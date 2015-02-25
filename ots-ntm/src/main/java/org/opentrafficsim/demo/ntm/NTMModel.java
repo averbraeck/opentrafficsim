@@ -166,7 +166,7 @@ public class NTMModel implements OTSModelInterface
                                     .isOnlyCentroidsFileNode());
             this.areas =
                     ShapeFileReader.readAreas(this.getInputNTM().getInputMap() + this.getInputNTM().getFileAreas(),
-                            this.centroids);
+                            this.centroids, this.getInputNTM().getScalingFactorDemand());
             
             ShapeFileReader.readLinks(this.getInputNTM().getInputMap() + this.getInputNTM().getFileLinks(),
                     this.shpLinks, this.shpConnectors, this.nodes, this.centroids, this.getInputNTM().getLengthUnitLink());
@@ -190,7 +190,7 @@ public class NTMModel implements OTSModelInterface
                             timeStepCellTransmissionModel, this.getInputNTM().getReRouteTimeInterval(), this
                                     .getInputNTM().getNumberOfRoutes(), this.getInputNTM().getWeightNewRoutes(), this
                                     .getInputNTM().getVarianceRoutes(), this.getInputNTM().isReRoute(), this
-                                    .getInputNTM().getInputMap(), this.getInputNTM().getScalingFactorDemand());
+                                    .getInputNTM().getInputMap(), this.getInputNTM().isIncreaseDemandAreaByFactor(), this.getInputNTM().getScalingFactorDemand());
 
             // the Map areas contains a reference to the centroids!
             // save the selected and created areas to a shape file
@@ -233,7 +233,7 @@ public class NTMModel implements OTSModelInterface
                             new Area(shape.getGeometry(), areaName, "name", "gemeente", "gebied", "regio", 0, shape
                                     .getGeometry().getCentroid(), TrafficBehaviourType.NTM, new Rel<LengthUnit>(0,
                                     LengthUnit.KILOMETER), new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-                                    increaseDemandByFactor, parametersNTM);
+                                    this.getInputNTM().getScalingFactorDemand(), parametersNTM);
                     this.bigAreas.put(bigArea.getCentroidNr(), bigArea);
                 }
                 // create new centroids
@@ -409,6 +409,7 @@ public class NTMModel implements OTSModelInterface
                             capacity =
                                     cellBehaviourNTM.getParametersNTM().getCapacity().getInUnit(FrequencyUnit.PER_HOUR);
                         }
+//                        capacity = 9000;
                         parameters.remove(parameters.size() - 1);
                         parametersNTM =
                                 new ParametersNTM(parameters, capacity, areasToUse.get(node.getId()).getRoadLength());
