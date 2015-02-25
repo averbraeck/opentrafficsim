@@ -18,7 +18,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.jfree.chart.ChartPanel;
@@ -73,8 +72,9 @@ public class ContourPlotTest
     {
         ArrayList<Lane> result = new ArrayList<Lane>();
         Lane[] lanes =
-                LaneFactory.makeMultiLane("AtoB", new NodeGeotools.STR("A", new Coordinate(1234, 0, 0)), new NodeGeotools.STR("B",
-                        new Coordinate(12345, 0, 0)), null, 1, new LaneType<String>("lane type"), null);
+                LaneFactory.makeMultiLane("AtoB", new NodeGeotools.STR("A", new Coordinate(1234, 0, 0)),
+                        new NodeGeotools.STR("B", new Coordinate(12345, 0, 0)), null, 1, new LaneType<String>(
+                                "lane type"), null);
         result.add(lanes[0]);
         return result;
     }
@@ -85,7 +85,7 @@ public class ContourPlotTest
      * @throws SimRuntimeException
      * @throws NetworkException
      * @throws RemoteException
-     * @throws GTUException 
+     * @throws GTUException
      */
     @SuppressWarnings("static-method")
     @Test
@@ -105,7 +105,7 @@ public class ContourPlotTest
      * @throws SimRuntimeException
      * @throws NetworkException
      * @throws RemoteException
-     * @throws GTUException 
+     * @throws GTUException
      */
     @SuppressWarnings("static-method")
     @Test
@@ -125,11 +125,12 @@ public class ContourPlotTest
      * @throws SimRuntimeException
      * @throws NetworkException
      * @throws RemoteException
-     * @throws GTUException 
+     * @throws GTUException
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void flowContourTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException, GTUException
+    public final void flowContourTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException,
+            GTUException
     {
         List<Lane> path = dummyPath();
         FlowContourPlot fcp = new FlowContourPlot("Density", path);
@@ -144,11 +145,12 @@ public class ContourPlotTest
      * @throws SimRuntimeException
      * @throws NetworkException
      * @throws RemoteException
-     * @throws GTUException 
+     * @throws GTUException
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void speedContourTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException, GTUException
+    public final void speedContourTest() throws RemoteException, NetworkException, SimRuntimeException,
+            NamingException, GTUException
     {
         List<Lane> path = dummyPath();
         SpeedContourPlot scp = new SpeedContourPlot("Density", path);
@@ -170,7 +172,7 @@ public class ContourPlotTest
      * @throws RemoteException
      * @throws NamingException
      * @throws SimRuntimeException
-     * @throws GTUException 
+     * @throws GTUException
      */
     public static void standardContourTests(final ContourPlot cp, Lane lane, final double expectedZValue,
             final double expectedZValueWithTraffic) throws NetworkException, RemoteException, SimRuntimeException,
@@ -342,13 +344,14 @@ public class ContourPlotTest
                 new SimpleSimulator(new OTSSimTimeDouble(initialTime), new DoubleScalar.Rel<TimeUnit>(0,
                         TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800, TimeUnit.SECOND), model);
         // Create a car running 50 km.h
-        SequentialFixedAccelerationModel gtuFollowingModel = new SequentialFixedAccelerationModel();
+        SequentialFixedAccelerationModel gtuFollowingModel =
+                new SequentialFixedAccelerationModel(simulator.getSimulator());
         // Make the car run at constant speed for one minute
         gtuFollowingModel.addStep(new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
                 AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(60, TimeUnit.SECOND)));
         // Make the car run at constant speed for another minute
         gtuFollowingModel.addStep(new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
-                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(60, TimeUnit.SECOND)));
+                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(600, TimeUnit.SECOND)));
         // Make the car run at constant speed for five more minutes
         gtuFollowingModel.addStep(new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
                 AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND)));
@@ -394,7 +397,7 @@ public class ContourPlotTest
         simulator.runUpTo(gtuFollowingModel.timeAfterCompletionOfStep(0));
         // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
         // + car.getPosition(car.getLastEvaluationTime()));
-        System.out.println("At time " + simulator.getSimulator().getSimulatorTime().get() + " car is at " + car);
+        //System.out.println("At time " + simulator.getSimulator().getSimulatorTime().get() + " car is at " + car);
         for (int item = 0; item < bins; item++)
         {
             double x = cp.getXValue(0, item);
@@ -412,20 +415,23 @@ public class ContourPlotTest
             double z = cp.getZValue(0, item);
             // figure out if the car has traveled through this cell
             // if (x >= 180)
-            System.out.println(String.format("t=%.3f, x=%.3f z=%f, exp=%.3f, carLast=%s, carNext=%s", x, y, z,
-                    expectedZValue, car.getLastEvaluationTime().getSI(), car.getNextEvaluationTime().getSI()));
+            //System.out.println(String.format("t=%.3f, x=%.3f z=%f, exp=%.3f, carLast=%s, carNext=%s", x, y, z,
+            //        expectedZValue, car.getLastEvaluationTime().getSI(), car.getNextEvaluationTime().getSI()));
             boolean hit = false;
             if (x + useTimeGranularity >= car.getLastEvaluationTime().getSI()
                     && x <= car.getNextEvaluationTime().getSI())
             {
-                // the car MAY have hit contributed to this cell
+                // the car MAY have contributed to this cell
                 DoubleScalar.Abs<TimeUnit> cellStartTime =
                         new DoubleScalar.Abs<TimeUnit>(Math.max(car.getLastEvaluationTime().getSI(), x),
                                 TimeUnit.SECOND);
                 DoubleScalar.Abs<TimeUnit> cellEndTime =
                         new DoubleScalar.Abs<TimeUnit>(Math.min(car.getNextEvaluationTime().getSI(), x
                                 + useTimeGranularity), TimeUnit.SECOND);
-                if (car.position(lane, car.getReference(), cellStartTime).getSI() <= y + useDistanceGranularity
+                DoubleScalar.Rel<LengthUnit> carAtCellStartTime = car.position(lane, car.getReference(), cellStartTime);
+                DoubleScalar.Rel<LengthUnit> carAtCellEndTime = car.position(lane, car.getReference(), cellEndTime);
+                if (cellStartTime.getSI() < cellEndTime.getSI()
+                        && car.position(lane, car.getReference(), cellStartTime).getSI() <= y + useDistanceGranularity
                         && car.position(lane, car.getReference(), cellEndTime).getSI() >= y)
                 {
                     hit = true;
@@ -437,11 +443,6 @@ public class ContourPlotTest
             {
                 if (!Double.isNaN(expectedZValueWithTraffic))
                 {
-                    if (z != expectedZValueWithTraffic)
-                    {
-                        System.out.println("Oops");
-                        cp.getZ(0, item);
-                    }
                     assertEquals("Z value should be " + expectedZValueWithTraffic, expectedZValueWithTraffic, z, 0.0001);
                     assertEquals("Z value should be " + expectedZValueWithTraffic, expectedZValueWithTraffic,
                             alternateZ.doubleValue(), 0.0001);
@@ -475,7 +476,7 @@ public class ContourPlotTest
                 }
             }
         }
-        cp.addData(car, lane);
+        simulator.runUpTo(gtuFollowingModel.timeAfterCompletionOfStep(1));
         // Check that the time range has expanded
         xBins = cp.xAxisBins();
         bins = cp.getItemCount(0);
@@ -489,7 +490,7 @@ public class ContourPlotTest
             }
         }
         DoubleScalar.Abs<TimeUnit> carEndTime = car.getNextEvaluationTime();
-        double expectedHighestTime = Math.floor(carEndTime.getSI() / useTimeGranularity) * useTimeGranularity;
+        double expectedHighestTime = Math.floor((carEndTime.getSI() - 0.001) / useTimeGranularity) * useTimeGranularity;
         assertEquals("Time range should run up to " + expectedHighestTime, expectedHighestTime, observedHighestTime,
                 0.0001);
         // Check the updateHint method in the PointerHandler
@@ -573,48 +574,6 @@ public class ContourPlotTest
         assertEquals("The text should again be a single space", " ", hintPanel.getText());
     }
 
-    /** Set to true when the stop event is executed by the simulator. */
-    private volatile boolean stopped;
-
-    /**
-     * Run a simulator up to the specified stop time.
-     * @param stopTime DoubleScalar.Abs&lt;TimeUnit&gt;; the stop time
-     * @param simulator DEVSSimulatorInterface; the simulator
-     */
-    private void simulateUntil(DoubleScalar.Abs<TimeUnit> stopTime,
-            DEVSSimulatorInterface<Abs<TimeUnit>, ?, ?> simulator)
-    {
-        this.stopped = false;
-        try
-        {
-            simulator.scheduleEventAbs(stopTime, this, this, "stop", null);
-        }
-        catch (RemoteException | SimRuntimeException exception)
-        {
-            exception.printStackTrace();
-        }
-        while (!this.stopped)
-        {
-            try
-            {
-                simulator.step();
-            }
-            catch (RemoteException | SimRuntimeException exception)
-            {
-                exception.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Event for the simulator.
-     */
-    @SuppressWarnings("unused")
-    private void stop()
-    {
-        this.stopped = true;
-    }
-
     /**
      * Run the DensityContourPlot stand-alone for profiling
      * @param args
@@ -622,7 +581,7 @@ public class ContourPlotTest
      * @throws NetworkException
      * @throws SimRuntimeException
      * @throws NamingException
-     * @throws GTUException 
+     * @throws GTUException
      */
     public static void main(final String[] args) throws RemoteException, NetworkException, SimRuntimeException,
             NamingException, GTUException
