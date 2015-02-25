@@ -220,7 +220,6 @@ public class NTMModel implements OTSModelInterface
                 for (ShapeObject shape : this.compressedAreas.getGeoObjects())
                 {
                     String areaName = shape.getValues().get(0);
-                    double increaseDemandByFactor = java.lang.Double.parseDouble(shape.getValues().get(2));
                     double accCritMaxCapStart = java.lang.Double.parseDouble(shape.getValues().get(4));
                     double accCritMaxCapEnd = java.lang.Double.parseDouble(shape.getValues().get(5));
                     double accCritJam = java.lang.Double.parseDouble(shape.getValues().get(6));
