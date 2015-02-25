@@ -17,20 +17,29 @@ import javax.naming.NamingException;
 import javax.swing.JLabel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.jfree.chart.ChartPanel;
 import org.junit.Test;
 import org.opentrafficsim.core.car.CarTest;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 /**
  * <p>
@@ -41,7 +50,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @version Aug 25, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FundamentalDiagramPlotTest
+public class FundamentalDiagramPlotTest implements OTSModelInterface
 {
     /**
      * Test the FundamentalDiagram.
@@ -49,16 +58,17 @@ public class FundamentalDiagramPlotTest
      * @throws NetworkException on network error
      * @throws NamingException on ???
      * @throws SimRuntimeException on ???
+     * @throws GTUException
      */
     @SuppressWarnings("static-method")
     @Test
     public final void fundamentalDiagramTest() throws RemoteException, NetworkException, SimRuntimeException,
-            NamingException
+            NamingException, GTUException
     {
         DoubleScalar.Rel<TimeUnit> aggregationTime = new DoubleScalar.Rel<TimeUnit>(30, TimeUnit.SECOND);
         DoubleScalar.Abs<LengthUnit> position = new DoubleScalar.Abs<LengthUnit>(123, LengthUnit.METER);
-        FundamentalDiagram fd;
-        fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, XXXXX, position);
+        Lane lane = CarTest.makeLane();
+        FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, lane, position);
         assertEquals("SeriesCount should match numberOfLanes", 1, fd.getSeriesCount());
         assertEquals("Position should match the supplied position", position.getSI(), fd.getPosition().getSI(), 0.0001);
         try
@@ -80,13 +90,13 @@ public class FundamentalDiagramPlotTest
             // Ignore
         }
         double value = fd.getXValue(0, 0);
-        assertTrue("No data should result in NaN", Double.isNaN(value));
+        assertTrue("No data should result in NaN", java.lang.Double.isNaN(value));
         value = fd.getX(0, 0).doubleValue();
-        assertTrue("No data should result in NaN", Double.isNaN(value));
+        assertTrue("No data should result in NaN", java.lang.Double.isNaN(value));
         value = fd.getYValue(0, 0);
-        assertTrue("No data should result in NaN", Double.isNaN(value));
+        assertTrue("No data should result in NaN", java.lang.Double.isNaN(value));
         value = fd.getY(0, 0).doubleValue();
-        assertTrue("No data should result in NaN", Double.isNaN(value));
+        assertTrue("No data should result in NaN", java.lang.Double.isNaN(value));
         ActionEvent setXToSpeed = new ActionEvent(fd, 0, "Speed/Speed");
         ActionEvent resetAxis = new ActionEvent(fd, 0, "Flow/Density");
         DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
@@ -95,20 +105,28 @@ public class FundamentalDiagramPlotTest
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
-        Lane lane = CarTest.makeLane();
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(23, LengthUnit.METER);
         initialLongitudinalPositions.put(lane, initialPosition);
-        OTSDEVSSimulator simulator = CarTest.makeSimulator();
+        SimpleSimulator simulator =
+                new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND)),
+                        new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800,
+                                TimeUnit.SECOND), this);
+        simulator.runUpTo(time);
         int bucket = (int) Math.floor(time.getSI() / aggregationTime.getSI());
         LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar<Integer> car =
-                new LaneBasedIndividualCar<Integer>(1, null, null, laneChangeModel, initialLongitudinalPositions, speed, length,
-                        width, maxSpeed, simulator);
-        fd.addData(car, time);
+                new LaneBasedIndividualCar<Integer>(1, null, new FixedAccelerationModel(
+                        new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2),
+                        new DoubleScalar.Rel<TimeUnit>(1000, TimeUnit.SECOND)), laneChangeModel,
+                        initialLongitudinalPositions, speed, length, width, maxSpeed,
+                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
+        simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(1800, TimeUnit.SECOND));
+        fd.addData(car);
         for (int sample = 0; sample < 10; sample++)
         {
             boolean shouldHaveData = sample == bucket;
             value = fd.getXValue(0, sample);
+            //System.out.println("value " + value);
             if (shouldHaveData)
             {
                 double expectedDensity = 3600 / aggregationTime.getSI() / speed.getSI();
@@ -116,7 +134,7 @@ public class FundamentalDiagramPlotTest
             }
             else
             {
-                assertTrue("Data should be NaN", Double.isNaN(value));
+                assertTrue("Data should be NaN", java.lang.Double.isNaN(value));
             }
             value = fd.getX(0, sample).doubleValue();
             if (shouldHaveData)
@@ -126,7 +144,7 @@ public class FundamentalDiagramPlotTest
             }
             else
             {
-                assertTrue("Data should be NaN", Double.isNaN(value));
+                assertTrue("Data should be NaN", java.lang.Double.isNaN(value));
             }
             shouldHaveData = sample <= bucket;
             value = fd.getYValue(0, sample);
@@ -137,7 +155,7 @@ public class FundamentalDiagramPlotTest
             }
             else
             {
-                assertTrue("Data should be NaN", Double.isNaN(value));
+                assertTrue("Data should be NaN", java.lang.Double.isNaN(value));
             }
             value = fd.getY(0, sample).doubleValue();
             if (shouldHaveData)
@@ -147,7 +165,7 @@ public class FundamentalDiagramPlotTest
             }
             else
             {
-                assertTrue("Data should be NaN", Double.isNaN(value));
+                assertTrue("Data should be NaN", java.lang.Double.isNaN(value));
             }
             fd.actionPerformed(setXToSpeed);
             value = fd.getYValue(0, sample);
@@ -158,7 +176,7 @@ public class FundamentalDiagramPlotTest
             }
             else
             {
-                assertTrue("Data should be NaN", Double.isNaN(value));
+                assertTrue("Data should be NaN", java.lang.Double.isNaN(value));
             }
             value = fd.getY(0, sample).doubleValue();
             if (shouldHaveData)
@@ -168,16 +186,16 @@ public class FundamentalDiagramPlotTest
             }
             else
             {
-                assertTrue("Data should be NaN", Double.isNaN(value));
+                assertTrue("Data should be NaN", java.lang.Double.isNaN(value));
             }
             fd.actionPerformed(resetAxis);
         }
         // Check that harmonic mean speed is computed
         speed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
         car =
-                new LaneBasedIndividualCar<Integer>(1234, null, null, laneChangeModel, initialLongitudinalPositions, speed,
-                        length, width, maxSpeed, simulator);
-        fd.addData(car, time);
+                new LaneBasedIndividualCar<Integer>(1234, null, null, laneChangeModel, initialLongitudinalPositions,
+                        speed, length, width, maxSpeed, (OTSDEVSSimulatorInterface) simulator);
+        fd.addData(car);
         fd.actionPerformed(setXToSpeed);
         value = fd.getYValue(0, bucket);
         double expected = 2d / (1d / 100 + 1d / 10);
@@ -251,14 +269,16 @@ public class FundamentalDiagramPlotTest
 
     /**
      * Test the updateHint method in the PointerHandler.
+     * @throws NetworkException
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void testHints()
+    public final void testHints() throws NetworkException
     {
         DoubleScalar.Rel<TimeUnit> aggregationTime = new DoubleScalar.Rel<TimeUnit>(30, TimeUnit.SECOND);
         DoubleScalar.Abs<LengthUnit> position = new DoubleScalar.Abs<LengthUnit>(123, LengthUnit.METER);
-        FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, XXXXX, position);
+        FundamentalDiagram fd =
+                new FundamentalDiagram("Fundamental Diagram", aggregationTime, CarTest.makeLane(), position);
         // First get the panel that stores the result of updateHint (this is ugly)
         JLabel hintPanel = null;
         ChartPanel chartPanel = null;
@@ -335,7 +355,23 @@ public class FundamentalDiagramPlotTest
         ph.updateHint(1, 2);
         // System.out.println("Hint text is now " + hintPanel.getText());
         assertFalse("Hint should not be a single space", " ".equals(hintPanel.getText()));
-        ph.updateHint(Double.NaN, Double.NaN);
+        ph.updateHint(java.lang.Double.NaN, java.lang.Double.NaN);
         assertEquals("The text should again be a single space", " ", hintPanel.getText());
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> arg0)
+            throws SimRuntimeException, RemoteException
+    {
+        // Do nothing
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
+    {
+        return null;
+    }
+
 }
