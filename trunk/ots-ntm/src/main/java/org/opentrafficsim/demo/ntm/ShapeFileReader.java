@@ -50,7 +50,7 @@ public class ShapeFileReader
      * @return map of areas with areanr as the key
      * @throws IOException on error
      */
-    public static Map<String, Area> readAreas(final String shapeFileName, final Map<String, Node> centroids)
+    public static Map<String, Area> readAreas(final String shapeFileName, final Map<String, Node> centroids, double scalingFactorDemand)
             throws IOException
     {
         /*-
@@ -142,10 +142,10 @@ public class ShapeFileReader
                         newNr++;
                         centroidNr = newNr.toString();
                     }
-                    double increaseDemandByFactor = 1.0;
                     double accCritMaxCapStart = 25;
                     double accCritMaxCapEnd = 50;
                     double accCritJam = 100;
+                    double increaseDemandByFactor = scalingFactorDemand;
                     ArrayList<java.lang.Double> accCritical = new ArrayList<java.lang.Double>(); 
                     accCritical.add(accCritMaxCapStart);
                     accCritical.add(accCritMaxCapEnd);

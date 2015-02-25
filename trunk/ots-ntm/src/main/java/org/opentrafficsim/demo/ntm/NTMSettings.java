@@ -74,16 +74,16 @@ public class NTMSettings
      * @param timeStepDurationCTM
      * @param reRouteTimeInterval
      * @param numberOfRoutes
-     * @param weightNewRoutes 
-     * @param varianceRoutes 
-     * @param reRoute 
+     * @param weightNewRoutes
+     * @param varianceRoutes
+     * @param reRoute
      * @param path
-     * @param scalingFactorDemand 
+     * @param scalingFactorDemand
      */
     public NTMSettings(Calendar startTime, Rel<TimeUnit> durationOfSimulation, String descriptionProject,
             Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM, Rel<TimeUnit> reRouteTimeInterval,
             int numberOfRoutes, double weightNewRoutes, double varianceRoutes, boolean reRoute, String path,
-            double scalingFactorDemand)
+            boolean increaseDemandByArea, double scalingFactorDemand)
     {
         this.setStartTime(new DoubleScalar.Abs<TimeUnit>(startTime.getTimeInMillis(), TimeUnit.MILLISECOND));
         int hour = startTime.get(Calendar.HOUR_OF_DAY);
@@ -103,6 +103,7 @@ public class NTMSettings
         this.varianceRoutes = varianceRoutes;
         this.reRoute = reRoute;
         this.path = path;
+        this.increaseDemandByArea = increaseDemandByArea;
         this.scalingFactorDemand = scalingFactorDemand;
     }
 

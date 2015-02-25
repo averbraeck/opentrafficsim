@@ -201,10 +201,6 @@ public class NTMsimulation
                                             cellBehaviourNTM.getArea().getRoadLength(),
                                             cellBehaviourNTM.getParametersNTM()).getInUnit(FrequencyUnit.PER_HOUR);
 
-                            if (model.getSettingsNTM().isIncreaseDemandByArea())
-                            {
-                                tripByHour *= cellBehaviourNTM.getArea().getIncreaseDemandByFactor();
-                            }
                             tripByHour =
                                     tripByHour
                                             * cellBehaviourNTM.getArea().getRoadLength()
@@ -235,6 +231,10 @@ public class NTMsimulation
                             if (speed == null)
                             {
                                 speed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
+                            }
+                            if (origin.getId().equals("C5") && steps >5)
+                            {
+                                System.out.println("speed C5 " + speed);
                             }
                             origin.getArea().setCurrentSpeed(
                                     cellBehaviourNTM.retrieveCurrentSpeed(cellBehaviourNTM.getAccumulatedCars(),
@@ -1006,6 +1006,11 @@ public class NTMsimulation
                                                                     destinationNode.getId(), currentTime, model
                                                                             .getSettingsNTM().getTimeStepDurationNTM());
                                     // **** RELEVANT
+                                    if (model.getSettingsNTM().isIncreaseDemandByArea())
+                                    {
+                                        startingTrips *= model.getSettingsNTM().getScalingFactorDemand();
+                                    }
+
                                     tripInfoByDestination.addAccumulatedCarsToDestination(startingTrips);
                                     tripInfoByDestination.setAccumulatedCarsToDestinationAdded(startingTrips);
                                     tripInfoByDestination.addDepartedTrips(startingTrips);

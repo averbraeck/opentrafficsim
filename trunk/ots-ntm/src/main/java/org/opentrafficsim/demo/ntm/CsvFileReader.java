@@ -300,7 +300,7 @@ public class CsvFileReader
                             String gebied = cordonConnector.getLinkData().getName();
                             String regio = "cordonPoint " + nr;
                             double dhb = 0.0;
-                            Double increaseDemandByFactor = 1.0;
+                            Double increaseDemandByFactor = settingsNTM.getScalingFactorDemand();
                             double accCritMaxCapStart = 25;
                             double accCritMaxCapEnd = 50;
                             double accCritJam = 100;

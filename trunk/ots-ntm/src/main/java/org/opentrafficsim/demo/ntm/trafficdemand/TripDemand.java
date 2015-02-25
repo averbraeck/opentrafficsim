@@ -121,6 +121,7 @@ public class TripDemand<TripInformation>
                                 {
                                     bigTripInfo = new TripInfoTimeDynamic(0, null);
                                 }
+
                                 bigTripInfo.addNumberOfTrips(tripInfo.getNumberOfTrips());
                                 bigTripInfo.setDepartureTimeProfile(tripInfo.getDepartureTimeProfile());
                                 bigTripDemandRow.put(mapSmallAreaToBigArea.get(destination).getId(), bigTripInfo);
@@ -167,33 +168,36 @@ public class TripDemand<TripInformation>
     }
 
     /**
-     * @param thisDemand 
-     * @param currentTime 
-     * @param timeStepDurationNTM 
+     * @param thisDemand
+     * @param currentTime
+     * @param timeStepDurationNTM
      * @param origin
      * @param destination
      * @return mapDestinations a hashmap with destination as key and tripInfo as values
      */
     public static final double getTotalNumberOfTripsFromOrigin(TripDemand<TripInfoTimeDynamic> thisDemand,
-            String originID, DoubleScalar.Abs<TimeUnit> currentTime, final DoubleScalar.Rel<TimeUnit> timeStepDurationNTM)
+            String originID, DoubleScalar.Abs<TimeUnit> currentTime,
+            final DoubleScalar.Rel<TimeUnit> timeStepDurationNTM)
     {
         Map<String, Map<String, TripInfoTimeDynamic>> demand = thisDemand.getTripInfo();
         Map<String, TripInfoTimeDynamic> mapDestinations = demand.get(originID);
         double rowTotal = 0.0;
         if (mapDestinations != null)
         {
-            for ( Entry<String, TripInfoTimeDynamic> tripInfo : mapDestinations.entrySet())
+            for (Entry<String, TripInfoTimeDynamic> tripInfo : mapDestinations.entrySet())
             {
-                double trips = getTotalNumberOfTripsFromOriginToDestinationByTimeStep(thisDemand,
-                        originID, tripInfo.getKey(), currentTime, timeStepDurationNTM);
-                        rowTotal += trips;
+                double trips =
+                        getTotalNumberOfTripsFromOriginToDestinationByTimeStep(thisDemand, originID, tripInfo.getKey(),
+                                currentTime, timeStepDurationNTM);
+                rowTotal += trips;
             }
         }
         return rowTotal;
     }
 
-    public static final double getTotalNumberOfTripsFromOriginToDestinationByTimeStep(TripDemand<TripInfoTimeDynamic> thisDemand,
-            String originID, String destination, DoubleScalar.Abs<TimeUnit> currentTime, final DoubleScalar.Rel<TimeUnit> timeStepDurationNTM)
+    public static final double getTotalNumberOfTripsFromOriginToDestinationByTimeStep(
+            TripDemand<TripInfoTimeDynamic> thisDemand, String originID, String destination,
+            DoubleScalar.Abs<TimeUnit> currentTime, final DoubleScalar.Rel<TimeUnit> timeStepDurationNTM)
     {
         Map<String, Map<String, TripInfoTimeDynamic>> demand = thisDemand.getTripInfo();
         Map<String, TripInfoTimeDynamic> mapDestinations = demand.get(originID);
