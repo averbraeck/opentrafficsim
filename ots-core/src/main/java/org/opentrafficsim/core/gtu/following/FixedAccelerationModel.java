@@ -1,14 +1,12 @@
 package org.opentrafficsim.core.gtu.following;
 
-import java.rmi.RemoteException;
-
-import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * Fixed GTU following model. This GTU following model does not react in any way to other GTUs. In stead it has a
@@ -65,23 +63,12 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
         return this.acceleration;
     }
 
-    /**
-     * Construct the AccelerationStep that is returned by the public computeAcceleration methods.
-     * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the simulation time
-     * @return AccelerationStep; the acceleration and duration of that acceleration
-     */
-    private AccelerationStep computeAcceleration(final DoubleScalar.Abs<TimeUnit> when)
-    {
-        return new AccelerationStep(this.acceleration, DoubleScalar.plus(when, this.duration).immutable());
-    }
-
     /** {@inheritDoc} */
     @Override
-    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
-            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
+    public Abs<AccelerationUnit> computeAcceleration(Abs<SpeedUnit> followerSpeed, Abs<SpeedUnit> followerMaximumSpeed,
+            Abs<SpeedUnit> leaderSpeed, Rel<LengthUnit> headway, Abs<SpeedUnit> speedLimit)
     {
-        return computeAcceleration(follower.getSimulator().getSimulatorTime().get());
+        return this.acceleration;
     }
 
     /** {@inheritDoc} */
@@ -110,6 +97,12 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
     public final String getLongName()
     {
         return "Fixed GTU following model";
+    }
+    
+    /** {@inheritDoc} */
+    public final String toString()
+    {
+        return "FixedAccelerationModel " + this.duration + ", " + this.acceleration;
     }
 
 }

@@ -10,6 +10,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 
 /**
  * Abstract GTU following model.
@@ -38,6 +39,25 @@ public interface GTUFollowingModel
     AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower, final DoubleScalar.Abs<SpeedUnit> leaderSpeed,
             final DoubleScalar.Rel<LengthUnit> headway, final DoubleScalar.Abs<SpeedUnit> speedLimit)
             throws RemoteException, NetworkException;
+
+    /**
+     * Compute the acceleration that would be used to follow a leader.<br />
+     * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their
+     * @param followerSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed of the follower at the current time
+     * @param followerMaximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the maximum speed that the follower is capable of
+     *            driving at
+     * @param leaderSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed of the follower at the current time
+     * @param headway DoubleScalar.Rel&lt;LengthUnit&gt;; the <b>net</b> headway (distance between the front of the
+     *            follower to the rear of the leader) at the current time
+     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the local speed limit
+     * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration (or, if negative, deceleration) resulting from
+     *         application of the GTU following model
+     * @throws RemoteException on communications failure
+     */
+    DoubleScalar.Abs<AccelerationUnit> computeAcceleration(final DoubleScalar.Abs<SpeedUnit> followerSpeed,
+            Abs<SpeedUnit> followerMaximumSpeed, final DoubleScalar.Abs<SpeedUnit> leaderSpeed,
+            final DoubleScalar.Rel<LengthUnit> headway, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+            throws RemoteException;
 
     /**
      * Compute the lowest accelerations (or most severe decelerations) that would be used if a referenceGTU is present
@@ -72,6 +92,17 @@ public interface GTUFollowingModel
             final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException;
 
     /**
+     * Compute the minimum <b>net></b> headway given the speed of the follower and the leader.<br/>
+     * At the returned headway, the follower might decelerate with it's maximum comfortable deceleration.
+     * @param followerSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; speed of the follower
+     * @param leaderSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; speed of the leader
+     * @return DoubleScalar.Rel&lt;LengthUnit&gt;
+     * @throws RemoteException on communications failure
+     */
+    DoubleScalar.Rel<LengthUnit> minimumHeadway(DoubleScalar.Abs<SpeedUnit> followerSpeed,
+            DoubleScalar.Abs<SpeedUnit> leaderSpeed) throws RemoteException;
+
+    /**
      * Return the maximum safe deceleration for use in gap acceptance models. This is the deceleration that may be
      * enforced upon a new follower due to entering a road or changing into an adjacent lane. The result shall be a
      * <b>positive value</b>. In most car following models this value is named <cite>b</cite>.
@@ -82,8 +113,9 @@ public interface GTUFollowingModel
     /**
      * Return the step size of this GTU following model.
      * @return DoubleScalar.Rel&lt;TimeUnit&gt;; the step size of the GTU following model
+     * @throws RemoteException on communications failure
      */
-    DoubleScalar.Rel<TimeUnit> getStepSize();
+    DoubleScalar.Rel<TimeUnit> getStepSize() throws RemoteException;
 
     /**
      * Return the name of this GTU following model.
