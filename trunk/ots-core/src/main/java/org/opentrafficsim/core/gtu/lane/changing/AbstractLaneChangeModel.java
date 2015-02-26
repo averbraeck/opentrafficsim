@@ -7,6 +7,7 @@ import java.util.Map;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.AbstractGTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.AccelerationStep;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.HeadwayGTU;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -59,8 +60,13 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             Lane nonPreferredLane =
                     lane.bestAccessibleAdjacentLane(nonPreferred, longitudinalPosition, gtu.getGTUType());
             Lane preferredLane = lane.bestAccessibleAdjacentLane(preferred, longitudinalPosition, gtu.getGTUType());
+            GTUFollowingModel gtuFollowingModel = gtu.getGTUFollowingModel();
+            if (null == gtuFollowingModel)
+            {
+                throw new Error("GTU " + gtu + " has null GTUFollowingModel");
+            }
             AccelerationStep[] straightAccelerationSteps =
-                    gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneGTUs, speedLimit);
+                    gtuFollowingModel.computeAcceleration(gtu, sameLaneGTUs, speedLimit);
             if (straightAccelerationSteps[0].getAcceleration().getSI() < -9999)
             {
                 System.out.println("Problem");
