@@ -9,10 +9,11 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
- * This is a sensor that is placed at the start of a Lane to register a GTU on the lane, and register the lane with the GTU when
- * the front of the vehicle passes over the sensor.
+ * This is a sensor that is placed at the start of a Lane to register a GTU on the lane, and register the lane with the
+ * GTU when the front of the vehicle passes over the sensor.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jan 1, 2015 <br>
@@ -30,13 +31,13 @@ public class SensorLaneStart extends AbstractSensor
      */
     public SensorLaneStart(final Lane lane)
     {
-        super(lane, new DoubleScalar.Abs<LengthUnit>(Math.ulp(0.0), LengthUnit.METER), RelativePosition.FRONT);
+        super(lane, new DoubleScalar.Rel<LengthUnit>(Math.ulp(0.0), LengthUnit.METER), RelativePosition.FRONT);
     }
 
     /**
      * {@inheritDoc} <br>
-     * For this method, we assume that the right sensor triggered this method. In this case the sensor that indicates the front
-     * of the GTU. The code triggering the sensor therefore has to do the checking for sensor type.
+     * For this method, we assume that the right sensor triggered this method. In this case the sensor that indicates
+     * the front of the GTU. The code triggering the sensor therefore has to do the checking for sensor type.
      * @throws RemoteException on communications failure
      */
     @Override
@@ -62,7 +63,7 @@ public class SensorLaneStart extends AbstractSensor
     public String toString()
     {
         return "SensorLaneStart [getLane()=" + this.getLane() + ", getLongitudinalPosition()="
-            + this.getLongitudinalPosition() + ", getPositionType()=" + this.getPositionType() + "]";
+                + this.getLongitudinalPosition() + ", getPositionType()=" + this.getPositionType() + "]";
     }
 
 }
