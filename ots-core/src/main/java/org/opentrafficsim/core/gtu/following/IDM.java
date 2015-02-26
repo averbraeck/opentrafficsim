@@ -6,7 +6,6 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.conversions.Calc;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
@@ -85,7 +84,7 @@ public class IDM extends AbstractGTUFollowingModel
      * @return DoubleScalarRel&lt;SpeedUnit&gt;; the desired speed
      */
     private DoubleScalar.Rel<SpeedUnit> vDes(final DoubleScalar.Abs<SpeedUnit> speedLimit,
-            DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed)
+            final DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed)
     {
         return new DoubleScalar.Rel<SpeedUnit>(Math.min(this.delta * speedLimit.getSI(), followerMaximumSpeed.getSI()),
                 SpeedUnit.METER_PER_SECOND);
@@ -93,7 +92,7 @@ public class IDM extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     public final DoubleScalar.Abs<AccelerationUnit> computeAcceleration(
-            final DoubleScalar.Abs<SpeedUnit> followerSpeed, Abs<SpeedUnit> followerMaximumSpeed,
+            final DoubleScalar.Abs<SpeedUnit> followerSpeed, final DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed,
             final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
             final DoubleScalar.Abs<SpeedUnit> speedLimit)
     {
@@ -146,8 +145,8 @@ public class IDM extends AbstractGTUFollowingModel
         {
             // System.out.println("Limiting deceleration to prevent moving backwards");
             newAcceleration =
-                    new DoubleScalar.Abs<AccelerationUnit>(-followerSpeed.getSI()
-                            / this.stepSize.getSI(), AccelerationUnit.METER_PER_SECOND_2);
+                    new DoubleScalar.Abs<AccelerationUnit>(-followerSpeed.getSI() / this.stepSize.getSI(),
+                            AccelerationUnit.METER_PER_SECOND_2);
         }
         // System.out.println("newAcceleration is " + newAcceleration);
         return newAcceleration;
