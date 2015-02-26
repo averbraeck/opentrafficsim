@@ -151,8 +151,8 @@ public class FundamentalDiagrams implements WrappableSimulation
         panel.getTabbedPane().addTab("statistics", charts);
         for (int plotNumber = 0; plotNumber < 10; plotNumber++)
         {
-            DoubleScalar.Abs<LengthUnit> detectorLocation =
-                    new DoubleScalar.Abs<LengthUnit>(400 + 500 * plotNumber, LengthUnit.METER);
+            DoubleScalar.Rel<LengthUnit> detectorLocation =
+                    new DoubleScalar.Rel<LengthUnit>(400 + 500 * plotNumber, LengthUnit.METER);
             FundamentalDiagram fd =
                     new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getSI() + "m",
                             new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.MINUTE), model.lane, detectorLocation);

@@ -399,8 +399,7 @@ class StraightModel implements OTSModelInterface
             LaneType<String> laneType = new LaneType<String>("CarLane");
             this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.simulator);
             this.path.add(this.lane);
-            @SuppressWarnings("unchecked")
-            CrossSectionLink<String, String> endLink = LaneFactory.makeLink("endLink", to, end, null);
+            CrossSectionLink<?, ?> endLink = LaneFactory.makeLink("endLink", to, end, null);
             new SinkLane(endLink, this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), laneType,
                     LongitudinalDirectionality.FORWARD);
             String carFollowingModelName = null;
