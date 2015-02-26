@@ -64,8 +64,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     /** Caption for this Fundamental Diagram. */
     private final String caption;
 
-    /** Position of this Fundamental Diagram. */
-    private final DoubleScalar.Abs<LengthUnit> position;
+    /** Position of this Fundamental Diagram sensor. */
+    private final DoubleScalar.Rel<LengthUnit> position;
 
     /** Area to show status information. */
     private final JLabel statusLabel;
@@ -159,11 +159,11 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @param aggregationTime DoubleScalarRel&lt;TimeUnit&gt;; the aggregation of the detector that generates the data
      *            for this Fundamental diagram
      * @param lane Lane; the Lane on which the traffic will be sampled
-     * @param position DoubleScalarAbs&lt;LengthUnit&gt;; longitudinal position of the detector on the Lane
+     * @param position DoubleScalarRel&lt;LengthUnit&gt;; longitudinal position of the detector on the Lane
      * @throws NetworkException on network inconsistency
      */
     public FundamentalDiagram(final String caption, final DoubleScalar.Rel<TimeUnit> aggregationTime, final Lane lane,
-            final DoubleScalar.Abs<LengthUnit> position) throws NetworkException
+            final DoubleScalar.Rel<LengthUnit> position) throws NetworkException
     {
         if (aggregationTime.getSI() <= 0)
         {
@@ -171,7 +171,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         }
         this.aggregationTime = aggregationTime;
         this.caption = caption;
-        this.position = new DoubleScalar.Abs<LengthUnit>(position);
+        this.position = position;
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
         this.chartPanel =
                 ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false,
@@ -235,11 +235,11 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /**
      * Retrieve the position of the detector.
-     * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position of the detector
+     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the position of the detector
      */
-    public final DoubleScalar.Abs<LengthUnit> getPosition()
+    public final DoubleScalar.Rel<LengthUnit> getPosition()
     {
-        return new DoubleScalar.Abs<LengthUnit>(this.position);
+        return this.position;
     }
 
     /**
@@ -603,7 +603,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
          *            FundamentalDiagramSensor
          * @throws NetworkException on network inconsistency
          */
-        public FundamentalDiagramSensor(final Lane lane, final DoubleScalar.Abs<LengthUnit> longitudinalPosition)
+        public FundamentalDiagramSensor(final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
                 throws NetworkException
         {
             super(lane, longitudinalPosition, RelativePosition.REFERENCE);

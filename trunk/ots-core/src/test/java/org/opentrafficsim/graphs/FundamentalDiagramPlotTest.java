@@ -28,6 +28,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
@@ -52,6 +53,9 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  */
 public class FundamentalDiagramPlotTest implements OTSModelInterface
 {
+    /** */
+    private static final long serialVersionUID = 20150226L;
+
     /**
      * Test the FundamentalDiagram.
      * @throws RemoteException on communications error
@@ -66,7 +70,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
             NamingException, GTUException
     {
         DoubleScalar.Rel<TimeUnit> aggregationTime = new DoubleScalar.Rel<TimeUnit>(30, TimeUnit.SECOND);
-        DoubleScalar.Abs<LengthUnit> position = new DoubleScalar.Abs<LengthUnit>(123, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> position = new DoubleScalar.Rel<LengthUnit>(123, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> carPosition = new DoubleScalar.Rel<LengthUnit>(122.5, LengthUnit.METER);
         Lane lane = CarTest.makeLane();
         FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, lane, position);
         assertEquals("SeriesCount should match numberOfLanes", 1, fd.getSeriesCount());
@@ -105,8 +110,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
-        DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(23, LengthUnit.METER);
-        initialLongitudinalPositions.put(lane, initialPosition);
+        initialLongitudinalPositions.put(lane, carPosition);
         SimpleSimulator simulator =
                 new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND)),
                         new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800,
@@ -114,19 +118,18 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
         simulator.runUpTo(time);
         int bucket = (int) Math.floor(time.getSI() / aggregationTime.getSI());
         LaneChangeModel laneChangeModel = new Egoistic();
-        LaneBasedIndividualCar<Integer> car =
-                new LaneBasedIndividualCar<Integer>(1, null, new FixedAccelerationModel(
-                        new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2),
-                        new DoubleScalar.Rel<TimeUnit>(1000, TimeUnit.SECOND)), laneChangeModel,
-                        initialLongitudinalPositions, speed, length, width, maxSpeed,
-                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
-        simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(1800, TimeUnit.SECOND));
-        fd.addData(car);
+        GTUFollowingModel gtuFollowingModel =
+                new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(1000, TimeUnit.SECOND));
+        // Construct a car
+        new LaneBasedIndividualCar<Integer>(1, null, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions,
+                speed, length, width, maxSpeed, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+        simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(124, TimeUnit.SECOND));
         for (int sample = 0; sample < 10; sample++)
         {
             boolean shouldHaveData = sample == bucket;
             value = fd.getXValue(0, sample);
-            //System.out.println("value " + value);
+            // System.out.println("value " + value);
             if (shouldHaveData)
             {
                 double expectedDensity = 3600 / aggregationTime.getSI() / speed.getSI();
@@ -192,10 +195,10 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
         }
         // Check that harmonic mean speed is computed
         speed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
-        car =
-                new LaneBasedIndividualCar<Integer>(1234, null, null, laneChangeModel, initialLongitudinalPositions,
-                        speed, length, width, maxSpeed, (OTSDEVSSimulatorInterface) simulator);
-        fd.addData(car);
+        new LaneBasedIndividualCar<Integer>(1234, null, gtuFollowingModel, laneChangeModel,
+                initialLongitudinalPositions, speed, length, width, maxSpeed,
+                (OTSDEVSSimulatorInterface) simulator.getSimulator());
+        simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(125, TimeUnit.SECOND));
         fd.actionPerformed(setXToSpeed);
         value = fd.getYValue(0, bucket);
         double expected = 2d / (1d / 100 + 1d / 10);
@@ -276,7 +279,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
     public final void testHints() throws NetworkException
     {
         DoubleScalar.Rel<TimeUnit> aggregationTime = new DoubleScalar.Rel<TimeUnit>(30, TimeUnit.SECOND);
-        DoubleScalar.Abs<LengthUnit> position = new DoubleScalar.Abs<LengthUnit>(123, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> position = new DoubleScalar.Rel<LengthUnit>(123, LengthUnit.METER);
         FundamentalDiagram fd =
                 new FundamentalDiagram("Fundamental Diagram", aggregationTime, CarTest.makeLane(), position);
         // First get the panel that stores the result of updateHint (this is ugly)
