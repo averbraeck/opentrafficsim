@@ -218,10 +218,11 @@ public abstract class CrossSectionElement implements LocatableInterface
         Set<Coordinate> startSet = new HashSet<Coordinate>();
         Set<Integer> endIndexSet = new HashSet<>();
         Set<Coordinate> endSet = new HashSet<Coordinate>();
+        final double precision = 0.000001;  // 
         for (int i = 0; i < bufferCoordinates.length; i++) // Note: the last coordinate = the first coordinate
         {
             Coordinate c = bufferCoordinates[i];
-            if (Math.abs(c.distance(sC) - bufferOffset) < bufferOffset / 100.0) // within 99%
+            if (Math.abs(c.distance(sC) - bufferOffset) < bufferOffset * precision)
             {
                 if (!startSet.contains(c))
                 {
@@ -229,7 +230,7 @@ public abstract class CrossSectionElement implements LocatableInterface
                     startSet.add(c);
                 }
             }
-            if (Math.abs(c.distance(eC) - bufferOffset) < bufferOffset / 100.0) // within 99%
+            if (Math.abs(c.distance(eC) - bufferOffset) < bufferOffset * precision)
             {
                 if (!endSet.contains(c))
                 {
