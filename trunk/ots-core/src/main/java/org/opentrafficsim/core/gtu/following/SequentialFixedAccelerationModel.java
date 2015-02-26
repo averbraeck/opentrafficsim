@@ -13,7 +13,6 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
@@ -110,7 +109,6 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
 
     /**
      * Find the FixedAccelerationModel that starts at the current simulator time.
-     * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the current simulator time
      * @return FixedAccelerationModel; the FixedAccelerationModel that starts at the current simulator time
      * @throws RemoteException on communications failure
      */
@@ -135,8 +133,10 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public Abs<AccelerationUnit> computeAcceleration(Abs<SpeedUnit> followerSpeed, Abs<SpeedUnit> followerMaximumSpeed,
-            Abs<SpeedUnit> leaderSpeed, Rel<LengthUnit> headway, Abs<SpeedUnit> speedLimit) throws RemoteException
+    public final DoubleScalar.Abs<AccelerationUnit> computeAcceleration(
+            final DoubleScalar.Abs<SpeedUnit> followerSpeed, final DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed,
+            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
     {
         return getAccelerationModel().getAcceleration();
     }

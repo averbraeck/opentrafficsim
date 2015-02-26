@@ -5,8 +5,6 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * Fixed GTU following model. This GTU following model does not react in any way to other GTUs. In stead it has a
@@ -19,10 +17,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
  * <p>
  * @version 6 feb. 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
 public class FixedAccelerationModel extends AbstractGTUFollowingModel
 {
@@ -65,8 +60,10 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public Abs<AccelerationUnit> computeAcceleration(Abs<SpeedUnit> followerSpeed, Abs<SpeedUnit> followerMaximumSpeed,
-            Abs<SpeedUnit> leaderSpeed, Rel<LengthUnit> headway, Abs<SpeedUnit> speedLimit)
+    public final DoubleScalar.Abs<AccelerationUnit> computeAcceleration(
+            final DoubleScalar.Abs<SpeedUnit> followerSpeed, final DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed,
+            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit)
     {
         return this.acceleration;
     }
@@ -98,7 +95,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
     {
         return "Fixed GTU following model";
     }
-    
+
     /** {@inheritDoc} */
     public final String toString()
     {

@@ -138,8 +138,8 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public DoubleScalar.Rel<LengthUnit> minimumHeadway(DoubleScalar.Abs<SpeedUnit> followerSpeed,
-            DoubleScalar.Abs<SpeedUnit> leaderSpeed) throws RemoteException
+    public final DoubleScalar.Rel<LengthUnit> minimumHeadway(final DoubleScalar.Abs<SpeedUnit> followerSpeed,
+            final DoubleScalar.Abs<SpeedUnit> leaderSpeed) throws RemoteException
     {
         // Make a usable assumption for the speed limit (use max of followerSpeed an leaderSpeed)
         DoubleScalar.Abs<SpeedUnit> speedLimit =
