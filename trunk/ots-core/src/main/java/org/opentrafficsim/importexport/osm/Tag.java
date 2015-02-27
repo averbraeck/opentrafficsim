@@ -57,4 +57,9 @@ public class Tag
         this.key = k;
         this.value = v;
     }
+    /** {@inheritDoc} */
+    public final String toString()
+    {
+        return "Tag: Key: " + this.key + " Value: " + this.value; 
+    }
 }
