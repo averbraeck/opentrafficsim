@@ -21,26 +21,29 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
 /**
  * Import an OpenStreetMap file.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
- * <p>.
- * @version 31 dec. 2014 <br> 
+ * <p>
+ * .
+ * @version 31 dec. 2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
 public class ReadOSM
 {
     /** */
     private static String loc = "file:///home/moe/Documents/TUD/A3.osm.bz2";
-    //private static String loc = "duesseldorf_germany.osm.bz2";
-    //private static String loc = "Mettmann.osm";
-    //private static String loc = "TUD.osm";// "amsterdam_netherlands.osm.bz2";// "munich.osm.bz2";
+
+    // private static String loc = "duesseldorf_germany.osm.bz2";
+    // private static String loc = "Mettmann.osm";
+    // private static String loc = "TUD.osm";// "amsterdam_netherlands.osm.bz2";// "munich.osm.bz2";
 
     /** */
     private static List<Tag> wt;
-    
+
     /** */
     private static List<String> ft;
-    
+
     /**
      * 
      */
@@ -69,7 +72,7 @@ public class ReadOSM
         Tag t12 = new Tag("highway", "bus_stop");
         wt.add(t12);
     }
-    
+
     /**
      * 
      */
@@ -86,15 +89,15 @@ public class ReadOSM
         ft.add("busway");
         ft.add("junction");
         ft.add("service");
-        ft.add("ele"); //Altitude/elevation
-        ft.add("location"); //underground, overground, underwater etc.
+        ft.add("ele"); // Altitude/elevation
+        ft.add("location"); // underground, overground, underwater etc.
         ft.add("layer"); // -5 to 5. 0 not explicitly used.
         ft.add("bridge");
         ft.add("tunnel");
     }
 
     /**
-     * @param args 
+     * @param args
      */
     public static void main(final String[] args)
     {
@@ -106,7 +109,7 @@ public class ReadOSM
         {
             System.out.println("Parsing " + loc);
             String prefix = "file:///D:/";
-            ReadOSMFile osmf = new ReadOSMFile(/*prefix +*/ loc, wt, ft);
+            ReadOSMFile osmf = new ReadOSMFile(/* prefix + */loc, wt, ft);
             while (!osmf.checkisReaderThreadDead())
             {
                 System.out.println("Processing");
@@ -120,10 +123,10 @@ public class ReadOSM
             net.removeRedundancy();
             System.out.println(net.getLinks().size() + " links after redudancy removal");
             System.out.println("Now converting to OTS internal format");
-            org.opentrafficsim.core.network.Network<String, CrossSectionLink<?, ?>> otsNet = 
+            org.opentrafficsim.core.network.Network<String, CrossSectionLink<?, ?>> otsNet =
                     new org.opentrafficsim.core.network.Network<String, CrossSectionLink<?, ?>>(net.getName());
             System.out.println("OTS Network named: " + otsNet.getId());
-            for (org.opentrafficsim.importexport.osm.Node osmNode: net.getNodes().values())
+            for (org.opentrafficsim.importexport.osm.Node osmNode : net.getNodes().values())
             {
                 try
                 {
@@ -135,7 +138,7 @@ public class ReadOSM
                 }
             }
             System.out.println(otsNet.getNodeSet().size() + " OTS Nodes created");
-            for (org.opentrafficsim.importexport.osm.Link osmLink: net.getLinks())
+            for (org.opentrafficsim.importexport.osm.Link osmLink : net.getLinks())
             {
                 otsNet.add(Convert.convertLink(osmLink));
             }
@@ -143,16 +146,17 @@ public class ReadOSM
             try
             {
                 SimpleSimulator result =
-                        new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
-                                new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
-                                        TimeUnit.SECOND), null);
+                        new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
+                                new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(
+                                        1800.0, TimeUnit.SECOND), null);
             }
             catch (SimRuntimeException exception)
             {
                 exception.printStackTrace();
             }
             System.out.println("Done. Terminating.");
-            /*int countn = 0;
+            /*-
+            int countn = 0;
             for (Long n: net.getNodes().keySet())
             {
                 countn++;
@@ -195,7 +199,7 @@ public class ReadOSM
             {
                 System.out.println(e);
             }
-        */}
+             */}
         catch (URISyntaxException exception)
         {
             exception.printStackTrace();

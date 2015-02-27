@@ -121,7 +121,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
      * @throws RemoteException
      * @throws NetworkException
      * @throws SimRuntimeException
-     * @throws GTUException 
+     * @throws GTUException
      */
     public static void main(String[] args) throws RemoteException, NamingException, NetworkException,
             SimRuntimeException, GTUException
@@ -224,7 +224,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
      * @throws RemoteException
      * @throws NamingException
      * @throws NetworkException
-     * @throws GTUException 
+     * @throws GTUException
      */
     private DoubleScalar.Rel<LengthUnit> findDecisionPoint(DoubleScalar.Rel<LengthUnit> low,
             DoubleScalar.Rel<LengthUnit> high, DoubleScalar.Abs<SpeedUnit> referenceSpeed,
@@ -246,7 +246,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
                 LengthUnit.METER));
         // The reference car only needs a simulator
         // But that needs a model (which this class implements)
-        SimpleSimulator simpleSimulator = new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
+        SimpleSimulator simpleSimulator =
+                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
                                 TimeUnit.SECOND), this);
         this.carFollowingModel =
@@ -328,7 +329,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
      * @throws NamingException
      * @throws SimRuntimeException
      * @throws NetworkException
-     * @throws GTUException 
+     * @throws GTUException
      */
     private LaneMovementStep computeLaneChange(LaneBasedIndividualCar<String> referenceCar,
             Collection<HeadwayGTU> sameLaneGTUs, DoubleScalar.Abs<SpeedUnit> speedLimit,
