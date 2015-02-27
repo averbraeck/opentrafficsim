@@ -127,7 +127,7 @@ public class OpenStreetMap implements WrappableSimulation
         ArrayList<String> ft = new ArrayList<String>();
         try
         {
-        ReadOSMFile osmf = new ReadOSMFile("file:///home/moe/Documents/TUD/WassenbergstrasseSnip.osm.bz2", wt, ft);
+        ReadOSMFile osmf = new ReadOSMFile("file:///home/moe/Documents/TUD/EmmerichSnip.osm.bz2", wt, ft);
         org.opentrafficsim.importexport.osm.Network net = osmf.getNetwork();
         net.makeLinks();
         // net.removeRedundancy();
@@ -160,7 +160,7 @@ public class OpenStreetMap implements WrappableSimulation
     }
 
     /**
-     * @param args
+     * @param args 
      */
     public static void main(final String[] args)
     {
@@ -214,7 +214,7 @@ public class OpenStreetMap implements WrappableSimulation
     public SimpleSimulator buildSimulator(final ArrayList<AbstractProperty<?>> usedProperties)
             throws SimRuntimeException, RemoteException, NetworkException
     {
-        OSMModel model = new OSMModel(usedProperties, this.networkOSM);
+        OSMModel model = new OSMModel(usedProperties);
         Iterator<Node<?, ?>> count = this.networkOTS.getNodeSet().iterator();
         Rectangle2D area = new Rectangle2D.Double(0, 0, 0, 0);
         while (count.hasNext())
@@ -287,22 +287,105 @@ class OSMModel implements OTSModelInterface
 
     /** Provided Network. */
     private org.opentrafficsim.importexport.osm.Network network;
-
-
-    /** Provided links. */
-    private ArrayList<CrossSectionLink<?, ?>> links;
+    
+    /** OTS Network created from provided OSM Network. */
+    private Network<String, CrossSectionLink<?, ?>> networkOTS;
 
     /** Provided lanes. */
     private ArrayList<Lane> lanes;
 
     /**
-     * @param properties
-     * @param net
+     * @param properties 
      */
-    public OSMModel(final ArrayList<AbstractProperty<?>> properties,
-            final org.opentrafficsim.importexport.osm.Network net)
+    public OSMModel(final ArrayList<AbstractProperty<?>> properties)
     {
+        ArrayList<org.opentrafficsim.importexport.osm.Tag> wt =
+                new ArrayList<org.opentrafficsim.importexport.osm.Tag>();
+        org.opentrafficsim.importexport.osm.Tag t1 = new org.opentrafficsim.importexport.osm.Tag("highway", "primary");
+        wt.add(t1);
+        org.opentrafficsim.importexport.osm.Tag t2 =
+                new org.opentrafficsim.importexport.osm.Tag("highway", "secondary");
+        wt.add(t2);
+        org.opentrafficsim.importexport.osm.Tag t3 = new org.opentrafficsim.importexport.osm.Tag("highway", "tertiary");
+        wt.add(t3);
+        org.opentrafficsim.importexport.osm.Tag t4 = new org.opentrafficsim.importexport.osm.Tag("highway", "cycleway");
+        wt.add(t4);
+        org.opentrafficsim.importexport.osm.Tag t5 = new org.opentrafficsim.importexport.osm.Tag("highway", "trunk");
+        wt.add(t5);
+        org.opentrafficsim.importexport.osm.Tag t6 = new org.opentrafficsim.importexport.osm.Tag("highway", "path");
+        wt.add(t6);
+        org.opentrafficsim.importexport.osm.Tag t8 = new org.opentrafficsim.importexport.osm.Tag("cyclway", "lane");
+        wt.add(t8);
+        org.opentrafficsim.importexport.osm.Tag t9 = new org.opentrafficsim.importexport.osm.Tag("highway", "residential");
+        wt.add(t9);
+        org.opentrafficsim.importexport.osm.Tag t10 = new org.opentrafficsim.importexport.osm.Tag("highway", "service");
+        wt.add(t10);
+        org.opentrafficsim.importexport.osm.Tag t11 =
+                new org.opentrafficsim.importexport.osm.Tag("highway", "motorway");
+        wt.add(t11);
+        org.opentrafficsim.importexport.osm.Tag t12 =
+                new org.opentrafficsim.importexport.osm.Tag("highway", "bus_stop");
+        wt.add(t12);
+        org.opentrafficsim.importexport.osm.Tag t13 =
+                new org.opentrafficsim.importexport.osm.Tag("highway", "motorway_link");
+        wt.add(t13);
+        org.opentrafficsim.importexport.osm.Tag t14 =
+                new org.opentrafficsim.importexport.osm.Tag("highway", "unclassified");
+        wt.add(t14);
+        org.opentrafficsim.importexport.osm.Tag t15 = new org.opentrafficsim.importexport.osm.Tag("highway", "footway");
+        wt.add(t15);
+        org.opentrafficsim.importexport.osm.Tag t16 = new org.opentrafficsim.importexport.osm.Tag("cycleway", "track");
+        wt.add(t16);
+        org.opentrafficsim.importexport.osm.Tag t17 = new org.opentrafficsim.importexport.osm.Tag("highway", "road");
+        wt.add(t17);
+        org.opentrafficsim.importexport.osm.Tag t18 = new org.opentrafficsim.importexport.osm.Tag("highway", "pedestrian");
+        wt.add(t18);
+        org.opentrafficsim.importexport.osm.Tag t19 = new org.opentrafficsim.importexport.osm.Tag("highway", "track");
+        wt.add(t19);
+        org.opentrafficsim.importexport.osm.Tag t20 = new org.opentrafficsim.importexport.osm.Tag("highway", "living_street");
+        wt.add(t20);
+        org.opentrafficsim.importexport.osm.Tag t21 = new org.opentrafficsim.importexport.osm.Tag("highway", "tertiary_link");
+        wt.add(t21);
+        org.opentrafficsim.importexport.osm.Tag t22 = new org.opentrafficsim.importexport.osm.Tag("highway", "secondary_link");
+        wt.add(t22);
+        org.opentrafficsim.importexport.osm.Tag t23 = new org.opentrafficsim.importexport.osm.Tag("highway", "primary_link");
+        wt.add(t23);
+        org.opentrafficsim.importexport.osm.Tag t24 = new org.opentrafficsim.importexport.osm.Tag("highway", "trunk_link");
+        wt.add(t24);
+
+        ArrayList<String> ft = new ArrayList<String>();
+        try
+        {
+        ReadOSMFile osmf = new ReadOSMFile("file:///home/moe/Documents/TUD/EmmerichSnip.osm.bz2", wt, ft);
+        org.opentrafficsim.importexport.osm.Network net = osmf.getNetwork();
+        net.makeLinks();
+        // net.removeRedundancy();
         this.network = new org.opentrafficsim.importexport.osm.Network(net);
+        this.networkOTS = new Network<String, CrossSectionLink<?, ?>>(this.network.getName());
+        for (org.opentrafficsim.importexport.osm.Node osmNode: this.network.getNodes().values())
+        {
+                try
+                {
+                    this.networkOTS.addNode(Convert.convertNode(osmNode));
+                }
+                catch (NetworkException ne)
+                {
+                    System.out.println(ne.getMessage());
+                }
+            }
+            for (org.opentrafficsim.importexport.osm.Link osmLink : this.network.getLinks())
+            {
+                this.networkOTS.add(Convert.convertLink(osmLink));
+            }
+        }
+        catch (URISyntaxException exception)
+        {
+            exception.printStackTrace();
+        }
+        catch (IOException exception)
+        {
+            exception.printStackTrace();
+        }
         this.lanes = new ArrayList<Lane>();
         this.properties = new ArrayList<AbstractProperty<?>>(properties);
     }
@@ -314,14 +397,14 @@ class OSMModel implements OTSModelInterface
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         ArrayList<org.opentrafficsim.importexport.osm.Link> foundSinkLinks = findPossibleSinks();
-        int i = 0;
+        //int i = 0;
         for (org.opentrafficsim.importexport.osm.Link l : this.network.getLinks())
         {
             try
             {
                 if (foundSinkLinks.contains(l))
                 {
-                    i++;
+                    //i++;
                     //System.out.println(i);
                     if (this.network.hasFollowingLink(l))
                     {
@@ -407,8 +490,8 @@ class OSMModel implements OTSModelInterface
     }
 
     /**
-     * @param theSimulator
-     * @param errorMessage
+     * @param theSimulator 
+     * @param errorMessage 
      */
     public void stopSimulator(final OTSDEVSSimulatorInterface theSimulator, final String errorMessage)
     {
