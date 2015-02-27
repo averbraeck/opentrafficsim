@@ -47,7 +47,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
         // Find out if there is an immediate collision
         for (HeadwayGTU headwayGTU : otherGTUs)
         {
-            if (null == headwayGTU.getDistance())
+            if (headwayGTU.getOtherGTU() != referenceGTU && null == headwayGTU.getDistance())
             {
                 return TOODANGEROUS;
             }
@@ -98,9 +98,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
         }
         if (null == followerAccelerationStep)
         {
-            followerAccelerationStep =
-                    new AccelerationStep(new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.SI), DoubleScalar
-                            .plus(referenceGTU.getSimulator().getSimulatorTime().get(), gfm.getStepSize()).immutable());
+            followerAccelerationStep = gfm.computeAccelerationWithNoLeader(referenceGTU, speedLimit);
         }
         if (null == referenceGTUAccelerationStep)
         {
@@ -139,11 +137,14 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> minimumHeadway(final DoubleScalar.Abs<SpeedUnit> followerSpeed,
-            final DoubleScalar.Abs<SpeedUnit> leaderSpeed) throws RemoteException
+            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> precision,
+            final DoubleScalar.Abs<SpeedUnit> speedLimit, final DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed)
+            throws RemoteException
     {
-        // Make a usable assumption for the speed limit (use max of followerSpeed an leaderSpeed)
-        DoubleScalar.Abs<SpeedUnit> speedLimit =
-                new DoubleScalar.Abs<SpeedUnit>(Math.max(followerSpeed.getSI(), leaderSpeed.getSI()), SpeedUnit.SI);
+        if (precision.getSI() <= 0)
+        {
+            throw new Error("Precision has bad value (must be > 0; got " + precision + ")");
+        }
         double maximumDeceleration = -maximumSafeDeceleration().getSI();
         // Find a decent interval to bisect
         double minimumSI = 0;
@@ -161,9 +162,9 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
         for (int step = 0; step < 20; step++)
         {
             maximumSIDeceleration =
-                    computeAcceleration(followerSpeed, followerSpeed, leaderSpeed,
+                    computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed,
                             new DoubleScalar.Rel<LengthUnit>(maximumSI, LengthUnit.SI), speedLimit).getSI();
-            if (maximumSIDeceleration <= maximumDeceleration)
+            if (maximumSIDeceleration > maximumDeceleration)
             {
                 break;
             }
@@ -180,7 +181,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
         {
             double midSI = (minimumSI + maximumSI) / 2;
             double midSIAcceleration =
-                    computeAcceleration(followerSpeed, followerSpeed, leaderSpeed,
+                    computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed,
                             new DoubleScalar.Rel<LengthUnit>(midSI, LengthUnit.SI), speedLimit).getSI();
             if (midSIAcceleration < maximumDeceleration)
             {
@@ -191,6 +192,10 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
                 maximumSI = midSI;
             }
         }
-        return new DoubleScalar.Rel<LengthUnit>((minimumSI + maximumSI) / 2, LengthUnit.SI);
+        DoubleScalar.Rel<LengthUnit> result =
+                new DoubleScalar.Rel<LengthUnit>((minimumSI + maximumSI) / 2, LengthUnit.SI);
+        computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed,
+                new DoubleScalar.Rel<LengthUnit>(result.getSI(), LengthUnit.SI), speedLimit).getSI();
+        return result;
     }
 }

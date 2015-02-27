@@ -93,14 +93,18 @@ public interface GTUFollowingModel
 
     /**
      * Compute the minimum <b>net></b> headway given the speed of the follower and the leader.<br/>
-     * At the returned headway, the follower might decelerate with it's maximum comfortable deceleration.
+     * At the returned headway, the follower would decelerate with it's maximum comfortable deceleration.
      * @param followerSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; speed of the follower
      * @param leaderSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; speed of the leader
+     * @param precision DoubleScalar.Rel&lt;LengthUnit&gt;; the required precision of the result (must be > 0)
+     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the local speed limit
+     * @param followerMaximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the maximum speed that the follower can drive at
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;
      * @throws RemoteException on communications failure
      */
     DoubleScalar.Rel<LengthUnit> minimumHeadway(DoubleScalar.Abs<SpeedUnit> followerSpeed,
-            DoubleScalar.Abs<SpeedUnit> leaderSpeed) throws RemoteException;
+            DoubleScalar.Abs<SpeedUnit> leaderSpeed, DoubleScalar.Rel<LengthUnit> precision, Abs<SpeedUnit> speedLimit,
+            Abs<SpeedUnit> followerMaximumSpeed) throws RemoteException;
 
     /**
      * Return the maximum safe deceleration for use in gap acceptance models. This is the deceleration that may be
