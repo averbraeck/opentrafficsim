@@ -52,13 +52,13 @@ public class SimpleSimulator
      * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
      */
-    public SimpleSimulator(final OTSSimTimeDouble startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
+    public SimpleSimulator(final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
             final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
             SimRuntimeException
     {
         this.simulator = new OTSDEVSSimulator();
-        this.simulator.initialize(new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod,
-                runLength, model), ReplicationMode.TERMINATING);
+        this.simulator.initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime),
+                warmupPeriod, runLength, model), ReplicationMode.TERMINATING);
         this.panel =
                 new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model,
                         this.simulator);

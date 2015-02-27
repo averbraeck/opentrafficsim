@@ -341,8 +341,8 @@ public class ContourPlotTest
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
         ContourPlotModel model = new ContourPlotModel();
         SimpleSimulator simulator =
-                new SimpleSimulator(new OTSSimTimeDouble(initialTime), new DoubleScalar.Rel<TimeUnit>(0,
-                        TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800, TimeUnit.SECOND), model);
+                new SimpleSimulator(initialTime, new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND),
+                        new DoubleScalar.Rel<TimeUnit>(1800, TimeUnit.SECOND), model);
         // Create a car running 50 km.h
         SequentialFixedAccelerationModel gtuFollowingModel =
                 new SequentialFixedAccelerationModel(simulator.getSimulator());
@@ -397,7 +397,7 @@ public class ContourPlotTest
         simulator.runUpTo(gtuFollowingModel.timeAfterCompletionOfStep(0));
         // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
         // + car.getPosition(car.getLastEvaluationTime()));
-        //System.out.println("At time " + simulator.getSimulator().getSimulatorTime().get() + " car is at " + car);
+        // System.out.println("At time " + simulator.getSimulator().getSimulatorTime().get() + " car is at " + car);
         for (int item = 0; item < bins; item++)
         {
             double x = cp.getXValue(0, item);
@@ -415,8 +415,8 @@ public class ContourPlotTest
             double z = cp.getZValue(0, item);
             // figure out if the car has traveled through this cell
             // if (x >= 180)
-            //System.out.println(String.format("t=%.3f, x=%.3f z=%f, exp=%.3f, carLast=%s, carNext=%s", x, y, z,
-            //        expectedZValue, car.getLastEvaluationTime().getSI(), car.getNextEvaluationTime().getSI()));
+            // System.out.println(String.format("t=%.3f, x=%.3f z=%f, exp=%.3f, carLast=%s, carNext=%s", x, y, z,
+            // expectedZValue, car.getLastEvaluationTime().getSI(), car.getNextEvaluationTime().getSI()));
             boolean hit = false;
             if (x + useTimeGranularity >= car.getLastEvaluationTime().getSI()
                     && x <= car.getNextEvaluationTime().getSI())
@@ -428,8 +428,6 @@ public class ContourPlotTest
                 DoubleScalar.Abs<TimeUnit> cellEndTime =
                         new DoubleScalar.Abs<TimeUnit>(Math.min(car.getNextEvaluationTime().getSI(), x
                                 + useTimeGranularity), TimeUnit.SECOND);
-                DoubleScalar.Rel<LengthUnit> carAtCellStartTime = car.position(lane, car.getReference(), cellStartTime);
-                DoubleScalar.Rel<LengthUnit> carAtCellEndTime = car.position(lane, car.getReference(), cellEndTime);
                 if (cellStartTime.getSI() < cellEndTime.getSI()
                         && car.position(lane, car.getReference(), cellStartTime).getSI() <= y + useDistanceGranularity
                         && car.position(lane, car.getReference(), cellEndTime).getSI() >= y)
