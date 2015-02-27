@@ -159,7 +159,7 @@ public class CircularLane implements WrappableSimulation
     {
         LaneSimulationModel model = new LaneSimulationModel(userModifiedProperties);
         SimpleSimulator result =
-                new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
+                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(-1000, -1000, 2000, 2000));
         new ControlPanel(result);
@@ -557,7 +557,7 @@ class LaneSimulationModel implements OTSModelInterface
 
     /**
      * Generate cars at a fixed rate (implemented by re-scheduling this method).
-     * @throws GTUException 
+     * @throws GTUException
      */
     protected final void generateCar(Lane lane, DoubleScalar.Rel<LengthUnit> initialPosition) throws GTUException
     {

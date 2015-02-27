@@ -121,14 +121,14 @@ public class FundamentalDiagrams implements WrappableSimulation
      * @return SimpleSimulator
      * @throws SimRuntimeException
      * @throws RemoteException
-     * @throws NetworkException 
+     * @throws NetworkException
      */
     public SimpleSimulator buildSimulator(ArrayList<AbstractProperty<?>> userModifiedProperties)
             throws RemoteException, SimRuntimeException, NetworkException
     {
         FundamentalDiagramPlotsModel model = new FundamentalDiagramPlotsModel(userModifiedProperties);
         SimpleSimulator result =
-                new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
+                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(0, -100, 5000, 200));
         new ControlPanel(result);
@@ -141,10 +141,11 @@ public class FundamentalDiagrams implements WrappableSimulation
      * make the stand-alone plots for the model and put them in the statistics panel.
      * @param model FundamentalDiagramPlotsModel; the model.
      * @param panel DSOLPanel
-     * @throws NetworkException 
+     * @throws NetworkException
      */
     private static void makePlots(final FundamentalDiagramPlotsModel model,
-            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel) throws NetworkException
+            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
+            throws NetworkException
     {
         final int panelsPerRow = 3;
         TablePanel charts = new TablePanel(4, panelsPerRow);
@@ -413,10 +414,10 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
         {
             this.block =
                     new LaneBasedIndividualCar<>(999999, null /* gtuType */, this.carFollowingModelCars,
-                            this.laneChangeModel, 
-                    initialPositions,
-                    new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER),
-                    new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), this.simulator);
+                            this.laneChangeModel, initialPositions, new DoubleScalar.Abs<SpeedUnit>(0,
+                                    SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER),
+                            new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0,
+                                    SpeedUnit.KM_PER_HOUR), this.simulator);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
@@ -454,9 +455,10 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
                 throw new Error("gtuFollowingModel is null");
             }
             new LaneBasedIndividualCar<>(++this.carsCreated, null /* gtuType */, generateTruck
-                    ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel, initialPositions,
-                    initialSpeed, vehicleLength,
-                    new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), this.simulator);
+                    ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel,
+                    initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8,
+                            LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR),
+                    this.simulator);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)

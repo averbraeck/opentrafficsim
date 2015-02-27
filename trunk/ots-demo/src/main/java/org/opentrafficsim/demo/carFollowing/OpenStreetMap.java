@@ -43,7 +43,8 @@ import org.opentrafficsim.simulationengine.WrappableSimulation;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Feb 10, 2015 <br>
@@ -57,11 +58,11 @@ public class OpenStreetMap implements WrappableSimulation
 {
     /** The OSM network that this Simulation is supposed to draw. */
     private org.opentrafficsim.importexport.osm.Network networkOSM;
-    
+
     /** The OTS network created out of the OSM network. */
-    
+
     private Network<String, CrossSectionLink<?, ?>> networkOTS;
-    
+
     /** The properties of this simulation. */
     private ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();
 
@@ -69,10 +70,12 @@ public class OpenStreetMap implements WrappableSimulation
      */
     public OpenStreetMap()
     {
-        ArrayList<org.opentrafficsim.importexport.osm.Tag> wt = new ArrayList<org.opentrafficsim.importexport.osm.Tag>();
+        ArrayList<org.opentrafficsim.importexport.osm.Tag> wt =
+                new ArrayList<org.opentrafficsim.importexport.osm.Tag>();
         org.opentrafficsim.importexport.osm.Tag t1 = new org.opentrafficsim.importexport.osm.Tag("highway", "primary");
         wt.add(t1);
-        org.opentrafficsim.importexport.osm.Tag t2 = new org.opentrafficsim.importexport.osm.Tag("highway", "secondary");
+        org.opentrafficsim.importexport.osm.Tag t2 =
+                new org.opentrafficsim.importexport.osm.Tag("highway", "secondary");
         wt.add(t2);
         org.opentrafficsim.importexport.osm.Tag t3 = new org.opentrafficsim.importexport.osm.Tag("highway", "tertiary");
         wt.add(t3);
@@ -84,43 +87,48 @@ public class OpenStreetMap implements WrappableSimulation
         wt.add(t6);
         org.opentrafficsim.importexport.osm.Tag t8 = new org.opentrafficsim.importexport.osm.Tag("cyclway", "lane");
         wt.add(t8);
-        org.opentrafficsim.importexport.osm.Tag t9 = new org.opentrafficsim.importexport.osm.Tag("highway", "residental");
+        org.opentrafficsim.importexport.osm.Tag t9 =
+                new org.opentrafficsim.importexport.osm.Tag("highway", "residental");
         wt.add(t9);
         org.opentrafficsim.importexport.osm.Tag t10 = new org.opentrafficsim.importexport.osm.Tag("highway", "service");
         wt.add(t10);
-        org.opentrafficsim.importexport.osm.Tag t11 = new org.opentrafficsim.importexport.osm.Tag("highway", "motorway");
+        org.opentrafficsim.importexport.osm.Tag t11 =
+                new org.opentrafficsim.importexport.osm.Tag("highway", "motorway");
         wt.add(t11);
-        org.opentrafficsim.importexport.osm.Tag t12 = new org.opentrafficsim.importexport.osm.Tag("highway", "bus_stop");
+        org.opentrafficsim.importexport.osm.Tag t12 =
+                new org.opentrafficsim.importexport.osm.Tag("highway", "bus_stop");
         wt.add(t12);
-        org.opentrafficsim.importexport.osm.Tag t13 = new org.opentrafficsim.importexport.osm.Tag("highway", "motorway_link");
+        org.opentrafficsim.importexport.osm.Tag t13 =
+                new org.opentrafficsim.importexport.osm.Tag("highway", "motorway_link");
         wt.add(t13);
-        org.opentrafficsim.importexport.osm.Tag t14 = new org.opentrafficsim.importexport.osm.Tag("highway", "unclassified");
+        org.opentrafficsim.importexport.osm.Tag t14 =
+                new org.opentrafficsim.importexport.osm.Tag("highway", "unclassified");
         wt.add(t14);
-        
+
         ArrayList<String> ft = new ArrayList<String>();
         try
         {
-        ReadOSMFile osmf = new ReadOSMFile("file:///home/moe/Documents/TUD/A3.osm.bz2", wt, ft);
-        org.opentrafficsim.importexport.osm.Network net = osmf.getNetwork();
-        net.makeLinks();
-        //net.removeRedundancy();
-        this.networkOSM = new org.opentrafficsim.importexport.osm.Network(net);
-        this.networkOTS = new Network<String, CrossSectionLink<?, ?>>(this.networkOSM.getName());
-        for (org.opentrafficsim.importexport.osm.Node osmNode: this.networkOSM.getNodes().values())
-        {
-            try
+            ReadOSMFile osmf = new ReadOSMFile("file:///home/moe/Documents/TUD/A3.osm.bz2", wt, ft);
+            org.opentrafficsim.importexport.osm.Network net = osmf.getNetwork();
+            net.makeLinks();
+            // net.removeRedundancy();
+            this.networkOSM = new org.opentrafficsim.importexport.osm.Network(net);
+            this.networkOTS = new Network<String, CrossSectionLink<?, ?>>(this.networkOSM.getName());
+            for (org.opentrafficsim.importexport.osm.Node osmNode : this.networkOSM.getNodes().values())
             {
-                this.networkOTS.addNode(Convert.convertNode(osmNode));
+                try
+                {
+                    this.networkOTS.addNode(Convert.convertNode(osmNode));
+                }
+                catch (NetworkException ne)
+                {
+                    System.out.println(ne.getMessage());
+                }
             }
-            catch (NetworkException ne)
+            for (org.opentrafficsim.importexport.osm.Link osmLink : this.networkOSM.getLinks())
             {
-                System.out.println(ne.getMessage());
+                this.networkOTS.add(Convert.convertLink(osmLink));
             }
-        }
-        for (org.opentrafficsim.importexport.osm.Link osmLink: this.networkOSM.getLinks())
-        {
-            this.networkOTS.add(Convert.convertLink(osmLink));
-        }
         }
         catch (URISyntaxException exception)
         {
@@ -131,9 +139,9 @@ public class OpenStreetMap implements WrappableSimulation
             exception.printStackTrace();
         }
     }
-    
+
     /**
-     * @param args 
+     * @param args
      */
     public static void main(final String[] args)
     {
@@ -179,12 +187,13 @@ public class OpenStreetMap implements WrappableSimulation
                 }
             }
         });
-        
+
     }
+
     /** {@inheritDoc} */
     @Override
-    public SimpleSimulator buildSimulator(final ArrayList<AbstractProperty<?>> usedProperties) throws SimRuntimeException,
-            RemoteException, NetworkException
+    public SimpleSimulator buildSimulator(final ArrayList<AbstractProperty<?>> usedProperties)
+            throws SimRuntimeException, RemoteException, NetworkException
     {
         OSMModel model = new OSMModel(usedProperties, this.networkOSM);
         Iterator<Node<?, ?>> count = this.networkOTS.getNodeSet().iterator();
@@ -201,9 +210,9 @@ public class OpenStreetMap implements WrappableSimulation
                 area = area.createUnion(new Rectangle2D.Double(node.getX(), node.getY(), 0, 0));
             }
         }
-        
+
         SimpleSimulator result =
-                new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
+                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
                                 TimeUnit.SECOND), model, area);
         new ControlPanel(result);
@@ -235,7 +244,8 @@ public class OpenStreetMap implements WrappableSimulation
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Feb 10, 2015 <br>
@@ -247,26 +257,30 @@ public class OpenStreetMap implements WrappableSimulation
  */
 class OSMModel implements OTSModelInterface
 {
+    /** */
+    private static final long serialVersionUID = 20150227L;
+
     /** the simulator. */
     private OTSDEVSSimulatorInterface simulator;
-    
+
     /** User settable properties. */
     private ArrayList<AbstractProperty<?>> properties = null;
-    
+
     /** Provided Network. */
     private org.opentrafficsim.importexport.osm.Network network;
-    
+
     /** Provided links. */
     private ArrayList<CrossSectionLink<?, ?>> links;
-    
+
     /** Provided lanes. */
     private ArrayList<Lane> lanes;
-    
+
     /**
-     * @param properties 
-     * @param net 
+     * @param properties
+     * @param net
      */
-    public OSMModel(final ArrayList<AbstractProperty<?>> properties, final org.opentrafficsim.importexport.osm.Network net)
+    public OSMModel(final ArrayList<AbstractProperty<?>> properties,
+            final org.opentrafficsim.importexport.osm.Network net)
     {
         this.network = new org.opentrafficsim.importexport.osm.Network(net);
         this.links = new ArrayList<CrossSectionLink<?, ?>>();
@@ -282,7 +296,7 @@ class OSMModel implements OTSModelInterface
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         ArrayList<org.opentrafficsim.importexport.osm.Link> foundSinkLinks = findPossibleSinks();
         int i = 0;
-        for (org.opentrafficsim.importexport.osm.Link l: this.network.getLinks())
+        for (org.opentrafficsim.importexport.osm.Link l : this.network.getLinks())
         {
             try
             {
@@ -316,20 +330,20 @@ class OSMModel implements OTSModelInterface
             }
         }
     }
-    
+
     /**
-     * @return List of Links which are candidates for becoming sinks/sources. 
+     * @return List of Links which are candidates for becoming sinks/sources.
      */
     private ArrayList<org.opentrafficsim.importexport.osm.Link> findPossibleSinks()
     {
-        ArrayList<org.opentrafficsim.importexport.osm.Node> foundSinkNodes = 
+        ArrayList<org.opentrafficsim.importexport.osm.Node> foundSinkNodes =
                 new ArrayList<org.opentrafficsim.importexport.osm.Node>();
-        ArrayList<org.opentrafficsim.importexport.osm.Link> foundSinkLinks = 
+        ArrayList<org.opentrafficsim.importexport.osm.Link> foundSinkLinks =
                 new ArrayList<org.opentrafficsim.importexport.osm.Link>();
-        for (org.opentrafficsim.importexport.osm.Node n: this.network.getNodes().values())
+        for (org.opentrafficsim.importexport.osm.Node n : this.network.getNodes().values())
         {
             int count = 0;
-            for (org.opentrafficsim.importexport.osm.Link l: this.network.getLinks())
+            for (org.opentrafficsim.importexport.osm.Link l : this.network.getLinks())
             {
                 if (l.getStart().equals(n) || l.getEnd().equals(n) || l.getSplineList().contains(n))
                 {
@@ -345,7 +359,7 @@ class OSMModel implements OTSModelInterface
                 foundSinkNodes.add(n);
             }
         }
-        for (org.opentrafficsim.importexport.osm.Link l: this.network.getLinks())
+        for (org.opentrafficsim.importexport.osm.Link l : this.network.getLinks())
         {
             if (foundSinkNodes.contains(l.getEnd()) || foundSinkNodes.contains(l.getStart()))
             {
@@ -353,7 +367,7 @@ class OSMModel implements OTSModelInterface
             }
             else
             {
-                for (org.opentrafficsim.importexport.osm.Node n: l.getSplineList())
+                for (org.opentrafficsim.importexport.osm.Node n : l.getSplineList())
                 {
                     if (foundSinkNodes.contains(n))
                     {
@@ -362,20 +376,20 @@ class OSMModel implements OTSModelInterface
                 }
             }
         }
-        for (org.opentrafficsim.importexport.osm.Node n: foundSinkNodes)
+        for (org.opentrafficsim.importexport.osm.Node n : foundSinkNodes)
         {
             System.out.println(n.getID());
         }
-        for (org.opentrafficsim.importexport.osm.Link l: foundSinkLinks)
+        for (org.opentrafficsim.importexport.osm.Link l : foundSinkLinks)
         {
             System.out.println(l.getID());
         }
         return foundSinkLinks;
     }
-    
+
     /**
-     * @param theSimulator 
-     * @param errorMessage 
+     * @param theSimulator
+     * @param errorMessage
      */
     public void stopSimulator(final OTSDEVSSimulatorInterface theSimulator, final String errorMessage)
     {
@@ -400,5 +414,5 @@ class OSMModel implements OTSModelInterface
     {
         return this.simulator;
     }
-    
+
 }
