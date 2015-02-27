@@ -336,16 +336,18 @@ public final class Convert
                     {
                         types.add(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.bike);
                     }
-                    if (t2.getKey().equals("foot"))
+                    /*if (t2.getKey().equals("foot"))
                     {
                         types.add(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.pedestrian);
-                    }
+                    }*/
                 }
+                types.add(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.pedestrian);
                 if (!types.isEmpty())
                 {    
                     lt = makeLaneType(types);
                     structure.put(forwards - 1, lt);
                 }
+                types.clear();
             }
         }
         
@@ -385,6 +387,11 @@ public final class Convert
             for (int i = 0; i < forwards; i++)
             {
                 lt = structure.get(i);
+                if (lt == null)
+                {
+                    String s = "awww shucks";
+                    System.out.println(s);
+                }
                 if (lt.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.car))
                 {
                     structurewithOffset.put(currentOffset, lt);
@@ -565,7 +572,7 @@ public final class Convert
         String iD = "";
         for (GTUType<String> gtu : gtuTypes)
         {
-            iD.concat(gtu.getId());
+            iD += gtu.getId() + "|";
         }
         LaneType<String> lt = new LaneType<String>(iD);
         for (GTUType<String> gtu : gtuTypes)
