@@ -173,7 +173,7 @@ public class CircularRoad implements WrappableSimulation
     {
         RoadSimulationModel model = new RoadSimulationModel(userModifiedProperties);
         final SimpleSimulator result =
-                new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
+                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(-1000, -1000, 2000, 2000));
         new ControlPanel(result);
@@ -585,7 +585,7 @@ class RoadSimulationModel implements OTSModelInterface
      * @throws SimRuntimeException
      * @throws NetworkException
      * @throws RemoteException
-     * @throws GTUException 
+     * @throws GTUException
      */
     protected final void generateCar(DoubleScalar.Rel<LengthUnit> initialPosition, Lane lane, GTUType<String> gtuType)
             throws NamingException, NetworkException, SimRuntimeException, RemoteException, GTUException
@@ -597,9 +597,9 @@ class RoadSimulationModel implements OTSModelInterface
         DoubleScalar.Rel<LengthUnit> vehicleLength =
                 new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
         new LaneBasedIndividualCar<>(++this.carsCreated, gtuType, generateTruck ? this.carFollowingModelTrucks
-                : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed,
-                vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                                SpeedUnit.KM_PER_HOUR), this.simulator);
+                : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
+                new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
+                        SpeedUnit.KM_PER_HOUR), this.simulator);
     }
 
     /** {@inheritDoc} */
