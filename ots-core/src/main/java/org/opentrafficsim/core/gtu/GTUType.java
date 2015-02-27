@@ -41,5 +41,10 @@ public class GTUType<ID> implements Serializable
     {
         return this.id;
     }
+    
+    public final String toString()
+    {
+        return "GTUType: " + this.id;
+    }
 
 }
