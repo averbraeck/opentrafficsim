@@ -79,5 +79,9 @@
 			<artifactId>osmosis-osm-binary</artifactId>
 			<version>0.43.1</version>
 		</dependency>
+		<dependency>
+			<groupId>com.bric</groupId>
+			<artifactId>multislider</artifactId>
+		</dependency>
 	</dependencies>
 </project>
