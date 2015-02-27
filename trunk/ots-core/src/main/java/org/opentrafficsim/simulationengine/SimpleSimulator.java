@@ -66,7 +66,7 @@ public class SimpleSimulator
 
     /**
      * Create a simulation engine with animation; the easy way.
-     * @param startTime OTSSimTimeDouble; the start time of the simulation
+     * @param startTime DoubleScalar.Abs&lt;TimeUnit&gt;; the start time of the simulation
      * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warm up period of the simulation (use new
      *            DoubleScalar.Rel&ltTimeUnit&gt;(0, TimeUnit.SECOND) if you don't know what this is)
      * @param runLength DoubleScalar.Rel&lt;TimeUnit&gt;; the duration of the simulation
@@ -75,13 +75,13 @@ public class SimpleSimulator
      * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
      */
-    public SimpleSimulator(final OTSSimTimeDouble startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
+    public SimpleSimulator(final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
             final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model, final Rectangle2D extent)
             throws RemoteException, SimRuntimeException
     {
         this.simulator = new OTSDEVSAnimator();
-        this.simulator.initialize(new OTSReplication("rep" + ++this.lastReplication, startTime, warmupPeriod,
-                runLength, model), ReplicationMode.TERMINATING);
+        this.simulator.initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime),
+                warmupPeriod, runLength, model), ReplicationMode.TERMINATING);
         this.panel =
                 new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model,
                         this.simulator);
