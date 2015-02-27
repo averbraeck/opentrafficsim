@@ -62,9 +62,9 @@ public class IDMPlusTest
     {
         // Check a car standing still with no leaders accelerates with maximum acceleration
         SimpleSimulator simulator =
-                new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND)),
-                        new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600,
-                                TimeUnit.SECOND), new IDMPlusTestModel());
+                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(
+                        0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600, TimeUnit.SECOND),
+                        new IDMPlusTestModel());
         DoubleScalar.Rel<LengthUnit> s0 = new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER);
         GTUFollowingModel carFollowingModel =
                 new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1.25, AccelerationUnit.METER_PER_SECOND_2),
