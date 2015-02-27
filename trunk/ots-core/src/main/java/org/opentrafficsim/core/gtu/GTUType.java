@@ -42,6 +42,7 @@ public class GTUType<ID> implements Serializable
         return this.id;
     }
     
+    /** {@inheritDoc} */
     public final String toString()
     {
         return "GTUType: " + this.id;
