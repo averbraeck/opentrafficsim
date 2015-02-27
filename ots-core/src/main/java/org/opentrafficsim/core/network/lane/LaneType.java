@@ -57,5 +57,11 @@ public class LaneType<ID>
     {
         return this.id;
     }
-
+    
+    /** {@inheritDoc} */
+    public final String toString()
+    {
+        String out = "LaneType: " + this.id;
+        return out;
+    }
 }
