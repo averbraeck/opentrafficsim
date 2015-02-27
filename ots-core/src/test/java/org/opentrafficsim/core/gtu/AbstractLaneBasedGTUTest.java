@@ -12,8 +12,6 @@ import java.util.Map;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.junit.Test;
@@ -21,8 +19,6 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
@@ -64,7 +60,7 @@ public class AbstractLaneBasedGTUTest
      * @throws RemoteException
      * @throws NamingException
      * @throws NetworkException
-     * @throws GTUException 
+     * @throws GTUException
      */
     @Test
     public void abstractLaneBasedGTUTest() throws RemoteException, SimRuntimeException, NamingException,
@@ -79,7 +75,7 @@ public class AbstractLaneBasedGTUTest
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForTemplateGTUTest();
         final SimpleSimulator simulator =
-                new SimpleSimulator(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
+                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(-1000, -1000, 2000, 2000));
 
@@ -382,21 +378,6 @@ public class AbstractLaneBasedGTUTest
         // removeLane should throw an Error when the car is not on that lane (currently this is silently ignored)
         // TODO
         // figure out why the added lane has a non-zero position
-    }
-
-    /** Flag to indicate that the autoPauseSimulator event was executed. */
-    private volatile boolean stopTimeReached;
-
-    /** Called by the simulator. */
-    public final void autoPauseSimulator()
-    {
-        this.stopTimeReached = true;
-    }
-
-    /** Called by the simulator. */
-    public final void dummyEvent()
-    {
-        // Do nothing
     }
 
 }
