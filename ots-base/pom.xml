@@ -57,6 +57,7 @@
 		<xml-apis-version>1.4.01</xml-apis-version>
 		<apache-poi-version>3.8</apache-poi-version>
 		<jgrapht-version>0.9.0</jgrapht-version>
+		<multislider-version>1.0</multislider-version>
 
 		<maven.compiler.version>3.1</maven.compiler.version>
 		<maven.site.version>3.4</maven.site.version>
@@ -76,7 +77,7 @@
 		<maven.taglist.version>2.4</maven.taglist.version>
 		<maven.pmd.version>3.2</maven.pmd.version>
 		<maven.changes.version>2.10</maven.changes.version>
-		<wagon.maven.version>2.8</wagon.maven.version>
+		<wagon.maven.version>1.0</wagon.maven.version>
 		<wagon.ssh.version>2.8</wagon.ssh.version>
 		<wagon.ftp.version>2.8</wagon.ftp.version>
 	</properties>
@@ -673,6 +674,12 @@
 				<groupId>org.jgrapht</groupId>
 				<artifactId>jgrapht-ext</artifactId>
 				<version>${jgrapht-version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.bric</groupId>
+				<artifactId>multislider</artifactId>
+				<version>${multislider-version}</version>
 			</dependency>
 
 		</dependencies>
