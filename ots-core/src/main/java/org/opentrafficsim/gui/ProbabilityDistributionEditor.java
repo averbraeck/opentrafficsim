@@ -10,9 +10,10 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import org.opentrafficsim.core.locale.DefaultLocale;
-import org.opentrafficsim.gui.multislider.MultiThumbSlider;
-import org.opentrafficsim.gui.multislider.MultiThumbSliderUI;
-import org.opentrafficsim.gui.multislider.MultiThumbSliderUI.Thumb;
+
+import com.bric.multislider.MultiThumbSlider;
+import com.bric.multislider.MultiThumbSliderUI;
+import com.bric.multislider.MultiThumbSliderUI.Thumb;
 
 /**
  * Wrapper for Jeremy Wood's MultiThumbSlider.
