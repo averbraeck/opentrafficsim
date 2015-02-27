@@ -75,6 +75,12 @@ public class Link
                 this.setOneway(true);
                 this.forwardLanes = this.lanes;
             }
+            if (t2.getKey().equals("highway") && (t2.getValue().equals("cycleway") 
+                    || t2.getValue().equals("footway") || t2.getValue().equals("pedestrian") 
+                    || t2.getValue().equals("steps")))
+            {
+                this.lanes = 1;
+            }
         }
         
         lt2 = new ArrayList<Tag>(lt3);
@@ -98,7 +104,7 @@ public class Link
             }
         }
         this.linktags = lt3;
-        if (!forwardDefined)
+        if (!forwardDefined && this.lanes > 1)
         {
             this.forwardLanes = (byte) (this.lanes / 2);
         }
