@@ -43,7 +43,7 @@ public class SimpleSimulator
     private final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator;
 
     /**
-     * Create a simulation engine without animation; the easy way.
+     * Create a simulation engine without animation; the easy way. PauseOnError is set to true;
      * @param startTime OTSSimTimeDouble; the start time of the simulation
      * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warm up period of the simulation (use new
      *            DoubleScalar.Rel&ltTimeUnit&gt;(0, TimeUnit.SECOND) if you don't know what this is)
@@ -57,6 +57,7 @@ public class SimpleSimulator
             SimRuntimeException
     {
         this.simulator = new OTSDEVSSimulator();
+        this.simulator.setPauseOnError(true);
         this.simulator.initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime),
                 warmupPeriod, runLength, model), ReplicationMode.TERMINATING);
         this.panel =
@@ -65,7 +66,7 @@ public class SimpleSimulator
     }
 
     /**
-     * Create a simulation engine with animation; the easy way.
+     * Create a simulation engine with animation; the easy way. PauseOnError is set to true;
      * @param startTime DoubleScalar.Abs&lt;TimeUnit&gt;; the start time of the simulation
      * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warm up period of the simulation (use new
      *            DoubleScalar.Rel&ltTimeUnit&gt;(0, TimeUnit.SECOND) if you don't know what this is)
@@ -80,6 +81,7 @@ public class SimpleSimulator
             throws RemoteException, SimRuntimeException
     {
         this.simulator = new OTSDEVSAnimator();
+        this.simulator.setPauseOnError(true);
         this.simulator.initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime),
                 warmupPeriod, runLength, model), ReplicationMode.TERMINATING);
         this.panel =
