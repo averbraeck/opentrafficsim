@@ -682,6 +682,14 @@ public class Lane extends CrossSectionElement
     }
 
     /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    protected double getZ()
+    {
+        return 0.0;
+    }
+
+    /** {@inheritDoc} */
     public final String toString()
     {
         CrossSectionLink<?, ?> link = getParentLink();

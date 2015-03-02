@@ -41,6 +41,13 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
         super(parentLink, lateralCenterPosition, lateralCenterPosition, beginWidth, endWidth);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected final double getZ()
+    {
+        return 0.0001;
+    }
+
     /**
      * Add lateral permeability for a GTU type in the direction of the design line of the overarching CrossSectionLink.
      * Therefore, the lateral directionality of one-sided permeability has to be switched for left lanes. This is done because

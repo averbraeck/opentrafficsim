@@ -450,23 +450,26 @@ public abstract class CrossSectionElement implements LocatableInterface
         return DoubleScalar.interpolate(this.beginWidth, this.endWidth, fractionalPosition).immutable();
     }
 
+    /** @return the z-value to determine "stacking" for animation. */
+    protected abstract double getZ();
+    
     /** {@inheritDoc} */
     @Override
     public final DirectedPoint getLocation() throws RemoteException
     {
-        Envelope e = this.contour.getEnvelopeInternal();
-        return new DirectedPoint(0.5 * (e.getMaxX() - e.getMinX()), 0.5 * (e.getMaxY() - e.getMinY()), 0.0);
+        Envelope e = this.contour.getEnvelopeInternal(); // cached, so not expensive
+        return new DirectedPoint(0.5 * (e.getMaxX() - e.getMinX()), 0.5 * (e.getMaxY() - e.getMinY()), getZ());
     }
 
     /** {@inheritDoc} */
     @Override
     public final Bounds getBounds() throws RemoteException
     {
-        Envelope e = this.contour.getEnvelopeInternal();
+        Envelope e = this.contour.getEnvelopeInternal(); // cached, so not expensive
         double dx = 0.5 * (e.getMaxX() - e.getMinX());
         double dy = 0.5 * (e.getMaxY() - e.getMinY());
         return new BoundingBox(new Point3d(e.getMinX() - dx, e.getMinY() - dy, 0.0), new Point3d(e.getMinX() + dx,
-                e.getMinY() + dy, 0.0));
+                e.getMinY() + dy, getZ()));
     }
 
     /**
