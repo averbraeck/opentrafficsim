@@ -231,7 +231,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
     public static class LaneBasedIndividualCarBuilder<ID>
     {
         /** The id of the GTU, could be String or Integer. */
-        private ID id = null;;
+        private ID id = null;
 
         /** The type of GTU, e.g. TruckType, CarType, BusType. */
         private GTUType<ID> gtuType = null;;

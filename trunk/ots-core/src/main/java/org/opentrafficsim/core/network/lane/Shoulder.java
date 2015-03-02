@@ -29,4 +29,10 @@ public class Shoulder extends CrossSectionElement
         super(parentLink, lateralPosition, lateralPosition, beginWidth, endWidth);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected final double getZ()
+    {
+        return -0.0002;
+    }
 }
