@@ -89,6 +89,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @throws UnitException when unit cannot be added to the list of units
      */
+    /*-
     public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem) throws UnitException
     {
         this.conversionFactorToStandardUnit = 1.0;
@@ -97,6 +98,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
         this.unitSystem = unitSystem;
         addUnit(this);
     }
+    */
 
     /**
      * Build a unit with a conversion factor to another unit.
@@ -107,6 +109,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
      * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
      * @throws UnitException when unit cannot be added to the list of units
      */
+    /*-
     public Unit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem, final U referenceUnit,
         final double conversionFactorToReferenceUnit) throws UnitException
     {
@@ -126,6 +129,7 @@ public abstract class Unit<U extends Unit<U>> implements Serializable
         this.unitSystem = unitSystem;
         addUnit(this);
     }
+    */
 
     /**
      * Build a standard unit.
