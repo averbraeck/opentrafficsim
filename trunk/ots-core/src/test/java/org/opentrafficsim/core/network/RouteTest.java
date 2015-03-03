@@ -3,12 +3,16 @@ package org.opentrafficsim.core.network;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.opentrafficsim.core.network.point2d.NodePoint2D;
+import org.opentrafficsim.core.network.geotools.NodeGeotools;
+import org.opentrafficsim.core.network.lane.CrossSectionLink;
+import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+
+import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * Test the Route class.
@@ -61,7 +65,7 @@ public class RouteTest
         assertEquals("lastVisitedNode should return null", null, route.lastVisitedNode());
         assertEquals("visitNextNode should return null", null, route.visitNextNode());
         assertEquals("nextNodeToVisit should return null", null, route.nextNodeToVisit());
-        NodePoint2D.STR n1 = new NodePoint2D.STR("N1", new Point2D.Double(12, 34));
+        NodeGeotools.STR n1 = new NodeGeotools.STR("N1", new Coordinate(12, 34));
         try
         {
             route.addNode(1, n1);
@@ -83,7 +87,7 @@ public class RouteTest
         route.addNode(n1);
         assertEquals("Route should now contain one Node", 1, route.size());
         assertEquals("Node 0 of route should be N1", n1, route.getNode(0));
-        NodePoint2D.STR n2 = new NodePoint2D.STR("N2", new Point2D.Double(56, 78));
+        NodeGeotools.STR n2 = new NodeGeotools.STR("N2", new Coordinate(56, 78));
         route.addNode(n2);
         assertEquals("Route should now contain two Nodes", 2, route.size());
         assertEquals("Node 0 of route should be N1", n1, route.getNode(0));
@@ -106,17 +110,17 @@ public class RouteTest
         {
             // ignore expected exception
         }
-        //System.out.println(route);
+        // System.out.println(route);
         assertEquals("nextNodeToVisit should be n1", n1, route.nextNodeToVisit());
         Node<?, ?> nextNode = route.visitNextNode();
         assertEquals("vistNextNode should have returned n1", n1, nextNode);
         assertEquals("nextNodeToVisit should be n2", n2, route.nextNodeToVisit());
         // Currently insertion before the "current" node is allowed and increments the internal lastNode index.
-        NodePoint2D.STR n0 = new NodePoint2D.STR("n0", new Point2D.Double(0, 0));
+        NodeGeotools.STR n0 = new NodeGeotools.STR("n0", new Coordinate(0, 0));
         route.addNode(0, n0);
         assertEquals("size should now be 3", 3, route.size());
         assertEquals("nextNodeToVisit should still be n2", n2, route.nextNodeToVisit());
-        NodePoint2D.STR n3 = new NodePoint2D.STR("n3", new Point2D.Double(0, 0));
+        NodeGeotools.STR n3 = new NodeGeotools.STR("n3", new Coordinate(0, 0));
         route.addNode(n3);
         assertEquals("size should now be 4", 4, route.size());
         assertEquals("destinationNode should now be n3", n3, route.destinationNode());
@@ -127,7 +131,7 @@ public class RouteTest
         assertEquals("vistNextNode should have returned n3", n3, nextNode);
         nextNode = route.visitNextNode();
         assertEquals("vistNextNode should have returned null", null, nextNode);
-        
+
         List<Node<?, ?>> list = new ArrayList<Node<?, ?>>();
         list.add(n0);
         list.add(n1);
@@ -138,6 +142,9 @@ public class RouteTest
         assertEquals("Route element 1 is n1", n1, route.getNode(1));
         assertEquals("Route element 2 is n2", n2, route.getNode(2));
         assertEquals("Route element 3 is n3", n3, route.getNode(3));
+        Link l01 =
+                new CrossSectionLink<String, String>("name", n0, n1, new DoubleScalar.Rel<LengthUnit>(200,
+                        LengthUnit.METER));
         Node<?, ?> removedNode = route.removeNode(2);
         assertEquals("removeNode should return the removed node; i.c. n2", n2, removedNode);
         assertEquals("Route element 0 is n0", n0, route.getNode(0));
@@ -161,20 +168,20 @@ public class RouteTest
         {
             // Ignore expected exception
         }
-        //System.out.println(route);
+        // System.out.println(route);
         nextNode = route.visitNextNode();
-        //System.out.println(route);
+        // System.out.println(route);
         assertEquals("visitNextNode should return n0", n0, nextNode);
         nextNode = route.visitNextNode();
-        //System.out.println(route);
+        // System.out.println(route);
         assertEquals("visitNextNode should return n1", n1, nextNode);
         removedNode = route.removeNode(0);
         assertEquals("removed node should be n0", n0, removedNode);
-        //System.out.println(route);
+        // System.out.println(route);
         try
         {
             route.removeNode(0);
-            fail ("Removing the last visited node on the route should have thrown a NetworkException");
+            fail("Removing the last visited node on the route should have thrown a NetworkException");
         }
         catch (NetworkException ne)
         {
