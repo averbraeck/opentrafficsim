@@ -284,6 +284,12 @@ public class ProjectConfigurations
                 DoubleScalar.Rel<TimeUnit> time = new Rel<TimeUnit>(300, TimeUnit.SECOND);
                 model.getInputNTM().setReRouteTimeInterval(time);
             }
+            else if (name.equals("linkCapacityNumberOfHours"))
+            {
+                String value = config[1].trim();
+                Double valueDouble = Double.parseDouble(value);
+                model.getInputNTM().setLinkCapacityNumberOfHours(valueDouble);
+            }
             else if (name.equals("maxSpeed"))
             {
                 String value = config[1].trim();
@@ -304,6 +310,7 @@ public class ProjectConfigurations
                 String value = config[1].trim();
                 model.getInputNTM().setVariantNumber(value);
             }
+            
 
         }
 
