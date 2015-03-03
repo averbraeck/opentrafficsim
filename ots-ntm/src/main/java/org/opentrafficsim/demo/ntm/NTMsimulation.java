@@ -12,6 +12,7 @@ import java.util.NavigableMap;
 import java.util.Set;
 
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -306,17 +307,16 @@ public class NTMsimulation
                                 // Compute the share of the accumulated trips to a certain destination as part of the
                                 // total accumulation
                                 Set<BoundedNode> neighbours =
-                                        tripInfoByDestination.getNeighbourAndRouteShare().keySet();
+                                        tripInfoByDestination.getRouteFractionToNeighbours().keySet();
                                 for (BoundedNode neighbour : neighbours)
                                 {
                                     if (neighbour != null)
                                     {
 
                                         double demandToNeighbour =
-                                                (tripInfoByDestination.getAccumulatedCarsToDestination()
-                                                        * tripInfoByDestination.getNeighbourAndRouteShare().get(
-                                                                neighbour) / origin.getCellBehaviour()
-                                                        .getAccumulatedCars()) * origin.getCellBehaviour().getDemand();
+                                                (tripInfoByDestination.getAccumulatedCarsToNeighbour().get(neighbour) / origin
+                                                        .getCellBehaviour().getAccumulatedCars())
+                                                        * origin.getCellBehaviour().getDemand();
                                         double demandToNeighbourPerHour =
                                                 demandToNeighbour
                                                         * 3600
@@ -342,27 +342,26 @@ public class NTMsimulation
                         // In this step we are interested in the first zone we encounter ("neighbour") of the
                         // cars on their path to a certain destination Area.
                         // Therefore we retrieve this neighbour.
-                        Set<BoundedNode> neighbours = tripInfoByDestination.getNeighbourAndRouteShare().keySet();
+                        Set<BoundedNode> neighbours = tripInfoByDestination.getAccumulatedCarsToNeighbour().keySet();
                         for (BoundedNode neighbour : neighbours)
                         {
                             // Compute the share of the accumulated trips to a certain destination as part of the
                             // total accumulation
                             if (neighbour != null)
                             {
-                                if (tripInfoByDestination.getAccumulatedCarsToDestination() >= 0)
+                                if (tripInfoByDestination.getAccumulatedCarsToNeighbour().get(neighbour) >= 0)
                                 {
                                     // this potential out-flow is heading to the neighbour that is on its path to
                                     // destination
 
                                     // **** RELEVANT
                                     double demandToNeighbour = 0;
-                                    if (tripInfoByDestination.getAccumulatedCarsToDestination() > 0)
+                                    if (tripInfoByDestination.getAccumulatedCarsToNeighbour().get(neighbour) > 0)
                                     {
                                         demandToNeighbour =
-                                                (tripInfoByDestination.getAccumulatedCarsToDestination()
-                                                        * tripInfoByDestination.getNeighbourAndRouteShare().get(
-                                                                neighbour) / origin.getCellBehaviour()
-                                                        .getAccumulatedCars()) * origin.getCellBehaviour().getDemand();
+                                                tripInfoByDestination.getAccumulatedCarsToNeighbour().get(neighbour)
+                                                        / origin.getCellBehaviour().getAccumulatedCars()
+                                                        * origin.getCellBehaviour().getDemand();
                                         // in case of CAPACITY RESTRAINTS at borders, the demand could be lower
                                         if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
                                         {
@@ -382,6 +381,11 @@ public class NTMsimulation
                                                                             .getSI()
                                                                             / cellBehaviour.getBorderDemand()
                                                                                     .get(neighbour).getSI();
+                                                            if (origin.getId().equals("C96")
+                                                                    && neighbour.getId().equals("C98"))
+                                                            {
+                                                                ratioCapacityVersusDemand = 0;
+                                                            }
                                                         }
                                                         else
                                                         {
@@ -397,6 +401,7 @@ public class NTMsimulation
                                     }
 
                                     // **** RELEVANT
+                                    tripInfoByDestination.getDemandToNeighbour().put(neighbour, demandToNeighbour);
                                     tripInfoByDestination.addDemandToDestination(demandToNeighbour);
                                     // first add these trips to the number of trips that want to transfer to their
                                     // neighbour
@@ -415,13 +420,13 @@ public class NTMsimulation
                                         Set<BoundedNode> nextNeighbours =
                                                 neighbour.getCellBehaviour().getTripInfoByNodeMap()
                                                         .get(tripInfoByDestination.getDestination())
-                                                        .getNeighbourAndRouteShare().keySet();
+                                                        .getDemandToNeighbour().keySet();
                                         for (BoundedNode nextNeighbour : nextNeighbours)
                                         {
                                             double shareOfNeighbour =
                                                     neighbour.getCellBehaviour().getTripInfoByNodeMap()
                                                             .get(tripInfoByDestination.getDestination())
-                                                            .getNeighbourAndRouteShare().get(nextNeighbour);
+                                                            .getRouteFractionToNeighbours().get(nextNeighbour);
                                             // when entering a flow link, loop through all succeeding flow links until
                                             // reaching
                                             // a NTM or CORODN node :
@@ -475,7 +480,7 @@ public class NTMsimulation
                     for (TripInfoByDestination tripInfoByDestination : origin.getCellBehaviour().getTripInfoByNodeMap()
                             .values())
                     {
-                        Set<BoundedNode> neighbours = tripInfoByDestination.getNeighbourAndRouteShare().keySet();
+                        Set<BoundedNode> neighbours = tripInfoByDestination.getRouteFractionToNeighbours().keySet();
                         for (BoundedNode neighbour : neighbours)
                         {
 
@@ -578,13 +583,13 @@ public class NTMsimulation
                                             Set<BoundedNode> nextNeighbours =
                                                     neighbour.getCellBehaviour().getTripInfoByNodeMap()
                                                             .get(tripInfoByDestination.getDestination())
-                                                            .getNeighbourAndRouteShare().keySet();
+                                                            .getRouteFractionToNeighbours().keySet();
                                             for (BoundedNode nextNeighbour : nextNeighbours)
                                             {
                                                 double shareOfNeighbour =
                                                         neighbour.getCellBehaviour().getTripInfoByNodeMap()
                                                                 .get(tripInfoByDestination.getDestination())
-                                                                .getNeighbourAndRouteShare().get(nextNeighbour);
+                                                                .getRouteFractionToNeighbours().get(nextNeighbour);
                                                 if (lastCell.getCellBehaviourFlow().getTripInfoByNodeMap()
                                                         .get(tripInfoByDestination.getDestination()) == null)
                                                 {
@@ -690,8 +695,7 @@ public class NTMsimulation
                         {
                             if (tripInfoByDestination.getAccumulatedCarsToDestination() >= 0)
                             {
-                                Set<BoundedNode> neighbours =
-                                        tripInfoByDestination.getNeighbourAndRouteShare().keySet();
+                                Set<BoundedNode> neighbours = tripInfoByDestination.getDemandToNeighbour().keySet();
                                 for (BoundedNode neighbour : neighbours)
                                 {
                                     BoundedNode destination = (BoundedNode) tripInfoByDestination.getDestination();
@@ -704,10 +708,13 @@ public class NTMsimulation
                                         {
                                             // retrieve the type of CellBehaviour (showing the demand and supply
                                             // characteristics of this neighbour)
+                                            // double newShare = tripInfoByDestination.getNeighbourAndRouteShare().get(
+                                            // neighbour) * Math.min(ratioCapacityVersusDemand, 1);
+                                            // tripInfoByDestination.getNeighbourAndRouteShare().put(neighbour,
+                                            // newShare);
+
                                             double demandToNeighbour =
-                                                    tripInfoByDestination.getDemandToDestination()
-                                                            * tripInfoByDestination.getNeighbourAndRouteShare().get(
-                                                                    neighbour);
+                                                    tripInfoByDestination.getDemandToNeighbour().get(neighbour);
                                             // compute the share of traffic that wants to enter this Neighbour area from
                                             // a certain origin - destination pair as part of the total demand that
                                             // wants to enter the neighbour cell. The total supply to the neighbour may
@@ -729,6 +736,13 @@ public class NTMsimulation
                                             // set the final flow to the neighbour
 
                                             // **** RELEVANT
+                                            /*
+                                             * if (origin.getId().equals("C96") && neighbour.getId().equals("C98") &&
+                                             * flowToNeighbour > 0) { double cap =
+                                             * origin.getCellBehaviour().getBorderCapacity().get(neighbour) .getSI();
+                                             * origin.getCellBehaviour().getBorderDemand().get(neighbour).getSI();
+                                             * flowToNeighbour = 0; }
+                                             */
                                             if (!neighbour.getId().equals(destination.getId()))
                                             {
                                                 if (neighbour.getCellBehaviour().getTripInfoByNodeMap()
@@ -758,6 +772,11 @@ public class NTMsimulation
                                                     tripInfoByDestination.addArrivedTrips(flowToNeighbour);
                                                 }
                                             }
+                                            double oldAccumulated =
+                                                    tripInfoByDestination.getAccumulatedCarsToNeighbour()
+                                                            .get(neighbour);
+                                            tripInfoByDestination.getAccumulatedCarsToNeighbour().put(neighbour,
+                                                    oldAccumulated - flowToNeighbour);
                                             tripInfoByDestination.addAccumulatedCarsToDestination(-flowToNeighbour);
                                             tripInfoByDestination.addFluxToNeighbour(flowToNeighbour);
                                             origin.getCellBehaviour().addAccumulatedCars(-flowToNeighbour);
@@ -782,14 +801,14 @@ public class NTMsimulation
                                         // determine the next movement: a flow link
                                         double demandToNeighbour =
                                                 tripInfoByDestination.getDemandToDestination()
-                                                        * tripInfoByDestination.getNeighbourAndRouteShare().get(
+                                                        * tripInfoByDestination.getRouteFractionToNeighbours().get(
                                                                 neighbour);
                                         if (demandToNeighbour > 0)
                                         {
                                             // retrieve the downstream Flow node opportunities
                                             Set<BoundedNode> nextNeighbours =
                                                     neighbour.getCellBehaviour().getTripInfoByNodeMap()
-                                                            .get(destination).getNeighbourAndRouteShare().keySet();
+                                                            .get(destination).getDemandToNeighbour().keySet();
                                             // tripInfoByDestination.getNeighbourAndRouteShare().keySet();
                                             for (BoundedNode nextNeighbour : nextNeighbours)
                                             {
@@ -807,8 +826,8 @@ public class NTMsimulation
                                                     // the FlowNode!!
                                                     FlowCell cell = ctmLink.getCells().get(0);
                                                     double share =
-                                                            neighbourTripInfoByDestination.getNeighbourAndRouteShare()
-                                                                    .get(nextNeighbour);
+                                                            neighbourTripInfoByDestination
+                                                                    .getRouteFractionToNeighbours().get(nextNeighbour);
                                                     // * tripInfoByDestination.getNeighbourAndRouteShare().get(
                                                     // nextNeighbour);
                                                     double demandToNextNeighbour = demandToNeighbour * share;
@@ -983,12 +1002,12 @@ public class NTMsimulation
                             .values())
                     // only select the final destinations: where Trips are heading to
                     {
-                        BoundedNode destinationNode = (BoundedNode) tripInfoByDestination.getDestination();
+                        BoundedNode destination = (BoundedNode) tripInfoByDestination.getDestination();
                         if (tripsFrom != null)
                         {
-                            if (tripsFrom.get(destinationNode.getId()) != null)
+                            if (tripsFrom.get(destination.getId()) != null)
                             {
-                                if (tripsFrom.get(destinationNode.getId()).getNumberOfTrips() > 0)
+                                if (tripsFrom.get(destination.getId()).getNumberOfTrips() > 0)
                                 {
                                     // get the share of Trips of this time slice (NTM simulation step of 10 seconds)
                                     // these new Trips are added to the TRIPS that are already on their way (passing an
@@ -1000,8 +1019,8 @@ public class NTMsimulation
                                             shareToAdd
                                                     * TripDemand
                                                             .getTotalNumberOfTripsFromOriginToDestinationByTimeStep(
-                                                                    model.tripDemandToUse, origin.getId(),
-                                                                    destinationNode.getId(), currentTime, model
+                                                                    model.tripDemandToUse, origin.getId(), destination
+                                                                            .getId(), currentTime, model
                                                                             .getSettingsNTM().getTimeStepDurationNTM());
                                     // **** RELEVANT
                                     if (model.getSettingsNTM().isIncreaseDemandByArea())
@@ -1009,8 +1028,17 @@ public class NTMsimulation
                                         startingTrips *= model.getSettingsNTM().getScalingFactorDemand();
                                     }
 
+                                    for (BoundedNode neighbour : origin.getCellBehaviour().getTripInfoByNodeMap()
+                                            .get(destination).getRouteFractionToNeighbours().keySet())
+                                    {
+                                        double share =
+                                                origin.getCellBehaviour().getTripInfoByNodeMap().get(destination)
+                                                        .getRouteFractionToNeighbours().get(neighbour);
+
+                                        origin.getCellBehaviour().getTripInfoByNodeMap().get(destination)
+                                                .getAccumulatedCarsToNeighbour().put(neighbour, share * startingTrips);
+                                    }
                                     tripInfoByDestination.addAccumulatedCarsToDestination(startingTrips);
-                                    tripInfoByDestination.setAccumulatedCarsToDestinationAdded(startingTrips);
                                     tripInfoByDestination.addDepartedTrips(startingTrips);
 
                                     // increases the total number of accumulated cars in the area, that is
@@ -1079,6 +1107,7 @@ public class NTMsimulation
                 }
             }
         }
+
     }
 
     /**
@@ -1135,14 +1164,14 @@ public class NTMsimulation
                 }
             }
             double demandCell;
-            double supplyCell;    
+            double supplyCell;
             // the last cell of the cell transmission link transfers trips to the next Link/AreaNode
             if (ctmLink.getCells().indexOf(cell) == ctmLink.getCells().size() - 1)
             // at the last cell, the trips are forwarded to the next Node: could
             // be NTM, Flow or Cordon
             {
-                for (TripInfoByDestination tripInfoByDestination : cell.getCellBehaviourFlow()
-                        .getTripInfoByNodeMap().values())
+                for (TripInfoByDestination tripInfoByDestination : cell.getCellBehaviourFlow().getTripInfoByNodeMap()
+                        .values())
                 {
                     BoundedNode destination = (BoundedNode) tripInfoByDestination.getDestination();
                     double demandToNextCell =
@@ -1155,12 +1184,11 @@ public class NTMsimulation
                                 neighbour.getCellBehaviour().getTripInfoByNodeMap().get(destination);
 
                         Set<BoundedNode> nextNeighbours =
-                                neighbourTripInfoByDestination.getNeighbourAndRouteShare().keySet();
+                                neighbourTripInfoByDestination.getRouteFractionToNeighbours().keySet();
                         for (BoundedNode nextNeighbour : nextNeighbours)
                         {
                             double share =
-                                    neighbourTripInfoByDestination.getNeighbourAndRouteShare().get(
-                                            nextNeighbour);
+                                    neighbourTripInfoByDestination.getRouteFractionToNeighbours().get(nextNeighbour);
 
                             if (nextNeighbour.getBehaviourType() == TrafficBehaviourType.NTM
                                     || nextNeighbour.getBehaviourType() == TrafficBehaviourType.CORDON)
@@ -1201,8 +1229,7 @@ public class NTMsimulation
                             {
                                 // set the variables for the next loop (while...)
                                 LinkCellTransmission ctmLinkNext =
-                                        (LinkCellTransmission) areaGraph.getEdge(neighbour, nextNeighbour)
-                                                .getLink();
+                                        (LinkCellTransmission) areaGraph.getEdge(neighbour, nextNeighbour).getLink();
 
                                 // at the first cell after the NTM/Cordon Node, demand comes from
                                 // the FlowNode!!
@@ -1220,8 +1247,7 @@ public class NTMsimulation
                                     if (demandCell > 0)
                                     {
                                         flowToDestination =
-                                                share * Math.min(supplyCell / demandCell, 1.0)
-                                                        * demandToNextCell;
+                                                share * Math.min(supplyCell / demandCell, 1.0) * demandToNextCell;
                                     }
                                     // **** RELEVANT
                                     firstCell.getCellBehaviourFlow().addAccumulatedCars(flowToDestination);
@@ -1231,17 +1257,7 @@ public class NTMsimulation
                                     cell.getCellBehaviourFlow().addAccumulatedCars(-flowToDestination);
                                     cell.getCellBehaviourFlow().getTripInfoByNodeMap().get(destination)
                                             .addAccumulatedCarsToDestination(-flowToDestination);
-                                    if (ctmLinkNext.getStartNode().getId().equals("4") & steps > 20)
-                                    {
-                                        System.out.println("Step " + steps + "flowToDestination from "
-                                                + neighbour.getId() + " to " + nextNeighbour.getId() + "Share "
-                                                + share + " * demand this Cell': " + demandCell
-                                                + " versus supply next Cell" + supplyCell
-                                                + " demand to next Cell" + demandToNextCell
-                                                + " total demand from cell: "
-                                                + cell.getCellBehaviourFlow().getDemand());
-                                        System.out.println("break ");
-                                    }
+
                                 }
 
                             }
@@ -1249,7 +1265,7 @@ public class NTMsimulation
                     }
                 }
             }
-        prevCell = cell;
+            prevCell = cell;
 
         }
     }

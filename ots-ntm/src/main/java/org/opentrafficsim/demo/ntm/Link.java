@@ -203,19 +203,19 @@ public class Link extends AbstractLink<String, Node>
                 {
                     lanes = 1;
                 }
-                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 2400)
+                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 3200)
                 {
                     lanes = 2;
                 }
-                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 3600)
+                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 4400)
                 {
                     lanes = 3;
                 }
-                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 4800)
+                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 5400)
                 {
                     lanes = 4;
                 }
-                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 6000)
+                else if (capacity.getInUnit(FrequencyUnit.PER_HOUR) < 6400)
                 {
                     lanes = 5;
                 }

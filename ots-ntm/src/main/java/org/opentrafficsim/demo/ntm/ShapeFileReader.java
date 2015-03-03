@@ -50,8 +50,8 @@ public class ShapeFileReader
      * @return map of areas with areanr as the key
      * @throws IOException on error
      */
-    public static Map<String, Area> readAreas(final String shapeFileName, final Map<String, Node> centroids, double scalingFactorDemand)
-            throws IOException
+    public static Map<String, Area> readAreas(final String shapeFileName, final Map<String, Node> centroids,
+            double scalingFactorDemand) throws IOException
     {
         /*-
         the_geom class com.vividsolutions.jts.geom.MultiPolygon MULTIPOLYGON (((81816.4228569232, ...
@@ -146,11 +146,11 @@ public class ShapeFileReader
                     double accCritMaxCapEnd = 50;
                     double accCritJam = 100;
                     double increaseDemandByFactor = scalingFactorDemand;
-                    ArrayList<java.lang.Double> accCritical = new ArrayList<java.lang.Double>(); 
+                    ArrayList<java.lang.Double> accCritical = new ArrayList<java.lang.Double>();
                     accCritical.add(accCritMaxCapStart);
                     accCritical.add(accCritMaxCapEnd);
                     accCritical.add(accCritJam);
-                    ParametersNTM parametersNTM = new ParametersNTM(accCritical) ;
+                    ParametersNTM parametersNTM = new ParametersNTM(accCritical);
                     Area area =
                             new Area(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroidNode.getPoint(),
                                     TrafficBehaviourType.NTM, new Rel<LengthUnit>(0, LengthUnit.METER),
@@ -330,10 +330,13 @@ public class ShapeFileReader
      * @param connectors returns the file with artificial links to a centroid/zone
      * @param nodes the map of nodes to retrieve start and end node
      * @param centroids the centroids to check start and end Node
+     * @param lengthUnit
+     * @param linkCapacityNumberOfHours
      * @throws IOException on error
      */
     public static void readLinks(final String shapeFileName, Map<String, Link> links, Map<String, Link> connectors,
-            Map<String, Node> nodes, Map<String, Node> centroids, String lengthUnit) throws IOException
+            Map<String, Node> nodes, Map<String, Node> centroids, String lengthUnit, Double linkCapacityNumberOfHours)
+            throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.MultiLineString MULTILINESTRING ((232250.38755446894 ...
@@ -400,7 +403,9 @@ public class ShapeFileReader
                 String typeWeg = (String) feature.getAttribute("TYPEWEG_AB");
                 Double speedIn = Double.parseDouble(String.valueOf(feature.getAttribute("SPEEDAB")));
                 DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(speedIn, SpeedUnit.KM_PER_HOUR);
-                double capacityIn = Double.parseDouble(String.valueOf(feature.getAttribute("CAPACITYAB")));
+                double capacityIn =
+                        Double.parseDouble(String.valueOf(feature.getAttribute("CAPACITYAB")))
+                                / linkCapacityNumberOfHours;
                 DoubleScalar.Abs<FrequencyUnit> capacity =
                         new DoubleScalar.Abs<FrequencyUnit>(capacityIn, FrequencyUnit.PER_HOUR);
                 int hierarchy = 0;

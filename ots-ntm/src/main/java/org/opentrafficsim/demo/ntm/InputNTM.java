@@ -193,6 +193,24 @@ public class InputNTM
     /** */
     DoubleScalar<FrequencyUnit> maxCapacity = null;
 
+    /** */
+    Double linkCapacityNumberOfHours;
+    /**
+     * @return linkCapacityNumberOfHours.
+     */
+    public Double getLinkCapacityNumberOfHours()
+    {
+        return this.linkCapacityNumberOfHours;
+    }
+
+    /**
+     * @param linkCapacityNumberOfHours set linkCapacityNumberOfHours.
+     */
+    public void setLinkCapacityNumberOfHours(Double linkCapacityNumberOfHours)
+    {
+        this.linkCapacityNumberOfHours = linkCapacityNumberOfHours;
+    }
+
     /**
      * 
      */

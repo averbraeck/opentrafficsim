@@ -18,7 +18,13 @@ import java.util.HashMap;
 public class TripInfoByDestination
 {
     /** the first Area/Node encountered on the path to Destination. */
-    private HashMap<BoundedNode, Double> neighboursAndRouteShare;
+    private HashMap<BoundedNode, Double> routeFractionToNeighbours;
+
+    /** the first Area/Node encountered on the path to Destination. */
+    private HashMap<BoundedNode, Double> accumulatedCarsToNeighbour;
+
+    /** the first Area/Node encountered on the path to Destination. */
+    private HashMap<BoundedNode, Double> demandToNeighbour;
 
     /** the first Area/Node encountered on the path to Destination. */
     private Node destination;
@@ -26,66 +32,83 @@ public class TripInfoByDestination
     /** trips on their journey within an area. */
     private double accumulatedCarsToDestination;
 
-    /** trips on their journey within an area. */
-    private double accumulatedCarsToDestinationAdded;
-
     /** demand to neighbour. */
     private double demandToDestination;
-    
+
     /** demand to neighbour. */
     private double departedTrips;
-    
+
     /** demand to neighbour. */
     private double arrivedTrips;
-    
+
     /** */
     private double fluxToNeighbour;
 
     /**
-     * @param neighbour
+     * @param routeFractionToNeighbours 
+     * @param accumulatedCarsToNeighbour 
+     * @param demandToNeighbour 
      * @param destination
-     * @param accumulatedCarsToDestination
-     * @param flowToNeighbour
-     */
-    public TripInfoByDestination(HashMap<BoundedNode, Double> neighbour, Node destination, double accumulatedCarsToDestination, double demandToNeighbour, double fluxToNeighbour)
-    {
-        super();
-        this.neighboursAndRouteShare = neighbour;
-        this.destination = destination;
-        this.accumulatedCarsToDestination = accumulatedCarsToDestination;
-        this.demandToDestination = demandToNeighbour;
-        this.fluxToNeighbour = fluxToNeighbour;
-    }
 
-    /**
-     * @param neighbour
-     * @param destination
-     * @param accumulatedCarsToDestination
-     * @param flowToNeighbour
      */
-    public TripInfoByDestination(HashMap<BoundedNode, Double> neighbour, Node destination)
+    public TripInfoByDestination(HashMap<BoundedNode, Double> routeFractionToNeighbours,
+            HashMap<BoundedNode, Double> accumulatedCarsToNeighbour, HashMap<BoundedNode, Double> demandToNeighbour,
+            Node destination)
     {
         super();
-        this.neighboursAndRouteShare = neighbour;
+        this.routeFractionToNeighbours = routeFractionToNeighbours;
+        this.accumulatedCarsToNeighbour = accumulatedCarsToNeighbour;
+        this.demandToNeighbour = demandToNeighbour;
         this.destination = destination;
     }
 
     /**
      * @return neighbour.
      */
-    public HashMap<BoundedNode, Double> getNeighbourAndRouteShare()
+    public HashMap<BoundedNode, Double> getRouteFractionToNeighbours()
     {
-        return this.neighboursAndRouteShare;
+        return this.routeFractionToNeighbours;
     }
 
     /**
      * @param neighbour set neighbour.
      */
-    public void setNeighbourAndRouteShare(HashMap<BoundedNode, Double> neighbour)
+    public void setRouteFractionToNeighbours(HashMap<BoundedNode, Double> neighbour)
     {
-        this.neighboursAndRouteShare = neighbour;
+        this.routeFractionToNeighbours = neighbour;
     }
 
+    /**
+     * @return accumulationToNeighbour.
+     */
+    public HashMap<BoundedNode, Double> getAccumulatedCarsToNeighbour()
+    {
+        return accumulatedCarsToNeighbour;
+    }
+
+    /**
+     * @param accumulationToNeighbour set accumulationToNeighbour.
+     */
+    public void setAccumulatedCarsToNeighbour(HashMap<BoundedNode, Double> accumulatedCarsToNeighbour)
+    {
+        this.accumulatedCarsToNeighbour = accumulatedCarsToNeighbour;
+    }
+
+    /**
+     * @return demandToNeighbour.
+     */
+    public HashMap<BoundedNode, Double> getDemandToNeighbour()
+    {
+        return demandToNeighbour;
+    }
+
+    /**
+     * @param demandToNeighbour set demandToNeighbour.
+     */
+    public void setDemandToNeighbour(HashMap<BoundedNode, Double> demandToNeighbour)
+    {
+        this.demandToNeighbour = demandToNeighbour;
+    }
 
     /**
      * @return geef bestemmin g
@@ -118,7 +141,7 @@ public class TripInfoByDestination
     {
         this.accumulatedCarsToDestination = accumulatedCarsToDestination;
     }
-    
+
     /**
      * @param accumulatedCarsToDestination set accumulatedCarsToDestination.
      */
@@ -142,7 +165,7 @@ public class TripInfoByDestination
     {
         this.demandToDestination += addDemandToDestination;
     }
-    
+
     /**
      * @param flowToNeighbour set flowToNeighbour.
      */
@@ -156,7 +179,7 @@ public class TripInfoByDestination
      */
     public double getFluxToNeighbour()
     {
-        return fluxToNeighbour;
+        return this.fluxToNeighbour;
     }
 
     /**
@@ -180,7 +203,7 @@ public class TripInfoByDestination
      */
     public double getDepartedTrips()
     {
-        return departedTrips;
+        return this.departedTrips;
     }
 
     /**
@@ -190,8 +213,9 @@ public class TripInfoByDestination
     {
         this.departedTrips = departedTrips;
     }
+
     /**
-     * @param addDepartedTrips 
+     * @param addDepartedTrips
      */
     public void addDepartedTrips(double addDepartedTrips)
     {
@@ -203,7 +227,7 @@ public class TripInfoByDestination
      */
     public double getArrivedTrips()
     {
-        return arrivedTrips;
+        return this.arrivedTrips;
     }
 
     /**
@@ -215,27 +239,11 @@ public class TripInfoByDestination
     }
 
     /**
-     * @param addArrivedTrips 
+     * @param addArrivedTrips
      */
     public void addArrivedTrips(double addArrivedTrips)
     {
         this.arrivedTrips += addArrivedTrips;
-    }
-
-    /**
-     * @return accumulatedCarsToDestinationAdded.
-     */
-    public double getAccumulatedCarsToDestinationAdded()
-    {
-        return accumulatedCarsToDestinationAdded;
-    }
-
-    /**
-     * @param accumulatedCarsToDestinationAdded set accumulatedCarsToDestinationAdded.
-     */
-    public void setAccumulatedCarsToDestinationAdded(double accumulatedCarsToDestinationAdded)
-    {
-        this.accumulatedCarsToDestinationAdded = accumulatedCarsToDestinationAdded;
     }
 
 }

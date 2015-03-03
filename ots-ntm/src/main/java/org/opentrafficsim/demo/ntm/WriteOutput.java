@@ -796,7 +796,7 @@ public class WriteOutput
                     CellBehaviour cellBehaviour = node.getCellBehaviour();
                     for (TripInfoByDestination tripInfoByDestination : cellBehaviour.getTripInfoByNodeMap().values())
                     {
-                        Set<BoundedNode> neighbours = tripInfoByDestination.getNeighbourAndRouteShare().keySet();
+                        Set<BoundedNode> neighbours = tripInfoByDestination.getRouteFractionToNeighbours().keySet();
                         for (BoundedNode neighbour : neighbours)
                         {
                             double trips = 0;
@@ -824,7 +824,7 @@ public class WriteOutput
                             if (DATATYPE == "fluxes")
                             {
                                 trips =
-                                        tripInfoByDestination.getNeighbourAndRouteShare().get(neighbour)
+                                        tripInfoByDestination.getRouteFractionToNeighbours().get(neighbour)
                                                 * tripInfoByDestination.getFluxToNeighbour();
                             }
                             else if (DATATYPE == "arrivalsOD")
