@@ -104,6 +104,7 @@ public class SuperDemo
         demonstrations.add(new CircularLane());
         demonstrations.add(new CircularRoad());
         // demonstrations.add(new OpenStreetMap());
+        demonstrations.add(new XMLNetworks());
         // final JPanel left = new LabeledPanel("Simulation Settings");
         this.simulationSelection = new LabeledPanel("Network");
         this.simulationSelection.setLayout(new GridBagLayout());
@@ -271,7 +272,7 @@ public class SuperDemo
                         0.5, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.25,
                         AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
                         new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 3));
-                properties.add(1, modelSelection);
+                properties.add(properties.size() > 0 ? 1 : 0, modelSelection);
             }
             properties.add(0, simulationSettings);
         }
