@@ -174,8 +174,8 @@ public abstract class CrossSectionElement implements LocatableInterface
         // which point(s) are in the right direction of the start / end?
         int startIndex = -1;
         int endIndex = -1;
-        double expectedStartAngle = norm(Math.atan2(sC1.y - sC.y, sC1.x - sC.x) - Math.signum(offset) * Math.PI / 2.0);
-        double expectedEndAngle = norm(Math.atan2(eC.y - eC1.y, eC.x - eC1.x) - Math.signum(offset) * Math.PI / 2.0);
+        double expectedStartAngle = norm(Math.atan2(sC1.y - sC.y, sC1.x - sC.x) + Math.signum(offset) * Math.PI / 2.0);
+        double expectedEndAngle = norm(Math.atan2(eC.y - eC1.y, eC.x - eC1.x) + Math.signum(offset) * Math.PI / 2.0);
         for (int ic : startIndexSet)
         {
             if (Math.abs(norm(Math.atan2(bufferCoordinates[ic].y - sC.y, bufferCoordinates[ic].x - sC.x)
