@@ -403,30 +403,7 @@ public abstract class AbstractLaneBasedGTUCOPY<ID> extends AbstractGTU<ID> imple
                         replacementLanes.add(newLane);
                     }
                     System.out.println("GTU " + this + " changed lanes from: " + oldLaneSet + " to " + replacementLanes);
-                    // check internal consistency
-                    for (Lane l : this.lanes)
-                    {
-                        if (!this.fractionalLinkPositions.containsKey(l.getParentLink()))
-                        {
-                            System.err.println("GTU " + this + "XXXXXXXX");
-                        }
-                    }
-                    for (Link<?, ?> csl : this.fractionalLinkPositions.keySet())
-                    {
-                        boolean found = false;
-                        for (Lane l : this.lanes)
-                        {
-                            if (l.getParentLink().equals(csl))
-                            {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found)
-                        {
-                            System.err.println("GTU " + this + "YYYYYYYYY");
-                        }
-                    }
+                    checkConsistency();
                 }
             }
         }
@@ -444,6 +421,36 @@ public abstract class AbstractLaneBasedGTUCOPY<ID> extends AbstractGTU<ID> imple
         // Schedule all sensor triggers that are going to happen until the next evaluation time.
         scheduleTriggers();
         getSimulator().scheduleEventAbs(this.getNextEvaluationTime(), this, this, "move", null);
+    }
+    
+    /**
+     * Verify that all the lanes registered in this GTU have this GTU registered as well and vice versa.
+     */
+    private void checkConsistency()
+    {
+        for (Lane l : this.lanes)
+        {
+            if (!this.fractionalLinkPositions.containsKey(l.getParentLink()))
+            {
+                System.err.println("GTU " + this + "XXXXXXXX");
+            }
+        }
+        for (Link<?, ?> csl : this.fractionalLinkPositions.keySet())
+        {
+            boolean found = false;
+            for (Lane l : this.lanes)
+            {
+                if (l.getParentLink().equals(csl))
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                System.err.println("GTU " + this + "YYYYYYYYY");
+            }
+        }
     }
 
     private void scheduleTriggers() throws NetworkException, RemoteException, SimRuntimeException
