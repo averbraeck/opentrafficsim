@@ -396,7 +396,19 @@ class OSMModel implements OTSModelInterface
             throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
-        ArrayList<org.opentrafficsim.importexport.osm.Link> foundSinkLinks = findPossibleSinks();
+        this.network = Convert.findSinksandSources(this.network);
+        for (org.opentrafficsim.importexport.osm.Link l : this.network.getLinks())
+        {
+            try
+            {
+                this.lanes.addAll(Convert.makeLanes(l, this.simulator));
+            }
+            catch (NetworkException | NamingException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+        /*ArrayList<org.opentrafficsim.importexport.osm.Link> foundSinkLinks = findPossibleSinks();
         //int i = 0;
         for (org.opentrafficsim.importexport.osm.Link l : this.network.getLinks())
         {
@@ -430,7 +442,7 @@ class OSMModel implements OTSModelInterface
             {
                 exception.printStackTrace();
             }
-        }
+        }*/
     }
 
     /**
