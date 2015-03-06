@@ -26,6 +26,18 @@ public class Node
 
     /** */
     private List<Tag> nodetags;
+    
+    /** */
+    private boolean trafficSignal = false;
+    
+    /** */
+    private boolean stopSign = false;
+    
+    /** */
+    private boolean yieldSign = false;
+    
+    /** */
+    private boolean crossing = false;
 
     /**
      * @param id 
@@ -127,7 +139,29 @@ public class Node
      */
     public final void setTags(final List<Tag> theNodeTags)
     {
+        this.setCrossing(false);
+        this.setStopSign(false);
+        this.setTrafficSignal(false);
+        this.setYieldSign(false);
         this.nodetags = theNodeTags;
+        for (Tag t: this.nodetags)
+        {
+            if (t.getKey().equals("highway"))
+            {
+                switch (t.getValue())
+                {
+                    case "crossing":            this.setCrossing(true);
+                                                break;
+                    case "give_way":            this.setYieldSign(true);
+                                                break;
+                    case "stop":                this.setStopSign(true);
+                                                break;
+                    case "traffic_signals":     this.setTrafficSignal(true);
+                                                break;
+                    default:                    break;
+                }
+            }
+        }
     }
 
     /**
@@ -136,6 +170,21 @@ public class Node
     public final void addTag(final Tag nodetag)
     {
             this.nodetags.add(nodetag);
+            if (nodetag.getKey().equals("highway"))
+            {
+                switch (nodetag.getValue())
+                {
+                    case "crossing":            this.setCrossing(true);
+                                                break;
+                    case "give_way":            this.setYieldSign(true);
+                                                break;
+                    case "stop":                this.setStopSign(true);
+                                                break;
+                    case "traffic_signals":     this.setTrafficSignal(true);
+                                                break;
+                    default:                    break;
+                }
+            }
     }
     
     /** {@inheritDoc} */
@@ -159,5 +208,69 @@ public class Node
             }
         }
         return found;
+    }
+
+    /**
+     * @return trafficSignal.
+     */
+    public final boolean isTrafficSignal()
+    {
+        return this.trafficSignal;
+    }
+
+    /**
+     * @param trafficSignal set trafficSignal.
+     */
+    public final void setTrafficSignal(final boolean trafficSignal)
+    {
+        this.trafficSignal = trafficSignal;
+    }
+
+    /**
+     * @return stopSign.
+     */
+    public final boolean isStopSign()
+    {
+        return this.stopSign;
+    }
+
+    /**
+     * @param stopSign set stopSign.
+     */
+    public final void setStopSign(final boolean stopSign)
+    {
+        this.stopSign = stopSign;
+    }
+
+    /**
+     * @return yieldSign.
+     */
+    public final boolean isYieldSign()
+    {
+        return this.yieldSign;
+    }
+
+    /**
+     * @param yieldSign set yieldSign.
+     */
+    public final void setYieldSign(final boolean yieldSign)
+    {
+        this.yieldSign = yieldSign;
+    }
+
+    /**
+     * @return crossing.
+     */
+    public final boolean isCrossing()
+    {
+        return this.crossing;
+    }
+
+    /**
+     * @param crossing set crossing.
+     */
+    public final void setCrossing(final boolean crossing)
+    {
+        this.crossing = crossing;
     }
 }
