@@ -455,11 +455,11 @@ public final class Convert
             {
                 la = structure.get(i);
                 lt = la.getLaneType();
-                if (lt == null)
+                /*if (lt == null)
                 {
                     String s = "awww shucks";
                     System.out.println(s);
-                }
+                }*/
                 if (lt.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.car))
                 {
                     la.setWidth(width);
@@ -532,21 +532,8 @@ public final class Convert
         LaneType<?> lt = null;
         Lane result = null;
         Color color = Color.LIGHT_GRAY;
-        boolean widthOverride = false; /* In case the OSM link provides a width the standard width will be overridden */
         HashMap<Double, LaneAttributes> structure = makeStructure(osmlink);
-        LongitudinalDirectionality directionality;
-        DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(3.05, LengthUnit.METER); /** estimation */
-        for (org.opentrafficsim.importexport.osm.Tag t : osmlink.getTags())
-        {
-            if (t.getKey().equals("width"))
-            {
-                String w = t.getValue().replace(",", ".");
-                width = new DoubleScalar.Rel<LengthUnit>(Double.parseDouble(w) 
-                        / osmlink.getLanes(), LengthUnit.METER);
-                widthOverride = true;
-            }
-        }
-        
+
         DoubleScalar.Abs<FrequencyUnit> f2000 =
                 new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR); /** temporary */
         Iterator<Double> iter = structure.keySet().iterator();
@@ -555,39 +542,6 @@ public final class Convert
             Double i = iter.next();
             LaneAttributes la = structure.get(i);
             lt = la.getLaneType();
-            /*if (!widthOverride)
-            {
-                if (lt.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.car))
-                {
-                    width = new DoubleScalar.Rel<LengthUnit>(3.05, LengthUnit.METER);
-                    standard = Color.LIGHT_GRAY;
-                }
-                else if (lt.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.bike))
-                {
-                    width = new DoubleScalar.Rel<LengthUnit>(0.8, LengthUnit.METER);
-                    standard = Color.ORANGE;
-                }
-                else if (lt.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.pedestrian))
-                {
-                    width = new DoubleScalar.Rel<LengthUnit>(0.95, LengthUnit.METER);
-                    standard = Color.GREEN;
-                }
-            }
-            else
-            {
-                if (lt.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.car))
-                {
-                    standard = Color.LIGHT_GRAY;
-                }
-                else if (lt.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.bike))
-                {
-                    standard = Color.ORANGE;
-                }
-                else if (lt.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.pedestrian))
-                {
-                    standard = Color.GREEN;
-                }
-            }*/
             Double offSet = i;
             DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(offSet, LengthUnit.METER);
             if (osmlink.hasTag("hasPreceding") && i >= 0)
