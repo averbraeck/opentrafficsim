@@ -187,7 +187,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
             Lane frontLane = frontPositions.keySet().iterator().next();
             return String.format("Car %s front: %s[%s]", getId(), frontLane, frontPositions.get(frontLane));
         }
-        catch (RemoteException | NetworkException exception)
+        catch (Exception exception)
         {
             // exception.printStackTrace();
         }

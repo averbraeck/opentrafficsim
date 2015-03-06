@@ -336,7 +336,7 @@ public class AbstractLaneBasedGTUTest
         Lane[] lanesGroupC =
                 LaneFactory.makeMultiLane("C", nodeCFrom, nodeCTo, null, 3, laneType,
                         (OTSDEVSSimulatorInterface) simulator.getSimulator());
-        car.addLane(lanesGroupC[0]);
+        car.addLane(lanesGroupC[0], new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.SI));
         for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
         {
             Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
