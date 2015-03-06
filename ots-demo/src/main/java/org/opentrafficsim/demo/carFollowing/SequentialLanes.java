@@ -31,6 +31,7 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
+import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
@@ -321,7 +322,7 @@ class SequentialModel implements OTSModelInterface
     double carProbability;
 
     /** The lane change model. */
-    protected AbstractLaneChangeModel laneChangeModel;
+    protected AbstractLaneChangeModel laneChangeModel = new Egoistic();
 
     /** the headway (inter-vehicle time). */
     private DoubleScalar.Rel<TimeUnit> headway;
@@ -373,10 +374,11 @@ class SequentialModel implements OTSModelInterface
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         this.nodes = new ArrayList<NodeGeotools.STR>();
-        int[] linkBoundaries = {0, 1000, 1001, 2001, 2200};
+        // TODO use: int[] linkBoundaries = {0, 1000, 1001, 2001, 2200};
+        int[] linkBoundaries = {0, 1000, 2001, 2200};
         for (int xPos : linkBoundaries)
         {
-            this.nodes.add(new NodeGeotools.STR("Node at " + xPos, new Coordinate(xPos, -10, 0)));
+            this.nodes.add(new NodeGeotools.STR("Node at " + xPos, new Coordinate(xPos, (xPos>1001) ? 200 : -10, 0)));
         }
         LaneType<String> laneType = new LaneType<String>("CarLane");
         // Now we can build a series of Links with one Lane on them

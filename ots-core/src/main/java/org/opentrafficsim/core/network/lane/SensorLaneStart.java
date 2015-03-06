@@ -43,12 +43,12 @@ public class SensorLaneStart extends AbstractSensor
     @Override
     public final void trigger(final LaneBasedGTU<?> gtu) throws RemoteException
     {
-        // The GTU is already in the lane to trigger the sensor. So no: gtu.addLane(getLane());
         try
         {
             // if the GTU has the front as its reference point: it enters with its front.
             // otherwise, negatively displaced by the difference between the front and the reference position.
             getLane().addGTU(gtu, new DoubleScalar.Rel<LengthUnit>(-gtu.getFront().getDx().getSI(), LengthUnit.SI));
+            gtu.addFrontToSubsequentLane(getLane());
         }
         catch (NetworkException exception)
         {

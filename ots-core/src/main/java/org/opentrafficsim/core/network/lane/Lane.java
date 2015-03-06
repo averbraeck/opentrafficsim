@@ -220,7 +220,7 @@ public class Lane extends CrossSectionElement
     /**
      * Trigger the sensors for a certain time step; from now until the nextEvaluationTime of the GTU.
      * @param gtu the LaneBasedGTU for which to trigger the sensors.
-     * @param referenceStartSI the SI distance on the lane at the start of the next time step (current time).
+     * @param referenceStartSI the SI distance of the GTU reference point on the lane at the current time
      * @param referenceMoveSI the SI distance traveled in the next time step.
      * @throws RemoteException when simulation time cannot be retrieved.
      * @throws NetworkException when GTU not on this lane.
@@ -322,6 +322,7 @@ public class Lane extends CrossSectionElement
                         + gtu.positions(gtu.getFront()).keySet() + "] locations: "
                         + gtu.positions(gtu.getFront()).values() + " time: "
                         + gtu.getSimulator().getSimulatorTime().get());
+                new Exception().printStackTrace();
                 return index;
                 /*-
                 throw new NetworkException("GTU " + gtu + " already registered on Lane " + this
