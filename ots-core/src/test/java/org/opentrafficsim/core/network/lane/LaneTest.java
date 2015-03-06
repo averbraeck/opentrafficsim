@@ -146,7 +146,7 @@ public class LaneTest
                 .getLongitudinalPositionSI(), 0.01);
 
         // Harder case; create a Link with form points along the way
-        System.out.println("Constructing Link and Lane with one form point");
+        //System.out.println("Constructing Link and Lane with one form point");
         coordinates = new Coordinate[3];
         coordinates[0] = new Coordinate(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new Coordinate(200, 100);
@@ -194,7 +194,7 @@ public class LaneTest
                 .getLongitudinalPosition().getSI(), 0.01);
         assertEquals("This sensor should be at the end of the lane", lane.getLength().getSI(), sensors.get(0)
                 .getLongitudinalPositionSI(), 0.01);
-        System.out.println("Add another Lane at the inside of the corner in the design line");
+        //System.out.println("Add another Lane at the inside of the corner in the design line");
         DoubleScalar.Rel<LengthUnit> startLateralPos2 = new DoubleScalar.Rel<LengthUnit>(-8, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> endLateralPos2 = new DoubleScalar.Rel<LengthUnit>(-5, LengthUnit.METER);
         Lane lane2 =
@@ -238,7 +238,8 @@ public class LaneTest
     }
 
     /**
-     * Test that the contour of a constructed lane covers the expected area.
+     * Test that the contour of a constructed lane covers the expected area. Tests are only performed for straight
+     * lanes, but the orientation of the link and the offset of the lane from the link is varied in many ways.
      * @throws NetworkException
      */
     @Test
@@ -317,9 +318,9 @@ public class LaneTest
 
     /**
      * Verify that a point at specified distance along and across from the design line of the parent Link of a Lane is
-     * inside c.q. outside the contour of a Lane. This method uses an implementation that is totally independent of the
-     * Geometry class methods.
-     * @param lane Lane, the lane
+     * inside c.q. outside the contour of a Lane. The test uses an implementation that is as independent as possible of
+     * the Geometry class methods.
+     * @param lane Lane; the lane
      * @param longitudinal double; the longitudinal position along the design line of the parent Link of the Lane. This
      *            design line is expected to be straight and the longitudinal position may be negative (indicating a
      *            point before the start of the Link) and it may exceed the length of the Link (indicating a point
@@ -363,12 +364,13 @@ public class LaneTest
     }
 
     /**
-     * Algorithm of W. Randolph Franklin http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html.
+     * Algorithm of W. Randolph Franklin http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html, found
+     * via stackoverflow.com: http://stackoverflow.com/questions/217578/point-in-polygon-aka-hit-test.
      * @param point Coordinate; the point
      * @param polygon Coordinate[]; the polygon (last coordinate is allowed to be identical to the first, but his is not
      *            a requirement)
      * @return boolean; true if the point is inside the polygon; false if it is outside the polygon; if the point lies
-     *         <b>on</b> the polygon the result is undefined
+     *         <b>on</b> an vertex or edge of the polygon the result is (of course) undefined
      */
     private boolean pointInsidePolygon(Coordinate point, Coordinate[] polygon)
     {
