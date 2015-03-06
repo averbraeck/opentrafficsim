@@ -68,8 +68,12 @@ public class NTMTestApplication extends DSOLApplication
         InputNTM inputNTM = new InputNTM(); 
         model.setInputNTM(inputNTM);
         String startMap = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/TheHague/";
+        //String startMap =  System.getProperty("user.dir");
         ProjectConfigurations.readConfigurations(startMap, model);
-        
+        if (!new File(model.getInputNTM().getInputMap()).canRead())
+        {
+            model.getInputNTM().setInputMap(System.getProperty("user.dir"));
+        }
         OTSDEVSAnimator simulator = new OTSDEVSAnimator();
         // model.getSettingsNTM().getStartTimeSinceMidnight().getInUnit(TimeUnit.SECOND)
         OTSSimTimeDouble startTime = new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND));

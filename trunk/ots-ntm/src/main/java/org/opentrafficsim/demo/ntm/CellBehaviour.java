@@ -29,11 +29,11 @@ public class CellBehaviour
     public CellBehaviour()
     {
         super();
-        this.tripInfoByNodeMap = new HashMap<Node, TripInfoByDestination>();
+        this.tripInfoByDestinationMap = new HashMap<Node, TripInfoByDestination>();
     }
 
     /** the first Area/Node encountered on the path to Destination. */
-    private HashMap<Node, TripInfoByDestination> tripInfoByNodeMap;
+    private HashMap<Node, TripInfoByDestination> tripInfoByDestinationMap;
 
     /** maximum in-flow */
     private double supply;
@@ -171,17 +171,17 @@ public class CellBehaviour
     /**
      * @return tripInfoNode.
      */
-    public final HashMap<Node, TripInfoByDestination> getTripInfoByNodeMap()
+    public final HashMap<Node, TripInfoByDestination> getTripInfoByDestinationMap()
     {
-        return this.tripInfoByNodeMap;
+        return this.tripInfoByDestinationMap;
     }
 
     /**
-     * @param tripInfoByNodeMap set tripInfoNode.
+     * @param tripInfoByDestinationMap set tripInfoNode.
      */
-    public final void setTripInfoByNodeMap(final HashMap<Node, TripInfoByDestination> tripInfoByNodeMap)
+    public final void setTripInfoByDestinationMap(final HashMap<Node, TripInfoByDestination> tripInfoByDestinationMap)
     {
-        this.tripInfoByNodeMap = tripInfoByNodeMap;
+        this.tripInfoByDestinationMap = tripInfoByDestinationMap;
     }
 
     /**

@@ -35,6 +35,9 @@ public class TripInfoByDestination
     /** demand to neighbour. */
     private double demandToDestination;
 
+    /** trips that could not yet injected. */
+    private double tripsInReservoir;
+
     /** demand to neighbour. */
     private double departedTrips;
 
@@ -222,6 +225,30 @@ public class TripInfoByDestination
         this.departedTrips += addDepartedTrips;
     }
 
+    /**
+     * @return tripsInReservoir.
+     */
+    public double getTripsInReservoir()
+    {
+        return tripsInReservoir;
+    }
+
+    /**
+     * @param tripsInReservoir set tripsInReservoir.
+     */
+    public void setTripsInReservoir(double tripsInReservoir)
+    {
+        this.tripsInReservoir = tripsInReservoir;
+    }
+
+    /**
+     * @param tripsInReservoir 
+\     */
+    public void addTripsInReservoir(double tripsInReservoir)
+    {
+        this.tripsInReservoir += tripsInReservoir;
+    }
+    
     /**
      * @return arrivedTrips.
      */

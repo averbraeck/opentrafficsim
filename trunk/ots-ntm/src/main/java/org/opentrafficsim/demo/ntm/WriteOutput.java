@@ -794,7 +794,7 @@ public class WriteOutput
                         || node.getBehaviourType() == TrafficBehaviourType.CORDON)
                 {
                     CellBehaviour cellBehaviour = node.getCellBehaviour();
-                    for (TripInfoByDestination tripInfoByDestination : cellBehaviour.getTripInfoByNodeMap().values())
+                    for (TripInfoByDestination tripInfoByDestination : cellBehaviour.getTripInfoByDestinationMap().values())
                     {
                         Set<BoundedNode> neighbours = tripInfoByDestination.getRouteFractionToNeighbours().keySet();
                         for (BoundedNode neighbour : neighbours)
