@@ -148,7 +148,7 @@ public class NTMsimulation
 
         // STEP 1: Loop through all area-nodes (called BoundedNode)to detect the trips (demand) to the destination area
         // The FLOW nodes are intermediate destinations, and dealt with in the next loop!!!
-        
+
         // the variable CellBehaviour(NTM) defines the traffic process within an area (the area is
         // represented by the "BoundedNode"). This can be NTM behaviour, Cell transmission or other.
         // during the simulation traffic enters and leaves the NTM areas. The number of "accumulated cars"
@@ -694,7 +694,7 @@ public class NTMsimulation
                                             // a certain origin - destination pair as part of the total demand that
                                             // wants to enter the neighbour cell. The total supply to the neighbour may
                                             // be restricted (by calling getSupply that provides the maximum Supply).
-                                            double totalDemand =
+                                            double totalDemandThatCanEnter =
                                                     Math.min(neighbour.getCellBehaviour().getDemandToEnter(), neighbour
                                                             .getCellBehaviour().getSupply());
 
@@ -704,7 +704,7 @@ public class NTMsimulation
                                             {
                                                 flowToNeighbour =
                                                         (demandToNeighbour / neighbour.getCellBehaviour()
-                                                                .getDemandToEnter()) * totalDemand;
+                                                                .getDemandToEnter()) * totalDemandThatCanEnter;
                                             }
                                             // Compute the final flow based on the share of Trips
                                             // to a certain destination and this maximum supply of the Cell.
@@ -741,9 +741,19 @@ public class NTMsimulation
                                                                         .getTripInfoByDestinationMap().get(destination)
                                                                         .getAccumulatedCarsToNeighbour()
                                                                         .get(nextNeighbour);
-                                                        neighbour.getCellBehaviour().getTripInfoByDestinationMap()
-                                                                .get(destination).getAccumulatedCarsToNeighbour()
-                                                                .put(nextNeighbour, flowToNeighbour + oldAccumulated);
+                                                        double routeFraction =
+                                                                neighbour.getCellBehaviour()
+                                                                        .getTripInfoByDestinationMap().get(destination)
+                                                                        .getRouteFractionToNeighbours()
+                                                                        .get(nextNeighbour);
+                                                        neighbour
+                                                                .getCellBehaviour()
+                                                                .getTripInfoByDestinationMap()
+                                                                .get(destination)
+                                                                .getAccumulatedCarsToNeighbour()
+                                                                .put(nextNeighbour,
+                                                                        routeFraction * flowToNeighbour
+                                                                                + oldAccumulated);
                                                     }
                                                 }
                                             }
