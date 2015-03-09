@@ -405,12 +405,12 @@ public final class ValueClassesGenerator
      */
     private static String buildMathFunctionImpl(final String type, final CodeGenerator cg)
     {
-        String useCast = (type.startsWith("D") ? "" : "(" + type.toLowerCase() + ") "); // append a space
         StringBuilder construction = new StringBuilder();
         for (MathFunction mf : MathFunction.mathFunctions)
         {
             if (mf.appearsInMathFunctionsImpl)
             {
+                String useCast = type.startsWith("F") && mf.castToFloatRequired ? "(" + type.toLowerCase() + ") " : "";
                 construction.append(cg.indent(1) + "/**\r\n" + cg.indent(1) + " * Function that returns <tt>Math."
                         + mf.name + "(a)</tt>.\r\n" + cg.indent(1) + " */\r\n" + cg.indent(1) + "public static final "
                         + type + "Function " + mf.name + " = new " + type + "Function()\r\n" + cg.indent(1) + "{\r\n"
