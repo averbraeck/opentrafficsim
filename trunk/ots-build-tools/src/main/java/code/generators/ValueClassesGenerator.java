@@ -623,7 +623,7 @@ public final class ValueClassesGenerator
                                 cg.indent(1) + "// System.out.println(\"copyOnWrite is " + "set: Copying " + "data\");",
                                 cg.indent(1) + "deepCopyData();", cg.indent(1) + "setCopyOnWrite(false);", "}"}, false));
             }
-            code.append(cg.buildMethod(outerIndent, (0 == dimensions ? "" : "public") + " final|void|setSI",
+            code.append(cg.buildMethod(outerIndent, (0 == dimensions ? "" : "public ") + "final|void|setSI",
                     0 == dimensions ? "Replace the stored value by the supplied value which is expressed "
                             + "in the standard SI unit." : null, new String[]{
                             1 == dimensions ? "final int|index|" : null,
@@ -670,8 +670,6 @@ public final class ValueClassesGenerator
                         new String[]{"checkCopyOnWrite();",
                                 "get" + aggregate + "SI().assign(" + type.substring(0, 1).toLowerCase() + ");"}, false));
             }
-            code.append(cg.buildBlockComment(outerIndent, "MATH METHODS"));
-            code.append(buildVectorFunctions(cg, outerIndent, type, aggregate, dimensions));
             code.append(cg.buildMethod(outerIndent, "public final|Mutable" + type + aggregate + "<U>|multiply", null,
                     new String[]{"final " + type.toLowerCase() + "|constant|"}, null, null, new String[]{
                             0 == dimensions ? "setValueSI(getSI() * constant);" : "assign(" + type
@@ -685,8 +683,8 @@ public final class ValueClassesGenerator
                     dimensions, true));
             code.append(buildInOrDecrementValueByValue(cg, outerIndent, type, aggregate, pluralAggregateType,
                     dimensions, false));
-            code.append(cg.buildMethod(outerIndent, "public final|Mutable" + type + aggregate
-                    + "<U>|incrementBy|this modified Mutable" + type + aggregate, "Increment the value"
+            code.append(cg.buildMethod(outerIndent, "protected final|Mutable" + type + aggregate
+                    + "<U>|incrementByImpl|this modified Mutable" + type + aggregate, "Increment the value"
                     + (0 == dimensions ? "" : "s") + " in this Mutable" + type + aggregate + " by the "
                     + (0 == dimensions ? "value" : "corresponding values") + " in a Relative " + type + aggregate
                     + ". <br>\r\n" + outerIndent + " * Only Relative values are allowed; adding an Absolute value to "
@@ -703,11 +701,11 @@ public final class ValueClassesGenerator
             code.append(cg
                     .buildMethod(
                             outerIndent,
-                            "public final|Mutable" + type + aggregate + "<U>|decrementBy|this modified Mutable" + type
-                                    + aggregate,
+                            "protected final|Mutable" + type + aggregate + "<U>|decrementByImpl|this modified Mutable"
+                                    + type + aggregate,
                             "Decrement the "
                                     + (0 == dimensions ? "value" : "corresponding values")
-                                    + " of a Relative "
+                                    + " of this Relative "
                                     + type
                                     + aggregate
                                     + " from the value"
@@ -746,7 +744,7 @@ public final class ValueClassesGenerator
             {
                 code.append(cg.buildMethod(
                         outerIndent,
-                        "public final|void|scaleValueByValue",
+                        "protected final|void|scaleValueByValue",
                         "Scale the values in this Mutable" + type + aggregate + " by the corresponding values in a "
                                 + type + aggregate + ".",
                         new String[]{"final " + type + aggregate
@@ -768,7 +766,7 @@ public final class ValueClassesGenerator
                                 dimensions > 1 ? cg.indent(1) + "}" : null, "}"}, false));
                 code.append(cg.buildMethod(
                         outerIndent,
-                        "public final|Mutable" + type + aggregate + "<U>|scaleValueByValue|this modified Mutable"
+                        "protected final|Mutable" + type + aggregate + "<U>|scaleValueByValue|this modified Mutable"
                                 + type + aggregate,
                         "Scale the values in this Mutable" + type + aggregate + " by the corresponding values in a "
                                 + type.toLowerCase() + " array.",
@@ -1544,9 +1542,10 @@ public final class ValueClassesGenerator
                         + (mutable ? "Mutable" : "") + type + aggregate}, "<U extends Unit<U>> extends "
                         + (mutable ? type + aggregate : 0 == dimensions ? "Scalar" : "AbstractValue")
                         + "<U>"
-                        + (dimensions > 0 || mutable ? " implements "
+                        + (dimensions > 0 || mutable ? " implements\r\n"
+                                + cg.indent(2)
                                 + (0 == dimensions ? type + "MathFunctions<" + type + aggregate + "<U>>" : (mutable
-                                        ? "\r\n" + cg.indent(2) + "Write" + type + aggregate + "Functions<U>, " + type
+                                        ? "Write" + type + aggregate + "Functions<U>, " + type
                                                 + "MathFunctions<Mutable" + type + aggregate + "<U>>"
                                         : "Serializable,\r\n" + cg.indent(1) + "ReadOnly" + type + aggregate
                                                 + "Functions<U>")) : ""), code.toString());
@@ -1846,12 +1845,13 @@ public final class ValueClassesGenerator
      * @param cg CodeGenerator; the code generator
      * @param indent String; prefix for all output lines
      * @param type String; either <cite>Float</cite>, or <cite>Double</cite>
-     * @param aggregate TODO
+     * @param aggregate String; either <cite>Scalar</cite>, or <cite>Vector</cite>, or <cite>Matrix</cite>
+     * @param absRel String; either <cite>Abs</cite>, or <cite>Rel</cite>
      * @param dimensions int; number of dimensions of the value
      * @return String; Java code
      */
-    private static String buildVectorFunctions(final CodeGenerator cg, final String indent, final String type,
-            String aggregate, final int dimensions)
+    private static String buildMathFunctions(final CodeGenerator cg, final String indent, final String type,
+            String aggregate, String absRel, final int dimensions)
     {
         StringBuilder construction = new StringBuilder();
         final String cast = (type.startsWith("F") ? "(float)" : null);
@@ -1870,16 +1870,17 @@ public final class ValueClassesGenerator
                             "setValueSI(" + (null != cast && mf.castToFloatRequired ? cast + " " : "") + "Math."
                                     + mf.name + "(" + "getSI()" + (null != mf.argument ? ", x" : "") + ")" + ");";
                 }
-                construction.append(cg.buildMethod(indent,
-                        "public final|Mutable" + type + aggregate + "<U>|" + mf.name, null, null != mf.argument
-                                ? new String[]{"final double|x|"} : null, null, null, new String[]{
-                                null != mf.toDoText ? "// TODO " + mf.toDoText : null, code, "return this;"}, false));
+                construction.append(cg.buildMethod(indent, "public final|Mutable" + type + aggregate + "." + absRel
+                        + "<U>|" + mf.name, null, null != mf.argument ? new String[]{"final double|x|"} : null, null,
+                        null, new String[]{
+                        /* null != mf.toDoText ? "// TODO " + mf.toDoText : null, */
+                        code, "return this;"}, false));
             }
             else
             {
-                construction.append(cg.buildMethod(indent,
-                        "public final|Mutable" + type + aggregate + "<U>|" + mf.name, null, null != mf.argument
-                                ? new String[]{"final double" + "|x|"} : null, null, null, new String[]{
+                construction.append(cg.buildMethod(indent, "public final|Mutable" + type + aggregate + "." + absRel
+                        + "<U>|" + mf.name, null, null != mf.argument ? new String[]{"final double" + "|x|"} : null,
+                        null, null, new String[]{
                                 "assign(" + type
                                         + (mf.appearsInMathFunctionsImpl ? "MathFunctionsImpl." : "Functions.")
                                         + mf.name
@@ -1894,7 +1895,7 @@ public final class ValueClassesGenerator
      * Generate the Java code for a sub class of vector or matrix class.
      * @param cg CodeGenerator; the code generator
      * @param indent String; prefix for each output line
-     * @param name String; name of the sub class, e.g. <cite>Abs</cite> or <cite>Rel</cite>
+     * @param absRel String; name of the sub class, e.g. <cite>Abs</cite> or <cite>Rel</cite>
      * @param longName String; full name of the sub class, e.g. <cite>Absolute Immutable FloatVector</cite> or
      *            <cite>Relative Mutable DoubleVector</cite>
      * @param extendsString String; something like <cite>DoubleScalar&lt;U&gt;</cite>
@@ -1905,7 +1906,7 @@ public final class ValueClassesGenerator
      * @param dimensions int; number of dimensions of the storage
      * @return String; Java code implementing the sub class
      */
-    private static String buildSubClass(final CodeGenerator cg, final String indent, final String name,
+    private static String buildSubClass(final CodeGenerator cg, final String indent, final String absRel,
             final String longName, final String extendsString, final String implementsString,
             final String parentClassName, final boolean mutable, final int dimensions)
     {
@@ -1913,16 +1914,16 @@ public final class ValueClassesGenerator
         final String floatType = extendsString.contains("Float") ? "Float" : "Double";
         StringBuilder construction = new StringBuilder();
         construction.append(indent + "/**\r\n" + indent + " * @param <U> Unit\r\n" + indent + " */\r\n");
-        construction.append(indent + "public " + (dimensions > 0 ? "abstract " : "") + "static class " + name
+        construction.append(indent + "public " + (dimensions > 0 ? "abstract " : "") + "static class " + absRel
                 + "<U extends Unit<U>> extends " + extendsString + " implements " + implementsString
-                + (0 == dimensions ? ", Comparable<" + name + "<U>>" : "") + "\r\n" + indent + "{\r\n");
+                + (0 == dimensions ? ", Comparable<" + absRel + "<U>>" : "") + "\r\n" + indent + "{\r\n");
         final String contentIndent = indent + cg.indent(1);
         construction.append(cg.buildSerialVersionUID(contentIndent));
-        construction.append(cg.buildMethod(contentIndent, (dimensions == 0 ? "public" : "protected") + "||" + name,
+        construction.append(cg.buildMethod(contentIndent, (dimensions == 0 ? "public" : "protected") + "||" + absRel,
                 "Construct a new " + longName + ".", new String[]{
                         0 == dimensions ? "final " + floatType.toLowerCase() + "|value|the value of the new "
                                 + longName : null, "final U|unit|the unit of the new " + longName}, null, null,
-                new String[]{"super(unit);", "// System.out.println(\"Created " + name + "\");",
+                new String[]{"super(unit);", "// System.out.println(\"Created " + absRel + "\");",
                         (0 == dimensions ? "initialize(value);" : null)}, true));
         if (dimensions > 0)
         {
@@ -1934,46 +1935,72 @@ public final class ValueClassesGenerator
         else
         {
             // Scalar; build the constructors
-            final String immutableName = floatType + "Scalar." + name + "<U>";
+            final String immutableName = floatType + "Scalar." + absRel + "<U>";
             final String immutableLongName =
-                    (name.startsWith("Abs") ? "Absolute" : "Relative") + " Immutable " + floatType + "Scalar";
+                    (absRel.startsWith("Abs") ? "Absolute" : "Relative") + " Immutable " + floatType + "Scalar";
             final String mutableName = "Mutable" + immutableName;
             final String mutableLongName =
-                    (name.startsWith("Abs") ? "Absolute" : "Relative") + " Mutable" + floatType + "Scalar";
-            construction.append(cg.buildMethod(contentIndent, "public||" + name, "Construct a new " + longName
+                    (absRel.startsWith("Abs") ? "Absolute" : "Relative") + " Mutable" + floatType + "Scalar";
+            construction.append(cg.buildMethod(contentIndent, "public||" + absRel, "Construct a new " + longName
                     + " from an existing " + immutableLongName + ".", new String[]{"final " + immutableName
                     + "|value|the reference"}, null, null, new String[]{"super(value.getUnit());",
-                    "// System.out.println(\"Created " + name + "\");", "initialize(value);"}, true));
-            construction.append(cg.buildMethod(contentIndent, "public||" + name, "Construct a new " + longName
+                    "// System.out.println(\"Created " + absRel + "\");", "initialize(value);"}, true));
+            construction.append(cg.buildMethod(contentIndent, "public||" + absRel, "Construct a new " + longName
                     + " from an existing " + mutableLongName + ".", new String[]{"final " + mutableName
                     + "|value|the reference"}, null, null, new String[]{"super(value.getUnit());",
-                    "// System.out.println(\"Created " + name + "\");", "initialize(value);"}, true));
+                    "// System.out.println(\"Created " + absRel + "\");", "initialize(value);"}, true));
             // Make a mutable of an immutable
-            construction.append(cg.buildMethod(contentIndent, "public final|Mutable" + floatType + "Scalar." + name
+            construction.append(cg.buildMethod(contentIndent, "public final|Mutable" + floatType + "Scalar." + absRel
                     + "<U>|mutable", null, null, null, null, new String[]{"return new Mutable" + floatType + "Scalar."
-                    + name + "<U>(this);"}, false));
+                    + absRel + "<U>(this);"}, false));
             if (mutable)
             {
-                construction.append(cg.buildMethod(contentIndent, "public final|" + floatType + "Scalar." + name
+                // Make an immutable of a mutable
+                construction.append(cg.buildMethod(contentIndent, "public final|" + floatType + "Scalar." + absRel
                         + "<U>|immutable", null, null, null, null, new String[]{"return new " + floatType + "Scalar."
-                        + name + "<U>(this);"}, false));
+                        + absRel + "<U>(this);"}, false));
             }
             // compareTo
             construction.append(cg.buildMethod(contentIndent, "public final|int|compareTo", null, new String[]{"final "
-                    + name + "<U>|o|"}, null, null, new String[]{"return new " + floatType
+                    + absRel + "<U>|o|"}, null, null, new String[]{"return new " + floatType
                     + "(getSI()).compareTo(o.getSI());"}, false));
             // copy
             construction.append(cg.buildMethod(contentIndent, "public final|" + (mutable ? "Mutable" : "") + floatType
-                    + "Scalar." + name + "<U>|copy", null, null, null, null, new String[]{mutable
-                    ? "return new Mutable" + floatType + "Scalar." + name + "<U>(this);" : "return this;"}, false));
+                    + "Scalar." + absRel + "<U>|copy", null, null, null, null, new String[]{mutable
+                    ? "return new Mutable" + floatType + "Scalar." + absRel + "<U>(this);" : "return this;"}, false));
         }
         if (dimensions > 0)
         {
-            construction.append(cg.buildMethod(contentIndent, "public final|" + floatType + "Scalar." + name
+            construction.append(cg.buildMethod(contentIndent, "public final|" + floatType + "Scalar." + absRel
                     + "<U>|get", null, 1 == dimensions ? new String[]{"final int|index|"} : new String[]{
                     "final int|row|", "final int|column|"}, "ValueException|when index < 0 or index >= size()", null,
-                    new String[]{"return new " + floatType + "Scalar." + name + "<U>(getInUnit("
+                    new String[]{"return new " + floatType + "Scalar." + absRel + "<U>(getInUnit("
                             + (1 == dimensions ? "index" : "row, column") + ", getUnit()), getUnit());"}, false));
+        }
+        final String aggregateType = dimensions == 0 ? "Scalar" : dimensions == 1 ? "Vector" : "Matrix";
+        if (mutable)
+        {
+            // incrementBy
+            construction.append(cg.buildMethod(contentIndent, "public final|Mutable" + floatType + aggregateType + "."
+                    + absRel + "<U>|incrementBy", "Increment the value by the supplied value and return the result.",
+                    new String[]{"final " + floatType + aggregateType
+                            + ".Rel<U>|increment|amount by which the value is incremented"}, dimensions > 0
+                            ? "ValueException|when the size of increment is not identical to the size of this" : null,
+                    null, new String[]{"return (Mutable" + floatType + aggregateType + "." + absRel
+                            + "<U>) incrementByImpl(increment);"}, false));
+            // decrementBy
+            construction.append(cg.buildMethod(contentIndent, "public final|Mutable" + floatType + aggregateType + "."
+                    + absRel + "<U>|decrementBy", "Decrement the value by the supplied value and return the result.",
+                    new String[]{"final " + floatType + aggregateType
+                            + ".Rel<U>|decrement|amount by which the value is decremented"}, dimensions > 0
+                            ? "ValueException|when the size of increment is not identical to the size of this" : null,
+                    null, new String[]{"return (Mutable" + floatType + aggregateType + "." + absRel
+                            + "<U>) decrementByImpl(decrement);"}, false));
+        }
+        if (mutable)
+        {
+            construction.append(cg.buildBlockComment(contentIndent, "MATH METHODS"));
+            construction.append(buildMathFunctions(cg, contentIndent, floatType, aggregateType, absRel, dimensions));
         }
         construction.append(indent + "}\r\n\r\n");
         return construction.toString();
@@ -2132,7 +2159,7 @@ public final class ValueClassesGenerator
                         "final " + scalarType + "Scalar.Rel<U>|right|the right argument",
                         "Unit|<U>|the unit of the parameters and the result"}, null, null, new String[]{
                         "Mutable" + scalarType + "Scalar." + absRel + "<U> result = new Mutable" + scalarType
-                                + "Scalar." + absRel + "<U>(" + "left);", "result.incrementBy(right);",
+                                + "Scalar." + absRel + "<U>(" + "left);", "result.incrementByImpl(right);",
                         "return result;"}, false);
     }
 
@@ -2161,7 +2188,7 @@ public final class ValueClassesGenerator
                         "final " + type + "Scalar.Rel<U>|right|the right value",
                         "Unit|<U>|the unit of the parameters and the result"}, null, null, new String[]{
                         "Mutable" + type + "Scalar." + absRel + "<U> result = new Mutable" + type + "Scalar." + absRel
-                                + "<U>(left);", "result.decrementBy(right);", "return result;"}, false);
+                                + "<U>(left);", "result.decrementByImpl(right);", "return result;"}, false);
     }
 
     /**
