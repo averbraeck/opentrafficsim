@@ -142,7 +142,7 @@ public class RouteTest
         assertEquals("Route element 1 is n1", n1, route.getNode(1));
         assertEquals("Route element 2 is n2", n2, route.getNode(2));
         assertEquals("Route element 3 is n3", n3, route.getNode(3));
-        Link l01 =
+        Link<?, ?> l01 =
                 new CrossSectionLink<String, String>("name", n0, n1, new DoubleScalar.Rel<LengthUnit>(200,
                         LengthUnit.METER));
         Node<?, ?> removedNode = route.removeNode(2);

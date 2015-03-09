@@ -4,9 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.rmi.RemoteException;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-
 import org.junit.Test;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.network.NetworkException;
@@ -203,49 +200,6 @@ public class TrajectoryPlotTest
             assertEquals("Sample position should have been " + actualPosition, actualPosition.getSI(), sampledPosition,
                 0.0001);
         }
-    }
-
-    /** Set to true when the stop event is executed by the simulator. */
-    private volatile boolean stopped;
-
-    /**
-     * Run a simulator up to the specified stop time.
-     * @param stopTime DoubleScalar.Abs&lt;TimeUnit&gt;; the stop time
-     * @param simulator DEVSSimulatorInterface; the simulator
-     */
-    @SuppressWarnings("unchecked")
-    private void simulateUntil(final DoubleScalar.Abs<TimeUnit> stopTime,
-        @SuppressWarnings("rawtypes") final DEVSSimulatorInterface simulator)
-    {
-        this.stopped = false;
-        try
-        {
-            simulator.scheduleEventAbs(simulator.getSimulatorTime(), this, this, "stop", null);
-        }
-        catch (RemoteException | SimRuntimeException exception)
-        {
-            exception.printStackTrace();
-        }
-        while (!this.stopped)
-        {
-            try
-            {
-                simulator.step();
-            }
-            catch (RemoteException | SimRuntimeException exception)
-            {
-                exception.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Event for the simulator.
-     */
-    @SuppressWarnings("unused")
-    private void stop()
-    {
-        this.stopped = true;
     }
 
 }
