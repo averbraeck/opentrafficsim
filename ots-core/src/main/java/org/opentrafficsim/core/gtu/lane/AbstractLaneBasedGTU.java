@@ -469,6 +469,12 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
     }
 
+    /**
+     * Schedule the triggers for this GTU during the new time period.
+     * @throws NetworkException on network inconsistency
+     * @throws RemoteException on communications failure
+     * @throws SimRuntimeException should never happen
+     */
     private void scheduleTriggers() throws NetworkException, RemoteException, SimRuntimeException
     {
         // Does our front reference point enter new lane(s) during the next time step?
@@ -478,7 +484,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             double frontPosSI = position(lane, getFront(), this.lastEvaluationTime).getSI();
             double frontPosAtNextEvalSI = position(lane, getFront(), this.nextEvaluationTime).getSI();
             double remainingDistanceSI = lane.getLength().getSI() - frontPosSI;
-            double excessNextLaneSI = frontPosAtNextEvalSI - lane.getLength().getSI();
+            //double excessNextLaneSI = frontPosAtNextEvalSI - lane.getLength().getSI();
             double moveSI = frontPosAtNextEvalSI - frontPosSI;
             if (lane.fractionSI(frontPosSI) <= 1.0 && lane.fractionSI(frontPosAtNextEvalSI) > 1.0)
             {
@@ -1168,13 +1174,14 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 {
                     useFraction = 0.99;
                 }
-                Coordinate c = lil.extractPoint(useFraction * line.getLength());
+                // DO NOT MODIFY THE RESULT OF extractPoint (it may be one of the coordinates in line).
+                Coordinate c = new Coordinate(lil.extractPoint(useFraction * line.getLength()));
                 c.z = 0d;
                 Coordinate cb = lil.extractPoint((useFraction + 0.01) * line.getLength());
                 double angle = Math.atan2(cb.y - c.y, cb.x - c.x);
+                // FindBugs does not like this comparison - looking for a way to suppress that warning
                 if (fraction != useFraction)
                 {
-                    // DO NOT MODIFY THE RESULT OF extractPoint (it may be one of the coordinates in line).
                     c =
                         new Coordinate(c.x + (fraction - useFraction) * 100 * (cb.x - c.x), c.y + (fraction - useFraction)
                             * 100 * (cb.y - c.y), c.z);

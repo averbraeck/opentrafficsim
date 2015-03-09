@@ -194,6 +194,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
      */
     protected final void fixButtons()
     {
+        System.out.println("FixButtons entered");
         final boolean moreWorkToDo = this.simulator.getEventList().size() > 0;
         for (JButton button : this.buttons)
         {
@@ -223,6 +224,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 this.logger.logp(Level.SEVERE, "ControlPanel", "fixButtons", "", new Exception("Unknown button?"));
             }
         }
+        System.out.println("FixButtons finishing");
     }
 
     /**
@@ -261,20 +263,39 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             else
             {
                 // System.out.println("Not re-scheduling");
-                try
+                if (SwingUtilities.isEventDispatchThread())
                 {
-                    SwingUtilities.invokeAndWait(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            fixButtons();
-                        }
-                    });
+                    System.out.println("Already on EventDispatchThread");
+                    fixButtons();
                 }
-                catch (Exception e)
+                else
                 {
-                    e.printStackTrace();
+                    try
+                    {
+                        System.out.println("Current thread is NOT EventDispatchThread: " + Thread.currentThread());
+                        SwingUtilities.invokeAndWait(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                System.out.println("Runnable started");
+                                fixButtons();
+                                System.out.println("Runnable finishing");
+                            }
+                        });
+                    }
+                    catch (Exception e)
+                    {
+                        if (e instanceof InterruptedException)
+                        {
+                            System.out.println("Caught " + e);
+                            e.printStackTrace();
+                        }
+                        else
+                        {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
         }
@@ -345,7 +366,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         private final JLabel clockLabel;
 
         /** timer update in msec. */
-        private final long updateInterval = 1000;
+        private final static long UPDATEINTERVAL = 1000;
 
         /** Construct a clock panel. */
         ClockPanel()
@@ -354,7 +375,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             this.clockLabel = this;
             this.setFont(getTimeFont());
             Timer timer = new Timer();
-            timer.scheduleAtFixedRate(new TimeUpdateTask(), 0, this.updateInterval);
+            timer.scheduleAtFixedRate(new TimeUpdateTask(), 0, ClockPanel.UPDATEINTERVAL);
 
         }
 
@@ -398,9 +419,6 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         /** */
         private static final long serialVersionUID = 20141212L;
 
-        /** Formatter for the text field. */
-        private final MaskFormatter timeMask;
-
         /**
          * Construct a new TimeEdit.
          * @param initialValue DoubleScalar.Abs&lt;TimeUnit&gt;; the initial value for the TimeEdit
@@ -412,17 +430,16 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             try
             {
                 mf = new MaskFormatter("####:##:##.###");
+                mf.setPlaceholderCharacter('0');
+                mf.setAllowsInvalid(false);
+                mf.setCommitsOnValidEdit(true);
+                mf.setOverwriteMode(true);
+                mf.install(this);
             }
             catch (ParseException exception)
             {
                 exception.printStackTrace();
             }
-            this.timeMask = mf;
-            this.timeMask.setPlaceholderCharacter('0');
-            this.timeMask.setAllowsInvalid(false);
-            this.timeMask.setCommitsOnValidEdit(true);
-            this.timeMask.setOverwriteMode(true);
-            this.timeMask.install(this);
             setTime(initialValue);
             setFont(getTimeFont());
         }
@@ -456,7 +473,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
      * @version 12 dec. 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class RegexFormatter extends DefaultFormatter
+    static class RegexFormatter extends DefaultFormatter
     {
         /** */
         private static final long serialVersionUID = 20141212L;

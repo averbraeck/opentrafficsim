@@ -46,8 +46,7 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
         this.shortName = shortName;
         this.description = description;
         this.names = elementNames;
-        verifyProposedValues(initialValue);
-        this.value = initialValue;
+        updateValue(initialValue);
         this.readOnly = readOnly;
     }
 
@@ -132,8 +131,22 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
         {
             throw new PropertyException("This property is read-only");
         }
+        updateValue(newValue);
+    }
+
+    /**
+     * Verify proposed values and make a deep copy.
+     * @param newValue Double[]; the proposed values
+     */
+    private void updateValue(final Double[] newValue) throws PropertyException
+    {
         verifyProposedValues(newValue);
-        this.value = newValue;
+        // Make a deep copy
+        this.value = new Double[newValue.length];
+        for (int i = 0; i < newValue.length; i++)
+        {
+            this.value[i] = newValue[i];
+        }
     }
 
     /**

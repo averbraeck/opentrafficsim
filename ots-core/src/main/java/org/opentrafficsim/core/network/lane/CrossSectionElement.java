@@ -97,7 +97,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /** Precision of buffer operations. */
-    private final int quadrantSegments = 8;
+    private final static int QUADRANTSEGMENTS = 8;
 
     // FIXME put in utility class. Also exists in XmlNetworkLaneParser.
     /**
@@ -136,7 +136,8 @@ public abstract class CrossSectionElement implements LocatableInterface
             return result;
         }
         Coordinate[] bufferCoordinates =
-                referenceLine.buffer(bufferOffset, this.quadrantSegments, BufferParameters.CAP_FLAT).getCoordinates();
+                referenceLine.buffer(bufferOffset, CrossSectionElement.QUADRANTSEGMENTS, BufferParameters.CAP_FLAT)
+                        .getCoordinates();
         // find the coordinate indices closest to the start point and end point, at a distance of approximately the
         // offset
         Coordinate sC = referenceCoordinates[0];
@@ -452,7 +453,7 @@ public abstract class CrossSectionElement implements LocatableInterface
 
     /** @return the z-value to determine "stacking" for animation. */
     protected abstract double getZ();
-    
+
     /** {@inheritDoc} */
     @Override
     public final DirectedPoint getLocation() throws RemoteException

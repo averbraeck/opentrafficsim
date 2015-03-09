@@ -20,7 +20,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Sep 13, 2014 <br>
@@ -38,8 +39,8 @@ public class GeometryLinkAnimation extends Renderable2D
      * @throws NamingException for problems with registering in context
      * @throws RemoteException on communications failure
      */
-    public GeometryLinkAnimation(final LinkGeotools source, final OTSSimulatorInterface simulator, final float width)
-        throws NamingException, RemoteException
+    public GeometryLinkAnimation(final LinkGeotools<?, ?> source, final OTSSimulatorInterface simulator,
+            final float width) throws NamingException, RemoteException
     {
         super(source, simulator);
         this.width = width;
@@ -52,7 +53,7 @@ public class GeometryLinkAnimation extends Renderable2D
         graphics.setColor(Color.RED);
         Stroke oldStroke = graphics.getStroke();
         graphics.setStroke(new BasicStroke(this.width));
-        DirectedPoint p = ((LinkGeotools) getSource()).getLocation();
+        DirectedPoint p = ((LinkGeotools<?, ?>) getSource()).getLocation();
         boolean start = false;
         Path2D.Double path = new Path2D.Double();
         for (Coordinate c : ((LinkGeotools) getSource()).getGeometry().getLineString().getCoordinates())
