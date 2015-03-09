@@ -92,7 +92,7 @@ public final class FloatMathFunctionsImpl
         @Override
         public float apply(final float a)
         {
-            return (float) Math.round(a);
+            return Math.round(a);
         }
     };
 
@@ -104,7 +104,7 @@ public final class FloatMathFunctionsImpl
         @Override
         public float apply(final float a)
         {
-            return (float) Math.signum(a);
+            return Math.signum(a);
         }
     };
 
