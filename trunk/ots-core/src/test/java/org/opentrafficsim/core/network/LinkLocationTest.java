@@ -32,7 +32,7 @@ public class LinkLocationTest
         NodeGeotools.STR nodeFrom = new NodeGeotools.STR("From", new Coordinate(0, 0, 0));
         NodeGeotools.STR nodeTo = new NodeGeotools.STR("To", new Coordinate(1000, 0, 0));
         DoubleScalar.Rel<LengthUnit> linkLength = new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER);
-        CrossSectionLink link = new CrossSectionLink("Link", nodeFrom, nodeTo, linkLength);
+        CrossSectionLink<?, ?> link = new CrossSectionLink<String, String>("Link", nodeFrom, nodeTo, linkLength);
         // Now we can make a LinkLocation.
         DoubleScalar.Rel<LengthUnit> referenceLocationDistance =
                 new DoubleScalar.Rel<LengthUnit>(123, LengthUnit.METER);

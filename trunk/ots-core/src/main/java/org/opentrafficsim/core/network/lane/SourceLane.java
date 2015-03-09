@@ -23,7 +23,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public class SourceLane extends Lane
 {
     /** the generators on this generation lane; one per GTU type. */
-    private final Set<GTUGeneratorIndividual> generators = new HashSet<GTUGeneratorIndividual>();
+    private final Set<GTUGeneratorIndividual<?>> generators = new HashSet<GTUGeneratorIndividual<?>>();
     
     /**
      * Construct a GeneratorLane.

@@ -42,7 +42,12 @@ public class SelectionProperty extends AbstractProperty<String>
         super(displayPriority);
         this.shortName = shortName;
         this.description = description;
-        this.options = options;
+        // Make a deep copy of options
+        this.options = new String[options.length];
+        for (int i = 0; i < options.length; i++)
+        {
+            this.options[i] = options[i];
+        }
         this.currentOption = initialDefaultOption;
         this.readOnly = readOnly;
     }

@@ -55,7 +55,7 @@ public class ProbabilityDistributionEditor extends JPanel
         for (int i = 0; i < values.length - 1; i++)
         {
             sum += values[i];
-            initialValues[i] = new Float(sum);
+            initialValues[i] = (float) sum;
             reducedNames[i] = elementNames[i];
         }
         this.slider = new MultiThumbSlider<String>(MultiThumbSlider.HORIZONTAL, initialValues, reducedNames);
