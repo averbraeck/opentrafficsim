@@ -56,7 +56,7 @@ public class GeometryLinkAnimation extends Renderable2D
         DirectedPoint p = ((LinkGeotools<?, ?>) getSource()).getLocation();
         boolean start = false;
         Path2D.Double path = new Path2D.Double();
-        for (Coordinate c : ((LinkGeotools) getSource()).getGeometry().getLineString().getCoordinates())
+        for (Coordinate c : ((LinkGeotools<?, ?>) getSource()).getGeometry().getLineString().getCoordinates())
         {
             if (!start)
             {
