@@ -28,24 +28,27 @@ public class DeterminantProblem
 
         FloatMatrix2D sparseFloatMatrix2D = new SparseCCFloatMatrix2D(values.length, values[0].length);
         FloatMatrix2D denseFloatMatrix2D = new DenseFloatMatrix2D(values.length, values[0].length);
-        
+
         for (int row = 0; row < values.length; row++)
         {
             for (int column = 0; column < values[row].length; column++)
             {
                 sparseFloatMatrix2D.set(row, column, values[row][column]);
-                denseFloatMatrix2D.set(row,  column,  values[row][column]);
+                denseFloatMatrix2D.set(row, column, values[row][column]);
             }
         }
         System.out.println("sparse matrix: " + sparseFloatMatrix2D.toString());
         float sparseDeterminant = new SparseFloatAlgebra().det(sparseFloatMatrix2D);
-        System.out.println("determinant is " + sparseDeterminant + " (prints -15; correct value is 15.0)");
+        System.out.println("determinant returned by det() is " + sparseDeterminant
+                + " (prints -15.0; correct value is 15.0)");
+        System.out.println("");
         System.out.println("dense matrix: " + denseFloatMatrix2D.toString());
         float denseDeterminant = new DenseFloatAlgebra().det(denseFloatMatrix2D);
-        System.out.println("determinant is " + denseDeterminant + " (prints 15 which is OK)");
+        System.out.println("determinant returned by det() is " + denseDeterminant + " (prints 15.0 which is OK)");
 
         System.out.println("");
-        System.out.println("The L and U matrices of the LU decompositions look fine");
+        System.out.println("The L and U matrices of the LU decompositions look fine and are identical (except for "
+                + "one being sparse and the other dense).");
         SparseFloatLUDecomposition sparseLU = new SparseFloatLUDecomposition(sparseFloatMatrix2D, 0, true);
         DenseFloatLUDecomposition denseLU = new DenseFloatLUDecomposition(denseFloatMatrix2D);
 
@@ -54,7 +57,7 @@ public class DeterminantProblem
         System.out.println("");
         System.out.println("sparse U: " + sparseLU.getU());
         System.out.println("dense U: " + denseLU.getU());
-        
+
         sparseLU.det();
         denseLU.det();
     }
