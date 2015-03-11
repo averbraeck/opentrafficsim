@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.gtu.lane.changing;
 
-import org.opentrafficsim.core.gtu.following.AccelerationStep;
+import org.opentrafficsim.core.gtu.following.DualAccelerationStep;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -19,12 +19,12 @@ public class Altruistic extends AbstractLaneChangeModel
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<AccelerationUnit> applyDriverPersonality(final AccelerationStep[] accelerationSteps)
+    public final DoubleScalar.Abs<AccelerationUnit> applyDriverPersonality(final DualAccelerationStep accelerationSteps)
     {
         // The result gets the unit of the acceleration of element 0 of accelerationSteps.
-        AccelerationUnit unit = accelerationSteps[0].getAcceleration().getUnit();
-        return new DoubleScalar.Abs<AccelerationUnit>(accelerationSteps[0].getAcceleration().getInUnit()
-                + accelerationSteps[1].getAcceleration().getInUnit(unit), unit);
+        AccelerationUnit unit = accelerationSteps.getLeaderAcceleration().getUnit();
+        return new DoubleScalar.Abs<AccelerationUnit>(accelerationSteps.getLeaderAcceleration().getInUnit()
+                + accelerationSteps.getFollowerAcceleration().getInUnit(unit), unit);
     }
 
 }

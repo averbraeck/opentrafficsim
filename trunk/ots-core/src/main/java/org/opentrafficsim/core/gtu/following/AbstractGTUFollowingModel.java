@@ -34,12 +34,12 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
             new DoubleScalar.Abs<TimeUnit>(Double.NaN, TimeUnit.SI));
 
     /** Return value if lane change causes immediate collision. */
-    public static final AccelerationStep[] TOODANGEROUS = new AccelerationStep[]{PROHIBITIVEACCELERATIONSTEP,
-            PROHIBITIVEACCELERATIONSTEP};
+    public static final DualAccelerationStep TOODANGEROUS = new DualAccelerationStep(PROHIBITIVEACCELERATIONSTEP,
+            PROHIBITIVEACCELERATIONSTEP);
 
     /** {@inheritDoc} */
     @Override
-    public final AccelerationStep[] computeAcceleration(final LaneBasedGTU<?> referenceGTU,
+    public final DualAccelerationStep computeAcceleration(final LaneBasedGTU<?> referenceGTU,
             final Collection<HeadwayGTU> otherGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit)
             throws RemoteException, NetworkException
     {
@@ -104,7 +104,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
         {
             referenceGTUAccelerationStep = gfm.computeAccelerationWithNoLeader(referenceGTU, speedLimit);
         }
-        return new AccelerationStep[]{referenceGTUAccelerationStep, followerAccelerationStep};
+        return new DualAccelerationStep(referenceGTUAccelerationStep, followerAccelerationStep);
     }
 
     /** {@inheritDoc} */

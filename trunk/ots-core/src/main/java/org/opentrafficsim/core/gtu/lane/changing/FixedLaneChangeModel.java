@@ -49,18 +49,20 @@ public class FixedLaneChangeModel implements LaneChangeModel
         {
             if (null == this.laneChange)
             {
-                return new LaneMovementStep(gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneTraffic,
-                        speedLimit)[0], null);
+                return new LaneMovementStep(gtu.getGTUFollowingModel()
+                        .computeAcceleration(gtu, sameLaneTraffic, speedLimit).getLeaderAccelerationStep(), null);
             }
             else if (LateralDirectionality.LEFT == this.laneChange)
             {
-                return new LaneMovementStep(gtu.getGTUFollowingModel().computeAcceleration(gtu, leftLaneTraffic,
-                        speedLimit)[0], this.laneChange);
+                return new LaneMovementStep(gtu.getGTUFollowingModel()
+                        .computeAcceleration(gtu, leftLaneTraffic, speedLimit).getLeaderAccelerationStep(),
+                        this.laneChange);
             }
             else if (LateralDirectionality.RIGHT == this.laneChange)
             {
-                return new LaneMovementStep(gtu.getGTUFollowingModel().computeAcceleration(gtu, rightLaneTraffic,
-                        speedLimit)[0], this.laneChange);
+                return new LaneMovementStep(gtu.getGTUFollowingModel()
+                        .computeAcceleration(gtu, rightLaneTraffic, speedLimit).getLeaderAccelerationStep(),
+                        this.laneChange);
             }
             throw new Error("Program Error - unhandled LateralDirectionality");
         }

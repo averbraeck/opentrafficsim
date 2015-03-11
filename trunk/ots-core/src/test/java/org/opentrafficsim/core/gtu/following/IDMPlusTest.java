@@ -127,12 +127,12 @@ public class IDMPlusTest
                         - initialPosition.getSI());
         leaders.add(leader2); // Put the 2nd leader in first place
         leaders.add(leader);
-        cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit)[0];
+        cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit).getLeaderAccelerationStep();
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         leaders.clear();
         leaders.add(leader); // Put the 1st leader in first place
         leaders.add(leader2);
-        cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit)[0];
+        cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit).getLeaderAccelerationStep();
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         leaders.clear();
         leaderPosition =
@@ -149,7 +149,7 @@ public class IDMPlusTest
                 new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
                         - initialPosition.getSI());
         leaders.add(leader);
-        cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit)[0];
+        cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit).getFollowerAccelerationStep();
         assertEquals("Acceleration should be 1.25", 1.25, cfmr.getAcceleration().getSI(), 0.0001);
         // Check that the returned acceleration increases with the distance to the leader
         double referenceAcceleration = -1;
@@ -169,7 +169,9 @@ public class IDMPlusTest
                     new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
                             - initialPosition.getSI());
             leaders.add(leader);
-            cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit)[0];
+            cfmr =
+                    carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit)
+                            .getFollowerAccelerationStep();
             double acceleration = cfmr.getAcceleration().getSI();
             // System.out.println("Acceleration with stationary leader at " + spareDistance + " is " + acceleration);
             assertTrue("acceleration should not decrease when distance to leader is increased",
@@ -208,7 +210,9 @@ public class IDMPlusTest
             leaders.add(leader);
             // System.out.println("referenceCar: " + referenceCar);
             // System.out.println("leaderCar   : " + leaderCar);
-            cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit)[0];
+            cfmr =
+                    carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit)
+                            .getFollowerAccelerationStep();
             double acceleration = cfmr.getAcceleration().getSI();
             // System.out.println("Acceleration with leader driving " + integerLeaderSpeed + " m/s is " + acceleration);
             assertTrue("acceleration should not decrease when leader speed is increased",

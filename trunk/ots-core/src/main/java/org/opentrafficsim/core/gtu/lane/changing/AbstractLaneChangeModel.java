@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.AbstractGTUFollowingModel;
-import org.opentrafficsim.core.gtu.following.AccelerationStep;
+import org.opentrafficsim.core.gtu.following.DualAccelerationStep;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.HeadwayGTU;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
@@ -65,9 +65,9 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             {
                 throw new Error("GTU " + gtu + " has null GTUFollowingModel");
             }
-            AccelerationStep[] straightAccelerationSteps =
+            DualAccelerationStep straightAccelerationSteps =
                     gtuFollowingModel.computeAcceleration(gtu, sameLaneGTUs, speedLimit);
-            if (straightAccelerationSteps[0].getAcceleration().getSI() < -9999)
+            if (straightAccelerationSteps.getLeaderAcceleration().getSI() < -9999)
             {
                 System.out.println("Problem");
                 gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneGTUs, speedLimit);
@@ -75,22 +75,22 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             DoubleScalar.Abs<AccelerationUnit> straightA =
                     DoubleScalar.plus(applyDriverPersonality(straightAccelerationSteps), laneChangeThreshold)
                             .immutable();
-            AccelerationStep[] nonPreferrredAccelerationSteps =
+            DualAccelerationStep nonPreferrredAccelerationSteps =
                     null == nonPreferredLane ? null : gtu.getGTUFollowingModel().computeAcceleration(gtu,
                             nonPreferredLaneGTUs, speedLimit);
             if (null != nonPreferrredAccelerationSteps
-                    && nonPreferrredAccelerationSteps[1].getAcceleration().getSI() < -gtu.getGTUFollowingModel()
+                    && nonPreferrredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getGTUFollowingModel()
                             .maximumSafeDeceleration().getSI())
             {
                 nonPreferrredAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
             }
             DoubleScalar.Abs<AccelerationUnit> nonPreferredA =
                     null == nonPreferredLane ? null : applyDriverPersonality(nonPreferrredAccelerationSteps);
-            AccelerationStep[] preferredAccelerationSteps =
+            DualAccelerationStep preferredAccelerationSteps =
                     null == preferredLane ? null : gtu.getGTUFollowingModel().computeAcceleration(gtu,
                             preferredLaneGTUs, speedLimit);
             if (null != preferredAccelerationSteps
-                    && preferredAccelerationSteps[1].getAcceleration().getSI() < -gtu.getGTUFollowingModel()
+                    && preferredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getGTUFollowingModel()
                             .maximumSafeDeceleration().getSI())
             {
                 preferredAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
@@ -103,7 +103,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 if (null == nonPreferredA)
                 {
                     // No lane change possible; this is definitely the easy case
-                    return new LaneMovementStep(straightAccelerationSteps[0], null);
+                    return new LaneMovementStep(straightAccelerationSteps.getLeaderAccelerationStep(), null);
                 }
                 else
                 {
@@ -111,12 +111,13 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                     if (DoubleScalar.plus(nonPreferredA, nonPreferredLaneRouteIncentive).getSI() > straightA.getSI())
                     {
                         // Merge to the nonPreferred lane; i.e. start an overtaking procedure
-                        return new LaneMovementStep(nonPreferrredAccelerationSteps[0], nonPreferred);
+                        return new LaneMovementStep(nonPreferrredAccelerationSteps.getLeaderAccelerationStep(),
+                                nonPreferred);
                     }
                     else
                     {
                         // Stay in the current lane
-                        return new LaneMovementStep(straightAccelerationSteps[0], null);
+                        return new LaneMovementStep(straightAccelerationSteps.getLeaderAccelerationStep(), null);
                     }
                 }
             }
@@ -127,12 +128,12 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 if (DoubleScalar.plus(preferredA, preferredLaneRouteIncentive).getSI() > straightA.getSI())
                 {
                     // Merge to the preferred lane; i.e. finish (or cancel) an overtaking procedure
-                    return new LaneMovementStep(preferredAccelerationSteps[0], preferred);
+                    return new LaneMovementStep(preferredAccelerationSteps.getLeaderAccelerationStep(), preferred);
                 }
                 else
                 {
                     // Stay in current lane
-                    return new LaneMovementStep(straightAccelerationSteps[0], null);
+                    return new LaneMovementStep(straightAccelerationSteps.getLeaderAccelerationStep(), null);
                 }
             }
             // All merges are possible
@@ -145,17 +146,17 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             if (preferredAttractiveness.getSI() <= 0 && nonPreferredAttractiveness.getSI() < 0)
             {
                 // Stay in current lane
-                return new LaneMovementStep(straightAccelerationSteps[0], null);
+                return new LaneMovementStep(straightAccelerationSteps.getLeaderAccelerationStep(), null);
 
             }
             if (preferredAttractiveness.getSI() > 0
                     && preferredAttractiveness.getSI() > nonPreferredAttractiveness.getSI())
             {
                 // Merge to the preferred lane; i.e. finish (or cancel) an overtaking procedure
-                return new LaneMovementStep(preferredAccelerationSteps[0], preferred);
+                return new LaneMovementStep(preferredAccelerationSteps.getLeaderAccelerationStep(), preferred);
             }
             // Merge to the adjacent nonPreferred lane; i.e. start an overtaking procedure
-            return new LaneMovementStep(nonPreferrredAccelerationSteps[0], nonPreferred);
+            return new LaneMovementStep(nonPreferrredAccelerationSteps.getLeaderAccelerationStep(), nonPreferred);
         }
         catch (NetworkException exception)
         {
@@ -168,12 +169,11 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
     /**
      * Return the weighted acceleration as described by the personality. This incorporates the personality of the driver
      * to the lane change decisions.
-     * @param accelerationSteps AccelerationStep[]; the AccelerationStep that the reference GTU will make (in position 0
-     *            of the array) and the AccelerationStep that the (new) follower GTU will make (in position 1 of the
-     *            array)
+     * @param accelerationSteps DualAccelerationStep; the DualAccelerationStep that contains the AccelerationStep that
+     *            the reference GTU will make and the AccelerationStep that the (new) follower GTU will make
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration that the personality of the driver uses (in a
      *         comparison to a similarly computed acceleration in the non-, or different-lane-changed state) to decide
      *         if a lane change should be performed
      */
-    public abstract DoubleScalar.Abs<AccelerationUnit> applyDriverPersonality(AccelerationStep[] accelerationSteps);
+    public abstract DoubleScalar.Abs<AccelerationUnit> applyDriverPersonality(DualAccelerationStep accelerationSteps);
 }

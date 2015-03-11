@@ -72,12 +72,12 @@ public interface GTUFollowingModel
      * @param otherGTUs Collection&lt;HeadwayGTU&gt;; the other GTUs. A negative headway value indicates that the other
      *            GTU is a follower. NB. If the referenceGTU is contained in this Collection, it is ignored.
      * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the local speed limit
-     * @return AccelerationStep[]; the result with the lowest accelerations (or most severe decelerations) of
+     * @return DualAccelerationStep; the result with the lowest accelerations (or most severe decelerations) of
      *         application of the GTU following model of the referenceGTU for each leader and follower
      * @throws RemoteException in case of simulator reachability problems
      * @throws NetworkException on network inconsistency
      */
-    AccelerationStep[] computeAcceleration(final LaneBasedGTU<?> referenceGTU, final Collection<HeadwayGTU> otherGTUs,
+    DualAccelerationStep computeAcceleration(final LaneBasedGTU<?> referenceGTU, final Collection<HeadwayGTU> otherGTUs,
             final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException;
 
     /**
