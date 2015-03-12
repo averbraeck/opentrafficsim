@@ -64,8 +64,7 @@ public interface GTUFollowingModel
      * (inserted, or not removed) in a set of other GTUs.<br />
      * If any GTU in the set of otherGTUs has a null headway (indicating that the other GTU is in fact parallel to the
      * referenceGTU), prohibitive decelerations shall be returned.<br />
-     * Two AccelerationStep values are returned in a two-element array. Element 0 contains the AccelerationStep for the
-     * referenceGTU, Element 1 contains the AccelerationStep for the most affected follower among the otherGTUs.<br />
+     * Two AccelerationStep values are returned in a DualAccelerationStep.<br />
      * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their
      * leader, or should slow down for a crossing from accelerating to unsafe speeds.
      * @param referenceGTU LaneBasedGTU&lt;?&gt;; the GTU for which the accelerations are computed
