@@ -6,6 +6,7 @@ import java.util.Map;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.network.NetworkException;
@@ -31,20 +32,21 @@ public abstract class AbstractLaneBasedTemplateGTU<ID> extends AbstractLaneBased
     private static final long serialVersionUID = 20140822L;
 
     /**
-     * @param id the id of the GTU, could be String or Integer.
-     * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType.
-     * @param gtuFollowingModel the following model, including a reference to the simulator.
-     * @param initialLongitudinalPositions the initial positions of the car on one or more lanes.
-     * @param initialSpeed the initial speed of the car on the lane.
-     * @throws RemoteException when the simulator cannot be reached.
-     * @throws NetworkException when the GTU cannot be placed on the given lane.
-     * @throws SimRuntimeException when the move method cannot be scheduled.
+     * @param id the id of the GTU, could be String or Integer
+     * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
+     * @param gtuFollowingModel the following model, including a reference to the simulator
+     * @param initialLongitudinalPositions the initial positions of the car on one or more lanes
+     * @param initialSpeed the initial speed of the car on the lane
+     * @throws RemoteException when the simulator cannot be reached
+     * @throws NetworkException when the GTU cannot be placed on the given lane
+     * @throws SimRuntimeException when the move method cannot be scheduled
+     * @throws GTUException when gtuFollowingModel is null
      */
     public AbstractLaneBasedTemplateGTU(final ID id, final TemplateGTUType<?> gtuType,
             final GTUFollowingModel gtuFollowingModel,
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
             final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NetworkException,
-            SimRuntimeException
+            SimRuntimeException, GTUException
     {
         super(id, gtuType, gtuFollowingModel, null /* LaneChangeModel */, initialLongitudinalPositions, initialSpeed,
                 gtuType.getSimulator());

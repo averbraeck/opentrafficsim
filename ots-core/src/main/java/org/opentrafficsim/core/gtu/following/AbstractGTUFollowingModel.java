@@ -174,9 +174,8 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
         {
             throw new Error("Cannot find headway that results in an acceptable deceleration");
         }
-        final double maximumError = 0.1; // [m]
-        // Now bisect until the error is less than maximumError
-        final int maximumStep = (int) Math.ceil(Math.log((maximumSI - minimumSI) / maximumError) / Math.log(2));
+        // Now bisect until the error is less than the requested precision
+        final int maximumStep = (int) Math.ceil(Math.log((maximumSI - minimumSI) / precision.getSI()) / Math.log(2));
         for (int step = 0; step < maximumStep; step++)
         {
             double midSI = (minimumSI + maximumSI) / 2;
