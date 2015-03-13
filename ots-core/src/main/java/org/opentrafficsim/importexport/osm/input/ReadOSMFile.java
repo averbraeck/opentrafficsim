@@ -26,7 +26,7 @@ import crosby.binary.osmosis.OsmosisReader;
  * @author <a href="http://www.tbm.tudelft.nl/mzhang">Mingxin Zhang </a>
  * @author <a>Moritz Bergmann</a>
  */
-public class ReadOSMFile
+public final class ReadOSMFile
 {
 
     /**  */
