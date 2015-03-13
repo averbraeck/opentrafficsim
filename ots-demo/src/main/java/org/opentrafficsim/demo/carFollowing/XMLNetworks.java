@@ -276,7 +276,7 @@ class XMLNetworkModel implements OTSModelInterface
                     }
                 }
             }
-            // 600 [veh / hour]
+            // 600 [veh / hour] on each lane results in a reasonable chance to merge
             this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 600.0, TimeUnit.SECOND);
             setupGenerator(LaneFactory.makeMultiLane("From to FirstVia", from, firstVia, null, merge ? lanesOnMain
                     : lanesOnCommonCompressed, laneType, this.simulator));
@@ -301,7 +301,6 @@ class XMLNetworkModel implements OTSModelInterface
             {
                 setupSink(LaneFactory.makeMultiLane("SecondVia to end2", secondVia, end2, null, lanesOnBranch,
                         lanesOnCommon - lanesOnBranch, 0, laneType, this.simulator));
-
             }
         }
         catch (NamingException | NetworkException | GTUException exception1)
