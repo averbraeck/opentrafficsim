@@ -535,7 +535,7 @@ class StraightModel implements OTSModelInterface
         try
         {
             this.block =
-                    new LaneBasedIndividualCar<>(999999, null /* gtuType */, this.carFollowingModelCars,
+                    new LaneBasedIndividualCar<Integer>(999999, null /* gtuType */, this.carFollowingModelCars,
                             this.laneChangeModel, initialPositions, new DoubleScalar.Abs<SpeedUnit>(0,
                                     SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER),
                             new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0,
@@ -576,11 +576,10 @@ class StraightModel implements OTSModelInterface
             {
                 throw new Error("gtuFollowingModel is null");
             }
-            new LaneBasedIndividualCar<>(++this.carsCreated, null /* gtuType */, generateTruck
-                    ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel,
-                    initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8,
-                            LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR),
-                    this.simulator);
+            new LaneBasedIndividualCar<Integer>(++this.carsCreated, null /* gtuType */, gtuFollowingModel,
+                    this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
+                    new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
+                            SpeedUnit.KM_PER_HOUR), this.simulator);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
