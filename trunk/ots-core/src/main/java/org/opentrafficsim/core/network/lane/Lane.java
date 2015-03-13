@@ -180,7 +180,7 @@ public class Lane extends CrossSectionElement
      */
     public final void removeSensor(final Sensor sensor) throws NetworkException
     {
-        List<Sensor> sensorList = this.sensors.get(sensor.getLongitudinalPosition());
+        List<Sensor> sensorList = this.sensors.get(sensor.getLongitudinalPosition().getSI());
         if (null == sensorList)
         {
             throw new NetworkException("No sensor at " + sensor.getLongitudinalPositionSI());
@@ -188,7 +188,7 @@ public class Lane extends CrossSectionElement
         sensorList.remove(sensor);
         if (sensorList.size() == 0)
         {
-            this.sensors.remove(sensorList);
+            this.sensors.remove(sensor.getLongitudinalPosition().getSI());
         }
     }
 

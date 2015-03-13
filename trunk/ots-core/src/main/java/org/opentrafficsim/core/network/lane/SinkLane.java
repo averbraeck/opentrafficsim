@@ -63,7 +63,7 @@ public class SinkLane extends Lane
      * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
      * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
      */
-    private class SinkSensor extends AbstractSensor
+    private static class SinkSensor extends AbstractSensor
     {
         /** */
         private static final long serialVersionUID = 20150130L;

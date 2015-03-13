@@ -35,8 +35,8 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
      * @param initialValue Double[]; array of Double values
      * @param readOnly boolean; if true this ProbabilityDistributionProperty can not be altered
      * @param displayPriority int; the display priority of the new ProbabilityDistributionProperty
-     * @throws PropertyException when the array is empty, any value is outside the range 0.0 .. 1.0, or when
-     *             the sum of the values is not equal to 1.0 within a small error margin
+     * @throws PropertyException when the array is empty, any value is outside the range 0.0 .. 1.0, or when the sum of
+     *             the values is not equal to 1.0 within a small error margin
      */
     public ProbabilityDistributionProperty(final String shortName, final String description,
             final String[] elementNames, final Double[] initialValue, final boolean readOnly, final int displayPriority)
@@ -45,16 +45,21 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
         super(displayPriority);
         this.shortName = shortName;
         this.description = description;
-        this.names = elementNames;
-        updateValue(initialValue);
+        this.names = new String[elementNames.length];
+        for (int i = 0; i < elementNames.length; i++)
+        {
+            this.names[i] = elementNames[i];
+        }
+        verifyProposedValues(initialValue);
+        copyValue(initialValue);
         this.readOnly = readOnly;
     }
 
     /**
      * Verify that a provided array of probability values is acceptable.
      * @param values double[]; the array of values to verify
-     * @throws PropertyException when the number of values is 0, any value is outside [0..1], or the sum of
-     *             the values does not add up to 1.0 within a (very small) error margin
+     * @throws PropertyException when the number of values is 0, any value is outside [0..1], or the sum of the values
+     *             does not add up to 1.0 within a (very small) error margin
      */
     private void verifyProposedValues(final Double[] values) throws PropertyException
     {
@@ -67,8 +72,7 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
         {
             if (v < 0.0 || v > 1.0)
             {
-                throw new PropertyException("Probability value " + v
-                        + " is invalid (valid range is 0.0..1.0)");
+                throw new PropertyException("Probability value " + v + " is invalid (valid range is 0.0..1.0)");
             }
             sum += v;
         }
@@ -135,18 +139,27 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
     }
 
     /**
-     * Verify proposed values and make a deep copy.
-     * @param newValue Double[]; the proposed values
+     * Make a deep copy of the provided array of values.
+     * @param newValue Double[]; the array of values to copy to this.value
      */
-    private void updateValue(final Double[] newValue) throws PropertyException
+    private void copyValue(final Double[] newValue)
     {
-        verifyProposedValues(newValue);
         // Make a deep copy
         this.value = new Double[newValue.length];
         for (int i = 0; i < newValue.length; i++)
         {
             this.value[i] = newValue[i];
         }
+    }
+
+    /**
+     * Verify proposed values and make a deep copy.
+     * @param newValue Double[]; the proposed values
+     */
+    private void updateValue(final Double[] newValue) throws PropertyException
+    {
+        verifyProposedValues(newValue);
+        copyValue(newValue);
     }
 
     /**

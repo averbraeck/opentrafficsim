@@ -13,6 +13,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
@@ -56,12 +57,13 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
      * @throws RemoteException when the simulator cannot be reached.
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
+     * @throws GTUException when gtuFollowingModel is null
      */
     public LaneBasedTemplateCar(final ID id, final TemplateGTUType<?> templateGtuType,
         final GTUFollowingModel gtuFollowingModel,
         final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
         final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws NamingException, RemoteException, NetworkException,
-        SimRuntimeException
+        SimRuntimeException, GTUException
     {
         this(id, templateGtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, DefaultCarAnimation.class);
     }
@@ -78,12 +80,13 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
      * @throws RemoteException when the simulator cannot be reached.
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
+     * @throws GTUException when gtuFollowingModel is null
      */
     public LaneBasedTemplateCar(final ID id, final TemplateGTUType<?> templateGtuType,
         final GTUFollowingModel gtuFollowingModel,
         final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
         final DoubleScalar.Abs<SpeedUnit> initialSpeed, final Class<? extends Renderable2D> animationClass)
-        throws NamingException, RemoteException, NetworkException, SimRuntimeException
+        throws NamingException, RemoteException, NetworkException, SimRuntimeException, GTUException
     {
         super(id, templateGtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed);
 
@@ -275,9 +278,10 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
          * @throws RemoteException when the simulator cannot be reached.
          * @throws NetworkException when the GTU cannot be placed on the given lane.
          * @throws SimRuntimeException when the move method cannot be scheduled.
+         * @throws GTUException when gtuFollowingModel is null
          */
         public final LaneBasedTemplateCar<ID> build() throws RemoteException, NamingException, NetworkException,
-            SimRuntimeException
+            SimRuntimeException, GTUException
         {
             // TODO check that none of the variables (except animationClass) is null, and throw an exception if it is.
 

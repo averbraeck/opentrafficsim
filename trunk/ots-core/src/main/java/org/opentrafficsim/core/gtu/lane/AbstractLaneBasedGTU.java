@@ -117,13 +117,18 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * @throws RemoteException when the simulator cannot be reached
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
+     * @throws GTUException when gtuFollowingModel is null
      */
     public AbstractLaneBasedGTU(final ID id, final GTUType<?> gtuType, final GTUFollowingModel gtuFollowingModel,
         final LaneChangeModel laneChangeModel, final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
         final DoubleScalar.Abs<SpeedUnit> initialSpeed, final OTSDEVSSimulatorInterface simulator) throws RemoteException,
-        NetworkException, SimRuntimeException
+        NetworkException, SimRuntimeException, GTUException
     {
         super(id, gtuType);
+        if (null == gtuFollowingModel)
+        {
+            throw new GTUException("gtuFollowingModel may not be null");
+        }
         this.gtuFollowingModel = gtuFollowingModel;
         this.laneChangeModel = laneChangeModel;
         this.lateralVelocity = new DoubleScalar.Abs<SpeedUnit>(0.0, SpeedUnit.METER_PER_SECOND);

@@ -11,10 +11,13 @@ import java.util.Map;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.junit.Test;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -34,6 +37,8 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -50,8 +55,11 @@ import com.vividsolutions.jts.geom.LineString;
  * @version 14 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneChangeModelTest
+public class LaneChangeModelTest implements OTSModelInterface
 {
+    /** */
+    private static final long serialVersionUID = 20150313;
+
     /**
      * Create a Link.
      * @param name String; name of the new Link
@@ -169,7 +177,7 @@ public class LaneChangeModelTest
         SimpleSimulator simpleSimulator =
                 new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600,
-                                TimeUnit.SECOND), null /* CRASH - FIXME - will have to wait for Network factory*/);
+                                TimeUnit.SECOND), this /* CRASH - FIXME - will have to wait for Network factory*/);
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar<String> car =
                 new LaneBasedIndividualCar<String>("ReferenceCar", gtuType, new IDMPlus(
@@ -216,7 +224,7 @@ public class LaneChangeModelTest
                                     TimeUnit.SECOND), 1d), laneChangeModel, otherLongitudinalPositions,
                             new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), vehicleLength,
                             new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
-                                    SpeedUnit.KM_PER_HOUR), (OTSDEVSSimulatorInterface) simpleSimulator);
+                                    SpeedUnit.KM_PER_HOUR), (OTSDEVSSimulatorInterface) simpleSimulator.getSimulator());
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU = new HeadwayGTU(collisionCar, pos - reference.getSI());
             preferredLaneGTUs.add(collisionHWGTU);
@@ -244,7 +252,7 @@ public class LaneChangeModelTest
                                     TimeUnit.SECOND), 1d), laneChangeModel, otherLongitudinalPositions,
                             new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), vehicleLength,
                             new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
-                                    SpeedUnit.KM_PER_HOUR), (OTSDEVSSimulatorInterface) simpleSimulator);
+                                    SpeedUnit.KM_PER_HOUR), (OTSDEVSSimulatorInterface) simpleSimulator.getSimulator());
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU =
                     new HeadwayGTU(otherCar, pos - car.position(lanes[0], car.getReference()).getSI());
@@ -271,5 +279,19 @@ public class LaneChangeModelTest
     // TODO test/prove the expected differences between Egoistic and Altruistic
     // TODO prove that the most restrictive car in the other lane determines what happens
     // TODO test merge into overtaking lane
+
+    /** {@inheritDoc} */
+    @Override
+    public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+            throws SimRuntimeException, RemoteException
+    {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
+    {
+        return null;
+    }
 
 }

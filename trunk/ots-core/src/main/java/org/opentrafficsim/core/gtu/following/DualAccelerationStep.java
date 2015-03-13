@@ -87,5 +87,11 @@ public class DualAccelerationStep
     {
         return getFollowerAccelerationStep().getValidUntil();
     }
+    
+    /** {@inheritDoc} */
+    public String toString()
+    {
+        return "Follower: " + getFollowerAccelerationStep() + ", Leader: " + getLeaderAccelerationStep();
+    }
 
 }
