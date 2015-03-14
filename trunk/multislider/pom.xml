@@ -16,6 +16,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<wagon.ssh.version>2.8</wagon.ssh.version>
 		<wagon.ftp.version>2.8</wagon.ftp.version>
+		<jdk.version>1.8</jdk.version>
 	</properties>
 
 	<build>
