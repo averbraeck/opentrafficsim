@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NETWORK xmlns="http://www.opentrafficsim.org/ots-infra" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots-infra ots-infra.xsd">
+
+  <GLOBAL WIDTH="3.6m" SPEED="100km/h" />
+
+  <!-- extent -->
+  <!-- seeds -->
+
+  <GTU NAME="CAR" GTUTYPE="CAR" FOLLOWING="IDM+" LENGTH="UNIF(5,7) m" WIDTH="UNIF(1.7, 2) m" LANECHANGE="EGOISTIC"
+    MAXSPEED="CONST(120) km/h" />
+  <GTU NAME="TRUCK" GTUTYPE="TRUCK" FOLLOWING="IDM+" LENGTH="UNIF(16,24) m" WIDTH="UNIF(2.2, 2.7) m" LANECHANGE="ALTRUISTIC"
+    MAXSPEED="CONST(100) km/h" />
+
+  <NODE NAME="N1" COORDINATE="(0.0, 0.0)" ANGLE="90" />
+  <NODE NAME="N2" />
+  <NODE NAME="NE" />
+
+  <LINK NAME="L1" FROM="N1" TO="N2" ELEMENTS="S1-X1|A1:D:A2|X2-S2">
+    <ARC RADIUS="1000m" ANGLE="180" DIRECTION="L" />
+    <LANE NAME="X1" WIDTH="2.5m"/>
+    <LANE NAME="X2" WIDTH="2.5m"/>
+    <LANE NAME="S1" WIDTH="2m"/>
+    <LANE NAME="S2" WIDTH="2m"/>
+  </LINK>
+
+  <LINK NAME="L2" FROM="N2" TO="N1" ELEMENTS="S1-X1|A1:D:A2|X2-S2">
+    <ARC RADIUS="1000m" ANGLE="180" DIRECTION="L" />
+    <LANE NAME="X1" WIDTH="2.5m"/>
+    <LANE NAME="X2" WIDTH="2.5m"/>
+    <LANE NAME="S1" WIDTH="2m"/>
+    <LANE NAME="S2" WIDTH="2m"/>
+  </LINK>
+
+  <LINK NAME="ENTRY" FROM="NE" TO="N1" ELEMENTS="S1-X1|A1:D:A2|X2-S2">
+    <STRAIGHT LENGTH="200m" />
+    <LANE NAME="A1" SPEED="100 km/h" />
+    <LANE NAME="X1" WIDTH="2.5m"/>
+    <LANE NAME="X2" WIDTH="2.5m"/>
+    <LANE NAME="S1" WIDTH="2m"/>
+    <LANE NAME="S2" WIDTH="2m"/>
+    <GENERATOR LANE="A1" GTU="CAR" IAT="EXPO(30) s" INITIALSPEED="TRIA(80,90,100) km/h" MAXGTU="50" />
+    <GENERATOR LANE="A1" GTU="TRUCK" IAT="EXPO(60) s" INITIALSPEED="TRIA(60,70,80) km/h" MAXGTU="25" />
+    <GENERATOR LANE="A2" GTU="CAR" IAT="EXPO(45) s" INITIALSPEED="TRIA(80,90,100) km/h" MAXGTU="25" />
+  </LINK>
+
+</NETWORK>

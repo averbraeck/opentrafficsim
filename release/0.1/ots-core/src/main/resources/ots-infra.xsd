@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots-infra"
+  xmlns="http://www.opentrafficsim.org/ots-infra" elementFormDefault="qualified">
+
+  <xsd:simpleType name="SPEEDTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+[\.]{0,1}\d*\s*(km/h|m/s|mi/h|y/s|ft/s)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="LENGTHTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+[\.]{0,1}\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="TIMETYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+[\.]{0,1}\d*\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="COORDINATETYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="\(\s*(\-|\+){0,1}\d+[\.]{0,1}\d*\s*\,\s*(\-|\+){0,1}\d+[\.]{0,1}\d*(\s*,\s*(\-|\+){0,1}\d+[\.]{0,1}\d*){0,1}\)">
+      </xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="LEFTRIGHTTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="L|LEFT|R|RIGHT|CLOCKWISE|COUNTERCLOCKWISE"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ANGLETYPE">
+    <xsd:restriction base="xsd:double">
+      <xsd:minInclusive value="-180.0"></xsd:minInclusive>
+      <xsd:maxInclusive value="180.0"></xsd:maxInclusive>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="GTUTYPETYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="CAR|TRUCK|BUS|MOTORBIKE|BIKE|PEDESTRIAN"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ELEMENTSTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="((((S|X|V|A)\d+){0,10}(\-|\||\:|\#|&lt;|&gt;){0,1}){0,10}D(((S|X|V|A)\d+){0,10}(\
+){0}(\-|\||\:|\#|&lt;|&gt;){0,1}){0,10})(\
+){0}|((((S|X|V|A)\d+){0,10}(\-|\||\:|\#|&lt;|&gt;){0,1}){0,10}((SD|XD|VD|AD)\d+)(((S|X|V|A)\d+){0,10}(\
+){0}(\-|\||\:|\#|&lt;|&gt;){0,1}){0,10})"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="FOLLOWINGTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="IDM|IDM\+"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="LANECHANGETYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="EGOISTIC|ALTRUISTIC"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="CONTDISTTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="(\
+{0})(CONST|CONSTANT)\(\s*\d+[\.]{0,1}\d*\s*\)(\
+{0})|(EXPO|EXPONENTIAL)\(\s*\d+[\.]{0,1}\d*\s*\)(\
+{0})|(TRIA|TRIANGULAR)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
+{0})|(NORM|NORMAL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
+{0})|BETA\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
+{0})|ERLANG\(\s*\d+\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
+{0})|GAMMA\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
+{0})|(LOGN|LOGNORMAL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
+{0})|PEARSON5\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
+{0})|PEARSON6\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
+{0})|(UNIF|UNIFORM)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)(\
+{0})|(WEIB|WEIBULL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)">
+      </xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="LENGTHDISTTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="(\
+{0})(CONST|CONSTANT)\(\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(EXPO|EXPONENTIAL)\(\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(TRIA|TRIANGULAR)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(NORM|NORMAL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|BETA\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|ERLANG\(\s*\d+\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|GAMMA\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(LOGN|LOGNORMAL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|PEARSON5\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|PEARSON6\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(UNIF|UNIFORM)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)(\
+{0})|(WEIB|WEIBULL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)">
+      </xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="SPEEDDISTTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="(\
+{0})(CONST|CONSTANT)\(\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|(EXPO|EXPONENTIAL)\(\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|(TRIA|TRIANGULAR)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|(NORM|NORMAL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|BETA\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|ERLANG\(\s*\d+\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|GAMMA\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|(LOGN|LOGNORMAL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|PEARSON5\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|PEARSON6\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|(UNIF|UNIFORM)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)(\
+{0})|(WEIB|WEIBULL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(km/h|m/s|mi/h|y/s|ft/s)">
+      </xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="TIMEDISTTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="(\
+{0})(CONST|CONSTANT)\(\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(EXPO|EXPONENTIAL)\(\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(TRIA|TRIANGULAR)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(NORM|NORMAL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|BETA\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|ERLANG\(\s*\d+\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|GAMMA\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(LOGN|LOGNORMAL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|PEARSON5\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|PEARSON6\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(UNIF|UNIFORM)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)(\
+{0})|(WEIB|WEIBULL)\(\s*\d+[\.]{0,1}\d*\s*,\s*\d+[\.]{0,1}\d*\s*\)\s*(ms|s|m|min|h|hr|d|day|wk|week)">
+      </xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:group name="NODELINK">
+    <xsd:choice>
+      <xsd:element name="NODE">
+        <xsd:complexType>
+          <xsd:attribute name="NAME" type="xsd:string" use="required"></xsd:attribute>
+          <xsd:attribute name="COORDINATE" type="COORDINATETYPE" use="optional"></xsd:attribute>
+          <xsd:attribute name="ANGLE" type="ANGLETYPE" use="optional"></xsd:attribute>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="LINK">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:choice>
+              <xsd:element name="STRAIGHT">
+                <xsd:complexType>
+                  <xsd:attribute name="LENGTH" type="LENGTHTYPE" use="required"></xsd:attribute>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="ARC">
+                <xsd:complexType>
+                  <xsd:attribute name="RADIUS" type="LENGTHTYPE" use="required"></xsd:attribute>
+                  <xsd:attribute name="ANGLE" type="ANGLETYPE" use="required"></xsd:attribute>
+                  <xsd:attribute name="DIRECTION" type="LEFTRIGHTTYPE" use="required"></xsd:attribute>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:choice>
+
+            <xsd:element name="LANE" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="NAME" type="xsd:string" use="required"></xsd:attribute>
+                <xsd:attribute name="SPEED" type="SPEEDTYPE" use="optional"></xsd:attribute>
+                <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GENERATOR" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
+                <xsd:attribute name="GTU" type="xsd:string" use="required"></xsd:attribute>
+                <xsd:attribute name="IAT" type="TIMEDISTTYPE" use="required"></xsd:attribute>
+                <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required"></xsd:attribute>
+                <xsd:attribute name="MAXGTU" type="xsd:double" use="optional"></xsd:attribute>
+                <xsd:attribute name="STARTTIME" type="TIMETYPE" use="optional"></xsd:attribute>
+                <xsd:attribute name="ENDTIME" type="TIMETYPE" use="optional"></xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="FILL" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
+                <xsd:attribute name="GTU" type="xsd:string" use="required"></xsd:attribute>
+                <xsd:attribute name="DISTANCE" type="LENGTHDISTTYPE" use="required"></xsd:attribute>
+                <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required"></xsd:attribute>
+                <xsd:attribute name="MAXGTU" type="xsd:double" use="optional"></xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+
+          <xsd:attribute name="NAME" type="xsd:string" use="required"></xsd:attribute>
+          <xsd:attribute name="FROM" type="xsd:string" use="required"></xsd:attribute>
+          <xsd:attribute name="TO" type="xsd:string" use="required"></xsd:attribute>
+          <xsd:attribute name="ELEMENTS" type="ELEMENTSTYPE" use="required"></xsd:attribute>
+          <xsd:attribute name="SPEED" type="SPEEDTYPE" use="optional"></xsd:attribute>
+          <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="GTU">
+        <xsd:complexType>
+          <xsd:attribute name="NAME" type="xsd:string" use="required"></xsd:attribute>
+          <xsd:attribute name="GTUTYPE" type="GTUTYPETYPE" use="required"></xsd:attribute>
+          <xsd:attribute name="LENGTH" type="LENGTHDISTTYPE" use="required"></xsd:attribute>
+          <xsd:attribute name="WIDTH" type="LENGTHDISTTYPE" use="required"></xsd:attribute>
+          <xsd:attribute name="FOLLOWING" type="FOLLOWINGTYPE" use="required"></xsd:attribute>
+          <xsd:attribute name="LANECHANGE" type="LANECHANGETYPE" use="required"></xsd:attribute>
+          <xsd:attribute name="MAXSPEED" type="SPEEDDISTTYPE" use="required"></xsd:attribute>
+        </xsd:complexType>
+      </xsd:element>
+
+    </xsd:choice>
+  </xsd:group>
+
+  <xsd:element name="NETWORK">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="GLOBAL" minOccurs="0" maxOccurs="1">
+          <xsd:complexType>
+            <xsd:attribute name="SPEED" type="SPEEDTYPE" use="optional"></xsd:attribute>
+            <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
+          </xsd:complexType>
+        </xsd:element>
+
+        <xsd:group ref="NODELINK" minOccurs="1" maxOccurs="unbounded" />
+
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

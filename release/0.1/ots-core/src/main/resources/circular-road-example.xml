@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NETWORK xmlns="http://www.opentrafficsim.org/ots-infra"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opentrafficsim.org/ots-infra ots-infra.xsd">
+
+	<GLOBAL WIDTH="3.6m" SPEED="80km/h" />
+
+	<NODE NAME="N1" COORDINATE="(0.0, 0.0)" ANGLE="90" />
+	<NODE NAME="N2" />
+	<NODE NAME="NE" />
+
+	<LINK NAME="L1" FROM="N1" TO="N2" ELEMENTS="A1:D:A2">
+		<ARC RADIUS="1000m" ANGLE="180" DIRECTION="L" />
+	</LINK>
+
+	<LINK NAME="L2" FROM="N2" TO="N1" ELEMENTS="A1:D:A2">
+		<ARC RADIUS="1000m" ANGLE="180" DIRECTION="L" />
+	</LINK>
+
+	<LINK NAME="ENTRY" FROM="NE" TO="N1" ELEMENTS="A1:D:A2">
+		<STRAIGHT LENGTH="200m" />
+	</LINK>
+
+</NETWORK>
