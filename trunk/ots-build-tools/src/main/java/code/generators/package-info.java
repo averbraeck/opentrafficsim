@@ -1,5 +1,5 @@
 /**
- * Code generators. <br/>
+ * Code generators. <br>
  * Code generators should be used whenever a software architect runs into major "DRY" (Don't Repeat Yourself" problems 
  * that cannot be fixed by better use of generics, sub-classing, etc.
  * <p>

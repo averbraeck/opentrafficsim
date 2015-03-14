@@ -585,8 +585,8 @@ public class CodeGenerator
     }
 
     /**
-     * Convert an ArrayList&ltString&gt; into an array of String.
-     * @param code ArrayList<String>; the lines to convert to an array of string
+     * Convert an ArrayList&lt;String&gt; into an array of String.
+     * @param code ArrayList&lt;String&gt;; the lines to convert to an array of string
      * @return String[]; array containing the strings from the ArrayList
      */
     public static String[] arrayListToArray(final ArrayList<String> code)
