@@ -3,7 +3,7 @@
   <parent>
     <groupId>opentrafficsim</groupId>
     <artifactId>ots-base</artifactId>
-    <version>0.1</version>
+    <version>0.02.01</version>
   </parent>
   <artifactId>ots-demo</artifactId>
   <name>Open Traffic Sim demo classes</name>
