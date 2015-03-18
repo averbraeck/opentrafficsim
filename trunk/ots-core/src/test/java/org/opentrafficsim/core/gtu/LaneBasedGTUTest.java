@@ -127,6 +127,17 @@ public class LaneBasedGTUTest
         DoubleScalar.Rel<LengthUnit> truckWidth = new DoubleScalar.Rel<LengthUnit>(2.5, LengthUnit.METER);
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
         DoubleScalar.Abs<SpeedUnit> maximumVelocity = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
+        try
+        {
+            new LaneBasedIndividualCar<String>("Truck", truckType, null /* GTU following model */, laneChangeModel,
+                    truckPositions, truckSpeed, truckLength, truckWidth, maximumVelocity,
+                    (OTSDEVSSimulatorInterface) simulator.getSimulator());
+            fail("null GTUFollowingModel should have thrown a GTUException");
+        }
+        catch (GTUException e)
+        {
+            // Ignore expected exception
+        }
         GTUFollowingModel gtuFollowingModel = new IDMPlus();
         LaneBasedIndividualCar<String> truck =
                 new LaneBasedIndividualCar<String>("Truck", truckType, gtuFollowingModel, laneChangeModel,
