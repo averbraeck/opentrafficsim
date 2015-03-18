@@ -12,6 +12,7 @@ import java.util.Random;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.FloydWarshallShortestPaths;
 import org.opentrafficsim.core.network.LinkEdge;
+import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
@@ -33,6 +34,8 @@ import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
  */
 public class Routes
 {
+    public final static long seed = 100;
+    public static Random fRandom = new Random(seed);
 
     /**
      * @param model
@@ -60,15 +63,17 @@ public class Routes
         {
 
             // create stochastic link edge weights
+            
             for (LinkEdge le : model.getAreaGraph().edgeSet())
             {
-                double rateCongestedVersusFreeSpeed = 1.0;
+                double rateCongestedVersusFreeTravelTime = 1.0;
+                BoundedNode startNode =
+                        (BoundedNode) model.getNodeAreaGraphMap().get(le.getLink().getStartNode().getId());
+                BoundedNode endNode =
+                        (BoundedNode) model.getNodeAreaGraphMap().get(le.getLink().getEndNode().getId());
                 if (!initiateSimulation)
                 {
-                    BoundedNode startNode =
-                            (BoundedNode) model.getNodeAreaGraphMap().get(le.getLink().getStartNode().getId());
-                    BoundedNode endNode =
-                            (BoundedNode) model.getNodeAreaGraphMap().get(le.getLink().getEndNode().getId());
+
                     if (startNode.getBehaviourType() == TrafficBehaviourType.NTM
                             && endNode.getBehaviourType() == TrafficBehaviourType.NTM)
                     {
@@ -82,7 +87,7 @@ public class Routes
                             double freeSpeedStart =
                                     cellBehaviourStart.getParametersNTM().getFreeSpeed()
                                             .getInUnit(SpeedUnit.KM_PER_HOUR);
-                            rateCongestedVersusFreeSpeed = 0.5 * freeSpeedStart / currentSpeedStart;
+                            rateCongestedVersusFreeTravelTime = 0.5 * freeSpeedStart / currentSpeedStart;
                             CellBehaviourNTM cellBehaviourEnd = (CellBehaviourNTM) endNode.getCellBehaviour();
                             double currentSpeedEnd =
                                     cellBehaviourEnd.retrieveCurrentSpeed(cellBehaviourEnd.getAccumulatedCars(),
@@ -90,7 +95,7 @@ public class Routes
                                             SpeedUnit.KM_PER_HOUR);
                             double freeSpeedEnd =
                                     cellBehaviourEnd.getParametersNTM().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
-                            rateCongestedVersusFreeSpeed += 0.5 * freeSpeedEnd / currentSpeedEnd;
+                            rateCongestedVersusFreeTravelTime += 0.5 * freeSpeedEnd / currentSpeedEnd;
                         }
                     }
                     else if (startNode.getBehaviourType() == TrafficBehaviourType.FLOW
@@ -100,9 +105,9 @@ public class Routes
                         LinkCellTransmission ctmLink = (LinkCellTransmission) le.getLink();
                         double freeTime = ctmLink.getTime().getInUnit(TimeUnit.SECOND);
                         double currrentTime = ctmLink.retrieveActualTime().getInUnit(TimeUnit.SECOND);
-                        rateCongestedVersusFreeSpeed = currrentTime / freeTime;
+                        rateCongestedVersusFreeTravelTime = currrentTime / freeTime;
 
-                        if (rateCongestedVersusFreeSpeed > 10000)
+                        if (rateCongestedVersusFreeTravelTime > 10000)
                         {
                             System.out.println("Start: " + startNode.getId() + " End node: " + endNode.getId()
                                     + " currentTime: " + currrentTime + " freeTime: " + currrentTime);
@@ -110,15 +115,20 @@ public class Routes
                         }
 
                     }
-                    else if (startNode.getBehaviourType() == TrafficBehaviourType.CORDON
-                            || endNode.getBehaviourType() == TrafficBehaviourType.CORDON)
-                    {
-                        rateCongestedVersusFreeSpeed = 0.001;
-                    }
-
                 }
+                
+                if (startNode.getBehaviourType() == TrafficBehaviourType.CORDON
+                        || endNode.getBehaviourType() == TrafficBehaviourType.CORDON)
+                {
+                    rateCongestedVersusFreeTravelTime = 999999;
+                }
+                double speed = ((Link) le.getLink()).getFreeSpeed().getInUnit(SpeedUnit.METER_PER_SECOND);
+                double length = le.getLink().getLength().getInUnit(LengthUnit.METER);
+                double travelTime =  length / speed;
+//                double weight =
+//                        rateCongestedVersusFreeTravelTime * model.getAreaGraph().getEdgeWeight(le) * Gaussian(VARIANCE, 100);
                 double weight =
-                        rateCongestedVersusFreeSpeed * model.getAreaGraph().getEdgeWeight(le) * Gaussian(VARIANCE);
+                        rateCongestedVersusFreeTravelTime * travelTime * Gaussian(fRandom, VARIANCE);
                 model.getAreaGraph().setEdgeWeight(le, weight);
             }
 
@@ -220,7 +230,7 @@ public class Routes
                     }
 
                     WriteOutput.writeOutputRoutesNTM(model, steps, i, origin, neighbour, destination, MAXSTEPS,
-                            dataRoutesNTMOut, share, weightNew * addShare);
+                            dataRoutesNTMOut, share, weightNew * addShare, path.getWeight());
 
                     // only for initialisation of routes over the flow Links;
                     if (path.getEdgeList().get(0).getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
@@ -273,13 +283,14 @@ public class Routes
     }
 
     /**
+     * @param fRandom 
+     * @param VARIANCE 
      * @return
      */
-    public static double Gaussian(double VARIANCE)
+    public static double Gaussian(Random random, double VARIANCE)
     {
         double MEAN = 100.0f;
-        Random fRandom = new Random();
-        double number = MEAN + fRandom.nextGaussian() * VARIANCE;
+        double number = MEAN + random.nextGaussian() * VARIANCE;
         return number / 100;
     }
 

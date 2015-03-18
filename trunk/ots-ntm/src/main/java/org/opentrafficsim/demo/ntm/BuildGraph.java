@@ -89,9 +89,9 @@ public class BuildGraph
             {
                 LinkEdge<Link> linkEdge = new LinkEdge<>(shpLink);
                 model.getLinkGraph().addEdge(nodeA, nodeB, linkEdge);
-                double speed = shpLink.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
-                double length = shpLink.getLength().getInUnit(LengthUnit.KILOMETER);
-                double travelTime = speed * length;
+                double speed = shpLink.getFreeSpeed().getInUnit(SpeedUnit.METER_PER_SECOND);
+                double length = shpLink.getLength().getInUnit(LengthUnit.METER);
+                double travelTime = length / speed;
                 model.getLinkGraph().setEdgeWeight(linkEdge, travelTime);
                 linkMap.put(shpLink.getId(), linkEdge);
             }
@@ -971,10 +971,11 @@ public class BuildGraph
      * @param centroid
      * @return the additional areas
      */
-    /*
-     * public SimpleDirectedWeightedGraph copySimpleDirectedWeightedGraph(final SimpleDirectedWeightedGraph graph) {
-     * SimpleDirectedWeightedGraph copyOfGraph; graph. return copyOfGraph; }
-     */
+    public SimpleDirectedWeightedGraph copySimpleDirectedWeightedGraph(final SimpleDirectedWeightedGraph graph)
+    {
+        SimpleDirectedWeightedGraph copyOfGraph = null;
+        return copyOfGraph;
+    }
 
     /**
      * For every area, find the touching areas

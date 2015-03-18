@@ -188,7 +188,7 @@ public class WriteOutput
         String description = "CellData";
         String DATATYPE = "cellData";
         createDir(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap());
-       
+
         if (steps == 1)
         {
             File fileLaneLength =
@@ -484,6 +484,15 @@ public class WriteOutput
     static BufferedWriter dataFluxToNeighbourNTMOut = null;
 
     /** */
+    static BufferedWriter dataDemandToNeighbourNTMOut = null;
+
+    /** */
+    static BufferedWriter dataAccumulationToNeighbourNTMOut = null;
+
+    /** */
+    static BufferedWriter dataRouteFractionToNeighbourNTMOut = null;
+
+    /** */
     static BufferedWriter dataDemandVersusCapacityToNeighbourNTMOut = null;
 
     /** */
@@ -520,7 +529,16 @@ public class WriteOutput
     static Double[][][] fluxToNeighbourNTM = new Double[9][9][MAXSTEPS];
 
     /** */
-    static HashMap<Node, HashMap<Node, Double[]>> fluxToNeighbourNTMMap = new HashMap<>();
+    static HashMap<Node, HashMap<Node, HashMap<Node, Double[]>>> fluxToNeighbourNTMMap = new HashMap<>();
+
+    /** */
+    static HashMap<Node, HashMap<Node, HashMap<Node, Double[]>>> demandToNeighbourNTMMap = new HashMap<>();
+
+    /** */
+    static HashMap<Node, HashMap<Node, HashMap<Node, Double[]>>> accumulationToNeighbourNTMMap = new HashMap<>();
+
+    /** */
+    static HashMap<Node, HashMap<Node, HashMap<Node, Double[]>>> routeFractionToNeighbourNTMMap = new HashMap<>();
 
     /** */
     static HashMap<Node, HashMap<Node, Double[]>> demandVersusCapacityToNeighbourNTMMap = new HashMap<>();
@@ -559,15 +577,50 @@ public class WriteOutput
         String description = "fluxes";
         String DATATYPE = "fluxes";
         createDir(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap());
-
         if (steps == 1)
         {
             File file =
                     new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             dataFluxToNeighbourNTMOut = createWriter(file);
         }
-        writeHashMap(model, steps, MAXSTEPS, description, dataFluxToNeighbourNTMOut, fluxToNeighbourNTMMap, indexNode,
-                DATATYPE);
+        writeHashMap(model, steps, MAXSTEPS, description, dataFluxToNeighbourNTMOut, null, fluxToNeighbourNTMMap,
+                indexNode, DATATYPE);
+
+        fileName = "/NTMdemandToNeighbour";
+        description = "demandToNeighbour";
+        DATATYPE = "demandToNeighbour";
+        if (steps == 1)
+        {
+            File file =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
+            dataDemandToNeighbourNTMOut = createWriter(file);
+        }
+        writeHashMap(model, steps, MAXSTEPS, description, dataDemandToNeighbourNTMOut, null, demandToNeighbourNTMMap,
+                indexNode, DATATYPE);
+
+        fileName = "/NTMaccumulationToNeighbour";
+        description = "accumulationToNeighbour";
+        DATATYPE = "accumulationToNeighbour";
+        if (steps == 1)
+        {
+            File file =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
+            dataAccumulationToNeighbourNTMOut = createWriter(file);
+        }
+        writeHashMap(model, steps, MAXSTEPS, description, dataAccumulationToNeighbourNTMOut, null,
+                accumulationToNeighbourNTMMap, indexNode, DATATYPE);
+
+        fileName = "/NTMrouteFractionToNeighbour";
+        description = "routeFractionToNeighbour";
+        DATATYPE = "routeFractionToNeighbour";
+        if (steps == 1)
+        {
+            File file =
+                    new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
+            dataRouteFractionToNeighbourNTMOut = createWriter(file);
+        }
+        writeHashMap(model, steps, MAXSTEPS, description, dataRouteFractionToNeighbourNTMOut, null,
+                routeFractionToNeighbourNTMMap, indexNode, DATATYPE);
 
         fileName = "/NTMdemandVersusCapacityToNeighbour";
         description = "demandVersusCapacity";
@@ -579,7 +632,7 @@ public class WriteOutput
             dataDemandVersusCapacityToNeighbourNTMOut = createWriter(file);
         }
         writeHashMap(model, steps, MAXSTEPS, description, dataDemandVersusCapacityToNeighbourNTMOut,
-                demandVersusCapacityToNeighbourNTMMap, indexNode, DATATYPE);
+                demandVersusCapacityToNeighbourNTMMap, null, indexNode, DATATYPE);
 
         fileName = "/NTMtravelTimeToDestination";
         description = "timeToDestination";
@@ -602,7 +655,7 @@ public class WriteOutput
                     new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             dataODDeparturesNTMOut = createWriter(file);
         }
-        writeHashMap(model, steps, MAXSTEPS, description, dataODDeparturesNTMOut, ODDeparturesNTMMap, indexNode,
+        writeHashMap(model, steps, MAXSTEPS, description, dataODDeparturesNTMOut, ODDeparturesNTMMap, null, indexNode,
                 DATATYPE);
 
         fileName = "/NTMarrivalsByOD";
@@ -614,7 +667,8 @@ public class WriteOutput
                     new File(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName + ".txt");
             dataODArrivalsNTMOut = createWriter(file);
         }
-        writeHashMap(model, steps, MAXSTEPS, description, dataODArrivalsNTMOut, ODArrivalsNTMMap, indexNode, DATATYPE);
+        writeHashMap(model, steps, MAXSTEPS, description, dataODArrivalsNTMOut, ODArrivalsNTMMap, null, indexNode,
+                DATATYPE);
 
         fileName = "/ALLarrivals";
         description = "Arrived trips";
@@ -707,7 +761,7 @@ public class WriteOutput
      * @throws IOException
      */
     public static void writeOutputRoutesNTM(NTMModel model, int steps, int pathIterator, Node startNode,
-            Node neighbour, Node destination, int MAXSTEPS, BufferedWriter data, double oldShare, double addShare)
+            Node neighbour, Node destination, int MAXSTEPS, BufferedWriter data, double oldShare, double addShare, double pathWeight)
             throws IOException
     {
         // for testing we open a file and write some results:
@@ -717,7 +771,7 @@ public class WriteOutput
         path.add(startNode);
         path.add(neighbour);
         path.add(destination);
-        writeRoutes(model, steps, pathIterator, MAXSTEPS, data, description, path, oldShare, addShare);
+        writeRoutes(model, steps, pathIterator, MAXSTEPS, data, description, path, oldShare, addShare, pathWeight);
 
     }
 
@@ -732,13 +786,13 @@ public class WriteOutput
      * @throws IOException
      */
     static void writeRoutes(NTMModel model, int steps, int pathIterator, int MAXSTEPS, BufferedWriter data,
-            String description, ArrayList<Node> dataArray, double oldShare, double addShare) throws IOException
+            String description, ArrayList<Node> dataArray, double oldShare, double addShare, double pathWeight) throws IOException
     {
         if (description == "routesNTM")
         {
 
-            if (steps <= MAXSTEPS - 1 && dataArray.get(2).getId().equals("C9")
-                    && !dataArray.get(0).getId().startsWith("C"))
+            if (steps <= MAXSTEPS - 1 && dataArray.get(2).getId().equals("C1017")
+                    && dataArray.get(0).getId().startsWith("C70"))
             {
                 if (startRoute)
                 {
@@ -748,7 +802,8 @@ public class WriteOutput
                     data.write("Neighbour       " + ", ");
                     data.write("destination     " + ", ");
                     data.write("oldShare        " + ", ");
-                    data.write("added Weight     " + ", ");
+                    data.write("added Weight    " + ", ");
+                    data.write("travel Time     " + ", ");
 
                     data.write(" \n");
                     startRoute = false;
@@ -762,6 +817,7 @@ public class WriteOutput
                 }
                 data.write(oldShare + ", ");
                 data.write(addShare + ", ");
+                data.write(pathWeight + ", ");
 
                 data.write(" \n");
 
@@ -779,7 +835,9 @@ public class WriteOutput
      * @param intNodeMap
      */
     static void writeHashMap(NTMModel model, int steps, int MAXSTEPS, String description, BufferedWriter data,
-            HashMap<Node, HashMap<Node, Double[]>> nodeNodeDoublemap, HashMap<Integer, Node> intNodeMap, String DATATYPE)
+            HashMap<Node, HashMap<Node, Double[]>> nodeNodeDoublemap,
+            HashMap<Node, HashMap<Node, HashMap<Node, Double[]>>> nodeNodeNodeDoublemap,
+            HashMap<Integer, Node> intNodeMap, String DATATYPE)
     {
 
         if (steps < MAXSTEPS)
@@ -789,17 +847,59 @@ public class WriteOutput
 
             for (Node nodeIn : graphVertices)
             {
-                BoundedNode node = (BoundedNode) nodeIn;
-                if (node.getBehaviourType() == TrafficBehaviourType.NTM
-                        || node.getBehaviourType() == TrafficBehaviourType.CORDON)
+                BoundedNode origin = (BoundedNode) nodeIn;
+                if (origin.getBehaviourType() == TrafficBehaviourType.NTM
+                        || origin.getBehaviourType() == TrafficBehaviourType.CORDON)
                 {
-                    CellBehaviour cellBehaviour = node.getCellBehaviour();
-                    for (TripInfoByDestination tripInfoByDestination : cellBehaviour.getTripInfoByDestinationMap().values())
+                    CellBehaviour cellBehaviour = origin.getCellBehaviour();
+                    for (TripInfoByDestination tripInfoByDestination : cellBehaviour.getTripInfoByDestinationMap()
+                            .values())
                     {
+                        BoundedNode destination = (BoundedNode) tripInfoByDestination.getDestination();
+                        double trips = 0;
+                        if (DATATYPE == "arrivalsOD")
+                        {
+                            trips = tripInfoByDestination.getArrivedTrips();
+                        }
+                        else if (DATATYPE == "departuresOD")
+                        {
+                            trips = tripInfoByDestination.getDepartedTrips();
+
+                        }
+                        if (trips > 0.0)
+                        {
+                            if (nodeNodeDoublemap != null)
+                            {
+                                if (nodeNodeDoublemap.get(origin) == null)
+                                {
+                                    HashMap<Node, Double[]> fluxMap = new HashMap<Node, Double[]>();
+                                    Double[] fluxes = new Double[MAXSTEPS];
+                                    fluxes[steps - 1] = trips;
+                                    fluxMap.put(destination, fluxes);
+                                    nodeNodeDoublemap.put(origin, fluxMap);
+                                }
+                                else
+                                {
+                                    if (nodeNodeDoublemap.get(origin).get(destination) == null)
+                                    {
+                                        Double[] fluxes = new Double[MAXSTEPS];
+                                        fluxes[steps - 1] = trips;
+                                        nodeNodeDoublemap.get(origin).put(destination, fluxes);
+                                    }
+                                    else
+                                    {
+                                        Double[] fluxes = nodeNodeDoublemap.get(origin).get(destination);
+                                        fluxes[steps - 1] = trips;
+                                        nodeNodeDoublemap.get(origin).put(destination, fluxes);
+                                    }
+                                }
+                            }
+                        }
+                        
                         Set<BoundedNode> neighbours = tripInfoByDestination.getRouteFractionToNeighbours().keySet();
                         for (BoundedNode neighbour : neighbours)
                         {
-                            double trips = 0;
+                            trips = 0;
                             if (DATATYPE == "demandVersusCapacity")
                             {
                                 if (cellBehaviour.getBorderDemand() != null)
@@ -827,40 +927,59 @@ public class WriteOutput
                                         tripInfoByDestination.getRouteFractionToNeighbours().get(neighbour)
                                                 * tripInfoByDestination.getFluxToNeighbour();
                             }
-                            else if (DATATYPE == "arrivalsOD")
+                            else if (DATATYPE == "demandToNeighbour")
                             {
-                                trips = tripInfoByDestination.getArrivedTrips();
+                                trips = tripInfoByDestination.getDemandToNeighbour().get(neighbour);
                             }
-                            else if (DATATYPE == "departuresOD")
+                            else if (DATATYPE == "accumulationToNeighbour")
                             {
-                                trips = tripInfoByDestination.getDepartedTrips();
-
+                                trips = tripInfoByDestination.getAccumulatedCarsToNeighbour().get(neighbour);
+                            }
+                            else if (DATATYPE == "routeFractionToNeighbour")
+                            {
+                                trips = tripInfoByDestination.getRouteFractionToNeighbours().get(neighbour);
                             }
 
                             if (trips > 0.0)
                             {
-                                if (nodeNodeDoublemap.get(node) == null)
+                                if (nodeNodeNodeDoublemap != null)
                                 {
-                                    HashMap<Node, Double[]> fluxMap = new HashMap<Node, Double[]>();
-                                    Double[] fluxes = new Double[MAXSTEPS];
-                                    fluxes[steps - 1] = trips;
-                                    fluxMap.put(neighbour, fluxes);
-                                    nodeNodeDoublemap.put(node, fluxMap);
-                                }
-                                else
-                                {
-                                    if (nodeNodeDoublemap.get(node).get(neighbour) == null)
+                                    if (nodeNodeNodeDoublemap.get(origin) == null)
                                     {
+                                        HashMap<Node, HashMap<Node, Double[]>> nodeFluxMap =
+                                                new HashMap<Node, HashMap<Node, Double[]>>();
+                                        HashMap<Node, Double[]> fluxMap = new HashMap<Node, Double[]>();
                                         Double[] fluxes = new Double[MAXSTEPS];
                                         fluxes[steps - 1] = trips;
-                                        nodeNodeDoublemap.get(node).put(neighbour, fluxes);
+                                        fluxMap.put(neighbour, fluxes);
+                                        nodeFluxMap.put(destination, fluxMap);
+                                        nodeNodeNodeDoublemap.put(origin, nodeFluxMap);
                                     }
                                     else
                                     {
-                                        Double[] fluxes = nodeNodeDoublemap.get(node).get(neighbour);
-                                        fluxes[steps - 1] = trips;
+                                        if (nodeNodeNodeDoublemap.get(origin).get(destination) == null)
+                                        {
+                                            HashMap<Node, Double[]> fluxMap = new HashMap<Node, Double[]>();
+                                            Double[] fluxes = new Double[MAXSTEPS];
+                                            fluxes[steps - 1] = trips;
+                                            fluxMap.put(neighbour, fluxes);
+                                            nodeNodeNodeDoublemap.get(origin).put(destination, fluxMap);
+                                        }
+                                        else if (nodeNodeNodeDoublemap.get(origin).get(destination).get(neighbour) == null)
+                                        {
+                                            Double[] fluxes = new Double[MAXSTEPS];
+                                            fluxes[steps - 1] = trips;
+                                            nodeNodeNodeDoublemap.get(origin).get(destination).put(neighbour, fluxes);
+                                        }
+                                        else
+                                        {
+                                            Double[] fluxes = nodeNodeNodeDoublemap.get(origin).get(destination).get(neighbour);
+                                            fluxes[steps - 1] = trips;
+                                            nodeNodeNodeDoublemap.get(origin).get(destination).put(neighbour, fluxes);
+                                        }
                                     }
                                 }
+
                             }
                         }
                     }
@@ -869,39 +988,81 @@ public class WriteOutput
                 }
             }
         }
-        String textOut;
 
+        String textOut;
         // Write data to file
         if (steps == MAXSTEPS - 1)
         {
             try
             {
-                for (int i = 0; i < numberOfCells; i++)
+                if (nodeNodeDoublemap != null)
                 {
-                    HashMap<Node, Double[]> fluxMap = nodeNodeDoublemap.get(intNodeMap.get(i));
-                    if (fluxMap != null)
+                    for (int i = 0; i < numberOfCells; i++)
                     {
-                        for (int j = 0; j < numberOfCells; j++)
+                        HashMap<Node, Double[]> fluxMap = nodeNodeDoublemap.get(intNodeMap.get(i));
+                        if (fluxMap != null)
                         {
-                            Double[] trips = fluxMap.get(intNodeMap.get(j));
-                            if (trips != null)
+                            for (int j = 0; j < numberOfCells; j++)
                             {
-                                data.write(description + " " + intNodeMap.get(i).getId() + intNodeMap.get(j).getId()
-                                        + ", ");
-                                for (int k = 0; k < steps; k++)
+                                Double[] trips = fluxMap.get(intNodeMap.get(j));
+                                if (trips != null)
                                 {
-                                    if (trips[k] == null)
+                                    data.write(description + " " + intNodeMap.get(i).getId()
+                                            + intNodeMap.get(j).getId() + ", ");
+                                    for (int k = 0; k < steps; k++)
                                     {
-                                        trips[k] = 0.0;
+                                        if (trips[k] == null)
+                                        {
+                                            trips[k] = 0.0;
+                                        }
+                                        textOut = String.format("%.5f", trips[k]);
+                                        data.write(textOut + ", ");
                                     }
-                                    textOut = String.format("%.5f", trips[k]);
-                                    data.write(textOut + ", ");
+                                    data.write(" \n");
                                 }
-                                data.write(" \n");
                             }
                         }
                     }
                 }
+                if (nodeNodeNodeDoublemap != null)
+                {
+                    for (int i = 0; i < numberOfCells; i++)
+                    {
+                        HashMap<Node, HashMap<Node, Double[]>> nodeFluxMap =
+                                nodeNodeNodeDoublemap.get(intNodeMap.get(i));
+                        if (nodeFluxMap != null)
+                        {
+                            for (int j = 0; j < numberOfCells; j++)
+                            {
+                                HashMap<Node, Double[]> fluxMap = nodeFluxMap.get(intNodeMap.get(j));
+                                if (fluxMap != null)
+                                {
+                                    for (int k = 0; k < numberOfCells; k++)
+                                    {
+                                        Double[] trips = fluxMap.get(intNodeMap.get(k));
+                                        if (trips != null)
+                                        {
+                                            data.write(description + " " + intNodeMap.get(i).getId() + " "
+                                                    + intNodeMap.get(j).getId() + " " + intNodeMap.get(k).getId()
+                                                    + ", ");
+                                            for (int l = 0; l < steps; l++)
+                                            {
+                                                if (trips[l] == null)
+                                                {
+                                                    trips[l] = 0.0;
+                                                }
+                                                textOut = String.format("%.5f", trips[l]);
+                                                data.write(textOut + ", ");
+                                            }
+                                            data.write(" \n");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 data.close();
             }
             catch (IOException exception)
@@ -959,10 +1120,6 @@ public class WriteOutput
                         dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getDepartures();
                     }
                     else if (DATATYPE == "accumulation")
-                    {
-                        dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getAccumulatedCars();
-                    }
-                    else if (DATATYPE == "routes")
                     {
                         dataArray[nodeIndex.get(node)][steps - 1] = cellBehaviour.getAccumulatedCars();
                     }
@@ -1173,21 +1330,25 @@ public class WriteOutput
         }
         return bWriter;
     }
-    
+
     static File createDir(String directory)
     {
-        File theDir = new File( directory);
-    
+        File theDir = new File(directory);
+
         // if the directory does not exist, create it
-        if (!theDir.exists()) {
-          boolean result = false;
-    
-          try{
-              theDir.mkdir();
-              result = true;
-           } catch(SecurityException se){
-              //handle it
-           }        
+        if (!theDir.exists())
+        {
+            boolean result = false;
+
+            try
+            {
+                theDir.mkdir();
+                result = true;
+            }
+            catch (SecurityException se)
+            {
+                // handle it
+            }
         }
         return theDir;
     }
