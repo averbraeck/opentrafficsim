@@ -434,7 +434,7 @@ public class NTMsimulation
 
                                 else
                                 {
-                                    System.out.println("NTMSimulation line 379: Strange: no neighbour");
+                                    //System.out.println("NTMSimulation line 379: Strange: no neighbour");
                                 }
                             }
                             // In the next step, see whether this demand from nodes is able to enter completely or
@@ -544,15 +544,19 @@ public class NTMsimulation
                                                                 .get(tripInfoByDestination.getDestination());
                                                 // we don't have to iterate over multiple neighbours: there is no
                                                 // specific one...
-                                                double demandToDestination =
-                                                        cellInfoByDestinationMap.getAccumulatedCarsToNeighbour().get(
-                                                                neighbour)
-                                                                / accumulationCell
-                                                                * cell.getCellBehaviourFlow().getDemand();
+                                                if (cellInfoByDestinationMap.getAccumulatedCarsToNeighbour().get(
+                                                        neighbour) != null)
+                                                {
+                                                    double demandToDestination =
+                                                            cellInfoByDestinationMap.getAccumulatedCarsToNeighbour()
+                                                                    .get(neighbour)
+                                                                    / accumulationCell
+                                                                    * cell.getCellBehaviourFlow().getDemand();
 
-                                                // **** RELEVANT
-                                                cellInfoByDestinationMap.getDemandToNeighbour().put(neighbour,
-                                                        demandToDestination);
+                                                    // **** RELEVANT
+                                                    cellInfoByDestinationMap.getDemandToNeighbour().put(neighbour,
+                                                            demandToDestination);
+                                                }
                                             }
 
                                         }
@@ -578,31 +582,41 @@ public class NTMsimulation
                                                         System.out.println("Stop");
                                                     }
                                                 }
-                                                double addDemandToDestination =
-                                                        lastCell.getCellBehaviourFlow().getTripInfoByDestinationMap()
+                                                if (lastCell.getCellBehaviourFlow().getTripInfoByDestinationMap()
                                                                 .get(tripInfoByDestination.getDestination())
-                                                                .getDemandToNeighbour().get(neighbour);
-                                                // lastCell.getCellBehaviourFlow().getTripInfoByDestinationMap()
-                                                // .get(tripInfoByDestination.getDestination())
-                                                // .getDemandToDestination();
-                                                // * tripInfoByDestination.getNeighbourAndRouteShare()
-                                                // .get(neighbour);
-                                                if (nextNeighbour.getBehaviourType() == TrafficBehaviourType.FLOW)
+                                                                .getDemandToNeighbour().get(neighbour) !=null)
                                                 {
-                                                    LinkCellTransmission ctmLinkNext =
-                                                            (LinkCellTransmission) model.getAreaGraph()
-                                                                    .getEdge(neighbour, nextNeighbour).getLink();
-                                                    ctmLinkNext.getCells().get(0).getCellBehaviourFlow()
-                                                            .addDemandToEnter(addDemandToDestination); // shareOfNeighbour
-                                                                                                       // *
+                                                    double addDemandToDestination =
+                                                            lastCell.getCellBehaviourFlow().getTripInfoByDestinationMap()
+                                                                    .get(tripInfoByDestination.getDestination())
+                                                                    .getDemandToNeighbour().get(neighbour);
+                                                    // lastCell.getCellBehaviourFlow().getTripInfoByDestinationMap()
+                                                    // .get(tripInfoByDestination.getDestination())
+                                                    // .getDemandToDestination();
+                                                    // * tripInfoByDestination.getNeighbourAndRouteShare()
+                                                    // .get(neighbour);
+                                                    if (nextNeighbour.getBehaviourType() == TrafficBehaviourType.FLOW)
+                                                    {
+                                                        LinkCellTransmission ctmLinkNext =
+                                                                (LinkCellTransmission) model.getAreaGraph()
+                                                                        .getEdge(neighbour, nextNeighbour).getLink();
+                                                        ctmLinkNext.getCells().get(0).getCellBehaviourFlow()
+                                                                .addDemandToEnter(addDemandToDestination); // shareOfNeighbour
+                                                                                                           // *
+    
+                                                    }
+                                                    else if (nextNeighbour.getBehaviourType() == TrafficBehaviourType.NTM
+                                                            || nextNeighbour.getBehaviourType() == TrafficBehaviourType.CORDON)
+                                                    {
+                                                        nextNeighbour.getCellBehaviour().addDemandToEnter(
+                                                                addDemandToDestination); // shareOfNeighbour *
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    System.out.println("No demand to destination");
+                                                }
 
-                                                }
-                                                else if (nextNeighbour.getBehaviourType() == TrafficBehaviourType.NTM
-                                                        || nextNeighbour.getBehaviourType() == TrafficBehaviourType.CORDON)
-                                                {
-                                                    nextNeighbour.getCellBehaviour().addDemandToEnter(
-                                                            addDemandToDestination); // shareOfNeighbour *
-                                                }
 
                                             }
                                         }
