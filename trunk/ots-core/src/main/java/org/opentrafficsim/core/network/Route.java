@@ -11,7 +11,9 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
  * indicate the next node to visit. Routes can be expanded (e.g. for node expansion), collapsed (e.g. to use a macro
  * model for a part of the route) or changed (e.g. to avoid congestion). Changing is done by adding and/or removing
  * nodes of the node list. When the last visited node of the route is deleted, however, it is impossible to follow the
- * route any further, which will result in a <code>NetworkException</code>.
+ * route any further, which will result in a <code>NetworkException</code>.<br/>
+ * The Node type in the list has generic parameters. This requires callers of getNode(), visitNextNode(), etc. to cast
+ * the result as needed. and permits inclusion mixed types of Nodes in one Route.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -19,9 +21,7 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
  * <p>
  * @version Jan 1, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a> FIXME: PK If this class is parameterized with
- *         the detailed Node type, no casts are needed when calling getNode(), visitNextNode, etc. and it will be
- *         impossible to insert Nodes of mixed types in the same Route.
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class Route implements Serializable
 {
@@ -43,13 +43,14 @@ public class Route implements Serializable
     }
 
     /**
-     * Create a route based on an initial list of nodes.
+     * Create a route based on an initial list of nodes. <br/>
+     * This constructor makes a defensive copy of the provided List.
      * @param nodes the initial list of nodes.
      */
     public Route(final List<Node<?, ?>> nodes)
     {
-        // FIXME PK: Either make a defensive copy, or document that this constructor does not make a defensive copy
-        this.nodes = nodes;
+        // Make a defensive copy so constructors of GTUs can alter and re-use their List to construct other GTUs
+        this.nodes = new ArrayList<Node<?, ?>>(nodes);
     }
 
     /**
@@ -226,7 +227,7 @@ public class Route implements Serializable
     }
 
     /**
-     * FIXME: this fails if this route contains a Node more than once.
+     * Determine if this Route contains the specified Link.
      * @param link the link to check in the route.
      * @return whether the link is part of the route or not.
      */
@@ -234,16 +235,22 @@ public class Route implements Serializable
     {
         Node<?, ?> sn = link.getStartNode();
         Node<?, ?> en = link.getEndNode();
-        if (this.nodes.contains(sn) && this.nodes.contains(en))
+        for (int index = 1; index < this.nodes.size(); index++)
         {
-            return this.nodes.indexOf(en) - this.nodes.indexOf(sn) == 1;
+            if (this.nodes.get(index) == en)
+            {
+                if (this.nodes.get(index - 1) == sn)
+                {
+                    return true;
+                }
+            }
         }
         return false;
     }
 
     /**
-     * Return the index of a Node in this Route, or -1 if this Route does not contain the specified Node. FIXME: this
-     * fails if this route contains a Node more than once.
+     * Return the index of a Node in this Route, or -1 if this Route does not contain the specified Node. <br/>
+     * If this route contains the Node more than once, the index of the first is returned.
      * @param node Node&lt;?, ?&gt;; the Node to find
      * @return int;
      */
