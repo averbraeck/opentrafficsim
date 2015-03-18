@@ -1,6 +1,8 @@
 package org.opentrafficsim.core.network;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -66,6 +68,7 @@ public class RouteTest
         assertEquals("visitNextNode should return null", null, route.visitNextNode());
         assertEquals("nextNodeToVisit should return null", null, route.nextNodeToVisit());
         NodeGeotools.STR n1 = new NodeGeotools.STR("N1", new Coordinate(12, 34));
+        assertEquals("indexOf should return -1 for an empty Route", -1, route.indexOf(n1));
         try
         {
             route.addNode(1, n1);
@@ -87,11 +90,16 @@ public class RouteTest
         route.addNode(n1);
         assertEquals("Route should now contain one Node", 1, route.size());
         assertEquals("Node 0 of route should be N1", n1, route.getNode(0));
+        assertEquals("OriginNode should be N1", n1, route.originNode());
+        assertEquals("indexOf N1 should return 0", 0, route.indexOf(n1));
         NodeGeotools.STR n2 = new NodeGeotools.STR("N2", new Coordinate(56, 78));
         route.addNode(n2);
         assertEquals("Route should now contain two Nodes", 2, route.size());
         assertEquals("Node 0 of route should be N1", n1, route.getNode(0));
         assertEquals("Node 1 of route should be N2", n2, route.getNode(1));
+        assertEquals("OriginNode should be N1", n1, route.originNode());
+        assertEquals("indexOf N1 should return 0", 0, route.indexOf(n1));
+        assertEquals("indexOf N2 should return 1", 1, route.indexOf(n2));
         try
         {
             route.getNode(-1);
@@ -114,7 +122,9 @@ public class RouteTest
         assertEquals("nextNodeToVisit should be n1", n1, route.nextNodeToVisit());
         Node<?, ?> nextNode = route.visitNextNode();
         assertEquals("vistNextNode should have returned n1", n1, nextNode);
+        assertEquals("lastVisitedNode should return n1", n1, route.lastVisitedNode());
         assertEquals("nextNodeToVisit should be n2", n2, route.nextNodeToVisit());
+        assertEquals("lastVisitedNode should return n1", n1, route.lastVisitedNode());
         // Currently insertion before the "current" node is allowed and increments the internal lastNode index.
         NodeGeotools.STR n0 = new NodeGeotools.STR("n0", new Coordinate(0, 0));
         route.addNode(0, n0);
@@ -127,6 +137,7 @@ public class RouteTest
         assertEquals("nextNodeToVisit should still be n2", n2, route.nextNodeToVisit());
         nextNode = route.visitNextNode();
         assertEquals("vistNextNode should have returned n2", n2, nextNode);
+        assertEquals("lastVisitedNode should return n2", n2, route.lastVisitedNode());
         nextNode = route.visitNextNode();
         assertEquals("vistNextNode should have returned n3", n3, nextNode);
         nextNode = route.visitNextNode();
@@ -142,14 +153,21 @@ public class RouteTest
         assertEquals("Route element 1 is n1", n1, route.getNode(1));
         assertEquals("Route element 2 is n2", n2, route.getNode(2));
         assertEquals("Route element 3 is n3", n3, route.getNode(3));
-        Link<?, ?> l01 =
+        assertEquals("OriginNode should be n0", n0, route.originNode());
+        CrossSectionLink<?, ?> l01 =
                 new CrossSectionLink<String, String>("name", n0, n1, new DoubleScalar.Rel<LengthUnit>(200,
                         LengthUnit.METER));
+        assertTrue("Route contains Link l01", route.containsLink(l01));
+        CrossSectionLink<?, ?> l10 =
+                new CrossSectionLink<String, String>("name", n1, n0, new DoubleScalar.Rel<LengthUnit>(200,
+                        LengthUnit.METER));
+        assertFalse("Route contains Link l10", route.containsLink(l10));
         Node<?, ?> removedNode = route.removeNode(2);
         assertEquals("removeNode should return the removed node; i.c. n2", n2, removedNode);
         assertEquals("Route element 0 is n0", n0, route.getNode(0));
         assertEquals("Route element 1 is n1", n1, route.getNode(1));
         assertEquals("Route element 2 is n3", n3, route.getNode(2));
+        assertEquals("OriginNode should be n0", n0, route.originNode());
         try
         {
             route.removeNode(-1);
