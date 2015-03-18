@@ -19,4 +19,6 @@ public class PredefinedGTUTypes
     public static final GTUType<String> bike = new GTUType<String>("BIKE");
     public static final GTUType<String> car = new GTUType<String>("CAR");
     public static final GTUType<String> pedestrian = new GTUType<String>("PEDESTRIAN");
+    public static final GTUType<String> boat = new GTUType<String>("BOAT");
+    public static final GTUType<String> none = new GTUType<String>("NONE");
 }
