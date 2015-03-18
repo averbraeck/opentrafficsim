@@ -23,7 +23,9 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.HeadwayGTU;
+import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.gtu.lane.changing.FixedLaneChangeModel;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
@@ -125,9 +127,10 @@ public class LaneBasedGTUTest
         DoubleScalar.Rel<LengthUnit> truckWidth = new DoubleScalar.Rel<LengthUnit>(2.5, LengthUnit.METER);
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
         DoubleScalar.Abs<SpeedUnit> maximumVelocity = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
+        GTUFollowingModel gtuFollowingModel = new IDMPlus();
         LaneBasedIndividualCar<String> truck =
-                new LaneBasedIndividualCar<String>("Truck", truckType, null, laneChangeModel, truckPositions,
-                        truckSpeed, truckLength, truckWidth, maximumVelocity,
+                new LaneBasedIndividualCar<String>("Truck", truckType, gtuFollowingModel, laneChangeModel,
+                        truckPositions, truckSpeed, truckLength, truckWidth, maximumVelocity,
                         (OTSDEVSSimulatorInterface) simulator.getSimulator());
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
@@ -187,8 +190,8 @@ public class LaneBasedGTUTest
                 Map<Lane, DoubleScalar.Rel<LengthUnit>> carPositions =
                         buildPositionsMap(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
                 LaneBasedIndividualCar<String> car =
-                        new LaneBasedIndividualCar<String>("Car", carType, null, laneChangeModel, carPositions,
-                                carSpeed, carLength, carWidth, maximumVelocity,
+                        new LaneBasedIndividualCar<String>("Car", carType, gtuFollowingModel, laneChangeModel,
+                                carPositions, carSpeed, carLength, carWidth, maximumVelocity,
                                 (OTSDEVSSimulatorInterface) simulator.getSimulator());
                 leader = truck.headway(forwardMaxDistance);
                 double actualHeadway = leader.getDistanceSI();
