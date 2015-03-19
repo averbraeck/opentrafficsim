@@ -65,13 +65,14 @@ public class Network
      */
     public final List<Long> getNodesFromWay(final Long wayid) throws IOException
     {
-        if (this.ways.get(wayid) == null)
+        Way w = this.ways.get(wayid);
+        if (w == null)
         {
             throw new IOException("Way with the ID: " + wayid + "was not found");
         }
         else
         {
-            return this.ways.get(wayid).getNodes();
+            return w.getNodes();
         }
     }
 
@@ -83,13 +84,14 @@ public class Network
      */
     public final Node getNode(final long nodeid) throws IOException
     {
-        if (this.nodes.get(nodeid) == null)
+        Node n = this.nodes.get(nodeid);
+        if (n == null)
         {
             throw new IOException("Node with the ID: " + nodeid + "was not found");
         }
         else
         {
-            return this.nodes.get(nodeid);
+            return n;
         }
     }
 
@@ -109,13 +111,14 @@ public class Network
      */
     public final Relation getRelation(final long relid) throws IOException
     {
-        if (this.relations.get(relid) == null)
+        Relation r = this.relations.get(relid);
+        if (r == null)
         {
             throw new IOException("Relation with the ID: " + relid + "was not found");
         }
         else
         {
-            return this.relations.get(relid);
+            return r;
         }
     }
 
@@ -135,13 +138,14 @@ public class Network
      */
     public final Way getWay(final long wayid) throws IOException
     {
-        if (this.ways.get(wayid) == null)
+        Way w = this.ways.get(wayid);
+        if (w == null)
         {
             throw new IOException("Way with the ID: " + wayid + "was not found");
         }
         else
         {
-            return this.ways.get(wayid);
+            return w;
         }
     }
 
@@ -240,31 +244,24 @@ public class Network
     public final void makeLinks() throws IOException
     {
         List<Link> links2 = new ArrayList<Link>();
-        double length;
-        Node n1;
-        Node n2;
-        double x1;
-        double x2;
-        double y1;
-        double y2;
         for (Long wayid : this.ways.keySet())
         {
             List<Long> waynodes = this.getWay(wayid).getNodes();
             for (int i = 0; i < (waynodes.size() - 1); i++)
             {
-                n1 = this.getNode(waynodes.get(i).longValue());
-                n2 = this.getNode(waynodes.get(i + 1).longValue());
+                Node fromNode = this.getNode(waynodes.get(i).longValue());
+                Node toNode = this.getNode(waynodes.get(i + 1).longValue());
                 // Workaround for bug in OSM near Mettmann Germany
-                if (n1 == n2)
+                if (fromNode == toNode)
                 {
                     continue;
                 }
-                x1 = n1.getLatitude();
-                x2 = n2.getLatitude();
-                y1 = n1.getLongitude();
-                y2 = n2.getLongitude();
-                length = distanceLongLat(x1, y1, x2, y2);
-                Link e = new Link(n1, n2, this.getWay(wayid).getTags(), length);
+                double x1 = fromNode.getLatitude();
+                double x2 = toNode.getLatitude();
+                double y1 = fromNode.getLongitude();
+                double y2 = toNode.getLongitude();
+                double length = distanceLongLat(x1, y1, x2, y2);
+                Link e = new Link(fromNode, toNode, this.getWay(wayid).getTags(), length);
                 links2.add(e);
             }
         }
@@ -304,6 +301,7 @@ public class Network
     }
 
     /**
+     * FIXME Network looks 'crooked' after using this.
      * This function checks for and removes redundancies between the networks links.
      */
     public final void removeRedundancy()
@@ -389,8 +387,6 @@ public class Network
                             lnew.addSpline(n2);
                         }
                     }
-                    // System.out.println("removing " + l1 + " and " + l2);
-                    // System.out.println("adding " + lnew);
                     checkedLinks.add(lnew);
                     removedLinks.add(l1);
                     removedLinks.add(l2);
@@ -398,15 +394,8 @@ public class Network
                 }
             }
         }
-        // System.out.println("Combining " + removedLinks.size() + " to " + checkedLinks.size());
-        // if (removedLinks.size() < 40)
-        // {
-        // for (Link l : removedLinks)
-        // System.out.println("Removing link " + l);
-        // }
         this.links.removeAll(removedLinks);
         this.links.addAll(checkedLinks);
-        //System.out.println("there are now " + this.links.size() + " links");
         return redundancy;
     }
     
@@ -459,18 +448,7 @@ public class Network
      */
     public final boolean hasPrecedingLink(final Link l)
     {
-        if (!this.links.contains(l))
-        {
-            throw new Error("This link does not exist in this network: " + l);
-        }
-        for (Link l2: this.links)
-        {
-            if (l.getStart().equals(l2.getEnd()))
-            {
-                return true;
-            }
-        }
-        return false;
+        return null != findPrecedingLink(l);
     }
     
     /**
@@ -480,17 +458,6 @@ public class Network
      */
     public final boolean hasFollowingLink(final Link l)
     {
-        if (!this.links.contains(l))
-        {
-            throw new Error("This link does not exist in this network: " + l);
-        }
-        for (Link l2: this.links)
-        {
-            if (l.getEnd().equals(l2.getStart()))
-            {
-                return true;
-            }
-        }
-        return false;
+        return null != findFollowingLink(l);
     }
 }

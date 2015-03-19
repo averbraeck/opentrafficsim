@@ -10,7 +10,7 @@ package org.opentrafficsim.importexport.osm;
  */
 public class Tag
 {
-    /** */
+    /** (Non-Unique) Key of the Tag. */
     private String key;
 
     /** */
