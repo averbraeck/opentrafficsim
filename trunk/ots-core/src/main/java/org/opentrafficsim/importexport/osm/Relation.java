@@ -1,12 +1,12 @@
 package org.opentrafficsim.importexport.osm;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 31 dec. 2014 <br>
@@ -67,7 +67,7 @@ public class Relation
     }
 
     /**
-     * @return ways
+     * @return ways 
      */
     public final List<Long> getWays()
     {
@@ -91,7 +91,7 @@ public class Relation
     }
 
     /**
-     * @return nodes
+     * @return nodes 
      */
     public final List<Long> getNodes()
     {
@@ -127,30 +127,21 @@ public class Relation
 
     /**
      * @param tagKey 
-     * @return A specific Tag
-     * @throws IOException 
+     * @return List of matching Tags
      */
-    public final Tag getTag(final String tagKey) throws IOException
+    public final List<Tag> getMatchingTags(final String tagKey)
     {
-        Integer length = this.taglist.size();
-        Integer i = 0;
-        try
+        List<Tag> result = new ArrayList<Tag>();
+        for (Tag t : this.taglist)
         {
-            do
+            if (t.getKey().equals(tagKey))
             {
-                if (this.taglist.get(i).getKey().equals(tagKey))
-                {
-                    return this.taglist.get(i);
-                }
+                result.add(t);
             }
-            while (i < length);
-            throw new IOException(" not found");
         }
-        catch (IOException e)
-        {
-            return null;
-        }
+        return result;
     }
+
     /**
      * @return List of all Tags in this relation
      */

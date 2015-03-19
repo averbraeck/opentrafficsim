@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import javax.naming.NamingException;
 
@@ -36,7 +37,6 @@ import org.opentrafficsim.core.network.lane.SourceLane;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.importexport.osm.Link;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -168,14 +168,37 @@ public final class Convert
     {
         Coordinate coordWGS84;
         Coordinate coordGCC;
+        Double elevation = 0D;
         if (node.contains("ele"))
         {
             try
             {
                 String ele = node.getTag("ele").getValue();
-                
+                String regex1 = "[0-9]+(km)|m";
+                String regex2 = "[0-9]+";
+                if  (ele.matches(regex1))
+                {
+                    String[] ele2 = ele.split("(km)|m");
+                    ele = ele2[0];
+                    if (ele2[1].equals("km"))
+                    {
+                        elevation = Double.parseDouble(ele) * 1000;
+                    }
+                    else if (ele2[1].equals("m"))
+                    {
+                        elevation = Double.parseDouble(ele);
+                    }
+                    else
+                    {
+                        elevation = 0D;
+                    }
+                }
+                else if (ele.matches(regex2))
+                {
+                    elevation = Double.parseDouble(ele);
+                }
                 coordWGS84 = new Coordinate(node.getLongitude(), node.getLatitude(), 
-                        Double.parseDouble(node.getTag("ele").getValue()));
+                        elevation);
                 try
                 {
                     coordGCC = Convert.transform(coordWGS84);
@@ -438,10 +461,10 @@ public final class Convert
     }
     
     /**
-     * @param structure
-     * @param osmlink
-     * @param forwards
-     * @param backwards
+     * @param structure 
+     * @param osmlink 
+     * @param forwards 
+     * @param backwards 
      * @return HashMap containing the lane structure with offsets.
      */
     private static HashMap<Double, LaneAttributes> calculateOffsets(final SortedMap<Integer, LaneAttributes> structure,

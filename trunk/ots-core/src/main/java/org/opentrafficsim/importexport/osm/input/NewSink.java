@@ -108,13 +108,13 @@ public class NewSink implements Sink
                 while (wayint1.hasNext())
                 {
                     WayNode waynode1 = wayint1.next();
-                    way1.addNode(waynode1.getNodeId());
+                    way1.appendNode(waynode1.getNodeId());
                 }
                 this.net.addWay(way1);
             }
         }
         else if (entity instanceof Relation)
-        {
+        { //A relation is a Set of Ways and Nodes
             boolean wanted = false;
             checkTags: for (Tag t : entity.getTags())
             {
@@ -129,12 +129,12 @@ public class NewSink implements Sink
             }
             if (wanted)
             {
-                Iterator<Tag> tagint = entity.getTags().iterator();
+                Iterator<Tag> tagIterator = entity.getTags().iterator();
                 org.opentrafficsim.importexport.osm.Relation rel1 =
                         new org.opentrafficsim.importexport.osm.Relation(entity.getId());
-                while (tagint.hasNext())
+                while (tagIterator.hasNext())
                 {
-                    Tag reltag = tagint.next();
+                    Tag reltag = tagIterator.next();
                     if (this.filterKeys.contains(reltag.getKey()) || this.filterKeys.isEmpty())
                     {
                         org.opentrafficsim.importexport.osm.Tag tag =
@@ -142,18 +142,17 @@ public class NewSink implements Sink
                         rel1.addTag(tag);
                     }
                 }
-                Iterator<RelationMember> relint1 = ((Relation) entity).getMembers().iterator();
-                while (relint1.hasNext())
+                Iterator<RelationMember> relIterator = ((Relation) entity).getMembers().iterator();
+                while (relIterator.hasNext())
                 {
-
-                    RelationMember relmemb1 = relint1.next();
-                    if (relmemb1.getMemberType().equals(EntityType.Node))
+                    RelationMember relMember = relIterator.next();
+                    if (relMember.getMemberType().equals(EntityType.Node))
                     {
-                        rel1.addNode(relmemb1.getMemberId());
+                        rel1.addNode(relMember.getMemberId());
                     }
-                    if (relmemb1.getMemberType().equals(EntityType.Way))
+                    if (relMember.getMemberType().equals(EntityType.Way))
                     {
-                        rel1.addWay(relmemb1.getMemberId());
+                        rel1.addWay(relMember.getMemberId());
                     }
                 }
                 this.net.addRelation(rel1);
@@ -167,10 +166,10 @@ public class NewSink implements Sink
         // todo
     }
 
-    /** The complete method removes all Nodes which are not used within any imported way or relation. */
+    /** The complete method is called after all Entities are processed. It removes all Nodes which are not used within any imported way or relation. */
     public final void complete()
     {
-        HashMap<Long, org.opentrafficsim.importexport.osm.Node> usednodes =
+        HashMap<Long, org.opentrafficsim.importexport.osm.Node> usedNodes =
                 new HashMap<Long, org.opentrafficsim.importexport.osm.Node>();
         for (Long wid : this.net.getWays().keySet())
         {
@@ -179,9 +178,9 @@ public class NewSink implements Sink
                 org.opentrafficsim.importexport.osm.Way w = this.net.getWay(wid);
                 for (Long nid : w.getNodes())
                 {
-                    if (this.net.getNodes().keySet().contains(nid) && !usednodes.containsKey(nid))
+                    if (this.net.getNodes().keySet().contains(nid) && !usedNodes.containsKey(nid))
                     {
-                        usednodes.put(nid, this.net.getNode(nid));
+                        usedNodes.put(nid, this.net.getNode(nid));
                     }
                 }
             }
@@ -197,9 +196,9 @@ public class NewSink implements Sink
                 org.opentrafficsim.importexport.osm.Relation r = this.net.getRelation(rid);
                 for (Long nid : r.getNodes())
                 {
-                    if (this.net.getNodes().keySet().contains(nid) && !usednodes.containsKey(nid))
+                    if (this.net.getNodes().keySet().contains(nid) && !usedNodes.containsKey(nid))
                     {
-                        usednodes.put(nid, this.net.getNode(nid));
+                        usedNodes.put(nid, this.net.getNode(nid));
                     }
                 }
             }
@@ -208,7 +207,7 @@ public class NewSink implements Sink
                 e.printStackTrace();
             }
         }
-        this.net.setNodes(usednodes);
+        this.net.setNodes(usedNodes);
     }
 
     /**

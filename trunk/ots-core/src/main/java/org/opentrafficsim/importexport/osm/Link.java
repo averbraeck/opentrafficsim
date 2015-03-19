@@ -34,22 +34,22 @@ public class Link
     /** Is this link one way?*/
     private boolean oneway;
     /**
-     * @param n1 Startnode
-     * @param n2 Endnode
+     * @param fromNode Startnode
+     * @param toNode Endnode
      * @param lt List of inherited Waytags
      * @param length length of the link
      */
-    public Link(final Node n1, final Node n2, final List<Tag> lt, final double length)
+    public Link(final Node fromNode, final Node toNode, final List<Tag> lt, final double length)
     {
-        if (n1 == n2)
+        if (fromNode == toNode)
         {
-            throw new Error("Start and end of link are the same Node: " + n1);
+            throw new Error("Start and end of link are the same Node: " + fromNode);
         }
-        this.iD = Objects.toString(n1.getID()) + Objects.toString(n2.getID());
-        this.start = n1;
-        this.end = n2;
+        this.iD = Objects.toString(fromNode.getID()) + Objects.toString(toNode.getID());
+        this.start = fromNode;
+        this.end = toNode;
         this.length = length;
-        this.lanes = 2;
+        this.lanes = 1;
         this.forwardLanes = 1;
         boolean forwardDefined = false;
 
@@ -61,7 +61,6 @@ public class Link
             {
                 this.setOneway(true);
                 lt3.remove(t2);
-                this.lanes = 1;
                 this.forwardLanes = this.lanes;
             }
             if (t2.getKey().equals("highway") && t2.getValue().equals("motorway_link"))
@@ -88,25 +87,40 @@ public class Link
         {
             if (t2.getKey().equals("lanes"))
             {
-                this.lanes = Byte.parseByte(t2.getValue());
-                lt3.remove(t2);
-                if (this.oneway)
+                if (Link.isByte(t2.getValue()))
                 {
-                    this.forwardLanes = this.lanes;
-                    forwardDefined = true;
+                    this.lanes = Byte.parseByte(t2.getValue());
+                    lt3.remove(t2);
+                    if (this.oneway)
+                    {
+                        this.forwardLanes = this.lanes;
+                        forwardDefined = true;
+                    }
+                }
+                else
+                {
+                    /* TODO Fire Event */
                 }
             }
             if (t2.getKey().equals("lanes:forward"))
             {
-                this.forwardLanes = Byte.parseByte(t2.getValue());
-                lt3.remove(t2);
-                forwardDefined = true;
+                if (Link.isByte(t2.getValue()))
+                {
+                    this.forwardLanes = Byte.parseByte(t2.getValue());
+                    lt3.remove(t2);
+                    forwardDefined = true;
+                }
+                else
+                {
+                    /* TODO Fire Event */
+                }
             }
         }
         this.linktags = lt3;
         if (!forwardDefined && this.lanes > 1)
         {
             this.forwardLanes = (byte) (this.lanes / 2);
+            /* TODO Fire Event */
         }
         this.splineList = new ArrayList<Node>(); 
     }
@@ -300,6 +314,23 @@ public class Link
             }
         }
         return false;
+    }
+    
+    /**
+     * @param s 
+     * @return is the given String a byte.
+     */
+    public static boolean isByte(final String s)
+    {
+        try
+        {
+            Byte.parseByte(s);
+        }
+        catch (NumberFormatException e) 
+        {
+            return false;
+        }
+        return true;
     }
     
     /** {@inheritDoc} */

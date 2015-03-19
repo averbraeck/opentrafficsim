@@ -53,10 +53,10 @@ public final class ReadOSMFile
     /**  */
     private boolean isReaderThreadDead = false;
 
-    /** */
+    /** Objects not having any of the wanted Tags are skipped or ignored. If empty all Objects will be imported.*/
     private List<Tag> wantedTags;
 
-    /** */
+    /** Tags not having any of the here defined keys are skipped or ignored. If empty all Tags are imported. */
     private List<String> filterKeys;
 
     /**
@@ -139,7 +139,7 @@ public final class ReadOSMFile
     /**
      * @return is reader thread dead
      */
-    public final boolean checkisReaderThreadDead()
+    public boolean checkisReaderThreadDead()
     {
         return this.isReaderThreadDead;
     }
@@ -147,7 +147,7 @@ public final class ReadOSMFile
     /**
      * @return get the whole Network
      */
-    public final Network getNetwork()
+    public Network getNetwork()
     {
         return this.sinkImplementation.getNetwork();
     }

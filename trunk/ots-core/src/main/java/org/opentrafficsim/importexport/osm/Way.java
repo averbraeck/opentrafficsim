@@ -1,6 +1,5 @@
 package org.opentrafficsim.importexport.osm;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +61,7 @@ public class Way
     /**
      * @param waynode 
      */
-    public final void addNode(final Long waynode)
+    public final void appendNode(final Long waynode)
     {
         this.waynodes.add(waynode);
     }
@@ -104,25 +103,18 @@ public class Way
 
     /**
      * @param tagKey 
-     * @return waytag
-     * @throws IOException 
+     * @return List of matching Tags 
      */
-    public final Tag getTag(final String tagKey) throws IOException
+    public final List<Tag> getMatchingTags(final String tagKey)
     {
-        try
+        List<Tag> result = new ArrayList<Tag>();
+        for (Tag t: this.waytags)
         {
-            for (Tag t: this.waytags)
+            if (t.getKey().equals(tagKey))
             {
-                if (t.getKey().equals(tagKey))
-                {
-                    return t;
-                }
+                result.add(t);
             }
-            throw new IOException(" not found");
         }
-        catch (IOException e)
-        {
-            return null;
-        }
+        return result;
     }
 }
