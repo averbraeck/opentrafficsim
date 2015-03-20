@@ -15,7 +15,7 @@ import org.opentrafficsim.core.network.route.RouteGenerator;
  * @version 20 mrt. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FixedRouteGenerator implements RouteGenerator
+public class FixedRouteGenerator implements RouteGenerator, Comparable<FixedRouteGenerator>
 {
     /** The route that is returned on every call to generateRoute. */
     final private List<Node<?, ?>> nodeList;
@@ -35,5 +35,41 @@ public class FixedRouteGenerator implements RouteGenerator
     public Route generateRoute()
     {
         return new Route(this.nodeList);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int compareTo(FixedRouteGenerator o)
+    {
+        List<Node<?, ?>> otherNodes = o.nodeList;
+        String myEndNodeId = this.nodeList.get(this.nodeList.size() - 1).getId().toString();
+        String otherEndNodeId = otherNodes.get(otherNodes.size() - 1).getId().toString();
+        int result = myEndNodeId.compareTo(otherEndNodeId);
+        if (0 != result)
+        {
+            return result;
+        }
+        int sizeDifference = this.nodeList.size() - otherNodes.size();
+        if (sizeDifference > 0)
+        {
+            return 1;
+        }
+        else if (sizeDifference < 0)
+        {
+            return -1;
+        }
+        // This is a tough one
+        for (int index = this.nodeList.size() - 1; --index >= 0; )
+        {
+            String myNodeId = this.nodeList.get(index).getId().toString();
+            String otherNodeId = otherNodes.get(index).getId().toString();
+            result = myNodeId.compareTo(otherNodeId);
+            if (0 != result)
+            {
+                return result;
+            }
+        }
+        // FIXME: this goes VERY wrong in different Nodes can have the same id
+        return 0;
     }
 }
