@@ -481,6 +481,8 @@ public final class Convert
             if (t.getKey().equals("width"))
             {
                 String w = t.getValue().replace(",", ".");
+                w = w.replace(" ", "");
+                w = w.replace("m", "");
                 width = Double.parseDouble(w) / osmlink.getLanes();
                 // widthOverride = true;
             }
@@ -495,10 +497,11 @@ public final class Convert
             for (int i = 0; i < forwards; i++)
             {
                 la = structure.get(i);
+                if (la == null) 
+                { 
+                    break;
+                }
                 lt = la.getLaneType();
-                /*
-                 * if (lt == null) { String s = "awww shucks"; System.out.println(s); }
-                 */
                 if (lt.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.car))
                 {
                     la.setWidth(width);
@@ -606,6 +609,10 @@ public final class Convert
         {
             Double i = iter.next();
             LaneAttributes la = structure.get(i);
+            if(la == null)
+            {
+                break;
+            }
             lt = la.getLaneType();
             Double offSet = i;
             DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(offSet, LengthUnit.METER);
@@ -804,7 +811,14 @@ class LaneAttributes
      */
     public LaneAttributes(final LaneType<?> lt, final Color c, final LongitudinalDirectionality d)
     {
-        this.laneType = lt;
+        if (lt == null)
+        {
+            this.laneType = Convert.makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.none);
+        }
+        else
+        {
+            this.laneType = lt;
+        }
         this.color = c;
         this.directionality = d;
     }
@@ -817,7 +831,14 @@ class LaneAttributes
      */
     public LaneAttributes(final LaneType<?> lt, final Color c, final LongitudinalDirectionality d, final Double w)
     {
-        this.laneType = lt;
+        if (lt == null)
+        {
+            this.laneType = Convert.makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.none);
+        }
+        else
+        {
+            this.laneType = lt;
+        }
         this.color = c;
         this.directionality = d;
         this.setWidth(w);
@@ -866,5 +887,13 @@ class LaneAttributes
     public String toString()
     {
         return "Lane Attributes: " + this.laneType + "; " + this.color + "; " + this.directionality + "; " + this.width;
+    }
+    
+    /**
+     * @param lt 
+     */
+    public void setLaneType(final LaneType<?> lt)
+    {
+        this.laneType = lt;
     }
 }
