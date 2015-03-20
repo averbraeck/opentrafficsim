@@ -99,6 +99,7 @@ public class SensorTest
                 {
                     fail("Unexpected sensor: " + sensor.toString());
                 }
+                assertEquals("Lane of sensor should be l", l, sensor.getLane());
             }
             assertEquals("There should be two sensor on each Lane", 2, sensorsFound);
         }
