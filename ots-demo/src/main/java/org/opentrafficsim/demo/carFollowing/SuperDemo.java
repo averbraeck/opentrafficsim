@@ -11,6 +11,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -103,7 +104,6 @@ public class SuperDemo
         demonstrations.add(new SequentialLanes());
         demonstrations.add(new CircularLane());
         demonstrations.add(new CircularRoad());
-        demonstrations.add(new OpenStreetMap());
         demonstrations.add(new XMLNetworks());
         // final JPanel left = new LabeledPanel("Simulation Settings");
         this.simulationSelection = new LabeledPanel("Network");
