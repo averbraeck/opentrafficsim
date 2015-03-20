@@ -1,13 +1,19 @@
 package org.opentrafficsim.demo.carFollowing;
 
+import java.awt.FileDialog;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.naming.NamingException;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -56,20 +62,36 @@ import org.opentrafficsim.simulationengine.WrappableSimulation;
  */
 public class OpenStreetMap implements WrappableSimulation
 {
-    /** The OSM network that this Simulation is supposed to draw. */
+    /** */
     private org.opentrafficsim.importexport.osm.Network networkOSM;
-
-    /** The OTS network created out of the OSM network. */
-
+    
+    /** */
     private Network<String, CrossSectionLink<?, ?>> networkOTS;
-
+    
     /** The properties of this simulation. */
     private ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();
 
     /**
+     * @throws MalformedURLException 
      */
-    public OpenStreetMap()
+    public OpenStreetMap() throws MalformedURLException
     {
+        JFrame frame = new JFrame();
+        FileDialog fd = new FileDialog(frame, "Choose a file", FileDialog.LOAD);
+        fd.setDirectory("C:\\");
+        fd.setFile("*.osm.bz2");
+        fd.setVisible(true);
+        File[] file = fd.getFiles();
+        String filename = fd.getFile();
+        String filepath = file[0].toURL().toString();
+        if (filename == null)
+        {
+          System.out.println("You cancelled the choice");
+        }
+        else
+        {
+          System.out.println("You chose " + filename);
+        }
         ArrayList<org.opentrafficsim.importexport.osm.Tag> wt =
                 new ArrayList<org.opentrafficsim.importexport.osm.Tag>();
         org.opentrafficsim.importexport.osm.Tag t1 = new org.opentrafficsim.importexport.osm.Tag("highway", "primary");
@@ -127,9 +149,10 @@ public class OpenStreetMap implements WrappableSimulation
         ArrayList<String> ft = new ArrayList<String>();
         try
         {
-        ReadOSMFile osmf = new ReadOSMFile("file:///home/moe/Documents/TUD/EmmerichSnip.osm.bz2", wt, ft);
+        System.out.println(filepath);
+        ReadOSMFile osmf = new ReadOSMFile(filepath, wt, ft);
         org.opentrafficsim.importexport.osm.Network net = osmf.getNetwork();
-        net.makeLinks();
+        //net.makeLinks();
         // net.removeRedundancy();
         this.networkOSM = new org.opentrafficsim.importexport.osm.Network(net);
         this.networkOTS = new Network<String, CrossSectionLink<?, ?>>(this.networkOSM.getName());
@@ -214,7 +237,7 @@ public class OpenStreetMap implements WrappableSimulation
     public SimpleSimulator buildSimulator(final ArrayList<AbstractProperty<?>> usedProperties)
             throws SimRuntimeException, RemoteException, NetworkException
     {
-        OSMModel model = new OSMModel(usedProperties);
+        OSMModel model = new OSMModel(usedProperties, this.networkOSM);
         Iterator<Node<?, ?>> count = this.networkOTS.getNodeSet().iterator();
         Rectangle2D area = new Rectangle2D.Double(0, 0, 0, 0);
         while (count.hasNext())
@@ -297,9 +320,10 @@ class OSMModel implements OTSModelInterface
     /**
      * @param properties 
      */
-    public OSMModel(final ArrayList<AbstractProperty<?>> properties)
+    public OSMModel(final ArrayList<AbstractProperty<?>> properties, final org.opentrafficsim.importexport.osm.Network net)
     {
-        ArrayList<org.opentrafficsim.importexport.osm.Tag> wt =
+        this.network = net;
+        /*ArrayList<org.opentrafficsim.importexport.osm.Tag> wt =
                 new ArrayList<org.opentrafficsim.importexport.osm.Tag>();
         org.opentrafficsim.importexport.osm.Tag t1 = new org.opentrafficsim.importexport.osm.Tag("highway", "primary");
         wt.add(t1);
@@ -372,12 +396,20 @@ class OSMModel implements OTSModelInterface
         ArrayList<String> ft = new ArrayList<String>();
         try
         {
-        ReadOSMFile osmf = new ReadOSMFile("file:///home/moe/Documents/TUD/rhine.osm.bz2", wt, ft);
+        ReadOSMFile osmf = new ReadOSMFile("file:///C:/amsterdam_netherlands.osm.bz2", wt, ft);
         org.opentrafficsim.importexport.osm.Network net = osmf.getNetwork();
         net.makeLinks();
         // net.removeRedundancy();
-        this.network = new org.opentrafficsim.importexport.osm.Network(net);
+        this.network = new org.opentrafficsim.importexport.osm.Network(net);*/
         this.networkOTS = new Network<String, CrossSectionLink<?, ?>>(this.network.getName());
+        try
+        {
+            this.network.makeLinks();
+        }
+        catch (IOException exception1)
+        {
+            exception1.printStackTrace();
+        }
         for (org.opentrafficsim.importexport.osm.Node osmNode: this.network.getNodes().values())
         {
                 try
@@ -388,20 +420,11 @@ class OSMModel implements OTSModelInterface
                 {
                     System.out.println(ne.getMessage());
                 }
-            }
+        }
             for (org.opentrafficsim.importexport.osm.Link osmLink : this.network.getLinks())
             {
                 this.networkOTS.add(Convert.convertLink(osmLink));
             }
-        }
-        catch (URISyntaxException exception)
-        {
-            exception.printStackTrace();
-        }
-        catch (IOException exception)
-        {
-            exception.printStackTrace();
-        }
         this.lanes = new ArrayList<Lane>();
         this.properties = new ArrayList<AbstractProperty<?>>(properties);
     }
@@ -411,13 +434,12 @@ class OSMModel implements OTSModelInterface
     public void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
-        this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         this.network = Convert.findSinksandSources(this.network);
         for (org.opentrafficsim.importexport.osm.Link l : this.network.getLinks())
         {
             try
             {
-                this.lanes.addAll(Convert.makeLanes(l, this.simulator));
+                this.lanes.addAll(Convert.makeLanes(l, (OTSDEVSSimulatorInterface) theSimulator));
             }
             catch (NetworkException | NamingException exception)
             {
