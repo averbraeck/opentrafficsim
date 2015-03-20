@@ -19,13 +19,13 @@ import org.opentrafficsim.core.value.Absolute;
  */
 public abstract class DistContinuousDoubleScalar<U extends Unit<U>>
 {
-    /** the wrapped distribution function. */
+    /** The wrapped distribution function. */
     private final DistContinuous distribution;
 
-    /** the unit. */
+    /** The unit of the generated values. */
     private final U unit;
 
-    /** the dummy stream for the constant values. Is never really used. */
+    /** The dummy stream for the constant values. Is never really used. */
     private static final StreamInterface DUMMY_STREAM = new Java2Random();
 
     /**
