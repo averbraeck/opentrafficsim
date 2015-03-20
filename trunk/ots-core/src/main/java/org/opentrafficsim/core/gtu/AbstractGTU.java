@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.gtu;
 
-import org.opentrafficsim.core.network.Route;
+import org.opentrafficsim.core.network.route.Route;
 
 /**
  * <p>

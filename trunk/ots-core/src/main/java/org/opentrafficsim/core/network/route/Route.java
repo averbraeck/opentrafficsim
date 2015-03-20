@@ -1,9 +1,11 @@
-package org.opentrafficsim.core.network;
+package org.opentrafficsim.core.network.route;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 
 /**
