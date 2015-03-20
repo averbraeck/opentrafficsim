@@ -146,7 +146,7 @@ public class LaneTest
                 .getLongitudinalPositionSI(), 0.01);
 
         // Harder case; create a Link with form points along the way
-        //System.out.println("Constructing Link and Lane with one form point");
+        // System.out.println("Constructing Link and Lane with one form point");
         coordinates = new Coordinate[3];
         coordinates[0] = new Coordinate(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new Coordinate(200, 100);
@@ -194,7 +194,7 @@ public class LaneTest
                 .getLongitudinalPosition().getSI(), 0.01);
         assertEquals("This sensor should be at the end of the lane", lane.getLength().getSI(), sensors.get(0)
                 .getLongitudinalPositionSI(), 0.01);
-        //System.out.println("Add another Lane at the inside of the corner in the design line");
+        // System.out.println("Add another Lane at the inside of the corner in the design line");
         DoubleScalar.Rel<LengthUnit> startLateralPos2 = new DoubleScalar.Rel<LengthUnit>(-8, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> endLateralPos2 = new DoubleScalar.Rel<LengthUnit>(-5, LengthUnit.METER);
         Lane lane2 =
@@ -308,6 +308,8 @@ public class LaneTest
                                 // One meter before the end, right outside the lane
                                 checkInside(lane, link.getLength().getSI() - 1, endLateralOffset + endWidth / 2 + 1,
                                         false);
+                                // TODO check the result of getBounds (will have to wait until PK knows what that result
+                                // is supposed to be)
                             }
                         }
                     }
