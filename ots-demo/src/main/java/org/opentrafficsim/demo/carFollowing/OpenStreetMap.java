@@ -352,11 +352,27 @@ class OSMModel implements OTSModelInterface
         wt.add(t23);
         org.opentrafficsim.importexport.osm.Tag t24 = new org.opentrafficsim.importexport.osm.Tag("highway", "trunk_link");
         wt.add(t24);
+        org.opentrafficsim.importexport.osm.Tag t25 = new org.opentrafficsim.importexport.osm.Tag("waterway", "river");
+        wt.add(t25);
+        org.opentrafficsim.importexport.osm.Tag t26 = new org.opentrafficsim.importexport.osm.Tag("waterway", "riverbank");
+        wt.add(t26);
+        org.opentrafficsim.importexport.osm.Tag t27 = new org.opentrafficsim.importexport.osm.Tag("waterway", "stream");
+        wt.add(t27);
+        org.opentrafficsim.importexport.osm.Tag t28 = new org.opentrafficsim.importexport.osm.Tag("waterway", "wadi");
+        wt.add(t28);
+        org.opentrafficsim.importexport.osm.Tag t29 = new org.opentrafficsim.importexport.osm.Tag("waterway", "canal");
+        wt.add(t29);
+        org.opentrafficsim.importexport.osm.Tag t30 = new org.opentrafficsim.importexport.osm.Tag("waterway", "drain");
+        wt.add(t30);
+        org.opentrafficsim.importexport.osm.Tag t31 = new org.opentrafficsim.importexport.osm.Tag("waterway", "ditch");
+        wt.add(t31);
+        org.opentrafficsim.importexport.osm.Tag t32 = new org.opentrafficsim.importexport.osm.Tag("highway", "steps");
+        wt.add(t32);
 
         ArrayList<String> ft = new ArrayList<String>();
         try
         {
-        ReadOSMFile osmf = new ReadOSMFile("file:///home/moe/Documents/TUD/EmmerichSnip.osm.bz2", wt, ft);
+        ReadOSMFile osmf = new ReadOSMFile("file:///home/moe/Documents/TUD/rhine.osm.bz2", wt, ft);
         org.opentrafficsim.importexport.osm.Network net = osmf.getNetwork();
         net.makeLinks();
         // net.removeRedundancy();
@@ -408,97 +424,6 @@ class OSMModel implements OTSModelInterface
                 exception.printStackTrace();
             }
         }
-        /*ArrayList<org.opentrafficsim.importexport.osm.Link> foundSinkLinks = findPossibleSinks();
-        //int i = 0;
-        for (org.opentrafficsim.importexport.osm.Link l : this.network.getLinks())
-        {
-            try
-            {
-                if (foundSinkLinks.contains(l))
-                {
-                    //i++;
-                    //System.out.println(i);
-                    if (this.network.hasFollowingLink(l))
-                    {
-                        l.addTag(new org.opentrafficsim.importexport.osm.Tag("hasFollowing", ""));
-                        this.lanes.addAll(Convert.makeLanes(l, this.simulator));
-                    }
-                    else if (this.network.hasPrecedingLink(l))
-                    {
-                        l.addTag(new org.opentrafficsim.importexport.osm.Tag("hasPreceding", ""));
-                        this.lanes.addAll(Convert.makeLanes(l, this.simulator));
-                    }
-                    else
-                    {
-                        this.lanes.addAll(Convert.makeLanes(l, this.simulator));
-                    }
-                }
-                else
-                {
-                    this.lanes.addAll(Convert.makeLanes(l, this.simulator));
-                }
-            }
-            catch (NetworkException | NamingException exception)
-            {
-                exception.printStackTrace();
-            }
-        }*/
-    }
-
-    /**
-     * @return List of Links which are candidates for becoming sinks/sources.
-     */
-    private ArrayList<org.opentrafficsim.importexport.osm.Link> findPossibleSinks()
-    {
-        ArrayList<org.opentrafficsim.importexport.osm.Node> foundSinkNodes =
-                new ArrayList<org.opentrafficsim.importexport.osm.Node>();
-        ArrayList<org.opentrafficsim.importexport.osm.Link> foundSinkLinks =
-                new ArrayList<org.opentrafficsim.importexport.osm.Link>();
-        for (org.opentrafficsim.importexport.osm.Node n : this.network.getNodes().values())
-        {
-            int count = 0;
-            for (org.opentrafficsim.importexport.osm.Link l : this.network.getLinks())
-            {
-                if (l.getStart().equals(n) || l.getEnd().equals(n) || l.getSplineList().contains(n))
-                {
-                    count += 1;
-                    if (count > 1)
-                    {
-                        break;
-                    }
-                }
-            }
-            if (count == 1)
-            {
-                foundSinkNodes.add(n);
-            }
-        }
-        for (org.opentrafficsim.importexport.osm.Link l : this.network.getLinks())
-        {
-            if (foundSinkNodes.contains(l.getEnd()) || foundSinkNodes.contains(l.getStart()))
-            {
-                foundSinkLinks.add(l);
-            }
-            else
-            {
-                for (org.opentrafficsim.importexport.osm.Node n : l.getSplineList())
-                {
-                    if (foundSinkNodes.contains(n))
-                    {
-                        foundSinkLinks.add(l);
-                    }
-                }
-            }
-        }
-        /*for (org.opentrafficsim.importexport.osm.Node n: foundSinkNodes)
-        {
-            System.out.println(n.getID());
-        }
-        for (org.opentrafficsim.importexport.osm.Link l : foundSinkLinks)
-        {
-            System.out.println(l.getID());
-        }*/
-        return foundSinkLinks;
     }
 
     /**
