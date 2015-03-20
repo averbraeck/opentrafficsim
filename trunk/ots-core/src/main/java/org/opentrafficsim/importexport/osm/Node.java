@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opentrafficsim.core.network.geotools.NodeGeotools;
+
 /**
  * OpenStreetmap Node.
  * <p>
@@ -38,6 +40,14 @@ public class Node
     
     /** */
     private boolean crossing = false;
+    
+    /** */
+    public int linksOriginating = 0;
+    
+    /** */
+    public int linksTerminating = 0;
+    
+    private NodeGeotools.STR otsNode = null;
 
     /**
      * @param id 
@@ -272,5 +282,19 @@ public class Node
     public final void setCrossing(final boolean crossing)
     {
         this.crossing = crossing;
+    }
+    
+    public final void setOtsNode(NodeGeotools.STR n)
+    {
+        if(this.otsNode != null)
+        {
+            throw new Error("OTS Node already set, can only be set once.");
+        }
+        this.otsNode = n;
+    }
+    
+    public final NodeGeotools.STR getOtsNode()
+    {
+        return this.otsNode;
     }
 }
