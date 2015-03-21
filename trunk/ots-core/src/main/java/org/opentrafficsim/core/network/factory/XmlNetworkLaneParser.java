@@ -71,6 +71,7 @@ import org.opentrafficsim.core.unit.AnglePlaneUnit;
 import org.opentrafficsim.core.unit.AngleSlopeUnit;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.LinearDensityUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DistContinuousDoubleScalar;
@@ -186,6 +187,12 @@ public class XmlNetworkLaneParser
     /** the time units. */
     private static final Map<String, TimeUnit> TIME_UNITS = new HashMap<>();
 
+    /** the per-length units. */
+    private static final Map<String, LinearDensityUnit> PER_LENGTH_UNITS = new HashMap<>();
+
+    /** the time units. */
+    private static final Map<String, FrequencyUnit> PER_TIME_UNITS = new HashMap<>();
+
     /** the processed nodes for further reference. */
     @SuppressWarnings({"rawtypes", "visibilitymodifier"})
     protected Map<String, Node> nodes = new HashMap<>();
@@ -201,6 +208,26 @@ public class XmlNetworkLaneParser
     /** the gtu tags for further reference. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, GTUTag> gtuTags = new HashMap<>();
+
+    /** the gtumix tags for further reference. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, GTUMixTag> gtuMixTags = new HashMap<>();
+
+    /** the route tags for further reference. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, RouteTag> routeTags = new HashMap<>();
+
+    /** the route mix tags for further reference. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, RouteMixTag> routeMixTags = new HashMap<>();
+
+    /** the shortest route tags for further reference. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, ShortestRouteTag> shortestRouteTags = new HashMap<>();
+
+    /** the shortest route mix tags for further reference. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, ShortestRouteMixTag> shortestRouteMixTags = new HashMap<>();
 
     /** the GTUTypes that have been created. */
     @SuppressWarnings("visibilitymodifier")
@@ -240,6 +267,28 @@ public class XmlNetworkLaneParser
         TIME_UNITS.put("day", TimeUnit.DAY);
         TIME_UNITS.put("wk", TimeUnit.WEEK);
         TIME_UNITS.put("week", TimeUnit.WEEK);
+
+        PER_LENGTH_UNITS.put("/mm", LinearDensityUnit.PER_MILLIMETER);
+        PER_LENGTH_UNITS.put("/cm", LinearDensityUnit.PER_CENTIMETER);
+        PER_LENGTH_UNITS.put("/dm", LinearDensityUnit.PER_DECIMETER);
+        PER_LENGTH_UNITS.put("/dam", LinearDensityUnit.PER_DEKAMETER);
+        PER_LENGTH_UNITS.put("/hm", LinearDensityUnit.PER_HECTOMETER);
+        PER_LENGTH_UNITS.put("/m", LinearDensityUnit.PER_METER);
+        PER_LENGTH_UNITS.put("/km", LinearDensityUnit.PER_KILOMETER);
+        PER_LENGTH_UNITS.put("/mi", LinearDensityUnit.PER_MILE);
+        PER_LENGTH_UNITS.put("/y", LinearDensityUnit.PER_YARD);
+        PER_LENGTH_UNITS.put("/ft", LinearDensityUnit.PER_FOOT);
+        
+        PER_TIME_UNITS.put("/ms", FrequencyUnit.PER_MILLISECOND);
+        PER_TIME_UNITS.put("/s", FrequencyUnit.PER_SECOND);
+        PER_TIME_UNITS.put("/m", FrequencyUnit.PER_MINUTE);
+        PER_TIME_UNITS.put("/min", FrequencyUnit.PER_MINUTE);
+        PER_TIME_UNITS.put("/h", FrequencyUnit.PER_HOUR);
+        PER_TIME_UNITS.put("/hr", FrequencyUnit.PER_HOUR);
+        PER_TIME_UNITS.put("/d", FrequencyUnit.PER_DAY);
+        PER_TIME_UNITS.put("/day", FrequencyUnit.PER_DAY);
+        PER_TIME_UNITS.put("/wk", FrequencyUnit.PER_WEEK);
+        PER_TIME_UNITS.put("/week", FrequencyUnit.PER_WEEK);
     }
 
     /**
@@ -700,12 +749,26 @@ public class XmlNetworkLaneParser
             generatorTag.laneTag = laneTag;
 
             String gtuName = attributes.getValue("GTU");
-            if (gtuName == null)
-                throw new SAXException("GENERATOR: missing attribute GTU");
-            if (!XmlNetworkLaneParser.this.gtuTags.containsKey(gtuName))
-                throw new NetworkException("GENERATOR: LANE " + laneName + " GTU " + gtuName + " not defined in link "
-                    + this.linkTag.name);
-            generatorTag.gtuTag = XmlNetworkLaneParser.this.gtuTags.get(gtuName);
+            if (gtuName != null)
+            {
+                if (!XmlNetworkLaneParser.this.gtuTags.containsKey(gtuName))
+                    throw new NetworkException("GENERATOR: LANE " + laneName + " GTU " + gtuName + " in link "
+                        + this.linkTag.name + " not defined");
+                generatorTag.gtuTag = XmlNetworkLaneParser.this.gtuTags.get(gtuName);
+            }
+
+            String gtuMixName = attributes.getValue("GTUMIX");
+            if (gtuMixName != null)
+            {
+                if (!XmlNetworkLaneParser.this.gtuMixTags.containsKey(gtuMixName))
+                    throw new NetworkException("GENERATOR: LANE " + laneName + " GTUMIX " + gtuMixName + " in link "
+                        + this.linkTag.name + " not defined");
+                generatorTag.gtuMixTag = XmlNetworkLaneParser.this.gtuMixTags.get(gtuMixName);
+            }
+
+            if (generatorTag.gtuTag == null && generatorTag.gtuMixTag == null)
+                throw new SAXException("GENERATOR: missing attribute GTU or GTUMIX for Lane with NAME " + laneName
+                    + " of link " + this.linkTag.name);
 
             String iat = attributes.getValue("IAT");
             if (iat == null)
@@ -748,12 +811,26 @@ public class XmlNetworkLaneParser
             fillTag.laneTag = this.linkTag.laneTags.get(laneName);
 
             String gtuName = attributes.getValue("GTU");
-            if (gtuName == null)
-                throw new SAXException("FILL: missing attribute GTU");
-            if (!XmlNetworkLaneParser.this.gtuTags.containsKey(gtuName))
-                throw new NetworkException("FILL: LANE " + laneName + " GTU " + gtuName + " not defined in link "
+            if (gtuName != null)
+            {
+                if (!XmlNetworkLaneParser.this.gtuTags.containsKey(gtuName))
+                    throw new NetworkException("FILL: LANE " + laneName + " GTU " + gtuName + " in link "
+                        + this.linkTag.name + " not defined");
+                fillTag.gtuTag = XmlNetworkLaneParser.this.gtuTags.get(gtuName);
+            }
+
+            String gtuMixName = attributes.getValue("GTUMIX");
+            if (gtuMixName != null)
+            {
+                if (!XmlNetworkLaneParser.this.gtuMixTags.containsKey(gtuMixName))
+                    throw new NetworkException("FILL: LANE " + laneName + " GTUMIX " + gtuMixName + " in link "
+                        + this.linkTag.name + " not defined");
+                fillTag.gtuMixTag = XmlNetworkLaneParser.this.gtuMixTags.get(gtuMixName);
+            }
+
+            if (fillTag.gtuTag == null && fillTag.gtuMixTag == null)
+                throw new SAXException("FILL: missing attribute GTU or GTUMIX for Lane with NAME " + laneName + " of link "
                     + this.linkTag.name);
-            fillTag.gtuTag = XmlNetworkLaneParser.this.gtuTags.get(gtuName);
 
             String distance = attributes.getValue("DISTANCE");
             if (distance == null)
@@ -1263,8 +1340,7 @@ public class XmlNetworkLaneParser
         {
             if (stripeSet.contains(s.charAt(0)))
             {
-                DoubleScalar.Rel<LengthUnit> lateralCenterPosition =
-                    new DoubleScalar.Rel<LengthUnit>(posSI, LengthUnit.SI);
+                DoubleScalar.Rel<LengthUnit> lateralCenterPosition = new DoubleScalar.Rel<LengthUnit>(posSI, LengthUnit.SI);
                 DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(0.1, LengthUnit.METER);
                 switch (s.charAt(0))
                 {
@@ -1335,7 +1411,7 @@ public class XmlNetworkLaneParser
                     throw new SAXException("When parsing elements " + elements + ", expected " + name + " at start of " + s);
                 }
                 s = s.substring(name.length());
-                
+
                 LongitudinalDirectionality ld = null;
                 if (name.startsWith("A")) // lane going in the design direction
                 {
@@ -2144,6 +2220,20 @@ public class XmlNetworkLaneParser
         protected DistContinuousDoubleScalar.Abs<SpeedUnit> maxSpeedDist = null;
     }
 
+    /** GTUMIX element. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected class GTUMixTag
+    {
+        /** name. */
+        protected String name;
+
+        /** GTUs. */
+        protected List<GTUTag> gtus = new ArrayList<GTUTag>();
+
+        /** weights. */
+        protected List<Double> weights = new ArrayList<Double>();
+    }
+    
     /** Generator element. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected class GeneratorTag
@@ -2153,6 +2243,9 @@ public class XmlNetworkLaneParser
 
         /** GTU tag. */
         protected GTUTag gtuTag = null;
+
+        /** GTU mix tag. */
+        protected GTUMixTag gtuMixTag = null;
 
         /** interarrival time. */
         protected DistContinuousDoubleScalar.Rel<TimeUnit> iatDist = null;
@@ -2168,6 +2261,18 @@ public class XmlNetworkLaneParser
 
         /** end time of generation. */
         protected DoubleScalar.Abs<TimeUnit> endTime = null;
+
+        /** Route tag. */
+        protected RouteTag routeTag = null;
+
+        /** Route mix tag. */
+        protected RouteMixTag routeMixTag = null;
+
+        /** Shortest route tag. */
+        protected ShortestRouteTag shortestRouteTag = null;
+
+        /** Shortest route mix tag. */
+        protected ShortestRouteMixTag shortestRouteMixTag = null;
     }
 
     /** Fill element. */
@@ -2180,6 +2285,9 @@ public class XmlNetworkLaneParser
         /** GTU tag. */
         protected GTUTag gtuTag = null;
 
+        /** GTU mix tag. */
+        protected GTUMixTag gtuMixTag = null;
+
         /** inter-vehicle distance. */
         protected DistContinuousDoubleScalar.Rel<LengthUnit> distanceDist = null;
 
@@ -2188,8 +2296,82 @@ public class XmlNetworkLaneParser
 
         /** max number of generated GTUs. */
         protected int maxGTUs = Integer.MAX_VALUE;
+
+        /** Route tag. */
+        protected RouteTag routeTag = null;
+
+        /** Route mix tag. */
+        protected RouteMixTag routeMixTag = null;
+
+        /** Shortest route tag. */
+        protected ShortestRouteTag shortestRouteTag = null;
+
+        /** Shortest route mix tag. */
+        protected ShortestRouteMixTag shortestRouteMixTag = null;
     }
 
+    /** ROUTE element. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected class RouteTag
+    {
+        /** name. */
+        protected String name = null;
+
+        /** Nodes. */
+        protected List<NodeTag> routeNodeTags = new ArrayList<NodeTag>();
+    }
+
+    /** SHORTESTROUTE element. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected class ShortestRouteTag
+    {
+        /** name. */
+        protected String name = null;
+
+        /** From Node. */
+        protected NodeTag from = null;
+
+        /** Via Nodes. */
+        protected List<NodeTag> via = new ArrayList<NodeTag>();
+
+        /** To Node. */
+        protected NodeTag to = null;
+        
+        /** time unit for the "cost" per time. */
+        protected DoubleScalar<FrequencyUnit> costPerTime = null;
+
+        /** distance unit for the "cost" per time. */
+        protected DoubleScalar<LinearDensityUnit> costPerDistance = null;
+    }
+
+    /** ROUTEMIX element. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected class RouteMixTag
+    {
+        /** name. */
+        protected String name;
+
+        /** routes. */
+        protected List<RouteTag> routes = new ArrayList<RouteTag>();
+
+        /** weights. */
+        protected List<Double> weights = new ArrayList<Double>();
+    }
+    
+    /** SHORTESTROUTEMIX element. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected class ShortestRouteMixTag
+    {
+        /** name. */
+        protected String name;
+
+        /** shortest routes. */
+        protected List<ShortestRouteTag> shortestRoutes = new ArrayList<ShortestRouteTag>();
+
+        /** weights. */
+        protected List<Double> weights = new ArrayList<Double>();
+    }
+    
     /**
      * Test.
      * @param args none.

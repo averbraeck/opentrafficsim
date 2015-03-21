@@ -44,6 +44,9 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
     /** Revolutions per minute = 1/60 Hz. */
     public static final FrequencyUnit RPM;
 
+    /** 1/millisecond. */
+    public static final FrequencyUnit PER_MILLISECOND;
+
     /** 1/s. */
     public static final FrequencyUnit PER_SECOND;
 
@@ -56,6 +59,9 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
     /** 1/day. */
     public static final FrequencyUnit PER_DAY;
 
+    /** 1/week. */
+    public static final FrequencyUnit PER_WEEK;
+
     static
     {
         SI = new FrequencyUnit(TimeUnit.SECOND, "FrequencyUnit.Hertz", "FrequencyUnit.Hz", SI_DERIVED);
@@ -65,10 +71,13 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
         GIGAHERTZ = new FrequencyUnit("FrequencyUnit.gigahertz", "FrequencyUnit.GHz", SI_DERIVED, HERTZ, 1.0E9);
         TERAHERTZ = new FrequencyUnit("FrequencyUnit.terahertz", "FrequencyUnit.THz", SI_DERIVED, HERTZ, 1.0E12);
         RPM = new FrequencyUnit("FrequencyUnit.revolutions_per_minute", "FrequencyUnit.rpm", OTHER, HERTZ, 1.0 / 60.0);
+        PER_MILLISECOND =
+            new FrequencyUnit(TimeUnit.MILLISECOND, "FrequencyUnit.per_millisecond", "FrequencyUnit.1/ms", SI_DERIVED);
         PER_SECOND = new FrequencyUnit(TimeUnit.SECOND, "FrequencyUnit.per_second", "FrequencyUnit.1/s", SI_DERIVED);
         PER_MINUTE = new FrequencyUnit(TimeUnit.MINUTE, "FrequencyUnit.per_minute", "FrequencyUnit.1/min", SI_ACCEPTED);
         PER_HOUR = new FrequencyUnit(TimeUnit.HOUR, "FrequencyUnit.per_hour", "FrequencyUnit.1/h", SI_ACCEPTED);
         PER_DAY = new FrequencyUnit(TimeUnit.DAY, "FrequencyUnit.per_day", "FrequencyUnit.1/d", SI_ACCEPTED);
+        PER_WEEK = new FrequencyUnit(TimeUnit.WEEK, "FrequencyUnit.per_week", "FrequencyUnit.1/w", OTHER);
     }
 
     /**
@@ -79,7 +88,7 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
     public FrequencyUnit(final TimeUnit timeUnit, final String nameKey, final String abbreviationKey,
-            final UnitSystem unitSystem)
+        final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, HERTZ, 1.0 / timeUnit.getConversionFactorToStandardUnit(), true);
         this.timeUnit = timeUnit;
@@ -91,11 +100,10 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
-     *            reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
      */
     public FrequencyUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
-            final FrequencyUnit referenceUnit, final double conversionFactorToReferenceUnit)
+        final FrequencyUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.timeUnit = referenceUnit.getTimeUnit();

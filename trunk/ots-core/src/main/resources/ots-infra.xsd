@@ -222,7 +222,8 @@
           </xsd:complexType>
         </xsd:element>
 
-        <!-- solve EITHER GTU or GTUGROUP should be present... -->
+        <!-- TODO EITHER GTU or GTUGROUP should be present... -->
+        <!-- TODO Maximum one of ROUTE, ROUTEMIX, SHORTESTROUTE, SHORTESTROUTEMIX should be present... -->
         <xsd:element name="GENERATOR" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>
             <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
@@ -233,10 +234,15 @@
             <xsd:attribute name="MAXGTU" type="xsd:double" use="optional"></xsd:attribute>
             <xsd:attribute name="STARTTIME" type="TIMETYPE" use="optional"></xsd:attribute>
             <xsd:attribute name="ENDTIME" type="TIMETYPE" use="optional"></xsd:attribute>
+            <xsd:attribute name="ROUTE" type="xsd:IDREF" use="optional"></xsd:attribute>
+            <xsd:attribute name="ROUTEMIX" type="xsd:IDREF" use="optional"></xsd:attribute>
+            <xsd:attribute name="SHORTESTROUTE" type="xsd:IDREF" use="optional"></xsd:attribute>
+            <xsd:attribute name="SHORTESTROUTEMIX" type="xsd:IDREF" use="optional"></xsd:attribute>
           </xsd:complexType>
         </xsd:element>
 
-        <!-- solve EITHER GTU or GTUGROUP should be present... -->
+        <!-- TODO EITHER GTU or GTUGROUP should be present... -->
+        <!-- TODO Maximum one of ROUTE, ROUTEMIX, SHORTESTROUTE, SHORTESTROUTEMIX should be present... -->
         <xsd:element name="FILL" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>
             <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
@@ -245,6 +251,10 @@
             <xsd:attribute name="DISTANCE" type="LENGTHDISTTYPE" use="required"></xsd:attribute>
             <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required"></xsd:attribute>
             <xsd:attribute name="MAXGTU" type="xsd:double" use="optional"></xsd:attribute>
+            <xsd:attribute name="ROUTE" type="xsd:IDREF" use="optional"></xsd:attribute>
+            <xsd:attribute name="ROUTEMIX" type="xsd:IDREF" use="optional"></xsd:attribute>
+            <xsd:attribute name="SHORTESTROUTE" type="xsd:IDREF" use="optional"></xsd:attribute>
+            <xsd:attribute name="SHORTESTROUTEMIX" type="xsd:IDREF" use="optional"></xsd:attribute>
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
@@ -271,17 +281,18 @@
       <xsd:attribute name="FROM" type="xsd:IDREF" use="required"></xsd:attribute>
       <xsd:attribute name="TO" type="xsd:IDREF" use="required"></xsd:attribute>
       <xsd:attribute name="VIA" type="xsd:IDREFS" use="optional"></xsd:attribute>
+      <xsd:attribute name="DISTANCECOST" type="DISTANCECOSTTYPE" use="required"></xsd:attribute>
+      <xsd:attribute name="TIMECOST" type="TIMECOSTTYPE" use="required"></xsd:attribute>
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="ROUTEDIST">
+  <xsd:element name="ROUTEMIX">
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element name="ROUTE" minOccurs="1" maxOccurs="unbounded">
           <xsd:complexType>
-            <xsd:attribute name="NAME" type="xsd:ID" use="required"></xsd:attribute>
+            <xsd:attribute name="NAME" type="xsd:IDREF" use="required"></xsd:attribute>
             <xsd:attribute name="WEIGHT" type="xsd:double" use="required"></xsd:attribute>
-            <xsd:attribute name="NODES" type="xsd:IDREFS" use="required"></xsd:attribute>
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
@@ -289,22 +300,17 @@
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="SHORTESTROUTEDIST">
+  <xsd:element name="SHORTESTROUTEMIX">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="ROUTE" minOccurs="1" maxOccurs="unbounded">
+        <xsd:element name="SHORTESTROUTE" minOccurs="1" maxOccurs="unbounded">
           <xsd:complexType>
-            <xsd:attribute name="NAME" type="xsd:ID" use="required"></xsd:attribute>
+            <xsd:attribute name="NAME" type="xsd:IDREF" use="required"></xsd:attribute>
             <xsd:attribute name="WEIGHT" type="xsd:double" use="required"></xsd:attribute>
-            <xsd:attribute name="FROM" type="xsd:IDREF" use="required"></xsd:attribute>
-            <xsd:attribute name="TO" type="xsd:IDREF" use="required"></xsd:attribute>
-            <xsd:attribute name="VIA" type="xsd:IDREFS" use="optional"></xsd:attribute>
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
       <xsd:attribute name="NAME" type="xsd:ID" use="required"></xsd:attribute>
-      <xsd:attribute name="DISTANCECOST" type="DISTANCECOSTTYPE" use="required"></xsd:attribute>
-      <xsd:attribute name="TIMECOST" type="TIMECOSTTYPE" use="required"></xsd:attribute>
     </xsd:complexType>
   </xsd:element>
 
@@ -336,9 +342,9 @@
           <xsd:element ref="GTU" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="GTUMIX" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="ROUTE" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="ROUTEDIST" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="ROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="SHORTESTROUTE" minOccurs="0" maxOccurs="unbounded" />
-          <xsd:element ref="SHORTESTROUTEDIST" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="SHORTESTROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
         </xsd:choice>
       </xsd:sequence>
     </xsd:complexType>
