@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NETWORK xmlns="http://www.opentrafficsim.org/testschema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/testschema testschema.xsd">
+
+<GTU NAME="CAR"/>
+<GTU NAME="TRUCK"/>
+
+<NODE NAME="N1" />
+
+<GEN>
+  <GTU NAME="CAR" WEIGHT="10"/>
+  <GTU NAME="CAR" WEIGHT="10"/>
+</GEN>
+
+<NODE NAME="N2" />
+
+<NODELIST NODES="N1 N2" />
+
+</NETWORK>
