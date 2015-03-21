@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/testschema"
+  xmlns="http://www.opentrafficsim.org/testschema" elementFormDefault="qualified">
+
+  <xsd:element name="GTU">
+    <xsd:complexType>
+      <xsd:attribute name="NAME" type="xsd:ID" use="required" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="NODE">
+    <xsd:complexType>
+      <xsd:attribute name="NAME" type="xsd:ID" use="required" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="NODELIST">
+    <xsd:complexType>
+      <xsd:attribute name="NODES"  type="xsd:IDREFS" use="required" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="GEN">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="GTU" minOccurs="1" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="NAME" type="xsd:IDREF" use="required" />
+            <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="NETWORK">
+    <xsd:complexType>
+      <xsd:choice minOccurs="1" maxOccurs="unbounded">
+          <xsd:element ref="GTU" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="GEN" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="NODE" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="NODELIST" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:choice>
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>
