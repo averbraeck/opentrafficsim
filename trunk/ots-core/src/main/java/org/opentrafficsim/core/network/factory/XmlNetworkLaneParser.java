@@ -54,6 +54,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.animation.LaneAnimation;
 import org.opentrafficsim.core.network.animation.ShoulderAnimation;
+import org.opentrafficsim.core.network.animation.StripeAnimation;
 import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.network.geotools.LinkGeotools;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
@@ -62,8 +63,9 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.lane.NoTrafficLane;
-import org.opentrafficsim.core.network.lane.RoadMarkerAlong;
 import org.opentrafficsim.core.network.lane.Shoulder;
+import org.opentrafficsim.core.network.lane.Stripe;
+import org.opentrafficsim.core.network.lane.Stripe.Permeable;
 import org.opentrafficsim.core.network.point2d.NodePoint2D;
 import org.opentrafficsim.core.unit.AnglePlaneUnit;
 import org.opentrafficsim.core.unit.AngleSlopeUnit;
@@ -1168,22 +1170,38 @@ public class XmlNetworkLaneParser
      * @throws SAXException for unknown lane type or other inconsistencies.
      * @throws NamingException when animation context cannot be found.
      * @throws RemoteException when animation context cannot be reached.
+     * @throws NetworkException
      */
     @SuppressWarnings({"rawtypes", "checkstyle:methodlength"})
     protected final List<CrossSectionElement> parseElements(final String elements, final CrossSectionLink csl,
-        final LinkTag linkTag, final GlobalTag globalTag) throws SAXException, RemoteException, NamingException
+        final LinkTag linkTag, final GlobalTag globalTag) throws SAXException, RemoteException, NamingException,
+        NetworkException
     {
         List<CrossSectionElement> cseList = new ArrayList<>();
-        List<RoadMarkerAlong> roadMarkers = new ArrayList<>();
+        Set<Character> stripeSet = new HashSet<>();
+        stripeSet.add('<');
+        stripeSet.add('>');
+        stripeSet.add('-');
+        stripeSet.add(':');
+        stripeSet.add('|');
+        stripeSet.add('#');
+
         String[] nameStrings = elements.split("(\\-)|(\\|)|(\\:)|(\\<)|(\\>)|(\\#)");
+
         List<String> names = new ArrayList<>();
         for (String s : nameStrings)
         {
             if (s.length() > 0) // to take out potential empty strings at the start and end.
             {
                 names.add(s);
+                int i = elements.indexOf(s);
+                if (i == -1)
+                {
+                    throw new SAXException("Inconsistent elements tag " + elements + " - could not find name " + s);
+                }
             }
         }
+
         List<Double> widthsSI = new ArrayList<>();
         int designIndex = -1;
         int i = -1;
@@ -1238,12 +1256,86 @@ public class XmlNetworkLaneParser
             cumSI = cumSI + widthsSI.get(j) / 2.0 + ((j < widthsSI.size() - 1) ? widthsSI.get(j + 1) / 2.0 : 0.0);
         }
 
+        String s = elements;
         i = -1;
-        for (String name : names)
+        double posSI = offsetSI[0] - widthsSI.get(0) / 2.0;
+        while (s.length() > 0)
         {
-            if (name.length() > 0)
+            if (stripeSet.contains(s.charAt(0)))
+            {
+                DoubleScalar.Rel<LengthUnit> lateralCenterPosition =
+                    new DoubleScalar.Rel<LengthUnit>(posSI, LengthUnit.SI);
+                DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(0.1, LengthUnit.METER);
+                switch (s.charAt(0))
+                {
+                    case '|':
+                        Stripe solidLine = new Stripe(csl, lateralCenterPosition, width);
+                        if (this.simulator != null)
+                        {
+                            new StripeAnimation(solidLine, this.simulator, StripeAnimation.TYPE.SOLID);
+                        }
+                        cseList.add(solidLine);
+                        break;
+
+                    case '<':
+                        Stripe leftOnlyLine = new Stripe(csl, lateralCenterPosition, width);
+                        leftOnlyLine.addPermeability(GTUType.ALL, Permeable.LEFT); // TODO: correct?
+                        if (this.simulator != null)
+                        {
+                            new StripeAnimation(leftOnlyLine, this.simulator, StripeAnimation.TYPE.LEFTONLY);
+                        }
+                        cseList.add(leftOnlyLine);
+                        break;
+
+                    case '>':
+                        Stripe rightOnlyLine = new Stripe(csl, lateralCenterPosition, width);
+                        rightOnlyLine.addPermeability(GTUType.ALL, Permeable.RIGHT); // TODO: correct?
+                        if (this.simulator != null)
+                        {
+                            new StripeAnimation(rightOnlyLine, this.simulator, StripeAnimation.TYPE.RIGHTONLY);
+                        }
+                        cseList.add(rightOnlyLine);
+                        break;
+
+                    case ':':
+                        Stripe dashedLine = new Stripe(csl, lateralCenterPosition, width);
+                        dashedLine.addPermeability(GTUType.ALL, Permeable.BOTH);
+                        if (this.simulator != null)
+                        {
+                            new StripeAnimation(dashedLine, this.simulator, StripeAnimation.TYPE.DASHED);
+                        }
+                        cseList.add(dashedLine);
+                        break;
+
+                    case '#':
+                        width = new DoubleScalar.Rel<LengthUnit>(0.2, LengthUnit.METER);
+                        Stripe doubleLine = new Stripe(csl, lateralCenterPosition, width);
+                        if (this.simulator != null)
+                        {
+                            new StripeAnimation(doubleLine, this.simulator, StripeAnimation.TYPE.DOUBLE);
+                        }
+                        cseList.add(doubleLine);
+                        break;
+
+                    default:
+                        // TODO: what about permeability if there is no line?
+                        break;
+                }
+                s = s.substring(1);
+            }
+
+            else
+
             {
                 i++;
+                String name = names.get(i);
+                posSI += widthsSI.get(i);
+                if (!s.startsWith(name))
+                {
+                    throw new SAXException("When parsing elements " + elements + ", expected " + name + " at start of " + s);
+                }
+                s = s.substring(name.length());
+                
                 LongitudinalDirectionality ld = null;
                 if (name.startsWith("A")) // lane going in the design direction
                 {
@@ -1329,7 +1421,122 @@ public class XmlNetworkLaneParser
                 }
             }
         }
+
         return cseList;
+
+        /*-
+        i = -1;
+        for (String name : names)
+        {
+            i++;
+            LongitudinalDirectionality ld = null;
+            if (name.startsWith("A")) // lane going in the design direction
+            {
+                ld = LongitudinalDirectionality.FORWARD;
+            }
+            else if (name.startsWith("V")) // lane going in the opposite direction
+            {
+                ld = LongitudinalDirectionality.BACKWARD;
+            }
+            else if (name.startsWith("B")) // lane going in both directions
+            {
+                ld = LongitudinalDirectionality.BOTH;
+            }
+            else if (name.startsWith("X")) // forbidden lane (e.g., emergency lane)
+            {
+                ld = LongitudinalDirectionality.NONE;
+            }
+            else if (name.startsWith("S")) // forbidden lane (e.g., grass)
+            {
+                ld = LongitudinalDirectionality.NONE;
+            }
+            else if (name.equals("D")) // design line
+            {
+                ld = LongitudinalDirectionality.NONE;
+            }
+            else
+            {
+                throw new SAXException("unknown lane type in " + elements + ": " + name.charAt(0));
+            }
+
+            try
+            {
+                if (ld.equals(LongitudinalDirectionality.NONE))
+                {
+                    if (name.startsWith("S"))
+                    {
+                        Shoulder shoulder =
+                            new Shoulder(csl, new DoubleScalar.Rel<LengthUnit>(offsetSI[i], LengthUnit.SI),
+                                new DoubleScalar.Rel<LengthUnit>(widthsSI.get(i), LengthUnit.SI),
+                                new DoubleScalar.Rel<LengthUnit>(widthsSI.get(i), LengthUnit.SI));
+                        linkTag.laneTags.get(name).cse = shoulder;
+                        cseList.add(shoulder);
+                        if (this.simulator != null)
+                        {
+                            new ShoulderAnimation(shoulder, this.simulator);
+                        }
+                    }
+                    else if (name.startsWith("X"))
+                    {
+                        Lane lane =
+                            new NoTrafficLane(csl, new DoubleScalar.Rel<LengthUnit>(offsetSI[i], LengthUnit.SI),
+                                new DoubleScalar.Rel<LengthUnit>(offsetSI[i], LengthUnit.SI),
+                                new DoubleScalar.Rel<LengthUnit>(widthsSI.get(i), LengthUnit.SI),
+                                new DoubleScalar.Rel<LengthUnit>(widthsSI.get(i), LengthUnit.SI), this.laneType, ld,
+                                new DoubleScalar.Abs<FrequencyUnit>(0.0, FrequencyUnit.PER_HOUR));
+                        linkTag.laneTags.get(name).cse = lane;
+                        cseList.add(lane);
+                        if (this.simulator != null)
+                        {
+                            new LaneAnimation(lane, this.simulator, Color.LIGHT_GRAY);
+                        }
+                    }
+                }
+                else
+                {
+                    Lane lane =
+                        new Lane(csl, new DoubleScalar.Rel<LengthUnit>(offsetSI[i], LengthUnit.SI),
+                            new DoubleScalar.Rel<LengthUnit>(offsetSI[i], LengthUnit.SI), new DoubleScalar.Rel<LengthUnit>(
+                                widthsSI.get(i), LengthUnit.SI), new DoubleScalar.Rel<LengthUnit>(widthsSI.get(i),
+                                LengthUnit.SI), this.laneType, ld, new DoubleScalar.Abs<FrequencyUnit>(Double.MAX_VALUE,
+                                FrequencyUnit.PER_HOUR));
+                    linkTag.laneTags.get(name).cse = lane;
+                    cseList.add(lane);
+                    if (this.simulator != null)
+                    {
+                        new LaneAnimation(lane, this.simulator, Color.GRAY);
+                    }
+                }
+            }
+            catch (NetworkException ne)
+            {
+                throw new SAXException(ne);
+            }
+        }
+
+        // road markers
+        for (int j = 0; j < markerStrings.length(); j++)
+        {
+            DoubleScalar.Rel<LengthUnit> lateralCenterPosition = new DoubleScalar.Rel<LengthUnit>();
+            DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(0.1, LengthUnit.METER);
+            switch (markerStrings.charAt(j))
+            {
+                case '-':
+                    break;
+
+                case '|':
+                    Stripe solidLine = new Stripe(csl, lateralCenterPosition, width);
+                    if (this.simulator != null)
+                    {
+                        new StripeAnimation(solidLine, this.simulator, StripeAnimation.type.SOLID);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+         */
     }
 
     /**
