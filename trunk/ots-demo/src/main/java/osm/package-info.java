@@ -5,6 +5,6 @@
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 16 jan. 2015 <br>
- * @author Moritz Bergmann</a>
+ * @author Moritz Bergmann
  */
 package osm;
