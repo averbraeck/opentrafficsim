@@ -54,7 +54,7 @@ public class TestXMLModel implements OTSModelInterface
                 String.class, this.simulator);
         try
         {
-            Network n = nlp.build(url.openStream());
+            Network n = nlp.build(url);
         }
         catch (NetworkException | ParserConfigurationException | SAXException | IOException exception1)
         {

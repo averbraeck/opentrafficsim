@@ -188,6 +188,20 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="GTUMIX">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="GTU" minOccurs="1" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="NAME" type="xsd:IDREF" use="required" />
+            <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="NAME" type="xsd:ID" use="required"></xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:element name="NODE">
     <xsd:complexType>
       <xsd:attribute name="NAME" type="xsd:ID" use="required"></xsd:attribute>
@@ -307,20 +321,6 @@
           <xsd:complexType>
             <xsd:attribute name="NAME" type="xsd:IDREF" use="required"></xsd:attribute>
             <xsd:attribute name="WEIGHT" type="xsd:double" use="required"></xsd:attribute>
-          </xsd:complexType>
-        </xsd:element>
-      </xsd:sequence>
-      <xsd:attribute name="NAME" type="xsd:ID" use="required"></xsd:attribute>
-    </xsd:complexType>
-  </xsd:element>
-
-  <xsd:element name="GTUMIX">
-    <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element name="GTU" minOccurs="1" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:attribute name="NAME" type="xsd:IDREF" use="required" />
-            <xsd:attribute name="WEIGHT" type="xsd:double" use="required" />
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
