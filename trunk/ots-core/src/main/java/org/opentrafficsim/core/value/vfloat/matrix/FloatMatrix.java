@@ -469,7 +469,7 @@ public abstract class FloatMatrix<U extends Unit<U>> extends AbstractValue<U> im
     }
 
     /**
-     * Create storage for the data. <br/>
+     * Create storage for the data. <br>
      * This method must be implemented by each leaf class.
      * @param rows int; the number of rows in the matrix
      * @param columns int; the number of columns in the matrix

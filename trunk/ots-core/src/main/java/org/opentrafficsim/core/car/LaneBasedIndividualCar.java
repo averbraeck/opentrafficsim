@@ -52,7 +52,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
 
     /**
      * @param id ID; the id of the GTU, could be String or Integer
-     * @param gtuType GTUTYpe&lt;?&gt;; the type of GTU, e.g. TruckType, CarType, BusType
+     * @param gtuType GTUType&lt;?&gt;; the type of GTU, e.g. TruckType, CarType, BusType
      * @param gtuFollowingModel GTUFollowingModel; the following model, including a reference to the simulator
      * @param laneChangeModel LaneChangeModel; the lane change model
      * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial positions of
@@ -206,17 +206,17 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
      * Build an individual car and use easy setter methods to instantiate the car. Typical use looks like:
      * 
      * <pre>
-     * LaneBasedIndividualCar<String> car = new LaneBasedIndividualCarBuilder<String>().setId("Car:"+nr)
-     *    .setLength(new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER))....build(); 
+     * LaneBasedIndividualCar&lt;String&gt; car = new LaneBasedIndividualCarBuilder&lt;String&gt;().setId("Car:"+nr)
+     *    .setLength(new DoubleScalar.Rel&lt;LengthUnit&gt;(4.0, LengthUnit.METER))....build(); 
      *    
      * or
      * 
-     * LaneBasedIndividualCarBuilder<String> carBuilder = new LaneBasedIndividualCarBuilder<String>();
+     * LaneBasedIndividualCarBuilder&lt;String&gt; carBuilder = new LaneBasedIndividualCarBuilder&lt;String&gt;();
      * carBuilder.setId("Car:"+nr);
-     * carBuilder.setLength(new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER));
-     * carBuilder.setWidth(new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER));
+     * carBuilder.setLength(new DoubleScalar.Rel&lt;LengthUnit&gt;(4.0, LengthUnit.METER));
+     * carBuilder.setWidth(new DoubleScalar.Rel&lt;LengthUnit&gt;(1.8, LengthUnit.METER));
      * ...
-     * LaneBasedIndividualCar<String> car = carBuilder.build();
+     * LaneBasedIndividualCar&lt;String&gt; car = carBuilder.build();
      * </pre>
      * <p>
      * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
@@ -234,7 +234,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         private ID id = null;
 
         /** The type of GTU, e.g. TruckType, CarType, BusType. */
-        private GTUType<ID> gtuType = null;;
+        private GTUType<ID> gtuType = null;
 
         /** The initial positions of the car on one or more lanes. */
         private Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = null;;

@@ -13,7 +13,7 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
  * indicate the next node to visit. Routes can be expanded (e.g. for node expansion), collapsed (e.g. to use a macro
  * model for a part of the route) or changed (e.g. to avoid congestion). Changing is done by adding and/or removing
  * nodes of the node list. When the last visited node of the route is deleted, however, it is impossible to follow the
- * route any further, which will result in a <code>NetworkException</code>.<br/>
+ * route any further, which will result in a <code>NetworkException</code>.<br>
  * The Node type in the list has generic parameters. This requires callers of getNode(), visitNextNode(), etc. to cast
  * the result as needed. and permits inclusion mixed types of Nodes in one Route.
  * <p>
@@ -45,7 +45,7 @@ public class Route implements Serializable
     }
 
     /**
-     * Create a route based on an initial list of nodes. <br/>
+     * Create a route based on an initial list of nodes. <br>
      * This constructor makes a defensive copy of the provided List.
      * @param nodes the initial list of nodes.
      */
@@ -77,7 +77,7 @@ public class Route implements Serializable
      * Add a node at a specific location.
      * @param i the location to put the node (0-based).
      * @param node the node to add.
-     * @throws NetworkException when i<0 or i>=nodes.size(). Also thrown when another error occurs.
+     * @throws NetworkException when i&lt;0 or i&gt;=nodes.size(). Also thrown when another error occurs.
      */
     public final void addNode(final int i, final Node<?, ?> node) throws NetworkException
     {
@@ -137,7 +137,7 @@ public class Route implements Serializable
      * Return a node at a specific location.
      * @param i the location to get the node from (0-based).
      * @return the retrieved node.
-     * @throws NetworkException when i<0 or i>=nodes.size().
+     * @throws NetworkException when i&lt;0 or i&gt;=nodes.size().
      */
     public final Node<?, ?> getNode(final int i) throws NetworkException
     {
@@ -251,7 +251,7 @@ public class Route implements Serializable
     }
 
     /**
-     * Return the index of a Node in this Route, or -1 if this Route does not contain the specified Node. <br/>
+     * Return the index of a Node in this Route, or -1 if this Route does not contain the specified Node. <br>
      * If this route contains the Node more than once, the index of the first is returned.
      * @param node Node&lt;?, ?&gt;; the Node to find
      * @return int;

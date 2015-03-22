@@ -25,7 +25,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 public interface GTUFollowingModel
 {
     /**
-     * Compute the acceleration that would be used to follow a leader.<br />
+     * Compute the acceleration that would be used to follow a leader.<br>
      * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their
      * leader, or should slow down for a crossing from accelerating to unsafe speeds.
      * @param follower LaneBasedGTU&lt;?&gt;; the GTU for which acceleration is computed
@@ -41,7 +41,7 @@ public interface GTUFollowingModel
             throws RemoteException, NetworkException;
 
     /**
-     * Compute the acceleration that would be used to follow a leader.<br />
+     * Compute the acceleration that would be used to follow a leader.<br>
      * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their
      * @param followerSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed of the follower at the current time
      * @param followerMaximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the maximum speed that the follower is capable of
@@ -61,10 +61,10 @@ public interface GTUFollowingModel
 
     /**
      * Compute the lowest accelerations (or most severe decelerations) that would be used if a referenceGTU is present
-     * (inserted, or not removed) in a set of other GTUs.<br />
+     * (inserted, or not removed) in a set of other GTUs.<br>
      * If any GTU in the set of otherGTUs has a null headway (indicating that the other GTU is in fact parallel to the
-     * referenceGTU), prohibitive decelerations shall be returned.<br />
-     * Two AccelerationStep values are returned in a DualAccelerationStep.<br />
+     * referenceGTU), prohibitive decelerations shall be returned.<br>
+     * Two AccelerationStep values are returned in a DualAccelerationStep.<br>
      * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their
      * leader, or should slow down for a crossing from accelerating to unsafe speeds.
      * @param referenceGTU LaneBasedGTU&lt;?&gt;; the GTU for which the accelerations are computed
@@ -91,11 +91,11 @@ public interface GTUFollowingModel
             final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException;
 
     /**
-     * Compute the minimum <b>net></b> headway given the speed of the follower and the leader.<br/>
+     * Compute the minimum <b>net</b> headway given the speed of the follower and the leader.<br>
      * At the returned headway, the follower would decelerate with it's maximum comfortable deceleration.
      * @param followerSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; speed of the follower
      * @param leaderSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; speed of the leader
-     * @param precision DoubleScalar.Rel&lt;LengthUnit&gt;; the required precision of the result (must be > 0)
+     * @param precision DoubleScalar.Rel&lt;LengthUnit&gt;; the required precision of the result (must be &gt; 0)
      * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the local speed limit
      * @param followerMaximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the maximum speed that the follower can drive at
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;

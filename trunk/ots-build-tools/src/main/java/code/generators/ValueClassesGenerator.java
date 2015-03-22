@@ -934,7 +934,7 @@ public final class ValueClassesGenerator
                 code.append(cg.buildMethod(outerIndent, "protected abstract|" + type + "Matrix" + dimensions
                         + "D|createMatrix" + dimensions + "D|an instance of the right type of " + type + "Matrix"
                         + dimensions + "D (absolute/relative, dense/sparse, etc.)",
-                        "Create storage for the data. <br/>\r\n" + outerIndent
+                        "Create storage for the data. <br>\r\n" + outerIndent
                                 + " * This method must be implemented by each leaf class.", 1 == dimensions
                                 ? new String[]{"final int|size|the number of cells in the " + aggregate.toLowerCase()}
                                 : new String[]{"final int|rows|the number of rows in the matrix",

@@ -20,7 +20,7 @@ public class LaneMovementStep
 
     /**
      * Lane change. This has one of the following values:
-     * <table>
+     * <table summary="">
      * <tr>
      * <td>null:</td>
      * <td>Stay in the current lane</td>
@@ -41,7 +41,7 @@ public class LaneMovementStep
      * Construct a new LaneChangeModelResult.
      * @param gfmr GTUFollowingModelResult; the acceleration and duration of validity of this result.
      * @param laneChange LateralDirectionality; this has one of the values:
-     *            <table>
+     *            <table summary="">
      *            <tr>
      *            <td>null:</td>
      *            <td>Stay in the current lane</td>
@@ -72,7 +72,7 @@ public class LaneMovementStep
 
     /**
      * @return laneChange. This has one of the values:
-     *         <table>
+     *         <table summary="">
      *         <tr>
      *         <td>null:</td>
      *         <td>Stay in the current lane</td>
