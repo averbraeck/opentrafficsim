@@ -179,17 +179,17 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
      * Build a template car and use easy setter methods to instantiate the car. Typical use looks like:
      * 
      * <pre>
-     * LaneBasedTemplateCar<String> car = new LaneBasedTemplateCarBuilder<String>().setId("Car:"+nr)
-     *    .setInitialSpeed(new DoubleScalar.Rel<SpeedUnit>(80.0, LengthUnit.KM_PER_HOUR))....build(); 
+     * LaneBasedTemplateCar&lt;String&gt; car = new LaneBasedTemplateCarBuilder&lt;String&gt;().setId("Car:"+nr)
+     *    .setInitialSpeed(new DoubleScalar.Rel&lt;SpeedUnit&gt;(80.0, LengthUnit.KM_PER_HOUR))....build(); 
      *    
      * or
      * 
-     * LaneBasedTemplateCarBuilder<String> carBuilder = new LaneBasedTemplateCarBuilder<String>();
+     * LaneBasedTemplateCarBuilder&lt;String&gt; carBuilder = new LaneBasedTemplateCarBuilder&lt;String&gt;();
      * carBuilder.setId("Car:"+nr);
      * carBuilder.setTemplateGtuType(TruckTemplate);
-     * carBuilder.setInitialSpeed(new DoubleScalar.Rel<SpeedUnit>(80.0, LengthUnit.KM_PER_HOUR));
+     * carBuilder.setInitialSpeed(new DoubleScalar.Rel&lt;SpeedUnit&gt;(80.0, LengthUnit.KM_PER_HOUR));
      * ...
-     * LaneBasedTemplateCar<String> car = carBuilder.build();
+     * LaneBasedTemplateCar&lt;String&gt; car = carBuilder.build();
      * </pre>
      * <p>
      * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>

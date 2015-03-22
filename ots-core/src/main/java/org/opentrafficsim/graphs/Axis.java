@@ -118,7 +118,7 @@ class Axis
     }
 
     /**
-     * Change the granularity for this axis. <br/>
+     * Change the granularity for this axis. <br>
      * The new value must be present in the granularities.
      * @param newGranularity double; the new value for the granularity of this axis
      */

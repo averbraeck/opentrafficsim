@@ -22,7 +22,7 @@ public class FixedRouteGenerator implements RouteGenerator, Comparable<FixedRout
 
     /**
      * Construct a new FixedRouteGenerator.
-     * @param nodeList List&lt;Node&lt;?, ?&kgt;&gt;; List of Nodes that define the Route (this constructor makes a deep
+     * @param nodeList List&lt;Node&lt;?, ?&gt;&gt;; List of Nodes that define the Route (this constructor makes a deep
      *            copy of the provided List)
      */
     public FixedRouteGenerator(List<Node<?, ?>> nodeList)

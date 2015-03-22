@@ -7,7 +7,7 @@ import org.jgrapht.graph.DefaultWeightedEdge;
  * called <code>link</code> with nodes <code>nodeA</code> and <code>nodeB</code> to a graph is:
  * 
  * <pre>
- * SimpleWeightedGraph<Node, LinkEdge> linkGraph = new SimpleWeightedGraph<>(LinkEdge.class);
+ * SimpleWeightedGraph&lt;Node, LinkEdge&gt; linkGraph = new SimpleWeightedGraph&lt;&gt;(LinkEdge.class);
  * ...
  * Link link = new Link(nodeA, nodeB, name);
  * LinkEdge linkEdge = new LinkEdge(link);

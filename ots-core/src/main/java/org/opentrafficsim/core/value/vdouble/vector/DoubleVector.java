@@ -463,7 +463,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     }
 
     /**
-     * Create storage for the data. <br/>
+     * Create storage for the data. <br>
      * This method must be implemented by each leaf class.
      * @param size int; the number of cells in the vector
      * @return DoubleMatrix1D; an instance of the right type of DoubleMatrix1D (absolute/relative, dense/sparse, etc.)

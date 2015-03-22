@@ -5,7 +5,7 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
- * Storage for the result of a GTU following model. <br/>
+ * Storage for the result of a GTU following model. <br>
  * Currently the result is restricted to a constant acceleration during the period of validity (the time slot) of the
  * result.
  * <p>

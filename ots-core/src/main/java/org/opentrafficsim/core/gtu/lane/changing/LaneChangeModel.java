@@ -27,7 +27,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 public interface LaneChangeModel
 {
     /**
-     * Compute the acceleration and lane change. <br />
+     * Compute the acceleration and lane change. <br>
      * FIXME the parameters of this method will change. Hopefully will become straightforward to figure out the nearby
      * vehicles in the current and the adjacent lanes.
      * @param gtu GTU; the GTU for which the acceleration and lane change is computed

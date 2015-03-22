@@ -46,7 +46,7 @@ public class SimpleSimulator
      * Create a simulation engine without animation; the easy way. PauseOnError is set to true;
      * @param startTime OTSSimTimeDouble; the start time of the simulation
      * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warm up period of the simulation (use new
-     *            DoubleScalar.Rel&ltTimeUnit&gt;(0, TimeUnit.SECOND) if you don't know what this is)
+     *            DoubleScalar.Rel&lt;TimeUnit&gt;(0, TimeUnit.SECOND) if you don't know what this is)
      * @param runLength DoubleScalar.Rel&lt;TimeUnit&gt;; the duration of the simulation
      * @param model OTSModelInterface; the simulation to execute
      * @throws RemoteException on communications failure
@@ -69,7 +69,7 @@ public class SimpleSimulator
      * Create a simulation engine with animation; the easy way. PauseOnError is set to true;
      * @param startTime DoubleScalar.Abs&lt;TimeUnit&gt;; the start time of the simulation
      * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warm up period of the simulation (use new
-     *            DoubleScalar.Rel&ltTimeUnit&gt;(0, TimeUnit.SECOND) if you don't know what this is)
+     *            DoubleScalar.Rel&lt;TimeUnit&gt;(0, TimeUnit.SECOND) if you don't know what this is)
      * @param runLength DoubleScalar.Rel&lt;TimeUnit&gt;; the duration of the simulation
      * @param model OTSModelInterface; the simulation to execute
      * @param extent Rectangle2D; bottom left corner, length and width of the area (world) to animate.

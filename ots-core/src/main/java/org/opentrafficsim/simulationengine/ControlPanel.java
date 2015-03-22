@@ -461,7 +461,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     }
 
     /**
-     * Extension of a DefaultFormatter that uses a regular expression. <br />
+     * Extension of a DefaultFormatter that uses a regular expression. <br>
      * Derived from <a
      * href="http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm">
      * http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm</a>

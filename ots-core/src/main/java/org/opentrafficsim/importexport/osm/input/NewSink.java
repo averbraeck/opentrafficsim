@@ -234,7 +234,7 @@ public class NewSink implements Sink
     }
 
     /**
-     * Set/replace the filter keys.<br/>
+     * Set/replace the filter keys.<br>
      * The provided list is <b>not copied</b>; the caller should not modify the list afterwards.
      * @param keys List&lt;String&gt; list of filter keys
      */

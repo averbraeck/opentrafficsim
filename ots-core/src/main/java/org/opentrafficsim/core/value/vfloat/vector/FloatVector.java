@@ -463,7 +463,7 @@ public abstract class FloatVector<U extends Unit<U>> extends AbstractValue<U> im
     }
 
     /**
-     * Create storage for the data. <br/>
+     * Create storage for the data. <br>
      * This method must be implemented by each leaf class.
      * @param size int; the number of cells in the vector
      * @return FloatMatrix1D; an instance of the right type of FloatMatrix1D (absolute/relative, dense/sparse, etc.)

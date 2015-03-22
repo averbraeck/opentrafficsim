@@ -81,8 +81,8 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * Register the lane with a GTU, at the start of the lane. The reference point will be registered at the time and relative
      * position of the last evaluation of the GTU to keep calculations consistent.
      * @param lane the lane to add to the list of lanes on which the GTU is registered.
-     * @throws NetworkException 
-     * @throws RemoteException 
+     * @throws NetworkException
+     * @throws RemoteException
      */
     void addFrontToSubsequentLane(Lane lane) throws RemoteException, NetworkException;
 
@@ -234,8 +234,8 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * Determine by what distance the front of this GTU is behind the rear an other GTU, or the rear of this GTU is ahead of the
      * front of an other GTU. Only positive values are returned. This method only looks in the given lane, and not further than
      * the given maxDistance. When no vehicle is found within the given maxDistance,
-     * <code>new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER)</code> is returned. The search will extend
-     * into successive lanes if the maxDistance is larger than the length of the lane.<br>
+     * <code>new DoubleScalar.Rel&lt;LengthUnit&gt;(Double.MAX_VALUE, LengthUnit.METER)</code> is returned. The search will
+     * extend into successive lanes if the maxDistance is larger than the length of the lane.<br>
      * <b>Note:</b> Headway is the net headway and calculated on a front-to-back basis.
      * @param lane the lane to look for another GTU
      * @param maxDistance the maximum distance to look for; if positive, the search is forwards; if negative, the search is

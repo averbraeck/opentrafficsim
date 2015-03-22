@@ -7,8 +7,8 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
- * Fixed GTU following model. This GTU following model does not react in any way to other GTUs. In stead it has a
- * predetermined acceleration for a predetermined duration.<br/>
+ * Fixed GTU following model. This GTU following model does not react in any way to other GTUs. Instead it has a
+ * predetermined acceleration for a predetermined duration.<br>
  * Primary use is testing of lane based GTU movement.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
@@ -29,7 +29,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
 
     /**
      * Create a new FixedAccelerationModel.
-     * @param acceleration DoubleScalar.Abs&ltAccelerationUnit&gt;; the acceleration that will be returned by the
+     * @param acceleration DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration that will be returned by the
      *            computeAcceleration methods
      * @param duration DoubleScalar.Abs&lt;TimeUnit&gt;; the duration that the acceleration will be maintained
      */

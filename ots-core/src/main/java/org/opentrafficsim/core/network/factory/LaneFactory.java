@@ -136,7 +136,7 @@ public final class LaneFactory
     }
 
     /**
-     * Create a simple road with the specified number of Lanes.<br/>
+     * Create a simple road with the specified number of Lanes.<br>
      * This method returns an array of Lane. These lanes are embedded in a Link that can be accessed through the
      * getParentLink method of the Lane.
      * @param name String; name of the Link
@@ -181,7 +181,7 @@ public final class LaneFactory
     }
 
     /**
-     * Create a simple road with the specified number of Lanes.<br/>
+     * Create a simple road with the specified number of Lanes.<br>
      * This method returns an array of Lane. These lanes are embedded in a Link that can be accessed through the
      * getParentLink method of the Lane.
      * @param name String; name of the Link
