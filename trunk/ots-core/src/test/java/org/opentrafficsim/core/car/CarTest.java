@@ -3,6 +3,7 @@ package org.opentrafficsim.core.car;
 import static org.junit.Assert.assertEquals;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,11 +30,13 @@ import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -68,7 +71,8 @@ public class CarTest
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void carTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException, GTUException
+    public final void carTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException,
+            GTUException
     {
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
         Lane lane = makeLane();
@@ -139,9 +143,8 @@ public class CarTest
      */
     public static LaneBasedIndividualCar<Integer> makeReferenceCar(final int nr, final Lane lane,
             final DoubleScalar.Rel<LengthUnit> initialPosition, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
-            final OTSDEVSSimulator simulator, GTUFollowingModel gtuFollowingModel,
-            LaneChangeModel laneChangeModel) throws RemoteException, NamingException, NetworkException,
-            SimRuntimeException, GTUException
+            final OTSDEVSSimulator simulator, GTUFollowingModel gtuFollowingModel, LaneChangeModel laneChangeModel)
+            throws RemoteException, NamingException, NetworkException, SimRuntimeException, GTUException
     {
         GTUType<String> carType = new GTUType<String>("Car");
         DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
@@ -150,7 +153,8 @@ public class CarTest
         initialLongitudinalPositions.put(lane, initialPosition);
         DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
         return new LaneBasedIndividualCar<Integer>(nr, carType, gtuFollowingModel, laneChangeModel,
-                initialLongitudinalPositions, initialSpeed, length, width, maxSpeed, simulator);
+                initialLongitudinalPositions, initialSpeed, length, width, maxSpeed, new Route(
+                        new ArrayList<Node<?, ?>>()), simulator);
     }
 
     /**

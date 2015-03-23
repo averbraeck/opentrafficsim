@@ -27,14 +27,21 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
     private Route route = null;
 
     /**
-     * @param id the id of the GTU, could be String or Integer.
-     * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType.
+     * @param id the id of the GTU, could be String or Integer
+     * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
+     * @param route Route; the route that the GTU will take
+     * @throws GTUException when route is null
      */
-    public AbstractGTU(final ID id, final GTUType<?> gtuType)
+    public AbstractGTU(final ID id, final GTUType<?> gtuType, Route route) throws GTUException
     {
         super();
         this.id = id;
         this.gtuType = gtuType;
+        if (null == route)
+        {
+            throw new GTUException("route may not be null");
+        }
+        this.route = route;
     }
 
     /** {@inheritDoc} */

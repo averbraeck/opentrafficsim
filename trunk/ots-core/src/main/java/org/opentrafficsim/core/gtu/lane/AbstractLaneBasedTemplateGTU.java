@@ -11,6 +11,7 @@ import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -37,6 +38,7 @@ public abstract class AbstractLaneBasedTemplateGTU<ID> extends AbstractLaneBased
      * @param gtuFollowingModel the following model, including a reference to the simulator
      * @param initialLongitudinalPositions the initial positions of the car on one or more lanes
      * @param initialSpeed the initial speed of the car on the lane
+     * @param route Route; the route that the GTU will take
      * @throws RemoteException when the simulator cannot be reached
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
@@ -45,11 +47,11 @@ public abstract class AbstractLaneBasedTemplateGTU<ID> extends AbstractLaneBased
     public AbstractLaneBasedTemplateGTU(final ID id, final TemplateGTUType<?> gtuType,
             final GTUFollowingModel gtuFollowingModel,
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-            final DoubleScalar.Abs<SpeedUnit> initialSpeed) throws RemoteException, NetworkException,
+            final DoubleScalar.Abs<SpeedUnit> initialSpeed, Route route) throws RemoteException, NetworkException,
             SimRuntimeException, GTUException
     {
         super(id, gtuType, gtuFollowingModel, null /* LaneChangeModel */, initialLongitudinalPositions, initialSpeed,
-                gtuType.getSimulator());
+                route, gtuType.getSimulator());
     }
 
     /** {@inheritDoc} */

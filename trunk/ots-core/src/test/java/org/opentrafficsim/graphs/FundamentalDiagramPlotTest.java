@@ -10,6 +10,7 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +33,9 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -122,7 +125,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
                         AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(1000, TimeUnit.SECOND));
         // Construct a car
         new LaneBasedIndividualCar<Integer>(1, null, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions,
-                speed, length, width, maxSpeed, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                speed, length, width, maxSpeed, new Route(new ArrayList<Node<?, ?>>()),
+                (OTSDEVSSimulatorInterface) simulator.getSimulator());
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(124, TimeUnit.SECOND));
         for (int sample = 0; sample < 10; sample++)
         {
@@ -195,7 +199,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
         // Check that harmonic mean speed is computed
         speed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
         new LaneBasedIndividualCar<Integer>(1234, null, gtuFollowingModel, laneChangeModel,
-                initialLongitudinalPositions, speed, length, width, maxSpeed,
+                initialLongitudinalPositions, speed, length, width, maxSpeed, new Route(new ArrayList<Node<?, ?>>()),
                 (OTSDEVSSimulatorInterface) simulator.getSimulator());
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(125, TimeUnit.SECOND));
         fd.actionPerformed(setXToSpeed);

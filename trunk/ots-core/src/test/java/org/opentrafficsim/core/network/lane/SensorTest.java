@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -26,8 +27,10 @@ import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -129,7 +132,7 @@ public class SensorTest
         // Now we can make a GTU (and we don't even have to hold a pointer to it)
         new LaneBasedIndividualCar<String>(carID, gtuType, fas, laneChangeModel, initialLongitudinalPositions,
                 initialSpeed, carLength, carWidth, maximumVelocity,
-                (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                new Route(new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simulator.getSimulator());
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(1, TimeUnit.SECOND));
         // Construction of the car scheduled a car move event at t=0
         Set<SimEventInterface<OTSSimTimeDouble>> eventList = simulator.getSimulator().getEventList();

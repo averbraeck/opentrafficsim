@@ -31,12 +31,14 @@ import org.opentrafficsim.core.gtu.lane.changing.FixedLaneChangeModel;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.CrossSectionElement;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -131,7 +133,7 @@ public class LaneBasedGTUTest
         {
             new LaneBasedIndividualCar<String>("Truck", truckType, null /* GTU following model */, laneChangeModel,
                     truckPositions, truckSpeed, truckLength, truckWidth, maximumVelocity,
-                    (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                    new Route(new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simulator.getSimulator());
             fail("null GTUFollowingModel should have thrown a GTUException");
         }
         catch (GTUException e)
@@ -139,10 +141,21 @@ public class LaneBasedGTUTest
             // Ignore expected exception
         }
         GTUFollowingModel gtuFollowingModel = new IDMPlus();
+        try
+        {
+            new LaneBasedIndividualCar<String>("Truck", truckType, gtuFollowingModel, laneChangeModel,
+                    truckPositions, truckSpeed, truckLength, truckWidth, maximumVelocity,
+                    null, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+            fail("null Route should have thrown a GTUException");
+        }
+        catch (GTUException e)
+        {
+            // Ignore expected exception
+        }
         LaneBasedIndividualCar<String> truck =
                 new LaneBasedIndividualCar<String>("Truck", truckType, gtuFollowingModel, laneChangeModel,
                         truckPositions, truckSpeed, truckLength, truckWidth, maximumVelocity,
-                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                        new Route(new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simulator.getSimulator());
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
         int found = 0;
@@ -203,7 +216,7 @@ public class LaneBasedGTUTest
                 LaneBasedIndividualCar<String> car =
                         new LaneBasedIndividualCar<String>("Car", carType, gtuFollowingModel, laneChangeModel,
                                 carPositions, carSpeed, carLength, carWidth, maximumVelocity,
-                                (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                                new Route(new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simulator.getSimulator());
                 leader = truck.headway(forwardMaxDistance);
                 double actualHeadway = leader.getDistanceSI();
                 double expectedHeadway =
@@ -386,7 +399,7 @@ public class LaneBasedGTUTest
                     new LaneBasedIndividualCar<String>("Car", carType, fam, laneChangeModel, carPositions, carSpeed,
                             new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
                                     1.8, LengthUnit.METER), maximumVelocity,
-                            (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                                    new Route(new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simulator.getSimulator());
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(61, TimeUnit.SECOND));
             // System.out.println("acceleration is " + acceleration);

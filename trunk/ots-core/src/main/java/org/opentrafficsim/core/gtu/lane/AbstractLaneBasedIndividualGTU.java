@@ -12,6 +12,7 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -55,6 +56,7 @@ public abstract class AbstractLaneBasedIndividualGTU<ID> extends AbstractLaneBas
      * @param length the maximum length of the GTU (parallel with driving direction)
      * @param width the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumVelocity the maximum speed of the GTU (in the driving direction)
+     * @param route Route; the route that the GTU will take
      * @param simulator the simulator
      * @throws RemoteException when the simulator cannot be reached
      * @throws NetworkException when the GTU cannot be placed on the given lane
@@ -67,10 +69,10 @@ public abstract class AbstractLaneBasedIndividualGTU<ID> extends AbstractLaneBas
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
             final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
             final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
-            final OTSDEVSSimulatorInterface simulator) throws RemoteException, NetworkException, SimRuntimeException,
+            Route route, final OTSDEVSSimulatorInterface simulator) throws RemoteException, NetworkException, SimRuntimeException,
             GTUException
     {
-        super(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, simulator);
+        super(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, route, simulator);
         this.length = length;
         this.width = width;
         if (null == maximumVelocity)

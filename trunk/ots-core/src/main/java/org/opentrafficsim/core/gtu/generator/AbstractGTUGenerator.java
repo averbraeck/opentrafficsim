@@ -15,6 +15,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -22,7 +23,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DistContinuousDoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Feb 2, 2015 <br>
@@ -32,62 +34,66 @@ import org.opentrafficsim.core.value.vdouble.scalar.DistContinuousDoubleScalar;
  */
 public abstract class AbstractGTUGenerator<ID>
 {
-    /** the generator name. Will be used for generated GTUs as Name:# where # is the id of the gtu when ID is a String. */
+    /** The generator name. Will be used for generated GTUs as Name:# where # is the id of the gtu when ID is a String. */
     private final String name;
 
-    /** the type of GTU to generate. */
+    /** The type of GTU to generate. */
     private final GTUType<ID> gtuType;
 
-    /** the gtu class to instantiate. */
+    /** The gtu class to instantiate. */
     private final Class<GTU<ID>> gtuClass;
 
-    /** the GTU following model to use. */
+    /** The GTU following model to use. */
     private final GTUFollowingModel gtuFollowingModel;
 
-    /** distribution of the initial speed of the GTU. */
+    /** Distribution of the initial speed of the GTU. */
     private final DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist;
 
-    /** distribution of the interarrival time. */
+    /** Distribution of the interarrival time. */
     private final DistContinuousDoubleScalar.Rel<TimeUnit> interarrivelTimeDist;
 
-    /** maximum number of GTUs to generate. */
+    /** Maximum number of GTUs to generate. */
     private final long maxGTUs;
 
-    /** start time of generation (delayed start). */
+    /** Start time of generation (delayed start). */
     private final OTSSimTimeDouble startTime;
 
-    /** end time of generation. */
+    /** End time of generation. */
     private final OTSSimTimeDouble endTime;
 
-    /** lane to generate the GTU on -- at the end for now. */
+    /** Lane to generate the GTU on -- at the end for now. */
     private final Lane lane;
 
-    /** number of generated GTUs. */
+    /** Route generator used to create a route for each generated GTU. */
+    private RouteGenerator routeGenerator;
+
+    /** Number of generated GTUs. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected long numberGTUs = 0;
 
     /**
-     * @param name the name of the generator.
-     * @param simulator the simulator to schedule the start of the generation.
-     * @param gtuType the type of GTU to generate.
-     * @param gtuClass the gtu class to instantiate.
-     * @param gtuFollowingModel the GTU following model to use.
-     * @param initialSpeedDist distribution of the initial speed of the GTU.
-     * @param interarrivelTimeDist distribution of the interarrival time.
-     * @param maxGTUs maximum number of GTUs to generate.
-     * @param startTime start time of generation (delayed start).
-     * @param endTime end time of generation.
-     * @param lane the lane to generate the GTU on -- at the end for now.
+     * @param name the name of the generator
+     * @param simulator the simulator to schedule the start of the generation
+     * @param gtuType the type of GTU to generate
+     * @param gtuClass the GTU class to instantiate
+     * @param gtuFollowingModel the GTU following model to use
+     * @param initialSpeedDist distribution of the initial speed of the GTU
+     * @param interarrivelTimeDist distribution of the interarrival time
+     * @param maxGTUs maximum number of GTUs to generate
+     * @param startTime start time of generation (delayed start)
+     * @param endTime end time of generation
+     * @param lane the lane to generate the GTU on -- at the end for now
+     * @param routeGenerator RouteGenerator; the route generator that will create a route for each generated GTU 
      * @throws SimRuntimeException when simulation scheduling fails
      * @throws RemoteException when remote simulator cannot be reached
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType<ID> gtuType,
-        final Class<GTU<ID>> gtuClass, final GTUFollowingModel gtuFollowingModel,
-        final DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist,
-        final DistContinuousDoubleScalar.Rel<TimeUnit> interarrivelTimeDist, final long maxGTUs,
-        final OTSSimTimeDouble startTime, final OTSSimTimeDouble endTime, final Lane lane) throws RemoteException,
-        SimRuntimeException
+    public AbstractGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator,
+            final GTUType<ID> gtuType, final Class<GTU<ID>> gtuClass, final GTUFollowingModel gtuFollowingModel,
+            final DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist,
+            final DistContinuousDoubleScalar.Rel<TimeUnit> interarrivelTimeDist, final long maxGTUs,
+            final OTSSimTimeDouble startTime, final OTSSimTimeDouble endTime, final Lane lane,
+            RouteGenerator routeGenerator) throws RemoteException, SimRuntimeException
     {
         super();
         this.name = name;
@@ -100,13 +106,14 @@ public abstract class AbstractGTUGenerator<ID>
         this.startTime = startTime;
         this.endTime = endTime;
         this.lane = lane;
+        this.routeGenerator = routeGenerator;
 
         simulator.scheduleEventAbs(startTime, this, this, "generate", null);
     }
 
     /**
      * Generate a GTU.
-     * @throws Exception 
+     * @throws Exception
      */
     @SuppressWarnings("unchecked")
     protected final void generate() throws Exception
@@ -115,7 +122,7 @@ public abstract class AbstractGTUGenerator<ID>
         Class<?> getidtype = String.class;
         try
         {
-            Method getid = ClassUtil.resolveMethod(this.gtuClass, "getId", new Class<?>[] {});
+            Method getid = ClassUtil.resolveMethod(this.gtuClass, "getId", new Class<?>[]{});
             getidtype = getid.getReturnType();
         }
         catch (NoSuchMethodException exception)
@@ -155,6 +162,7 @@ public abstract class AbstractGTUGenerator<ID>
             carBuilder.setInitialSpeed(getInitialSpeedDist().draw());
             carBuilder.setSimulator(getSimulator());
             // TODO carBuilder.setInitialLongitudinalPositions(initialLongitudinalPositions);
+            carBuilder.setRouteGenerator(getRouteGenerator());
             LaneBasedIndividualCar<ID> car = carBuilder.build();
         }
         else
@@ -254,4 +262,20 @@ public abstract class AbstractGTUGenerator<ID>
         return this.endTime;
     }
 
+    /**
+     * @return routeGenerator.
+     */
+    public RouteGenerator getRouteGenerator()
+    {
+        return this.routeGenerator;
+    }
+
+    /**
+     * @param routeGenerator set routeGenerator.
+     */
+    public void setRouteGenerator(RouteGenerator routeGenerator)
+    {
+        this.routeGenerator = routeGenerator;
+    }
+    
 }
