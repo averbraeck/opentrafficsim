@@ -29,12 +29,14 @@ import org.opentrafficsim.core.gtu.lane.changing.FixedLaneChangeModel;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.lane.SinkLane;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -375,7 +377,7 @@ class XMLNetworkModel implements OTSModelInterface
         new LaneBasedIndividualCar<Integer>(999999, null /* gtuType */, gfm, lcm, initialPositions,
                 new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(1,
                         LengthUnit.METER), lane.getWidth(1), new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-                this.simulator);
+                        new Route(new ArrayList<Node<?, ?>>()), this.simulator);
         return lane;
     }
 
@@ -398,7 +400,7 @@ class XMLNetworkModel implements OTSModelInterface
             new LaneBasedIndividualCar<Integer>(++this.carsCreated, this.gtuType, gtuFollowingModel,
                     this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
                     new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                            SpeedUnit.KM_PER_HOUR), this.simulator);
+                            SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator);
             Object[] arguments = new Object[1];
             arguments[0] = lane;
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", arguments);

@@ -47,10 +47,12 @@ import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.gtu.lane.changing.LaneMovementStep;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -263,7 +265,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
                 new LaneBasedIndividualCar<String>("ReferenceCar", gtuType, this.carFollowingModel, laneChangeModel,
                         initialLongitudinalPositions, referenceSpeed, new DoubleScalar.Rel<LengthUnit>(4,
                                 LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
-                        new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR),
+                        new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR), new Route(
+                                new ArrayList<Node<?, ?>>()),
                         (OTSDEVSSimulatorInterface) simpleSimulator.getSimulator());
         Collection<HeadwayGTU> sameLaneGTUs = new HashSet<HeadwayGTU>();
         sameLaneGTUs.add(new HeadwayGTU(referenceCar, 0));
@@ -344,7 +347,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
                                 referenceCar.getLongitudinalVelocity(), deltaV).immutable(),
                         new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(2,
                                 LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR),
-                        referenceCar.getSimulator());
+                        new Route(new ArrayList<Node<?, ?>>()), referenceCar.getSimulator());
         Collection<HeadwayGTU> preferredLaneGTUs = new HashSet<HeadwayGTU>();
         Collection<HeadwayGTU> nonPreferredLaneGTUs = new HashSet<HeadwayGTU>();
         DoubleScalar.Rel<LengthUnit> referenceCarPosition =
