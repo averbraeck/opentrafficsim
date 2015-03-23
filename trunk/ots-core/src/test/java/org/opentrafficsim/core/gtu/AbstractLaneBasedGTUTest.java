@@ -59,7 +59,7 @@ public class AbstractLaneBasedGTUTest
 {
 
     /**
-     * Test that the constructor puts the supplied values in the correct fields.
+     * Test that the constructor puts the supplied values in the correct fields, then check the motion of the GTU.
      * @throws SimRuntimeException
      * @throws RemoteException
      * @throws NamingException
