@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.network;
+package org.opentrafficsim.core.network.route;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -8,10 +8,14 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.junit.Test;
+import org.opentrafficsim.core.network.FixedRouteGenerator;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.route.ProbabilisticFixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
@@ -83,8 +87,13 @@ public class RouteGeneratorTest
         {
             // Ignore expected exception
         }
-        double[] probabilities = new double[]{0.1, 0.2, 0.7};
-        routeProbabilities.put(createRouteGenerator("0"), probabilities[0]);
+        double[] frequencies = new double[]{1, 2, 7};
+        double sumFrequencies = 0;
+        for (double frequency : frequencies)
+        {
+            sumFrequencies += frequency;
+        }
+        routeProbabilities.put(createRouteGenerator("0"), frequencies[0]);
         ProbabilisticFixedRouteGenerator pfrg = new ProbabilisticFixedRouteGenerator(routeProbabilities, 1234);
         assertNotNull("Returned ProbabilisticRouteGenerator should not be null", pfrg);
         for (int i = 0; i < 20; i++)
@@ -92,11 +101,12 @@ public class RouteGeneratorTest
             Route r = pfrg.generateRoute();
             assertEquals("Every generated Route should end at node \"0\"", "0", r.destinationNode().getId());
         }
-        routeProbabilities.put(createRouteGenerator("1"), probabilities[1]);
-        routeProbabilities.put(createRouteGenerator("2"), probabilities[2]);
+        routeProbabilities.put(createRouteGenerator("1"), frequencies[1]);
+        routeProbabilities.put(createRouteGenerator("2"), frequencies[2]);
         pfrg = new ProbabilisticFixedRouteGenerator(routeProbabilities, 1234);
-        double[] observedCounts = new double[3];
-        for (int i = 0; i < 1000; i++)
+        int[] observedCounts = new int[3];
+        int samplesToTake = 10000;
+        for (int i = 0; i < samplesToTake; i++)
         {
             Route r = pfrg.generateRoute();
             String lastNodeName = r.destinationNode().getId().toString();
@@ -105,16 +115,27 @@ public class RouteGeneratorTest
         }
         for (int index = 0; index < observedCounts.length; index++)
         {
-            double observedFraction = observedCounts[index] / 1000;
-            double deviation = Math.abs(observedFraction - probabilities[index]);
-            System.out.println("Observed counts for probability " + index + ": " + observedCounts[index]
-                    + " deviation " + deviation);
-            final double maxDeviation = 0.02;
+            double observedFraction = 1.0 * observedCounts[index] / samplesToTake;
+            double expectedFraction = frequencies[index] / sumFrequencies;
+            double deviation = observedFraction - expectedFraction;
+            System.out.println(String.format(Locale.US,
+                    "Probability %.1f: expected/observed count %4d/%4d relative deviation % 6.4f", expectedFraction,
+                    (int) (samplesToTake * expectedFraction), observedCounts[index], deviation));
+            final double maxDeviation = 0.01;
             assertTrue("Deviation " + deviation + " (using the fixed seed) should be less than " + maxDeviation,
-                    deviation < maxDeviation);
+                    Math.abs(deviation) < maxDeviation);
         }
-        // TODO test that a negative probability/frequency throws a NetworkException
-        // TODO test that the probabilities/frequencies are normalized
+        // Add another entry with an illegal frequency
+        routeProbabilities.put(createRouteGenerator("3"), -2d);
+        try
+        {
+            new ProbabilisticFixedRouteGenerator(routeProbabilities, 1234);
+            fail("Illegal probability/frequency should have thrown an exception");
+        }
+        catch (NetworkException e)
+        {
+            // Ignore expected exception
+        }
     }
 
     /**
