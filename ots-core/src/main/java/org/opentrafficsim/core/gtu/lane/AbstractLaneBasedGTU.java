@@ -330,11 +330,10 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     protected final void move() throws RemoteException, NamingException, NetworkException, GTUException,
             SimRuntimeException
     {
-        // if (getId().toString().equals("41")) // && getSimulator().getSimulatorTime().get().getSI() > 7.9)
+        // if (getId().toString().equals("80")) // && getSimulator().getSimulatorTime().get().getSI() > 7.9)
         // {
         // System.out.println("Debug me: " + this);
         // }
-
         // Sanity check
         if (getSimulator().getSimulatorTime().get().getSI() != getNextEvaluationTime().getSI())
         {
@@ -507,8 +506,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 {
                     // Only follow links on the Route if there is a Route, and we haven't added this lane already
                     if (!this.lanes.contains(nextLane)
-                            && (this.getRoute() == null || this.getRoute() != null
-                                    && this.getRoute().containsLink(nextLane.getParentLink())))
+                            && (this.getRoute() == null || this.getRoute().size() == 0
+                                    || this.getRoute().containsLink(nextLane.getParentLink())))
                     {
                         nextLane.scheduleTriggers(this, -remainingDistanceSI - getFront().getDx().getSI(), moveSI);
                     }
@@ -731,7 +730,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 for (Lane nextLane : nextLanes)
                 {
                     // Only follow links on the Route if there is a "real" Route
-                    if (this.getRoute() == null || this.getRoute().size() == 0  /* XXXXX STUB dummy route */
+                    if (this.getRoute() == null || this.getRoute().size() == 0 /* XXXXX STUB dummy route */
                             || this.getRoute().containsLink(lane.getParentLink()))
                     {
                         double traveledDistanceSI = cumDistanceSI + lane.getLength().getSI() - lanePositionSI;
