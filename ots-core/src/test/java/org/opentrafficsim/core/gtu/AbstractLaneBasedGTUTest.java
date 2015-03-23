@@ -6,7 +6,9 @@ import static org.junit.Assert.fail;
 
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.naming.NamingException;
@@ -24,10 +26,12 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -114,14 +118,23 @@ public class AbstractLaneBasedGTUTest
         DoubleScalar.Abs<SpeedUnit> maximumVelocity = new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR);
         // ID of the Car
         String carID = "theCar";
+        // List of Nodes visited by the Car
+        List<Node<?, ?>> nodeList = new ArrayList<Node<?, ?>>();
+        nodeList.add(nodeAFrom);
+        nodeList.add(nodeATo);
+        // Route of the Car
+        Route route = new Route (nodeList);
         // Now we can make a GTU
         LaneBasedIndividualCar<String> car =
                 new LaneBasedIndividualCar<String>(carID, gtuType, gfm, laneChangeModel, initialLongitudinalPositions,
-                        initialSpeed, carLength, carWidth, maximumVelocity,
+                        initialSpeed, carLength, carWidth, maximumVelocity, route,
                         (OTSDEVSSimulatorInterface) simulator.getSimulator());
         // Now we can verify the various fields in the newly created Car
         assertEquals("ID of the car should be identical to the provided one", carID, car.getId());
         assertEquals("GTU following model should be identical to the provided one", gfm, car.getGTUFollowingModel());
+        assertEquals("Route should be identical to the provided route", route, car.getRoute());
+        assertEquals("Width should be identical to the provided width", carWidth, car.getWidth());
+        assertEquals("Length should be identical to the provided length", carLength, car.getLength());
         assertEquals("GTU type should be identical to the provided one", gtuType, car.getGTUType());
         assertEquals("front in lanesGroupA[1] is positionA", positionA.getSI(),
                 car.position(lanesGroupA[1], car.getReference()).getSI(), 0.0001);

@@ -10,6 +10,7 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -42,20 +43,21 @@ public class GTUGeneratorIndividual<ID> extends AbstractGTUGenerator<ID>
     private final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeedDist;
 
     /**
-     * @param name the name of the generator.
-     * @param gtuType the type of GTU to generate.
-     * @param gtuClass the gtu class to instantiate.
-     * @param gtuFollowingModel the GTU following model to use.
-     * @param initialSpeedDist distribution of the initial speed of the GTU.
-     * @param interarrivelTimeDist distribution of the interarrival time.
-     * @param maxGTUs maximum number of GTUs to generate.
-     * @param startTime start time of generation (delayed start).
-     * @param endTime end time of generation.
-     * @param simulator simulator to schedule next arrival events.
-     * @param lengthDist distribution of the length of the GTU.
-     * @param widthDist distribution of the width of the GTU.
-     * @param maximumSpeedDist distribution of the maximum speed of the GTU.
-     * @param lane Lane on which newly GTUs are placed.
+     * @param name the name of the generator
+     * @param gtuType the type of GTU to generate
+     * @param gtuClass the gtu class to instantiate
+     * @param gtuFollowingModel the GTU following model to use
+     * @param initialSpeedDist distribution of the initial speed of the GTU
+     * @param interarrivelTimeDist distribution of the interarrival time
+     * @param maxGTUs maximum number of GTUs to generate
+     * @param startTime start time of generation (delayed start)
+     * @param endTime end time of generation
+     * @param simulator simulator to schedule next arrival events
+     * @param lengthDist distribution of the length of the GTU
+     * @param widthDist distribution of the width of the GTU
+     * @param maximumSpeedDist distribution of the maximum speed of the GTU
+     * @param lane Lane on which newly GTUs are placed
+     * @param routeGenerator RouteGenerator; the route generator that will create a route for each newly constructed GTU
      * @throws SimRuntimeException when simulation scheduling fails
      * @throws RemoteException when remote simulator cannot be reached
      */
@@ -67,11 +69,11 @@ public class GTUGeneratorIndividual<ID> extends AbstractGTUGenerator<ID>
             final DistContinuousDoubleScalar.Rel<LengthUnit> lengthDist,
             final DistContinuousDoubleScalar.Rel<LengthUnit> widthDist,
             final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeedDist, final long maxGTUs,
-            final OTSSimTimeDouble startTime, final OTSSimTimeDouble endTime, final Lane lane) throws RemoteException,
-            SimRuntimeException
+            final OTSSimTimeDouble startTime, final OTSSimTimeDouble endTime, final Lane lane,
+            final RouteGenerator routeGenerator) throws RemoteException, SimRuntimeException
     {
         super(name, simulator, gtuType, gtuClass, gtuFollowingModel, initialSpeedDist, interarrivelTimeDist, maxGTUs,
-                startTime, endTime, lane);
+                startTime, endTime, lane, routeGenerator);
         this.simulator = simulator;
         this.lengthDist = lengthDist;
         this.widthDist = widthDist;

@@ -24,6 +24,8 @@ import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -62,6 +64,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
      * @param width DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum width of the GTU (perpendicular to driving
      *            direction)
      * @param maximumVelocity DoubleScalar.Abs&lt;SpeedUnit&gt;;the maximum speed of the GTU (in the driving direction)
+     * @param route Route; the route that the GTU will follow
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @throws NamingException if an error occurs when adding the animation handler
      * @throws RemoteException when the simulator cannot be reached
@@ -75,11 +78,11 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
             final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
             final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
-            final OTSDEVSSimulatorInterface simulator) throws NamingException, RemoteException, NetworkException,
+            Route route, final OTSDEVSSimulatorInterface simulator) throws NamingException, RemoteException, NetworkException,
             SimRuntimeException, GTUException
     {
         this(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, length,
-                width, maximumVelocity, simulator, DefaultCarAnimation.class);
+                width, maximumVelocity, route, simulator, DefaultCarAnimation.class);
     }
 
     /**
@@ -95,6 +98,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
      * @param width DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum width of the GTU (perpendicular to driving
      *            direction)
      * @param maximumVelocity DoubleScalar.Abs&lt;SpeedUnit&gt;;the maximum speed of the GTU (in the driving direction)
+     * @param route Route the route that the GTU will follow
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @param animationClass Class&lt;? extends Renderable2D&gt;; the class for animation or null if no animation
      * @throws NamingException if an error occurs when adding the animation handler
@@ -109,11 +113,11 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
             final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
             final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
-            final OTSDEVSSimulatorInterface simulator, final Class<? extends Renderable2D> animationClass)
+            Route route, final OTSDEVSSimulatorInterface simulator, final Class<? extends Renderable2D> animationClass)
             throws NamingException, RemoteException, NetworkException, SimRuntimeException, GTUException
     {
         super(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, length,
-                width, maximumVelocity, simulator);
+                width, maximumVelocity, route, simulator);
 
         // sensor positions.
         // We take the rear position of the Car to be the reference point. So the front is the length
@@ -256,6 +260,9 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
 
         /** The maximum speed of the GTU (in the driving direction). */
         private DoubleScalar.Abs<SpeedUnit> maximumVelocity = null;
+        
+        /** The route generator that will create route for the GTU. */
+        private RouteGenerator routeGenerator;
 
         /** The simulator. */
         private OTSDEVSSimulatorInterface simulator = null;
@@ -264,8 +271,8 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         private Class<? extends Renderable2D> animationClass = null;
 
         /**
-         * @param id set id.
-         * @return the class itself for chaining the setters.
+         * @param id set id
+         * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder<ID> setId(final ID id)
         {
@@ -274,8 +281,8 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         }
 
         /**
-         * @param gtuType set gtuType.
-         * @return the class itself for chaining the setters.
+         * @param gtuType set gtuType
+         * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder<ID> setGtuType(final GTUType<ID> gtuType)
         {
@@ -285,7 +292,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
 
         /**
          * @param gtuFollowingModel GTUFollowingModel; the GTU following model used by the built cars
-         * @return the class itself for chaining the setters.
+         * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder<ID> setGTUFollowingModel(final GTUFollowingModel gtuFollowingModel)
         {
@@ -295,7 +302,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
 
         /**
          * @param laneChangeModel AbstractLaneChangeModel; the lane change model
-         * @return the class itself for chaining the setters.
+         * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder<ID> setLaneChangeModel(final AbstractLaneChangeModel laneChangeModel)
         {
@@ -304,8 +311,8 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         }
 
         /**
-         * @param initialLongitudinalPositions set initialLongitudinalPositions.
-         * @return the class itself for chaining the setters.
+         * @param initialLongitudinalPositions set initialLongitudinalPositions
+         * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder<ID> setInitialLongitudinalPositions(
                 final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions)
@@ -315,8 +322,8 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         }
 
         /**
-         * @param initialSpeed set initialSpeed.
-         * @return the class itself for chaining the setters.
+         * @param initialSpeed set initialSpeed
+         * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder<ID> setInitialSpeed(final DoubleScalar.Abs<SpeedUnit> initialSpeed)
         {
@@ -325,8 +332,8 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         }
 
         /**
-         * @param length set length.
-         * @return the class itself for chaining the setters.
+         * @param length set length
+         * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder<ID> setLength(final DoubleScalar.Rel<LengthUnit> length)
         {
@@ -335,8 +342,8 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         }
 
         /**
-         * @param width set width.
-         * @return the class itself for chaining the setters.
+         * @param width set width
+         * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder<ID> setWidth(final DoubleScalar.Rel<LengthUnit> width)
         {
@@ -345,8 +352,8 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         }
 
         /**
-         * @param maximumVelocity set maximumVelocity.
-         * @return the class itself for chaining the setters.
+         * @param maximumVelocity set maximumVelocity
+         * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder<ID> setMaximumVelocity(
                 final DoubleScalar.Abs<SpeedUnit> maximumVelocity)
@@ -356,8 +363,18 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         }
 
         /**
-         * @param simulator set simulator.
-         * @return the class itself for chaining the setters.
+         * @param routeGenerator
+         * @return the class itself for chaining the setters
+         */
+        public final LaneBasedIndividualCarBuilder<ID> setRouteGenerator(RouteGenerator routeGenerator)
+        {
+            this.routeGenerator = routeGenerator;
+            return this;
+        }
+
+        /**
+         * @param simulator set simulator
+         * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder<ID> setSimulator(final OTSDEVSSimulatorInterface simulator)
         {
@@ -366,8 +383,8 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         }
 
         /**
-         * @param animationClass set animation class.
-         * @return the class itself for chaining the setters.
+         * @param animationClass set animation class
+         * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder<ID> setAnimationClass(
                 final Class<? extends Renderable2D> animationClass)
@@ -386,14 +403,15 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
             if (null == this.id || null == this.gtuType || null == this.gtuFollowingModel
                     || null == this.laneChangeModel || null == this.initialLongitudinalPositions
                     || null == this.initialSpeed || null == this.length || null == this.width
-                    || null == this.maximumVelocity || null == this.simulator)
+                    || null == this.maximumVelocity || null == this.routeGenerator || null == this.simulator)
             {
                 // TODO Should throw a more specific Exception type
-                throw new Exception("factory settings incomplete");
+                throw new GTUException("factory settings incomplete");
             }
             return new LaneBasedIndividualCar<ID>(this.id, this.gtuType, this.gtuFollowingModel, this.laneChangeModel,
                     this.initialLongitudinalPositions, this.initialSpeed, this.length, this.width,
-                    this.maximumVelocity, this.simulator, this.animationClass);
+                    this.maximumVelocity, this.routeGenerator.generateRoute(), this.simulator, this.animationClass);
         }
+
     }
 }

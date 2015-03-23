@@ -25,7 +25,9 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -83,8 +85,8 @@ public class IDMPlusTest
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar<Integer> referenceCar =
                 new LaneBasedIndividualCar<Integer>(12345, carType, carFollowingModel, laneChangeModel,
-                        initialLongitudinalPositions, initialSpeed, length, width, maxSpeed,
-                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                        initialLongitudinalPositions, initialSpeed, length, width, maxSpeed, new Route(
+                                new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simulator.getSimulator());
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         AccelerationStep cfmr = carFollowingModel.computeAccelerationWithNoLeader(referenceCar, speedLimit);
         assertEquals("Standard time slice in IDM+ is 0.5s", 0.5, cfmr.getValidUntil().getSI(), 0.0001);
@@ -103,7 +105,8 @@ public class IDMPlusTest
                         AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(9999, TimeUnit.SECOND));
         LaneBasedIndividualCar<Integer> leaderCar =
                 new LaneBasedIndividualCar<Integer>(23456, carType, fam, laneChangeModel, leaderPositions,
-                        initialSpeed, length, width, maxSpeed, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                        initialSpeed, length, width, maxSpeed, new Route(new ArrayList<Node<?, ?>>()),
+                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
         HeadwayGTU leader =
                 new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
                         - initialPosition.getSI());
@@ -119,7 +122,8 @@ public class IDMPlusTest
         // Exercise the if statement that ignores leaders that are further ahead
         LaneBasedIndividualCar<Integer> leaderCar2 =
                 new LaneBasedIndividualCar<Integer>(34567, carType, fam, laneChangeModel, leaderPositions,
-                        initialSpeed, length, width, maxSpeed, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                        initialSpeed, length, width, maxSpeed, new Route(new ArrayList<Node<?, ?>>()),
+                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
         // Verify that the result is independent of the order of adding in the Collection
         Collection<HeadwayGTU> leaders = new ArrayList<HeadwayGTU>();
         HeadwayGTU leader2 =
@@ -144,7 +148,8 @@ public class IDMPlusTest
         leaderCar2.destroy();
         leaderCar =
                 new LaneBasedIndividualCar<Integer>(23456, carType, fam, laneChangeModel, leaderPositions,
-                        initialSpeed, length, width, maxSpeed, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                        initialSpeed, length, width, maxSpeed, new Route(new ArrayList<Node<?, ?>>()),
+                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
         leader =
                 new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
                         - initialPosition.getSI());
@@ -164,7 +169,8 @@ public class IDMPlusTest
             leaderPositions.put(lane, leaderPosition);
             leaderCar =
                     new LaneBasedIndividualCar<Integer>(0, carType, fam, laneChangeModel, leaderPositions,
-                            initialSpeed, length, width, maxSpeed, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                            initialSpeed, length, width, maxSpeed, new Route(new ArrayList<Node<?, ?>>()),
+                            (OTSDEVSSimulatorInterface) simulator.getSimulator());
             leader =
                     new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
                             - initialPosition.getSI());
@@ -196,14 +202,15 @@ public class IDMPlusTest
             referenceCar.destroy();
             referenceCar =
                     new LaneBasedIndividualCar<Integer>(12345, carType, carFollowingModel, laneChangeModel,
-                            initialPositions, initialSpeed, length, width, maxSpeed,
-                            (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                            initialPositions, initialSpeed, length, width, maxSpeed, new Route(
+                                    new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simulator.getSimulator());
             leaders.clear();
             DoubleScalar.Abs<SpeedUnit> leaderSpeed =
                     new DoubleScalar.Abs<SpeedUnit>(integerLeaderSpeed, SpeedUnit.METER_PER_SECOND);
             leaderCar =
                     new LaneBasedIndividualCar<Integer>(0, carType, fam, laneChangeModel, leaderPositions, leaderSpeed,
-                            length, width, maxSpeed, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                            length, width, maxSpeed, new Route(new ArrayList<Node<?, ?>>()),
+                            (OTSDEVSSimulatorInterface) simulator.getSimulator());
             leader =
                     new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
                             - initialPosition.getSI());
@@ -230,13 +237,14 @@ public class IDMPlusTest
         referenceCar =
                 new LaneBasedIndividualCar<Integer>(12345, carType, carFollowingModel, laneChangeModel,
                         initialPositions, initialSpeed, length, width, maxSpeed,
-                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                        new Route(new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simulator.getSimulator());
         leaderPosition =
                 new DoubleScalar.Rel<LengthUnit>(100 + 3 + referenceCar.getLength().getSI()
                         + referenceCar.position(lane, referenceCar.getFront(), initialTime).getSI(), LengthUnit.METER);
         leaderCar =
                 new LaneBasedIndividualCar<Integer>(0, carType, fam, laneChangeModel, leaderPositions, initialSpeed,
-                        length, width, maxSpeed, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                        length, width, maxSpeed, new Route(new ArrayList<Node<?, ?>>()),
+                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
         for (int timeStep = 0; timeStep < 200; timeStep++)
         {
             DoubleScalar.Abs<TimeUnit> simulateUntil = new DoubleScalar.Abs<TimeUnit>(0.1 * timeStep, TimeUnit.SI);
