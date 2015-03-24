@@ -27,12 +27,10 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 public interface LaneChangeModel
 {
     /**
-     * Compute the acceleration and lane change. <br>
-     * FIXME the parameters of this method will change. Hopefully will become straightforward to figure out the nearby
-     * vehicles in the current and the adjacent lanes.
+     * Compute the acceleration and lane change.
      * @param gtu GTU; the GTU for which the acceleration and lane change is computed
      * @param sameLaneTraffic Collection&lt;GTU&gt;; the set of observable GTUs in the current lane (can not be null and
-     *            may include gtu)
+     *            may include the <code>gtu</code>)
      * @param rightLaneTraffic Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane where GTUs should
      *            drive in the absence of other traffic (must be null if there is no such lane)
      * @param leftLaneTraffic Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane into which
@@ -51,8 +49,7 @@ public interface LaneChangeModel
     LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
             final Collection<HeadwayGTU> sameLaneTraffic,
             final Collection<HeadwayGTU> rightLaneTraffic,
-            final Collection<HeadwayGTU> leftLaneTraffic,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit,
+            final Collection<HeadwayGTU> leftLaneTraffic, final DoubleScalar.Abs<SpeedUnit> speedLimit,
             final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
             Rel<AccelerationUnit> laneChangeThreshold,
             final DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException;
