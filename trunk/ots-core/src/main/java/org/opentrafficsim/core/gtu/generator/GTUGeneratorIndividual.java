@@ -6,9 +6,9 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -19,8 +19,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DistContinuousDoubleScalar;
 /**
  * Generate GTUs.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Feb 2, 2015 <br>
@@ -47,6 +46,7 @@ public class GTUGeneratorIndividual<ID> extends AbstractGTUGenerator<ID>
      * @param gtuType the type of GTU to generate
      * @param gtuClass the gtu class to instantiate
      * @param gtuFollowingModel the GTU following model to use
+     * @param laneChangeModel the lane change model to use
      * @param initialSpeedDist distribution of the initial speed of the GTU
      * @param interarrivelTimeDist distribution of the interarrival time
      * @param maxGTUs maximum number of GTUs to generate
@@ -62,18 +62,18 @@ public class GTUGeneratorIndividual<ID> extends AbstractGTUGenerator<ID>
      * @throws RemoteException when remote simulator cannot be reached
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public GTUGeneratorIndividual(final String name, final OTSDEVSSimulatorInterface simulator,
-            final GTUType<ID> gtuType, final Class<GTU<ID>> gtuClass, final GTUFollowingModel gtuFollowingModel,
-            final DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist,
-            final DistContinuousDoubleScalar.Rel<TimeUnit> interarrivelTimeDist,
-            final DistContinuousDoubleScalar.Rel<LengthUnit> lengthDist,
-            final DistContinuousDoubleScalar.Rel<LengthUnit> widthDist,
-            final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeedDist, final long maxGTUs,
-            final OTSSimTimeDouble startTime, final OTSSimTimeDouble endTime, final Lane lane,
-            final RouteGenerator routeGenerator) throws RemoteException, SimRuntimeException
+    public GTUGeneratorIndividual(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType<ID> gtuType,
+        final Class<?> gtuClass, final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel,
+        final DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist,
+        final DistContinuousDoubleScalar.Rel<TimeUnit> interarrivelTimeDist,
+        final DistContinuousDoubleScalar.Rel<LengthUnit> lengthDist,
+        final DistContinuousDoubleScalar.Rel<LengthUnit> widthDist,
+        final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeedDist, final long maxGTUs,
+        final OTSSimTimeDouble startTime, final OTSSimTimeDouble endTime, final Lane lane,
+        final RouteGenerator routeGenerator) throws RemoteException, SimRuntimeException
     {
-        super(name, simulator, gtuType, gtuClass, gtuFollowingModel, initialSpeedDist, interarrivelTimeDist, maxGTUs,
-                startTime, endTime, lane, routeGenerator);
+        super(name, simulator, gtuType, gtuClass, gtuFollowingModel, laneChangeModel, initialSpeedDist,
+            interarrivelTimeDist, maxGTUs, startTime, endTime, lane, routeGenerator);
         this.simulator = simulator;
         this.lengthDist = lengthDist;
         this.widthDist = widthDist;

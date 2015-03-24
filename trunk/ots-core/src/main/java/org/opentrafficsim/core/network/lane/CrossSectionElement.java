@@ -97,7 +97,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     }
 
     /** Precision of buffer operations. */
-    private final static int QUADRANTSEGMENTS = 8;
+    private static final int QUADRANTSEGMENTS = 8;
 
     // FIXME put in utility class. Also exists in XmlNetworkLaneParser.
     /**

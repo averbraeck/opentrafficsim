@@ -13,7 +13,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.junit.Test;
-import org.opentrafficsim.core.network.FixedRouteGenerator;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;

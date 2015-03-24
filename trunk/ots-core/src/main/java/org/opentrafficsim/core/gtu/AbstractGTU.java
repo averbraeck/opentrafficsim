@@ -32,7 +32,7 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
      * @param route Route; the route that the GTU will take
      * @throws GTUException when route is null
      */
-    public AbstractGTU(final ID id, final GTUType<?> gtuType, Route route) throws GTUException
+    public AbstractGTU(final ID id, final GTUType<?> gtuType, final Route route) throws GTUException
     {
         super();
         this.id = id;

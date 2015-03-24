@@ -21,6 +21,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.distributions.DistBeta;
 import nl.tudelft.simulation.jstats.distributions.DistConstant;
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
@@ -38,11 +39,14 @@ import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
+import org.opentrafficsim.core.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.core.gtu.lane.changing.Altruistic;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
@@ -66,6 +70,8 @@ import org.opentrafficsim.core.network.lane.Shoulder;
 import org.opentrafficsim.core.network.lane.Stripe;
 import org.opentrafficsim.core.network.lane.Stripe.Permeable;
 import org.opentrafficsim.core.network.point2d.NodePoint2D;
+import org.opentrafficsim.core.network.route.FixedRouteGenerator;
+import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.unit.AnglePlaneUnit;
 import org.opentrafficsim.core.unit.AngleSlopeUnit;
 import org.opentrafficsim.core.unit.FrequencyUnit;
@@ -238,7 +244,7 @@ public class XmlNetworkLaneParser
     private final LaneType<String> laneType = new LaneType<String>("CarLane");
 
     /** the simulator for creating the animation. Null if no animation needed. */
-    private OTSSimulatorInterface simulator;
+    private OTSDEVSSimulatorInterface simulator;
 
     /** the phase of parsing. 0 = parse nodes; 1 = parse rest of the network. */
     @SuppressWarnings("visibilitymodifier")
@@ -310,7 +316,7 @@ public class XmlNetworkLaneParser
      */
     public XmlNetworkLaneParser(final Class<?> networkIdClass, final Class<?> nodeClass, final Class<?> nodeIdClass,
         final Class<?> nodePointClass, final Class<?> linkClass, final Class<?> linkIdClass,
-        final OTSSimulatorInterface simulator)
+        final OTSDEVSSimulatorInterface simulator)
     {
         this.networkIdClass = networkIdClass;
         this.nodeClass = nodeClass;
@@ -587,6 +593,15 @@ public class XmlNetworkLaneParser
                                     CrossSectionLink link = makeLink(this.linkTag);
                                     parseElements(this.linkTag.elements, link, this.linkTag, this.globalTag);
                                     XmlNetworkLaneParser.this.links.put(link.getId().toString(), link);
+
+                                    // when lane(s) of the link have been built, activate the possible generator(s).
+                                    for (LaneTag laneTag : this.linkTag.laneTags.values())
+                                    {
+                                        for (GeneratorTag generatorTag : laneTag.generatorTags)
+                                        {
+                                            makeGenerator(generatorTag);
+                                        }
+                                    }
                                     this.linkTag = null;
                                     break;
 
@@ -624,8 +639,10 @@ public class XmlNetworkLaneParser
                                     break;
                                 case "ARC":
                                     break;
+
                                 case "LANE":
                                     break;
+
                                 case "GENERATOR":
                                     break;
                                 case "FILL":
@@ -953,10 +970,10 @@ public class XmlNetworkLaneParser
             generatorTag.maxGTUs = maxGTU == null ? Integer.MAX_VALUE : Integer.parseInt(maxGTU);
 
             if (attributes.getValue("STARTTIME") != null)
-                generatorTag.startTime = parseTimeAbs(attributes.getValue("STARTTIME"));
+                generatorTag.startTime = new OTSSimTimeDouble(parseTimeAbs(attributes.getValue("STARTTIME")));
 
             if (attributes.getValue("ENDTIME") != null)
-                generatorTag.endTime = parseTimeAbs(attributes.getValue("ENDTIME"));
+                generatorTag.endTime = new OTSSimTimeDouble(parseTimeAbs(attributes.getValue("ENDTIME")));
 
             int numberRouteTags = 0;
 
@@ -1713,6 +1730,34 @@ public class XmlNetworkLaneParser
         {
             throw new SAXException("Error building Link", ne);
         }
+    }
+
+    /**
+     * Make a generator.
+     * @param generatorTag
+     * @throws SimRuntimeException
+     * @throws RemoteException
+     */
+    private void makeGenerator(final GeneratorTag generatorTag) throws SimRuntimeException, RemoteException
+    {
+        Class<?> gtuClass = LaneBasedIndividualCar.class;
+        List<Node<?, ?>> nodeList = new ArrayList<>();
+        for (NodeTag nodeTag : generatorTag.routeTag.routeNodeTags)
+        {
+            nodeList.add(this.nodes.get(nodeTag.name));
+        }
+        OTSSimTimeDouble startTime =
+            generatorTag.startTime != null ? generatorTag.startTime : new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(
+                0.0, TimeUnit.SI));
+        OTSSimTimeDouble endTime =
+                generatorTag.endTime != null ? generatorTag.endTime : new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(
+                    Double.MAX_VALUE, TimeUnit.SI));
+        RouteGenerator rg = new FixedRouteGenerator(nodeList);
+        new GTUGeneratorIndividual<String>(generatorTag.laneTag.name, this.simulator, generatorTag.gtuTag.gtuType, gtuClass,
+            generatorTag.gtuTag.followingModel, generatorTag.gtuTag.laneChangeModel, generatorTag.initialSpeedDist,
+            generatorTag.iatDist, generatorTag.gtuTag.lengthDist, generatorTag.gtuTag.widthDist,
+            generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime,
+            (Lane) generatorTag.laneTag.cse, rg);
     }
 
     /**
@@ -2840,10 +2885,10 @@ public class XmlNetworkLaneParser
         protected int maxGTUs = Integer.MAX_VALUE;
 
         /** start time of generation. */
-        protected DoubleScalar.Abs<TimeUnit> startTime = null;
+        protected OTSSimTimeDouble startTime = null;
 
         /** end time of generation. */
-        protected DoubleScalar.Abs<TimeUnit> endTime = null;
+        protected OTSSimTimeDouble endTime = null;
 
         /** Route tag. */
         protected RouteTag routeTag = null;

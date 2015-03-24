@@ -248,10 +248,7 @@
             <xsd:attribute name="MAXGTU" type="xsd:double" use="optional"></xsd:attribute>
             <xsd:attribute name="STARTTIME" type="TIMETYPE" use="optional"></xsd:attribute>
             <xsd:attribute name="ENDTIME" type="TIMETYPE" use="optional"></xsd:attribute>
-            <xsd:attribute name="ROUTE" type="xsd:IDREF" use="optional"></xsd:attribute>
-            <xsd:attribute name="ROUTEMIX" type="xsd:IDREF" use="optional"></xsd:attribute>
-            <xsd:attribute name="SHORTESTROUTE" type="xsd:IDREF" use="optional"></xsd:attribute>
-            <xsd:attribute name="SHORTESTROUTEMIX" type="xsd:IDREF" use="optional"></xsd:attribute>
+            <xsd:attribute name="ROUTE" type="xsd:IDREF" use="required"></xsd:attribute>
           </xsd:complexType>
         </xsd:element>
 
@@ -265,10 +262,7 @@
             <xsd:attribute name="DISTANCE" type="LENGTHDISTTYPE" use="required"></xsd:attribute>
             <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required"></xsd:attribute>
             <xsd:attribute name="MAXGTU" type="xsd:double" use="optional"></xsd:attribute>
-            <xsd:attribute name="ROUTE" type="xsd:IDREF" use="optional"></xsd:attribute>
-            <xsd:attribute name="ROUTEMIX" type="xsd:IDREF" use="optional"></xsd:attribute>
-            <xsd:attribute name="SHORTESTROUTE" type="xsd:IDREF" use="optional"></xsd:attribute>
-            <xsd:attribute name="SHORTESTROUTEMIX" type="xsd:IDREF" use="optional"></xsd:attribute>
+            <xsd:attribute name="ROUTE" type="xsd:IDREF" use="required"></xsd:attribute>
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
