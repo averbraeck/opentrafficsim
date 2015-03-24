@@ -25,10 +25,10 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class DefaultCarAnimation extends Renderable2D
+public class DefaultCarAnimation extends Renderable2D
 {
     /** Color of this car. */
-    private final Color color;
+    private final Color color; 
 
     /** Counter used to cycle through the colors in colorTable. */
     private static int nextIndex = 0;

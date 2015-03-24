@@ -125,7 +125,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public AbstractLaneBasedGTU(final ID id, final GTUType<?> gtuType, final GTUFollowingModel gtuFollowingModel,
             final LaneChangeModel laneChangeModel,
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-            final DoubleScalar.Abs<SpeedUnit> initialSpeed, Route route, final OTSDEVSSimulatorInterface simulator)
+            final DoubleScalar.Abs<SpeedUnit> initialSpeed, final Route route, final OTSDEVSSimulatorInterface simulator)
             throws RemoteException, NetworkException, SimRuntimeException, GTUException
     {
         super(id, gtuType, route);

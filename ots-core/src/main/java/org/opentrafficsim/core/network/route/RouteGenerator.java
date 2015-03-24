@@ -17,5 +17,5 @@ public interface RouteGenerator
      * Generate a Route.
      * @return Route; the generated Route
      */
-    public Route generateRoute();
+    Route generateRoute();
 }

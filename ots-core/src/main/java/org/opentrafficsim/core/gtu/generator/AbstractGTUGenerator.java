@@ -2,29 +2,32 @@ package org.opentrafficsim.core.gtu.generator;
 
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.Map;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
+import org.opentrafficsim.core.car.DefaultCarAnimation;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar.LaneBasedIndividualCarBuilder;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DistContinuousDoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Feb 2, 2015 <br>
@@ -41,10 +44,13 @@ public abstract class AbstractGTUGenerator<ID>
     private final GTUType<ID> gtuType;
 
     /** The gtu class to instantiate. */
-    private final Class<GTU<ID>> gtuClass;
+    private final Class<?> gtuClass;
 
     /** The GTU following model to use. */
     private final GTUFollowingModel gtuFollowingModel;
+
+    /** The lane change model to use. */
+    private final LaneChangeModel laneChangeModel;
 
     /** Distribution of the initial speed of the GTU. */
     private final DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist;
@@ -77,29 +83,31 @@ public abstract class AbstractGTUGenerator<ID>
      * @param gtuType the type of GTU to generate
      * @param gtuClass the GTU class to instantiate
      * @param gtuFollowingModel the GTU following model to use
+     * @param laneChangeModel the lane change model to use
      * @param initialSpeedDist distribution of the initial speed of the GTU
      * @param interarrivelTimeDist distribution of the interarrival time
      * @param maxGTUs maximum number of GTUs to generate
      * @param startTime start time of generation (delayed start)
      * @param endTime end time of generation
      * @param lane the lane to generate the GTU on -- at the end for now
-     * @param routeGenerator RouteGenerator; the route generator that will create a route for each generated GTU 
+     * @param routeGenerator RouteGenerator; the route generator that will create a route for each generated GTU
      * @throws SimRuntimeException when simulation scheduling fails
      * @throws RemoteException when remote simulator cannot be reached
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator,
-            final GTUType<ID> gtuType, final Class<GTU<ID>> gtuClass, final GTUFollowingModel gtuFollowingModel,
-            final DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist,
-            final DistContinuousDoubleScalar.Rel<TimeUnit> interarrivelTimeDist, final long maxGTUs,
-            final OTSSimTimeDouble startTime, final OTSSimTimeDouble endTime, final Lane lane,
-            RouteGenerator routeGenerator) throws RemoteException, SimRuntimeException
+    public AbstractGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType<ID> gtuType,
+        final Class<?> gtuClass, final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel,
+        final DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist,
+        final DistContinuousDoubleScalar.Rel<TimeUnit> interarrivelTimeDist, final long maxGTUs,
+        final OTSSimTimeDouble startTime, final OTSSimTimeDouble endTime, final Lane lane,
+        final RouteGenerator routeGenerator) throws RemoteException, SimRuntimeException
     {
         super();
         this.name = name;
         this.gtuType = gtuType;
         this.gtuClass = gtuClass;
         this.gtuFollowingModel = gtuFollowingModel;
+        this.laneChangeModel = laneChangeModel;
         this.initialSpeedDist = initialSpeedDist;
         this.interarrivelTimeDist = interarrivelTimeDist;
         this.maxGTUs = maxGTUs;
@@ -113,7 +121,7 @@ public abstract class AbstractGTUGenerator<ID>
 
     /**
      * Generate a GTU.
-     * @throws Exception
+     * @throws Exception when something in the generation fails.
      */
     @SuppressWarnings("unchecked")
     protected final void generate() throws Exception
@@ -122,7 +130,7 @@ public abstract class AbstractGTUGenerator<ID>
         Class<?> getidtype = String.class;
         try
         {
-            Method getid = ClassUtil.resolveMethod(this.gtuClass, "getId", new Class<?>[]{});
+            Method getid = ClassUtil.resolveMethod(this.gtuClass, "getId", new Class<?>[] {});
             getidtype = getid.getReturnType();
         }
         catch (NoSuchMethodException exception)
@@ -147,7 +155,8 @@ public abstract class AbstractGTUGenerator<ID>
         }
         else
         {
-            throw new GTUException("GTU ID class " + getidtype.getName() + ": cannot instantiate.");
+            // throw new GTUException("GTU ID class " + getidtype.getName() + ": cannot instantiate.")
+            id = (ID) new String(this.name + ":" + this.numberGTUs);
         }
 
         // create the GTU
@@ -156,14 +165,20 @@ public abstract class AbstractGTUGenerator<ID>
             LaneBasedIndividualCarBuilder<ID> carBuilder = new LaneBasedIndividualCarBuilder<ID>();
             carBuilder.setId(id);
             carBuilder.setGtuType(getGtuType());
-            carBuilder.setLength(getLengthDist().draw());
+            carBuilder.setGTUFollowingModel(this.gtuFollowingModel);
+            carBuilder.setLaneChangeModel(this.laneChangeModel);
+            DoubleScalar.Rel<LengthUnit> carLength = getLengthDist().draw();
+            carBuilder.setLength(carLength);
             carBuilder.setWidth(getWidthDist().draw());
             carBuilder.setMaximumVelocity(getMaximumSpeedDist().draw());
             carBuilder.setInitialSpeed(getInitialSpeedDist().draw());
             carBuilder.setSimulator(getSimulator());
-            // TODO carBuilder.setInitialLongitudinalPositions(initialLongitudinalPositions);
+            Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>(1);
+            initialLongitudinalPositions.put(this.lane, this.lane.getLength().mutable().decrementBy(carLength).immutable());
+            carBuilder.setInitialLongitudinalPositions(initialLongitudinalPositions);
             carBuilder.setRouteGenerator(getRouteGenerator());
-            LaneBasedIndividualCar<ID> car = carBuilder.build();
+            carBuilder.setAnimationClass(DefaultCarAnimation.class);
+            carBuilder.build();
         }
         else
         {
@@ -209,7 +224,7 @@ public abstract class AbstractGTUGenerator<ID>
     /**
      * @return gtuClass.
      */
-    public final Class<GTU<ID>> getGtuClass()
+    public final Class<?> getGtuClass()
     {
         return this.gtuClass;
     }
@@ -265,7 +280,7 @@ public abstract class AbstractGTUGenerator<ID>
     /**
      * @return routeGenerator.
      */
-    public RouteGenerator getRouteGenerator()
+    public final RouteGenerator getRouteGenerator()
     {
         return this.routeGenerator;
     }
@@ -273,9 +288,9 @@ public abstract class AbstractGTUGenerator<ID>
     /**
      * @param routeGenerator set routeGenerator.
      */
-    public void setRouteGenerator(RouteGenerator routeGenerator)
+    public final void setRouteGenerator(final RouteGenerator routeGenerator)
     {
         this.routeGenerator = routeGenerator;
     }
-    
+
 }

@@ -65,7 +65,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
     public LaneBasedTemplateCar(final ID id, final TemplateGTUType<?> templateGtuType,
             final GTUFollowingModel gtuFollowingModel,
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-            final DoubleScalar.Abs<SpeedUnit> initialSpeed, Route route) throws NamingException, RemoteException,
+            final DoubleScalar.Abs<SpeedUnit> initialSpeed, final Route route) throws NamingException, RemoteException,
             NetworkException, SimRuntimeException, GTUException
     {
         this(id, templateGtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, route,

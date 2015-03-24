@@ -10,7 +10,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 
-import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -40,15 +40,16 @@ public class TestXMLModel implements OTSModelInterface
     private static final long serialVersionUID = 1L;
 
     /** simulator. */
-    private OTSSimulatorInterface simulator;
+    private OTSDEVSSimulatorInterface simulator;
 
     /** {@inheritDoc} */
     @Override
     public final void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
             throws SimRuntimeException, RemoteException
     {
-        this.simulator = (OTSSimulatorInterface) pSimulator;
+        this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
         URL url = URLResource.getResource("/circular-road-gtu-example.xml");
+        // URL url = URLResource.getResource("/ots-infra-example.xml");
         XmlNetworkLaneParser nlp =
             new XmlNetworkLaneParser(String.class, NodeGeotools.class, String.class, Coordinate.class, LinkGeotools.class,
                 String.class, this.simulator);

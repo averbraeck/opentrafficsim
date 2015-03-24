@@ -1,10 +1,9 @@
-package org.opentrafficsim.core.network;
+package org.opentrafficsim.core.network.route;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.network.route.RouteGenerator;
+import org.opentrafficsim.core.network.Node;
 
 /**
  * <p>
