@@ -500,8 +500,8 @@ public class NTMModel implements OTSModelInterface
     {
         HashMap<String, HashMap<String, Abs<FrequencyUnit>>> borderCapacityAreasMap =
                 CsvFileReader.readCapResNTM(file, ";", ",");
-        HashMap<String, HashMap<String, Abs<FrequencyUnit>>> borderCapacityFactorAreasMap =
-                CsvFileReader.readCapResNTM(fileFactor, ";", ",");
+        HashMap<String, HashMap<String, java.lang.Double>> borderCapacityFactorAreasMap =
+                CsvFileReader.readCapResFactorNTM(fileFactor, ";", ",");
 
         if (borderCapacityAreasMap.isEmpty())
         {
@@ -512,7 +512,7 @@ public class NTMModel implements OTSModelInterface
         if (borderCapacityFactorAreasMap.isEmpty())
         {
             CsvFileWriter.writeCapresNTM(this, fileFactor, 1.0);
-            borderCapacityFactorAreasMap = CsvFileReader.readCapResNTM(fileFactor, ";", ",");
+            borderCapacityFactorAreasMap = CsvFileReader.readCapResFactorNTM(fileFactor, ";", ",");
         }
 
         // set the border capacity

@@ -509,6 +509,8 @@ public class WriteOutput
     /** */
     static BufferedWriter dataODArrivalsNTMOut = null;
 
+    static Double[] criticalCapacity = new Double[99];
+
     /** */
     static Double[][] accumulationNTM = new Double[MAXZONES][MAXSTEPS];
 
@@ -546,7 +548,8 @@ public class WriteOutput
     static HashMap<Node, HashMap<Node, HashMap<Node, Double[]>>> routeFractionToNeighbourNTMMap = new HashMap<>();
 
     /** */
-    static HashMap<Node, HashMap<Node, HashMap<Node, Double[]>>> demandVersusCapacityToNeighbourNTMMap = new HashMap<>();
+    static HashMap<Node, HashMap<Node, HashMap<Node, Double[]>>> demandVersusCapacityToNeighbourNTMMap =
+            new HashMap<>();
 
     /** */
     static HashMap<Node, HashMap<Node, Double[]>> timeToDestinationNTMMap = new HashMap<>();
@@ -572,14 +575,14 @@ public class WriteOutput
      * @param MAXSTEPS
      * @param arrivalsPreviousStep
      * @param departuresPreviousStep
-     * @throws Exception 
+     * @throws Exception
      */
     public static void writeOutputDataNTM(NTMModel model, int steps, int MAXSTEPS) throws Exception
     {
         // for testing we open a file and write some results:
         // TODO testing
         createDir(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap());
-  
+
         String fileName = "/NTMfluxToNeighbour";
         String description = "fluxes";
         String DATATYPE = "fluxes";
@@ -638,7 +641,7 @@ public class WriteOutput
             dataDemandVersusCapacityToNeighbourNTMOut = createWriter(file);
         }
         writeHashMap(model, steps, MAXSTEPS, description, dataDemandVersusCapacityToNeighbourNTMOut, null,
-                demandVersusCapacityToNeighbourNTMMap,indexNode, DATATYPE);
+                demandVersusCapacityToNeighbourNTMMap, indexNode, DATATYPE);
 
         fileName = "/NTMtravelTimeToDestination";
         description = "timeToDestination";
@@ -772,8 +775,8 @@ public class WriteOutput
      * @throws IOException
      */
     public static void writeOutputRoutesNTM(NTMModel model, int steps, int pathIterator, Node startNode,
-            Node neighbour, Node destination, int MAXSTEPS, BufferedWriter data, double oldShare, double addShare, double pathWeight)
-            throws IOException
+            Node neighbour, Node destination, int MAXSTEPS, BufferedWriter data, double oldShare, double addShare,
+            double pathWeight) throws IOException
     {
         // for testing we open a file and write some results:
         // TODO testing
@@ -797,7 +800,8 @@ public class WriteOutput
      * @throws IOException
      */
     static void writeRoutes(NTMModel model, int steps, int pathIterator, int MAXSTEPS, BufferedWriter data,
-            String description, ArrayList<Node> dataArray, double oldShare, double addShare, double pathWeight) throws IOException
+            String description, ArrayList<Node> dataArray, double oldShare, double addShare, double pathWeight)
+            throws IOException
     {
         if (description == "routesNTM")
         {
@@ -906,7 +910,7 @@ public class WriteOutput
                                 }
                             }
                         }
-                        
+
                         Set<BoundedNode> neighbours = tripInfoByDestination.getRouteFractionToNeighbours().keySet();
                         for (BoundedNode neighbour : neighbours)
                         {
@@ -984,7 +988,8 @@ public class WriteOutput
                                         }
                                         else
                                         {
-                                            Double[] fluxes = nodeNodeNodeDoublemap.get(origin).get(destination).get(neighbour);
+                                            Double[] fluxes =
+                                                    nodeNodeNodeDoublemap.get(origin).get(destination).get(neighbour);
                                             fluxes[steps - 1] = trips;
                                             nodeNodeNodeDoublemap.get(origin).get(destination).put(neighbour, fluxes);
                                         }
@@ -1091,7 +1096,7 @@ public class WriteOutput
      * @param data
      * @param dataArray
      * @param DATATYPE
-     * @throws Exception 
+     * @throws Exception
      */
     static void writeArray(NTMModel model, int steps, int MAXSTEPS, String description, BufferedWriter data,
             Double[][] dataArray, String DATATYPE) throws Exception
@@ -1201,7 +1206,6 @@ public class WriteOutput
         }
 
         // Write data to file
-        Double criticalCapacity[] = new Double[99];
         if (DATATYPE != "parametersNFD")
         {
             if (steps == MAXSTEPS - 1)
@@ -1232,8 +1236,7 @@ public class WriteOutput
                         data.write(" \n");
                     }
                     data.close();
-                    
-                    
+
                 }
                 catch (IOException exception)
                 {
@@ -1250,6 +1253,7 @@ public class WriteOutput
                     String textOut;
                     // Link transmission
                     data.write("Indicators:     " + ", ");
+                    // here the variables start
                     data.write("Capacity (/h)   " + ", ");
                     data.write("RoadLength (km) " + ", ");
                     data.write("FreeSpeed (km/h)" + ", ");
@@ -1271,7 +1275,7 @@ public class WriteOutput
                             textOut = String.format("%.5f", dataArray[i][j]);
                             data.write(textOut + ", ");
                         }
-                        criticalCapacity[i] = dataArray[i][2] * dataArray[i][5];
+                        criticalCapacity[i] = dataArray[i][1] * dataArray[i][3];
 
                         data.write(" \n");
                     }
@@ -1286,42 +1290,48 @@ public class WriteOutput
         if (steps == MAXSTEPS - 1)
         {
             if (DATATYPE == "accumulation")
-            {            
-                final TimeSeries series = new TimeSeries("Random");
+            {
+                final TimeSeries series = new TimeSeries("Accumulation");
                 Second current = new Second();
-                
-                String[] categoryMax = new String[99];  
+
+                String[] categoryMax = new String[99];
                 final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-                for (int i = 0; i < numberOfCells; i++)  
+                for (int i = 0; i < numberOfCells; i++)
                 {
-                    categoryMax[i] = Integer.toString(i);
-                    Double maxValue = 0.0;
-                    for (int j = 0; j < steps; j++)
+                    // categoryMax[i] = Integer.toString(i);
+                    if (indexNode.get(i).getBehaviourType() == TrafficBehaviourType.NTM)
                     {
-                        if (dataArray[i][j] == null)
+                        categoryMax[i] = indexNode.get(i).getId();
+                        Double maxValue = 0.0;
+                        for (int j = 0; j < steps; j++)
                         {
-                            dataArray[i][j] = Double.NaN;
+                            if (dataArray[i][j] == null)
+                            {
+                                dataArray[i][j] = Double.NaN;
+                            }
+                            try
+                            {
+                                double value = dataArray[i][j];
+                                maxValue = Math.max(maxValue, value);
+                                series.add(current, new Double(value));
+                                current = (Second) current.next();
+                            }
+                            catch (SeriesException e)
+                            {
+                                System.err.println("Error adding to series");
+                            }
                         }
-                        try
-                        {
-                            double value = dataArray[i][j];
-                            maxValue = Math.max(maxValue, value);
-                            series.add(current, new Double(value));
-                            current = (Second) current.next();
-                        }
-                        catch (SeriesException e)
-                        {
-                            System.err.println("Error adding to series");
-                        }
+                        dataset.addValue(maxValue, "maxDensity", categoryMax[i]);
+                        dataset.addValue(criticalCapacity[i], "criticalCapacity", categoryMax[i]);
                     }
-                    dataset.addValue(maxValue, "maxDensity", categoryMax[i]);
-                    dataset.addValue(criticalCapacity[i], "criticalCapacity", categoryMax[i]);
                 }
                 String fileName = "/TimeSeries.jpeg";
-                TimeSeriesChart.TimeSeries(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName, series);
-                fileName = "/BarChart.jpeg";
-                TimeSeriesChart.BarChart(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap() + fileName, dataset);
-                
+                TimeSeriesChart.TimeSeries(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap()
+                        + fileName, series);
+                fileName = "/AccumulationChart.jpeg";
+                TimeSeriesChart.BarChart(model.getInputNTM().getInputMap() + model.getInputNTM().getOutputMap()
+                        + fileName, dataset);
+
             }
         }
     }

@@ -647,6 +647,8 @@ public class CsvFileReader
         return parametersNTM;
     }
 
+    
+    
     public static HashMap<String, HashMap<String, Abs<FrequencyUnit>>> readCapResNTM(final String csvFileName,
             final String csvSplitBy, final String csvSplitInternalBy) throws IOException, ParseException
     {
@@ -698,6 +700,99 @@ public class CsvFileReader
                                 {
                                     Abs<FrequencyUnit> capacity = new Abs<FrequencyUnit>(Double.parseDouble(dataItem[i]), FrequencyUnit.PER_HOUR);
                                     capRes.put(name.get(i), capacity);
+                                }
+                            }
+                        }
+                    }
+                    if (header)
+                    {
+                        header = false;                    
+                    }
+                    else
+                    {
+                        capResMap.put(centroidName, capRes);
+                    }
+                }
+                // test if the fractions are read correctly
+            }
+            catch (FileNotFoundException e)
+            {
+                e.printStackTrace();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                if (bufferedReader != null)
+                {
+                    try
+                    {
+                        bufferedReader.close();
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return capResMap;
+    }
+
+
+    public static HashMap<String, HashMap<String, Double>> readCapResFactorNTM(final String csvFileName,
+            final String csvSplitBy, final String csvSplitInternalBy) throws IOException, ParseException
+    {
+        BufferedReader bufferedReader = null;
+        String line = "";
+        URL url;
+        if (new File(csvFileName).canRead())
+        {
+            url = new File(csvFileName).toURI().toURL();
+        }
+        else
+        {
+            url = ShapeFileReader.class.getResource(csvFileName);
+        }
+        HashMap<String, HashMap<String, Double>> capResMap = new HashMap<String, HashMap<String, Double>>();
+        // double OD = capResMap.get("O").get("D");
+        if (url != null)
+        {
+            try
+            {
+                String path = url.getPath();
+                bufferedReader = new BufferedReader(new FileReader(path));
+                boolean header = true;
+                // read all lines: first column contains the name of the origin
+                // this can be either a link or a centroid (starts with "C")
+                HashMap<Integer, String> name = new HashMap<Integer, String>();
+                while ((line = bufferedReader.readLine()) != null)
+                {
+                    String centroidName = null;
+                    HashMap<String, Double> capRes = new HashMap<String, Double>();
+                    String[] completeLine = line.split(csvSplitBy);
+                    for (String lineSegment : completeLine)
+                    {
+                        lineSegment = lineSegment.trim();
+                        String[] dataItem = lineSegment.split(csvSplitInternalBy);
+                        if (dataItem.length > 0)
+                        {
+                            if (header)
+                            {
+                                for (int i = 1; i < dataItem.length; i++)
+                                {
+                                    name.put(i, dataItem[i].trim());
+                                }
+                            }
+                            else
+                            {
+                                centroidName = dataItem[0];
+                                for (int i = 1; i < dataItem.length; i++)
+                                {
+                                    Double capacityReductionFactor = Double.parseDouble(dataItem[i]);
+                                    capRes.put(name.get(i), capacityReductionFactor);
                                 }
                             }
                         }

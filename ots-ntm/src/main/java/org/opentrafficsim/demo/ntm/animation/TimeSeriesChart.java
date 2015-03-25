@@ -12,6 +12,7 @@ package org.opentrafficsim.demo.ntm.animation;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
+import java.awt.Font;
 import java.io.File;
 
 import org.jfree.chart.ChartFactory;
@@ -62,10 +63,15 @@ public class TimeSeriesChart
                 true, // tooltips?
                 false // URLs?
                 );
-
+        Font font = new Font("Dialog", Font.PLAIN, 20);
+        
+        chart.getCategoryPlot().getDomainAxis().setLabelFont(font);
+        chart.getCategoryPlot().getRangeAxis().setLabelFont(font);
+        font = new Font("Dialog", Font.PLAIN, 6);
+        chart.getCategoryPlot().getDomainAxis().setTickLabelFont(font);
         int width = 960; /* Width of the image */
         int height = 670; /* Height of the image */
-        File fileTimeChart= new File(fileName);
+        File fileTimeChart = new File(fileName);
         ChartUtilities.saveChartAsJPEG(fileTimeChart, chart, width, height);
     }
 
