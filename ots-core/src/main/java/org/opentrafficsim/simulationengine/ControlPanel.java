@@ -51,7 +51,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public class ControlPanel implements ActionListener, PropertyChangeListener
 {
     /** The simulator. */
-    private final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator;
+    private final SimpleSimulator simulator;
 
     /** The SimulatorInterface that is controlled by the buttons. */
     private final SimulatorInterface<?, ?, ?> target;
@@ -80,7 +80,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
      */
     public ControlPanel(final SimpleSimulator simulator)
     {
-        this.simulator = simulator.getSimulator();
+        this.simulator = simulator;
         this.target = simulator.getSimulator();
         this.logger = Logger.getLogger("nl.tudelft.opentrafficsim");
 
@@ -136,9 +136,9 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         {
             if (actionCommand.equals("Step"))
             {
-                if (this.simulator.isRunning())
+                if (getSimulator().isRunning())
                 {
-                    this.simulator.stop();
+                    getSimulator().stop();
                 }
                 this.target.step();
             }
@@ -148,19 +148,17 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             }
             if (actionCommand.equals("NextTime"))
             {
-                if (this.simulator.isRunning())
+                if (getSimulator().isRunning())
                 {
-                    this.simulator.stop();
+                    getSimulator().stop();
                 }
-                double now = this.simulator.getSimulatorTime().get().getSI();
+                double now = getSimulator().getSimulatorTime().get().getSI();
                 // System.out.println("now is " + now);
-                this.stopAtEvent =
-                        new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(now,
-                                TimeUnit.SECOND)), SimEventInterface.MIN_PRIORITY, this, this, "autoPauseSimulator",
-                                null);
                 try
                 {
-                    this.simulator.scheduleEvent(this.stopAtEvent);
+                    this.stopAtEvent =
+                            this.simulator.scheduleEvent(new DoubleScalar.Abs<TimeUnit>(now, TimeUnit.SI),
+                                    SimEventInterface.MIN_PRIORITY, this, this, "autoPauseSimulator", null);
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -175,9 +173,9 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             }
             if (actionCommand.equals("Reset"))
             {
-                if (this.simulator.isRunning())
+                if (getSimulator().isRunning())
                 {
-                    this.simulator.stop();
+                    getSimulator().stop();
                 }
                 // Should this create a new replication?
             }
@@ -195,7 +193,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     protected final void fixButtons()
     {
         System.out.println("FixButtons entered");
-        final boolean moreWorkToDo = this.simulator.getEventList().size() > 0;
+        final boolean moreWorkToDo = getSimulator().getEventList().size() > 0;
         for (JButton button : this.buttons)
         {
             final String actionCommand = button.getActionCommand();
@@ -205,7 +203,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             }
             else if (actionCommand.equals("Run"))
             {
-                button.setEnabled(moreWorkToDo && !this.simulator.isRunning());
+                button.setEnabled(moreWorkToDo && !getSimulator().isRunning());
             }
             else if (actionCommand.equals("NextTime"))
             {
@@ -213,7 +211,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             }
             else if (actionCommand.equals("Pause"))
             {
-                button.setEnabled(this.simulator.isRunning());
+                button.setEnabled(getSimulator().isRunning());
             }
             else if (actionCommand.equals("Reset"))
             {
@@ -232,11 +230,11 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
      */
     public final void autoPauseSimulator()
     {
-        if (this.simulator.isRunning())
+        if (getSimulator().isRunning())
         {
-            this.simulator.stop();
-            double currentTick = this.simulator.getSimulatorTime().get().getSI();
-            double nextTick = this.simulator.getEventList().first().getAbsoluteExecutionTime().get().getSI();
+            getSimulator().stop();
+            double currentTick = getSimulator().getSimulatorTime().get().getSI();
+            double nextTick = getSimulator().getEventList().first().getAbsoluteExecutionTime().get().getSI();
             // System.out.println("currentTick is " + currentTick);
             // System.out.println("nextTick is " + nextTick);
             if (nextTick > currentTick)
@@ -244,15 +242,13 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 // The clock is now just beyond where it was when the user requested the NextTime operation
                 // Insert another autoPauseSimulator event just before what is now the time of the next event
                 // and let the simulator time increment to that time
-                this.stopAtEvent =
-                        new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(nextTick,
-                                TimeUnit.SECOND)), SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator",
-                                null);
                 // System.out.println("Re-Scheduling at " + nextTick);
                 try
                 {
-                    this.simulator.scheduleEvent(this.stopAtEvent);
-                    this.simulator.start();
+                    this.stopAtEvent =
+                            this.simulator.scheduleEvent(new DoubleScalar.Abs<TimeUnit>(nextTick, TimeUnit.SI),
+                                    SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
+                    getSimulator().start();
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -308,7 +304,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         // System.out.println("PropertyChanged: " + evt);
         if (null != this.stopAtEvent)
         {
-            this.simulator.cancelEvent(this.stopAtEvent); // silently ignore false result
+            getSimulator().cancelEvent(this.stopAtEvent); // silently ignore false result
             this.stopAtEvent = null;
         }
         String newValue = (String) evt.getNewValue();
@@ -318,18 +314,17 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         int seconds = Integer.parseInt(fields[2]);
         int fraction = Integer.parseInt(fields[3]);
         double stopTime = hours * 3600 + minutes * 60 + seconds + fraction / 1000d;
-        if (stopTime < this.simulator.getSimulatorTime().get().getSI())
+        if (stopTime < getSimulator().getSimulatorTime().get().getSI())
         {
             return;
         }
         else
         {
-            this.stopAtEvent =
-                    new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(stopTime,
-                            TimeUnit.SECOND)), SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
             try
             {
-                this.simulator.scheduleEvent(this.stopAtEvent);
+                this.stopAtEvent =
+                        this.simulator.scheduleEvent(new DoubleScalar.Abs<TimeUnit>(stopTime, TimeUnit.SECOND),
+                                SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
             }
             catch (SimRuntimeException exception)
             {
@@ -345,7 +340,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
      */
     public final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
     {
-        return this.simulator;
+        return this.simulator.getSimulator();
     }
 
     /**
@@ -465,10 +460,6 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
      * Derived from <a
      * href="http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm">
      * http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm</a>
-     * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
-     * reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version 12 dec. 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>

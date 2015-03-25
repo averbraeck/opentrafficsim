@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 
-import nl.tudelft.simulation.dsol.ModelInterface;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
