@@ -62,7 +62,6 @@ public class CsvFileWriter
         File filecapRestraintsAreas = new File(pathAndFile);
         capResFileWriter = WriteOutput.createWriter(filecapRestraintsAreas);
         boolean header = true;
-        double capacity = 999999;
         for (Node origin : model.getAreaGraph().vertexSet())
         {
             if (origin.getBehaviourType() == TrafficBehaviourType.NTM
@@ -80,14 +79,11 @@ public class CsvFileWriter
                             textHeader += ", ";
                             textHeader += destination.getId();
                         }
+                        double capacity = 999999;
                         if (origin.getId() != destination.getId())
                         {
                             if (model.getAreaGraph().getEdge(origin, destination) != null)
                             {
-                                if (origin.getBehaviourType() == TrafficBehaviourType.CORDON)
-                                {
-                                    System.out.println("test");
-                                }
                                 if (factor == 0.0)
                                 {
                                     capacity =
