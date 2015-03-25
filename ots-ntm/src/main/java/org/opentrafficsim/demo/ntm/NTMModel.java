@@ -278,7 +278,6 @@ public class NTMModel implements OTSModelInterface
                     createFlowLinks(this.shpLinks, this.getInputNTM().getMaxSpeed(), this.getInputNTM()
                             .getMaxCapacity());
 
-
             // merge link segments between junctions on flow links:
             // Link.findSequentialLinks(this.flowLinks, this.nodes);
             // Link.findSequentialLinks(this.shpLinks, this.nodes);
@@ -293,9 +292,8 @@ public class NTMModel implements OTSModelInterface
             // build the higher level map and the graph
             BuildGraph.buildGraph(this, areasToUse, centroidsToUse, shpConnectorsToUse);
 
-            //this.areaFlowLinks = createFlowLinkBuffers(this.flowLinks);
+            // this.areaFlowLinks = createFlowLinkBuffers(this.flowLinks);
 
-            
             if (this.getInputNTM().COMPRESS_AREAS)
             {
                 readOrSetParametersNTM(this, areasToUse, centroidsToUse, this.getInputNTM().getInputMap()
@@ -374,7 +372,8 @@ public class NTMModel implements OTSModelInterface
                 AreaFlowLink areaFlowLink =
                         new AreaFlowLink(buffer, "test", "test", "test", "test", "test", dhb, centroid1,
                                 TrafficBehaviourType.NTM, new Rel<LengthUnit>(0, LengthUnit.METER), new Abs<SpeedUnit>(
-                                        0, SpeedUnit.KM_PER_HOUR), 1.0, parametersNTM, linkCTM, linkCTM.getCells().indexOf(cell));
+                                        0, SpeedUnit.KM_PER_HOUR), 1.0, parametersNTM, linkCTM, linkCTM.getCells()
+                                        .indexOf(cell));
                 String Id = link.getId() + character;
                 areasFlowLink.put(Id, areaFlowLink);
                 character++;
@@ -492,6 +491,7 @@ public class NTMModel implements OTSModelInterface
      * @param model
      * @param areasToUse
      * @param file
+     * @param fileFactor
      * @throws IOException
      * @throws ParseException
      */
@@ -502,16 +502,17 @@ public class NTMModel implements OTSModelInterface
                 CsvFileReader.readCapResNTM(file, ";", ",");
         HashMap<String, HashMap<String, Abs<FrequencyUnit>>> borderCapacityFactorAreasMap =
                 CsvFileReader.readCapResNTM(fileFactor, ";", ",");
+
         if (borderCapacityAreasMap.isEmpty())
         {
-            CsvFileWriter.writeCapresNTM(this, file);
+            CsvFileWriter.writeCapresNTM(this, file, 0.0);
             borderCapacityAreasMap = CsvFileReader.readCapResNTM(file, ";", ",");
         }
 
         if (borderCapacityFactorAreasMap.isEmpty())
         {
-            CsvFileWriter.writeCapresNTM(this, fileFactor);
-            borderCapacityAreasMap = CsvFileReader.readCapResNTM(fileFactor, ";", ",");
+            CsvFileWriter.writeCapresNTM(this, fileFactor, 1.0);
+            borderCapacityFactorAreasMap = CsvFileReader.readCapResNTM(fileFactor, ";", ",");
         }
 
         // set the border capacity
@@ -526,6 +527,7 @@ public class NTMModel implements OTSModelInterface
                 Set<LinkEdge<Link>> outGoing = this.getAreaGraph().outgoingEdgesOf(node);
                 for (LinkEdge<Link> link : outGoing)
                 {
+                    double factor = 1.0;
                     Node neighbourNode = link.getLink().getEndNode();
                     BoundedNode graphEndNode = (BoundedNode) this.getNodeAreaGraphMap().get(neighbourNode.getId());
                     if (!borderCapacityAreasMap.isEmpty())
@@ -534,9 +536,25 @@ public class NTMModel implements OTSModelInterface
                         {
                             System.out.println("NT");
                         }
-
-                        borderCapacity.put(graphEndNode,
-                                borderCapacityAreasMap.get(origin.getId()).get(graphEndNode.getId()));
+                        if (!borderCapacityFactorAreasMap.isEmpty())
+                        {
+                            if (borderCapacityFactorAreasMap.get(origin.getId()) == null)
+                            {
+                                System.out.println("No capres factor");
+                            }
+                            else
+                            {
+                                factor =
+                                        borderCapacityFactorAreasMap.get(origin.getId()).get(graphEndNode.getId())
+                                                .doubleValue();
+                            }
+                        }
+                        double capacity =
+                                borderCapacityAreasMap.get(origin.getId()).get(graphEndNode.getId())
+                                        .getInUnit(FrequencyUnit.PER_HOUR);
+                        capacity *= factor;
+                        Abs<FrequencyUnit> cap = new Abs<FrequencyUnit>(capacity, FrequencyUnit.PER_HOUR);
+                        borderCapacity.put(graphEndNode, cap);
                     }
                     else
                     {
@@ -681,10 +699,10 @@ public class NTMModel implements OTSModelInterface
     }
 
     /**
-     * @throws IOException
+     * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    protected final void ntmFlowTimestep() throws IOException
+    protected final void ntmFlowTimestep() throws Exception
     {
         NTMsimulation.simulate(this);
 
@@ -813,7 +831,7 @@ public class NTMModel implements OTSModelInterface
                 {
                     for (Area area : model.bigAreas.values())
                     {
-                        if (area.getTrafficBehaviourType()==TrafficBehaviourType.NTM)
+                        if (area.getTrafficBehaviourType() == TrafficBehaviourType.NTM)
                         {
                             new AreaAnimation(area, model.simulator, 4f);
                         }
@@ -823,17 +841,17 @@ public class NTMModel implements OTSModelInterface
                 {
                     for (Area area : model.areas.values())
                     {
-                        if (area.getTrafficBehaviourType()==TrafficBehaviourType.NTM)
+                        if (area.getTrafficBehaviourType() == TrafficBehaviourType.NTM)
                         {
                             new AreaAnimation(area, model.simulator, 4f);
                         }
                     }
                 }
 
-/*                for (AreaFlowLink areaFlowLinks : model.areaFlowLinks.values())
-                {
-                    new AreaFlowLinkAnimation(areaFlowLinks, model.simulator, 4f);
-                }*/
+                /*
+                 * for (AreaFlowLink areaFlowLinks : model.areaFlowLinks.values()) { new
+                 * AreaFlowLinkAnimation(areaFlowLinks, model.simulator, 4f); }
+                 */
 
             }
             if (showLinks)

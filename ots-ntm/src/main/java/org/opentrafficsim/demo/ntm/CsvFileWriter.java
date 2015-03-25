@@ -56,7 +56,7 @@ public class CsvFileWriter
 
     // temporary: end
 
-    public static void writeCapresNTM(NTMModel model, String pathAndFile) throws IOException
+    public static void writeCapresNTM(NTMModel model, String pathAndFile, Double factor) throws IOException
     {
         BufferedWriter capResFileWriter = null;
         File filecapRestraintsAreas = new File(pathAndFile);
@@ -65,13 +65,15 @@ public class CsvFileWriter
         double capacity = 999999;
         for (Node origin : model.getAreaGraph().vertexSet())
         {
-            if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
+            if (origin.getBehaviourType() == TrafficBehaviourType.NTM
+                    | origin.getBehaviourType() == TrafficBehaviourType.CORDON)
             {
                 String textOutCapRes = origin.getId();
                 String textHeader = "Capacity";
                 for (Node destination : model.getAreaGraph().vertexSet())
                 {
-                    if (destination.getBehaviourType() == TrafficBehaviourType.NTM)
+                    if (destination.getBehaviourType() == TrafficBehaviourType.NTM
+                            | destination.getBehaviourType() == TrafficBehaviourType.CORDON)
                     {
                         if (header)
                         {
@@ -82,9 +84,21 @@ public class CsvFileWriter
                         {
                             if (model.getAreaGraph().getEdge(origin, destination) != null)
                             {
-                                capacity =
-                                        model.getAreaGraph().getEdge(origin, destination).getLink()
-                                                .getCorridorCapacity().getInUnit(FrequencyUnit.PER_HOUR);
+                                if (origin.getBehaviourType() == TrafficBehaviourType.CORDON)
+                                {
+                                    System.out.println("test");
+                                }
+                                if (factor == 0.0)
+                                {
+                                    capacity =
+                                            model.getAreaGraph().getEdge(origin, destination).getLink()
+                                                    .getCorridorCapacity().getInUnit(FrequencyUnit.PER_HOUR);
+                                }
+                                else
+                                {
+                                    capacity = factor;
+                                }
+
                             }
                         }
                         textOutCapRes += ", ";

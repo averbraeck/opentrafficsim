@@ -11,7 +11,9 @@ import java.rmi.RemoteException;
 import java.text.ParseException;
 
 import javax.naming.NamingException;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
@@ -28,6 +30,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.demo.ntm.IO.ProjectConfigurations;
+import org.opentrafficsim.demo.ntm.animation.TimeSeriesChart;
 
 
 /**
@@ -53,16 +56,16 @@ public class NTMTestApplication extends DSOLApplication
 
     /** */
     private static final long serialVersionUID = 20140819L;
-
+    /** */
+    public static DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel;
+    public static JTextArea textArea; 
+    
     /**
+     * 
      * @param args
-     * @throws SimRuntimeException
-     * @throws RemoteException
-     * @throws NamingException
-     * @throws IOException
-     * @throws ParseException 
+     * @throws Exception 
      */
-    public static void main(final String[] args) throws SimRuntimeException, RemoteException, NamingException, IOException, ParseException
+    public static void main(final String[] args) throws Exception
     {
         NTMModel model = new NTMModel();
         InputNTM inputNTM = new InputNTM(); 
@@ -80,9 +83,9 @@ public class NTMTestApplication extends DSOLApplication
         OTSReplication replication =
                 new OTSReplication("rep1", startTime, new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(10800.0, TimeUnit.SECOND), model);
-        simulator.initialize(replication, ReplicationMode.TERMINATING);
+        //simulator.initialize(replication, ReplicationMode.TERMINATING);
 
-        DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel =
+        panel =
                 new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model,
                         simulator);
         addInfoTab(panel);
@@ -91,14 +94,27 @@ public class NTMTestApplication extends DSOLApplication
         Dimension size = new Dimension(1024, 768);
         AnimationPanel animationPanel = new AnimationPanel(extent, size, simulator);
         panel.getTabbedPane().addTab(0, "animation", animationPanel);
-
+        String content = "The simulation starts with the import of alle data, and initializes the NTM model\n"
+                + "Wait untill this process has finished...\n" + " \n";
+        int index = panel.getTabbedPane().getSelectedIndex();
+        textArea = new JTextArea(content);
+        panel.getTabbedPane().setComponentAt(index, textArea);
         // tell the animation panel to update its statistics
         // TODO should be done automatically in DSOL!
         animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, simulator, null));
-
+//        infoBox("Start initialization", "NTM");
         new NTMTestApplication("Network Transmission Model", panel);
+
+        simulator.initialize(replication, ReplicationMode.TERMINATING);
+//        infoBox("Ended initialization", "NTM");
+        textArea.append("Finished the initialization,\n" + "Push the Start button now! \n" + " \n");
+        
     }
 
+    public static void infoBox(String infoMessage, String titleBar)
+    {
+        JOptionPane.showMessageDialog(null, infoMessage, "InfoBox: " + titleBar, JOptionPane.INFORMATION_MESSAGE);
+    }
     /**
      * @param panel
      */

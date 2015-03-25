@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
 
+import javax.swing.JTextArea;
+
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.network.LinkEdge;
@@ -52,9 +54,9 @@ public class NTMsimulation
 
     /**
      * @param model
-     * @throws IOException
+     * @throws Exception
      */
-    public static void simulate(final NTMModel model) throws IOException
+    public static void simulate(final NTMModel model) throws Exception
     {
         @SuppressWarnings("unchecked")
         DoubleScalar.Abs<TimeUnit> currentTime = null;
@@ -123,6 +125,9 @@ public class NTMsimulation
         // initial settings of SUPPLY at first step
         if (steps == 1)
         {
+            NTMTestApplication.textArea.append("The simulation has started right now, \n" + "Wait for the next message...  \n"
+                    + "This may take a while! \n" + " \n");
+
             for (Node node : model.getAreaGraph().vertexSet())
             {
                 BoundedNode origin = (BoundedNode) node;
@@ -434,7 +439,7 @@ public class NTMsimulation
 
                                 else
                                 {
-                                    //System.out.println("NTMSimulation line 379: Strange: no neighbour");
+                                    // System.out.println("NTMSimulation line 379: Strange: no neighbour");
                                 }
                             }
                             // In the next step, see whether this demand from nodes is able to enter completely or
@@ -583,11 +588,12 @@ public class NTMsimulation
                                                     }
                                                 }
                                                 if (lastCell.getCellBehaviourFlow().getTripInfoByDestinationMap()
-                                                                .get(tripInfoByDestination.getDestination())
-                                                                .getDemandToNeighbour().get(neighbour) !=null)
+                                                        .get(tripInfoByDestination.getDestination())
+                                                        .getDemandToNeighbour().get(neighbour) != null)
                                                 {
                                                     double addDemandToDestination =
-                                                            lastCell.getCellBehaviourFlow().getTripInfoByDestinationMap()
+                                                            lastCell.getCellBehaviourFlow()
+                                                                    .getTripInfoByDestinationMap()
                                                                     .get(tripInfoByDestination.getDestination())
                                                                     .getDemandToNeighbour().get(neighbour);
                                                     // lastCell.getCellBehaviourFlow().getTripInfoByDestinationMap()
@@ -603,7 +609,7 @@ public class NTMsimulation
                                                         ctmLinkNext.getCells().get(0).getCellBehaviourFlow()
                                                                 .addDemandToEnter(addDemandToDestination); // shareOfNeighbour
                                                                                                            // *
-    
+
                                                     }
                                                     else if (nextNeighbour.getBehaviourType() == TrafficBehaviourType.NTM
                                                             || nextNeighbour.getBehaviourType() == TrafficBehaviourType.CORDON)
@@ -616,7 +622,6 @@ public class NTMsimulation
                                                 {
                                                     System.out.println("No demand to destination");
                                                 }
-
 
                                             }
                                         }
@@ -1066,6 +1071,7 @@ public class NTMsimulation
         {
             WriteOutput.writeOutputDataFlowLinks(model, steps, MAXSTEPS);
             WriteOutput.writeOutputDataNTM(model, steps, MAXSTEPS);
+
         }
 
         // FIRST: Loop through all nodes and reset the relevant variables such as DemandToEnter (for nodes with more
