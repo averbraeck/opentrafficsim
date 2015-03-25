@@ -62,10 +62,10 @@ public abstract class AbstractGTUGenerator<ID>
     private final long maxGTUs;
 
     /** Start time of generation (delayed start). */
-    private final OTSSimTimeDouble startTime;
+    private final DoubleScalar.Abs<TimeUnit> startTime;
 
     /** End time of generation. */
-    private final OTSSimTimeDouble endTime;
+    private final DoubleScalar.Abs<TimeUnit> endTime;
 
     /** Lane to generate the GTU on -- at the end for now. */
     private final Lane lane;
@@ -99,7 +99,7 @@ public abstract class AbstractGTUGenerator<ID>
         final Class<?> gtuClass, final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel,
         final DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist,
         final DistContinuousDoubleScalar.Rel<TimeUnit> interarrivelTimeDist, final long maxGTUs,
-        final OTSSimTimeDouble startTime, final OTSSimTimeDouble endTime, final Lane lane,
+        final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Abs<TimeUnit> endTime, final Lane lane,
         final RouteGenerator routeGenerator) throws RemoteException, SimRuntimeException
     {
         super();
@@ -187,7 +187,7 @@ public abstract class AbstractGTUGenerator<ID>
 
         // reschedule next arrival
         OTSSimTimeDouble nextTime = getSimulator().getSimulatorTime().plus(this.interarrivelTimeDist.draw());
-        if (nextTime.le(this.endTime))
+        if (nextTime.get().getSI() < this.endTime.getSI())
         {
             getSimulator().scheduleEventAbs(nextTime, this, this, "generate", null);
         }
@@ -264,7 +264,7 @@ public abstract class AbstractGTUGenerator<ID>
     /**
      * @return startTime.
      */
-    public final OTSSimTimeDouble getStartTime()
+    public final DoubleScalar.Abs<TimeUnit> getStartTime()
     {
         return this.startTime;
     }
@@ -272,7 +272,7 @@ public abstract class AbstractGTUGenerator<ID>
     /**
      * @return endTime.
      */
-    public final OTSSimTimeDouble getEndTime()
+    public final DoubleScalar.Abs<TimeUnit> getEndTime()
     {
         return this.endTime;
     }

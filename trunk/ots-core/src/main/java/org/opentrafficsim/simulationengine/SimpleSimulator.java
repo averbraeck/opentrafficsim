@@ -23,6 +23,7 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
+ * Construct a DSOL DEVSSimulator or DEVSAnimator the easy way.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -43,6 +44,32 @@ public class SimpleSimulator
     private final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator;
 
     /**
+     * Internal constructor that performs the tasks that must be executed for any kind of SimpleSimulator.
+     * @param simulator DEVSSimulator; either a OTSDEVSSimulator, or a OTSDEVSAnimator.
+     * @param startTime OTSSimTimeDouble; the start time of the simulation
+     * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warm up period of the simulation (use new
+     *            DoubleScalar.Rel&lt;TimeUnit&gt;(0, TimeUnit.SECOND) if you don't know what this is)
+     * @param runLength DoubleScalar.Rel&lt;TimeUnit&gt;; the duration of the simulation
+     * @param model OTSModelInterface; the simulation to execute
+     * @throws RemoteException on communications failure
+     * @throws SimRuntimeException on ???
+     */
+    private SimpleSimulator(
+            DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator,
+            final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
+            final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
+            SimRuntimeException
+    {
+        this.simulator = simulator;
+        this.simulator.setPauseOnError(true);
+        this.simulator.initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime),
+                warmupPeriod, runLength, model), ReplicationMode.TERMINATING);
+        this.panel =
+                new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model,
+                        this.simulator);
+    }
+
+    /**
      * Create a simulation engine without animation; the easy way. PauseOnError is set to true;
      * @param startTime OTSSimTimeDouble; the start time of the simulation
      * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warm up period of the simulation (use new
@@ -56,13 +83,7 @@ public class SimpleSimulator
             final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
             SimRuntimeException
     {
-        this.simulator = new OTSDEVSSimulator();
-        this.simulator.setPauseOnError(true);
-        this.simulator.initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime),
-                warmupPeriod, runLength, model), ReplicationMode.TERMINATING);
-        this.panel =
-                new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model,
-                        this.simulator);
+        this(new OTSDEVSSimulator(), startTime, warmupPeriod, runLength, model);
     }
 
     /**
@@ -80,13 +101,7 @@ public class SimpleSimulator
             final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model, final Rectangle2D extent)
             throws RemoteException, SimRuntimeException
     {
-        this.simulator = new OTSDEVSAnimator();
-        this.simulator.setPauseOnError(true);
-        this.simulator.initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime),
-                warmupPeriod, runLength, model), ReplicationMode.TERMINATING);
-        this.panel =
-                new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model,
-                        this.simulator);
+        this(new OTSDEVSAnimator(), startTime, warmupPeriod, runLength, model);
         Dimension size = new Dimension(1024, 768);
         AnimationPanel animationPanel = new AnimationPanel(extent, size, this.simulator);
         this.panel.getTabbedPane().addTab(0, "animation", animationPanel);
@@ -112,9 +127,6 @@ public class SimpleSimulator
         return this.simulator;
     }
 
-    /** The stop simulation event that is used to run the simulator up to a specified time. */
-    private SimEvent<OTSSimTimeDouble> stopAtEvent = null;
-
     /**
      * Run the simulation up to the specified time.
      * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the stop time.
@@ -122,10 +134,7 @@ public class SimpleSimulator
      */
     public final void runUpTo(final DoubleScalar.Abs<TimeUnit> when) throws SimRuntimeException
     {
-        this.stopAtEvent =
-                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(when.getSI(),
-                        TimeUnit.SECOND)), SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
-        this.simulator.scheduleEvent(this.stopAtEvent);
+        scheduleEvent(when, SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
         while (this.simulator.getSimulatorTime().get().getSI() < when.getSI())
         {
             this.simulator.step();
@@ -142,6 +151,31 @@ public class SimpleSimulator
         {
             this.simulator.stop();
         }
+    }
+
+    /**
+     * Construct and schedule a SimEvent using a DoubleScalar.Abs&lt;TimeUnit&gt; to specify the execution time.
+     * @param executionTime DoubleScalar.Abs&lt;TimeUnit&gt;; the time at which the event must happen
+     * @param priority short; should be between <cite>SimEventInterface.MAX_PRIORITY</cite> and
+     *            <cite>SimEventInterface.MIN_PRIORITY</cite>; most normal events should use
+     *            <cite>SimEventInterface.NORMAL_PRIORITY</cite>
+     * @param source Object; the object that creates/schedules the event
+     * @param target Object; the object that must execute the event
+     * @param method String; the name of the method of <code>target</code> that must execute the event
+     * @param args Object[]; the arguments of the <code>method</code> that must execute the event
+     * @return SimEvent&lt;OTSSimTimeDouble&gt;; the event that was scheduled (the caller should save this if a need to
+     *         cancel the event may arise later)
+     * @throws SimRuntimeException when the <code>executionTime</code> is in the past
+     */
+    public SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime,
+            final short priority, final Object source, final Object target, final String method, final Object[] args)
+            throws SimRuntimeException
+    {
+        SimEvent<OTSSimTimeDouble> result =
+                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(
+                        executionTime.getSI(), TimeUnit.SECOND)), priority, source, target, method, args);
+        this.simulator.scheduleEvent(result);
+        return result;
     }
 
 }
