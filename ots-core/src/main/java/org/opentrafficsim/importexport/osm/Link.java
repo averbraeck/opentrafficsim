@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.opentrafficsim.importexport.osm.events.WarningEvent;
+import org.opentrafficsim.importexport.osm.events.WarningListener;
+
 /**
  * OpenStreetMap Link.
  * <p>
@@ -38,8 +41,9 @@ public class Link
      * @param toNode Endnode
      * @param lt List of inherited Waytags
      * @param length length of the link
+     * @param warningListener 
      */
-    public Link(final Node fromNode, final Node toNode, final List<Tag> lt, final double length)
+    public Link(final Node fromNode, final Node toNode, final List<Tag> lt, final double length, final WarningListener warningListener)
     {
         if (fromNode == toNode)
         {
@@ -99,7 +103,8 @@ public class Link
                 }
                 else
                 {
-                    /* TODO Fire Event */
+                    String warning = "Illegal value for the tag 'lanes' at link " + this.iD;
+                    warningListener.warning(new WarningEvent(this, warning));
                 }
             }
             if (t2.getKey().equals("lanes:forward"))
@@ -112,7 +117,8 @@ public class Link
                 }
                 else
                 {
-                    /* TODO Fire Event */
+                    String warning = "Illegal value for the tag 'lanes:forward' at link " + this.iD;
+                    warningListener.warning(new WarningEvent(this, warning));
                 }
             }
         }
@@ -120,7 +126,8 @@ public class Link
         if (!forwardDefined && this.lanes > 1)
         {
             this.forwardLanes = (byte) (this.lanes / 2);
-            /* TODO Fire Event */
+            String warning = "No forward lanes defined at link " + this.iD;
+            warningListener.warning(new WarningEvent(this, warning));
         }
         this.splineList = new ArrayList<Node>(); 
     }

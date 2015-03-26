@@ -18,6 +18,8 @@ import org.openstreetmap.osmosis.core.domain.v0_6.Way;
 import org.openstreetmap.osmosis.core.domain.v0_6.WayNode;
 import org.openstreetmap.osmosis.core.task.v0_6.Sink;
 import org.opentrafficsim.importexport.osm.Network;
+import org.opentrafficsim.importexport.osm.events.ProgressEvent;
+import org.opentrafficsim.importexport.osm.events.ProgressListener;
 
 /**
  * <p>
@@ -39,6 +41,9 @@ public class NewSink implements Sink
 
     /** */
     private List<String> filterKeys;
+    
+    /** ProgressListener. */
+    private ProgressListener progressListener;
 
     @Override
     public void initialize(final Map<String, Object> arg0)
@@ -171,6 +176,10 @@ public class NewSink implements Sink
     {
         HashMap<Long, org.opentrafficsim.importexport.osm.Node> usedNodes =
                 new HashMap<Long, org.opentrafficsim.importexport.osm.Node>();
+        double total = this.net.getWays().size() + this.net.getRelations().size();
+        double counter = 0;
+        double nextPercentage = 5.0D;
+        this.progressListener.progress(new ProgressEvent(this, "Starting node cleanup."));
         for (Long wid : this.net.getWays().keySet())
         {
             try
@@ -187,6 +196,13 @@ public class NewSink implements Sink
             catch (IOException e)
             {
                 e.printStackTrace();
+            }
+            counter++;
+            double currentPercentage = counter / total * 100;
+            if (currentPercentage >= nextPercentage)
+            {
+                this.progressListener.progress(new ProgressEvent(this, nextPercentage + "% Progress"));
+                nextPercentage += 5.0D;
             }
         }
         for (Long rid : this.net.getRelations().keySet())
@@ -206,8 +222,16 @@ public class NewSink implements Sink
             {
                 e.printStackTrace();
             }
+            counter++;
+            double currentPercentage = counter / total * 100;
+            if (currentPercentage >= nextPercentage)
+            {
+                this.progressListener.progress(new ProgressEvent(this, nextPercentage + "% Progress"));
+                nextPercentage += 5.0D;
+            }
         }
         this.net.setNodes(usedNodes);
+        this.progressListener.progress(new ProgressEvent(this, "Cleanup complete."));
     }
 
     /**
@@ -234,12 +258,28 @@ public class NewSink implements Sink
     }
 
     /**
-     * Set/replace the filter keys.<br>
+     * Set/replace the filter keys.<br/>
      * The provided list is <b>not copied</b>; the caller should not modify the list afterwards.
      * @param keys List&lt;String&gt; list of filter keys
      */
     public final void setFilterKeys(final List<String> keys)
     {
         this.filterKeys = keys;
+    }
+
+    /**
+     * @return progressListener.
+     */
+    public ProgressListener getProgressListener()
+    {
+        return this.progressListener;
+    }
+
+    /**
+     * @param progressListener set progressListener.
+     */
+    public void setProgressListener(final ProgressListener progressListener)
+    {
+        this.progressListener = progressListener;
     }
 }

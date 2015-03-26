@@ -21,13 +21,11 @@ public class WarningEvent extends EventObject
     
     /**
      * @param source of the WarningEvent.
-     * @param obj Object which caused the warning.
      * @param warn Textual description of the warning.
      */
-    public WarningEvent(final Object source, final Object obj, final String warn)
+    public WarningEvent(final Object source, final String warn)
     {
         super(source);
-        this.object = obj;
         this.warning = warn;
     }
     
