@@ -35,6 +35,11 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.importexport.osm.events.ProgressEvent;
+import org.opentrafficsim.importexport.osm.events.ProgressListener;
+import org.opentrafficsim.importexport.osm.events.ProgressListenerImpl;
+import org.opentrafficsim.importexport.osm.events.WarningListener;
+import org.opentrafficsim.importexport.osm.events.WarningListenerImpl;
 import org.opentrafficsim.importexport.osm.input.ReadOSMFile;
 import org.opentrafficsim.importexport.osm.output.Convert;
 import org.opentrafficsim.simulationengine.AbstractProperty;
@@ -70,16 +75,23 @@ public class OpenStreetMap implements WrappableSimulation
     
     /** The properties of this simulation. */
     private ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();
+    
+    /** */
+    private ProgressListener progressListener;
+    
+    /** */
+    private WarningListener warningListener;
 
     /**
      * @throws MalformedURLException 
      */
     public OpenStreetMap() throws MalformedURLException
     {
+        
         JFrame frame = new JFrame();
         FileDialog fd = new FileDialog(frame, "Choose a file", FileDialog.LOAD);
         fd.setDirectory("C:\\");
-        fd.setFile("*.osm.bz2");
+        fd.setFile("*.*");
         fd.setVisible(true);
         File[] file = fd.getFiles();
         String filename = fd.getFile();
@@ -150,7 +162,9 @@ public class OpenStreetMap implements WrappableSimulation
         try
         {
         System.out.println(filepath);
-        ReadOSMFile osmf = new ReadOSMFile(filepath, wt, ft);
+        this.progressListener = new ProgressListenerImpl();
+        this.warningListener = new WarningListenerImpl();
+        ReadOSMFile osmf = new ReadOSMFile(filepath, wt, ft, this.progressListener);
         org.opentrafficsim.importexport.osm.Network net = osmf.getNetwork();
         //net.makeLinks();
         // net.removeRedundancy();
@@ -237,7 +251,7 @@ public class OpenStreetMap implements WrappableSimulation
     public SimpleSimulator buildSimulator(final ArrayList<AbstractProperty<?>> usedProperties)
             throws SimRuntimeException, RemoteException, NetworkException
     {
-        OSMModel model = new OSMModel(usedProperties, this.networkOSM);
+        OSMModel model = new OSMModel(usedProperties, this.networkOSM, this.warningListener, this.progressListener);
         Iterator<Node<?, ?>> count = this.networkOTS.getNodeSet().iterator();
         Rectangle2D area = new Rectangle2D.Double(0, 0, 0, 0);
         while (count.hasNext())
@@ -316,13 +330,25 @@ class OSMModel implements OTSModelInterface
 
     /** Provided lanes. */
     private ArrayList<Lane> lanes;
+    
+    /** */
+    private ProgressListener progressListener;
+    
+    /** */
+    private WarningListener warningListener;
 
     /**
      * @param properties 
+     * @param net 
+     * @param wL 
+     * @param pL 
      */
-    public OSMModel(final ArrayList<AbstractProperty<?>> properties, final org.opentrafficsim.importexport.osm.Network net)
+    public OSMModel(final ArrayList<AbstractProperty<?>> properties, final org.opentrafficsim.importexport.osm.Network net,
+        final WarningListener wL, final ProgressListener pL)
     {
         this.network = net;
+        this.warningListener = wL;
+        this.progressListener = pL;
         /*ArrayList<org.opentrafficsim.importexport.osm.Tag> wt =
                 new ArrayList<org.opentrafficsim.importexport.osm.Tag>();
         org.opentrafficsim.importexport.osm.Tag t1 = new org.opentrafficsim.importexport.osm.Tag("highway", "primary");
@@ -404,7 +430,7 @@ class OSMModel implements OTSModelInterface
         this.networkOTS = new Network<String, CrossSectionLink<?, ?>>(this.network.getName());
         try
         {
-            this.network.makeLinks();
+            this.network.makeLinks(this.warningListener, this.progressListener);
         }
         catch (IOException exception1)
         {
@@ -434,18 +460,34 @@ class OSMModel implements OTSModelInterface
     public void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
-        this.network = Convert.findSinksandSources(this.network);
+        this.network = Convert.findSinksandSources(this.network, this.progressListener);
+        this.progressListener.progress(new ProgressEvent(this.network, "Starting lane creation."));
+        double total = this.network.getLinks().size();
+        double counter = 0;
+        double nextPercentage = 5.0D;
         for (org.opentrafficsim.importexport.osm.Link l : this.network.getLinks())
         {
             try
             {
-                this.lanes.addAll(Convert.makeLanes(l, (OTSDEVSSimulatorInterface) theSimulator));
+                this.lanes.addAll(Convert.makeLanes(l, (OTSDEVSSimulatorInterface) theSimulator,
+                    this.warningListener, this.progressListener));
             }
             catch (NetworkException | NamingException exception)
             {
                 exception.printStackTrace();
             }
+            counter++;
+            double currentPercentage = counter / total * 100;
+            if (currentPercentage >= nextPercentage)
+            {
+                this.progressListener.progress(new ProgressEvent(this, nextPercentage + "% Progress"));
+                nextPercentage += 5.0D;
+            }
         }
+        /*System.out.println("Number of Links: " + this.network.getLinks().size());
+        System.out.println("Number of Nodes: " + this.network.getNodes().size());
+        System.out.println("Number of Lanes: " + this.lanes.size());*/
+
     }
 
     /**
