@@ -22,6 +22,7 @@ public class ProgressListenerImpl implements ProgressListener
     {
         this.currentProgress = progressEvent.getProgress();
         this.log += this.currentProgress + "\n";
+        System.out.println(this.currentProgress);
     }
 
     /**

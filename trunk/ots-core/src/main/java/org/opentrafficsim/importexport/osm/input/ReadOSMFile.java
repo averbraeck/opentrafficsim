@@ -13,6 +13,8 @@ import org.openstreetmap.osmosis.xml.common.CompressionMethod;
 import org.openstreetmap.osmosis.xml.v0_6.XmlReader;
 import org.opentrafficsim.importexport.osm.Network;
 import org.opentrafficsim.importexport.osm.Tag;
+import org.opentrafficsim.importexport.osm.events.ProgressEvent;
+import org.opentrafficsim.importexport.osm.events.ProgressListener;
 
 import crosby.binary.osmosis.OsmosisReader;
 
@@ -58,6 +60,9 @@ public final class ReadOSMFile
 
     /** Tags not having any of the here defined keys are skipped or ignored. If empty all Tags are imported. */
     private List<String> filterKeys;
+    
+    /** ProgressListener */
+    private ProgressListener progressListener;
 
     /**
      * @param location String; the location of the OSM file
@@ -67,9 +72,10 @@ public final class ReadOSMFile
      * @throws FileNotFoundException when the OSM file can not be found
      * @throws MalformedURLException when <cite>location</cite> is not valid
      */
-    public ReadOSMFile(final String location, final List<Tag> wt, final List<String> ft) throws URISyntaxException,
+    public ReadOSMFile(final String location, final List<Tag> wt, final List<String> ft, final ProgressListener progListener) throws URISyntaxException,
             FileNotFoundException, MalformedURLException
     {
+        this.setProgressListener(progListener);
         this.wantedTags = wt;
         this.filterKeys = ft;
         this.url = new URL(location);
@@ -82,6 +88,7 @@ public final class ReadOSMFile
         this.sinkImplementation = new NewSink();
         this.sinkImplementation.setWantedTags(this.wantedTags);
         this.sinkImplementation.setFilterKeys(this.filterKeys);
+        this.sinkImplementation.setProgressListener(this.progressListener);
 
         this.compression = CompressionMethod.None;
 
@@ -118,6 +125,7 @@ public final class ReadOSMFile
         this.reader.setSink(this.sinkImplementation);
 
         this.readerThread = new Thread(this.reader);
+        this.progressListener.progress(new ProgressEvent(this, "Starting Import."));
         this.readerThread.start();
         while (this.readerThread.isAlive())
         {
@@ -150,5 +158,21 @@ public final class ReadOSMFile
     public Network getNetwork()
     {
         return this.sinkImplementation.getNetwork();
+    }
+
+    /**
+     * @return progressListener.
+     */
+    public ProgressListener getProgressListener()
+    {
+        return this.progressListener;
+    }
+
+    /**
+     * @param progressListener set progressListener.
+     */
+    public void setProgressListener(final ProgressListener progressListener)
+    {
+        this.progressListener = progressListener;
     }
 }

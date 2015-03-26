@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.opentrafficsim.importexport.osm.events.ProgressEvent;
+import org.opentrafficsim.importexport.osm.events.ProgressListener;
+import org.opentrafficsim.importexport.osm.events.WarningListener;
+
 /**
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
@@ -239,10 +243,14 @@ public class Network
 
     /**
      * Creates links out of the ways in this network.
+     * @param warningListener 
+     * @param progressListener 
      * @throws IOException on read errors
      */
-    public final void makeLinks() throws IOException
+    public final void makeLinks(final WarningListener warningListener, final ProgressListener progressListener) throws IOException
     {
+        progressListener.progress(new ProgressEvent(this, "Starting link creation:"));
+        
         List<Link> links2 = new ArrayList<Link>();
         for (Long wayid : this.ways.keySet())
         {
@@ -261,11 +269,12 @@ public class Network
                 double y1 = fromNode.getLongitude();
                 double y2 = toNode.getLongitude();
                 double length = distanceLongLat(x1, y1, x2, y2);
-                Link e = new Link(fromNode, toNode, this.getWay(wayid).getTags(), length);
+                Link e = new Link(fromNode, toNode, this.getWay(wayid).getTags(), length, warningListener);
                 links2.add(e);
             }
         }
         this.links = links2;
+        progressListener.progress(new ProgressEvent(this, "Link creation finished. Created " + this.links.size() + " links."));
     }
 
     /**

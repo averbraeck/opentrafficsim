@@ -47,6 +47,7 @@ public class Node
     /** */
     public int linksTerminating = 0;
     
+    /** */
     private NodeGeotools.STR otsNode = null;
 
     /**
@@ -284,15 +285,21 @@ public class Node
         this.crossing = crossing;
     }
     
-    public final void setOtsNode(NodeGeotools.STR n)
+    /**
+     * @param n NodeGeotools.STR
+     */
+    public final void setOtsNode(final NodeGeotools.STR n)
     {
-        if(this.otsNode != null)
+        if (this.otsNode != null)
         {
             throw new Error("OTS Node already set, can only be set once.");
         }
         this.otsNode = n;
     }
     
+    /**
+     * @return NodeGeotools.STR - The associated OTS Node.
+     */
     public final NodeGeotools.STR getOtsNode()
     {
         return this.otsNode;

@@ -27,6 +27,7 @@ public class WarningListenerImpl implements WarningListener
     {
         this.currentWarning = warningEvent.getWarning();
         this.warningLog += this.currentWarning + "\n";
+        System.out.println(this.currentWarning);
     }
 
     /**
