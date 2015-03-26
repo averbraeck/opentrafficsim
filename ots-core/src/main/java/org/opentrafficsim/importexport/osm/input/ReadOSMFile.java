@@ -61,19 +61,20 @@ public final class ReadOSMFile
     /** Tags not having any of the here defined keys are skipped or ignored. If empty all Tags are imported. */
     private List<String> filterKeys;
     
-    /** ProgressListener */
+    /** ProgressListener. */
     private ProgressListener progressListener;
 
     /**
      * @param location String; the location of the OSM file
      * @param wt List&lt;Tag&gt;; the list of wanted tags
      * @param ft List&lt;String&gt;; the list of filtered keys
+     * @param progListener 
      * @throws URISyntaxException when <cite>location</cite> is not a valid URL
      * @throws FileNotFoundException when the OSM file can not be found
      * @throws MalformedURLException when <cite>location</cite> is not valid
      */
-    public ReadOSMFile(final String location, final List<Tag> wt, final List<String> ft, final ProgressListener progListener) throws URISyntaxException,
-            FileNotFoundException, MalformedURLException
+    public ReadOSMFile(final String location, final List<Tag> wt, final List<String> ft, final ProgressListener progListener)
+            throws URISyntaxException, FileNotFoundException, MalformedURLException
     {
         this.setProgressListener(progListener);
         this.wantedTags = wt;
