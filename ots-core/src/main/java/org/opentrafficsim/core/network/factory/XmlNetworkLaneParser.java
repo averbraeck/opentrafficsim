@@ -3038,6 +3038,6 @@ public class XmlNetworkLaneParser
         nlp =
                 new XmlNetworkLaneParser(String.class, NodeGeotools.class, String.class, Coordinate.class,
                         LinkGeotools.class, String.class, null);
-        nlp.build(url);
+        nlp.build(url); // This dies when the generator is scheduled on a null-simulator
     }
 }
