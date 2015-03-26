@@ -46,7 +46,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <ots-version>${project.version}</ots-version>
-    <dsol-version>3.00.02</dsol-version>
+    <dsol-version>3.00.03</dsol-version>
     <junit.version>4.11</junit.version>
     <java3d.version>1.5.1</java3d.version>
     <parallelcolt.version>0.10.1</parallelcolt.version>
@@ -66,7 +66,7 @@
     <maven.install.version>2.5.1</maven.install.version>
     <maven.source.version>2.2.1</maven.source.version>
     <maven.javadoc.version>2.9.1</maven.javadoc.version>
-    <maven.checkstyle.version>2.12.1</maven.checkstyle.version>
+    <maven.checkstyle.version>2.15</maven.checkstyle.version>
     <maven.surefire.version>2.17</maven.surefire.version>
     <maven.surefire-report.version>2.17</maven.surefire-report.version>
     <maven.failsafe.version>2.17</maven.failsafe.version>
