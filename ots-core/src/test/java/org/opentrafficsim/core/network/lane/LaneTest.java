@@ -22,6 +22,7 @@ import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -74,11 +75,12 @@ public class LaneTest
         laneType.addPermeability(gtuTypeCar);
         laneType.addPermeability(gtuTypeTruck);
         DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000, FrequencyUnit.PER_HOUR);
-        // Now we can construct a Lane
         LongitudinalDirectionality longitudinalDirectionality = LongitudinalDirectionality.FORWARD;
+        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        // Now we can construct a Lane
         Lane lane =
                 new Lane(link, startLateralPos, endLateralPos, startWidth, endWidth, laneType,
-                        longitudinalDirectionality, f2000, XXX);
+                        longitudinalDirectionality, f2000, speedLimit);
         // Verify the easy bits
         assertEquals("Capacity should be " + f2000, f2000.getSI(), lane.getCapacity().getSI(), 0.001);
         assertEquals("PrevLanes should be empty", 0, lane.prevLanes().size()); // this one caught a bug!
@@ -89,6 +91,7 @@ public class LaneTest
                 lane.getContour().getLength(), 0.1);
         assertEquals("Directionality should be " + longitudinalDirectionality, longitudinalDirectionality,
                 lane.getDirectionality());
+        assertEquals("SpeedLimit should be " + speedLimit, speedLimit, lane.getSpeedLimit());
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane.getLaneType());
         for (int i = 0; i < 10; i++)
@@ -158,7 +161,7 @@ public class LaneTest
         new LinearGeometry(link, lineString, null);
         lane =
                 new Lane(link, startLateralPos, endLateralPos, startWidth, endWidth, laneType,
-                        longitudinalDirectionality, f2000, XXX);
+                        longitudinalDirectionality, f2000, speedLimit);
         // Verify the easy bits
         assertEquals("Capacity should be " + f2000, f2000.getSI(), lane.getCapacity().getSI(), 0.001);
         assertEquals("PrevLanes should be empty", 0, lane.prevLanes().size());
@@ -199,7 +202,7 @@ public class LaneTest
         DoubleScalar.Rel<LengthUnit> endLateralPos2 = new DoubleScalar.Rel<LengthUnit>(-5, LengthUnit.METER);
         Lane lane2 =
                 new Lane(link, startLateralPos2, endLateralPos2, startWidth, endWidth, laneType,
-                        longitudinalDirectionality, f2000, XXX);
+                        longitudinalDirectionality, f2000, speedLimit);
         // Verify the easy bits
         assertEquals("Capacity should be " + f2000, f2000.getSI(), lane2.getCapacity().getSI(), 0.001);
         assertEquals("PrevLanes should be empty", 0, lane2.prevLanes().size());
@@ -252,6 +255,7 @@ public class LaneTest
         DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000, FrequencyUnit.PER_HOUR);
         LongitudinalDirectionality longitudinalDirectionality = LongitudinalDirectionality.FORWARD;
         LaneType<String> laneType = new LaneType<String>("Car");
+        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
         for (int xStart : startPositions)
         {
             for (int yStart : startPositions)
@@ -286,7 +290,7 @@ public class LaneTest
                                                 LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(endLateralOffset,
                                                 LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(startWidth,
                                                 LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(endWidth,
-                                                LengthUnit.METER), laneType, longitudinalDirectionality, f2000, XXX);
+                                                LengthUnit.METER), laneType, longitudinalDirectionality, f2000, speedLimit);
                                 final Geometry geometry = lane.getContour();
                                 assertNotNull("geometry of the lane should not be null", geometry);
                                 // Verify a couple of points that should be inside the contour of the Lane

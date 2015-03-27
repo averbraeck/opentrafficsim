@@ -117,6 +117,7 @@ public class LaneBasedGTUTest
             String linkName = fromNode.getId() + "-" + toNode.getId();
             Lane[] lanes =
                     LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, laneCount, laneType,
+                            new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR),
                             (OTSDEVSSimulatorInterface) simulator.getSimulator());
             links.add(lanes[0].getParentLink());
         }
@@ -132,8 +133,8 @@ public class LaneBasedGTUTest
         try
         {
             new LaneBasedIndividualCar<String>("Truck", truckType, null /* GTU following model */, laneChangeModel,
-                    truckPositions, truckSpeed, truckLength, truckWidth, maximumVelocity,
-                    new Route(new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                    truckPositions, truckSpeed, truckLength, truckWidth, maximumVelocity, new Route(
+                            new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simulator.getSimulator());
             fail("null GTUFollowingModel should have thrown a GTUException");
         }
         catch (GTUException e)
@@ -143,9 +144,9 @@ public class LaneBasedGTUTest
         GTUFollowingModel gtuFollowingModel = new IDMPlus();
         try
         {
-            new LaneBasedIndividualCar<String>("Truck", truckType, gtuFollowingModel, laneChangeModel,
-                    truckPositions, truckSpeed, truckLength, truckWidth, maximumVelocity,
-                    null, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+            new LaneBasedIndividualCar<String>("Truck", truckType, gtuFollowingModel, laneChangeModel, truckPositions,
+                    truckSpeed, truckLength, truckWidth, maximumVelocity, null,
+                    (OTSDEVSSimulatorInterface) simulator.getSimulator());
             fail("null Route should have thrown a GTUException");
         }
         catch (GTUException e)
@@ -154,8 +155,8 @@ public class LaneBasedGTUTest
         }
         LaneBasedIndividualCar<String> truck =
                 new LaneBasedIndividualCar<String>("Truck", truckType, gtuFollowingModel, laneChangeModel,
-                        truckPositions, truckSpeed, truckLength, truckWidth, maximumVelocity,
-                        new Route(new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                        truckPositions, truckSpeed, truckLength, truckWidth, maximumVelocity, new Route(
+                                new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simulator.getSimulator());
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
         int found = 0;
@@ -215,8 +216,9 @@ public class LaneBasedGTUTest
                         buildPositionsMap(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
                 LaneBasedIndividualCar<String> car =
                         new LaneBasedIndividualCar<String>("Car", carType, gtuFollowingModel, laneChangeModel,
-                                carPositions, carSpeed, carLength, carWidth, maximumVelocity,
-                                new Route(new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                                carPositions, carSpeed, carLength, carWidth, maximumVelocity, new Route(
+                                        new ArrayList<Node<?, ?>>()),
+                                (OTSDEVSSimulatorInterface) simulator.getSimulator());
                 leader = truck.headway(forwardMaxDistance);
                 double actualHeadway = leader.getDistanceSI();
                 double expectedHeadway =
@@ -384,6 +386,7 @@ public class LaneBasedGTUTest
             String linkName = "AB";
             Lane lane =
                     LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType,
+                            new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR),
                             (OTSDEVSSimulatorInterface) simulator.getSimulator())[0];
             DoubleScalar.Rel<LengthUnit> carPosition = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);
             Map<Lane, DoubleScalar.Rel<LengthUnit>> carPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
@@ -398,8 +401,8 @@ public class LaneBasedGTUTest
             LaneBasedIndividualCar<String> car =
                     new LaneBasedIndividualCar<String>("Car", carType, fam, laneChangeModel, carPositions, carSpeed,
                             new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
-                                    1.8, LengthUnit.METER), maximumVelocity,
-                                    new Route(new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                                    1.8, LengthUnit.METER), maximumVelocity, new Route(new ArrayList<Node<?, ?>>()),
+                            (OTSDEVSSimulatorInterface) simulator.getSimulator());
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(61, TimeUnit.SECOND));
             // System.out.println("acceleration is " + acceleration);
