@@ -8,6 +8,7 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
@@ -24,7 +25,7 @@ public class SourceLane extends Lane
 {
     /** the generators on this generation lane; one per GTU type. */
     private final Set<GTUGeneratorIndividual<?>> generators = new HashSet<GTUGeneratorIndividual<?>>();
-    
+
     /**
      * Construct a GeneratorLane.
      * @param parentLink Cross Section Link to which the element belongs.
@@ -38,11 +39,11 @@ public class SourceLane extends Lane
     @SuppressWarnings("checkstyle:parameternumber")
     public SourceLane(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart,
         final DoubleScalar.Rel<LengthUnit> beginWidth, final LaneType<?> laneType,
-        final LongitudinalDirectionality directionality) throws NetworkException
+        final LongitudinalDirectionality directionality, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+        throws NetworkException
     {
         super(parentLink, lateralOffsetAtStart, lateralOffsetAtStart, beginWidth, beginWidth, laneType, directionality,
-            new DoubleScalar.Abs<FrequencyUnit>(1, FrequencyUnit.SI));
+            new DoubleScalar.Abs<FrequencyUnit>(1, FrequencyUnit.SI), speedLimit);
     }
-
 
 }

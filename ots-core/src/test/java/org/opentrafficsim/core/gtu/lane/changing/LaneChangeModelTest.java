@@ -112,7 +112,7 @@ public class LaneChangeModelTest implements OTSModelInterface
             throws RemoteException, NamingException, NetworkException
     {
         DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
-        Lane result = new Lane(link, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f2000);
+        Lane result = new Lane(link, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f2000, XXX);
         return result;
     }
 

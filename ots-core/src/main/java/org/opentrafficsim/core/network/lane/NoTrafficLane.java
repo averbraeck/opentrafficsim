@@ -4,6 +4,7 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
@@ -35,10 +36,11 @@ public class NoTrafficLane extends Lane
     public NoTrafficLane(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart,
         final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd, final DoubleScalar.Rel<LengthUnit> beginWidth,
         final DoubleScalar.Rel<LengthUnit> endWidth, final LaneType<?> laneType,
-        final LongitudinalDirectionality directionality, final DoubleScalar.Abs<FrequencyUnit> capacity)
-        throws NetworkException
+        final LongitudinalDirectionality directionality, final DoubleScalar.Abs<FrequencyUnit> capacity,
+        final DoubleScalar.Abs<SpeedUnit> speedLimit) throws NetworkException
     {
-        super(parentLink, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, laneType, directionality, capacity);
+        super(parentLink, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, laneType, directionality,
+            capacity, speedLimit);
     }
 
     /** {@inheritDoc} */
