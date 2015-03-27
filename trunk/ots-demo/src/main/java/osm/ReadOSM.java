@@ -99,115 +99,115 @@ public class ReadOSM
     /**
      * @param args
      */
-    public static void main(final String[] args)
-    {
-        ft = new ArrayList<String>();
-        wt = new ArrayList<Tag>();
-        makeWanted();
-        makeFilter();
-        try
-        {
-            System.out.println("Parsing " + loc);
-            String prefix = "file:///D:/";
-            ReadOSMFile osmf = new ReadOSMFile(/* prefix + */loc, wt, ft);
-            while (!osmf.checkisReaderThreadDead())
-            {
-                System.out.println("Processing");
-            }
-            Network net = osmf.getNetwork();
-            System.out.println("Got Network. Preparing Conversion");
-            System.out.println("Making links");
-            net.makeLinks();
-            System.out.println("Made " + net.getLinks().size() + " links");
-            System.out.println("Removing redundancies");
-            net.removeRedundancy();
-            System.out.println(net.getLinks().size() + " links after redudancy removal");
-            System.out.println("Now converting to OTS internal format");
-            org.opentrafficsim.core.network.Network<String, CrossSectionLink<?, ?>> otsNet =
-                    new org.opentrafficsim.core.network.Network<String, CrossSectionLink<?, ?>>(net.getName());
-            System.out.println("OTS Network named: " + otsNet.getId());
-            for (org.opentrafficsim.importexport.osm.Node osmNode : net.getNodes().values())
-            {
-                try
-                {
-                    otsNet.addNode(Convert.convertNode(osmNode));
-                }
-                catch (NetworkException ne)
-                {
-                    System.out.println(ne.getMessage());
-                }
-            }
-            System.out.println(otsNet.getNodeSet().size() + " OTS Nodes created");
-            for (org.opentrafficsim.importexport.osm.Link osmLink : net.getLinks())
-            {
-                otsNet.add(Convert.convertLink(osmLink));
-            }
-            System.out.println(otsNet.size() + " OTS Links created");
-            try
-            {
-                SimpleSimulator result =
-                        new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
-                                new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(
-                                        1800.0, TimeUnit.SECOND), null);
-            }
-            catch (SimRuntimeException exception)
-            {
-                exception.printStackTrace();
-            }
-            System.out.println("Done. Terminating.");
-            /*-
-            int countn = 0;
-            for (Long n: net.getNodes().keySet())
-            {
-                countn++;
-                System.out.println(n);
-            }
-            int countw = 0;
-            for (Long w: net.getWays().keySet())
-            {
-                countw++;
-                String s = "";
-                for (Tag t: net.getWay(w).getTags())
-                {   
-                    s = s + t.getKey() + ": " +t.getValue() + " || ";
-                }
-                if(!s.isEmpty())
-                {
-                    System.out.println(s);
-                }
-            }
-            try
-            {
-                net.makeLinks();
-                int countl = 0;
-                for (Link l: net.getLinks())
-                {
-                    countl++;
-                    String s = "";
-                    for (Tag t: l.getTags())
-                    {   
-                        s = s + t.getKey() + ": " +t.getValue() + " || ";
-                    }
-                    if(!s.isEmpty())
-                    {
-                        System.out.println(s);
-                    }
-                }
-                System.out.println("Number of ways: " + countw + " || Number of nodes " + countn + " || Number of links: " + countl);
-            }
-            catch(IOException e)
-            {
-                System.out.println(e);
-            }
-             */}
-        catch (URISyntaxException exception)
-        {
-            exception.printStackTrace();
-        }
-        catch (IOException exception)
-        {
-            exception.printStackTrace();
-        }
-    }
+//    public static void main(final String[] args)
+//    {
+//        ft = new ArrayList<String>();
+//        wt = new ArrayList<Tag>();
+//        makeWanted();
+//        makeFilter();
+//        try
+//        {
+//            System.out.println("Parsing " + loc);
+//            String prefix = "file:///D:/";
+//            ReadOSMFile osmf = new ReadOSMFile(/* prefix + */loc, wt, ft);
+//            while (!osmf.checkisReaderThreadDead())
+//            {
+//                System.out.println("Processing");
+//            }
+//            Network net = osmf.getNetwork();
+//            System.out.println("Got Network. Preparing Conversion");
+//            System.out.println("Making links");
+//            net.makeLinks();
+//            System.out.println("Made " + net.getLinks().size() + " links");
+//            System.out.println("Removing redundancies");
+//            net.removeRedundancy();
+//            System.out.println(net.getLinks().size() + " links after redudancy removal");
+//            System.out.println("Now converting to OTS internal format");
+//            org.opentrafficsim.core.network.Network<String, CrossSectionLink<?, ?>> otsNet =
+//                    new org.opentrafficsim.core.network.Network<String, CrossSectionLink<?, ?>>(net.getName());
+//            System.out.println("OTS Network named: " + otsNet.getId());
+//            for (org.opentrafficsim.importexport.osm.Node osmNode : net.getNodes().values())
+//            {
+//                try
+//                {
+//                    otsNet.addNode(Convert.convertNode(osmNode));
+//                }
+//                catch (NetworkException ne)
+//                {
+//                    System.out.println(ne.getMessage());
+//                }
+//            }
+//            System.out.println(otsNet.getNodeSet().size() + " OTS Nodes created");
+//            for (org.opentrafficsim.importexport.osm.Link osmLink : net.getLinks())
+//            {
+//                otsNet.add(Convert.convertLink(osmLink));
+//            }
+//            System.out.println(otsNet.size() + " OTS Links created");
+//            try
+//            {
+//                SimpleSimulator result =
+//                        new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
+//                                new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(
+//                                        1800.0, TimeUnit.SECOND), null);
+//            }
+//            catch (SimRuntimeException exception)
+//            {
+//                exception.printStackTrace();
+//            }
+//            System.out.println("Done. Terminating.");
+//            /*-
+//            int countn = 0;
+//            for (Long n: net.getNodes().keySet())
+//            {
+//                countn++;
+//                System.out.println(n);
+//            }
+//            int countw = 0;
+//            for (Long w: net.getWays().keySet())
+//            {
+//                countw++;
+//                String s = "";
+//                for (Tag t: net.getWay(w).getTags())
+//                {   
+//                    s = s + t.getKey() + ": " +t.getValue() + " || ";
+//                }
+//                if(!s.isEmpty())
+//                {
+//                    System.out.println(s);
+//                }
+//            }
+//            try
+//            {
+//                net.makeLinks();
+//                int countl = 0;
+//                for (Link l: net.getLinks())
+//                {
+//                    countl++;
+//                    String s = "";
+//                    for (Tag t: l.getTags())
+//                    {   
+//                        s = s + t.getKey() + ": " +t.getValue() + " || ";
+//                    }
+//                    if(!s.isEmpty())
+//                    {
+//                        System.out.println(s);
+//                    }
+//                }
+//                System.out.println("Number of ways: " + countw + " || Number of nodes " + countn + " || Number of links: " + countl);
+//            }
+//            catch(IOException e)
+//            {
+//                System.out.println(e);
+//            }
+//             */}
+//        catch (URISyntaxException exception)
+//        {
+//            exception.printStackTrace();
+//        }
+//        catch (IOException exception)
+//        {
+//            exception.printStackTrace();
+//        }
+//    }
 
 }
