@@ -84,14 +84,14 @@ public class AbstractLaneBasedGTUTest
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(-1000, -1000, 2000, 2000));
 
         Lane[] lanesGroupA =
-                LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType,
-                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(
+                        100, SpeedUnit.KM_PER_HOUR), (OTSDEVSSimulatorInterface) simulator.getSimulator());
         // A GTU can exist on several lanes at once; create another lane group to test that
         NodeGeotools.STR nodeBFrom = new NodeGeotools.STR("BFrom", new Coordinate(10, 0, 0));
         NodeGeotools.STR nodeBTo = new NodeGeotools.STR("BTo", new Coordinate(1000, 100, 0));
         Lane[] lanesGroupB =
-                LaneFactory.makeMultiLane("B", nodeBFrom, nodeBTo, null, 3, laneType,
-                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                LaneFactory.makeMultiLane("B", nodeBFrom, nodeBTo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(
+                        100, SpeedUnit.KM_PER_HOUR), (OTSDEVSSimulatorInterface) simulator.getSimulator());
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
                 new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
 
@@ -123,7 +123,7 @@ public class AbstractLaneBasedGTUTest
         nodeList.add(nodeAFrom);
         nodeList.add(nodeATo);
         // Route of the Car
-        Route route = new Route (nodeList);
+        Route route = new Route(nodeList);
         // Now we can make a GTU
         LaneBasedIndividualCar<String> car =
                 new LaneBasedIndividualCar<String>(carID, gtuType, gfm, laneChangeModel, initialLongitudinalPositions,
@@ -347,8 +347,8 @@ public class AbstractLaneBasedGTUTest
         NodeGeotools.STR nodeCFrom = new NodeGeotools.STR("CFrom", new Coordinate(10, 100, 0));
         NodeGeotools.STR nodeCTo = new NodeGeotools.STR("CTo", new Coordinate(1000, 0, 0));
         Lane[] lanesGroupC =
-                LaneFactory.makeMultiLane("C", nodeCFrom, nodeCTo, null, 3, laneType,
-                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                LaneFactory.makeMultiLane("C", nodeCFrom, nodeCTo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(
+                        100, SpeedUnit.KM_PER_HOUR), (OTSDEVSSimulatorInterface) simulator.getSimulator());
         car.addLane(lanesGroupC[0], new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.SI));
         for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
         {
@@ -392,7 +392,6 @@ public class AbstractLaneBasedGTUTest
         // TODO
         // figure out why the added lane has a non-zero position
     }
-
 }
 
 /**

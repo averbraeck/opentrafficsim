@@ -190,6 +190,7 @@ public final class LaneFactory
      * @param intermediateCoordinates Coordinate[]; intermediate coordinates or null to create a straight road
      * @param laneCount int; number of lanes in the road
      * @param laneType LaneType; type of the new Lanes
+     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt; the speed limit (applies to all generated lanes)
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @return Lane[]; array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation

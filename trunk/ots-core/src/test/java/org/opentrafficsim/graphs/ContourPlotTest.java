@@ -74,7 +74,7 @@ public class ContourPlotTest
         Lane[] lanes =
                 LaneFactory.makeMultiLane("AtoB", new NodeGeotools.STR("A", new Coordinate(1234, 0, 0)),
                         new NodeGeotools.STR("B", new Coordinate(12345, 0, 0)), null, 1, new LaneType<String>(
-                                "lane type"), null);
+                                "lane type"), new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), null);
         result.add(lanes[0]);
         return result;
     }
@@ -614,6 +614,7 @@ class ContourPlotModel implements OTSModelInterface
     public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> simulator)
             throws SimRuntimeException, RemoteException
     {
+        // NOT USED
     }
 
     /** {@inheritDoc} */

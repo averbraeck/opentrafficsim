@@ -78,8 +78,8 @@ public class SensorTest
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(-1000, -1000, 2000, 2000));
         Lane[] lanes =
-                LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType,
-                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(
+                        100, SpeedUnit.KM_PER_HOUR), (OTSDEVSSimulatorInterface) simulator.getSimulator());
         // Check that there is a SensorLaneStart and a SensorLaneEnd on each Lane
         for (Lane l : lanes)
         {
@@ -131,8 +131,8 @@ public class SensorTest
         LaneChangeModel laneChangeModel = new Egoistic();
         // Now we can make a GTU (and we don't even have to hold a pointer to it)
         new LaneBasedIndividualCar<String>(carID, gtuType, fas, laneChangeModel, initialLongitudinalPositions,
-                initialSpeed, carLength, carWidth, maximumVelocity,
-                new Route(new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                initialSpeed, carLength, carWidth, maximumVelocity, new Route(new ArrayList<Node<?, ?>>()),
+                (OTSDEVSSimulatorInterface) simulator.getSimulator());
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(1, TimeUnit.SECOND));
         // Construction of the car scheduled a car move event at t=0
         Set<SimEventInterface<OTSSimTimeDouble>> eventList = simulator.getSimulator().getEventList();

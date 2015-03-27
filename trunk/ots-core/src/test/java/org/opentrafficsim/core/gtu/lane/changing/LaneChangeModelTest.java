@@ -112,7 +112,9 @@ public class LaneChangeModelTest implements OTSModelInterface
             throws RemoteException, NamingException, NetworkException
     {
         DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
-        Lane result = new Lane(link, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f2000, XXX);
+        Lane result =
+                new Lane(link, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f2000,
+                        new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR));
         return result;
     }
 
@@ -178,9 +180,14 @@ public class LaneChangeModelTest implements OTSModelInterface
                 new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialLongitudinalPositions.put(lanes[0], new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER));
         SimpleSimulator simpleSimulator =
-                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND),
-                        new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600,
-                                TimeUnit.SECOND), this /* CRASH - FIXME - will have to wait for Network factory*/);
+                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(
+                        0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600, TimeUnit.SECOND), this /*
+                                                                                                          * CRASH -
+                                                                                                          * FIXME - will
+                                                                                                          * have to wait
+                                                                                                          * for Network
+                                                                                                          * factory
+                                                                                                          */);
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar<String> car =
                 new LaneBasedIndividualCar<String>("ReferenceCar", gtuType, new IDMPlus(
@@ -190,8 +197,9 @@ public class LaneChangeModelTest implements OTSModelInterface
                                 TimeUnit.SECOND), 1d), laneChangeModel, initialLongitudinalPositions,
                         new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(
                                 4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
-                        new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR),
-                        new Route(new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simpleSimulator.getSimulator());
+                        new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR), new Route(
+                                new ArrayList<Node<?, ?>>()),
+                        (OTSDEVSSimulatorInterface) simpleSimulator.getSimulator());
         Collection<HeadwayGTU> sameLaneGTUs = new HashSet<HeadwayGTU>();
         sameLaneGTUs.add(new HeadwayGTU(car, 0));
         Collection<HeadwayGTU> preferredLaneGTUs = new HashSet<HeadwayGTU>();
@@ -227,7 +235,8 @@ public class LaneChangeModelTest implements OTSModelInterface
                                     TimeUnit.SECOND), 1d), laneChangeModel, otherLongitudinalPositions,
                             new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), vehicleLength,
                             new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
-                                    SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simpleSimulator.getSimulator());
+                                    SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()),
+                            (OTSDEVSSimulatorInterface) simpleSimulator.getSimulator());
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU = new HeadwayGTU(collisionCar, pos - reference.getSI());
             preferredLaneGTUs.add(collisionHWGTU);
@@ -255,7 +264,8 @@ public class LaneChangeModelTest implements OTSModelInterface
                                     TimeUnit.SECOND), 1d), laneChangeModel, otherLongitudinalPositions,
                             new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), vehicleLength,
                             new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
-                                    SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), (OTSDEVSSimulatorInterface) simpleSimulator.getSimulator());
+                                    SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()),
+                            (OTSDEVSSimulatorInterface) simpleSimulator.getSimulator());
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU =
                     new HeadwayGTU(otherCar, pos - car.position(lanes[0], car.getReference()).getSI());
@@ -279,6 +289,7 @@ public class LaneChangeModelTest implements OTSModelInterface
             // null, laneChangeModelResult.getLaneChange());
         }
     }
+
     // TODO test/prove the expected differences between Egoistic and Altruistic
     // TODO prove that the most restrictive car in the other lane determines what happens
     // TODO test merge into overtaking lane
@@ -288,6 +299,7 @@ public class LaneChangeModelTest implements OTSModelInterface
     public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> simulator)
             throws SimRuntimeException, RemoteException
     {
+        // DO NOTHING
     }
 
     /** {@inheritDoc} */
