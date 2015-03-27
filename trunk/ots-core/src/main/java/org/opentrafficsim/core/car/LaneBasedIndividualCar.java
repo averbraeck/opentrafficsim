@@ -24,7 +24,6 @@ import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -252,14 +251,14 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         /** The maximum speed of the GTU (in the driving direction). */
         private DoubleScalar.Abs<SpeedUnit> maximumVelocity = null;
 
-        /** The route generator that will create route for the GTU. */
-        private RouteGenerator routeGenerator;
-
         /** The simulator. */
         private OTSDEVSSimulatorInterface simulator = null;
 
         /** Animation. */
         private Class<? extends Renderable2D> animationClass = null;
+        
+        /** Cached Route. */
+        private Route route = null;
 
         /**
          * @param id set id
@@ -353,16 +352,6 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         }
 
         /**
-         * @param routeGenerator the generator of the fixed or probabilistic route
-         * @return the class itself for chaining the setters
-         */
-        public final LaneBasedIndividualCarBuilder<ID> setRouteGenerator(final RouteGenerator routeGenerator)
-        {
-            this.routeGenerator = routeGenerator;
-            return this;
-        }
-
-        /**
          * @param simulator set simulator
          * @return the class itself for chaining the setters
          */
@@ -383,6 +372,112 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         }
 
         /**
+         * @param route set route.
+         * @return the class itself for chaining the setters
+         */
+        public final LaneBasedIndividualCarBuilder<ID>  setRoute(Route route)
+        {
+            this.route = route;
+            return this;
+        }
+
+        /**
+         * @return id.
+         */
+        public final ID getId()
+        {
+            return this.id;
+        }
+
+        /**
+         * @return route.
+         */
+        public final Route getRoute()
+        {
+            return this.route;
+        }
+
+        /**
+         * @return gtuType.
+         */
+        public final GTUType<ID> getGtuType()
+        {
+            return this.gtuType;
+        }
+
+        /**
+         * @return initialLongitudinalPositions.
+         */
+        public final Map<Lane, DoubleScalar.Rel<LengthUnit>> getInitialLongitudinalPositions()
+        {
+            return this.initialLongitudinalPositions;
+        }
+
+        /**
+         * @return initialSpeed.
+         */
+        public final DoubleScalar.Abs<SpeedUnit> getInitialSpeed()
+        {
+            return this.initialSpeed;
+        }
+
+        /**
+         * @return gtuFollowingModel.
+         */
+        public final GTUFollowingModel getGtuFollowingModel()
+        {
+            return this.gtuFollowingModel;
+        }
+
+        /**
+         * @return laneChangeModel.
+         */
+        public final LaneChangeModel getLaneChangeModel()
+        {
+            return this.laneChangeModel;
+        }
+
+        /**
+         * @return length.
+         */
+        public final DoubleScalar.Rel<LengthUnit> getLength()
+        {
+            return this.length;
+        }
+
+        /**
+         * @return width.
+         */
+        public final DoubleScalar.Rel<LengthUnit> getWidth()
+        {
+            return this.width;
+        }
+
+        /**
+         * @return maximumVelocity.
+         */
+        public final DoubleScalar.Abs<SpeedUnit> getMaximumVelocity()
+        {
+            return this.maximumVelocity;
+        }
+
+        /**
+         * @return simulator.
+         */
+        public final OTSDEVSSimulatorInterface getSimulator()
+        {
+            return this.simulator;
+        }
+
+        /**
+         * @return animationClass.
+         */
+        public final Class<? extends Renderable2D> getAnimationClass()
+        {
+            return this.animationClass;
+        }
+
+        /**
          * Build one LaneBasedIndividualCar.
          * @return the built Car with the set properties
          * @throws Exception when not all required values have been set
@@ -391,7 +486,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         {
             if (null == this.id || null == this.gtuType || null == this.gtuFollowingModel || null == this.laneChangeModel
                 || null == this.initialLongitudinalPositions || null == this.initialSpeed || null == this.length
-                || null == this.width || null == this.maximumVelocity || null == this.routeGenerator
+                || null == this.width || null == this.maximumVelocity || null == this.route
                 || null == this.simulator)
             {
                 // TODO Should throw a more specific Exception type
@@ -399,7 +494,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
             }
             return new LaneBasedIndividualCar<ID>(this.id, this.gtuType, this.gtuFollowingModel, this.laneChangeModel,
                 this.initialLongitudinalPositions, this.initialSpeed, this.length, this.width, this.maximumVelocity,
-                this.routeGenerator.generateRoute(), this.simulator, this.animationClass);
+                this.route, this.simulator, this.animationClass);
         }
 
     }

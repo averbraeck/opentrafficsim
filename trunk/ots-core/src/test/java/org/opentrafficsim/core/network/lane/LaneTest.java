@@ -78,7 +78,7 @@ public class LaneTest
         LongitudinalDirectionality longitudinalDirectionality = LongitudinalDirectionality.FORWARD;
         Lane lane =
                 new Lane(link, startLateralPos, endLateralPos, startWidth, endWidth, laneType,
-                        longitudinalDirectionality, f2000);
+                        longitudinalDirectionality, f2000, XXX);
         // Verify the easy bits
         assertEquals("Capacity should be " + f2000, f2000.getSI(), lane.getCapacity().getSI(), 0.001);
         assertEquals("PrevLanes should be empty", 0, lane.prevLanes().size()); // this one caught a bug!
@@ -158,7 +158,7 @@ public class LaneTest
         new LinearGeometry(link, lineString, null);
         lane =
                 new Lane(link, startLateralPos, endLateralPos, startWidth, endWidth, laneType,
-                        longitudinalDirectionality, f2000);
+                        longitudinalDirectionality, f2000, XXX);
         // Verify the easy bits
         assertEquals("Capacity should be " + f2000, f2000.getSI(), lane.getCapacity().getSI(), 0.001);
         assertEquals("PrevLanes should be empty", 0, lane.prevLanes().size());
@@ -199,7 +199,7 @@ public class LaneTest
         DoubleScalar.Rel<LengthUnit> endLateralPos2 = new DoubleScalar.Rel<LengthUnit>(-5, LengthUnit.METER);
         Lane lane2 =
                 new Lane(link, startLateralPos2, endLateralPos2, startWidth, endWidth, laneType,
-                        longitudinalDirectionality, f2000);
+                        longitudinalDirectionality, f2000, XXX);
         // Verify the easy bits
         assertEquals("Capacity should be " + f2000, f2000.getSI(), lane2.getCapacity().getSI(), 0.001);
         assertEquals("PrevLanes should be empty", 0, lane2.prevLanes().size());
@@ -286,7 +286,7 @@ public class LaneTest
                                                 LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(endLateralOffset,
                                                 LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(startWidth,
                                                 LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(endWidth,
-                                                LengthUnit.METER), laneType, longitudinalDirectionality, f2000);
+                                                LengthUnit.METER), laneType, longitudinalDirectionality, f2000, XXX);
                                 final Geometry geometry = lane.getContour();
                                 assertNotNull("geometry of the lane should not be null", geometry);
                                 // Verify a couple of points that should be inside the contour of the Lane

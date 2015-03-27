@@ -671,7 +671,7 @@ public final class Convert
                 color = la.getColor();
                 newLane =
                         new Lane(otslink, latPos, latPos, la.getWidth(), la.getWidth(), lt, la.getDirectionality(),
-                                f2000);
+                                f2000, XXX);
             }
             animateLane(newLane, simulator, color);
             lanes.add(newLane);
