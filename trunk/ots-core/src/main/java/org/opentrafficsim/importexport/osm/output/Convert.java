@@ -35,6 +35,7 @@ import org.opentrafficsim.core.network.lane.SinkLane;
 import org.opentrafficsim.core.network.lane.SourceLane;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.importexport.osm.events.ProgressEvent;
 import org.opentrafficsim.importexport.osm.events.ProgressListener;
@@ -65,9 +66,9 @@ public final class Convert
 
     /**
      * @param c - WGS84 Coordinate
-     * @return Geocentric Cartesian Coordinate 
-     * @throws FactoryException 
-     * @throws TransformException 
+     * @return Geocentric Cartesian Coordinate
+     * @throws FactoryException
+     * @throws TransformException
      */
     public static Coordinate transform(final Coordinate c) throws FactoryException, TransformException
     {
@@ -256,12 +257,13 @@ public final class Convert
 
     /**
      * @param osmLink - The OSM Link on which the conversion is based.
-     * @param progressListener 
-     * @param warningListener 
+     * @param progressListener
+     * @param warningListener
      * @return HashMap of the lane structure
      */
-    private static HashMap<Double, LaneAttributes> makeStructure(final org.opentrafficsim.importexport.osm.Link osmLink,
-        final WarningListener warningListener, final ProgressListener progressListener)
+    private static HashMap<Double, LaneAttributes> makeStructure(
+            final org.opentrafficsim.importexport.osm.Link osmLink, final WarningListener warningListener,
+            final ProgressListener progressListener)
     {
         SortedMap<Integer, LaneAttributes> structure = new TreeMap<Integer, LaneAttributes>();
         HashMap<Double, LaneAttributes> structurewithOffset = new HashMap<Double, LaneAttributes>();
@@ -487,17 +489,19 @@ public final class Convert
                 }
             }
         }
-        structurewithOffset = calculateOffsets(structure, osmLink, forwards, backwards, warningListener, progressListener);
+        structurewithOffset =
+                calculateOffsets(structure, osmLink, forwards, backwards, warningListener, progressListener);
         return structurewithOffset;
     }
 
-    /** Calculates the actual offsets of the individual lanes.
+    /**
+     * Calculates the actual offsets of the individual lanes.
      * @param structure - Sorted Map of Lane Positions and Attributes
      * @param osmLink - The osmLink on which the conversion is based.
      * @param forwards - Number of forwards oriented lanes.
      * @param backwards - Number of backwards oriented lanes.
-     * @param progressListener 
-     * @param warningListener 
+     * @param progressListener
+     * @param warningListener
      * @return HashMap containing the lane structure with offsets.
      */
     private static HashMap<Double, LaneAttributes> calculateOffsets(final SortedMap<Integer, LaneAttributes> structure,
@@ -558,16 +562,17 @@ public final class Convert
         return structurewithOffset;
     }
 
-    /**Figure out a reasonable width for a lane.
+    /**
+     * Figure out a reasonable width for a lane.
      * @param la LaneAttributes; the attributes of the lane
      * @param link org.opentrafficsim.importexport.osm.Link; the link that owns the lane
-     * @param warningListener 
+     * @param warningListener
      * @return double
      */
     static double laneWidth(final LaneAttributes la, final org.opentrafficsim.importexport.osm.Link link,
-        final WarningListener warningListener)
+            final WarningListener warningListener)
     {
-        Double defaultLaneWidth = 3.05D; //TODO This is the German standard car lane width
+        Double defaultLaneWidth = 3.05D; // TODO This is the German standard car lane width
         boolean widthOverride = false;
         for (org.opentrafficsim.importexport.osm.Tag t : link.getTags())
         {
@@ -587,11 +592,11 @@ public final class Convert
         }
         else if (lt.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.bike))
         {
-            return 0.8D; //TODO German default bikepath width
+            return 0.8D; // TODO German default bikepath width
         }
         else if (lt.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.pedestrian))
         {
-            return 0.95d; //TODO German default footpath width
+            return 0.95d; // TODO German default footpath width
         }
         else if (lt.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.boat))
         {
@@ -615,7 +620,8 @@ public final class Convert
         }
         if (!widthOverride)
         {
-            warningListener.warning(new WarningEvent(link, "No width given, assuming a default value at Link " + link.getID()));
+            warningListener.warning(new WarningEvent(link, "No width given, assuming a default value at Link "
+                    + link.getID()));
         }
         return defaultLaneWidth;
     }
@@ -626,15 +632,16 @@ public final class Convert
      * vehicles (2.55m) + 25cm each side.
      * @param osmlink Link - the OSM link to make lanes for.
      * @param simulator - The simulator for the animation.
-     * @param warningListener 
-     * @param progressListener 
-     * @return Lanes 
-     * @throws NetworkException 
-     * @throws NamingException 
-     * @throws RemoteException 
+     * @param warningListener
+     * @param progressListener
+     * @return Lanes
+     * @throws NetworkException
+     * @throws NamingException
+     * @throws RemoteException
      */
     public static List<Lane> makeLanes(final org.opentrafficsim.importexport.osm.Link osmlink,
-            final OTSDEVSSimulatorInterface simulator, final WarningListener warningListener, final ProgressListener progressListener) throws NetworkException, RemoteException, NamingException
+            final OTSDEVSSimulatorInterface simulator, final WarningListener warningListener,
+            final ProgressListener progressListener) throws NetworkException, RemoteException, NamingException
     {
         CrossSectionLink<?, ?> otslink = convertLink(osmlink);
         List<Lane> lanes = new ArrayList<Lane>();
@@ -659,19 +666,23 @@ public final class Convert
             if (osmlink.hasTag("hasPreceding") && offset >= 0 || osmlink.hasTag("hasFollowing") && offset < 0)
             {
                 color = Color.RED;
-                newLane = new SinkLane(otslink, latPos, la.getWidth(), lt, la.getDirectionality());
+                newLane =
+                        new SinkLane(otslink, latPos, la.getWidth(), lt, la.getDirectionality(),
+                                new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR)/* FIXME STUB */);
             }
             else if (osmlink.hasTag("hasPreceding") && offset < 0 || osmlink.hasTag("hasFollowing") && offset >= 0)
             {
                 color = Color.BLUE;
-                newLane = new SourceLane(otslink, latPos, la.getWidth(), lt, la.getDirectionality());
+                newLane =
+                        new SourceLane(otslink, latPos, la.getWidth(), lt, la.getDirectionality(),
+                                new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR)/* FIXME STUB */);
             }
             else
             {
                 color = la.getColor();
                 newLane =
                         new Lane(otslink, latPos, latPos, la.getWidth(), la.getWidth(), lt, la.getDirectionality(),
-                                f2000, XXX);
+                                f2000, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR)/* FIXME STUB */);
             }
             animateLane(newLane, simulator, color);
             lanes.add(newLane);
@@ -684,8 +695,8 @@ public final class Convert
      * @param l - The lane that is to be animated.
      * @param simulator - The simulator for the animation.
      * @param color - The color which should be used for the animation.
-     * @throws RemoteException 
-     * @throws NamingException 
+     * @throws RemoteException
+     * @throws NamingException
      */
     private static void animateLane(final Lane l, final OTSDEVSSimulatorInterface simulator, final Color color)
             throws RemoteException, NamingException
@@ -767,12 +778,11 @@ public final class Convert
 
     /**
      * @param net The OSM network which is to be searched for Sinks and Sources.
-     * @param progressListener 
+     * @param progressListener
      * @return Network with all possible sinks and sources tagged.
      */
     public static org.opentrafficsim.importexport.osm.Network findSinksandSources(
-            final org.opentrafficsim.importexport.osm.Network net,
-            final ProgressListener progressListener)
+            final org.opentrafficsim.importexport.osm.Network net, final ProgressListener progressListener)
     {
         progressListener.progress(new ProgressEvent(net, "Starting to find Sinks and Sources"));
         List<org.opentrafficsim.importexport.osm.Node> nodes =
@@ -781,7 +791,7 @@ public final class Convert
         ArrayList<org.opentrafficsim.importexport.osm.Link> foundEndpoints = findEndpoints(nodes, net.getLinks());
         for (org.opentrafficsim.importexport.osm.Link l : net.getLinks())
         {
-            
+
             if (foundEndpoints.contains(l))
             {
                 if (net.hasFollowingLink(l))
