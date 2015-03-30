@@ -1892,6 +1892,49 @@ public final class ValueClassesGenerator
     }
 
     /**
+     * Relational operators.
+     * <p>
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+     * reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version 30 mrt. 2015 <br>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     */
+    private static class RelOpTableEntry
+    {
+        /** Name of the relational operation. */
+        public final String name;
+
+        /** Java doc for the operation. */
+        public final String description;
+
+        /** Name of the method, e.g. le, lt. */
+        public final String operator;
+
+        /**
+         * Construct a RelOpTableEntry.
+         * @param name TODO
+         * @param description
+         * @param operator
+         */
+        public RelOpTableEntry(String name, final String description, final String operator)
+        {
+            this.name = name;
+            this.description = description;
+            this.operator = operator;
+        }
+    }
+
+    /** Table of the relational operations. */
+    private static RelOpTableEntry[] relOpTable = {new RelOpTableEntry("lt", "Test if this $1 is less than a $2", "<"),
+            new RelOpTableEntry("le", "Test if this $1 is less than or equal to a $2", "<="),
+            new RelOpTableEntry("gt", "Test if this $1 is greater than or equal to a $2", ">"),
+            new RelOpTableEntry("ge", "Test if this $1 is greater than a $2", ">="),
+            new RelOpTableEntry("eq", "Test if this $1 is equal to a $2", "=="),
+            new RelOpTableEntry("ne", "Test if this $1 is not equal to a $2", "!="),};
+
+    /**
      * Generate the Java code for a sub class of vector or matrix class.
      * @param cg CodeGenerator; the code generator
      * @param indent String; prefix for each output line
@@ -1968,6 +2011,21 @@ public final class ValueClassesGenerator
             construction.append(cg.buildMethod(contentIndent, "public final|" + (mutable ? "Mutable" : "") + floatType
                     + "Scalar." + absRel + "<U>|copy", null, null, null, null, new String[]{mutable
                     ? "return new Mutable" + floatType + "Scalar." + absRel + "<U>(this);" : "return this;"}, false));
+            // relational operators returning boolean
+            for (String otherMutable : new String[]{floatType, "Mutable" + floatType})
+            {
+                for (RelOpTableEntry relOp : relOpTable)
+                {
+                    String description = relOp.description;
+                    description = description.replace("$1", floatType + "Scalar." + absRel + "&lt;U&gt;");
+                    description = description.replace("$2", otherMutable + "Scalar." + absRel + "&lt;U&gt;");
+                    construction.append(cg.buildMethod(contentIndent, "public final|boolean|" + relOp.name, description
+                            + ".", new String[]{"final " + otherMutable + "Scalar." + absRel
+                            + "<U>|o|the right hand side operand of the comparison"}, null, null,
+                            new String[]{"return this.getSI() " + relOp.operator + " o.getSI();"}, false));
+                }
+                // TODO: The tests eq and ne could also be implemented for vectors and matrices
+            }
         }
         if (dimensions > 0)
         {
