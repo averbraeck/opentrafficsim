@@ -407,6 +407,69 @@ public class ValueTestsGenerator
                                     + shortName + "DifferentValue));"
 
                     }, false));
+            if (0 == dimensions)
+            {
+                for (String base : new String[]{"", "Mutable"})
+                {
+                    final String oppositeBase = base.equals("") ? "Mutable" : "";
+                    code.append(cg.buildMethod(cg.indent(1), "public final|void|relOp" + base + absRel + "Test",
+                            "Test the relational operations", null, null, pragma, new String[]{
+                                    base + type + "Scalar." + absRel + "<LengthUnit> base = new " + base + type
+                                            + "Scalar." + absRel + "<LengthUnit>(123, LengthUnit.KILOMETER);",
+                                    base + type + "Scalar." + absRel + "<LengthUnit> same = new " + base + type
+                                            + "Scalar." + absRel + "<LengthUnit>(123000, LengthUnit.METER);",
+                                    base + type + "Scalar." + absRel + "<LengthUnit> smaller = new " + base + type
+                                            + "Scalar." + absRel + "<LengthUnit>(122999, LengthUnit.METER);",
+                                    base + type + "Scalar." + absRel + "<LengthUnit> larger = new " + base + type
+                                            + "Scalar." + absRel + "<LengthUnit>(123001, LengthUnit.METER);",
+                                    "assertFalse(\"123km < 123000m\", base.lt(same));",
+                                    "assertTrue(\"123km <= 123000m\", base.le(same));",
+                                    "assertTrue(\"123km >= 123000m\", base.ge(same));",
+                                    "assertFalse(\"NOT 123km > 123000m\", base.gt(same));",
+                                    "assertTrue(\"123km == 123000m\", base.eq(same));",
+                                    "assertFalse(\"NOT 123km != 123000m\", base.ne(same));",
+                                    "assertTrue(\"123km < 123001m\", base.lt(larger));",
+                                    "assertTrue(\"123km > 122999m\", base.gt(smaller));",
+                                    "assertTrue(\"123km >= 123000m\", base.ge(same));",
+                                    "assertFalse(\"NOT 123km > 123000m\", base.gt(same));",
+                                    "assertFalse(\"NOT 123km < 123000m\", base.lt(same));",
+                                    "assertTrue(\"123km <= 123000m\", base.le(same));",
+                                    "assertTrue(\"123km != 123001m\", base.ne(larger));",
+                                    "assertFalse(\"NOT 123km == 123001m\", base.eq(larger));",
+                                    "assertTrue(\"123km != 122999m\", base.ne(smaller));",
+                                    "assertFalse(\"NOT 123km == 122999m\", base.eq(smaller));",
+                                    "assertFalse(\"NOT 123km >= 123001m\", base.ge(larger));",
+                                    "assertFalse(\"NOT 123km <= 122999m\", base.le(smaller));",
+                                    oppositeBase + type + "Scalar." + absRel + "<LengthUnit> same2 = new "
+                                            + oppositeBase + type + "Scalar." + absRel
+                                            + "<LengthUnit>(123000, LengthUnit.METER);",
+                                    oppositeBase + type + "Scalar." + absRel + "<LengthUnit> smaller2 = new "
+                                            + oppositeBase + type + "Scalar." + absRel
+                                            + "<LengthUnit>(122999, LengthUnit.METER);",
+                                    oppositeBase + type + "Scalar." + absRel + "<LengthUnit> larger2 = new "
+                                            + oppositeBase + type + "Scalar." + absRel
+                                            + "<LengthUnit>(123001, LengthUnit.METER);",
+                                    "assertFalse(\"NOT 123km < 123000m\", base.lt(same2));",
+                                    "assertTrue(\"123km <= 123000m\", base.le(same2));",
+                                    "assertTrue(\"123km >= 123000m\", base.ge(same2));",
+                                    "assertFalse(\"NOT 123km > 123000m\", base.gt(same2));",
+                                    "assertTrue(\"123km == 123000m\", base.eq(same2));",
+                                    "assertFalse(\"NOT 123km != 123000m\", base.ne(same2));",
+                                    "assertTrue(\"123km < 123001m\", base.lt(larger2));",
+                                    "assertTrue(\"123km > 122999m\", base.gt(smaller2));",
+                                    "assertTrue(\"123km >= 123000m\", base.ge(same2));",
+                                    "assertFalse(\"NOT 123km > 123000m\", base.gt(same2));",
+                                    "assertFalse(\"NOT 123km < 123000m\", base.lt(same2));",
+                                    "assertTrue(\"123km <= 123000m\", base.le(same2));",
+                                    "assertTrue(\"123km != 123001m\", base.ne(larger2));",
+                                    "assertFalse(\"NOT 123km == 123001m\", base.eq(larger2));",
+                                    "assertTrue(\"123km != 122999m\", base.ne(smaller2));",
+                                    "assertFalse(\"NOT 123km == 122999m\", base.eq(smaller2));",
+                                    "assertFalse(\"NOT 123km >= 123001m\", base.ge(larger2));",
+                                    "assertFalse(\"NOT 123km <= 122999m\", base.le(smaller2));"
+                                    }, false));
+                }
+            }
             ArrayList<String> mathCode = new ArrayList<String>();
             final String varName = type.toLowerCase().substring(0, 1);
             mathCode.add(type.toLowerCase() + "[] seedValues = {-10" + suffix + ", -2" + suffix + ", -1" + suffix
