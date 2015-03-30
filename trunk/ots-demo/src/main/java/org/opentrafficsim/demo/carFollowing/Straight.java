@@ -47,6 +47,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.graphs.AccelerationContourPlot;
 import org.opentrafficsim.graphs.ContourPlot;
 import org.opentrafficsim.graphs.DensityContourPlot;
@@ -378,6 +379,9 @@ class StraightModel implements OTSModelInterface
     /** The sequence of Lanes that all vehicles will follow. */
     private List<Lane> path = new ArrayList<Lane>();
 
+    /** The speed limit on all Lanes. */
+    private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+
     /**
      * @return List&lt;Lane*gt;; the set of lanes for the specified index
      */
@@ -399,11 +403,11 @@ class StraightModel implements OTSModelInterface
         try
         {
             LaneType<String> laneType = new LaneType<String>("CarLane");
-            this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.simulator);
+            this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.speedLimit, this.simulator);
             this.path.add(this.lane);
             CrossSectionLink<?, ?> endLink = LaneFactory.makeLink("endLink", to, end, null);
             new SinkLane(endLink, this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), laneType,
-                    LongitudinalDirectionality.FORWARD);
+                    LongitudinalDirectionality.FORWARD, this.speedLimit);
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", this.properties, false, 0);
             AbstractProperty<?> cfmp = propertyContainer.findByShortName("Car following model");

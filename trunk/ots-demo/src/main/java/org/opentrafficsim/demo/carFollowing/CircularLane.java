@@ -482,7 +482,8 @@ class LaneSimulationModel implements OTSModelInterface
                 coordsHalf1[i] = new Coordinate(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             this.lane1 =
-                    LaneFactory.makeMultiLane("Lane1", start, halfway, coordsHalf1, 1, laneType, this.simulator)[0];
+                    LaneFactory.makeMultiLane("Lane1", start, halfway, coordsHalf1, 1, laneType, this.speedLimit,
+                            this.simulator)[0];
             this.path.add(this.lane1);
 
             Coordinate[] coordsHalf2 = new Coordinate[127];
@@ -492,7 +493,8 @@ class LaneSimulationModel implements OTSModelInterface
                 coordsHalf2[i] = new Coordinate(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             this.lane2 =
-                    LaneFactory.makeMultiLane("Lane2", halfway, start, coordsHalf2, 1, laneType, this.simulator)[0];
+                    LaneFactory.makeMultiLane("Lane2", halfway, start, coordsHalf2, 1, laneType, this.speedLimit,
+                            this.simulator)[0];
             this.path.add(this.lane2);
 
             // Put the (not very evenly spaced) cars on track1
@@ -580,8 +582,8 @@ class LaneSimulationModel implements OTSModelInterface
             new LaneBasedIndividualCar<>(++this.carsCreated, null /* gtuType */, generateTruck
                     ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel,
                     initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8,
-                            LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR),
-                    new Route(new ArrayList<Node<?, ?>>()), this.simulator);
+                            LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), new Route(
+                            new ArrayList<Node<?, ?>>()), this.simulator);
         }
         catch (RemoteException | NamingException | SimRuntimeException | NetworkException exception)
         {

@@ -305,7 +305,7 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
         LaneType<String> laneType = new LaneType<String>("CarLane");
         try
         {
-            this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.simulator);
+            this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.speedLimit, this.simulator);
         }
         catch (NamingException | NetworkException exception)
         {

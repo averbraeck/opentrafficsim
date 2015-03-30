@@ -302,10 +302,10 @@ class TrajectoriesModel implements OTSModelInterface
         LaneType<String> laneType = new LaneType<String>("CarLane");
         try
         {
-            this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.simulator);
+            this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.speedLimit, this.simulator);
             CrossSectionLink<?, ?> endLink = LaneFactory.makeLink("endLink", to, end, null);
             new SinkLane(endLink, this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), laneType,
-                    LongitudinalDirectionality.FORWARD);
+                    LongitudinalDirectionality.FORWARD, this.speedLimit);
         }
         catch (NamingException | NetworkException exception1)
         {

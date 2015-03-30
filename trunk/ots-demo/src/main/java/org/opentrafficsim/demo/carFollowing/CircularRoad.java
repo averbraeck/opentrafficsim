@@ -512,7 +512,7 @@ class RoadSimulationModel implements OTSModelInterface
             }
             Lane[] lanes1 =
                     LaneFactory.makeMultiLane("FirstHalf", start, halfway, coordsHalf1, laneCount, laneType,
-                            this.simulator);
+                            this.speedLimit, this.simulator);
             Coordinate[] coordsHalf2 = new Coordinate[127];
             for (int i = 0; i < coordsHalf2.length; i++)
             {
@@ -521,7 +521,7 @@ class RoadSimulationModel implements OTSModelInterface
             }
             Lane lanes2[] =
                     LaneFactory.makeMultiLane("SecondHalf", halfway, start, coordsHalf2, laneCount, laneType,
-                            this.simulator);
+                            this.speedLimit, this.simulator);
             for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
             {
                 this.paths.get(laneIndex).add(lanes1[laneIndex]);
