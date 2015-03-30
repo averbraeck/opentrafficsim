@@ -235,10 +235,12 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
         GTUType<String> gtuType = new GTUType<String>("car");
         LaneType<String> laneType = new LaneType<String>("CarLane");
         laneType.addPermeability(gtuType);
+        final DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
+
         Lane lanes[] =
                 LaneFactory.makeMultiLane("Road with two lanes",
                         new NodeGeotools.STR("From", new Coordinate(lowerBound.getSI(), 0, 0)), new NodeGeotools.STR(
-                                "To", new Coordinate(upperBound.getSI(), 0, 0)), null, 2, laneType, null);
+                                "To", new Coordinate(upperBound.getSI(), 0, 0)), null, 2, laneType, speedLimit, null);
         // Create the reference vehicle
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
                 new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
@@ -270,7 +272,6 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
                         (OTSDEVSSimulatorInterface) simpleSimulator.getSimulator());
         Collection<HeadwayGTU> sameLaneGTUs = new HashSet<HeadwayGTU>();
         sameLaneGTUs.add(new HeadwayGTU(referenceCar, 0));
-        final DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
         // TODO play with the speed limit
         // TODO play with the preferredLaneRouteIncentive
         LaneMovementStep lowResult =

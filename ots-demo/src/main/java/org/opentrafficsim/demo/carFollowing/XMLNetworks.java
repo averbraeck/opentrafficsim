@@ -142,9 +142,12 @@ class XMLNetworkModel implements OTSModelInterface
     /** the headway (inter-vehicle time). */
     private DoubleScalar.Rel<TimeUnit> headway;
 
+    /** The speed limit. */
+    private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+
     /** number of cars created. */
     private int carsCreated = 0;
-    
+
     /** type of all GTUs (required to permit lane changing). */
     GTUType<String> gtuType = new GTUType<String>("Car");
 
@@ -281,10 +284,10 @@ class XMLNetworkModel implements OTSModelInterface
             // 600 [veh / hour] on each lane results in a reasonable chance to merge
             this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 600.0, TimeUnit.SECOND);
             setupGenerator(LaneFactory.makeMultiLane("From to FirstVia", from, firstVia, null, merge ? lanesOnMain
-                    : lanesOnCommonCompressed, laneType, this.simulator));
+                    : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator));
             Lane[] common =
                     LaneFactory.makeMultiLane("FirstVia to SecondVia", firstVia, secondVia, null, lanesOnCommon,
-                            laneType, this.simulator);
+                            laneType, this.speedLimit, this.simulator);
             if (merge)
             {
                 for (int i = lanesOnCommonCompressed; i < lanesOnCommon; i++)
@@ -293,16 +296,16 @@ class XMLNetworkModel implements OTSModelInterface
                 }
             }
             setupSink(LaneFactory.makeMultiLane("SecondVia to end", secondVia, end, null, merge
-                    ? lanesOnCommonCompressed : lanesOnMain, laneType, this.simulator));
+                    ? lanesOnCommonCompressed : lanesOnMain, laneType, this.speedLimit, this.simulator));
             if (merge)
             {
                 setupGenerator(LaneFactory.makeMultiLane("From2 to FirstVia", from2, firstVia, null, lanesOnBranch, 0,
-                        lanesOnCommon - lanesOnBranch, laneType, this.simulator));
+                        lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator));
             }
             else
             {
                 setupSink(LaneFactory.makeMultiLane("SecondVia to end2", secondVia, end2, null, lanesOnBranch,
-                        lanesOnCommon - lanesOnBranch, 0, laneType, this.simulator));
+                        lanesOnCommon - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator));
             }
         }
         catch (NamingException | NetworkException | GTUException exception1)
@@ -349,7 +352,7 @@ class XMLNetworkModel implements OTSModelInterface
         for (Lane lane : lanes)
         {
             new SinkLane(endLink, lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getLaneType(),
-                    LongitudinalDirectionality.FORWARD);
+                    LongitudinalDirectionality.FORWARD, this.speedLimit);
         }
         return lanes;
     }
@@ -377,7 +380,7 @@ class XMLNetworkModel implements OTSModelInterface
         new LaneBasedIndividualCar<Integer>(999999, null /* gtuType */, gfm, lcm, initialPositions,
                 new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(1,
                         LengthUnit.METER), lane.getWidth(1), new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-                        new Route(new ArrayList<Node<?, ?>>()), this.simulator);
+                new Route(new ArrayList<Node<?, ?>>()), this.simulator);
         return lane;
     }
 

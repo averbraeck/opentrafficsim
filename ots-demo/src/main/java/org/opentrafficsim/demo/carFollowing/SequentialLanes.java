@@ -353,6 +353,9 @@ class SequentialModel implements OTSModelInterface
     /** The sequence of Lanes that all vehicles will follow. */
     private List<Lane> path = new ArrayList<Lane>();
 
+    /** The speedLimit on all Lanes. */
+    private DoubleScalar.Abs<SpeedUnit> speedLimit;
+
     /**
      * @param properties the user settable properties
      */
@@ -375,6 +378,7 @@ class SequentialModel implements OTSModelInterface
             throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
+        this.speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         this.nodes = new ArrayList<NodeGeotools.STR>();
         // TODO use: int[] linkBoundaries = {0, 1000, 1001, 2001, 2200};
         int[] linkBoundaries = {0, 1000, 2001, 2200};
@@ -392,7 +396,9 @@ class SequentialModel implements OTSModelInterface
             String linkName = fromNode.getId() + "-" + toNode.getId();
             try
             {
-                Lane[] lanes = LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, this.simulator);
+                Lane[] lanes =
+                        LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, this.speedLimit,
+                                this.simulator);
                 if (i == this.nodes.size() - 1)
                 {
                     CrossSectionLink<?, ?> link = lanes[0].getParentLink();
@@ -400,7 +406,7 @@ class SequentialModel implements OTSModelInterface
                     lanes[0] =
                             new SinkLane(link, lanes[0].getLateralCenterPosition(0),
                                     lanes[0].getLateralCenterPosition(1), lanes[0].getLaneType(),
-                                    lanes[0].getDirectionality());
+                                    lanes[0].getDirectionality(), this.speedLimit);
                     link.getCrossSectionElementList().remove(index);
                     link.getCrossSectionElementList().add(index, lanes[0]); // FIXME - this is horrible
                 }
