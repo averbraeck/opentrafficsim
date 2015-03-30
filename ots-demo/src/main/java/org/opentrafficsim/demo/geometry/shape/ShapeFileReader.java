@@ -47,7 +47,8 @@ import com.vividsolutions.jts.geom.Point;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Sep 11, 2014 <br>
@@ -71,7 +72,7 @@ public final class ShapeFileReader
      * @throws IOException on error
      */
     public static Map<String, NodeGeotools.STR> ReadNodes(final String shapeFileName, final String numberType,
-        final boolean returnCentroid, final boolean allCentroids) throws IOException
+            final boolean returnCentroid, final boolean allCentroids) throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.Point POINT (190599 325650)
@@ -168,7 +169,7 @@ public final class ShapeFileReader
      * @throws IOException on error
      */
     public static void readLinks(final String shapeFileName, final Map<String, Link> links,
-        final Map<String, NodeGeotools.STR> nodes, final OTSSimulatorInterface simulator) throws IOException
+            final Map<String, NodeGeotools.STR> nodes, final OTSSimulatorInterface simulator) throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.MultiLineString MULTILINESTRING ((232250.38755446894 ...
@@ -230,7 +231,7 @@ public final class ShapeFileReader
                 DoubleScalar<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(speedIn, SpeedUnit.KM_PER_HOUR);
                 double capacityIn = Double.parseDouble(String.valueOf(feature.getAttribute("CAPACITYAB")));
                 DoubleScalar<FrequencyUnit> capacity =
-                    new DoubleScalar.Abs<FrequencyUnit>(capacityIn, FrequencyUnit.PER_HOUR);
+                        new DoubleScalar.Abs<FrequencyUnit>(capacityIn, FrequencyUnit.PER_HOUR);
                 // new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
                 // create the link or connector to a centroid....
                 NodeGeotools.STR nodeA = nodes.get(lNodeA);
@@ -266,7 +267,7 @@ public final class ShapeFileReader
                 else
                 {
                     System.out.println("Node lNodeA=" + lNodeA + " or lNodeB=" + lNodeB + " not found for linknr=" + nr
-                        + ", name=" + name);
+                            + ", name=" + name);
                 }
             }
 
@@ -350,7 +351,7 @@ public final class ShapeFileReader
      * @throws NetworkException
      */
     private static void animate(final CrossSectionLink link, final String wegType, final OTSSimulatorInterface simulator)
-        throws RemoteException, NamingException, NetworkException
+            throws RemoteException, NamingException, NetworkException
     {
         // leave out if center line not needed.
         new GeometryLinkAnimation(link, simulator, 0.1f);
@@ -396,7 +397,7 @@ public final class ShapeFileReader
      * @throws NetworkException
      */
     private static void addNLanes(final int n, final int spits, final CrossSectionLink link,
-        final OTSSimulatorInterface simulator) throws NetworkException
+            final OTSSimulatorInterface simulator) throws NetworkException
     {
         // 2 x n lanes, grass underneath, lines between lanes, barrier in center
         // lane is 3.5 meters wide. gap in middle is one meter. outside 0.5 meters on both sides
@@ -405,6 +406,7 @@ public final class ShapeFileReader
         DoubleScalar.Rel<LengthUnit> m35 = new DoubleScalar.Rel<LengthUnit>(3.5, LengthUnit.METER);
         DoubleScalar.Abs<FrequencyUnit> f0 = new DoubleScalar.Abs<FrequencyUnit>(0.0, FrequencyUnit.PER_HOUR);
         DoubleScalar.Abs<FrequencyUnit> f200 = new DoubleScalar.Abs<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
+        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
         try
         {
@@ -414,20 +416,21 @@ public final class ShapeFileReader
             for (int i = -1; i <= 1; i += 2)
             {
                 LongitudinalDirectionality dir =
-                    (i < 0) ? LongitudinalDirectionality.FORWARD : LongitudinalDirectionality.BACKWARD;
+                        (i < 0) ? LongitudinalDirectionality.FORWARD : LongitudinalDirectionality.BACKWARD;
                 //
                 Lane laneEM =
-                    new Lane(link, new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER),
-                        new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER), m05, m05, null,
-                        LongitudinalDirectionality.NONE, f0, XXX);
+                        new Lane(link, new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER),
+                                new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER), m05, m05, null,
+                                LongitudinalDirectionality.NONE, f0, speedLimit);
                 new LaneAnimation(laneEM, simulator, Color.LIGHT_GRAY);
                 double lat = 1;
                 for (int j = 0; j < n; j++)
                 {
                     lat += i * 1.75;
                     Lane lane =
-                        new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
-                            new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m35, m35, null, dir, f200, XXX);
+                            new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
+                                    new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m35, m35, null, dir, f200,
+                                    speedLimit);
                     new LaneAnimation(lane, simulator, Color.GRAY);
                     lat += i * 1.75;
                 }
@@ -436,15 +439,16 @@ public final class ShapeFileReader
                 {
                     lat += i * 1.75;
                     Lane lane =
-                        new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
-                            new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m35, m35, null, dir, f0, XXX);
+                            new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
+                                    new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m35, m35, null, dir, f0,
+                                    speedLimit);
                     new LaneAnimation(lane, simulator, Color.LIGHT_GRAY);
                     lat += i * 1.75;
                 }
                 Lane laneEO =
-                    new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER),
-                        new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER), m05, m05, null,
-                        LongitudinalDirectionality.NONE, f0, XXX);
+                        new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER),
+                                new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER), m05, m05, null,
+                                LongitudinalDirectionality.NONE, f0, speedLimit);
                 new LaneAnimation(laneEO, simulator, Color.LIGHT_GRAY);
                 lat += i * 0.5;
                 Shoulder sO = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m10, m10);
@@ -465,13 +469,14 @@ public final class ShapeFileReader
      * @throws NetworkException
      */
     private static void addCityStreetLanes(final int n, final boolean middenberm, final CrossSectionLink link,
-        final OTSSimulatorInterface simulator) throws NetworkException
+            final OTSSimulatorInterface simulator) throws NetworkException
     {
         // 2 x n lanes, grass underneath, lines between lanes, barrier in center
         // lane is 3.0 meters wide. gap in middle is one meter. outside 0.5 meters on both sides
         DoubleScalar.Rel<LengthUnit> m10 = new DoubleScalar.Rel<LengthUnit>(1.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> m30 = new DoubleScalar.Rel<LengthUnit>(3.0, LengthUnit.METER);
         DoubleScalar.Abs<FrequencyUnit> f200 = new DoubleScalar.Abs<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
+        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
         try
         {
@@ -483,14 +488,15 @@ public final class ShapeFileReader
             for (int i = -1; i <= 1; i += 2)
             {
                 LongitudinalDirectionality dir =
-                    (i < 0) ? LongitudinalDirectionality.FORWARD : LongitudinalDirectionality.BACKWARD;
+                        (i < 0) ? LongitudinalDirectionality.FORWARD : LongitudinalDirectionality.BACKWARD;
                 double lat = middenberm ? 0.5 : 0.0;
                 for (int j = 0; j < n; j++)
                 {
                     lat += i * 1.5;
                     Lane lane =
-                        new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
-                            new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m30, m30, null, dir, f200, XXX);
+                            new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
+                                    new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m30, m30, null, dir, f200,
+                                    speedLimit);
                     new LaneAnimation(lane, simulator, Color.DARK_GRAY);
                     lat += i * 1.5;
                 }
@@ -508,14 +514,16 @@ public final class ShapeFileReader
      * @throws NetworkException
      */
     private static void addCityStreet(final CrossSectionLink link, final OTSSimulatorInterface simulator)
-        throws NetworkException
+            throws NetworkException
     {
         DoubleScalar.Rel<LengthUnit> m60 = new DoubleScalar.Rel<LengthUnit>(6.0, LengthUnit.METER);
         DoubleScalar.Abs<FrequencyUnit> f50 = new DoubleScalar.Abs<FrequencyUnit>(50.0, FrequencyUnit.PER_HOUR);
+        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
         Lane lane =
-            new Lane(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.0,
-                LengthUnit.METER), m60, m60, null, LongitudinalDirectionality.BOTH, f50, XXX);
+                new Lane(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER),
+                        new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m60, m60, null,
+                        LongitudinalDirectionality.BOTH, f50, speedLimit);
         try
         {
             new LaneAnimation(lane, simulator, Color.DARK_GRAY);
