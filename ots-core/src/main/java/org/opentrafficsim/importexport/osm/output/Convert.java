@@ -755,12 +755,12 @@ public final class Convert
                 {
                     l.addTag(hasPreceding);
                 }
-                if (0 == ++progress % progressReportStep)
-                {
-                    progressListener.progress(new ProgressEvent(net, String.format(Locale.US,
-                            "%d of %d links processed (%.1f%%)", progress, net.getLinks().size(), 100.0 * progress
-                                    / net.getLinks().size())));
-                }
+            }
+            if (0 == ++progress % progressReportStep)
+            {
+                progressListener.progress(new ProgressEvent(net, String.format(Locale.US,
+                        "%d of %d links processed (%.1f%%)", progress, net.getLinks().size(), 100.0 * progress
+                                / net.getLinks().size())));
             }
         }
         progressListener.progress(new ProgressEvent(net, "Found " + foundEndpoints.size() + " Sinks and Sources."));
