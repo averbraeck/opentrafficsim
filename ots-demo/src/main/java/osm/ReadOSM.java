@@ -12,8 +12,8 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.importexport.osm.Network;
-import org.opentrafficsim.importexport.osm.Tag;
+import org.opentrafficsim.importexport.osm.OSMNetwork;
+import org.opentrafficsim.importexport.osm.OSMTag;
 import org.opentrafficsim.importexport.osm.input.ReadOSMFile;
 import org.opentrafficsim.importexport.osm.output.Convert;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
@@ -39,7 +39,7 @@ public class ReadOSM
     // private static String loc = "TUD.osm";// "amsterdam_netherlands.osm.bz2";// "munich.osm.bz2";
 
     /** */
-    private static List<Tag> wt;
+    private static List<OSMTag> wt;
 
     /** */
     private static List<String> ft;
@@ -49,27 +49,27 @@ public class ReadOSM
      */
     private static void makeWanted()
     {
-        Tag t1 = new Tag("highway", "primary");
+        OSMTag t1 = new OSMTag("highway", "primary");
         wt.add(t1);
-        Tag t2 = new Tag("highway", "secondary");
+        OSMTag t2 = new OSMTag("highway", "secondary");
         wt.add(t2);
-        Tag t3 = new Tag("highway", "tertiary");
+        OSMTag t3 = new OSMTag("highway", "tertiary");
         wt.add(t3);
-        Tag t4 = new Tag("highway", "cycleway");
+        OSMTag t4 = new OSMTag("highway", "cycleway");
         wt.add(t4);
-        Tag t5 = new Tag("highway", "trunk");
+        OSMTag t5 = new OSMTag("highway", "trunk");
         wt.add(t5);
-        Tag t6 = new Tag("highway", "path");
+        OSMTag t6 = new OSMTag("highway", "path");
         wt.add(t6);
-        Tag t8 = new Tag("cyclway", "lane");
+        OSMTag t8 = new OSMTag("cyclway", "lane");
         wt.add(t8);
-        Tag t9 = new Tag("highway", "residental");
+        OSMTag t9 = new OSMTag("highway", "residental");
         wt.add(t9);
-        Tag t10 = new Tag("highway", "service");
+        OSMTag t10 = new OSMTag("highway", "service");
         wt.add(t10);
-        Tag t11 = new Tag("highway", "motorway");
+        OSMTag t11 = new OSMTag("highway", "motorway");
         wt.add(t11);
-        Tag t12 = new Tag("highway", "bus_stop");
+        OSMTag t12 = new OSMTag("highway", "bus_stop");
         wt.add(t12);
     }
 
