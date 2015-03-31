@@ -17,7 +17,7 @@ import org.openstreetmap.osmosis.core.domain.v0_6.Tag;
 import org.openstreetmap.osmosis.core.domain.v0_6.Way;
 import org.openstreetmap.osmosis.core.domain.v0_6.WayNode;
 import org.openstreetmap.osmosis.core.task.v0_6.Sink;
-import org.opentrafficsim.importexport.osm.Network;
+import org.opentrafficsim.importexport.osm.OSMNetwork;
 import org.opentrafficsim.importexport.osm.events.ProgressEvent;
 import org.opentrafficsim.importexport.osm.events.ProgressListener;
 
@@ -31,17 +31,17 @@ import org.opentrafficsim.importexport.osm.events.ProgressListener;
  * @author <a href="http://www.tbm.tudelft.nl/mzhang">Mingxin Zhang </a>
  * @author <a>Moritz Bergmann</a>
  */
-public class NewSink implements Sink
+public class OSMParser implements Sink
 {
     /** */
-    private Network net = new Network("tempnet");
+    private OSMNetwork net = new OSMNetwork("tempnet");
 
     /** */
     private List<Tag> wantedTags;
 
     /** */
     private List<String> filterKeys;
-    
+
     /** ProgressListener. */
     private ProgressListener progressListener;
 
@@ -61,22 +61,22 @@ public class NewSink implements Sink
         Entity entity = entityContainer.getEntity();
         if (entity instanceof Node)
         {
-            org.opentrafficsim.importexport.osm.Node node1 =
-                    new org.opentrafficsim.importexport.osm.Node(entity.getId(), ((Node) entity).getLongitude(),
+            org.opentrafficsim.importexport.osm.OSMNode node1 =
+                    new org.opentrafficsim.importexport.osm.OSMNode(entity.getId(), ((Node) entity).getLongitude(),
                             ((Node) entity).getLatitude());
             Iterator<Tag> tagint = entity.getTags().iterator();
             while (tagint.hasNext())
             {
                 Tag nodetag = tagint.next();
-                //if (true/* this.wantedTags.contains(nodetag) || this.wantedTags.isEmpty() */)
-                //{
-                    if (this.filterKeys.contains(nodetag.getKey()) || this.filterKeys.isEmpty())
-                    {
-                        org.opentrafficsim.importexport.osm.Tag tag =
-                                new org.opentrafficsim.importexport.osm.Tag(nodetag.getKey(), nodetag.getValue());
-                        node1.addTag(tag);
-                    }
-                //}
+                // if (true/* this.wantedTags.contains(nodetag) || this.wantedTags.isEmpty() */)
+                // {
+                if (this.filterKeys.contains(nodetag.getKey()) || this.filterKeys.isEmpty())
+                {
+                    org.opentrafficsim.importexport.osm.OSMTag tag =
+                            new org.opentrafficsim.importexport.osm.OSMTag(nodetag.getKey(), nodetag.getValue());
+                    node1.addTag(tag);
+                }
+                // }
             }
             this.net.addNode(node1);
         }
@@ -97,15 +97,15 @@ public class NewSink implements Sink
             if (wanted)
             {
                 Iterator<Tag> tagint = entity.getTags().iterator();
-                org.opentrafficsim.importexport.osm.Way way1 =
-                        new org.opentrafficsim.importexport.osm.Way(entity.getId());
+                org.opentrafficsim.importexport.osm.OSMWay way1 =
+                        new org.opentrafficsim.importexport.osm.OSMWay(entity.getId());
                 while (tagint.hasNext())
                 {
                     Tag waytag = tagint.next();
                     if (this.filterKeys.contains(waytag.getKey()) || this.filterKeys.isEmpty())
                     {
-                        org.opentrafficsim.importexport.osm.Tag tag =
-                                new org.opentrafficsim.importexport.osm.Tag(waytag.getKey(), waytag.getValue());
+                        org.opentrafficsim.importexport.osm.OSMTag tag =
+                                new org.opentrafficsim.importexport.osm.OSMTag(waytag.getKey(), waytag.getValue());
                         way1.addTag(tag);
                     }
                 }
@@ -119,7 +119,7 @@ public class NewSink implements Sink
             }
         }
         else if (entity instanceof Relation)
-        { //A relation is a Set of Ways and Nodes
+        { // A relation is a Set of Ways and Nodes
             boolean wanted = false;
             checkTags: for (Tag t : entity.getTags())
             {
@@ -135,15 +135,15 @@ public class NewSink implements Sink
             if (wanted)
             {
                 Iterator<Tag> tagIterator = entity.getTags().iterator();
-                org.opentrafficsim.importexport.osm.Relation rel1 =
-                        new org.opentrafficsim.importexport.osm.Relation(entity.getId());
+                org.opentrafficsim.importexport.osm.OSMRelation rel1 =
+                        new org.opentrafficsim.importexport.osm.OSMRelation(entity.getId());
                 while (tagIterator.hasNext())
                 {
                     Tag reltag = tagIterator.next();
                     if (this.filterKeys.contains(reltag.getKey()) || this.filterKeys.isEmpty())
                     {
-                        org.opentrafficsim.importexport.osm.Tag tag =
-                                new org.opentrafficsim.importexport.osm.Tag(reltag.getKey(), reltag.getValue());
+                        org.opentrafficsim.importexport.osm.OSMTag tag =
+                                new org.opentrafficsim.importexport.osm.OSMTag(reltag.getKey(), reltag.getValue());
                         rel1.addTag(tag);
                     }
                 }
@@ -171,11 +171,14 @@ public class NewSink implements Sink
         // todo
     }
 
-    /** The complete method is called after all Entities are processed. It removes all Nodes which are not used within any imported way or relation. */
+    /**
+     * The complete method is called after all Entities are processed. It removes all Nodes which are not used within
+     * any imported way or relation.
+     */
     public final void complete()
     {
-        HashMap<Long, org.opentrafficsim.importexport.osm.Node> usedNodes =
-                new HashMap<Long, org.opentrafficsim.importexport.osm.Node>();
+        HashMap<Long, org.opentrafficsim.importexport.osm.OSMNode> usedNodes =
+                new HashMap<Long, org.opentrafficsim.importexport.osm.OSMNode>();
         double total = this.net.getWays().size() + this.net.getRelations().size();
         double counter = 0;
         double nextPercentage = 5.0D;
@@ -184,7 +187,7 @@ public class NewSink implements Sink
         {
             try
             {
-                org.opentrafficsim.importexport.osm.Way w = this.net.getWay(wid);
+                org.opentrafficsim.importexport.osm.OSMWay w = this.net.getWay(wid);
                 for (Long nid : w.getNodes())
                 {
                     if (this.net.getNodes().keySet().contains(nid) && !usedNodes.containsKey(nid))
@@ -209,7 +212,7 @@ public class NewSink implements Sink
         {
             try
             {
-                org.opentrafficsim.importexport.osm.Relation r = this.net.getRelation(rid);
+                org.opentrafficsim.importexport.osm.OSMRelation r = this.net.getRelation(rid);
                 for (Long nid : r.getNodes())
                 {
                     if (this.net.getNodes().keySet().contains(nid) && !usedNodes.containsKey(nid))
@@ -237,7 +240,7 @@ public class NewSink implements Sink
     /**
      * @return the whole Network
      */
-    public final Network getNetwork()
+    public final OSMNetwork getNetwork()
     {
         return this.net;
     }
@@ -247,10 +250,10 @@ public class NewSink implements Sink
      * This method makes a deep copy of the supplied list.
      * @param tags List&lt;Tag&gt;; the list of wanted tags
      */
-    public final void setWantedTags(final List<org.opentrafficsim.importexport.osm.Tag> tags)
+    public final void setWantedTags(final List<org.opentrafficsim.importexport.osm.OSMTag> tags)
     {
         this.wantedTags = new ArrayList<Tag>();
-        for (org.opentrafficsim.importexport.osm.Tag t1 : tags)
+        for (org.opentrafficsim.importexport.osm.OSMTag t1 : tags)
         {
             Tag t2 = new Tag(t1.getKey(), t1.getValue());
             this.wantedTags.add(t2);

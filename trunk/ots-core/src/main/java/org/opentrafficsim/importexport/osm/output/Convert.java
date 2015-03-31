@@ -100,7 +100,7 @@ public final class Convert
      * @param link OSM Link to be converted
      * @return OTS Link
      */
-    public static CrossSectionLink<?, ?> convertLink(final org.opentrafficsim.importexport.osm.Link link)
+    public static CrossSectionLink<?, ?> convertLink(final org.opentrafficsim.importexport.osm.OSMLink link)
     {
         if (null == link.getStart().getOtsNode())
         {
@@ -112,7 +112,7 @@ public final class Convert
         }
         CrossSectionLink<?, ?> result;
         Coordinate[] coordinates;
-        List<org.opentrafficsim.importexport.osm.Node> nodes = link.getSplineList();
+        List<org.opentrafficsim.importexport.osm.OSMNode> nodes = link.getSplineList();
         int coordinateCount = 2 + nodes.size();
         coordinates = new Coordinate[coordinateCount];
         NodeGeotools.STR start = link.getStart().getOtsNode();
@@ -144,7 +144,7 @@ public final class Convert
      * @param node OSM Node to be converted
      * @return OTS Node
      */
-    public static NodeGeotools.STR convertNode(final org.opentrafficsim.importexport.osm.Node node)
+    public static NodeGeotools.STR convertNode(final org.opentrafficsim.importexport.osm.OSMNode node)
     {
         if (node.contains("ele"))
         {
@@ -211,7 +211,7 @@ public final class Convert
      * @return HashMap of the lane structure
      */
     private static HashMap<Double, LaneAttributes> makeStructure(
-            final org.opentrafficsim.importexport.osm.Link osmLink, final WarningListener warningListener,
+            final org.opentrafficsim.importexport.osm.OSMLink osmLink, final WarningListener warningListener,
             final ProgressListener progressListener)
     {
         SortedMap<Integer, LaneAttributes> structure = new TreeMap<Integer, LaneAttributes>();
@@ -220,7 +220,7 @@ public final class Convert
         int backwards = osmLink.getLanes() - osmLink.getForwardLanes();
         LaneType<String> lt;
         LaneAttributes la;
-        for (org.opentrafficsim.importexport.osm.Tag t : osmLink.getTags())
+        for (org.opentrafficsim.importexport.osm.OSMTag t : osmLink.getTags())
         {
             if (t.getKey().equals("waterway"))
             {
@@ -237,7 +237,7 @@ public final class Convert
                 structure.put(0, la);
             }
         }
-        for (org.opentrafficsim.importexport.osm.Tag t : osmLink.getTags())
+        for (org.opentrafficsim.importexport.osm.OSMTag t : osmLink.getTags())
         {
             if (t.getKey().equals("highway")
                     && (t.getValue().equals("primary") || t.getValue().equals("secondary")
@@ -275,7 +275,7 @@ public final class Convert
             else if (t.getKey().equals("highway") && (t.getValue().equals("path") || t.getValue().equals("steps")))
             {
                 List<GTUType<String>> types = new ArrayList<GTUType<String>>();
-                for (org.opentrafficsim.importexport.osm.Tag t2 : osmLink.getTags())
+                for (org.opentrafficsim.importexport.osm.OSMTag t2 : osmLink.getTags())
                 {
                     if (t2.getKey().equals("bicycle"))
                     {
@@ -315,7 +315,7 @@ public final class Convert
                 types.clear();
             }
         }
-        for (org.opentrafficsim.importexport.osm.Tag t : osmLink.getTags())
+        for (org.opentrafficsim.importexport.osm.OSMTag t : osmLink.getTags())
         {
             if (t.getKey().equals("cycleway"))
             {
@@ -353,7 +353,7 @@ public final class Convert
                 }
             }
         }
-        for (org.opentrafficsim.importexport.osm.Tag t : osmLink.getTags())
+        for (org.opentrafficsim.importexport.osm.OSMTag t : osmLink.getTags())
         {
             if (t.getKey().equals("sidewalk"))
             {
@@ -383,7 +383,7 @@ public final class Convert
                 }
             }
         }
-        for (org.opentrafficsim.importexport.osm.Tag t : osmLink.getTags())
+        for (org.opentrafficsim.importexport.osm.OSMTag t : osmLink.getTags())
         {
             if (t.getKey().equals("highway")
                     && (t.getValue().equals("cycleway") || t.getValue().equals("footway")
@@ -454,7 +454,7 @@ public final class Convert
      * @return HashMap containing the lane structure with offsets.
      */
     private static HashMap<Double, LaneAttributes> calculateOffsets(final SortedMap<Integer, LaneAttributes> structure,
-            final org.opentrafficsim.importexport.osm.Link osmLink, final Integer forwards, final Integer backwards,
+            final org.opentrafficsim.importexport.osm.OSMLink osmLink, final Integer forwards, final Integer backwards,
             final WarningListener warningListener, final ProgressListener progressListener)
     {
         HashMap<Double, LaneAttributes> structurewithOffset = new HashMap<Double, LaneAttributes>();
@@ -518,12 +518,12 @@ public final class Convert
      * @param warningListener
      * @return double
      */
-    static double laneWidth(final LaneAttributes la, final org.opentrafficsim.importexport.osm.Link link,
+    static double laneWidth(final LaneAttributes la, final org.opentrafficsim.importexport.osm.OSMLink link,
             final WarningListener warningListener)
     {
         Double defaultLaneWidth = 3.05D; // TODO This is the German standard car lane width
         boolean widthOverride = false;
-        for (org.opentrafficsim.importexport.osm.Tag t : link.getTags())
+        for (org.opentrafficsim.importexport.osm.OSMTag t : link.getTags())
         {
             if (t.getKey().equals("width"))
             {
@@ -557,7 +557,7 @@ public final class Convert
         }
         else if (lt.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.boat))
         {
-            for (org.opentrafficsim.importexport.osm.Tag t : link.getTags())
+            for (org.opentrafficsim.importexport.osm.OSMTag t : link.getTags())
             {
                 if (t.getKey().equals("waterway"))
                 {
@@ -596,7 +596,7 @@ public final class Convert
      * @throws NamingException
      * @throws RemoteException
      */
-    public static List<Lane> makeLanes(final org.opentrafficsim.importexport.osm.Link osmlink,
+    public static List<Lane> makeLanes(final org.opentrafficsim.importexport.osm.OSMLink osmlink,
             final OTSDEVSSimulatorInterface simulator, final WarningListener warningListener,
             final ProgressListener progressListener) throws NetworkException, RemoteException, NamingException
     {
@@ -702,28 +702,28 @@ public final class Convert
      * @param links List of Links
      * @return List of Links which are candidates for becoming sinks/sources.
      */
-    private static ArrayList<org.opentrafficsim.importexport.osm.Link> findEndpoints(
-            final List<org.opentrafficsim.importexport.osm.Node> nodes,
-            final List<org.opentrafficsim.importexport.osm.Link> links)
+    private static ArrayList<org.opentrafficsim.importexport.osm.OSMLink> findEndpoints(
+            final List<org.opentrafficsim.importexport.osm.OSMNode> nodes,
+            final List<org.opentrafficsim.importexport.osm.OSMLink> links)
     {
-        ArrayList<org.opentrafficsim.importexport.osm.Node> foundEndNodes =
-                new ArrayList<org.opentrafficsim.importexport.osm.Node>();
-        ArrayList<org.opentrafficsim.importexport.osm.Link> foundEndLinks =
-                new ArrayList<org.opentrafficsim.importexport.osm.Link>();
+        ArrayList<org.opentrafficsim.importexport.osm.OSMNode> foundEndNodes =
+                new ArrayList<org.opentrafficsim.importexport.osm.OSMNode>();
+        ArrayList<org.opentrafficsim.importexport.osm.OSMLink> foundEndLinks =
+                new ArrayList<org.opentrafficsim.importexport.osm.OSMLink>();
 
-        for (org.opentrafficsim.importexport.osm.Link l : links)
+        for (org.opentrafficsim.importexport.osm.OSMLink l : links)
         {
             l.getStart().linksOriginating++;
             l.getEnd().linksTerminating++;
         }
-        for (org.opentrafficsim.importexport.osm.Node n : nodes)
+        for (org.opentrafficsim.importexport.osm.OSMNode n : nodes)
         {
             if (0 == n.linksOriginating && n.linksTerminating > 0 || 0 == n.linksTerminating && n.linksOriginating > 0)
             {
                 foundEndNodes.add(n);
             }
         }
-        for (org.opentrafficsim.importexport.osm.Link l : links)
+        for (org.opentrafficsim.importexport.osm.OSMLink l : links)
         {
             if (foundEndNodes.contains(l.getStart()) || foundEndNodes.contains(l.getEnd()))
             {
@@ -738,26 +738,26 @@ public final class Convert
      * @param progressListener
      * @return Network with all possible sinks and sources tagged.
      */
-    public static org.opentrafficsim.importexport.osm.Network findSinksandSources(
-            final org.opentrafficsim.importexport.osm.Network net, final ProgressListener progressListener)
+    public static org.opentrafficsim.importexport.osm.OSMNetwork findSinksandSources(
+            final org.opentrafficsim.importexport.osm.OSMNetwork net, final ProgressListener progressListener)
     {
         progressListener.progress(new ProgressEvent(net, "Starting to find Sinks and Sources"));
-        List<org.opentrafficsim.importexport.osm.Node> nodes =
-                new ArrayList<org.opentrafficsim.importexport.osm.Node>();
+        List<org.opentrafficsim.importexport.osm.OSMNode> nodes =
+                new ArrayList<org.opentrafficsim.importexport.osm.OSMNode>();
         nodes.addAll(net.getNodes().values());
-        ArrayList<org.opentrafficsim.importexport.osm.Link> foundEndpoints = findEndpoints(nodes, net.getLinks());
-        for (org.opentrafficsim.importexport.osm.Link l : net.getLinks())
+        ArrayList<org.opentrafficsim.importexport.osm.OSMLink> foundEndpoints = findEndpoints(nodes, net.getLinks());
+        for (org.opentrafficsim.importexport.osm.OSMLink l : net.getLinks())
         {
 
             if (foundEndpoints.contains(l))
             {
                 if (net.hasFollowingLink(l))
                 {
-                    l.addTag(new org.opentrafficsim.importexport.osm.Tag("hasFollowing", ""));
+                    l.addTag(new org.opentrafficsim.importexport.osm.OSMTag("hasFollowing", ""));
                 }
                 else if (net.hasPrecedingLink(l))
                 {
-                    l.addTag(new org.opentrafficsim.importexport.osm.Tag("hasPreceding", ""));
+                    l.addTag(new org.opentrafficsim.importexport.osm.OSMTag("hasPreceding", ""));
                 }
             }
         }

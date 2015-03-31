@@ -12,13 +12,13 @@ import java.util.List;
  * @version 31 dec. 2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
-public class Relation
+public class OSMRelation
 {
     /** */
     private long iD;
 
     /** */
-    private List<Tag> taglist;
+    private List<OSMTag> taglist;
 
     /** */
     private List<Long> relWays;
@@ -35,7 +35,7 @@ public class Relation
     }
 
     /**
-     * @param niD 
+     * @param niD
      */
     public final void setID(final long niD)
     {
@@ -45,29 +45,29 @@ public class Relation
     /**
      * @return taglist
      */
-    public final List<Tag> getTaglist()
+    public final List<OSMTag> getTaglist()
     {
         return this.taglist;
     }
 
     /**
-     * @param taglist 
+     * @param taglist
      */
-    public final void setTaglist(final List<Tag> taglist)
+    public final void setTaglist(final List<OSMTag> taglist)
     {
         this.taglist = taglist;
     }
 
     /**
-     * @param tag 
+     * @param tag
      */
-    public final void addTag(final Tag tag)
+    public final void addTag(final OSMTag tag)
     {
         this.taglist.add(tag);
     }
 
     /**
-     * @return ways 
+     * @return ways
      */
     public final List<Long> getWays()
     {
@@ -75,7 +75,7 @@ public class Relation
     }
 
     /**
-     * @param ways 
+     * @param ways
      */
     public final void setWays(final List<Long> ways)
     {
@@ -83,7 +83,7 @@ public class Relation
     }
 
     /**
-     * @param way 
+     * @param way
      */
     public final void addWay(final Long way)
     {
@@ -91,7 +91,7 @@ public class Relation
     }
 
     /**
-     * @return nodes 
+     * @return nodes
      */
     public final List<Long> getNodes()
     {
@@ -99,7 +99,7 @@ public class Relation
     }
 
     /**
-     * @param nodes 
+     * @param nodes
      */
     public final void setNodes(final List<Long> nodes)
     {
@@ -107,7 +107,7 @@ public class Relation
     }
 
     /**
-     * @param node 
+     * @param node
      */
     public final void addNode(final Long node)
     {
@@ -115,24 +115,24 @@ public class Relation
     }
 
     /**
-     * @param id 
+     * @param id
      */
-    public Relation(final long id)
+    public OSMRelation(final long id)
     {
         this.iD = id;
         this.relNodes = new ArrayList<Long>();
         this.relWays = new ArrayList<Long>();
-        this.taglist = new ArrayList<Tag>();
+        this.taglist = new ArrayList<OSMTag>();
     }
 
     /**
-     * @param tagKey 
+     * @param tagKey
      * @return List of matching Tags
      */
-    public final List<Tag> getMatchingTags(final String tagKey)
+    public final List<OSMTag> getMatchingTags(final String tagKey)
     {
-        List<Tag> result = new ArrayList<Tag>();
-        for (Tag t : this.taglist)
+        List<OSMTag> result = new ArrayList<OSMTag>();
+        for (OSMTag t : this.taglist)
         {
             if (t.getKey().equals(tagKey))
             {
@@ -145,7 +145,7 @@ public class Relation
     /**
      * @return List of all Tags in this relation
      */
-    public final List<Tag> getTags()
+    public final List<OSMTag> getTags()
     {
         return this.taglist;
     }
