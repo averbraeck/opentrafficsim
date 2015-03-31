@@ -105,6 +105,7 @@ public class SuperDemo
         demonstrations.add(new CircularLane());
         demonstrations.add(new CircularRoad());
         demonstrations.add(new XMLNetworks());
+        demonstrations.add(new OpenStreetMap());
         // final JPanel left = new LabeledPanel("Simulation Settings");
         this.simulationSelection = new LabeledPanel("Network");
         this.simulationSelection.setLayout(new GridBagLayout());
