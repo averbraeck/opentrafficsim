@@ -26,6 +26,7 @@ import org.opentrafficsim.importexport.osm.events.ProgressEvent;
 import org.opentrafficsim.importexport.osm.events.ProgressListener;
 
 /**
+ * Build a structure from the elements in an OSM file.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -60,17 +61,15 @@ public class OSMParser implements Sink
         this.filterKeys = filteredKeys;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void initialize(final Map<String, Object> arg0)
     {
-        // Nothing needs to be initialized
+        // Nothing needs to be initialized in this Sink implementation
     }
 
-    /**
-     * @param entityContainer Nodes: Initially in the process method all nodes are imported. Later on in the complete
-     *            method unused nodes are detected and deleted. Ways: All ways which contain the specified wanted Tags
-     *            are imported. The imported Tags for the Ways are filtered by the filterKeys
-     */
+    /** {@inheritDoc} */
+    @Override
     public final void process(final EntityContainer entityContainer)
     {
         Entity entity = entityContainer.getEntity();
@@ -172,16 +171,15 @@ public class OSMParser implements Sink
         }
     }
 
-    /** */
+    /** {@inheritDoc} */
+    @Override
     public void release()
     {
-        // Nothing needs to be done here
+        // Nothing needs to be done after the entire network has been parsed
     }
 
-    /**
-     * The complete method is called after all Entities are processed. It removes all Nodes which are not used within
-     * any imported way or relation.
-     */
+    /** {@inheritDoc} */
+    @Override
     public final void complete()
     {
         HashMap<Long, OSMNode> usedNodes = new HashMap<Long, OSMNode>();
