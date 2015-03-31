@@ -68,7 +68,7 @@ import org.opentrafficsim.simulationengine.WrappableSimulation;
 public class OpenStreetMap implements WrappableSimulation
 {
     /** The OSMNetwork. */
-    private OSMNetwork networkOSM;
+    private OSMNetwork osmNetwork;
 
     /** The OTS network. */
     private Network<String, CrossSectionLink<?, ?>> otsNetwork;
@@ -204,9 +204,9 @@ public class OpenStreetMap implements WrappableSimulation
             ReadOSMFile osmf = new ReadOSMFile(filepath, wantedTags, ft, this.progressListener);
             OSMNetwork net = osmf.getNetwork();
             // net.removeRedundancy(); // Defective; do not call removeRedundancy
-            this.networkOSM = net;// new OSMNetwork(net); // Why would you make a copy?
-            this.otsNetwork = new Network<String, CrossSectionLink<?, ?>>(this.networkOSM.getName());
-            for (OSMNode osmNode : this.networkOSM.getNodes().values())
+            this.osmNetwork = net;// new OSMNetwork(net); // Why would you make a copy?
+            this.otsNetwork = new Network<String, CrossSectionLink<?, ?>>(this.osmNetwork.getName());
+            for (OSMNode osmNode : this.osmNetwork.getNodes().values())
             {
                 try
                 {
@@ -217,17 +217,18 @@ public class OpenStreetMap implements WrappableSimulation
                     System.out.println(ne.getMessage());
                 }
             }
-            for (OSMLink osmLink : this.networkOSM.getLinks())
+            for (OSMLink osmLink : this.osmNetwork.getLinks())
             {
                 this.otsNetwork.add(Convert.convertLink(osmLink));
             }
+            this.osmNetwork.makeLinks(this.warningListener, this.progressListener);
         }
         catch (URISyntaxException | IOException exception)
         {
             exception.printStackTrace();
             return null;
         }
-        OSMModel model = new OSMModel(usedProperties, this.networkOSM, this.warningListener, this.progressListener);
+        OSMModel model = new OSMModel(usedProperties, this.osmNetwork, this.warningListener, this.progressListener);
         Iterator<Node<?, ?>> count = this.otsNetwork.getNodeSet().iterator();
         Rectangle2D area = null;
         while (count.hasNext())
@@ -295,10 +296,10 @@ class OSMModel implements OTSModelInterface
     private List<AbstractProperty<?>> properties = null;
 
     /** Provided Network. */
-    private OSMNetwork network;
+    private OSMNetwork osmNetwork;
 
     /** Provided lanes. */
-    private List<Lane> lanes;
+    private List<Lane> lanes = new ArrayList<Lane>();
 
     /** */
     private ProgressListener progressListener;
@@ -315,36 +316,10 @@ class OSMModel implements OTSModelInterface
     public OSMModel(final ArrayList<AbstractProperty<?>> properties, final OSMNetwork osmNetwork,
             final WarningListener wL, final ProgressListener pL)
     {
-        this.network = osmNetwork;
+        this.properties = new ArrayList<AbstractProperty<?>>(properties);
+        this.osmNetwork = osmNetwork;
         this.warningListener = wL;
         this.progressListener = pL;
-        Network<String, CrossSectionLink<?, ?>> networkOTS =
-                new Network<String, CrossSectionLink<?, ?>>(this.network.getName());
-        try
-        {
-            this.network.makeLinks(this.warningListener, this.progressListener);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        for (OSMNode osmNode : this.network.getNodes().values())
-        {
-            try
-            {
-                networkOTS.addNode(Convert.convertNode(osmNode));
-            }
-            catch (NetworkException ne)
-            {
-                System.out.println(ne.getMessage());
-            }
-        }
-        for (OSMLink osmLink : this.network.getLinks())
-        {
-            networkOTS.add(Convert.convertLink(osmLink));
-        }
-        this.lanes = new ArrayList<Lane>();
-        this.properties = new ArrayList<AbstractProperty<?>>(properties);
     }
 
     /** {@inheritDoc} */
@@ -352,13 +327,30 @@ class OSMModel implements OTSModelInterface
     public void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
-        this.network = Convert.findSinksandSources(this.network, this.progressListener);
-        this.progressListener.progress(new ProgressEvent(this.network, "Creation the lanes on "
-                + this.network.getLinks().size() + " links"));
-        double total = this.network.getLinks().size();
+        Network<String, CrossSectionLink<?, ?>> otsNetwork =
+                new Network<String, CrossSectionLink<?, ?>>(this.osmNetwork.getName());
+        for (OSMNode osmNode : this.osmNetwork.getNodes().values())
+        {
+            try
+            {
+                otsNetwork.addNode(Convert.convertNode(osmNode));
+            }
+            catch (NetworkException ne)
+            {
+                System.out.println(ne.getMessage());
+            }
+        }
+        for (OSMLink osmLink : this.osmNetwork.getLinks())
+        {
+            otsNetwork.add(Convert.convertLink(osmLink));
+        }
+        Convert.findSinksandSources(this.osmNetwork, this.progressListener);
+        this.progressListener.progress(new ProgressEvent(this.osmNetwork, "Creation the lanes on "
+                + this.osmNetwork.getLinks().size() + " links"));
+        double total = this.osmNetwork.getLinks().size();
         double counter = 0;
         double nextPercentage = 5.0;
-        for (OSMLink link : this.network.getLinks())
+        for (OSMLink link : this.osmNetwork.getLinks())
         {
             try
             {
@@ -382,7 +374,6 @@ class OSMModel implements OTSModelInterface
          * System.out.println("Number of Nodes: " + this.network.getNodes().size());
          * System.out.println("Number of Lanes: " + this.lanes.size());
          */
-
     }
 
     /** {@inheritDoc} */
