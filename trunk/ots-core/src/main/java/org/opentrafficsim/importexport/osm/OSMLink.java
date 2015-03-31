@@ -35,7 +35,7 @@ public class OSMLink
     private double length;
 
     /** These are the tags that this link inherits from it's way. */
-    private List<OSMTag> linktags;
+    private List<OSMTag> tags;
 
     /** This is the number of lanes this link has. */
     private byte lanes;
@@ -60,7 +60,7 @@ public class OSMLink
         {
             throw new Error("Start and end of link are the same Node: " + fromNode);
         }
-        this.iD = Objects.toString(fromNode.getID()) + Objects.toString(toNode.getID());
+        this.iD = Objects.toString(fromNode.getId()) + Objects.toString(toNode.getId());
         this.start = fromNode;
         this.end = toNode;
         this.length = length;
@@ -133,7 +133,7 @@ public class OSMLink
                 }
             }
         }
-        this.linktags = lt3;
+        this.tags = lt3;
         if (!forwardDefined && this.lanes > 1)
         {
             this.forwardLanes = (byte) (this.lanes / 2);
@@ -158,10 +158,10 @@ public class OSMLink
         {
             throw new Error("start and end of link are the same Node: " + n1);
         }
-        this.iD = Objects.toString(n1.getID()) + Objects.toString(n2.getID());
+        this.iD = Objects.toString(n1.getId()) + Objects.toString(n2.getId());
         this.start = n1;
         this.end = n2;
-        this.linktags = lt;
+        this.tags = lt;
         this.length = length;
         this.lanes = lanes;
         this.forwardLanes = flanes;
@@ -171,7 +171,7 @@ public class OSMLink
     /**
      * @return ID
      */
-    public final String getID()
+    public final String getId()
     {
         return this.iD;
     }
@@ -213,15 +213,15 @@ public class OSMLink
      */
     public final void setTags(final List<OSMTag> lt)
     {
-        this.linktags = lt;
+        this.tags = lt;
     }
 
     /**
-     * @return linktags
+     * @return List&lt;OSMTab&gt;
      */
     public final List<OSMTag> getTags()
     {
-        return this.linktags;
+        return new ArrayList<OSMTag>(this.tags); // Create and return a copy (the tags themselves are immutable).
     }
 
     /**
@@ -279,7 +279,7 @@ public class OSMLink
      */
     public final void addTag(final OSMTag tag)
     {
-        this.linktags.add(tag);
+        this.tags.add(tag);
     }
 
     /**
@@ -330,7 +330,7 @@ public class OSMLink
      */
     public final boolean hasTag(final String key)
     {
-        for (OSMTag t : this.linktags)
+        for (OSMTag t : this.tags)
         {
             if (t.getKey().equals(key))
             {
@@ -360,6 +360,16 @@ public class OSMLink
     /** {@inheritDoc} */
     public final String toString()
     {
-        return String.format("Link %s from %d to %d", getID(), getStart().getID(), getEnd().getID());
+        return String.format("Link %s from %d to %d", getId(), getStart().getId(), getEnd().getId());
+    }
+
+    /**
+     * Report if this OSMLink has all tags in a supplied set.
+     * @param tagsToCheck
+     * @return boolean; true if this Link has all the supplied tags; false otherwise
+     */
+    public boolean containsAllTags(List<OSMTag> tagsToCheck)
+    {
+        return this.tags.containsAll(tagsToCheck);
     }
 }

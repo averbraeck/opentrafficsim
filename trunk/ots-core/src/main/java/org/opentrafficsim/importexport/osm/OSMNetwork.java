@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.opentrafficsim.importexport.osm.events.ProgressEvent;
 import org.opentrafficsim.importexport.osm.events.ProgressListener;
@@ -21,27 +22,27 @@ import org.opentrafficsim.importexport.osm.events.WarningListener;
 public class OSMNetwork
 {
     /** The Nodes of the Network. */
-    private HashMap<Long, OSMNode> nodes;
+    private Map<Long, OSMNode> nodes;
 
     /** The Ways of the Network. */
-    private HashMap<Long, OSMWay> ways;
+    private Map<Long, OSMWay> ways;
 
     /** The Relations of the Network. */
-    private HashMap<Long, OSMRelation> relations;
+    private Map<Long, OSMRelation> relations;
 
-    /** The name of the Network. */
-    private String name;
+    /** The name of the Network (immutable). */
+    private final String name;
 
     /** The Links of the Network. */
     private List<OSMLink> links;
 
     /**
-     * Construct a new Network.
+     * Construct a new OSMNetwork.
      * @param name String; the name of the new Network
      */
     public OSMNetwork(final String name)
     {
-        this.setName(name);
+        this.name = name;
         this.nodes = new HashMap<Long, OSMNode>();
         this.ways = new HashMap<Long, OSMWay>();
         this.relations = new HashMap<Long, OSMRelation>();
@@ -54,7 +55,7 @@ public class OSMNetwork
      */
     public OSMNetwork(final OSMNetwork net)
     {
-        this.setName(net.getName());
+        this.name = net.getName();
         this.nodes = new HashMap<Long, OSMNode>(net.getNodes());
         this.ways = new HashMap<Long, OSMWay>(net.getWays());
         this.relations = new HashMap<Long, OSMRelation>(net.getRelations());
@@ -102,7 +103,7 @@ public class OSMNetwork
     /**
      * @return HashMap of all Nodes in this Network
      */
-    public final HashMap<Long, OSMNode> getNodes()
+    public final Map<Long, OSMNode> getNodes()
     {
         return this.nodes;
     }
@@ -129,7 +130,7 @@ public class OSMNetwork
     /**
      * @return HashMap of all relations in the network
      */
-    public final HashMap<Long, OSMRelation> getRelations()
+    public final Map<Long, OSMRelation> getRelations()
     {
         return this.relations;
     }
@@ -162,15 +163,6 @@ public class OSMNetwork
     }
 
     /**
-     * Set/update the name of this Network.
-     * @param name String; the new name
-     */
-    public final void setName(final String name)
-    {
-        this.name = name;
-    }
-
-    /**
      * Set/replace the Nodes of this Network.<br>
      * The provided list is <b>not copied</b>; the caller should not modify the list after setting it.
      * @param newnodes HashMap&lt;Long, Node&gt;; the (new) Nodes for this Network
@@ -186,7 +178,7 @@ public class OSMNetwork
      */
     public final void addNode(final OSMNode node)
     {
-        this.nodes.put(node.getID(), node);
+        this.nodes.put(node.getId(), node);
     }
 
     /**
@@ -195,7 +187,7 @@ public class OSMNetwork
      */
     public final void delNode(final OSMNode node)
     {
-        this.nodes.remove(node.getID());
+        this.nodes.remove(node.getId());
     }
 
     /**
@@ -228,7 +220,7 @@ public class OSMNetwork
     /**
      * @return ways
      */
-    public final HashMap<Long, OSMWay> getWays()
+    public final Map<Long, OSMWay> getWays()
     {
         return this.ways;
     }
@@ -280,35 +272,34 @@ public class OSMNetwork
     }
 
     /**
-     * @param xx1 Latitude of point 1
-     * @param yy1 Longitude of point 1
-     * @param xx2 Latitude of point 2
-     * @param yy2 Longitude of point 2
-     * @return distance in meter between the (x1,y1) and (x2,y2) This method utilizes great circle calculation
+     * Compute the distance between two locations specified by longitude and latitude on Earth
+     * @param fromLongitude Latitude of point 1 in degrees
+     * @param fromLatitude Longitude of point 1 in degrees
+     * @param toLongitude Latitude of point 2 in degrees
+     * @param toLatitude Longitude of point 2 in degrees
+     * @return distance in meters from point 1 to point 2. This method utilizes great circle calculation
      */
-    private static double distanceLongLat(final double xx1, final double yy1, final double xx2, final double yy2)
+    private static double distanceLongLat(final double fromLongitude, final double fromLatitude,
+            final double toLongitude, final double toLatitude)
     {
-
-        double y1 = yy1;
-        double y2 = yy2;
+        double y1 = fromLatitude;
+        double y2 = toLatitude;
         if (y1 < 0)
         {
-            y1 = 360 + yy1;
+            y1 = 360 + fromLatitude;
         }
         if (y2 < 0)
         {
-            y2 = 360 + yy2;
+            y2 = 360 + toLatitude;
         }
-        double x1 = 90 - xx1;
-        double x2 = 90 - xx2;
-        x1 = x1 * (2 * Math.PI / 360);
-        x2 = x2 * (2 * Math.PI / 360);
-        y1 = y1 * (2 * Math.PI / 360);
-        y2 = y2 * (2 * Math.PI / 360);
-        double distance;
-        distance =
-                Math.acos(Math.sin(x1) * Math.sin(x2) * Math.cos(y1 - y2) + Math.cos(x1) * Math.cos(x2)) * 6371 * 1000;
-        return distance;
+        double x1 = 90 - fromLongitude;
+        double x2 = 90 - toLongitude;
+        x1 = Math.toRadians(x1);
+        x2 = Math.toRadians(x2);
+        y1 = Math.toRadians(y1);
+        y2 = Math.toRadians(y2);
+        final double earthRadius = 6371 * 1000;
+        return Math.acos(Math.sin(x1) * Math.sin(x2) * Math.cos(y1 - y2) + Math.cos(x1) * Math.cos(x2)) * earthRadius;
     }
 
     /**
@@ -334,7 +325,8 @@ public class OSMNetwork
     {
         List<OSMLink> checkedLinks = new ArrayList<OSMLink>();
         List<OSMLink> removedLinks = new ArrayList<OSMLink>();
-        boolean redundancy = false;
+        boolean redundancyRemoved = false;
+        // FIXME PK thinks that this method could remove a junction from a through-road
         for (OSMLink l1 : this.links)
         {
             if (removedLinks.contains(l1))
@@ -363,10 +355,9 @@ public class OSMNetwork
                         name2 = t2.getValue();
                     }
                 }
-                if (l1.getEnd().equals(l2.getStart()) && name1.equalsIgnoreCase(name2)
-                        && l1.getEnd().getTags().isEmpty() && l1.getTags().containsAll(l2.getTags())
-                        && l1.getLanes() == l2.getLanes() && l1.getForwardLanes() == l2.getForwardLanes()
-                        && l1.getStart() != l2.getEnd())
+                if (l1.getEnd().equals(l2.getStart()) && name1.equalsIgnoreCase(name2) && l1.getEnd().hasNoTags()
+                        && l1.containsAllTags(l2.getTags()) && l1.getLanes() == l2.getLanes()
+                        && l1.getForwardLanes() == l2.getForwardLanes() && l1.getStart() != l2.getEnd())
                 {
                     if (removedLinks.contains(l1))
                     {
@@ -380,25 +371,25 @@ public class OSMNetwork
                         }
                         throw new Error("about to add " + l1 + " to removeLinks which already contains that link");
                     }
-                    redundancy = true;
-                    OSMLink lnew =
+                    redundancyRemoved = true;
+                    OSMLink replacementLink =
                             new OSMLink(l1.getStart(), l2.getEnd(), l1.getTags(), l1.getLength() + l2.getLength(),
                                     l1.getLanes(), l1.getForwardLanes());
                     if (!l1.getSplineList().isEmpty())
                     {
                         for (OSMNode n1 : l1.getSplineList())
                         {
-                            lnew.addSpline(n1);
+                            replacementLink.addSpline(n1);
                         }
                     }
                     if (!l2.getSplineList().isEmpty())
                     {
                         for (OSMNode n2 : l2.getSplineList())
                         {
-                            lnew.addSpline(n2);
+                            replacementLink.addSpline(n2);
                         }
                     }
-                    checkedLinks.add(lnew);
+                    checkedLinks.add(replacementLink);
                     removedLinks.add(l1);
                     removedLinks.add(l2);
                     break; // don't merge any other links with l1; do that on the next iteration.
@@ -407,23 +398,26 @@ public class OSMNetwork
         }
         this.links.removeAll(removedLinks);
         this.links.addAll(checkedLinks);
-        return redundancy;
+        return redundancyRemoved;
     }
 
     /**
      * Finds the link which follows the given link. If it exists.
-     * @param l
+     * @param link
      * @return Link
      */
-    public final OSMLink findFollowingLink(final OSMLink l)
+    public final OSMLink findFollowingLink(final OSMLink link)
     {
-        if (!this.links.contains(l))
+        /*-
+        if (!this.links.contains(link))
         {
-            throw new Error("This link does not exist in this network: " + l);
+            throw new Error("This link does not exist in this network: " + link);
         }
+         */
+        final OSMNode startNode = link.getEnd();
         for (OSMLink l2 : this.links)
         {
-            if (l.getEnd().equals(l2.getStart()))
+            if (startNode.equals(l2.getStart()))
             {
                 return l2;
             }
@@ -433,18 +427,21 @@ public class OSMNetwork
 
     /**
      * Finds the link which precedes the given link. If it exists.
-     * @param l
+     * @param link
      * @return Link
      */
-    public final OSMLink findPrecedingLink(final OSMLink l)
+    public final OSMLink findPrecedingLink(final OSMLink link)
     {
-        if (!this.links.contains(l))
+        /*-
+        if (!this.links.contains(link))
         {
-            throw new Error("This link does not exist in this network: " + l);
+            throw new Error("This link does not exist in this network: " + link);
         }
+         */
+        final OSMNode endNode = link.getStart();
         for (OSMLink l2 : this.links)
         {
-            if (l.getStart().equals(l2.getEnd()))
+            if (endNode.equals(l2.getEnd()))
             {
                 return l2;
             }
@@ -454,21 +451,21 @@ public class OSMNetwork
 
     /**
      * Returns true if the given link has a preceding link.
-     * @param l
+     * @param link
      * @return boolean
      */
-    public final boolean hasPrecedingLink(final OSMLink l)
+    public final boolean hasPrecedingLink(final OSMLink link)
     {
-        return null != findPrecedingLink(l);
+        return null != findPrecedingLink(link);
     }
 
     /**
      * Returns true if the given link has a following link.
-     * @param l
+     * @param link
      * @return boolean
      */
-    public final boolean hasFollowingLink(final OSMLink l)
+    public final boolean hasFollowingLink(final OSMLink link)
     {
-        return null != findFollowingLink(l);
+        return null != findFollowingLink(link);
     }
 }

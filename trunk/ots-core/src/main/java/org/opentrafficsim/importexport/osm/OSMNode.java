@@ -1,6 +1,5 @@
 package org.opentrafficsim.importexport.osm;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,69 +17,45 @@ import org.opentrafficsim.core.network.geotools.NodeGeotools;
  */
 public class OSMNode
 {
-    /** */
-    private long iD;
+    /** Id of this OSMNode. */
+    private final long id;
 
-    /** */
-    private double longitude;
+    /** Longitude of this OSMNode. */
+    private final double longitude;
 
-    /** */
-    private double latitude;
+    /** Latitude of this OSMNode. */
+    private final double latitude;
 
-    /** */
-    private List<OSMTag> nodetags;
+    /** Tags of this OSMNode. */
+    private List<OSMTag> tags;
 
-    /** */
+    /** Does this OSMNode have a traffic signal? */
     private boolean trafficSignal = false;
 
-    /** */
+    /** Does this OSMNode have a stop sign? */
     private boolean stopSign = false;
 
-    /** */
+    /** Does this OSMNode have a yield sign? */
     private boolean yieldSign = false;
 
-    /** */
+    /** Is this OSMNode a crossing? */
     private boolean crossing = false;
 
-    /** */
+    /** The number of OSMLinks originating at this OSMNode; i.e. having this node as start. */
     public int linksOriginating = 0;
 
-    /** */
+    /** The number of OSMLinks ending at this OSMNode; i.e. having this node as end. */
     public int linksTerminating = 0;
 
-    /** */
+    /** The OTS Node that corresponds to this OSMNode. */
     private NodeGeotools.STR otsNode = null;
 
     /**
-     * @param id
+     * @return Id
      */
-    public final void setID(final long id)
+    public final long getId()
     {
-        this.iD = id;
-    }
-
-    /**
-     * @param longi
-     */
-    public final void setLongitude(final double longi)
-    {
-        this.longitude = longi;
-    }
-
-    /**
-     * @param lati
-     */
-    public final void setLatitude(final double lati)
-    {
-        this.latitude = lati;
-    }
-
-    /**
-     * @return ID
-     */
-    public final long getID()
-    {
-        return this.iD;
+        return this.id;
     }
 
     /**
@@ -100,96 +75,46 @@ public class OSMNode
     }
 
     /**
-     * @param id
-     * @param longi
-     * @param lati
+     * Construct a new OSMNode.
+     * @param id long; id of the new OSMNode
+     * @param longitude double; longitude of the new OSMNode
+     * @param latitude double; latitude of the new OSMNode
      */
-    public OSMNode(final long id, final double longi, final double lati)
+    public OSMNode(final long id, final double longitude, final double latitude)
     {
-        this.iD = id;
-        this.longitude = longi;
-        this.latitude = lati;
-        this.nodetags = new ArrayList<OSMTag>();
+        this.id = id;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.tags = new ArrayList<OSMTag>();
     }
 
     /**
-     * @return nodetags
+     * Retrieve a tag of this OSMNode.
+     * @param key String; the key of the tag to retrieve
+     * @return OSMTag, or null if this OSMNode has no tag with the specified key
      */
-    public final List<OSMTag> getTags()
+    public final OSMTag getTag(final String key)
     {
-        return this.nodetags;
-    }
-
-    /**
-     * @param tagKey
-     * @return nodetag
-     * @throws IOException
-     */
-    public final OSMTag getTag(final String tagKey) throws IOException
-    {
-        try
+        for (OSMTag tag : this.tags)
         {
-            for (OSMTag t : this.nodetags)
+            if (tag.getKey().equals(key))
             {
-                if (t.getKey().equals(tagKey))
-                {
-                    return t;
-                }
-            }
-            throw new IOException(" not found");
-        }
-        catch (IOException e)
-        {
-            return null;
-        }
-
-    }
-
-    /**
-     * Set/replace the Node Tags.
-     * @param theNodeTags List&lt;Tag&gt;; the list of Node tags
-     */
-    public final void setTags(final List<OSMTag> theNodeTags)
-    {
-        this.setCrossing(false);
-        this.setStopSign(false);
-        this.setTrafficSignal(false);
-        this.setYieldSign(false);
-        this.nodetags = theNodeTags;
-        for (OSMTag t : this.nodetags)
-        {
-            if (t.getKey().equals("highway"))
-            {
-                switch (t.getValue())
-                {
-                    case "crossing":
-                        this.setCrossing(true);
-                        break;
-                    case "give_way":
-                        this.setYieldSign(true);
-                        break;
-                    case "stop":
-                        this.setStopSign(true);
-                        break;
-                    case "traffic_signals":
-                        this.setTrafficSignal(true);
-                        break;
-                    default:
-                        break;
-                }
+                return tag;
             }
         }
+        return null;
     }
 
     /**
-     * @param nodetag
+     * Add a tag to this OSMNode.
+     * @param tag OSMTag; the tag to add to this OSMNode
      */
-    public final void addTag(final OSMTag nodetag)
+    public final void addTag(final OSMTag tag)
     {
-        this.nodetags.add(nodetag);
-        if (nodetag.getKey().equals("highway"))
+        this.tags.add(tag);
+        if (tag.getKey().equals("highway"))
         {
-            switch (nodetag.getValue())
+            switch (tag.getValue())
             {
                 case "crossing":
                     this.setCrossing(true);
@@ -212,24 +137,7 @@ public class OSMNode
     /** {@inheritDoc} */
     public final String toString()
     {
-        return String.format("Node %d %.6f %.6f", getID(), getLongitude(), getLatitude());
-    }
-
-    /**
-     * @param key
-     * @return boolean
-     */
-    public final boolean contains(final String key)
-    {
-        boolean found = false;
-        for (OSMTag t : this.nodetags)
-        {
-            if (t.getKey().equals(key))
-            {
-                found = true;
-            }
-        }
-        return found;
+        return String.format("Node %d %.6f %.6f", getId(), getLongitude(), getLatitude());
     }
 
     /**
@@ -314,5 +222,13 @@ public class OSMNode
     public final NodeGeotools.STR getOtsNode()
     {
         return this.otsNode;
+    }
+
+    /**
+     * @return boolean; true if this OSMNode has no tags; false otherwise
+     */
+    public boolean hasNoTags()
+    {
+        return this.tags.isEmpty();
     }
 }

@@ -37,28 +37,24 @@ public final class ReadOSMFile
     /**  */
     private boolean isReaderThreadDead = false;
 
-    /** ProgressListener. */
-    private ProgressListener progressListener;
-
     /**
      * @param location String; the location of the OSM file
      * @param wantedTags List&lt;Tag&gt;; the list of wanted tags
      * @param filteredKeys List&lt;String&gt;; the list of filtered keys
-     * @param progListener
+     * @param progressListener ProgressListener
      * @throws URISyntaxException when <cite>location</cite> is not a valid URL
      * @throws FileNotFoundException when the OSM file can not be found
      * @throws MalformedURLException when <cite>location</cite> is not valid
      */
     public ReadOSMFile(final String location, final List<OSMTag> wantedTags, final List<String> filteredKeys,
-            final ProgressListener progListener) throws URISyntaxException, FileNotFoundException,
+            final ProgressListener progressListener) throws URISyntaxException, FileNotFoundException,
             MalformedURLException
     {
-        this.setProgressListener(progListener);
         URL url = new URL(location);
         File file = new File(url.toURI());
 
         this.sinkImplementation = new OSMParser(wantedTags, filteredKeys);
-        this.sinkImplementation.setProgressListener(this.progressListener);
+        this.sinkImplementation.setProgressListener(progressListener);
 
         CompressionMethod compression = CompressionMethod.None;
         boolean protocolBufferBinaryFormat = false;
@@ -76,29 +72,14 @@ public final class ReadOSMFile
             compression = CompressionMethod.BZip2;
         }
 
-        RunnableSource reader = null;
-
-        if (protocolBufferBinaryFormat)
-        {
-            try
-            {
-                reader = new OsmosisReader(new FileInputStream(file));
-            }
-            catch (FileNotFoundException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        else
-        {
-            reader = new XmlReader(file, false, compression);
-        }
+        RunnableSource reader =
+                protocolBufferBinaryFormat ? new OsmosisReader(new FileInputStream(file)) : new XmlReader(file, false,
+                        compression);
 
         reader.setSink(this.sinkImplementation);
 
         Thread readerThread = new Thread(reader);
-        this.progressListener.progress(new ProgressEvent(this, "Starting Import."));
+        this.sinkImplementation.getProgressListener().progress(new ProgressEvent(this, "Starting Import."));
         readerThread.start();
         while (readerThread.isAlive())
         {
@@ -136,7 +117,7 @@ public final class ReadOSMFile
      */
     public ProgressListener getProgressListener()
     {
-        return this.progressListener;
+        return this.sinkImplementation.getProgressListener();
     }
 
     /**
@@ -144,6 +125,6 @@ public final class ReadOSMFile
      */
     public void setProgressListener(final ProgressListener progressListener)
     {
-        this.progressListener = progressListener;
+        this.sinkImplementation.setProgressListener(progressListener);
     }
 }
