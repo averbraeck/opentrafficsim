@@ -37,12 +37,6 @@ public final class ReadOSMFile
     /**  */
     private boolean isReaderThreadDead = false;
 
-    /** Objects not having any of the wanted Tags are skipped or ignored. If empty all Objects will be imported. */
-    private List<OSMTag> wantedTags;
-
-    /** Tags not having any of the here defined keys are skipped or ignored. If empty all Tags are imported. */
-    private List<String> filterKeys;
-
     /** ProgressListener. */
     private ProgressListener progressListener;
 
@@ -60,14 +54,10 @@ public final class ReadOSMFile
             MalformedURLException
     {
         this.setProgressListener(progListener);
-        this.wantedTags = wantedTags;
-        this.filterKeys = filteredKeys;
         URL url = new URL(location);
         File file = new File(url.toURI());
 
-        this.sinkImplementation = new OSMParser();
-        this.sinkImplementation.setWantedTags(this.wantedTags);
-        this.sinkImplementation.setFilterKeys(this.filterKeys);
+        this.sinkImplementation = new OSMParser(wantedTags, filteredKeys);
         this.sinkImplementation.setProgressListener(this.progressListener);
 
         CompressionMethod compression = CompressionMethod.None;
@@ -118,13 +108,11 @@ public final class ReadOSMFile
             }
             catch (InterruptedException e)
             {
-                System.err.println("The map reader thread got problem!");
+                System.err.println("Failed to join with the map reader thread: " + e.getMessage());
             }
         }
-
+        // Reader has finished
         this.isReaderThreadDead = true;
-
-        // System.out.println("reader thread is dead here/////");
     }
 
     /**

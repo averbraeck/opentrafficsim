@@ -11,11 +11,11 @@ package org.opentrafficsim.importexport.osm;
  */
 public class OSMTag
 {
-    /** (Non-Unique) Key of the Tag. */
-    private String key;
+    /** (Non-Unique) Key of the tag. */
+    private final String key;
 
-    /** */
-    private String value;
+    /** Value of the tag. */
+    private final String value;
 
     /**
      * @return value
@@ -26,27 +26,11 @@ public class OSMTag
     }
 
     /**
-     * @param value
-     */
-    public final void setValue(final String value)
-    {
-        this.value = value;
-    }
-
-    /**
      * @return key
      */
     public final String getKey()
     {
         return this.key;
-    }
-
-    /**
-     * @param key
-     */
-    public final void setKey(final String key)
-    {
-        this.key = key;
     }
 
     /**
