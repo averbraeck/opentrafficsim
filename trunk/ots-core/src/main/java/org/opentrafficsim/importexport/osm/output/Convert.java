@@ -102,73 +102,41 @@ public final class Convert
      */
     public static CrossSectionLink<?, ?> convertLink(final org.opentrafficsim.importexport.osm.Link link)
     {
-        if (link.getStart().getOtsNode() == null)
+        if (null == link.getStart().getOtsNode())
         {
             link.getStart().setOtsNode(convertNode(link.getStart()));
         }
-        if (link.getEnd().getOtsNode() == null)
+        if (null == link.getEnd().getOtsNode())
         {
             link.getEnd().setOtsNode(convertNode(link.getEnd()));
         }
+        CrossSectionLink<?, ?> result;
+        Coordinate[] coordinates;
+        List<org.opentrafficsim.importexport.osm.Node> nodes = link.getSplineList();
+        int coordinateCount = 2 + nodes.size();
+        coordinates = new Coordinate[coordinateCount];
         NodeGeotools.STR start = link.getStart().getOtsNode();
+        coordinates[0] = new Coordinate(start.getPoint().x, start.getPoint().y, 0);
+        for (int i = 0; i < nodes.size(); i++)
+        {
+            coordinates[i + 1] = new Coordinate(nodes.get(i).getLongitude(), nodes.get(i).getLatitude());
+        }
         NodeGeotools.STR end = link.getEnd().getOtsNode();
-        CrossSectionLink<?, ?> l2;
-        if (link.getSplineList().isEmpty())
+        coordinates[coordinates.length - 1] = new Coordinate(end.getPoint().x, end.getPoint().y, 0);
+        GeometryFactory factory = new GeometryFactory();
+        LineString lineString = factory.createLineString(coordinates);
+        result =
+                new CrossSectionLink<String, String>(link.getID(), start, end, new DoubleScalar.Rel<LengthUnit>(
+                        lineString.getLength(), LengthUnit.METER));
+        try
         {
-            GeometryFactory factory = new GeometryFactory();
-            Coordinate[] coordinates = new Coordinate[2];
-            coordinates[0] = new Coordinate(start.getPoint().x, start.getPoint().y, 0);
-            coordinates[1] = new Coordinate(end.getPoint().x, end.getPoint().y, 0);
-            LineString lineString = factory.createLineString(coordinates);
-            l2 =
-                    new CrossSectionLink<String, String>(link.getID(), start, end, new DoubleScalar.Rel<LengthUnit>(
-                            lineString.getLength(), LengthUnit.METER));
-            try
-            {
-                new LinearGeometry(l2, lineString, null);
-            }
-            catch (NetworkException exception)
-            {
-                throw new Error("Network exception in LinearGeometry");
-            }
-
+            new LinearGeometry(result, lineString, null);
         }
-        else
+        catch (NetworkException exception)
         {
-            List<Coordinate> iC = new ArrayList<Coordinate>();
-            for (org.opentrafficsim.importexport.osm.Node spline : link.getSplineList())
-            {
-                Coordinate coord = new Coordinate(spline.getLongitude(), spline.getLatitude());
-                iC.add(coord);
-            }
-            Coordinate[] intermediateCoordinates = new Coordinate[iC.size()];
-            iC.toArray(intermediateCoordinates);
-            int coordinateCount = 2 + (null == intermediateCoordinates ? 0 : intermediateCoordinates.length);
-            Coordinate[] coordinates = new Coordinate[coordinateCount];
-            coordinates[0] = new Coordinate(start.getPoint().x, start.getPoint().y, 0);
-            coordinates[coordinates.length - 1] = new Coordinate(end.getPoint().x, end.getPoint().y, 0);
-            if (null != intermediateCoordinates)
-            {
-                for (int i = 0; i < intermediateCoordinates.length; i++)
-                {
-                    coordinates[i + 1] = new Coordinate(intermediateCoordinates[i]);
-                }
-            }
-            GeometryFactory factory = new GeometryFactory();
-            LineString lineString = factory.createLineString(coordinates);
-            l2 =
-                    new CrossSectionLink<String, String>(link.getID(), start, end, new DoubleScalar.Rel<LengthUnit>(
-                            lineString.getLength(), LengthUnit.METER));
-            try
-            {
-                new LinearGeometry(l2, lineString, null);
-            }
-            catch (NetworkException exception)
-            {
-                throw new Error("Network exception in LinearGeometry");
-            }
+            throw new Error("Network exception in LinearGeometry");
         }
-        return l2;
+        return result;
     }
 
     /**
@@ -178,17 +146,13 @@ public final class Convert
      */
     public static NodeGeotools.STR convertNode(final org.opentrafficsim.importexport.osm.Node node)
     {
-        Coordinate coordWGS84;
-        Coordinate coordGCC;
-        Double elevation = 0D;
         if (node.contains("ele"))
         {
             try
             {
                 String ele = node.getTag("ele").getValue();
-                String regex1 = "[0-9]+(km)|m";
-                String regex2 = "[0-9]+";
-                if (ele.matches(regex1))
+                Double elevation = 0d;
+                if (ele.matches("[0-9]+(km)|m"))
                 {
                     String[] ele2 = ele.split("(km)|m");
                     ele = ele2[0];
@@ -202,56 +166,41 @@ public final class Convert
                     }
                     else
                     {
-                        elevation = 0D;
+                        throw new NumberFormatException("Cannot parse elevation value\"" + ele + "\"");
                     }
                 }
-                else if (ele.matches(regex2))
+                else if (ele.matches("[0-9]+"))
                 {
                     elevation = Double.parseDouble(ele);
                 }
-                coordWGS84 = new Coordinate(node.getLongitude(), node.getLatitude(), elevation);
+                Coordinate coordWGS84 = new Coordinate(node.getLongitude(), node.getLatitude(), elevation);
                 try
                 {
-                    coordGCC = Convert.transform(coordWGS84);
-                    NodeGeotools.STR n2 = new NodeGeotools.STR(Objects.toString(node.getID()), coordGCC);
-                    return n2;
+                    return new NodeGeotools.STR(Objects.toString(node.getID()), Convert.transform(coordWGS84));
                 }
-                catch (FactoryException exception)
-                {
-                    exception.printStackTrace();
-                }
-                catch (TransformException exception)
+                catch (FactoryException | TransformException exception)
                 {
                     exception.printStackTrace();
                 }
             }
-            catch (NumberFormatException exception)
-            {
-                exception.printStackTrace();
-            }
-            catch (IOException exception)
+            catch (NumberFormatException | IOException exception)
             {
                 exception.printStackTrace();
             }
         }
-        else
+        else // No elevation specified; return a 2D Coordinate
         {
-            coordWGS84 = new Coordinate(node.getLongitude(), node.getLatitude(), 0D);
+            Coordinate coordWGS84 = new Coordinate(node.getLongitude(), node.getLatitude(), 0d);
             try
             {
-                coordGCC = Convert.transform(coordWGS84);
-                NodeGeotools.STR n2 = new NodeGeotools.STR(Objects.toString(node.getID()), coordGCC);
-                return n2;
+                return new NodeGeotools.STR(Objects.toString(node.getID()), Convert.transform(coordWGS84));
             }
-            catch (FactoryException exception)
-            {
-                exception.printStackTrace();
-            }
-            catch (TransformException exception)
+            catch (FactoryException | TransformException exception)
             {
                 exception.printStackTrace();
             }
         }
+        // FIXME: how does the caller deal with a null result? (Answer: not!)
         return null;
     }
 
@@ -581,7 +530,15 @@ public final class Convert
                 String w = t.getValue().replace(",", ".");
                 w = w.replace(" ", "");
                 w = w.replace("m", "");
-                defaultLaneWidth = Double.parseDouble(w) / link.getLanes();
+                w = w.replace("Meter", "");
+                try
+                {
+                    defaultLaneWidth = Double.parseDouble(w) / link.getLanes();
+                }
+                catch (NumberFormatException nfe)
+                {
+                    System.err.println("Bad lanewidth: \"" + t.getValue() + "\"");
+                }
                 widthOverride = true;
             }
         }
