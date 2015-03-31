@@ -9,13 +9,14 @@ import org.opentrafficsim.core.network.geotools.NodeGeotools;
 /**
  * OpenStreetmap Node.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 31 dec. 2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
-public class Node
+public class OSMNode
 {
     /** */
     private long iD;
@@ -27,31 +28,31 @@ public class Node
     private double latitude;
 
     /** */
-    private List<Tag> nodetags;
-    
+    private List<OSMTag> nodetags;
+
     /** */
     private boolean trafficSignal = false;
-    
+
     /** */
     private boolean stopSign = false;
-    
+
     /** */
     private boolean yieldSign = false;
-    
+
     /** */
     private boolean crossing = false;
-    
+
     /** */
     public int linksOriginating = 0;
-    
+
     /** */
     public int linksTerminating = 0;
-    
+
     /** */
     private NodeGeotools.STR otsNode = null;
 
     /**
-     * @param id 
+     * @param id
      */
     public final void setID(final long id)
     {
@@ -59,7 +60,7 @@ public class Node
     }
 
     /**
-     * @param longi 
+     * @param longi
      */
     public final void setLongitude(final double longi)
     {
@@ -67,7 +68,7 @@ public class Node
     }
 
     /**
-     * @param lati 
+     * @param lati
      */
     public final void setLatitude(final double lati)
     {
@@ -75,7 +76,7 @@ public class Node
     }
 
     /**
-     * @return ID 
+     * @return ID
      */
     public final long getID()
     {
@@ -99,36 +100,36 @@ public class Node
     }
 
     /**
-     * @param id 
-     * @param longi 
-     * @param lati 
+     * @param id
+     * @param longi
+     * @param lati
      */
-    public Node(final long id, final double longi, final double lati)
+    public OSMNode(final long id, final double longi, final double lati)
     {
         this.iD = id;
         this.longitude = longi;
         this.latitude = lati;
-        this.nodetags = new ArrayList<Tag>();
+        this.nodetags = new ArrayList<OSMTag>();
     }
 
     /**
      * @return nodetags
      */
-    public final List<Tag> getTags()
+    public final List<OSMTag> getTags()
     {
         return this.nodetags;
     }
 
     /**
-     * @param tagKey 
+     * @param tagKey
      * @return nodetag
-     * @throws IOException 
+     * @throws IOException
      */
-    public final Tag getTag(final String tagKey) throws IOException
+    public final OSMTag getTag(final String tagKey) throws IOException
     {
         try
         {
-            for (Tag t: this.nodetags)
+            for (OSMTag t : this.nodetags)
             {
                 if (t.getKey().equals(tagKey))
                 {
@@ -148,70 +149,80 @@ public class Node
      * Set/replace the Node Tags.
      * @param theNodeTags List&lt;Tag&gt;; the list of Node tags
      */
-    public final void setTags(final List<Tag> theNodeTags)
+    public final void setTags(final List<OSMTag> theNodeTags)
     {
         this.setCrossing(false);
         this.setStopSign(false);
         this.setTrafficSignal(false);
         this.setYieldSign(false);
         this.nodetags = theNodeTags;
-        for (Tag t: this.nodetags)
+        for (OSMTag t : this.nodetags)
         {
             if (t.getKey().equals("highway"))
             {
                 switch (t.getValue())
                 {
-                    case "crossing":            this.setCrossing(true);
-                                                break;
-                    case "give_way":            this.setYieldSign(true);
-                                                break;
-                    case "stop":                this.setStopSign(true);
-                                                break;
-                    case "traffic_signals":     this.setTrafficSignal(true);
-                                                break;
-                    default:                    break;
+                    case "crossing":
+                        this.setCrossing(true);
+                        break;
+                    case "give_way":
+                        this.setYieldSign(true);
+                        break;
+                    case "stop":
+                        this.setStopSign(true);
+                        break;
+                    case "traffic_signals":
+                        this.setTrafficSignal(true);
+                        break;
+                    default:
+                        break;
                 }
             }
         }
     }
 
     /**
-     * @param nodetag 
+     * @param nodetag
      */
-    public final void addTag(final Tag nodetag)
+    public final void addTag(final OSMTag nodetag)
     {
-            this.nodetags.add(nodetag);
-            if (nodetag.getKey().equals("highway"))
+        this.nodetags.add(nodetag);
+        if (nodetag.getKey().equals("highway"))
+        {
+            switch (nodetag.getValue())
             {
-                switch (nodetag.getValue())
-                {
-                    case "crossing":            this.setCrossing(true);
-                                                break;
-                    case "give_way":            this.setYieldSign(true);
-                                                break;
-                    case "stop":                this.setStopSign(true);
-                                                break;
-                    case "traffic_signals":     this.setTrafficSignal(true);
-                                                break;
-                    default:                    break;
-                }
+                case "crossing":
+                    this.setCrossing(true);
+                    break;
+                case "give_way":
+                    this.setYieldSign(true);
+                    break;
+                case "stop":
+                    this.setStopSign(true);
+                    break;
+                case "traffic_signals":
+                    this.setTrafficSignal(true);
+                    break;
+                default:
+                    break;
             }
+        }
     }
-    
+
     /** {@inheritDoc} */
     public final String toString()
     {
         return String.format("Node %d %.6f %.6f", getID(), getLongitude(), getLatitude());
     }
-    
+
     /**
-     * @param key 
+     * @param key
      * @return boolean
      */
     public final boolean contains(final String key)
     {
         boolean found = false;
-        for (Tag t: this.nodetags)
+        for (OSMTag t : this.nodetags)
         {
             if (t.getKey().equals(key))
             {
@@ -284,7 +295,7 @@ public class Node
     {
         this.crossing = crossing;
     }
-    
+
     /**
      * @param n NodeGeotools.STR
      */
@@ -296,7 +307,7 @@ public class Node
         }
         this.otsNode = n;
     }
-    
+
     /**
      * @return NodeGeotools.STR - The associated OTS Node.
      */

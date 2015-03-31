@@ -5,25 +5,29 @@ import java.util.List;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 31 dec. 2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
-public class Way
+public class OSMWay
 {
-    /** The ID of the way.
+    /**
+     * The ID of the way.
      */
     private long iD;
 
-    /** The List of the IDs of all nodes this way has.
+    /**
+     * The List of the IDs of all nodes this way has.
      */
     private List<Long> waynodes;
 
-    /** The List of all Tags this way has.
+    /**
+     * The List of all Tags this way has.
      */
-    private List<Tag> waytags;
+    private List<OSMTag> waytags;
 
     /**
      * @return ID
@@ -34,7 +38,7 @@ public class Way
     }
 
     /**
-     * @param id 
+     * @param id
      */
     public final void setID(final long id)
     {
@@ -59,7 +63,7 @@ public class Way
     }
 
     /**
-     * @param waynode 
+     * @param waynode
      */
     public final void appendNode(final Long waynode)
     {
@@ -67,19 +71,19 @@ public class Way
     }
 
     /**
-     * @param id 
+     * @param id
      */
-    public Way(final long id)
+    public OSMWay(final long id)
     {
         this.iD = id;
         this.waynodes = new ArrayList<Long>();
-        this.waytags = new ArrayList<Tag>();
+        this.waytags = new ArrayList<OSMTag>();
     }
 
     /**
      * @return waytags
      */
-    public final List<Tag> getTags()
+    public final List<OSMTag> getTags()
     {
         return this.waytags;
     }
@@ -88,27 +92,27 @@ public class Way
      * Set/replace the list of way tags.
      * @param theWayTags List&lt;Tag&gt;; the new list of way tags
      */
-    public final void setTags(final List<Tag> theWayTags)
+    public final void setTags(final List<OSMTag> theWayTags)
     {
         this.waytags = theWayTags;
     }
 
     /**
-     * @param waytag 
+     * @param waytag
      */
-    public final void addTag(final Tag waytag)
+    public final void addTag(final OSMTag waytag)
     {
         this.waytags.add(waytag);
     }
 
     /**
-     * @param tagKey 
-     * @return List of matching Tags 
+     * @param tagKey
+     * @return List of matching Tags
      */
-    public final List<Tag> getMatchingTags(final String tagKey)
+    public final List<OSMTag> getMatchingTags(final String tagKey)
     {
-        List<Tag> result = new ArrayList<Tag>();
-        for (Tag t: this.waytags)
+        List<OSMTag> result = new ArrayList<OSMTag>();
+        for (OSMTag t : this.waytags)
         {
             if (t.getKey().equals(tagKey))
             {

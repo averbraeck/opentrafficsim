@@ -10,40 +10,51 @@ import org.opentrafficsim.importexport.osm.events.WarningListener;
 /**
  * OpenStreetMap Link.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 31 dec. 2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
-public class Link
+public class OSMLink
 {
     /** This is the Link ID. It is generated out of the Start ID and the End ID. */
     private String iD;
+
     /** This is the start Node of the link. */
-    private Node start;
+    private OSMNode start;
+
     /** This is the end Node of the link. */
-    private Node end;
+    private OSMNode end;
+
     /** This is a List of nodes that are used just for mapping purposes. */
-    private List<Node> splineList;
-    /** This is the length of the link.*/
+    private List<OSMNode> splineList;
+
+    /** This is the length of the link. */
     private double length;
+
     /** These are the tags that this link inherits from it's way. */
-    private List<Tag> linktags;
+    private List<OSMTag> linktags;
+
     /** This is the number of lanes this link has. */
     private byte lanes;
+
     /** This is the number of lanes going forward. */
     private byte forwardLanes;
-    /** Is this link one way?*/
+
+    /** Is this link one way? */
     private boolean oneway;
+
     /**
      * @param fromNode Startnode
      * @param toNode Endnode
      * @param lt List of inherited Waytags
      * @param length length of the link
-     * @param warningListener 
+     * @param warningListener
      */
-    public Link(final Node fromNode, final Node toNode, final List<Tag> lt, final double length, final WarningListener warningListener)
+    public OSMLink(final OSMNode fromNode, final OSMNode toNode, final List<OSMTag> lt, final double length,
+            final WarningListener warningListener)
     {
         if (fromNode == toNode)
         {
@@ -57,9 +68,9 @@ public class Link
         this.forwardLanes = 1;
         boolean forwardDefined = false;
 
-        List<Tag> lt2 = new ArrayList<Tag>(lt);
-        List<Tag> lt3 = new ArrayList<Tag>(lt); 
-        for (Tag t2: lt2)
+        List<OSMTag> lt2 = new ArrayList<OSMTag>(lt);
+        List<OSMTag> lt3 = new ArrayList<OSMTag>(lt);
+        for (OSMTag t2 : lt2)
         {
             if (t2.getKey().equals("oneway") && t2.getValue().equals("yes"))
             {
@@ -78,20 +89,20 @@ public class Link
                 this.setOneway(true);
                 this.forwardLanes = this.lanes;
             }
-            if (t2.getKey().equals("highway") && (t2.getValue().equals("cycleway") 
-                    || t2.getValue().equals("footway") || t2.getValue().equals("pedestrian") 
-                    || t2.getValue().equals("steps")))
+            if (t2.getKey().equals("highway")
+                    && (t2.getValue().equals("cycleway") || t2.getValue().equals("footway")
+                            || t2.getValue().equals("pedestrian") || t2.getValue().equals("steps")))
             {
                 this.lanes = 1;
             }
         }
-        
-        lt2 = new ArrayList<Tag>(lt3);
-        for (Tag t2: lt2)
+
+        lt2 = new ArrayList<OSMTag>(lt3);
+        for (OSMTag t2 : lt2)
         {
             if (t2.getKey().equals("lanes"))
             {
-                if (Link.isByte(t2.getValue()))
+                if (OSMLink.isByte(t2.getValue()))
                 {
                     this.lanes = Byte.parseByte(t2.getValue());
                     lt3.remove(t2);
@@ -109,7 +120,7 @@ public class Link
             }
             if (t2.getKey().equals("lanes:forward"))
             {
-                if (Link.isByte(t2.getValue()))
+                if (OSMLink.isByte(t2.getValue()))
                 {
                     this.forwardLanes = Byte.parseByte(t2.getValue());
                     lt3.remove(t2);
@@ -129,9 +140,9 @@ public class Link
             String warning = "No forward lanes defined at link " + this.iD;
             warningListener.warning(new WarningEvent(this, warning));
         }
-        this.splineList = new ArrayList<Node>(); 
+        this.splineList = new ArrayList<OSMNode>();
     }
-    
+
     /**
      * @param n1 Startnode
      * @param n2 Endnode
@@ -140,7 +151,8 @@ public class Link
      * @param lanes total number of lanes
      * @param flanes number of forward lanes
      */
-    public Link(final Node n1, final Node n2, final List<Tag> lt, final double length, final byte lanes, final byte flanes)
+    public OSMLink(final OSMNode n1, final OSMNode n2, final List<OSMTag> lt, final double length, final byte lanes,
+            final byte flanes)
     {
         if (n1 == n2)
         {
@@ -153,9 +165,9 @@ public class Link
         this.length = length;
         this.lanes = lanes;
         this.forwardLanes = flanes;
-        this.splineList = new ArrayList<Node>();
+        this.splineList = new ArrayList<OSMNode>();
     }
-    
+
     /**
      * @return ID
      */
@@ -163,51 +175,55 @@ public class Link
     {
         return this.iD;
     }
+
     /**
      * @return start.
      */
-    public final Node getStart()
+    public final OSMNode getStart()
     {
         return this.start;
     }
+
     /**
      * @param start set start.
      */
-    public final void setStart(final Node start)
+    public final void setStart(final OSMNode start)
     {
         this.start = start;
     }
+
     /**
      * @return end.
      */
-    public final Node getEnd()
+    public final OSMNode getEnd()
     {
         return this.end;
     }
+
     /**
      * @param end set end.
      */
-    public final void setEnd(final Node end)
+    public final void setEnd(final OSMNode end)
     {
         this.end = end;
     }
-    
+
     /**
-     * @param lt 
+     * @param lt
      */
-    public final void setTags(final List<Tag> lt)
+    public final void setTags(final List<OSMTag> lt)
     {
         this.linktags = lt;
     }
-    
+
     /**
      * @return linktags
      */
-    public final List<Tag> getTags()
+    public final List<OSMTag> getTags()
     {
         return this.linktags;
     }
-    
+
     /**
      * @return oneway.
      */
@@ -239,7 +255,7 @@ public class Link
     {
         return this.forwardLanes;
     }
-    
+
     /**
      * @param lanes set lanes.
      */
@@ -256,11 +272,12 @@ public class Link
     {
         this.forwardLanes = forwardLanes;
     }
+
     /**
      * Add a Tag to this Link.
      * @param tag Tag; the Tag that must be added
      */
-    public final void addTag(final Tag tag)
+    public final void addTag(final OSMTag tag)
     {
         this.linktags.add(tag);
     }
@@ -284,7 +301,7 @@ public class Link
     /**
      * @return splineList.
      */
-    public final List<Node> getSplineList()
+    public final List<OSMNode> getSplineList()
     {
         return this.splineList;
     }
@@ -292,28 +309,28 @@ public class Link
     /**
      * @param splineList set splineList.
      */
-    public final void setSplineList(final List<Node> splineList)
+    public final void setSplineList(final List<OSMNode> splineList)
     {
         this.splineList = splineList;
     }
-    
+
     /**
      * Append a Node to the spline of this Link.
      * @param spline Node; the Node to add to the splineList
      */
-    public final void addSpline(final Node spline)
+    public final void addSpline(final OSMNode spline)
     {
         this.splineList.add(spline);
     }
-    
+
     /**
      * Returns true if the link has a Tag with the specified key.
-     * @param key 
+     * @param key
      * @return boolean
      */
     public final boolean hasTag(final String key)
     {
-        for (Tag t: this.linktags)
+        for (OSMTag t : this.linktags)
         {
             if (t.getKey().equals(key))
             {
@@ -322,9 +339,9 @@ public class Link
         }
         return false;
     }
-    
+
     /**
-     * @param s 
+     * @param s
      * @return is the given String a byte.
      */
     public static boolean isByte(final String s)
@@ -333,13 +350,13 @@ public class Link
         {
             Byte.parseByte(s);
         }
-        catch (NumberFormatException e) 
+        catch (NumberFormatException e)
         {
             return false;
         }
         return true;
     }
-    
+
     /** {@inheritDoc} */
     public final String toString()
     {

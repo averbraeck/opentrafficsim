@@ -11,8 +11,8 @@ import java.util.List;
 import org.openstreetmap.osmosis.core.task.v0_6.RunnableSource;
 import org.openstreetmap.osmosis.xml.common.CompressionMethod;
 import org.openstreetmap.osmosis.xml.v0_6.XmlReader;
-import org.opentrafficsim.importexport.osm.Network;
-import org.opentrafficsim.importexport.osm.Tag;
+import org.opentrafficsim.importexport.osm.OSMNetwork;
+import org.opentrafficsim.importexport.osm.OSMTag;
 import org.opentrafficsim.importexport.osm.events.ProgressEvent;
 import org.opentrafficsim.importexport.osm.events.ProgressListener;
 
@@ -31,86 +31,68 @@ import crosby.binary.osmosis.OsmosisReader;
 public final class ReadOSMFile
 {
 
-    /**  */
-    private NewSink sinkImplementation = null;
-
-    /**  */
-    private boolean pbf = false;
-
-    /**  */
-    private URL url;
-
-    /**  */
-    private File file;
-
-    /**  */
-    private CompressionMethod compression;
-
-    /**  */
-    private RunnableSource reader = null;
-
-    /**  */
-    private Thread readerThread;
+    /** The parser/network builder. */
+    private OSMParser sinkImplementation = null;
 
     /**  */
     private boolean isReaderThreadDead = false;
 
-    /** Objects not having any of the wanted Tags are skipped or ignored. If empty all Objects will be imported.*/
-    private List<Tag> wantedTags;
+    /** Objects not having any of the wanted Tags are skipped or ignored. If empty all Objects will be imported. */
+    private List<OSMTag> wantedTags;
 
     /** Tags not having any of the here defined keys are skipped or ignored. If empty all Tags are imported. */
     private List<String> filterKeys;
-    
+
     /** ProgressListener. */
     private ProgressListener progressListener;
 
     /**
      * @param location String; the location of the OSM file
-     * @param wt List&lt;Tag&gt;; the list of wanted tags
-     * @param ft List&lt;String&gt;; the list of filtered keys
-     * @param progListener 
+     * @param wantedTags List&lt;Tag&gt;; the list of wanted tags
+     * @param filteredKeys List&lt;String&gt;; the list of filtered keys
+     * @param progListener
      * @throws URISyntaxException when <cite>location</cite> is not a valid URL
      * @throws FileNotFoundException when the OSM file can not be found
      * @throws MalformedURLException when <cite>location</cite> is not valid
      */
-    public ReadOSMFile(final String location, final List<Tag> wt, final List<String> ft, final ProgressListener progListener)
-            throws URISyntaxException, FileNotFoundException, MalformedURLException
+    public ReadOSMFile(final String location, final List<OSMTag> wantedTags, final List<String> filteredKeys,
+            final ProgressListener progListener) throws URISyntaxException, FileNotFoundException,
+            MalformedURLException
     {
         this.setProgressListener(progListener);
-        this.wantedTags = wt;
-        this.filterKeys = ft;
-        this.url = new URL(location);
-        if (null == this.url)
-        {
-            throw new FileNotFoundException("Cannot construct url for location \"" + location + "\"");
-        }
-        this.file = new File(this.url.toURI());
+        this.wantedTags = wantedTags;
+        this.filterKeys = filteredKeys;
+        URL url = new URL(location);
+        File file = new File(url.toURI());
 
-        this.sinkImplementation = new NewSink();
+        this.sinkImplementation = new OSMParser();
         this.sinkImplementation.setWantedTags(this.wantedTags);
         this.sinkImplementation.setFilterKeys(this.filterKeys);
         this.sinkImplementation.setProgressListener(this.progressListener);
 
-        this.compression = CompressionMethod.None;
+        CompressionMethod compression = CompressionMethod.None;
+        boolean protocolBufferBinaryFormat = false;
 
-        if (this.file.getName().endsWith(".pbf"))
+        if (file.getName().endsWith(".pbf"))
         {
-            this.pbf = true;
+            protocolBufferBinaryFormat = true;
         }
-        else if (this.file.getName().endsWith(".gz"))
+        else if (file.getName().endsWith(".gz"))
         {
-            this.compression = CompressionMethod.GZip;
+            compression = CompressionMethod.GZip;
         }
-        else if (this.file.getName().endsWith(".bz2"))
+        else if (file.getName().endsWith(".bz2"))
         {
-            this.compression = CompressionMethod.BZip2;
+            compression = CompressionMethod.BZip2;
         }
 
-        if (this.pbf)
+        RunnableSource reader = null;
+
+        if (protocolBufferBinaryFormat)
         {
             try
             {
-                this.reader = new OsmosisReader(new FileInputStream(this.file));
+                reader = new OsmosisReader(new FileInputStream(file));
             }
             catch (FileNotFoundException e)
             {
@@ -120,19 +102,19 @@ public final class ReadOSMFile
         }
         else
         {
-            this.reader = new XmlReader(this.file, false, this.compression);
+            reader = new XmlReader(file, false, compression);
         }
 
-        this.reader.setSink(this.sinkImplementation);
+        reader.setSink(this.sinkImplementation);
 
-        this.readerThread = new Thread(this.reader);
+        Thread readerThread = new Thread(reader);
         this.progressListener.progress(new ProgressEvent(this, "Starting Import."));
-        this.readerThread.start();
-        while (this.readerThread.isAlive())
+        readerThread.start();
+        while (readerThread.isAlive())
         {
             try
             {
-                this.readerThread.join();
+                readerThread.join();
             }
             catch (InterruptedException e)
             {
@@ -156,7 +138,7 @@ public final class ReadOSMFile
     /**
      * @return get the whole Network
      */
-    public Network getNetwork()
+    public OSMNetwork getNetwork()
     {
         return this.sinkImplementation.getNetwork();
     }

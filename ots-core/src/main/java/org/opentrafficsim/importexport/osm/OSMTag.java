@@ -2,13 +2,14 @@ package org.opentrafficsim.importexport.osm;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 31 dec. 2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
-public class Tag
+public class OSMTag
 {
     /** (Non-Unique) Key of the Tag. */
     private String key;
@@ -25,7 +26,7 @@ public class Tag
     }
 
     /**
-     * @param value 
+     * @param value
      */
     public final void setValue(final String value)
     {
@@ -33,7 +34,7 @@ public class Tag
     }
 
     /**
-     * @return key 
+     * @return key
      */
     public final String getKey()
     {
@@ -41,7 +42,7 @@ public class Tag
     }
 
     /**
-     * @param key 
+     * @param key
      */
     public final void setKey(final String key)
     {
@@ -49,17 +50,18 @@ public class Tag
     }
 
     /**
-     * @param k 
-     * @param v 
+     * @param k
+     * @param v
      */
-    public Tag(final String k, final String v)
+    public OSMTag(final String k, final String v)
     {
         this.key = k;
         this.value = v;
     }
+
     /** {@inheritDoc} */
     public final String toString()
     {
-        return "Tag: Key: " + this.key + " Value: " + this.value; 
+        return "Tag: Key: " + this.key + " Value: " + this.value;
     }
 }
