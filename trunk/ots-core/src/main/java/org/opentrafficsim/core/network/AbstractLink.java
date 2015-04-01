@@ -10,7 +10,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 19, 2014 <br>
@@ -23,7 +24,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @param <N> the type of Node that this Link uses.
  */
 public abstract class AbstractLink<IDL, IDN, P, N extends AbstractNode<IDN, P>> implements Link<IDL, N>, Serializable,
-    LocatableInterface
+        LocatableInterface
 {
     /** */
     private static final long serialVersionUID = 20150101L;
@@ -52,8 +53,16 @@ public abstract class AbstractLink<IDL, IDN, P, N extends AbstractNode<IDN, P>> 
      * @param capacity link capacity in GTUs per hour
      */
     public AbstractLink(final IDL id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length,
-        final DoubleScalar.Abs<FrequencyUnit> capacity)
+            final DoubleScalar.Abs<FrequencyUnit> capacity)
     {
+        double dx = endNode.getX() - startNode.getX();
+        double dy = endNode.getY() - startNode.getY();
+        double distSquared = dx * dx + dy * dy;
+        if (distSquared < 0.00000000001)
+        {
+            System.out.println("Nodes clash: " + startNode + "(" + startNode.getX() + "," + startNode.getY() + "), "
+                    + endNode + "(" + endNode.getX() + "," + endNode.getY() + ")");
+        }
         this.id = id;
         this.startNode = startNode;
         this.endNode = endNode;
@@ -74,7 +83,7 @@ public abstract class AbstractLink<IDL, IDN, P, N extends AbstractNode<IDN, P>> 
     public AbstractLink(final IDL id, final N startNode, final N endNode, final DoubleScalar.Rel<LengthUnit> length)
     {
         this(id, startNode, endNode, length, new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY,
-            FrequencyUnit.PER_SECOND));
+                FrequencyUnit.PER_SECOND));
     }
 
     /**

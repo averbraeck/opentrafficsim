@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.opentrafficsim.importexport.osm.events.ProgressEvent;
 import org.opentrafficsim.importexport.osm.events.ProgressListener;
+import org.opentrafficsim.importexport.osm.events.WarningEvent;
 import org.opentrafficsim.importexport.osm.events.WarningListener;
 
 /**
@@ -255,6 +256,15 @@ public class OSMNetwork
                 // Workaround for bug in OSM near Mettmann Germany
                 if (fromNode == toNode)
                 {
+                    continue;
+                }
+                // Something similar occurs in Duesseldorf (PK), but the node ids are different; work-around below
+                if (fromNode.getLatitude() == toNode.getLatitude()
+                        && (fromNode.getLongitude() == toNode.getLongitude()))
+                {
+                    warningListener.warning(new WarningEvent(this, String.format("Node clash %s vs %s", fromNode,
+                            toNode)));
+                    // FIXME: should probably assign all link end points of toNode to fromNode
                     continue;
                 }
                 double x1 = fromNode.getLatitude();
