@@ -128,7 +128,7 @@ public abstract class CrossSectionElement implements LocatableInterface
         Coordinate[] referenceCoordinates = referenceLine.getCoordinates();
         // printCoordinates("reference", referenceCoordinates);
         double bufferOffset = Math.abs(offset);
-        final double precision = 0.0001; // XXX moved earlier in the method
+        final double precision = 0.00001;
         if (bufferOffset < precision) // FIXME if this is not added, and offset = 1E-16: CRASH
         {
             // return a copy of the reference line
@@ -165,6 +165,11 @@ public abstract class CrossSectionElement implements LocatableInterface
         }
         if (startIndexSet.size() != 2)
         {
+            for (int i = 0; i < bufferCoordinates.length; i++) // Note: the last coordinate = the first coordinate
+            {
+                Coordinate c = bufferCoordinates[i];
+                System.out.println(String.format("point %d %s limit %s", i, Math.abs(c.distance(sC) - bufferOffset), bufferOffset * precision));
+            }
             throw new NetworkException("offsetGeometry: startIndexSet.size() = " + startIndexSet.size());
         }
         if (endIndexSet.size() != 2)

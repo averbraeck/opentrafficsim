@@ -185,8 +185,9 @@ public class OSMParser implements Sink
         HashMap<Long, OSMNode> usedNodes = new HashMap<Long, OSMNode>();
         double total = this.net.getWays().size() + this.net.getRelations().size();
         double counter = 0;
-        double nextPercentage = 5.0D;
-        this.progressListener.progress(new ProgressEvent(this, "Starting node cleanup."));
+        double percentageStep = 20.0d;
+        double nextPercentage = percentageStep;
+        this.progressListener.progress(new ProgressEvent(this, "Removing unused nodes"));
         for (Long wid : this.net.getWays().keySet())
         {
             try
@@ -194,7 +195,7 @@ public class OSMParser implements Sink
                 OSMWay w = this.net.getWay(wid);
                 for (Long nid : w.getNodes())
                 {
-                    if (this.net.getNodes().keySet().contains(nid) && !usedNodes.containsKey(nid))
+                    if (this.net.getNodes().containsKey(nid) && !usedNodes.containsKey(nid))
                     {
                         usedNodes.put(nid, this.net.getNode(nid));
                     }
@@ -204,22 +205,20 @@ public class OSMParser implements Sink
             {
                 e.printStackTrace();
             }
-            counter++;
-            double currentPercentage = counter / total * 100;
-            if (currentPercentage >= nextPercentage)
+            if (++counter / total * 100 >= nextPercentage)
             {
-                this.progressListener.progress(new ProgressEvent(this, nextPercentage + "% Progress"));
-                nextPercentage += 5.0D;
+                this.progressListener.progress(new ProgressEvent(this, "Removing unused nodes " + nextPercentage + "%"));
+                nextPercentage += percentageStep;
             }
         }
-        for (Long rid : this.net.getRelations().keySet())
+        for (OSMRelation r : this.net.getRelations().values())
         {
             try
             {
-                OSMRelation r = this.net.getRelation(rid);
+                //OSMRelation r = this.net.getRelation(rid);
                 for (Long nid : r.getNodes())
                 {
-                    if (this.net.getNodes().keySet().contains(nid) && !usedNodes.containsKey(nid))
+                    if (this.net.getNodes().containsKey(nid) && !usedNodes.containsKey(nid))
                     {
                         usedNodes.put(nid, this.net.getNode(nid));
                     }
@@ -229,12 +228,10 @@ public class OSMParser implements Sink
             {
                 e.printStackTrace();
             }
-            counter++;
-            double currentPercentage = counter / total * 100;
-            if (currentPercentage >= nextPercentage)
+            if (++counter / total * 100 >= nextPercentage)
             {
-                this.progressListener.progress(new ProgressEvent(this, nextPercentage + "% Progress"));
-                nextPercentage += 5.0D;
+                this.progressListener.progress(new ProgressEvent(this, "Removing unused nodes " + nextPercentage + "%"));
+                nextPercentage += percentageStep;
             }
         }
         this.net.setNodes(usedNodes);
