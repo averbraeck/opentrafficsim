@@ -6,8 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -19,14 +17,11 @@ import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.animation.TimeSeriesChart;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripInfo;
-import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
 
@@ -261,8 +256,8 @@ public class WriteOutput
                         {
                             linkIndex.put(link, i);
                             indexLink.put(i, link);
-                            indexStartNode.put(i, link.getStartNode());
-                            indexEndNode.put(i, link.getEndNode());
+                            indexStartNode.put(i, (Node) link.getStartNode());
+                            indexEndNode.put(i, (Node) link.getEndNode());
                             cellID[i] = String.valueOf(linkNumber);
 
                             if (DATATYPE == "cellData")
@@ -1351,8 +1346,8 @@ public class WriteOutput
         Coordinate pointB = null;
         LineString line = ctmLink.getGeometry().getLineString();
         LengthIndexedLine indexedLine = new LengthIndexedLine(line);
-        if (ctmLink.getStartNode().getPoint().getCoordinate().x == line.getCoordinates()[0].x
-                && ctmLink.getStartNode().getPoint().getCoordinate().y == line.getCoordinates()[0].y)
+        if (ctmLink.getStartNode().getPoint().x == line.getCoordinates()[0].x
+                && ctmLink.getStartNode().getPoint().y == line.getCoordinates()[0].y)
         {
             pointA = indexedLine.extractPoint(line.getLength() * (index) / totalNumberOfCells);
             pointB = indexedLine.extractPoint(line.getLength() * (index + 1) / totalNumberOfCells);

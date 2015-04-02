@@ -15,6 +15,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.demo.ntm.Link;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
 
 /**
@@ -52,10 +53,10 @@ public class LinkAnimation extends Renderable2D
         graphics.setColor(Color.BLACK);
         Stroke oldStroke = graphics.getStroke();
         graphics.setStroke(new BasicStroke(this.width));
-        Point a = ((Link) getSource()).getStartNode().getPoint();
-        Point b = ((Link) getSource()).getEndNode().getPoint();
+        Coordinate a = ((Link) getSource()).getStartNode().getPoint();
+        Coordinate b = ((Link) getSource()).getEndNode().getPoint();
         // draw relative to point A (getLocation)
-        graphics.draw(new Line2D.Double(0.0, 0.0, b.getX() - a.getX(), a.getY() - b.getY()));
+        graphics.draw(new Line2D.Double(0.0, 0.0, b.x - a.x, a.y - b.y));
         graphics.setStroke(oldStroke);
     }
 
