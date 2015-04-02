@@ -60,7 +60,15 @@ public class OSMLink
         {
             throw new Error("Start and end of link are the same Node: " + fromNode);
         }
-        this.iD = Objects.toString(fromNode.getId()) + Objects.toString(toNode.getId());
+        String name = "";
+        for (OSMTag tag : lt)
+        {
+            if (tag.getKey().equals("name"))
+            {
+                name = ": " + tag.getValue();
+            }
+        }
+        this.iD = Objects.toString(fromNode.getId()) + Objects.toString(toNode.getId()) + name;
         this.start = fromNode;
         this.end = toNode;
         this.length = length;
