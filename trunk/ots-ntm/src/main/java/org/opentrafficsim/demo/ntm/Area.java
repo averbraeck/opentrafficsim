@@ -8,17 +8,16 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
-import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
-
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
+
+import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -52,12 +51,13 @@ import com.vividsolutions.jts.geom.Point;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Area extends GeoObject implements LocatableInterface 
+public class Area extends GeoObject implements LocatableInterface
 {
 
     /**
      * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+     * reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version 10 Oct 2014 <br>
@@ -86,34 +86,35 @@ public class Area extends GeoObject implements LocatableInterface
     /** DHB class java.lang.Double 70.0 */
     private final double dhb;
 
-    /** Centroid as a Point */
-    private final Point centroid;
+    /** Centroid as a Coordinate. */
+    private final Coordinate centroid;
 
     /** */
     private DoubleScalar.Abs<SpeedUnit> averageSpeed;
-    
+
     /** */
     private DoubleScalar.Abs<SpeedUnit> currentSpeed;
-    
+
     /** */
     private DoubleScalar.Rel<LengthUnit> roadLength;
-    
+
     /** */
     private ParametersNTM parametersNTM;
-    
+
     /** polygon for drawing relative to centroid */
     private Set<Path2D> polygons = null;
-    
+
     /** */
     private TrafficBehaviourType trafficBehaviourType;
 
     private double increaseDemandByFactor;
+
     /** The parameters for the NFD. */
 
-    
     /**
      * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+     * reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version 7 Oct 2014 <br>
@@ -123,29 +124,28 @@ public class Area extends GeoObject implements LocatableInterface
      * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
      * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
      */
-    
-    
 
     /** The number of cars within this Area. */
     private double accumulatedCars;
+
     /**
      * @param geometry the_geom class com.vividsolutions.jts.geom.MultiPolygon MULTIPOLYGON (((81816.4228569232 ...
-     * @param centroidNr 
+     * @param centroidNr
      * @param name NAME class java.lang.String 70 Oostduinen
      * @param gemeente GEMEENTEVM class java.lang.String sGravenhage
      * @param gebied GEBIEDSNAA class java.lang.String Studiegebied
      * @param regio REGIO class java.lang.String Den_Haag
      * @param dhb DHB class java.lang.Double 70.0
      * @param centroid Centroid as a Point
-     * @param trafficBehaviourType 
-     * @param roadLength 
-     * @param averageSpeed 
-     * @param increaseDemandByFactor 
-
+     * @param trafficBehaviourType
+     * @param roadLength
+     * @param averageSpeed
+     * @param increaseDemandByFactor
      */
-    public Area(final Geometry geometry, final String centroidNr, final String name, final String gemeente, final String gebied,
-            final String regio, final double dhb, final Point centroid, final TrafficBehaviourType trafficBehaviourType,
-            Rel<LengthUnit> roadLength, Abs<SpeedUnit> averageSpeed, double increaseDemandByFactor, ParametersNTM parametersNTM)
+    public Area(final Geometry geometry, final String centroidNr, final String name, final String gemeente,
+            final String gebied, final String regio, final double dhb, final Coordinate centroid,
+            final TrafficBehaviourType trafficBehaviourType, Rel<LengthUnit> roadLength, Abs<SpeedUnit> averageSpeed,
+            double increaseDemandByFactor, ParametersNTM parametersNTM)
     {
         super(geometry);
         this.centroidNr = centroidNr;
@@ -219,7 +219,7 @@ public class Area extends GeoObject implements LocatableInterface
     /**
      * @return centroid
      */
-    public final Point getCentroid()
+    public final Coordinate getCentroid()
     {
         return this.centroid;
     }
@@ -272,8 +272,6 @@ public class Area extends GeoObject implements LocatableInterface
         return this.dhb;
     }
 
-
-
     /**
      * @return accumulatedCars.
      */
@@ -290,11 +288,9 @@ public class Area extends GeoObject implements LocatableInterface
         this.accumulatedCars = d;
     }
 
-
-
     /**
      * @return areaType.
-     */ 
+     */
     public final TrafficBehaviourType getTrafficBehaviourType()
     {
         return this.trafficBehaviourType;
@@ -325,11 +321,11 @@ public class Area extends GeoObject implements LocatableInterface
     }
 
     /**
-     * @param rel 
+     * @param rel
      */
     public void addRoadLength(Rel<LengthUnit> rel)
     {
-        this.roadLength = DoubleScalar.plus(rel, this.roadLength).immutable();        
+        this.roadLength = DoubleScalar.plus(rel, this.roadLength).immutable();
     }
 
     /**
@@ -395,8 +391,5 @@ public class Area extends GeoObject implements LocatableInterface
     {
         this.parametersNTM = parametersNTM;
     }
-
-
-
 
 }

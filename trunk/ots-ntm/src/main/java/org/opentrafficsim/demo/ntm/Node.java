@@ -7,9 +7,13 @@ import java.util.Comparator;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
+
 import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opentrafficsim.core.network.AbstractNode;
+import org.opentrafficsim.core.network.geotools.NodeGeotools;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -27,7 +31,7 @@ import com.vividsolutions.jts.geom.Point;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class Node extends AbstractNode<String, Point> implements Comparable<Node>
+public class Node extends NodeGeotools<String> implements Comparable<Node>
 {
     /**
      * <p>
@@ -67,7 +71,7 @@ public class Node extends AbstractNode<String, Point> implements Comparable<Node
      * @param point ...
      * @param behaviourType describes traffic behaviour of units moving through the "node"
      */
-    public Node(String nr, Point point, TrafficBehaviourType behaviourType)
+    public Node(String nr, Coordinate point, TrafficBehaviourType behaviourType)
     {
         super(nr, point);
         // long index = indexNumber++;
@@ -81,26 +85,9 @@ public class Node extends AbstractNode<String, Point> implements Comparable<Node
      * @param y1 coord
      * @return new Point
      */
-    public static Point createPoint(double x1, double y1)
+    public static Coordinate createPoint(double x1, double y1)
     {
-        GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
-        Coordinate coord = new Coordinate(x1, y1);
-        Point newPoint = geometryFactory.createPoint(coord);
-        return newPoint;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final DirectedPoint getLocation() throws RemoteException
-    {
-        return new DirectedPoint(new double[]{getPoint().getX(), getPoint().getY(), 0.0d});
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final Bounds getBounds() throws RemoteException
-    {
-        return new BoundingSphere(new Point3d(0.0d, 0.0d, 0.0d), 10.0d);
+        return new Coordinate(x1, y1);
     }
 
     /**
@@ -117,15 +104,6 @@ public class Node extends AbstractNode<String, Point> implements Comparable<Node
     public final void setBehaviourType(final TrafficBehaviourType behaviourType)
     {
         this.behaviourType = behaviourType;
-    }
-
-    /** {@inheritDoc} */
-    @SuppressWarnings("checkstyle:designforextension")
-    @Override
-    public String toString()
-    {
-        //return "Node [centroid=" + getPoint() + "]";
-        return getId();
     }
 
     /** {@inheritDoc} */

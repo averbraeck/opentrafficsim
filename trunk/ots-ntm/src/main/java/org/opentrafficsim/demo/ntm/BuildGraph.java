@@ -1,18 +1,13 @@
 package org.opentrafficsim.demo.ntm;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
-import org.jgrapht.alg.FloydWarshallShortestPaths;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.jgrapht.graph.SimpleWeightedGraph;
-import org.opentrafficsim.core.network.AbstractNode;
 import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -23,9 +18,10 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.TopologyException;
 import com.vividsolutions.jts.index.SpatialIndex;
 import com.vividsolutions.jts.index.strtree.STRtree;
@@ -77,12 +73,12 @@ public class BuildGraph
             BoundedNode nodeA = (BoundedNode) nodeMap.get(shpLink.getStartNode().getId());
             if (nodeA == null)
             {
-                nodeA = addNodeToLinkGraph(shpLink, shpLink.getStartNode(), nodeMap, areasToUse.values(), model);
+                nodeA = addNodeToLinkGraph(shpLink, (Node) shpLink.getStartNode(), nodeMap, areasToUse.values(), model);
             }
             BoundedNode nodeB = (BoundedNode) nodeMap.get(shpLink.getEndNode().getId());
             if (nodeB == null)
             {
-                nodeB = addNodeToLinkGraph(shpLink, shpLink.getEndNode(), nodeMap, areasToUse.values(), model);
+                nodeB = addNodeToLinkGraph(shpLink, (Node) shpLink.getEndNode(), nodeMap, areasToUse.values(), model);
             }
 
             try
@@ -107,7 +103,7 @@ public class BuildGraph
                 if (nodeA == null)
                 {
                     nodeA =
-                            addNodeToAreaGraph(shpLink, shpLink.getStartNode(), model.getNodeAreaGraphMap(),
+                            addNodeToAreaGraph(shpLink, (Node) shpLink.getStartNode(), model.getNodeAreaGraphMap(),
                                     areaNodeCentroidMap, areasToUse.values(), model);
                 }
 
@@ -115,7 +111,7 @@ public class BuildGraph
                 if (nodeB == null)
                 {
                     nodeB =
-                            addNodeToAreaGraph(shpLink, shpLink.getEndNode(), model.getNodeAreaGraphMap(),
+                            addNodeToAreaGraph(shpLink, (Node) shpLink.getEndNode(), model.getNodeAreaGraphMap(),
                                     areaNodeCentroidMap, areasToUse.values(), model);
                 }
             }
@@ -318,8 +314,8 @@ public class BuildGraph
         {
             // test: from node 314071 (Scheveningen) to node 78816 (Voorburg)
             System.out.println("\nScheveningen -> Voorburg via centroids");
-            Point pSch = nodeMap.get("314071").getPoint();
-            Point pVb = nodeMap.get("78816").getPoint();
+            Coordinate pSch = nodeMap.get("314071").getPoint();
+            Coordinate pVb = nodeMap.get("78816").getPoint();
             Area aSch;
             Area aVb;
             aSch = findArea(pSch, areasToUse.values());
@@ -374,10 +370,10 @@ public class BuildGraph
             {
 
                 time = new DoubleScalar.Rel<TimeUnit>(sp.getPath().getWeight(), TimeUnit.HOUR);
-                double xA = cAVertex.getPoint().getCoordinate().x;
-                double yA = cAVertex.getPoint().getCoordinate().y;
-                double xB = cBVertex.getPoint().getCoordinate().x;
-                double yB = cBVertex.getPoint().getCoordinate().y;
+                double xA = cAVertex.getPoint().x;
+                double yA = cAVertex.getPoint().y;
+                double xB = cBVertex.getPoint().x;
+                double yB = cBVertex.getPoint().y;
                 // TODO check distance by coordinates!!!!
                 double distance = 1.3 * Math.sqrt(Math.pow(xB - xA, 2) + Math.pow(yB - yA, 2));
                 double timeDouble = 0.5 * distance / speedA.getSI() + 0.5 * distance / speedB.getSI();
@@ -385,8 +381,7 @@ public class BuildGraph
                 double speedDouble =
                         0.5 * speedA.getInUnit(SpeedUnit.KM_PER_HOUR) + 0.5 * speedB.getInUnit(SpeedUnit.KM_PER_HOUR);
                 DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(speedDouble, SpeedUnit.KM_PER_HOUR);
-                int hierarchy = le.getLink().getHierarchy();
-                Link newLink = Link.createLink(cAVertex, cBVertex, null, speed, time, trafficBehaviourType, hierarchy);
+                Link newLink = Link.createLink(cAVertex, cBVertex, null, speed, time, trafficBehaviourType);
                 if (le.getLink().getCapacity() != null)
                 {
                     newLink.setCorridorCapacity(le.getLink().getCapacity());
@@ -527,7 +522,8 @@ public class BuildGraph
         BoundedNode centroid = null;
         for (Node node : collection)
         {
-            if (area.getGeometry().contains(node.getPoint()))
+            Geometry g = new GeometryFactory().createPoint(node.getPoint());
+            if (area.getGeometry().contains(g))
             {
                 // TODO later: why multiple areas
                 /*
@@ -548,15 +544,16 @@ public class BuildGraph
     }
 
     /**
-     * @param p the point to search.
+     * @param c the point to search.
      * @return the area that contains point p, or null if not found.
      */
-    private static Area findArea(final Point p, Collection<Area> areas)
+    private static Area findArea(final Coordinate c, Collection<Area> areas)
     {
+        Geometry g = new GeometryFactory().createPoint(c);
         Area area = null;
         for (Area a : areas)
         {
-            if (a.getGeometry().contains(p))
+            if (a.getGeometry().contains(g))
             {
                 // TODO later: why multiple areas
                 /*
@@ -791,7 +788,7 @@ public class BuildGraph
             final Map<String, LinkEdge<Link>> linkMap, final Map<Area, Node> areaNodeCentroidMap,
             final Map<String, Node> nodeGraphMap, NTMModel model, Map<String, Area> areasToUse)
     {
-        Node node = le.getLink().getStartNode();
+        Node node = (Node) le.getLink().getStartNode();
         BoundedNode flowNodeStart = (BoundedNode) nodeGraphMap.get(node.getId());
         if (flowNodeStart.getArea() == null)
         {
@@ -799,7 +796,7 @@ public class BuildGraph
         }
         // BoundedNode flowNodeStart = new BoundedNode(node.getPoint(), node.getId(), areaStart,
         // node.getBehaviourType());
-        node = le.getLink().getEndNode();
+        node = (Node) le.getLink().getEndNode();
         BoundedNode flowNodeEnd = (BoundedNode) nodeGraphMap.get(node.getId());
         if (flowNodeEnd.getArea() == null)
         {
@@ -813,7 +810,6 @@ public class BuildGraph
         LinkCellTransmission linkCTM = new LinkCellTransmission(link, flowNodeStart, flowNodeEnd, cells);
         @SuppressWarnings({"unchecked", "rawtypes"})
         LinkEdge leNew = new LinkEdge(linkCTM);
-        int hierarchy = le.getLink().getHierarchy();
         addLinkEdge(flowNodeStart, flowNodeEnd, leNew, TrafficBehaviourType.FLOW, model.getAreaGraph());
         // loop through the other links to find the links that connect
         BoundedNode cA = null;
@@ -841,8 +837,7 @@ public class BuildGraph
 
                         new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
                         Link newLink =
-                                Link.createLink(cA, flowNodeStart, capacity, speed, null, TrafficBehaviourType.NTM,
-                                        hierarchy);
+                                Link.createLink(cA, flowNodeStart, capacity, speed, null, TrafficBehaviourType.NTM);
                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
                         addLinkEdge(cA, flowNodeStart, newLinkEdge, TrafficBehaviourType.NTM, model.getAreaGraph());
 
@@ -870,8 +865,7 @@ public class BuildGraph
                         DoubleScalar.Abs<FrequencyUnit> capacity =
                                 new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
                         Link newLink =
-                                Link.createLink(flowNodeEnd, cB, capacity, speed, null, TrafficBehaviourType.NTM,
-                                        hierarchy);
+                                Link.createLink(flowNodeEnd, cB, capacity, speed, null, TrafficBehaviourType.NTM);
                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
                         addLinkEdge(flowNodeEnd, cB, newLinkEdge, TrafficBehaviourType.NTM, model.getAreaGraph());
                     }
@@ -889,7 +883,7 @@ public class BuildGraph
                 if (urbanLink.getLink().getEndNode().getId().equals(flowNodeStart.getId()))
                 {
                     // from urban (Area) to Highway (flow)
-                    node = urbanLink.getLink().getStartNode();
+                    node = (Node) urbanLink.getLink().getStartNode();
                     cA = (BoundedNode) nodeGraphMap.get(node.getId());
 
                     // cA = new BoundedNode(node.getPoint(), node.getId(), areaStart, node.getBehaviourType());
@@ -904,8 +898,7 @@ public class BuildGraph
                         DoubleScalar.Abs<FrequencyUnit> capacity =
                                 new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
                         Link newLink =
-                                Link.createLink(cA, flowNodeStart, capacity, speed, null, TrafficBehaviourType.CORDON,
-                                        hierarchy);
+                                Link.createLink(cA, flowNodeStart, capacity, speed, null, TrafficBehaviourType.CORDON);
                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
                         addLinkEdge(cA, flowNodeStart, newLinkEdge, TrafficBehaviourType.CORDON, model.getAreaGraph());
                     }
@@ -914,7 +907,7 @@ public class BuildGraph
                 else if (urbanLink.getLink().getStartNode().getId().equals(flowNodeEnd.getId()))
                 {
                     // from Highway (flow) to urban (Area)
-                    node = urbanLink.getLink().getEndNode();
+                    node = (Node) urbanLink.getLink().getEndNode();
                     cB = (BoundedNode) nodeGraphMap.get(node.getId());
 
                     // cB = new BoundedNode(node.getPoint(), node.getId(), areaEnd, node.getBehaviourType());
@@ -929,8 +922,7 @@ public class BuildGraph
                         DoubleScalar.Abs<FrequencyUnit> capacity =
                                 new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
                         Link newLink =
-                                Link.createLink(flowNodeEnd, cB, capacity, speed, null, TrafficBehaviourType.CORDON,
-                                        hierarchy);
+                                Link.createLink(flowNodeEnd, cB, capacity, speed, null, TrafficBehaviourType.CORDON);
                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
                         addLinkEdge(flowNodeEnd, cB, newLinkEdge, TrafficBehaviourType.CORDON, model.getAreaGraph());
                     }
@@ -948,8 +940,8 @@ public class BuildGraph
      */
     public static Area createMissingArea(final Node centroid)
     {
-        Geometry buffer = centroid.getPoint().getGeometryN(0).buffer(30);
-        Point centroid1 = buffer.getCentroid();
+        Geometry cg = new GeometryFactory().createPoint(centroid.getPoint());
+        Geometry buffer = cg.buffer(30);
         String nr = centroid.getId();
         String name = centroid.getId();
         String gemeente = "Area is missing for: " + centroid.getId();
@@ -959,7 +951,7 @@ public class BuildGraph
         Double increaseDemandByFactor = 1.0;
         ParametersNTM parametersNTM = new ParametersNTM();
         Area area =
-                new Area(buffer, nr, name, gemeente, gebied, regio, dhb, centroid1, TrafficBehaviourType.NTM,
+                new Area(buffer, nr, name, gemeente, gebied, regio, dhb, centroid.getPoint(), TrafficBehaviourType.NTM,
                         new Rel<LengthUnit>(0, LengthUnit.METER), new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
                         increaseDemandByFactor, parametersNTM);
         return area;

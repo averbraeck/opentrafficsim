@@ -19,7 +19,9 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.naming.NamingException;
+
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -35,23 +37,20 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.animation.AreaAnimation;
-import org.opentrafficsim.demo.ntm.animation.AreaFlowLinkAnimation;
 import org.opentrafficsim.demo.ntm.animation.NodeAnimation;
 import org.opentrafficsim.demo.ntm.animation.ShpLinkAnimation;
 import org.opentrafficsim.demo.ntm.animation.ShpNodeAnimation;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeObject;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeStore;
 import org.opentrafficsim.demo.ntm.trafficdemand.DepartureTimeProfile;
-import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
 import org.opentrafficsim.demo.ntm.trafficdemand.TripDemand;
+import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * <p>
@@ -243,11 +242,13 @@ public class NTMModel implements OTSModelInterface
                     accCritical.add(accCritMaxCapEnd);
                     accCritical.add(accCritJam);
                     ParametersNTM parametersNTM = new ParametersNTM(accCritical);
+                    Point p = shape.getGeometry().getCentroid();
+                    Coordinate centroid = new Coordinate(p.getX(), p.getY());
                     Area bigArea =
-                            new Area(shape.getGeometry(), areaName, "name", "gemeente", "gebied", "regio", 0, shape
-                                    .getGeometry().getCentroid(), TrafficBehaviourType.NTM, new Rel<LengthUnit>(0,
-                                    LengthUnit.KILOMETER), new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), this
-                                    .getInputNTM().getScalingFactorDemand(), parametersNTM);
+                            new Area(shape.getGeometry(), areaName, "name", "gemeente", "gebied", "regio", 0, centroid,
+                                    TrafficBehaviourType.NTM, new Rel<LengthUnit>(0, LengthUnit.KILOMETER),
+                                    new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), this.getInputNTM()
+                                            .getScalingFactorDemand(), parametersNTM);
                     this.bigAreas.put(bigArea.getCentroidNr(), bigArea);
                 }
                 // create new centroids
@@ -366,11 +367,12 @@ public class NTMModel implements OTSModelInterface
                 coordinates[2] = cellPoints.get(1);
                 LineString linear = new GeometryFactory().createLineString(coordinates);
                 Geometry buffer = linear.buffer(30);
-                Point centroid1 = buffer.getCentroid();
+                Point centroidPoint = buffer.getCentroid();
+                Coordinate centroid = new Coordinate(centroidPoint.getX(), centroidPoint.getY());
                 double dhb = 0.0;
                 ParametersNTM parametersNTM = new ParametersNTM();
                 AreaFlowLink areaFlowLink =
-                        new AreaFlowLink(buffer, "test", "test", "test", "test", "test", dhb, centroid1,
+                        new AreaFlowLink(buffer, "test", "test", "test", "test", "test", dhb, centroid,
                                 TrafficBehaviourType.NTM, new Rel<LengthUnit>(0, LengthUnit.METER), new Abs<SpeedUnit>(
                                         0, SpeedUnit.KM_PER_HOUR), 1.0, parametersNTM, linkCTM, linkCTM.getCells()
                                         .indexOf(cell));
@@ -399,11 +401,15 @@ public class NTMModel implements OTSModelInterface
             int NTM = 0;
             int CORDON = 0;
             String nr = bigArea.getValues().get(0);
-            Node bigCentroid = new Node(nr, bigArea.getGeometry().getCentroid(), TrafficBehaviourType.NTM);
+            Point centroidPoint = bigArea.getGeometry().getCentroid();
+            Coordinate centroidCoordinate = new Coordinate(centroidPoint.getX(), centroidPoint.getY());
+            Node bigCentroid = new Node(nr, centroidCoordinate, TrafficBehaviourType.NTM);
             bigCentroids.put(nr, bigCentroid);
             for (Node centroid : centroids.values())
             {
-                if (bigArea.getGeometry().covers(centroid.getPoint()))
+                Coordinate nodeCoordinate = centroid.getPoint();
+                Geometry nodeGeometry = new GeometryFactory().createPoint(nodeCoordinate);
+                if (bigArea.getGeometry().covers(nodeGeometry))
                 {
                     mapSmallAreaToBigArea.put(centroid, bigCentroid);
                     if (centroid.getBehaviourType() == TrafficBehaviourType.CORDON)
@@ -528,7 +534,7 @@ public class NTMModel implements OTSModelInterface
                 for (LinkEdge<Link> link : outGoing)
                 {
                     double factor = 1.0;
-                    Node neighbourNode = link.getLink().getEndNode();
+                    Node neighbourNode = (Node) link.getLink().getEndNode();
                     BoundedNode graphEndNode = (BoundedNode) this.getNodeAreaGraphMap().get(neighbourNode.getId());
                     if (!borderCapacityAreasMap.isEmpty())
                     {
@@ -594,16 +600,16 @@ public class NTMModel implements OTSModelInterface
             if (startNode != null)
             {
                 newConnector =
-                        new Link(link.getGeometry(), link.getId(), link.getLength(), startNode, link.getEndNode(),
-                                link.getFreeSpeed(), null, link.getCapacity(), link.getBehaviourType(),
-                                link.getLinkData(), link.getHierarchy());
+                        new Link(link.getGeometry(), link.getId(), link.getLength(), startNode,
+                                (Node) link.getEndNode(), link.getFreeSpeed(), null, link.getCapacity(),
+                                link.getBehaviourType(), link.getLinkData());
             }
             else if (endNode != null)
             {
                 newConnector =
-                        new Link(link.getGeometry(), link.getId(), link.getLength(), link.getStartNode(), endNode,
-                                link.getFreeSpeed(), null, link.getCapacity(), link.getBehaviourType(),
-                                link.getLinkData(), link.getHierarchy());
+                        new Link(link.getGeometry(), link.getId(), link.getLength(), (Node) link.getStartNode(),
+                                endNode, link.getFreeSpeed(), null, link.getCapacity(), link.getBehaviourType(),
+                                link.getLinkData());
             }
             else
             {
@@ -1113,8 +1119,8 @@ public class NTMModel implements OTSModelInterface
                     System.out.println("NTMModel line 694 ... no geometry");
                 }
                 flowLink.setBehaviourType(TrafficBehaviourType.FLOW);
-                flowLink.getStartNode().setBehaviourType(TrafficBehaviourType.FLOW);
-                flowLink.getEndNode().setBehaviourType(TrafficBehaviourType.FLOW);
+                ((Node) flowLink.getStartNode()).setBehaviourType(TrafficBehaviourType.FLOW);
+                ((Node) flowLink.getEndNode()).setBehaviourType(TrafficBehaviourType.FLOW);
                 flowLinks.put(flowLink.getId(), flowLink);
             }
         }

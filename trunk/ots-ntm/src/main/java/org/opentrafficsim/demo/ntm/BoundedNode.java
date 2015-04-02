@@ -1,13 +1,9 @@
 package org.opentrafficsim.demo.ntm;
 
-import java.util.ArrayList;
-
-import org.opentrafficsim.core.unit.FrequencyUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
-import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * <p>
@@ -32,6 +28,29 @@ public class BoundedNode extends Node
 
     /** */
     private CellBehaviour cellBehaviour;
+    
+    private static double zCoordinate(TrafficBehaviourType behaviourType)
+    {
+        if (null == behaviourType)
+        {
+            System.out.println("WTF");
+        }
+        switch (behaviourType)
+        {
+            case CENTROID:
+                throw new Error("centroid does not have z value");
+            case CORDON:
+                return 3;
+            case FLOW:
+                return 4;
+            case NTM:
+                return 2;
+            case ROAD:
+                return 2;
+            default:
+                throw new Error("Unhandled BehaviourType: " + behaviourType);
+        }
+    }
 
     /**
      * /**
@@ -41,31 +60,24 @@ public class BoundedNode extends Node
      * @param behaviourType describes behaviour of the node depending on its type
      * @param parametersNTM
      */
-    public BoundedNode(final Point centroid, final String nr, final Area area, final TrafficBehaviourType behaviourType)
+    public BoundedNode(final Coordinate centroid, final String nr, final Area area, final TrafficBehaviourType behaviourType)
     {
-        super(nr, centroid, behaviourType);
+        super(nr, new Coordinate(centroid.x, centroid.y, zCoordinate(behaviourType)), behaviourType);
         this.area = area;
 
         if (behaviourType == TrafficBehaviourType.ROAD)
         {
-            this.getPoint().getCoordinate().z = 2;
             this.setCellBehaviour(new CellBehaviour());
         }
         else if (behaviourType == TrafficBehaviourType.NTM)
         {
-            this.getPoint().getCoordinate().z = 2;
             ParametersNTM parametersNTM = null;
             parametersNTM = new ParametersNTM(area.getAverageSpeed(), area.getRoadLength());
-            if (parametersNTM.getCapacity() == null)
-            {
-
-            }
             this.setCellBehaviour(new CellBehaviourNTM(area, parametersNTM));
         }
 
         else if (behaviourType == TrafficBehaviourType.FLOW)
         {
-            this.getPoint().getCoordinate().z = 4;
             DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(80, SpeedUnit.KM_PER_HOUR);
             // TODO parameters should depend on area characteristics
             // DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane = new DoubleScalar.Abs<FrequencyUnit>(2000,
@@ -77,7 +89,6 @@ public class BoundedNode extends Node
 
         else if (behaviourType == TrafficBehaviourType.CORDON)
         {
-            this.getPoint().getCoordinate().z = 3;
             this.setCellBehaviour(new CellBehaviourCordon());
         }
 

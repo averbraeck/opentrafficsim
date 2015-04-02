@@ -12,25 +12,22 @@ import java.util.Set;
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
+import nl.tudelft.simulation.language.d3.BoundingBox;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.geotools.geometry.jts.JTSFactoryFinder;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opentrafficsim.core.network.AbstractLink;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.LinearGeometry;
+import org.opentrafficsim.core.network.geotools.LinearGeometry;
+import org.opentrafficsim.core.network.geotools.LinkGeotools;
+import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SIUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
-import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
-
-import nl.tudelft.simulation.dsol.animation.LocatableInterface;
-import nl.tudelft.simulation.language.d3.BoundingBox;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -56,7 +53,7 @@ import com.vividsolutions.jts.operation.linemerge.LineMerger;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Link extends AbstractLink<String, Node>
+public class Link extends LinkGeotools<String, String>
 {
     /** SPEEDAB class java.lang.Double 120.0. */
     private DoubleScalar.Abs<SpeedUnit> freeSpeed;
@@ -79,12 +76,9 @@ public class Link extends AbstractLink<String, Node>
     /** traffic behaviour. */
     private TrafficBehaviourType behaviourType;
 
-
     /**
      * @param geometry
      * @param nr
-     * @param name
-     * @param direction
      * @param length
      * @param startNode
      * @param endNode
@@ -93,17 +87,22 @@ public class Link extends AbstractLink<String, Node>
      * @param capacity
      * @param behaviourType
      * @param linkData
-     * @param hierarchy
+     * @param name
+     * @param direction
      */
 
     public Link(final LinearGeometry geometry, final String nr, final DoubleScalar.Rel<LengthUnit> length,
             final Node startNode, final Node endNode, DoubleScalar.Abs<SpeedUnit> freeSpeed,
             DoubleScalar.Rel<TimeUnit> time, final DoubleScalar.Abs<FrequencyUnit> capacity,
-            final TrafficBehaviourType behaviourType, LinkData linkData, int hierarchy)
+            final TrafficBehaviourType behaviourType, LinkData linkData)
     {
-
-        super(nr, startNode, endNode, length, capacity, hierarchy);
-        setGeometry(geometry);
+        super(nr, startNode, endNode, length, capacity);
+        if (null == behaviourType)
+        {
+            System.out.println("behaviourType is null!");
+        }
+        // LinkGeotools(final IDL id, final NodeGeotools<IDN> startNode, final NodeGeotools<IDN> endNode,
+        // final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
         this.freeSpeed = freeSpeed;
         this.time = time;
         this.behaviourType = behaviourType;
@@ -119,14 +118,13 @@ public class Link extends AbstractLink<String, Node>
             }
             else
             {
-                if (Math.abs(cc[0].x - startNode.getPoint().getX()) > 0.001
-                        && Math.abs(cc[0].x - endNode.getPoint().getX()) > 0.001
-                        && Math.abs(cc[cc.length - 1].x - startNode.getPoint().getX()) > 0.001
-                        && Math.abs(cc[cc.length - 1].x - endNode.getPoint().getX()) > 0.001)
+                if (Math.abs(cc[0].x - startNode.getX()) > 0.001 && Math.abs(cc[0].x - endNode.getX()) > 0.001
+                        && Math.abs(cc[cc.length - 1].x - startNode.getX()) > 0.001
+                        && Math.abs(cc[cc.length - 1].x - endNode.getX()) > 0.001)
                 {
                     System.out.println("x coordinate non-match for " + nr + " (" + nr + "); cc[0].x=" + cc[0].x
-                            + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x=" + startNode.getPoint().getX()
-                            + ", nodeB.x=" + endNode.getPoint().getX());
+                            + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x=" + startNode.getX() + ", nodeB.x="
+                            + endNode.getX());
                 }
             }
         }
@@ -233,11 +231,11 @@ public class Link extends AbstractLink<String, Node>
      */
     public Link(final Link link)
     {
-        super(link.getId(), link.getStartNode(), link.getEndNode(), link.getLength(), link.getCapacity(), link
-                .getHierarchy());
+        super(link.getId(), link.getStartNode(), link.getEndNode(), link.getLength(), link.getCapacity());
         setGeometry(link.getGeometry());
         this.freeSpeed = link.freeSpeed;
         this.numberOfLanes = link.getNumberOfLanes();
+        this.behaviourType = link.behaviourType;
         if (this.getGeometry() != null)
         {
             Coordinate[] cc = this.getGeometry().getLineString().getCoordinates();
@@ -245,14 +243,13 @@ public class Link extends AbstractLink<String, Node>
                 System.out.println("cc.length = 0 for " + this.getId() + " (" + this.getId() + ")");
             else
             {
-                if (Math.abs(cc[0].x - this.getStartNode().getPoint().getX()) > 0.001
-                        && Math.abs(cc[0].x - this.getEndNode().getPoint().getX()) > 0.001
-                        && Math.abs(cc[cc.length - 1].x - this.getStartNode().getPoint().getX()) > 0.001
-                        && Math.abs(cc[cc.length - 1].x - this.getEndNode().getPoint().getX()) > 0.001)
+                if (Math.abs(cc[0].x - this.getStartNode().getX()) > 0.001
+                        && Math.abs(cc[0].x - this.getEndNode().getX()) > 0.001
+                        && Math.abs(cc[cc.length - 1].x - this.getStartNode().getX()) > 0.001
+                        && Math.abs(cc[cc.length - 1].x - this.getEndNode().getX()) > 0.001)
                     System.out.println("x coordinate non-match for " + this.getId() + " (" + this.getId()
                             + "); cc[0].x=" + cc[0].x + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x="
-                            + this.getStartNode().getPoint().getX() + ", nodeB.x="
-                            + this.getEndNode().getPoint().getX());
+                            + this.getStartNode().getX() + ", nodeB.x=" + this.getEndNode().getX());
             }
         }
     }
@@ -267,20 +264,19 @@ public class Link extends AbstractLink<String, Node>
      */
     public static Link createLink(Node startNode, Node endNode, Abs<FrequencyUnit> capacity,
             DoubleScalar.Abs<SpeedUnit> speed, DoubleScalar.Rel<TimeUnit> time,
-            TrafficBehaviourType trafficBehaviourType, int hierarchy)
+            TrafficBehaviourType trafficBehaviourType)
 
     {
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
-        Coordinate coordStart = new Coordinate(startNode.getPoint().getX(), startNode.getPoint().getY());
-        Coordinate coordEnd = new Coordinate(endNode.getPoint().getX(), endNode.getPoint().getY());
+        Coordinate coordStart = new Coordinate(startNode.getX(), startNode.getY());
+        Coordinate coordEnd = new Coordinate(endNode.getX(), endNode.getY());
         Coordinate[] coords = new Coordinate[]{coordStart, coordEnd};
         LineString line = geometryFactory.createLineString(coords);
         DoubleScalar.Rel<LengthUnit> length =
                 new DoubleScalar.Rel<LengthUnit>(startNode.getPoint().distance(endNode.getPoint()), LengthUnit.METER);
         String nr = startNode.getId() + " - " + endNode.getId();
         Link newLink =
-                new Link(null, nr, length, startNode, endNode, speed, null, capacity, trafficBehaviourType, null,
-                        hierarchy);
+                new Link(null, nr, length, startNode, endNode, speed, null, capacity, trafficBehaviourType, null);
         try
         {
             LinearGeometry geometry = new LinearGeometry(newLink, line, null);
@@ -299,8 +295,8 @@ public class Link extends AbstractLink<String, Node>
     public static void findSequentialLinks(final Map<String, Link> links, Map<String, Node> nodes)
     {
         // compare all links
-        HashMap<Node, ArrayList<Link>> linksStartAtNode = new HashMap<Node, ArrayList<Link>>();
-        HashMap<Node, ArrayList<Link>> linksEndAtNode = new HashMap<Node, ArrayList<Link>>();
+        HashMap<NodeGeotools, ArrayList<Link>> linksStartAtNode = new HashMap<NodeGeotools, ArrayList<Link>>();
+        HashMap<NodeGeotools, ArrayList<Link>> linksEndAtNode = new HashMap<NodeGeotools, ArrayList<Link>>();
         // HashMap<Node, Link> endNodeToLinkMap = new HashMap<Node, Link>();
         // HashMap<Node, Integer> numberOfLinksFromStartNodeMap = new HashMap<Node, Integer>();
         // find out how many links start from the endNode of a link
@@ -524,11 +520,9 @@ public class Link extends AbstractLink<String, Node>
 
         DoubleScalar.Rel<LengthUnit> length =
                 new DoubleScalar.Rel<LengthUnit>(up.getLength().getSI() + down.getLength().getSI(), LengthUnit.METER);
-
         mergedLink =
-                new Link(null, nr, length, up.getStartNode(), down.getEndNode(), up.getFreeSpeed(), up.getTime(),
-                        up.getCapacity(), up.getBehaviourType(), up.getLinkData(), up.getHierarchy());
-
+                new Link(null, nr, length, (Node) up.getStartNode(), (Node) down.getEndNode(), up.getFreeSpeed(),
+                        up.getTime(), up.getCapacity(), up.getBehaviourType(), up.getLinkData());
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         Coordinate[] coords = mergedGeometry.getCoordinates();
         LineString line = geometryFactory.createLineString(coords);
@@ -609,7 +603,6 @@ public class Link extends AbstractLink<String, Node>
         return this.freeSpeed;
     }
 
-
     /**
      * @return corridorCapacity.
      */
@@ -625,18 +618,18 @@ public class Link extends AbstractLink<String, Node>
     {
         this.corridorCapacity = corridorCapacity;
     }
-    
+
     /**
-     * @param roadCapacity 
+     * @param roadCapacity
      * @param linkData set linkData.
      */
-    public void addCorridorCapacity(Abs<FrequencyUnit>roadCapacity)
+    public void addCorridorCapacity(Abs<FrequencyUnit> roadCapacity)
     {
         double cap = roadCapacity.getInUnit(FrequencyUnit.PER_HOUR);
         Rel<FrequencyUnit> addCap = new Rel<FrequencyUnit>(cap, FrequencyUnit.PER_HOUR);
         this.corridorCapacity = DoubleScalar.plus(this.getCorridorCapacity(), addCap).immutable();
     }
-    
+
     /**
      * @return time.
      */
@@ -666,9 +659,12 @@ public class Link extends AbstractLink<String, Node>
      */
     public void setBehaviourType(TrafficBehaviourType behaviourType)
     {
+        if (null == behaviourType)
+        {
+            System.out.println("OOOPS");
+        }
         this.behaviourType = behaviourType;
     }
-
 
     /** {@inheritDoc} */
     @Override

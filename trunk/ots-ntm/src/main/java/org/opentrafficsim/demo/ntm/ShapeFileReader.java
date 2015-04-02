@@ -16,7 +16,7 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opentrafficsim.core.network.LinearGeometry;
+import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -119,7 +119,8 @@ public class ShapeFileReader
                 {
                     for (Node node : centroids.values())
                     {
-                        if (geometry.contains(node.getPoint()))
+                        Geometry g = new GeometryFactory().createPoint(node.getPoint());
+                        if (geometry.contains(g))
                         {
                             centroidNode = node;
                             centroidNr = node.getId();
@@ -240,7 +241,8 @@ public class ShapeFileReader
             while (iterator.hasNext())
             {
                 SimpleFeature feature = iterator.next();
-                Point point = (Point) feature.getAttribute("the_geom");
+                Point p = (Point) feature.getAttribute("the_geom");
+                Coordinate point = new Coordinate(p.getX(), p.getY());
                 String nr = CsvFileReader.removeQuotes(String.valueOf(feature.getAttribute(numberType)));
                 boolean addThisNode = false;
                 TrafficBehaviourType type = null;
@@ -275,8 +277,8 @@ public class ShapeFileReader
                     }
                     else
                     {
-                        x = point.getCoordinate().x;
-                        y = point.getCoordinate().y;
+                        x = point.x;
+                        y = point.y;
                     }
 
                     // initially, set the behaviour default to TrafficBehaviourType.ROAD
@@ -427,13 +429,13 @@ public class ShapeFileReader
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
                                 new Link(null, nr, length, nodeA, nodeB, speed, null, capacity,
-                                        TrafficBehaviourType.ROAD, linkData, hierarchy);
+                                        TrafficBehaviourType.ROAD, linkData);
                         LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
                         linkAB.setGeometry(linearGeometry);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
                                 new Link(null, nrBA, length, nodeB, nodeA, speed, null, capacity,
-                                        TrafficBehaviourType.ROAD, linkData, hierarchy);
+                                        TrafficBehaviourType.ROAD, linkData);
                         linearGeometry = new LinearGeometry(linkBA, line, null);
                         linkBA.setGeometry(linearGeometry);
                         if (direction == 1)
@@ -487,13 +489,13 @@ public class ShapeFileReader
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
                                 new Link(null, nr, length, centroidA, nodeB, speed, null, capacity,
-                                        TrafficBehaviourType.NTM, linkData, hierarchy);
+                                        TrafficBehaviourType.NTM, linkData);
                         LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
                         linkAB.setGeometry(linearGeometry);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
                                 new Link(null, nrBA, length, nodeB, centroidA, speed, null, capacity,
-                                        TrafficBehaviourType.NTM, linkData, hierarchy);
+                                        TrafficBehaviourType.NTM, linkData);
                         linearGeometry = new LinearGeometry(linkBA, line, null);
                         linkBA.setGeometry(linearGeometry);
                         if (direction == 1)
@@ -518,13 +520,13 @@ public class ShapeFileReader
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
                                 new Link(null, nr, length, nodeA, centroidB, speed, null, capacity,
-                                        TrafficBehaviourType.NTM, linkData, hierarchy);
+                                        TrafficBehaviourType.NTM, linkData);
                         LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
                         linkAB.setGeometry(linearGeometry);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
                                 new Link(null, nrBA, length, centroidB, nodeA, speed, null, capacity,
-                                        TrafficBehaviourType.NTM, linkData, hierarchy);
+                                        TrafficBehaviourType.NTM, linkData);
                         linearGeometry = new LinearGeometry(linkBA, line, null);
                         linkBA.setGeometry(linearGeometry);
                         if (direction == 1)
@@ -548,7 +550,7 @@ public class ShapeFileReader
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         Link link =
                                 new Link(null, nr, length, nodeA, nodeB, speed, null, capacity,
-                                        TrafficBehaviourType.ROAD, linkData, hierarchy);
+                                        TrafficBehaviourType.ROAD, linkData);
                         LinearGeometry linearGeometry = new LinearGeometry(link, line, null);
                         link.setGeometry(linearGeometry);
                         links.put(nr, link);
@@ -575,12 +577,12 @@ public class ShapeFileReader
      * @param centroid
      * @return if TRUE: the points match geographically
      */
-    public static boolean testGeometry(final Coordinate coordinate, final Point centroid)
+    public static boolean testGeometry(final Coordinate coordinate, final Coordinate centroid)
     {
         boolean geomEqual = false;
-        if (Math.abs(coordinate.x - centroid.getX()) < 1)
+        if (Math.abs(coordinate.x - centroid.x) < 1)
         {
-            if (Math.abs(coordinate.y - centroid.getY()) < 1)
+            if (Math.abs(coordinate.y - centroid.y) < 1)
             {
                 geomEqual = true;
             }

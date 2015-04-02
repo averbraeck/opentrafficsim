@@ -8,8 +8,8 @@ import org.opentrafficsim.demo.ntm.Link;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.ParametersNTM;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
 
 /**
  * <p>
@@ -50,7 +50,7 @@ public class AreaFlowLink extends Area
      * @param indexCell 
      */
     public AreaFlowLink(Geometry geometry, String centroidNr, String name, String gemeente, String gebied,
-            String regio, double dhb, Point centroid, TrafficBehaviourType trafficBehaviourType,
+            String regio, double dhb, Coordinate centroid, TrafficBehaviourType trafficBehaviourType,
             Rel<LengthUnit> roadLength, Abs<SpeedUnit> averageSpeed, double increaseDemandByFactor,
             ParametersNTM parametersNTM, LinkCellTransmission flowLink, int indexCell)
     {

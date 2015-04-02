@@ -2,17 +2,14 @@ package org.opentrafficsim.demo.ntm;
 
 import java.util.ArrayList;
 
-import org.opentrafficsim.core.network.LinearGeometry;
+import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * <p>
@@ -45,12 +42,12 @@ public class LinkCellTransmission extends Link
      * @param startNode
      * @param endNode
      * @param speed
-     * @param time 
+     * @param time
      * @param capacity
      * @param behaviourType
      * @param linkData
      * @param cells
-     * @param hierarchy 
+     * @param hierarchy
      */
 
     public LinkCellTransmission(LinearGeometry geometry, String nr, DoubleScalar.Rel<LengthUnit> length,
@@ -58,7 +55,7 @@ public class LinkCellTransmission extends Link
             DoubleScalar.Abs<FrequencyUnit> capacity, TrafficBehaviourType behaviourType, LinkData linkData,
             ArrayList<FlowCell> cells, int hierarchy)
     {
-        super(geometry, nr, length, startNode, endNode, speed, time, capacity, behaviourType, linkData, hierarchy);
+        super(geometry, nr, length, startNode, endNode, speed, time, capacity, behaviourType, linkData);
         this.cells = cells;
     }
 
@@ -68,9 +65,8 @@ public class LinkCellTransmission extends Link
      */
     public LinkCellTransmission(final Link link, final ArrayList<FlowCell> cells)
     {
-        super(link.getGeometry(), link.getId(), link.getLength(), link.getStartNode(), link.getEndNode(), link
-                .getFreeSpeed(), link.getTime(), link.getCapacity(), link.getBehaviourType(), link.getLinkData(), link
-                .getHierarchy());
+        super(link.getGeometry(), link.getId(), link.getLength(), (Node) link.getStartNode(), (Node) link.getEndNode(),
+                link.getFreeSpeed(), link.getTime(), link.getCapacity(), link.getBehaviourType(), link.getLinkData());
         this.cells = cells;
     }
 
@@ -83,8 +79,8 @@ public class LinkCellTransmission extends Link
     public LinkCellTransmission(final Link link, BoundedNode startNode, BoundedNode endNode,
             final ArrayList<FlowCell> cells)
     {
-        super(link.getGeometry(), link.getId(), link.getLength(), startNode, endNode, link.getFreeSpeed(), link.getTime(),
-                link.getCapacity(), link.getBehaviourType(), link.getLinkData(), link.getHierarchy());
+        super(link.getGeometry(), link.getId(), link.getLength(), startNode, endNode, link.getFreeSpeed(), link
+                .getTime(), link.getCapacity(), link.getBehaviourType(), link.getLinkData());
         this.cells = cells;
     }
 
@@ -119,9 +115,9 @@ public class LinkCellTransmission extends Link
                         * timeStepDurationCellTransmission.getInUnit(TimeUnit.HOUR), LengthUnit.KILOMETER);
         // find out how many Cells fit into this Link
         double numberOfCells = Math.max(Math.rint(link.getLength().getSI() / cellLength.getSI()), 1);
-//        DoubleScalar.Abs<FrequencyUnit> capPerLane =
-//                new DoubleScalar.Abs<FrequencyUnit>(link.getCapacity().getSI() * 3600 / link.getNumberOfLanes(),
-//                        FrequencyUnit.PER_HOUR);
+        // DoubleScalar.Abs<FrequencyUnit> capPerLane =
+        // new DoubleScalar.Abs<FrequencyUnit>(link.getCapacity().getSI() * 3600 / link.getNumberOfLanes(),
+        // FrequencyUnit.PER_HOUR);
         // compute the amount of cells
         for (int i = 0; i < numberOfCells; i++)
         {
@@ -134,7 +130,7 @@ public class LinkCellTransmission extends Link
     }
 
     /**
-     * @param accumulatedCars 
+     * @param accumulatedCars
      * @return actualTime.
      */
     public Rel<TimeUnit> retrieveActualTime()

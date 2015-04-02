@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>opentrafficsim</groupId>
 		<artifactId>ots-base</artifactId>
-		<version>0.1</version>
+		<version>0.02.01</version>
 	</parent>
 	<artifactId>ots-ntm</artifactId>
 	<name>OpenTrafficSim Network Transmission Model</name>
