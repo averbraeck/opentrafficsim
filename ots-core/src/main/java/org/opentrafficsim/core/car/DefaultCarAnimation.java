@@ -34,6 +34,7 @@ public class DefaultCarAnimation extends Renderable2D
     private static int nextIndex = 0;
 
     /**
+     * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
      * @param source the Car to draw
      * @param simulator the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
@@ -75,7 +76,7 @@ public class DefaultCarAnimation extends Renderable2D
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "DefaultCarAnimation [getSource()=" + this.getSource() + "]";
     }

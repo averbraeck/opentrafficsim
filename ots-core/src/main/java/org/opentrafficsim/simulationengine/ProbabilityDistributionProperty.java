@@ -155,6 +155,8 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
     /**
      * Verify proposed values and make a deep copy.
      * @param newValue Double[]; the proposed values
+     * @throws PropertyException when the number of values is 0, any value is outside [0..1], or the sum of the values
+     *             does not add up to 1.0 within a (very small) error margin
      */
     private void updateValue(final Double[] newValue) throws PropertyException
     {

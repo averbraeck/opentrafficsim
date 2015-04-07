@@ -5,19 +5,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.rmi.RemoteException;
 import java.util.List;
-
-import javax.naming.NamingException;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.junit.Test;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.AbstractNode;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.unit.FrequencyUnit;
@@ -44,13 +38,10 @@ public class LaneTest
 {
     /**
      * Test the constructor.
-     * @throws SimRuntimeException
-     * @throws RemoteException
-     * @throws NamingException
-     * @throws NetworkException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void laneConstructorTest() throws RemoteException, SimRuntimeException, NamingException, NetworkException
+    public void laneConstructorTest() throws Exception
     {
         // First we need two Nodes
         NodeGeotools.STR nodeFrom = new NodeGeotools.STR("A", new Coordinate(0, 0, 0));
@@ -243,10 +234,10 @@ public class LaneTest
     /**
      * Test that the contour of a constructed lane covers the expected area. Tests are only performed for straight
      * lanes, but the orientation of the link and the offset of the lane from the link is varied in many ways.
-     * @throws NetworkException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void contourTest() throws NetworkException
+    public void contourTest() throws Exception
     {
         final int[] startPositions = {0, 1, -1, 20, -20};
         final double[] angles =

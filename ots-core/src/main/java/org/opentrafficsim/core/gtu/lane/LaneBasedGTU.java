@@ -81,8 +81,8 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * Register the lane with a GTU, at the start of the lane. The reference point will be registered at the time and relative
      * position of the last evaluation of the GTU to keep calculations consistent.
      * @param lane the lane to add to the list of lanes on which the GTU is registered.
-     * @throws NetworkException
-     * @throws RemoteException
+     * @throws NetworkException on network inconsistency
+     * @throws RemoteException on communications failure
      */
     void addFrontToSubsequentLane(Lane lane) throws RemoteException, NetworkException;
 
@@ -92,7 +92,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * are relative towards this position.
      * @param lane the lane to add to the list of lanes on which the GTU is registered.
      * @param position the position on the lane.
-     * @throws NetworkException
+     * @throws NetworkException on network inconsistency
      */
     void addLane(Lane lane, DoubleScalar.Rel<LengthUnit> position) throws NetworkException;
 

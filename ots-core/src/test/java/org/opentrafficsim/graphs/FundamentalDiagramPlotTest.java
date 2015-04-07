@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.naming.NamingException;
 import javax.swing.JLabel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -27,12 +26,10 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.Route;
@@ -61,16 +58,11 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
 
     /**
      * Test the FundamentalDiagram.
-     * @throws RemoteException on communications error
-     * @throws NetworkException on network error
-     * @throws NamingException on ???
-     * @throws SimRuntimeException on ???
-     * @throws GTUException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void fundamentalDiagramTest() throws RemoteException, NetworkException, SimRuntimeException,
-            NamingException, GTUException
+    public final void fundamentalDiagramTest() throws Exception
     {
         DoubleScalar.Rel<TimeUnit> aggregationTime = new DoubleScalar.Rel<TimeUnit>(30, TimeUnit.SECOND);
         DoubleScalar.Rel<LengthUnit> position = new DoubleScalar.Rel<LengthUnit>(123, LengthUnit.METER);
@@ -275,11 +267,11 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
 
     /**
      * Test the updateHint method in the PointerHandler.
-     * @throws NetworkException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void testHints() throws NetworkException
+    public final void testHints() throws Exception
     {
         DoubleScalar.Rel<TimeUnit> aggregationTime = new DoubleScalar.Rel<TimeUnit>(30, TimeUnit.SECOND);
         DoubleScalar.Rel<LengthUnit> position = new DoubleScalar.Rel<LengthUnit>(123, LengthUnit.METER);

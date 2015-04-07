@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -69,10 +69,10 @@ public final class Convert
     }
 
     /**
-     * @param c - WGS84 Coordinate
-     * @return Geocentric Cartesian Coordinate
-     * @throws FactoryException
-     * @throws TransformException
+     * @param c Coordinate in WGS84
+     * @return Coordinate in Geocentric Cartesian system
+     * @throws FactoryException on ???
+     * @throws TransformException on problems with the coordinate transformation
      */
     public static Coordinate transform(final Coordinate c) throws FactoryException, TransformException
     {
@@ -84,8 +84,7 @@ public final class Convert
         double[] dstPt = new double[mathTransform.getTargetDimensions()];
 
         mathTransform.transform(srcPt, 0, dstPt, 0, 1);
-        Coordinate c2 = new Coordinate(dstPt[1], -dstPt[0]);
-        return c2;
+        return new Coordinate(dstPt[1], -dstPt[0]);
     }
 
     /**
@@ -197,16 +196,15 @@ public final class Convert
     }
 
     /**
+     * Determine the positions of the various lanes on an OSMLink.
      * @param osmLink - The OSM Link on which the conversion is based.
-     * @param progressListener
-     * @param warningListener
-     * @return HashMap of the lane structure
+     * @param warningListener WarningListener; the warning listener that receives warning events
+     * @return Map&lt;Double, LaneAttributes&gt;; the lane structure
      */
-    private static HashMap<Double, LaneAttributes> makeStructure(final OSMLink osmLink,
-            final WarningListener warningListener, final ProgressListener progressListener)
+    private static Map<Double, LaneAttributes> makeStructure(final OSMLink osmLink,
+            final WarningListener warningListener)
     {
         SortedMap<Integer, LaneAttributes> structure = new TreeMap<Integer, LaneAttributes>();
-        HashMap<Double, LaneAttributes> structurewithOffset = new HashMap<Double, LaneAttributes>();
         int forwards = osmLink.getForwardLanes();
         int backwards = osmLink.getLanes() - osmLink.getForwardLanes();
         LaneType<String> laneType;
@@ -219,10 +217,13 @@ public final class Convert
                 {
                     case "river":
                         laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.boat);
+                        break;
                     case "canal":
                         laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.boat);
+                        break;
                     default:
                         laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.none);
+                        break;
                 }
                 laneAttributes = new LaneAttributes(laneType, Color.CYAN, LongitudinalDirectionality.BOTH);
                 structure.put(0, laneAttributes);
@@ -443,9 +444,7 @@ public final class Convert
                 }
             }
         }
-        structurewithOffset =
-                calculateOffsets(structure, osmLink, forwards, backwards, warningListener, progressListener);
-        return structurewithOffset;
+        return calculateOffsets(structure, osmLink, forwards, backwards, warningListener);
     }
 
     /**
@@ -454,13 +453,12 @@ public final class Convert
      * @param osmLink - The osmLink on which the conversion is based.
      * @param forwards - Number of forwards oriented lanes.
      * @param backwards - Number of backwards oriented lanes.
-     * @param progressListener
-     * @param warningListener
-     * @return HashMap containing the lane structure with offsets.
+     * @param warningListener WarningListener; the warning listener that receives warning events
+     * @return Map containing the lane structure with offsets.
      */
-    private static HashMap<Double, LaneAttributes> calculateOffsets(final SortedMap<Integer, LaneAttributes> structure,
-            final org.opentrafficsim.importexport.osm.OSMLink osmLink, final Integer forwards, final Integer backwards,
-            final WarningListener warningListener, final ProgressListener progressListener)
+    private static Map<Double, LaneAttributes> calculateOffsets(final SortedMap<Integer, LaneAttributes> structure,
+            final OSMLink osmLink, final Integer forwards, final Integer backwards,
+            final WarningListener warningListener)
     {
         HashMap<Double, LaneAttributes> structurewithOffset = new HashMap<Double, LaneAttributes>();
         LaneAttributes laneAttributes;
@@ -520,8 +518,8 @@ public final class Convert
      * Figure out a reasonable width for a lane.
      * @param laneAttributes LaneAttributes; the attributes of the lane
      * @param link OSMLink; the link that owns the lane
-     * @param warningListener
-     * @return double
+     * @param warningListener WarningListener; the warning listener that receives warning events
+     * @return double; the width (in meters) of the lane
      */
     static double laneWidth(final LaneAttributes laneAttributes, final OSMLink link,
             final WarningListener warningListener)
@@ -592,22 +590,22 @@ public final class Convert
      * This method creates lanes out of an OSM link LaneTypes are not jet extensive and can be further increased through
      * Tags provided by OSM. The standard lane width of 3.05 is an estimation based on the European width limitation for
      * vehicles (2.55m) + 25cm each side.
-     * @param osmlink Link - the OSM link to make lanes for.
-     * @param simulator - The simulator for the animation.
-     * @param warningListener
-     * @param progressListener
-     * @return Lanes
-     * @throws NetworkException
-     * @throws NamingException
-     * @throws RemoteException
+     * @param osmlink Link OSMLink; the OSM link to make lanes for
+     * @param simulator OTSDEVSSimulatorInterface; the simulator that will animate the generates lanes (if it happens to
+     *            be an instance of OTSAnimatorInterface)
+     * @param warningListener WarningListener; the warning listener that will receive warning events
+     * @return List&lt;Lane&gt;
+     * @throws NetworkException on network inconsistency
+     * @throws NamingException on naming problems (in the animator)
+     * @throws RemoteException on communications failure
      */
     public static List<Lane> makeLanes(final OSMLink osmlink, final OTSDEVSSimulatorInterface simulator,
-            final WarningListener warningListener, final ProgressListener progressListener) throws NetworkException,
+            final WarningListener warningListener) throws NetworkException,
             RemoteException, NamingException
     {
         CrossSectionLink<?, ?> otslink = convertLink(osmlink);
         List<Lane> lanes = new ArrayList<Lane>();
-        HashMap<Double, LaneAttributes> structure = makeStructure(osmlink, warningListener, progressListener);
+        Map<Double, LaneAttributes> structure = makeStructure(osmlink, warningListener);
 
         DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
         for (Double offset : structure.keySet())
@@ -662,16 +660,16 @@ public final class Convert
      */
     public static LaneType<String> makeLaneType(final List<GTUType<String>> gtuTypes)
     {
-        String name = "";
+        StringBuilder name = new StringBuilder();
         for (GTUType<String> gtu : gtuTypes)
         {
             if (name.length() > 0)
             {
-                name += "|";
+                name.append("|");
             }
-            name += gtu.getId();
+            name.append(gtu.getId());
         }
-        LaneType<String> result = new LaneType<String>(name);
+        LaneType<String> result = new LaneType<String>(name.toString());
         for (GTUType<String> gtu : gtuTypes)
         {
             result.addPermeability(gtu);
@@ -689,10 +687,10 @@ public final class Convert
         List<GTUType<String>> gtuTypes = new ArrayList<GTUType<String>>(1);
         gtuTypes.add(gtuType);
         return makeLaneType(gtuTypes);
-//        String name = gtuType.getId();
-//        LaneType<String> result = new LaneType<String>(name);
-//        result.addPermeability(gtuType);
-//        return result;
+        // String name = gtuType.getId();
+        // LaneType<String> result = new LaneType<String>(name);
+        // result.addPermeability(gtuType);
+        // return result;
     }
 
     /**
@@ -708,7 +706,8 @@ public final class Convert
         // Reset the counters (should not be necessary unless this method is called more than once)
         for (OSMNode node : nodes)
         {
-            node.linksOriginating = node.linksTerminating = 0;
+            node.linksOriginating = 0;
+            node.linksTerminating = 0;
         }
         for (OSMLink link : links)
         {
@@ -737,7 +736,7 @@ public final class Convert
 
     /**
      * @param net The OSM network which is to be searched for Sinks and Sources.
-     * @param progressListener
+     * @param progressListener ProgressListener; the progress listener that will receive progress events
      * @return Network with all possible sinks and sources tagged.
      */
     public static OSMNetwork findSinksandSources(final OSMNetwork net, final ProgressListener progressListener)

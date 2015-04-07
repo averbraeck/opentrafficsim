@@ -8,8 +8,8 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
- * A Network consists of a set of links. Each link has, in its turn, a start node and an end node. An expandable network can be
- * an (expanded) node as well. An example is shown below:
+ * A Network consists of a set of links. Each link has, in its turn, a start node and an end node. An expandable network
+ * can be an (expanded) node as well. An example is shown below:
  * 
  * <pre>
  *            |
@@ -31,9 +31,9 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  *            |
  * </pre>
  * 
- * Node O in the example is expanded into the subnetwork consisting of nodes A, B, C, D, and E, and links AB, AC, AD, BC, CD,
- * BE, CE, and DE. It also means that when node expansion takes place, the links to node O have to be replaced. In the example
- * below:
+ * Node O in the example is expanded into the subnetwork consisting of nodes A, B, C, D, and E, and links AB, AC, AD,
+ * BC, CD, BE, CE, and DE. It also means that when node expansion takes place, the links to node O have to be replaced.
+ * In the example below:
  * 
  * <pre>
  *            X
@@ -59,18 +59,19 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  *            W
  * </pre>
  * 
- * the node XO is replaced by XA, YO is replaced by YB, OZ is replaced by DZ, and OW is replaced by EW in the network. The
- * reverse takes place when we do node collapse.
+ * The node XO is replaced by XA, YO is replaced by YB, OZ is replaced by DZ, and OW is replaced by EW in the network.
+ * The reverse takes place when we do node collapse.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 19, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <ID> the ID type of the network.
- * @param <L>
+ * @param <ID> the ID type of the network
+ * @param <L> Link type of the network
  */
 public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
 {
@@ -107,13 +108,13 @@ public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
      * @throws NetworkException when expansion node is part of the initial collection.
      */
     public ExpansionNetwork(final ID id, final Collection<? extends L> collection, final Node<?, ?> expansionNode)
-        throws NetworkException
+            throws NetworkException
     {
         super(id, collection);
         if (collection.contains(expansionNode))
         {
             throw new NetworkException("Creating Network " + id + " with initial collection. Expansion node "
-                + expansionNode.toString() + " is part of the initial collection");
+                    + expansionNode.toString() + " is part of the initial collection");
         }
         this.expansionOfNode = expansionNode;
     }
@@ -216,7 +217,7 @@ public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
             }
         }
         throw new NetworkException("Deleting" + deleteThis.getId().toString() + "is failed. Possible cause:"
-            + " node is not a member of the given Network");
+                + " node is not a member of the given Network");
     }
 
     /**
@@ -277,9 +278,9 @@ public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
         float forwardCapacity = 0.0f; // One direction
         float reverseCapacity = 0.0f; // Other direction
         DoubleScalar.Rel<LengthUnit> shortestLengthFrom1 =
-            new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
+                new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> shortestLengthFrom2 =
-            new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
+                new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER);
 
         int forwardLinksFound = 0;
         int reverseLinksFound = 0;

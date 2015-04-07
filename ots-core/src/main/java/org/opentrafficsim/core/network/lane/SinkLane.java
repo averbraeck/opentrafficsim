@@ -35,6 +35,7 @@ public class SinkLane extends Lane
      * @param beginWidth DoubleScalar.Rel&lt;LengthUnit&gt;; start width, positioned <i>symmetrically around</i> the design line
      * @param laneType type of lane to deduce compatibility with GTU types
      * @param directionality in direction of geometry, reverse, or both
+     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit on the new SinkLane
      * @throws NetworkException when creation of the geometry fails
      */
     @SuppressWarnings("checkstyle:parameternumber")

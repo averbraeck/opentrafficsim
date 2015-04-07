@@ -19,7 +19,6 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.HeadwayGTU;
@@ -126,13 +125,10 @@ public class LaneChangeModelTest implements OTSModelInterface
      * @param laneType LaneType&lt;String&gt;; the type of GTU that can use the lanes
      * @param laneCount int; number of lanes in the road
      * @return Lane[]; array containing the new Lanes
-     * @throws NamingException when network error occurs
-     * @throws RemoteException when netwprk error occurs
-     * @throws NetworkException
+     * @throws Exception when something goes wrong (should not happen)
      */
     public static Lane[] makeMultiLane(final String name, final NodeGeotools.STR from, final NodeGeotools.STR to,
-            final LaneType<String> laneType, final int laneCount) throws RemoteException, NamingException,
-            NetworkException
+            final LaneType<String> laneType, final int laneCount) throws Exception
     {
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(laneCount * 4.0, LengthUnit.METER);
         final CrossSectionLink<String, String> link = makeLink(name, from, to, width);
@@ -160,15 +156,10 @@ public class LaneChangeModelTest implements OTSModelInterface
 
     /**
      * Test that a vehicle in the left lane changes to the right lane if that is empty, or there is enough room.
-     * @throws RemoteException on communications failure
-     * @throws NamingException on ???
-     * @throws SimRuntimeException on ???
-     * @throws NetworkException on Network inconsistency
-     * @throws GTUException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public final void changeRight() throws RemoteException, NamingException, SimRuntimeException, NetworkException,
-            GTUException
+    public final void changeRight() throws Exception
     {
         GTUType<String> gtuType = new GTUType<String>("car");
         LaneType<String> laneType = new LaneType<String>("CarLane");

@@ -239,12 +239,9 @@ public class Route implements Serializable
         Node<?, ?> en = link.getEndNode();
         for (int index = 1; index < this.nodes.size(); index++)
         {
-            if (this.nodes.get(index) == en)
+            if (this.nodes.get(index) == en && this.nodes.get(index - 1) == sn)
             {
-                if (this.nodes.get(index - 1) == sn)
-                {
-                    return true;
-                }
+                return true;
             }
         }
         return false;

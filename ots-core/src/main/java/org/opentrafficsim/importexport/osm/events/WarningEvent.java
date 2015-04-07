@@ -15,7 +15,7 @@ public class WarningEvent extends EventObject
     /** */
     private static final long serialVersionUID = 1L;
     /** Object which caused the warning. */
-    private Object object;
+    
     /** Textual description of the warning. */
     private String warning;
     
@@ -27,14 +27,6 @@ public class WarningEvent extends EventObject
     {
         super(source);
         this.warning = warn;
-    }
-    
-    /**
-     * @return Get the object which caused the warning.
-     */
-    public final Object getObject()
-    {
-        return this.object;
     }
     
     /**

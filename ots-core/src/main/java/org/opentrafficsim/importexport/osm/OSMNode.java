@@ -17,16 +17,16 @@ import org.opentrafficsim.core.network.geotools.NodeGeotools;
  */
 public class OSMNode
 {
-    /** Id of this OSMNode. */
+    /** The id of this OSMNode. */
     private final long id;
 
-    /** Longitude of this OSMNode. */
+    /** The longitude of this OSMNode. */
     private final double longitude;
 
-    /** Latitude of this OSMNode. */
+    /** The latitude of this OSMNode. */
     private final double latitude;
 
-    /** Tags of this OSMNode. */
+    /** The tags of this OSMNode. */
     private List<OSMTag> tags;
 
     /** Does this OSMNode have a traffic signal? */
@@ -227,7 +227,7 @@ public class OSMNode
     /**
      * @return boolean; true if this OSMNode has no tags; false otherwise
      */
-    public boolean hasNoTags()
+    public final boolean hasNoTags()
     {
         return this.tags.isEmpty();
     }

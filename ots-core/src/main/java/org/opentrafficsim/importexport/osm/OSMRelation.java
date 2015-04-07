@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * OSMRelation wraps a set of OSMTags, a set of OSMWays and a set of OSMNodes.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -14,127 +15,104 @@ import java.util.List;
  */
 public class OSMRelation
 {
-    /** */
-    private long iD;
+    /** The id of this OSMRelation. */
+    private final long id;
 
-    /** */
-    private List<OSMTag> taglist;
+    /** The OSMTag list of this OSMRelation. */
+    private List<OSMTag> tags = new ArrayList<OSMTag>();
 
-    /** */
-    private List<Long> relWays;
+    /** The ordered list of ids of the OSMWays of this OSMRelation. */
+    private List<Long> wayIds = new ArrayList<Long>();
 
-    /** */
-    private List<Long> relNodes;
+    /** The ordered list of ids of the OSMNodes of this OSMRelation. */
+    private List<Long> nodeIds = new ArrayList<Long>();
 
     /**
-     * @return iD
+     * @return id
      */
-    public final long getID()
+    public final long getId()
     {
-        return this.iD;
+        return this.id;
     }
 
     /**
-     * @param niD
-     */
-    public final void setID(final long niD)
-    {
-        this.iD = niD;
-    }
-
-    /**
-     * @return taglist
+     * Retrieve the list of OSMTags of this OSMRelation.
+     * @return List&lt;OSMTag&gt;; the list of OSMTags of this OSMRelation; <strong>modifications of the returned list
+     *         are reflected in this OSMWay</strong>.
      */
     public final List<OSMTag> getTaglist()
     {
-        return this.taglist;
+        return this.tags;
     }
 
     /**
-     * @param taglist
-     */
-    public final void setTaglist(final List<OSMTag> taglist)
-    {
-        this.taglist = taglist;
-    }
-
-    /**
-     * @param tag
+     * Add an OSMTag to this OSMRelation.
+     * @param tag OSMTag; the OSMTag that will be added
      */
     public final void addTag(final OSMTag tag)
     {
-        this.taglist.add(tag);
+        this.tags.add(tag);
     }
 
     /**
-     * @return ways
+     * Retrieve the list of OSMWay ids of this OSMRelation.
+     * @return List&lt;Long&gt;; the list of OSMWay ids of this OSMRelation; <strong>modifications of the returned list
+     *         are reflected in this OSMWay</strong>.
      */
     public final List<Long> getWays()
     {
-        return this.relWays;
+        return this.wayIds;
     }
 
     /**
-     * @param ways
-     */
-    public final void setWays(final List<Long> ways)
-    {
-        this.relWays = ways;
-    }
-
-    /**
-     * @param way
+     * Add one OSMWay id to this OSMRelation.
+     * @param way Long; the id of the OSMWay that will be added
      */
     public final void addWay(final Long way)
     {
-        this.relWays.add(way);
+        this.wayIds.add(way);
     }
 
     /**
-     * @return nodes
+     * Retrieve the list of OSMNode ids of this OSMRelation.
+     * @return List&lt;Long&gt;; the list of OSMNode ids of this OSMRelation; <strong>modifications of the returned list
+     *         are reflected in this OSMWay</strong>.
      */
     public final List<Long> getNodes()
     {
-        return this.relNodes;
+        return this.nodeIds;
     }
 
     /**
-     * @param nodes
-     */
-    public final void setNodes(final List<Long> nodes)
-    {
-        this.relNodes = nodes;
-    }
-
-    /**
-     * @param node
+     * Add one OSMNode id to this OSMRelation.
+     * @param node Long; the id of the OSMNode that will be added
      */
     public final void addNode(final Long node)
     {
-        this.relNodes.add(node);
+        this.nodeIds.add(node);
     }
 
     /**
-     * @param id
+     * Construct a new OSMRelation.
+     * @param id long; the id of the new OSMRelation
      */
     public OSMRelation(final long id)
     {
-        this.iD = id;
-        this.relNodes = new ArrayList<Long>();
-        this.relWays = new ArrayList<Long>();
-        this.taglist = new ArrayList<OSMTag>();
+        this.id = id;
     }
 
     /**
-     * @param tagKey
-     * @return List of matching Tags
+     * Retrieve the OSMTags of this OSMRelation that have a specified key.
+     * @param key String; the key of the returned OSMTags
+     * @return List&lt;OSMTag&gt;; the OSMTags that have the specified key (modifications of the result do not affect
+     *         this OSMRelation)
      */
-    public final List<OSMTag> getMatchingTags(final String tagKey)
+    public final List<OSMTag> getMatchingTags(final String key)
     {
         List<OSMTag> result = new ArrayList<OSMTag>();
-        for (OSMTag t : this.taglist)
+        for (OSMTag t : this.tags)
         {
-            if (t.getKey().equals(tagKey))
+            if (t.getKey().equals(key))
             {
                 result.add(t);
             }
@@ -142,11 +120,4 @@ public class OSMRelation
         return result;
     }
 
-    /**
-     * @return List of all Tags in this relation
-     */
-    public final List<OSMTag> getTags()
-    {
-        return this.taglist;
-    }
 }

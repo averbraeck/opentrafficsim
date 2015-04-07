@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.naming.NamingException;
-
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -30,7 +28,6 @@ import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.gtu.lane.changing.FixedLaneChangeModel;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
@@ -72,14 +69,10 @@ public class LaneBasedGTUTest
      * @param truckFromLane int; lowest rank of lane range of the truck
      * @param truckUpToLane int; highest rank of lane range of the truck
      * @param carLanesCovered int; number of lanes that the car covers
-     * @throws RemoteException on communications failure
-     * @throws SimRuntimeException on ??? (should never happen; the simulator is not really used)
-     * @throws NetworkException on network topology problem (should never happen)
-     * @throws NamingException on errors registering the animation of objects (should never happen)
-     * @throws GTUException on invalid parameter in GTU construction
+     * @throws Exception when something goes wrong (should not happen)
      */
     private void leaderFollowerParallel(int truckFromLane, int truckUpToLane, int carLanesCovered)
-            throws RemoteException, SimRuntimeException, NetworkException, NamingException, GTUException
+            throws Exception
     {
         // Perform a few sanity checks
         if (carLanesCovered < 1)
@@ -340,15 +333,10 @@ public class LaneBasedGTUTest
 
     /**
      * Test the leader, follower and parallel methods.
-     * @throws NetworkException
-     * @throws NamingException
-     * @throws RemoteException
-     * @throws SimRuntimeException
-     * @throws GTUException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void leaderFollowerAndParallelTest() throws RemoteException, NamingException, NetworkException,
-            SimRuntimeException, GTUException
+    public void leaderFollowerAndParallelTest() throws Exception
     {
         leaderFollowerParallel(2, 2, 1);
         leaderFollowerParallel(2, 3, 1);
@@ -358,15 +346,10 @@ public class LaneBasedGTUTest
 
     /**
      * Test the deltaTimeForDistance and timeAtDistance methods.
-     * @throws RemoteException
-     * @throws SimRuntimeException
-     * @throws NamingException
-     * @throws NetworkException
-     * @throws GTUException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void timeAtDistanceTest() throws RemoteException, SimRuntimeException, NamingException, NetworkException,
-            GTUException
+    public void timeAtDistanceTest() throws Exception
     {
         for (int a = 1; a >= -1; a--)
         {

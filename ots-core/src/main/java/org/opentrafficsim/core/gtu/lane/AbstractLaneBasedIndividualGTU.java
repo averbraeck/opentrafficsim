@@ -69,10 +69,11 @@ public abstract class AbstractLaneBasedIndividualGTU<ID> extends AbstractLaneBas
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
             final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
             final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
-            Route route, final OTSDEVSSimulatorInterface simulator) throws RemoteException, NetworkException, SimRuntimeException,
-            GTUException
+            final Route route, final OTSDEVSSimulatorInterface simulator) throws RemoteException, NetworkException,
+            SimRuntimeException, GTUException
     {
-        super(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, route, simulator);
+        super(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, route,
+                simulator);
         this.length = length;
         this.width = width;
         if (null == maximumVelocity)

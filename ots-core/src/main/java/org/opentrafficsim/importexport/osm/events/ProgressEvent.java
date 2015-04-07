@@ -19,19 +19,20 @@ public class ProgressEvent extends EventObject
     private static Long first = null;
     
     /** Textual description of the progress made. */
-    private String progressInformation;
+    private final String progressInformation;
     
     /** Time when the event occurred. */
     private final long when;
     
     /**
-     * @param source Object from which the event originates.
-     * @param progInfo The progress information in a String.
+     * Construct a new ProgressEvent.
+     * @param source Object; the object from which the event originates
+     * @param description The progress information in a String
      */
-    public ProgressEvent(final Object source, final String progInfo)
+    public ProgressEvent(final Object source, final String description)
     {
         super(source);
-        this.progressInformation = progInfo;
+        this.progressInformation = description;
         this.when = System.currentTimeMillis();
         if (null == first)
         {

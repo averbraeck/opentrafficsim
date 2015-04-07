@@ -17,7 +17,6 @@ import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -45,11 +44,10 @@ public class TemplateGTUTypeTest
 
     /**
      * Test construction of a TemplateGTUType and prove that each one uses private fields.
-     * @throws SimRuntimeException
-     * @throws RemoteException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void constructorTest() throws RemoteException, SimRuntimeException
+    public void constructorTest() throws Exception
     {
         String pcId = "passenger car";
         DistContinuousDoubleScalar.Rel<LengthUnit> pcLength =
@@ -90,11 +88,10 @@ public class TemplateGTUTypeTest
 
     /**
      * Test the isCompatible method.
-     * @throws SimRuntimeException
-     * @throws RemoteException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void compatibleLaneTypeTest() throws RemoteException, SimRuntimeException
+    public void compatibleLaneTypeTest() throws Exception
     {
         // Create some TemplateGTUTypes
         String pcId = "passenger car";

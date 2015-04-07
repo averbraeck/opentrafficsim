@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * OSMWay wraps an ordered set of OSMNode (identified by their ids) and a list of tags.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -14,74 +15,66 @@ import java.util.List;
  */
 public class OSMWay
 {
-    /**
-     * The ID of the way.
-     */
-    private long iD;
+    /** The id of the way. */
+    private final long id;
 
-    /**
-     * The List of the IDs of all nodes this way has.
-     */
-    private List<Long> waynodes;
+    /** The List of the IDs of all nodes this way has. */
+    private List<Long> nodes;
 
-    /**
-     * The List of all Tags this way has.
-     */
+    /** The List of all Tags this way has. */
     private List<OSMTag> waytags;
 
     /**
-     * @return ID
+     * Retrieve the dd of this OSMWay.
+     * @return long; the id of this OSMWay
      */
-    public final long getID()
+    public final long getId()
     {
-        return this.iD;
+        return this.id;
     }
 
     /**
-     * @param id
-     */
-    public final void setID(final long id)
-    {
-        this.iD = id;
-    }
-
-    /**
-     * @return waynodes
+     * Retrieve the list of ids that comprise this OSMWay.
+     * @return List&lt;Long&gt;; a list of ids of the nodes of this OSMWay <strong>DO NOT MODIFY THE RESUL</strong>.
      */
     public final List<Long> getNodes()
     {
-        return this.waynodes;
+        return this.nodes;
     }
 
     /**
      * Set/replace the list of way nodes.
-     * @param theWayNodes List&lt;Long&gt;; the new list of way nodes
+     * @param newNodes List&lt;Long&gt;; the new list of way nodes
      */
-    public final void setNodes(final List<Long> theWayNodes)
+    public final void setNodes(final List<Long> newNodes)
     {
-        this.waynodes = theWayNodes;
+        this.nodes = newNodes;
     }
 
     /**
-     * @param waynode
+     * Append one node id to the list of node ids.
+     * @param nodeId Long; the id of the node that must be added
      */
-    public final void appendNode(final Long waynode)
+    public final void appendNode(final Long nodeId)
     {
-        this.waynodes.add(waynode);
+        this.nodes.add(nodeId);
     }
 
     /**
-     * @param id
+     * Construct a new OSMWay.
+     * @param id long; Id of the new OSMWay
      */
     public OSMWay(final long id)
     {
-        this.iD = id;
-        this.waynodes = new ArrayList<Long>();
+        this.id = id;
+        this.nodes = new ArrayList<Long>();
         this.waytags = new ArrayList<OSMTag>();
     }
 
     /**
-     * @return waytags
+     * Retrieve the list of OSMTags of this OSMWay.
+     * @return List&lt;OSMTab&gt;; the list of OSMTags of this OSMWay (modifications on this result are reflected in
+     *         this OSMWay)
      */
     public final List<OSMTag> getTags()
     {
@@ -90,15 +83,16 @@ public class OSMWay
 
     /**
      * Set/replace the list of way tags.
-     * @param theWayTags List&lt;Tag&gt;; the new list of way tags
+     * @param newTags List&lt;Tag&gt;; the new list of way tags
      */
-    public final void setTags(final List<OSMTag> theWayTags)
+    public final void setTags(final List<OSMTag> newTags)
     {
-        this.waytags = theWayTags;
+        this.waytags = newTags;
     }
 
     /**
-     * @param waytag
+     * Add one tag to the list of tags of this OSMWay.
+     * @param waytag OSMTag; the tag that must be added
      */
     public final void addTag(final OSMTag waytag)
     {
@@ -106,8 +100,9 @@ public class OSMWay
     }
 
     /**
-     * @param tagKey
-     * @return List of matching Tags
+     * Retrieve the tags that match the give key.
+     * @param tagKey String; the key
+     * @return List of matching Tags; the returned list is a copy; modifications of the result do not affect this OSMWay
      */
     public final List<OSMTag> getMatchingTags(final String tagKey)
     {

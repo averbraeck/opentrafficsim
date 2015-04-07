@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.NamingException;
-
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -60,15 +58,10 @@ public class AbstractLaneBasedGTUTest
 
     /**
      * Test that the constructor puts the supplied values in the correct fields, then check the motion of the GTU.
-     * @throws SimRuntimeException
-     * @throws RemoteException
-     * @throws NamingException
-     * @throws NetworkException
-     * @throws GTUException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void abstractLaneBasedGTUTest() throws RemoteException, SimRuntimeException, NamingException,
-            NetworkException, GTUException
+    public void abstractLaneBasedGTUTest() throws Exception
     {
         // This initialization code should probably be moved to a helper method that will be used in several tests.
         // First we need a set of Lanes

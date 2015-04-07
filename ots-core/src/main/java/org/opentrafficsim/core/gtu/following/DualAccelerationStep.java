@@ -89,7 +89,7 @@ public class DualAccelerationStep
     }
     
     /** {@inheritDoc} */
-    public String toString()
+    public final String toString()
     {
         return "Follower: " + getFollowerAccelerationStep() + ", Leader: " + getLeaderAccelerationStep();
     }

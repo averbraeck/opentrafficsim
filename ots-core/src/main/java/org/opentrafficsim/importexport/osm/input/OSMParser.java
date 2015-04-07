@@ -55,7 +55,7 @@ public class OSMParser implements Sink
      * @param wantedTags List&lt;Tab&gt;; the list of wantedTags
      * @param filteredKeys List&lt;String&gt;; the list of filtered keys
      */
-    public OSMParser(final List<org.opentrafficsim.importexport.osm.OSMTag> wantedTags, final List<String> filteredKeys)
+    public OSMParser(final List<OSMTag> wantedTags, final List<String> filteredKeys)
     {
         setWantedTags(wantedTags);
         this.filterKeys = filteredKeys;
@@ -207,7 +207,8 @@ public class OSMParser implements Sink
             }
             if (++counter / total * 100 >= nextPercentage)
             {
-                this.progressListener.progress(new ProgressEvent(this, "Removing unused nodes " + nextPercentage + "%"));
+                this.progressListener
+                        .progress(new ProgressEvent(this, "Removing unused nodes " + nextPercentage + "%"));
                 nextPercentage += percentageStep;
             }
         }
@@ -215,7 +216,7 @@ public class OSMParser implements Sink
         {
             try
             {
-                //OSMRelation r = this.net.getRelation(rid);
+                // OSMRelation r = this.net.getRelation(rid);
                 for (Long nid : r.getNodes())
                 {
                     if (this.net.getNodes().containsKey(nid) && !usedNodes.containsKey(nid))
@@ -230,7 +231,8 @@ public class OSMParser implements Sink
             }
             if (++counter / total * 100 >= nextPercentage)
             {
-                this.progressListener.progress(new ProgressEvent(this, "Removing unused nodes " + nextPercentage + "%"));
+                this.progressListener
+                        .progress(new ProgressEvent(this, "Removing unused nodes " + nextPercentage + "%"));
                 nextPercentage += percentageStep;
             }
         }
@@ -261,7 +263,7 @@ public class OSMParser implements Sink
     }
 
     /**
-     * Set/replace the filter keys.<br/>
+     * Set/replace the filter keys.<br>
      * The provided list is <b>not copied</b>; the caller should not modify the list afterwards.
      * @param keys List&lt;String&gt; list of filter keys
      */
@@ -273,7 +275,7 @@ public class OSMParser implements Sink
     /**
      * @return progressListener.
      */
-    public ProgressListener getProgressListener()
+    public final ProgressListener getProgressListener()
     {
         return this.progressListener;
     }
@@ -281,7 +283,7 @@ public class OSMParser implements Sink
     /**
      * @param progressListener set progressListener.
      */
-    public void setProgressListener(final ProgressListener progressListener)
+    public final void setProgressListener(final ProgressListener progressListener)
     {
         this.progressListener = progressListener;
     }

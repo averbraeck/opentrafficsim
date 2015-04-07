@@ -28,7 +28,6 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.following.SequentialFixedAccelerationModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
@@ -64,11 +63,9 @@ public class ContourPlotTest
     /**
      * Create a dummy path for the tests.
      * @return List&lt;Lane&gt;; the dummy path
-     * @throws NetworkException
-     * @throws NamingException
-     * @throws RemoteException
+     * @throws Exception when something goes wrong (should not happen)
      */
-    private List<Lane> dummyPath() throws RemoteException, NamingException, NetworkException
+    private List<Lane> dummyPath() throws Exception
     {
         ArrayList<Lane> result = new ArrayList<Lane>();
         Lane[] lanes =
@@ -81,16 +78,11 @@ public class ContourPlotTest
 
     /**
      * Test the AccelerationContourPlot.
-     * @throws NamingException
-     * @throws SimRuntimeException
-     * @throws NetworkException
-     * @throws RemoteException
-     * @throws GTUException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void accelerationContourTest() throws RemoteException, NetworkException, SimRuntimeException,
-            NamingException, GTUException
+    public final void accelerationContourTest() throws Exception
     {
         List<Lane> path = dummyPath();
         AccelerationContourPlot acp = new AccelerationContourPlot("Acceleration", path);
@@ -101,16 +93,11 @@ public class ContourPlotTest
 
     /**
      * Test the DensityContourPlot.
-     * @throws NamingException
-     * @throws SimRuntimeException
-     * @throws NetworkException
-     * @throws RemoteException
-     * @throws GTUException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void densityContourTest() throws RemoteException, NetworkException, SimRuntimeException,
-            NamingException, GTUException
+    public final void densityContourTest() throws Exception
     {
         List<Lane> path = dummyPath();
         DensityContourPlot dcp = new DensityContourPlot("Density", path);
@@ -121,16 +108,11 @@ public class ContourPlotTest
 
     /**
      * Test the FlowContourPlot.
-     * @throws NamingException
-     * @throws SimRuntimeException
-     * @throws NetworkException
-     * @throws RemoteException
-     * @throws GTUException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void flowContourTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException,
-            GTUException
+    public final void flowContourTest() throws Exception
     {
         List<Lane> path = dummyPath();
         FlowContourPlot fcp = new FlowContourPlot("Density", path);
@@ -141,16 +123,11 @@ public class ContourPlotTest
 
     /**
      * Test the SpeedContourPlot.
-     * @throws NamingException
-     * @throws SimRuntimeException
-     * @throws NetworkException
-     * @throws RemoteException
-     * @throws GTUException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void speedContourTest() throws RemoteException, NetworkException, SimRuntimeException,
-            NamingException, GTUException
+    public final void speedContourTest() throws Exception
     {
         List<Lane> path = dummyPath();
         SpeedContourPlot scp = new SpeedContourPlot("Density", path);
@@ -162,21 +139,16 @@ public class ContourPlotTest
     /**
      * Test various properties of a ContourPlot that has no observed data added.
      * @param cp ContourPlot; the ContourPlot to test
-     * @param lane TODO
+     * @param lane Lane; the lane on which the test GTUs are run
      * @param expectedZValue double; the value that getZ and getZValue should return for a valid item when no car has
      *            passed
      * @param expectedZValueWithTraffic double; the value that getZ and getZValue should return a valid item where a car
-     *            has travelled at constant speed of 50 km/h. Supply Double.NaN if the value varies but differs from the
+     *            has traveled at constant speed of 50 km/h. Supply Double.NaN if the value varies but differs from the
      *            value expected when no car has passed
-     * @throws NetworkException
-     * @throws RemoteException
-     * @throws NamingException
-     * @throws SimRuntimeException
-     * @throws GTUException
+     * @throws Exception when something goes wrong (should not happen)
      */
     public static void standardContourTests(final ContourPlot cp, Lane lane, final double expectedZValue,
-            final double expectedZValueWithTraffic) throws NetworkException, RemoteException, SimRuntimeException,
-            NamingException, GTUException
+            final double expectedZValueWithTraffic) throws Exception
     {
         assertEquals("seriesCount should be 1", 1, cp.getSeriesCount());
         assertEquals("domainOrder should be ASCENDING", DomainOrder.ASCENDING, cp.getDomainOrder());
@@ -573,16 +545,11 @@ public class ContourPlotTest
     }
 
     /**
-     * Run the DensityContourPlot stand-alone for profiling
-     * @param args
-     * @throws RemoteException
-     * @throws NetworkException
-     * @throws SimRuntimeException
-     * @throws NamingException
-     * @throws GTUException
+     * Run the DensityContourPlot stand-alone for profiling.
+     * @param args String[]; the command line arguments (not used)
+     * @throws Exception when something goes wrong (should not happen)
      */
-    public static void main(final String[] args) throws RemoteException, NetworkException, SimRuntimeException,
-            NamingException, GTUException
+    public static void main(final String[] args) throws Exception
     {
         ContourPlotTest cpt = new ContourPlotTest();
         System.out.println("Click the OK button");

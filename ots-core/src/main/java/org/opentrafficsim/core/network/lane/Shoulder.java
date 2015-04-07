@@ -21,7 +21,7 @@ public class Shoulder extends CrossSectionElement
      * @param lateralPosition the lateral start position compared to the linear geometry of the Cross Section Link.
      * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
-     * @throws NetworkException 
+     * @throws NetworkException on network inconsistency
      */
     public Shoulder(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralPosition,
         final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth) throws NetworkException

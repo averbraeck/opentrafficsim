@@ -15,8 +15,8 @@ import java.util.Set;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <ID> the ID type of the network.
- * @param <L>
+ * @param <ID> the ID type of the network
+ * @param <L> the Link type of the network
  */
 public class Network<ID, L extends Link<?, ?>> extends HashSet<L> implements Serializable
 {

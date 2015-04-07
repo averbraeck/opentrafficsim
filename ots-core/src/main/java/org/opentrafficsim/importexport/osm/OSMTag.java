@@ -11,14 +11,15 @@ package org.opentrafficsim.importexport.osm;
  */
 public class OSMTag
 {
-    /** (Non-Unique) Key of the tag. */
+    /** The (not necessarily unique) Key of the tag. */
     private final String key;
 
-    /** Value of the tag. */
+    /** The value of the tag. */
     private final String value;
 
     /**
-     * @return value
+     * Retrieve the value of this OSMTag.
+     * @return String; the value of this OSMTag
      */
     public final String getValue()
     {
@@ -26,7 +27,8 @@ public class OSMTag
     }
 
     /**
-     * @return key
+     * Retrieve the key of this OSMTag.
+     * @return String; the key of this OSMTag
      */
     public final String getKey()
     {
@@ -34,13 +36,14 @@ public class OSMTag
     }
 
     /**
-     * @param k
-     * @param v
+     * Construct a new OSMTag.
+     * @param key String; the key of the new OSMTag
+     * @param value String; the value of the new OSMTag
      */
-    public OSMTag(final String k, final String v)
+    public OSMTag(final String key, final String value)
     {
-        this.key = k;
-        this.value = v;
+        this.key = key;
+        this.value = value;
     }
 
     /** {@inheritDoc} */
@@ -48,4 +51,5 @@ public class OSMTag
     {
         return "Tag: Key: " + this.key + " Value: " + this.value;
     }
+    
 }

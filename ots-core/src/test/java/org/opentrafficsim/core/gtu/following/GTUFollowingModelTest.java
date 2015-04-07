@@ -11,8 +11,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.naming.NamingException;
-
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -22,11 +20,9 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.Route;
@@ -57,14 +53,9 @@ public class GTUFollowingModelTest implements OTSModelInterface
     /**
      * Test that the methods required by the GTUFollowingModel interface.
      * @param gtuFollowingModel GTUFollowingModel
-     * @throws RemoteException
-     * @throws SimRuntimeException
-     * @throws NetworkException
-     * @throws NamingException
-     * @throws GTUException
+     * @throws Exception when something goes wrong (should not happen)
      */
-    private void gtuFollowingModelTests(GTUFollowingModel gtuFollowingModel) throws RemoteException,
-            SimRuntimeException, NamingException, NetworkException, GTUException
+    private void gtuFollowingModelTests(GTUFollowingModel gtuFollowingModel) throws Exception
     {
         DoubleScalar.Abs<AccelerationUnit> maxSafeDeceleration = gtuFollowingModel.maximumSafeDeceleration();
         assertNotNull("maximumSafeDeceleration must return non-null value", maxSafeDeceleration);
@@ -288,29 +279,20 @@ public class GTUFollowingModelTest implements OTSModelInterface
 
     /**
      * Test IDM
-     * @throws RemoteException
-     * @throws GTUException
-     * @throws NetworkException
-     * @throws NamingException
-     * @throws SimRuntimeException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void testIDM() throws RemoteException, SimRuntimeException, NamingException, NetworkException, GTUException
+    public void testIDM() throws Exception
     {
         gtuFollowingModelTests(new IDM());
     }
 
     /**
      * Test IDMPlus
-     * @throws RemoteException
-     * @throws GTUException
-     * @throws NetworkException
-     * @throws NamingException
-     * @throws SimRuntimeException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void testIDMPlus() throws RemoteException, SimRuntimeException, NamingException, NetworkException,
-            GTUException
+    public void testIDMPlus() throws Exception
     {
         gtuFollowingModelTests(new IDMPlus());
     }
