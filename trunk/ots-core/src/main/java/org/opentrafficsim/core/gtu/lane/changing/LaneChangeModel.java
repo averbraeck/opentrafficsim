@@ -33,13 +33,13 @@ public interface LaneChangeModel
      *            may include the <code>gtu</code>)
      * @param rightLaneTraffic Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane where GTUs should
      *            drive in the absence of other traffic (must be null if there is no such lane)
-     * @param leftLaneTraffic Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane into which
-     *            GTUs should merge to overtake other traffic (must be null if there is no such lane)
+     * @param leftLaneTraffic Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane into which GTUs
+     *            should merge to overtake other traffic (must be null if there is no such lane)
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
      * @param preferredLaneRouteIncentive DoubleScalar.Rel&lt;AccelerationUnit&gt;; route incentive to merge to the
      *            adjacent lane where GTUs should drive in the absence of other traffic
-     * @param laneChangeThreshold DoubleScalar.Rel&lt;AccelerationUnit&gt;; changing threshold that prevents lane
-     *            changes that have very little benefit
+     * @param laneChangeThreshold DoubleScalar.Rel&lt;AccelerationUnit&gt;; threshold that prevents lane changes that
+     *            have very little benefit
      * @param nonPreferredLaneRouteIncentive DoubleScalar.Rel&lt;AccelerationUnit&gt;; route incentive to merge to the
      *            adjacent lane into which GTUs should merge to overtake other traffic
      * @return LaneMovementStep; the result of the lane change and GTU following model
@@ -47,11 +47,10 @@ public interface LaneChangeModel
      */
     @SuppressWarnings("checkstyle:parameternumber")
     LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
-            final Collection<HeadwayGTU> sameLaneTraffic,
-            final Collection<HeadwayGTU> rightLaneTraffic,
+            final Collection<HeadwayGTU> sameLaneTraffic, final Collection<HeadwayGTU> rightLaneTraffic,
             final Collection<HeadwayGTU> leftLaneTraffic, final DoubleScalar.Abs<SpeedUnit> speedLimit,
             final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
-            Rel<AccelerationUnit> laneChangeThreshold,
+            final DoubleScalar.Rel<AccelerationUnit> laneChangeThreshold,
             final DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException;
 
 }
