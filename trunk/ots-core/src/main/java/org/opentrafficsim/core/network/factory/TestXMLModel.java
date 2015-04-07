@@ -13,8 +13,6 @@ import nl.tudelft.simulation.language.io.URLResource;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.geotools.LinkGeotools;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
@@ -55,7 +53,7 @@ public class TestXMLModel implements OTSModelInterface
                 String.class, this.simulator);
         try
         {
-            Network n = nlp.build(url);
+            nlp.build(url);
         }
         catch (NetworkException | ParserConfigurationException | SAXException | IOException exception1)
         {

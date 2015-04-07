@@ -122,6 +122,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GTUException when gtuFollowingModel is null
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     public AbstractLaneBasedGTU(final ID id, final GTUType<?> gtuType, final GTUFollowingModel gtuFollowingModel,
             final LaneChangeModel laneChangeModel,
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
@@ -213,8 +214,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         double positionPrevTimeStepSI = position(prevLane, getReference(), this.lastEvaluationTime).getSI();
         double positionNowSI = position(prevLane, getReference()).getSI();
         DoubleScalar.Rel<LengthUnit> position =
-                new DoubleScalar.Rel<>(positionPrevTimeStepSI - positionNowSI
-                        - (getFront().getDx().getSI() - getReference().getDx().getSI()), LengthUnit.SI);
+                new DoubleScalar.Rel<>(positionPrevTimeStepSI - positionNowSI + getReference().getDx().getSI()
+                        - getFront().getDx().getSI(), LengthUnit.SI);
         addLane(lane, position);
     }
 
@@ -325,6 +326,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * @throws RemoteException RemoteException
      * @throws NamingException on ???
      * @throws NetworkException on network inconsistency
+     * @throws GTUException when GTU has not lane change model
      * @throws SimRuntimeException on not being able to reschedule the move() method.
      */
     protected final void move() throws RemoteException, NamingException, NetworkException, GTUException,
@@ -436,13 +438,14 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             // }
             else
             {
-                // throw new GTUException("All LaneBasedGTUs should have a LaneChangeModel");
+                throw new GTUException("All LaneBasedGTUs should have a LaneChangeModel");
                 /*- TODO the rest of this method should disappear; all GTUs should have a LaneChangeModel
                 HeadwayGTU leader = headway(maximumForwardHeadway);
                 AccelerationStep as =
-                    null != leader.getOtherGTU() ? getGTUFollowingModel().computeAcceleration(this, leader.getOtherGTU().getLateralVelocity(),
-                        leader.getDistance(), speedLimit) : new AccelerationStep(new DoubleScalar.Abs<AccelerationUnit>(0,
-                        AccelerationUnit.SI), DoubleScalar.plus(getSimulator().getSimulatorTime().get(),
+                    null != leader.getOtherGTU() ? getGTUFollowingModel().computeAcceleration(this, 
+                        leader.getOtherGTU().getLateralVelocity(),
+                        leader.getDistance(), speedLimit) : new AccelerationStep(new DoubleScalar.Abs<AccelerationUnit>(
+                        0, AccelerationUnit.SI), DoubleScalar.plus(getSimulator().getSimulatorTime().get(),
                         getGTUFollowingModel().getStepSize()).immutable());
                 setState(as);
                  */
@@ -506,8 +509,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 {
                     // Only follow links on the Route if there is a Route, and we haven't added this lane already
                     if (!this.lanes.contains(nextLane)
-                            && (this.getRoute() == null || this.getRoute().size() == 0
-                                    || this.getRoute().containsLink(nextLane.getParentLink())))
+                            && (this.getRoute() == null || this.getRoute().size() == 0 || this.getRoute().containsLink(
+                                    nextLane.getParentLink())))
                     {
                         nextLane.scheduleTriggers(this, -remainingDistanceSI - getFront().getDx().getSI(), moveSI);
                     }
@@ -634,6 +637,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 lane.position(this.fractionalLinkPositions.get(lane.getParentLink()));
         if (longitudinalPosition == null)
         {
+            // According to FindBugs; this cannot happen; PK is unsure whether FindBugs is correct.
             throw new NetworkException("GetPosition: GTU " + toString() + " not in lane " + lane);
         }
         DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();

@@ -19,41 +19,43 @@ import org.opentrafficsim.importexport.osm.events.WarningListener;
  */
 public class OSMLink
 {
-    /** This is the Link ID. It is generated out of the Start ID and the End ID. */
-    private String iD;
+    /** The Link ID. It is generated out of the Start ID and the End ID and (if present) the name tag. */
+    private final String id;
 
-    /** This is the start Node of the link. */
-    private OSMNode start;
+    /** The start Node of the OSMLink. */
+    private final OSMNode start;
 
-    /** This is the end Node of the link. */
-    private OSMNode end;
+    /** The end Node of the OSMLink. */
+    private final OSMNode end;
 
-    /** This is a List of nodes that are used just for mapping purposes. */
-    private List<OSMNode> splineList;
+    /** The List of nodes that are used only to define shape (for mapping purposes). */
+    private List<OSMNode> intermediateNodes;
 
-    /** This is the length of the link. */
-    private double length;
+    /** The length of the OSMLink. */
+    private final double length;
 
-    /** These are the tags that this link inherits from it's way. */
+    /** The tags that this OSMLink inherits from it's way. */
     private List<OSMTag> tags;
 
-    /** This is the number of lanes this link has. */
+    /** The number of lanes on this OSMLink. */
     private byte lanes;
 
-    /** This is the number of lanes going forward. */
+    /** The number of lanes going forward (the <i>design</i> direction). */
     private byte forwardLanes;
 
-    /** Is this link one way? */
+    /** Is this OSMLink one way? */
     private boolean oneway;
 
     /**
-     * @param fromNode Startnode
-     * @param toNode Endnode
-     * @param lt List of inherited Waytags
-     * @param length length of the link
-     * @param warningListener
+     * Construct a new OSMLink.
+     * @param fromNode OSMNode; the OSMNode where this OSMLinks begins
+     * @param toNode OSMNode; the OSMNode where this OSMLink ends
+     * @param tags List&lt;OSMTab&gt;; the OSMTags (inherited from the OSMWay that causes this OSMLink to be
+     *            constructed)
+     * @param length double; the length of the new OSMLink
+     * @param warningListener WarningListener; the warning listener that will receive warning events
      */
-    public OSMLink(final OSMNode fromNode, final OSMNode toNode, final List<OSMTag> lt, final double length,
+    public OSMLink(final OSMNode fromNode, final OSMNode toNode, final List<OSMTag> tags, final double length,
             final WarningListener warningListener)
     {
         if (fromNode == toNode)
@@ -61,14 +63,14 @@ public class OSMLink
             throw new Error("Start and end of link are the same Node: " + fromNode);
         }
         String name = "";
-        for (OSMTag tag : lt)
+        for (OSMTag tag : tags)
         {
             if (tag.getKey().equals("name"))
             {
                 name = ": " + tag.getValue();
             }
         }
-        this.iD = Objects.toString(fromNode.getId()) + Objects.toString(toNode.getId()) + name;
+        this.id = Objects.toString(fromNode.getId()) + Objects.toString(toNode.getId()) + name;
         this.start = fromNode;
         this.end = toNode;
         this.length = length;
@@ -76,44 +78,42 @@ public class OSMLink
         this.forwardLanes = 1;
         boolean forwardDefined = false;
 
-        List<OSMTag> lt2 = new ArrayList<OSMTag>(lt);
-        List<OSMTag> lt3 = new ArrayList<OSMTag>(lt);
-        for (OSMTag t2 : lt2)
+        List<OSMTag> linkTags = new ArrayList<OSMTag>(tags);
+        for (OSMTag tag : tags)
         {
-            if (t2.getKey().equals("oneway") && t2.getValue().equals("yes"))
+            if (tag.getKey().equals("oneway") && tag.getValue().equals("yes"))
             {
                 this.setOneway(true);
-                lt3.remove(t2);
+                linkTags.remove(tag);
                 this.forwardLanes = this.lanes;
             }
-            if (t2.getKey().equals("highway") && t2.getValue().equals("motorway_link"))
+            if (tag.getKey().equals("highway") && tag.getValue().equals("motorway_link"))
             {
                 this.setOneway(true);
                 this.lanes = 1;
                 this.forwardLanes = this.lanes;
             }
-            if (t2.getKey().equals("highway") && t2.getValue().equals("motorway"))
+            if (tag.getKey().equals("highway") && tag.getValue().equals("motorway"))
             {
                 this.setOneway(true);
                 this.forwardLanes = this.lanes;
             }
-            if (t2.getKey().equals("highway")
-                    && (t2.getValue().equals("cycleway") || t2.getValue().equals("footway")
-                            || t2.getValue().equals("pedestrian") || t2.getValue().equals("steps")))
+            if (tag.getKey().equals("highway")
+                    && (tag.getValue().equals("cycleway") || tag.getValue().equals("footway")
+                            || tag.getValue().equals("pedestrian") || tag.getValue().equals("steps")))
             {
                 this.lanes = 1;
             }
         }
 
-        lt2 = new ArrayList<OSMTag>(lt3);
-        for (OSMTag t2 : lt2)
+        for (OSMTag tag2 : new ArrayList<OSMTag>(linkTags))
         {
-            if (t2.getKey().equals("lanes"))
+            if (tag2.getKey().equals("lanes"))
             {
-                if (OSMLink.isByte(t2.getValue()))
+                if (isByte(tag2.getValue()))
                 {
-                    this.lanes = Byte.parseByte(t2.getValue());
-                    lt3.remove(t2);
+                    this.lanes = Byte.parseByte(tag2.getValue());
+                    linkTags.remove(tag2);
                     if (this.oneway)
                     {
                         this.forwardLanes = this.lanes;
@@ -122,66 +122,67 @@ public class OSMLink
                 }
                 else
                 {
-                    String warning = "Illegal value for the tag 'lanes' at link " + this.iD;
+                    String warning = "Illegal value for the tag 'lanes' at link " + this.id;
                     warningListener.warning(new WarningEvent(this, warning));
                 }
             }
-            if (t2.getKey().equals("lanes:forward"))
+            if (tag2.getKey().equals("lanes:forward"))
             {
-                if (OSMLink.isByte(t2.getValue()))
+                if (isByte(tag2.getValue()))
                 {
-                    this.forwardLanes = Byte.parseByte(t2.getValue());
-                    lt3.remove(t2);
+                    this.forwardLanes = Byte.parseByte(tag2.getValue());
+                    linkTags.remove(tag2);
                     forwardDefined = true;
                 }
                 else
                 {
-                    String warning = "Illegal value for the tag 'lanes:forward' at link " + this.iD;
+                    String warning = "Illegal value for the tag 'lanes:forward' at link " + this.id;
                     warningListener.warning(new WarningEvent(this, warning));
                 }
             }
         }
-        this.tags = lt3;
+        this.tags = linkTags;
         if (!forwardDefined && this.lanes > 1)
         {
             this.forwardLanes = (byte) (this.lanes / 2);
-            String warning = "No forward lanes defined at link " + this.iD;
+            String warning = "No forward lanes defined at link " + this.id;
             warningListener.warning(new WarningEvent(this, warning));
         }
-        this.splineList = new ArrayList<OSMNode>();
+        this.intermediateNodes = new ArrayList<OSMNode>();
     }
 
     /**
-     * @param n1 Startnode
-     * @param n2 Endnode
-     * @param lt List of Tags inherited from way
+     * Construct a new OSMLink with specified number of lanes and forward lanes.
+     * @param startNode OSMNode; the start OSMNode of the new OSMLink
+     * @param endNode OSMNode; the end OSMNode of the new OSMLink
+     * @param tags List of Tags inherited from way
      * @param length length of link
-     * @param lanes total number of lanes
-     * @param flanes number of forward lanes
+     * @param lanes byte; the total number of lanes
+     * @param flanes byte; the number of forward lanes
      */
-    public OSMLink(final OSMNode n1, final OSMNode n2, final List<OSMTag> lt, final double length, final byte lanes,
-            final byte flanes)
+    public OSMLink(final OSMNode startNode, final OSMNode endNode, final List<OSMTag> tags, final double length,
+            final byte lanes, final byte flanes)
     {
-        if (n1 == n2)
+        if (startNode == endNode)
         {
-            throw new Error("start and end of link are the same Node: " + n1);
+            throw new Error("start and end of link are the same Node: " + startNode);
         }
-        this.iD = Objects.toString(n1.getId()) + Objects.toString(n2.getId());
-        this.start = n1;
-        this.end = n2;
-        this.tags = lt;
+        this.id = Objects.toString(startNode.getId()) + Objects.toString(endNode.getId());
+        this.start = startNode;
+        this.end = endNode;
+        this.tags = tags;
         this.length = length;
         this.lanes = lanes;
         this.forwardLanes = flanes;
-        this.splineList = new ArrayList<OSMNode>();
+        this.intermediateNodes = new ArrayList<OSMNode>();
     }
 
     /**
-     * @return ID
+     * @return id
      */
     public final String getId()
     {
-        return this.iD;
+        return this.id;
     }
 
     /**
@@ -193,14 +194,6 @@ public class OSMLink
     }
 
     /**
-     * @param start set start.
-     */
-    public final void setStart(final OSMNode start)
-    {
-        this.start = start;
-    }
-
-    /**
      * @return end.
      */
     public final OSMNode getEnd()
@@ -209,23 +202,9 @@ public class OSMLink
     }
 
     /**
-     * @param end set end.
-     */
-    public final void setEnd(final OSMNode end)
-    {
-        this.end = end;
-    }
-
-    /**
-     * @param lt
-     */
-    public final void setTags(final List<OSMTag> lt)
-    {
-        this.tags = lt;
-    }
-
-    /**
-     * @return List&lt;OSMTab&gt;
+     * Retrieve the tags of this OSMLink.
+     * @return List&lt;OSMTab&gt;; the returned object is a copy; modifications of the returned object do not affect
+     *         this OSMLink
      */
     public final List<OSMTag> getTags()
     {
@@ -233,7 +212,8 @@ public class OSMLink
     }
 
     /**
-     * @return oneway.
+     * Indicate if this OSMLink is one way.
+     * @return boolean; true if this OSMLink is one way; false if this OSMLink is not one way
      */
     public final boolean isOneway()
     {
@@ -241,15 +221,17 @@ public class OSMLink
     }
 
     /**
-     * @param oneway set if link is one way.
+     * Set the one way status of this OSMLink.
+     * @param isOneWay the new value for the one way status of this OSMLink
      */
-    public final void setOneway(final boolean oneway)
+    public final void setOneway(final boolean isOneWay)
     {
-        this.oneway = oneway;
+        this.oneway = isOneWay;
     }
 
     /**
-     * @return lanes.
+     * Retrieve the total number of lanes on this OSMLink.
+     * @return byte; the total number of lanes on this OSMLink
      */
     public final byte getLanes()
     {
@@ -257,7 +239,9 @@ public class OSMLink
     }
 
     /**
-     * @return ForwardLanes.
+     * Retrieve the total number of forward lanes on this OSMLink; forward lanes are lanes that may only be traveled
+     * from startNode towards endNode.
+     * @return byte; the number of forward lanes on this OSMLink
      */
     public final byte getForwardLanes()
     {
@@ -265,25 +249,8 @@ public class OSMLink
     }
 
     /**
-     * @param lanes set lanes.
-     */
-    public final void setLanes(final byte lanes)
-    {
-        this.lanes = lanes;
-    }
-
-    /**
-     * Set the number of forward lanes of this Link.
-     * @param forwardLanes byte; the number of forward lanes
-     */
-    public final void setForwardLanes(final byte forwardLanes)
-    {
-        this.forwardLanes = forwardLanes;
-    }
-
-    /**
-     * Add a Tag to this Link.
-     * @param tag Tag; the Tag that must be added
+     * Add an OSMTag to this Link.
+     * @param tag Tag; the OSMTag that must be added
      */
     public final void addTag(final OSMTag tag)
     {
@@ -291,7 +258,8 @@ public class OSMLink
     }
 
     /**
-     * @return length.
+     * Retrieve the length of this OSMLink.
+     * @return double; the length of this OSMLink in meters
      */
     public final double getLength()
     {
@@ -299,42 +267,27 @@ public class OSMLink
     }
 
     /**
-     * @param length set length.
-     */
-    public final void setLength(final double length)
-    {
-        this.length = length;
-    }
-
-    /**
-     * @return splineList.
+     * Retrieve the list of OSMNodes that define the shape of this OSMLink.
+     * @return List&lt;OSMNode&gt;; the list of OSMNodes that define the shape of this OSMLink
      */
     public final List<OSMNode> getSplineList()
     {
-        return this.splineList;
+        return this.intermediateNodes;
     }
 
     /**
-     * @param splineList set splineList.
+     * Append a Node to the list of OSMNodes of this OSMLink that define the shape of this OSMLink.
+     * @param shapeNode OSMNode; the OSMNode to add to the list of OSMNodes that define the shape of this OSMLink
      */
-    public final void setSplineList(final List<OSMNode> splineList)
+    public final void addSpline(final OSMNode shapeNode)
     {
-        this.splineList = splineList;
+        this.intermediateNodes.add(shapeNode);
     }
 
     /**
-     * Append a Node to the spline of this Link.
-     * @param spline Node; the Node to add to the splineList
-     */
-    public final void addSpline(final OSMNode spline)
-    {
-        this.splineList.add(spline);
-    }
-
-    /**
-     * Returns true if the link has a Tag with the specified key.
-     * @param key
-     * @return boolean
+     * Returns true if the link has an OSMTag with the specified key.
+     * @param key String; the key of the sought OSMTag
+     * @return boolean; true if this OSMLink has (one or more) OSMTag(s) with the specified key
      */
     public final boolean hasTag(final String key)
     {
@@ -349,10 +302,11 @@ public class OSMLink
     }
 
     /**
-     * @param s
+     * Determine if a string represents a number that can stored in a byte.
+     * @param s String; the string
      * @return is the given String a byte.
      */
-    public static boolean isByte(final String s)
+    private boolean isByte(final String s)
     {
         try
         {
@@ -373,11 +327,12 @@ public class OSMLink
 
     /**
      * Report if this OSMLink has all tags in a supplied set.
-     * @param tagsToCheck
+     * @param tagsToCheck List&lt;OSMTag&gt;; the supplied set of tags
      * @return boolean; true if this Link has all the supplied tags; false otherwise
      */
-    public boolean containsAllTags(List<OSMTag> tagsToCheck)
+    public final boolean containsAllTags(final List<OSMTag> tagsToCheck)
     {
         return this.tags.containsAll(tagsToCheck);
     }
+    
 }

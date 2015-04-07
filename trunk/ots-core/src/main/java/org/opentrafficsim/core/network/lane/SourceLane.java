@@ -1,9 +1,5 @@
 package org.opentrafficsim.core.network.lane;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.opentrafficsim.core.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.FrequencyUnit;
@@ -24,7 +20,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public class SourceLane extends Lane
 {
     /** the generators on this generation lane; one per GTU type. */
-    private final Set<GTUGeneratorIndividual<?>> generators = new HashSet<GTUGeneratorIndividual<?>>();
+    // NOT USED private final Set<GTUGeneratorIndividual<?>> generators = new HashSet<GTUGeneratorIndividual<?>>();
 
     /**
      * Construct a GeneratorLane.
@@ -34,6 +30,7 @@ public class SourceLane extends Lane
      * @param beginWidth DoubleScalar.Rel&lt;LengthUnit&gt;; start width, positioned <i>symmetrically around</i> the design line
      * @param laneType type of lane to deduce compatibility with GTU types
      * @param directionality in direction of geometry, reverse, or both
+     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit on the new GeneratorLane
      * @throws NetworkException when creation of the geometry fails
      */
     @SuppressWarnings("checkstyle:parameternumber")

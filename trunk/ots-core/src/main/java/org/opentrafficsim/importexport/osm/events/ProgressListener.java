@@ -13,7 +13,8 @@ import java.util.EventListener;
 public interface ProgressListener extends EventListener
 {
     /**
-     * @param progressEvent 
+     * Process one ProgressEvent.
+     * @param progressEvent ProgressEvent; the event
      */
     void progress(ProgressEvent progressEvent);
 }

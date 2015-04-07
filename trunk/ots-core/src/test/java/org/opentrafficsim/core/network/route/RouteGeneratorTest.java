@@ -35,10 +35,10 @@ public class RouteGeneratorTest
 {
     /**
      * Test the fixedRouteGenerator class.
-     * @throws NetworkException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void fixedRouteGeneratorTest() throws NetworkException
+    public void fixedRouteGeneratorTest() throws Exception
     {
         List<Node<?, ?>> nodes = new ArrayList<Node<?, ?>>();
         nodes.add(new NodeGeotools.STR("n1", new Coordinate(0, 0, 0)));
@@ -62,10 +62,10 @@ public class RouteGeneratorTest
 
     /**
      * Test the ProbabilisticFixedRouteGenerator.
-     * @throws NetworkException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void probabilisticFixedRouteGeneratorTest() throws NetworkException
+    public void probabilisticFixedRouteGeneratorTest() throws Exception
     {
         SortedMap<RouteGenerator, Double> routeProbabilities = new TreeMap<RouteGenerator, Double>();
         try

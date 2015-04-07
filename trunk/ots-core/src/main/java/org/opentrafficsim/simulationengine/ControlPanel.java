@@ -361,7 +361,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         private final JLabel clockLabel;
 
         /** timer update in msec. */
-        private final static long UPDATEINTERVAL = 1000;
+        private static final long UPDATEINTERVAL = 1000;
 
         /** Construct a clock panel. */
         ClockPanel()

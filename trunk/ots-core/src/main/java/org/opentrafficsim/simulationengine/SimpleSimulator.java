@@ -55,7 +55,7 @@ public class SimpleSimulator
      * @throws SimRuntimeException on ???
      */
     private SimpleSimulator(
-            DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator,
+            final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator,
             final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
             final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
             SimRuntimeException
@@ -167,7 +167,7 @@ public class SimpleSimulator
      *         cancel the event may arise later)
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
      */
-    public SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime,
+    public final SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime,
             final short priority, final Object source, final Object target, final String method, final Object[] args)
             throws SimRuntimeException
     {

@@ -12,6 +12,7 @@ import org.opentrafficsim.importexport.osm.events.WarningEvent;
 import org.opentrafficsim.importexport.osm.events.WarningListener;
 
 /**
+ * Container for all imported entities of an OpenStreetMap file.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -22,20 +23,20 @@ import org.opentrafficsim.importexport.osm.events.WarningListener;
  */
 public class OSMNetwork
 {
-    /** The Nodes of the Network. */
-    private Map<Long, OSMNode> nodes;
-
-    /** The Ways of the Network. */
-    private Map<Long, OSMWay> ways;
-
-    /** The Relations of the Network. */
-    private Map<Long, OSMRelation> relations;
-
     /** The name of the Network (immutable). */
     private final String name;
 
+    /** The Nodes of the Network. */
+    private Map<Long, OSMNode> nodes = new HashMap<Long, OSMNode>();
+
+    /** The Ways of the Network. */
+    private Map<Long, OSMWay> ways = new HashMap<Long, OSMWay>();
+
+    /** The Relations of the Network. */
+    private Map<Long, OSMRelation> relations = new HashMap<Long, OSMRelation>();
+
     /** The Links of the Network. */
-    private List<OSMLink> links;
+    private List<OSMLink> links = new ArrayList<OSMLink>();
 
     /**
      * Construct a new OSMNetwork.
@@ -44,65 +45,44 @@ public class OSMNetwork
     public OSMNetwork(final String name)
     {
         this.name = name;
-        this.nodes = new HashMap<Long, OSMNode>();
-        this.ways = new HashMap<Long, OSMWay>();
-        this.relations = new HashMap<Long, OSMRelation>();
-        this.links = new ArrayList<OSMLink>();
-    }
-
-    /**
-     * Construct a new Network out of another Network.
-     * @param net
-     */
-    public OSMNetwork(final OSMNetwork net)
-    {
-        this.name = net.getName();
-        this.nodes = new HashMap<Long, OSMNode>(net.getNodes());
-        this.ways = new HashMap<Long, OSMWay>(net.getWays());
-        this.relations = new HashMap<Long, OSMRelation>(net.getRelations());
-        this.links = new ArrayList<OSMLink>(net.getLinks());
     }
 
     /**
      * Retrieve a list of Nodes that form a Way from this Network.
-     * @param wayid long; the id of the Way
-     * @return List&lt;Long*gt;; the list of NodeIds of way with the specified id
+     * @param wayId long; the id of the Way
+     * @return List&lt;Long&gt;; the list of OSMNode ids of the OSMWay with the specified id
      * @throws IOException when no Way with the specified id exists in this Network
      */
-    public final List<Long> getNodesFromWay(final Long wayid) throws IOException
+    public final List<Long> getNodesFromWay(final Long wayId) throws IOException
     {
-        OSMWay w = this.ways.get(wayid);
-        if (w == null)
+        OSMWay osmWay = this.ways.get(wayId);
+        if (osmWay == null)
         {
-            throw new IOException("Way with the ID: " + wayid + "was not found");
+            throw new IOException("Way with the ID: " + wayId + "was not found");
         }
-        else
-        {
-            return w.getNodes();
-        }
+        return osmWay.getNodes();
     }
 
     /**
      * Retrieve a Node from this Network.
-     * @param nodeid long; the id of the Node
-     * @return node Node; the node with the specified id
-     * @throws IOException when no Node with the specified id exist in this Network
+     * @param nodeId long; the id of the Node
+     * @return node OSMNode; the node with the specified id
+     * @throws IOException when no OSMNode with the specified id exist in this Network
      */
-    public final OSMNode getNode(final long nodeid) throws IOException
+    public final OSMNode getNode(final long nodeId) throws IOException
     {
-        OSMNode n = this.nodes.get(nodeid);
-        if (n == null)
+        OSMNode result = this.nodes.get(nodeId);
+        if (result == null)
         {
-            throw new IOException("Node with the ID: " + nodeid + "was not found");
+            throw new IOException("Node with the id: " + nodeId + "was not found");
         }
-        else
-        {
-            return n;
-        }
+        return result;
     }
 
     /**
-     * @return HashMap of all Nodes in this Network
+     * Retrieve the map of OSMNode ids to OSMNodes of this OSMNetwork.
+     * @return Map&lt;Long, OSMNode&gt;; the map of all Nodes in this Network (modifications of the returned object are
+     *         reflected in this OSMNetwork)
      */
     public final Map<Long, OSMNode> getNodes()
     {
@@ -112,24 +92,23 @@ public class OSMNetwork
     /**
      * Retrieve a Relation from this Network.
      * @param relid long; the id of the Relation
-     * @return Relation
+     * @return OSMRelation; modifications of the result are reflected in this OSMNetwork
      * @throws IOException when no Relation with the specified id exists in this Network
      */
     public final OSMRelation getRelation(final long relid) throws IOException
     {
-        OSMRelation r = this.relations.get(relid);
-        if (r == null)
+        OSMRelation result = this.relations.get(relid);
+        if (result == null)
         {
             throw new IOException("Relation with the ID: " + relid + "was not found");
         }
-        else
-        {
-            return r;
-        }
+        return result;
     }
 
     /**
-     * @return HashMap of all relations in the network
+     * Retrieve the map of OSMRelations of this OSMNetwork.
+     * @return Map&lt;Long, OSMRelation&gt;; the map of all OSMRelations in the network (modifications of the returned
+     *         object are reflected in this OSMNetwork)
      */
     public final Map<Long, OSMRelation> getRelations()
     {
@@ -156,7 +135,8 @@ public class OSMNetwork
     }
 
     /**
-     * @return name
+     * Retrieve the name of this OSMNetwork.
+     * @return name String; the name of this OSMNetwork
      */
     public final String getName()
     {
@@ -174,8 +154,8 @@ public class OSMNetwork
     }
 
     /**
-     * Add a Node to this Network.
-     * @param node Node; the node to add to this Network
+     * Add one OSMNode to this OSMNetwork.
+     * @param node OSMNode; the node to add to this OSMNetwork
      */
     public final void addNode(final OSMNode node)
     {
@@ -183,43 +163,27 @@ public class OSMNetwork
     }
 
     /**
-     * Delete a Node from this Network.
-     * @param node Node; the Node to delete
-     */
-    public final void delNode(final OSMNode node)
-    {
-        this.nodes.remove(node.getId());
-    }
-
-    /**
-     * Delete a Node from this Network.
-     * @param nodeid Long; the id of the Node to delete
-     */
-    public final void delNode(final Long nodeid)
-    {
-        this.nodes.remove(nodeid);
-    }
-
-    /**
-     * Add a Way to this Network.
-     * @param way Way; the Way to add
+     * Add one OSMWay to this OSMNetwork.
+     * @param way OSMWay; the OSMWay to add
      */
     public final void addWay(final OSMWay way)
     {
-        this.ways.put(way.getID(), way);
+        this.ways.put(way.getId(), way);
     }
 
     /**
-     * Add a Relation to this Network.
-     * @param rel Relation; the relation to add
+     * Add one OSMRelation to this Network.
+     * @param osmRelation OSMRelation; the OSMRelation to add
      */
-    public final void addRelation(final OSMRelation rel)
+    public final void addRelation(final OSMRelation osmRelation)
     {
-        this.relations.put(rel.getID(), rel);
+        this.relations.put(osmRelation.getId(), osmRelation);
     }
 
     /**
-     * @return ways
+     * Retrieve the map of OSMWays of this OSMNetwork.
+     * @return ways Map&lt;Long, OSMWay&gt;; the map of OSMWays of this OSMNetwork; modifications of the result are
+     *         reflected in this OSMNetwork
      */
     public final Map<Long, OSMWay> getWays()
     {
@@ -227,7 +191,9 @@ public class OSMNetwork
     }
 
     /**
-     * @return links
+     * Retrieve the list of OSMLinks of this OSMNetwork.
+     * @return links List&lt;OSMLink&gt;; the list of OSMLinks of this OSMNetwork; modifications of the result are
+     *         reflected in this OSMNetwork
      */
     public final List<OSMLink> getLinks()
     {
@@ -236,8 +202,8 @@ public class OSMNetwork
 
     /**
      * Creates links out of the ways in this network.
-     * @param warningListener
-     * @param progressListener
+     * @param warningListener WarningListener; the warning listener that will receive warning events
+     * @param progressListener ProgressListener; the progress listener that will receive progress events
      * @throws IOException on read errors
      */
     public final void makeLinks(final WarningListener warningListener, final ProgressListener progressListener)
@@ -245,10 +211,11 @@ public class OSMNetwork
     {
         progressListener.progress(new ProgressEvent(this, "Starting link creation:"));
 
-        List<OSMLink> links2 = new ArrayList<OSMLink>();
-        for (Long wayid : this.ways.keySet())
+        List<OSMLink> newLinks = new ArrayList<OSMLink>();
+        for (Long wayId : this.ways.keySet())
         {
-            List<Long> waynodes = this.getWay(wayid).getNodes();
+            OSMWay osmWay = this.getWay(wayId);
+            List<Long> waynodes = osmWay.getNodes();
             for (int i = 0; i < (waynodes.size() - 1); i++)
             {
                 OSMNode fromNode = this.getNode(waynodes.get(i).longValue());
@@ -258,52 +225,43 @@ public class OSMNetwork
                 {
                     continue;
                 }
-                // Something similar occurs in Duesseldorf (PK), but the node ids are different; work-around below
-                if (fromNode.getLatitude() == toNode.getLatitude()
-                        && (fromNode.getLongitude() == toNode.getLongitude()))
+                // Something similar occurs in Duesseldorf (PK), but here the node ids are different; work-around below
+                if (fromNode.getLatitude() == toNode.getLatitude() && fromNode.getLongitude() == toNode.getLongitude())
                 {
                     warningListener.warning(new WarningEvent(this, String.format("Node clash %s vs %s", fromNode,
                             toNode)));
                     // FIXME: should probably assign all link end points of toNode to fromNode
                     continue;
                 }
-                double x1 = fromNode.getLatitude();
-                double x2 = toNode.getLatitude();
-                double y1 = fromNode.getLongitude();
-                double y2 = toNode.getLongitude();
-                double length = distanceLongLat(x1, y1, x2, y2);
-                OSMLink e = new OSMLink(fromNode, toNode, this.getWay(wayid).getTags(), length, warningListener);
-                links2.add(e);
+                newLinks.add(new OSMLink(fromNode, toNode, osmWay.getTags(), distanceLongLat(fromNode, toNode),
+                        warningListener));
             }
         }
-        this.links = links2;
+        this.links = newLinks;
         progressListener.progress(new ProgressEvent(this, "Link creation finished. Created " + this.links.size()
                 + " links."));
     }
 
     /**
-     * Compute the distance between two locations specified by longitude and latitude on Earth
-     * @param fromLongitude Latitude of point 1 in degrees
-     * @param fromLatitude Longitude of point 1 in degrees
-     * @param toLongitude Latitude of point 2 in degrees
-     * @param toLatitude Longitude of point 2 in degrees
+     * Compute the distance between two OSMNodes.
+     * @param fromNode OSMNode; the first location
+     * @param toNode OSMNode; the second location
      * @return distance in meters from point 1 to point 2. This method utilizes great circle calculation
      */
-    private static double distanceLongLat(final double fromLongitude, final double fromLatitude,
-            final double toLongitude, final double toLatitude)
+    private double distanceLongLat(final OSMNode fromNode, final OSMNode toNode)
     {
-        double y1 = fromLatitude;
-        double y2 = toLatitude;
+        double y1 = fromNode.getLatitude();
+        double y2 = toNode.getLatitude();
         if (y1 < 0)
         {
-            y1 = 360 + fromLatitude;
+            y1 += 360;
         }
         if (y2 < 0)
         {
-            y2 = 360 + toLatitude;
+            y2 += 360;
         }
-        double x1 = 90 - fromLongitude;
-        double x2 = 90 - toLongitude;
+        double x1 = 90 - fromNode.getLongitude();
+        double x2 = 90 - toNode.getLongitude();
         x1 = Math.toRadians(x1);
         x2 = Math.toRadians(x2);
         y1 = Math.toRadians(y1);
@@ -337,71 +295,72 @@ public class OSMNetwork
         List<OSMLink> removedLinks = new ArrayList<OSMLink>();
         boolean redundancyRemoved = false;
         // FIXME PK thinks that this method could remove a junction from a through-road
-        for (OSMLink l1 : this.links)
+        for (OSMLink link1 : this.links)
         {
-            if (removedLinks.contains(l1))
+            if (removedLinks.contains(link1))
             {
                 continue;
             }
-            String name1 = "1";
-            for (OSMTag t1 : l1.getTags())
+            String link1Name = "1";
+            for (OSMTag t1 : link1.getTags())
             {
                 if (t1.getKey().equals("name"))
                 {
-                    name1 = t1.getValue();
+                    link1Name = t1.getValue();
                 }
             }
-            for (OSMLink l2 : this.links)
+            for (OSMLink link2 : this.links)
             {
-                if (removedLinks.contains(l2))
+                if (removedLinks.contains(link2))
                 {
                     continue;
                 }
-                String name2 = "2";
-                for (OSMTag t2 : l2.getTags())
+                String link2Name = "2";
+                for (OSMTag t2 : link2.getTags())
                 {
                     if (t2.getKey().equals("name"))
                     {
-                        name2 = t2.getValue();
+                        link2Name = t2.getValue();
                     }
                 }
-                if (l1.getEnd().equals(l2.getStart()) && name1.equalsIgnoreCase(name2) && l1.getEnd().hasNoTags()
-                        && l1.containsAllTags(l2.getTags()) && l1.getLanes() == l2.getLanes()
-                        && l1.getForwardLanes() == l2.getForwardLanes() && l1.getStart() != l2.getEnd())
+                if (link1.getEnd().equals(link2.getStart()) && link1Name.equalsIgnoreCase(link2Name)
+                        && link1.getEnd().hasNoTags() && link1.containsAllTags(link2.getTags())
+                        && link1.getLanes() == link2.getLanes() && link1.getForwardLanes() == link2.getForwardLanes()
+                        && link1.getStart() != link2.getEnd())
                 {
-                    if (removedLinks.contains(l1))
+                    if (removedLinks.contains(link1))
                     {
                         for (int i = 0; i < this.links.size(); i++)
                         {
                             OSMLink l = this.links.get(i);
-                            if (l == l1)
+                            if (l == link1)
                             {
                                 System.out.println("found link " + l + " at position " + i);
                             }
                         }
-                        throw new Error("about to add " + l1 + " to removeLinks which already contains that link");
+                        throw new Error("about to add " + link1 + " to removeLinks which already contains that link");
                     }
                     redundancyRemoved = true;
                     OSMLink replacementLink =
-                            new OSMLink(l1.getStart(), l2.getEnd(), l1.getTags(), l1.getLength() + l2.getLength(),
-                                    l1.getLanes(), l1.getForwardLanes());
-                    if (!l1.getSplineList().isEmpty())
+                            new OSMLink(link1.getStart(), link2.getEnd(), link1.getTags(), link1.getLength()
+                                    + link2.getLength(), link1.getLanes(), link1.getForwardLanes());
+                    if (!link1.getSplineList().isEmpty())
                     {
-                        for (OSMNode n1 : l1.getSplineList())
+                        for (OSMNode n1 : link1.getSplineList())
                         {
                             replacementLink.addSpline(n1);
                         }
                     }
-                    if (!l2.getSplineList().isEmpty())
+                    if (!link2.getSplineList().isEmpty())
                     {
-                        for (OSMNode n2 : l2.getSplineList())
+                        for (OSMNode n2 : link2.getSplineList())
                         {
                             replacementLink.addSpline(n2);
                         }
                     }
                     checkedLinks.add(replacementLink);
-                    removedLinks.add(l1);
-                    removedLinks.add(l2);
+                    removedLinks.add(link1);
+                    removedLinks.add(link2);
                     break; // don't merge any other links with l1; do that on the next iteration.
                 }
             }
@@ -412,18 +371,13 @@ public class OSMNetwork
     }
 
     /**
-     * Finds the link which follows the given link. If it exists.
-     * @param link
-     * @return Link
+     * Finds the link that follows a given OSMLink.
+     * @param link OSMLink for which a successor OSMLink is sought
+     * @return OSMLink (one of) the successor OSMLink(s) of the given OSMLink, or null if the given OSMLink has no
+     *         successors
      */
     public final OSMLink findFollowingLink(final OSMLink link)
     {
-        /*-
-        if (!this.links.contains(link))
-        {
-            throw new Error("This link does not exist in this network: " + link);
-        }
-         */
         final OSMNode startNode = link.getEnd();
         for (OSMLink l2 : this.links)
         {
@@ -436,18 +390,13 @@ public class OSMNetwork
     }
 
     /**
-     * Finds the link which precedes the given link. If it exists.
-     * @param link
-     * @return Link
+     * Finds an OSMLink that precedes the given OSMLink.
+     * @param link OSMLink; the OSMLink for which a predecessor OSMLink is sought
+     * @return OSMLink (one of) the predecessor OSMLink(s) of the given OSMLink, or null if the given OSMLink has no
+     *         predecessors
      */
     public final OSMLink findPrecedingLink(final OSMLink link)
     {
-        /*-
-        if (!this.links.contains(link))
-        {
-            throw new Error("This link does not exist in this network: " + link);
-        }
-         */
         final OSMNode endNode = link.getStart();
         for (OSMLink l2 : this.links)
         {
@@ -461,8 +410,8 @@ public class OSMNetwork
 
     /**
      * Returns true if the given link has a preceding link.
-     * @param link
-     * @return boolean
+     * @param link OSMLink; the link for which the caller wants to know whether there is a preceding link
+     * @return boolean; true if the given link has one or more predecessors; false otherwise
      */
     public final boolean hasPrecedingLink(final OSMLink link)
     {
@@ -470,9 +419,9 @@ public class OSMNetwork
     }
 
     /**
-     * Returns true if the given link has a following link.
-     * @param link
-     * @return boolean
+     * Returns true if the given OSMLink has a following OSMLink.
+     * @param link OSMLink; the OSMLink for which the caller wants to know if it has a follower OSMLink
+     * @return boolean; true if the specified OSMLink has a follower link in this OSMNetwork
      */
     public final boolean hasFollowingLink(final OSMLink link)
     {

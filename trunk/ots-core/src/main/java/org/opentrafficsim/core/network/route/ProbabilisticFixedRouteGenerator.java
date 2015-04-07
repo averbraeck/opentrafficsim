@@ -21,13 +21,13 @@ import org.opentrafficsim.core.network.NetworkException;
 public class ProbabilisticFixedRouteGenerator implements RouteGenerator
 {
     /** The ordered list of RouteGenerators. */
-    final ArrayList<RouteGenerator> routes = new ArrayList<RouteGenerator>();
+    private final ArrayList<RouteGenerator> routes = new ArrayList<RouteGenerator>();
 
     /** Probabilities corresponding to the routes. */
-    final double[] probabilities;
+    private final double[] probabilities;
 
     /** The uniform random generator used to select from routes. */
-    final DistUniform random;
+    private final DistUniform random;
 
     /**
      * Construct a new ProbabilisticFixedRouteGenerator using <code>System.currentTimeMillis()</code> to seed the random
@@ -37,7 +37,7 @@ public class ProbabilisticFixedRouteGenerator implements RouteGenerator
      *            internally scaled to add up to 1.0.
      * @throws NetworkException when the probabilities or frequencies are invalid (negative, or all zero)
      */
-    public ProbabilisticFixedRouteGenerator(SortedMap<RouteGenerator, Double> routeProbabilities)
+    public ProbabilisticFixedRouteGenerator(final SortedMap<RouteGenerator, Double> routeProbabilities)
             throws NetworkException
     {
         this(routeProbabilities, System.currentTimeMillis());
@@ -51,7 +51,7 @@ public class ProbabilisticFixedRouteGenerator implements RouteGenerator
      * @param seed long; the seed for the random number generator that will be used
      * @throws NetworkException when the probabilities or frequencies are invalid (negative, or all zero)
      */
-    public ProbabilisticFixedRouteGenerator(SortedMap<RouteGenerator, Double> routeProbabilities, long seed)
+    public ProbabilisticFixedRouteGenerator(final SortedMap<RouteGenerator, Double> routeProbabilities, final long seed)
             throws NetworkException
     {
         double sum = 0;
@@ -81,7 +81,7 @@ public class ProbabilisticFixedRouteGenerator implements RouteGenerator
 
     /** {@inheritDoc} */
     @Override
-    public Route generateRoute()
+    public final Route generateRoute()
     {
         double randomValue = this.random.draw();
         for (int index = 0; index < this.probabilities.length; index++)

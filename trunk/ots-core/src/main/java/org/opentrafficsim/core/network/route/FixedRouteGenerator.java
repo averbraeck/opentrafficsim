@@ -17,28 +17,28 @@ import org.opentrafficsim.core.network.Node;
 public class FixedRouteGenerator implements RouteGenerator, Comparable<FixedRouteGenerator>
 {
     /** The route that is returned on every call to generateRoute. */
-    final private List<Node<?, ?>> nodeList;
+    private final List<Node<?, ?>> nodeList;
 
     /**
      * Construct a new FixedRouteGenerator.
      * @param nodeList List&lt;Node&lt;?, ?&gt;&gt;; List of Nodes that define the Route (this constructor makes a deep
      *            copy of the provided List)
      */
-    public FixedRouteGenerator(List<Node<?, ?>> nodeList)
+    public FixedRouteGenerator(final List<Node<?, ?>> nodeList)
     {
         this.nodeList = new ArrayList<Node<?, ?>>(nodeList);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Route generateRoute()
+    public final Route generateRoute()
     {
         return new Route(this.nodeList);
     }
 
     /** {@inheritDoc} */
     @Override
-    public int compareTo(FixedRouteGenerator o)
+    public final int compareTo(final FixedRouteGenerator o)
     {
         List<Node<?, ?>> otherNodes = o.nodeList;
         String myEndNodeId = this.nodeList.get(this.nodeList.size() - 1).getId().toString();
@@ -58,7 +58,7 @@ public class FixedRouteGenerator implements RouteGenerator, Comparable<FixedRout
             return -1;
         }
         // This is a tough one
-        for (int index = this.nodeList.size() - 1; --index >= 0; )
+        for (int index = this.nodeList.size() - 1; --index >= 0;)
         {
             String myNodeId = this.nodeList.get(index).getId().toString();
             String otherNodeId = otherNodes.get(index).getId().toString();
@@ -68,7 +68,7 @@ public class FixedRouteGenerator implements RouteGenerator, Comparable<FixedRout
                 return result;
             }
         }
-        // FIXME: this goes VERY wrong in different Nodes can have the same id
+        // FIXME: this goes VERY wrong if different Nodes can have the same id
         return 0;
     }
 }

@@ -13,7 +13,8 @@ import java.util.EventListener;
 public interface WarningListener extends EventListener
 {
     /**
-     * @param warningEvent 
+     * Process one WarningEvent.
+     * @param warningEvent WarningEvent; the warning event
      */
     void warning(WarningEvent warningEvent);
 }

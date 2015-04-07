@@ -9,8 +9,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.naming.NamingException;
-
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -20,11 +18,9 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.Route;
@@ -51,16 +47,11 @@ public class IDMPlusTest
 
     /**
      * Test IDMPlus.
-     * @throws RemoteException on communications failure
-     * @throws NetworkException on network error
-     * @throws NamingException on ???
-     * @throws SimRuntimeException on ???
-     * @throws GTUException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @SuppressWarnings({"static-method", "checkstyle:methodlength"})
     @Test
-    public final void computeAcceleration() throws RemoteException, NetworkException, SimRuntimeException,
-            NamingException, GTUException
+    public final void computeAcceleration() throws Exception
     {
         // Check a car standing still with no leaders accelerates with maximum acceleration
         SimpleSimulator simulator =

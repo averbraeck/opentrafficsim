@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.naming.NamingException;
-
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -21,12 +19,10 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
@@ -56,15 +52,10 @@ public class SensorTest
 {
     /**
      * Test the constructors of SensorLaneEnd and SensorLaneStart
-     * @throws SimRuntimeException
-     * @throws RemoteException
-     * @throws NamingException
-     * @throws NetworkException
-     * @throws GTUException
+     * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public void sensorLaneStartEndTest() throws RemoteException, SimRuntimeException, NamingException,
-            NetworkException, GTUException
+    public void sensorLaneStartEndTest() throws Exception
     {
         // First we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
