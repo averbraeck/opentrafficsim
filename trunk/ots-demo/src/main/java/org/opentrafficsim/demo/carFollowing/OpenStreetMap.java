@@ -178,7 +178,7 @@ public class OpenStreetMap implements WrappableSimulation
         wantedTags.add(new OSMTag("highway", "cycleway"));
         wantedTags.add(new OSMTag("highway", "trunk"));
         wantedTags.add(new OSMTag("highway", "path"));
-        wantedTags.add(new OSMTag("cyclway", "lane"));
+        wantedTags.add(new OSMTag("cycleway", "lane"));
         wantedTags.add(new OSMTag("highway", "residential"));
         wantedTags.add(new OSMTag("highway", "service"));
         wantedTags.add(new OSMTag("highway", "motorway"));
