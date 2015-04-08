@@ -435,25 +435,25 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                     checkConsistency();
                 }
             }
-            // }
-            else
-            {
-                throw new GTUException("All LaneBasedGTUs should have a LaneChangeModel");
-                /*- TODO the rest of this method should disappear; all GTUs should have a LaneChangeModel
-                HeadwayGTU leader = headway(maximumForwardHeadway);
-                AccelerationStep as =
-                    null != leader.getOtherGTU() ? getGTUFollowingModel().computeAcceleration(this, 
-                        leader.getOtherGTU().getLateralVelocity(),
-                        leader.getDistance(), speedLimit) : new AccelerationStep(new DoubleScalar.Abs<AccelerationUnit>(
-                        0, AccelerationUnit.SI), DoubleScalar.plus(getSimulator().getSimulatorTime().get(),
-                        getGTUFollowingModel().getStepSize()).immutable());
-                setState(as);
-                 */
-            }
-            // Schedule all sensor triggers that are going to happen until the next evaluation time.
-            scheduleTriggers();
-            getSimulator().scheduleEventAbs(this.getNextEvaluationTime(), this, this, "move", null);
         }
+        else
+        {
+            throw new GTUException("All LaneBasedGTUs should have a LaneChangeModel");
+            /*- TODO the rest of this method should disappear; all GTUs should have a LaneChangeModel
+            HeadwayGTU leader = headway(maximumForwardHeadway);
+            AccelerationStep as =
+                null != leader.getOtherGTU() ? getGTUFollowingModel().computeAcceleration(this, 
+                    leader.getOtherGTU().getLateralVelocity(),
+                    leader.getDistance(), speedLimit) : new AccelerationStep(new DoubleScalar.Abs<AccelerationUnit>(
+                    0, AccelerationUnit.SI), DoubleScalar.plus(getSimulator().getSimulatorTime().get(),
+                    getGTUFollowingModel().getStepSize()).immutable());
+            setState(as);
+             */
+        }
+        // Schedule all sensor triggers that are going to happen until the next evaluation time.
+        scheduleTriggers();
+        getSimulator().scheduleEventAbs(this.getNextEvaluationTime(), this, this, "move", null);
+
     }
 
     /**
