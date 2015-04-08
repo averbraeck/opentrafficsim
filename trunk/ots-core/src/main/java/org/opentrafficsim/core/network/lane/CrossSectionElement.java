@@ -105,7 +105,7 @@ public abstract class CrossSectionElement implements LocatableInterface
      * @param angle original angle.
      * @return angle between 0 and 2 * PI.
      */
-    private double norm(final double angle)
+    private static double norm(final double angle)
     {
         double normalized = angle % (2 * Math.PI);
         if (normalized < 0.0)
@@ -123,7 +123,7 @@ public abstract class CrossSectionElement implements LocatableInterface
      * @throws NetworkException on failure
      */
     @SuppressWarnings("checkstyle:methodlength")
-    private Geometry offsetGeometry(final Geometry referenceLine, final double offset) throws NetworkException
+    public static Geometry offsetGeometry(final Geometry referenceLine, final double offset) throws NetworkException
     {
         Coordinate[] referenceCoordinates = referenceLine.getCoordinates();
         // printCoordinates("reference", referenceCoordinates);
