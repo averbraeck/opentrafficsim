@@ -6,8 +6,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -20,6 +23,8 @@ import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.text.DefaultFormatter;
 import javax.swing.text.MaskFormatter;
@@ -62,6 +67,9 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     /** The clock. */
     private final ClockPanel clockPanel;
 
+    /** The time warp control. */
+    private final TimeWarpPanel timeWarpPanel;
+
     /** The control buttons. */
     private final ArrayList<JButton> buttons = new ArrayList<JButton>();
 
@@ -95,6 +103,8 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 "Execute all events scheduled for the current time", true));
         buttonPanel.add(makeButton("runButton", "/Play.png", "Run", "Run the simulation at maximum speed", true));
         buttonPanel.add(makeButton("pauseButton", "/Pause.png", "Pause", "Pause the simulator", false));
+        this.timeWarpPanel = new TimeWarpPanel(0.1, 100, 1, 3);
+        buttonPanel.add(this.timeWarpPanel);
         buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", null, false));
         this.clockPanel = new ClockPanel();
         buttonPanel.add(this.clockPanel);
@@ -349,6 +359,138 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     public final Font getTimeFont()
     {
         return this.timeFont;
+    }
+
+    /** JPanel that contains a JSider that uses a logarithmic scale. */
+    class TimeWarpPanel extends JPanel
+    {
+        /** */
+        private static final long serialVersionUID = 20150408L;
+
+        /** The JSlider that the user sees. */
+        private final JSlider slider;
+
+        /** The ratios used in each decade. */
+        private final int[] ratios;
+
+        /**
+         * Construct a new TimeWarpPanel.
+         * @param minimum double; the minimum value on the scale (the displayed scale may extend a little further than
+         *            this value)
+         * @param maximum double; the maximum value on the scale (the displayed scale may extend a little further than
+         *            this value)
+         * @param initialValue double; the initially selected value on the scale
+         * @param ticksPerDecade int; the number of steps per decade
+         */
+        public TimeWarpPanel(final double minimum, final double maximum, final double initialValue,
+                final int ticksPerDecade)
+        {
+            if (minimum <= 0 || minimum > initialValue || initialValue > maximum)
+            {
+                throw new Error("Bad (combination of) minimum, maximum and initialValue; "
+                        + "(restrictions: 0 < minimum <= initialValue <= maximum)");
+            }
+            switch (ticksPerDecade)
+            {
+                case 1:
+                    this.ratios = new int[]{1};
+                    break;
+                case 2:
+                    this.ratios = new int[]{1, 3};
+                    break;
+                case 3:
+                    this.ratios = new int[]{1, 2, 5};
+                    break;
+                default:
+                    throw new Error("Bad ticksPerDecade value (must be 1, 2 or 3)");
+            }
+            int minimumTick = (int) Math.floor(Math.log10(minimum / initialValue) * ticksPerDecade);
+            int maximumTick = (int) Math.ceil(Math.log10(maximum / initialValue) * ticksPerDecade);
+            this.slider = new JSlider(SwingConstants.HORIZONTAL, minimumTick, maximumTick, 0);
+            Hashtable<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
+            for (int step = 0; step <= maximumTick; step++)
+            {
+                StringBuilder text = new StringBuilder();
+                text.append(this.ratios[step % this.ratios.length]);
+                for (int decade = 0; decade < step / this.ratios.length; decade++)
+                {
+                    text.append("0");
+                }
+                labels.put(step, new JLabel(text.toString()));
+                System.out.println("Label " + step + " is \"" + text.toString() + "\"");
+            }
+            // Figure out the DecimalSymbol
+            String decimalSeparator =
+                    "" + ((DecimalFormat) NumberFormat.getInstance()).getDecimalFormatSymbols().getDecimalSeparator();
+            for (int step = -1; step >= minimumTick; step--)
+            {
+                StringBuilder text = new StringBuilder();
+                text.append("0");
+                text.append(decimalSeparator);
+                for (int decade = (int) Math.floor((step + 1) / this.ratios.length); decade < 0; decade++)
+                {
+                    text.append("0");
+                }
+                int index = step % this.ratios.length;
+                if (index < 0)
+                {
+                    index += this.ratios.length;
+                }
+                text.append(this.ratios[index]);
+                labels.put(step, new JLabel(text.toString()));
+                System.out.println("Label " + step + " is \"" + text.toString() + "\"");
+            }
+            this.slider.setLabelTable(labels);
+            this.slider.setPaintLabels(true);
+            this.slider.setPaintTicks(true);
+            this.slider.setMajorTickSpacing(1);
+            this.add(this.slider);
+            /*- Uncomment to verify the stepToFactor method.
+            for (int i = this.slider.getMinimum(); i <= this.slider.getMaximum(); i++)
+            {
+                System.out.println("pos=" + i + " value is " + stepToFactor(i));
+            }
+            */
+            
+            // TODO: add event listener handling
+        }
+
+        /**
+         * Convert a position on the slider to a factor.
+         * @param step int; the position on the slider
+         * @return double; the factor that corresponds to step
+         */
+        private final double stepToFactor(final int step)
+        {
+            int index = step % this.ratios.length;
+            if (index < 0)
+            {
+                index += this.ratios.length;
+            }
+            double result = this.ratios[index];
+            // Make positive to avoid trouble with negative values that round towards 0 on division
+            int power = (step + 1000 * this.ratios.length) / this.ratios.length - 1000;// This is ugly
+            while (power > 0)
+            {
+                result *= 10;
+                power--;
+            }
+            while (power < 0)
+            {
+                result /= 10;
+                power++;
+            }
+            return result;
+        }
+
+        /**
+         * Retrieve the current TimeWarp factor.
+         * @return double; the current TimeWarp factor
+         */
+        public final double getFactor()
+        {
+            return stepToFactor(this.slider.getValue());
+        }
     }
 
     /** JLabel that displays the simulation time. */
