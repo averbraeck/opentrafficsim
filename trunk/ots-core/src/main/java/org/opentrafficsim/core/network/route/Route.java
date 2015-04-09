@@ -268,7 +268,7 @@ public class Route implements Serializable
      * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the longitudinal position in the lane
      * @return double; a value between 0.0 (totally unsuitable) and 1.0 (extremely suitable).
      */
-    public double suitability(final Lane lane, DoubleScalar.Rel<LengthUnit> longitudinalPosition)
+    public final double suitability(final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
     {
         return 1.0; // FIXME: STUB; result should depend on the lane and the longitudinal position
     }

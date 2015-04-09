@@ -277,7 +277,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         // Note: a (Sink) trigger can have 'destroyed' us between the previous evaluation step and this one.
         if (this.lanes.isEmpty())
         {
-            return;// Done; do not re-schedule execution of this move method.
+            return; // Done; do not re-schedule execution of this move method.
         }
         DoubleScalar.Rel<LengthUnit> maximumForwardHeadway = new DoubleScalar.Rel<LengthUnit>(500.0, LengthUnit.METER);
         // TODO 500?

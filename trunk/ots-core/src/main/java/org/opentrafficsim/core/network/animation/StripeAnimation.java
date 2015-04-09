@@ -57,8 +57,8 @@ public class StripeAnimation extends Renderable2D
      * @return ArrayList&lt;Coordinate&gt;; the coordinates of the dashes separated and terminated by a
      *         <cite>NEWPATH</cite> Coordinate
      */
-    ArrayList<Coordinate> makeDashes(final LengthIndexedLine center, final double width, final double startOffset,
-            final double[] onOffLengths)
+    private final ArrayList<Coordinate> makeDashes(final LengthIndexedLine center, final double width,
+            final double startOffset, final double[] onOffLengths)
     {
         double period = 0;
         for (double length : onOffLengths)
@@ -104,16 +104,17 @@ public class StripeAnimation extends Renderable2D
         }
         return result;
     }
-    
+
     /**
-     * Create the contour for 
-     * @param center
-     * @param width
-     * @return
+     * Create the contour for a solid stripe.
+     * @param center Geometry; the design line for the solid stripe
+     * @param width double; the width of the solid stripe in m
+     * @return ArrayList&lt;Coordinate&gt;; the coordinates of the contour of the solid stripe
      */
     ArrayList<Coordinate> makeSolid(final Geometry center, final double width)
     {
-        return new ArrayList<Coordinate>(Arrays.asList(center.buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates()));
+        return new ArrayList<Coordinate>(Arrays.asList(center.buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT)
+                .getCoordinates()));
     }
 
     /**
@@ -130,7 +131,6 @@ public class StripeAnimation extends Renderable2D
             case DASHED:// : - Draw a 3-9 dash pattern on the center line
                 return makeDashes(new LengthIndexedLine(stripe.getCenterLine()), 0.2, 0, new double[]{3, 9});
             case DOUBLE:// ||- Draw two solid lines
-            {
                 try
                 {
                     Geometry centerLine = stripe.getCenterLine();
@@ -155,15 +155,12 @@ public class StripeAnimation extends Renderable2D
                 {
                     exception.printStackTrace();
                 }
-                return new ArrayList<Coordinate>();// Return an empty ArrayList after an error occurred
-            }
+                return new ArrayList<Coordinate>(); // Return an empty ArrayList after an error occurred
             case LEFTONLY: // |: - Draw left solid, right 3-9 dashed
-            {
                 try
                 {
                     Geometry centerLine = stripe.getCenterLine();
-                    Geometry rightDesignLine =
-                            CrossSectionElement.offsetGeometry(centerLine, -0.2);
+                    Geometry rightDesignLine = CrossSectionElement.offsetGeometry(centerLine, -0.2);
                     ArrayList<Coordinate> result =
                             makeDashes(new LengthIndexedLine(rightDesignLine), 0.2, 0, new double[]{3, 9});
                     Geometry leftDesignLine =
@@ -182,14 +179,12 @@ public class StripeAnimation extends Renderable2D
                 {
                     exception.printStackTrace();
                 }
-                return new ArrayList<Coordinate>();// Return an empty ArrayList after an error occurred
-            }
+                return new ArrayList<Coordinate>(); // Return an empty ArrayList after an error occurred
             case RIGHTONLY: // :| - Draw left 3-9 dashed, right solid
                 try
                 {
                     Geometry centerLine = stripe.getCenterLine();
-                    Geometry leftDesignLine =
-                            CrossSectionElement.offsetGeometry(centerLine, 0.2);
+                    Geometry leftDesignLine = CrossSectionElement.offsetGeometry(centerLine, 0.2);
                     ArrayList<Coordinate> result =
                             makeDashes(new LengthIndexedLine(leftDesignLine), 0.2, 0, new double[]{3, 9});
                     Geometry rightDesignLine =
@@ -208,7 +203,7 @@ public class StripeAnimation extends Renderable2D
                 {
                     exception.printStackTrace();
                 }
-                return new ArrayList<Coordinate>();// Return an empty ArrayList after an error occurred
+                return new ArrayList<Coordinate>(); // Return an empty ArrayList after an error occurred
             case SOLID:// | - Draw single solid line. This (regretfully) involves copying everything twice...
                 return new ArrayList<Coordinate>(Arrays.asList(stripe.getContour().getCoordinates()));
             default:
@@ -276,7 +271,8 @@ public class StripeAnimation extends Renderable2D
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      */
-    public static enum TYPE {
+    public static enum TYPE
+    {
         /** Single solid line. */
         SOLID,
 
