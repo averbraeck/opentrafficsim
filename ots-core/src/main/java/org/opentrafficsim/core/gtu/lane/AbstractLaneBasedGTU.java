@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.media.j3d.Bounds;
-import javax.naming.NamingException;
 import javax.vecmath.Point3d;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -22,7 +21,6 @@ import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.following.AccelerationStep;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.HeadwayGTU;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
@@ -263,8 +261,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * @throws GTUException when GTU has not lane change model
      * @throws SimRuntimeException on not being able to reschedule this move() method.
      */
-    protected final void move() throws RemoteException, NetworkException, GTUException,
-            SimRuntimeException
+    protected final void move() throws RemoteException, NetworkException, GTUException, SimRuntimeException
     {
         // if (getId().toString().equals("80")) // && getSimulator().getSimulatorTime().get().getSI() > 7.9)
         // {
@@ -409,7 +406,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             if (!this.fractionalLinkPositions.containsKey(l.getParentLink()))
             {
-                System.err.println("GTU " + this + "XXXXXXXX");
+                System.err.println("GTU " + this + " is in lane " + l
+                        + " but that GTU has no fractional position on the link of that lane");
             }
         }
         for (Link<?, ?> csl : this.fractionalLinkPositions.keySet())
@@ -425,7 +423,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             }
             if (!found)
             {
-                System.err.println("GTU " + this + "YYYYYYYYY");
+                System.err.println("GTU " + this + " has a fractional position "
+                        + this.fractionalLinkPositions.get(csl) + " on link " + csl
+                        + " but this GTU is not on any lane(s) of that link");
             }
         }
     }
