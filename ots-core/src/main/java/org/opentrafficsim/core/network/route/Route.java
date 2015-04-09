@@ -7,6 +7,7 @@ import java.util.List;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
+import org.opentrafficsim.core.network.lane.Lane;
 
 /**
  * A Route consists of a list of Nodes. The last visited node is kept. Code can ask what the next node is, and can
@@ -147,7 +148,7 @@ public class Route implements Serializable
         }
         catch (IndexOutOfBoundsException e)
         {
-            throw new NetworkException("Route.getNode(i) was called where i<0 or i>=nodes.size()");
+            throw new NetworkException("Route.getNode(i) was called where i < 0 or i>= nodes.size()");
         }
     }
 
@@ -256,6 +257,16 @@ public class Route implements Serializable
     public final int indexOf(final Node<?, ?> node)
     {
         return this.nodes.indexOf(node);
+    }
+    
+    /**
+     * Determine the suitability of being in a particular Lane for following this Route.
+     * @param lane Lane; the lane to consider
+     * @return double; a value between 0.0 (extremely unattractive) and 1.0 (extremely attractive).
+     */
+    public double suitability(final Lane lane)
+    {
+        return 1.0; // FIXME: STUB; result should depend on lane
     }
 
     /** {@inheritDoc} */
