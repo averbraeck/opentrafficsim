@@ -925,7 +925,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             return Double.MAX_VALUE;
         }
 
-        // Continue search on successor lanes.
+        // Continue search on predecessor lanes.
         if (cumDistanceSI + lanePositionSI < maxDistanceSI)
         {
             // is there a successor link?
@@ -936,8 +936,12 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 {
                     // Routes are NOT IMPORTANT when we look backward.
                     double traveledDistanceSI = cumDistanceSI + lanePositionSI;
+                    // PK: This looks like a bug; replacement code below this comment.
+                    // double headwayPredecessor =
+                    // headwayRecursiveForwardSI(prevLane, prevLane.getLength().getSI(), otherGTU,
+                    // traveledDistanceSI, maxDistanceSI, when);
                     double headwayPredecessor =
-                            headwayRecursiveForwardSI(prevLane, prevLane.getLength().getSI(), otherGTU,
+                            headwayRecursiveBackwardSI(prevLane, prevLane.getLength().getSI(), otherGTU,
                                     traveledDistanceSI, maxDistanceSI, when);
                     if (headwayPredecessor < maxDistanceSI)
                     {
