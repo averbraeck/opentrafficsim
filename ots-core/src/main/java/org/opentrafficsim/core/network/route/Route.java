@@ -8,6 +8,8 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * A Route consists of a list of Nodes. The last visited node is kept. Code can ask what the next node is, and can
@@ -258,15 +260,17 @@ public class Route implements Serializable
     {
         return this.nodes.indexOf(node);
     }
-    
+
     /**
-     * Determine the suitability of being in a particular Lane for following this Route.
+     * Determine the suitability of being at a particular longitudinal position in a particular Lane for following this
+     * Route.
      * @param lane Lane; the lane to consider
-     * @return double; a value between 0.0 (extremely unattractive) and 1.0 (extremely attractive).
+     * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the longitudinal position in the lane
+     * @return double; a value between 0.0 (totally unsuitable) and 1.0 (extremely suitable).
      */
-    public double suitability(final Lane lane)
+    public double suitability(final Lane lane, DoubleScalar.Rel<LengthUnit> longitudinalPosition)
     {
-        return 1.0; // FIXME: STUB; result should depend on lane
+        return 1.0; // FIXME: STUB; result should depend on the lane and the longitudinal position
     }
 
     /** {@inheritDoc} */
