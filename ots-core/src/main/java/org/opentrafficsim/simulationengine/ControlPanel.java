@@ -362,7 +362,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     }
 
     /** JPanel that contains a JSider that uses a logarithmic scale. */
-    class TimeWarpPanel extends JPanel
+    static class TimeWarpPanel extends JPanel
     {
         /** */
         private static final long serialVersionUID = 20150408L;
@@ -427,7 +427,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 StringBuilder text = new StringBuilder();
                 text.append("0");
                 text.append(decimalSeparator);
-                for (int decade = (int) Math.floor((step + 1) / this.ratios.length); decade < 0; decade++)
+                for (int decade = (step + 1) / this.ratios.length; decade < 0; decade++)
                 {
                     text.append("0");
                 }
@@ -460,7 +460,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
          * @param step int; the position on the slider
          * @return double; the factor that corresponds to step
          */
-        private final double stepToFactor(final int step)
+        private double stepToFactor(final int step)
         {
             int index = step % this.ratios.length;
             if (index < 0)
@@ -469,7 +469,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             }
             double result = this.ratios[index];
             // Make positive to avoid trouble with negative values that round towards 0 on division
-            int power = (step + 1000 * this.ratios.length) / this.ratios.length - 1000;// This is ugly
+            int power = (step + 1000 * this.ratios.length) / this.ratios.length - 1000; // This is ugly
             while (power > 0)
             {
                 result *= 10;
