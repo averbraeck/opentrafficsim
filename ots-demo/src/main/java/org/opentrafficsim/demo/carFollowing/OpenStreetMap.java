@@ -355,7 +355,7 @@ class OSMModel implements OTSModelInterface
             try
             {
                 this.lanes.addAll(Convert.makeLanes(link, (OTSDEVSSimulatorInterface) theSimulator,
-                        this.warningListener, this.progressListener));
+                        this.warningListener));
             }
             catch (NetworkException | NamingException exception)
             {
