@@ -257,18 +257,70 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     }
 
     /**
-     * Set the new state.
-     * @param cfmr AccelerationStep; the new state of this GTU
-     * @throws RemoteException when simulator time could not be retrieved or sensor trigger scheduling fails.
-     * @throws NetworkException when the vehicle is not on the given lane.
-     * @throws SimRuntimeException when sensor trigger(s) cannot be scheduled on the simulator.
+     * Move this GTU to it's current location, then compute (and commit to) the next movement step.
+     * @throws RemoteException on communications failure
+     * @throws NetworkException on network inconsistency
+     * @throws GTUException when GTU has not lane change model
+     * @throws SimRuntimeException on not being able to reschedule this move() method.
      */
-    private void setState(final AccelerationStep cfmr) throws RemoteException, NetworkException, SimRuntimeException
+    protected final void move() throws RemoteException, NetworkException, GTUException,
+            SimRuntimeException
     {
-        if (cfmr.getAcceleration().getSI() < -9999)
+        // if (getId().toString().equals("80")) // && getSimulator().getSimulatorTime().get().getSI() > 7.9)
+        // {
+        // System.out.println("Debug me: " + this);
+        // }
+        // Quick sanity check
+        if (getSimulator().getSimulatorTime().get().getSI() != getNextEvaluationTime().getSI())
+        {
+            throw new Error("move called at wrong time: expected time " + getNextEvaluationTime()
+                    + " simulator time is : " + getSimulator().getSimulatorTime().get());
+        }
+        // Only carry out move() if we still have lane(s) to drive on.
+        // Note: a (Sink) trigger can have 'destroyed' us between the previous evaluation step and this one.
+        if (this.lanes.isEmpty())
+        {
+            return;// Done; do not re-schedule execution of this move method.
+        }
+        DoubleScalar.Rel<LengthUnit> maximumForwardHeadway = new DoubleScalar.Rel<LengthUnit>(500.0, LengthUnit.METER);
+        // TODO 500?
+        DoubleScalar.Rel<LengthUnit> maximumReverseHeadway = new DoubleScalar.Rel<LengthUnit>(-200.0, LengthUnit.METER);
+        // TODO 200?
+        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100.0, SpeedUnit.KM_PER_HOUR);
+        // TODO should be the local speed limit and based on the maximum lane speed and the maximum GTU speed
+        if (null == this.laneChangeModel)
+        {
+            throw new GTUException("All LaneBasedGTUs should have a LaneChangeModel");
+        }
+        Collection<HeadwayGTU> sameLaneTraffic = new ArrayList<HeadwayGTU>();
+        HeadwayGTU leader = headway(maximumForwardHeadway);
+        if (null != leader.getOtherGTU())
+        {
+            sameLaneTraffic.add(leader);
+        }
+        HeadwayGTU follower = headway(maximumReverseHeadway);
+        if (null != follower.getOtherGTU())
+        {
+            sameLaneTraffic.add(new HeadwayGTU(follower.getOtherGTU(), -follower.getDistanceSI()));
+        }
+        DoubleScalar.Abs<TimeUnit> now = getSimulator().getSimulatorTime().get();
+        Collection<HeadwayGTU> leftLaneTraffic =
+                collectNeighborLaneTraffic(LateralDirectionality.LEFT, now, maximumForwardHeadway,
+                        maximumReverseHeadway);
+        Collection<HeadwayGTU> rightLaneTraffic =
+                collectNeighborLaneTraffic(LateralDirectionality.RIGHT, now, maximumForwardHeadway,
+                        maximumReverseHeadway);
+        LaneMovementStep lcmr =
+                this.laneChangeModel.computeLaneChangeAndAcceleration(this, sameLaneTraffic, rightLaneTraffic,
+                        leftLaneTraffic, speedLimit, new DoubleScalar.Rel<AccelerationUnit>(0.3,
+                                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(0.1,
+                                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(-0.3,
+                                AccelerationUnit.METER_PER_SECOND_2));
+        if (lcmr.getGfmr().getAcceleration().getSI() < -9999)
         {
             System.out.println("Problem");
         }
+        // First move this GTU forward (to its current location) as determined in the PREVIOUS move step.
         // GTUs move based on their fractional position to stay aligned when registered in parallel lanes.
         // The "oldest" lane of parallel lanes takes preference when updating the fractional position.
         // So we work from back to front.
@@ -280,180 +332,72 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
         // Compute and set the current speed using the "old" nextEvaluationTime and acceleration
         this.speed = getLongitudinalVelocity(this.nextEvaluationTime);
-        // Update lastEvaluationTime and then set the new nextEvaluationTime
+        // Now update last evaluation time
         this.lastEvaluationTime = this.nextEvaluationTime;
-        this.nextEvaluationTime = cfmr.getValidUntil();
-        this.acceleration = cfmr.getAcceleration();
-
-        // // Does our front reference point enter new lane(s) during the next time step? If so, add to our lane list!
-        // // Note: the trigger at the start of the lane will add the vehicle to that lane at the exact right time.
-        // List<Lane> lanesToCheck = new ArrayList<Lane>(this.lanes);
-        // while (!lanesToCheck.isEmpty())
-        // {
-        // Lane lane = lanesToCheck.remove(0);
-        // double frontPosSI = position(lane, getFront(), this.lastEvaluationTime).getSI();
-        // // TODO speed this up by using SI units, caching, etc.
-        // if (lane.fractionSI(frontPosSI) <= 1.0
-        // && lane.fraction(position(lane, getFront(), this.nextEvaluationTime)) > 1.0)
-        // {
-        // for (Lane nextLane : lane.nextLanes())
-        // {
-        // // Only follow links on the Route if there is a Route, and we haven't added this lane already
-        // if (!this.lanes.contains(nextLane)
-        // && (this.getRoute() == null || this.getRoute() != null
-        // && this.getRoute().containsLink(nextLane.getParentLink())))
-        // {
-        // this.lanes.add(nextLane);
-        // if (!this.fractionalLinkPositions.containsKey(nextLane.getParentLink()))
-        // {
-        // double positionSI = frontPosSI - lane.getLength().getSI() - getFront().getDx().getSI();
-        // this.fractionalLinkPositions.put(nextLane.getParentLink(), nextLane.fractionSI(positionSI));
-        // }
-        // lanesToCheck.add(nextLane);
-        // }
-        // }
-        // }
-        // }
+        // Set the next evaluation time
+        this.nextEvaluationTime = lcmr.getGfmr().getValidUntil();
+        // Set the acceleration (this totally defines the longitudinal motion until the next evaluation time)
+        this.acceleration = lcmr.getGfmr().getAcceleration();
         // Execute all samplers
         for (Lane lane : this.lanes)
         {
             lane.sample(this);
         }
-        // System.out.println("setState: " + cfmr + " " + this + " next evaluation is " + cfmr.getValidUntil());
-    }
-
-    /**
-     * @throws RemoteException RemoteException
-     * @throws NamingException on ???
-     * @throws NetworkException on network inconsistency
-     * @throws GTUException when GTU has not lane change model
-     * @throws SimRuntimeException on not being able to reschedule the move() method.
-     */
-    protected final void move() throws RemoteException, NamingException, NetworkException, GTUException,
-            SimRuntimeException
-    {
-        // if (getId().toString().equals("80")) // && getSimulator().getSimulatorTime().get().getSI() > 7.9)
-        // {
-        // System.out.println("Debug me: " + this);
-        // }
-        // Sanity check
-        if (getSimulator().getSimulatorTime().get().getSI() != getNextEvaluationTime().getSI())
+        // Change onto laterally adjacent lane(s) if the LaneMovementStep indicates a lane change
+        if (lcmr.getLaneChange() != null)
         {
-            throw new Error("move called at wrong time: expected time " + getNextEvaluationTime()
-                    + " simulator time is : " + getSimulator().getSimulatorTime().get());
-        }
-        // only carry out move() if we still have lane(s) to drive on.
-        // Note: a (Sink) trigger can have 'destroyed' us between the previous evaluation step and this one.
-        if (this.lanes.isEmpty())
-        {
-            return;
-        }
-        DoubleScalar.Rel<LengthUnit> maximumForwardHeadway = new DoubleScalar.Rel<LengthUnit>(500.0, LengthUnit.METER);
-        // TODO 500?
-        DoubleScalar.Rel<LengthUnit> maximumReverseHeadway = new DoubleScalar.Rel<LengthUnit>(-200.0, LengthUnit.METER);
-        // TODO 200?
-        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100.0, SpeedUnit.KM_PER_HOUR);
-        // TODO should be the local speed limit and based on the maximum lane speed and the maximum GTU speed
-        if (null != this.laneChangeModel)
-        {
-            Collection<HeadwayGTU> sameLaneTraffic = new ArrayList<HeadwayGTU>();
-            HeadwayGTU leader = headway(maximumForwardHeadway);
-            if (null != leader.getOtherGTU())
+            synchronized (this.lanes)
             {
-                sameLaneTraffic.add(leader);
-            }
-            HeadwayGTU follower = headway(maximumReverseHeadway);
-            if (null != follower.getOtherGTU())
-            {
-                sameLaneTraffic.add(new HeadwayGTU(follower.getOtherGTU(), -follower.getDistanceSI()));
-            }
-            DoubleScalar.Abs<TimeUnit> now = getSimulator().getSimulatorTime().get();
-            Collection<HeadwayGTU> leftLaneTraffic =
-                    collectNeighborLaneTraffic(LateralDirectionality.LEFT, now, maximumForwardHeadway,
-                            maximumReverseHeadway);
-            Collection<HeadwayGTU> rightLaneTraffic =
-                    collectNeighborLaneTraffic(LateralDirectionality.RIGHT, now, maximumForwardHeadway,
-                            maximumReverseHeadway);
-            LaneMovementStep lcmr =
-                    this.laneChangeModel.computeLaneChangeAndAcceleration(this, sameLaneTraffic, rightLaneTraffic,
-                            leftLaneTraffic, speedLimit, new DoubleScalar.Rel<AccelerationUnit>(0.3,
-                                    AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(0.1,
-                                    AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<AccelerationUnit>(-0.3,
-                                    AccelerationUnit.METER_PER_SECOND_2));
-            // First move this GTU forward (to its current location)
-            setState(lcmr.getGfmr());
-
-            // Then change onto laterally adjacent lane(s) if the LaneMovementStep indicates a lane change
-
-            if (lcmr.getLaneChange() != null)
-            {
-                synchronized (this.lanes)
+                // TODO: make lane changes gradual (not instantaneous; like now)
+                Collection<Lane> oldLaneSet = new ArrayList<Lane>(this.lanes);
+                Collection<Lane> newLaneSet = adjacentLanes(lcmr.getLaneChange());
+                // Remove this GTU from all of the Lanes that it is on and remember the fractional position on each
+                // one
+                Map<Lane, Double> oldFractionalPositions = new HashMap<Lane, Double>();
+                for (Lane l : this.lanes)
                 {
-                    // TODO: make lane changes gradual (not instantaneous; like now)
-                    Collection<Lane> oldLaneSet = new ArrayList<Lane>(this.lanes);
-                    Collection<Lane> newLaneSet = adjacentLanes(lcmr.getLaneChange());
-                    // Remove this GTU from all of the Lanes that it is on and remember the fractional position on each
-                    // one
-                    Map<Lane, Double> oldFractionalPositions = new HashMap<Lane, Double>();
-                    for (Lane l : this.lanes)
-                    {
-                        oldFractionalPositions.put(l, fractionalPosition(l, getReference(), getLastEvaluationTime()));
-                        this.fractionalLinkPositions.remove(l.getParentLink());
-                    }
-                    for (Lane l : oldFractionalPositions.keySet())
-                    {
-                        l.removeGTU(this);
-                        removeLane(l);
-                    }
-                    ArrayList<Lane> replacementLanes = new ArrayList<Lane>(); // for DEBUG
-                    // Add this GTU to the lanes in newLaneSet
-                    // This could be rewritten to be more efficient.
-                    for (Lane newLane : newLaneSet)
-                    {
-                        Double fractionalPosition = null;
-                        // find ONE lane in oldLaneSet that has l as neighbor
-                        for (Lane oldLane : oldLaneSet)
-                        {
-                            if (oldLane.accessibleAdjacentLanes(lcmr.getLaneChange(), getGTUType()).contains(newLane))
-                            {
-                                fractionalPosition = oldFractionalPositions.get(oldLane);
-                                break;
-                            }
-                        }
-                        if (null == fractionalPosition)
-                        {
-                            throw new Error("Program error: Cannot find an oldLane that has newLane " + newLane
-                                    + " as " + lcmr.getLaneChange() + " neighbor");
-                        }
-                        newLane.addGTU(this, fractionalPosition);
-                        addLane(newLane, (Rel<LengthUnit>) newLane.getLength().mutable().multiply(fractionalPosition)
-                                .immutable());
-                        replacementLanes.add(newLane);
-                    }
-                    System.out
-                            .println("GTU " + this + " changed lanes from: " + oldLaneSet + " to " + replacementLanes);
-                    checkConsistency();
+                    oldFractionalPositions.put(l, fractionalPosition(l, getReference(), getLastEvaluationTime()));
+                    this.fractionalLinkPositions.remove(l.getParentLink());
                 }
+                for (Lane l : oldFractionalPositions.keySet())
+                {
+                    l.removeGTU(this);
+                    removeLane(l);
+                }
+                ArrayList<Lane> replacementLanes = new ArrayList<Lane>(); // for DEBUG
+                // Add this GTU to the lanes in newLaneSet.
+                // This could be rewritten to be more efficient.
+                for (Lane newLane : newLaneSet)
+                {
+                    Double fractionalPosition = null;
+                    // find ONE lane in oldLaneSet that has l as neighbor
+                    for (Lane oldLane : oldLaneSet)
+                    {
+                        if (oldLane.accessibleAdjacentLanes(lcmr.getLaneChange(), getGTUType()).contains(newLane))
+                        {
+                            fractionalPosition = oldFractionalPositions.get(oldLane);
+                            break;
+                        }
+                    }
+                    if (null == fractionalPosition)
+                    {
+                        throw new Error("Program error: Cannot find an oldLane that has newLane " + newLane + " as "
+                                + lcmr.getLaneChange() + " neighbor");
+                    }
+                    newLane.addGTU(this, fractionalPosition);
+                    addLane(newLane, (Rel<LengthUnit>) newLane.getLength().mutable().multiply(fractionalPosition)
+                            .immutable());
+                    replacementLanes.add(newLane);
+                }
+                System.out.println("GTU " + this + " changed lanes from: " + oldLaneSet + " to " + replacementLanes);
+                checkConsistency();
             }
         }
-        else
-        {
-            throw new GTUException("All LaneBasedGTUs should have a LaneChangeModel");
-            /*- TODO the rest of this method should disappear; all GTUs should have a LaneChangeModel
-            HeadwayGTU leader = headway(maximumForwardHeadway);
-            AccelerationStep as =
-                null != leader.getOtherGTU() ? getGTUFollowingModel().computeAcceleration(this, 
-                    leader.getOtherGTU().getLateralVelocity(),
-                    leader.getDistance(), speedLimit) : new AccelerationStep(new DoubleScalar.Abs<AccelerationUnit>(
-                    0, AccelerationUnit.SI), DoubleScalar.plus(getSimulator().getSimulatorTime().get(),
-                    getGTUFollowingModel().getStepSize()).immutable());
-            setState(as);
-             */
-        }
+        // The GTU is now committed to executed the movement
         // Schedule all sensor triggers that are going to happen until the next evaluation time.
         scheduleTriggers();
+        // Re-schedule this move method at the end of the committed time step.
         getSimulator().scheduleEventAbs(this.getNextEvaluationTime(), this, this, "move", null);
-
     }
 
     /**
