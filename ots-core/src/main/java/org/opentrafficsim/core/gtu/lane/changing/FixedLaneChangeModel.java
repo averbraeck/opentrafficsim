@@ -74,4 +74,19 @@ public class FixedLaneChangeModel implements LaneChangeModel
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String getName()
+    {
+        return "Fixed lane change model";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getLongName()
+    {
+        return "Fixed lane change model. This model returns a lane change decision that is independent of the actual "
+                + "traffic. It is used mostly for testing.";
+    }
+
 }
