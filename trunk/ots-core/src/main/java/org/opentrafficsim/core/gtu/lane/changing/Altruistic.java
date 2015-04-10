@@ -30,4 +30,18 @@ public class Altruistic extends AbstractLaneChangeModel
                 + accelerationSteps.getFollowerAcceleration().getInUnit(unit), unit);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String getName()
+    {
+        return "Altruistic";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getLongName()
+    {
+        return "Altruistic lane change model (as described by Treiber).";
+    }
+
 }

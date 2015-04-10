@@ -24,4 +24,18 @@ public final class Egoistic extends AbstractLaneChangeModel
         return accelerations.getLeaderAcceleration();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String getName()
+    {
+        return "Egoistic";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getLongName()
+    {
+        return "Egoistic lane change model (as described by Treiber).";
+    }
+
 }
