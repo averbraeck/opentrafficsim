@@ -2,7 +2,6 @@ package org.opentrafficsim.core.network.animation;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import java.util.Arrays;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
@@ -42,9 +40,6 @@ public class StripeAnimation extends Renderable2D
 
     /** Precision of buffer operations. */
     private static final int QUADRANTSEGMENTS = 8;
-
-    /** Dummy coordinate that forces the drawing operation to start a new path. */
-    private static final Coordinate NEWPATH = new Coordinate(Double.NaN, Double.NaN);
 
     /**
      * Generate the drawing commands for a dash pattern.
@@ -98,7 +93,7 @@ public class StripeAnimation extends Renderable2D
                 {
                     result.add(oneDash[i]);
                 }
-                result.add(NEWPATH);
+                result.add(PaintPolygons.NEWPATH);
             }
             position = nextBoundary + onOffLengths[phase++ % onOffLengths.length];
         }
@@ -172,7 +167,7 @@ public class StripeAnimation extends Renderable2D
                     {
                         result.add(leftCoordinates[i]);
                     }
-                    result.add(NEWPATH);
+                    result.add(PaintPolygons.NEWPATH);
                     return result;
                 }
                 catch (NetworkException exception)
@@ -196,7 +191,7 @@ public class StripeAnimation extends Renderable2D
                     {
                         result.add(rightCoordinates[i]);
                     }
-                    result.add(NEWPATH);
+                    result.add(PaintPolygons.NEWPATH);
                     return result;
                 }
                 catch (NetworkException exception)
@@ -233,35 +228,7 @@ public class StripeAnimation extends Renderable2D
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        graphics.setColor(Color.WHITE);
-        Stripe stripe = (Stripe) getSource();
-        DirectedPoint p = stripe.getLocation();
-        Path2D.Double path = new Path2D.Double();
-        boolean withinPath = false;
-        for (Coordinate c : this.coordinates)
-        {
-            if (c == NEWPATH)
-            {
-                path.closePath();
-                graphics.fill(path);
-                path = new Path2D.Double();
-                withinPath = false;
-            }
-            else if (!withinPath)
-            {
-                withinPath = true;
-                path.moveTo(c.x - p.x, -c.y + p.y);
-            }
-            else
-            {
-                path.lineTo(c.x - p.x, -c.y + p.y);
-            }
-        }
-        if (withinPath)
-        {
-            path.closePath();
-        }
-        graphics.fill(path);
+        PaintPolygons.paintMultiPolygon(graphics, Color.WHITE, ((Stripe) getSource()).getLocation(), this.coordinates);
     }
 
     /**

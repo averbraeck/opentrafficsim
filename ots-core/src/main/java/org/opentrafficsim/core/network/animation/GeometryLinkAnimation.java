@@ -50,9 +50,12 @@ public class GeometryLinkAnimation extends Renderable2D
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        graphics.setColor(Color.RED);
         Stroke oldStroke = graphics.getStroke();
         graphics.setStroke(new BasicStroke(this.width));
+        PaintPolygons.paintMultiPolygon(graphics, Color.RED, ((LinkGeotools<?, ?>) getSource()).getLocation(),
+                ((LinkGeotools<?, ?>) getSource()).getGeometry().getLineString().getCoordinates());
+        /*- Old code
+        graphics.setColor(Color.RED);
         DirectedPoint p = ((LinkGeotools<?, ?>) getSource()).getLocation();
         boolean start = false;
         Path2D.Double path = new Path2D.Double();
@@ -69,6 +72,7 @@ public class GeometryLinkAnimation extends Renderable2D
             }
         }
         graphics.draw(path);
+        */
         graphics.setStroke(oldStroke);
     }
 
