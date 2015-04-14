@@ -18,7 +18,6 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * A Route consists of a list of Nodes. The last visited node is kept. Code can ask what the next node is, and can
@@ -352,7 +351,7 @@ public class Route implements Serializable
                                     currentLane = adjacentLane;
                                     break;
                                 }
-                                // If there are several adjacent lanes that have non empty nextLanes, we simple take the 
+                                // If there are several adjacent lanes that have non empty nextLanes, we simple take the
                                 // first in the set
                             }
                         }
@@ -364,7 +363,7 @@ public class Route implements Serializable
                                 currentLane = adjacentLane;
                                 break;
                             }
-                            // If there are several adjacent lanes that have non empty nextLanes, we simple take the 
+                            // If there are several adjacent lanes that have non empty nextLanes, we simple take the
                             // first in the set
                         }
                         if (currentLane.nextLanes().size() == 0)
@@ -386,8 +385,9 @@ public class Route implements Serializable
                 }
                 else
                 {
-                    // There is a non-CrossSectionLink on the path to the next branch. These do 
-                    // A non-CrossSectionLink does not have identifiable Lanes, therefore we can't aim for a particular Lane
+                    // There is a non-CrossSectionLink on the path to the next branch. These do
+                    // A non-CrossSectionLink does not have identifiable Lanes, therefore we can't aim for a particular
+                    // Lane
                     return 1.0; // Any Lane will do equally well
                 }
             }
@@ -459,15 +459,83 @@ public class Route implements Serializable
             return currentLaneSuitability; // Following the current lane will keep us on the Route
         }
         // Changing one or more lanes (left or right) is required.
+        int totalLanes = countCompatibleLanes(currentLane.getParentLink(), gtuType);
+        double leftSuitability =
+                computeSuitabilityWithLaneChanges(currentLane, lanesBeforeBranch, totalLanes,
+                        LateralDirectionality.LEFT, gtuType);
+        double rightSuitability =
+                computeSuitabilityWithLaneChanges(currentLane, lanesBeforeBranch, totalLanes,
+                        LateralDirectionality.RIGHT, gtuType);
+        double result = Math.max(leftSuitability, rightSuitability);
+        if (0 == result)
+        {
+            throw new NetworkException("Changing lanes in any direction does not get the GTU on a suitable lane");
+        }
+        return result;
+    }
+
+    /**
+     * Compute the suitability of a lane from which lane changes are required to get to the next point on the Route.<br>
+     * This method weighs the suitability of the first found suitable lane by (m - n) / m where n is the number of lane
+     * changes required and m is the total number of lanes in the CrossSectionLink.
+     * @param startLane Lane; the current lane of the GTU
+     * @param suitabilities Map&lt;Lane, Double&gt;; the set of suitable lanes and their suitability
+     * @param totalLanes integer; total number of lanes compatible with the GTU type
+     * @param direction LateralDirectionality; the direction of the lane changes to attempt
+     * @param gtuType GTUType&lt;?&gt;; the type of the GTU
+     * @return integer; the number of lane changes required, or Integer.MAX_VALUE if (repeatedly) changing lane in the
+     *         given direction does not put the GTU on a suitable lane
+     */
+    private double computeSuitabilityWithLaneChanges(final Lane startLane, final Map<Lane, Double> suitabilities,
+            int totalLanes, final LateralDirectionality direction, GTUType<?> gtuType)
+    {
         /*-
          * The time per required lane change seems more relevant than distance per required lane change.
          * Total time required does not grow linearly with the number of required lane changes. Logarithmic, arc tangent 
          * is more like it.
          * Rijkswaterstaat appears to use a fixed time for ANY number of lane changes (about 60s). 
          * TomTom navigation systems give more time (about 90s).
+         * In this method the returned suitability decreases linearly with the number of required lane changes.
          */
-        // FIXME: For now we'll pretend that performing N lane changes is not harder than performing 1 lane change
-        return remainingTime / timeHorizon.getSI();
+        int laneChangesUsed = 0;
+        Lane currentLane = startLane;
+        Double currentSuitability = null;
+        while (null == currentSuitability)
+        {
+            laneChangesUsed++;
+            Set<Lane> adjacentLanes = startLane.accessibleAdjacentLanes(direction, gtuType);
+            if (adjacentLanes.size() == 0)
+            {
+                return 0;
+            }
+            currentLane = adjacentLanes.iterator().next();
+            currentSuitability = suitabilities.get(currentLane);
+        }
+        return currentSuitability * (totalLanes - laneChangesUsed) / totalLanes;
+    }
+
+    /**
+     * Determine how many lanes on a CrossSectionLink are compatible with a particular GTU type.<br>
+     * TODO: this method should probably be moved into the CrossSectionLink class
+     * @param link CrossSectionLink&lt;?, ?&gt;; the link
+     * @param gtuType GTUType; the GTU type
+     * @return integer; the number of lanes on the link that are compatible with the GTU type
+     */
+    private int countCompatibleLanes(CrossSectionLink<?, ?> link, GTUType<?> gtuType)
+    {
+        int result = 0;
+        for (CrossSectionElement cse : link.getCrossSectionElementList())
+        {
+            if (cse instanceof Lane)
+            {
+                Lane l = (Lane) cse;
+                if (l.getLaneType().isCompatible(gtuType))
+                {
+                    result++;
+                }
+            }
+        }
+        return result;
     }
 
     /** {@inheritDoc} */
