@@ -2,14 +2,23 @@ package org.opentrafficsim.core.network.route;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.lane.CrossSectionElement;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * A Route consists of a list of Nodes. The last visited node is kept. Code can ask what the next node is, and can
@@ -266,11 +275,199 @@ public class Route implements Serializable
      * Route.
      * @param lane Lane; the lane to consider
      * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the longitudinal position in the lane
+     * @param gtuType GTUType&lt;?&gt;; the type of the GTU (used to check lane compatibility of lanes)
+     * @param timeHorizon DoubleScalar.Rel&lt;TimeUnit&gt;; the maximum time that a driver may want to look ahead
      * @return double; a value between 0.0 (totally unsuitable) and 1.0 (extremely suitable).
+     * @throws NetworkException on network inconsistency, or when the continuation Link at a branch cannot be determined
      */
-    public final double suitability(final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
+    public final double suitability(final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
+            GTUType<?> gtuType, DoubleScalar.Rel<TimeUnit> timeHorizon) throws NetworkException
     {
-        return 1.0; // FIXME: STUB; result should depend on the lane and the longitudinal position
+        double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();
+        double remainingTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit().getSI();
+        // Find the first upcoming Node where there is a branch
+        Node<?, ?> nextNode = lane.getParentLink().getEndNode();
+        Node<?, ?> nextSplitNode = null;
+        Lane currentLane = lane;
+        CrossSectionLink<?, ?> linkBeforeBranch = lane.getParentLink();
+        while (null != nextNode)
+        {
+            if (remainingTime >= 0)
+            {
+                return 1.0; // It is not yet time to worry; this lane will do as well as any other
+            }
+            // Count the number of compatible Lanes on this Link
+            int laneCount = 0;
+            for (CrossSectionElement cse : linkBeforeBranch.getCrossSectionElementList())
+            {
+                if (cse instanceof Lane)
+                {
+                    Lane l = (Lane) cse;
+                    if (l.getLaneType().isCompatible(gtuType))
+                    {
+                        laneCount++;
+                    }
+                }
+            }
+            if (0 == laneCount)
+            {
+                throw new NetworkException("No compatible Lanes on Link " + linkBeforeBranch);
+            }
+            if (1 == laneCount)
+            {
+                return 1.0; // Only one compatible lane available; we'll get there "automatically"; i.e. without
+                // being steered by the Route
+            }
+            int branching = nextNode.getLinksOut().size();
+            if (branching > 1)
+            { // Found a split
+                nextSplitNode = nextNode;
+                break;
+            }
+            else if (0 == branching)
+            {
+                return 1.0; // dead end; no more choices to make
+            }
+            else
+            { // Look beyond this nextNode
+                Link<?, ?> nextLink = nextNode.getLinksOut().iterator().next(); // cannot be null
+                if (nextLink instanceof CrossSectionLink)
+                {
+                    nextNode = nextLink.getEndNode();
+                    remainingDistance += linkBeforeBranch.getLength().getSI();
+                    linkBeforeBranch = (CrossSectionLink<?, ?>) nextLink;
+                    // Figure out the new currentLane
+                    if (currentLane.nextLanes().size() == 0)
+                    {
+                        // Lane drop; our lane disappears. This is a compulsory lane change; which is not controlled
+                        // by the Route. Perform the forced lane change.
+                        Set<Lane> adjacentLanes =
+                                currentLane.accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType);
+                        if (adjacentLanes.size() > 0)
+                        {
+                            for (Lane adjacentLane : adjacentLanes)
+                            {
+                                if (adjacentLane.nextLanes().size() > 0)
+                                {
+                                    currentLane = adjacentLane;
+                                    break;
+                                }
+                                // If there are several adjacent lanes that have non empty nextLanes, we simple take the 
+                                // first in the set
+                            }
+                        }
+                        adjacentLanes = currentLane.accessibleAdjacentLanes(LateralDirectionality.LEFT, gtuType);
+                        for (Lane adjacentLane : adjacentLanes)
+                        {
+                            if (adjacentLane.nextLanes().size() > 0)
+                            {
+                                currentLane = adjacentLane;
+                                break;
+                            }
+                            // If there are several adjacent lanes that have non empty nextLanes, we simple take the 
+                            // first in the set
+                        }
+                        if (currentLane.nextLanes().size() == 0)
+                        {
+                            throw new NetworkException("Lane ends and there is not compatible adjacent lane that does "
+                                    + "not end");
+                        }
+                    }
+                    // Any compulsory lane change(s) have been performed and there is guaranteed a compatible next lane.
+                    for (Lane nextLane : currentLane.nextLanes())
+                    {
+                        if (nextLane.getLaneType().isCompatible(gtuType))
+                        {
+                            currentLane = currentLane.nextLanes().iterator().next();
+                            break;
+                        }
+                    }
+                    remainingTime -= currentLane.getLength().getSI() / currentLane.getSpeedLimit().getSI();
+                }
+                else
+                {
+                    // There is a non-CrossSectionLink on the path to the next branch. These do 
+                    // A non-CrossSectionLink does not have identifiable Lanes, therefore we can't aim for a particular Lane
+                    return 1.0; // Any Lane will do equally well
+                }
+            }
+        }
+        if (null == nextNode)
+        {
+            throw new NetworkException("Cannot find the next branch or sink node");
+        }
+        // We have now found the first upcoming branching Node
+        // Which continuing link is the one we need?
+        Map<Lane, Double> lanesBeforeBranch = new HashMap<Lane, Double>();
+        Link<?, ?> linkAfterBranch = null;
+        for (Link<?, ?> link : nextSplitNode.getLinksOut())
+        {
+            Node<?, ?> nextNodeOnLink = link.getEndNode();
+            for (int i = this.lastNode + 1; i < this.nodes.size(); i++)
+            {
+                Node<?, ?> n = getNode(i);
+                if (nextNodeOnLink == n)
+                {
+                    if (null != linkAfterBranch)
+                    {
+                        throw new NetworkException("Parallel Links at " + nextSplitNode + " go to " + nextNodeOnLink);
+                        // FIXME If all but one of these have no Lane compatible with gtuType, dying here is a bit
+                        // premature
+                    }
+                    linkAfterBranch = link;
+                    break;
+                }
+            }
+        }
+        if (null == linkAfterBranch)
+        {
+            throw new NetworkException("Cannot identify the link to follow after Node " + nextSplitNode);
+        }
+        for (CrossSectionElement cse : linkBeforeBranch.getCrossSectionElementList())
+        {
+            if (cse instanceof Lane)
+            {
+                Lane l = (Lane) cse;
+                if (l.getLaneType().isCompatible(gtuType))
+                {
+                    for (Lane connectingLane : l.nextLanes())
+                    {
+                        if (connectingLane.getParentLink() == linkAfterBranch
+                                && connectingLane.getLaneType().isCompatible(gtuType))
+                        {
+                            Double currentValue = lanesBeforeBranch.get(l);
+                            // Use recursion to find out HOW suitable this continuation lane is, but don't revert back
+                            // to the maximum time horizon (or we could end up in infinite recursion when there are
+                            // loops in the network).
+                            Double value =
+                                    suitability(l, new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.SI), gtuType,
+                                            new DoubleScalar.Rel<TimeUnit>(remainingTime, TimeUnit.SI));
+                            lanesBeforeBranch.put(l, null == currentValue || value > currentValue ? value
+                                    : currentValue);
+                        }
+                    }
+                }
+            }
+        }
+        if (lanesBeforeBranch.size() == 0)
+        {
+            throw new NetworkException("No lanes available on Link " + linkBeforeBranch);
+        }
+        Double currentLaneSuitability = lanesBeforeBranch.get(currentLane);
+        if (null != currentLaneSuitability)
+        {
+            return currentLaneSuitability; // Following the current lane will keep us on the Route
+        }
+        // Changing one or more lanes (left or right) is required.
+        /*-
+         * The time per required lane change seems more relevant than distance per required lane change.
+         * Total time required does not grow linearly with the number of required lane changes. Logarithmic, arc tangent 
+         * is more like it.
+         * Rijkswaterstaat appears to use a fixed time for ANY number of lane changes (about 60s). 
+         * TomTom navigation systems give more time (about 90s).
+         */
+        // FIXME: For now we'll pretend that performing N lane changes is not harder than performing 1 lane change
+        return remainingTime / timeHorizon.getSI();
     }
 
     /** {@inheritDoc} */
