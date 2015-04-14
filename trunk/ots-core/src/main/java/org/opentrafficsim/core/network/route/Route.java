@@ -483,8 +483,7 @@ public class Route implements Serializable
      * @param totalLanes integer; total number of lanes compatible with the GTU type
      * @param direction LateralDirectionality; the direction of the lane changes to attempt
      * @param gtuType GTUType&lt;?&gt;; the type of the GTU
-     * @return integer; the number of lane changes required, or Integer.MAX_VALUE if (repeatedly) changing lane in the
-     *         given direction does not put the GTU on a suitable lane
+     * @return double; the suitability of the <cite>startLane</site> for following the Route
      */
     private double computeSuitabilityWithLaneChanges(final Lane startLane, final Map<Lane, Double> suitabilities,
             int totalLanes, final LateralDirectionality direction, GTUType<?> gtuType)
