@@ -476,7 +476,7 @@ public class Route implements Serializable
 
     /**
      * Compute the suitability of a lane from which lane changes are required to get to the next point on the Route.<br>
-     * This method weighs the suitability of the first found suitable lane by (m - n) / m where n is the number of lane
+     * This method weighs the suitability of the nearest suitable lane by (m - n) / m where n is the number of lane
      * changes required and m is the total number of lanes in the CrossSectionLink.
      * @param startLane Lane; the current lane of the GTU
      * @param suitabilities Map&lt;Lane, Double&gt;; the set of suitable lanes and their suitability
