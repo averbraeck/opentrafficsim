@@ -283,7 +283,7 @@ public class Route implements Serializable
             GTUType<?> gtuType, DoubleScalar.Rel<TimeUnit> timeHorizon) throws NetworkException
     {
         double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();
-        double remainingTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit().getSI();
+        double spareTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit().getSI();
         // Find the first upcoming Node where there is a branch
         Node<?, ?> nextNode = lane.getParentLink().getEndNode();
         Node<?, ?> nextSplitNode = null;
@@ -291,23 +291,11 @@ public class Route implements Serializable
         CrossSectionLink<?, ?> linkBeforeBranch = lane.getParentLink();
         while (null != nextNode)
         {
-            if (remainingTime >= 0)
+            if (spareTime <= 0)
             {
                 return 1.0; // It is not yet time to worry; this lane will do as well as any other
             }
-            // Count the number of compatible Lanes on this Link
-            int laneCount = 0;
-            for (CrossSectionElement cse : linkBeforeBranch.getCrossSectionElementList())
-            {
-                if (cse instanceof Lane)
-                {
-                    Lane l = (Lane) cse;
-                    if (l.getLaneType().isCompatible(gtuType))
-                    {
-                        laneCount++;
-                    }
-                }
-            }
+            int laneCount = countCompatibleLanes(linkBeforeBranch, gtuType);
             if (0 == laneCount)
             {
                 throw new NetworkException("No compatible Lanes on Link " + linkBeforeBranch);
@@ -381,7 +369,7 @@ public class Route implements Serializable
                             break;
                         }
                     }
-                    remainingTime -= currentLane.getLength().getSI() / currentLane.getSpeedLimit().getSI();
+                    spareTime -= currentLane.getLength().getSI() / currentLane.getSpeedLimit().getSI();
                 }
                 else
                 {
@@ -440,8 +428,8 @@ public class Route implements Serializable
                             // to the maximum time horizon (or we could end up in infinite recursion when there are
                             // loops in the network).
                             Double value =
-                                    suitability(l, new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.SI), gtuType,
-                                            new DoubleScalar.Rel<TimeUnit>(remainingTime, TimeUnit.SI));
+                                    suitability(connectingLane, new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.SI),
+                                            gtuType, new DoubleScalar.Rel<TimeUnit>(spareTime, TimeUnit.SI));
                             lanesBeforeBranch.put(l, null == currentValue || value > currentValue ? value
                                     : currentValue);
                         }
@@ -466,7 +454,7 @@ public class Route implements Serializable
         double rightSuitability =
                 computeSuitabilityWithLaneChanges(currentLane, lanesBeforeBranch, totalLanes,
                         LateralDirectionality.RIGHT, gtuType);
-        double result = Math.max(leftSuitability, rightSuitability);
+        double result = 1.0 - (1.0 - Math.max(leftSuitability, rightSuitability)) * spareTime / timeHorizon.getSI();
         if (0 == result)
         {
             throw new NetworkException("Changing lanes in any direction does not get the GTU on a suitable lane");
@@ -502,7 +490,7 @@ public class Route implements Serializable
         while (null == currentSuitability)
         {
             laneChangesUsed++;
-            Set<Lane> adjacentLanes = startLane.accessibleAdjacentLanes(direction, gtuType);
+            Set<Lane> adjacentLanes = currentLane.accessibleAdjacentLanes(direction, gtuType);
             if (adjacentLanes.size() == 0)
             {
                 return 0;
