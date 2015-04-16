@@ -3,6 +3,7 @@ package org.opentrafficsim.demo.lanechange;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.geom.Line2D;
+import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +14,7 @@ import java.util.Map;
 import javax.naming.NamingException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -101,6 +103,9 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
     /** End of two lane road. */
     static final DoubleScalar.Rel<LengthUnit> upperBound = new DoubleScalar.Rel<LengthUnit>(500, LengthUnit.METER);
 
+    /** The JFrame with the lane change graphs. */
+    static LaneChangeGraph lcs;
+    
     /**
      * Create a Lane Change Graph
      * @param title String; title text of the window
@@ -113,42 +118,42 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.charts = new ChartPanel[2][standardSpeeds.length];
     }
-
+    
     /**
-     * Then execution start point.
-     * @param args String[]; the command line arguments (not used)
-     * @throws NamingException
-     * @throws RemoteException
-     * @throws NetworkException
-     * @throws SimRuntimeException
-     * @throws GTUException
+     * Main entry point; now Swing thread safe (I hope).
+     * @param args
+     * @throws GTUException 
+     * @throws SimRuntimeException 
+     * @throws NetworkException 
+     * @throws NamingException 
+     * @throws RemoteException 
      */
-    public static void main(String[] args) throws RemoteException, NamingException, NetworkException,
-            SimRuntimeException, GTUException
+    public static void main(final String[] args) throws RemoteException, NamingException, NetworkException, SimRuntimeException, GTUException
     {
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        LaneChangeGraph lcs = new LaneChangeGraph("Lane change graphs", mainPanel);
-        TablePanel chartsPanel = new TablePanel(standardSpeeds.length, 2);
-        mainPanel.add(chartsPanel, BorderLayout.CENTER);
-        for (int index = 0; index < standardSpeeds.length; index++)
+        try
         {
-            lcs.charts[0][index] =
-                    new ChartPanel(lcs.createChart(
-                            String.format("Egoistic reference car at %.0fkm/h", standardSpeeds[index]),
-                            standardSpeeds[index]));
-            chartsPanel.setCell(lcs.charts[0][index], index, 0);
+            SwingUtilities.invokeAndWait(new Runnable()
+            {
+
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        buildGUI(args);
+                    }
+                    catch (RemoteException | NamingException | NetworkException | SimRuntimeException | GTUException exception)
+                    {
+                        exception.printStackTrace();
+                    }
+                }
+                
+            });
         }
-        for (int index = 0; index < standardSpeeds.length; index++)
+        catch (InvocationTargetException | InterruptedException exception)
         {
-            lcs.charts[1][index] =
-                    new ChartPanel(lcs.createChart(
-                            String.format("Altruistic reference car at %.0fkm/h", standardSpeeds[index]),
-                            standardSpeeds[index]));
-            chartsPanel.setCell(lcs.charts[1][index], index, 1);
+            exception.printStackTrace();
         }
-        lcs.pack();
-        lcs.setExtendedState(Frame.MAXIMIZED_BOTH);
-        lcs.setVisible(true);
         for (int row = 0; row < lcs.charts.length; row++)
         {
             LaneChangeModel laneChangeModel = 0 == row ? new Egoistic() : new Altruistic();
@@ -210,6 +215,44 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
                 }
             }
         }
+
+    }
+
+    /**
+     * Then execution start point.
+     * @param args String[]; the command line arguments (not used)
+     * @throws NamingException
+     * @throws RemoteException
+     * @throws NetworkException
+     * @throws SimRuntimeException
+     * @throws GTUException
+     */
+    public static void buildGUI(String[] args) throws RemoteException, NamingException, NetworkException,
+            SimRuntimeException, GTUException
+    {
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        lcs = new LaneChangeGraph("Lane change graphs", mainPanel);
+        TablePanel chartsPanel = new TablePanel(standardSpeeds.length, 2);
+        mainPanel.add(chartsPanel, BorderLayout.CENTER);
+        for (int index = 0; index < standardSpeeds.length; index++)
+        {
+            lcs.charts[0][index] =
+                    new ChartPanel(lcs.createChart(
+                            String.format("Egoistic reference car at %.0fkm/h", standardSpeeds[index]),
+                            standardSpeeds[index]));
+            chartsPanel.setCell(lcs.charts[0][index], index, 0);
+        }
+        for (int index = 0; index < standardSpeeds.length; index++)
+        {
+            lcs.charts[1][index] =
+                    new ChartPanel(lcs.createChart(
+                            String.format("Altruistic reference car at %.0fkm/h", standardSpeeds[index]),
+                            standardSpeeds[index]));
+            chartsPanel.setCell(lcs.charts[1][index], index, 1);
+        }
+        lcs.pack();
+        lcs.setExtendedState(Frame.MAXIMIZED_BOTH);
+        lcs.setVisible(true);
     }
 
     /**
