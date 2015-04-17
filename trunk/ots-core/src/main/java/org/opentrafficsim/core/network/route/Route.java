@@ -18,7 +18,6 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * A Route consists of a list of Nodes. The last visited node is kept. Code can ask what the next node is, and can
