@@ -66,7 +66,7 @@ public class SuitabilityGraph implements OTSModelInterface
     /** The JPanel that contains all the graphs. */
     private JPanel graphPanel;
 
-    /** Number of lanes on the main roadway. */
+    /** Number of lanes on the main roadway (do not set higher than size of colorTable). */
     private static final int laneCount = 4;
 
     /** Speed limit values in km/h. */
@@ -79,7 +79,11 @@ public class SuitabilityGraph implements OTSModelInterface
     DoubleScalar.Rel<TimeUnit> timeHorizon = new DoubleScalar.Rel<TimeUnit>(100, TimeUnit.SECOND);
 
     /** Time range for graphs (also adjusts distance range). */
-    DoubleScalar.Rel<TimeUnit> timeRange = new DoubleScalar.Rel<TimeUnit>(120, TimeUnit.SECOND);
+    DoubleScalar.Rel<TimeUnit> timeRange = new DoubleScalar.Rel<TimeUnit>(110, TimeUnit.SECOND);
+
+    /** Colors that correspond to the lanes; taken from electrical resistor color codes. */
+    private static final Color[] colorTable = {new Color(160, 82, 45) /* brown */, Color.RED, Color.ORANGE,
+            Color.YELLOW, Color.GREEN, Color.BLUE, new Color(199, 21, 133) /* violet */, Color.GRAY, Color.WHITE};
 
     /** The graphs. */
     JFreeChart[][] charts;
@@ -144,13 +148,14 @@ public class SuitabilityGraph implements OTSModelInterface
                 NodeGeotools.STR destination =
                         new NodeGeotools.STR("Destination", new Coordinate(1000, targetLaneConfiguration > 0 ? 100
                                 : -100, 0));
-                LaneFactory.makeMultiLane("DestinationLane", branchPoint, destination, null, Math
-                        .abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? 0 : 4 + targetLaneConfiguration,
-                        0, laneType, speedLimit, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                LaneFactory.makeMultiLane("DestinationLink", branchPoint, destination, null,
+                        Math.abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? 0 : laneCount
+                                + targetLaneConfiguration, 0, laneType, speedLimit,
+                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
                 NodeGeotools.STR nonDestination =
                         new NodeGeotools.STR("Non-Destination", new Coordinate(1000, targetLaneConfiguration > 0 ? -100
                                 : 100, 0));
-                LaneFactory.makeMultiLane("Non-DestinationLane", branchPoint, nonDestination, null,
+                LaneFactory.makeMultiLane("Non-DestinationLink", branchPoint, nonDestination, null,
                         laneCount - Math.abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? laneCount
                                 - targetLaneConfiguration : 0, 0, laneType, speedLimit,
                         (OTSDEVSSimulatorInterface) simulator.getSimulator());
@@ -168,8 +173,12 @@ public class SuitabilityGraph implements OTSModelInterface
                     {
                         DoubleScalar.Rel<LengthUnit> longitudinalPosition =
                                 new DoubleScalar.Rel<LengthUnit>(position, LengthUnit.METER);
-                        double suitability = route.suitability(lane, longitudinalPosition, gtuType, this.timeHorizon);
-                        dataset.addXYPair(key, mainLength - position, suitability);
+                        DoubleScalar.Rel<LengthUnit> suitability =
+                                route.suitability(lane, longitudinalPosition, gtuType, this.timeHorizon);
+                        if (suitability.getSI() <= mainLength)
+                        {
+                            dataset.addXYPair(key, mainLength - position, suitability.getSI());
+                        }
                     }
                     dataset.reGraph();
                 }
@@ -192,7 +201,7 @@ public class SuitabilityGraph implements OTSModelInterface
         {
             int targetLaneConfiguration = targetLanes[row];
             String targetLaneDescription =
-                    String.format("%s lane %s branch", Math.abs(targetLaneConfiguration) == 1 ? "single" : "double",
+                    String.format("%s lane %s exit", Math.abs(targetLaneConfiguration) == 1 ? "single" : "double",
                             targetLaneConfiguration > 0 ? "left" : "right");
             for (int column = 0; column < columns; column++)
             {
@@ -207,10 +216,6 @@ public class SuitabilityGraph implements OTSModelInterface
         }
     }
 
-    /** Colors that correspond to the lanes; taken from electrical resistor color codes. */
-    private static final Color[] colorTable = {new Color(150, 96, 96), Color.RED, Color.ORANGE, Color.YELLOW,
-            Color.GREEN, Color.BLUE, new Color(255, 0, 255)};
-
     /**
      * @param caption String; the caption for the chart
      * @param speed double; the speed of the reference vehicle
@@ -221,8 +226,10 @@ public class SuitabilityGraph implements OTSModelInterface
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
         XYDataset chartData = new SuitabilityData();
         JFreeChart chartPanel =
-                ChartFactory.createXYLineChart(caption, "", "", chartData, PlotOrientation.VERTICAL, true, false,
-                        false);
+                ChartFactory
+                        .createXYLineChart(caption, "", "", chartData, PlotOrientation.VERTICAL, true, false, false);
+        chartPanel.setBorderVisible(true);
+        chartPanel.setBorderPaint(new Color(192, 192, 192));
         NumberAxis timeAxis = new NumberAxis("\u2192 " + "Remaining time to junction [s]");
         double distanceRange = this.timeRange.getSI() * speedLimit.getSI();
         NumberAxis distanceAxis = new NumberAxis("\u2192 " + "Remaining distance to junction [m]");
@@ -235,16 +242,15 @@ public class SuitabilityGraph implements OTSModelInterface
         timeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         // time axis gets messed up on auto range (probably due to all data being relative to distance axis)
         // ((XYPlot) chartPanel.getPlot()).setDomainAxis(1, timeAxis);
-        NumberAxis yAxis = new NumberAxis("\u2192 " + "Suitability");
+        NumberAxis yAxis = new NumberAxis("\u2192 " + "Distance to vacate lane [m]");
         yAxis.setAutoRangeIncludesZero(true);
-        yAxis.setRange(-0.1, 1.1);
+        yAxis.setRange(-0.1, distanceRange);
         chartPanel.getXYPlot().setDomainAxis(distanceAxis);
         chartPanel.getXYPlot().setRangeAxis(yAxis);
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) chartPanel.getXYPlot().getRenderer();
         renderer.setBaseLinesVisible(true);
         renderer.setBaseShapesVisible(false);
-        // renderer.setBaseShape(new Line2D.Float(0, 0, 0, 0));
-        // sets paint color for each series
+        // Set paint color and stroke for each series
         for (int index = 0; index < laneCount; index++)
         {
             renderer.setSeriesPaint(index, colorTable[index]);
