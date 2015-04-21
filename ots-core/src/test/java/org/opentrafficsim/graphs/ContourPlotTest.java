@@ -27,6 +27,7 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.following.SequentialFixedAccelerationModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
@@ -63,13 +64,13 @@ public class ContourPlotTest
      * @return List&lt;Lane&gt;; the dummy path
      * @throws Exception when something goes wrong (should not happen)
      */
-    private List<Lane> dummyPath() throws Exception
+    private List<Lane> dummyPath(final LaneType<String> laneType) throws Exception
     {
         ArrayList<Lane> result = new ArrayList<Lane>();
         Lane[] lanes =
                 LaneFactory.makeMultiLane("AtoB", new NodeGeotools.STR("A", new Coordinate(1234, 0, 0)),
-                        new NodeGeotools.STR("B", new Coordinate(12345, 0, 0)), null, 1, new LaneType<String>(
-                                "lane type"), new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), null);
+                        new NodeGeotools.STR("B", new Coordinate(12345, 0, 0)), null, 1, laneType,
+                        new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), null);
         result.add(lanes[0]);
         return result;
     }
@@ -82,11 +83,14 @@ public class ContourPlotTest
     @Test
     public final void accelerationContourTest() throws Exception
     {
-        List<Lane> path = dummyPath();
+        LaneType<String> laneType = new LaneType<String>("CarLane");
+        GTUType<?> gtuType = new GTUType<String>("Car");
+        laneType.addPermeability(gtuType);
+        List<Lane> path = dummyPath(laneType);
         AccelerationContourPlot acp = new AccelerationContourPlot("Acceleration", path);
         assertTrue("newly created AccelerationContourPlot should not be null", null != acp);
         assertEquals("SeriesKey should be \"acceleration\"", "acceleration", acp.getSeriesKey(0));
-        standardContourTests(acp, path.get(0), Double.NaN, 0);
+        standardContourTests(acp, path.get(0), gtuType, Double.NaN, 0);
     }
 
     /**
@@ -97,11 +101,14 @@ public class ContourPlotTest
     @Test
     public final void densityContourTest() throws Exception
     {
-        List<Lane> path = dummyPath();
+        LaneType<String> laneType = new LaneType<String>("CarLane");
+        GTUType<?> gtuType = new GTUType<String>("Car");
+        laneType.addPermeability(gtuType);
+        List<Lane> path = dummyPath(laneType);
         DensityContourPlot dcp = new DensityContourPlot("Density", path);
         assertTrue("newly created DensityContourPlot should not be null", null != dcp);
         assertEquals("SeriesKey should be \"density\"", "density", dcp.getSeriesKey(0));
-        standardContourTests(dcp, path.get(0), 0, Double.NaN);
+        standardContourTests(dcp, path.get(0), gtuType, 0, Double.NaN);
     }
 
     /**
@@ -112,11 +119,14 @@ public class ContourPlotTest
     @Test
     public final void flowContourTest() throws Exception
     {
-        List<Lane> path = dummyPath();
+        LaneType<String> laneType = new LaneType<String>("CarLane");
+        GTUType<?> gtuType = new GTUType<String>("Car");
+        laneType.addPermeability(gtuType);
+        List<Lane> path = dummyPath(laneType);
         FlowContourPlot fcp = new FlowContourPlot("Density", path);
         assertTrue("newly created DensityContourPlot should not be null", null != fcp);
         assertEquals("SeriesKey should be \"flow\"", "flow", fcp.getSeriesKey(0));
-        standardContourTests(fcp, path.get(0), 0, Double.NaN);
+        standardContourTests(fcp, path.get(0), gtuType, 0, Double.NaN);
     }
 
     /**
@@ -127,17 +137,21 @@ public class ContourPlotTest
     @Test
     public final void speedContourTest() throws Exception
     {
-        List<Lane> path = dummyPath();
+        LaneType<String> laneType = new LaneType<String>("CarLane");
+        GTUType<?> gtuType = new GTUType<String>("Car");
+        laneType.addPermeability(gtuType);
+        List<Lane> path = dummyPath(laneType);
         SpeedContourPlot scp = new SpeedContourPlot("Density", path);
         assertTrue("newly created DensityContourPlot should not be null", null != scp);
         assertEquals("SeriesKey should be \"speed\"", "speed", scp.getSeriesKey(0));
-        standardContourTests(scp, path.get(0), Double.NaN, 50);
+        standardContourTests(scp, path.get(0), gtuType, Double.NaN, 50);
     }
 
     /**
      * Test various properties of a ContourPlot that has no observed data added.
      * @param cp ContourPlot; the ContourPlot to test
      * @param lane Lane; the lane on which the test GTUs are run
+     * @param gtuType GTUType&lt;?&gt;; the type of GTU
      * @param expectedZValue double; the value that getZ and getZValue should return for a valid item when no car has
      *            passed
      * @param expectedZValueWithTraffic double; the value that getZ and getZValue should return a valid item where a car
@@ -145,7 +159,7 @@ public class ContourPlotTest
      *            value expected when no car has passed
      * @throws Exception when something goes wrong (should not happen)
      */
-    public static void standardContourTests(final ContourPlot cp, Lane lane, final double expectedZValue,
+    public static void standardContourTests(final ContourPlot cp, Lane lane, GTUType<?> gtuType, final double expectedZValue,
             final double expectedZValueWithTraffic) throws Exception
     {
         assertEquals("seriesCount should be 1", 1, cp.getSeriesCount());
@@ -327,7 +341,7 @@ public class ContourPlotTest
                 AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND)));
         LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar<Integer> car =
-                CarTest.makeReferenceCar(0, lane, initialPosition, initialSpeed,
+                CarTest.makeReferenceCar(0, gtuType, lane, initialPosition, initialSpeed,
                         (OTSDEVSSimulator) simulator.getSimulator(), gtuFollowingModel, laneChangeModel);
         // Check that the initial data in the graph contains no trace of any car.
         for (int item = 0; item < bins; item++)

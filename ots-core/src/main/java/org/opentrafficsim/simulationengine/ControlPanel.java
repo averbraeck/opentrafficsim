@@ -202,7 +202,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
      */
     protected final void fixButtons()
     {
-        System.out.println("FixButtons entered");
+        //System.out.println("FixButtons entered");
         final boolean moreWorkToDo = getSimulator().getEventList().size() > 0;
         for (JButton button : this.buttons)
         {
@@ -232,7 +232,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 this.logger.logp(Level.SEVERE, "ControlPanel", "fixButtons", "", new Exception("Unknown button?"));
             }
         }
-        System.out.println("FixButtons finishing");
+        //System.out.println("FixButtons finishing");
     }
 
     /**
@@ -271,22 +271,22 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 // System.out.println("Not re-scheduling");
                 if (SwingUtilities.isEventDispatchThread())
                 {
-                    System.out.println("Already on EventDispatchThread");
+                    //System.out.println("Already on EventDispatchThread");
                     fixButtons();
                 }
                 else
                 {
                     try
                     {
-                        System.out.println("Current thread is NOT EventDispatchThread: " + Thread.currentThread());
+                        //System.out.println("Current thread is NOT EventDispatchThread: " + Thread.currentThread());
                         SwingUtilities.invokeAndWait(new Runnable()
                         {
                             @Override
                             public void run()
                             {
-                                System.out.println("Runnable started");
+                                //System.out.println("Runnable started");
                                 fixButtons();
-                                System.out.println("Runnable finishing");
+                                //System.out.println("Runnable finishing");
                             }
                         });
                     }
@@ -295,7 +295,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                         if (e instanceof InterruptedException)
                         {
                             System.out.println("Caught " + e);
-                            e.printStackTrace();
+                            //e.printStackTrace();
                         }
                         else
                         {
@@ -417,7 +417,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                     text.append("0");
                 }
                 labels.put(step, new JLabel(text.toString()));
-                System.out.println("Label " + step + " is \"" + text.toString() + "\"");
+                //System.out.println("Label " + step + " is \"" + text.toString() + "\"");
             }
             // Figure out the DecimalSymbol
             String decimalSeparator =
@@ -438,7 +438,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 }
                 text.append(this.ratios[index]);
                 labels.put(step, new JLabel(text.toString()));
-                System.out.println("Label " + step + " is \"" + text.toString() + "\"");
+                //System.out.println("Label " + step + " is \"" + text.toString() + "\"");
             }
             this.slider.setLabelTable(labels);
             this.slider.setPaintLabels(true);

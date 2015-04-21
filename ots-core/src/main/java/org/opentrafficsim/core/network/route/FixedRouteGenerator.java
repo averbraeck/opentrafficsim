@@ -71,4 +71,21 @@ public class FixedRouteGenerator implements RouteGenerator, Comparable<FixedRout
         // FIXME: this goes VERY wrong if different Nodes can have the same id
         return 0;
     }
+
+    /** {@inheritDoc} */
+    public final String toString()
+    {
+        StringBuilder result = new StringBuilder();
+        result.append("FixedRouteGenerator");
+        String separator = " [";
+        for (Node<?, ?> node : this.nodeList)
+        {
+            result.append(separator);
+            result.append(node);
+            separator = ", ";
+        }
+        result.append("]");
+        return result.toString();
+    }
+
 }

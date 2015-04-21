@@ -75,7 +75,10 @@ public class CarTest
             GTUException
     {
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
-        Lane lane = makeLane();
+        GTUType<String> gtuType = new GTUType<String>("Car");
+        LaneType<String> laneType = new LaneType<String>("CarLane");
+        laneType.addPermeability(gtuType);
+        Lane lane = makeLane(laneType);
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(12, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(34, SpeedUnit.KM_PER_HOUR);
         OTSDEVSSimulator simulator = makeSimulator();
@@ -84,7 +87,7 @@ public class CarTest
                         AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND));
         LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar<Integer> referenceCar =
-                makeReferenceCar(12345, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
+                makeReferenceCar(12345, gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
                         laneChangeModel);
         assertEquals("The car should store it's ID", 12345, (int) referenceCar.getId());
         assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(),
@@ -127,6 +130,7 @@ public class CarTest
     /**
      * Create a new Car.
      * @param nr int; the name (number) of the Car
+     * @param gtuType GTUType&lt;?&gt;; the type of the new car
      * @param lane Lane; the lane on which the new Car is positioned
      * @param initialPosition DoubleScalar.Abs&lt;LengthUnit&gt;; the initial longitudinal position of the new Car
      * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed
@@ -141,27 +145,28 @@ public class CarTest
      * @throws SimRuntimeException when the move method cannot be scheduled.
      * @throws GTUException when construction of the GTU fails (probably due to an invalid parameter)
      */
-    public static LaneBasedIndividualCar<Integer> makeReferenceCar(final int nr, final Lane lane,
-            final DoubleScalar.Rel<LengthUnit> initialPosition, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
-            final OTSDEVSSimulator simulator, GTUFollowingModel gtuFollowingModel, LaneChangeModel laneChangeModel)
-            throws RemoteException, NamingException, NetworkException, SimRuntimeException, GTUException
+    public static LaneBasedIndividualCar<Integer> makeReferenceCar(final int nr, final GTUType<?> gtuType,
+            final Lane lane, final DoubleScalar.Rel<LengthUnit> initialPosition,
+            final DoubleScalar.Abs<SpeedUnit> initialSpeed, final OTSDEVSSimulator simulator,
+            GTUFollowingModel gtuFollowingModel, LaneChangeModel laneChangeModel) throws RemoteException,
+            NamingException, NetworkException, SimRuntimeException, GTUException
     {
-        GTUType<String> carType = new GTUType<String>("Car");
         DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
         initialLongitudinalPositions.put(lane, initialPosition);
         DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
-        return new LaneBasedIndividualCar<Integer>(nr, carType, gtuFollowingModel, laneChangeModel,
+        return new LaneBasedIndividualCar<Integer>(nr, gtuType, gtuFollowingModel, laneChangeModel,
                 initialLongitudinalPositions, initialSpeed, length, width, maxSpeed, new Route(
                         new ArrayList<Node<?, ?>>()), simulator);
     }
 
     /**
+     * @param laneType LaneType&lt;String&gt;; the type of the lane
      * @return a lane of 1000 m long.
      * @throws NetworkException on network error
      */
-    public static Lane makeLane() throws NetworkException
+    public static Lane makeLane(LaneType<?> laneType) throws NetworkException
     {
         NodeGeotools.STR n1 = new NodeGeotools.STR("n1", new Coordinate(0, 0));
         NodeGeotools.STR n2 = new NodeGeotools.STR("n2", new Coordinate(10000.0, 0.0));
@@ -171,11 +176,10 @@ public class CarTest
         Coordinate[] coordinates = new Coordinate[]{new Coordinate(0.0, 0.0), new Coordinate(10000.0, 0.0)};
         LineString line = factory.createLineString(coordinates);
         new LinearGeometry(link12, line, null);
-        LaneType<String> carLaneType = new LaneType<String>("CarLane");
         DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         DoubleScalar.Abs<FrequencyUnit> f200 = new DoubleScalar.Abs<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
-        return new Lane(link12, latPos, latPos, width, width, carLaneType, LongitudinalDirectionality.FORWARD, f200,
+        return new Lane(link12, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f200,
                 new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR));
     }
 

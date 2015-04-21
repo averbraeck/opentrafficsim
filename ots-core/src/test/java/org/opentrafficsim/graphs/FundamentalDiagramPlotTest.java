@@ -26,12 +26,14 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -67,7 +69,10 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
         DoubleScalar.Rel<TimeUnit> aggregationTime = new DoubleScalar.Rel<TimeUnit>(30, TimeUnit.SECOND);
         DoubleScalar.Rel<LengthUnit> position = new DoubleScalar.Rel<LengthUnit>(123, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> carPosition = new DoubleScalar.Rel<LengthUnit>(122.5, LengthUnit.METER);
-        Lane lane = CarTest.makeLane();
+        LaneType<String> laneType = new LaneType<String>("CarLane");
+        GTUType<String> gtuType = new GTUType<String>("Car");
+        laneType.addPermeability(gtuType);
+        Lane lane = CarTest.makeLane(laneType);
         FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, lane, position);
         assertEquals("SeriesCount should match numberOfLanes", 1, fd.getSeriesCount());
         assertEquals("Position should match the supplied position", position.getSI(), fd.getPosition().getSI(), 0.0001);
@@ -116,7 +121,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
                 new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
                         AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(1000, TimeUnit.SECOND));
         // Construct a car
-        new LaneBasedIndividualCar<Integer>(1, null, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions,
+        new LaneBasedIndividualCar<Integer>(1, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions,
                 speed, length, width, maxSpeed, new Route(new ArrayList<Node<?, ?>>()),
                 (OTSDEVSSimulatorInterface) simulator.getSimulator());
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(124, TimeUnit.SECOND));
@@ -275,8 +280,9 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
     {
         DoubleScalar.Rel<TimeUnit> aggregationTime = new DoubleScalar.Rel<TimeUnit>(30, TimeUnit.SECOND);
         DoubleScalar.Rel<LengthUnit> position = new DoubleScalar.Rel<LengthUnit>(123, LengthUnit.METER);
+        LaneType<String> laneType = new LaneType<String>("CarLane");
         FundamentalDiagram fd =
-                new FundamentalDiagram("Fundamental Diagram", aggregationTime, CarTest.makeLane(), position);
+                new FundamentalDiagram("Fundamental Diagram", aggregationTime, CarTest.makeLane(laneType), position);
         // First get the panel that stores the result of updateHint (this is ugly)
         JLabel hintPanel = null;
         ChartPanel chartPanel = null;

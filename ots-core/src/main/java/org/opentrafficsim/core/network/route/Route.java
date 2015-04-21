@@ -270,11 +270,11 @@ public class Route implements Serializable
     }
 
     /** Return value of suitability when no lane change is required withing the time horizon. */
-    private static final DoubleScalar.Rel<LengthUnit> NOLANECHANGENEEDED = new DoubleScalar.Rel<LengthUnit>(
+    public static final DoubleScalar.Rel<LengthUnit> NOLANECHANGENEEDED = new DoubleScalar.Rel<LengthUnit>(
             Double.MAX_VALUE, LengthUnit.SI);
 
     /** Return value of suitability when a lane change is required <i>right now</i>. */
-    private static final DoubleScalar.Rel<LengthUnit> GETOFFTHISLANENOW = new DoubleScalar.Rel<LengthUnit>(0,
+    public static final DoubleScalar.Rel<LengthUnit> GETOFFTHISLANENOW = new DoubleScalar.Rel<LengthUnit>(0,
             LengthUnit.SI);
 
     /**
@@ -420,7 +420,7 @@ public class Route implements Serializable
         }
         if (null == linkAfterBranch)
         {
-            throw new NetworkException("Cannot identify the link to follow after Node " + nextSplitNode);
+            throw new NetworkException("Cannot identify the link to follow after " + nextSplitNode + " in " + this);
         }
         for (CrossSectionElement cse : linkBeforeBranch.getCrossSectionElementList())
         {
@@ -441,7 +441,9 @@ public class Route implements Serializable
                             DoubleScalar.Rel<LengthUnit> value =
                                     suitability(connectingLane, new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.SI),
                                             gtuType, new DoubleScalar.Rel<TimeUnit>(spareTime, TimeUnit.SI));
-                            suitabilityOfLanesBeforeBranch.put(l, null == currentValue || value.ge(currentValue)
+                            // Use the minimum of the value computed for the first split junction (if there is one)
+                            // and the value computed for the second split junction.
+                            suitabilityOfLanesBeforeBranch.put(l, null == currentValue || value.le(currentValue)
                                     ? value : currentValue);
                         }
                     }
