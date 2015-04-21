@@ -68,7 +68,9 @@ public class AbstractLaneBasedGTUTest
         // To create Lanes we need Nodes and a LaneType
         NodeGeotools.STR nodeAFrom = new NodeGeotools.STR("AFrom", new Coordinate(0, 0, 0));
         NodeGeotools.STR nodeATo = new NodeGeotools.STR("ATo", new Coordinate(1000, 0, 0));
+        GTUType<String> gtuType = new GTUType<String>("Car");
         LaneType<String> laneType = new LaneType<String>("CarLane");
+        laneType.addPermeability(gtuType);
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForTemplateGTUTest();
         final SimpleSimulator simulator =
@@ -99,9 +101,7 @@ public class AbstractLaneBasedGTUTest
         GTUFollowingModel gfm = new FixedAccelerationModel(acceleration, validFor);
         // A Car needs a lane change model
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
-        // A Car needs a type
-        GTUType<String> gtuType = new GTUType<String>("Car");
-        // A Car needs an initial speed
+         // A Car needs an initial speed
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
         // Length of the Car
         DoubleScalar.Rel<LengthUnit> carLength = new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER);
@@ -208,7 +208,7 @@ public class AbstractLaneBasedGTUTest
             {
                 step = 0.1; // Reduce testing time by increasing the step size
             }
-            // System.out.println("Simulating until " + stopTime.getSI());
+            System.out.println("Simulating until " + stepTime.getSI());
             simulator.runUpTo(stepTime);
             if (stepTime.getSI() > 0)
             {
@@ -227,6 +227,11 @@ public class AbstractLaneBasedGTUTest
                 Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
                 assertEquals("Car should be in two lanes", 2, positions.size());
                 Double pos = positions.get(lanesGroupA[1]);
+                if (null == pos)
+                {
+                    System.out.println("MIS");
+                    positions.get(lanesGroupA[1]);
+                }
                 assertTrue("Car should be in lane 1 of lane group A", null != pos);
                 assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
                         car.fractionalPosition(lanesGroupA[1], relativePosition), 0.0000001);
