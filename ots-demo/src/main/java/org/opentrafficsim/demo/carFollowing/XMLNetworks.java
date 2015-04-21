@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.naming.NamingException;
 
@@ -36,7 +38,10 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.lane.SinkLane;
+import org.opentrafficsim.core.network.route.FixedRouteGenerator;
+import org.opentrafficsim.core.network.route.ProbabilisticFixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -164,7 +169,10 @@ class XMLNetworkModel implements OTSModelInterface
     private double carProbability;
 
     /** The random number generator used to decide what kind of GTU to generate. */
-    private Random randomGenerator = new Random(12345);
+    private Random randomGenerator = new Random(12346);
+
+    /** The route generator. */
+    private RouteGenerator routeGenerator;
 
     /**
      * @param userModifiedProperties
@@ -184,10 +192,10 @@ class XMLNetworkModel implements OTSModelInterface
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         NodeGeotools.STR from = new NodeGeotools.STR("From", new Coordinate(0, 0, 0));
         NodeGeotools.STR end = new NodeGeotools.STR("End", new Coordinate(500, 0, 0));
-        NodeGeotools.STR from2 = new NodeGeotools.STR("From", new Coordinate(0, -50, 0));
-        NodeGeotools.STR firstVia = new NodeGeotools.STR("From", new Coordinate(200, 0, 0));
-        NodeGeotools.STR end2 = new NodeGeotools.STR("End", new Coordinate(500, -50, 0));
-        NodeGeotools.STR secondVia = new NodeGeotools.STR("End", new Coordinate(300, 0, 0));
+        NodeGeotools.STR from2 = new NodeGeotools.STR("From2", new Coordinate(0, -50, 0));
+        NodeGeotools.STR firstVia = new NodeGeotools.STR("Via1", new Coordinate(200, 0, 0));
+        NodeGeotools.STR end2 = new NodeGeotools.STR("End2", new Coordinate(500, -50, 0));
+        NodeGeotools.STR secondVia = new NodeGeotools.STR("Via2", new Coordinate(300, 0, 0));
         CompoundProperty cp = new CompoundProperty("", "", this.properties, false, 0);
         String networkType = (String) cp.findByShortName("Network").getValue();
         boolean merge = networkType.startsWith("M");
@@ -301,11 +309,21 @@ class XMLNetworkModel implements OTSModelInterface
             {
                 setupGenerator(LaneFactory.makeMultiLane("From2 to FirstVia", from2, firstVia, null, lanesOnBranch, 0,
                         lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator));
+                this.routeGenerator = new FixedRouteGenerator(new ArrayList<Node<?, ?>>());
             }
             else
             {
                 setupSink(LaneFactory.makeMultiLane("SecondVia to end2", secondVia, end2, null, lanesOnBranch,
                         lanesOnCommon - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator));
+                SortedMap<RouteGenerator, java.lang.Double> routeProbabilities =
+                        new TreeMap<RouteGenerator, java.lang.Double>();
+                ArrayList<Node<?, ?>> mainRoute = new ArrayList<Node<?, ?>>();
+                mainRoute.add(end);
+                routeProbabilities.put(new FixedRouteGenerator(mainRoute), new java.lang.Double(lanesOnMain));
+                ArrayList<Node<?, ?>> sideRoute = new ArrayList<Node<?, ?>>();
+                sideRoute.add(end2);
+                routeProbabilities.put(new FixedRouteGenerator(sideRoute), new java.lang.Double(lanesOnBranch));
+                this.routeGenerator = new ProbabilisticFixedRouteGenerator(routeProbabilities, 1234);
             }
         }
         catch (NamingException | NetworkException | GTUException exception1)
@@ -377,7 +395,7 @@ class XMLNetworkModel implements OTSModelInterface
                 new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.SI),
                         new DoubleScalar.Rel<TimeUnit>(java.lang.Double.MAX_VALUE, TimeUnit.SI));
         LaneChangeModel lcm = new FixedLaneChangeModel(null);
-        new LaneBasedIndividualCar<Integer>(999999, null /* gtuType */, gfm, lcm, initialPositions,
+        new LaneBasedIndividualCar<Integer>(999999, this.gtuType, gfm, lcm, initialPositions,
                 new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(1,
                         LengthUnit.METER), lane.getWidth(1), new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
                 new Route(new ArrayList<Node<?, ?>>()), this.simulator);
@@ -403,7 +421,7 @@ class XMLNetworkModel implements OTSModelInterface
             new LaneBasedIndividualCar<Integer>(++this.carsCreated, this.gtuType, gtuFollowingModel,
                     this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
                     new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                            SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator);
+                            SpeedUnit.KM_PER_HOUR), this.routeGenerator.generateRoute(), this.simulator);
             Object[] arguments = new Object[1];
             arguments[0] = lane;
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", arguments);
