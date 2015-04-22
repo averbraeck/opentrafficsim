@@ -23,6 +23,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
@@ -299,6 +300,9 @@ class LaneSimulationModel implements OTSModelInterface
     /** number of cars created. */
     private int carsCreated = 0;
 
+    /** Type of all GTUs. */
+    GTUType<String> gtuType = GTUType.makeGTUType("Car");
+
     /** the car following model, e.g. IDM Plus for cars. */
     protected GTUFollowingModel carFollowingModelCars;
 
@@ -474,6 +478,7 @@ class LaneSimulationModel implements OTSModelInterface
             NodeGeotools.STR start = new NodeGeotools.STR("Start", new Coordinate(radius, 0, 0));
             NodeGeotools.STR halfway = new NodeGeotools.STR("Halfway", new Coordinate(-radius, 0, 0));
             LaneType<String> laneType = new LaneType<String>("CarLane");
+            laneType.addPermeability(this.gtuType);
 
             Coordinate[] coordsHalf1 = new Coordinate[127];
             for (int i = 0; i < coordsHalf1.length; i++)
@@ -579,7 +584,7 @@ class LaneSimulationModel implements OTSModelInterface
             {
                 throw new Error("gtuFollowingModel is null");
             }
-            new LaneBasedIndividualCar<>(++this.carsCreated, null /* gtuType */, generateTruck
+            new LaneBasedIndividualCar<>(++this.carsCreated, this.gtuType, generateTruck
                     ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel,
                     initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8,
                             LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), new Route(

@@ -275,7 +275,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
             throws RemoteException, NamingException, NetworkException, SimRuntimeException, GTUException
     {
         // Set up the network
-        GTUType<String> gtuType = new GTUType<String>("car");
+        GTUType<String> gtuType = GTUType.makeGTUType("car");
         LaneType<String> laneType = new LaneType<String>("CarLane");
         laneType.addPermeability(gtuType);
         final DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);

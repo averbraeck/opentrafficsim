@@ -27,6 +27,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
@@ -330,6 +331,9 @@ class StraightModel implements OTSModelInterface
 
     /** number of cars created. */
     private int carsCreated = 0;
+    
+    /** Type of all GTUs. */
+    GTUType<String> gtuType = GTUType.makeGTUType("Car");
 
     /** the car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModel carFollowingModelCars;
@@ -402,6 +406,7 @@ class StraightModel implements OTSModelInterface
         try
         {
             LaneType<String> laneType = new LaneType<String>("CarLane");
+            laneType.addPermeability(this.gtuType);
             this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.speedLimit, this.simulator);
             this.path.add(this.lane);
             CrossSectionLink<?, ?> endLink = LaneFactory.makeLink("endLink", to, end, null);
@@ -540,7 +545,7 @@ class StraightModel implements OTSModelInterface
         try
         {
             this.block =
-                    new LaneBasedIndividualCar<Integer>(999999, null /* gtuType */, this.carFollowingModelCars,
+                    new LaneBasedIndividualCar<Integer>(999999, this.gtuType, this.carFollowingModelCars,
                             this.laneChangeModel, initialPositions, new DoubleScalar.Abs<SpeedUnit>(0,
                                     SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER),
                             new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0,
@@ -581,7 +586,7 @@ class StraightModel implements OTSModelInterface
             {
                 throw new Error("gtuFollowingModel is null");
             }
-            new LaneBasedIndividualCar<Integer>(++this.carsCreated, null /* gtuType */, gtuFollowingModel,
+            new LaneBasedIndividualCar<Integer>(++this.carsCreated, this.gtuType, gtuFollowingModel,
                     this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
                     new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
                             SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator);
