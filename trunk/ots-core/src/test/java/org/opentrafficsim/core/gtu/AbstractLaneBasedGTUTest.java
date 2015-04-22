@@ -21,8 +21,8 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
-import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
+import org.opentrafficsim.core.gtu.lane.changing.FixedLaneChangeModel;
+import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.factory.LaneFactory;
@@ -100,7 +100,8 @@ public class AbstractLaneBasedGTUTest
         DoubleScalar.Rel<TimeUnit> validFor = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
         GTUFollowingModel gfm = new FixedAccelerationModel(acceleration, validFor);
         // A Car needs a lane change model
-        AbstractLaneChangeModel laneChangeModel = new Egoistic();
+        //AbstractLaneChangeModel laneChangeModel = new Egoistic();
+        LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
          // A Car needs an initial speed
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
         // Length of the Car
@@ -208,7 +209,7 @@ public class AbstractLaneBasedGTUTest
             {
                 step = 0.1; // Reduce testing time by increasing the step size
             }
-            System.out.println("Simulating until " + stepTime.getSI());
+            //System.out.println("Simulating until " + stepTime.getSI());
             simulator.runUpTo(stepTime);
             if (stepTime.getSI() > 0)
             {
@@ -227,11 +228,7 @@ public class AbstractLaneBasedGTUTest
                 Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
                 assertEquals("Car should be in two lanes", 2, positions.size());
                 Double pos = positions.get(lanesGroupA[1]);
-                if (null == pos)
-                {
-                    System.out.println("MIS");
-                    positions.get(lanesGroupA[1]);
-                }
+                //System.out.println("Fractional positions: " + positions);
                 assertTrue("Car should be in lane 1 of lane group A", null != pos);
                 assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
                         car.fractionalPosition(lanesGroupA[1], relativePosition), 0.0000001);

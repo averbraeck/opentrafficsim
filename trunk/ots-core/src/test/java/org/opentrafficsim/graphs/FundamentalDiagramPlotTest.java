@@ -195,7 +195,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
         }
         // Check that harmonic mean speed is computed
         speed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
-        new LaneBasedIndividualCar<Integer>(1234, null, gtuFollowingModel, laneChangeModel,
+        new LaneBasedIndividualCar<Integer>(1234, gtuType, gtuFollowingModel, laneChangeModel,
                 initialLongitudinalPositions, speed, length, width, maxSpeed, new Route(new ArrayList<Node<?, ?>>()),
                 (OTSDEVSSimulatorInterface) simulator.getSimulator());
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(125, TimeUnit.SECOND));
