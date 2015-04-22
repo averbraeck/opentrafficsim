@@ -62,6 +62,9 @@ public class SensorTest
         NodeGeotools.STR nodeAFrom = new NodeGeotools.STR("AFrom", new Coordinate(0, 0, 0));
         NodeGeotools.STR nodeATo = new NodeGeotools.STR("ATo", new Coordinate(1000, 0, 0));
         LaneType<String> laneType = new LaneType<String>("CarLane");
+        // A Car needs a type
+        GTUType<String> gtuType = new GTUType<String>("Car");
+        laneType.addPermeability(gtuType);
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForSensorTest();
         final SimpleSimulator simulator =
@@ -99,11 +102,8 @@ public class SensorTest
         }
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
                 new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
-
         DoubleScalar.Rel<LengthUnit> positionA = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);
         initialLongitudinalPositions.put(lanes[1], positionA);
-        // A Car needs a type
-        GTUType<String> gtuType = new GTUType<String>("Car");
         // A Car needs an initial speed
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
         // Length of the Car
@@ -120,7 +120,7 @@ public class SensorTest
                         AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(100, TimeUnit.SECOND));
         // Create a lane change model for the car
         LaneChangeModel laneChangeModel = new Egoistic();
-        // Now we can make a GTU (and we don't even have to hold a pointer to it)
+        // Now we can make a car (GTU) (and we don't even have to hold a pointer to it)
         new LaneBasedIndividualCar<String>(carID, gtuType, fas, laneChangeModel, initialLongitudinalPositions,
                 initialSpeed, carLength, carWidth, maximumVelocity, new Route(new ArrayList<Node<?, ?>>()),
                 (OTSDEVSSimulatorInterface) simulator.getSimulator());
@@ -131,7 +131,7 @@ public class SensorTest
         int index = 0;
         for (SimEventInterface<OTSSimTimeDouble> event : eventList)
         {
-            // System.out.println("Scheduled Event " + event);
+            System.out.println("Scheduled Event " + event);
             if (0 == index)
             {
                 triggerEvent = event;

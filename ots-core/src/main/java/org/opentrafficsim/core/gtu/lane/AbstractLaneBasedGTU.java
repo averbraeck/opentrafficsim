@@ -554,19 +554,18 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 }
                 else if (0 == branching)
                 {
-                    return;
                     //throw new NetworkException("nextLanes of " + lane + " is empty set");
                 }
                 else
                 {
                     if (null == this.getRoute())
                     {
-                        throw new GTUException(this + " reached branch and but has not route");
+                        throw new GTUException(this + " reaches branch and but has not route");
                     }
                     Node<?, ?> nextNode = this.getRoute().nextNodeToVisit();
                     if (null == nextNode)
                     {
-                        throw new GTUException(this + " reached branch and the route returns null as nextNodeToVisit");
+                        throw new GTUException(this + " reaches branch and the route returns null as nextNodeToVisit");
                     }
                     int continuingLaneCount = 0;
                     for (Lane nextLane : lane.nextLanes())
