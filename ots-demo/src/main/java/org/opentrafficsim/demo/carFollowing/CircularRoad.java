@@ -498,7 +498,7 @@ class RoadSimulationModel implements OTSModelInterface
                     }
                 }
             }
-            GTUType<String> gtuType = new GTUType<String>("car");
+            GTUType<String> gtuType = GTUType.makeGTUType("car");
             LaneType<String> laneType = new LaneType<String>("CarLane");
             laneType.addPermeability(gtuType);
             NodeGeotools.STR start = new NodeGeotools.STR("Start", new Coordinate(radius, 0, 0));

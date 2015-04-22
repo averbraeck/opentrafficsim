@@ -27,6 +27,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
@@ -332,6 +333,9 @@ class SequentialModel implements OTSModelInterface
     /** number of cars created. */
     private int carsCreated = 0;
 
+    /** Type of all GTUs. */
+    GTUType<String> gtuType = GTUType.makeGTUType("Car");
+
     /** minimum distance. */
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
 
@@ -387,6 +391,7 @@ class SequentialModel implements OTSModelInterface
             this.nodes.add(new NodeGeotools.STR("Node at " + xPos, new Coordinate(xPos, (xPos > 1001) ? 200 : -10, 0)));
         }
         LaneType<String> laneType = new LaneType<String>("CarLane");
+        laneType.addPermeability(this.gtuType);
         // Now we can build a series of Links with one Lane on them
         ArrayList<CrossSectionLink<?, ?>> links = new ArrayList<CrossSectionLink<?, ?>>();
         for (int i = 1; i < this.nodes.size(); i++)
@@ -585,11 +590,10 @@ class SequentialModel implements OTSModelInterface
             {
                 throw new Error("gtuFollowingModel is null");
             }
-            new LaneBasedIndividualCar<>(++this.carsCreated, null /* gtuType */, generateTruck
-                    ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel,
-                    initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8,
-                            LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), new Route(
-                            new ArrayList<Node<?, ?>>()), this.simulator);
+            new LaneBasedIndividualCar<>(++this.carsCreated, this.gtuType, generateTruck ? this.carFollowingModelTrucks
+                    : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
+                    new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
+                            SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
