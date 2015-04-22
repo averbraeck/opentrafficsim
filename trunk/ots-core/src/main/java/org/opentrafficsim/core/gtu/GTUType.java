@@ -1,6 +1,8 @@
 package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -29,9 +31,32 @@ public class GTUType<ID> implements Serializable
     /**
      * @param id The id of the GTUType to make it identifiable.
      */
-    public GTUType(final ID id)
+    private GTUType(final ID id)
     {
         this.id = id;
+    }
+    
+    /** The set of previously instantiated GTUTypes. */
+    private static final Map<Object, GTUType<?>> instantiatedGTUTypes = new HashMap<Object, GTUType<?>>();
+
+    /**
+     * Construct a new GTUType or (if it already exists) return an existing GTUType.
+     * @param id ID; the id of the GTUType
+     * @return GTUType&lt;ID&gt;
+     */
+    @SuppressWarnings("unchecked")
+    public static <ID> GTUType<ID> makeGTUType(final ID id)
+    {
+        synchronized (instantiatedGTUTypes)
+        {
+            GTUType<?> result = instantiatedGTUTypes.get(id);
+            if (null == result)
+            {
+                result = new GTUType<ID>(id);
+                instantiatedGTUTypes.put(id, result);
+            }
+            return (GTUType<ID>) result;
+        }
     }
 
     /**

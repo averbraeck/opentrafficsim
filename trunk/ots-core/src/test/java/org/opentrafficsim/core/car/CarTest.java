@@ -75,7 +75,7 @@ public class CarTest
             GTUException
     {
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
-        GTUType<String> gtuType = new GTUType<String>("Car");
+        GTUType<String> gtuType = GTUType.makeGTUType("Car");
         LaneType<String> laneType = new LaneType<String>("CarLane");
         laneType.addPermeability(gtuType);
         Lane lane = makeLane(laneType);

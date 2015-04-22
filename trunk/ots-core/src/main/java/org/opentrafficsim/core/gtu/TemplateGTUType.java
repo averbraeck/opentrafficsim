@@ -16,10 +16,13 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <ID> the ID-type of the GTU, e.g. String or a certain Enum type.
  */
-public class TemplateGTUType<ID> extends GTUType<ID>
+public class TemplateGTUType<ID>
 {
     /** */
     private static final long serialVersionUID = 20141230L;
+    
+    /** The type of the GTU. */
+    private final GTUType<ID> gtuType;
 
     /** distribution of the length of the GTU. */
     private final DistContinuousDoubleScalar.Rel<LengthUnit> lengthDist;
@@ -44,7 +47,7 @@ public class TemplateGTUType<ID> extends GTUType<ID>
         final DistContinuousDoubleScalar.Rel<LengthUnit> widthDist,
         final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeedDist, final OTSDEVSSimulatorInterface simulator)
     {
-        super(id);
+        this.gtuType = GTUType.makeGTUType(id);
         this.lengthDist = lengthDist;
         this.widthDist = widthDist;
         this.maximumSpeedDist = maximumSpeedDist;
@@ -57,7 +60,7 @@ public class TemplateGTUType<ID> extends GTUType<ID>
      */
     public final boolean isCompatible(final LaneType<?> laneType)
     {
-        return laneType.isCompatible(this);
+        return laneType.isCompatible(this.getGtuType());
     }
 
     /**
@@ -90,5 +93,13 @@ public class TemplateGTUType<ID> extends GTUType<ID>
     public final OTSDEVSSimulatorInterface getSimulator()
     {
         return this.simulator;
+    }
+
+    /**
+     * @return gtuType.
+     */
+    public GTUType<ID> getGtuType()
+    {
+        return this.gtuType;
     }
 }

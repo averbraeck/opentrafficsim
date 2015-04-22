@@ -63,7 +63,7 @@ public class SensorTest
         NodeGeotools.STR nodeATo = new NodeGeotools.STR("ATo", new Coordinate(1000, 0, 0));
         LaneType<String> laneType = new LaneType<String>("CarLane");
         // A Car needs a type
-        GTUType<String> gtuType = new GTUType<String>("Car");
+        GTUType<String> gtuType = GTUType.makeGTUType("Car");
         laneType.addPermeability(gtuType);
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForSensorTest();

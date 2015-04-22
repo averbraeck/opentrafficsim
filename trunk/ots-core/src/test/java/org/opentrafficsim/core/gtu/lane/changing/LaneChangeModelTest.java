@@ -161,7 +161,7 @@ public class LaneChangeModelTest implements OTSModelInterface
     @Test
     public final void changeRight() throws Exception
     {
-        GTUType<String> gtuType = new GTUType<String>("car");
+        GTUType<String> gtuType = GTUType.makeGTUType("car");
         LaneType<String> laneType = new LaneType<String>("CarLane");
         laneType.addPermeability(gtuType);
         Lane[] lanes =

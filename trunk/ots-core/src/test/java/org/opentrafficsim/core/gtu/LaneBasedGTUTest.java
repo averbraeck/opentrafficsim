@@ -88,8 +88,8 @@ public class LaneBasedGTUTest
                 new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(-1000, -1000, 2000, 2000));
-        GTUType<String> carType = new GTUType<String>("car");
-        GTUType<String> truckType = new GTUType<String>("truck");
+        GTUType<String> carType = GTUType.makeGTUType("car");
+        GTUType<String> truckType = GTUType.makeGTUType("truck");
         LaneType<String> laneType = new LaneType<String>("CarLane");
         laneType.addPermeability(carType);
         laneType.addPermeability(truckType);
@@ -361,7 +361,7 @@ public class LaneBasedGTUTest
                                     3600.0, TimeUnit.SECOND), model, new Rectangle2D.Double(-1000, -1000, 2000, 2000));
             // Run the simulator clock to some non-zero value
             simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(60, TimeUnit.SECOND));
-            GTUType<String> carType = new GTUType<String>("car");
+            GTUType<String> carType = GTUType.makeGTUType("car");
             LaneType<String> laneType = new LaneType<String>("CarLane");
             laneType.addPermeability(carType);
             NodeGeotools.STR fromNode = new NodeGeotools.STR("Node A", new Coordinate(0, 0, 0));

@@ -249,7 +249,7 @@ public class Lane extends CrossSectionElement
                                 - relativePosition.getDx().getSI());
                         DoubleScalar.Abs<TimeUnit> triggerTime =
                             gtu.timeAtDistance(new DoubleScalar.Rel<LengthUnit>(d, LengthUnit.METER));
-                        System.out.println("Scheduling trigger at " + triggerTime + " for sensor " + sensor);
+                        //System.out.println("Scheduling trigger at " + triggerTime + " for sensor " + sensor);
                         gtu.getSimulator().scheduleEventAbs(triggerTime, this, sensor, "trigger", new Object[] {gtu});
                     }
                 }

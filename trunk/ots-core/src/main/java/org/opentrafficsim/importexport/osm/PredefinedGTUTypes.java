@@ -25,18 +25,18 @@ public final class PredefinedGTUTypes
     }
 
     /** Bicycle. */
-    public static final GTUType<String> bike = new GTUType<String>("BIKE");
+    public static final GTUType<String> bike = GTUType.makeGTUType("BIKE");
     
     /** Car. */
-    public static final GTUType<String> car = new GTUType<String>("CAR");
+    public static final GTUType<String> car = GTUType.makeGTUType("CAR");
     
     /** Pedestrian. */
-    public static final GTUType<String> pedestrian = new GTUType<String>("PEDESTRIAN");
+    public static final GTUType<String> pedestrian = GTUType.makeGTUType("PEDESTRIAN");
     
     /** Boat. */
-    public static final GTUType<String> boat = new GTUType<String>("BOAT");
+    public static final GTUType<String> boat = GTUType.makeGTUType("BOAT");
     
     /** No type. */
-    public static final GTUType<String> none = new GTUType<String>("NONE");
+    public static final GTUType<String> none = GTUType.makeGTUType("NONE");
     
 }

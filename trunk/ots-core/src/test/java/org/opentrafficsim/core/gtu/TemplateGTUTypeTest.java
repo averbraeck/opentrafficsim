@@ -125,13 +125,13 @@ public class TemplateGTUTypeTest
                         (OTSDEVSSimulatorInterface) truckSimulator.getSimulator());
         // Create some LaneTypes
         LaneType<String> trucksForbidden = new LaneType<String>("No Trucks");
-        trucksForbidden.addPermeability(passengerCar);
+        trucksForbidden.addPermeability(passengerCar.getGtuType());
         LaneType<String> trucksOnly = new LaneType<String>("Trucks Only");
-        trucksOnly.addPermeability(truck);
+        trucksOnly.addPermeability(truck.getGtuType());
         LaneType<String> bicycleLane = new LaneType<String>("Bicycles Only");
         LaneType<String> urbanRoad = new LaneType<String>("Urban road - open to all traffic");
-        urbanRoad.addPermeability(passengerCar);
-        urbanRoad.addPermeability(truck);
+        urbanRoad.addPermeability(passengerCar.getGtuType());
+        urbanRoad.addPermeability(truck.getGtuType());
         // Now we test all combinations
         assertTrue("Passengers cars are allowed on a no trucks lane", passengerCar.isCompatible(trucksForbidden));
         assertFalse("Trucks are not allowed on a no trucks lane", truck.isCompatible(trucksForbidden));
@@ -157,7 +157,7 @@ public class TemplateGTUTypeTest
             final DistContinuousDoubleScalar.Rel<LengthUnit> width,
             final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeed, final OTSDEVSSimulatorInterface simulator)
     {
-        assertTrue("Id should be " + id, id.equals(templateGTUType.getId()));
+        assertTrue("Id should be " + id, id.equals(templateGTUType.getGtuType().getId()));
         assertEquals("Length should be " + length, length.draw().getSI(), templateGTUType.getLength().getSI(), 0.0001);
         assertEquals("Sidth should be " + width, width.draw().getSI(), templateGTUType.getWidth().getSI(), 0.0001);
         assertEquals("Maximum speed should be " + maximumSpeed, maximumSpeed.draw().getSI(), templateGTUType

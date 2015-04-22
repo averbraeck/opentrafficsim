@@ -68,7 +68,7 @@ public class AbstractLaneBasedGTUTest
         // To create Lanes we need Nodes and a LaneType
         NodeGeotools.STR nodeAFrom = new NodeGeotools.STR("AFrom", new Coordinate(0, 0, 0));
         NodeGeotools.STR nodeATo = new NodeGeotools.STR("ATo", new Coordinate(1000, 0, 0));
-        GTUType<String> gtuType = new GTUType<String>("Car");
+        GTUType<String> gtuType = GTUType.makeGTUType("Car");
         LaneType<String> laneType = new LaneType<String>("CarLane");
         laneType.addPermeability(gtuType);
         // And a simulator, but for that we first need something that implements OTSModelInterface

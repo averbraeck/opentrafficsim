@@ -89,7 +89,7 @@ public class GTUFollowingModelTest implements OTSModelInterface
         SimpleSimulator simulator =
                 new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(
                         0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800, TimeUnit.SECOND), this);
-        GTUType<String> carType = new GTUType<String>("Car");
+        GTUType<String> carType = GTUType.makeGTUType("Car");
         LaneType<String> laneType = new LaneType<String>("CarLane");
         laneType.addPermeability(carType);
         Lane lane = CarTest.makeLane(laneType);
