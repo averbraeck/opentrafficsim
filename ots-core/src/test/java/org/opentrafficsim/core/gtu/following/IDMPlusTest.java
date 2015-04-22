@@ -64,7 +64,7 @@ public class IDMPlusTest
                 new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1.25, AccelerationUnit.METER_PER_SECOND_2),
                         new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2), s0,
                         new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
-        GTUType<String> gtuType = new GTUType<String>("Car");
+        GTUType<String> gtuType = GTUType.makeGTUType("Car");
         LaneType<String> laneType = new LaneType<String>("CarLane");
         laneType.addPermeability(gtuType);
         Lane lane = CarTest.makeLane(laneType);

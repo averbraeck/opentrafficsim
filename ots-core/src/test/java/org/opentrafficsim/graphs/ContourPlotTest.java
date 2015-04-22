@@ -84,7 +84,7 @@ public class ContourPlotTest
     public final void accelerationContourTest() throws Exception
     {
         LaneType<String> laneType = new LaneType<String>("CarLane");
-        GTUType<?> gtuType = new GTUType<String>("Car");
+        GTUType<?> gtuType = GTUType.makeGTUType("Car");
         laneType.addPermeability(gtuType);
         List<Lane> path = dummyPath(laneType);
         AccelerationContourPlot acp = new AccelerationContourPlot("Acceleration", path);
@@ -102,7 +102,7 @@ public class ContourPlotTest
     public final void densityContourTest() throws Exception
     {
         LaneType<String> laneType = new LaneType<String>("CarLane");
-        GTUType<?> gtuType = new GTUType<String>("Car");
+        GTUType<?> gtuType = GTUType.makeGTUType("Car");
         laneType.addPermeability(gtuType);
         List<Lane> path = dummyPath(laneType);
         DensityContourPlot dcp = new DensityContourPlot("Density", path);
@@ -120,7 +120,7 @@ public class ContourPlotTest
     public final void flowContourTest() throws Exception
     {
         LaneType<String> laneType = new LaneType<String>("CarLane");
-        GTUType<?> gtuType = new GTUType<String>("Car");
+        GTUType<?> gtuType = GTUType.makeGTUType("Car");
         laneType.addPermeability(gtuType);
         List<Lane> path = dummyPath(laneType);
         FlowContourPlot fcp = new FlowContourPlot("Density", path);
@@ -138,7 +138,7 @@ public class ContourPlotTest
     public final void speedContourTest() throws Exception
     {
         LaneType<String> laneType = new LaneType<String>("CarLane");
-        GTUType<?> gtuType = new GTUType<String>("Car");
+        GTUType<?> gtuType = GTUType.makeGTUType("Car");
         laneType.addPermeability(gtuType);
         List<Lane> path = dummyPath(laneType);
         SpeedContourPlot scp = new SpeedContourPlot("Density", path);

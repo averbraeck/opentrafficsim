@@ -70,7 +70,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
         DoubleScalar.Rel<LengthUnit> position = new DoubleScalar.Rel<LengthUnit>(123, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> carPosition = new DoubleScalar.Rel<LengthUnit>(122.5, LengthUnit.METER);
         LaneType<String> laneType = new LaneType<String>("CarLane");
-        GTUType<String> gtuType = new GTUType<String>("Car");
+        GTUType<String> gtuType = GTUType.makeGTUType("Car");
         laneType.addPermeability(gtuType);
         Lane lane = CarTest.makeLane(laneType);
         FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, lane, position);

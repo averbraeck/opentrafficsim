@@ -2230,7 +2230,7 @@ public class XmlNetworkLaneParser
     {
         if (!this.gtuTypes.containsKey(typeName))
         {
-            GTUType<String> gtuType = new GTUType<>(typeName);
+            GTUType<String> gtuType = GTUType.makeGTUType(typeName);
             this.gtuTypes.put(typeName, gtuType);
         }
         return this.gtuTypes.get(typeName);

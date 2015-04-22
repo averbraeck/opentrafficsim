@@ -60,8 +60,8 @@ public class LaneTest
         DoubleScalar.Rel<LengthUnit> endLateralPos = new DoubleScalar.Rel<LengthUnit>(5, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> startWidth = new DoubleScalar.Rel<LengthUnit>(3, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> endWidth = new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER);
-        GTUType<String> gtuTypeCar = new GTUType<String>("Car");
-        GTUType<String> gtuTypeTruck = new GTUType<String>("Truck");
+        GTUType<String> gtuTypeCar = GTUType.makeGTUType("Car");
+        GTUType<String> gtuTypeTruck = GTUType.makeGTUType("Truck");
         LaneType<String> laneType = new LaneType<String>("Car");
         laneType.addPermeability(gtuTypeCar);
         laneType.addPermeability(gtuTypeTruck);

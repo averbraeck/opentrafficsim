@@ -286,10 +286,10 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      */
     protected final void move() throws RemoteException, NetworkException, GTUException, SimRuntimeException
     {
-        if (getId().toString().equals("53"))// && getSimulator().getSimulatorTime().get().getSI() > 75.5)
-        {
-            System.out.println("Debug me: " + this);
-        }
+        // if (getId().toString().equals("53"))// && getSimulator().getSimulatorTime().get().getSI() > 75.5)
+        // {
+        // System.out.println("Debug me: " + this);
+        // }
         // Quick sanity check
         if (getSimulator().getSimulatorTime().get().getSI() != getNextEvaluationTime().getSI())
         {

@@ -7,6 +7,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.network.NetworkException;
@@ -31,10 +32,13 @@ public abstract class AbstractLaneBasedTemplateGTU<ID> extends AbstractLaneBased
 {
     /** */
     private static final long serialVersionUID = 20140822L;
+    
+    /** The TemplateGTUType. */
+    TemplateGTUType<?> templateGTUType;
 
     /**
      * @param id the id of the GTU, could be String or Integer
-     * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
+     * @param templateGTUType the TemplateGTUType, e.g. TruckType, CarType, BusType
      * @param gtuFollowingModel the following model, including a reference to the simulator
      * @param initialLongitudinalPositions the initial positions of the car on one or more lanes
      * @param initialSpeed the initial speed of the car on the lane
@@ -44,50 +48,51 @@ public abstract class AbstractLaneBasedTemplateGTU<ID> extends AbstractLaneBased
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GTUException when gtuFollowingModel is null
      */
-    public AbstractLaneBasedTemplateGTU(final ID id, final TemplateGTUType<?> gtuType,
+    public AbstractLaneBasedTemplateGTU(final ID id, final TemplateGTUType<?> templateGTUType,
             final GTUFollowingModel gtuFollowingModel,
             final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
             final DoubleScalar.Abs<SpeedUnit> initialSpeed, final Route route) throws RemoteException,
             NetworkException, SimRuntimeException, GTUException
     {
-        super(id, gtuType, gtuFollowingModel, null /* LaneChangeModel */, initialLongitudinalPositions, initialSpeed,
-                route, gtuType.getSimulator());
+        super(id, templateGTUType.getGtuType(), gtuFollowingModel, null /* LaneChangeModel */, initialLongitudinalPositions, initialSpeed,
+                route, templateGTUType.getSimulator());
+        this.templateGTUType = templateGTUType;
     }
 
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
-    public TemplateGTUType<?> getGTUType()
+    public GTUType<?> getGTUType()
     {
-        return (TemplateGTUType<?>) super.getGTUType();
+        return super.getGTUType();
     }
 
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> getLength()
     {
-        return getGTUType().getLength();
+        return this.templateGTUType.getLength();
     }
 
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> getWidth()
     {
-        return getGTUType().getWidth();
+        return this.templateGTUType.getWidth();
     }
 
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Abs<SpeedUnit> getMaximumVelocity()
     {
-        return getGTUType().getMaximumVelocity();
+        return this.templateGTUType.getMaximumVelocity();
     }
 
     /** {@inheritDoc} */
     @Override
     public final OTSDEVSSimulatorInterface getSimulator()
     {
-        return getGTUType().getSimulator();
+        return this.templateGTUType.getSimulator();
     }
 
 }
