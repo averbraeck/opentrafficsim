@@ -89,6 +89,7 @@ public class ProbabilisticFixedRouteGenerator implements RouteGenerator
             double bucketSize = this.probabilities[index];
             if (bucketSize >= randomValue)
             {
+                System.out.println("calling " + this.routes.get(index));
                 return this.routes.get(index).generateRoute();
             }
             randomValue -= bucketSize;

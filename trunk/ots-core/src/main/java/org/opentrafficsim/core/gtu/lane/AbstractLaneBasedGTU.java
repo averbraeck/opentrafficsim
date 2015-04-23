@@ -38,9 +38,11 @@ import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
+import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.conversions.Calc;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LineString;
@@ -151,7 +153,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         this.lastEvaluationTime = new DoubleScalar.Abs<TimeUnit>(simulator.getSimulatorTime().get());
         // FIXME: DoubleScalar.whatever is immutable; there is no need to duplicate the speed.
         this.speed = new DoubleScalar.Abs<SpeedUnit>(initialSpeed);
-        // FIXME: should be SAME as this.lastEvaluationTime; don't ask the simulator for another one. 
+        // FIXME: should be SAME as this.lastEvaluationTime; don't ask the simulator for another one.
         this.nextEvaluationTime = new DoubleScalar.Abs<TimeUnit>(simulator.getSimulatorTime().get());
 
         // start the movement of the GTU
@@ -283,13 +285,24 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * @throws NetworkException on network inconsistency
      * @throws GTUException when GTU has not lane change model
      * @throws SimRuntimeException on not being able to reschedule this move() method.
+     * @throws ValueException cannot happen
      */
-    protected final void move() throws RemoteException, NetworkException, GTUException, SimRuntimeException
+    protected final void move() throws RemoteException, NetworkException, GTUException, SimRuntimeException,
+            ValueException
     {
-        // if (getId().toString().equals("53"))// && getSimulator().getSimulatorTime().get().getSI() > 75.5)
-        // {
-        // System.out.println("Debug me: " + this);
-        // }
+        if (getLongitudinalVelocity().getSI() < 0)
+        {
+            System.out.println("negative velocity: " + this + " " + getLateralVelocity().getSI() + "m/s");
+        }
+        if (getSimulator().getSimulatorTime().get().getSI() == 70)
+        {
+            System.out.println(this + " " + getLongitudinalVelocity().getSI());
+        }
+        if (getId().toString().equals("15"))// && getSimulator().getSimulatorTime().get().getSI() > 10)
+        {
+            System.out.println("Debug me: " + getSimulator().getSimulatorTime() + " " + this + " " + this.getRoute()
+                    + " " + this.getLongitudinalVelocity().getSI());
+        }
         // Quick sanity check
         if (getSimulator().getSimulatorTime().get().getSI() != getNextEvaluationTime().getSI())
         {
@@ -330,24 +343,37 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         Collection<HeadwayGTU> rightLaneTraffic =
                 collectNeighborLaneTraffic(LateralDirectionality.RIGHT, now, maximumForwardHeadway,
                         maximumReverseHeadway);
-        DoubleScalar.Rel<AccelerationUnit> stayInCurrentLaneIncentive = laneIncentive(null, STAYINCURRENTLANEINCENTIVE);
         // FIXME: whether we drive on the right should be stored in some central place.
         final LateralDirectionality preferred = LateralDirectionality.RIGHT;
-        final LateralDirectionality nonPreferred = LateralDirectionality.LEFT;
-        DoubleScalar.Rel<AccelerationUnit> preferredLaneIncentive = laneIncentive(preferred, PREFERREDLANEINCENTIVE);
-        DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneIncentive =
-                laneIncentive(nonPreferred, NONPREFERREDLANEINCENTIVE);
+        final DoubleScalar.Rel<AccelerationUnit> defaultLeftLaneIncentive =
+                LateralDirectionality.LEFT == preferred ? PREFERREDLANEINCENTIVE : NONPREFERREDLANEINCENTIVE;
+        final DoubleScalar.Rel<AccelerationUnit> defaultRightLaneIncentive =
+                LateralDirectionality.RIGHT == preferred ? PREFERREDLANEINCENTIVE : NONPREFERREDLANEINCENTIVE;
+        DoubleVector.Rel.Dense<AccelerationUnit> defaultLaneIncentives =
+                new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{defaultLeftLaneIncentive.getSI(),
+                        STAYINCURRENTLANEINCENTIVE.getSI(), defaultRightLaneIncentive.getSI()}, AccelerationUnit.SI);
+        DoubleVector.Rel.Dense<AccelerationUnit> laneIncentives = laneIncentives(defaultLaneIncentives);
+        // DoubleScalar.Rel<AccelerationUnit> stayInCurrentLaneIncentive = laneIncentive(null,
+        // STAYINCURRENTLANEINCENTIVE);
+        // DoubleScalar.Rel<AccelerationUnit> preferredLaneIncentive = laneIncentive(preferred, PREFERREDLANEINCENTIVE);
+        // DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneIncentive =
+        // laneIncentive(nonPreferred, NONPREFERREDLANEINCENTIVE);
         LaneMovementStep lcmr =
                 this.laneChangeModel.computeLaneChangeAndAcceleration(this, sameLaneTraffic, rightLaneTraffic,
-                        leftLaneTraffic, speedLimit, preferredLaneIncentive, stayInCurrentLaneIncentive,
-                        nonPreferredLaneIncentive);
+                        leftLaneTraffic, speedLimit,
+                        laneIncentives.get(preferred == LateralDirectionality.RIGHT ? 2 : 0), laneIncentives.get(1),
+                        laneIncentives.get(preferred == LateralDirectionality.RIGHT ? 0 : 2));
         // Oops; must convert a Rel into an Abs
         DoubleScalar.Abs<AccelerationUnit> currentLaneIncentive =
-                new DoubleScalar.Abs<AccelerationUnit>(stayInCurrentLaneIncentive.getSI(), AccelerationUnit.SI);
-        if (null == lcmr.getLaneChange() && stayInCurrentLaneIncentive != STAYINCURRENTLANEINCENTIVE
-                && lcmr.getGfmr().getAcceleration().gt(currentLaneIncentive))
+                new DoubleScalar.Abs<AccelerationUnit>(laneIncentives.getSI(1), AccelerationUnit.SI);
+        if (null == lcmr.getLaneChange()
+                && laneIncentives.get(1).ne(STAYINCURRENTLANEINCENTIVE)
+                && lcmr.getGfmr().getAcceleration().gt(currentLaneIncentive)
+                )
         {
             // Must slow down (looking for a gap)
+            System.out
+                    .println("Overriding gfmr of " + this + " from " + lcmr.getGfmr() + " to " + currentLaneIncentive);
             lcmr =
                     new LaneMovementStep(new AccelerationStep(currentLaneIncentive, lcmr.getGfmr().getValidUntil()),
                             null);
@@ -437,6 +463,96 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     }
 
     /**
+     * Figure out if the default lane incentives are OK, or override them with values that should keep this GTU on the
+     * intended route.
+     * @param defaultLaneIncentives DoubleVector.Rel.Dense&lt;AccelerationUnit&gt; the three lane incentives for the
+     *            next left adjacent lane, the current lane and the next right adjacent lane
+     * @return DoubleVector.Rel.Dense&lt;AccelerationUnit&gt;; the (possibly adjusted) lane incentives
+     * @throws RemoteException on communications failure
+     * @throws NetworkException on network inconsistency
+     * @throws ValueException cannot happen
+     */
+    private DoubleVector.Rel.Dense<AccelerationUnit> laneIncentives(
+            final DoubleVector.Rel.Dense<AccelerationUnit> defaultLaneIncentives) throws RemoteException,
+            NetworkException, ValueException
+    {
+        DoubleScalar.Rel<LengthUnit> leftSuitability = suitability(LateralDirectionality.LEFT);
+        DoubleScalar.Rel<LengthUnit> currentSuitability = suitability(null);
+        DoubleScalar.Rel<LengthUnit> rightSuitability = suitability(LateralDirectionality.RIGHT);
+        if ((leftSuitability == Route.NOLANECHANGENEEDED || leftSuitability == Route.GETOFFTHISLANENOW)
+                && currentSuitability == Route.NOLANECHANGENEEDED
+                && (rightSuitability == Route.NOLANECHANGENEEDED || rightSuitability == Route.GETOFFTHISLANENOW))
+        {
+            return defaultLaneIncentives;
+        }
+        if (currentSuitability == Route.NOLANECHANGENEEDED)
+        {
+            return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{acceleration(leftSuitability),
+                    defaultLaneIncentives.get(1).getSI(), acceleration(rightSuitability)}, AccelerationUnit.SI);
+        }
+        return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{acceleration(leftSuitability),
+                acceleration(currentSuitability), acceleration(rightSuitability)}, AccelerationUnit.SI);
+    }
+
+    /**
+     * Compute deceleration needed to stop at a specified distance.
+     * @param stopDistance DoubleScalar.Rel&lt;LengthUnit&gt;; the distance
+     * @return double; the acceleration (deceleration) needed to stop at the specified distance in m/s/s
+     * @throws RemoteException on communications failure
+     */
+    private double acceleration(DoubleScalar.Rel<LengthUnit> stopDistance) throws RemoteException
+    {
+        // What is the deceleration that will bring this GTU to a stop at exactly the suitability distance?
+        // Answer: a = -v^2 / 2 / suitabilityDistance
+        double v = getLongitudinalVelocity().getSI();
+        double a = -v * v / 2 / stopDistance.getSI();
+        return a;
+    }
+
+    /**
+     * Return the suitability for the current lane, left adjacent lane or right adjacent lane.
+     * @param direction LateralDirectionality; one of the values <cite>null</cite>,
+     *            <cite>LateralDirectionality.LEFT</cite>, or <cite>LateralDirectionality.RIGHT</cite>
+     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the suitability of the lane for reaching the (next) destination
+     * @throws NetworkException on network inconsistency
+     * @throws RemoteException on communications failure
+     */
+    private DoubleScalar.Rel<LengthUnit> suitability(LateralDirectionality direction) throws NetworkException,
+            RemoteException
+    {
+        Lane lane = null;
+        DoubleScalar.Rel<LengthUnit> longitudinalPosition = null;
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> positions = positions(RelativePosition.REFERENCE_POSITION);
+        if (null == direction)
+        {
+            for (Lane l : getLanes())
+            {
+                if (l.getLaneType().isCompatible(getGTUType()))
+                {
+                    lane = l;
+                }
+            }
+            if (null == lane)
+            {
+                throw new NetworkException("GTU " + this + " is not on any compatible lane");
+            }
+            longitudinalPosition = positions.get(lane);
+        }
+        else
+        {
+            lane = positions.keySet().iterator().next();
+            longitudinalPosition = positions.get(lane);
+            lane = lane.bestAccessibleAdjacentLane(direction, longitudinalPosition, getGTUType());
+        }
+        if (null == lane)
+        {
+            return Route.GETOFFTHISLANENOW;
+        }
+        return getRoute().suitability(lane, longitudinalPosition, getGTUType(), TIMEHORIZON);
+
+    }
+
+    /**
      * Determine if driving on the (adjacent) lane is suitable for following the route. If not, return a deceleration
      * that reflects how soon this GTU should be off that (adjacent) lane. If the lane <i>is</i> suitable for the route,
      * return the <cite>defaultIncentive</cite>.
@@ -485,10 +601,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             // Answer: a = -v^2 / 2 / suitabilityDistance
             double v = getLongitudinalVelocity().getSI();
             double a = -v * v / 2 / suitability.getSI();
-            if (a < defaultIncentive.getSI()) // only return this result if it is more restrictive than the default
-            {
-                return new DoubleScalar.Rel<AccelerationUnit>(a, AccelerationUnit.SI);
-            }
+            return new DoubleScalar.Rel<AccelerationUnit>(a, AccelerationUnit.SI);
         }
         return defaultIncentive;
     }
@@ -554,7 +667,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 }
                 else if (0 == branching)
                 {
-                    //throw new NetworkException("nextLanes of " + lane + " is empty set");
+                    // throw new NetworkException("nextLanes of " + lane + " is empty set");
                 }
                 else
                 {
@@ -1255,11 +1368,6 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             {
                 if (this.lanes.size() == 0)
                 {
-                    if (getSimulator().isRunning())
-                    {
-                        // getSimulator().stop();
-                        System.out.println("GTU " + this.getId() + " is not on any lane");
-                    }
                     // This happens temporarily when a GTU is moved to another Lane
                     return new DirectedPoint(Double.MAX_VALUE, Double.MAX_VALUE, 0);
                 }
