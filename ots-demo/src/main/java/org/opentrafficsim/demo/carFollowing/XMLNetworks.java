@@ -148,7 +148,7 @@ class XMLNetworkModel implements OTSModelInterface
     private DoubleScalar.Rel<TimeUnit> headway;
 
     /** The speed limit. */
-    private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+    private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(60, SpeedUnit.KM_PER_HOUR);
 
     /** number of cars created. */
     private int carsCreated = 0;
