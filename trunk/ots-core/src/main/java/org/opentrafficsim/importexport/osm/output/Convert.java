@@ -13,12 +13,7 @@ import java.util.TreeMap;
 
 import javax.naming.NamingException;
 
-import org.geotools.referencing.CRS;
-import org.geotools.referencing.crs.DefaultGeocentricCRS;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -62,12 +57,16 @@ import com.vividsolutions.jts.geom.LineString;
  */
 public final class Convert
 {
-    /** Do not instantiate this class. */
-    private Convert()
+    
+    /**
+     * Construct a converter.
+     */
+    public Convert()
     {
-        // Cannot be instantiated.
+        baseX = Double.NaN;
     }
-
+    
+    /** Meridian of least distortion. */
     static double baseX = Double.NaN;
     /**
      * @param c Coordinate in WGS84
@@ -105,7 +104,7 @@ public final class Convert
      * @param link OSM Link to be converted
      * @return OTS Link
      */
-    public static CrossSectionLink<?, ?> convertLink(final OSMLink link)
+    public CrossSectionLink<?, ?> convertLink(final OSMLink link)
     {
         if (null == link.getStart().getOtsNode())
         {
@@ -149,7 +148,7 @@ public final class Convert
      * @param node OSM Node to be converted
      * @return OTS Node
      */
-    public static NodeGeotools.STR convertNode(final OSMNode node)
+    public NodeGeotools.STR convertNode(final OSMNode node)
     {
         OSMTag tag = node.getTag("ele");
         if (null != tag)
@@ -612,7 +611,7 @@ public final class Convert
      * @throws NamingException on naming problems (in the animator)
      * @throws RemoteException on communications failure
      */
-    public static List<Lane> makeLanes(final OSMLink osmlink, final OTSDEVSSimulatorInterface simulator,
+    public List<Lane> makeLanes(final OSMLink osmlink, final OTSDEVSSimulatorInterface simulator,
             final WarningListener warningListener) throws NetworkException,
             RemoteException, NamingException
     {
