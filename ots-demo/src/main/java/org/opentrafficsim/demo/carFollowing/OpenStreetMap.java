@@ -169,6 +169,7 @@ public class OpenStreetMap implements WrappableSimulation
             System.out.println("You cancelled the choice");
             return null;
         }
+        Convert converter = new Convert();
         System.out.println("Opening file " + filename);
         ArrayList<org.opentrafficsim.importexport.osm.OSMTag> wantedTags =
                 new ArrayList<org.opentrafficsim.importexport.osm.OSMTag>();
@@ -210,7 +211,7 @@ public class OpenStreetMap implements WrappableSimulation
             {
                 try
                 {
-                    this.otsNetwork.addNode(Convert.convertNode(osmNode));
+                    this.otsNetwork.addNode(converter.convertNode(osmNode));
                 }
                 catch (NetworkException ne)
                 {
@@ -219,7 +220,7 @@ public class OpenStreetMap implements WrappableSimulation
             }
             for (OSMLink osmLink : this.osmNetwork.getLinks())
             {
-                this.otsNetwork.add(Convert.convertLink(osmLink));
+                this.otsNetwork.add(converter.convertLink(osmLink));
             }
             this.osmNetwork.makeLinks(this.warningListener, this.progressListener);
         }
@@ -228,7 +229,8 @@ public class OpenStreetMap implements WrappableSimulation
             exception.printStackTrace();
             return null;
         }
-        OSMModel model = new OSMModel(usedProperties, this.osmNetwork, this.warningListener, this.progressListener);
+        OSMModel model =
+                new OSMModel(usedProperties, this.osmNetwork, this.warningListener, this.progressListener, converter);
         Iterator<Node<?, ?>> count = this.otsNetwork.getNodeSet().iterator();
         Rectangle2D area = null;
         while (count.hasNext())
@@ -306,20 +308,25 @@ class OSMModel implements OTSModelInterface
 
     /** */
     private WarningListener warningListener;
+    
+    /** The coordinate converter. */
+    private final Convert converter;
 
     /**
      * @param properties
      * @param osmNetwork
      * @param wL
      * @param pL
+     * @param converter
      */
     public OSMModel(final ArrayList<AbstractProperty<?>> properties, final OSMNetwork osmNetwork,
-            final WarningListener wL, final ProgressListener pL)
+            final WarningListener wL, final ProgressListener pL, final Convert converter)
     {
         this.properties = new ArrayList<AbstractProperty<?>>(properties);
         this.osmNetwork = osmNetwork;
         this.warningListener = wL;
         this.progressListener = pL;
+        this.converter = converter;
     }
 
     /** {@inheritDoc} */
@@ -333,7 +340,7 @@ class OSMModel implements OTSModelInterface
         {
             try
             {
-                otsNetwork.addNode(Convert.convertNode(osmNode));
+                otsNetwork.addNode(this.converter.convertNode(osmNode));
             }
             catch (NetworkException ne)
             {
@@ -342,7 +349,7 @@ class OSMModel implements OTSModelInterface
         }
         for (OSMLink osmLink : this.osmNetwork.getLinks())
         {
-            otsNetwork.add(Convert.convertLink(osmLink));
+            otsNetwork.add(this.converter.convertLink(osmLink));
         }
         Convert.findSinksandSources(this.osmNetwork, this.progressListener);
         this.progressListener.progress(new ProgressEvent(this.osmNetwork, "Creation the lanes on "
@@ -354,7 +361,7 @@ class OSMModel implements OTSModelInterface
         {
             try
             {
-                this.lanes.addAll(Convert.makeLanes(link, (OTSDEVSSimulatorInterface) theSimulator,
+                this.lanes.addAll(this.converter.makeLanes(link, (OTSDEVSSimulatorInterface) theSimulator,
                         this.warningListener));
             }
             catch (NetworkException | NamingException exception)
