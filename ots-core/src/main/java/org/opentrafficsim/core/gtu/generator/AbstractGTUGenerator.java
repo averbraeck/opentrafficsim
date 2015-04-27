@@ -3,7 +3,7 @@ package org.opentrafficsim.core.gtu.generator;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -186,7 +186,7 @@ public abstract class AbstractGTUGenerator<ID>
             carBuilder.setMaximumVelocity(getMaximumSpeedDist().draw());
             carBuilder.setInitialSpeed(getInitialSpeedDist().draw());
             carBuilder.setSimulator(getSimulator());
-            Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>(1);
+            Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new LinkedHashMap<>(1);
             initialLongitudinalPositions.put(this.lane, this.lane.getLength().mutable().decrementBy(carLength)
                     .immutable());
             carBuilder.setInitialLongitudinalPositions(initialLongitudinalPositions);

@@ -2,7 +2,7 @@ package org.opentrafficsim.core.network.lane;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
@@ -48,7 +48,7 @@ public class Lane extends CrossSectionElement
 
     /** the speed limit of this lane. */
     private DoubleScalar.Abs<SpeedUnit> speedLimit;
-    
+
     /** Sensors on the lane to trigger behavior of the GTU, sorted by longitudinal position. */
     private final SortedMap<Double, List<Sensor>> sensors = new TreeMap<>();
 
@@ -56,10 +56,10 @@ public class Lane extends CrossSectionElement
     private final List<LaneBasedGTU<?>> gtuList = new ArrayList<LaneBasedGTU<?>>();
 
     /** Adjacent left lanes that some GTU types can change onto. */
-    private Set<Lane> leftNeighbors = new HashSet<Lane>(1);
+    private Set<Lane> leftNeighbors = new LinkedHashSet<Lane>(1);
 
     /** Adjacent right lanes that some GTU types can change onto. */
-    private Set<Lane> rightNeighbors = new HashSet<Lane>(1);
+    private Set<Lane> rightNeighbors = new LinkedHashSet<Lane>(1);
 
     /**
      * Next lane(s) following this lane. Initially null so we can calculate and cache the first time the method is called.
@@ -249,7 +249,7 @@ public class Lane extends CrossSectionElement
                                 - relativePosition.getDx().getSI());
                         DoubleScalar.Abs<TimeUnit> triggerTime =
                             gtu.timeAtDistance(new DoubleScalar.Rel<LengthUnit>(d, LengthUnit.METER));
-                        //System.out.println("Scheduling trigger at " + triggerTime + " for sensor " + sensor);
+                        // System.out.println("Scheduling trigger at " + triggerTime + " for sensor " + sensor);
                         gtu.getSimulator().scheduleEventAbs(triggerTime, this, sensor, "trigger", new Object[] {gtu});
                     }
                 }
@@ -477,7 +477,7 @@ public class Lane extends CrossSectionElement
         if (this.nextLanes == null)
         {
             // Construct (and cache) the result.
-            this.nextLanes = new HashSet<Lane>(1);
+            this.nextLanes = new LinkedHashSet<Lane>(1);
             for (Link<?, ?> link : getParentLink().getEndNode().getLinksOut())
             {
                 if (link instanceof CrossSectionLink<?, ?>)
@@ -509,7 +509,7 @@ public class Lane extends CrossSectionElement
         if (this.prevLanes == null)
         {
             // Construct (and cache) the result.
-            this.prevLanes = new HashSet<Lane>(1);
+            this.prevLanes = new LinkedHashSet<Lane>(1);
             for (Link<?, ?> link : getParentLink().getStartNode().getLinksIn())
             {
                 if (link instanceof CrossSectionLink<?, ?>)
@@ -545,7 +545,7 @@ public class Lane extends CrossSectionElement
      */
     public final Set<Lane> accessibleAdjacentLanes(final LateralDirectionality lateralDirection, final GTUType<?> gtuType)
     {
-        Set<Lane> candidates = new HashSet<>();
+        Set<Lane> candidates = new LinkedHashSet<>();
         for (Lane l : neighbors(lateralDirection))
         {
             if (l.getLaneType().isCompatible(gtuType)

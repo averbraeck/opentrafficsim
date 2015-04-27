@@ -3,8 +3,8 @@ package org.opentrafficsim.core.gtu.lane;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -75,7 +75,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * lastEvaluationTime. Because the reference point of the GTU might not be on all the links the GTU is registered
      * on, the fractional longitudinal positions can be more than one, or less than zero.
      */
-    private final Map<Link<?, ?>, Double> fractionalLinkPositions = new HashMap<>();
+    private final Map<Link<?, ?>, Double> fractionalLinkPositions = new LinkedHashMap<>();
 
     /**
      * The lanes the GTU is registered on. Each lane has to have its link registered in the fractionalLinkPositions as
@@ -415,7 +415,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 Collection<Lane> newLaneSet = adjacentLanes(lcmr.getLaneChange());
                 // Remove this GTU from all of the Lanes that it is on and remember the fractional position on each
                 // one
-                Map<Lane, Double> oldFractionalPositions = new HashMap<Lane, Double>();
+                Map<Lane, Double> oldFractionalPositions = new LinkedHashMap<Lane, Double>();
                 for (Lane l : this.lanes)
                 {
                     oldFractionalPositions.put(l, fractionalPosition(l, getReference(), getLastEvaluationTime()));
@@ -730,7 +730,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             final DoubleScalar.Abs<TimeUnit> when, final DoubleScalar.Rel<LengthUnit> maximumForwardHeadway,
             final DoubleScalar.Rel<LengthUnit> maximumReverseHeadway) throws RemoteException, NetworkException
     {
-        Collection<HeadwayGTU> result = new HashSet<HeadwayGTU>();
+        Collection<HeadwayGTU> result = new LinkedHashSet<HeadwayGTU>();
         for (LaneBasedGTU<?> p : parallel(directionality, when))
         {
             result.add(new HeadwayGTU(p, Double.NaN));
@@ -764,7 +764,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public final Map<Lane, DoubleScalar.Rel<LengthUnit>> positions(final RelativePosition relativePosition,
             final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
     {
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> positions = new HashMap<>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> positions = new LinkedHashMap<>();
         for (Lane lane : this.lanes)
         {
             positions.put(lane, position(lane, relativePosition, when));
@@ -853,7 +853,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public final Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition,
             final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
     {
-        Map<Lane, Double> positions = new HashMap<>();
+        Map<Lane, Double> positions = new LinkedHashMap<>();
         for (Lane lane : this.lanes)
         {
             positions.put(lane, fractionalPosition(lane, relativePosition, when));
@@ -1201,7 +1201,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public final Set<LaneBasedGTU<?>> parallel(final Lane lane, final DoubleScalar.Abs<TimeUnit> when)
             throws RemoteException, NetworkException
     {
-        Set<LaneBasedGTU<?>> gtuSet = new HashSet<LaneBasedGTU<?>>();
+        Set<LaneBasedGTU<?>> gtuSet = new LinkedHashSet<LaneBasedGTU<?>>();
         for (Lane l : this.lanes)
         {
             // only take lanes that we can compare based on a shared design line
@@ -1234,7 +1234,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      */
     private Set<Lane> adjacentLanes(final LateralDirectionality lateralDirection)
     {
-        Set<Lane> result = new HashSet<Lane>();
+        Set<Lane> result = new LinkedHashSet<Lane>();
         for (Lane lane : this.lanes)
         {
             result.addAll(lane.accessibleAdjacentLanes(lateralDirection, getGTUType()));
@@ -1248,13 +1248,13 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             final DoubleScalar.Abs<TimeUnit> when) throws RemoteException, NetworkException
     {
         Set<Lane> adjacentLanes = adjacentLanes(lateralDirection);
-        /*-                       new HashSet<Lane>();
+        /*-                       new LinkedHashSet<Lane>();
         for (Lane lane : this.lanes)
         {
             adjacentLanes.addAll(lane.accessibleAdjacentLanes(lateralDirection, getGTUType()));
         }
          */
-        Set<LaneBasedGTU<?>> gtuSet = new HashSet<LaneBasedGTU<?>>();
+        Set<LaneBasedGTU<?>> gtuSet = new LinkedHashSet<LaneBasedGTU<?>>();
         for (Lane adjacentLane : adjacentLanes)
         {
             gtuSet.addAll(parallel(adjacentLane, when));
