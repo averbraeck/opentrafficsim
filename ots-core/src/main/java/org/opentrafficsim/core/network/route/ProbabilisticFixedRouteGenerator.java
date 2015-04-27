@@ -41,6 +41,7 @@ public class ProbabilisticFixedRouteGenerator implements RouteGenerator
             throws NetworkException
     {
         this(routeProbabilities, System.currentTimeMillis());
+        System.err.println("Seeding random generator from clock");
     }
 
     /**
@@ -89,7 +90,7 @@ public class ProbabilisticFixedRouteGenerator implements RouteGenerator
             double bucketSize = this.probabilities[index];
             if (bucketSize >= randomValue)
             {
-                System.out.println("calling " + this.routes.get(index));
+                //System.out.println("calling " + this.routes.get(index));
                 return this.routes.get(index).generateRoute();
             }
             randomValue -= bucketSize;

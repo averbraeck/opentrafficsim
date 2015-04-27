@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.network.lane;
 
+import java.rmi.RemoteException;
+
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -41,6 +43,16 @@ public class SensorLaneEnd extends AbstractSensor
     @Override
     public final void trigger(final LaneBasedGTU<?> gtu)
     {
+        /*-
+        try
+        {
+            System.out.println(gtu.getSimulator().getSimulatorTime().get() + ": removing " + gtu + " at end of lane " + getLane());
+        }
+        catch (RemoteException exception)
+        {
+            exception.printStackTrace();
+        }
+        */
         gtu.removeLane(getLane());
         getLane().removeGTU(gtu);
     }

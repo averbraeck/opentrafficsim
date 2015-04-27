@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -294,15 +295,11 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             System.out.println("negative velocity: " + this + " " + getLateralVelocity().getSI() + "m/s");
         }
-        if (getSimulator().getSimulatorTime().get().getSI() == 70)
-        {
-            System.out.println(this + " " + getLongitudinalVelocity().getSI());
-        }
-        if (getId().toString().equals("15"))// && getSimulator().getSimulatorTime().get().getSI() > 10)
-        {
-            System.out.println("Debug me: " + getSimulator().getSimulatorTime() + " " + this + " " + this.getRoute()
-                    + " " + this.getLongitudinalVelocity().getSI());
-        }
+        // if (getId().toString().equals("15"))// && getSimulator().getSimulatorTime().get().getSI() > 10)
+        // {
+        // System.out.println("Debug me: " + getSimulator().getSimulatorTime() + " " + this + " " + this.getRoute()
+        // + " " + this.getLongitudinalVelocity().getSI());
+        // }
         // Quick sanity check
         if (getSimulator().getSimulatorTime().get().getSI() != getNextEvaluationTime().getSI())
         {
@@ -366,10 +363,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         // Oops; must convert a Rel into an Abs
         DoubleScalar.Abs<AccelerationUnit> currentLaneIncentive =
                 new DoubleScalar.Abs<AccelerationUnit>(laneIncentives.getSI(1), AccelerationUnit.SI);
-        if (null == lcmr.getLaneChange()
-                && laneIncentives.get(1).ne(STAYINCURRENTLANEINCENTIVE)
-                && lcmr.getGfmr().getAcceleration().gt(currentLaneIncentive)
-                )
+        if (null == lcmr.getLaneChange() && laneIncentives.get(1).ne(STAYINCURRENTLANEINCENTIVE)
+                && lcmr.getGfmr().getAcceleration().gt(currentLaneIncentive))
         {
             // Must slow down (looking for a gap)
             System.out
@@ -460,6 +455,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         scheduleTriggers();
         // Re-schedule this move method at the end of the committed time step.
         getSimulator().scheduleEventAbs(this.getNextEvaluationTime(), this, this, "move", null);
+        //System.out.println("t=" + this.getSimulator().getSimulatorTime().get() + ", " + this + " a="
+        //        + getAcceleration().getSI());
     }
 
     /**
