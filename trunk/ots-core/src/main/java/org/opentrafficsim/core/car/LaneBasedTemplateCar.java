@@ -3,7 +3,7 @@ package org.opentrafficsim.core.car;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.naming.NamingException;
@@ -46,7 +46,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
     private Renderable2D animation;
 
     /** Sensing positions. */
-    private final Map<RelativePosition.TYPE, RelativePosition> relativePositions = new HashMap<>();
+    private final Map<RelativePosition.TYPE, RelativePosition> relativePositions = new LinkedHashMap<>();
 
     /**
      * @param id ID; the id of the GTU, could be String or Integer

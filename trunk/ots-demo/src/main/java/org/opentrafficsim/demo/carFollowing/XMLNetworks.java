@@ -3,8 +3,8 @@ package org.opentrafficsim.demo.carFollowing;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.SortedMap;
@@ -62,8 +62,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 4 mrt. 2015 <br>
@@ -80,21 +79,21 @@ public class XMLNetworks implements WrappableSimulation
      */
     public XMLNetworks()
     {
-        this.properties.add(new SelectionProperty("Network", "Network", new String[]{"Merge 1 plus 1 into 1",
-                "Merge 2 plus 1 into 2", "Merge 2 plus 2 into 4", "Split 1 into 1 plus 1", "Split 2 into 1 plus 2",
-                "Split 4 into 2 plus 2",}, 0, false, 0));
+        this.properties.add(new SelectionProperty("Network", "Network", new String[] {"Merge 1 plus 1 into 1",
+            "Merge 2 plus 1 into 2", "Merge 2 plus 2 into 4", "Split 1 into 1 plus 1", "Split 2 into 1 plus 2",
+            "Split 4 into 2 plus 2",}, 0, false, 0));
     }
 
     /** {@inheritDoc} */
     @Override
-    public SimpleSimulator buildSimulator(ArrayList<AbstractProperty<?>> userModifiedProperties)
-            throws SimRuntimeException, RemoteException, NetworkException
+    public SimpleSimulator buildSimulator(ArrayList<AbstractProperty<?>> userModifiedProperties) throws SimRuntimeException,
+        RemoteException, NetworkException
     {
         XMLNetworkModel model = new XMLNetworkModel(userModifiedProperties);
         SimpleSimulator result =
-                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
-                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
-                                TimeUnit.SECOND), model, new Rectangle2D.Double(-50, -200, 600, 400));
+            new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
+                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0, TimeUnit.SECOND), model, new Rectangle2D.Double(
+                -50, -200, 600, 400));
         new ControlPanel(result);
         return result;
     }
@@ -125,8 +124,7 @@ public class XMLNetworks implements WrappableSimulation
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 4 mrt. 2015 <br>
@@ -185,8 +183,8 @@ class XMLNetworkModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public void constructModel(
-            SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException, RemoteException
+        SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+        throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
@@ -224,7 +222,7 @@ class XMLNetworkModel implements OTSModelInterface
                 throw new Error("\"Car following model\" property has wrong type");
             }
             Iterator<AbstractProperty<ArrayList<AbstractProperty<?>>>> iterator =
-                    new CompoundProperty("", "", this.properties, false, 0).iterator();
+                new CompoundProperty("", "", this.properties, false, 0).iterator();
             while (iterator.hasNext())
             {
                 AbstractProperty<?> ap = iterator.next();
@@ -292,10 +290,10 @@ class XMLNetworkModel implements OTSModelInterface
             // 600 [veh / hour] on each lane results in a reasonable chance to merge
             this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 600.0, TimeUnit.SECOND);
             setupGenerator(LaneFactory.makeMultiLane("From to FirstVia", from, firstVia, null, merge ? lanesOnMain
-                    : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator));
+                : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator));
             Lane[] common =
-                    LaneFactory.makeMultiLane("FirstVia to SecondVia", firstVia, secondVia, null, lanesOnCommon,
-                            laneType, this.speedLimit, this.simulator);
+                LaneFactory.makeMultiLane("FirstVia to SecondVia", firstVia, secondVia, null, lanesOnCommon, laneType,
+                    this.speedLimit, this.simulator);
             if (merge)
             {
                 for (int i = lanesOnCommonCompressed; i < lanesOnCommon; i++)
@@ -303,20 +301,20 @@ class XMLNetworkModel implements OTSModelInterface
                     setupBlock(common[i]);
                 }
             }
-            setupSink(LaneFactory.makeMultiLane("SecondVia to end", secondVia, end, null, merge
-                    ? lanesOnCommonCompressed : lanesOnMain, laneType, this.speedLimit, this.simulator));
+            setupSink(LaneFactory.makeMultiLane("SecondVia to end", secondVia, end, null, merge ? lanesOnCommonCompressed
+                : lanesOnMain, laneType, this.speedLimit, this.simulator));
             if (merge)
             {
                 setupGenerator(LaneFactory.makeMultiLane("From2 to FirstVia", from2, firstVia, null, lanesOnBranch, 0,
-                        lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator));
+                    lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator));
                 this.routeGenerator = new FixedRouteGenerator(new ArrayList<Node<?, ?>>());
             }
             else
             {
-                setupSink(LaneFactory.makeMultiLane("SecondVia to end2", secondVia, end2, null, lanesOnBranch,
-                        lanesOnCommon - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator));
+                setupSink(LaneFactory.makeMultiLane("SecondVia to end2", secondVia, end2, null, lanesOnBranch, lanesOnCommon
+                    - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator));
                 SortedMap<RouteGenerator, java.lang.Double> routeProbabilities =
-                        new TreeMap<RouteGenerator, java.lang.Double>();
+                    new TreeMap<RouteGenerator, java.lang.Double>();
                 ArrayList<Node<?, ?>> mainRoute = new ArrayList<Node<?, ?>>();
                 mainRoute.add(end);
                 routeProbabilities.put(new FixedRouteGenerator(mainRoute), new java.lang.Double(lanesOnMain));
@@ -345,8 +343,8 @@ class XMLNetworkModel implements OTSModelInterface
         {
             Object[] arguments = new Object[1];
             arguments[0] = lane;
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
-                    "generateCar", arguments);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this, "generateCar",
+                arguments);
         }
         return lanes;
     }
@@ -370,7 +368,7 @@ class XMLNetworkModel implements OTSModelInterface
         for (Lane lane : lanes)
         {
             new SinkLane(endLink, lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getLaneType(),
-                    LongitudinalDirectionality.FORWARD, this.speedLimit);
+                LongitudinalDirectionality.FORWARD, this.speedLimit);
         }
         return lanes;
     }
@@ -386,19 +384,19 @@ class XMLNetworkModel implements OTSModelInterface
      * @throws GTUException
      */
     private Lane setupBlock(Lane lane) throws RemoteException, NamingException, NetworkException, SimRuntimeException,
-            GTUException
+        GTUException
     {
         DoubleScalar.Rel<LengthUnit> initialPosition = lane.getLength();
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(lane, initialPosition);
         GTUFollowingModel gfm =
-                new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.SI),
-                        new DoubleScalar.Rel<TimeUnit>(java.lang.Double.MAX_VALUE, TimeUnit.SI));
+            new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.SI),
+                new DoubleScalar.Rel<TimeUnit>(java.lang.Double.MAX_VALUE, TimeUnit.SI));
         LaneChangeModel lcm = new FixedLaneChangeModel(null);
         new LaneBasedIndividualCar<Integer>(999999, this.gtuType, gfm, lcm, initialPositions,
-                new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(1,
-                        LengthUnit.METER), lane.getWidth(1), new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-                new Route(new ArrayList<Node<?, ?>>()), this.simulator);
+            new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
+            new DoubleScalar.Rel<LengthUnit>(1, LengthUnit.METER), lane.getWidth(1), new DoubleScalar.Abs<SpeedUnit>(0,
+                SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator);
         return lane;
     }
 
@@ -410,18 +408,17 @@ class XMLNetworkModel implements OTSModelInterface
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(lane, initialPosition);
         try
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength =
-                    new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
-            GTUFollowingModel gtuFollowingModel =
-                    generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
-            new LaneBasedIndividualCar<Integer>(++this.carsCreated, this.gtuType, gtuFollowingModel,
-                    this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
-                    new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                            SpeedUnit.KM_PER_HOUR), this.routeGenerator.generateRoute(), this.simulator);
+                new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
+            GTUFollowingModel gtuFollowingModel = generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
+            new LaneBasedIndividualCar<Integer>(++this.carsCreated, this.gtuType, gtuFollowingModel, this.laneChangeModel,
+                initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
+                new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), this.routeGenerator.generateRoute(),
+                this.simulator);
             Object[] arguments = new Object[1];
             arguments[0] = lane;
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", arguments);

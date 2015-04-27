@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -37,7 +37,7 @@ public class GTUType<ID> implements Serializable
     }
     
     /** The set of previously instantiated GTUTypes. */
-    private static final Map<Object, GTUType<?>> instantiatedGTUTypes = new HashMap<Object, GTUType<?>>();
+    private static final Map<Object, GTUType<?>> instantiatedGTUTypes = new LinkedHashMap<Object, GTUType<?>>();
 
     /**
      * Construct a new GTUType or (if it already exists) return an existing GTUType.
