@@ -46,10 +46,10 @@ public class TestXMLModel implements OTSModelInterface
             throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
-        URL url = URLResource.getResource("/circular-road-gtu-example.xml");
+        URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
         // URL url = URLResource.getResource("/ots-infra-example.xml");
-        XmlNetworkLaneParser nlp =
-            new XmlNetworkLaneParser(String.class, NodeGeotools.class, String.class, Coordinate.class, LinkGeotools.class,
+        XmlNetworkLaneParser2 nlp =
+            new XmlNetworkLaneParser2(String.class, NodeGeotools.class, String.class, Coordinate.class, LinkGeotools.class,
                 String.class, this.simulator);
         try
         {

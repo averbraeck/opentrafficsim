@@ -159,7 +159,7 @@ public class TemplateGTUTypeTest
     {
         assertTrue("Id should be " + id, id.equals(templateGTUType.getGtuType().getId()));
         assertEquals("Length should be " + length, length.draw().getSI(), templateGTUType.getLength().getSI(), 0.0001);
-        assertEquals("Sidth should be " + width, width.draw().getSI(), templateGTUType.getWidth().getSI(), 0.0001);
+        assertEquals("Width should be " + width, width.draw().getSI(), templateGTUType.getWidth().getSI(), 0.0001);
         assertEquals("Maximum speed should be " + maximumSpeed, maximumSpeed.draw().getSI(), templateGTUType
                 .getMaximumVelocity().getSI(), 0.0001);
         assertEquals("Simulator", simulator, templateGTUType.getSimulator());

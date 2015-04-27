@@ -18,6 +18,12 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:simpleType name="SIGNEDLENGTHTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="(\-|\+){0,1}\d+[\.]{0,1}\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:simpleType name="TIMETYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+[\.]{0,1}\d*\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
@@ -82,6 +88,30 @@
   <xsd:simpleType name="LANECHANGETYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="EGOISTIC|ALTRUISTIC"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="STRIPETYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="SOLID|DASHED|BLOCKED|DOUBLE|LEFTONLY|RIGHTONLY"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="DIRECTIONTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="FORWARD|BACKWARD|BOTH"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="COLORTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="(\
+{0})WHITE|LIGHT_GRAY|GRAY|DARK_GRAY|BLACK|RED|PINK|ORANGE|YELLOW|GREEN|MAGENTA|CYAN|BLUE(\
+{0})|\#[(0-9)|(A-F)]{6}(\
+{0})|RGB\(0*([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\s*\,\s*(\
+{0})0*([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\s*\,\s*(\
+{0})0*([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -171,8 +201,14 @@
 
   <xsd:element name="GLOBAL">
     <xsd:complexType>
-      <xsd:attribute name="SPEED" type="SPEEDTYPE" use="optional"></xsd:attribute>
-      <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
+      <xsd:attribute name="SPEED" type="SPEEDTYPE" use="required"></xsd:attribute>
+      <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="required"></xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="INCLUDE">
+    <xsd:complexType>
+      <xsd:attribute name="FILE" type="xsd:anyURI" use="required"></xsd:attribute>
     </xsd:complexType>
   </xsd:element>
 
@@ -210,6 +246,58 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="ROADTYPE">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:choice minOccurs="1" maxOccurs="unbounded">
+
+          <xsd:element name="LANE" minOccurs="0" maxOccurs="unbounded">
+            <xsd:complexType>
+              <xsd:attribute name="NAME" type="xsd:string" use="required"></xsd:attribute>
+              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional"></xsd:attribute>
+              <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
+              <xsd:attribute name="SPEED" type="SPEEDTYPE" use="optional"></xsd:attribute>
+              <xsd:attribute name="DIRECTION" type="DIRECTIONTYPE" use="required"></xsd:attribute>
+              <xsd:attribute name="COLOR" type="COLORTYPE" use="optional"></xsd:attribute>
+            </xsd:complexType>
+          </xsd:element>
+
+          <xsd:element name="NOTRAFFICLANE" minOccurs="0" maxOccurs="unbounded">
+            <xsd:complexType>
+              <xsd:attribute name="NAME" type="xsd:string" use="optional"></xsd:attribute>
+              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional"></xsd:attribute>
+              <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
+              <xsd:attribute name="COLOR" type="COLORTYPE" use="optional"></xsd:attribute>
+            </xsd:complexType>
+          </xsd:element>
+
+          <xsd:element name="SHOULDER" minOccurs="0" maxOccurs="unbounded">
+            <xsd:complexType>
+              <xsd:attribute name="NAME" type="xsd:string" use="optional"></xsd:attribute>
+              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional"></xsd:attribute>
+              <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
+              <xsd:attribute name="COLOR" type="COLORTYPE" use="optional"></xsd:attribute>
+            </xsd:complexType>
+          </xsd:element>
+
+          <xsd:element name="STRIPE" minOccurs="0" maxOccurs="unbounded">
+            <xsd:complexType>
+              <xsd:attribute name="NAME" type="xsd:string" use="optional"></xsd:attribute>
+              <xsd:attribute name="TYPE" type="STRIPETYPE" use="required"></xsd:attribute>
+              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional"></xsd:attribute>
+              <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
+              <xsd:attribute name="COLOR" type="COLORTYPE" use="optional"></xsd:attribute>
+            </xsd:complexType>
+          </xsd:element>
+
+        </xsd:choice>
+      </xsd:sequence>
+      <xsd:attribute name="NAME" type="xsd:ID" use="required"></xsd:attribute>
+      <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
+      <xsd:attribute name="SPEED" type="SPEEDTYPE" use="optional"></xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:element name="LINK">
     <xsd:complexType>
       <xsd:sequence>
@@ -228,13 +316,16 @@
           </xsd:element>
         </xsd:choice>
 
-        <xsd:element name="LANE" minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="LANEOVERRIDE" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>
             <xsd:attribute name="NAME" type="xsd:string" use="required"></xsd:attribute>
             <xsd:attribute name="SPEED" type="SPEEDTYPE" use="optional"></xsd:attribute>
-            <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
+            <xsd:attribute name="DIRECTION" type="DIRECTIONTYPE" use="optional"></xsd:attribute>
+            <xsd:attribute name="COLOR" type="COLORTYPE" use="optional"></xsd:attribute>
           </xsd:complexType>
         </xsd:element>
+
+        <xsd:element ref="ROADTYPE" minOccurs="0" maxOccurs="1" />
 
         <!-- TODO EITHER GTU or GTUGROUP should be present... -->
         <!-- TODO Maximum one of ROUTE, ROUTEMIX, SHORTESTROUTE, SHORTESTROUTEMIX should be present... -->
@@ -270,9 +361,7 @@
       <xsd:attribute name="NAME" type="xsd:ID" use="required"></xsd:attribute>
       <xsd:attribute name="FROM" type="xsd:IDREF" use="required"></xsd:attribute>
       <xsd:attribute name="TO" type="xsd:IDREF" use="required"></xsd:attribute>
-      <xsd:attribute name="ELEMENTS" type="ELEMENTSTYPE" use="required"></xsd:attribute>
-      <xsd:attribute name="SPEED" type="SPEEDTYPE" use="optional"></xsd:attribute>
-      <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
+      <xsd:attribute name="ROADTYPE" type="xsd:IDREF" use="optional"></xsd:attribute>
     </xsd:complexType>
   </xsd:element>
 
@@ -330,11 +419,13 @@
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element ref="GLOBAL" minOccurs="0" maxOccurs="1" />
+        <xsd:element ref="INCLUDE" minOccurs="0" maxOccurs="unbounded" />
         <xsd:choice minOccurs="1" maxOccurs="unbounded">
           <xsd:element ref="NODE" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="LINK" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="GTU" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="GTUMIX" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="ROADTYPE" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="ROUTE" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="ROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="SHORTESTROUTE" minOccurs="0" maxOccurs="unbounded" />

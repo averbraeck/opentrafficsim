@@ -30,10 +30,7 @@
       <artifactId>parallelcolt</artifactId>
     </dependency>
 
-    <!-- dependency>
-      <groupId>org.ojalgo</groupId>
-      <artifactId>ojalgo</artifactId>
-    </dependency -->
+    <!-- dependency> <groupId>org.ojalgo</groupId> <artifactId>ojalgo</artifactId> </dependency -->
 
     <dependency>
       <groupId>org.jfree</groupId>
