@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -273,10 +272,6 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     private static final DoubleScalar.Rel<AccelerationUnit> NONPREFERREDLANEINCENTIVE =
             new DoubleScalar.Rel<AccelerationUnit>(-0.3, AccelerationUnit.METER_PER_SECOND_2);
 
-    /** Standard incentive for lanes that are not there. */
-    private static final DoubleScalar.Rel<AccelerationUnit> DONOTENTERINCENTIVE =
-            new DoubleScalar.Rel<AccelerationUnit>(Double.MIN_VALUE, AccelerationUnit.SI);
-
     /** Standard time horizon for route choices. */
     private static final DoubleScalar.Rel<TimeUnit> TIMEHORIZON = new DoubleScalar.Rel<TimeUnit>(90, TimeUnit.SECOND);
 
@@ -497,7 +492,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * @return double; the acceleration (deceleration) needed to stop at the specified distance in m/s/s
      * @throws RemoteException on communications failure
      */
-    private double acceleration(DoubleScalar.Rel<LengthUnit> stopDistance) throws RemoteException
+    private double acceleration(final DoubleScalar.Rel<LengthUnit> stopDistance) throws RemoteException
     {
         // What is the deceleration that will bring this GTU to a stop at exactly the suitability distance?
         // Answer: a = -v^2 / 2 / suitabilityDistance
@@ -514,7 +509,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      * @throws NetworkException on network inconsistency
      * @throws RemoteException on communications failure
      */
-    private DoubleScalar.Rel<LengthUnit> suitability(LateralDirectionality direction) throws NetworkException,
+    private DoubleScalar.Rel<LengthUnit> suitability(final LateralDirectionality direction) throws NetworkException,
             RemoteException
     {
         Lane lane = null;
@@ -547,60 +542,6 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
         return getRoute().suitability(lane, longitudinalPosition, getGTUType(), TIMEHORIZON);
 
-    }
-
-    /**
-     * Determine if driving on the (adjacent) lane is suitable for following the route. If not, return a deceleration
-     * that reflects how soon this GTU should be off that (adjacent) lane. If the lane <i>is</i> suitable for the route,
-     * return the <cite>defaultIncentive</cite>.
-     * @param direction LateralDirectionality; LEFT, RIGHT, or null
-     * @param defaultIncentive DoubleScalar.Rel&lt;AccelerationUnit&gt;; the normal incentive to be/stay in lane
-     * @return DoubleScalar.Rel&lt;AccelerationUnit&gt;; the incentive to be in the lane
-     * @throws NetworkException on network inconsistency
-     * @throws RemoteException on communications failure
-     */
-    private DoubleScalar.Rel<AccelerationUnit> laneIncentive(final LateralDirectionality direction,
-            final DoubleScalar.Rel<AccelerationUnit> defaultIncentive) throws NetworkException, RemoteException
-    {
-        Lane lane = null;
-        DoubleScalar.Rel<LengthUnit> longitudinalPosition = null;
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> positions = positions(RelativePosition.REFERENCE_POSITION);
-        if (null == direction)
-        {
-            for (Lane l : getLanes())
-            {
-                if (l.getLaneType().isCompatible(getGTUType()))
-                {
-                    lane = l;
-                }
-            }
-            if (null == lane)
-            {
-                throw new NetworkException("GTU " + this + " is not on any compatible lane");
-            }
-            longitudinalPosition = positions.get(lane);
-        }
-        else
-        {
-            lane = positions.keySet().iterator().next();
-            longitudinalPosition = positions.get(lane);
-            lane = lane.bestAccessibleAdjacentLane(direction, longitudinalPosition, getGTUType());
-        }
-        if (null == lane)
-        {
-            return DONOTENTERINCENTIVE;
-        }
-        DoubleScalar.Rel<LengthUnit> suitability =
-                getRoute().suitability(lane, longitudinalPosition, getGTUType(), TIMEHORIZON);
-        if (suitability != Route.NOLANECHANGENEEDED)
-        {
-            // What is the deceleration that will bring this GTU to a stop at exactly the suitability distance?
-            // Answer: a = -v^2 / 2 / suitabilityDistance
-            double v = getLongitudinalVelocity().getSI();
-            double a = -v * v / 2 / suitability.getSI();
-            return new DoubleScalar.Rel<AccelerationUnit>(a, AccelerationUnit.SI);
-        }
-        return defaultIncentive;
     }
 
     /**
@@ -682,7 +623,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                     {
                         if (this.lanes.contains(nextLane))
                         {
-                            continue;// Already on this lane
+                            continue; // Already on this lane
                         }
                         if (nextNode == nextLane.getParentLink().getEndNode())
                         {
@@ -1432,14 +1373,14 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      */
     public final String toString(final Lane lane, final DoubleScalar.Abs<TimeUnit> when)
     {
-        double pos = Double.NaN;
+        double pos;
         try
         {
             pos = this.position(lane, getFront(), when).getSI();
         }
         catch (NetworkException exception)
         {
-            // exception.printStackTrace();
+            pos = Double.NaN;
         }
         // A space in the format after the % becomes a space for positive numbers or a minus for negative numbers
         return String.format("Car %5d lastEval %6.1fs, nextEval %6.1fs, % 9.3fm, v % 6.3fm/s, a % 6.3fm/s^2", getId(),

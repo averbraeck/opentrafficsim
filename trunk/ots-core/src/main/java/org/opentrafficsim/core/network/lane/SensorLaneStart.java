@@ -46,7 +46,8 @@ public class SensorLaneStart extends AbstractSensor
         /*-
         try
         {
-            System.out.println(gtu.getSimulator().getSimulatorTime().get() + ": adding " + gtu + " at start of lane " + getLane());
+            System.out.println(gtu.getSimulator().getSimulatorTime().get() + ": adding " + gtu + " at start of lane " 
+                    + getLane());
         }
         catch (RemoteException exception)
         {

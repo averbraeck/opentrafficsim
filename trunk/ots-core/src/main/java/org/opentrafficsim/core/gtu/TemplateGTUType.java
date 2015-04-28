@@ -98,7 +98,7 @@ public class TemplateGTUType<ID>
     /**
      * @return gtuType.
      */
-    public GTUType<ID> getGtuType()
+    public final GTUType<ID> getGtuType()
     {
         return this.gtuType;
     }

@@ -32,7 +32,7 @@ public abstract class AbstractLaneBasedTemplateGTU<ID> extends AbstractLaneBased
 {
     /** */
     private static final long serialVersionUID = 20140822L;
-    
+
     /** The TemplateGTUType. */
     TemplateGTUType<?> templateGTUType;
 
@@ -54,8 +54,8 @@ public abstract class AbstractLaneBasedTemplateGTU<ID> extends AbstractLaneBased
             final DoubleScalar.Abs<SpeedUnit> initialSpeed, final Route route) throws RemoteException,
             NetworkException, SimRuntimeException, GTUException
     {
-        super(id, templateGTUType.getGtuType(), gtuFollowingModel, null /* LaneChangeModel */, initialLongitudinalPositions, initialSpeed,
-                route, templateGTUType.getSimulator());
+        super(id, templateGTUType.getGtuType(), gtuFollowingModel, null /* LaneChangeModel */,
+                initialLongitudinalPositions, initialSpeed, route, templateGTUType.getSimulator());
         this.templateGTUType = templateGTUType;
     }
 

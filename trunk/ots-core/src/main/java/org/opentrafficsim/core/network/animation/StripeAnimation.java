@@ -52,7 +52,7 @@ public class StripeAnimation extends Renderable2D
      * @return ArrayList&lt;Coordinate&gt;; the coordinates of the dashes separated and terminated by a
      *         <cite>NEWPATH</cite> Coordinate
      */
-    private final ArrayList<Coordinate> makeDashes(final LengthIndexedLine center, final double width,
+    private ArrayList<Coordinate> makeDashes(final LengthIndexedLine center, final double width,
             final double startOffset, final double[] onOffLengths)
     {
         double period = 0;
@@ -98,18 +98,6 @@ public class StripeAnimation extends Renderable2D
             position = nextBoundary + onOffLengths[phase++ % onOffLengths.length];
         }
         return result;
-    }
-
-    /**
-     * Create the contour for a solid stripe.
-     * @param center Geometry; the design line for the solid stripe
-     * @param width double; the width of the solid stripe in m
-     * @return ArrayList&lt;Coordinate&gt;; the coordinates of the contour of the solid stripe
-     */
-    ArrayList<Coordinate> makeSolid(final Geometry center, final double width)
-    {
-        return new ArrayList<Coordinate>(Arrays.asList(center.buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT)
-                .getCoordinates()));
     }
 
     /**
