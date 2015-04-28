@@ -18,7 +18,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @version 10 apr. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class PaintPolygons
+public final class PaintPolygons
 {
     /** Do not instantiate this class. */
     private PaintPolygons()

@@ -14,7 +14,7 @@ import java.util.Map;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <ID> the ID-type of the GTU, e.g. String or a certain Enum type.
  */
-public class GTUType<ID> implements Serializable
+public final class GTUType<ID> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141231L;
@@ -37,23 +37,24 @@ public class GTUType<ID> implements Serializable
     }
     
     /** The set of previously instantiated GTUTypes. */
-    private static final Map<Object, GTUType<?>> instantiatedGTUTypes = new LinkedHashMap<Object, GTUType<?>>();
+    private static final Map<Object, GTUType<?>> INSTANTIATEDGTUTYPES = new LinkedHashMap<Object, GTUType<?>>();
 
     /**
      * Construct a new GTUType or (if it already exists) return an existing GTUType.
      * @param id ID; the id of the GTUType
+     * @param <ID> the ID-type of the GTU, e.g. String or a certain Enum type.
      * @return GTUType&lt;ID&gt;
      */
     @SuppressWarnings("unchecked")
     public static <ID> GTUType<ID> makeGTUType(final ID id)
     {
-        synchronized (instantiatedGTUTypes)
+        synchronized (INSTANTIATEDGTUTYPES)
         {
-            GTUType<?> result = instantiatedGTUTypes.get(id);
+            GTUType<?> result = INSTANTIATEDGTUTYPES.get(id);
             if (null == result)
             {
                 result = new GTUType<ID>(id);
-                instantiatedGTUTypes.put(id, result);
+                INSTANTIATEDGTUTYPES.put(id, result);
             }
             return (GTUType<ID>) result;
         }
@@ -62,13 +63,13 @@ public class GTUType<ID> implements Serializable
     /**
      * @return id.
      */
-    public final ID getId()
+    public ID getId()
     {
         return this.id;
     }
     
     /** {@inheritDoc} */
-    public final String toString()
+    public String toString()
     {
         return "GTUType: " + this.id;
     }

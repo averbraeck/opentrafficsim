@@ -33,14 +33,14 @@ public class Altruistic extends AbstractLaneChangeModel
 
     /** {@inheritDoc} */
     @Override
-    public String getName()
+    public final String getName()
     {
         return "Altruistic";
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getLongName()
+    public final String getLongName()
     {
         return "Altruistic lane change model (as described by Treiber).";
     }

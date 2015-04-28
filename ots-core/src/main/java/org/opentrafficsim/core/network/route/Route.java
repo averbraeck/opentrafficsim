@@ -289,8 +289,8 @@ public class Route implements Serializable
      * @throws NetworkException on network inconsistency, or when the continuation Link at a branch cannot be determined
      */
     public final DoubleScalar.Rel<LengthUnit> suitability(final Lane lane,
-            final DoubleScalar.Rel<LengthUnit> longitudinalPosition, GTUType<?> gtuType,
-            DoubleScalar.Rel<TimeUnit> timeHorizon) throws NetworkException
+            final DoubleScalar.Rel<LengthUnit> longitudinalPosition, final GTUType<?> gtuType,
+            final DoubleScalar.Rel<TimeUnit> timeHorizon) throws NetworkException
     {
         double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();
         double spareTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit().getSI();
@@ -492,11 +492,11 @@ public class Route implements Serializable
      * @param totalLanes integer; total number of lanes compatible with the GTU type
      * @param direction LateralDirectionality; the direction of the lane changes to attempt
      * @param gtuType GTUType&lt;?&gt;; the type of the GTU
-     * @return double; the suitability of the <cite>startLane</site> for following the Route
+     * @return double; the suitability of the <cite>startLane</cite> for following the Route
      */
     private DoubleScalar.Rel<LengthUnit> computeSuitabilityWithLaneChanges(final Lane startLane,
-            double remainingDistance, final Map<Lane, DoubleScalar.Rel<LengthUnit>> suitabilities, int totalLanes,
-            final LateralDirectionality direction, GTUType<?> gtuType)
+            final double remainingDistance, final Map<Lane, DoubleScalar.Rel<LengthUnit>> suitabilities,
+            final int totalLanes, final LateralDirectionality direction, final GTUType<?> gtuType)
     {
         /*-
          * The time per required lane change seems more relevant than distance per required lane change.
@@ -534,7 +534,7 @@ public class Route implements Serializable
      * @param gtuType GTUType; the GTU type
      * @return integer; the number of lanes on the link that are compatible with the GTU type
      */
-    private int countCompatibleLanes(CrossSectionLink<?, ?> link, GTUType<?> gtuType)
+    private int countCompatibleLanes(final CrossSectionLink<?, ?> link, final GTUType<?> gtuType)
     {
         int result = 0;
         for (CrossSectionElement cse : link.getCrossSectionElementList())
