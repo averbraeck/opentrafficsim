@@ -208,6 +208,7 @@
 		<!-- AV: changed LeftCurly and RightCurly options -->
 		<module name="AvoidNestedBlocks">
 			<property name="severity" value="warning" />
+            <property name="allowInSwitchCase" value="true"/>
 		</module>
 		<module name="EmptyBlock">
 			<property name="severity" value="warning" />

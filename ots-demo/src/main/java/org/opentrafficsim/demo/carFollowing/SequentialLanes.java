@@ -142,7 +142,7 @@ public class SequentialLanes implements WrappableSimulation
                     new SimulatorFrame("Sequential Lanes Plots animation", sequential.buildSimulator(localProperties)
                         .getPanel());
                 }
-                catch (RemoteException | SimRuntimeException exception)
+                catch (RemoteException | SimRuntimeException | NamingException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -153,7 +153,7 @@ public class SequentialLanes implements WrappableSimulation
     /** {@inheritDoc} */
     @Override
     public SimpleSimulator buildSimulator(ArrayList<AbstractProperty<?>> userModifiedProperties) throws SimRuntimeException,
-        RemoteException
+        RemoteException, NamingException
     {
         SequentialModel model = new SequentialModel(userModifiedProperties);
         SimpleSimulator result =

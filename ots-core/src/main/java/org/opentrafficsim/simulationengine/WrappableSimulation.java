@@ -3,6 +3,8 @@ package org.opentrafficsim.simulationengine;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+import javax.naming.NamingException;
+
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.opentrafficsim.core.network.NetworkException;
@@ -26,9 +28,10 @@ public interface WrappableSimulation
      * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
      * @throws NetworkException on Network inconsistency
+     * @throws NamingException when context for the animation cannot be created
      */
     SimpleSimulator buildSimulator(ArrayList<AbstractProperty<?>> properties) throws SimRuntimeException,
-            RemoteException, NetworkException;
+            RemoteException, NetworkException, NamingException;
 
     /**
      * Return a very short description of the simulation.

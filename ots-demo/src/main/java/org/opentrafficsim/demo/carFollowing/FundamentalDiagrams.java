@@ -107,7 +107,7 @@ public class FundamentalDiagrams implements WrappableSimulation
                     new SimulatorFrame("Fundamental Diagrams animation", fundamentalDiagrams.buildSimulator(
                         fundamentalDiagrams.getProperties()).getPanel());
                 }
-                catch (RemoteException | SimRuntimeException | NetworkException exception)
+                catch (RemoteException | SimRuntimeException | NetworkException | NamingException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -120,9 +120,10 @@ public class FundamentalDiagrams implements WrappableSimulation
      * @throws SimRuntimeException
      * @throws RemoteException
      * @throws NetworkException
+     * @throws NamingException 
      */
     public SimpleSimulator buildSimulator(ArrayList<AbstractProperty<?>> userModifiedProperties) throws RemoteException,
-        SimRuntimeException, NetworkException
+        SimRuntimeException, NetworkException, NamingException
     {
         FundamentalDiagramPlotsModel model = new FundamentalDiagramPlotsModel(userModifiedProperties);
         SimpleSimulator result =

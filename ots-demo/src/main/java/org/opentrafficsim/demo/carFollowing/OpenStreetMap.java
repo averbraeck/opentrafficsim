@@ -140,10 +140,11 @@ public class OpenStreetMap implements WrappableSimulation
 
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc} 
+     * @throws NamingException */
     @Override
     public SimpleSimulator buildSimulator(final ArrayList<AbstractProperty<?>> usedProperties)
-            throws SimRuntimeException, RemoteException, NetworkException
+            throws SimRuntimeException, RemoteException, NetworkException, NamingException
     {
         JFrame frame = new JFrame();
         FileDialog fd = new FileDialog(frame, "Choose a file", FileDialog.LOAD);

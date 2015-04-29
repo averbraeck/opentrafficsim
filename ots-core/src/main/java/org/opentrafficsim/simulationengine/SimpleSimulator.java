@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 
+import javax.naming.NamingException;
+
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
@@ -14,7 +16,7 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
 
-import org.opentrafficsim.core.dsol.OTSDEVSAnimator;
+import org.opentrafficsim.core.dsol.OTSDEVSRealTimeClock;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSReplication;
@@ -53,12 +55,13 @@ public class SimpleSimulator
      * @param model OTSModelInterface; the simulation to execute
      * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
+     * @throws NamingException when the context for the replication cannot be created
      */
     private SimpleSimulator(
             final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator,
             final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
             final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
-            SimRuntimeException
+            SimRuntimeException, NamingException
     {
         this.simulator = simulator;
         this.simulator.setPauseOnError(true);
@@ -78,10 +81,11 @@ public class SimpleSimulator
      * @param model OTSModelInterface; the simulation to execute
      * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
+     * @throws NamingException when the context for the replication cannot be created
      */
     public SimpleSimulator(final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
             final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
-            SimRuntimeException
+            SimRuntimeException, NamingException
     {
         this(new OTSDEVSSimulator(), startTime, warmupPeriod, runLength, model);
     }
@@ -96,12 +100,13 @@ public class SimpleSimulator
      * @param extent Rectangle2D; bottom left corner, length and width of the area (world) to animate.
      * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
+     * @throws NamingException when context for the animation cannot be created
      */
     public SimpleSimulator(final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
             final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model, final Rectangle2D extent)
-            throws RemoteException, SimRuntimeException
+            throws RemoteException, SimRuntimeException, NamingException
     {
-        this(new OTSDEVSAnimator(), startTime, warmupPeriod, runLength, model);
+        this(new OTSDEVSRealTimeClock(), startTime, warmupPeriod, runLength, model);
         Dimension size = new Dimension(1024, 768);
         AnimationPanel animationPanel = new AnimationPanel(extent, size, this.simulator);
         this.panel.getTabbedPane().addTab(0, "animation", animationPanel);

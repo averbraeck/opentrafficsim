@@ -152,7 +152,7 @@ public class CircularRoad implements WrappableSimulation
                         new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 3));
                     new SimulatorFrame("Circular Road animation", circularRoad.buildSimulator(properties).getPanel());
                 }
-                catch (RemoteException | SimRuntimeException exception)
+                catch (RemoteException | SimRuntimeException | NamingException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -165,9 +165,10 @@ public class CircularRoad implements WrappableSimulation
      * @return SimpleSimulator; the simulation
      * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
+     * @throws NamingException when context for the animation cannot be created
      */
     public SimpleSimulator buildSimulator(ArrayList<AbstractProperty<?>> userModifiedProperties) throws RemoteException,
-        SimRuntimeException
+        SimRuntimeException, NamingException
     {
         RoadSimulationModel model = new RoadSimulationModel(userModifiedProperties);
         final SimpleSimulator result =
