@@ -14,6 +14,9 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.jstats.distributions.DistContinuous;
+import nl.tudelft.simulation.jstats.distributions.DistErlang;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -88,7 +91,7 @@ public class XMLNetworks implements WrappableSimulation
                 3000d, "%.0f veh/h", false, 1));
     }
 
-    /** {@inheritDoc}  */
+    /** {@inheritDoc} */
     @Override
     public SimpleSimulator buildSimulator(ArrayList<AbstractProperty<?>> userModifiedProperties)
             throws SimRuntimeException, RemoteException, NetworkException, NamingException
@@ -147,8 +150,14 @@ class XMLNetworkModel implements OTSModelInterface
     /** User settable properties */
     ArrayList<AbstractProperty<?>> properties = null;
 
-    /** the headway (inter-vehicle time). */
-    private DoubleScalar.Rel<TimeUnit> headway;
+    /** The average headway (inter-vehicle time). */
+    private DoubleScalar.Rel<TimeUnit> averageHeadway;
+
+    /** The minimum headway. */
+    private DoubleScalar.Rel<TimeUnit> minimumHeadway;
+
+    /** The probability distribution for the variable part of the headway. */
+    private DistContinuous headwayGenerator;
 
     /** The speed limit. */
     private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(60, SpeedUnit.KM_PER_HOUR);
@@ -256,7 +265,12 @@ class XMLNetworkModel implements OTSModelInterface
                     ContinuousProperty contP = (ContinuousProperty) ap;
                     if (contP.getShortName().startsWith("Flow "))
                     {
-                        this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / contP.getValue(), TimeUnit.SECOND);
+                        this.averageHeadway =
+                                new DoubleScalar.Rel<TimeUnit>(3600.0 / contP.getValue(), TimeUnit.SECOND);
+                        this.minimumHeadway = new DoubleScalar.Rel<TimeUnit>(3, TimeUnit.SECOND);
+                        this.headwayGenerator =
+                                new DistErlang(new MersenneTwister(1234), 4, DoubleScalar.minus(this.averageHeadway,
+                                        this.minimumHeadway).getSI());
                     }
                 }
                 else if (ap instanceof CompoundProperty)
@@ -435,7 +449,8 @@ class XMLNetworkModel implements OTSModelInterface
                             SpeedUnit.KM_PER_HOUR), this.routeGenerator.generateRoute(), this.simulator);
             Object[] arguments = new Object[1];
             arguments[0] = lane;
-            this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", arguments);
+            this.simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(this.headwayGenerator.draw(),
+                    TimeUnit.SECOND), this, this, "generateCar", arguments);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
