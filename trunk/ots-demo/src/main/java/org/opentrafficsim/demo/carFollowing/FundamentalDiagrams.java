@@ -57,7 +57,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 /**
  * Demonstrate the FundamentalDiagram plot.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 17 dec. 2014 <br>
@@ -73,13 +74,15 @@ public class FundamentalDiagrams implements WrappableSimulation
     {
         try
         {
-            this.properties.add(new SelectionProperty("Car following model", "<html>The car following model determines "
-                + "the acceleration that a vehicle will make taking into account nearby vehicles, infrastructural "
-                + "restrictions (e.g. speed limit, curvature of the road) capabilities of the vehicle and "
-                + "personality of the driver.</html>", new String[] {"IDM", "IDM+"}, 1, false, 500));
+            this.properties.add(new SelectionProperty("Car following model",
+                    "<html>The car following model determines "
+                            + "the acceleration that a vehicle will make taking into account nearby vehicles, "
+                            + "infrastructural restrictions (e.g. speed limit, curvature of the road) "
+                            + "capabilities of the vehicle and personality of the driver.</html>", new String[]{"IDM",
+                            "IDM+"}, 1, false, 500));
             this.properties.add(new ProbabilityDistributionProperty("Traffic composition",
-                "<html>Mix of passenger cars and trucks</html>", new String[] {"passenger car", "truck"}, new Double[] {0.8,
-                    0.2}, false, 10));
+                    "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
+                    new Double[]{0.8, 0.2}, false, 10));
         }
         catch (PropertyException exception)
         {
@@ -90,8 +93,8 @@ public class FundamentalDiagrams implements WrappableSimulation
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
-     * @throws SimRuntimeException
-     * @throws RemoteException
+     * @throws SimRuntimeException on ???
+     * @throws RemoteException on communications failure
      */
     public static void main(final String[] args) throws RemoteException, SimRuntimeException
     {
@@ -105,7 +108,7 @@ public class FundamentalDiagrams implements WrappableSimulation
                 {
                     FundamentalDiagrams fundamentalDiagrams = new FundamentalDiagrams();
                     new SimulatorFrame("Fundamental Diagrams animation", fundamentalDiagrams.buildSimulator(
-                        fundamentalDiagrams.getProperties()).getPanel());
+                            fundamentalDiagrams.getProperties()).getPanel());
                 }
                 catch (RemoteException | SimRuntimeException | NetworkException | NamingException exception)
                 {
@@ -116,20 +119,21 @@ public class FundamentalDiagrams implements WrappableSimulation
     }
 
     /**
+     * @param userModifiedProperties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user modified) properties
      * @return SimpleSimulator
-     * @throws SimRuntimeException
-     * @throws RemoteException
-     * @throws NetworkException
-     * @throws NamingException 
+     * @throws SimRuntimeException on ???
+     * @throws RemoteException on communications failure
+     * @throws NetworkException on network inconsistency
+     * @throws NamingException on ???
      */
-    public SimpleSimulator buildSimulator(ArrayList<AbstractProperty<?>> userModifiedProperties) throws RemoteException,
-        SimRuntimeException, NetworkException, NamingException
+    public final SimpleSimulator buildSimulator(final ArrayList<AbstractProperty<?>> userModifiedProperties)
+            throws RemoteException, SimRuntimeException, NetworkException, NamingException
     {
         FundamentalDiagramPlotsModel model = new FundamentalDiagramPlotsModel(userModifiedProperties);
         SimpleSimulator result =
-            new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
-                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0, TimeUnit.SECOND), model, new Rectangle2D.Double(0,
-                -100, 5000, 200));
+                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
+                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
+                                TimeUnit.SECOND), model, new Rectangle2D.Double(0, -100, 5000, 200));
         new ControlPanel(result);
         makePlots(model, result.getPanel());
         addInfoTab(result.getPanel());
@@ -143,8 +147,8 @@ public class FundamentalDiagrams implements WrappableSimulation
      * @throws NetworkException
      */
     private static void makePlots(final FundamentalDiagramPlotsModel model,
-        final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
-        throws NetworkException
+            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
+            throws NetworkException
     {
         final int panelsPerRow = 3;
         TablePanel charts = new TablePanel(4, panelsPerRow);
@@ -152,10 +156,10 @@ public class FundamentalDiagrams implements WrappableSimulation
         for (int plotNumber = 0; plotNumber < 10; plotNumber++)
         {
             DoubleScalar.Rel<LengthUnit> detectorLocation =
-                new DoubleScalar.Rel<LengthUnit>(400 + 500 * plotNumber, LengthUnit.METER);
+                    new DoubleScalar.Rel<LengthUnit>(400 + 500 * plotNumber, LengthUnit.METER);
             FundamentalDiagram fd =
-                new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getSI() + "m",
-                    new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.MINUTE), model.lane, detectorLocation);
+                    new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getSI() + "m",
+                            new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.MINUTE), model.lane, detectorLocation);
             fd.setTitle("Density Contour Graph");
             fd.setExtendedState(Frame.MAXIMIZED_BOTH);
             model.getFundamentalDiagrams().add(fd);
@@ -167,11 +171,11 @@ public class FundamentalDiagrams implements WrappableSimulation
      * @param panel DSOLPanel
      */
     private static void addInfoTab(
-        final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
+            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         // Let's find some content for our infoscreen and add it to our tabbedPane
         String helpSource =
-            "/" + FundamentalDiagramPlotsModel.class.getPackage().getName().replace('.', '/') + "/package.html";
+                "/" + FundamentalDiagramPlotsModel.class.getPackage().getName().replace('.', '/') + "/package.html";
         URL page = FundamentalDiagramPlotsModel.class.getResource(helpSource);
         if (page != null)
         {
@@ -190,39 +194,40 @@ public class FundamentalDiagrams implements WrappableSimulation
 
     /** {@inheritDoc} */
     @Override
-    public String shortName()
+    public final String shortName()
     {
         return "Fundamental Diagrams";
     }
 
     /** {@inheritDoc} */
     @Override
-    public String description()
+    public final String description()
     {
         return "<html><h1>Fundamental Diagram Plots</H1>"
-            + "Simulation of a single lane road of 5 km length. Vechicles are generated at a constant rate of "
-            + "1500 veh/hour. At time 300s a blockade is inserted at position 4km; this blockade is removed at time "
-            + "500s. This blockade simulates a bridge opening.<br/>"
-            + "The blockade causes a traffic jam that slowly dissolves after the blockade is removed.<br />"
-            + "Output is a set of Diagrams that plot observed density, flow and speed plots against each other.</html>";
+                + "Simulation of a single lane road of 5 km length. Vechicles are generated at a constant rate of "
+                + "1500 veh/hour. At time 300s a blockade is inserted at position 4km; this blockade is removed at time "
+                + "500s. This blockade simulates a bridge opening.<br/>"
+                + "The blockade causes a traffic jam that slowly dissolves after the blockade is removed.<br />"
+                + "Output is a set of Diagrams that plot observed density, flow and speed plots against each other.</html>";
     }
 
     /** {@inheritDoc} */
     @Override
-    public ArrayList<AbstractProperty<?>> getProperties()
+    public final ArrayList<AbstractProperty<?>> getProperties()
     {
         return this.properties;
     }
 }
 
 /**
- * Simulate a single lane road of 5 km length. Vehicles are generated at a constant rate of 1500 veh/hour. At time 300s a
- * blockade is inserted at position 4 km; this blockade is removed at time 500s. The used car following algorithm is IDM+ <a
- * href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with Relaxation and
- * Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>. <br>
+ * Simulate a single lane road of 5 km length. Vehicles are generated at a constant rate of 1500 veh/hour. At time 300s
+ * a blockade is inserted at position 4 km; this blockade is removed at time 500s. The used car following algorithm is
+ * IDM+ <a href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with
+ * Relaxation and Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>. <br>
  * Output is a set of FundamentalDiagram plots for various point along the lane.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 1, 2014 <br>
@@ -275,16 +280,16 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
     /** the fundamental diagram plots. */
     private ArrayList<FundamentalDiagram> fundamentalDiagrams = new ArrayList<FundamentalDiagram>();
 
-    /** User settable properties */
+    /** User settable properties. */
     ArrayList<AbstractProperty<?>> properties = null;
 
     /** The random number generator used to decide what kind of GTU to generate. */
     Random randomGenerator = new Random(12345);
 
     /**
-     * @param properties
+     * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
      */
-    public FundamentalDiagramPlotsModel(ArrayList<AbstractProperty<?>> properties)
+    public FundamentalDiagramPlotsModel(final ArrayList<AbstractProperty<?>> properties)
     {
         this.properties = properties;
     }
@@ -292,8 +297,8 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public final void constructModel(
-        final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-        throws SimRuntimeException, RemoteException
+            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+            throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         NodeGeotools.STR from = new NodeGeotools.STR("From", new Coordinate(getMinimumDistance().getSI(), 0, 0));
@@ -319,28 +324,30 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
                     if (modelName.equals("IDM"))
                     {
                         this.carFollowingModelCars =
-                            new IDM(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
-                                new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
-                                    TimeUnit.SECOND), 1d);
+                                new IDM(
+                                        new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
+                                        new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+                                        new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
+                                        new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
                         this.carFollowingModelTrucks =
-                            new IDM(new DoubleScalar.Abs<AccelerationUnit>(0.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
-                                    TimeUnit.SECOND), 1d);
+                                new IDM(
+                                        new DoubleScalar.Abs<AccelerationUnit>(0.5, AccelerationUnit.METER_PER_SECOND_2),
+                                        new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+                                        new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
+                                        new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
                     }
                     else if (modelName.equals("IDM+"))
                     {
                         this.carFollowingModelCars =
-                            new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
-                                new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
-                                    TimeUnit.SECOND), 1d);
+                                new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1,
+                                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(
+                                        1.5, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2,
+                                        LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
                         this.carFollowingModelTrucks =
-                            new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(0.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
-                                    TimeUnit.SECOND), 1d);
+                                new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(0.5,
+                                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(
+                                        1.5, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2,
+                                        LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
                     }
                     else
                     {
@@ -376,19 +383,19 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
         try
         {
             // Schedule creation of the first car (this will re-schedule itself one headway later, etc.).
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this, "generateCar",
-                null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
+                    "generateCar", null);
             // Create a block at t = 5 minutes
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND), this, this, "createBlock",
-                null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND), this, this,
+                    "createBlock", null);
             // Remove the block at t = 7 minutes
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(420, TimeUnit.SECOND), this, this, "removeBlock",
-                null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(420, TimeUnit.SECOND), this, this,
+                    "removeBlock", null);
             // Schedule regular updates of the graph
             for (int t = 1; t <= 1800; t++)
             {
                 this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, TimeUnit.SECOND), this, this,
-                    "drawGraphs", null);
+                        "drawGraphs", null);
             }
         }
         catch (RemoteException | SimRuntimeException exception)
@@ -404,16 +411,17 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
     protected final void createBlock() throws RemoteException
     {
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(4000, LengthUnit.METER);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
+                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.lane, initialPosition);
         try
         {
             this.block =
-                new LaneBasedIndividualCar<>(999999, null /* gtuType */, this.carFollowingModelCars, this.laneChangeModel,
-                    initialPositions, new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-                    new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1.8,
-                        LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new Route(
-                        new ArrayList<Node<?, ?>>()), this.simulator);
+                    new LaneBasedIndividualCar<>(999999, null /* gtuType */, this.carFollowingModelCars,
+                            this.laneChangeModel, initialPositions, new DoubleScalar.Abs<SpeedUnit>(0,
+                                    SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER),
+                            new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0,
+                                    SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
@@ -438,22 +446,24 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
+                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.lane, initialPosition);
         try
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength =
-                new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
-            GTUFollowingModel gtuFollowingModel = generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
+                    new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
+            GTUFollowingModel gtuFollowingModel =
+                    generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
             if (null == gtuFollowingModel)
             {
                 throw new Error("gtuFollowingModel is null");
             }
             new LaneBasedIndividualCar<>(++this.carsCreated, null /* gtuType */, generateTruck
-                ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel, initialPositions,
-                initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
-                new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()),
-                this.simulator);
+                    ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel,
+                    initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8,
+                            LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), new Route(
+                            new ArrayList<Node<?, ?>>()), this.simulator);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
@@ -477,7 +487,7 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        throws RemoteException
+            throws RemoteException
     {
         return null;
     }

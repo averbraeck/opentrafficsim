@@ -172,7 +172,7 @@ public class TestModel implements OTSModelInterface
      *
      * <br>
      * @param link link.
-     * @throws NetworkException
+     * @throws NetworkException on network inconsistency
      */
     private void add2x2Lanes(final CrossSectionLink link) throws NetworkException
     {

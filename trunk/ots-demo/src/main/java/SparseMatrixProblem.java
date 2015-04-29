@@ -20,7 +20,7 @@ public class SparseMatrixProblem
      */
     public static void main(final String[] args)
     {
-        float[][] values = { {1, 2, 3}, {3, 5, 7}, {5, 10, 0}};
+        float[][] values = {{1, 2, 3}, {3, 5, 7}, {5, 10, 0}};
         Float determinant = null;
 
         FloatMatrix2D floatMatrix2D = new SparseFloatMatrix2D(values.length, values[0].length);
