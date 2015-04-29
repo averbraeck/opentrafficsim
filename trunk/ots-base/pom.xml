@@ -46,7 +46,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <ots-version>${project.version}</ots-version>
-    <dsol-version>3.00.03</dsol-version>
+    <dsol-version>3.00.07</dsol-version>
     <junit.version>4.11</junit.version>
     <java3d.version>1.5.1</java3d.version>
     <parallelcolt.version>0.10.1</parallelcolt.version>

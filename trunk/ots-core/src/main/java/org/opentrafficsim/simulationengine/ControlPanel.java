@@ -10,7 +10,9 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -26,6 +28,8 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 import javax.swing.text.MaskFormatter;
 
@@ -34,6 +38,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.SimulatorControlPanel;
+import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
@@ -45,8 +50,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /**
  * Peter's improved simulation control panel.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 11 dec. 2014 <br>
@@ -92,18 +96,17 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         this.target = simulator.getSimulator();
         this.logger = Logger.getLogger("nl.tudelft.opentrafficsim");
 
-        DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel =
-                simulator.getPanel();
+        DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel = simulator.getPanel();
         SimulatorControlPanel controlPanel =
-                (SimulatorControlPanel) ((BorderLayout) panel.getLayout()).getLayoutComponent(BorderLayout.NORTH);
+            (SimulatorControlPanel) ((BorderLayout) panel.getLayout()).getLayoutComponent(BorderLayout.NORTH);
         JPanel buttonPanel = (JPanel) controlPanel.getComponent(0);
         buttonPanel.removeAll();
         buttonPanel.add(makeButton("stepButton", "/Last_recor.png", "Step", "Execute one event", true));
         buttonPanel.add(makeButton("nextTimeButton", "/NextTrack.png", "NextTime",
-                "Execute all events scheduled for the current time", true));
+            "Execute all events scheduled for the current time", true));
         buttonPanel.add(makeButton("runButton", "/Play.png", "Run", "Run the simulation at maximum speed", true));
         buttonPanel.add(makeButton("pauseButton", "/Pause.png", "Pause", "Pause the simulator", false));
-        this.timeWarpPanel = new TimeWarpPanel(0.1, 100, 1, 3);
+        this.timeWarpPanel = new TimeWarpPanel(0.1, 100, 1, 3, simulator);
         buttonPanel.add(this.timeWarpPanel);
         buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", null, false));
         this.clockPanel = new ClockPanel();
@@ -123,7 +126,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
      * @return JButton
      */
     private JButton makeButton(final String name, final String iconPath, final String actionCommand,
-            final String toolTipText, final boolean enabled)
+        final String toolTipText, final boolean enabled)
     {
         // JButton result = new JButton(new ImageIcon(this.getClass().getResource(iconPath)));
         JButton result = new JButton(new ImageIcon(URLResource.getResource(iconPath)));
@@ -167,13 +170,13 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 try
                 {
                     this.stopAtEvent =
-                            this.simulator.scheduleEvent(new DoubleScalar.Abs<TimeUnit>(now, TimeUnit.SI),
-                                    SimEventInterface.MIN_PRIORITY, this, this, "autoPauseSimulator", null);
+                        this.simulator.scheduleEvent(new DoubleScalar.Abs<TimeUnit>(now, TimeUnit.SI),
+                            SimEventInterface.MIN_PRIORITY, this, this, "autoPauseSimulator", null);
                 }
                 catch (SimRuntimeException exception)
                 {
                     this.logger.logp(Level.SEVERE, "ControlPanel", "autoPauseSimulator", "Caught an exception "
-                            + "while trying to schedule an autoPauseSimulator event at the current simulator time");
+                        + "while trying to schedule an autoPauseSimulator event at the current simulator time");
                 }
                 this.target.start();
             }
@@ -202,7 +205,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
      */
     protected final void fixButtons()
     {
-        //System.out.println("FixButtons entered");
+        // System.out.println("FixButtons entered");
         final boolean moreWorkToDo = getSimulator().getEventList().size() > 0;
         for (JButton button : this.buttons)
         {
@@ -232,7 +235,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 this.logger.logp(Level.SEVERE, "ControlPanel", "fixButtons", "", new Exception("Unknown button?"));
             }
         }
-        //System.out.println("FixButtons finishing");
+        // System.out.println("FixButtons finishing");
     }
 
     /**
@@ -256,14 +259,14 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 try
                 {
                     this.stopAtEvent =
-                            this.simulator.scheduleEvent(new DoubleScalar.Abs<TimeUnit>(nextTick, TimeUnit.SI),
-                                    SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
+                        this.simulator.scheduleEvent(new DoubleScalar.Abs<TimeUnit>(nextTick, TimeUnit.SI),
+                            SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
                     getSimulator().start();
                 }
                 catch (SimRuntimeException exception)
                 {
                     this.logger.logp(Level.SEVERE, "ControlPanel", "autoPauseSimulator",
-                            "Caught an exception while trying to re-schedule an autoPauseEvent at the next real event");
+                        "Caught an exception while trying to re-schedule an autoPauseEvent at the next real event");
                 }
             }
             else
@@ -271,22 +274,22 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 // System.out.println("Not re-scheduling");
                 if (SwingUtilities.isEventDispatchThread())
                 {
-                    //System.out.println("Already on EventDispatchThread");
+                    // System.out.println("Already on EventDispatchThread");
                     fixButtons();
                 }
                 else
                 {
                     try
                     {
-                        //System.out.println("Current thread is NOT EventDispatchThread: " + Thread.currentThread());
+                        // System.out.println("Current thread is NOT EventDispatchThread: " + Thread.currentThread());
                         SwingUtilities.invokeAndWait(new Runnable()
                         {
                             @Override
                             public void run()
                             {
-                                //System.out.println("Runnable started");
+                                // System.out.println("Runnable started");
                                 fixButtons();
-                                //System.out.println("Runnable finishing");
+                                // System.out.println("Runnable finishing");
                             }
                         });
                     }
@@ -295,7 +298,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                         if (e instanceof InterruptedException)
                         {
                             System.out.println("Caught " + e);
-                            //e.printStackTrace();
+                            // e.printStackTrace();
                         }
                         else
                         {
@@ -333,13 +336,13 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             try
             {
                 this.stopAtEvent =
-                        this.simulator.scheduleEvent(new DoubleScalar.Abs<TimeUnit>(stopTime, TimeUnit.SECOND),
-                                SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
+                    this.simulator.scheduleEvent(new DoubleScalar.Abs<TimeUnit>(stopTime, TimeUnit.SECOND),
+                        SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
             }
             catch (SimRuntimeException exception)
             {
                 this.logger.logp(Level.SEVERE, "ControlPanel", "propertyChange",
-                        "Caught an exception while trying to schedule an autoPauseSimulator event");
+                    "Caught an exception while trying to schedule an autoPauseSimulator event");
             }
         }
 
@@ -368,38 +371,42 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         private static final long serialVersionUID = 20150408L;
 
         /** The JSlider that the user sees. */
-        private final JSlider slider;
+        protected final JSlider slider;
 
         /** The ratios used in each decade. */
         private final int[] ratios;
+        
+        /** The values at each tick. */
+        protected Map<Integer, Double> tickValues = new HashMap<>();
 
         /**
          * Construct a new TimeWarpPanel.
-         * @param minimum double; the minimum value on the scale (the displayed scale may extend a little further than
-         *            this value)
-         * @param maximum double; the maximum value on the scale (the displayed scale may extend a little further than
-         *            this value)
+         * @param minimum double; the minimum value on the scale (the displayed scale may extend a little further than this
+         *            value)
+         * @param maximum double; the maximum value on the scale (the displayed scale may extend a little further than this
+         *            value)
          * @param initialValue double; the initially selected value on the scale
          * @param ticksPerDecade int; the number of steps per decade
+         * @param simulator SimpleSimulator; the simulator to change the speed of
          */
         public TimeWarpPanel(final double minimum, final double maximum, final double initialValue,
-                final int ticksPerDecade)
+            final int ticksPerDecade, final SimpleSimulator simulator)
         {
             if (minimum <= 0 || minimum > initialValue || initialValue > maximum)
             {
                 throw new Error("Bad (combination of) minimum, maximum and initialValue; "
-                        + "(restrictions: 0 < minimum <= initialValue <= maximum)");
+                    + "(restrictions: 0 < minimum <= initialValue <= maximum)");
             }
             switch (ticksPerDecade)
             {
                 case 1:
-                    this.ratios = new int[]{1};
+                    this.ratios = new int[] {1};
                     break;
                 case 2:
-                    this.ratios = new int[]{1, 3};
+                    this.ratios = new int[] {1, 3};
                     break;
                 case 3:
-                    this.ratios = new int[]{1, 2, 5};
+                    this.ratios = new int[] {1, 2, 5};
                     break;
                 default:
                     throw new Error("Bad ticksPerDecade value (must be 1, 2 or 3)");
@@ -417,11 +424,12 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                     text.append("0");
                 }
                 labels.put(step, new JLabel(text.toString()));
-                //System.out.println("Label " + step + " is \"" + text.toString() + "\"");
+                this.tickValues.put(step, Double.parseDouble(text.toString()));
+                // System.out.println("Label " + step + " is \"" + text.toString() + "\"");
             }
             // Figure out the DecimalSymbol
             String decimalSeparator =
-                    "" + ((DecimalFormat) NumberFormat.getInstance()).getDecimalFormatSymbols().getDecimalSeparator();
+                "" + ((DecimalFormat) NumberFormat.getInstance()).getDecimalFormatSymbols().getDecimalSeparator();
             for (int step = -1; step >= minimumTick; step--)
             {
                 StringBuilder text = new StringBuilder();
@@ -438,7 +446,8 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 }
                 text.append(this.ratios[index]);
                 labels.put(step, new JLabel(text.toString()));
-                //System.out.println("Label " + step + " is \"" + text.toString() + "\"");
+                this.tickValues.put(step, Double.parseDouble(text.toString()));
+                // System.out.println("Label " + step + " is \"" + text.toString() + "\"");
             }
             this.slider.setLabelTable(labels);
             this.slider.setPaintLabels(true);
@@ -450,9 +459,31 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             {
                 System.out.println("pos=" + i + " value is " + stepToFactor(i));
             }
-            */
+             */
+
+            // initial value of simulation speed
+            if (simulator.getSimulator() instanceof DEVSRealTimeClock)
+            {
+                DEVSRealTimeClock<?, ?, ?> clock = (DEVSRealTimeClock<?, ?, ?>) simulator.getSimulator();
+                clock.setSpeedFactor(TimeWarpPanel.this.tickValues.get(this.slider.getValue()));
+            }
             
-            // TODO: add event listener handling
+            // adjust the simulation speed
+            this.slider.addChangeListener(new ChangeListener()
+            {
+                public void stateChanged(final ChangeEvent ce)
+                {
+                    JSlider source = (JSlider) ce.getSource();
+                    if (!source.getValueIsAdjusting())
+                    {
+                        if (simulator.getSimulator() instanceof DEVSRealTimeClock)
+                        {
+                            DEVSRealTimeClock<?, ?, ?> clock = (DEVSRealTimeClock<?, ?, ?>) simulator.getSimulator();
+                            clock.setSpeedFactor(TimeWarpPanel.this.tickValues.get(TimeWarpPanel.this.slider.getValue()));
+                        }
+                    }
+                }
+            });
         }
 
         /**
@@ -534,8 +565,8 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 int seconds = (int) Math.floor(now);
                 int fractionalSeconds = (int) Math.floor(1000 * (now - seconds));
                 getClockLabel().setText(
-                        String.format("  %02d:%02d:%02d.%03d  ", seconds / 3600, seconds / 60 % 60, seconds % 60,
-                                fractionalSeconds));
+                    String.format("  %02d:%02d:%02d.%03d  ", seconds / 3600, seconds / 60 % 60, seconds % 60,
+                        fractionalSeconds));
                 getClockLabel().repaint();
             }
         }
@@ -591,16 +622,14 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             int integerPart = (int) Math.floor(v);
             int fraction = (int) Math.floor((v - integerPart) * 1000);
             String text =
-                    String.format("%04d:%02d:%02d.%03d", integerPart / 3600, integerPart / 60 % 60, integerPart % 60,
-                            fraction);
+                String.format("%04d:%02d:%02d.%03d", integerPart / 3600, integerPart / 60 % 60, integerPart % 60, fraction);
             this.setText(text);
         }
     }
 
     /**
      * Extension of a DefaultFormatter that uses a regular expression. <br>
-     * Derived from <a
-     * href="http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm">
+     * Derived from <a href="http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm">
      * http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm</a>
      * <p>
      * @version 12 dec. 2014 <br>

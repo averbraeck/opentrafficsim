@@ -14,6 +14,7 @@ import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+import javax.naming.NamingException;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -187,7 +188,7 @@ public class SuperDemo
                     mainPanel.add(simulation.buildSimulator(SuperDemo.this.activeProperties).getPanel(),
                             BorderLayout.CENTER);
                 }
-                catch (RemoteException | SimRuntimeException | NetworkException exception)
+                catch (RemoteException | SimRuntimeException | NetworkException | NamingException exception)
                 {
                     exception.printStackTrace();
                 }

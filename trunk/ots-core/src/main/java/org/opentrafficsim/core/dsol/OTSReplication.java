@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.dsol;
 
 import javax.naming.Context;
+import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.experiment.Experiment;
 import nl.tudelft.simulation.dsol.experiment.Replication;
@@ -35,9 +36,10 @@ public class OTSReplication extends Replication<DoubleScalar.Abs<TimeUnit>, Doub
      * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warmup period of the new OTSReplication
      * @param runLength DoubleScalarRel&lt;TimeUnit&gt;; the run length of the new OTSReplication
      * @param model OTSModelInterface; the model
+     * @throws NamingException when the context for the replication cannot be created
      */
     public OTSReplication(final String id, final OTSSimTimeDouble startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
-        final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model)
+        final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws NamingException
     {
         super(id, startTime, warmupPeriod, runLength, model);
     }

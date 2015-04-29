@@ -138,7 +138,7 @@ public class Straight implements WrappableSimulation
                         new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 3));
                     new SimulatorFrame("Contour Plots animation", straight.buildSimulator(localProperties).getPanel());
                 }
-                catch (RemoteException | SimRuntimeException exception)
+                catch (RemoteException | SimRuntimeException | NamingException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -152,9 +152,10 @@ public class Straight implements WrappableSimulation
      * @return SimpleSimulator; the simulation
      * @throws RemoteException on communications failure
      * @throws SimRuntimeException when simulation cannot be created with given parameters
+     * @throws NamingException when context for the animation cannot be created
      */
     public final SimpleSimulator buildSimulator(final ArrayList<AbstractProperty<?>> userModifiedProperties)
-        throws SimRuntimeException, RemoteException
+        throws SimRuntimeException, RemoteException, NamingException
     {
         StraightModel model = new StraightModel(userModifiedProperties);
         SimpleSimulator result =

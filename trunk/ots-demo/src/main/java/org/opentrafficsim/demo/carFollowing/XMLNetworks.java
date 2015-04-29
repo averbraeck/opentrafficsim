@@ -88,10 +88,10 @@ public class XMLNetworks implements WrappableSimulation
                 3000d, "%.0f veh/h", false, 1));
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}  */
     @Override
     public SimpleSimulator buildSimulator(ArrayList<AbstractProperty<?>> userModifiedProperties)
-            throws SimRuntimeException, RemoteException, NetworkException
+            throws SimRuntimeException, RemoteException, NetworkException, NamingException
     {
         XMLNetworkModel model = new XMLNetworkModel(userModifiedProperties);
         SimpleSimulator result =

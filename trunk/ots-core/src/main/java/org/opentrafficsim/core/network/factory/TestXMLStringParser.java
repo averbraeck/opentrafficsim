@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 
+import javax.naming.NamingException;
+
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
@@ -46,8 +48,9 @@ public class TestXMLStringParser extends DSOLApplication
      * @param args args
      * @throws RemoteException if error
      * @throws SimRuntimeException if error
+     * @throws NamingException if error
      */
-    public static void main(final String[] args) throws RemoteException, SimRuntimeException
+    public static void main(final String[] args) throws RemoteException, SimRuntimeException, NamingException
     {
         OTSModelInterface model = new TestXMLStringModel();
         OTSDEVSAnimator simulator = new OTSDEVSAnimator();

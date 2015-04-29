@@ -111,7 +111,7 @@ public class Trajectories implements WrappableSimulation
                     new SimulatorFrame("Trajectory Plots animation", trajectories.buildSimulator(
                         trajectories.getProperties()).getPanel());
                 }
-                catch (RemoteException | SimRuntimeException exception)
+                catch (RemoteException | SimRuntimeException | NamingException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -124,9 +124,10 @@ public class Trajectories implements WrappableSimulation
      * @return SimpleSimulator; the new simulation
      * @throws SimRuntimeException
      * @throws RemoteException
+     * @throws NamingException 
      */
     public SimpleSimulator buildSimulator(ArrayList<AbstractProperty<?>> userModifiedProperties) throws RemoteException,
-        SimRuntimeException
+        SimRuntimeException, NamingException
     {
         TrajectoriesModel model = new TrajectoriesModel(userModifiedProperties);
         SimpleSimulator result =
