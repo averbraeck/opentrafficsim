@@ -47,12 +47,12 @@ public final class FloatVectorDemo
         try
         {
             fadsum = FloatVector.plus(fad, frd);
+            System.out.println("fadsum:          " + fadsum.toString());
         }
         catch (ValueException exception)
         {
             exception.printStackTrace();
         }
-        System.out.println("fadsum:          " + fadsum.toString());
 
         System.out.println("Creating MutableFloatVector.Abs.Dense mfad");
         MutableFloatVector.Abs.Dense<TemperatureUnit> mfad =

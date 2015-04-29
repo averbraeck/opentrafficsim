@@ -74,7 +74,8 @@ import com.vividsolutions.jts.geom.Coordinate;
  * Single lane road consisting of three consecutive links.<br>
  * Tests that GTUs correctly transfer themselves onto the next lane and that the graph samplers handle this situation.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 30 jan. 2015 <br>
@@ -95,7 +96,8 @@ public class SequentialLanes implements WrappableSimulation
         outputProperties.add(new BooleanProperty("Speed", "Speed contour plot", true, false, 2));
         outputProperties.add(new BooleanProperty("Acceleration", "Acceleration contour plot", true, false, 3));
         outputProperties.add(new BooleanProperty("Trajectories", "Trajectory (time/distance) diagram", true, false, 4));
-        this.properties.add(new CompoundProperty("Output", "Select the graphical output", outputProperties, true, 1000));
+        this.properties
+                .add(new CompoundProperty("Output", "Select the graphical output", outputProperties, true, 1000));
     }
 
     /**
@@ -118,29 +120,31 @@ public class SequentialLanes implements WrappableSimulation
                     try
                     {
                         localProperties.add(new ProbabilityDistributionProperty("Traffic composition",
-                            "<html>Mix of passenger cars and trucks</html>", new String[] {"passenger car", "truck"},
-                            new Double[] {0.8, 0.2}, false, 10));
+                                "<html>Mix of passenger cars and trucks</html>",
+                                new String[]{"passenger car", "truck"}, new Double[]{0.8, 0.2}, false, 10));
                     }
                     catch (PropertyException exception)
                     {
                         exception.printStackTrace();
                     }
                     localProperties.add(new SelectionProperty("Car following model",
-                        "<html>The car following model determines "
-                            + "the acceleration that a vehicle will make taking into account "
-                            + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
-                            + "curvature of the road) capabilities of the vehicle and personality "
-                            + "of the driver.</html>", new String[] {"IDM", "IDM+"}, 1, false, 1));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Car", new DoubleScalar.Abs<AccelerationUnit>(1.0,
-                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
-                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
-                        new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 2));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new DoubleScalar.Abs<AccelerationUnit>(
-                        0.5, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.25,
-                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
-                        new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 3));
+                            "<html>The car following model determines "
+                                    + "the acceleration that a vehicle will make taking into account "
+                                    + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
+                                    + "curvature of the road) capabilities of the vehicle and personality "
+                                    + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Car",
+                            new DoubleScalar.Abs<AccelerationUnit>(1.0, AccelerationUnit.METER_PER_SECOND_2),
+                            new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+                            new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(
+                                    1.0, TimeUnit.SECOND), 2));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck",
+                            new DoubleScalar.Abs<AccelerationUnit>(0.5, AccelerationUnit.METER_PER_SECOND_2),
+                            new DoubleScalar.Abs<AccelerationUnit>(1.25, AccelerationUnit.METER_PER_SECOND_2),
+                            new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(
+                                    1.0, TimeUnit.SECOND), 3));
                     new SimulatorFrame("Sequential Lanes Plots animation", sequential.buildSimulator(localProperties)
-                        .getPanel());
+                            .getPanel());
                 }
                 catch (RemoteException | SimRuntimeException | NamingException exception)
                 {
@@ -152,14 +156,14 @@ public class SequentialLanes implements WrappableSimulation
 
     /** {@inheritDoc} */
     @Override
-    public SimpleSimulator buildSimulator(ArrayList<AbstractProperty<?>> userModifiedProperties) throws SimRuntimeException,
-        RemoteException, NamingException
+    public final SimpleSimulator buildSimulator(final ArrayList<AbstractProperty<?>> userModifiedProperties)
+            throws SimRuntimeException, RemoteException, NamingException
     {
         SequentialModel model = new SequentialModel(userModifiedProperties);
         SimpleSimulator result =
-            new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
-                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0, TimeUnit.SECOND), model, new Rectangle2D.Double(0,
-                -100, 2010, 200));
+                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
+                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
+                                TimeUnit.SECOND), model, new Rectangle2D.Double(0, -100, 2010, 200));
         new ControlPanel(result);
 
         // Make the info tab
@@ -218,8 +222,8 @@ public class SequentialLanes implements WrappableSimulation
             if (graphName.contains("Trajectories"))
             {
                 TrajectoryPlot tp =
-                    new TrajectoryPlot("TrajectoryPlot", new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), model
-                        .getPath());
+                        new TrajectoryPlot("TrajectoryPlot", new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND),
+                                model.getPath());
                 tp.setTitle("Trajectory Graph");
                 tp.setExtendedState(Frame.MAXIMIZED_BOTH);
                 graph = tp;
@@ -265,25 +269,25 @@ public class SequentialLanes implements WrappableSimulation
 
     /** {@inheritDoc} */
     @Override
-    public String shortName()
+    public final String shortName()
     {
         return "Sequential Lanes";
     }
 
     /** {@inheritDoc} */
     @Override
-    public String description()
+    public final String description()
     {
         return "<html><h1>Simulation of a straight one-lane road consisting of three consecutive Links</H1>"
-            + "Simulation of a single lane road consisting of two 1 km stretches with a 1m stretch in between. "
-            + "This will test transition of a GTU from one lane section onto the next.<br />"
-            + "Vehicles are generated at a constant rate of 1500 veh/hour.<br />"
-            + "Selected trajectory and contour plots are generated during the simulation.</html>";
+                + "Simulation of a single lane road consisting of two 1 km stretches with a 1m stretch in between. "
+                + "This will test transition of a GTU from one lane section onto the next.<br />"
+                + "Vehicles are generated at a constant rate of 1500 veh/hour.<br />"
+                + "Selected trajectory and contour plots are generated during the simulation.</html>";
     }
 
     /** {@inheritDoc} */
     @Override
-    public ArrayList<AbstractProperty<?>> getProperties()
+    public final ArrayList<AbstractProperty<?>> getProperties()
     {
         return new ArrayList<AbstractProperty<?>>(this.properties);
     }
@@ -293,7 +297,8 @@ public class SequentialLanes implements WrappableSimulation
 /**
  * Build the sequential model.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 30 jan. 2015 <br>
@@ -373,8 +378,9 @@ class SequentialModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-        throws SimRuntimeException, RemoteException
+    public final void constructModel(
+            final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+            throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         this.speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
@@ -383,7 +389,7 @@ class SequentialModel implements OTSModelInterface
         int[] linkBoundaries = {0, 1000, 2001, 2200};
         for (int xPos : linkBoundaries)
         {
-            this.nodes.add(new NodeGeotools.STR("Node at " + xPos, new Coordinate(xPos, (xPos > 1001) ? 200 : -10, 0)));
+            this.nodes.add(new NodeGeotools.STR("Node at " + xPos, new Coordinate(xPos, xPos > 1001 ? 200 : -10, 0)));
         }
         LaneType<String> laneType = new LaneType<String>("CarLane");
         laneType.addPermeability(this.gtuType);
@@ -397,15 +403,16 @@ class SequentialModel implements OTSModelInterface
             try
             {
                 Lane[] lanes =
-                    LaneFactory
-                        .makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, this.speedLimit, this.simulator);
+                        LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, this.speedLimit,
+                                this.simulator);
                 if (i == this.nodes.size() - 1)
                 {
                     CrossSectionLink<?, ?> link = lanes[0].getParentLink();
                     int index = link.getCrossSectionElementList().indexOf(lanes[0]);
                     lanes[0] =
-                        new SinkLane(link, lanes[0].getLateralCenterPosition(0), lanes[0].getLateralCenterPosition(1),
-                            lanes[0].getLaneType(), lanes[0].getDirectionality(), this.speedLimit);
+                            new SinkLane(link, lanes[0].getLateralCenterPosition(0),
+                                    lanes[0].getLateralCenterPosition(1), lanes[0].getLaneType(),
+                                    lanes[0].getDirectionality(), this.speedLimit);
                     link.getCrossSectionElementList().remove(index);
                     link.getCrossSectionElementList().add(index, lanes[0]); // FIXME - this is horrible
                 }
@@ -427,13 +434,13 @@ class SequentialModel implements OTSModelInterface
         // 1500 [veh / hour] == 2.4s headway
         this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
         // Schedule creation of the first car (it will re-schedule itself one headway later, etc.).
-        this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this, "generateCar",
-            null);
+        this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
+                "generateCar", null);
         // Schedule regular updates of the graphs
         for (int t = 1; t <= 1800; t++)
         {
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, TimeUnit.SECOND), this, this,
-                "drawGraphs", null);
+                    "drawGraphs", null);
         }
         try
         {
@@ -453,7 +460,7 @@ class SequentialModel implements OTSModelInterface
                 throw new Error("\"Car following model\" property has wrong type");
             }
             Iterator<AbstractProperty<ArrayList<AbstractProperty<?>>>> iterator =
-                new CompoundProperty("", "", this.properties, false, 0).iterator();
+                    new CompoundProperty("", "", this.properties, false, 0).iterator();
             while (iterator.hasNext())
             {
                 AbstractProperty<?> ap = iterator.next();
@@ -572,21 +579,23 @@ class SequentialModel implements OTSModelInterface
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
+                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.initialLane, initialPosition);
         try
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength =
-                new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
-            GTUFollowingModel gtuFollowingModel = generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
+                    new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
+            GTUFollowingModel gtuFollowingModel =
+                    generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
             if (null == gtuFollowingModel)
             {
                 throw new Error("gtuFollowingModel is null");
             }
             new LaneBasedIndividualCar<>(++this.carsCreated, this.gtuType, generateTruck ? this.carFollowingModelTrucks
-                : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
-                new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                    SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator);
+                    : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
+                    new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
+                            SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)

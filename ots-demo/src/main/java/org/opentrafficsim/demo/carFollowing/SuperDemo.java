@@ -57,7 +57,8 @@ import org.opentrafficsim.simulationengine.WrappableSimulation;
 /**
  * Several demos in one application.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 17 dec. 2014 <br>
@@ -78,7 +79,7 @@ public class SuperDemo
      * Start the application.
      * @param args String[]; the command line arguments (not used)
      */
-    public static void main(String[] args)
+    public static void main(final String[] args)
     {
         SwingUtilities.invokeLater(new Runnable()
         {
@@ -94,11 +95,11 @@ public class SuperDemo
      * Build the GUI.
      * @return JPanel; the JPanel that holds the application
      */
-    public JPanel buildGUI()
+    public final JPanel buildGUI()
     {
         final JPanel mainPanel = new JPanel(new BorderLayout());
         // Ensure that the window does not shrink into (almost) nothingness when un-maximized
-        mainPanel.setPreferredSize(new java.awt.Dimension(800, 600));
+        mainPanel.setPreferredSize(new Dimension(800, 600));
         final ArrayList<WrappableSimulation> demonstrations = new ArrayList<WrappableSimulation>();
         demonstrations.add(new Straight());
         demonstrations.add(new SequentialLanes());
@@ -138,7 +139,7 @@ public class SuperDemo
             button.addActionListener(new ActionListener()
             {
                 @Override
-                public void actionPerformed(ActionEvent e)
+                public void actionPerformed(final ActionEvent e)
                 {
                     // System.out.println("selected " + demo.shortName());
                     // Clear out the main panel and put the description of the selected simulator in it.
@@ -163,7 +164,7 @@ public class SuperDemo
         startButton.addActionListener(new ActionListener()
         {
             @Override
-            public void actionPerformed(ActionEvent e)
+            public void actionPerformed(final ActionEvent e)
             {
                 WrappableSimulation simulation = null;
                 for (Component c : SuperDemo.this.simulationSelection.getComponents())
@@ -217,7 +218,7 @@ public class SuperDemo
      * Regenerate the contents of the propertyPanel.
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the demo-specific properties to display
      */
-    void rebuildPropertyPanel(final ArrayList<AbstractProperty<?>> properties)
+    final void rebuildPropertyPanel(final ArrayList<AbstractProperty<?>> properties)
     {
         this.propertyPanel.removeAll();
         try
@@ -303,7 +304,7 @@ public class SuperDemo
      * @param ap AbstractProperty; the abstract property for which an editor must be created
      * @return JPanel
      */
-    JPanel makePropertyEditor(AbstractProperty<?> ap)
+    final JPanel makePropertyEditor(final AbstractProperty<?> ap)
     {
         JPanel result;
         if (ap instanceof SelectionProperty)
@@ -317,7 +318,7 @@ public class SuperDemo
             comboBox.addItemListener(new ItemListener()
             {
                 @Override
-                public void itemStateChanged(ItemEvent itemEvent)
+                public void itemStateChanged(final ItemEvent itemEvent)
                 {
                     if (itemEvent.getStateChange() == ItemEvent.SELECTED)
                     {
@@ -340,7 +341,7 @@ public class SuperDemo
                 {
 
                     @Override
-                    public void actionPerformed(ActionEvent actionEvent)
+                    public void actionPerformed(final ActionEvent actionEvent)
                     {
                         if (comboBox.getSelectedIndex() != 0)
                         {
@@ -364,7 +365,7 @@ public class SuperDemo
             pdpe.addPropertyChangeListener(new PropertyChangeListener()
             {
                 @Override
-                public void propertyChange(PropertyChangeEvent arg0)
+                public void propertyChange(final PropertyChangeEvent arg0)
                 {
                     try
                     {
@@ -398,7 +399,7 @@ public class SuperDemo
             slider.addChangeListener(new ChangeListener()
             {
                 @Override
-                public void stateChanged(ChangeEvent changeEvent)
+                public void stateChanged(final ChangeEvent changeEvent)
                 {
                     int value = slider.getValue();
                     currentValue.setText(String.format(DefaultLocale.getLocale(), ip.getFormatString(), value));
@@ -438,7 +439,7 @@ public class SuperDemo
             slider.addChangeListener(new ChangeListener()
             {
                 @Override
-                public void stateChanged(ChangeEvent changeEvent)
+                public void stateChanged(final ChangeEvent changeEvent)
                 {
                     double value =
                             slider.getValue() * (cp.getMaximumValue() - cp.getMinimumValue()) / useSteps
@@ -473,7 +474,7 @@ public class SuperDemo
             checkBox.addChangeListener(new ChangeListener()
             {
                 @Override
-                public void stateChanged(ChangeEvent arg0)
+                public void stateChanged(final ChangeEvent arg0)
                 {
                     try
                     {
@@ -519,9 +520,10 @@ class CleverRadioButton extends JRadioButton
 
     /**
      * Construct a JRadioButton that also stores a WrappableSimulation.
-     * @param simulation
+     * @param simulation WrappableSimulation; the simulation to run if this radio button is selected and the start
+     *            simulation button is clicked
      */
-    CleverRadioButton(WrappableSimulation simulation)
+    CleverRadioButton(final WrappableSimulation simulation)
     {
         super(simulation.shortName());
         this.simulation = simulation;

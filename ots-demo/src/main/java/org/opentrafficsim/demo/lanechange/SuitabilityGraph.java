@@ -67,13 +67,13 @@ public class SuitabilityGraph implements OTSModelInterface
     private JPanel graphPanel;
 
     /** Number of lanes on the main roadway (do not set higher than size of colorTable). */
-    private static final int laneCount = 4;
+    private static final int LANECOUNT = 4;
 
     /** Speed limit values in km/h. */
-    private final static double speedLimits[] = {30, 50, 80, 120};
+    private static final double[] SPEEDLIMITS = {30, 50, 80, 120};
 
     /** Arrangements of lanes to aim for. Negative numbers indicate lanes on right side of the roadway. */
-    private final static int targetLanes[] = {1, 2, -2, -1};
+    private static final int[] TARGETLANES = {1, 2, -2, -1};
 
     /** Time horizon for lane changes. */
     DoubleScalar.Rel<TimeUnit> timeHorizon = new DoubleScalar.Rel<TimeUnit>(100, TimeUnit.SECOND);
@@ -82,7 +82,7 @@ public class SuitabilityGraph implements OTSModelInterface
     DoubleScalar.Rel<TimeUnit> timeRange = new DoubleScalar.Rel<TimeUnit>(110, TimeUnit.SECOND);
 
     /** Colors that correspond to the lanes; taken from electrical resistor color codes. */
-    private static final Color[] colorTable = {new Color(160, 82, 45) /* brown */, Color.RED, Color.ORANGE,
+    private static final Color[] COLORTABLE = {new Color(160, 82, 45) /* brown */, Color.RED, Color.ORANGE,
             Color.YELLOW, Color.GREEN, Color.BLUE, new Color(199, 21, 133) /* violet */, Color.GRAY, Color.WHITE};
 
     /** The graphs. */
@@ -117,25 +117,25 @@ public class SuitabilityGraph implements OTSModelInterface
 
     /**
      * Draw the plots.
-     * @throws NetworkException
-     * @throws NamingException
-     * @throws RemoteException
-     * @throws SimRuntimeException
+     * @throws NetworkException on network inconsistency
+     * @throws NamingException on ???
+     * @throws RemoteException on communications failure
+     * @throws SimRuntimeException on ???
      */
-    protected void drawPlots() throws RemoteException, NamingException, NetworkException, SimRuntimeException
+    protected final void drawPlots() throws RemoteException, NamingException, NetworkException, SimRuntimeException
     {
         SimpleSimulator simulator =
                 new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SI), new DoubleScalar.Rel<TimeUnit>(0,
                         TimeUnit.SI), new DoubleScalar.Rel<TimeUnit>(99999, TimeUnit.SI), this);
-        final int rows = speedLimits.length;
-        final int columns = targetLanes.length;
+        final int rows = SPEEDLIMITS.length;
+        final int columns = TARGETLANES.length;
         for (int row = 0; row < rows; row++)
         {
-            int targetLaneConfiguration = targetLanes[row];
+            int targetLaneConfiguration = TARGETLANES[row];
             for (int column = 0; column < columns; column++)
             {
                 DoubleScalar.Abs<SpeedUnit> speedLimit =
-                        new DoubleScalar.Abs<SpeedUnit>(speedLimits[column], SpeedUnit.KM_PER_HOUR);
+                        new DoubleScalar.Abs<SpeedUnit>(SPEEDLIMITS[column], SpeedUnit.KM_PER_HOUR);
                 double mainLength = speedLimit.getSI() * this.timeRange.getSI();
                 NodeGeotools.STR from = new NodeGeotools.STR("From", new Coordinate(-mainLength, 0, 0));
                 NodeGeotools.STR branchPoint = new NodeGeotools.STR("From", new Coordinate(0, 0, 0));
@@ -143,20 +143,20 @@ public class SuitabilityGraph implements OTSModelInterface
                 GTUType<String> gtuType = GTUType.makeGTUType("Car");
                 laneType.addPermeability(gtuType);
                 Lane[] lanes =
-                        LaneFactory.makeMultiLane("Test road", from, branchPoint, null, laneCount, laneType,
+                        LaneFactory.makeMultiLane("Test road", from, branchPoint, null, LANECOUNT, laneType,
                                 speedLimit, (OTSDEVSSimulatorInterface) simulator.getSimulator());
                 NodeGeotools.STR destination =
                         new NodeGeotools.STR("Destination", new Coordinate(1000, targetLaneConfiguration > 0 ? 100
                                 : -100, 0));
                 LaneFactory.makeMultiLane("DestinationLink", branchPoint, destination, null,
-                        Math.abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? 0 : laneCount
+                        Math.abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? 0 : LANECOUNT
                                 + targetLaneConfiguration, 0, laneType, speedLimit,
                         (OTSDEVSSimulatorInterface) simulator.getSimulator());
                 NodeGeotools.STR nonDestination =
                         new NodeGeotools.STR("Non-Destination", new Coordinate(1000, targetLaneConfiguration > 0 ? -100
                                 : 100, 0));
                 LaneFactory.makeMultiLane("Non-DestinationLink", branchPoint, nonDestination, null,
-                        laneCount - Math.abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? laneCount
+                        LANECOUNT - Math.abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? LANECOUNT
                                 - targetLaneConfiguration : 0, 0, laneType, speedLimit,
                         (OTSDEVSSimulatorInterface) simulator.getSimulator());
                 Route route = new Route();
@@ -165,7 +165,7 @@ public class SuitabilityGraph implements OTSModelInterface
                 route.addNode(destination);
                 SuitabilityData dataset =
                         (SuitabilityData) ((XYPlot) (this.charts[row][column].getPlot())).getDataset();
-                for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
+                for (int laneIndex = 0; laneIndex < LANECOUNT; laneIndex++)
                 {
                     int key = dataset.addSeries("Lane " + (laneIndex + 1));
                     Lane lane = lanes[laneIndex];
@@ -192,21 +192,21 @@ public class SuitabilityGraph implements OTSModelInterface
     public SuitabilityGraph()
     {
         this.graphPanel = new JPanel(new BorderLayout());
-        final int rows = speedLimits.length;
-        final int columns = targetLanes.length;
+        final int rows = SPEEDLIMITS.length;
+        final int columns = TARGETLANES.length;
         TablePanel chartsPanel = new TablePanel(rows, rows);
         this.graphPanel.add(chartsPanel, BorderLayout.CENTER);
         this.charts = new JFreeChart[rows][columns];
         for (int row = 0; row < rows; row++)
         {
-            int targetLaneConfiguration = targetLanes[row];
+            int targetLaneConfiguration = TARGETLANES[row];
             String targetLaneDescription =
                     String.format("%s lane %s exit", Math.abs(targetLaneConfiguration) == 1 ? "single" : "double",
                             targetLaneConfiguration > 0 ? "left" : "right");
             for (int column = 0; column < columns; column++)
             {
                 DoubleScalar.Abs<SpeedUnit> speedLimit =
-                        new DoubleScalar.Abs<SpeedUnit>(speedLimits[column], SpeedUnit.KM_PER_HOUR);
+                        new DoubleScalar.Abs<SpeedUnit>(SPEEDLIMITS[column], SpeedUnit.KM_PER_HOUR);
                 JFreeChart chart =
                         createChart(String.format("Speed limit %.0f%s, %s", speedLimit.getInUnit(),
                                 speedLimit.getUnit(), targetLaneDescription), speedLimit);
@@ -218,8 +218,8 @@ public class SuitabilityGraph implements OTSModelInterface
 
     /**
      * @param caption String; the caption for the chart
-     * @param speed double; the speed of the reference vehicle
-     * @return
+     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit
+     * @return JFreeChart; the newly created graph
      */
     private JFreeChart createChart(final String caption, final DoubleScalar.Abs<SpeedUnit> speedLimit)
     {
@@ -251,9 +251,9 @@ public class SuitabilityGraph implements OTSModelInterface
         renderer.setBaseLinesVisible(true);
         renderer.setBaseShapesVisible(false);
         // Set paint color and stroke for each series
-        for (int index = 0; index < laneCount; index++)
+        for (int index = 0; index < LANECOUNT; index++)
         {
-            renderer.setSeriesPaint(index, colorTable[index]);
+            renderer.setSeriesPaint(index, COLORTABLE[index]);
             renderer.setSeriesStroke(index, new BasicStroke(4.0f));
         }
 
@@ -264,14 +264,14 @@ public class SuitabilityGraph implements OTSModelInterface
      * Return the JPanel that contains all the graphs.
      * @return JPanel
      */
-    public JPanel getPanel()
+    public final JPanel getPanel()
     {
         return this.graphPanel;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+    public final void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> simulator)
             throws SimRuntimeException, RemoteException
     {
         // Do nothing
@@ -279,7 +279,7 @@ public class SuitabilityGraph implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
     {
         return null;
     }
@@ -330,7 +330,7 @@ class SuitabilityData implements XYDataset
      * @param seriesName String; the name of the new series
      * @return int; the index to use to address the new series
      */
-    public int addSeries(String seriesName)
+    public final int addSeries(final String seriesName)
     {
         this.xValues.add(new ArrayList<Double>());
         this.yValues.add(new ArrayList<Double>());
@@ -339,12 +339,12 @@ class SuitabilityData implements XYDataset
     }
 
     /**
-     * Add an XY pair to the data
+     * Add an XY pair to the data.
      * @param seriesKey int; key to the data series
      * @param x double; x value of the pair
      * @param y double; y value of the pair
      */
-    public void addXYPair(int seriesKey, double x, double y)
+    public final void addXYPair(final int seriesKey, final double x, final double y)
     {
         this.xValues.get(seriesKey).add(x);
         this.yValues.get(seriesKey).add(y);
@@ -352,49 +352,49 @@ class SuitabilityData implements XYDataset
 
     /** {@inheritDoc} */
     @Override
-    public int getSeriesCount()
+    public final int getSeriesCount()
     {
         return this.seriesKeys.size();
     }
 
     /** {@inheritDoc} */
     @Override
-    public Comparable<?> getSeriesKey(int series)
+    public final Comparable<?> getSeriesKey(final int series)
     {
         return this.seriesKeys.get(series);
     }
 
     /** {@inheritDoc} */
     @Override
-    public int indexOf(@SuppressWarnings("rawtypes") Comparable seriesKey)
+    public final int indexOf(@SuppressWarnings("rawtypes") final Comparable seriesKey)
     {
         return this.seriesKeys.indexOf(seriesKey);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void addChangeListener(DatasetChangeListener listener)
+    public final void addChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.add(DatasetChangeListener.class, listener);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void removeChangeListener(DatasetChangeListener listener)
+    public final void removeChangeListener(final DatasetChangeListener listener)
     {
         this.listenerList.remove(DatasetChangeListener.class, listener);
     }
 
     /** {@inheritDoc} */
     @Override
-    public DatasetGroup getGroup()
+    public final DatasetGroup getGroup()
     {
         return this.datasetGroup;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void setGroup(DatasetGroup group)
+    public final void setGroup(final DatasetGroup group)
     {
         this.datasetGroup = group;
     }
@@ -408,35 +408,35 @@ class SuitabilityData implements XYDataset
 
     /** {@inheritDoc} */
     @Override
-    public int getItemCount(int series)
+    public final int getItemCount(final int series)
     {
         return this.xValues.get(series).size();
     }
 
     /** {@inheritDoc} */
     @Override
-    public Number getX(int series, int item)
+    public final Number getX(final int series, final int item)
     {
         return this.xValues.get(series).get(item);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double getXValue(int series, int item)
+    public final double getXValue(final int series, final int item)
     {
         return this.xValues.get(series).get(item);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Number getY(int series, int item)
+    public final Number getY(final int series, final int item)
     {
         return this.yValues.get(series).get(item);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double getYValue(int series, int item)
+    public final double getYValue(final int series, final int item)
     {
         return this.yValues.get(series).get(item);
     }

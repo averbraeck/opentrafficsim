@@ -93,35 +93,35 @@ public class XMLNetworks implements WrappableSimulation
 
     /** {@inheritDoc} */
     @Override
-    public SimpleSimulator buildSimulator(ArrayList<AbstractProperty<?>> userModifiedProperties)
+    public final SimpleSimulator buildSimulator(final ArrayList<AbstractProperty<?>> userModifiedProperties)
             throws SimRuntimeException, RemoteException, NetworkException, NamingException
     {
         XMLNetworkModel model = new XMLNetworkModel(userModifiedProperties);
         SimpleSimulator result =
                 new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
-                                TimeUnit.SECOND), model, new Rectangle2D.Double(-50, -200, 600, 400));
+                                TimeUnit.SECOND), model, new Rectangle2D.Double(-50, -200, 700, 400));
         new ControlPanel(result);
         return result;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String shortName()
+    public final String shortName()
     {
         return "Test networks";
     }
 
     /** {@inheritDoc} */
     @Override
-    public String description()
+    public final String description()
     {
         return "<html><h1>Test Networks</h1>Prove that the test networks can be constructed and rendered on screen.</html>";
     }
 
     /** {@inheritDoc} */
     @Override
-    public ArrayList<AbstractProperty<?>> getProperties()
+    public final ArrayList<AbstractProperty<?>> getProperties()
     {
         // Create and return a deep copy of the internal list
         return new ArrayList<AbstractProperty<?>>(this.properties);
@@ -147,7 +147,7 @@ class XMLNetworkModel implements OTSModelInterface
     /** the simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
-    /** User settable properties */
+    /** User settable properties. */
     ArrayList<AbstractProperty<?>> properties = null;
 
     /** The average headway (inter-vehicle time). */
@@ -187,27 +187,27 @@ class XMLNetworkModel implements OTSModelInterface
     private RouteGenerator routeGenerator;
 
     /**
-     * @param userModifiedProperties
+     * @param userModifiedProperties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user modified) properties
      */
-    public XMLNetworkModel(ArrayList<AbstractProperty<?>> userModifiedProperties)
+    public XMLNetworkModel(final ArrayList<AbstractProperty<?>> userModifiedProperties)
     {
         this.properties = userModifiedProperties;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(
-            SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+    public final void constructModel(
+            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         NodeGeotools.STR from = new NodeGeotools.STR("From", new Coordinate(0, 0, 0));
-        NodeGeotools.STR end = new NodeGeotools.STR("End", new Coordinate(500, 0, 0));
+        NodeGeotools.STR end = new NodeGeotools.STR("End", new Coordinate(600, 0, 0));
         NodeGeotools.STR from2 = new NodeGeotools.STR("From2", new Coordinate(0, -50, 0));
         NodeGeotools.STR firstVia = new NodeGeotools.STR("Via1", new Coordinate(200, 0, 0));
-        NodeGeotools.STR end2 = new NodeGeotools.STR("End2", new Coordinate(500, -50, 0));
-        NodeGeotools.STR secondVia = new NodeGeotools.STR("Via2", new Coordinate(300, 0, 0));
+        NodeGeotools.STR end2 = new NodeGeotools.STR("End2", new Coordinate(600, -50, 0));
+        NodeGeotools.STR secondVia = new NodeGeotools.STR("Via2", new Coordinate(400, 0, 0));
         CompoundProperty cp = new CompoundProperty("", "", this.properties, false, 0);
         String networkType = (String) cp.findByShortName("Network").getValue();
         boolean merge = networkType.startsWith("M");
@@ -245,10 +245,7 @@ class XMLNetworkModel implements OTSModelInterface
                     SelectionProperty sp = (SelectionProperty) ap;
                     if ("Car following model".equals(sp.getShortName()))
                     {
-                        if ("Car following model".equals(sp.getShortName()))
-                        {
-                            carFollowingModelName = sp.getValue();
-                        }
+                        carFollowingModelName = sp.getValue();
                     }
                 }
                 else if (ap instanceof ProbabilityDistributionProperty)
@@ -359,10 +356,10 @@ class XMLNetworkModel implements OTSModelInterface
      * Add a generator to an array of Lane.
      * @param lanes Lane[]; the lanes that must get a generator at the start
      * @return Lane[]; the lanes
-     * @throws RemoteException
-     * @throws SimRuntimeException
+     * @throws RemoteException on communications failure
+     * @throws SimRuntimeException on ???
      */
-    private Lane[] setupGenerator(Lane[] lanes) throws RemoteException, SimRuntimeException
+    private Lane[] setupGenerator(final Lane[] lanes) throws RemoteException, SimRuntimeException
     {
         for (Lane lane : lanes)
         {
@@ -378,9 +375,9 @@ class XMLNetworkModel implements OTSModelInterface
      * Append a sink to each lane of an array of Lanes.
      * @param lanes Lane[]; the array of lanes
      * @return Lane[]; the lanes
-     * @throws NetworkException
+     * @throws NetworkException on network inconsistency
      */
-    private Lane[] setupSink(Lane[] lanes) throws NetworkException
+    private Lane[] setupSink(final Lane[] lanes) throws NetworkException
     {
         CrossSectionLink<?, ?> link = lanes[0].getParentLink();
         NodeGeotools.STR to = (NodeGeotools.STR) link.getEndNode();
@@ -400,16 +397,16 @@ class XMLNetworkModel implements OTSModelInterface
 
     /**
      * Put a block at the end of a Lane.
-     * @param lane Lane; the lane
+     * @param lane Lane; the lane on which the block is placed
      * @return Lane; the lane
-     * @throws RemoteException
-     * @throws NamingException
-     * @throws NetworkException
-     * @throws SimRuntimeException
-     * @throws GTUException
+     * @throws RemoteException on communications failure
+     * @throws NamingException on ???
+     * @throws NetworkException on network inconsistency
+     * @throws SimRuntimeException on ???
+     * @throws GTUException when construction of the GTU (the block is a GTU) fails
      */
-    private Lane setupBlock(Lane lane) throws RemoteException, NamingException, NetworkException, SimRuntimeException,
-            GTUException
+    private Lane setupBlock(final Lane lane) throws RemoteException, NamingException, NetworkException,
+            SimRuntimeException, GTUException
     {
         DoubleScalar.Rel<LengthUnit> initialPosition = lane.getLength();
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
@@ -428,8 +425,9 @@ class XMLNetworkModel implements OTSModelInterface
 
     /**
      * Generate cars at a fixed rate (implemented by re-scheduling this method).
+     * @param lane Lane; the lane on which the generated cars are placed
      */
-    protected final void generateCar(Lane lane)
+    protected final void generateCar(final Lane lane)
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);

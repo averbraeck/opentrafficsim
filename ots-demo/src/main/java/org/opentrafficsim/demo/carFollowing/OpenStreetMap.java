@@ -82,16 +82,14 @@ public class OpenStreetMap implements WrappableSimulation
     /** The WarningListener. */
     private WarningListener warningListener;
 
-    /**
-     * Construct the OpenStreetMap demo
-     */
+    /** Construct the OpenStreetMap demo. */
     public OpenStreetMap()
     {
         // The work is done in buildSimulator.
     }
 
     /**
-     * @param args
+     * @param args String[]; the command line arguments (not used)
      */
     public static void main(final String[] args)
     {
@@ -143,7 +141,7 @@ public class OpenStreetMap implements WrappableSimulation
     /** {@inheritDoc} 
      * @throws NamingException */
     @Override
-    public SimpleSimulator buildSimulator(final ArrayList<AbstractProperty<?>> usedProperties)
+    public final SimpleSimulator buildSimulator(final ArrayList<AbstractProperty<?>> usedProperties)
             throws SimRuntimeException, RemoteException, NetworkException, NamingException
     {
         JFrame frame = new JFrame();
@@ -172,8 +170,8 @@ public class OpenStreetMap implements WrappableSimulation
         }
         Convert converter = new Convert();
         System.out.println("Opening file " + filename);
-        ArrayList<org.opentrafficsim.importexport.osm.OSMTag> wantedTags =
-                new ArrayList<org.opentrafficsim.importexport.osm.OSMTag>();
+        ArrayList<OSMTag> wantedTags =
+                new ArrayList<OSMTag>();
         wantedTags.add(new OSMTag("highway", "primary"));
         wantedTags.add(new OSMTag("highway", "secondary"));
         wantedTags.add(new OSMTag("highway", "tertiary"));
@@ -206,7 +204,7 @@ public class OpenStreetMap implements WrappableSimulation
             ReadOSMFile osmf = new ReadOSMFile(filepath, wantedTags, ft, this.progressListener);
             OSMNetwork net = osmf.getNetwork();
             // net.removeRedundancy(); // Defective; do not call removeRedundancy
-            this.osmNetwork = net;// new OSMNetwork(net); // Why would you make a copy?
+            this.osmNetwork = net; // new OSMNetwork(net); // Why would you make a copy?
             this.otsNetwork = new Network<String, CrossSectionLink<?, ?>>(this.osmNetwork.getName());
             for (OSMNode osmNode : this.osmNetwork.getNodes().values())
             {
@@ -256,21 +254,21 @@ public class OpenStreetMap implements WrappableSimulation
 
     /** {@inheritDoc} */
     @Override
-    public String shortName()
+    public final String shortName()
     {
         return "Open Street Map Demonstration";
     }
 
     /** {@inheritDoc} */
     @Override
-    public String description()
+    public final String description()
     {
         return "Load an OpenStreetMap file and show it";
     }
 
     /** {@inheritDoc} */
     @Override
-    public ArrayList<AbstractProperty<?>> getProperties()
+    public final ArrayList<AbstractProperty<?>> getProperties()
     {
         return new ArrayList<AbstractProperty<?>>(this.properties);
     }
@@ -314,11 +312,11 @@ class OSMModel implements OTSModelInterface
     private final Convert converter;
 
     /**
-     * @param properties
-     * @param osmNetwork
-     * @param wL
-     * @param pL
-     * @param converter
+     * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
+     * @param osmNetwork OSMNetwork; the OSM network structure
+     * @param wL WarningListener; the receiver of warning events
+     * @param pL ProgressListener; the receiver of progress events
+     * @param converter Convert; the output converter
      */
     public OSMModel(final ArrayList<AbstractProperty<?>> properties, final OSMNetwork osmNetwork,
             final WarningListener wL, final ProgressListener pL, final Convert converter)
