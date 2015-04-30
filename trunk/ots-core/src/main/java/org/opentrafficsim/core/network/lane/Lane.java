@@ -631,6 +631,11 @@ public class Lane extends CrossSectionElement
      */
     public final void sample(final AbstractLaneBasedGTU<?> gtu) throws RemoteException, NetworkException
     {
+        // FIXME: Hack; do not sample dummy vehicle at lane drop
+        if (gtu.getNextEvaluationTime().getSI() == Double.MAX_VALUE)
+        {
+            return;
+        }
         for (LaneBasedGTUSampler sampler : this.samplers)
         {
             sampler.addData(gtu, this);
