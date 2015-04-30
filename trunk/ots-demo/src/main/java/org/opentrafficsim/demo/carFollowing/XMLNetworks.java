@@ -1,10 +1,13 @@
 package org.opentrafficsim.demo.carFollowing;
 
+import java.awt.Container;
+import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.SortedMap;
@@ -13,6 +16,7 @@ import java.util.TreeMap;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 import nl.tudelft.simulation.jstats.distributions.DistErlang;
@@ -52,6 +56,8 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.graphs.LaneBasedGTUSampler;
+import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.simulationengine.AbstractProperty;
 import org.opentrafficsim.simulationengine.CompoundProperty;
 import org.opentrafficsim.simulationengine.ContinuousProperty;
@@ -87,7 +93,7 @@ public class XMLNetworks implements WrappableSimulation
         this.properties.add(new SelectionProperty("Network", "Network", new String[]{"Merge 1 plus 1 into 1",
                 "Merge 2 plus 1 into 2", "Merge 2 plus 2 into 4", "Split 1 into 1 plus 1", "Split 2 into 1 plus 2",
                 "Split 4 into 2 plus 2",}, 0, false, 0));
-        this.properties.add(new ContinuousProperty("Flow per input lane", "Traffic flow per input lane", 600d, 0d,
+        this.properties.add(new ContinuousProperty("Flow per input lane", "Traffic flow per input lane", 500d, 0d,
                 3000d, "%.0f veh/h", false, 1));
     }
 
@@ -100,8 +106,25 @@ public class XMLNetworks implements WrappableSimulation
         SimpleSimulator result =
                 new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
-                                TimeUnit.SECOND), model, new Rectangle2D.Double(-50, -200, 700, 400));
+                                TimeUnit.SECOND), model, new Rectangle2D.Double(-50, -300, 1300, 600));
         new ControlPanel(result);
+        int graphCount = model.pathCount();
+        int columns = 1;
+        int rows = 0 == columns ? 0 : (int) Math.ceil(graphCount * 1.0 / columns);
+        TablePanel charts = new TablePanel(columns, rows);
+        result.getPanel().getTabbedPane().addTab("statistics", charts);
+        for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
+        {
+            TrajectoryPlot tp =
+                    new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), new DoubleScalar.Rel<TimeUnit>(0.5,
+                            TimeUnit.SECOND), model.getPath(graphIndex));
+            tp.setTitle("Trajectory Graph");
+            tp.setExtendedState(Frame.MAXIMIZED_BOTH);
+            LaneBasedGTUSampler graph = tp;
+            Container container = tp.getContentPane();
+            charts.setCell(container, graphIndex % columns, graphIndex / columns);
+            model.getPlots().add(graph);
+        }
         return result;
     }
 
@@ -147,8 +170,14 @@ class XMLNetworkModel implements OTSModelInterface
     /** the simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
+    /** The plots. */
+    private ArrayList<LaneBasedGTUSampler> plots = new ArrayList<LaneBasedGTUSampler>();
+
     /** User settable properties. */
     ArrayList<AbstractProperty<?>> properties = null;
+
+    /** The sequence of Lanes that all vehicles will follow. */
+    private ArrayList<List<Lane>> paths = new ArrayList<List<Lane>>();
 
     /** The average headway (inter-vehicle time). */
     private DoubleScalar.Rel<TimeUnit> averageHeadway;
@@ -194,6 +223,32 @@ class XMLNetworkModel implements OTSModelInterface
         this.properties = userModifiedProperties;
     }
 
+    /**
+     * @param index int; the rank number of the path
+     * @return List&lt;Lane&gt;; the set of lanes for the specified index
+     */
+    public final List<Lane> getPath(final int index)
+    {
+        return this.paths.get(index);
+    }
+
+    /**
+     * Return the number of paths that can be used to show graphs.
+     * @return int; the number of paths that can be used to show graphs
+     */
+    public final int pathCount()
+    {
+        return this.paths.size();
+    }
+
+    /**
+     * @return plots
+     */
+    public final ArrayList<LaneBasedGTUSampler> getPlots()
+    {
+        return this.plots;
+    }
+
     /** {@inheritDoc} */
     @Override
     public final void constructModel(
@@ -203,11 +258,11 @@ class XMLNetworkModel implements OTSModelInterface
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         NodeGeotools.STR from = new NodeGeotools.STR("From", new Coordinate(0, 0, 0));
-        NodeGeotools.STR end = new NodeGeotools.STR("End", new Coordinate(600, 0, 0));
+        NodeGeotools.STR end = new NodeGeotools.STR("End", new Coordinate(1200, 0, 0));
         NodeGeotools.STR from2 = new NodeGeotools.STR("From2", new Coordinate(0, -50, 0));
-        NodeGeotools.STR firstVia = new NodeGeotools.STR("Via1", new Coordinate(200, 0, 0));
-        NodeGeotools.STR end2 = new NodeGeotools.STR("End2", new Coordinate(600, -50, 0));
-        NodeGeotools.STR secondVia = new NodeGeotools.STR("Via2", new Coordinate(400, 0, 0));
+        NodeGeotools.STR firstVia = new NodeGeotools.STR("Via1", new Coordinate(800, 0, 0));
+        NodeGeotools.STR end2 = new NodeGeotools.STR("End2", new Coordinate(1200, -50, 0));
+        NodeGeotools.STR secondVia = new NodeGeotools.STR("Via2", new Coordinate(1000, 0, 0));
         CompoundProperty cp = new CompoundProperty("", "", this.properties, false, 0);
         String networkType = (String) cp.findByShortName("Network").getValue();
         boolean merge = networkType.startsWith("M");
@@ -345,6 +400,37 @@ class XMLNetworkModel implements OTSModelInterface
                 routeProbabilities.put(new FixedRouteGenerator(sideRoute), new java.lang.Double(lanesOnBranch));
                 this.routeGenerator = new ProbabilisticFixedRouteGenerator(routeProbabilities, 1234);
             }
+            for (int index = 0; index < lanesOnCommon; index++)
+            {
+                this.paths.add(new ArrayList<Lane>());
+                Lane lane = common[index];
+                // Follow back
+                while (lane.prevLanes().size() > 0)
+                {
+                    if (lane.prevLanes().size() > 1)
+                    {
+                        throw new NetworkException("This network should not have lane merge points");
+                    }
+                    lane = lane.prevLanes().iterator().next();
+                }
+                // Follow forward
+                while (true)
+                {
+                    this.paths.get(index).add(lane);
+                    int branching = lane.nextLanes().size();
+                    if (branching == 0)
+                    {
+                        break;
+                    }
+                    if (branching > 1)
+                    {
+                        throw new NetworkException("Thisnetwork should not have lane split points");
+                    }
+                    lane = lane.nextLanes().iterator().next();
+                }
+            }
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.999, TimeUnit.SECOND), this, this,
+                    "drawGraphs", null);
         }
         catch (NamingException | NetworkException | GTUException exception1)
         {
@@ -421,6 +507,28 @@ class XMLNetworkModel implements OTSModelInterface
                         LengthUnit.METER), lane.getWidth(1), new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
                 new Route(new ArrayList<Node<?, ?>>()), this.simulator);
         return lane;
+    }
+
+    /**
+     * Notify the contour plots that the underlying data has changed.
+     */
+    protected final void drawGraphs()
+    {
+        for (LaneBasedGTUSampler plot : this.plots)
+        {
+            plot.reGraph();
+        }
+        // Re schedule this method
+        try
+        {
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(this.simulator.getSimulatorTime().get()
+                    .getSI() + 1, TimeUnit.SECOND), this, this, "drawGraphs", null);
+        }
+        catch (RemoteException | SimRuntimeException exception)
+        {
+            exception.printStackTrace();
+        }
+
     }
 
     /**
