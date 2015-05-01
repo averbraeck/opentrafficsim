@@ -67,13 +67,13 @@ import org.opentrafficsim.simulationengine.WrappableSimulation;
 public class SuperDemo
 {
     /** The JPanel that holds the user settable properties. */
-    JPanel propertyPanel;
+    private JPanel propertyPanel;
 
     /** The JPanel that holds the simulation selection radio buttons. */
-    JPanel simulationSelection;
+    private JPanel simulationSelection;
 
     /** Properties of the currently selected demonstration. */
-    ArrayList<AbstractProperty<?>> activeProperties = null;
+    private ArrayList<AbstractProperty<?>> activeProperties = null;
 
     /**
      * Start the application.
@@ -516,7 +516,7 @@ class CleverRadioButton extends JRadioButton
     private static final long serialVersionUID = 20141217L;
 
     /** The WrappableSimulation. */
-    final WrappableSimulation simulation;
+    private final WrappableSimulation simulation;
 
     /**
      * Construct a JRadioButton that also stores a WrappableSimulation.

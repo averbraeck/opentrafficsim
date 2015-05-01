@@ -78,13 +78,12 @@ public class Trajectories implements WrappableSimulation
     {
         try
         {
-            this.properties
-                    .add(new SelectionProperty(
-                            "Car following model",
-                            "<html>The car following model determines "
-                                    + "the acceleration that a vehicle will make taking into account nearby vehicles, infrastructural "
-                                    + "restrictions (e.g. speed limit, curvature of the road) capabilities of the vehicle and "
-                                    + "personality of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 10));
+            this.properties.add(new SelectionProperty("Car following model",
+                    "<html>The car following model determines "
+                            + "the acceleration that a vehicle will make taking into account nearby vehicles, "
+                            + "infrastructural restrictions (e.g. speed limit, curvature of the road) "
+                            + "capabilities of the vehicle and personality of the driver.</html>", new String[]{"IDM",
+                            "IDM+"}, 1, false, 10));
             this.properties.add(new ProbabilityDistributionProperty("Traffic composition",
                     "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
                     new Double[]{0.8, 0.2}, false, 9));
@@ -157,7 +156,7 @@ public class Trajectories implements WrappableSimulation
         panel.getTabbedPane().addTab("statistics", charts);
         DoubleScalar.Rel<TimeUnit> sampleInterval = new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND);
         List<Lane> path = new ArrayList<Lane>();
-        path.add(model.lane);
+        path.add(model.getLane());
         TrajectoryPlot tp = new TrajectoryPlot("Trajectory Plot", sampleInterval, path);
         tp.setTitle("Density Contour Graph");
         tp.setExtendedState(Frame.MAXIMIZED_BOTH);
@@ -248,40 +247,40 @@ class TrajectoriesModel implements OTSModelInterface
     private int carsCreated = 0;
 
     /** the car following model, e.g. IDM Plus for cars. */
-    protected GTUFollowingModel carFollowingModelCars;
+    private GTUFollowingModel carFollowingModelCars;
 
     /** the car following model, e.g. IDM Plus for trucks. */
-    protected GTUFollowingModel carFollowingModelTrucks;
+    private GTUFollowingModel carFollowingModelTrucks;
 
     /** The probability that the next generated GTU is a passenger car. */
-    double carProbability;
+    private double carProbability;
 
     /** The lane change model. */
-    protected AbstractLaneChangeModel laneChangeModel = new Egoistic();
+    private AbstractLaneChangeModel laneChangeModel = new Egoistic();
 
     /** The blocking car. */
-    protected LaneBasedIndividualCar<Integer> block = null;
+    private LaneBasedIndividualCar<Integer> block = null;
 
     /** minimum distance. */
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
 
     /** maximum distance. */
-    DoubleScalar.Rel<LengthUnit> maximumDistance = new DoubleScalar.Rel<LengthUnit>(5000, LengthUnit.METER);
+    private DoubleScalar.Rel<LengthUnit> maximumDistance = new DoubleScalar.Rel<LengthUnit>(5000, LengthUnit.METER);
 
     /** The Lane containing the simulated Cars. */
-    Lane lane;
+    private Lane lane;
 
     /** the speed limit. */
-    DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+    private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
     /** the trajectory plot. */
     private TrajectoryPlot trajectoryPlot;
 
     /** User settable properties. */
-    ArrayList<AbstractProperty<?>> properties = null;
+    private ArrayList<AbstractProperty<?>> properties = null;
 
     /** The random number generator used to decide what kind of GTU to generate. */
-    Random randomGenerator = new Random(12345);
+    private Random randomGenerator = new Random(12345);
 
     /**
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
@@ -306,7 +305,7 @@ class TrajectoriesModel implements OTSModelInterface
         {
             this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.speedLimit, this.simulator);
             CrossSectionLink<?, ?> endLink = LaneFactory.makeLink("endLink", to, end, null);
-            new SinkLane(endLink, this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), laneType,
+            new SinkLane(endLink, this.getLane().getLateralCenterPosition(1.0), this.getLane().getWidth(1.0), laneType,
                     LongitudinalDirectionality.FORWARD, this.speedLimit);
         }
         catch (NamingException | NetworkException exception1)
@@ -419,7 +418,7 @@ class TrajectoriesModel implements OTSModelInterface
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(4000, LengthUnit.METER);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
                 new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
-        initialPositions.put(this.lane, initialPosition);
+        initialPositions.put(this.getLane(), initialPosition);
         this.block =
                 new LaneBasedIndividualCar<>(999999, null /* gtuType */, this.carFollowingModelCars,
                         this.laneChangeModel, initialPositions, new DoubleScalar.Abs<SpeedUnit>(0,
@@ -446,7 +445,7 @@ class TrajectoriesModel implements OTSModelInterface
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
                 new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
-        initialPositions.put(this.lane, initialPosition);
+        initialPositions.put(this.getLane(), initialPosition);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         try
         {
@@ -510,6 +509,14 @@ class TrajectoriesModel implements OTSModelInterface
     public final void setTrajectoryPlot(final TrajectoryPlot trajectoryPlot)
     {
         this.trajectoryPlot = trajectoryPlot;
+    }
+
+    /**
+     * @return lane.
+     */
+    public Lane getLane()
+    {
+        return this.lane;
     }
 
 }

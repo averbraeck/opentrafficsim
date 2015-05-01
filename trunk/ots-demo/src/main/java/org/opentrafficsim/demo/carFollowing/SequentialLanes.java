@@ -316,16 +316,16 @@ class SequentialModel implements OTSModelInterface
     private ArrayList<NodeGeotools.STR> nodes = new ArrayList<NodeGeotools.STR>();
 
     /** the car following model, e.g. IDM Plus for cars. */
-    protected GTUFollowingModel carFollowingModelCars;
+    private GTUFollowingModel carFollowingModelCars;
 
     /** the car following model, e.g. IDM Plus for trucks. */
-    protected GTUFollowingModel carFollowingModelTrucks;
+    private GTUFollowingModel carFollowingModelTrucks;
 
     /** The probability that the next generated GTU is a passenger car. */
-    double carProbability;
+    private double carProbability;
 
     /** The lane change model. */
-    protected AbstractLaneChangeModel laneChangeModel = new Egoistic();
+    private AbstractLaneChangeModel laneChangeModel = new Egoistic();
 
     /** the headway (inter-vehicle time). */
     private DoubleScalar.Rel<TimeUnit> headway;
@@ -334,7 +334,7 @@ class SequentialModel implements OTSModelInterface
     private int carsCreated = 0;
 
     /** Type of all GTUs. */
-    GTUType<String> gtuType = GTUType.makeGTUType("Car");
+    private GTUType<String> gtuType = GTUType.makeGTUType("Car");
 
     /** minimum distance. */
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
@@ -349,7 +349,7 @@ class SequentialModel implements OTSModelInterface
     private ArrayList<LaneBasedGTUSampler> plots = new ArrayList<LaneBasedGTUSampler>();
 
     /** The random number generator used to decide what kind of GTU to generate. */
-    Random randomGenerator = new Random(12345);
+    private Random randomGenerator = new Random(12345);
 
     /** User settable properties. */
     private ArrayList<AbstractProperty<?>> properties = null;
