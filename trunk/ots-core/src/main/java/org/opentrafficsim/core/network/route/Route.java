@@ -383,9 +383,8 @@ public class Route implements Serializable
                 }
                 else
                 {
-                    // There is a non-CrossSectionLink on the path to the next branch. These do
-                    // A non-CrossSectionLink does not have identifiable Lanes, therefore we can't aim for a particular
-                    // Lane
+                    // There is a non-CrossSectionLink on the path to the next branch. A non-CrossSectionLink does not 
+                    // have identifiable Lanes, therefore we can't aim for a particular Lane
                     return NOLANECHANGENEEDED; // Any Lane will do equally well
                 }
             }
@@ -504,7 +503,8 @@ public class Route implements Serializable
          * is more like it.
          * Rijkswaterstaat appears to use a fixed time for ANY number of lane changes (about 60s). 
          * TomTom navigation systems give more time (about 90s).
-         * In this method the returned suitability decreases linearly with the number of required lane changes.
+         * In this method the returned suitability decreases linearly with the number of required lane changes. This
+         * ensures that there is a gradient that coaches the GTU towards the most suitable lane.
          */
         int laneChangesUsed = 0;
         Lane currentLane = startLane;
