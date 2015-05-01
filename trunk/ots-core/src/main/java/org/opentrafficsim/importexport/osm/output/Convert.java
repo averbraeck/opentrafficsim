@@ -67,7 +67,7 @@ public final class Convert
     }
     
     /** Meridian of least distortion. */
-    static double baseX = Double.NaN;
+    private static double baseX = Double.NaN;
     /**
      * @param c Coordinate in WGS84
      * @return Coordinate in Geocentric Cartesian system
@@ -228,13 +228,13 @@ public final class Convert
                 switch (tag.getValue())
                 {
                     case "river":
-                        laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.boat);
+                        laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.BOAT);
                         break;
                     case "canal":
-                        laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.boat);
+                        laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.BOAT);
                         break;
                     default:
-                        laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.none);
+                        laneType = makeLaneType(GTUType.NONE);
                         break;
                 }
                 laneAttributes = new LaneAttributes(laneType, Color.CYAN, LongitudinalDirectionality.BOTH);
@@ -253,7 +253,7 @@ public final class Convert
                             || tag.getValue().equals("trunk_link") || tag.getValue().equals("road")
                             || tag.getValue().equals("track") || tag.getValue().equals("living_street")))
             {
-                laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.car);
+                laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.CAR);
                 if (osmLink.getLanes() == 1 && !osmLink.isOneway())
                 {
                     laneAttributes = new LaneAttributes(laneType, Color.LIGHT_GRAY, LongitudinalDirectionality.BOTH);
@@ -286,7 +286,7 @@ public final class Convert
                 {
                     if (t2.getKey().equals("bicycle"))
                     {
-                        types.add(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.bike);
+                        types.add(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.BIKE);
                     }
                     /*
                      * if (t2.getKey().equals("foot")) {
@@ -294,7 +294,7 @@ public final class Convert
                      */
                 }
                 laneType = makeLaneType(types);
-                types.add(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.pedestrian);
+                types.add(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.PEDESTRIAN);
                 if (!types.isEmpty())
                 {
                     if (osmLink.getLanes() == 1 && !osmLink.isOneway())
@@ -328,7 +328,7 @@ public final class Convert
         {
             if (tag.getKey().equals("cycleway"))
             {
-                laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.bike);
+                laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.BIKE);
                 switch (tag.getValue())
                 {
                     case "lane": // cycleway:lane is directly adjacent to the highway.
@@ -351,8 +351,8 @@ public final class Convert
                         break;
                     case "shared_lane": // cycleway:shared_lane is embedded into the highway.
                         List<GTUType<String>> types = new ArrayList<GTUType<String>>();
-                        types.add(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.bike);
-                        types.add(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.car);
+                        types.add(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.BIKE);
+                        types.add(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.CAR);
                         laneType = makeLaneType(types);
                         laneAttributes =
                                 new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.BACKWARD);
@@ -369,7 +369,7 @@ public final class Convert
         {
             if (tag.getKey().equals("sidewalk"))
             {
-                laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.pedestrian);
+                laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.PEDESTRIAN);
                 switch (tag.getValue())
                 {
                     case "both":
@@ -405,7 +405,7 @@ public final class Convert
                 if (tag.getValue().equals("footway") || tag.getValue().equals("pedestrian")
                         || tag.getValue().equals("steps"))
                 {
-                    laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.pedestrian);
+                    laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.PEDESTRIAN);
                     if (osmLink.getLanes() == 1 && !osmLink.isOneway())
                     {
                         laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.BOTH);
@@ -432,7 +432,7 @@ public final class Convert
                 }
                 if (tag.getValue().equals("cycleway"))
                 {
-                    laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.bike);
+                    laneType = makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.BIKE);
                     if (osmLink.getLanes() == 1 && !osmLink.isOneway())
                     {
                         laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.BOTH);
@@ -558,19 +558,19 @@ public final class Convert
             }
         }
         LaneType<?> laneType = laneAttributes.getLaneType();
-        if (laneType.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.car))
+        if (laneType.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.CAR))
         {
             return defaultLaneWidth;
         }
-        else if (laneType.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.bike))
+        else if (laneType.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.BIKE))
         {
             return 0.8d; // TODO German default bikepath width
         }
-        else if (laneType.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.pedestrian))
+        else if (laneType.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.PEDESTRIAN))
         {
             return 0.95d; // TODO German default footpath width
         }
-        else if (laneType.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.boat))
+        else if (laneType.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.BOAT))
         {
             for (OSMTag tag : link.getTags())
             {
@@ -820,7 +820,7 @@ class LaneAttributes
     {
         if (lt == null)
         {
-            this.laneType = Convert.makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.none);
+            this.laneType = Convert.makeLaneType(GTUType.NONE);
         }
         else
         {
@@ -841,7 +841,7 @@ class LaneAttributes
     {
         if (laneType == null)
         {
-            this.laneType = Convert.makeLaneType(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.none);
+            this.laneType = Convert.makeLaneType(GTUType.NONE);
         }
         else
         {

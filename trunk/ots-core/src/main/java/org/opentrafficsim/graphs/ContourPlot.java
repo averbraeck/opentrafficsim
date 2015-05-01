@@ -63,13 +63,13 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     private final String caption;
 
     /** Color scale for the graph. */
-    final ContinuousColorPaintScale paintScale;
+    private final ContinuousColorPaintScale paintScale;
 
     /** Definition of the X-axis. */
-    final Axis xAxis;
+    protected final Axis xAxis;
 
     /** Definition of the Y-axis. */
-    final Axis yAxis;
+    protected final Axis yAxis;
 
     /** Difference of successive values in the legend. */
     private final double legendStep;
@@ -108,7 +108,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @param index int; the index of the path element; if -1, the total length of the path is returned
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the cumulative length at the end of the specified path element
      */
-    public final DoubleScalar.Rel<LengthUnit> getCumulativeLength(int index)
+    public final DoubleScalar.Rel<LengthUnit> getCumulativeLength(final int index)
     {
         int useIndex = -1 == index ? this.cumulativeLengths.size() - 1 : index;
         try
@@ -389,7 +389,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     }
 
     /** Cached result of yAxisBins. */
-    int cachedYAxisBins = -1;
+    private int cachedYAxisBins = -1;
 
     /**
      * Retrieve the number of cells to use along the distance axis.
@@ -436,7 +436,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     }
 
     /** Cached result of xAxisBins. */
-    int cachedXAxisBins = -1;
+    private int cachedXAxisBins = -1;
 
     /**
      * Retrieve the number of cells to use along the time axis.
@@ -453,7 +453,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     }
 
     /** Cached result of getItemCount. */
-    int cachedItemCount = -1;
+    private int cachedItemCount = -1;
 
     /** {@inheritDoc} */
     @Override
