@@ -144,7 +144,7 @@ public class FundamentalDiagrams implements WrappableSimulation
      * make the stand-alone plots for the model and put them in the statistics panel.
      * @param model FundamentalDiagramPlotsModel; the model.
      * @param panel DSOLPanel
-     * @throws NetworkException
+     * @throws NetworkException on network inconsistency
      */
     private static void makePlots(final FundamentalDiagramPlotsModel model,
             final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
@@ -159,7 +159,7 @@ public class FundamentalDiagrams implements WrappableSimulation
                     new DoubleScalar.Rel<LengthUnit>(400 + 500 * plotNumber, LengthUnit.METER);
             FundamentalDiagram fd =
                     new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getSI() + "m",
-                            new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.MINUTE), model.lane, detectorLocation);
+                            new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.MINUTE), model.getLane(), detectorLocation);
             fd.setTitle("Density Contour Graph");
             fd.setExtendedState(Frame.MAXIMIZED_BOTH);
             model.getFundamentalDiagrams().add(fd);
@@ -248,22 +248,19 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
     private int carsCreated = 0;
 
     /** the car following model, e.g. IDM Plus for cars. */
-    protected GTUFollowingModel carFollowingModelCars;
+    private GTUFollowingModel carFollowingModelCars;
 
     /** the car following model, e.g. IDM Plus for trucks. */
-    protected GTUFollowingModel carFollowingModelTrucks;
+    private GTUFollowingModel carFollowingModelTrucks;
 
     /** The probability that the next generated GTU is a passenger car. */
-    double carProbability;
+    private double carProbability;
 
     /** The lane change model. */
-    protected AbstractLaneChangeModel laneChangeModel = new Egoistic();
-
-    /** cars in the model. */
-    ArrayList<LaneBasedIndividualCar<Integer>> cars = new ArrayList<LaneBasedIndividualCar<Integer>>();
+    private AbstractLaneChangeModel laneChangeModel = new Egoistic();
 
     /** The blocking car. */
-    LaneBasedIndividualCar<Integer> block = null;
+    private LaneBasedIndividualCar<Integer> block = null;
 
     /** minimum distance. */
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
@@ -272,19 +269,19 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
     private DoubleScalar.Rel<LengthUnit> maximumDistance = new DoubleScalar.Rel<LengthUnit>(5000, LengthUnit.METER);
 
     /** The Lane containing the simulated Cars. */
-    Lane lane;
+    private Lane lane;
 
     /** the speed limit. */
-    DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+    private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
     /** the fundamental diagram plots. */
     private ArrayList<FundamentalDiagram> fundamentalDiagrams = new ArrayList<FundamentalDiagram>();
 
     /** User settable properties. */
-    ArrayList<AbstractProperty<?>> properties = null;
+    private ArrayList<AbstractProperty<?>> properties = null;
 
     /** The random number generator used to decide what kind of GTU to generate. */
-    Random randomGenerator = new Random(12345);
+    private Random randomGenerator = new Random(12345);
 
     /**
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
@@ -413,7 +410,7 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(4000, LengthUnit.METER);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
                 new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
-        initialPositions.put(this.lane, initialPosition);
+        initialPositions.put(this.getLane(), initialPosition);
         try
         {
             this.block =
@@ -448,7 +445,7 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
                 new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
-        initialPositions.put(this.lane, initialPosition);
+        initialPositions.put(this.getLane(), initialPosition);
         try
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength =
@@ -514,6 +511,14 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
     public final DoubleScalar.Rel<LengthUnit> getMaximumDistance()
     {
         return this.maximumDistance;
+    }
+
+    /**
+     * @return lane.
+     */
+    public Lane getLane()
+    {
+        return this.lane;
     }
 
 }

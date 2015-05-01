@@ -68,7 +68,7 @@ public final class ShapeFileReader
      * @return map of (shape file) nodes with nodenr as the key
      * @throws IOException on error
      */
-    public static Map<String, NodeGeotools.STR> ReadNodes(final String shapeFileName, final String numberType,
+    public static Map<String, NodeGeotools.STR> readNodes(final String shapeFileName, final String numberType,
             final boolean returnCentroid, final boolean allCentroids) throws IOException
     {
         /*-
@@ -340,12 +340,12 @@ public final class ShapeFileReader
     }
 
     /**
-     * @param link the link.
-     * @param wegType wegtype.
-     * @param simulator animator.
-     * @throws NamingException in case of context error.
-     * @throws RemoteException in case of context error.
-     * @throws NetworkException
+     * @param link the link
+     * @param wegType wegtype
+     * @param simulator animator
+     * @throws NamingException in case of context error
+     * @throws RemoteException in case of context error
+     * @throws NetworkException on network inconsistency
      */
     private static void animate(final CrossSectionLink link, final String wegType, final OTSSimulatorInterface simulator)
             throws RemoteException, NamingException, NetworkException
@@ -357,26 +357,42 @@ public final class ShapeFileReader
             int spits = 0;
             int n = 1;
             if (wegType.contains("2x2"))
+            {
                 n = 2;
+            }
             if (wegType.contains("2x3"))
+            {
                 n = 3;
+            }
             if (wegType.contains("2x4"))
+            {
                 n = 4;
+            }
             if (wegType.contains("2x5"))
+            {
                 n = 5;
+            }
             if (wegType.contains("+ 1") || wegType.contains("+1"))
+            {
                 spits = 1;
+            }
             if (wegType.contains("+ 2") || wegType.contains("+2"))
+            {
                 spits = 2;
+            }
             addNLanes(n, spits, link, simulator);
         }
         if (wegType.startsWith("stads"))
         {
             int n = 1;
             if (wegType.contains("2x2"))
+            {
                 n = 2;
+            }
             if (wegType.contains("2x3"))
+            {
                 n = 3;
+            }
             boolean middenberm = wegType.contains("met middenberm");
             addCityStreetLanes(n, middenberm, link, simulator);
         }
@@ -387,11 +403,11 @@ public final class ShapeFileReader
     }
 
     /**
-     * @param n aantal stroken per zijde.
-     * @param spits aantal spitsstroken.
-     * @param link link.
-     * @param simulator animator.
-     * @throws NetworkException
+     * @param n aantal stroken per zijde
+     * @param spits aantal spitsstroken
+     * @param link link
+     * @param simulator animator
+     * @throws NetworkException on network inconsistency
      */
     private static void addNLanes(final int n, final int spits, final CrossSectionLink link,
             final OTSSimulatorInterface simulator) throws NetworkException
@@ -459,11 +475,11 @@ public final class ShapeFileReader
     }
 
     /**
-     * @param n aantal stroken per zijde.
-     * @param middenberm aanwezig of niet.
-     * @param link link.
-     * @param simulator animator.
-     * @throws NetworkException
+     * @param n aantal stroken per zijde
+     * @param middenberm aanwezig of niet
+     * @param link link
+     * @param simulator animator
+     * @throws NetworkException on network inconsistency
      */
     private static void addCityStreetLanes(final int n, final boolean middenberm, final CrossSectionLink link,
             final OTSSimulatorInterface simulator) throws NetworkException
@@ -506,9 +522,9 @@ public final class ShapeFileReader
     }
 
     /**
-     * @param link link.
-     * @param simulator animator.
-     * @throws NetworkException
+     * @param link link
+     * @param simulator animator
+     * @throws NetworkException on network inconsistency
      */
     private static void addCityStreet(final CrossSectionLink link, final OTSSimulatorInterface simulator)
             throws NetworkException

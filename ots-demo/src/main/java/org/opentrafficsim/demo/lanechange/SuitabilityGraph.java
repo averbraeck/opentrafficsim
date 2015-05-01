@@ -76,17 +76,17 @@ public class SuitabilityGraph implements OTSModelInterface
     private static final int[] TARGETLANES = {1, 2, -2, -1};
 
     /** Time horizon for lane changes. */
-    DoubleScalar.Rel<TimeUnit> timeHorizon = new DoubleScalar.Rel<TimeUnit>(100, TimeUnit.SECOND);
+    private DoubleScalar.Rel<TimeUnit> timeHorizon = new DoubleScalar.Rel<TimeUnit>(100, TimeUnit.SECOND);
 
     /** Time range for graphs (also adjusts distance range). */
-    DoubleScalar.Rel<TimeUnit> timeRange = new DoubleScalar.Rel<TimeUnit>(110, TimeUnit.SECOND);
+    private DoubleScalar.Rel<TimeUnit> timeRange = new DoubleScalar.Rel<TimeUnit>(110, TimeUnit.SECOND);
 
     /** Colors that correspond to the lanes; taken from electrical resistor color codes. */
     private static final Color[] COLORTABLE = {new Color(160, 82, 45) /* brown */, Color.RED, Color.ORANGE,
             Color.YELLOW, Color.GREEN, Color.BLUE, new Color(199, 21, 133) /* violet */, Color.GRAY, Color.WHITE};
 
     /** The graphs. */
-    JFreeChart[][] charts;
+    private JFreeChart[][] charts;
 
     /**
      * Start the program.
@@ -291,13 +291,13 @@ class SuitabilityData implements XYDataset
 {
 
     /** The X values. */
-    ArrayList<ArrayList<Double>> xValues = new ArrayList<ArrayList<Double>>();
+    private ArrayList<ArrayList<Double>> xValues = new ArrayList<ArrayList<Double>>();
 
     /** The Y values. */
-    ArrayList<ArrayList<Double>> yValues = new ArrayList<ArrayList<Double>>();
+    private ArrayList<ArrayList<Double>> yValues = new ArrayList<ArrayList<Double>>();
 
     /** The names of the series. */
-    ArrayList<String> seriesKeys = new ArrayList<String>();
+    private ArrayList<String> seriesKeys = new ArrayList<String>();
 
     /** List of parties interested in changes of this ContourPlot. */
     private transient EventListenerList listenerList = new EventListenerList();

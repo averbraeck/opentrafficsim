@@ -85,26 +85,25 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
     /** Standard speed values in km/h. */
     static final double[] STANDARDSPEEDS = {30, 50, 80, 100, 120};
 
-    /** The main window. */
-    LaneChangeGraph mainWindow;
-
     /** The car following model. */
-    GTUFollowingModel carFollowingModel;
+    private GTUFollowingModel carFollowingModel;
 
     /** The graphs. */
-    ChartPanel[][] charts;
+    private ChartPanel[][] charts;
 
     /** Start of two lane road. */
-    static final DoubleScalar.Rel<LengthUnit> LOWERBOUND = new DoubleScalar.Rel<LengthUnit>(-500, LengthUnit.METER);
+    private static final DoubleScalar.Rel<LengthUnit> LOWERBOUND = new DoubleScalar.Rel<LengthUnit>(-500,
+            LengthUnit.METER);
 
     /** Position of reference vehicle on the two lane road. */
-    static final DoubleScalar.Rel<LengthUnit> MIDPOINT = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
+    private static final DoubleScalar.Rel<LengthUnit> MIDPOINT = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
 
     /** End of two lane road. */
-    static final DoubleScalar.Rel<LengthUnit> UPPERBOUND = new DoubleScalar.Rel<LengthUnit>(500, LengthUnit.METER);
+    private static final DoubleScalar.Rel<LengthUnit> UPPERBOUND = new DoubleScalar.Rel<LengthUnit>(500,
+            LengthUnit.METER);
 
     /** The JFrame with the lane change graphs. */
-    static LaneChangeGraph lcs;
+    private static LaneChangeGraph lcs;
 
     /**
      * Create a Lane Change Graph.
@@ -268,7 +267,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
      * @throws RemoteException on communications failure
      * @throws NamingException on ???
      * @throws NetworkException on network inconsistency
-     * @throws SimRuntimeExceptino on ???
+     * @throws SimRuntimeException on ???
      * @throws GTUException on error during GTU construction
      */
     private DoubleScalar.Rel<LengthUnit> findDecisionPoint(DoubleScalar.Rel<LengthUnit> low,
@@ -420,7 +419,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
                         new DoubleScalar.Rel<AccelerationUnit>(0.1, AccelerationUnit.METER_PER_SECOND_2),
                         new DoubleScalar.Rel<AccelerationUnit>(-0.3, AccelerationUnit.METER_PER_SECOND_2));
         // System.out.println(result);
-        sameLaneGTUs.remove(otherCar);
+        sameLaneGTUs.remove(otherGTU);
         otherCar.destroy();
         return result;
     }
@@ -428,7 +427,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
     /**
      * @param caption String; the caption for the chart
      * @param speed double; the speed of the reference vehicle
-     * @return
+     * @return new JFreeChart
      */
     private JFreeChart createChart(final String caption, final double speed)
     {
@@ -457,7 +456,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+    public void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> simulator)
             throws SimRuntimeException, RemoteException
     {
         // Do nothing
@@ -465,7 +464,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+            throws RemoteException
     {
         return null;
     }
@@ -477,13 +477,13 @@ class ChartData implements XYDataset
 {
 
     /** The X values. */
-    ArrayList<ArrayList<Double>> xValues = new ArrayList<ArrayList<Double>>();
+    private ArrayList<ArrayList<Double>> xValues = new ArrayList<ArrayList<Double>>();
 
     /** The Y values. */
-    ArrayList<ArrayList<Double>> yValues = new ArrayList<ArrayList<Double>>();
+    private ArrayList<ArrayList<Double>> yValues = new ArrayList<ArrayList<Double>>();
 
     /** The names of the series. */
-    ArrayList<String> seriesKeys = new ArrayList<String>();
+    private ArrayList<String> seriesKeys = new ArrayList<String>();
 
     /** List of parties interested in changes of this ContourPlot. */
     private transient EventListenerList listenerList = new EventListenerList();

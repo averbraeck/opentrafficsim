@@ -92,7 +92,7 @@ public class XMLNetworks implements WrappableSimulation
     {
         this.properties.add(new SelectionProperty("Network", "Network", new String[]{"Merge 1 plus 1 into 1",
                 "Merge 2 plus 1 into 2", "Merge 2 plus 2 into 4", "Split 1 into 1 plus 1", "Split 2 into 1 plus 2",
-                "Split 4 into 2 plus 2",}, 0, false, 0));
+                "Split 4 into 2 plus 2"}, 0, false, 0));
         this.properties.add(new ContinuousProperty("Flow per input lane", "Traffic flow per input lane", 500d, 0d,
                 3000d, "%.0f veh/h", false, 1));
     }
@@ -174,7 +174,7 @@ class XMLNetworkModel implements OTSModelInterface
     private ArrayList<LaneBasedGTUSampler> plots = new ArrayList<LaneBasedGTUSampler>();
 
     /** User settable properties. */
-    ArrayList<AbstractProperty<?>> properties = null;
+    private ArrayList<AbstractProperty<?>> properties = null;
 
     /** The sequence of Lanes that all vehicles will follow. */
     private ArrayList<List<Lane>> paths = new ArrayList<List<Lane>>();
@@ -195,7 +195,7 @@ class XMLNetworkModel implements OTSModelInterface
     private int carsCreated = 0;
 
     /** type of all GTUs (required to permit lane changing). */
-    GTUType<String> gtuType = GTUType.makeGTUType("Car");
+    private GTUType<String> gtuType = GTUType.makeGTUType("Car");
 
     /** the car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModel carFollowingModelCars;
@@ -204,7 +204,7 @@ class XMLNetworkModel implements OTSModelInterface
     private GTUFollowingModel carFollowingModelTrucks;
 
     /** The lane change model. */
-    protected AbstractLaneChangeModel laneChangeModel = new Egoistic();
+    private AbstractLaneChangeModel laneChangeModel = new Egoistic();
 
     /** The probability that the next generated GTU is a passenger car. */
     private double carProbability;

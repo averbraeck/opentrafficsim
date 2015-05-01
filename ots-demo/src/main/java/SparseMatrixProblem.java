@@ -11,8 +11,15 @@ import cern.colt.matrix.tfloat.impl.SparseFloatMatrix2D;
  * @version Aug 26, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SparseMatrixProblem
+public final class SparseMatrixProblem
 {
+    /**
+     * This class should never be instantiated.
+     */
+    private SparseMatrixProblem()
+    {
+        // This class should never be instantiated.
+    }
 
     /**
      * Execute the demo.

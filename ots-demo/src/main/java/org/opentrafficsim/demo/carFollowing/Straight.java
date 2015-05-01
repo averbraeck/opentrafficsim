@@ -334,7 +334,7 @@ class StraightModel implements OTSModelInterface
     private int carsCreated = 0;
 
     /** Type of all GTUs. */
-    GTUType<String> gtuType = GTUType.makeGTUType("Car");
+    private GTUType<String> gtuType = GTUType.makeGTUType("Car");
 
     /** the car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModel carFollowingModelCars;
@@ -346,10 +346,7 @@ class StraightModel implements OTSModelInterface
     private double carProbability;
 
     /** The lane change model. */
-    protected AbstractLaneChangeModel laneChangeModel = new Egoistic();
-
-    /** cars in the model. */
-    // private ArrayList<Car<Integer>> cars = new ArrayList<Car<Integer>>();
+    private  AbstractLaneChangeModel laneChangeModel = new Egoistic();
 
     /** The blocking car. */
     private LaneBasedIndividualCar<Integer> block = null;

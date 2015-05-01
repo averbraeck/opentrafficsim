@@ -48,7 +48,7 @@ public class ShapeModel implements OTSModelInterface
         try
         {
             // Read the shape files with the function:
-            this.nodes = ShapeFileReader.ReadNodes("/gis/TESTcordonnodes.shp", "NODENR", true, true);
+            this.nodes = ShapeFileReader.readNodes("/gis/TESTcordonnodes.shp", "NODENR", true, true);
             this.shpLinks = new HashMap<>();
             ShapeFileReader.readLinks("/gis/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.nodes, this.simulator);
 

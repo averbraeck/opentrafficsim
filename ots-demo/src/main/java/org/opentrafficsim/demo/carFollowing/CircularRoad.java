@@ -129,10 +129,10 @@ public class CircularRoad implements WrappableSimulation
                 try
                 {
                     CircularRoad circularRoad = new CircularRoad();
-                    ArrayList<AbstractProperty<?>> properties = circularRoad.getProperties();
+                    ArrayList<AbstractProperty<?>> propertyList = circularRoad.getProperties();
                     try
                     {
-                        properties.add(new ProbabilityDistributionProperty("Traffic composition",
+                        propertyList.add(new ProbabilityDistributionProperty("Traffic composition",
                                 "<html>Mix of passenger cars and trucks</html>",
                                 new String[]{"passenger car", "truck"}, new Double[]{0.8, 0.2}, false, 10));
                     }
@@ -140,21 +140,21 @@ public class CircularRoad implements WrappableSimulation
                     {
                         exception.printStackTrace();
                     }
-                    properties.add(new SelectionProperty("Car following model",
+                    propertyList.add(new SelectionProperty("Car following model",
                             "<html>The car following model determines "
                                     + "the acceleration that a vehicle will make taking into account "
                                     + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                                     + "curvature of the road) capabilities of the vehicle and personality "
                                     + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
-                    properties.add(IDMPropertySet.makeIDMPropertySet("Car", new DoubleScalar.Abs<AccelerationUnit>(1.0,
+                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Car", new DoubleScalar.Abs<AccelerationUnit>(1.0,
                             AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
                             AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0,
                             LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 2));
-                    properties.add(IDMPropertySet.makeIDMPropertySet("Truck", new DoubleScalar.Abs<AccelerationUnit>(
+                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Truck", new DoubleScalar.Abs<AccelerationUnit>(
                             0.5, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.25,
                             AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0,
                             LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 3));
-                    new SimulatorFrame("Circular Road animation", circularRoad.buildSimulator(properties).getPanel());
+                    new SimulatorFrame("Circular Road animation", circularRoad.buildSimulator(propertyList).getPanel());
                 }
                 catch (RemoteException | SimRuntimeException | NamingException exception)
                 {
@@ -172,7 +172,7 @@ public class CircularRoad implements WrappableSimulation
      * @throws SimRuntimeException on ???
      * @throws NamingException when context for the animation cannot be created
      */
-    public SimpleSimulator buildSimulator(final ArrayList<AbstractProperty<?>> userModifiedProperties)
+    public final SimpleSimulator buildSimulator(final ArrayList<AbstractProperty<?>> userModifiedProperties)
             throws RemoteException, SimRuntimeException, NamingException
     {
         RoadSimulationModel model = new RoadSimulationModel(userModifiedProperties);
@@ -313,40 +313,40 @@ class RoadSimulationModel implements OTSModelInterface
     private static final long serialVersionUID = 20141121L;
 
     /** the simulator. */
-    OTSDEVSSimulatorInterface simulator;
+    private OTSDEVSSimulatorInterface simulator;
 
     /** Number of cars created. */
     private int carsCreated = 0;
 
     /** the car following model, e.g. IDM Plus for cars. */
-    protected GTUFollowingModel carFollowingModelCars;
+    private GTUFollowingModel carFollowingModelCars;
 
     /** the car following model, e.g. IDM Plus for trucks. */
-    protected GTUFollowingModel carFollowingModelTrucks;
+    private GTUFollowingModel carFollowingModelTrucks;
 
     /** The probability that the next generated GTU is a passenger car. */
-    double carProbability;
+    private double carProbability;
 
     /** The lane change model. */
-    protected AbstractLaneChangeModel laneChangeModel;
+    private AbstractLaneChangeModel laneChangeModel;
 
     /** Minimum distance. */
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
 
     /** The speed limit. */
-    DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+    private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
     /** The plots. */
     private ArrayList<LaneBasedGTUSampler> plots = new ArrayList<LaneBasedGTUSampler>();
 
     /** User settable properties. */
-    ArrayList<AbstractProperty<?>> properties = null;
+    private ArrayList<AbstractProperty<?>> properties = null;
 
     /** The sequence of Lanes that all vehicles will follow. */
     private ArrayList<List<Lane>> paths = new ArrayList<List<Lane>>();
 
     /** The random number generator used to decide what kind of GTU to generate. */
-    Random randomGenerator = new Random(12345);
+    private Random randomGenerator = new Random(12345);
 
     /**
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
@@ -492,11 +492,6 @@ class RoadSimulationModel implements OTSModelInterface
                         {
                             throw new Error("Cannot determine gtu type for " + ap.getShortName());
                         }
-                        /*
-                         * System.out.println("Created " + carFollowingModelName + " for " + p.getShortName());
-                         * System.out.println("a: " + a); System.out.println("b: " + b); System.out.println("s0: " +
-                         * s0); System.out.println("tSafe: " + tSafe);
-                         */
                     }
                 }
             }

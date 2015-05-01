@@ -16,8 +16,16 @@ import cern.colt.matrix.tfloat.impl.SparseCCFloatMatrix2D;
  * @version 6 mrt. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class DeterminantProblem
+public final class DeterminantProblem
 {
+    /**
+     * This class should never be instantiated.
+     */
+    private DeterminantProblem()
+    {
+        // This class should never be instantiated.
+    }
+    
     /**
      * Execute the demo.
      * @param args String[]; not used
