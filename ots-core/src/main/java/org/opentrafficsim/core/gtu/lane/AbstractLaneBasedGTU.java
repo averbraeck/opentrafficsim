@@ -345,37 +345,12 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{defaultLeftLaneIncentive.getSI(),
                         STAYINCURRENTLANEINCENTIVE.getSI(), defaultRightLaneIncentive.getSI()}, AccelerationUnit.SI);
         DoubleVector.Rel.Dense<AccelerationUnit> laneIncentives = laneIncentives(defaultLaneIncentives);
-        // DoubleScalar.Rel<AccelerationUnit> stayInCurrentLaneIncentive = laneIncentive(null,
-        // STAYINCURRENTLANEINCENTIVE);
-        // DoubleScalar.Rel<AccelerationUnit> preferredLaneIncentive = laneIncentive(preferred, PREFERREDLANEINCENTIVE);
-        // DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneIncentive =
-        // laneIncentive(nonPreferred, NONPREFERREDLANEINCENTIVE);
         LaneMovementStep lcmr =
                 this.laneChangeModel.computeLaneChangeAndAcceleration(this, sameLaneTraffic, rightLaneTraffic,
                         leftLaneTraffic, speedLimit,
                         laneIncentives.get(preferred == LateralDirectionality.RIGHT ? 2 : 0), laneIncentives.get(1),
                         laneIncentives.get(preferred == LateralDirectionality.RIGHT ? 0 : 2));
-        /*-
-        // Oops; must convert a Rel into an Abs
-        DoubleScalar.Abs<AccelerationUnit> currentLaneIncentive =
-                new DoubleScalar.Abs<AccelerationUnit>(laneIncentives.getSI(1), AccelerationUnit.SI);
-        if (null == lcmr.getLaneChange()
-                && laneIncentives.get(1).ne(STAYINCURRENTLANEINCENTIVE)
-                && (laneIncentives.get(0).getSI() != Double.NEGATIVE_INFINITY || laneIncentives.get(2).getSI() 
-                        != Double.NEGATIVE_INFINITY)
-                && lcmr.getGfmr().getAcceleration().gt(currentLaneIncentive)
-                && getLongitudinalVelocity().getSI() + currentLaneIncentive.getSI()
-         * (lcmr.getGfmr().getValidUntil().getSI() - getSimulator().getSimulatorTime().get().getSI()) > 0
-                && !(getGTUFollowingModel() instanceof FixedAccelerationModel))
-        {
-            // Must slow down (looking for a gap)
-            System.out
-                    .println("Overriding gfmr of " + this + " from " + lcmr.getGfmr() + " to " + currentLaneIncentive);
-            lcmr =
-                    new LaneMovementStep(new AccelerationStep(currentLaneIncentive, lcmr.getGfmr().getValidUntil()),
-                            null);
-        }
-         */
+        // TODO: detect that a required lane change was blocked and, if it was, do something to find/create a gap. 
         if (lcmr.getGfmr().getAcceleration().getSI() < -9999)
         {
             System.out.println("Problem");
@@ -453,13 +428,11 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 checkConsistency();
             }
         }
-        // The GTU is now committed to executed the movement
+        // The GTU is now committed to executed the entire movement stored in the LaneChangeModelResult
         // Schedule all sensor triggers that are going to happen until the next evaluation time.
         scheduleTriggers();
         // Re-schedule this move method at the end of the committed time step.
         getSimulator().scheduleEventAbs(this.getNextEvaluationTime(), this, this, "move", null);
-        // System.out.println("t=" + this.getSimulator().getSimulatorTime().get() + ", " + this + " a="
-        // + getAcceleration().getSI());
     }
 
     /**

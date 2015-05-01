@@ -209,5 +209,7 @@ public class RouteTest
             // Ignore expected exception
         }
     }
+
+    // TODO write JUnit test for the suitability method (has to wait for the XML network lane parser).
     
 }
