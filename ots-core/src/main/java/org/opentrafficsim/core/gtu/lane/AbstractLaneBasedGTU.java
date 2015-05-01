@@ -21,8 +21,6 @@ import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.following.AccelerationStep;
-import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.HeadwayGTU;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
@@ -292,11 +290,11 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             System.out.println("negative velocity: " + this + " " + getLateralVelocity().getSI() + "m/s");
         }
-        if (getId().toString().equals("2") && getSimulator().getSimulatorTime().get().getSI() > 12)
-        {
-            System.out.println("Debug me: " + getSimulator().getSimulatorTime() + " " + this + " " + this.getRoute()
-                    + " " + this.getLongitudinalVelocity().getSI());
-        }
+        // if (getId().toString().equals("2") && getSimulator().getSimulatorTime().get().getSI() > 12)
+        // {
+        // System.out.println("Debug me: " + getSimulator().getSimulatorTime() + " " + this + " " + this.getRoute()
+        // + " " + this.getLongitudinalVelocity().getSI());
+        // }
         // Quick sanity check
         if (getSimulator().getSimulatorTime().get().getSI() != getNextEvaluationTime().getSI())
         {
@@ -363,10 +361,11 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 new DoubleScalar.Abs<AccelerationUnit>(laneIncentives.getSI(1), AccelerationUnit.SI);
         if (null == lcmr.getLaneChange()
                 && laneIncentives.get(1).ne(STAYINCURRENTLANEINCENTIVE)
-                && (laneIncentives.get(0).getSI() != Double.NEGATIVE_INFINITY || laneIncentives.get(2).getSI() != Double.NEGATIVE_INFINITY)
+                && (laneIncentives.get(0).getSI() != Double.NEGATIVE_INFINITY || laneIncentives.get(2).getSI() 
+                        != Double.NEGATIVE_INFINITY)
                 && lcmr.getGfmr().getAcceleration().gt(currentLaneIncentive)
                 && getLongitudinalVelocity().getSI() + currentLaneIncentive.getSI()
-                        * (lcmr.getGfmr().getValidUntil().getSI() - getSimulator().getSimulatorTime().get().getSI()) > 0
+         * (lcmr.getGfmr().getValidUntil().getSI() - getSimulator().getSimulatorTime().get().getSI()) > 0
                 && !(getGTUFollowingModel() instanceof FixedAccelerationModel))
         {
             // Must slow down (looking for a gap)
@@ -376,7 +375,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                     new LaneMovementStep(new AccelerationStep(currentLaneIncentive, lcmr.getGfmr().getValidUntil()),
                             null);
         }
-        */
+         */
         if (lcmr.getGfmr().getAcceleration().getSI() < -9999)
         {
             System.out.println("Problem");
@@ -539,12 +538,14 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /**
      * Return the distance until the next lane drop in the specified (nearby) lane.
-     * @param direction
+     * @param direction LateralDirectionality; one of the values <cite>LateralDirectionality.LEFT</cite> (use the
+     *            left-adjacent lane), or <cite>LateralDirectionality.RIGHT</cite> (use the right-adjacent lane), or
+     *            <cite>null</cite> (use the current lane)
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; distance until the next lane drop if it occurs within the
      *         TIMEHORIZON, or Route.NOLANECHANGENEEDED if this lane can be followed until the next split junction or
      *         until beyond the TIMEHORIZON
-     * @throws NetworkException
-     * @throws RemoteException
+     * @throws NetworkException on network inconsistency
+     * @throws RemoteException on communications failure
      */
     private DoubleScalar.Rel<LengthUnit> laneDrop(final LateralDirectionality direction) throws NetworkException,
             RemoteException
@@ -717,11 +718,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                     lane.nextLanes().iterator().next()
                             .scheduleTriggers(this, -remainingDistanceSI - getFront().getDx().getSI(), moveSI);
                 }
-                else if (0 == branching)
-                {
-                    // throw new NetworkException("nextLanes of " + lane + " is empty set");
-                }
-                else
+                else if (branching > 1)
                 {
                     if (null == this.getRoute())
                     {

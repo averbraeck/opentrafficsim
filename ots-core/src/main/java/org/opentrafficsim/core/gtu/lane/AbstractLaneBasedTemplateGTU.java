@@ -34,7 +34,7 @@ public abstract class AbstractLaneBasedTemplateGTU<ID> extends AbstractLaneBased
     private static final long serialVersionUID = 20140822L;
 
     /** The TemplateGTUType. */
-    TemplateGTUType<?> templateGTUType;
+    private TemplateGTUType<?> templateGTUType;
 
     /**
      * @param id the id of the GTU, could be String or Integer
