@@ -28,7 +28,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 public class DefaultCarAnimation extends Renderable2D
 {
     /** Color of this car. */
-    private final Color color; 
+    private final Color color;
 
     /** Counter used to cycle through the colors in colorTable. */
     private static int nextIndex = 0;
@@ -44,7 +44,16 @@ public class DefaultCarAnimation extends Renderable2D
             throws NamingException, RemoteException
     {
         super(source, simulator);
-        this.color = COLORTABLE[++nextIndex % COLORTABLE.length];
+        this.color = COLORTABLE[nextIndex() % COLORTABLE.length];
+    }
+
+    /**
+     * Increment nextIndex and return the result.
+     * @return int; the total number of calls to this method
+     */
+    synchronized private static int nextIndex()
+    {
+        return ++nextIndex;
     }
 
     /**
@@ -60,7 +69,7 @@ public class DefaultCarAnimation extends Renderable2D
         final LaneBasedIndividualCar<?> car = (LaneBasedIndividualCar<?>) getSource();
         final double length = car.getLength().getSI();
         final double width = car.getWidth().getSI();
-        graphics.setColor(this.color);
+        graphics.setColor(car.animationColor());
         BasicStroke saveStroke = (BasicStroke) graphics.getStroke();
         graphics.setStroke(new BasicStroke(0));
         Rectangle2D rectangle = new Rectangle2D.Double(-length / 2, -width / 2, length, width);
@@ -72,6 +81,15 @@ public class DefaultCarAnimation extends Renderable2D
         graphics.draw(frontIndicator);
         graphics.fill(frontIndicator);
         graphics.setStroke(saveStroke);
+    }
+
+    /**
+     * Retrieve the rank based color of the GTU
+     * @return Color
+     */
+    public Color getColor()
+    {
+        return this.color;
     }
 
     /** {@inheritDoc} */
