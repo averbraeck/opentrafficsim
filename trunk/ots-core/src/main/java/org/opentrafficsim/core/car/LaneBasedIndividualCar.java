@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.car;
 
+import java.awt.Color;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
@@ -27,6 +28,7 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * <p>
@@ -46,6 +48,15 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
 
     /** animation. */
     private Renderable2D animation;
+    
+    /**
+     * Return the color that the body of this GTU will be filled with.
+     * @return Color
+     */
+    public final Color animationColor()
+    {
+        return ((DefaultCarAnimation) this.animation).getColor();
+    }
 
     /** Sensing positions. */
     private final Map<RelativePosition.TYPE, RelativePosition> relativePositions = new LinkedHashMap<>();
@@ -407,7 +418,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         {
             return this.route;
         }
-
+        
         /**
          * @return gtuType.
          */
@@ -509,4 +520,5 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         }
 
     }
+
 }

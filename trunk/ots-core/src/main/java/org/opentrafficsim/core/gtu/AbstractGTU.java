@@ -1,6 +1,10 @@
 package org.opentrafficsim.core.gtu;
 
+import java.rmi.RemoteException;
+
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -25,6 +29,9 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
     
     /** Route of the gtu to follow. */
     private Route route = null;
+    
+    /** Total traveled distance. */
+    protected DoubleScalar.Abs<LengthUnit> odometer = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.SI);
 
     /**
      * @param id the id of the GTU, could be String or Integer
@@ -81,5 +88,12 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
     {
         return RelativePosition.REFERENCE_POSITION;
     }
+    
+    /**
+     * Retrieve the odometer value.
+     * @return DoubleScalar.Abs&lt;LengthUnit&gt;; the current odometer value
+     * @throws RemoteException on communications failure
+     */
+    public abstract DoubleScalar.Abs<LengthUnit> getOdometer() throws RemoteException;
 
 }

@@ -124,9 +124,10 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @return the lanes and the position on the lanes where the GTU will be registered at the time, for the given position of
      *         the GTU.
      * @throws NetworkException when the vehicle is not on one of the lanes on which it is registered.
+     * @throws RemoteException on communications failure
      */
     Map<Lane, DoubleScalar.Rel<LengthUnit>> positions(RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
-        throws NetworkException;
+        throws NetworkException, RemoteException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane at the current
@@ -147,9 +148,10 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @param when the future time for which to calculate the positions.
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position, relative to the center line of the Lane.
      * @throws NetworkException when the vehicle is not on the given lane.
+     * @throws RemoteException  on communications failure
      */
     DoubleScalar.Rel<LengthUnit> position(Lane lane, RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
-        throws NetworkException;
+        throws NetworkException, RemoteException;
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
@@ -171,9 +173,10 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @return the lanes and the position on the lanes where the GTU will be registered at the time, for the given position of
      *         the GTU.
      * @throws NetworkException when the vehicle is not on one of the lanes on which it is registered.
+     * @throws RemoteException on communications failure
      */
     Map<Lane, Double> fractionalPositions(RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
-        throws NetworkException;
+        throws NetworkException, RemoteException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane, as a fraction
@@ -184,9 +187,10 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @param when the future time for which to calculate the positions.
      * @return the fractional relative position on the lane at the given time.
      * @throws NetworkException when the vehicle is not on the given lane.
+     * @throws RemoteException on communications failure
      */
     double fractionalPosition(Lane lane, RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
-        throws NetworkException;
+        throws NetworkException, RemoteException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane, as a fraction
@@ -208,9 +212,10 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the time for which to project the position of this GTU
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the position of this GTU in the projectionLane
      * @throws NetworkException when projectionLane it not in any of the CrossSectionLink that the GTU is on
+     * @throws RemoteException on communications failure
      */
     DoubleScalar.Rel<LengthUnit> projectedPosition(Lane projectionLane, RelativePosition relativePosition,
-        DoubleScalar.Abs<TimeUnit> when) throws NetworkException;
+        DoubleScalar.Abs<TimeUnit> when) throws NetworkException, RemoteException;
 
     /**
      * Determine which GTU in front of this GTU, or behind this GTU. This method looks in all lanes where this GTU is

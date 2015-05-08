@@ -206,6 +206,13 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
+    public DoubleScalar.Abs<LengthUnit> getOdometer() throws RemoteException
+    {
+        return DoubleScalar.plus(this.odometer, deltaX(getSimulator().getSimulatorTime().get())).immutable();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public final DoubleScalar.Abs<SpeedUnit> getLateralVelocity()
     {
         return new DoubleScalar.Abs<SpeedUnit>(this.lateralVelocity);
@@ -350,7 +357,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                         leftLaneTraffic, speedLimit,
                         laneIncentives.get(preferred == LateralDirectionality.RIGHT ? 2 : 0), laneIncentives.get(1),
                         laneIncentives.get(preferred == LateralDirectionality.RIGHT ? 0 : 2));
-        // TODO: detect that a required lane change was blocked and, if it was, do something to find/create a gap. 
+        // TODO: detect that a required lane change was blocked and, if it was, do something to find/create a gap.
         if (lcmr.getGfmr().getAcceleration().getSI() < -9999)
         {
             System.out.println("Problem");
@@ -365,6 +372,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             this.fractionalLinkPositions.put(lane.getParentLink(),
                     lane.fraction(position(lane, getReference(), this.nextEvaluationTime)));
         }
+        // Update the odometer value
+        this.odometer = DoubleScalar.plus(this.odometer, deltaX(this.nextEvaluationTime)).immutable();
         // Compute and set the current speed using the "old" nextEvaluationTime and acceleration
         this.speed = getLongitudinalVelocity(this.nextEvaluationTime);
         // Now update last evaluation time
@@ -784,7 +793,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final Map<Lane, DoubleScalar.Rel<LengthUnit>> positions(final RelativePosition relativePosition,
-            final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
+            final DoubleScalar.Abs<TimeUnit> when) throws NetworkException, RemoteException
     {
         Map<Lane, DoubleScalar.Rel<LengthUnit>> positions = new LinkedHashMap<>();
         for (Lane lane : this.lanes)
@@ -804,7 +813,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     public final DoubleScalar.Rel<LengthUnit> projectedPosition(final Lane projectionLane,
-            final RelativePosition relativePosition, final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
+            final RelativePosition relativePosition, final DoubleScalar.Abs<TimeUnit> when) throws NetworkException,
+            RemoteException
     {
         CrossSectionLink<?, ?> link = projectionLane.getParentLink();
         for (CrossSectionElement cse : link.getCrossSectionElementList())
@@ -826,7 +836,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> position(final Lane lane, final RelativePosition relativePosition,
-            final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
+            final DoubleScalar.Abs<TimeUnit> when) throws NetworkException, RemoteException
     {
         if (null == lane)
         {
@@ -847,13 +857,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             // According to FindBugs; this cannot happen; PK is unsure whether FindBugs is correct.
             throw new NetworkException("GetPosition: GTU " + toString() + " not in lane " + lane);
         }
-        DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
         DoubleScalar.Rel<LengthUnit> loc =
-                DoubleScalar.plus(
-                        DoubleScalar.plus(
-                                DoubleScalar.plus(longitudinalPosition, Calc.speedTimesTime(this.speed, dT))
-                                        .immutable(),
-                                Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(when), dT)).immutable(),
+                DoubleScalar.plus(DoubleScalar.plus(longitudinalPosition, deltaX(when)).immutable(),
                         relativePosition.getDx()).immutable();
         if (Double.isNaN(loc.getSI()))
         {
@@ -873,7 +878,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition,
-            final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
+            final DoubleScalar.Abs<TimeUnit> when) throws NetworkException, RemoteException
     {
         Map<Lane, Double> positions = new LinkedHashMap<>();
         for (Lane lane : this.lanes)
@@ -886,7 +891,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final double fractionalPosition(final Lane lane, final RelativePosition relativePosition,
-            final DoubleScalar.Abs<TimeUnit> when) throws NetworkException
+            final DoubleScalar.Abs<TimeUnit> when) throws NetworkException, RemoteException
     {
         return position(lane, relativePosition, when).getSI() / lane.getLength().getSI();
     }
@@ -1320,6 +1325,19 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     }
 
     /**
+     * Determine longitudinal displacement.
+     * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the durrent time
+     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the displacement since last move evaluation
+     * @throws RemoteException on communications failure
+     */
+    private DoubleScalar.Rel<LengthUnit> deltaX(DoubleScalar.Abs<TimeUnit> when) throws RemoteException
+    {
+        DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
+        return DoubleScalar.plus(Calc.speedTimesTime(this.speed, dT),
+                Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(), dT)).immutable();
+    }
+
+    /**
      * Determine show long it will take for this GTU to cover the specified distance (both time and distance since the
      * last evaluation time).
      * @param distance double; the distance
@@ -1462,7 +1480,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             pos = this.position(lane, getFront(), when).getSI();
         }
-        catch (NetworkException exception)
+        catch (NetworkException | RemoteException exception)
         {
             pos = Double.NaN;
         }
