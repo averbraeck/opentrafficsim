@@ -423,7 +423,7 @@ public class Lane extends CrossSectionElement
      * @param when the time for which to evaluate the positions.
      * @return the first GTU before a position on this lane, or null if no GTU could be found.
      * @throws NetworkException when there is a problem with the position of the GTUs on the lane.
-     * @throws RemoteException
+     * @throws RemoteException on communications failure
      */
     public final LaneBasedGTU<?> getGtuBefore(final DoubleScalar.Rel<LengthUnit> position,
             final RelativePosition.TYPE relativePosition, final DoubleScalar.Abs<TimeUnit> when)
