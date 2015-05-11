@@ -313,8 +313,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
                         initialLongitudinalPositions, referenceSpeed, new DoubleScalar.Rel<LengthUnit>(4,
                                 LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
                         new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR), new Route(
-                                new ArrayList<Node<?, ?>>()),
-                        (OTSDEVSSimulatorInterface) simpleSimulator.getSimulator());
+                                new ArrayList<Node<?, ?>>()), simpleSimulator);
         Collection<HeadwayGTU> sameLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         sameLaneGTUs.add(new HeadwayGTU(referenceCar, 0));
         // TODO play with the speed limit
