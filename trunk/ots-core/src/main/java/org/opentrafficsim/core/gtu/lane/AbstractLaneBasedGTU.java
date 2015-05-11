@@ -1422,21 +1422,23 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 // System.out.println("fraction is " + fraction);
                 // }
                 double useFraction = fraction;
+                boolean fractionAdjusted = false;
                 if (fraction < 0)
                 {
                     useFraction = 0;
+                    fractionAdjusted = true;
                 }
                 if (fraction > 0.99)
                 {
                     useFraction = 0.99;
+                    fractionAdjusted = true;
                 }
                 // DO NOT MODIFY THE RESULT OF extractPoint (it may be one of the coordinates in line).
                 Coordinate c = new Coordinate(lil.extractPoint(useFraction * line.getLength()));
                 c.z = 0d;
                 Coordinate cb = lil.extractPoint((useFraction + 0.01) * line.getLength());
                 double angle = Math.atan2(cb.y - c.y, cb.x - c.x);
-                // FindBugs does not like this comparison - looking for a way to suppress that warning
-                if (fraction != useFraction)
+                if (fractionAdjusted)
                 {
                     c =
                             new Coordinate(c.x + (fraction - useFraction) * 100 * (cb.x - c.x), c.y
