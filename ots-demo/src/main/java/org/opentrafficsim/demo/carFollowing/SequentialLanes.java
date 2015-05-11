@@ -64,7 +64,7 @@ import org.opentrafficsim.simulationengine.IDMPropertySet;
 import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.PropertyException;
 import org.opentrafficsim.simulationengine.SelectionProperty;
-import org.opentrafficsim.simulationengine.SimpleSimulator;
+import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.SimulatorFrame;
 import org.opentrafficsim.simulationengine.WrappableSimulation;
 
@@ -156,12 +156,12 @@ public class SequentialLanes implements WrappableSimulation
 
     /** {@inheritDoc} */
     @Override
-    public final SimpleSimulator buildSimulator(final ArrayList<AbstractProperty<?>> userModifiedProperties)
+    public final SimpleAnimator buildSimulator(final ArrayList<AbstractProperty<?>> userModifiedProperties)
             throws SimRuntimeException, RemoteException, NamingException
     {
         SequentialModel model = new SequentialModel(userModifiedProperties);
-        SimpleSimulator result =
-                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
+        SimpleAnimator result =
+                new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(0, -100, 2010, 200));
         new ControlPanel(result);

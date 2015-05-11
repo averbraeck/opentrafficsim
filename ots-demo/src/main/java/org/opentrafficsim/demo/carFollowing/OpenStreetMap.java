@@ -51,7 +51,7 @@ import org.opentrafficsim.simulationengine.IDMPropertySet;
 import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.PropertyException;
 import org.opentrafficsim.simulationengine.SelectionProperty;
-import org.opentrafficsim.simulationengine.SimpleSimulator;
+import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.SimulatorFrame;
 import org.opentrafficsim.simulationengine.WrappableSimulation;
 
@@ -141,7 +141,7 @@ public class OpenStreetMap implements WrappableSimulation
     /** {@inheritDoc} 
      * @throws NamingException */
     @Override
-    public final SimpleSimulator buildSimulator(final ArrayList<AbstractProperty<?>> usedProperties)
+    public final SimpleAnimator buildSimulator(final ArrayList<AbstractProperty<?>> usedProperties)
             throws SimRuntimeException, RemoteException, NetworkException, NamingException
     {
         JFrame frame = new JFrame();
@@ -244,8 +244,8 @@ public class OpenStreetMap implements WrappableSimulation
                 area = area.createUnion(new Rectangle2D.Double(node.getX(), node.getY(), 0, 0));
             }
         }
-        SimpleSimulator result =
-                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
+        SimpleAnimator result =
+                new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
                                 TimeUnit.SECOND), model, area);
         new ControlPanel(result);

@@ -144,21 +144,19 @@ public class SuitabilityGraph implements OTSModelInterface
                 laneType.addPermeability(gtuType);
                 Lane[] lanes =
                         LaneFactory.makeMultiLane("Test road", from, branchPoint, null, LANECOUNT, laneType,
-                                speedLimit, (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                                speedLimit, simulator);
                 NodeGeotools.STR destination =
                         new NodeGeotools.STR("Destination", new Coordinate(1000, targetLaneConfiguration > 0 ? 100
                                 : -100, 0));
                 LaneFactory.makeMultiLane("DestinationLink", branchPoint, destination, null,
                         Math.abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? 0 : LANECOUNT
-                                + targetLaneConfiguration, 0, laneType, speedLimit,
-                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                                + targetLaneConfiguration, 0, laneType, speedLimit, simulator);
                 NodeGeotools.STR nonDestination =
                         new NodeGeotools.STR("Non-Destination", new Coordinate(1000, targetLaneConfiguration > 0 ? -100
                                 : 100, 0));
                 LaneFactory.makeMultiLane("Non-DestinationLink", branchPoint, nonDestination, null,
                         LANECOUNT - Math.abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? LANECOUNT
-                                - targetLaneConfiguration : 0, 0, laneType, speedLimit,
-                        (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                                - targetLaneConfiguration : 0, 0, laneType, speedLimit, simulator);
                 Route route = new Route();
                 route.addNode(from);
                 route.addNode(branchPoint);
@@ -279,7 +277,8 @@ public class SuitabilityGraph implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+            throws RemoteException
     {
         return null;
     }
