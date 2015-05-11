@@ -116,7 +116,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         }
         else
         {
-            throw new Error("Don't know how to find the panel of this OTSDEVSSimulator");
+            throw new Error("Don't know how to find the DSOLPanel of this OTSDEVSSimulator");
         }
         SimulatorControlPanel controlPanel =
                 (SimulatorControlPanel) ((BorderLayout) panel.getLayout()).getLayoutComponent(BorderLayout.NORTH);
