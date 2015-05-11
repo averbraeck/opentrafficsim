@@ -9,7 +9,6 @@ import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -40,31 +39,6 @@ public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulatio
     private final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel;
 
     /**
-     * Internal constructor that performs the tasks that must be executed for any kind of SimpleSimulator.
-     * @param simulator DEVSSimulator; either a OTSDEVSSimulator, or a OTSDEVSAnimator.
-     * @param startTime OTSSimTimeDouble; the start time of the simulation
-     * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warm up period of the simulation (use new
-     *            DoubleScalar.Rel&lt;TimeUnit&gt;(0, TimeUnit.SECOND) if you don't know what this is)
-     * @param runLength DoubleScalar.Rel&lt;TimeUnit&gt;; the duration of the simulation
-     * @param model OTSModelInterface; the simulation to execute
-     * @throws RemoteException on communications failure
-     * @throws SimRuntimeException on ???
-     * @throws NamingException when the context for the replication cannot be created
-     */
-    private SimpleSimulator(
-            final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator,
-            final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
-            final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
-            SimRuntimeException, NamingException
-    {
-        setPauseOnError(true);
-        initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime), warmupPeriod,
-                runLength, model), ReplicationMode.TERMINATING);
-        this.panel =
-                new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model, this);
-    }
-
-    /**
      * Create a simulation engine without animation; the easy way. PauseOnError is set to true;
      * @param startTime OTSSimTimeDouble; the start time of the simulation
      * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warm up period of the simulation (use new
@@ -79,7 +53,11 @@ public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulatio
             final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
             SimRuntimeException, NamingException
     {
-        this(new OTSDEVSSimulator(), startTime, warmupPeriod, runLength, model);
+        setPauseOnError(true);
+        initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime), warmupPeriod,
+                runLength, model), ReplicationMode.TERMINATING);
+        this.panel =
+                new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model, this);
     }
 
     /**
