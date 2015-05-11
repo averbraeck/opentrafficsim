@@ -16,7 +16,6 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.junit.Test;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -34,7 +33,7 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
-import org.opentrafficsim.simulationengine.SimpleSimulator;
+import org.opentrafficsim.simulationengine.SimpleAnimator;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -67,13 +66,13 @@ public class SensorTest
         laneType.addPermeability(gtuType);
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForSensorTest();
-        final SimpleSimulator simulator =
-                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
+        final SimpleAnimator simulator =
+                new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(-1000, -1000, 2000, 2000));
         Lane[] lanes =
                 LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(
-                        100, SpeedUnit.KM_PER_HOUR), (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                        100, SpeedUnit.KM_PER_HOUR), simulator);
         // Check that there is a SensorLaneStart and a SensorLaneEnd on each Lane
         for (Lane l : lanes)
         {
@@ -122,11 +121,10 @@ public class SensorTest
         LaneChangeModel laneChangeModel = new Egoistic();
         // Now we can make a car (GTU) (and we don't even have to hold a pointer to it)
         new LaneBasedIndividualCar<String>(carID, gtuType, fas, laneChangeModel, initialLongitudinalPositions,
-                initialSpeed, carLength, carWidth, maximumVelocity, new Route(new ArrayList<Node<?, ?>>()),
-                (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                initialSpeed, carLength, carWidth, maximumVelocity, new Route(new ArrayList<Node<?, ?>>()), simulator);
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(1, TimeUnit.SECOND));
         // Construction of the car scheduled a car move event at t=0
-        Set<SimEventInterface<OTSSimTimeDouble>> eventList = simulator.getSimulator().getEventList();
+        Set<SimEventInterface<OTSSimTimeDouble>> eventList = simulator.getEventList();
         SimEventInterface<OTSSimTimeDouble> triggerEvent = null;
         int index = 0;
         for (SimEventInterface<OTSSimTimeDouble> event : eventList)
