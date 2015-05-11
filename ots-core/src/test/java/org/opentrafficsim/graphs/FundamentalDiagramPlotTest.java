@@ -121,9 +121,9 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
                 new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
                         AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(1000, TimeUnit.SECOND));
         // Construct a car
-        new LaneBasedIndividualCar<Integer>(1, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions,
-                speed, length, width, maxSpeed, new Route(new ArrayList<Node<?, ?>>()),
-                (OTSDEVSSimulatorInterface) simulator.getSimulator());
+        new LaneBasedIndividualCar<Integer>(1, gtuType, gtuFollowingModel, laneChangeModel,
+                initialLongitudinalPositions, speed, length, width, maxSpeed, new Route(new ArrayList<Node<?, ?>>()),
+                simulator);
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(124, TimeUnit.SECOND));
         for (int sample = 0; sample < 10; sample++)
         {
@@ -197,7 +197,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
         speed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
         new LaneBasedIndividualCar<Integer>(1234, gtuType, gtuFollowingModel, laneChangeModel,
                 initialLongitudinalPositions, speed, length, width, maxSpeed, new Route(new ArrayList<Node<?, ?>>()),
-                (OTSDEVSSimulatorInterface) simulator.getSimulator());
+                simulator);
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(125, TimeUnit.SECOND));
         fd.actionPerformed(setXToSpeed);
         value = fd.getYValue(0, bucket);

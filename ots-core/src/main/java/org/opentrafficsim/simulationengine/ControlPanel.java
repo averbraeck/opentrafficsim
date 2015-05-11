@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -40,12 +41,17 @@ import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.SimulatorControlPanel;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 
+import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * Peter's improved simulation control panel.
@@ -61,7 +67,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public class ControlPanel implements ActionListener, PropertyChangeListener
 {
     /** The simulator. */
-    private final SimpleSimulator simulator;
+    private final OTSDEVSSimulatorInterface simulator;
 
     /** The SimulatorInterface that is controlled by the buttons. */
     private final SimulatorInterface<?, ?, ?> target;
@@ -91,14 +97,27 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
      * Decorate a SimpleSimulator with a different set of control buttons.
      * @param simulator SimpleSimulator; the simulator.
      */
-    public ControlPanel(final SimpleSimulator simulator)
+    public ControlPanel(final OTSDEVSSimulatorInterface simulator)
     {
         this.simulator = simulator;
-        this.target = simulator.getSimulator();
+        this.target = simulator;
         this.logger = Logger.getLogger("nl.tudelft.opentrafficsim");
 
-        DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel =
-                simulator.getPanel();
+        DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel;
+        
+        if (simulator instanceof SimpleSimulator)
+        {
+            panel =
+                ((SimpleSimulator) simulator).getPanel();
+        }
+        else if (simulator instanceof SimpleAnimator)
+        {
+            panel = ((SimpleAnimator) simulator).getPanel();
+        }
+        else
+        {
+            throw new Error("Don't know how to find the panel of this OTSDEVSSimulator");
+        }
         SimulatorControlPanel controlPanel =
                 (SimulatorControlPanel) ((BorderLayout) panel.getLayout()).getLayoutComponent(BorderLayout.NORTH);
         JPanel buttonPanel = (JPanel) controlPanel.getComponent(0);
@@ -140,6 +159,33 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         this.buttons.add(result);
         return result;
     }
+    
+    /**
+     * Construct and schedule a SimEvent using a DoubleScalar.Abs&lt;TimeUnit&gt; to specify the execution time.
+     * @param executionTime DoubleScalar.Abs&lt;TimeUnit&gt;; the time at which the event must happen
+     * @param priority short; should be between <cite>SimEventInterface.MAX_PRIORITY</cite> and
+     *            <cite>SimEventInterface.MIN_PRIORITY</cite>; most normal events should use
+     *            <cite>SimEventInterface.NORMAL_PRIORITY</cite>
+     * @param source Object; the object that creates/schedules the event
+     * @param eventTarget Object; the object that must execute the event
+     * @param method String; the name of the method of <code>target</code> that must execute the event
+     * @param args Object[]; the arguments of the <code>method</code> that must execute the event
+     * @return SimEvent&lt;OTSSimTimeDouble&gt;; the event that was scheduled (the caller should save this if a need to
+     *         cancel the event may arise later)
+     * @throws SimRuntimeException when the <code>executionTime</code> is in the past
+     * @throws RemoteException 
+     */
+    private final SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime,
+            final short priority, final Object source, final Object eventTarget, final String method, final Object[] args)
+            throws SimRuntimeException, RemoteException
+    {
+        SimEvent<OTSSimTimeDouble> result =
+                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(
+                        executionTime.getSI(), TimeUnit.SECOND)), priority, source, eventTarget, method, args);
+        this.simulator.scheduleEvent(result);
+        return result;
+    }
+
 
     /** {@inheritDoc} */
     @Override
@@ -172,7 +218,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 try
                 {
                     this.stopAtEvent =
-                            this.simulator.scheduleEvent(new DoubleScalar.Abs<TimeUnit>(now, TimeUnit.SI),
+                            scheduleEvent(new DoubleScalar.Abs<TimeUnit>(now, TimeUnit.SI),
                                     SimEventInterface.MIN_PRIORITY, this, this, "autoPauseSimulator", null);
                 }
                 catch (SimRuntimeException exception)
@@ -261,11 +307,11 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 try
                 {
                     this.stopAtEvent =
-                            this.simulator.scheduleEvent(new DoubleScalar.Abs<TimeUnit>(nextTick, TimeUnit.SI),
+                            scheduleEvent(new DoubleScalar.Abs<TimeUnit>(nextTick, TimeUnit.SI),
                                     SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
                     getSimulator().start();
                 }
-                catch (SimRuntimeException exception)
+                catch (SimRuntimeException | RemoteException exception)
                 {
                     this.logger.logp(Level.SEVERE, "ControlPanel", "autoPauseSimulator",
                             "Caught an exception while trying to re-schedule an autoPauseEvent at the next real event");
@@ -338,10 +384,10 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
             try
             {
                 this.stopAtEvent =
-                        this.simulator.scheduleEvent(new DoubleScalar.Abs<TimeUnit>(stopTime, TimeUnit.SECOND),
+                        scheduleEvent(new DoubleScalar.Abs<TimeUnit>(stopTime, TimeUnit.SECOND),
                                 SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
             }
-            catch (SimRuntimeException exception)
+            catch (SimRuntimeException | RemoteException exception)
             {
                 this.logger.logp(Level.SEVERE, "ControlPanel", "propertyChange",
                         "Caught an exception while trying to schedule an autoPauseSimulator event");
@@ -355,7 +401,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
      */
     public final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
     {
-        return this.simulator.getSimulator();
+        return (DEVSSimulator<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble>) this.simulator;
     }
 
     /**
@@ -392,7 +438,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
          * @param simulator SimpleSimulator; the simulator to change the speed of
          */
         public TimeWarpPanel(final double minimum, final double maximum, final double initialValue,
-                final int ticksPerDecade, final SimpleSimulator simulator)
+                final int ticksPerDecade, final DEVSSimulatorInterface<?, ?, ?> simulator)
         {
             if (minimum <= 0 || minimum > initialValue || initialValue > maximum)
             {
@@ -464,9 +510,9 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
              */
 
             // initial value of simulation speed
-            if (simulator.getSimulator() instanceof DEVSRealTimeClock)
+            if (simulator instanceof DEVSRealTimeClock)
             {
-                DEVSRealTimeClock<?, ?, ?> clock = (DEVSRealTimeClock<?, ?, ?>) simulator.getSimulator();
+                DEVSRealTimeClock<?, ?, ?> clock = (DEVSRealTimeClock<?, ?, ?>) simulator;
                 clock.setSpeedFactor(TimeWarpPanel.this.tickValues.get(this.slider.getValue()));
             }
 
@@ -476,9 +522,9 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 public void stateChanged(final ChangeEvent ce)
                 {
                     JSlider source = (JSlider) ce.getSource();
-                    if (!source.getValueIsAdjusting() && simulator.getSimulator() instanceof DEVSRealTimeClock)
+                    if (!source.getValueIsAdjusting() && simulator instanceof DEVSRealTimeClock)
                     {
-                        DEVSRealTimeClock<?, ?, ?> clock = (DEVSRealTimeClock<?, ?, ?>) simulator.getSimulator();
+                        DEVSRealTimeClock<?, ?, ?> clock = (DEVSRealTimeClock<?, ?, ?>) simulator;
                         clock.setSpeedFactor(TimeWarpPanel.this.tickValues.get(TimeWarpPanel.this.slider.getValue()));
                     }
                 }

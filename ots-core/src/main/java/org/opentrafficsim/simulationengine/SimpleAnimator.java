@@ -1,17 +1,21 @@
 package org.opentrafficsim.simulationengine;
 
+import java.awt.Dimension;
+import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.Event;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
+import org.opentrafficsim.core.dsol.OTSDEVSRealTimeClock;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -19,19 +23,18 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
- * Construct a DSOL DEVSSimulator or DEVSAnimator the easy way.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version 12 nov. 2014 <br>
+ * @version 11 mei 2015 <br>
+ * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulation
+public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimulation
 {
     /** */
-    private static final long serialVersionUID = 20150510L;
+    private static final long serialVersionUID = 20150511L;
 
     /** Counter for replication. */
     private int lastReplication = 0;
@@ -40,50 +43,36 @@ public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulatio
     private final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel;
 
     /**
-     * Internal constructor that performs the tasks that must be executed for any kind of SimpleSimulator.
-     * @param simulator DEVSSimulator; either a OTSDEVSSimulator, or a OTSDEVSAnimator.
-     * @param startTime OTSSimTimeDouble; the start time of the simulation
+     * Create a simulation engine with animation; the easy way. PauseOnError is set to true;
+     * @param startTime DoubleScalar.Abs&lt;TimeUnit&gt;; the start time of the simulation
      * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warm up period of the simulation (use new
      *            DoubleScalar.Rel&lt;TimeUnit&gt;(0, TimeUnit.SECOND) if you don't know what this is)
      * @param runLength DoubleScalar.Rel&lt;TimeUnit&gt;; the duration of the simulation
      * @param model OTSModelInterface; the simulation to execute
+     * @param extent Rectangle2D; bottom left corner, length and width of the area (world) to animate.
      * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
-     * @throws NamingException when the context for the replication cannot be created
+     * @throws NamingException when context for the animation cannot be created
      */
-    private SimpleSimulator(
-            final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator,
-            final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
-            final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
-            SimRuntimeException, NamingException
+    public SimpleAnimator(final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
+            final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model, final Rectangle2D extent)
+            throws RemoteException, SimRuntimeException, NamingException
     {
         setPauseOnError(true);
         initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime), warmupPeriod,
                 runLength, model), ReplicationMode.TERMINATING);
         this.panel =
                 new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model, this);
+        Dimension size = new Dimension(1024, 768);
+        AnimationPanel animationPanel = new AnimationPanel(extent, size, this);
+        this.panel.getTabbedPane().addTab(0, "animation", animationPanel);
+        animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, this, null));
+        this.panel.getTabbedPane().setSelectedIndex(0); // Show the animation panel
     }
 
     /**
-     * Create a simulation engine without animation; the easy way. PauseOnError is set to true;
-     * @param startTime OTSSimTimeDouble; the start time of the simulation
-     * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warm up period of the simulation (use new
-     *            DoubleScalar.Rel&lt;TimeUnit&gt;(0, TimeUnit.SECOND) if you don't know what this is)
-     * @param runLength DoubleScalar.Rel&lt;TimeUnit&gt;; the duration of the simulation
-     * @param model OTSModelInterface; the simulation to execute
-     * @throws RemoteException on communications failure
-     * @throws SimRuntimeException on ???
-     * @throws NamingException when the context for the replication cannot be created
-     */
-    public SimpleSimulator(final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
-            final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
-            SimRuntimeException, NamingException
-    {
-        this(new OTSDEVSSimulator(), startTime, warmupPeriod, runLength, model);
-    }
-
-    /**
-     * {@inheritDoc}
+     * To use in a Swing application add the DSOLPanel to a JFrame.
+     * @return the simulation panel (extends JPanel).
      */
     public final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getPanel()
     {

@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.jfree.chart.ChartPanel;
@@ -329,7 +330,7 @@ public class ContourPlotTest
                         new DoubleScalar.Rel<TimeUnit>(1800, TimeUnit.SECOND), model);
         // Create a car running 50 km.h
         SequentialFixedAccelerationModel gtuFollowingModel =
-                new SequentialFixedAccelerationModel(simulator.getSimulator());
+                new SequentialFixedAccelerationModel(simulator);
         // Make the car run at constant speed for one minute
         gtuFollowingModel.addStep(new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
                 AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(60, TimeUnit.SECOND)));
@@ -342,7 +343,7 @@ public class ContourPlotTest
         LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar<Integer> car =
                 CarTest.makeReferenceCar(0, gtuType, lane, initialPosition, initialSpeed,
-                        (OTSDEVSSimulator) simulator.getSimulator(), gtuFollowingModel, laneChangeModel);
+                        (OTSDEVSSimulator) simulator, gtuFollowingModel, laneChangeModel);
         // Check that the initial data in the graph contains no trace of any car.
         for (int item = 0; item < bins; item++)
         {
