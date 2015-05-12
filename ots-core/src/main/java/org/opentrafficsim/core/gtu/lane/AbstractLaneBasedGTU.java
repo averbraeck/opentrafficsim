@@ -149,12 +149,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             lane.addGTU(this, initialLongitudinalPositions.get(lane));
         }
 
-        // Duplicate the other arguments as these are modified in this class and may be re-used by the caller
-        this.lastEvaluationTime = new DoubleScalar.Abs<TimeUnit>(simulator.getSimulatorTime().get());
-        // FIXME: DoubleScalar.whatever is immutable; there is no need to duplicate the speed.
-        this.speed = new DoubleScalar.Abs<SpeedUnit>(initialSpeed);
-        // FIXME: should be SAME as this.lastEvaluationTime; don't ask the simulator for another one.
-        this.nextEvaluationTime = new DoubleScalar.Abs<TimeUnit>(simulator.getSimulatorTime().get());
+        this.lastEvaluationTime = simulator.getSimulatorTime().get();
+        this.speed = initialSpeed;
+        this.nextEvaluationTime = this.lastEvaluationTime;
 
         // start the movement of the GTU
         simulator.scheduleEventNow(this, this, "move", null);

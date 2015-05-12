@@ -23,7 +23,6 @@ import org.jfree.chart.ChartPanel;
 import org.junit.Test;
 import org.opentrafficsim.core.car.CarTest;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUType;
