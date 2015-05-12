@@ -45,7 +45,6 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 
-import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -104,11 +103,10 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         this.logger = Logger.getLogger("nl.tudelft.opentrafficsim");
 
         DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel;
-        
+
         if (simulator instanceof SimpleSimulator)
         {
-            panel =
-                ((SimpleSimulator) simulator).getPanel();
+            panel = ((SimpleSimulator) simulator).getPanel();
         }
         else if (simulator instanceof SimpleAnimator)
         {
@@ -159,7 +157,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         this.buttons.add(result);
         return result;
     }
-    
+
     /**
      * Construct and schedule a SimEvent using a DoubleScalar.Abs&lt;TimeUnit&gt; to specify the execution time.
      * @param executionTime DoubleScalar.Abs&lt;TimeUnit&gt;; the time at which the event must happen
@@ -173,11 +171,11 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
      * @return SimEvent&lt;OTSSimTimeDouble&gt;; the event that was scheduled (the caller should save this if a need to
      *         cancel the event may arise later)
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
-     * @throws RemoteException 
+     * @throws RemoteException
      */
     private final SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime,
-            final short priority, final Object source, final Object eventTarget, final String method, final Object[] args)
-            throws SimRuntimeException, RemoteException
+            final short priority, final Object source, final Object eventTarget, final String method,
+            final Object[] args) throws SimRuntimeException, RemoteException
     {
         SimEvent<OTSSimTimeDouble> result =
                 new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(
@@ -185,7 +183,6 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         this.simulator.scheduleEvent(result);
         return result;
     }
-
 
     /** {@inheritDoc} */
     @Override
@@ -399,6 +396,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     /**
      * @return simulator.
      */
+    @SuppressWarnings("unchecked")
     public final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
     {
         return (DEVSSimulator<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble>) this.simulator;
@@ -525,10 +523,20 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                     if (!source.getValueIsAdjusting() && simulator instanceof DEVSRealTimeClock)
                     {
                         DEVSRealTimeClock<?, ?, ?> clock = (DEVSRealTimeClock<?, ?, ?>) simulator;
-                        clock.setSpeedFactor(TimeWarpPanel.this.tickValues.get(TimeWarpPanel.this.slider.getValue()));
+                        clock.setSpeedFactor(((TimeWarpPanel) source.getParent()).getTickValues()
+                                .get(source.getValue()));
                     }
                 }
             });
+        }
+
+        /**
+         * Access to tickValues map from within the event handler.
+         * @return Map&lt;Integer, Double&gt; the tickValues map of this TimeWarpPanel
+         */
+        protected Map<Integer, Double> getTickValues()
+        {
+            return this.tickValues;
         }
 
         /**
