@@ -159,8 +159,8 @@ public class ContourPlotTest
      *            value expected when no car has passed
      * @throws Exception when something goes wrong (should not happen)
      */
-    public static void standardContourTests(final ContourPlot cp, Lane lane, GTUType<?> gtuType, final double expectedZValue,
-            final double expectedZValueWithTraffic) throws Exception
+    public static void standardContourTests(final ContourPlot cp, Lane lane, GTUType<?> gtuType,
+            final double expectedZValue, final double expectedZValueWithTraffic) throws Exception
     {
         assertEquals("seriesCount should be 1", 1, cp.getSeriesCount());
         assertEquals("domainOrder should be ASCENDING", DomainOrder.ASCENDING, cp.getDomainOrder());
@@ -328,8 +328,7 @@ public class ContourPlotTest
                 new SimpleSimulator(initialTime, new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(1800, TimeUnit.SECOND), model);
         // Create a car running 50 km.h
-        SequentialFixedAccelerationModel gtuFollowingModel =
-                new SequentialFixedAccelerationModel(simulator);
+        SequentialFixedAccelerationModel gtuFollowingModel = new SequentialFixedAccelerationModel(simulator);
         // Make the car run at constant speed for one minute
         gtuFollowingModel.addStep(new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
                 AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(60, TimeUnit.SECOND)));
@@ -341,8 +340,8 @@ public class ContourPlotTest
                 AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND)));
         LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar<Integer> car =
-                CarTest.makeReferenceCar(0, gtuType, lane, initialPosition, initialSpeed,
-                        (OTSDEVSSimulator) simulator, gtuFollowingModel, laneChangeModel);
+                CarTest.makeReferenceCar(0, gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
+                        laneChangeModel);
         // Check that the initial data in the graph contains no trace of any car.
         for (int item = 0; item < bins; item++)
         {
