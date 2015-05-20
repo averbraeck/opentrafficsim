@@ -188,6 +188,7 @@ public class SuperDemo
                 {
                     mainPanel.add(simulation.buildSimulator(SuperDemo.this.activeProperties).getPanel(),
                             BorderLayout.CENTER);
+                    
                 }
                 catch (RemoteException | SimRuntimeException | NetworkException | NamingException exception)
                 {

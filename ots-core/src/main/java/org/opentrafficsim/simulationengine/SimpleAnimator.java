@@ -1,16 +1,17 @@
 package org.opentrafficsim.simulationengine;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
+import javax.swing.JButton;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
@@ -66,6 +67,10 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
         Dimension size = new Dimension(1024, 768);
         AnimationPanel animationPanel = new AnimationPanel(extent, size, this);
         this.panel.getTabbedPane().addTab(0, "animation", animationPanel);
+        // animationPanel.getBorderPanel().add(new JButton("ABC ZUID"), BorderLayout.SOUTH); // XXX REMOVE!!!
+        // animationPanel.getBorderPanel().add(new JButton("ABC OOST"), BorderLayout.EAST); // XXX REMOVE!!!
+        // animationPanel.getBorderPanel().add(new JButton("ABC NOORD"), BorderLayout.NORTH); // XXX REMOVE!!!
+        // animationPanel.getBorderPanel().add(new JButton("ABC WEST"), BorderLayout.WEST); // XXX REMOVE!!!
         animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, this, null));
         this.panel.getTabbedPane().setSelectedIndex(0); // Show the animation panel
     }
@@ -77,30 +82,6 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
     public final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getPanel()
     {
         return this.panel;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public final void runUpTo(final DoubleScalar.Abs<TimeUnit> when) throws SimRuntimeException
-    {
-        scheduleEvent(when, SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
-        while (getSimulatorTime().get().getSI() < when.getSI())
-        {
-            step();
-        }
-    }
-
-    /**
-     * Pause the simulator.
-     */
-    @SuppressWarnings("unused")
-    private void autoPauseSimulator()
-    {
-        if (isRunning())
-        {
-            stop();
-        }
     }
 
     /**
