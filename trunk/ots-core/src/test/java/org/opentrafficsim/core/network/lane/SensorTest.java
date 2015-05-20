@@ -123,6 +123,17 @@ public class SensorTest
         new LaneBasedIndividualCar<String>(carID, gtuType, fas, laneChangeModel, initialLongitudinalPositions,
                 initialSpeed, carLength, carWidth, maximumVelocity, new Route(new ArrayList<Node<?, ?>>()), simulator);
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(1, TimeUnit.SECOND));
+        while (simulator.isRunning())
+        {
+            try
+            {
+                Thread.sleep(1);
+            }
+            catch (InterruptedException ie)
+            {
+                ie = null; // ignore
+            }
+        }
         // Construction of the car scheduled a car move event at t=0
         Set<SimEventInterface<OTSSimTimeDouble>> eventList = simulator.getEventList();
         SimEventInterface<OTSSimTimeDouble> triggerEvent = null;

@@ -361,6 +361,17 @@ public class LaneBasedGTUTest
                                     3600.0, TimeUnit.SECOND), model, new Rectangle2D.Double(-1000, -1000, 2000, 2000));
             // Run the simulator clock to some non-zero value
             simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(60, TimeUnit.SECOND));
+            while (simulator.isRunning())
+            {
+                try
+                {
+                    Thread.sleep(1);
+                }
+                catch (InterruptedException ie)
+                {
+                    ie = null; // ignore
+                }
+            }
             GTUType<String> carType = GTUType.makeGTUType("car");
             LaneType<String> laneType = new LaneType<String>("CarLane");
             laneType.addPermeability(carType);
@@ -388,6 +399,18 @@ public class LaneBasedGTUTest
                             simulator);
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(61, TimeUnit.SECOND));
+            while (simulator.isRunning())
+            {
+                try
+                {
+                    Thread.sleep(1);
+                }
+                catch (InterruptedException ie)
+                {
+                    ie = null; // ignore
+                }
+            }
+
             // System.out.println("acceleration is " + acceleration);
             // Check the results
             for (int timeStep = 1; timeStep < 100; timeStep++)
