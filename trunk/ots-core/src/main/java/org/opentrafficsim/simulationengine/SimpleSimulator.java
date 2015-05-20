@@ -71,30 +71,6 @@ public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulatio
     /**
      * {@inheritDoc}
      */
-    public final void runUpTo(final DoubleScalar.Abs<TimeUnit> when) throws SimRuntimeException
-    {
-        scheduleEvent(when, SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
-        while (getSimulatorTime().get().getSI() < when.getSI())
-        {
-            step();
-        }
-    }
-
-    /**
-     * Pause the simulator.
-     */
-    @SuppressWarnings("unused")
-    private void autoPauseSimulator()
-    {
-        if (isRunning())
-        {
-            stop();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public final SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime,
             final short priority, final Object source, final Object target, final String method, final Object[] args)
             throws SimRuntimeException
