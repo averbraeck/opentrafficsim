@@ -70,7 +70,7 @@
     <maven.surefire.version>2.17</maven.surefire.version>
     <maven.surefire-report.version>2.17</maven.surefire-report.version>
     <maven.failsafe.version>2.17</maven.failsafe.version>
-    <maven.cobertura.version>2.6</maven.cobertura.version>
+    <maven.cobertura.version>2.7</maven.cobertura.version>
     <maven.jacoco.version>0.7.4.201502262128</maven.jacoco.version>
     <maven.findbugs.version>3.0.0</maven.findbugs.version>
     <maven.project-info-reports.version>2.7</maven.project-info-reports.version>
