@@ -377,7 +377,17 @@ public class ContourPlotTest
             }
         }
         simulator.runUpTo(gtuFollowingModel.timeAfterCompletionOfStep(0));
-        // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
+        while (simulator.isRunning())
+        {
+            try
+            {
+                Thread.sleep(10);
+            }
+            catch (InterruptedException ie)
+            {
+                ie = null; // ignore
+            }
+        }        // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
         // + car.getPosition(car.getLastEvaluationTime()));
         // System.out.println("At time " + simulator.getSimulator().getSimulatorTime().get() + " car is at " + car);
         for (int item = 0; item < bins; item++)
@@ -457,6 +467,17 @@ public class ContourPlotTest
             }
         }
         simulator.runUpTo(gtuFollowingModel.timeAfterCompletionOfStep(1));
+        while (simulator.isRunning())
+        {
+            try
+            {
+                Thread.sleep(10);
+            }
+            catch (InterruptedException ie)
+            {
+                ie = null; // ignore
+            }
+        }
         // Check that the time range has expanded
         xBins = cp.xAxisBins();
         bins = cp.getItemCount(0);

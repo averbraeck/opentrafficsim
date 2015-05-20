@@ -212,6 +212,18 @@ public class AbstractLaneBasedGTUTest
             }
             // System.out.println("Simulating until " + stepTime.getSI());
             simulator.runUpTo(stepTime);
+            while (simulator.isRunning())
+            {
+                try
+                {
+                    Thread.sleep(1);
+                }
+                catch (InterruptedException ie)
+                {
+                    ie = null; // ignore
+                }
+            }
+            
             if (stepTime.getSI() > 0)
             {
                 assertEquals("nextEvaluation time is " + validFor, validFor.getSI(), car.getNextEvaluationTime()

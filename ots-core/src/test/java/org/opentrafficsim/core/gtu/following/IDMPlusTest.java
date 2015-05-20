@@ -236,6 +236,17 @@ public class IDMPlusTest
         {
             DoubleScalar.Abs<TimeUnit> simulateUntil = new DoubleScalar.Abs<TimeUnit>(0.1 * timeStep, TimeUnit.SI);
             simulator.runUpTo(simulateUntil);
+            while (simulator.isRunning())
+            {
+                try
+                {
+                    Thread.sleep(1);
+                }
+                catch (InterruptedException ie)
+                {
+                    ie = null; // ignore
+                }
+            }
             // System.out.println(String.format("step %3d, t=%s, referenceCar: %s, speed %s, leaderCar: %s", timeStep,
             // simulateUntil, referenceCar, referenceCar.getLongitudinalVelocity(), leaderCar));
             if (timeStep > 120)

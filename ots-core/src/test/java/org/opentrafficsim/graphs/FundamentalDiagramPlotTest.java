@@ -114,6 +114,17 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
                 new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(
                         0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800, TimeUnit.SECOND), this);
         simulator.runUpTo(time);
+        while (simulator.isRunning())
+        {
+            try
+            {
+                Thread.sleep(1);
+            }
+            catch (InterruptedException ie)
+            {
+                ie = null; // ignore
+            }
+        }
         int bucket = (int) Math.floor(time.getSI() / aggregationTime.getSI());
         LaneChangeModel laneChangeModel = new Egoistic();
         GTUFollowingModel gtuFollowingModel =
@@ -124,6 +135,17 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
                 initialLongitudinalPositions, speed, length, width, maxSpeed, new Route(new ArrayList<Node<?, ?>>()),
                 simulator);
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(124, TimeUnit.SECOND));
+        while (simulator.isRunning())
+        {
+            try
+            {
+                Thread.sleep(1);
+            }
+            catch (InterruptedException ie)
+            {
+                ie = null; // ignore
+            }
+        }
         for (int sample = 0; sample < 10; sample++)
         {
             boolean shouldHaveData = sample == bucket;
@@ -198,6 +220,17 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
                 initialLongitudinalPositions, speed, length, width, maxSpeed, new Route(new ArrayList<Node<?, ?>>()),
                 simulator);
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(125, TimeUnit.SECOND));
+        while (simulator.isRunning())
+        {
+            try
+            {
+                Thread.sleep(1);
+            }
+            catch (InterruptedException ie)
+            {
+                ie = null; // ignore
+            }
+        }
         fd.actionPerformed(setXToSpeed);
         value = fd.getYValue(0, bucket);
         double expected = 2d / (1d / 100 + 1d / 10);
