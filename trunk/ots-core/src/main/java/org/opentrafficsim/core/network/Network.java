@@ -110,12 +110,13 @@ public class Network<ID, L extends Link<?, ?>> extends HashSet<L> implements Ser
     @SuppressWarnings("checkstyle:designforextension")
     public boolean deleteNode(final Node<?, ?> deleteThis) throws NetworkException
     {
-        // TODO ensure that no links are orphaned due to removal of the node
+        // TODO ensure that no Links are orphaned due to removal of the node
         if (isInNetwork(deleteThis))
         {
             this.nodeSet.remove(deleteThis);
             return true;
         }
+        // FIXME: It is inconsistent to indicate success by returning true and failure by throwing an exception.
         throw new NetworkException("Deleting" + deleteThis.getId().toString() + " failed. Possible cause:"
             + " node is not a member of the given Network");
     }
