@@ -33,15 +33,16 @@ import java.util.Set;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
- * @param <ID> Name of the sub network
- * @param <L> ???
+ * @param <ID> ID type of the sub network
+ * @param <L> Link type
  */
-public class SubNetwork<ID, L extends Link<?, ?>> extends Network
+public class SubNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
 {
 
     /** */
     private static final long serialVersionUID = 20141112L;
 
+    /** The Links in this SubNetwork. */
     private Set<L> links2Out = new HashSet<L>();
 
     /**
@@ -53,6 +54,10 @@ public class SubNetwork<ID, L extends Link<?, ?>> extends Network
         super(id);
     }
 
+    /**
+     * Retrieve the Links in this SubNetwork.
+     * @return Set&lt;L&gt;; the links in this SubNetwork
+     */
     public final Set<L> getLinks2Out()
     {
         // TODO should probably return a copy of the set
