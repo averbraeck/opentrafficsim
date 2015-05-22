@@ -43,6 +43,7 @@ public interface GTUFollowingModel
     /**
      * Compute the acceleration that would be used to follow a leader.<br>
      * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their
+     * leader, or should slow down for a crossing from accelerating to unsafe speeds.
      * @param followerSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed of the follower at the current time
      * @param followerMaximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the maximum speed that the follower is capable of
      *            driving at
