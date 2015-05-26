@@ -1,12 +1,10 @@
 package org.opentrafficsim.simulationengine;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
-import javax.swing.JButton;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
@@ -41,7 +39,7 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
     private int lastReplication = 0;
 
     /** The JPanel that contains the simulator controls, a status bar and a JTabbedPane with switchable sub panels. */
-    private final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel;
+    DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel;
 
     /**
      * Create a simulation engine with animation; the easy way. PauseOnError is set to true;

@@ -42,7 +42,6 @@ import nl.tudelft.simulation.dsol.gui.swing.SimulatorControlPanel;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
-import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -66,10 +65,10 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 public class ControlPanel implements ActionListener, PropertyChangeListener
 {
     /** The simulator. */
-    private final OTSDEVSSimulatorInterface simulator;
+    private OTSDEVSSimulatorInterface simulator;
 
-    /** The SimulatorInterface that is controlled by the buttons. */
-    private final SimulatorInterface<?, ?, ?> target;
+    /** The WrappableSimulation (needed for restart operation). */
+    final WrappableSimulation wrappableSimulation;
 
     /** Logger. */
     private final Logger logger;
@@ -94,12 +93,13 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
 
     /**
      * Decorate a SimpleSimulator with a different set of control buttons.
-     * @param simulator SimpleSimulator; the simulator.
+     * @param simulator SimpleSimulator; the simulator
+     * @param wrappableSimulation WrappableSimulation; if non-null, the restart button should work
      */
-    public ControlPanel(final OTSDEVSSimulatorInterface simulator)
+    public ControlPanel(final OTSDEVSSimulatorInterface simulator, WrappableSimulation wrappableSimulation)
     {
         this.simulator = simulator;
-        this.target = simulator;
+        this.wrappableSimulation = wrappableSimulation;
         this.logger = Logger.getLogger("nl.tudelft.opentrafficsim");
 
         DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel;
@@ -116,8 +116,12 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         {
             throw new Error("Don't know how to find the DSOLPanel of this OTSDEVSSimulator");
         }
+        // If the construction of the DSOLPanel changes in any significant way, the following code will throw all kinds
+        // of exceptions.
         SimulatorControlPanel controlPanel =
                 (SimulatorControlPanel) ((BorderLayout) panel.getLayout()).getLayoutComponent(BorderLayout.NORTH);
+        JButton oldSpeedButton = (JButton) controlPanel.getComponent(1);
+        controlPanel.remove(oldSpeedButton);
         JPanel buttonPanel = (JPanel) controlPanel.getComponent(0);
         buttonPanel.removeAll();
         buttonPanel.add(makeButton("stepButton", "/Last_recor.png", "Step", "Execute one event", true));
@@ -185,6 +189,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     @Override
     public final void actionPerformed(final ActionEvent actionEvent)
     {
@@ -198,11 +203,11 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 {
                     getSimulator().stop();
                 }
-                this.target.step();
+                this.simulator.step();
             }
             if (actionCommand.equals("Run"))
             {
-                this.target.start();
+                this.simulator.start();
             }
             if (actionCommand.equals("NextTime"))
             {
@@ -223,11 +228,11 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                     this.logger.logp(Level.SEVERE, "ControlPanel", "autoPauseSimulator", "Caught an exception "
                             + "while trying to schedule an autoPauseSimulator event at the current simulator time");
                 }
-                this.target.start();
+                this.simulator.start();
             }
             if (actionCommand.equals("Pause"))
             {
-                this.target.stop();
+                this.simulator.stop();
             }
             if (actionCommand.equals("Reset"))
             {
@@ -235,7 +240,26 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 {
                     getSimulator().stop();
                 }
-                // TODO: Should this create a new replication?
+                if (null == this.wrappableSimulation)
+                {
+                    throw new Error("Do not know how to restart this simulation");
+                }
+                // This is the magic that puts a brand new simulator in the current window
+                SimpleSimulation newSimulation = this.wrappableSimulation.rebuildSimulator();
+                DSOLPanel<?, ?, ?> dsolPanel = newSimulation.getPanel();
+                System.out.println("new DSOLPanel: " + dsolPanel);
+                DSOLPanel<?, ?, ?> ourPanel = ((SimpleAnimator) this.simulator).panel;
+                System.out.println("our DSOLPanel: " + ourPanel);
+                // dsolPanel.setSize(new Dimension(ourPanel.getWidth(), ourPanel.getHeight()));
+                // dsolPanel.revalidate();
+                System.out.println("new DSOLPanel: " + dsolPanel);
+                // Now move everything from the new into ours
+                JPanel parent = (JPanel) ourPanel.getParent();
+                parent.remove(ourPanel);
+                parent.add(dsolPanel);
+                ((SimpleAnimator) this.simulator).panel =
+                        (DSOLPanel<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble>) dsolPanel;
+                // TODO: Put the stop at value of this ControlPanel in the new ControlPanel
             }
             fixButtons();
         }
