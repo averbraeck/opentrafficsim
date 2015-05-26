@@ -1,6 +1,8 @@
 package org.opentrafficsim.simulationengine;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,6 +27,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
@@ -254,9 +257,19 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
                 // dsolPanel.revalidate();
                 System.out.println("new DSOLPanel: " + dsolPanel);
                 // Now move everything from the new into ours
-                JPanel parent = (JPanel) ourPanel.getParent();
-                parent.remove(ourPanel);
-                parent.add(dsolPanel);
+                Container parent = ourPanel.getParent();
+                if (parent instanceof JLayeredPane)
+                {
+                    JLayeredPane jlp = (JLayeredPane) parent;
+                    jlp.removeAll();
+                    dsolPanel.setSize(new Dimension(ourPanel.getWidth(), ourPanel.getHeight()));
+                    jlp.add(dsolPanel, JLayeredPane.DEFAULT_LAYER);
+                }
+                else
+                {
+                    parent.remove(ourPanel);
+                    parent.add(dsolPanel);
+                }
                 ((SimpleAnimator) this.simulator).panel =
                         (DSOLPanel<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble>) dsolPanel;
                 // TODO: Put the stop at value of this ControlPanel in the new ControlPanel
