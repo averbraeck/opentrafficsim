@@ -87,7 +87,7 @@ public class SequentialLanes implements WrappableSimulation
 {
     /** The properties exhibited by this simulation. */
     private ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();
-    
+
     /** The properties after (possible) editing by the user. */
     private ArrayList<AbstractProperty<?>> savedUserModifiedProperties;
 
@@ -100,8 +100,8 @@ public class SequentialLanes implements WrappableSimulation
         outputProperties.add(new BooleanProperty("Speed", "Speed contour plot", true, false, 2));
         outputProperties.add(new BooleanProperty("Acceleration", "Acceleration contour plot", true, false, 3));
         outputProperties.add(new BooleanProperty("Trajectories", "Trajectory (time/distance) diagram", true, false, 4));
-        this.properties
-                .add(new CompoundProperty("Output", "Select the graphical output", outputProperties, true, 1000));
+        this.properties.add(new CompoundProperty("Output graphs", "Select the graphical output", outputProperties,
+                true, 1000));
     }
 
     /**
@@ -188,7 +188,8 @@ public class SequentialLanes implements WrappableSimulation
         }
 
         // Make the tab with the plots
-        AbstractProperty<?> output = new CompoundProperty("", "", this.properties, false, 0).findByShortName("Output");
+        AbstractProperty<?> output =
+                new CompoundProperty("", "", this.properties, false, 0).findByShortName("Output graphs");
         if (null == output)
         {
             throw new Error("Cannot find output properties");
@@ -303,6 +304,13 @@ public class SequentialLanes implements WrappableSimulation
             NamingException
     {
         return buildSimulator(this.savedUserModifiedProperties);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ArrayList<AbstractProperty<?>> getUserModifiedProperties()
+    {
+        return this.savedUserModifiedProperties;
     }
 
 }
@@ -496,7 +504,7 @@ class SequentialModel implements OTSModelInterface
                 else if (ap instanceof CompoundProperty)
                 {
                     CompoundProperty cp = (CompoundProperty) ap;
-                    if (ap.getShortName().equals("Output"))
+                    if (ap.getShortName().equals("Output graphs"))
                     {
                         continue; // Output settings are handled elsewhere
                     }

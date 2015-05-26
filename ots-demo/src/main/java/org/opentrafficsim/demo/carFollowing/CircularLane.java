@@ -100,8 +100,8 @@ public class CircularLane implements WrappableSimulation
         outputProperties.add(new BooleanProperty("Speed", "Speed contour plot", true, false, 2));
         outputProperties.add(new BooleanProperty("Acceleration", "Acceleration contour plot", true, false, 3));
         outputProperties.add(new BooleanProperty("Trajectories", "Trajectory (time/distance) diagram", true, false, 4));
-        this.properties
-                .add(new CompoundProperty("Output", "Select the graphical output", outputProperties, true, 1000));
+        this.properties.add(new CompoundProperty("Output graphs", "Select the graphical output", outputProperties,
+                true, 1000));
     }
 
     /**
@@ -137,8 +137,8 @@ public class CircularLane implements WrappableSimulation
                                     + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                                     + "curvature of the road) capabilities of the vehicle and personality "
                                     + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
-                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Car", new DoubleScalar.Abs<AccelerationUnit>(1.0,
-                            AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
+                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Car", new DoubleScalar.Abs<AccelerationUnit>(
+                            1.0, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
                             AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0,
                             LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 2));
                     propertyList.add(IDMPropertySet.makeIDMPropertySet("Truck", new DoubleScalar.Abs<AccelerationUnit>(
@@ -176,7 +176,7 @@ public class CircularLane implements WrappableSimulation
 
         // Make the tab with the plots
         AbstractProperty<?> output =
-                new CompoundProperty("", "", userModifiedProperties, false, 0).findByShortName("Output");
+                new CompoundProperty("", "", userModifiedProperties, false, 0).findByShortName("Output graphs");
         if (null == output)
         {
             throw new Error("Cannot find output properties");
@@ -290,6 +290,13 @@ public class CircularLane implements WrappableSimulation
             NamingException
     {
         return buildSimulator(this.savedUserModifiedProperties);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ArrayList<AbstractProperty<?>> getUserModifiedProperties()
+    {
+        return this.savedUserModifiedProperties;
     }
 
 }
@@ -445,7 +452,7 @@ class LaneSimulationModel implements OTSModelInterface
                 else if (ap instanceof CompoundProperty)
                 {
                     CompoundProperty cp = (CompoundProperty) ap;
-                    if (ap.getShortName().equals("Output"))
+                    if (ap.getShortName().equals("Output graphs"))
                     {
                         continue; // Output settings are handled elsewhere
                     }
