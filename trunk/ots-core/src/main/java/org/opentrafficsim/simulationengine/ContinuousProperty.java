@@ -127,4 +127,11 @@ public class ContinuousProperty extends AbstractProperty<Double>
         return this.format;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String HTMLStateDescription()
+    {
+        return getShortName() + ": " + String.format(getFormatString(), getValue());
+    }
+
 }

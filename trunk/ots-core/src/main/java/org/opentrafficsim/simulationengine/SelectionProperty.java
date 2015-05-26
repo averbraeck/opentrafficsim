@@ -118,4 +118,11 @@ public class SelectionProperty extends AbstractProperty<String>
         return this.readOnly;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String HTMLStateDescription()
+    {
+        return getShortName() + ": " + this.options[this.currentOption];
+    }
+
 }

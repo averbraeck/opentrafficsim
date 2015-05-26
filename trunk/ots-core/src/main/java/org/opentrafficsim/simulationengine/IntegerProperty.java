@@ -129,4 +129,11 @@ public class IntegerProperty extends AbstractProperty<Integer>
         return this.format;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String HTMLStateDescription()
+    {
+        return getShortName() + ": " + String.format(getFormatString(), getValue());
+    }
+
 }

@@ -180,4 +180,19 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
         return this.readOnly;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String HTMLStateDescription()
+    {
+        StringBuilder result = new StringBuilder();
+        result.append("<table>");
+        result.append("<tr><th>" + getShortName() + "</th></tr>\n");
+        for (int i = 0; i < this.names.length; i++)
+        {
+            result.append("<tr><td>" + this.names[i] + ": " + String.format("%.3f", this.value[i]) + "</td></tr>\n");
+        }
+        result.append("</table>\n");
+        return result.toString();
+    }
+
 }
