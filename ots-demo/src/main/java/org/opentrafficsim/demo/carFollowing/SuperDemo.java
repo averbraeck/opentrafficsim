@@ -3,8 +3,11 @@ package org.opentrafficsim.demo.carFollowing;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -20,6 +23,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -29,6 +33,7 @@ import javax.swing.JSlider;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -68,7 +73,7 @@ public class SuperDemo
 {
     /** The JPanel that holds the user settable properties. */
     private JPanel propertyPanel;
-
+    
     /** The JPanel that holds the simulation selection radio buttons. */
     private JPanel simulationSelection;
 
@@ -86,7 +91,16 @@ public class SuperDemo
             @Override
             public void run()
             {
-                new SimulatorFrame("Open Traffic Simulator Demonstrations", new SuperDemo().buildGUI());
+                JFrame frame = new SimulatorFrame("Open Traffic Simulator Demonstrations", new SuperDemo().buildGUI());
+                frame.setExtendedState(frame.getExtendedState() & ~ Frame.MAXIMIZED_BOTH);
+                // frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_VERT);
+                // The code above does not work; the code below does work. Code found on
+                // http://stackoverflow.com/questions/5195634/how-to-maximize-a-the-height-of-a-jframe
+                Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(frame.getGraphicsConfiguration());
+                int taskHeight=screenInsets.bottom;
+                Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+                frame.setSize(d.width/2, d.height - taskHeight);
+                frame.setLocation(0, 0);
             }
         });
     }
@@ -99,7 +113,7 @@ public class SuperDemo
     {
         final JPanel mainPanel = new JPanel(new BorderLayout());
         // Ensure that the window does not shrink into (almost) nothingness when un-maximized
-        mainPanel.setPreferredSize(new Dimension(800, 600));
+        mainPanel.setPreferredSize(new Dimension(800, 800));
         final ArrayList<WrappableSimulation> demonstrations = new ArrayList<WrappableSimulation>();
         demonstrations.add(new Straight());
         demonstrations.add(new SequentialLanes());
@@ -182,6 +196,7 @@ public class SuperDemo
                 {
                     throw new Error("Cannot find a selected button");
                 }
+                /*
                 // Clear out the main panel and put the selected simulator in it.
                 mainPanel.remove(((BorderLayout) mainPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER));
                 try
@@ -195,6 +210,21 @@ public class SuperDemo
                     exception.printStackTrace();
                 }
                 startButton.setEnabled(false);
+                */
+                // Create a new JFrame for the simulation.
+                JFrame simulatorFrame = new JFrame();
+                try
+                {
+                    simulatorFrame.add(simulation.buildSimulator(SuperDemo.this.activeProperties).getPanel());
+                    simulatorFrame.setExtendedState(simulatorFrame.getExtendedState() | Frame.MAXIMIZED_BOTH);
+                    simulatorFrame.pack();
+                    simulatorFrame.setVisible(true);
+                    simulatorFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                }
+                catch (RemoteException | SimRuntimeException | NetworkException | NamingException exception)
+                {
+                    exception.printStackTrace();
+                }
             }
         });
         gbcLeft.gridy++;
@@ -202,8 +232,8 @@ public class SuperDemo
         gbcLeft.gridy++;
         gbcLeft.weighty = 1;
         JPanel filler = new JPanel();
-        filler.setMinimumSize(new Dimension(300, 0));
-        filler.setPreferredSize(new Dimension(300, 0));
+        filler.setMinimumSize(new Dimension(400, 0));
+        filler.setPreferredSize(new Dimension(400, 0));
         left.add(filler, gbcLeft); // add a filler that also enforces a reasonable width
         gbcLeft.weighty = 0;
         gbcLeft.anchor = GridBagConstraints.SOUTH;

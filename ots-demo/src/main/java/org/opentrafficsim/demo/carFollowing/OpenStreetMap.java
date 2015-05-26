@@ -52,6 +52,7 @@ import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.PropertyException;
 import org.opentrafficsim.simulationengine.SelectionProperty;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.simulationengine.SimpleSimulation;
 import org.opentrafficsim.simulationengine.SimulatorFrame;
 import org.opentrafficsim.simulationengine.WrappableSimulation;
 
@@ -67,6 +68,9 @@ import org.opentrafficsim.simulationengine.WrappableSimulation;
  */
 public class OpenStreetMap implements WrappableSimulation
 {
+    /** The properties after (possible) editing by the user. */
+    private ArrayList<AbstractProperty<?>> savedUserModifiedProperties;
+
     /** The OSMNetwork. */
     private OSMNetwork osmNetwork;
 
@@ -144,6 +148,7 @@ public class OpenStreetMap implements WrappableSimulation
     public final SimpleAnimator buildSimulator(final ArrayList<AbstractProperty<?>> usedProperties)
             throws SimRuntimeException, RemoteException, NetworkException, NamingException
     {
+        this.savedUserModifiedProperties = usedProperties;
         JFrame frame = new JFrame();
         FileDialog fd = new FileDialog(frame, "Choose a file", FileDialog.LOAD);
         fd.setFile("*.osm");
@@ -248,7 +253,7 @@ public class OpenStreetMap implements WrappableSimulation
                 new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
                                 TimeUnit.SECOND), model, area);
-        new ControlPanel(result);
+        new ControlPanel(result, this);
         return result;
     }
 
@@ -271,6 +276,14 @@ public class OpenStreetMap implements WrappableSimulation
     public final ArrayList<AbstractProperty<?>> getProperties()
     {
         return new ArrayList<AbstractProperty<?>>(this.properties);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SimpleSimulation rebuildSimulator() throws SimRuntimeException, RemoteException, NetworkException,
+            NamingException
+    {
+        return buildSimulator(this.savedUserModifiedProperties);
     }
 
 }
