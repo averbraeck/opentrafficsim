@@ -73,7 +73,7 @@ public class SuperDemo
 {
     /** The JPanel that holds the user settable properties. */
     private JPanel propertyPanel;
-    
+
     /** The JPanel that holds the simulation selection radio buttons. */
     private JPanel simulationSelection;
 
@@ -92,14 +92,14 @@ public class SuperDemo
             public void run()
             {
                 JFrame frame = new SimulatorFrame("Open Traffic Simulator Demonstrations", new SuperDemo().buildGUI());
-                frame.setExtendedState(frame.getExtendedState() & ~ Frame.MAXIMIZED_BOTH);
+                frame.setExtendedState(frame.getExtendedState() & ~Frame.MAXIMIZED_BOTH);
                 // frame.setExtendedState(frame.getExtendedState() | Frame.MAXIMIZED_VERT);
                 // The code above does not work; the code below does work. Code found on
                 // http://stackoverflow.com/questions/5195634/how-to-maximize-a-the-height-of-a-jframe
                 Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(frame.getGraphicsConfiguration());
-                int taskHeight=screenInsets.bottom;
+                int taskHeight = screenInsets.bottom;
                 Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-                frame.setSize(d.width/2, d.height - taskHeight);
+                frame.setSize(d.width / 2, d.height - taskHeight);
                 frame.setLocation(0, 0);
             }
         });
@@ -197,24 +197,17 @@ public class SuperDemo
                     throw new Error("Cannot find a selected button");
                 }
                 /*
-                // Clear out the main panel and put the selected simulator in it.
-                mainPanel.remove(((BorderLayout) mainPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER));
-                try
-                {
-                    mainPanel.add(simulation.buildSimulator(SuperDemo.this.activeProperties).getPanel(),
-                            BorderLayout.CENTER);
-                    
-                }
-                catch (RemoteException | SimRuntimeException | NetworkException | NamingException exception)
-                {
-                    exception.printStackTrace();
-                }
-                startButton.setEnabled(false);
-                */
+                 * // Clear out the main panel and put the selected simulator in it. mainPanel.remove(((BorderLayout)
+                 * mainPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER)); try {
+                 * mainPanel.add(simulation.buildSimulator(SuperDemo.this.activeProperties).getPanel(),
+                 * BorderLayout.CENTER); } catch (RemoteException | SimRuntimeException | NetworkException |
+                 * NamingException exception) { exception.printStackTrace(); } startButton.setEnabled(false);
+                 */
                 // Create a new JFrame for the simulation.
-                JFrame simulatorFrame = new JFrame();
+                JFrame simulatorFrame = new JFrame("Open Traffic Simulation - " + simulation.shortName());
                 try
                 {
+                    System.out.println("Active properties: " + SuperDemo.this.activeProperties);
                     simulatorFrame.add(simulation.buildSimulator(SuperDemo.this.activeProperties).getPanel());
                     simulatorFrame.setExtendedState(simulatorFrame.getExtendedState() | Frame.MAXIMIZED_BOTH);
                     simulatorFrame.pack();
@@ -261,7 +254,8 @@ public class SuperDemo
              * This is ugly, but it gets the job done... Insert a dummy property at the top and later replace the
              * property editor for the dummy property by the simulationSelection JPanel.
              */
-            simulationSettings.add(new BooleanProperty("Dummy", "Dummy", false, false, 0));
+            BooleanProperty dummy = new BooleanProperty("Dummy", "Dummy", false, false, 0);
+            simulationSettings.add(dummy);
             if (properties.size() > 0)
             {
                 while (true)
@@ -308,26 +302,27 @@ public class SuperDemo
                 properties.add(properties.size() > 0 ? 1 : 0, modelSelection);
             }
             properties.add(0, simulationSettings);
+            boolean fixedDummy = false;
+            for (AbstractProperty<?> p : new CompoundProperty("", "", properties, false, 0).displayOrderedValue())
+            {
+                JPanel propertySubPanel = makePropertyEditor(p);
+                if (!fixedDummy)
+                {
+                    // Replace the dummy property editor by the simulationSelection JPanel.
+                    JPanel subPanel = (JPanel) propertySubPanel.getComponent(0);
+                    subPanel.removeAll();
+                    subPanel.add(this.simulationSelection);
+                    fixedDummy = true;
+                }
+                this.propertyPanel.add(propertySubPanel);
+            }
+            simulationSettings.remove(dummy);
+            SuperDemo.this.activeProperties = properties;
         }
         catch (PropertyException exception)
         {
             exception.printStackTrace();
         }
-        boolean fixedDummy = false;
-        for (AbstractProperty<?> p : new CompoundProperty("", "", properties, false, 0).displayOrderedValue())
-        {
-            JPanel propertySubPanel = makePropertyEditor(p);
-            if (!fixedDummy)
-            {
-                // Replace the dummy property editor by the simulationSelection JPanel.
-                JPanel subPanel = (JPanel) propertySubPanel.getComponent(0);
-                subPanel.removeAll();
-                subPanel.add(this.simulationSelection);
-                fixedDummy = true;
-            }
-            this.propertyPanel.add(propertySubPanel);
-        }
-        SuperDemo.this.activeProperties = properties;
     }
 
     /**

@@ -286,6 +286,13 @@ public class OpenStreetMap implements WrappableSimulation
         return buildSimulator(this.savedUserModifiedProperties);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public ArrayList<AbstractProperty<?>> getUserModifiedProperties()
+    {
+        return this.savedUserModifiedProperties;
+    }
+
 }
 
 /**

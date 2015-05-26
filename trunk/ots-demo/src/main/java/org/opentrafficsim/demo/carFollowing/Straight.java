@@ -97,8 +97,8 @@ public class Straight implements WrappableSimulation
         outputProperties.add(new BooleanProperty("Speed", "Speed contour plot", true, false, 2));
         outputProperties.add(new BooleanProperty("Acceleration", "Acceleration contour plot", true, false, 3));
         outputProperties.add(new BooleanProperty("Trajectories", "Trajectory (time/distance) diagram", true, false, 4));
-        this.properties
-                .add(new CompoundProperty("Output", "Select the graphical output", outputProperties, true, 1000));
+        this.properties.add(new CompoundProperty("Output graphs", "Select the graphical output", outputProperties,
+                true, 1000));
     }
 
     /**
@@ -144,7 +144,7 @@ public class Straight implements WrappableSimulation
                             new DoubleScalar.Abs<AccelerationUnit>(1.25, AccelerationUnit.METER_PER_SECOND_2),
                             new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(
                                     1.0, TimeUnit.SECOND), 3));
-                    new SimulatorFrame("Contour Plots animation", straight.buildSimulator(localProperties).getPanel());
+                    new SimulatorFrame("Straight road animation", straight.buildSimulator(localProperties).getPanel());
                 }
                 catch (RemoteException | SimRuntimeException | NamingException exception)
                 {
@@ -190,7 +190,8 @@ public class Straight implements WrappableSimulation
         }
 
         // Make the tab with the plots
-        AbstractProperty<?> output = new CompoundProperty("", "", this.properties, false, 0).findByShortName("Output");
+        AbstractProperty<?> output =
+                new CompoundProperty("", "", this.properties, false, 0).findByShortName("Output graphs");
         if (null == output)
         {
             throw new Error("Cannot find output properties");
@@ -308,6 +309,13 @@ public class Straight implements WrappableSimulation
         return buildSimulator(this.savedUserModifiedProperties);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public ArrayList<AbstractProperty<?>> getUserModifiedProperties()
+    {
+        return this.savedUserModifiedProperties;
+    }
+
 }
 
 /**
@@ -359,7 +367,7 @@ class StraightModel implements OTSModelInterface
     private double carProbability;
 
     /** The lane change model. */
-    private  AbstractLaneChangeModel laneChangeModel = new Egoistic();
+    private AbstractLaneChangeModel laneChangeModel = new Egoistic();
 
     /** The blocking car. */
     private LaneBasedIndividualCar<Integer> block = null;
@@ -463,7 +471,7 @@ class StraightModel implements OTSModelInterface
                 else if (ap instanceof CompoundProperty)
                 {
                     CompoundProperty cp = (CompoundProperty) ap;
-                    if (ap.getShortName().equals("Output"))
+                    if (ap.getShortName().equals("Output graphs"))
                     {
                         continue; // Output settings are handled elsewhere
                     }

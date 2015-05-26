@@ -113,8 +113,8 @@ public class CircularRoad implements WrappableSimulation
             outputProperties.add(new BooleanProperty(laneId + "Trajectories", laneId
                     + "Trajectory (time/distance) diagram", true, false, 4));
         }
-        this.properties
-                .add(new CompoundProperty("Output", "Select the graphical output", outputProperties, true, 1000));
+        this.properties.add(new CompoundProperty("Output graphs", "Select the graphical output", outputProperties,
+                true, 1000));
     }
 
     /**
@@ -189,7 +189,8 @@ public class CircularRoad implements WrappableSimulation
         new ControlPanel(result, this);
 
         // Make the tab with the plots
-        AbstractProperty<?> output = new CompoundProperty("", "", this.properties, false, 0).findByShortName("Output");
+        AbstractProperty<?> output =
+                new CompoundProperty("", "", this.properties, false, 0).findByShortName("Output graphs");
         if (null == output)
         {
             throw new Error("Cannot find output properties");
@@ -307,6 +308,13 @@ public class CircularRoad implements WrappableSimulation
             NamingException
     {
         return buildSimulator(this.savedUserModifiedProperties);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ArrayList<AbstractProperty<?>> getUserModifiedProperties()
+    {
+        return this.savedUserModifiedProperties;
     }
 
 }
@@ -470,7 +478,7 @@ class RoadSimulationModel implements OTSModelInterface
                 else if (ap instanceof CompoundProperty)
                 {
                     CompoundProperty cp = (CompoundProperty) ap;
-                    if (ap.getShortName().equals("Output"))
+                    if (ap.getShortName().equals("Output graphs"))
                     {
                         continue; // Output settings are handled elsewhere
                     }
