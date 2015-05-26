@@ -66,6 +66,7 @@ import org.opentrafficsim.simulationengine.IDMPropertySet;
 import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.SelectionProperty;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.simulationengine.SimpleSimulation;
 import org.opentrafficsim.simulationengine.WrappableSimulation;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -85,6 +86,9 @@ public class XMLNetworks implements WrappableSimulation
     /** The properties exhibited by this simulation. */
     private ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();
 
+    /** The properties after (possible) editing by the user. */
+    private ArrayList<AbstractProperty<?>> savedUserModifiedProperties;
+
     /**
      * Define the XMLNetworks.
      */
@@ -102,12 +106,13 @@ public class XMLNetworks implements WrappableSimulation
     public final SimpleAnimator buildSimulator(final ArrayList<AbstractProperty<?>> userModifiedProperties)
             throws SimRuntimeException, RemoteException, NetworkException, NamingException
     {
+        this.savedUserModifiedProperties = userModifiedProperties;
         XMLNetworkModel model = new XMLNetworkModel(userModifiedProperties);
         SimpleAnimator result =
                 new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(-50, -300, 1300, 600));
-        new ControlPanel(result);
+        new ControlPanel(result, this);
         int graphCount = model.pathCount();
         int columns = 1;
         int rows = 0 == columns ? 0 : (int) Math.ceil(graphCount * 1.0 / columns);
@@ -139,7 +144,9 @@ public class XMLNetworks implements WrappableSimulation
     @Override
     public final String description()
     {
-        return "<html><h1>Test Networks</h1>Prove that the test networks can be constructed and rendered on screen.</html>";
+        return "<html><h1>Test Networks</h1>Prove that the test networks can be constructed and rendered on screen "
+                + "and that a mix of cars and trucks can run on them.<br/>On the statistics tab, a trajectory plot "
+                + "is generated for each lane.</html>";
     }
 
     /** {@inheritDoc} */
@@ -148,6 +155,14 @@ public class XMLNetworks implements WrappableSimulation
     {
         // Create and return a deep copy of the internal list
         return new ArrayList<AbstractProperty<?>>(this.properties);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SimpleSimulation rebuildSimulator() throws SimRuntimeException, RemoteException, NetworkException,
+            NamingException
+    {
+        return buildSimulator(this.savedUserModifiedProperties);
     }
 
 }

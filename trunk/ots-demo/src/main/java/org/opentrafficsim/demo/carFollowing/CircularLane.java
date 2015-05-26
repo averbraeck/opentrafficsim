@@ -61,6 +61,7 @@ import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.PropertyException;
 import org.opentrafficsim.simulationengine.SelectionProperty;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
+import org.opentrafficsim.simulationengine.SimpleSimulation;
 import org.opentrafficsim.simulationengine.SimulatorFrame;
 import org.opentrafficsim.simulationengine.WrappableSimulation;
 
@@ -80,6 +81,9 @@ public class CircularLane implements WrappableSimulation
 {
     /** The properties exhibited by this simulation. */
     private ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();
+
+    /** The properties after (possible) editing by the user. */
+    private ArrayList<AbstractProperty<?>> savedUserModifiedProperties;
 
     /** Create a CircularLane simulation. */
     public CircularLane()
@@ -162,12 +166,13 @@ public class CircularLane implements WrappableSimulation
     public final SimpleAnimator buildSimulator(final ArrayList<AbstractProperty<?>> userModifiedProperties)
             throws RemoteException, SimRuntimeException, NamingException
     {
+        this.savedUserModifiedProperties = userModifiedProperties;
         LaneSimulationModel model = new LaneSimulationModel(userModifiedProperties);
         SimpleAnimator result =
                 new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(-1000, -1000, 2000, 2000));
-        new ControlPanel(result);
+        new ControlPanel(result, this);
 
         // Make the tab with the plots
         AbstractProperty<?> output =
@@ -277,6 +282,14 @@ public class CircularLane implements WrappableSimulation
     public final ArrayList<AbstractProperty<?>> getProperties()
     {
         return new ArrayList<AbstractProperty<?>>(this.properties);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SimpleSimulation rebuildSimulator() throws SimRuntimeException, RemoteException, NetworkException,
+            NamingException
+    {
+        return buildSimulator(this.savedUserModifiedProperties);
     }
 
 }
