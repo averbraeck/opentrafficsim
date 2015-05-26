@@ -80,4 +80,11 @@ public class BooleanProperty extends AbstractProperty<Boolean>
         return this.readOnly;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String HTMLStateDescription()
+    {
+        return getShortName() + ": " + (null == this.value ? "null" : (this.value ? "true" : "false"));
+    }
+
 }

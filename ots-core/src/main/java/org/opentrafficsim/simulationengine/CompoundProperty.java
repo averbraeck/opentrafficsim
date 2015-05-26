@@ -30,7 +30,7 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
     private final Boolean readOnly;
 
     /**
-     * Construct an CompoundProperty.
+     * Construct a CompoundProperty.
      * @param shortName String; the short name of the new CompoundProperty
      * @param description String; description of the new CompoundProperty (may use HTML mark up)
      * @param initialValue Integer; the initial value of the new CompoundProperty
@@ -95,12 +95,12 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
      */
     public final AbstractProperty<?> findByShortName(final String name)
     {
-        //System.out.println("Searching property " + name);
+        // System.out.println("Searching property " + name);
         Iterator<AbstractProperty<ArrayList<AbstractProperty<?>>>> i = this.iterator();
         while (i.hasNext())
         {
             AbstractProperty<?> ap = i.next();
-            //System.out.println("Inspecting " + ap.getShortName());
+            // System.out.println("Inspecting " + ap.getShortName());
             if (ap.getShortName().equals(name))
             {
                 return ap;
@@ -227,6 +227,35 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
         }
          */
         return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String HTMLStateDescription()
+    {
+        StringBuilder result = new StringBuilder();
+        result.append("<table border=\"1\">");
+        result.append("<tr><th align=\"left\">" + getShortName() + "</th></tr>\n");
+        for (AbstractProperty<?> ap : displayOrderedValue())
+        {
+            result.append("<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;" + ap.HTMLStateDescription() + "</td></tr>\n");
+        }
+        result.append("</table>\n");
+        return result.toString();
+    }
+
+    /**
+     * Remove a property from this CompoundProperty.
+     * @param removeMe AbstractProperty the property that must be removed
+     * @throws PropertyException when the supplied property cannot be removed (probably because it is not part of this
+     *             CompoundProperty)
+     */
+    public void remove(AbstractProperty<?> removeMe) throws PropertyException
+    {
+        if (!this.value.remove(removeMe))
+        {
+            throw new PropertyException("Cannot remove property " + removeMe);
+        }
     }
 
 }

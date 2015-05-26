@@ -69,6 +69,13 @@ public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T
         return this.displayPriority;
     }
 
+    /**
+     * Generate a description of the state of this property in HTML (excluding the &lt;html&gt; at the start and the
+     * &lt;/html&gt; at the end. The result can be embedded in a html-table.
+     * @return String; the description of this property and the current state in HTML
+     */
+    public abstract String HTMLStateDescription();
+
     /** {@inheritDoc} */
     @Override
     public final Iterator<AbstractProperty<T>> iterator()

@@ -63,4 +63,10 @@ public interface WrappableSimulation
      * @return ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the list of visible properties
      */
     ArrayList<AbstractProperty<?>> getProperties();
+
+    /**
+     * Retrieve a list of properties as the user has modified them.
+     * @return ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the list of visible properties
+     */
+    ArrayList<AbstractProperty<?>> getUserModifiedProperties();
 }

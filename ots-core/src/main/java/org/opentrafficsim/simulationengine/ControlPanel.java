@@ -32,6 +32,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -44,6 +45,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
+import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.SimulatorControlPanel;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
@@ -96,7 +98,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
 
     /** The currently registered stop at event. */
     private SimEvent<OTSSimTimeDouble> stopAtEvent = null;
-    
+
     /** Has the window close handler been registered? */
     private boolean closeHandlerRegistered = false;
 
@@ -146,6 +148,19 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
         this.timeEdit = new TimeEdit(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND));
         this.timeEdit.addPropertyChangeListener("value", this);
         buttonPanel.add(this.timeEdit);
+        ArrayList<AbstractProperty<?>> propertyList =
+                new CompoundProperty("", "", wrappableSimulation.getUserModifiedProperties(), true, 0)
+                        .displayOrderedValue();
+        StringBuilder html = new StringBuilder();
+        html.append("<html><table border=\"1\"><tr><th colspan=\"" + propertyList.size() + "\">Settings</th></tr><tr>");
+
+        for (AbstractProperty<?> ap : propertyList)
+        {
+            html.append("<td valign=\"top\">" + ap.HTMLStateDescription() + "</td>");
+        }
+        html.append("</table></html>");
+        JLabel propertySettings = new JLabel(html.toString());
+        panel.getTabbedPane().addTab("settings", new JScrollPane(propertySettings));
     }
 
     /**
@@ -196,7 +211,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
         this.simulator.scheduleEvent(result);
         return result;
     }
-    
+
     /**
      * Install a handler for the window closed event that stops the simulator (if it is running).
      */
