@@ -25,7 +25,7 @@ public interface WrappableSimulation
      * Build the simulation.
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;*gt;; the (possibly user-modified) properties. This list
      *            must contain all the properties returned by getProperties(); any additional properties may be ignored
-     * @return SimpleSimulation; the new simulation.
+     * @return SimpleSimulation; the new simulation
      * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
      * @throws NetworkException on Network inconsistency
@@ -45,6 +45,16 @@ public interface WrappableSimulation
      * @return String; HTML text describing the simulation
      */
     String description();
+
+    /**
+     * Restart (rebuild) the simulation.
+     * @return SimpleSimulation; the new simulation
+     * @throws RemoteException on communications failure
+     * @throws SimRuntimeException on ???
+     * @throws NetworkException on Network inconsistency
+     * @throws NamingException when context for the animation cannot be created
+     */
+    SimpleSimulation rebuildSimulator() throws SimRuntimeException, RemoteException, NetworkException, NamingException;
 
     /**
      * Retrieve a list of visible properties of the simulation. <br>
