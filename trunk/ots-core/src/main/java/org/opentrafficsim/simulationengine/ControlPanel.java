@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
@@ -26,6 +28,7 @@ import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
@@ -65,7 +68,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ControlPanel implements ActionListener, PropertyChangeListener
+public class ControlPanel implements ActionListener, PropertyChangeListener, WindowListener
 {
     /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
@@ -93,6 +96,9 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
 
     /** The currently registered stop at event. */
     private SimEvent<OTSSimTimeDouble> stopAtEvent = null;
+    
+    /** Has the window close handler been registered? */
+    private boolean closeHandlerRegistered = false;
 
     /**
      * Decorate a SimpleSimulator with a different set of control buttons.
@@ -190,12 +196,37 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
         this.simulator.scheduleEvent(result);
         return result;
     }
+    
+    /**
+     * Install a handler for the window closed event that stops the simulator (if it is running).
+     */
+    public void installWindowCloseHandler()
+    {
+        if (this.closeHandlerRegistered)
+        {
+            return;
+        }
+        // Search towards the root of the Swing components until we find a JFrame
+        Container container = this.clockPanel;
+        while (null != container)
+        {
+            container = container.getParent();
+            if (container instanceof JFrame)
+            {
+                ((JFrame) container).addWindowListener(this);
+                this.closeHandlerRegistered = true;
+                // System.out.println("Registered closed window handler");
+                return;
+            }
+        }
+    }
 
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
     public final void actionPerformed(final ActionEvent actionEvent)
     {
+        installWindowCloseHandler();
         String actionCommand = actionEvent.getActionCommand();
         // System.out.println("actionCommand: " + actionCommand);
         try
@@ -437,6 +468,59 @@ public class ControlPanel implements ActionListener, PropertyChangeListener
     public final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
     {
         return (DEVSSimulator<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble>) this.simulator;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void windowOpened(WindowEvent e)
+    {
+        // No action
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void windowClosing(WindowEvent e)
+    {
+        // No action
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void windowClosed(WindowEvent e)
+    {
+        if (getSimulator().isRunning())
+        {
+            // System.out.println("Window closed; stopping simulator");
+            getSimulator().stop();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void windowIconified(WindowEvent e)
+    {
+        // No action
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void windowDeiconified(WindowEvent e)
+    {
+        // No action
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void windowActivated(WindowEvent e)
+    {
+        // No action
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void windowDeactivated(WindowEvent e)
+    {
+        // No action
     }
 
     /**
