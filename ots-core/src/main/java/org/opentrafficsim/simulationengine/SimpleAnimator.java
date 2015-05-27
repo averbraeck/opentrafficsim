@@ -40,6 +40,9 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
 
     /** The JPanel that contains the simulator controls, a status bar and a JTabbedPane with switchable sub panels. */
     DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel;
+    
+    /** The AnimationPanel. */
+    private final AnimationPanel animationPanel;
 
     /**
      * Create a simulation engine with animation; the easy way. PauseOnError is set to true;
@@ -63,16 +66,12 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
         this.panel =
                 new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model, this);
         Dimension size = new Dimension(1024, 768);
-        AnimationPanel animationPanel = new AnimationPanel(extent, size, this);
-        this.panel.getTabbedPane().addTab(0, "animation", animationPanel);
-        // animationPanel.getBorderPanel().add(new JButton("ABC ZUID"), BorderLayout.SOUTH); // XXX REMOVE!!!
-        // animationPanel.getBorderPanel().add(new JButton("ABC OOST"), BorderLayout.EAST); // XXX REMOVE!!!
-        // animationPanel.getBorderPanel().add(new JButton("ABC NOORD"), BorderLayout.NORTH); // XXX REMOVE!!!
-        // animationPanel.getBorderPanel().add(new JButton("ABC WEST"), BorderLayout.WEST); // XXX REMOVE!!!
-        animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, this, null));
+        this.animationPanel = new AnimationPanel(extent, size, this);
+        this.panel.getTabbedPane().addTab(0, "animation", this.animationPanel);
+        this.animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, this, null));
         this.panel.getTabbedPane().setSelectedIndex(0); // Show the animation panel
     }
-
+    
     /**
      * To use in a Swing application add the DSOLPanel to a JFrame.
      * @return the simulation panel (extends JPanel).
@@ -82,6 +81,15 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
         return this.panel;
     }
 
+    /**
+     * Easy access to the AnimationPanel.
+     * @return AnimationPanel
+     */
+    public final AnimationPanel getAnimationPanel()
+    {
+        return this.animationPanel;
+    }
+    
     /**
      * {@inheritDoc}
      */
