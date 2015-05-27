@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.car;
+package org.opentrafficsim.core.gtu.animation;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -12,6 +12,7 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
 /**
@@ -69,7 +70,7 @@ public class DefaultCarAnimation extends Renderable2D
         final LaneBasedIndividualCar<?> car = (LaneBasedIndividualCar<?>) getSource();
         final double length = car.getLength().getSI();
         final double width = car.getWidth().getSI();
-        graphics.setColor(car.animationColor());
+        graphics.setColor(this.color);
         BasicStroke saveStroke = (BasicStroke) graphics.getStroke();
         graphics.setStroke(new BasicStroke(0));
         Rectangle2D rectangle = new Rectangle2D.Double(-length / 2, -width / 2, length, width);

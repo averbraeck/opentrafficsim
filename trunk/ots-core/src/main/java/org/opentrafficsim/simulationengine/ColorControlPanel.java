@@ -1,11 +1,14 @@
 package org.opentrafficsim.simulationengine;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
+
+import org.opentrafficsim.core.gtu.GTU;
 
 /**
  * Let the user select what the colors in the animation mean.
@@ -33,9 +36,21 @@ public class ColorControlPanel extends JPanel
         this.comboBoxGTUColor = new JComboBox<String>();
         this.comboBoxGTUColor.addItem("Vehicle id");
         this.comboBoxGTUColor.addItem("Destination id");
+        this.comboBoxGTUColor.addItem("Lane change urgency");
         this.comboBoxGTUColor.addItem("Speed");
         this.comboBoxGTUColor.addItem("Acceleration");
         this.add(this.comboBoxGTUColor);
         animationPanel.add(this, BorderLayout.NORTH);
     }
+    
+    /**
+     * Return the fill color for a GTU.
+     * @param gtu GTU&lt;?&gt;; the GTU
+     * @return Color
+     */
+    public Color getColor(GTU<?> gtu)
+    {
+        return Color.red;
+    }
+    
 }
