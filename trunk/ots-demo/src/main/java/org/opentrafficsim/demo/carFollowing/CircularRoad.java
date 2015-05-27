@@ -53,6 +53,7 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.simulationengine.AbstractProperty;
 import org.opentrafficsim.simulationengine.BooleanProperty;
+import org.opentrafficsim.simulationengine.ColorControlPanel;
 import org.opentrafficsim.simulationengine.CompoundProperty;
 import org.opentrafficsim.simulationengine.ContinuousProperty;
 import org.opentrafficsim.simulationengine.ControlPanel;
@@ -187,6 +188,7 @@ public class CircularRoad implements WrappableSimulation
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(-1000, -1000, 2000, 2000));
         new ControlPanel(result, this);
+        new ColorControlPanel(result.getAnimationPanel());
 
         // Make the tab with the plots
         AbstractProperty<?> output =
