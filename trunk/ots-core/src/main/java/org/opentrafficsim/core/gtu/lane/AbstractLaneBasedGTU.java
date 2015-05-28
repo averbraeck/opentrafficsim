@@ -174,6 +174,13 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
+    public final DoubleScalar.Abs<SpeedUnit> getVelocity() throws RemoteException
+    {
+        return getLongitudinalVelocity();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public final DoubleScalar.Abs<TimeUnit> getLastEvaluationTime()
     {
         return new DoubleScalar.Abs<TimeUnit>(this.lastEvaluationTime);

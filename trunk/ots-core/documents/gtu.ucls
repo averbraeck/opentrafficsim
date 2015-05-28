@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class-diagram version="1.1.6" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+<class-diagram version="1.1.7" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" language="java" name="org.opentrafficsim.core.gtu.GTUType" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/GTUType.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="-18" y="35"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -14,8 +14,8 @@
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/RelativePosition.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="166" y="311"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -23,8 +23,8 @@
   <interface id="3" language="java" name="org.opentrafficsim.core.gtu.SpaceBasedGTU" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/SpaceBasedGTU.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="5" y="-35"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -34,8 +34,8 @@
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/lane/AbstractLaneBasedIndividualGTU.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="167" y="187"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -44,8 +44,8 @@
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/lane/AbstractLaneBasedGTU.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="168" y="102"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -53,8 +53,8 @@
   <class id="6" language="java" name="org.opentrafficsim.core.gtu.AbstractGTU" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/AbstractGTU.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="168" y="37"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -63,8 +63,8 @@
     file="/ots-core/src/main/java/org/opentrafficsim/core/car/LaneBasedIndividualCar.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="166" y="241"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -72,8 +72,8 @@
   <interface id="8" language="java" name="org.opentrafficsim.core.gtu.GTU" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/GTU.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="171" y="-36"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -82,8 +82,8 @@
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/lane/LaneBasedGTU.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="374" y="40"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -92,8 +92,8 @@
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/following/GTUFollowingModel.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="444" y="101"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -103,8 +103,8 @@
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/following/AbstractGTUFollowingModel.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="442" y="157"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -112,8 +112,8 @@
   <class id="12" language="java" name="org.opentrafficsim.core.gtu.following.IDM" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/following/IDM.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="344" y="198"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -122,8 +122,8 @@
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/following/IDMPlus.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="502" y="201"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -132,8 +132,8 @@
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/following/AccelerationStep.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="352" y="242"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -142,8 +142,8 @@
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/following/FixedAccelerationModel.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="461" y="282"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -152,8 +152,8 @@
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/lane/changing/LaneChangeModel.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="-90" y="103"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -163,8 +163,8 @@
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/lane/changing/AbstractLaneChangeModel.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="-64" y="243"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -173,8 +173,8 @@
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/lane/changing/Altruistic.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="-117" y="314"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -183,8 +183,8 @@
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/lane/changing/Egoistic.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="-11" y="313"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -193,8 +193,8 @@
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/lane/changing/LaneMovementStep.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="352" y="314"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
@@ -204,123 +204,147 @@
     file="/ots-core/src/main/java/org/opentrafficsim/core/gtu/lane/changing/FixedLaneChangeModel.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="3" y="150"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <realization id="22">    
-    <bendpoint x="-90" y="202"/>    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="16"/>  
-  </realization>  
-  <realization id="23">    
-    <end type="SOURCE" refId="21"/>    
-    <end type="TARGET" refId="16"/>  
-  </realization>  
-  <generalization id="24">    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="17"/>  
-  </generalization>  
-  <realization id="25">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="9"/>  
-  </realization>  
-  <realization id="26">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="10"/>  
-  </realization>  
-  <generalization id="27">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="5"/>  
-  </generalization>  
-  <association id="28">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="29" name="gtuType"/>      
-      <multiplicity id="30" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
-    <display labels="false" multiplicity="true"/>  
-  </association>  
-  <association id="31">    
-    <end type="SOURCE" refId="20" navigable="false">      
-      <attribute id="32" name="gfmr"/>      
-      <multiplicity id="33" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="14" navigable="true"/>    
-    <display labels="false" multiplicity="true"/>  
-  </association>  
-  <generalization id="34">    
-    <end type="SOURCE" refId="15"/>    
-    <end type="TARGET" refId="11"/>  
-  </generalization>  
-  <realization id="35">    
     <end type="SOURCE" refId="6"/>    
     <end type="TARGET" refId="8"/>  
   </realization>  
-  <generalization id="36">    
-    <end type="SOURCE" refId="12"/>    
+  <generalization id="23">    
+    <end type="SOURCE" refId="15"/>    
     <end type="TARGET" refId="11"/>  
   </generalization>  
-  <association id="37">    
-    <end type="SOURCE" refId="11" navigable="false">      
-      <attribute id="38" name="PROHIBITIVEACCELERATIONSTEP"/>      
-      <multiplicity id="39" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="14" navigable="true"/>    
-    <display labels="false" multiplicity="true"/>  
-  </association>  
-  <association id="40">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="41" name="laneChangeModel"/>      
-      <multiplicity id="42" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="16" navigable="true"/>    
-    <display labels="false" multiplicity="true"/>  
-  </association>  
-  <generalization id="43">    
-    <end type="SOURCE" refId="9"/>    
+  <generalization id="24">    
+    <end type="SOURCE" refId="3"/>    
     <end type="TARGET" refId="8"/>  
   </generalization>  
-  <association id="44">    
+  <generalization id="25">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="5"/>  
+  </generalization>  
+  <association id="26">    
     <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="45" name="gtuFollowingModel"/>      
-      <multiplicity id="46" minimum="0" maximum="1"/>    
+      <attribute id="27" name="gtuFollowingModel">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="28" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="10" navigable="true"/>    
     <display labels="false" multiplicity="true"/>  
   </association>  
-  <generalization id="47">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="4"/>  
-  </generalization>  
-  <generalization id="48">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="6"/>  
-  </generalization>  
-  <association id="49">    
+  <realization id="29">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="10"/>  
+  </realization>  
+  <association id="30">    
     <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="50" name="relativePositions"/>      
-      <multiplicity id="51" minimum="0" maximum="2147483647"/>    
+      <attribute id="31" name="relativePositions">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="32" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="false" multiplicity="true"/>  
   </association>  
-  <generalization id="52">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="8"/>  
-  </generalization>  
-  <generalization id="53">    
+  <association id="33">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="34" name="gtuType">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="35" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="1" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <generalization id="36">    
     <end type="SOURCE" refId="18"/>    
     <end type="TARGET" refId="17"/>  
   </generalization>  
-  <generalization id="54">    
+  <generalization id="37">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="8"/>  
+  </generalization>  
+  <association id="38">    
+    <end type="SOURCE" refId="11" navigable="false">      
+      <attribute id="39" name="PROHIBITIVEACCELERATIONSTEP">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="40" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="14" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <realization id="41">    
+    <end type="SOURCE" refId="21"/>    
+    <end type="TARGET" refId="16"/>  
+  </realization>  
+  <generalization id="42">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="11"/>  
+  </generalization>  
+  <generalization id="43">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="4"/>  
+  </generalization>  
+  <generalization id="44">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="6"/>  
+  </generalization>  
+  <realization id="45">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="9"/>  
+  </realization>  
+  <generalization id="46">    
     <end type="SOURCE" refId="13"/>    
     <end type="TARGET" refId="11"/>  
   </generalization>  
+  <generalization id="47">    
+    <end type="SOURCE" refId="19"/>    
+    <end type="TARGET" refId="17"/>  
+  </generalization>  
+  <association id="48">    
+    <end type="SOURCE" refId="20" navigable="false">      
+      <attribute id="49" name="gfmr">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="50" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="14" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <realization id="51">    
+    <bendpoint x="-90" y="202"/>    
+    <end type="SOURCE" refId="17"/>    
+    <end type="TARGET" refId="16"/>  
+  </realization>  
+  <association id="52">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="53" name="laneChangeModel">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="54" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="16" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
   <classifier-display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
-    accessors="true" visibility="true">    
+    sort-features="false" accessors="true" visibility="true">    
     <attributes public="false" package="false" protected="false" private="false" static="false"/>    
     <operations public="false" package="false" protected="false" private="false" static="false"/>  
   </classifier-display>  

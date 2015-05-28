@@ -28,11 +28,8 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
  */
 public class DefaultCarAnimation extends Renderable2D
 {
-    /** Color of this car. */
-    private final Color color;
-
-    /** Counter used to cycle through the colors in colorTable. */
-    private static int nextIndex = 0;
+    /** The GTUColorer that determines the color for the car. */
+    private GTUColorer colorer;
 
     /**
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
@@ -44,24 +41,32 @@ public class DefaultCarAnimation extends Renderable2D
     public DefaultCarAnimation(final LaneBasedIndividualCar<?> source, final OTSSimulatorInterface simulator)
             throws NamingException, RemoteException
     {
-        super(source, simulator);
-        this.color = COLORTABLE[nextIndex() % COLORTABLE.length];
+        this(source, simulator, new IDGTUColorer());
     }
 
     /**
-     * Increment nextIndex and return the result.
-     * @return int; the total number of calls to this method
+     * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
+     * @param source the Car to draw
+     * @param simulator the simulator to schedule on
+     * @param colorer GTUColorer; the GTUColorer that determines what fill color to use
+     * @throws NamingException in case of registration failure of the animation
+     * @throws RemoteException in case of remote registration failure of the animation
      */
-    synchronized private static int nextIndex()
+    public DefaultCarAnimation(final LaneBasedIndividualCar<?> source, final OTSSimulatorInterface simulator,
+            GTUColorer colorer) throws NamingException, RemoteException
     {
-        return ++nextIndex;
+        super(source, simulator);
+        this.colorer = colorer;
     }
-
+    
     /**
-     * Colors for the cars.
+     * Replace the GTUColorer.
+     * @param newGTUColorer GTUColorer; the GTUColorer to use from now on 
      */
-    private static final Color[] COLORTABLE = {Color.BLACK, new Color(0xa5, 0x2a, 0x2a), Color.RED, Color.ORANGE,
-            Color.YELLOW, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.GRAY};
+    public void setGTUColorer(GTUColorer newGTUColorer)
+    {
+        this.colorer = newGTUColorer;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -70,7 +75,7 @@ public class DefaultCarAnimation extends Renderable2D
         final LaneBasedIndividualCar<?> car = (LaneBasedIndividualCar<?>) getSource();
         final double length = car.getLength().getSI();
         final double width = car.getWidth().getSI();
-        graphics.setColor(this.color);
+        graphics.setColor(this.colorer.getColor(car));
         BasicStroke saveStroke = (BasicStroke) graphics.getStroke();
         graphics.setStroke(new BasicStroke(0));
         Rectangle2D rectangle = new Rectangle2D.Double(-length / 2, -width / 2, length, width);
@@ -82,15 +87,6 @@ public class DefaultCarAnimation extends Renderable2D
         graphics.draw(frontIndicator);
         graphics.fill(frontIndicator);
         graphics.setStroke(saveStroke);
-    }
-
-    /**
-     * Retrieve the rank based color of the GTU
-     * @return Color
-     */
-    public Color getColor()
-    {
-        return this.color;
     }
 
     /** {@inheritDoc} */

@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.Map;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
@@ -49,10 +50,16 @@ public interface GTU<ID> extends LocatableInterface, Serializable
 
     /** @return the rear position of the GTU, relative to its reference point. */
     RelativePosition getRear();
-    
+
+    /**
+     * @return the current velocity of the GTU, combining longitudinal, lateral and vertical speed components.
+     * @throws RemoteException
+     */
+    DoubleScalar.Abs<SpeedUnit> getVelocity() throws RemoteException;
+
     /** @return the positions for this GTU. */
     Map<RelativePosition.TYPE, RelativePosition> getRelativePositions();
-    
+
     /** destroy the vehicle from the simulation and animation. */
     void destroy();
 }
