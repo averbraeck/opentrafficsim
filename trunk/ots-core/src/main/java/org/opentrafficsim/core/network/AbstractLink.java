@@ -74,7 +74,7 @@ public abstract class AbstractLink<IDL, IDN, P, N extends AbstractNode<IDN, P>> 
     }
 
     /**
-     * Construct a a new link with infinite capacity.
+     * Construct a new link with infinite capacity.
      * @param id the link id
      * @param startNode start node (directional)
      * @param endNode end node (directional)
