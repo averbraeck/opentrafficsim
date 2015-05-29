@@ -28,6 +28,9 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
+import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
@@ -169,7 +172,10 @@ public class SequentialLanes implements WrappableSimulation
                 new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(0, -100, 2010, 200));
-        new ControlPanel(result, this);
+        ControlPanel controlPanel = new ControlPanel(result, this);
+        // Insert the SwitchableGTUColorer in the SwitchableGTUColorer of the model.
+        // This will incur the overhead of a nested call to getColor when a GTU is painted; this is intended.
+        model.getGTUColorer().setGTUColorer(controlPanel.getGTUColorer());
 
         // Make the info tab
         String helpSource = "/" + StraightModel.class.getPackage().getName().replace('.', '/') + "/IDMPlus.html";
@@ -381,6 +387,17 @@ class SequentialModel implements OTSModelInterface
     /** The speedLimit on all Lanes. */
     private DoubleScalar.Abs<SpeedUnit> speedLimit;
 
+    /** The SwitchableGTUColorer for the generated vehicles. */
+    private SwitchableGTUColorer gtuColorer;
+
+    /**
+     * @return gtuColorer.
+     */
+    public SwitchableGTUColorer getGTUColorer()
+    {
+        return this.gtuColorer;
+    }
+
     /**
      * @param properties the user settable properties
      */
@@ -452,6 +469,7 @@ class SequentialModel implements OTSModelInterface
                 exception.printStackTrace();
             }
         }
+        this.gtuColorer = new SwitchableGTUColorer(new IDGTUColorer());
         // 1500 [veh / hour] == 2.4s headway
         this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
         // Schedule creation of the first car (it will re-schedule itself one headway later, etc.).
@@ -616,7 +634,8 @@ class SequentialModel implements OTSModelInterface
             new LaneBasedIndividualCar<>(++this.carsCreated, this.gtuType, generateTruck ? this.carFollowingModelTrucks
                     : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
                     new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                            SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator);
+                            SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator,
+                            DefaultCarAnimation.class, this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)

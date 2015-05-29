@@ -28,6 +28,9 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
+import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
@@ -171,7 +174,10 @@ public class Straight implements WrappableSimulation
                 new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(0, -100, 5000, 200));
-        new ControlPanel(result, this);
+        ControlPanel controlPanel = new ControlPanel(result, this);
+        // Insert the SwitchableGTUColorer in the SwitchableGTUColorer of the model.
+        // This will incur the overhead of a nested call to getColor when a GTU is painted; this is intended.
+        model.getGTUColorer().setGTUColorer(controlPanel.getGTUColorer());
 
         // Make the info tab
         String helpSource = "/" + StraightModel.class.getPackage().getName().replace('.', '/') + "/IDMPlus.html";
@@ -390,6 +396,17 @@ class StraightModel implements OTSModelInterface
     /** The random number generator used to decide what kind of GTU to generate. */
     private Random randomGenerator = new Random(12345);
 
+    /** The SwitchableGTUColorer for the generated vehicles. */
+    private SwitchableGTUColorer gtuColorer;
+
+    /**
+     * @return gtuColorer.
+     */
+    public SwitchableGTUColorer getGTUColorer()
+    {
+        return this.gtuColorer;
+    }
+
     /**
      * @param properties the user settable properties
      */
@@ -514,6 +531,7 @@ class StraightModel implements OTSModelInterface
                     }
                 }
             }
+            this.gtuColorer = new SwitchableGTUColorer(new IDGTUColorer());
             // 1500 [veh / hour] == 2.4s headway
             this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
             // Schedule creation of the first car (it will re-schedule itself one headway later, etc.).
@@ -566,7 +584,8 @@ class StraightModel implements OTSModelInterface
                             this.laneChangeModel, initialPositions, new DoubleScalar.Abs<SpeedUnit>(0,
                                     SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER),
                             new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0,
-                                    SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator);
+                                    SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator,
+                                    DefaultCarAnimation.class, this.gtuColorer);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
@@ -607,7 +626,8 @@ class StraightModel implements OTSModelInterface
             new LaneBasedIndividualCar<Integer>(++this.carsCreated, this.gtuType, gtuFollowingModel,
                     this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
                     new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                            SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator);
+                            SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator,
+                    DefaultCarAnimation.class, this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)

@@ -24,6 +24,9 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
+import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
@@ -172,7 +175,10 @@ public class CircularLane implements WrappableSimulation
                 new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(-1000, -1000, 2000, 2000));
-        new ControlPanel(result, this);
+        ControlPanel controlPanel = new ControlPanel(result, this);
+        // Insert the SwitchableGTUColorer in the SwitchableGTUColorer of the model.
+        // This will incur the overhead of a nested call to getColor when a GTU is painted; this is intended.
+        model.getGTUColorer().setGTUColorer(controlPanel.getGTUColorer());
 
         // Make the tab with the plots
         AbstractProperty<?> output =
@@ -364,12 +370,23 @@ class LaneSimulationModel implements OTSModelInterface
     /** The sequence of Lanes that all vehicles will follow. */
     private List<Lane> path = new ArrayList<Lane>();
 
+    /** The SwitchableGTUColorer for the generated vehicles. */
+    private SwitchableGTUColorer gtuColorer;
+
     /**
      * @return a newly created path (which all GTUs in this simulation will follow).
      */
     public List<Lane> getPath()
     {
         return new ArrayList<Lane>(this.path);
+    }
+
+    /**
+     * @return SwitchableGTUColorer
+     */
+    public SwitchableGTUColorer getGTUColorer()
+    {
+        return this.gtuColorer;
     }
 
     /**
@@ -491,6 +508,7 @@ class LaneSimulationModel implements OTSModelInterface
                 }
             }
 
+            this.gtuColorer = new SwitchableGTUColorer(new IDGTUColorer());
             NodeGeotools.STR start = new NodeGeotools.STR("Start", new Coordinate(radius, 0, 0));
             NodeGeotools.STR halfway = new NodeGeotools.STR("Halfway", new Coordinate(-radius, 0, 0));
             LaneType<String> laneType = new LaneType<String>("CarLane");
@@ -606,7 +624,8 @@ class LaneSimulationModel implements OTSModelInterface
             new LaneBasedIndividualCar<>(++this.carsCreated, this.gtuType, generateTruck ? this.carFollowingModelTrucks
                     : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
                     new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                            SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator);
+                            SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator,
+                    DefaultCarAnimation.class, this.gtuColorer);
         }
         catch (RemoteException | NamingException | SimRuntimeException | NetworkException exception)
         {

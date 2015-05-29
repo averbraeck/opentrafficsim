@@ -28,6 +28,9 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
+import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
@@ -112,7 +115,10 @@ public class XMLNetworks implements WrappableSimulation
                 new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(-50, -300, 1300, 600));
-        new ControlPanel(result, this);
+        ControlPanel controlPanel = new ControlPanel(result, this);
+        // Insert the SwitchableGTUColorer in the SwitchableGTUColorer of the model.
+        // This will incur the overhead of a nested call to getColor when a GTU is painted; this is intended.
+        model.getGTUColorer().setGTUColorer(controlPanel.getGTUColorer());
         int graphCount = model.pathCount();
         int columns = 1;
         int rows = 0 == columns ? 0 : (int) Math.ceil(graphCount * 1.0 / columns);
@@ -236,6 +242,17 @@ class XMLNetworkModel implements OTSModelInterface
 
     /** The route generator. */
     private RouteGenerator routeGenerator;
+
+    /** The SwitchableGTUColorer for the generated vehicles. */
+    private SwitchableGTUColorer gtuColorer;
+
+    /**
+     * @return gtuColorer.
+     */
+    public SwitchableGTUColorer getGTUColorer()
+    {
+        return this.gtuColorer;
+    }
 
     /**
      * @param userModifiedProperties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user modified) properties
@@ -388,6 +405,7 @@ class XMLNetworkModel implements OTSModelInterface
                     }
                 }
             }
+            this.gtuColorer = new SwitchableGTUColorer(new IDGTUColorer());
             setupGenerator(LaneFactory.makeMultiLane("From to FirstVia", from, firstVia, null, merge ? lanesOnMain
                     : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator));
             Lane[] common =
@@ -574,7 +592,8 @@ class XMLNetworkModel implements OTSModelInterface
             new LaneBasedIndividualCar<Integer>(++this.carsCreated, this.gtuType, gtuFollowingModel,
                     this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
                     new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                            SpeedUnit.KM_PER_HOUR), this.routeGenerator.generateRoute(), this.simulator);
+                            SpeedUnit.KM_PER_HOUR), this.routeGenerator.generateRoute(), this.simulator,
+                            DefaultCarAnimation.class, this.gtuColorer);
             Object[] arguments = new Object[1];
             arguments[0] = lane;
             this.simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(this.headwayGenerator.draw(),
