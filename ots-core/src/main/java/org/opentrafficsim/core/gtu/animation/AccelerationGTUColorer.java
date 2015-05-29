@@ -32,17 +32,17 @@ public class AccelerationGTUColorer implements GTUColorer
     private final DoubleScalar.Abs<AccelerationUnit> maximumAcceleration;
 
     /** Negative scale part of the range of colors (excluding the zero value). */
-    private static Color[] DECELERATIONCOLORS = {Color.RED, Color.ORANGE, Color.YELLOW};
+    private static Color[] decelerationColors = {Color.RED, Color.ORANGE, Color.YELLOW};
 
     /** Positive scale part of the range of colors (including the zero value). */
-    private static Color[] ACCELERATIONCOLORS = {Color.YELLOW, Color.GREEN, Color.BLUE};
+    private static Color[] accelerationColors = {Color.YELLOW, Color.GREEN, Color.BLUE};
 
     /**
      * Construct a new AccelerationGTUColorer.
-     * @param maximumDeceleration DoubleScalar.Abs&ltAccelerationUnit&gt;; the deceleration (negative acceleration) that
-     *            corresponds to the first (red) legend entry
-     * @param maximumAcceleration DoubleScalar.Abs&ltAccelerationUnit&gt;; the deceleration that corresponds to the last
-     *            (blue) legend entry
+     * @param maximumDeceleration DoubleScalar.Abs&lt;AccelerationUnit&gt;; the deceleration (negative acceleration)
+     *            that corresponds to the first (red) legend entry
+     * @param maximumAcceleration DoubleScalar.Abs&lt;AccelerationUnit&gt;; the deceleration that corresponds to the
+     *            last (blue) legend entry
      */
     public AccelerationGTUColorer(final DoubleScalar.Abs<AccelerationUnit> maximumDeceleration,
             final DoubleScalar.Abs<AccelerationUnit> maximumAcceleration)
@@ -51,41 +51,41 @@ public class AccelerationGTUColorer implements GTUColorer
         this.maximumAcceleration = maximumAcceleration;
         this.legend = new ArrayList<LegendEntry>(5);
         DoubleScalar.Abs<AccelerationUnit> zeroValue = new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.SI);
-        for (int index = 0; index < DECELERATIONCOLORS.length - 1; index++)
+        for (int index = 0; index < decelerationColors.length - 1; index++)
         {
-            double ratio = index * 1.0 / (DECELERATIONCOLORS.length - 1);
+            double ratio = index * 1.0 / (decelerationColors.length - 1);
             DoubleScalar.Abs<AccelerationUnit> acceleration =
                     DoubleScalar.interpolate(this.maximumDeceleration, zeroValue, ratio).immutable();
-            this.legend.add(new LegendEntry(DECELERATIONCOLORS[index], acceleration.toString(), "deceleration"
+            this.legend.add(new LegendEntry(decelerationColors[index], acceleration.toString(), "deceleration"
                     + acceleration.toString()));
         }
-        for (int index = 0; index < ACCELERATIONCOLORS.length; index++)
+        for (int index = 0; index < accelerationColors.length; index++)
         {
-            double ratio = index * 1.0 / (ACCELERATIONCOLORS.length - 1);
+            double ratio = index * 1.0 / (accelerationColors.length - 1);
             DoubleScalar.Abs<AccelerationUnit> acceleration =
                     DoubleScalar.interpolate(zeroValue, this.maximumAcceleration, ratio).immutable();
-            this.legend.add(new LegendEntry(ACCELERATIONCOLORS[index], acceleration.toString(), "acceleration"
+            this.legend.add(new LegendEntry(accelerationColors[index], acceleration.toString(), "acceleration"
                     + acceleration.toString()));
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public Color getColor(GTU<?> gtu) throws RemoteException
+    public final Color getColor(final GTU<?> gtu) throws RemoteException
     {
         DoubleScalar.Abs<AccelerationUnit> acceleration = gtu.getAcceleration();
         double ratio;
         if (acceleration.getSI() < 0)
         {
             ratio =
-                    DECELERATIONCOLORS.length - 1 - acceleration.getSI() / this.maximumDeceleration.getSI()
-                            * (DECELERATIONCOLORS.length - 1);
+                    decelerationColors.length - 1 - acceleration.getSI() / this.maximumDeceleration.getSI()
+                            * (decelerationColors.length - 1);
         }
         else
         {
             ratio =
-                    acceleration.getSI() / this.maximumAcceleration.getSI() * (ACCELERATIONCOLORS.length - 1)
-                            + DECELERATIONCOLORS.length - 1;
+                    acceleration.getSI() / this.maximumAcceleration.getSI() * (accelerationColors.length - 1)
+                            + decelerationColors.length - 1;
         }
         if (ratio <= 0)
         {
@@ -103,14 +103,14 @@ public class AccelerationGTUColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public List<LegendEntry> getLegend()
+    public final List<LegendEntry> getLegend()
     {
         return Collections.unmodifiableList(this.legend);
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "Acceleration";
     }

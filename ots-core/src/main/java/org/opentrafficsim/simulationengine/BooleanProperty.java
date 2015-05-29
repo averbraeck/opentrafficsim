@@ -82,9 +82,9 @@ public class BooleanProperty extends AbstractProperty<Boolean>
 
     /** {@inheritDoc} */
     @Override
-    public String HTMLStateDescription()
+    public final String htmlStateDescription()
     {
-        return getShortName() + ": " + (null == this.value ? "null" : (this.value ? "true" : "false"));
+        return getShortName() + ": " + (null == this.value ? "null" : this.value ? "true" : "false");
     }
 
 }

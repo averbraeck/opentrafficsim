@@ -28,13 +28,13 @@ public interface GTUColorer
      * @return Color; the color for the GTU
      * @throws RemoteException on communications failure
      */
-    public Color getColor(GTU<?> gtu) throws RemoteException;
+    Color getColor(GTU<?> gtu) throws RemoteException;
 
     /**
-     * Return a list of legend entries (useful to make a legend of the colors used to render the GTUs)
+     * Return a list of legend entries (useful to make a legend of the colors used to render the GTUs).
      * @return List&lt;LegendEntry&gt;; the list of legend entries; the caller should not (try to) modify this List
      */
-    public List<LegendEntry> getLegend();
+    List<LegendEntry> getLegend();
 
     /**
      * Packs a Color, a short description and a long description in one object.
@@ -50,13 +50,13 @@ public interface GTUColorer
     class LegendEntry
     {
         /** The Color. */
-        final Color color;
+        private final Color color;
 
         /** Name of the legend entry (should be terse). */
-        final String name;
+        private final String name;
 
         /** Description of the legend entry (may use HTML). */
-        final String description;
+        private final String description;
 
         /**
          * Construct a new LegendEntry.
@@ -74,7 +74,7 @@ public interface GTUColorer
         /**
          * @return Color; the color of this LegendEntry
          */
-        public Color getColor()
+        public final Color getColor()
         {
             return this.color;
         }
@@ -82,7 +82,7 @@ public interface GTUColorer
         /**
          * @return name.
          */
-        public String getName()
+        public final String getName()
         {
             return this.name;
         }
@@ -90,7 +90,7 @@ public interface GTUColorer
         /**
          * @return description.
          */
-        public String getDescription()
+        public final String getDescription()
         {
             return this.description;
         }

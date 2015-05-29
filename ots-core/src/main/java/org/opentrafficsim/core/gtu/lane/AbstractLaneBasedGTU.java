@@ -210,7 +210,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
-    public DoubleScalar.Abs<LengthUnit> getOdometer() throws RemoteException
+    public final DoubleScalar.Abs<LengthUnit> getOdometer() throws RemoteException
     {
         return DoubleScalar.plus(this.odometer, deltaX(getSimulator().getSimulatorTime().get())).immutable();
     }
@@ -1330,11 +1330,11 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /**
      * Determine longitudinal displacement.
-     * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the durrent time
+     * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the current time
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the displacement since last move evaluation
      * @throws RemoteException on communications failure
      */
-    private DoubleScalar.Rel<LengthUnit> deltaX(DoubleScalar.Abs<TimeUnit> when) throws RemoteException
+    private DoubleScalar.Rel<LengthUnit> deltaX(final DoubleScalar.Abs<TimeUnit> when) throws RemoteException
     {
         DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
         return DoubleScalar.plus(Calc.speedTimesTime(this.speed, dT),

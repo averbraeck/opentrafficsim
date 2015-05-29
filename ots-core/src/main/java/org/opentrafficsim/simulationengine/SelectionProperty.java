@@ -120,7 +120,7 @@ public class SelectionProperty extends AbstractProperty<String>
 
     /** {@inheritDoc} */
     @Override
-    public String HTMLStateDescription()
+    public final String htmlStateDescription()
     {
         return getShortName() + ": " + this.options[this.currentOption];
     }

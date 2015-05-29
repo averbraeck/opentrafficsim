@@ -74,7 +74,7 @@ public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T
      * &lt;/html&gt; at the end. The result can be embedded in a html-table.
      * @return String; the description of this property and the current state in HTML
      */
-    public abstract String HTMLStateDescription();
+    public abstract String htmlStateDescription();
 
     /** {@inheritDoc} */
     @Override

@@ -33,13 +33,13 @@ public class ColorControlPanel extends JPanel implements ActionListener
     private static final long serialVersionUID = 20150527L;
 
     /** The combo box that sets the coloring for the GTUs. */
-    final JComboBox<GTUColorer> comboBoxGTUColor;
-    
+    private final JComboBox<GTUColorer> comboBoxGTUColor;
+
     /** The panel that holds the legend for the currently selected GTUColorer. */
-    final JPanel legendPanel;
+    private final JPanel legendPanel;
 
     /** The SwitchableGTUColorer that is controlled by this ColorControlPanel. */
-    final SwitchableGTUColorer switchableGTUColorer;
+    private final SwitchableGTUColorer switchableGTUColorer;
 
     /**
      * Add a ColorControlPanel to an AnimationPanel. Initially the ColorControlPanel will have no items. Items are added
@@ -48,7 +48,7 @@ public class ColorControlPanel extends JPanel implements ActionListener
      * @param switchableGTUColorer SwitchableGTUColorer; the switchable GTU colorer that will be controlled by this
      *            ColorControlPanel
      */
-    public ColorControlPanel(AnimationPanel animationPanel, SwitchableGTUColorer switchableGTUColorer)
+    public ColorControlPanel(final AnimationPanel animationPanel, final SwitchableGTUColorer switchableGTUColorer)
     {
         this.setLayout(new FlowLayout());
         this.switchableGTUColorer = switchableGTUColorer;
@@ -61,18 +61,18 @@ public class ColorControlPanel extends JPanel implements ActionListener
     }
 
     /**
-     * Add one item to this ColorControlPanel. The <cite>getName</cite> method of the 
+     * Add one item to this ColorControlPanel. The <cite>getName</cite> method of the
      * @param colorer GTUColorer; the GTUColorer that will be added
      */
-    public void addItem(GTUColorer colorer)
+    public final void addItem(final GTUColorer colorer)
     {
         this.comboBoxGTUColor.addItem(colorer);
         // The first item added makes that item the current one and triggers a call to actionPerformed.
     }
-    
+
     /** {@inheritDoc} */
     @Override
-    public void actionPerformed(ActionEvent e)
+    public final void actionPerformed(final ActionEvent e)
     {
         GTUColorer newColorer = (GTUColorer) this.comboBoxGTUColor.getSelectedItem();
         if (null != newColorer)

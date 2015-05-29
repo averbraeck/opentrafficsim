@@ -25,7 +25,7 @@ public class SwitchableGTUColorer implements GTUColorer
      * Construct a new Switchable GTUColorer.
      * @param initialColorer GTUColorer; the initially active GTUColorer.
      */
-    public SwitchableGTUColorer(GTUColorer initialColorer)
+    public SwitchableGTUColorer(final GTUColorer initialColorer)
     {
         this.gtuColorer = initialColorer;
     }
@@ -34,28 +34,28 @@ public class SwitchableGTUColorer implements GTUColorer
      * Replace the currently active GTUColorer.
      * @param newColorer GTUColorer; the GTUColorer that will replace the currently active GTUColorer
      */
-    public void setGTUColorer(GTUColorer newColorer)
+    public final void setGTUColorer(final GTUColorer newColorer)
     {
         this.gtuColorer = newColorer;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Color getColor(GTU<?> gtu) throws RemoteException
+    public final Color getColor(final GTU<?> gtu) throws RemoteException
     {
         return this.gtuColorer.getColor(gtu);
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<LegendEntry> getLegend()
+    public final List<LegendEntry> getLegend()
     {
         return this.gtuColorer.getLegend();
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "Switchable GTU Colorer";
     }

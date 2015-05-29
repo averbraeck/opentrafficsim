@@ -131,7 +131,7 @@ public class IntegerProperty extends AbstractProperty<Integer>
 
     /** {@inheritDoc} */
     @Override
-    public String HTMLStateDescription()
+    public final String htmlStateDescription()
     {
         return getShortName() + ": " + String.format(getFormatString(), getValue());
     }

@@ -9,9 +9,10 @@ import org.opentrafficsim.core.gtu.GTU;
 
 /**
  * Color GTUs based on their id. If the id ends on one or more digits, the value that those digits constitute is used.
- * Otherwise, the hash code of the string representation of the id is used. 
+ * Otherwise, the hash code of the string representation of the id is used.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 28 mei 2015 <br>
@@ -43,18 +44,20 @@ public class IDGTUColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public Color getColor(GTU<?> gtu) throws RemoteException
+    public final Color getColor(final GTU<?> gtu) throws RemoteException
     {
         String idString = "" + gtu.getId();
         int firstDigit = idString.length();
         while (firstDigit > 0)
         {
-           if (Character.isDigit (idString.charAt(firstDigit - 1)))
-           {
-               firstDigit--;
-           }
-           else
-               break;
+            if (Character.isDigit(idString.charAt(firstDigit - 1)))
+            {
+                firstDigit--;
+            }
+            else
+            {
+                break;
+            }
         }
         int idKey;
         if (firstDigit == idString.length())
@@ -70,13 +73,13 @@ public class IDGTUColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public List<LegendEntry> getLegend()
+    public final List<LegendEntry> getLegend()
     {
         return this.legend;
     }
-    
+
     /** {@inheritDoc} */
-    public String toString()
+    public final String toString()
     {
         return "ID";
     }
