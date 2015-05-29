@@ -9,7 +9,11 @@ import org.opentrafficsim.core.gtu.GTU;
 /**
  * Determine the fill color for a GTU.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * The result of the toString method of a GTUColorer is used to label the choices in the ColorControlPanel.
+ * Implementations of GTUColorer should ensure that the toString method returns something in the users locale.
+ * <p>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 27 mei 2015 <br>
@@ -25,17 +29,18 @@ public interface GTUColorer
      * @throws RemoteException on communications failure
      */
     public Color getColor(GTU<?> gtu) throws RemoteException;
-    
+
     /**
      * Return a list of legend entries (useful to make a legend of the colors used to render the GTUs)
      * @return List&lt;LegendEntry&gt;; the list of legend entries; the caller should not (try to) modify this List
      */
     public List<LegendEntry> getLegend();
-    
+
     /**
-     * Packs a Color, a short description and a long description in one object. 
+     * Packs a Color, a short description and a long description in one object.
      * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+     * reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version 27 mei 2015 <br>
@@ -46,13 +51,13 @@ public interface GTUColorer
     {
         /** The Color. */
         final Color color;
-        
+
         /** Name of the legend entry (should be terse). */
         final String name;
-        
+
         /** Description of the legend entry (may use HTML). */
         final String description;
-        
+
         /**
          * Construct a new LegendEntry.
          * @param color Color; the color of the new LegendEntry
@@ -73,5 +78,22 @@ public interface GTUColorer
         {
             return this.color;
         }
+        
+        /**
+         * @return name.
+         */
+        public String getName()
+        {
+            return this.name;
+        }
+
+        /**
+         * @return description.
+         */
+        public String getDescription()
+        {
+            return this.description;
+        }
+
     }
 }

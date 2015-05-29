@@ -53,6 +53,10 @@ import nl.tudelft.simulation.language.io.URLResource;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
+import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
+import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
+import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
@@ -100,6 +104,12 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
 
     /** Has the window close handler been registered? */
     private boolean closeHandlerRegistered = false;
+
+    /** The switchableGTUColorer used to color the GTUs. */
+    private SwitchableGTUColorer switchableGTUColorer = null;
+
+    /** The ColorControlPanel that allows the user to operate the SwitchableGTUColorer. */
+    private ColorControlPanel colorControlPanel = null;
 
     /**
      * Decorate a SimpleSimulator with a different set of control buttons.
@@ -160,6 +170,35 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
         html.append("</table></html>");
         JLabel propertySettings = new JLabel(html.toString());
         panel.getTabbedPane().addTab("settings", new JScrollPane(propertySettings));
+        if (simulator instanceof SimpleAnimator)
+        {
+            this.switchableGTUColorer = new SwitchableGTUColorer(new IDGTUColorer());
+            this.colorControlPanel =
+                    new ColorControlPanel(((SimpleAnimator) simulator).getAnimationPanel(), this.switchableGTUColorer);
+            this.colorControlPanel.addItem(new IDGTUColorer());
+            this.colorControlPanel.addItem(new VelocityGTUColorer(new DoubleScalar.Abs<SpeedUnit>(150,
+                    SpeedUnit.KM_PER_HOUR)));
+        }
+    }
+
+    /**
+     * Access the SwitchableGTUColorer of this ControlPanel. If the simulator is not a SimpleAnimator, no
+     * SwitchableGTUColorer was constructed and this method will return null.
+     * @return SwitchableGTUColorer
+     */
+    public final SwitchableGTUColorer getGTUColorer()
+    {
+        return this.switchableGTUColorer;
+    }
+
+    /**
+     * Access the ColorControlPanel of this ControlPanel. If the simulator is not a SimpleAnimator, no ColorControlPanel
+     * was constructed and this method will return null.
+     * @return ColorControlPanel
+     */
+    public final ColorControlPanel getColorControlPanel()
+    {
+        return this.colorControlPanel;
     }
 
     /**

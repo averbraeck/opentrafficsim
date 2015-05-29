@@ -19,6 +19,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedIndividualGTU;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
@@ -48,7 +49,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
 
     /** animation. */
     private Renderable2D animation;
-    
+
     /** Sensing positions. */
     private final Map<RelativePosition.TYPE, RelativePosition> relativePositions = new LinkedHashMap<>();
 
@@ -82,7 +83,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
             NetworkException, SimRuntimeException, GTUException
     {
         this(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, length,
-                width, maximumVelocity, route, simulator, DefaultCarAnimation.class);
+                width, maximumVelocity, route, simulator, DefaultCarAnimation.class, null);
     }
 
     /**
@@ -101,6 +102,8 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
      * @param route Route the route that the GTU will follow
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @param animationClass Class&lt;? extends Renderable2D&gt;; the class for animation or null if no animation
+     * @param gtuColorer GTUColorer; the GTUColorer that will be linked from the animation to determine the color (may
+     *            be null in which case a default will be used)
      * @throws NamingException if an error occurs when adding the animation handler
      * @throws RemoteException when the simulator cannot be reached
      * @throws NetworkException when the GTU cannot be placed on the given lane
@@ -114,8 +117,8 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
             final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
             final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
             final Route route, final OTSDEVSSimulatorInterface simulator,
-            final Class<? extends Renderable2D> animationClass) throws NamingException, RemoteException,
-            NetworkException, SimRuntimeException, GTUException
+            final Class<? extends Renderable2D> animationClass, GTUColorer gtuColorer) throws NamingException,
+            RemoteException, NetworkException, SimRuntimeException, GTUException
     {
         super(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, length,
                 width, maximumVelocity, route, simulator);
@@ -136,9 +139,18 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         {
             try
             {
-                Constructor<?> constructor =
-                        ClassUtil.resolveConstructor(animationClass, new Object[]{this, simulator});
-                this.animation = (Renderable2D) constructor.newInstance(this, simulator);
+                Constructor<?> constructor;
+
+                if (null == gtuColorer)
+                {
+                    constructor = ClassUtil.resolveConstructor(animationClass, new Object[]{this, simulator});
+                    this.animation = (Renderable2D) constructor.newInstance(this, simulator);
+                }
+                else
+                {
+                    constructor = ClassUtil.resolveConstructor(animationClass, new Object[]{this, simulator, gtuColorer});
+                    this.animation = (Renderable2D) constructor.newInstance(this, simulator, gtuColorer);
+                }
             }
             catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
                     | IllegalArgumentException | InvocationTargetException exception)
@@ -267,6 +279,9 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
 
         /** Animation. */
         private Class<? extends Renderable2D> animationClass = null;
+
+        /** GTUColorer. */
+        private GTUColorer gtuColorer = null;
 
         /** Cached Route. */
         private Route route = null;
@@ -409,7 +424,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         {
             return this.route;
         }
-        
+
         /**
          * @return gtuType.
          */
@@ -491,6 +506,22 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         }
 
         /**
+         * @return gtuColorer.
+         */
+        public GTUColorer getGtuColorer()
+        {
+            return this.gtuColorer;
+        }
+
+        /**
+         * @param gtuColorer set gtuColorer.
+         */
+        public void setGtuColorer(GTUColorer gtuColorer)
+        {
+            this.gtuColorer = gtuColorer;
+        }
+
+        /**
          * Build one LaneBasedIndividualCar.
          * @return the built Car with the set properties
          * @throws Exception when not all required values have been set
@@ -507,7 +538,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
             }
             return new LaneBasedIndividualCar<ID>(this.id, this.gtuType, this.gtuFollowingModel, this.laneChangeModel,
                     this.initialLongitudinalPositions, this.initialSpeed, this.length, this.width,
-                    this.maximumVelocity, this.route, this.simulator, this.animationClass);
+                    this.maximumVelocity, this.route, this.simulator, this.animationClass, this.gtuColorer);
         }
 
     }

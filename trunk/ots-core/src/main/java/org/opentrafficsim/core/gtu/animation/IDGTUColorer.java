@@ -74,5 +74,11 @@ public class IDGTUColorer implements GTUColorer
     {
         return this.legend;
     }
+    
+    /** {@inheritDoc} */
+    public String toString()
+    {
+        return "ID";
+    }
 
 }

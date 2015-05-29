@@ -41,7 +41,7 @@ public class VelocityGTUColorer implements GTUColorer
         DoubleScalar.Abs<SpeedUnit> zeroValue = new DoubleScalar.Abs<SpeedUnit>(0, maximumSpeed.getUnit());
         for (int index = 0; index < colorTable.length; index++)
         {
-            double ratio = index * 1.0 / colorTable.length;
+            double ratio = index * 1.0 / (colorTable.length - 1);
             DoubleScalar.Abs<SpeedUnit> speed = DoubleScalar.interpolate(zeroValue, maximumSpeed, ratio).immutable();
             this.legend.add(new LegendEntry(colorTable[index], speed.toString(), index == 0 ? "stationary" : "driving "
                     + speed.toString()));
@@ -76,6 +76,13 @@ public class VelocityGTUColorer implements GTUColorer
     public List<LegendEntry> getLegend()
     {
         return Collections.unmodifiableList(this.legend);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "Velocity";
     }
 
 }
