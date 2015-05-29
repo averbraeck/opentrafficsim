@@ -182,7 +182,7 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
 
     /** {@inheritDoc} */
     @Override
-    public String HTMLStateDescription()
+    public final String htmlStateDescription()
     {
         StringBuilder result = new StringBuilder();
         result.append("<table>");

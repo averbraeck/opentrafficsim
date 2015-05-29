@@ -117,7 +117,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
             final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
             final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
             final Route route, final OTSDEVSSimulatorInterface simulator,
-            final Class<? extends Renderable2D> animationClass, GTUColorer gtuColorer) throws NamingException,
+            final Class<? extends Renderable2D> animationClass, final GTUColorer gtuColorer) throws NamingException,
             RemoteException, NetworkException, SimRuntimeException, GTUException
     {
         super(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, length,
@@ -508,7 +508,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         /**
          * @return gtuColorer.
          */
-        public GTUColorer getGtuColorer()
+        public final GTUColorer getGtuColorer()
         {
             return this.gtuColorer;
         }
@@ -516,7 +516,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         /**
          * @param gtuColorer set gtuColorer.
          */
-        public void setGtuColorer(GTUColorer gtuColorer)
+        public final void setGtuColorer(final GTUColorer gtuColorer)
         {
             this.gtuColorer = gtuColorer;
         }

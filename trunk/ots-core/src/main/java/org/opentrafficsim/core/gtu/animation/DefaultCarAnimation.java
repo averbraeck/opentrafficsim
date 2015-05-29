@@ -53,7 +53,7 @@ public class DefaultCarAnimation extends Renderable2D
      * @throws RemoteException in case of remote registration failure of the animation
      */
     public DefaultCarAnimation(final LaneBasedIndividualCar<?> source, final OTSSimulatorInterface simulator,
-            GTUColorer gtuColorer) throws NamingException, RemoteException
+            final GTUColorer gtuColorer) throws NamingException, RemoteException
     {
         super(source, simulator);
         if (null == gtuColorer)
@@ -70,7 +70,7 @@ public class DefaultCarAnimation extends Renderable2D
      * Replace the GTUColorer.
      * @param newGTUColorer GTUColorer; the GTUColorer to use from now on
      */
-    public void setGTUColorer(GTUColorer newGTUColorer)
+    public final void setGTUColorer(final GTUColorer newGTUColorer)
     {
         this.gtuColorer = newGTUColorer;
     }

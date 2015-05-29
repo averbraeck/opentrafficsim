@@ -12,7 +12,7 @@ import java.awt.Color;
  * @version 27 mei 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ColorInterpolator
+public final class ColorInterpolator
 {
     /** Static use only; this class cannot be instantiated. */
     private ColorInterpolator()
@@ -28,7 +28,7 @@ public class ColorInterpolator
      * @param ratio double; the ratio (should be between 0 and 1)
      * @return Color; the interpolated color
      */
-    public static Color interpolateColor(Color zero, Color one, double ratio)
+    public static Color interpolateColor(final Color zero, final Color one, final double ratio)
     {
         if (ratio < 0 || ratio > 1)
         {

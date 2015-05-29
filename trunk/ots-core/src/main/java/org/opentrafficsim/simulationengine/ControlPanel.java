@@ -81,7 +81,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
     private OTSDEVSSimulatorInterface simulator;
 
     /** The WrappableSimulation (needed for restart operation). */
-    final WrappableSimulation wrappableSimulation;
+    private final WrappableSimulation wrappableSimulation;
 
     /** Logger. */
     private final Logger logger;
@@ -118,7 +118,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
      * @param simulator SimpleSimulator; the simulator
      * @param wrappableSimulation WrappableSimulation; if non-null, the restart button should work
      */
-    public ControlPanel(final OTSDEVSSimulatorInterface simulator, WrappableSimulation wrappableSimulation)
+    public ControlPanel(final OTSDEVSSimulatorInterface simulator, final WrappableSimulation wrappableSimulation)
     {
         this.simulator = simulator;
         this.wrappableSimulation = wrappableSimulation;
@@ -167,7 +167,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
 
         for (AbstractProperty<?> ap : propertyList)
         {
-            html.append("<td valign=\"top\">" + ap.HTMLStateDescription() + "</td>");
+            html.append("<td valign=\"top\">" + ap.htmlStateDescription() + "</td>");
         }
         html.append("</table></html>");
         JLabel propertySettings = new JLabel(html.toString());
@@ -242,9 +242,9 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
      * @return SimEvent&lt;OTSSimTimeDouble&gt;; the event that was scheduled (the caller should save this if a need to
      *         cancel the event may arise later)
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
-     * @throws RemoteException
+     * @throws RemoteException on communications failure
      */
-    private final SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime,
+    private SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime,
             final short priority, final Object source, final Object eventTarget, final String method,
             final Object[] args) throws SimRuntimeException, RemoteException
     {
@@ -258,7 +258,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
     /**
      * Install a handler for the window closed event that stops the simulator (if it is running).
      */
-    public void installWindowCloseHandler()
+    public final void installWindowCloseHandler()
     {
         if (this.closeHandlerRegistered)
         {
@@ -340,7 +340,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
                 SimpleSimulation newSimulation = this.wrappableSimulation.rebuildSimulator();
                 DSOLPanel<?, ?, ?> dsolPanel = newSimulation.getPanel();
                 System.out.println("new DSOLPanel: " + dsolPanel);
-                DSOLPanel<?, ?, ?> ourPanel = ((SimpleAnimator) this.simulator).panel;
+                DSOLPanel<?, ?, ?> ourPanel = ((SimpleAnimator) this.simulator).getPanel();
                 System.out.println("our DSOLPanel: " + ourPanel);
                 // dsolPanel.setSize(new Dimension(ourPanel.getWidth(), ourPanel.getHeight()));
                 // dsolPanel.revalidate();
@@ -359,8 +359,8 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
                     parent.remove(ourPanel);
                     parent.add(dsolPanel);
                 }
-                ((SimpleAnimator) this.simulator).panel =
-                        (DSOLPanel<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble>) dsolPanel;
+                ((SimpleAnimator) this.simulator)
+                        .setPanel((DSOLPanel<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble>) dsolPanel);
                 // TODO: Put the stop at value of this ControlPanel in the new ControlPanel
             }
             fixButtons();
@@ -530,21 +530,21 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
 
     /** {@inheritDoc} */
     @Override
-    public void windowOpened(WindowEvent e)
+    public void windowOpened(final WindowEvent e)
     {
         // No action
     }
 
     /** {@inheritDoc} */
     @Override
-    public void windowClosing(WindowEvent e)
+    public final void windowClosing(final WindowEvent e)
     {
         // No action
     }
 
     /** {@inheritDoc} */
     @Override
-    public void windowClosed(WindowEvent e)
+    public final void windowClosed(final WindowEvent e)
     {
         if (getSimulator().isRunning())
         {
@@ -555,28 +555,28 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
 
     /** {@inheritDoc} */
     @Override
-    public void windowIconified(WindowEvent e)
+    public final void windowIconified(final WindowEvent e)
     {
         // No action
     }
 
     /** {@inheritDoc} */
     @Override
-    public void windowDeiconified(WindowEvent e)
+    public final void windowDeiconified(final WindowEvent e)
     {
         // No action
     }
 
     /** {@inheritDoc} */
     @Override
-    public void windowActivated(WindowEvent e)
+    public final void windowActivated(final WindowEvent e)
     {
         // No action
     }
 
     /** {@inheritDoc} */
     @Override
-    public void windowDeactivated(WindowEvent e)
+    public final void windowDeactivated(final WindowEvent e)
     {
         // No action
     }

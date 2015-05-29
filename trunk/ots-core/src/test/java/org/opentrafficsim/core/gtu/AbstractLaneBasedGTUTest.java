@@ -81,13 +81,13 @@ public class AbstractLaneBasedGTUTest
 
         Lane[] lanesGroupA =
                 LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(
-                        100, SpeedUnit.KM_PER_HOUR), (OTSDEVSSimulatorInterface) simulator);
+                        100, SpeedUnit.KM_PER_HOUR), simulator);
         // A GTU can exist on several lanes at once; create another lane group to test that
         NodeGeotools.STR nodeBFrom = new NodeGeotools.STR("BFrom", new Coordinate(10, 0, 0));
         NodeGeotools.STR nodeBTo = new NodeGeotools.STR("BTo", new Coordinate(1000, 100, 0));
         Lane[] lanesGroupB =
                 LaneFactory.makeMultiLane("B", nodeBFrom, nodeBTo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(
-                        100, SpeedUnit.KM_PER_HOUR), (OTSDEVSSimulatorInterface) simulator);
+                        100, SpeedUnit.KM_PER_HOUR), simulator);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
                 new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
 
@@ -122,8 +122,7 @@ public class AbstractLaneBasedGTUTest
         // Now we can make a GTU
         LaneBasedIndividualCar<String> car =
                 new LaneBasedIndividualCar<String>(carID, gtuType, gfm, laneChangeModel, initialLongitudinalPositions,
-                        initialSpeed, carLength, carWidth, maximumVelocity, route,
-                        (OTSDEVSSimulatorInterface) simulator);
+                        initialSpeed, carLength, carWidth, maximumVelocity, route, simulator);
         // Now we can verify the various fields in the newly created Car
         assertEquals("ID of the car should be identical to the provided one", carID, car.getId());
         assertEquals("GTU following model should be identical to the provided one", gfm, car.getGTUFollowingModel());
@@ -223,7 +222,7 @@ public class AbstractLaneBasedGTUTest
                     ie = null; // ignore
                 }
             }
-            
+
             if (stepTime.getSI() > 0)
             {
                 assertEquals("nextEvaluation time is " + validFor, validFor.getSI(), car.getNextEvaluationTime()
@@ -356,7 +355,7 @@ public class AbstractLaneBasedGTUTest
         NodeGeotools.STR nodeCTo = new NodeGeotools.STR("CTo", new Coordinate(1000, 0, 0));
         Lane[] lanesGroupC =
                 LaneFactory.makeMultiLane("C", nodeCFrom, nodeCTo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(
-                        100, SpeedUnit.KM_PER_HOUR), (OTSDEVSSimulatorInterface) simulator);
+                        100, SpeedUnit.KM_PER_HOUR), simulator);
         car.addLane(lanesGroupC[0], new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.SI));
         for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
         {

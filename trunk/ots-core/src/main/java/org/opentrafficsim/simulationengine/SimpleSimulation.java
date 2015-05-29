@@ -24,7 +24,7 @@ public interface SimpleSimulation extends OTSDEVSSimulatorInterface
      * To use in a Swing application add the DSOLPanel to a JFrame.
      * @return the simulation panel (extends JPanel).
      */
-    public DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getPanel();
+    DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getPanel();
     
     /**
      * Construct and schedule a SimEvent using a DoubleScalar.Abs&lt;TimeUnit&gt; to specify the execution time.
@@ -40,7 +40,7 @@ public interface SimpleSimulation extends OTSDEVSSimulatorInterface
      *         cancel the event may arise later)
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
      */
-    public SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime,
+    SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime,
             final short priority, final Object source, final Object target, final String method, final Object[] args)
             throws SimRuntimeException;
 

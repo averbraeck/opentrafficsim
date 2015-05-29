@@ -231,14 +231,14 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
 
     /** {@inheritDoc} */
     @Override
-    public String HTMLStateDescription()
+    public final String htmlStateDescription()
     {
         StringBuilder result = new StringBuilder();
         result.append("<table border=\"1\">");
         result.append("<tr><th align=\"left\">" + getShortName() + "</th></tr>\n");
         for (AbstractProperty<?> ap : displayOrderedValue())
         {
-            result.append("<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;" + ap.HTMLStateDescription() + "</td></tr>\n");
+            result.append("<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;" + ap.htmlStateDescription() + "</td></tr>\n");
         }
         result.append("</table>\n");
         return result.toString();
@@ -250,7 +250,7 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
      * @throws PropertyException when the supplied property cannot be removed (probably because it is not part of this
      *             CompoundProperty)
      */
-    public void remove(AbstractProperty<?> removeMe) throws PropertyException
+    public final void remove(final AbstractProperty<?> removeMe) throws PropertyException
     {
         if (!this.value.remove(removeMe))
         {

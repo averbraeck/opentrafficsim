@@ -33,7 +33,7 @@ public class VelocityGTUColorer implements GTUColorer
      * Construct a new SpeedGTUColorer.
      * @param maximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed at (and above) which the color will green
      */
-    public VelocityGTUColorer(DoubleScalar.Abs<SpeedUnit> maximumSpeed)
+    public VelocityGTUColorer(final DoubleScalar.Abs<SpeedUnit> maximumSpeed)
     {
         this.maximumSpeed = maximumSpeed;
         this.legend = new ArrayList<LegendEntry>(4);
@@ -50,7 +50,7 @@ public class VelocityGTUColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public Color getColor(GTU<?> gtu) throws RemoteException
+    public final Color getColor(final GTU<?> gtu) throws RemoteException
     {
         DoubleScalar.Abs<SpeedUnit> speed = gtu.getVelocity();
         double ratio = speed.getSI() / this.maximumSpeed.getSI() * (this.legend.size() - 1);
@@ -70,14 +70,14 @@ public class VelocityGTUColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public List<LegendEntry> getLegend()
+    public final List<LegendEntry> getLegend()
     {
         return Collections.unmodifiableList(this.legend);
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "Velocity";
     }

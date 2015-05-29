@@ -23,7 +23,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 11 mei 2015 <br>
@@ -39,8 +40,8 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
     private int lastReplication = 0;
 
     /** The JPanel that contains the simulator controls, a status bar and a JTabbedPane with switchable sub panels. */
-    DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel;
-    
+    private DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel;
+
     /** The AnimationPanel. */
     private final AnimationPanel animationPanel;
 
@@ -63,15 +64,15 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
         setPauseOnError(true);
         initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime), warmupPeriod,
                 runLength, model), ReplicationMode.TERMINATING);
-        this.panel =
-                new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model, this);
+        this.setPanel(new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model,
+                this));
         Dimension size = new Dimension(1024, 768);
         this.animationPanel = new AnimationPanel(extent, size, this);
-        this.panel.getTabbedPane().addTab(0, "animation", this.animationPanel);
+        this.getPanel().getTabbedPane().addTab(0, "animation", this.animationPanel);
         this.animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, this, null));
-        this.panel.getTabbedPane().setSelectedIndex(0); // Show the animation panel
+        this.getPanel().getTabbedPane().setSelectedIndex(0); // Show the animation panel
     }
-    
+
     /**
      * To use in a Swing application add the DSOLPanel to a JFrame.
      * @return the simulation panel (extends JPanel).
@@ -89,7 +90,7 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
     {
         return this.animationPanel;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -102,6 +103,15 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
                         executionTime.getSI(), TimeUnit.SECOND)), priority, source, target, method, args);
         scheduleEvent(result);
         return result;
+    }
+
+    /**
+     * @param panel set panel.
+     */
+    public final void setPanel(
+            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
+    {
+        this.panel = panel;
     }
 
 }
