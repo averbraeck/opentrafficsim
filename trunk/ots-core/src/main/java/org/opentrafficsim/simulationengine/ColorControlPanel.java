@@ -67,7 +67,7 @@ public class ColorControlPanel extends JPanel implements ActionListener
     public final void addItem(final GTUColorer colorer)
     {
         this.comboBoxGTUColor.addItem(colorer);
-        // The first item added makes that item the current one and triggers a call to actionPerformed.
+        // The first item added automatically becomes the current one and triggers a call to actionPerformed.
     }
 
     /** {@inheritDoc} */
