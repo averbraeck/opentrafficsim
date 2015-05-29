@@ -25,6 +25,10 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
+import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
@@ -139,7 +143,10 @@ public class FundamentalDiagrams implements WrappableSimulation
                 new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
                                 TimeUnit.SECOND), model, new Rectangle2D.Double(0, -100, 5000, 200));
-        new ControlPanel(result, this);
+        ControlPanel controlPanel = new ControlPanel(result, this);
+        // Insert the SwitchableGTUColorer in the SwitchableGTUColorer of the model.
+        // This will incur the overhead of a nested call to getColor when a GTU is painted; this is intended.
+        model.getGTUColorer().setGTUColorer(controlPanel.getGTUColorer());
         makePlots(model, result.getPanel());
         addInfoTab(result.getPanel());
         return result;
@@ -268,6 +275,9 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
     /** number of cars created. */
     private int carsCreated = 0;
 
+    /** Type of all GTUs. */
+    private GTUType<String> gtuType = GTUType.makeGTUType("Car");
+
     /** the car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModel carFollowingModelCars;
 
@@ -304,6 +314,17 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
     /** The random number generator used to decide what kind of GTU to generate. */
     private Random randomGenerator = new Random(12345);
 
+    /** The SwitchableGTUColorer for the generated vehicles. */
+    private SwitchableGTUColorer gtuColorer;
+
+    /**
+     * @return SwitchableGTUColorer
+     */
+    public SwitchableGTUColorer getGTUColorer()
+    {
+        return this.gtuColorer;
+    }
+
     /**
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
      */
@@ -322,6 +343,7 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
         NodeGeotools.STR from = new NodeGeotools.STR("From", new Coordinate(getMinimumDistance().getSI(), 0, 0));
         NodeGeotools.STR to = new NodeGeotools.STR("To", new Coordinate(getMaximumDistance().getSI(), 0, 0));
         LaneType<String> laneType = new LaneType<String>("CarLane");
+        laneType.addPermeability(this.gtuType);
         try
         {
             this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.speedLimit, this.simulator);
@@ -395,6 +417,7 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
                 throw new Error("Unhandled property: " + p);
             }
         }
+        this.gtuColorer = new SwitchableGTUColorer(new IDGTUColorer());
         // 1500 [veh / hour] == 2.4s headway
         this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
 
@@ -435,11 +458,12 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
         try
         {
             this.block =
-                    new LaneBasedIndividualCar<>(999999, null /* gtuType */, this.carFollowingModelCars,
+                    new LaneBasedIndividualCar<>(999999, this.gtuType, this.carFollowingModelCars,
                             this.laneChangeModel, initialPositions, new DoubleScalar.Abs<SpeedUnit>(0,
                                     SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER),
                             new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0,
-                                    SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator);
+                                    SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator,
+                                    DefaultCarAnimation.class, this.gtuColorer);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
@@ -477,11 +501,12 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
             {
                 throw new Error("gtuFollowingModel is null");
             }
-            new LaneBasedIndividualCar<>(++this.carsCreated, null /* gtuType */, generateTruck
+            new LaneBasedIndividualCar<>(++this.carsCreated, this.gtuType, generateTruck
                     ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel,
                     initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8,
                             LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), new Route(
-                            new ArrayList<Node<?, ?>>()), this.simulator);
+                            new ArrayList<Node<?, ?>>()), this.simulator,
+                            DefaultCarAnimation.class, this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
