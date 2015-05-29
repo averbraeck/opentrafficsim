@@ -53,9 +53,11 @@ import nl.tudelft.simulation.language.io.URLResource;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
+import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -178,6 +180,9 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
             this.colorControlPanel.addItem(new IDGTUColorer());
             this.colorControlPanel.addItem(new VelocityGTUColorer(new DoubleScalar.Abs<SpeedUnit>(150,
                     SpeedUnit.KM_PER_HOUR)));
+            this.colorControlPanel.addItem(new AccelerationGTUColorer(new DoubleScalar.Abs<AccelerationUnit>(-4,
+                    AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(2,
+                    AccelerationUnit.METER_PER_SECOND_2)));
         }
     }
 

@@ -7,6 +7,7 @@ import java.util.Map;
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -53,7 +54,7 @@ public interface GTU<ID> extends LocatableInterface, Serializable
 
     /**
      * @return the current velocity of the GTU, combining longitudinal, lateral and vertical speed components.
-     * @throws RemoteException
+     * @throws RemoteException on communications failure
      */
     DoubleScalar.Abs<SpeedUnit> getVelocity() throws RemoteException;
 
@@ -62,4 +63,10 @@ public interface GTU<ID> extends LocatableInterface, Serializable
 
     /** destroy the vehicle from the simulation and animation. */
     void destroy();
+
+    /**
+     * @return the current acceleration of the GTU, combining longitudinal, lateral and vertical acceleration components.
+     * @throws RemoteException on communications failure
+     */
+    DoubleScalar.Abs<AccelerationUnit> getAcceleration() throws RemoteException;
 }
