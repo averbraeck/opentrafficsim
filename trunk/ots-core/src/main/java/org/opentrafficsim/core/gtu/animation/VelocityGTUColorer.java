@@ -48,10 +48,7 @@ public class VelocityGTUColorer implements GTUColorer
         }
     }
 
-    /**
-     * {@inheritDoc}
-     * @throws RemoteException
-     */
+    /** {@inheritDoc} */
     @Override
     public Color getColor(GTU<?> gtu) throws RemoteException
     {
