@@ -53,4 +53,11 @@ public class SwitchableGTUColorer implements GTUColorer
         return this.gtuColorer.getLegend();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "Switchable GTU Colorer";
+    }
+
 }
