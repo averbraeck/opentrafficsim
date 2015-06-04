@@ -83,7 +83,7 @@ public class ColorControlPanel extends JPanel implements ActionListener
             {
                 JPanel panel = new JPanel(new BorderLayout());
                 JLabel colorBox = new JLabel("     ");
-                colorBox.setOpaque(true); // By default, the label is transparant
+                colorBox.setOpaque(true); // By default, the label is transparent
                 colorBox.setBackground(legendEntry.getColor());
                 Border border = LineBorder.createBlackLineBorder();
                 colorBox.setBorder(border);
