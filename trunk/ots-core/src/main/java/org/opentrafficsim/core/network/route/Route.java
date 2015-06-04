@@ -331,7 +331,8 @@ public class Route implements Serializable
                 if (nextLink instanceof CrossSectionLink)
                 {
                     nextNode = nextLink.getEndNode();
-                    remainingDistance += linkBeforeBranch.getLength().getSI();
+                    // Oops: wrong code added the length of linkBeforeBranch in stead of length of nextLink
+                    remainingDistance += nextLink.getLength().getSI();
                     linkBeforeBranch = (CrossSectionLink<?, ?>) nextLink;
                     // Figure out the new currentLane
                     if (currentLane.nextLanes().size() == 0)
