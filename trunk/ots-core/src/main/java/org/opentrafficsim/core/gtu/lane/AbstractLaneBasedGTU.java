@@ -21,6 +21,7 @@ import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.animation.LaneChangeUrgeGTUColorer;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.HeadwayGTU;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
@@ -69,6 +70,11 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** Time of next evaluation. */
     private DoubleScalar.Abs<TimeUnit> nextEvaluationTime;
+
+    /** Distance to the next required lane change and lateral direction thereof. */
+    private LaneChangeUrgeGTUColorer.LaneChangeDistanceAndDirection lastLaneChangeDistanceAndDirection =
+            new LaneChangeUrgeGTUColorer.LaneChangeDistanceAndDirection(new DoubleScalar.Rel<LengthUnit>(
+                    Double.MAX_VALUE, LengthUnit.SI), null);
 
     /**
      * Fractional longitudinal positions of the reference point of the GTU on one or more links at the
@@ -301,11 +307,13 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             System.out.println("negative velocity: " + this + " " + getLateralVelocity().getSI() + "m/s");
         }
-        // if (getId().toString().equals("2") && getSimulator().getSimulatorTime().get().getSI() > 12)
-        // {
-        // System.out.println("Debug me: " + getSimulator().getSimulatorTime() + " " + this + " " + this.getRoute()
-        // + " " + this.getLongitudinalVelocity().getSI());
-        // }
+        /*-
+        if (getId().toString().equals("44") && getSimulator().getSimulatorTime().get().getSI() > 129.4)
+        {
+            System.out.println("Debug me: " + getSimulator().getSimulatorTime() + " " + this + " " + this.getRoute()
+                    + " " + this.getLongitudinalVelocity().getSI());
+        }
+        */
         // Quick sanity check
         if (getSimulator().getSimulatorTime().get().getSI() != getNextEvaluationTime().getSI())
         {
@@ -465,6 +473,17 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         DoubleScalar.Rel<LengthUnit> leftSuitability = suitability(LateralDirectionality.LEFT);
         DoubleScalar.Rel<LengthUnit> currentSuitability = suitability(null);
         DoubleScalar.Rel<LengthUnit> rightSuitability = suitability(LateralDirectionality.RIGHT);
+        if (currentSuitability == Route.NOLANECHANGENEEDED)
+        {
+            this.lastLaneChangeDistanceAndDirection =
+                    new LaneChangeUrgeGTUColorer.LaneChangeDistanceAndDirection(currentSuitability, null);
+        }
+        else
+        {
+            this.lastLaneChangeDistanceAndDirection =
+                    new LaneChangeUrgeGTUColorer.LaneChangeDistanceAndDirection(currentSuitability,
+                            rightSuitability.getSI() == 0 ? false : leftSuitability.gt(rightSuitability));
+        }
         if ((leftSuitability == Route.NOLANECHANGENEEDED || leftSuitability == Route.GETOFFTHISLANENOW)
                 && currentSuitability == Route.NOLANECHANGENEEDED
                 && (rightSuitability == Route.NOLANECHANGENEEDED || rightSuitability == Route.GETOFFTHISLANENOW))
@@ -1471,6 +1490,11 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         double dx = 0.5 * getLength().doubleValue();
         double dy = 0.5 * getWidth().doubleValue();
         return new BoundingBox(new Point3d(-dx, -dy, 0.0), new Point3d(dx, dy, 0.0));
+    }
+
+    public LaneChangeUrgeGTUColorer.LaneChangeDistanceAndDirection getLaneChangeDistanceAndDirection()
+    {
+        return this.lastLaneChangeDistanceAndDirection;
     }
 
     /**

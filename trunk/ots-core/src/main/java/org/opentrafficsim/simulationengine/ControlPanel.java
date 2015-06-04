@@ -55,9 +55,11 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
+import org.opentrafficsim.core.gtu.animation.LaneChangeUrgeGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
 import org.opentrafficsim.core.unit.AccelerationUnit;
+import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -183,6 +185,8 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
             this.colorControlPanel.addItem(new AccelerationGTUColorer(new DoubleScalar.Abs<AccelerationUnit>(-4,
                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(2,
                     AccelerationUnit.METER_PER_SECOND_2)));
+            this.colorControlPanel.addItem(new LaneChangeUrgeGTUColorer(new DoubleScalar.Rel<LengthUnit>(10,
+                    LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER)));
         }
     }
 
