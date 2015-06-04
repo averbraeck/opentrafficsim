@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.animation.LaneChangeUrgeGTUColorer;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.HeadwayGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -301,5 +302,11 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @return GTUFollowingModel
      */
     GTUFollowingModel getGTUFollowingModel();
+
+    /**
+     * Return the distance available for the next needed lane change and the lateral direction of that lane change.
+     * @return LaneChangeAndDirection; the available distance and lateral direction for the next required lane change
+     */
+    LaneChangeUrgeGTUColorer.LaneChangeDistanceAndDirection getLaneChangeDistanceAndDirection();
 
 }
