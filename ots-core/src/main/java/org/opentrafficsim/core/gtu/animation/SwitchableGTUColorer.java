@@ -30,7 +30,7 @@ public class SwitchableGTUColorer implements GTUColorer
      * Construct a new Switchable GTUColorer based on a list of colorers. The first colorer in the list becomes the active one.
      * @param activeIndex the index of the initially active colorer in the list (0-based).
      * @param colorers GTUColorers; the list of GTUColorer. List cannot be empty.
-     * @throws IndexOutOfBoundsException when activeIndex < 0 or larger than or equal to the number of colorers.
+     * @throws IndexOutOfBoundsException when activeIndex &lt; 0 or larger than or equal to the number of colorers.
      */
     @SuppressWarnings("checkstyle:redundantthrows")
     public SwitchableGTUColorer(final int activeIndex, final GTUColorer... colorers) throws IndexOutOfBoundsException
@@ -42,7 +42,7 @@ public class SwitchableGTUColorer implements GTUColorer
     /**
      * Replace the currently active GTUColorer.
      * @param activeIndex the index of the new active colorer in the list (0-based).
-     * @throws IndexOutOfBoundsException when activeIndex < 0 or larger than or equal to the number of colorers.
+     * @throws IndexOutOfBoundsException when activeIndex &lt; 0 or larger than or equal to the number of colorers.
      */
     @SuppressWarnings("checkstyle:redundantthrows")
     public final void setGTUColorer(final int activeIndex) throws IndexOutOfBoundsException

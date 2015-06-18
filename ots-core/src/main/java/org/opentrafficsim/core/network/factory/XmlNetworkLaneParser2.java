@@ -2071,9 +2071,9 @@ public class XmlNetworkLaneParser2
 
     /**
      * Make a generator.
-     * @param generatorTag
-     * @throws SimRuntimeException
-     * @throws RemoteException
+     * @param generatorTag XML tag for the generator to build
+     * @throws SimRuntimeException in case of simulation problems building the car generator
+     * @throws RemoteException in case of network problems building the car generator
      */
     protected final void makeGenerator(final GeneratorTag generatorTag) throws SimRuntimeException, RemoteException
     {
