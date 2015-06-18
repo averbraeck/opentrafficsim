@@ -688,6 +688,12 @@
 
   <repositories>
     <repository>
+      <name>OTS Repository</name>
+      <id>ots</id>
+      <url>http://opentrafficsim.org/maven</url>
+    </repository>
+
+    <repository>
       <name>DSOL Public Repository</name>
       <id>dsol</id>
       <url>http://simulation.tudelft.nl/maven</url>
