@@ -7,7 +7,6 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
-import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -34,9 +33,6 @@ public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulatio
     /** Counter for replication. */
     private int lastReplication = 0;
 
-    /** The JPanel that contains the simulator controls, a status bar and a JTabbedPane with switchable sub panels. */
-    private final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel;
-
     /**
      * Create a simulation engine without animation; the easy way. PauseOnError is set to true;
      * @param startTime OTSSimTimeDouble; the start time of the simulation
@@ -55,16 +51,6 @@ public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulatio
         setPauseOnError(true);
         initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime), warmupPeriod,
                 runLength, model), ReplicationMode.TERMINATING);
-        this.panel =
-                new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model, this);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getPanel()
-    {
-        return this.panel;
     }
 
     /**

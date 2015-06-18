@@ -1,4 +1,4 @@
-package org.opentrafficsim.simulationengine;
+package org.opentrafficsim.simulationengine.properties;
 
 /**
  * Property that describes a probability distribution.

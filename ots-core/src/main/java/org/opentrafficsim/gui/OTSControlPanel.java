@@ -1,9 +1,9 @@
-package org.opentrafficsim.simulationengine;
+package org.opentrafficsim.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -27,17 +27,17 @@ import java.util.regex.Pattern;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
@@ -46,8 +46,6 @@ import javax.swing.text.MaskFormatter;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
-import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
-import nl.tudelft.simulation.dsol.gui.swing.SimulatorControlPanel;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
@@ -55,18 +53,11 @@ import nl.tudelft.simulation.language.io.URLResource;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
-import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
-import org.opentrafficsim.core.gtu.animation.LaneChangeUrgeGTUColorer;
-import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
-import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
-import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.simulationengine.WrappableSimulation;
 
 /**
  * Peter's improved simulation control panel.
@@ -78,8 +69,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ControlPanel implements ActionListener, PropertyChangeListener, WindowListener
+public class OTSControlPanel extends JPanel implements ActionListener, PropertyChangeListener, WindowListener
 {
+    /** */
+    private static final long serialVersionUID = 20150617L;
+
     /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
@@ -110,45 +104,20 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
     /** Has the window close handler been registered? */
     private boolean closeHandlerRegistered = false;
 
-    /** The switchableGTUColorer used to color the GTUs. */
-    private SwitchableGTUColorer switchableGTUColorer = null;
-
-    /** The ColorControlPanel that allows the user to operate the SwitchableGTUColorer. */
-    private ColorControlPanel colorControlPanel = null;
-
     /**
      * Decorate a SimpleSimulator with a different set of control buttons.
      * @param simulator SimpleSimulator; the simulator
      * @param wrappableSimulation WrappableSimulation; if non-null, the restart button should work
      */
-    public ControlPanel(final OTSDEVSSimulatorInterface simulator, final WrappableSimulation wrappableSimulation)
+    public OTSControlPanel(final OTSDEVSSimulatorInterface simulator, final WrappableSimulation wrappableSimulation)
     {
         this.simulator = simulator;
         this.wrappableSimulation = wrappableSimulation;
         this.logger = Logger.getLogger("nl.tudelft.opentrafficsim");
 
-        DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel;
-
-        if (simulator instanceof SimpleSimulator)
-        {
-            panel = ((SimpleSimulator) simulator).getPanel();
-        }
-        else if (simulator instanceof SimpleAnimator)
-        {
-            panel = ((SimpleAnimator) simulator).getPanel();
-        }
-        else
-        {
-            throw new Error("Don't know how to find the DSOLPanel of this OTSDEVSSimulator");
-        }
-        // If the construction of the DSOLPanel changes in any significant way, the following code will throw all kinds
-        // of exceptions.
-        SimulatorControlPanel controlPanel =
-            (SimulatorControlPanel) ((BorderLayout) panel.getLayout()).getLayoutComponent(BorderLayout.NORTH);
-        JButton oldSpeedButton = (JButton) controlPanel.getComponent(1);
-        controlPanel.remove(oldSpeedButton);
-        JPanel buttonPanel = (JPanel) controlPanel.getComponent(0);
-        buttonPanel.removeAll();
+        this.setLayout(new FlowLayout(FlowLayout.LEFT));
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         buttonPanel.add(makeButton("stepButton", "/Last_recor.png", "Step", "Execute one event", true));
         buttonPanel.add(makeButton("nextTimeButton", "/NextTrack.png", "NextTime",
             "Execute all events scheduled for the current time", true));
@@ -162,52 +131,7 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
         this.timeEdit = new TimeEdit(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND));
         this.timeEdit.addPropertyChangeListener("value", this);
         buttonPanel.add(this.timeEdit);
-        ArrayList<AbstractProperty<?>> propertyList =
-            new CompoundProperty("", "", wrappableSimulation.getUserModifiedProperties(), true, 0).displayOrderedValue();
-        StringBuilder html = new StringBuilder();
-        html.append("<html><table border=\"1\"><tr><th colspan=\"" + propertyList.size() + "\">Settings</th></tr><tr>");
-
-        for (AbstractProperty<?> ap : propertyList)
-        {
-            html.append("<td valign=\"top\">" + ap.htmlStateDescription() + "</td>");
-        }
-        html.append("</table></html>");
-        JLabel propertySettings = new JLabel(html.toString());
-        panel.getTabbedPane().addTab("settings", new JScrollPane(propertySettings));
-        if (simulator instanceof SimpleAnimator)
-        {
-            this.switchableGTUColorer = new SwitchableGTUColorer(new IDGTUColorer());
-            this.colorControlPanel =
-                    new ColorControlPanel(((SimpleAnimator) simulator).getAnimationPanel(), this.switchableGTUColorer);
-            this.colorControlPanel.addItem(new IDGTUColorer());
-            this.colorControlPanel.addItem(new VelocityGTUColorer(new DoubleScalar.Abs<SpeedUnit>(150,
-                    SpeedUnit.KM_PER_HOUR)));
-            this.colorControlPanel.addItem(new AccelerationGTUColorer(new DoubleScalar.Abs<AccelerationUnit>(-4,
-                    AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(2,
-                    AccelerationUnit.METER_PER_SECOND_2)));
-            this.colorControlPanel.addItem(new LaneChangeUrgeGTUColorer(new DoubleScalar.Rel<LengthUnit>(10,
-                    LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER)));
-        }
-    }
-
-    /**
-     * Access the SwitchableGTUColorer of this ControlPanel. If the simulator is not a SimpleAnimator, no
-     * SwitchableGTUColorer was constructed and this method will return null.
-     * @return SwitchableGTUColorer
-     */
-    public final SwitchableGTUColorer getGTUColorer()
-    {
-        return this.switchableGTUColorer;
-    }
-
-    /**
-     * Access the ColorControlPanel of this ControlPanel. If the simulator is not a SimpleAnimator, no ColorControlPanel
-     * was constructed and this method will return null.
-     * @return ColorControlPanel
-     */
-    public final ColorControlPanel getColorControlPanel()
-    {
-        return this.colorControlPanel;
+        this.add(buttonPanel);
     }
 
     /**
@@ -248,15 +172,15 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
      * @throws RemoteException on communications failure
      */
-    private SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime,
-        final short priority, final Object source, final Object eventTarget, final String method, final Object[] args)
-        throws SimRuntimeException, RemoteException
+    private SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime, final short priority,
+        final Object source, final Object eventTarget, final String method, final Object[] args) throws SimRuntimeException,
+        RemoteException
     {
-        SimEvent<OTSSimTimeDouble> result =
+        SimEvent<OTSSimTimeDouble> simEvent =
             new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(executionTime.getSI(),
                 TimeUnit.SECOND)), priority, source, eventTarget, method, args);
-        this.simulator.scheduleEvent(result);
-        return result;
+        this.simulator.scheduleEvent(simEvent);
+        return simEvent;
     }
 
     /**
@@ -344,32 +268,17 @@ public class ControlPanel implements ActionListener, PropertyChangeListener, Win
                 // unbind the old animation and statistics
                 (new InitialContext()).unbind(String.valueOf(getSimulator().hashCode()));
 
-                // This is the magic that puts a brand new simulator in the current window
-                SimpleSimulation newSimulation = this.wrappableSimulation.rebuildSimulator();
-                DSOLPanel<?, ?, ?> dsolPanel = newSimulation.getPanel();
-                System.out.println("new DSOLPanel: " + dsolPanel);
-                DSOLPanel<?, ?, ?> ourPanel = ((SimpleAnimator) this.simulator).getPanel();
-                System.out.println("our DSOLPanel: " + ourPanel);
-                // dsolPanel.setSize(new Dimension(ourPanel.getWidth(), ourPanel.getHeight()));
-                // dsolPanel.revalidate();
-                System.out.println("new DSOLPanel: " + dsolPanel);
-                // Now move everything from the new into ours
-                Container parent = ourPanel.getParent();
-                if (parent instanceof JLayeredPane)
+                // find the JFrame position and dimensions
+                Container root = this;
+                while (null != root.getParent())
                 {
-                    JLayeredPane jlp = (JLayeredPane) parent;
-                    jlp.removeAll();
-                    dsolPanel.setSize(new Dimension(ourPanel.getWidth(), ourPanel.getHeight()));
-                    jlp.add(dsolPanel, JLayeredPane.DEFAULT_LAYER);
+                    root = root.getParent();
                 }
-                else
-                {
-                    parent.remove(ourPanel);
-                    parent.add(dsolPanel);
-                }
-                ((SimpleAnimator) this.simulator)
-                        .setPanel((DSOLPanel<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble>) dsolPanel);
-                // TODO: Put the stop at value of this ControlPanel in the new ControlPanel
+                JFrame frame = (JFrame) root;
+                Rectangle rect = frame.getBounds();
+                frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                this.wrappableSimulation.rebuildSimulator(rect);
+                frame.dispose();
             }
             fixButtons();
         }

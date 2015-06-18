@@ -1,6 +1,8 @@
 package org.opentrafficsim.demo.carFollowing;
 
+import java.awt.Dimension;
 import java.awt.FileDialog;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +23,8 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.animation.DefaultSwitchableGTUColorer;
+import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -34,6 +38,7 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.gui.OTSAnimationPanel;
 import org.opentrafficsim.importexport.osm.OSMLink;
 import org.opentrafficsim.importexport.osm.OSMNetwork;
 import org.opentrafficsim.importexport.osm.OSMNode;
@@ -45,21 +50,18 @@ import org.opentrafficsim.importexport.osm.events.WarningListener;
 import org.opentrafficsim.importexport.osm.events.WarningListenerImpl;
 import org.opentrafficsim.importexport.osm.input.ReadOSMFile;
 import org.opentrafficsim.importexport.osm.output.Convert;
-import org.opentrafficsim.simulationengine.AbstractProperty;
-import org.opentrafficsim.simulationengine.ControlPanel;
-import org.opentrafficsim.simulationengine.IDMPropertySet;
-import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
-import org.opentrafficsim.simulationengine.PropertyException;
-import org.opentrafficsim.simulationengine.SelectionProperty;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.SimpleSimulation;
-import org.opentrafficsim.simulationengine.SimulatorFrame;
 import org.opentrafficsim.simulationengine.WrappableSimulation;
+import org.opentrafficsim.simulationengine.properties.AbstractProperty;
+import org.opentrafficsim.simulationengine.properties.IDMPropertySet;
+import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionProperty;
+import org.opentrafficsim.simulationengine.properties.PropertyException;
+import org.opentrafficsim.simulationengine.properties.SelectionProperty;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Feb 10, 2015 <br>
@@ -68,8 +70,8 @@ import org.opentrafficsim.simulationengine.WrappableSimulation;
  */
 public class OpenStreetMap implements WrappableSimulation
 {
-    /** The properties after (possible) editing by the user. */
-    private ArrayList<AbstractProperty<?>> savedUserModifiedProperties;
+    /** the model. */
+    private OSMModel model;
 
     /** The OSMNetwork. */
     private OSMNetwork osmNetwork;
@@ -77,14 +79,20 @@ public class OpenStreetMap implements WrappableSimulation
     /** The OTS network. */
     private Network<String, CrossSectionLink<?, ?>> otsNetwork;
 
-    /** The properties of this simulation. */
-    private ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();
-
     /** The ProgressListener. */
     private ProgressListener progressListener;
 
     /** The WarningListener. */
     private WarningListener warningListener;
+
+    /** The properties exhibited by this simulation. */
+    private ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();
+
+    /** The properties after (possible) editing by the user. */
+    private ArrayList<AbstractProperty<?>> savedUserModifiedProperties;
+
+    /** Use EXIT_ON_CLOSE when true, DISPOSE_ON_CLOSE when false on closing of the window. */
+    private boolean exitOnClose;
 
     /** Construct the OpenStreetMap demo. */
     public OpenStreetMap()
@@ -108,30 +116,28 @@ public class OpenStreetMap implements WrappableSimulation
                     try
                     {
                         localProperties.add(new ProbabilityDistributionProperty("Traffic composition",
-                                "<html>Mix of passenger cars and trucks</html>",
-                                new String[]{"passenger car", "truck"}, new Double[]{0.8, 0.2}, false, 10));
+                            "<html>Mix of passenger cars and trucks</html>", new String[] {"passenger car", "truck"},
+                            new Double[] {0.8, 0.2}, false, 10));
                     }
                     catch (PropertyException exception)
                     {
                         exception.printStackTrace();
                     }
                     localProperties.add(new SelectionProperty("Car following model",
-                            "<html>The car following model determines "
-                                    + "the acceleration that a vehicle will make taking into account "
-                                    + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
-                                    + "curvature of the road) capabilities of the vehicle and personality "
-                                    + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Car",
-                            new DoubleScalar.Abs<AccelerationUnit>(1.0, AccelerationUnit.METER_PER_SECOND_2),
-                            new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                            new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(
-                                    1.0, TimeUnit.SECOND), 2));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck",
-                            new DoubleScalar.Abs<AccelerationUnit>(0.5, AccelerationUnit.METER_PER_SECOND_2),
-                            new DoubleScalar.Abs<AccelerationUnit>(1.25, AccelerationUnit.METER_PER_SECOND_2),
-                            new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(
-                                    1.0, TimeUnit.SECOND), 3));
-                    new SimulatorFrame("OpenStreetMap animation", osm.buildSimulator(localProperties).getPanel());
+                        "<html>The car following model determines "
+                            + "the acceleration that a vehicle will make taking into account "
+                            + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
+                            + "curvature of the road) capabilities of the vehicle and personality "
+                            + "of the driver.</html>", new String[] {"IDM", "IDM+"}, 1, false, 1));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Car", new DoubleScalar.Abs<AccelerationUnit>(1.0,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
+                        new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 2));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new DoubleScalar.Abs<AccelerationUnit>(
+                        0.5, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.25,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
+                        new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 3));
+                    osm.buildSimulator(localProperties, null, true);
                 }
                 catch (Exception e)
                 {
@@ -142,13 +148,14 @@ public class OpenStreetMap implements WrappableSimulation
 
     }
 
-    /** {@inheritDoc} 
-     * @throws NamingException */
+    /** {@inheritDoc} */
     @Override
-    public final SimpleAnimator buildSimulator(final ArrayList<AbstractProperty<?>> usedProperties)
-            throws SimRuntimeException, RemoteException, NetworkException, NamingException
+    public final SimpleAnimator buildSimulator(final ArrayList<AbstractProperty<?>> userModifiedProperties,
+        final Rectangle rect, final boolean eoc) throws RemoteException, SimRuntimeException, NamingException
     {
-        this.savedUserModifiedProperties = usedProperties;
+        this.savedUserModifiedProperties = userModifiedProperties;
+        this.exitOnClose = eoc;
+
         JFrame frame = new JFrame();
         FileDialog fd = new FileDialog(frame, "Choose a file", FileDialog.LOAD);
         fd.setFile("*.osm");
@@ -175,8 +182,7 @@ public class OpenStreetMap implements WrappableSimulation
         }
         Convert converter = new Convert();
         System.out.println("Opening file " + filename);
-        ArrayList<OSMTag> wantedTags =
-                new ArrayList<OSMTag>();
+        ArrayList<OSMTag> wantedTags = new ArrayList<OSMTag>();
         wantedTags.add(new OSMTag("highway", "primary"));
         wantedTags.add(new OSMTag("highway", "secondary"));
         wantedTags.add(new OSMTag("highway", "tertiary"));
@@ -233,8 +239,8 @@ public class OpenStreetMap implements WrappableSimulation
             exception.printStackTrace();
             return null;
         }
-        OSMModel model =
-                new OSMModel(usedProperties, this.osmNetwork, this.warningListener, this.progressListener, converter);
+        this.model =
+            new OSMModel(userModifiedProperties, this.osmNetwork, this.warningListener, this.progressListener, converter);
         Iterator<Node<?, ?>> count = this.otsNetwork.getNodeSet().iterator();
         Rectangle2D area = null;
         while (count.hasNext())
@@ -249,12 +255,14 @@ public class OpenStreetMap implements WrappableSimulation
                 area = area.createUnion(new Rectangle2D.Double(node.getX(), node.getY(), 0, 0));
             }
         }
-        SimpleAnimator result =
-                new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
-                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
-                                TimeUnit.SECOND), model, area);
-        new ControlPanel(result, this);
-        return result;
+
+        GTUColorer colorer = new DefaultSwitchableGTUColorer();
+        final SimpleAnimator simulator =
+            new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
+                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), this.model);
+        new OTSAnimationPanel(area, new Dimension(1024, 768), simulator, this, colorer);
+
+        return simulator;
     }
 
     /** {@inheritDoc} */
@@ -280,25 +288,23 @@ public class OpenStreetMap implements WrappableSimulation
 
     /** {@inheritDoc} */
     @Override
-    public SimpleSimulation rebuildSimulator() throws SimRuntimeException, RemoteException, NetworkException,
-            NamingException
+    public final SimpleSimulation rebuildSimulator(final Rectangle rect) throws SimRuntimeException, RemoteException,
+        NetworkException, NamingException
     {
-        return buildSimulator(this.savedUserModifiedProperties);
+        return buildSimulator(this.savedUserModifiedProperties, rect, this.exitOnClose);
     }
 
     /** {@inheritDoc} */
     @Override
-    public ArrayList<AbstractProperty<?>> getUserModifiedProperties()
+    public final ArrayList<AbstractProperty<?>> getUserModifiedProperties()
     {
         return this.savedUserModifiedProperties;
     }
-
 }
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Feb 10, 2015 <br>
@@ -327,7 +333,7 @@ class OSMModel implements OTSModelInterface
 
     /** */
     private WarningListener warningListener;
-    
+
     /** The coordinate converter. */
     private final Convert converter;
 
@@ -338,8 +344,8 @@ class OSMModel implements OTSModelInterface
      * @param pL ProgressListener; the receiver of progress events
      * @param converter Convert; the output converter
      */
-    public OSMModel(final ArrayList<AbstractProperty<?>> properties, final OSMNetwork osmNetwork,
-            final WarningListener wL, final ProgressListener pL, final Convert converter)
+    public OSMModel(final ArrayList<AbstractProperty<?>> properties, final OSMNetwork osmNetwork, final WarningListener wL,
+        final ProgressListener pL, final Convert converter)
     {
         this.properties = new ArrayList<AbstractProperty<?>>(properties);
         this.osmNetwork = osmNetwork;
@@ -351,10 +357,10 @@ class OSMModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException, RemoteException
+        throws SimRuntimeException, RemoteException
     {
         Network<String, CrossSectionLink<?, ?>> otsNetwork =
-                new Network<String, CrossSectionLink<?, ?>>(this.osmNetwork.getName());
+            new Network<String, CrossSectionLink<?, ?>>(this.osmNetwork.getName());
         for (OSMNode osmNode : this.osmNetwork.getNodes().values())
         {
             try
@@ -372,7 +378,7 @@ class OSMModel implements OTSModelInterface
         }
         Convert.findSinksandSources(this.osmNetwork, this.progressListener);
         this.progressListener.progress(new ProgressEvent(this.osmNetwork, "Creation the lanes on "
-                + this.osmNetwork.getLinks().size() + " links"));
+            + this.osmNetwork.getLinks().size() + " links"));
         double total = this.osmNetwork.getLinks().size();
         double counter = 0;
         double nextPercentage = 5.0;
@@ -381,7 +387,7 @@ class OSMModel implements OTSModelInterface
             try
             {
                 this.lanes.addAll(this.converter.makeLanes(link, (OTSDEVSSimulatorInterface) theSimulator,
-                        this.warningListener));
+                    this.warningListener));
             }
             catch (NetworkException | NamingException exception)
             {
@@ -396,9 +402,8 @@ class OSMModel implements OTSModelInterface
             }
         }
         /*
-         * System.out.println("Number of Links: " + this.network.getLinks().size());
-         * System.out.println("Number of Nodes: " + this.network.getNodes().size());
-         * System.out.println("Number of Lanes: " + this.lanes.size());
+         * System.out.println("Number of Links: " + this.network.getLinks().size()); System.out.println("Number of Nodes: " +
+         * this.network.getNodes().size()); System.out.println("Number of Lanes: " + this.lanes.size());
          */
     }
 

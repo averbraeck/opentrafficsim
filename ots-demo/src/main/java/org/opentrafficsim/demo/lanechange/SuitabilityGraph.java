@@ -44,8 +44,8 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.gui.SimulatorFrame;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
-import org.opentrafficsim.simulationengine.SimulatorFrame;
 
 import com.vividsolutions.jts.geom.Coordinate;
 

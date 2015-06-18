@@ -47,17 +47,17 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.gui.LabeledPanel;
 import org.opentrafficsim.gui.ProbabilityDistributionEditor;
-import org.opentrafficsim.simulationengine.AbstractProperty;
-import org.opentrafficsim.simulationengine.BooleanProperty;
-import org.opentrafficsim.simulationengine.CompoundProperty;
-import org.opentrafficsim.simulationengine.ContinuousProperty;
-import org.opentrafficsim.simulationengine.IDMPropertySet;
-import org.opentrafficsim.simulationengine.IntegerProperty;
-import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
-import org.opentrafficsim.simulationengine.PropertyException;
-import org.opentrafficsim.simulationengine.SelectionProperty;
-import org.opentrafficsim.simulationengine.SimulatorFrame;
+import org.opentrafficsim.gui.SimulatorFrame;
 import org.opentrafficsim.simulationengine.WrappableSimulation;
+import org.opentrafficsim.simulationengine.properties.AbstractProperty;
+import org.opentrafficsim.simulationengine.properties.BooleanProperty;
+import org.opentrafficsim.simulationengine.properties.CompoundProperty;
+import org.opentrafficsim.simulationengine.properties.ContinuousProperty;
+import org.opentrafficsim.simulationengine.properties.IDMPropertySet;
+import org.opentrafficsim.simulationengine.properties.IntegerProperty;
+import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionProperty;
+import org.opentrafficsim.simulationengine.properties.PropertyException;
+import org.opentrafficsim.simulationengine.properties.SelectionProperty;
 
 /**
  * Several demos in one application.
@@ -192,27 +192,16 @@ public class SuperDemo
                         }
                     }
                 }
+                
                 if (null == simulation)
                 {
                     throw new Error("Cannot find a selected button");
                 }
-                /*
-                 * // Clear out the main panel and put the selected simulator in it. mainPanel.remove(((BorderLayout)
-                 * mainPanel.getLayout()).getLayoutComponent(BorderLayout.CENTER)); try {
-                 * mainPanel.add(simulation.buildSimulator(SuperDemo.this.activeProperties).getPanel(),
-                 * BorderLayout.CENTER); } catch (RemoteException | SimRuntimeException | NetworkException |
-                 * NamingException exception) { exception.printStackTrace(); } startButton.setEnabled(false);
-                 */
-                // Create a new JFrame for the simulation.
-                JFrame simulatorFrame = new JFrame("Open Traffic Simulation - " + simulation.shortName());
+
                 try
                 {
                     System.out.println("Active properties: " + SuperDemo.this.activeProperties);
-                    simulatorFrame.add(simulation.buildSimulator(SuperDemo.this.activeProperties).getPanel());
-                    simulatorFrame.setExtendedState(simulatorFrame.getExtendedState() | Frame.MAXIMIZED_BOTH);
-                    simulatorFrame.pack();
-                    simulatorFrame.setVisible(true);
-                    simulatorFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                    simulation.buildSimulator(SuperDemo.this.activeProperties, null, false);
                 }
                 catch (RemoteException | SimRuntimeException | NetworkException | NamingException exception)
                 {

@@ -1,4 +1,4 @@
-package org.opentrafficsim.simulationengine;
+package org.opentrafficsim.simulationengine.properties;
 
 /**
  * Property that is described by a set of Strings where exactly one can (and must) be true.

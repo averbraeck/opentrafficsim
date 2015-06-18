@@ -14,6 +14,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.naming.NamingException;
+import javax.swing.JPanel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
@@ -29,8 +30,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
-import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
-import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
+import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
@@ -61,82 +61,78 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.TrajectoryPlot;
-import org.opentrafficsim.simulationengine.AbstractProperty;
-import org.opentrafficsim.simulationengine.CompoundProperty;
-import org.opentrafficsim.simulationengine.ContinuousProperty;
-import org.opentrafficsim.simulationengine.ControlPanel;
-import org.opentrafficsim.simulationengine.IDMPropertySet;
-import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
-import org.opentrafficsim.simulationengine.SelectionProperty;
-import org.opentrafficsim.simulationengine.SimpleAnimator;
-import org.opentrafficsim.simulationengine.SimpleSimulation;
 import org.opentrafficsim.simulationengine.WrappableSimulation;
+import org.opentrafficsim.simulationengine.properties.AbstractProperty;
+import org.opentrafficsim.simulationengine.properties.CompoundProperty;
+import org.opentrafficsim.simulationengine.properties.ContinuousProperty;
+import org.opentrafficsim.simulationengine.properties.IDMPropertySet;
+import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionProperty;
+import org.opentrafficsim.simulationengine.properties.SelectionProperty;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 4 mrt. 2015 <br>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class XMLNetworks implements WrappableSimulation
+public class XMLNetworks extends AbstractWrappableSimulation implements WrappableSimulation
 {
-    /** The properties exhibited by this simulation. */
-    private ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();
-
-    /** The properties after (possible) editing by the user. */
-    private ArrayList<AbstractProperty<?>> savedUserModifiedProperties;
+    /** the model. */
+    private XMLNetworkModel model;
 
     /**
      * Define the XMLNetworks.
      */
     public XMLNetworks()
     {
-        this.properties.add(new SelectionProperty("Network", "Network", new String[]{"Merge 1 plus 1 into 1",
-                "Merge 2 plus 1 into 2", "Merge 2 plus 2 into 4", "Split 1 into 1 plus 1", "Split 2 into 1 plus 2",
-                "Split 4 into 2 plus 2"}, 0, false, 0));
-        this.properties.add(new ContinuousProperty("Flow per input lane", "Traffic flow per input lane", 500d, 0d,
-                3000d, "%.0f veh/h", false, 1));
+        this.properties.add(new SelectionProperty("Network", "Network", new String[] {"Merge 1 plus 1 into 1",
+            "Merge 2 plus 1 into 2", "Merge 2 plus 2 into 4", "Split 1 into 1 plus 1", "Split 2 into 1 plus 2",
+            "Split 4 into 2 plus 2"}, 0, false, 0));
+        this.properties.add(new ContinuousProperty("Flow per input lane", "Traffic flow per input lane", 500d, 0d, 3000d,
+            "%.0f veh/h", false, 1));
     }
 
     /** {@inheritDoc} */
     @Override
-    public final SimpleAnimator buildSimulator(final ArrayList<AbstractProperty<?>> userModifiedProperties)
-            throws SimRuntimeException, RemoteException, NetworkException, NamingException
+    protected final Rectangle2D.Double makeAnimationRectangle()
     {
-        this.savedUserModifiedProperties = userModifiedProperties;
-        XMLNetworkModel model = new XMLNetworkModel(userModifiedProperties);
-        SimpleAnimator result =
-                new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
-                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
-                                TimeUnit.SECOND), model, new Rectangle2D.Double(-50, -300, 1300, 600));
-        ControlPanel controlPanel = new ControlPanel(result, this);
-        // Insert the SwitchableGTUColorer in the SwitchableGTUColorer of the model.
-        // This will incur the overhead of a nested call to getColor when a GTU is painted; this is intended.
-        model.getGTUColorer().setGTUColorer(controlPanel.getGTUColorer());
-        int graphCount = model.pathCount();
+        return new Rectangle2D.Double(-50, -300, 1300, 600);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected final OTSModelInterface makeModel(final GTUColorer colorer)
+    {
+        this.model = new XMLNetworkModel(this.savedUserModifiedProperties, colorer);
+        return this.model;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected final JPanel makeCharts()
+    {
+        int graphCount = this.model.pathCount();
         int columns = 1;
         int rows = 0 == columns ? 0 : (int) Math.ceil(graphCount * 1.0 / columns);
         TablePanel charts = new TablePanel(columns, rows);
-        result.getPanel().getTabbedPane().addTab("statistics", charts);
         for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
         {
             TrajectoryPlot tp =
-                    new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), new DoubleScalar.Rel<TimeUnit>(0.5,
-                            TimeUnit.SECOND), model.getPath(graphIndex));
+                new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), new DoubleScalar.Rel<TimeUnit>(0.5,
+                    TimeUnit.SECOND), this.model.getPath(graphIndex));
             tp.setTitle("Trajectory Graph");
             tp.setExtendedState(Frame.MAXIMIZED_BOTH);
             LaneBasedGTUSampler graph = tp;
             Container container = tp.getContentPane();
             charts.setCell(container, graphIndex % columns, graphIndex / columns);
-            model.getPlots().add(graph);
+            this.model.getPlots().add(graph);
         }
-        return result;
+        return charts;
     }
 
     /** {@inheritDoc} */
@@ -151,39 +147,15 @@ public class XMLNetworks implements WrappableSimulation
     public final String description()
     {
         return "<html><h1>Test Networks</h1>Prove that the test networks can be constructed and rendered on screen "
-                + "and that a mix of cars and trucks can run on them.<br/>On the statistics tab, a trajectory plot "
-                + "is generated for each lane.</html>";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final ArrayList<AbstractProperty<?>> getProperties()
-    {
-        // Create and return a deep copy of the internal list
-        return new ArrayList<AbstractProperty<?>>(this.properties);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SimpleSimulation rebuildSimulator() throws SimRuntimeException, RemoteException, NetworkException,
-            NamingException
-    {
-        return buildSimulator(this.savedUserModifiedProperties);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ArrayList<AbstractProperty<?>> getUserModifiedProperties()
-    {
-        return this.savedUserModifiedProperties;
+            + "and that a mix of cars and trucks can run on them.<br/>On the statistics tab, a trajectory plot "
+            + "is generated for each lane.</html>";
     }
 
 }
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 4 mrt. 2015 <br>
@@ -243,23 +215,17 @@ class XMLNetworkModel implements OTSModelInterface
     /** The route generator. */
     private RouteGenerator routeGenerator;
 
-    /** The SwitchableGTUColorer for the generated vehicles. */
-    private SwitchableGTUColorer gtuColorer;
-
-    /**
-     * @return gtuColorer.
-     */
-    public SwitchableGTUColorer getGTUColorer()
-    {
-        return this.gtuColorer;
-    }
+    /** The GTUColorer for the generated vehicles. */
+    private final GTUColorer gtuColorer;
 
     /**
      * @param userModifiedProperties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user modified) properties
+     * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
      */
-    public XMLNetworkModel(final ArrayList<AbstractProperty<?>> userModifiedProperties)
+    public XMLNetworkModel(final ArrayList<AbstractProperty<?>> userModifiedProperties, final GTUColorer gtuColorer)
     {
         this.properties = userModifiedProperties;
+        this.gtuColorer = gtuColorer;
     }
 
     /**
@@ -291,8 +257,8 @@ class XMLNetworkModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public final void constructModel(
-            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException, RemoteException
+        final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+        throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
@@ -330,7 +296,7 @@ class XMLNetworkModel implements OTSModelInterface
                 throw new Error("\"Car following model\" property has wrong type");
             }
             Iterator<AbstractProperty<ArrayList<AbstractProperty<?>>>> iterator =
-                    new CompoundProperty("", "", this.properties, false, 0).iterator();
+                new CompoundProperty("", "", this.properties, false, 0).iterator();
             while (iterator.hasNext())
             {
                 AbstractProperty<?> ap = iterator.next();
@@ -356,12 +322,11 @@ class XMLNetworkModel implements OTSModelInterface
                     ContinuousProperty contP = (ContinuousProperty) ap;
                     if (contP.getShortName().startsWith("Flow "))
                     {
-                        this.averageHeadway =
-                                new DoubleScalar.Rel<TimeUnit>(3600.0 / contP.getValue(), TimeUnit.SECOND);
+                        this.averageHeadway = new DoubleScalar.Rel<TimeUnit>(3600.0 / contP.getValue(), TimeUnit.SECOND);
                         this.minimumHeadway = new DoubleScalar.Rel<TimeUnit>(3, TimeUnit.SECOND);
                         this.headwayGenerator =
-                                new DistErlang(new MersenneTwister(1234), 4, DoubleScalar.minus(this.averageHeadway,
-                                        this.minimumHeadway).getSI());
+                            new DistErlang(new MersenneTwister(1234), 4, DoubleScalar.minus(this.averageHeadway,
+                                this.minimumHeadway).getSI());
                     }
                 }
                 else if (ap instanceof CompoundProperty)
@@ -405,12 +370,12 @@ class XMLNetworkModel implements OTSModelInterface
                     }
                 }
             }
-            this.gtuColorer = new SwitchableGTUColorer(new IDGTUColorer());
+
             setupGenerator(LaneFactory.makeMultiLane("From to FirstVia", from, firstVia, null, merge ? lanesOnMain
-                    : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator));
+                : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator));
             Lane[] common =
-                    LaneFactory.makeMultiLane("FirstVia to SecondVia", firstVia, secondVia, null, lanesOnCommon,
-                            laneType, this.speedLimit, this.simulator);
+                LaneFactory.makeMultiLane("FirstVia to SecondVia", firstVia, secondVia, null, lanesOnCommon, laneType,
+                    this.speedLimit, this.simulator);
             if (merge)
             {
                 for (int i = lanesOnCommonCompressed; i < lanesOnCommon; i++)
@@ -418,20 +383,20 @@ class XMLNetworkModel implements OTSModelInterface
                     setupBlock(common[i]);
                 }
             }
-            setupSink(LaneFactory.makeMultiLane("SecondVia to end", secondVia, end, null, merge
-                    ? lanesOnCommonCompressed : lanesOnMain, laneType, this.speedLimit, this.simulator));
+            setupSink(LaneFactory.makeMultiLane("SecondVia to end", secondVia, end, null, merge ? lanesOnCommonCompressed
+                : lanesOnMain, laneType, this.speedLimit, this.simulator));
             if (merge)
             {
                 setupGenerator(LaneFactory.makeMultiLane("From2 to FirstVia", from2, firstVia, null, lanesOnBranch, 0,
-                        lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator));
+                    lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator));
                 this.routeGenerator = new FixedRouteGenerator(new ArrayList<Node<?, ?>>());
             }
             else
             {
-                setupSink(LaneFactory.makeMultiLane("SecondVia to end2", secondVia, end2, null, lanesOnBranch,
-                        lanesOnCommon - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator));
+                setupSink(LaneFactory.makeMultiLane("SecondVia to end2", secondVia, end2, null, lanesOnBranch, lanesOnCommon
+                    - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator));
                 SortedMap<RouteGenerator, java.lang.Double> routeProbabilities =
-                        new TreeMap<RouteGenerator, java.lang.Double>();
+                    new TreeMap<RouteGenerator, java.lang.Double>();
                 ArrayList<Node<?, ?>> mainRoute = new ArrayList<Node<?, ?>>();
                 mainRoute.add(end);
                 routeProbabilities.put(new FixedRouteGenerator(mainRoute), new java.lang.Double(lanesOnMain));
@@ -470,7 +435,7 @@ class XMLNetworkModel implements OTSModelInterface
                 }
             }
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.999, TimeUnit.SECOND), this, this,
-                    "drawGraphs", null);
+                "drawGraphs", null);
         }
         catch (NamingException | NetworkException | GTUException exception1)
         {
@@ -491,8 +456,8 @@ class XMLNetworkModel implements OTSModelInterface
         {
             Object[] arguments = new Object[1];
             arguments[0] = lane;
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
-                    "generateCar", arguments);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this, "generateCar",
+                arguments);
         }
         return lanes;
     }
@@ -516,7 +481,7 @@ class XMLNetworkModel implements OTSModelInterface
         for (Lane lane : lanes)
         {
             new SinkLane(endLink, lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getLaneType(),
-                    LongitudinalDirectionality.FORWARD, this.speedLimit);
+                LongitudinalDirectionality.FORWARD, this.speedLimit);
         }
         return lanes;
     }
@@ -531,21 +496,20 @@ class XMLNetworkModel implements OTSModelInterface
      * @throws SimRuntimeException on ???
      * @throws GTUException when construction of the GTU (the block is a GTU) fails
      */
-    private Lane setupBlock(final Lane lane) throws RemoteException, NamingException, NetworkException,
-            SimRuntimeException, GTUException
+    private Lane setupBlock(final Lane lane) throws RemoteException, NamingException, NetworkException, SimRuntimeException,
+        GTUException
     {
         DoubleScalar.Rel<LengthUnit> initialPosition = lane.getLength();
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
-                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(lane, initialPosition);
         GTUFollowingModel gfm =
-                new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.SI),
-                        new DoubleScalar.Rel<TimeUnit>(java.lang.Double.MAX_VALUE, TimeUnit.SI));
+            new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.SI),
+                new DoubleScalar.Rel<TimeUnit>(java.lang.Double.MAX_VALUE, TimeUnit.SI));
         LaneChangeModel lcm = new FixedLaneChangeModel(null);
         new LaneBasedIndividualCar<Integer>(999999, this.gtuType, gfm, lcm, initialPositions,
-                new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(1,
-                        LengthUnit.METER), lane.getWidth(1), new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-                new Route(new ArrayList<Node<?, ?>>()), this.simulator);
+            new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
+            new DoubleScalar.Rel<LengthUnit>(1, LengthUnit.METER), lane.getWidth(1), new DoubleScalar.Abs<SpeedUnit>(0,
+                SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator);
         return lane;
     }
 
@@ -561,8 +525,8 @@ class XMLNetworkModel implements OTSModelInterface
         // Re schedule this method
         try
         {
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(this.simulator.getSimulatorTime().get()
-                    .getSI() + 1, TimeUnit.SECOND), this, this, "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(
+                this.simulator.getSimulatorTime().get().getSI() + 1, TimeUnit.SECOND), this, this, "drawGraphs", null);
         }
         catch (RemoteException | SimRuntimeException exception)
         {
@@ -580,24 +544,21 @@ class XMLNetworkModel implements OTSModelInterface
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
-                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(lane, initialPosition);
         try
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength =
-                    new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
-            GTUFollowingModel gtuFollowingModel =
-                    generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
-            new LaneBasedIndividualCar<Integer>(++this.carsCreated, this.gtuType, gtuFollowingModel,
-                    this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
-                    new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                            SpeedUnit.KM_PER_HOUR), this.routeGenerator.generateRoute(), this.simulator,
-                            DefaultCarAnimation.class, this.gtuColorer);
+                new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
+            GTUFollowingModel gtuFollowingModel = generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
+            new LaneBasedIndividualCar<Integer>(++this.carsCreated, this.gtuType, gtuFollowingModel, this.laneChangeModel,
+                initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
+                new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), this.routeGenerator.generateRoute(),
+                this.simulator, DefaultCarAnimation.class, this.gtuColorer);
             Object[] arguments = new Object[1];
             arguments[0] = lane;
-            this.simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(this.headwayGenerator.draw(),
-                    TimeUnit.SECOND), this, this, "generateCar", arguments);
+            this.simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(this.headwayGenerator.draw(), TimeUnit.SECOND),
+                this, this, "generateCar", arguments);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {

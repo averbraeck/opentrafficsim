@@ -1,4 +1,4 @@
-package org.opentrafficsim.simulationengine;
+package org.opentrafficsim.simulationengine.properties;
 
 import java.util.ArrayList;
 import java.util.Iterator;
