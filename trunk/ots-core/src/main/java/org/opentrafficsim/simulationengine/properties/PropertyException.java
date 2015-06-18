@@ -1,4 +1,4 @@
-package org.opentrafficsim.simulationengine;
+package org.opentrafficsim.simulationengine.properties;
 
 /**
  * Exception thrown when an operation is attempted that is not compatible with the indicated property.

@@ -1,9 +1,11 @@
-package org.opentrafficsim.simulationengine;
+package org.opentrafficsim.gui;
 
 import java.awt.Frame;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import org.opentrafficsim.simulationengine.WrappableSimulation;
 
 /**
  * Wrap a DSOL simulator, or any (descendant of a) JPanel in a JFrame (wrap it in a window). The window will be maximized.

@@ -2,6 +2,8 @@ package org.opentrafficsim.core.gtu.animation;
 
 import java.awt.Color;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.opentrafficsim.core.gtu.GTU;
@@ -19,38 +21,47 @@ import org.opentrafficsim.core.gtu.GTU;
 public class SwitchableGTUColorer implements GTUColorer
 {
     /** The currently active GTUColorer. */
-    private GTUColorer gtuColorer;
+    private GTUColorer activeColorer;
+    
+    /** list of included colorers. */
+    private List<GTUColorer> colorers = new ArrayList<>();
     
     /**
-     * Construct a new Switchable GTUColorer.
-     * @param initialColorer GTUColorer; the initially active GTUColorer.
+     * Construct a new Switchable GTUColorer based on a list of colorers. The first colorer in the list becomes the active one.
+     * @param activeIndex the index of the initially active colorer in the list (0-based).
+     * @param colorers GTUColorers; the list of GTUColorer. List cannot be empty.
+     * @throws IndexOutOfBoundsException when activeIndex < 0 or larger than or equal to the number of colorers.
      */
-    public SwitchableGTUColorer(final GTUColorer initialColorer)
+    @SuppressWarnings("checkstyle:redundantthrows")
+    public SwitchableGTUColorer(final int activeIndex, final GTUColorer... colorers) throws IndexOutOfBoundsException
     {
-        this.gtuColorer = initialColorer;
+        this.colorers.addAll(Arrays.asList(colorers));
+        setGTUColorer(activeIndex);
     }
     
     /**
      * Replace the currently active GTUColorer.
-     * @param newColorer GTUColorer; the GTUColorer that will replace the currently active GTUColorer
+     * @param activeIndex the index of the new active colorer in the list (0-based).
+     * @throws IndexOutOfBoundsException when activeIndex < 0 or larger than or equal to the number of colorers.
      */
-    public final void setGTUColorer(final GTUColorer newColorer)
+    @SuppressWarnings("checkstyle:redundantthrows")
+    public final void setGTUColorer(final int activeIndex) throws IndexOutOfBoundsException
     {
-        this.gtuColorer = newColorer;
+        this.activeColorer = this.colorers.get(activeIndex);
     }
 
     /** {@inheritDoc} */
     @Override
     public final Color getColor(final GTU<?> gtu) throws RemoteException
     {
-        return this.gtuColorer.getColor(gtu);
+        return this.activeColorer.getColor(gtu);
     }
 
     /** {@inheritDoc} */
     @Override
     public final List<LegendEntry> getLegend()
     {
-        return this.gtuColorer.getLegend();
+        return this.activeColorer.getLegend();
     }
 
     /** {@inheritDoc} */
@@ -58,6 +69,14 @@ public class SwitchableGTUColorer implements GTUColorer
     public final String toString()
     {
         return "Switchable GTU Colorer";
+    }
+
+    /**
+     * @return the list of colorers.
+     */
+    public final List<GTUColorer> getColorers()
+    {
+        return this.colorers;
     }
 
 }

@@ -2,8 +2,6 @@ package org.opentrafficsim.demo.carFollowing;
 
 import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -12,12 +10,10 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.naming.NamingException;
-import javax.swing.JScrollPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.gui.swing.DSOLPanel;
-import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
@@ -28,8 +24,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
-import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
-import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
+import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
@@ -51,50 +46,41 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.graphs.TrajectoryPlot;
-import org.opentrafficsim.simulationengine.AbstractProperty;
-import org.opentrafficsim.simulationengine.ControlPanel;
-import org.opentrafficsim.simulationengine.ProbabilityDistributionProperty;
-import org.opentrafficsim.simulationengine.PropertyException;
-import org.opentrafficsim.simulationengine.SelectionProperty;
-import org.opentrafficsim.simulationengine.SimpleAnimator;
-import org.opentrafficsim.simulationengine.SimpleSimulation;
-import org.opentrafficsim.simulationengine.SimulatorFrame;
 import org.opentrafficsim.simulationengine.WrappableSimulation;
+import org.opentrafficsim.simulationengine.properties.AbstractProperty;
+import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionProperty;
+import org.opentrafficsim.simulationengine.properties.PropertyException;
+import org.opentrafficsim.simulationengine.properties.SelectionProperty;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * Demonstrate the Trajectories plot.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 17 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class Trajectories implements WrappableSimulation
+public class Trajectories extends AbstractWrappableSimulation implements WrappableSimulation
 {
-    /** The properties exhibited by this simulation. */
-    private ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();
-
-    /** The properties after (possible) editing by the user. */
-    private ArrayList<AbstractProperty<?>> savedUserModifiedProperties;
+    /** the model. */
+    private TrajectoriesModel model;
 
     /** Create a Trajectories simulation. */
     public Trajectories()
     {
         try
         {
-            this.properties.add(new SelectionProperty("Car following model",
-                    "<html>The car following model determines "
-                            + "the acceleration that a vehicle will make taking into account nearby vehicles, "
-                            + "infrastructural restrictions (e.g. speed limit, curvature of the road) "
-                            + "capabilities of the vehicle and personality of the driver.</html>", new String[]{"IDM",
-                            "IDM+"}, 1, false, 10));
+            this.properties.add(new SelectionProperty("Car following model", "<html>The car following model determines "
+                + "the acceleration that a vehicle will make taking into account nearby vehicles, "
+                + "infrastructural restrictions (e.g. speed limit, curvature of the road) "
+                + "capabilities of the vehicle and personality of the driver.</html>", new String[] {"IDM", "IDM+"}, 1,
+                false, 10));
             this.properties.add(new ProbabilityDistributionProperty("Traffic composition",
-                    "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
-                    new Double[]{0.8, 0.2}, false, 9));
+                "<html>Mix of passenger cars and trucks</html>", new String[] {"passenger car", "truck"}, new Double[] {0.8,
+                    0.2}, false, 9));
         }
         catch (PropertyException exception)
         {
@@ -119,8 +105,7 @@ public class Trajectories implements WrappableSimulation
                 try
                 {
                     Trajectories trajectories = new Trajectories();
-                    new SimulatorFrame("Trajectory Plots animation", trajectories.buildSimulator(
-                            trajectories.getProperties()).getPanel());
+                    trajectories.buildSimulator(trajectories.getProperties(), null, true);
                 }
                 catch (RemoteException | SimRuntimeException | NamingException exception)
                 {
@@ -130,74 +115,35 @@ public class Trajectories implements WrappableSimulation
         });
     }
 
-    /**
-     * Create a new simulation.
-     * @param userModifiedProperties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user modified) propertees
-     * @return SimpleSimulator; the new simulation
-     * @throws SimRuntimeException on ???
-     * @throws RemoteException on communications failures
-     * @throws NamingException on ???
-     */
-    public final SimpleAnimator buildSimulator(final ArrayList<AbstractProperty<?>> userModifiedProperties)
-            throws RemoteException, SimRuntimeException, NamingException
+    /** {@inheritDoc} */
+    @Override
+    protected final Rectangle2D.Double makeAnimationRectangle()
     {
-        this.savedUserModifiedProperties = userModifiedProperties;
-        TrajectoriesModel model = new TrajectoriesModel(userModifiedProperties);
-        SimpleAnimator result =
-                new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
-                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800.0,
-                                TimeUnit.SECOND), model, new Rectangle2D.Double(0, -100, 5000, 200));
-        ControlPanel controlPanel = new ControlPanel(result, this);
-        // Insert the SwitchableGTUColorer in the SwitchableGTUColorer of the model.
-        // This will incur the overhead of a nested call to getColor when a GTU is painted; this is intended.
-        model.getGTUColorer().setGTUColorer(controlPanel.getGTUColorer());
-        makePlot(model, result.getPanel());
-        addInfoTab(result.getPanel());
-        return result;
+        return new Rectangle2D.Double(0, -100, 5000, 200);
     }
 
-    /**
-     * make the stand-alone plot for the model and put it in the statistics panel.
-     * @param model the model.
-     * @param panel DSOLPanel
-     */
-    private static void makePlot(final TrajectoriesModel model,
-            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
+    /** {@inheritDoc} */
+    @Override
+    protected final OTSModelInterface makeModel(final GTUColorer colorer)
+    {
+        this.model = new TrajectoriesModel(this.savedUserModifiedProperties, colorer);
+        return this.model;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected final JPanel makeCharts()
     {
         TablePanel charts = new TablePanel(1, 1);
-        panel.getTabbedPane().addTab("statistics", charts);
         DoubleScalar.Rel<TimeUnit> sampleInterval = new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND);
         List<Lane> path = new ArrayList<Lane>();
-        path.add(model.getLane());
+        path.add(this.model.getLane());
         TrajectoryPlot tp = new TrajectoryPlot("Trajectory Plot", sampleInterval, path);
         tp.setTitle("Density Contour Graph");
         tp.setExtendedState(Frame.MAXIMIZED_BOTH);
-        model.setTrajectoryPlot(tp);
+        this.model.setTrajectoryPlot(tp);
         charts.setCell(tp.getContentPane(), 0, 0);
-    }
-
-    /**
-     * @param panel DSOLPanel
-     */
-    private static void addInfoTab(
-            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
-    {
-        // Let's find some content for our info screen and add it to our tabbedPane
-        String helpSource = "/" + TrajectoriesModel.class.getPackage().getName().replace('.', '/') + "/package.html";
-        URL page = TrajectoriesModel.class.getResource(helpSource);
-        if (page != null)
-        {
-            HTMLPanel htmlPanel;
-            try
-            {
-                htmlPanel = new HTMLPanel(page);
-                panel.getTabbedPane().addTab("info", new JScrollPane(htmlPanel));
-            }
-            catch (IOException exception)
-            {
-                exception.printStackTrace();
-            }
-        }
+        return charts;
     }
 
     /** {@inheritDoc} */
@@ -212,48 +158,24 @@ public class Trajectories implements WrappableSimulation
     public final String description()
     {
         return "<html><H1>Trajectories</H1>"
-                + "Simulation of a single lane road of 5 km length. Vechicles are generated at a constant rate of "
-                + "1500 veh/hour. At time 300s a blockade is inserted at position 4km; this blockade is removed at time "
-                + "420s. This blockade simulates a bridge opening.<br/>"
-                + "The blockade causes a traffic jam that slowly dissolves after the blockade is removed.<br />"
-                + "Output is a Trajectory plots.</html>";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final ArrayList<AbstractProperty<?>> getProperties()
-    {
-        // Create and return a deep copy of the internal list
-        return new ArrayList<AbstractProperty<?>>(this.properties);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SimpleSimulation rebuildSimulator() throws SimRuntimeException, RemoteException, NetworkException,
-            NamingException
-    {
-        return buildSimulator(this.savedUserModifiedProperties);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ArrayList<AbstractProperty<?>> getUserModifiedProperties()
-    {
-        return this.savedUserModifiedProperties;
+            + "Simulation of a single lane road of 5 km length. Vechicles are generated at a constant rate of "
+            + "1500 veh/hour. At time 300s a blockade is inserted at position 4km; this blockade is removed at time "
+            + "420s. This blockade simulates a bridge opening.<br/>"
+            + "The blockade causes a traffic jam that slowly dissolves after the blockade is removed.<br />"
+            + "Output is a Trajectory plots.</html>";
     }
 
 }
 
 /**
- * Simulate a single lane road of 5 km length. Vehicles are generated at a constant rate of 1500 veh/hour. At time 300s
- * a blockade is inserted at position 4 km; this blockade is removed at time 500s. The used car following algorithm is
- * IDM+ <a href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with
- * Relaxation and Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>. <br>
- * Output is a trajectory plot with simulation time along the horizontal axis and distance along the road along the
- * vertical axis.
+ * Simulate a single lane road of 5 km length. Vehicles are generated at a constant rate of 1500 veh/hour. At time 300s a
+ * blockade is inserted at position 4 km; this blockade is removed at time 500s. The used car following algorithm is IDM+ <a
+ * href="http://opentrafficsim.org/downloads/MOTUS%20reference.pdf"><i>Integrated Lane Change Model with Relaxation and
+ * Synchronization</i>, by Wouter J. Schakel, Victor L. Knoop and Bart van Arem, 2012</a>. <br>
+ * Output is a trajectory plot with simulation time along the horizontal axis and distance along the road along the vertical
+ * axis.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Aug 1, 2014 <br>
@@ -312,30 +234,24 @@ class TrajectoriesModel implements OTSModelInterface
     /** The random number generator used to decide what kind of GTU to generate. */
     private Random randomGenerator = new Random(12345);
 
-    /** The SwitchableGTUColorer for the generated vehicles. */
-    private SwitchableGTUColorer gtuColorer;
-
-    /**
-     * @return gtuColorer.
-     */
-    public SwitchableGTUColorer getGTUColorer()
-    {
-        return this.gtuColorer;
-    }
+    /** The GTUColorer for the generated vehicles. */
+    private final GTUColorer gtuColorer;
 
     /**
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
+     * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
      */
-    public TrajectoriesModel(final ArrayList<AbstractProperty<?>> properties)
+    public TrajectoriesModel(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer)
     {
         this.properties = properties;
+        this.gtuColorer = gtuColorer;
     }
 
     /** {@inheritDoc} */
     @Override
     public final void constructModel(
-            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException, RemoteException
+        final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+        throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         NodeGeotools.STR from = new NodeGeotools.STR("From", new Coordinate(getMinimumDistance().getSI(), 0, 0));
@@ -348,7 +264,7 @@ class TrajectoriesModel implements OTSModelInterface
             this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.speedLimit, this.simulator);
             CrossSectionLink<?, ?> endLink = LaneFactory.makeLink("endLink", to, end, null);
             new SinkLane(endLink, this.getLane().getLateralCenterPosition(1.0), this.getLane().getWidth(1.0), laneType,
-                    LongitudinalDirectionality.FORWARD, this.speedLimit);
+                LongitudinalDirectionality.FORWARD, this.speedLimit);
         }
         catch (NamingException | NetworkException exception1)
         {
@@ -366,30 +282,28 @@ class TrajectoriesModel implements OTSModelInterface
                     if (modelName.equals("IDM"))
                     {
                         this.carFollowingModelCars =
-                                new IDM(
-                                        new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
-                                        new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                        new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
-                                        new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
+                            new IDM(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
+                                new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+                                new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
+                                    TimeUnit.SECOND), 1d);
                         this.carFollowingModelTrucks =
-                                new IDM(
-                                        new DoubleScalar.Abs<AccelerationUnit>(0.5, AccelerationUnit.METER_PER_SECOND_2),
-                                        new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                        new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
-                                        new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
+                            new IDM(new DoubleScalar.Abs<AccelerationUnit>(0.5, AccelerationUnit.METER_PER_SECOND_2),
+                                new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+                                new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
+                                    TimeUnit.SECOND), 1d);
                     }
                     else if (modelName.equals("IDM+"))
                     {
                         this.carFollowingModelCars =
-                                new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1,
-                                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(
-                                        1.5, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2,
-                                        LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
+                            new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1, AccelerationUnit.METER_PER_SECOND_2),
+                                new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+                                new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
+                                    TimeUnit.SECOND), 1d);
                         this.carFollowingModelTrucks =
-                                new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(0.5,
-                                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(
-                                        1.5, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2,
-                                        LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
+                            new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(0.5, AccelerationUnit.METER_PER_SECOND_2),
+                                new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
+                                new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1,
+                                    TimeUnit.SECOND), 1d);
                     }
                     else
                     {
@@ -419,26 +333,26 @@ class TrajectoriesModel implements OTSModelInterface
                 throw new Error("Unhandled property: " + p);
             }
         }
-        this.gtuColorer = new SwitchableGTUColorer(new IDGTUColorer());
+
         // 1500 [vehicles / hour] == 2.4s headway
         this.headway = new DoubleScalar.Rel<TimeUnit>(3600.0 / 1500.0, TimeUnit.SECOND);
 
         try
         {
             // Schedule creation of the first car (this will re-schedule itself one headway later, etc.).
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
-                    "generateCar", null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this, "generateCar",
+                null);
             // Create a block at t = 5 minutes
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND), this, this,
-                    "createBlock", null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND), this, this, "createBlock",
+                null);
             // Remove the block at t = 7 minutes
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(420, TimeUnit.SECOND), this, this,
-                    "removeBlock", null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(420, TimeUnit.SECOND), this, this, "removeBlock",
+                null);
             // Schedule regular updates of the graph
             for (int t = 1; t <= 1800; t++)
             {
                 this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, TimeUnit.SECOND), this, this,
-                        "drawGraph", null);
+                    "drawGraph", null);
             }
         }
         catch (RemoteException | SimRuntimeException exception)
@@ -456,19 +370,17 @@ class TrajectoriesModel implements OTSModelInterface
      * @throws GTUException if creation of the GTU fails
      */
     protected final void createBlock() throws RemoteException, NamingException, SimRuntimeException, NetworkException,
-            GTUException
+        GTUException
     {
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(4000, LengthUnit.METER);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
-                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.getLane(), initialPosition);
         this.block =
-                new LaneBasedIndividualCar<>(999999, this.gtuType, this.carFollowingModelCars, this.laneChangeModel,
-                        initialPositions, new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-                        new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1.8,
-                                LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-                        new Route(new ArrayList<Node<?, ?>>()), this.simulator, DefaultCarAnimation.class,
-                        this.gtuColorer);
+            new LaneBasedIndividualCar<>(999999, this.gtuType, this.carFollowingModelCars, this.laneChangeModel,
+                initialPositions, new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
+                new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1.8,
+                    LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new Route(
+                    new ArrayList<Node<?, ?>>()), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
     }
 
     /**
@@ -487,25 +399,23 @@ class TrajectoriesModel implements OTSModelInterface
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
-                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.getLane(), initialPosition);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         try
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength =
-                    new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
-            GTUFollowingModel gtuFollowingModel =
-                    generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
+                new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
+            GTUFollowingModel gtuFollowingModel = generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
             if (null == gtuFollowingModel)
             {
                 throw new Error("gtuFollowingModel is null");
             }
             new LaneBasedIndividualCar<>(++this.carsCreated, this.gtuType, generateTruck ? this.carFollowingModelTrucks
-                    : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
-                    new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                            SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator,
-                    DefaultCarAnimation.class, this.gtuColorer);
+                : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
+                new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
+                    SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator,
+                DefaultCarAnimation.class, this.gtuColorer);
             // Re-schedule this method after headway seconds
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
@@ -518,7 +428,7 @@ class TrajectoriesModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-            throws RemoteException
+        throws RemoteException
     {
         return this.simulator;
     }
