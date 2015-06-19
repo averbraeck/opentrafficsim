@@ -80,6 +80,10 @@ public class LaneChangeUrgeGTUColorer implements GTUColorer
             double ratio =
                     DoubleScalar.minus(distance, this.minimumLaneChangeDistance).getSI()
                             / DoubleScalar.minus(this.horizon, this.minimumLaneChangeDistance).getSI();
+            if (ratio < 0) // happens when the vehicle is within the minimumLaneChangeDistance
+            {
+                ratio = 0;
+            }
             return ColorInterpolator.interpolateColor(this.legend.get(distanceAndDirection.getLeft() ? 0 : 2)
                     .getColor(), this.legend.get(1).getColor(), ratio);
         }
