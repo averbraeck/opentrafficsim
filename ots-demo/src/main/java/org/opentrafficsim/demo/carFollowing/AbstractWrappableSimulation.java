@@ -74,7 +74,7 @@ public abstract class AbstractWrappableSimulation implements WrappableSimulation
         JPanel charts = makeCharts();
         this.panel.getTabbedPane().addTab("statistics", charts);
 
-        SimulatorFrame frame = new SimulatorFrame("Circular Road animation", this.panel);
+        SimulatorFrame frame = new SimulatorFrame(shortName(), this.panel);
         if (rect != null)
         {
             frame.setBounds(rect);
