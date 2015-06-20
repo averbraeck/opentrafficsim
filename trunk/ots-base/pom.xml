@@ -18,7 +18,6 @@
 
   <inceptionYear>2014</inceptionYear>
 
-
   <profiles>
     <!-- select profiles with -P option, e.g. "mvn install -P all" -->
     <profile>
@@ -29,14 +28,11 @@
         </property>
       </activation>
       <modules>
-        <!-- generic base packages -->
+        <!-- ots core package -->
         <module>../ots-core</module>
-        <!-- other modules here -->
+
+        <!-- examples and tutorial -->
         <module>../ots-demo</module>
-
-
-        <!-- micro model packages -->
-        <!-- module>../ots-yyy</module -->
       </modules>
     </profile>
   </profiles>
@@ -136,6 +132,19 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
         <version>${maven.site.version}</version>
+        <configuration>
+          <chmod>true</chmod>
+          <inputEncoding>UTF-8</inputEncoding>
+          <outputEncoding>UTF-8</outputEncoding>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-descriptor</id>
+            <goals>
+              <goal>attach-descriptor</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
@@ -359,6 +368,10 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>${maven.project-info-reports.version}</version>
+        <configuration>
+          <dependencyDetailsEnabled>true</dependencyDetailsEnabled>
+          <dependencyLocationsEnabled>true</dependencyLocationsEnabled>
+        </configuration>
         <reportSets>
           <reportSet>
             <reports>
@@ -735,14 +748,6 @@
       <url>http://download.osgeo.org/webdav/geotools/</url>
     </repository>
 
-    <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>codehaus</id>
-      <name>Codehaus Release Repository</name>
-      <url>http://repository.codehaus.org/</url>
-    </repository>
   </repositories>
 
   <licenses>
