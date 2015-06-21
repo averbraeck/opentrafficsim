@@ -99,6 +99,14 @@ public class XMLNetworks extends AbstractWrappableSimulation implements Wrappabl
 
     /** {@inheritDoc} */
     @Override
+    public final void stopTimersThreads()
+    {
+        super.stopTimersThreads();
+        this.model = null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected final Rectangle2D.Double makeAnimationRectangle()
     {
         return new Rectangle2D.Double(-50, -300, 1300, 600);

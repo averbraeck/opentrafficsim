@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.dsol;
 
-import javax.naming.Context;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.experiment.Experiment;
@@ -20,13 +19,14 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public class OTSReplication extends Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
 {
     /**
-     * @param context Context
      * @param experiment Experiment
+     * @throws NamingException when the context for the replication cannot be created
      */
-    public OTSReplication(final Context context,
+    public OTSReplication(
         final Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> experiment)
+        throws NamingException
     {
-        super(context, experiment);
+        super(experiment);
     }
 
     /**

@@ -25,8 +25,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -102,7 +100,10 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
     private SimEvent<OTSSimTimeDouble> stopAtEvent = null;
 
     /** Has the window close handler been registered? */
-    private boolean closeHandlerRegistered = false;
+    protected boolean closeHandlerRegistered = false;
+
+    /** has cleanup taken place? */
+    private boolean isCleanUp = false;
 
     /**
      * Decorate a SimpleSimulator with a different set of control buttons.
@@ -132,6 +133,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         this.timeEdit.addPropertyChangeListener("value", this);
         buttonPanel.add(this.timeEdit);
         this.add(buttonPanel);
+
+        installWindowCloseHandler();
     }
 
     /**
@@ -193,27 +196,59 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             return;
         }
 
-        // Search towards the root of the Swing components until we find a JFrame
-        Container container = this.clockPanel;
-        while (null != container)
+        // make sure the root frame gets disposed of when the closing X icon is pressed.
+        new DisposeOnCloseThread(this).start();
+    }
+
+    /** Install the dispose on close when the OTSControlPanel is registered as part of a frame. */
+    protected class DisposeOnCloseThread extends Thread
+    {
+        /** the current container. */
+        private OTSControlPanel panel;
+
+        /**
+         * @param panel the OTSControlpanel container.
+         */
+        public DisposeOnCloseThread(final OTSControlPanel panel)
         {
-            container = container.getParent();
-            if (container instanceof JFrame)
+            super();
+            this.panel = panel;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final void run()
+        {
+            Container root = this.panel;
+            while (!(root instanceof JFrame))
             {
-                ((JFrame) container).addWindowListener(this);
-                this.closeHandlerRegistered = true;
-                // System.out.println("Registered closed window handler");
-                return;
+                try
+                {
+                    Thread.sleep(10);
+                }
+                catch (InterruptedException exception)
+                {
+                    // nothing to do
+                }
+
+                // Search towards the root of the Swing components until we find a JFrame
+                root = this.panel;
+                while (null != root.getParent() && !(root instanceof JFrame))
+                {
+                    root = root.getParent();
+                }
             }
+            JFrame frame = (JFrame) root;
+            frame.addWindowListener(this.panel);
+            this.panel.closeHandlerRegistered = true;
+            // frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         }
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
     @Override
     public final void actionPerformed(final ActionEvent actionEvent)
     {
-        installWindowCloseHandler();
         String actionCommand = actionEvent.getActionCommand();
         // System.out.println("actionCommand: " + actionCommand);
         try
@@ -261,30 +296,76 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 {
                     getSimulator().stop();
                 }
-                if (null == this.wrappableSimulation)
+
+                if (null == OTSControlPanel.this.wrappableSimulation)
                 {
                     throw new Error("Do not know how to restart this simulation");
                 }
-                // unbind the old animation and statistics
-                (new InitialContext()).unbind(String.valueOf(getSimulator().hashCode()));
 
                 // find the JFrame position and dimensions
-                Container root = this;
-                while (null != root.getParent())
+                Container root = OTSControlPanel.this;
+                while (!(root instanceof JFrame))
                 {
                     root = root.getParent();
                 }
                 JFrame frame = (JFrame) root;
                 Rectangle rect = frame.getBounds();
                 frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                this.wrappableSimulation.rebuildSimulator(rect);
                 frame.dispose();
+                OTSControlPanel.this.cleanup();
+                try
+                {
+                    OTSControlPanel.this.wrappableSimulation.rebuildSimulator(rect);
+                }
+                catch (Exception exception)
+                {
+                    exception.printStackTrace();
+                }
             }
             fixButtons();
         }
         catch (Exception exception)
         {
-            this.logger.logp(Level.SEVERE, "ControlPanel", "actionPerformed", "", exception);
+            exception.printStackTrace();
+        }
+    }
+
+    /**
+     * clean up timers, contexts, threads, etc. that could prevent garbage collection.
+     */
+    private void cleanup()
+    {
+        if (!this.isCleanUp)
+        {
+            this.isCleanUp = true;
+            try
+            {
+                if (this.simulator != null)
+                {
+                    if (this.simulator.isRunning())
+                    {
+                        this.simulator.stop();
+                    }
+                    
+                    // unbind the old animation and statistics
+                    getSimulator().getReplication().getExperiment().removeFromContext(); // clean up the context
+                    getSimulator().cleanUp();
+                }
+
+                if (this.clockPanel != null)
+                {
+                    this.clockPanel.cancelTimer(); // cancel the timer on the clock panel.
+                }
+
+                if (this.wrappableSimulation != null)
+                {
+                    this.wrappableSimulation.stopTimersThreads(); // stop the linked timers and other threads
+                }
+            }
+            catch (Throwable exception)
+            {
+                exception.printStackTrace();
+            }
         }
     }
 
@@ -456,28 +537,27 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
     @Override
     public final void windowClosing(final WindowEvent e)
     {
-        // No action
+        if (this.simulator != null)
+        {
+            try
+            {
+                if (this.simulator.isRunning())
+                {
+                    this.simulator.stop();
+                }
+            }
+            catch (RemoteException | SimRuntimeException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public final void windowClosed(final WindowEvent e)
     {
-        if (getSimulator().isRunning())
-        {
-            // System.out.println("Window closed; stopping simulator");
-            getSimulator().stop();
-
-            // unbind the old animation and statistics
-            try
-            {
-                (new InitialContext()).unbind(String.valueOf(getSimulator().hashCode()));
-            }
-            catch (NamingException exception)
-            {
-                exception.printStackTrace();
-            }
-        }
+        cleanup();
     }
 
     /** {@inheritDoc} */
@@ -691,6 +771,9 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         /** The JLabel that displays the time. */
         private final JLabel clockLabel;
 
+        /** the timer so we can cancel it. */
+        private Timer timer;
+
         /** timer update in msec. */
         private static final long UPDATEINTERVAL = 1000;
 
@@ -700,9 +783,20 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             super("00:00:00.000");
             this.clockLabel = this;
             this.setFont(getTimeFont());
-            Timer timer = new Timer();
-            timer.scheduleAtFixedRate(new TimeUpdateTask(), 0, ClockPanel.UPDATEINTERVAL);
+            this.timer = new Timer();
+            this.timer.scheduleAtFixedRate(new TimeUpdateTask(), 0, ClockPanel.UPDATEINTERVAL);
+        }
 
+        /**
+         * Cancel the timer task.
+         */
+        public void cancelTimer()
+        {
+            if (this.timer != null)
+            {
+                this.timer.cancel();
+            }
+            this.timer = null;
         }
 
         /** Updater for the clock panel. */

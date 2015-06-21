@@ -102,4 +102,12 @@ public class OTSSimulationPanel extends JPanel
         return this.simulator;
     }
 
+    /**
+     * @return statusBar.
+     */
+    public final StatusBar getStatusBar()
+    {
+        return this.statusBar;
+    }
+
 }

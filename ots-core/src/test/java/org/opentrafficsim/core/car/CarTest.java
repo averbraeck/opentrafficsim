@@ -112,9 +112,8 @@ public class CarTest
     {
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         Model model = new Model();
-        Context context = new InitialContext();
         Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> exp =
-                new Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(context);
+                new Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>();
         Treatment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> tr =
                 new Treatment<>(exp, "tr1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND)),
                         new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
@@ -122,7 +121,7 @@ public class CarTest
         exp.setTreatment(tr);
         exp.setModel(model);
         Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> rep =
-                new Replication<>(context, exp);
+                new Replication<>(exp);
         simulator.initialize(rep, ReplicationMode.TERMINATING);
         return simulator;
     }

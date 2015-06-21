@@ -97,6 +97,14 @@ public class Straight extends AbstractWrappableSimulation implements WrappableSi
             1000));
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final void stopTimersThreads()
+    {
+        super.stopTimersThreads();
+        this.model = null;
+    }
+
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
