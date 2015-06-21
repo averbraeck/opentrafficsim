@@ -84,6 +84,14 @@ public class FundamentalDiagrams extends AbstractWrappableSimulation implements 
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final void stopTimersThreads()
+    {
+        super.stopTimersThreads();
+        this.model = null;
+    }
+
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)

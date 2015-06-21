@@ -88,6 +88,14 @@ public class Trajectories extends AbstractWrappableSimulation implements Wrappab
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final void stopTimersThreads()
+    {
+        super.stopTimersThreads();
+        this.model = null;
+    }
+
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)

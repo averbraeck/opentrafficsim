@@ -74,4 +74,9 @@ public interface WrappableSimulation
      * @return ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the list of visible properties
      */
     ArrayList<AbstractProperty<?>> getUserModifiedProperties();
+    
+    /**
+     * Stop the timers and threads that are connected when disposing of this wrappable simulation.
+     */
+    void stopTimersThreads();
 }
