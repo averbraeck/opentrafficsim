@@ -3,7 +3,8 @@ package org.opentrafficsim.simulationengine.properties;
 /**
  * Boolean property.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 29 dec. 2014 <br>
@@ -85,6 +86,14 @@ public class BooleanProperty extends AbstractProperty<Boolean>
     public final String htmlStateDescription()
     {
         return getShortName() + ": " + (null == this.value ? "null" : this.value ? "true" : "false");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public AbstractProperty<Boolean> deepCopy()
+    {
+        return new BooleanProperty(this.shortName, this.description, this.value, this.readOnly,
+                this.getDisplayPriority());
     }
 
 }

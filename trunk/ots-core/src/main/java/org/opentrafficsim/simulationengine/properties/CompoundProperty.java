@@ -258,4 +258,16 @@ public class CompoundProperty extends AbstractProperty<ArrayList<AbstractPropert
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public AbstractProperty<ArrayList<AbstractProperty<?>>> deepCopy()
+    {
+        ArrayList<AbstractProperty<?>> copyOfValue = new ArrayList<AbstractProperty<?>>();
+        for (AbstractProperty<?> ap : this.value)
+        {
+            copyOfValue.add(ap.deepCopy());
+        }
+        return new CompoundProperty(this.shortName, this.description, copyOfValue, this.readOnly, getDisplayPriority());
+    }
+
 }

@@ -125,4 +125,12 @@ public class SelectionProperty extends AbstractProperty<String>
         return getShortName() + ": " + this.options[this.currentOption];
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public AbstractProperty<String> deepCopy()
+    {
+        return new SelectionProperty(this.shortName, this.description, this.options, this.currentOption, this.readOnly,
+                getDisplayPriority());
+    }
+
 }

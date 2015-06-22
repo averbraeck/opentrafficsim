@@ -108,8 +108,8 @@ public class IntegerProperty extends AbstractProperty<Integer>
         }
         if (this.minimumValue > newValue || this.maximumValue < newValue)
         {
-            throw new PropertyException("new value " + newValue + " is out of valid range ("
-                    + this.minimumValue + ".." + this.maximumValue + ")");
+            throw new PropertyException("new value " + newValue + " is out of valid range (" + this.minimumValue + ".."
+                    + this.maximumValue + ")");
         }
         this.value = newValue;
     }
@@ -134,6 +134,14 @@ public class IntegerProperty extends AbstractProperty<Integer>
     public final String htmlStateDescription()
     {
         return getShortName() + ": " + String.format(getFormatString(), getValue());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public AbstractProperty<Integer> deepCopy()
+    {
+        return new IntegerProperty(this.shortName, this.description, this.value, this.maximumValue, this.maximumValue,
+                this.format, this.readOnly, getDisplayPriority());
     }
 
 }

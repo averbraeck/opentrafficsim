@@ -106,8 +106,8 @@ public class ContinuousProperty extends AbstractProperty<Double>
         }
         if (this.minimumValue > newValue || this.maximumValue < newValue)
         {
-            throw new PropertyException("new value " + newValue + " is out of valid range ("
-                    + this.minimumValue + ".." + this.maximumValue + ")");
+            throw new PropertyException("new value " + newValue + " is out of valid range (" + this.minimumValue + ".."
+                    + this.maximumValue + ")");
         }
         this.value = newValue;
     }
@@ -132,6 +132,14 @@ public class ContinuousProperty extends AbstractProperty<Double>
     public final String htmlStateDescription()
     {
         return getShortName() + ": " + String.format(getFormatString(), getValue());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public AbstractProperty<Double> deepCopy()
+    {
+        return new ContinuousProperty(this.shortName, this.description, this.value, this.minimumValue,
+                this.maximumValue, this.format, this.readOnly, getDisplayPriority());
     }
 
 }
