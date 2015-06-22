@@ -63,8 +63,8 @@ public class LaneTest
         GTUType<String> gtuTypeCar = GTUType.makeGTUType("Car");
         GTUType<String> gtuTypeTruck = GTUType.makeGTUType("Truck");
         LaneType<String> laneType = new LaneType<String>("Car");
-        laneType.addPermeability(gtuTypeCar);
-        laneType.addPermeability(gtuTypeTruck);
+        laneType.addCompatibility(gtuTypeCar);
+        laneType.addCompatibility(gtuTypeTruck);
         DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000, FrequencyUnit.PER_HOUR);
         LongitudinalDirectionality longitudinalDirectionality = LongitudinalDirectionality.FORWARD;
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);

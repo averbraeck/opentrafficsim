@@ -141,7 +141,7 @@ public class SuitabilityGraph implements OTSModelInterface
                 NodeGeotools.STR branchPoint = new NodeGeotools.STR("From", new Coordinate(0, 0, 0));
                 LaneType<String> laneType = new LaneType<String>("CarLane");
                 GTUType<String> gtuType = GTUType.makeGTUType("Car");
-                laneType.addPermeability(gtuType);
+                laneType.addCompatibility(gtuType);
                 Lane[] lanes =
                         LaneFactory.makeMultiLane("Test road", from, branchPoint, null, LANECOUNT, laneType,
                                 speedLimit, simulator);

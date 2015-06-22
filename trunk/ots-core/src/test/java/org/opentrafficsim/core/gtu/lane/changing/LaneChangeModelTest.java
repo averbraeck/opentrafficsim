@@ -162,7 +162,7 @@ public class LaneChangeModelTest implements OTSModelInterface
     {
         GTUType<String> gtuType = GTUType.makeGTUType("car");
         LaneType<String> laneType = new LaneType<String>("CarLane");
-        laneType.addPermeability(gtuType);
+        laneType.addCompatibility(gtuType);
         Lane[] lanes =
                 makeMultiLane("Road with two lanes", new NodeGeotools.STR("From", new Coordinate(0, 0, 0)),
                         new NodeGeotools.STR("To", new Coordinate(200, 0, 0)), laneType, 2);

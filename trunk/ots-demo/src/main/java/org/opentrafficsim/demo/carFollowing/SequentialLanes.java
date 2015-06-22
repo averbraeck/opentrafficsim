@@ -408,7 +408,7 @@ class SequentialModel implements OTSModelInterface
             this.nodes.add(new NodeGeotools.STR("Node at " + xPos, new Coordinate(xPos, xPos > 1001 ? 200 : -10, 0)));
         }
         LaneType<String> laneType = new LaneType<String>("CarLane");
-        laneType.addPermeability(this.gtuType);
+        laneType.addCompatibility(this.gtuType);
         // Now we can build a series of Links with one Lane on them
         ArrayList<CrossSectionLink<?, ?>> links = new ArrayList<CrossSectionLink<?, ?>>();
         for (int i = 1; i < this.nodes.size(); i++)

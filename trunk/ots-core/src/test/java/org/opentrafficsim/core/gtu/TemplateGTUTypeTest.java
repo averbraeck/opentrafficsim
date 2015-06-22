@@ -112,13 +112,13 @@ public class TemplateGTUTypeTest
             new TemplateGTUType<String>(truckId, truckLength, truckWidth, truckMaximumSpeed, truckSimulator);
         // Create some LaneTypes
         LaneType<String> trucksForbidden = new LaneType<String>("No Trucks");
-        trucksForbidden.addPermeability(passengerCar.getGtuType());
+        trucksForbidden.addCompatibility(passengerCar.getGtuType());
         LaneType<String> trucksOnly = new LaneType<String>("Trucks Only");
-        trucksOnly.addPermeability(truck.getGtuType());
+        trucksOnly.addCompatibility(truck.getGtuType());
         LaneType<String> bicycleLane = new LaneType<String>("Bicycles Only");
         LaneType<String> urbanRoad = new LaneType<String>("Urban road - open to all traffic");
-        urbanRoad.addPermeability(passengerCar.getGtuType());
-        urbanRoad.addPermeability(truck.getGtuType());
+        urbanRoad.addCompatibility(passengerCar.getGtuType());
+        urbanRoad.addCompatibility(truck.getGtuType());
         // Now we test all combinations
         assertTrue("Passengers cars are allowed on a no trucks lane", passengerCar.isCompatible(trucksForbidden));
         assertFalse("Trucks are not allowed on a no trucks lane", truck.isCompatible(trucksForbidden));

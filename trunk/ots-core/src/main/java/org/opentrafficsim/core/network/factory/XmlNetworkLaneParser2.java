@@ -2202,7 +2202,18 @@ public class XmlNetworkLaneParser2
         }
     }
 
-    @SuppressWarnings({"checkstyle:needbraces"})
+    /**
+     * At the end of a link tag, make sure the road type information is applied to the link.
+     * @param roadTypeTag the road type information
+     * @param csl the cross section link on which the data will be applied
+     * @param linkTag the link information from XML
+     * @param globalTag the global information for data not specified at the link
+     * @throws NetworkException when the stripe cannot be instantiated
+     * @throws RemoteException when the (remote) animator cannot be reached to create the animation
+     * @throws NamingException when the /animation/2D tree cannot be found in the context
+     * @throws SAXException when the stripe type cannot be parsed correctly
+     */
+    @SuppressWarnings({"checkstyle:needbraces", "rawtypes"})
     protected final void applyRoadTypeToLink(final RoadTypeTag roadTypeTag, final CrossSectionLink csl,
         final LinkTag linkTag, final GlobalTag globalTag) throws NetworkException, RemoteException, NamingException,
         SAXException

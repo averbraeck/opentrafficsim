@@ -684,7 +684,7 @@ public final class Convert
         LaneType<String> result = new LaneType<String>(name.toString());
         for (GTUType<String> gtu : gtuTypes)
         {
-            result.addPermeability(gtu);
+            result.addCompatibility(gtu);
         }
         return result;
     }

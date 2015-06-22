@@ -285,7 +285,7 @@ class XMLNetworkModel implements OTSModelInterface
         int lanesOnCommonCompressed = Integer.parseInt(networkType.split(" ")[merge ? 5 : 1]);
 
         LaneType<String> laneType = new LaneType<String>("CarLane");
-        laneType.addPermeability(this.gtuType);
+        laneType.addCompatibility(this.gtuType);
         try
         {
             String carFollowingModelName = null;
