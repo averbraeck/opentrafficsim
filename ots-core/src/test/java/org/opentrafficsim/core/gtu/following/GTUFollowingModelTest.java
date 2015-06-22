@@ -90,7 +90,7 @@ public class GTUFollowingModelTest implements OTSModelInterface
                         0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800, TimeUnit.SECOND), this);
         GTUType<String> carType = GTUType.makeGTUType("Car");
         LaneType<String> laneType = new LaneType<String>("CarLane");
-        laneType.addPermeability(carType);
+        laneType.addCompatibility(carType);
         Lane lane = CarTest.makeLane(laneType);
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(1234.567, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);

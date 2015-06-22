@@ -416,7 +416,7 @@ class StraightModel implements OTSModelInterface
         try
         {
             LaneType<String> laneType = new LaneType<String>("CarLane");
-            laneType.addPermeability(this.gtuType);
+            laneType.addCompatibility(this.gtuType);
             this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.speedLimit, this.simulator);
             this.path.add(this.lane);
             CrossSectionLink<?, ?> endLink = LaneFactory.makeLink("endLink", to, end, null);

@@ -279,7 +279,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
         // Set up the network
         GTUType<String> gtuType = GTUType.makeGTUType("car");
         LaneType<String> laneType = new LaneType<String>("CarLane");
-        laneType.addPermeability(gtuType);
+        laneType.addCompatibility(gtuType);
         final DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
 
         Lane[] lanes =

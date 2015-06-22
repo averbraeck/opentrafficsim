@@ -61,7 +61,7 @@ public class SensorTest
         LaneType<String> laneType = new LaneType<String>("CarLane");
         // A Car needs a type
         GTUType<String> gtuType = GTUType.makeGTUType("Car");
-        laneType.addPermeability(gtuType);
+        laneType.addCompatibility(gtuType);
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForSensorTest();
         final SimpleSimulator simulator =

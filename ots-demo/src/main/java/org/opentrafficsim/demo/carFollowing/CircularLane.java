@@ -478,7 +478,7 @@ class LaneSimulationModel implements OTSModelInterface
             NodeGeotools.STR start = new NodeGeotools.STR("Start", new Coordinate(radius, 0, 0));
             NodeGeotools.STR halfway = new NodeGeotools.STR("Halfway", new Coordinate(-radius, 0, 0));
             LaneType<String> laneType = new LaneType<String>("CarLane");
-            laneType.addPermeability(this.gtuType);
+            laneType.addCompatibility(this.gtuType);
 
             Coordinate[] coordsHalf1 = new Coordinate[127];
             for (int i = 0; i < coordsHalf1.length; i++)

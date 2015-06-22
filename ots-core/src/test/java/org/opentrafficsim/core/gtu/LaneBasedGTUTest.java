@@ -85,8 +85,8 @@ public class LaneBasedGTUTest
         GTUType<String> carType = GTUType.makeGTUType("car");
         GTUType<String> truckType = GTUType.makeGTUType("truck");
         LaneType<String> laneType = new LaneType<String>("CarLane");
-        laneType.addPermeability(carType);
-        laneType.addPermeability(truckType);
+        laneType.addCompatibility(carType);
+        laneType.addCompatibility(truckType);
         // Create a series of Nodes (some closely bunched together)
         ArrayList<NodeGeotools.STR> nodes = new ArrayList<NodeGeotools.STR>();
         int[] linkBoundaries = {0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200};
@@ -364,7 +364,7 @@ public class LaneBasedGTUTest
             }
             GTUType<String> carType = GTUType.makeGTUType("car");
             LaneType<String> laneType = new LaneType<String>("CarLane");
-            laneType.addPermeability(carType);
+            laneType.addCompatibility(carType);
             NodeGeotools.STR fromNode = new NodeGeotools.STR("Node A", new Coordinate(0, 0, 0));
             NodeGeotools.STR toNode = new NodeGeotools.STR("Node B", new Coordinate(1000, 0, 0));
             String linkName = "AB";

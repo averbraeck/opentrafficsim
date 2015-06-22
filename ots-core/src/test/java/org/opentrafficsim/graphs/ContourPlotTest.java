@@ -84,7 +84,7 @@ public class ContourPlotTest
     {
         LaneType<String> laneType = new LaneType<String>("CarLane");
         GTUType<?> gtuType = GTUType.makeGTUType("Car");
-        laneType.addPermeability(gtuType);
+        laneType.addCompatibility(gtuType);
         List<Lane> path = dummyPath(laneType);
         AccelerationContourPlot acp = new AccelerationContourPlot("Acceleration", path);
         assertTrue("newly created AccelerationContourPlot should not be null", null != acp);
@@ -102,7 +102,7 @@ public class ContourPlotTest
     {
         LaneType<String> laneType = new LaneType<String>("CarLane");
         GTUType<?> gtuType = GTUType.makeGTUType("Car");
-        laneType.addPermeability(gtuType);
+        laneType.addCompatibility(gtuType);
         List<Lane> path = dummyPath(laneType);
         DensityContourPlot dcp = new DensityContourPlot("Density", path);
         assertTrue("newly created DensityContourPlot should not be null", null != dcp);
@@ -120,7 +120,7 @@ public class ContourPlotTest
     {
         LaneType<String> laneType = new LaneType<String>("CarLane");
         GTUType<?> gtuType = GTUType.makeGTUType("Car");
-        laneType.addPermeability(gtuType);
+        laneType.addCompatibility(gtuType);
         List<Lane> path = dummyPath(laneType);
         FlowContourPlot fcp = new FlowContourPlot("Density", path);
         assertTrue("newly created DensityContourPlot should not be null", null != fcp);
@@ -138,7 +138,7 @@ public class ContourPlotTest
     {
         LaneType<String> laneType = new LaneType<String>("CarLane");
         GTUType<?> gtuType = GTUType.makeGTUType("Car");
-        laneType.addPermeability(gtuType);
+        laneType.addCompatibility(gtuType);
         List<Lane> path = dummyPath(laneType);
         SpeedContourPlot scp = new SpeedContourPlot("Density", path);
         assertTrue("newly created DensityContourPlot should not be null", null != scp);

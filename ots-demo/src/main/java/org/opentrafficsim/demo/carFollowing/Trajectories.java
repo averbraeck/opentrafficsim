@@ -266,7 +266,7 @@ class TrajectoriesModel implements OTSModelInterface
         NodeGeotools.STR to = new NodeGeotools.STR("To", new Coordinate(getMaximumDistance().getSI(), 0, 0));
         NodeGeotools.STR end = new NodeGeotools.STR("End", new Coordinate(getMaximumDistance().getSI() + 50.0, 0, 0));
         LaneType<String> laneType = new LaneType<String>("CarLane");
-        laneType.addPermeability(this.gtuType);
+        laneType.addCompatibility(this.gtuType);
         try
         {
             this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.speedLimit, this.simulator);

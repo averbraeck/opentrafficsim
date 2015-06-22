@@ -36,7 +36,7 @@ public class LaneType<ID>
     /**
      * @param gtuType GTU type to add compatibility for.
      */
-    public final void addPermeability(final GTUType<?> gtuType)
+    public final void addCompatibility(final GTUType<?> gtuType)
     {
         this.compatibilitySet.add(gtuType);
     }
