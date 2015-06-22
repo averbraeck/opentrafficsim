@@ -75,6 +75,12 @@ public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T
      * @return String; the description of this property and the current state in HTML
      */
     public abstract String htmlStateDescription();
+    
+    /**
+     * Construct a deep copy of this property (duplicates everything except immutable fields).
+     * @return AbstractProperty&lt;T&gt;; a deep copy of this AbstractProperty
+     */
+    abstract public AbstractProperty<T> deepCopy();
 
     /** {@inheritDoc} */
     @Override

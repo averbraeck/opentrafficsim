@@ -195,4 +195,21 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
         return result.toString();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public AbstractProperty<Double[]> deepCopy()
+    {
+        System.out.println("copying probabilitydistribution " + this.shortName + ", " + this.getValue(0));
+        try
+        {
+            return new ProbabilityDistributionProperty(this.shortName, this.description,
+                this.names, this.value, this.readOnly, getDisplayPriority());
+        }
+        catch (PropertyException exception)
+        {
+            throw new Error("Cannot happen (the current values should ALWAYS be suitable for constructing a new "
+                    + "ProbabilityDistributionProperty)");
+        }
+    }
+
 }
