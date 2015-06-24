@@ -65,7 +65,7 @@
 
   <xsd:simpleType name="GTUTYPETYPE">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="CAR|TRUCK|BUS|MOTORBIKE|BIKE|PEDESTRIAN"></xsd:pattern>
+      <xsd:pattern value="CAR|TRUCK|BUS|MOTORBIKE|BICYCLE|PEDESTRIAN"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -208,7 +208,20 @@
 
   <xsd:element name="INCLUDE">
     <xsd:complexType>
-      <xsd:attribute name="FILE" type="xsd:anyURI" use="required"></xsd:attribute>
+      <xsd:attribute name="URI" type="xsd:anyURI" use="required"></xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="COMPATIBILITY">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="LANETYPE" minOccurs="1" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="NAME" type="xsd:ID" use="required" />
+            <xsd:attribute name="GTULIST" type="xsd:IDREFS" use="required"></xsd:attribute>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
 
@@ -254,6 +267,7 @@
           <xsd:element name="LANE" minOccurs="0" maxOccurs="unbounded">
             <xsd:complexType>
               <xsd:attribute name="NAME" type="xsd:string" use="required"></xsd:attribute>
+              <xsd:attribute name="TYPE" type="xsd:IDREF" use="required"></xsd:attribute>
               <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional"></xsd:attribute>
               <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
               <xsd:attribute name="SPEED" type="SPEEDTYPE" use="optional"></xsd:attribute>
@@ -425,6 +439,7 @@
           <xsd:element ref="LINK" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="GTU" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="GTUMIX" minOccurs="0" maxOccurs="unbounded" />
+          <xsd:element ref="COMPATIBILITY" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="ROADTYPE" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="ROUTE" minOccurs="0" maxOccurs="unbounded" />
           <xsd:element ref="ROUTEMIX" minOccurs="0" maxOccurs="unbounded" />
