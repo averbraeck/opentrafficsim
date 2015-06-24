@@ -247,8 +247,13 @@ public class XmlNetworkLaneParser2
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, GTUType<String>> gtuTypes = new HashMap<>();
 
-    /** TODO incorporate into grammar. */
-    private final LaneType<String> laneType = new LaneType<String>("CarLane");
+    /** the LaneTypes that have been created. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, LaneType<String>> laneTypes = new HashMap<>();
+    
+    /** the no traffic LaneType. */
+    @SuppressWarnings("visibilitymodifier")
+    protected LaneType<String> noTrafficLaneType = new LaneType<>("NOTRAFFIC");
 
     /** the simulator for creating the animation. Null if no animation needed. */
     @SuppressWarnings("visibilitymodifier")
@@ -333,6 +338,7 @@ public class XmlNetworkLaneParser2
         this.linkClass = linkClass;
         this.linkIdClass = linkIdClass;
         this.simulator = simulator;
+        this.laneTypes.put(this.noTrafficLaneType.getId(), this.noTrafficLaneType);
     }
 
     /**
@@ -482,6 +488,9 @@ public class XmlNetworkLaneParser2
                                     case "INCLUDE":
                                         break;
 
+                                    case "COMPATIBILITY":
+                                        break;
+
                                     case "NODE":
                                         parseNodeTag(attributes);
                                         break;
@@ -520,6 +529,18 @@ public class XmlNetworkLaneParser2
 
                                     default:
                                         throw new SAXException("NETWORK: Received start tag " + qName
+                                            + ", but stack contains: " + this.stack);
+                                }
+                                break;
+
+                            case "COMPATIBILITY":
+                                switch (qName)
+                                {
+                                    case "LANETYPE":
+                                        parseLaneTypeTag(attributes);
+                                        break;
+                                    default:
+                                        throw new SAXException("COMPATIBILITY: Received end tag " + qName
                                             + ", but stack contains: " + this.stack);
                                 }
                                 break;
@@ -669,6 +690,9 @@ public class XmlNetworkLaneParser2
                                 case "INCLUDE":
                                     break;
 
+                                case "COMPATIBILITY":
+                                    break;
+
                                 case "NODE":
                                     XmlNetworkLaneParser2.this.nodeTags.put(this.nodeTag.name, this.nodeTag);
                                     if (this.nodeTag.coordinate != null)
@@ -734,6 +758,17 @@ public class XmlNetworkLaneParser2
                                 default:
                                     throw new SAXException("NETWORK: Received end tag " + qName + ", but stack contains: "
                                         + this.stack);
+                            }
+                            break;
+
+                        case "COMPATIBILITY":
+                            switch (qName)
+                            {
+                                case "LANETYPE":
+                                    break;
+                                default:
+                                    throw new SAXException("COMPATIBILITY: Received end tag " + qName
+                                        + ", but stack contains: " + this.stack);
                             }
                             break;
 
@@ -846,6 +881,7 @@ public class XmlNetworkLaneParser2
             XmlNetworkLaneParser2.this.gtuTags.putAll(includeParser.gtuTags);
             XmlNetworkLaneParser2.this.gtuTypes.putAll(includeParser.gtuTypes);
             XmlNetworkLaneParser2.this.links.putAll(includeParser.links);
+            XmlNetworkLaneParser2.this.laneTypes.putAll(includeParser.laneTypes);
             XmlNetworkLaneParser2.this.nodes.putAll(includeParser.nodes);
             XmlNetworkLaneParser2.this.nodeTags.putAll(includeParser.nodeTags);
             XmlNetworkLaneParser2.this.roadTypeTags.putAll(includeParser.roadTypeTags);
@@ -853,6 +889,27 @@ public class XmlNetworkLaneParser2
             XmlNetworkLaneParser2.this.routeTags.putAll(includeParser.routeTags);
             XmlNetworkLaneParser2.this.shortestRouteMixTags.putAll(includeParser.shortestRouteMixTags);
             XmlNetworkLaneParser2.this.shortestRouteTags.putAll(includeParser.shortestRouteTags);
+        }
+
+        /**
+         * Parse the COMPATIBILITY.LANETYPE tag with laneType - GTUType compatibility.
+         * @param attributes the attributes of the XML-tag.
+         * @throws SAXException in case of missing tags.
+         */
+        @SuppressWarnings("checkstyle:needbraces")
+        private void parseLaneTypeTag(final Attributes attributes) throws SAXException
+        {
+            LaneTypeTag laneTypeTag = new LaneTypeTag();
+            if (attributes.getValue("NAME") == null)
+                throw new SAXException("COMPATIBILITY.LANETYPE: missing attribute NAME");
+            laneTypeTag.laneType = attributes.getValue("NAME");
+
+            if (attributes.getValue("GTULIST") == null)
+                throw new SAXException("COMPATIBILITY.LANETYPE: missing attribute GTULIST for LANETYPE="
+                    + laneTypeTag.laneType);
+            laneTypeTag.gtuList = parseGTUList(attributes.getValue("GTULIST"));
+
+            addLaneType(laneTypeTag);
         }
 
         /**
@@ -1053,6 +1110,15 @@ public class XmlNetworkLaneParser2
             CrossSectionElementTag cseTag = new CrossSectionElementTag();
             cseTag.name = name;
             cseTag.elementType = ElementType.LANE;
+
+            if (attributes.getValue("TYPE") == null)
+                throw new SAXException("ROADTYPE.LANE: missing attribute TYPE for lane " + this.roadTypeTag.name + "."
+                    + name);
+            cseTag.laneTypeString = attributes.getValue("TYPE");
+            if (!XmlNetworkLaneParser2.this.laneTypes.containsKey(cseTag.laneTypeString))
+                throw new SAXException("ROADTYPE.LANE: TYPE " + cseTag.laneTypeString + " for lane " + this.roadTypeTag.name
+                    + "." + name + " does not have compatible GTUs defined in a COMPATIBILITY element");
+            cseTag.laneType = XmlNetworkLaneParser2.this.laneTypes.get(cseTag.laneTypeString);
 
             if (attributes.getValue("OFFSET") != null)
                 cseTag.offset = parseLengthRel(attributes.getValue("OFFSET"));
@@ -2284,7 +2350,7 @@ public class XmlNetworkLaneParser2
                 {
                     // TODO Override
                     Lane lane =
-                        new Lane(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width, this.laneType,
+                        new Lane(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width, cseTag.laneType,
                             cseTag.direction, new DoubleScalar.Abs<FrequencyUnit>(Double.MAX_VALUE, FrequencyUnit.PER_HOUR),
                             cseTag.speed);
                     cseTag.cse = lane;
@@ -2300,7 +2366,7 @@ public class XmlNetworkLaneParser2
                 {
                     // TODO Override
                     Lane lane =
-                        new NoTrafficLane(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width, this.laneType,
+                        new NoTrafficLane(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width, cseTag.laneType,
                             cseTag.direction, new DoubleScalar.Abs<FrequencyUnit>(0.0, FrequencyUnit.PER_HOUR), cseTag.speed);
                     cseTag.cse = lane;
                     cseList.add(lane);
@@ -2468,6 +2534,43 @@ public class XmlNetworkLaneParser2
             nodeList.add(this.nodeTags.get(s));
         }
         return nodeList;
+    }
+
+    /**
+     * @param gtuNames the GTU names as a space-separated String
+     * @return a list of GTUTags
+     * @throws SAXException when node could not be found
+     */
+    protected final List<GTUTag> parseGTUList(final String gtuNames) throws SAXException
+    {
+        List<GTUTag> gtuList = new ArrayList<>();
+        String[] ns = gtuNames.split("\\s");
+        for (String s : ns)
+        {
+            if (!this.gtuTags.containsKey(s))
+            {
+                throw new SAXException("GTU " + s + " from GTU list [" + gtuNames + "] was not defined");
+            }
+            gtuList.add(this.gtuTags.get(s));
+        }
+        return gtuList;
+    }
+
+    /**
+     * Add a compatibility type for this lane type.
+     * @param laneTypeTag the parsed LaneTypeTag that contains a relation between a LaneType and one or more GTUTypes.
+     */
+    protected final void addLaneType(final LaneTypeTag laneTypeTag)
+    {
+        if (!this.laneTypes.containsKey(laneTypeTag.laneType))
+        {
+            LaneType<String> laneType = new LaneType<String>(laneTypeTag.laneType);
+            this.laneTypes.put(laneTypeTag.laneType, laneType);
+        }
+        for (GTUTag gtuTag : laneTypeTag.gtuList)
+        {
+            this.laneTypes.get(laneTypeTag.laneType).addCompatibility(gtuTag.gtuType);
+        }
     }
 
     /**
@@ -3181,6 +3284,12 @@ public class XmlNetworkLaneParser2
         /** name. */
         protected String name = null;
 
+        /** lane type name in case elementType is a LANE. */
+        protected String laneTypeString = null;
+
+        /** lane type in case elementType is a LANE. */
+        protected LaneType<String> laneType = XmlNetworkLaneParser2.this.noTrafficLaneType;
+
         /** stripe type. */
         protected StripeType stripeType = null;
 
@@ -3473,6 +3582,17 @@ public class XmlNetworkLaneParser2
 
         /** weights. */
         protected List<Double> weights = new ArrayList<Double>();
+    }
+
+    /** COMPATIBILITY.LANETYPE element. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected class LaneTypeTag
+    {
+        /** lane type name. */
+        protected String laneType = null;
+
+        /** compatible gtu types. */
+        protected List<GTUTag> gtuList = new ArrayList<GTUTag>();
     }
 
 }
