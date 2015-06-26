@@ -249,12 +249,12 @@ public final class ValueClassesGenerator
                 "value.v" + type.toLowerCase(),
                 type + "MathFunctions",
                 new String[]{"org.opentrafficsim.core.value.MathFunctions"},
-                "Force implementation of multiply and divide.",
+                "Force implementation of multiplyBy and divideBy.",
                 new String[]{"<T> the type that these MathFunctions manipulate"},
                 "<T> extends MathFunctions<T>",
-                cg.buildMethod(cg.indent(1), "|T|multiply|the modified T", "Scale the value(s) by a factor.",
+                cg.buildMethod(cg.indent(1), "|T|multiplyBy|the modified T", "Scale the value(s) by a factor.",
                         new String[]{type.toLowerCase() + "|factor|the multiplier"}, null, null, null, false)
-                        + cg.buildMethod(cg.indent(1), "|T|divide|the modified T",
+                        + cg.buildMethod(cg.indent(1), "|T|divideBy|the modified T",
                                 "Scale the value(s) by the inverse of a factor; i.e. a divisor.",
                                 new String[]{type.toLowerCase() + "|divisor|the divisor"}, null, null, null, false));
         cg.generateFinalClass("value.v" + type.toLowerCase(), type + "MathFunctionsImpl",
@@ -670,14 +670,6 @@ public final class ValueClassesGenerator
                         new String[]{"checkCopyOnWrite();",
                                 "get" + aggregate + "SI().assign(" + type.substring(0, 1).toLowerCase() + ");"}, false));
             }
-            code.append(cg.buildMethod(outerIndent, "public final|Mutable" + type + aggregate + "<U>|multiply", null,
-                    new String[]{"final " + type.toLowerCase() + "|constant|"}, null, null, new String[]{
-                            0 == dimensions ? "setValueSI(getSI() * constant);" : "assign(" + type
-                                    + "Functions.mult(constant));", "return this;"}, false));
-            code.append(cg.buildMethod(outerIndent, "public final|Mutable" + type + aggregate + "<U>|divide", null,
-                    new String[]{"final " + type.toLowerCase() + "|constant|"}, null, null, new String[]{
-                            0 == dimensions ? "setValueSI(getSI() / constant);" : "assign(" + type
-                                    + "Functions.div(constant));", "return this;"}, false));
             code.append(cg.buildBlockComment(outerIndent, "NON-STATIC METHODS"));
             code.append(buildInOrDecrementValueByValue(cg, outerIndent, type, aggregate, pluralAggregateType,
                     dimensions, true));
@@ -2059,6 +2051,17 @@ public final class ValueClassesGenerator
         {
             construction.append(cg.buildBlockComment(contentIndent, "MATH METHODS"));
             construction.append(buildMathFunctions(cg, contentIndent, floatType, aggregateType, absRel, dimensions));
+            construction.append(cg.buildMethod(contentIndent, "public final|Mutable" + floatType + aggregateType + "."
+                    + absRel + "<U>|multiplyBy", null, new String[]{"final " + floatType.toLowerCase() + "|constant|"},
+                    null, null, new String[]{
+                            0 == dimensions ? "setValueSI(getSI() * constant);" : "assign(" + floatType
+                                    + "Functions.mult(constant));", "return this;"}, false));
+            construction.append(cg.buildMethod(contentIndent, "public final|Mutable" + floatType + aggregateType + "."
+                    + absRel + "<U>|divideBy", null, new String[]{"final " + floatType.toLowerCase() + "|constant|"},
+                    null, null, new String[]{
+                            0 == dimensions ? "setValueSI(getSI() / constant);" : "assign(" + floatType
+                                    + "Functions.div(constant));", "return this;"}, false));
+
         }
         construction.append(indent + "}\r\n\r\n");
         return construction.toString();
