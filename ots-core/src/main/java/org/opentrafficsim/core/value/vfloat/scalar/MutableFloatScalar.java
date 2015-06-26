@@ -457,6 +457,22 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
             return this;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final MutableFloatScalar.Abs<U> multiplyBy(final float constant)
+        {
+            setValueSI(getSI() * constant);
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final MutableFloatScalar.Abs<U> divideBy(final float constant)
+        {
+            setValueSI(getSI() / constant);
+            return this;
+        }
+
     }
 
     /**
@@ -881,6 +897,22 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
             return this;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final MutableFloatScalar.Rel<U> multiplyBy(final float constant)
+        {
+            setValueSI(getSI() * constant);
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final MutableFloatScalar.Rel<U> divideBy(final float constant)
+        {
+            setValueSI(getSI() / constant);
+            return this;
+        }
+
     }
 
     /**
@@ -916,22 +948,6 @@ public abstract class MutableFloatScalar<U extends Unit<U>> extends FloatScalar<
     final void setInUnit(final float value, final U valueUnit)
     {
         setValueSI((float) ValueUtil.expressAsSIUnit(value, valueUnit));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final MutableFloatScalar<U> multiply(final float constant)
-    {
-        setValueSI(getSI() * constant);
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final MutableFloatScalar<U> divide(final float constant)
-    {
-        setValueSI(getSI() / constant);
-        return this;
     }
 
     /**********************************************************************************/

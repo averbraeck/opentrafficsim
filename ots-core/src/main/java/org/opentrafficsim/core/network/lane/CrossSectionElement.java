@@ -599,9 +599,8 @@ public abstract class CrossSectionElement implements LocatableInterface
                 DoubleScalar.interpolate(this.designLineOffsetAtBegin, this.designLineOffsetAtEnd,
                         fractionalLongitudinalPosition).immutable();
         DoubleScalar.Rel<LengthUnit> halfWidth =
-                (DoubleScalar.Rel<LengthUnit>) DoubleScalar
-                        .interpolate(this.beginWidth, this.endWidth, fractionalLongitudinalPosition).multiply(0.5)
-                        .immutable();
+                DoubleScalar.interpolate(this.beginWidth, this.endWidth, fractionalLongitudinalPosition)
+                        .multiplyBy(0.5).immutable();
         switch (lateralDirection)
         {
             case LEFT:

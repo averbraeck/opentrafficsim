@@ -511,6 +511,22 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             return this;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final MutableDoubleMatrix.Abs<U> multiplyBy(final double constant)
+        {
+            assign(DoubleFunctions.mult(constant));
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final MutableDoubleMatrix.Abs<U> divideBy(final double constant)
+        {
+            assign(DoubleFunctions.div(constant));
+            return this;
+        }
+
     }
 
     /**
@@ -939,6 +955,22 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
             return this;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final MutableDoubleMatrix.Rel<U> multiplyBy(final double constant)
+        {
+            assign(DoubleFunctions.mult(constant));
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final MutableDoubleMatrix.Rel<U> divideBy(final double constant)
+        {
+            assign(DoubleFunctions.div(constant));
+            return this;
+        }
+
     }
 
     /**
@@ -992,22 +1024,6 @@ public abstract class MutableDoubleMatrix<U extends Unit<U>> extends DoubleMatri
     {
         checkCopyOnWrite();
         getMatrixSI().assign(d);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final MutableDoubleMatrix<U> multiply(final double constant)
-    {
-        assign(DoubleFunctions.mult(constant));
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final MutableDoubleMatrix<U> divide(final double constant)
-    {
-        assign(DoubleFunctions.div(constant));
-        return this;
     }
 
     /**********************************************************************************/

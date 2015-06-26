@@ -313,7 +313,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             System.out.println("Debug me: " + getSimulator().getSimulatorTime() + " " + this + " " + this.getRoute()
                     + " " + this.getLongitudinalVelocity().getSI());
         }
-        */
+         */
         // Quick sanity check
         if (getSimulator().getSimulatorTime().get().getSI() != getNextEvaluationTime().getSI())
         {
@@ -441,8 +441,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                                 + lcmr.getLaneChange() + " neighbor");
                     }
                     newLane.addGTU(this, fractionalPosition);
-                    addLane(newLane, (Rel<LengthUnit>) newLane.getLength().mutable().multiply(fractionalPosition)
-                            .immutable());
+                    addLane(newLane, newLane.getLength().mutable().multiplyBy(fractionalPosition).immutable());
                     replacementLanes.add(newLane);
                 }
                 System.out.println("GTU " + this + " changed lanes from: " + oldLaneSet + " to " + replacementLanes);

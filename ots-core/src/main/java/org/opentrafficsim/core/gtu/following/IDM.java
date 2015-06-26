@@ -110,7 +110,7 @@ public class IDM extends AbstractGTUFollowingModel
         MutableDoubleScalar.Rel<AccelerationUnit> logWeightedAccelerationTimes2 =
                 new MutableDoubleScalar.Rel<AccelerationUnit>(Math.sqrt(this.a.getSI() * this.b.getSI()),
                         AccelerationUnit.METER_PER_SECOND_2);
-        logWeightedAccelerationTimes2.multiply(2); // don't forget the times 2
+        logWeightedAccelerationTimes2.multiplyBy(2); // don't forget the times 2
         // TODO compute logWeightedAccelerationTimes2 only once per run
         /*
          * DoubleScalar.Rel<LengthUnit> sStar = DoubleScalar.plus( DoubleScalar.plus(this.s0,

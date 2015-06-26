@@ -507,6 +507,22 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             return this;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final MutableFloatVector.Abs<U> multiplyBy(final float constant)
+        {
+            assign(FloatFunctions.mult(constant));
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final MutableFloatVector.Abs<U> divideBy(final float constant)
+        {
+            assign(FloatFunctions.div(constant));
+            return this;
+        }
+
     }
 
     /**
@@ -934,6 +950,22 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
             return this;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final MutableFloatVector.Rel<U> multiplyBy(final float constant)
+        {
+            assign(FloatFunctions.mult(constant));
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final MutableFloatVector.Rel<U> divideBy(final float constant)
+        {
+            assign(FloatFunctions.div(constant));
+            return this;
+        }
+
     }
 
     /**
@@ -986,22 +1018,6 @@ public abstract class MutableFloatVector<U extends Unit<U>> extends FloatVector<
     {
         checkCopyOnWrite();
         getVectorSI().assign(f);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final MutableFloatVector<U> multiply(final float constant)
-    {
-        assign(FloatFunctions.mult(constant));
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final MutableFloatVector<U> divide(final float constant)
-    {
-        assign(FloatFunctions.div(constant));
-        return this;
     }
 
     /**********************************************************************************/
