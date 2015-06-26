@@ -457,6 +457,22 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
             return this;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final MutableDoubleScalar.Abs<U> multiplyBy(final double constant)
+        {
+            setValueSI(getSI() * constant);
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final MutableDoubleScalar.Abs<U> divideBy(final double constant)
+        {
+            setValueSI(getSI() / constant);
+            return this;
+        }
+
     }
 
     /**
@@ -881,6 +897,22 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
             return this;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final MutableDoubleScalar.Rel<U> multiplyBy(final double constant)
+        {
+            setValueSI(getSI() * constant);
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final MutableDoubleScalar.Rel<U> divideBy(final double constant)
+        {
+            setValueSI(getSI() / constant);
+            return this;
+        }
+
     }
 
     /**
@@ -916,22 +948,6 @@ public abstract class MutableDoubleScalar<U extends Unit<U>> extends DoubleScala
     final void setInUnit(final double value, final U valueUnit)
     {
         setValueSI(ValueUtil.expressAsSIUnit(value, valueUnit));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final MutableDoubleScalar<U> multiply(final double constant)
-    {
-        setValueSI(getSI() * constant);
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final MutableDoubleScalar<U> divide(final double constant)
-    {
-        setValueSI(getSI() / constant);
-        return this;
     }
 
     /**********************************************************************************/

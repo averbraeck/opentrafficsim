@@ -115,7 +115,7 @@ public class IDMPlus extends AbstractGTUFollowingModel
         MutableDoubleScalar.Rel<AccelerationUnit> logWeightedAccelerationTimes2 =
                 new MutableDoubleScalar.Rel<AccelerationUnit>(Math.sqrt(this.a.getSI() * this.b.getSI()),
                         AccelerationUnit.METER_PER_SECOND_2);
-        logWeightedAccelerationTimes2.multiply(2); // don't forget the times 2
+        logWeightedAccelerationTimes2.multiplyBy(2); // don't forget the times 2
 
         DoubleScalar.Rel<SpeedUnit> dV = DoubleScalar.minus(followerSpeed, leaderSpeed).immutable();
         // System.out.println("dV is " + dV);
@@ -143,7 +143,7 @@ public class IDMPlus extends AbstractGTUFollowingModel
         // }
         MutableDoubleScalar.Abs<AccelerationUnit> newAcceleration =
                 new MutableDoubleScalar.Abs<AccelerationUnit>(this.a);
-        newAcceleration.multiply(Math.min(leftComponent, rightComponent));
+        newAcceleration.multiplyBy(Math.min(leftComponent, rightComponent));
         // System.out.println("newAcceleration is " + newAcceleration);
         if (newAcceleration.getSI() * this.stepSize.getSI() + followerSpeed.getSI() < 0)
         {

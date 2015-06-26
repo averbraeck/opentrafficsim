@@ -510,6 +510,22 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             return this;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final MutableFloatMatrix.Abs<U> multiplyBy(final float constant)
+        {
+            assign(FloatFunctions.mult(constant));
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final MutableFloatMatrix.Abs<U> divideBy(final float constant)
+        {
+            assign(FloatFunctions.div(constant));
+            return this;
+        }
+
     }
 
     /**
@@ -937,6 +953,22 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
             return this;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final MutableFloatMatrix.Rel<U> multiplyBy(final float constant)
+        {
+            assign(FloatFunctions.mult(constant));
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final MutableFloatMatrix.Rel<U> divideBy(final float constant)
+        {
+            assign(FloatFunctions.div(constant));
+            return this;
+        }
+
     }
 
     /**
@@ -990,22 +1022,6 @@ public abstract class MutableFloatMatrix<U extends Unit<U>> extends FloatMatrix<
     {
         checkCopyOnWrite();
         getMatrixSI().assign(f);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final MutableFloatMatrix<U> multiply(final float constant)
-    {
-        assign(FloatFunctions.mult(constant));
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final MutableFloatMatrix<U> divide(final float constant)
-    {
-        assign(FloatFunctions.div(constant));
-        return this;
     }
 
     /**********************************************************************************/

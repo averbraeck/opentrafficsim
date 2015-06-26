@@ -507,6 +507,22 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             return this;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final MutableDoubleVector.Abs<U> multiplyBy(final double constant)
+        {
+            assign(DoubleFunctions.mult(constant));
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final MutableDoubleVector.Abs<U> divideBy(final double constant)
+        {
+            assign(DoubleFunctions.div(constant));
+            return this;
+        }
+
     }
 
     /**
@@ -934,6 +950,22 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
             return this;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final MutableDoubleVector.Rel<U> multiplyBy(final double constant)
+        {
+            assign(DoubleFunctions.mult(constant));
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final MutableDoubleVector.Rel<U> divideBy(final double constant)
+        {
+            assign(DoubleFunctions.div(constant));
+            return this;
+        }
+
     }
 
     /**
@@ -986,22 +1018,6 @@ public abstract class MutableDoubleVector<U extends Unit<U>> extends DoubleVecto
     {
         checkCopyOnWrite();
         getVectorSI().assign(d);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final MutableDoubleVector<U> multiply(final double constant)
-    {
-        assign(DoubleFunctions.mult(constant));
-        return this;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final MutableDoubleVector<U> divide(final double constant)
-    {
-        assign(DoubleFunctions.div(constant));
-        return this;
     }
 
     /**********************************************************************************/
