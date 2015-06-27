@@ -1,4 +1,4 @@
-package org.opentrafficsim.demo.carFollowing;
+package org.opentrafficsim.simulationengine;
 
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -21,9 +21,6 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.gui.OTSAnimationPanel;
 import org.opentrafficsim.gui.SimulatorFrame;
-import org.opentrafficsim.simulationengine.SimpleAnimator;
-import org.opentrafficsim.simulationengine.SimpleSimulation;
-import org.opentrafficsim.simulationengine.WrappableSimulation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 
 /**
@@ -68,6 +65,7 @@ public abstract class AbstractWrappableSimulation implements WrappableSimulation
         {
             return null; // Happens when the user cancels the file open dialog in the OpenStreetMap demo.
         }
+        
         final SimpleAnimator simulator =
             new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
                 TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);

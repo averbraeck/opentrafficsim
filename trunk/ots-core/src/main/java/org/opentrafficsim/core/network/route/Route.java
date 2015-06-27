@@ -20,16 +20,15 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
- * A Route consists of a list of Nodes. The last visited node is kept. Code can ask what the next node is, and can
- * indicate the next node to visit. Routes can be expanded (e.g. for node expansion), collapsed (e.g. to use a macro
- * model for a part of the route) or changed (e.g. to avoid congestion). Changing is done by adding and/or removing
- * nodes of the node list. When the last visited node of the route is deleted, however, it is impossible to follow the
- * route any further, which will result in a <code>NetworkException</code>.<br>
- * The Node type in the list has generic parameters. This requires callers of getNode(), visitNextNode(), etc. to cast
- * the result as needed. and permits inclusion mixed types of Nodes in one Route.
+ * A Route consists of a list of Nodes. The last visited node is kept. Code can ask what the next node is, and can indicate the
+ * next node to visit. Routes can be expanded (e.g. for node expansion), collapsed (e.g. to use a macro model for a part of the
+ * route) or changed (e.g. to avoid congestion). Changing is done by adding and/or removing nodes of the node list. When the
+ * last visited node of the route is deleted, however, it is impossible to follow the route any further, which will result in a
+ * <code>NetworkException</code>.<br>
+ * The Node type in the list has generic parameters. This requires callers of getNode(), visitNextNode(), etc. to cast the
+ * result as needed. and permits inclusion mixed types of Nodes in one Route.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Jan 1, 2015 <br>
@@ -117,8 +116,8 @@ public class Route implements Serializable
      * Remove a node from a specific location.
      * @param i the location to remove the node from (0-based).
      * @return the removed node.
-     * @throws NetworkException when i is equal to the last visited node because the next link on the route cannot be
-     *             computed anymore. Also thrown when another error occurs.
+     * @throws NetworkException when i is equal to the last visited node because the next link on the route cannot be computed
+     *             anymore. Also thrown when another error occurs.
      */
     public final Node<?, ?> removeNode(final int i) throws NetworkException
     {
@@ -270,27 +269,25 @@ public class Route implements Serializable
     }
 
     /** Return value of suitability when no lane change is required withing the time horizon. */
-    public static final DoubleScalar.Rel<LengthUnit> NOLANECHANGENEEDED = new DoubleScalar.Rel<LengthUnit>(
-            Double.MAX_VALUE, LengthUnit.SI);
+    public static final DoubleScalar.Rel<LengthUnit> NOLANECHANGENEEDED = new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE,
+        LengthUnit.SI);
 
     /** Return value of suitability when a lane change is required <i>right now</i>. */
-    public static final DoubleScalar.Rel<LengthUnit> GETOFFTHISLANENOW = new DoubleScalar.Rel<LengthUnit>(0,
-            LengthUnit.SI);
+    public static final DoubleScalar.Rel<LengthUnit> GETOFFTHISLANENOW = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.SI);
 
     /**
-     * Determine the suitability of being at a particular longitudinal position in a particular Lane for following this
-     * Route.
+     * Determine the suitability of being at a particular longitudinal position in a particular Lane for following this Route.
      * @param lane Lane; the lane to consider
      * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the longitudinal position in the lane
      * @param gtuType GTUType&lt;?&gt;; the type of the GTU (used to check lane compatibility of lanes)
      * @param timeHorizon DoubleScalar.Rel&lt;TimeUnit&gt;; the maximum time that a driver may want to look ahead
-     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; a value that indicates within what distance the GTU should try to
-     *         vacate this lane.
+     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; a value that indicates within what distance the GTU should try to vacate this
+     *         lane.
      * @throws NetworkException on network inconsistency, or when the continuation Link at a branch cannot be determined
      */
     public final DoubleScalar.Rel<LengthUnit> suitability(final Lane lane,
-            final DoubleScalar.Rel<LengthUnit> longitudinalPosition, final GTUType<?> gtuType,
-            final DoubleScalar.Rel<TimeUnit> timeHorizon) throws NetworkException
+        final DoubleScalar.Rel<LengthUnit> longitudinalPosition, final GTUType<?> gtuType,
+        final DoubleScalar.Rel<TimeUnit> timeHorizon) throws NetworkException
     {
         double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();
         double spareTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit().getSI();
@@ -339,8 +336,7 @@ public class Route implements Serializable
                     {
                         // Lane drop; our lane disappears. This is a compulsory lane change; which is not controlled
                         // by the Route. Perform the forced lane change.
-                        Set<Lane> adjacentLanes =
-                                currentLane.accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType);
+                        Set<Lane> adjacentLanes = currentLane.accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType);
                         if (adjacentLanes.size() > 0)
                         {
                             for (Lane adjacentLane : adjacentLanes)
@@ -367,8 +363,8 @@ public class Route implements Serializable
                         }
                         if (currentLane.nextLanes().size() == 0)
                         {
-                            throw new NetworkException("Lane ends and there is not compatible adjacent lane that does "
-                                    + "not end");
+                            throw new NetworkException("Lane ends and there is not a compatible adjacent lane that does "
+                                + "not end");
                         }
                     }
                     // Any compulsory lane change(s) have been performed and there is guaranteed a compatible next lane.
@@ -384,7 +380,7 @@ public class Route implements Serializable
                 }
                 else
                 {
-                    // There is a non-CrossSectionLink on the path to the next branch. A non-CrossSectionLink does not 
+                    // There is a non-CrossSectionLink on the path to the next branch. A non-CrossSectionLink does not
                     // have identifiable Lanes, therefore we can't aim for a particular Lane
                     return NOLANECHANGENEEDED; // Any Lane will do equally well
                 }
@@ -397,7 +393,7 @@ public class Route implements Serializable
         // We have now found the first upcoming branching Node
         // Which continuing link is the one we need?
         Map<Lane, DoubleScalar.Rel<LengthUnit>> suitabilityOfLanesBeforeBranch =
-                new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+            new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         Link<?, ?> linkAfterBranch = null;
         for (Link<?, ?> link : nextSplitNode.getLinksOut())
         {
@@ -432,19 +428,19 @@ public class Route implements Serializable
                     for (Lane connectingLane : l.nextLanes())
                     {
                         if (connectingLane.getParentLink() == linkAfterBranch
-                                && connectingLane.getLaneType().isCompatible(gtuType))
+                            && connectingLane.getLaneType().isCompatible(gtuType))
                         {
                             DoubleScalar.Rel<LengthUnit> currentValue = suitabilityOfLanesBeforeBranch.get(l);
                             // Use recursion to find out HOW suitable this continuation lane is, but don't revert back
                             // to the maximum time horizon (or we could end up in infinite recursion when there are
                             // loops in the network).
                             DoubleScalar.Rel<LengthUnit> value =
-                                    suitability(connectingLane, new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.SI),
-                                            gtuType, new DoubleScalar.Rel<TimeUnit>(spareTime, TimeUnit.SI));
+                                suitability(connectingLane, new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.SI), gtuType,
+                                    new DoubleScalar.Rel<TimeUnit>(spareTime, TimeUnit.SI));
                             // Use the minimum of the value computed for the first split junction (if there is one)
                             // and the value computed for the second split junction.
-                            suitabilityOfLanesBeforeBranch.put(l, null == currentValue || value.le(currentValue)
-                                    ? value : currentValue);
+                            suitabilityOfLanesBeforeBranch.put(l, null == currentValue || value.le(currentValue) ? value
+                                : currentValue);
                         }
                     }
                 }
@@ -462,11 +458,11 @@ public class Route implements Serializable
         // Performing one or more lane changes (left or right) is required.
         int totalLanes = countCompatibleLanes(currentLane.getParentLink(), gtuType);
         DoubleScalar.Rel<LengthUnit> leftSuitability =
-                computeSuitabilityWithLaneChanges(currentLane, remainingDistance, suitabilityOfLanesBeforeBranch,
-                        totalLanes, LateralDirectionality.LEFT, gtuType);
+            computeSuitabilityWithLaneChanges(currentLane, remainingDistance, suitabilityOfLanesBeforeBranch, totalLanes,
+                LateralDirectionality.LEFT, gtuType);
         DoubleScalar.Rel<LengthUnit> rightSuitability =
-                computeSuitabilityWithLaneChanges(currentLane, remainingDistance, suitabilityOfLanesBeforeBranch,
-                        totalLanes, LateralDirectionality.RIGHT, gtuType);
+            computeSuitabilityWithLaneChanges(currentLane, remainingDistance, suitabilityOfLanesBeforeBranch, totalLanes,
+                LateralDirectionality.RIGHT, gtuType);
         if (leftSuitability.ge(rightSuitability))
         {
             return leftSuitability;
@@ -484,8 +480,8 @@ public class Route implements Serializable
 
     /**
      * Compute the suitability of a lane from which lane changes are required to get to the next point on the Route.<br>
-     * This method weighs the suitability of the nearest suitable lane by (m - n) / m where n is the number of lane
-     * changes required and m is the total number of lanes in the CrossSectionLink.
+     * This method weighs the suitability of the nearest suitable lane by (m - n) / m where n is the number of lane changes
+     * required and m is the total number of lanes in the CrossSectionLink.
      * @param startLane Lane; the current lane of the GTU
      * @param remainingDistance double; distance in m of GTU to first branch
      * @param suitabilities Map&lt;Lane, Double&gt;; the set of suitable lanes and their suitability
@@ -495,8 +491,8 @@ public class Route implements Serializable
      * @return double; the suitability of the <cite>startLane</cite> for following the Route
      */
     private DoubleScalar.Rel<LengthUnit> computeSuitabilityWithLaneChanges(final Lane startLane,
-            final double remainingDistance, final Map<Lane, DoubleScalar.Rel<LengthUnit>> suitabilities,
-            final int totalLanes, final LateralDirectionality direction, final GTUType<?> gtuType)
+        final double remainingDistance, final Map<Lane, DoubleScalar.Rel<LengthUnit>> suitabilities, final int totalLanes,
+        final LateralDirectionality direction, final GTUType<?> gtuType)
     {
         /*-
          * The time per required lane change seems more relevant than distance per required lane change.
@@ -523,9 +519,8 @@ public class Route implements Serializable
         }
         double fraction = currentSuitability == NOLANECHANGENEEDED ? 0 : 0.5;
         int notSuitableLaneCount = totalLanes - suitabilities.size();
-        return new DoubleScalar.Rel<LengthUnit>(remainingDistance
-                * (notSuitableLaneCount - laneChangesUsed + 1 + fraction) / (notSuitableLaneCount + fraction),
-                LengthUnit.SI);
+        return new DoubleScalar.Rel<LengthUnit>(remainingDistance * (notSuitableLaneCount - laneChangesUsed + 1 + fraction)
+            / (notSuitableLaneCount + fraction), LengthUnit.SI);
     }
 
     /**

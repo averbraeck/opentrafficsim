@@ -553,7 +553,7 @@ public class Lane extends CrossSectionElement
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction. <br>
      * @param lateralDirection LEFT or RIGHT.
      * @param gtuType the type of GTU for which this an adjacent lane.
-     * @return the set of lanes that are accessible, or null if there is no lane that is accessiblewith a matching
+     * @return the set of lanes that are accessible, or null if there is no lane that is accessible with a matching
      *         driving direction.
      */
     public final Set<Lane> accessibleAdjacentLanes(final LateralDirectionality lateralDirection,

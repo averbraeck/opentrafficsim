@@ -334,7 +334,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
             for (int step = 0; step < stepsNeeded; step++)
             {
                 MutableDoubleScalar.Rel<LengthUnit> mutableMid = DoubleScalar.plus(low, high);
-                mutableMid.divide(2);
+                mutableMid.divideBy(2);
                 mid = mutableMid.immutable();
                 LaneMovementStep midResult =
                         computeLaneChange(referenceCar, sameLaneGTUs, speedLimit, laneChangeModel, mid, lanes[1],
