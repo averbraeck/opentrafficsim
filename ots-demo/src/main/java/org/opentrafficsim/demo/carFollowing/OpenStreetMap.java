@@ -47,6 +47,7 @@ import org.opentrafficsim.importexport.osm.events.WarningListener;
 import org.opentrafficsim.importexport.osm.events.WarningListenerImpl;
 import org.opentrafficsim.importexport.osm.input.ReadOSMFile;
 import org.opentrafficsim.importexport.osm.output.Convert;
+import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.IDMPropertySet;
 import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionProperty;

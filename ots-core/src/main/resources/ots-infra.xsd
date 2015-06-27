@@ -18,6 +18,12 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:simpleType name="FRACTIONTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="((\d(\.\d*){0,1})|(\d\d(\.\d*){0,1})|(100(\.\0*){0,1}))\s*\%"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:simpleType name="SIGNEDLENGTHTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(\-|\+){0,1}\d+[\.]{0,1}\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
@@ -370,6 +376,14 @@
             <xsd:attribute name="ROUTE" type="xsd:IDREF" use="required"></xsd:attribute>
           </xsd:complexType>
         </xsd:element>
+
+        <xsd:element name="BLOCK" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
+            <xsd:attribute name="POSITION" type="FRACTIONTYPE" use="optional"></xsd:attribute>
+          </xsd:complexType>
+        </xsd:element>
+
       </xsd:sequence>
 
       <xsd:attribute name="NAME" type="xsd:ID" use="required"></xsd:attribute>

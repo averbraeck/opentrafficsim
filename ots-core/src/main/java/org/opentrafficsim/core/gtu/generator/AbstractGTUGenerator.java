@@ -19,6 +19,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.HeadwayGTU;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
@@ -81,6 +82,9 @@ public abstract class AbstractGTUGenerator<ID>
 
     /** Route generator used to create a route for each generated GTU. */
     private RouteGenerator routeGenerator;
+    
+    /** GTUColorer to use. */
+    private final GTUColorer gtuColorer;
 
     /** Car builder list. */
     private List<LaneBasedIndividualCarBuilder<?>> carBuilderList = new ArrayList<>();
@@ -103,6 +107,7 @@ public abstract class AbstractGTUGenerator<ID>
      * @param endTime end time of generation
      * @param lane the lane to generate the GTU on -- at the end for now
      * @param routeGenerator RouteGenerator; the route generator that will create a route for each generated GTU
+     * @param gtuColorer the GTUColorer to use
      * @throws SimRuntimeException when simulation scheduling fails
      * @throws RemoteException when remote simulator cannot be reached
      */
@@ -112,7 +117,7 @@ public abstract class AbstractGTUGenerator<ID>
             final LaneChangeModel laneChangeModel, final DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist,
             final DistContinuousDoubleScalar.Rel<TimeUnit> interarrivelTimeDist, final long maxGTUs,
             final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Abs<TimeUnit> endTime, final Lane lane,
-            final RouteGenerator routeGenerator) throws RemoteException, SimRuntimeException
+            final RouteGenerator routeGenerator, final GTUColorer gtuColorer) throws RemoteException, SimRuntimeException
     {
         super();
         this.name = name;
@@ -127,6 +132,7 @@ public abstract class AbstractGTUGenerator<ID>
         this.endTime = endTime;
         this.lane = lane;
         this.routeGenerator = routeGenerator;
+        this.gtuColorer = gtuColorer;
 
         simulator.scheduleEventAbs(startTime, this, this, "generate", null);
         simulator.scheduleEventAbs(startTime, this, this, "checkCarBuilderList", null);
@@ -192,6 +198,7 @@ public abstract class AbstractGTUGenerator<ID>
             carBuilder.setInitialLongitudinalPositions(initialLongitudinalPositions);
             carBuilder.setRoute(getRouteGenerator().generateRoute());
             carBuilder.setAnimationClass(DefaultCarAnimation.class);
+            carBuilder.setGtuColorer(this.gtuColorer);
 
             // put the car in the queue and take it from there -- if the headway is enough, build the car.
             this.carBuilderList.add(carBuilder);
@@ -454,6 +461,22 @@ public abstract class AbstractGTUGenerator<ID>
     public final void setRouteGenerator(final RouteGenerator routeGenerator)
     {
         this.routeGenerator = routeGenerator;
+    }
+
+    /**
+     * @return laneChangeModel.
+     */
+    public final LaneChangeModel getLaneChangeModel()
+    {
+        return this.laneChangeModel;
+    }
+
+    /**
+     * @return gtuColorer.
+     */
+    public final GTUColorer getGtuColorer()
+    {
+        return this.gtuColorer;
     }
 
 }
