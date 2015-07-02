@@ -96,7 +96,7 @@ public class LaneChangeUrgeGTUColorer implements GTUColorer
     {
         return this.legend;
     }
-    
+
     public final String toString()
     {
         return "Lane change urge";

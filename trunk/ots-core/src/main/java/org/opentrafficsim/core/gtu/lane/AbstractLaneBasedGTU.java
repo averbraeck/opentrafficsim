@@ -42,7 +42,6 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.ValueException;
 import org.opentrafficsim.core.value.conversions.Calc;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -308,7 +307,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             System.out.println("negative velocity: " + this + " " + getLateralVelocity().getSI() + "m/s");
         }
         /*-
-        if (getId().toString().equals("44") && getSimulator().getSimulatorTime().get().getSI() > 129.4)
+        if (getId().toString().equals("4") && getSimulator().getSimulatorTime().get().getSI() > 129.4)
         {
             System.out.println("Debug me: " + getSimulator().getSimulatorTime() + " " + this + " " + this.getRoute()
                     + " " + this.getLongitudinalVelocity().getSI());
@@ -481,7 +480,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             this.lastLaneChangeDistanceAndDirection =
                     new LaneChangeUrgeGTUColorer.LaneChangeDistanceAndDirection(currentSuitability,
-                            rightSuitability.getSI() == 0 ? false : leftSuitability.gt(rightSuitability));
+                            rightSuitability.getSI() == 0 ? true : leftSuitability.gt(rightSuitability));
         }
         if ((leftSuitability == Route.NOLANECHANGENEEDED || leftSuitability == Route.GETOFFTHISLANENOW)
                 && currentSuitability == Route.NOLANECHANGENEEDED
