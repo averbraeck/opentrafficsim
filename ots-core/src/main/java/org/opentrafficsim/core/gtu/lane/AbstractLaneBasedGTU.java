@@ -314,7 +314,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
          */
         // Quick sanity check
-        if (getSimulator().getSimulatorTime().get().getSI() != getNextEvaluationTime().getSI())
+        if (getSimulator().getSimulatorTime().get().ne(getNextEvaluationTime()))
         {
             throw new Error("move called at wrong time: expected time " + getNextEvaluationTime()
                     + " simulator time is : " + getSimulator().getSimulatorTime().get());
