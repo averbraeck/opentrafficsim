@@ -577,12 +577,45 @@ public abstract class CrossSectionElement implements LocatableInterface
         return this.length;
     }
 
+    /**
+     * @return designLineOffsetAtBegin.
+     */
+    public final DoubleScalar.Rel<LengthUnit> getDesignLineOffsetAtBegin()
+    {
+        return this.designLineOffsetAtBegin;
+    }
+
+    /**
+     * @return designLineOffsetAtEnd.
+     */
+    public final DoubleScalar.Rel<LengthUnit> getDesignLineOffsetAtEnd()
+    {
+        return this.designLineOffsetAtEnd;
+    }
+
+    /**
+     * @return beginWidth.
+     */
+    public final DoubleScalar.Rel<LengthUnit> getBeginWidth()
+    {
+        return this.beginWidth;
+    }
+
+    /**
+     * @return endWidth.
+     */
+    public final DoubleScalar.Rel<LengthUnit> getEndWidth()
+    {
+        return this.endWidth;
+    }
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return String.format("offset %.2fm", this.designLineOffsetAtBegin.getSI());
+        return String.format("CSE offset %.2fm..%.2fm, width %.2fm..%.2fm", this.designLineOffsetAtBegin.getSI(),
+                this.designLineOffsetAtEnd.getSI(), this.beginWidth.getSI(), this.endWidth.getSI());
     }
 
     /**
