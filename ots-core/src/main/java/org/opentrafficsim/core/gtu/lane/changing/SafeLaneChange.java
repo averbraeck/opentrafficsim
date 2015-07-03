@@ -42,7 +42,7 @@ public final class SafeLaneChange
         /*-
         DoubleScalar.Abs<TimeUnit> when = referenceGTU.getSimulator().getSimulatorTime().get();
         GTUFollowingModel gtuFollowingModel = referenceGTU.getGTUFollowingModel();
-        if (referenceGTU.getPosition(when).getSI() > otherGTU.getPosition(when).getSI())
+        if (referenceGTU.getPosition(when).gt(otherGTU.getPosition(when)))
         { // The referenceGTU is ahead of the otherGTU
             return FollowAcceleration.acceleration(otherGTU, referenceGTU, when, gtuFollowingModel, speedLimit).getSI() 
                     >= -maximumDeceleration.getSI();

@@ -211,7 +211,7 @@ public abstract class AbstractGTUGenerator<ID>
 
         // reschedule next arrival
         OTSSimTimeDouble nextTime = getSimulator().getSimulatorTime().plus(this.interarrivelTimeDist.draw());
-        if (nextTime.get().getSI() < this.endTime.getSI())
+        if (nextTime.get().le(this.endTime))
         {
             getSimulator().scheduleEventAbs(nextTime, this, this, "generate", null);
         }
@@ -350,7 +350,7 @@ public abstract class AbstractGTUGenerator<ID>
                                             .getInitialSpeed());
                 }
 
-                if (headwayGTU.getDistance().getSI() >= minimumHeadway.getSI())
+                if (headwayGTU.getDistance().ge(minimumHeadway))
                 {
                     this.carBuilderList.remove(0);
                     carBuilder.build();

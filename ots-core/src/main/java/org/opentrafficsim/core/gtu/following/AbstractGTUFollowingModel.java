@@ -74,7 +74,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
                                 new DoubleScalar.Rel<LengthUnit>(-headwayGTU.getDistanceSI(), LengthUnit.SI),
                                 speedLimit);
                 if (null == followerAccelerationStep
-                        || as.getAcceleration().getSI() < followerAccelerationStep.getAcceleration().getSI())
+                        || as.getAcceleration().lt(followerAccelerationStep.getAcceleration()))
                 {
                     // if (as.getAcceleration().getSI() < -gfm.maximumSafeDeceleration().getSI())
                     // {
@@ -90,7 +90,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
                         gfm.computeAcceleration(referenceGTU, headwayGTU.getOtherGTU().getLongitudinalVelocity(when),
                                 headwayGTU.getDistance(), speedLimit);
                 if (null == referenceGTUAccelerationStep
-                        || as.getAcceleration().getSI() < referenceGTUAccelerationStep.getAcceleration().getSI())
+                        || as.getAcceleration().lt(referenceGTUAccelerationStep.getAcceleration()))
                 {
                     referenceGTUAccelerationStep = as;
                 }

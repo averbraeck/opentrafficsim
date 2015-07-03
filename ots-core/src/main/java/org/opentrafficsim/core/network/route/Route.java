@@ -471,7 +471,7 @@ public class Route implements Serializable
         {
             return rightSuitability;
         }
-        if (leftSuitability.getSI() <= GETOFFTHISLANENOW.getSI())
+        if (leftSuitability.le(GETOFFTHISLANENOW))
         {
             throw new NetworkException("Changing lanes in any direction does not get the GTU on a suitable lane");
         }

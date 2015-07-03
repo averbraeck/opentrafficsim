@@ -108,7 +108,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 else
                 {
                     // Merge to nonPreferredLane is possible; merge to preferredLane is NOT possible
-                    if (DoubleScalar.plus(nonPreferredA, nonPreferredLaneRouteIncentive).getSI() > straightA.getSI())
+                    if (DoubleScalar.plus(nonPreferredA, nonPreferredLaneRouteIncentive).gt(straightA))
                     {
                         // Merge to the nonPreferred lane; i.e. start an overtaking procedure
                         return new LaneMovementStep(nonPreferrredAccelerationSteps.getLeaderAccelerationStep(),
@@ -125,7 +125,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             if (null == nonPreferredA)
             {
                 // Merge to preferredLane is possible; merge to nonPreferred lane is NOT possible
-                if (DoubleScalar.plus(preferredA, preferredLaneRouteIncentive).getSI() > straightA.getSI())
+                if (DoubleScalar.plus(preferredA, preferredLaneRouteIncentive).gt(straightA))
                 {
                     // Merge to the preferred lane; i.e. finish (or cancel) an overtaking procedure
                     return new LaneMovementStep(preferredAccelerationSteps.getLeaderAccelerationStep(), preferred);
@@ -150,7 +150,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
 
             }
             if (preferredAttractiveness.getSI() > 0
-                    && preferredAttractiveness.getSI() > nonPreferredAttractiveness.getSI())
+                    && preferredAttractiveness.gt(nonPreferredAttractiveness))
             {
                 // Merge to the preferred lane; i.e. finish (or cancel) an overtaking procedure
                 return new LaneMovementStep(preferredAccelerationSteps.getLeaderAccelerationStep(), preferred);
