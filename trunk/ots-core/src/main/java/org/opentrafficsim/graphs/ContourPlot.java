@@ -597,7 +597,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
             clearCachedValues();
             this.getXAxis().adjustMaximumValue(toTime);
         }
-        if (toTime.getSI() <= fromTime.getSI()) // degenerate sample???
+        if (toTime.le(fromTime)) // degenerate sample???
         {
             return;
         }

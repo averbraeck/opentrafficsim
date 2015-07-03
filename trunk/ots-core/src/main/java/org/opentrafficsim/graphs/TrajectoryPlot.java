@@ -514,7 +514,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             this.currentEndPosition =
                     new DoubleScalar.Rel<LengthUnit>(car.position(lane, car.getReference(), this.currentEndTime)
                             .getSI() + positionOffset, LengthUnit.METER);
-            if (car.getNextEvaluationTime().getSI() > getMaximumTime().getSI())
+            if (car.getNextEvaluationTime().gt(getMaximumTime()))
             {
                 setMaximumTime(car.getNextEvaluationTime());
             }
