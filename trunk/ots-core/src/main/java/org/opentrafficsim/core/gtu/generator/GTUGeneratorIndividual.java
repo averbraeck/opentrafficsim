@@ -58,6 +58,7 @@ public class GTUGeneratorIndividual<ID> extends AbstractGTUGenerator<ID>
      * @param widthDist distribution of the width of the GTU
      * @param maximumSpeedDist distribution of the maximum speed of the GTU
      * @param lane Lane on which newly GTUs are placed
+     * @param position position on the lane, relative to the design line of the link
      * @param routeGenerator RouteGenerator; the route generator that will create a route for each newly constructed GTU
      * @param gtuColorer the GTUColorer to use
      * @throws SimRuntimeException when simulation scheduling fails
@@ -72,10 +73,11 @@ public class GTUGeneratorIndividual<ID> extends AbstractGTUGenerator<ID>
         final DistContinuousDoubleScalar.Rel<LengthUnit> widthDist,
         final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeedDist, final long maxGTUs,
         final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Abs<TimeUnit> endTime, final Lane lane,
-        final RouteGenerator routeGenerator, final GTUColorer gtuColorer) throws RemoteException, SimRuntimeException
+        final DoubleScalar.Rel<LengthUnit> position, final RouteGenerator routeGenerator, final GTUColorer gtuColorer)
+        throws RemoteException, SimRuntimeException
     {
         super(name, simulator, gtuType, gtuClass, gtuFollowingModel, laneChangeModel, initialSpeedDist,
-            interarrivelTimeDist, maxGTUs, startTime, endTime, lane, routeGenerator, gtuColorer);
+            interarrivelTimeDist, maxGTUs, startTime, endTime, lane, position, routeGenerator, gtuColorer);
         this.simulator = simulator;
         this.lengthDist = lengthDist;
         this.widthDist = widthDist;

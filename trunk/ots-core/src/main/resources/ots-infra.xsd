@@ -18,6 +18,16 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <!-- Allows patterns like BEGIN | END | END-10m | 25m | 50% -->
+  <xsd:simpleType name="LENGTHBEGINENDTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="BEGIN|END|END\-(\d+[\.]{0,1}\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft))|(\
+){0}(\d+[\.]{0,1}\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)|(\
+){0}((\d(\.\d*){0,1})|(\d\d(\.\d*){0,1})|(100(\.\0*){0,1}))\s*\%)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:simpleType name="FRACTIONTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="((\d(\.\d*){0,1})|(\d\d(\.\d*){0,1})|(100(\.\0*){0,1}))\s*\%"></xsd:pattern>
@@ -51,9 +61,8 @@
   </xsd:simpleType>
 
   <xsd:simpleType name="ANGLETYPE">
-    <xsd:restriction base="xsd:double">
-      <xsd:minInclusive value="-180.0"></xsd:minInclusive>
-      <xsd:maxInclusive value="180.0"></xsd:maxInclusive>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="(\-|\+){0,1}\d+[\.]{0,1}\d*\s*(deg|rad)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -72,16 +81,6 @@
   <xsd:simpleType name="GTUTYPETYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="CAR|TRUCK|BUS|MOTORBIKE|BICYCLE|PEDESTRIAN"></xsd:pattern>
-    </xsd:restriction>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="ELEMENTSTYPE">
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern
-        value="((((S|X|V|A)\d+){0,10}(\-|\||\:|\#|&lt;|&gt;){0,1}){0,10}D(((S|X|V|A)\d+){0,10}(\
-){0}(\-|\||\:|\#|&lt;|&gt;){0,1}){0,10})(\
-){0}|((((S|X|V|A)\d+){0,10}(\-|\||\:|\#|&lt;|&gt;){0,1}){0,10}((SD|XD|VD|AD)\d+)(((S|X|V|A)\d+){0,10}(\
-){0}(\-|\||\:|\#|&lt;|&gt;){0,1}){0,10})"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -352,6 +351,7 @@
         <xsd:element name="GENERATOR" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>
             <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
+            <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="optional"></xsd:attribute>
             <xsd:attribute name="GTU" type="xsd:IDREF" use="optional"></xsd:attribute>
             <xsd:attribute name="GTUMIX" type="xsd:IDREF" use="optional"></xsd:attribute>
             <xsd:attribute name="IAT" type="TIMEDISTTYPE" use="required"></xsd:attribute>
@@ -380,7 +380,7 @@
         <xsd:element name="BLOCK" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>
             <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
-            <xsd:attribute name="POSITION" type="FRACTIONTYPE" use="optional"></xsd:attribute>
+            <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required"></xsd:attribute>
           </xsd:complexType>
         </xsd:element>
 
