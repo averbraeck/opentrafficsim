@@ -5,6 +5,8 @@ import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_ACCEPTED;
 import static org.opentrafficsim.core.unit.unitsystem.UnitSystem.SI_DERIVED;
 
 import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 
 /**
  * Standard plane angle unit. Several conversion factors have been taken from <a
@@ -49,22 +51,17 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
     {
         SI = new AnglePlaneUnit("AnglePlaneUnit.radian", "AnglePlaneUnit.rad", SI_DERIVED);
         RADIAN = SI;
-        DEGREE =
-                new AnglePlaneUnit("AnglePlaneUnit.degree", "AnglePlaneUnit.deg", SI_ACCEPTED, RADIAN, Math.PI / 180.0);
-        ARCMINUTE =
-                new AnglePlaneUnit("AnglePlaneUnit.arcminute", "AnglePlaneUnit.arcmin", SI_ACCEPTED, DEGREE, 1.0 / 60.0);
+        DEGREE = new AnglePlaneUnit("AnglePlaneUnit.degree", "AnglePlaneUnit.deg", SI_ACCEPTED, RADIAN, Math.PI / 180.0);
+        ARCMINUTE = new AnglePlaneUnit("AnglePlaneUnit.arcminute", "AnglePlaneUnit.arcmin", SI_ACCEPTED, DEGREE, 1.0 / 60.0);
         ARCSECOND =
-                new AnglePlaneUnit("AnglePlaneUnit.arcsecond", "AnglePlaneUnit.arcsec", SI_ACCEPTED, DEGREE,
-                        1.0 / 3600.0);
-        GRAD =
-                new AnglePlaneUnit("AnglePlaneUnit.gradian", "AnglePlaneUnit.grad", OTHER, RADIAN,
-                        2.0 * Math.PI / 400.0);
+            new AnglePlaneUnit("AnglePlaneUnit.arcsecond", "AnglePlaneUnit.arcsec", SI_ACCEPTED, DEGREE, 1.0 / 3600.0);
+        GRAD = new AnglePlaneUnit("AnglePlaneUnit.gradian", "AnglePlaneUnit.grad", OTHER, RADIAN, 2.0 * Math.PI / 400.0);
         CENTESIMAL_ARCMINUTE =
-                new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcminute", "AnglePlaneUnit.centesimal_arcmin", OTHER,
-                        GRAD, 1.0 / 100.0);
+            new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcminute", "AnglePlaneUnit.centesimal_arcmin", OTHER, GRAD,
+                1.0 / 100.0);
         CENTESIMAL_ARCSECOND =
-                new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcsecond", "AnglePlaneUnit.centesimal_arcsec", OTHER,
-                        GRAD, 1.0 / 10000.0);
+            new AnglePlaneUnit("AnglePlaneUnit.centesimal_arcsecond", "AnglePlaneUnit.centesimal_arcsec", OTHER, GRAD,
+                1.0 / 10000.0);
     }
 
     /**
@@ -84,11 +81,10 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
-     *            reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
      */
     public AnglePlaneUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
-            final AnglePlaneUnit referenceUnit, final double conversionFactorToReferenceUnit)
+        final AnglePlaneUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
     }
@@ -105,6 +101,80 @@ public class AnglePlaneUnit extends Unit<AnglePlaneUnit>
     public final String getSICoefficientsString()
     {
         return "";
+    }
+
+    /**
+     * Normalize an angle between 0 and 2 * PI.
+     * @param angle original angle.
+     * @return angle between 0 and 2 * PI.
+     */
+    public static double normalize(final double angle)
+    {
+        double normalized = angle % (2 * Math.PI);
+        if (normalized < 0.0)
+        {
+            normalized += 2 * Math.PI;
+        }
+        return normalized;
+    }
+
+    /**
+     * Normalize an angle between 0 and 2 * PI.
+     * @param angle original angle.
+     * @return angle between 0 and 2 * PI.
+     */
+    public static float normalize(final float angle)
+    {
+        float normalized = (float) (angle % (2 * Math.PI));
+        if (normalized < 0.0)
+        {
+            normalized += 2 * Math.PI;
+        }
+        return normalized;
+    }
+
+    /**
+     * Normalize an angle between 0 and 2 * PI.
+     * @param angle original angle.
+     * @return angle between 0 and 2 * PI.
+     */
+    public static DoubleScalar.Abs<AnglePlaneUnit> normalize(final DoubleScalar.Abs<AnglePlaneUnit> angle)
+    {
+        double normalized = normalize(angle.getSI()) / angle.getUnit().getConversionFactorToStandardUnit();
+        return new DoubleScalar.Abs<AnglePlaneUnit>(normalized, angle.getUnit());
+    }
+
+    /**
+     * Normalize an angle between 0 and 2 * PI.
+     * @param angle original angle.
+     * @return angle between 0 and 2 * PI.
+     */
+    public static DoubleScalar.Rel<AnglePlaneUnit> normalize(final DoubleScalar.Rel<AnglePlaneUnit> angle)
+    {
+        double normalized = normalize(angle.getSI()) / angle.getUnit().getConversionFactorToStandardUnit();
+        return new DoubleScalar.Rel<AnglePlaneUnit>(normalized, angle.getUnit());
+    }
+
+    /**
+     * Normalize an angle between 0 and 2 * PI.
+     * @param angle original angle.
+     * @return angle between 0 and 2 * PI.
+     */
+    public static FloatScalar.Abs<AnglePlaneUnit> normalize(final FloatScalar.Abs<AnglePlaneUnit> angle)
+    {
+        float normalized = (float) (normalize(angle.getSI()) / angle.getUnit().getConversionFactorToStandardUnit());
+        return new FloatScalar.Abs<AnglePlaneUnit>(normalized, angle.getUnit());
+    }
+
+    /**
+     * Normalize an angle between 0 and 2 * PI.
+     * @param angle original angle.
+     * @return angle between 0 and 2 * PI.
+     */
+    public static FloatScalar.Rel<AnglePlaneUnit> normalize(final FloatScalar.Rel<AnglePlaneUnit> angle)
+    {
+        float normalized = (float) (normalize(angle.getSI()) / angle.getUnit().getConversionFactorToStandardUnit());
+        return new FloatScalar.Rel<AnglePlaneUnit>(normalized, angle.getUnit());
     }
 
 }
