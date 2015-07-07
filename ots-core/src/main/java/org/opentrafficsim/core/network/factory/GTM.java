@@ -192,7 +192,7 @@ public class GTM extends AbstractWrappableSimulation
                         new ListGTUGenerator<String>("generator 1", this.simulator, gtuType, new IDMPlus(),
                                 new Egoistic(), new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR), null,
                                 new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.SI), routeGenerator, this.gtuColorer,
-                                "D:/java/ots-core/src/main/resources/gtm_list.txt");
+                                "D:/java/ots-core/src/main/resources/gtm_list.txt" /* HACK */);
                 /* TODO Replace null for lane as obtained in the commented out code above */
 
             }
