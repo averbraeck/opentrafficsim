@@ -61,7 +61,7 @@ public class ListGTUGenerator<ID>
 
     /** The lane change model used by all generated GTUs. */
     final LaneChangeModel laneChangeModel;
-    
+
     /** Initial speed of the generated GTUs. */
     final DoubleScalar.Abs<SpeedUnit> initialSpeed;
 
@@ -91,14 +91,19 @@ public class ListGTUGenerator<ID>
      * @param fileName
      * @throws RemoteException
      * @throws SimRuntimeException
+     * @throws NetworkException
      */
     public ListGTUGenerator(String name, OTSDEVSSimulatorInterface simulator, GTUType<ID> gtuType,
             GTUFollowingModel gtuFollowingModel, LaneChangeModel laneChangeModel,
             DoubleScalar.Abs<SpeedUnit> initialSpeed, Lane lane,
             org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel<LengthUnit> position,
             RouteGenerator routeGenerator, GTUColorer gtuColorer, String fileName) throws RemoteException,
-            SimRuntimeException
+            SimRuntimeException, NetworkException
     {
+        if (null == lane)
+        {
+            throw new NetworkException("lane may not be null");
+        }
         this.name = name;
         this.lane = lane;
         this.gtuType = gtuType;
@@ -125,10 +130,24 @@ public class ListGTUGenerator<ID>
     {
         try
         {
-            String line = this.reader.readLine();
+            String line = null;
+            do
+            {
+                line = this.reader.readLine();
+                if (null == line)
+                {
+                    return; // End of input; do not re-schedule
+                }
+            }
+            while (line.equals(""));// ignore blank lines
             double when = Double.parseDouble(line);
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(when, TimeUnit.SECOND), this, this,
                     "generateCar", null);
+        }
+        catch (NumberFormatException exception)
+        {
+            exception.printStackTrace();
+            scheduleNextVehicle();
         }
         catch (IOException exception)
         {
