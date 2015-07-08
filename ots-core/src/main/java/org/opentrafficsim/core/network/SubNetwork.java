@@ -34,9 +34,10 @@ import java.util.Set;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  * @param <ID> ID type of the sub network
+ * @param <N> the node type
  * @param <L> Link type
  */
-public class SubNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
+public class SubNetwork<ID, N extends Node<?, ?>, L extends Link<?, N>> extends Network<ID, N, L>
 {
 
     /** */

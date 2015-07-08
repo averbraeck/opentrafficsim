@@ -22,14 +22,15 @@ public abstract class AbstractExpansionNode<ID, P> extends AbstractNode<ID, P>
     private static final long serialVersionUID = 20140921L;
 
     /** Network of expanded Node. */
-    private Network<?, ?> network;
+    private Network<?, AbstractExpansionNode<ID, P>, Link<?, AbstractExpansionNode<ID, P>>> network;
 
     /**
      * @param id ID of ExpansionNode.
      * @param point the point when the expansion node is collapsed.
      * @param network Network of expanded Node.
      */
-    public AbstractExpansionNode(final ID id, final P point, final Network<?, ?> network)
+    public AbstractExpansionNode(final ID id, final P point,
+        final Network<?, AbstractExpansionNode<ID, P>, Link<?, AbstractExpansionNode<ID, P>>> network)
     {
         super(id, point);
         this.network = network;
@@ -43,7 +44,8 @@ public abstract class AbstractExpansionNode<ID, P> extends AbstractNode<ID, P>
      * @param network Network of expanded Node.
      */
     public AbstractExpansionNode(final ID id, final P point, final DoubleScalar.Abs<AnglePlaneUnit> direction,
-        final DoubleScalar.Abs<AngleSlopeUnit> slope, final Network<?, ?> network)
+        final DoubleScalar.Abs<AngleSlopeUnit> slope,
+        final Network<?, AbstractExpansionNode<ID, P>, Link<?, AbstractExpansionNode<ID, P>>> network)
     {
         super(id, point, direction, slope);
         this.network = network;
@@ -52,7 +54,7 @@ public abstract class AbstractExpansionNode<ID, P> extends AbstractNode<ID, P>
     /**
      * @return Network of expanded Node.
      */
-    public final Network<?, ?> getNetwork()
+    public final Network<?, AbstractExpansionNode<ID, P>, Link<?, AbstractExpansionNode<ID, P>>> getNetwork()
     {
         return this.network;
     }

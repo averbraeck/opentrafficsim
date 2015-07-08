@@ -188,7 +188,8 @@ public class XmlNetworkLaneParser
     protected final Class<?> linkIdClass;
 
     /** the generated network. */
-    private Network<?, ?> network;
+    @SuppressWarnings("rawtypes")
+    private Network network;
 
     /** the angle units. */
     private static final Map<String, AnglePlaneUnit> ANGLE_UNITS = new HashMap<>();
@@ -363,7 +364,8 @@ public class XmlNetworkLaneParser
      * @throws ParserConfigurationException in case of parsing problems.
      * @throws IOException in case of file reading problems.
      */
-    public final Network<?, ?> build(final URL url) throws NetworkException, ParserConfigurationException, SAXException,
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public final Network build(final URL url) throws NetworkException, ParserConfigurationException, SAXException,
         IOException
     {
         // parse the Includes and Nodes.
@@ -380,7 +382,11 @@ public class XmlNetworkLaneParser
         handler = new SAXHandler();
         parser.parse(url.openStream(), handler);
 
-        // this.network = new Network(makeId(this.networkIdClass, networkId));
+        this.network = new Network(url.toString(), this.links.values());
+        for (Node node : this.nodes.values())
+        {
+            this.network.addNode(node);
+        }
         return this.network;
     }
 
@@ -392,7 +398,8 @@ public class XmlNetworkLaneParser
      * @throws ParserConfigurationException in case of parsing problems.
      * @throws IOException in case of file reading problems.
      */
-    public final Network<?, ?> build(final String s) throws NetworkException, ParserConfigurationException, SAXException,
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public final Network build(final String s) throws NetworkException, ParserConfigurationException, SAXException,
         IOException
     {
         // parse the Includes and Nodes.
@@ -411,7 +418,11 @@ public class XmlNetworkLaneParser
         bais.reset();
         parser.parse(bais, handler);
 
-        // this.network = new Network(makeId(this.networkIdClass, networkId));
+        this.network = new Network(UUID.randomUUID(), this.links.values());
+        for (Node node : this.nodes.values())
+        {
+            this.network.addNode(node);
+        }
         return this.network;
     }
 

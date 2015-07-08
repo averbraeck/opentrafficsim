@@ -23,9 +23,11 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.geotools.LinkGeotools;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.geotools.NodeGeotools.STR;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
@@ -56,8 +58,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Feb 10, 2015 <br>
@@ -73,7 +74,7 @@ public class OpenStreetMap extends AbstractWrappableSimulation
     private OSMNetwork osmNetwork;
 
     /** The OTS network. */
-    private Network<String, CrossSectionLink<?, ?>> otsNetwork;
+    private Network<String, NodeGeotools.STR, Link<String, NodeGeotools.STR>> otsNetwork;
 
     /** The ProgressListener. */
     private ProgressListener progressListener;
@@ -106,29 +107,27 @@ public class OpenStreetMap extends AbstractWrappableSimulation
                     try
                     {
                         localProperties.add(new ProbabilityDistributionProperty("Traffic composition",
-                                "<html>Mix of passenger cars and trucks</html>",
-                                new String[]{"passenger car", "truck"}, new Double[]{0.8, 0.2}, false, 10));
+                            "<html>Mix of passenger cars and trucks</html>", new String[] {"passenger car", "truck"},
+                            new Double[] {0.8, 0.2}, false, 10));
                     }
                     catch (PropertyException exception)
                     {
                         exception.printStackTrace();
                     }
                     localProperties.add(new SelectionProperty("Car following model",
-                            "<html>The car following model determines "
-                                    + "the acceleration that a vehicle will make taking into account "
-                                    + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
-                                    + "curvature of the road) capabilities of the vehicle and personality "
-                                    + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Car",
-                            new DoubleScalar.Abs<AccelerationUnit>(1.0, AccelerationUnit.METER_PER_SECOND_2),
-                            new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                            new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(
-                                    1.0, TimeUnit.SECOND), 2));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck",
-                            new DoubleScalar.Abs<AccelerationUnit>(0.5, AccelerationUnit.METER_PER_SECOND_2),
-                            new DoubleScalar.Abs<AccelerationUnit>(1.25, AccelerationUnit.METER_PER_SECOND_2),
-                            new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(
-                                    1.0, TimeUnit.SECOND), 3));
+                        "<html>The car following model determines "
+                            + "the acceleration that a vehicle will make taking into account "
+                            + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
+                            + "curvature of the road) capabilities of the vehicle and personality "
+                            + "of the driver.</html>", new String[] {"IDM", "IDM+"}, 1, false, 1));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Car", new DoubleScalar.Abs<AccelerationUnit>(1.0,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
+                        new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 2));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new DoubleScalar.Abs<AccelerationUnit>(
+                        0.5, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.25,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
+                        new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 3));
                     osm.buildSimulator(localProperties, null, true);
                 }
                 catch (Exception e)
@@ -204,7 +203,8 @@ public class OpenStreetMap extends AbstractWrappableSimulation
             OSMNetwork net = osmf.getNetwork();
             // net.removeRedundancy(); // Defective; do not call removeRedundancy
             this.osmNetwork = net; // new OSMNetwork(net); // Why would you make a copy?
-            this.otsNetwork = new Network<String, CrossSectionLink<?, ?>>(this.osmNetwork.getName());
+            this.otsNetwork =
+                new Network<String, NodeGeotools.STR, Link<String, NodeGeotools.STR>>(this.osmNetwork.getName());
             for (OSMNode osmNode : this.osmNetwork.getNodes().values())
             {
                 try
@@ -218,7 +218,8 @@ public class OpenStreetMap extends AbstractWrappableSimulation
             }
             for (OSMLink osmLink : this.osmNetwork.getLinks())
             {
-                this.otsNetwork.add(converter.convertLink(osmLink));
+                Link<String, NodeGeotools.STR> link = (Link) converter.convertLink(osmLink);
+                this.otsNetwork.add(link);
             }
             this.osmNetwork.makeLinks(this.warningListener, this.progressListener);
         }
@@ -228,13 +229,13 @@ public class OpenStreetMap extends AbstractWrappableSimulation
             return null;
         }
         this.model =
-                new OSMModel(getUserModifiedProperties(), this.osmNetwork, this.warningListener, this.progressListener,
-                        converter);
-        Iterator<Node<?, ?>> count = this.otsNetwork.getNodeSet().iterator();
+            new OSMModel(getUserModifiedProperties(), this.osmNetwork, this.warningListener, this.progressListener,
+                converter);
+        Iterator<NodeGeotools.STR> count = this.otsNetwork.getNodeSet().iterator();
         Rectangle2D area = null;
         while (count.hasNext())
         {
-            NodeGeotools.STR node = (STR) count.next();
+            NodeGeotools.STR node = count.next();
             if (null == area)
             {
                 area = new Rectangle2D.Double(node.getX(), node.getY(), 0, 0);
@@ -274,14 +275,13 @@ public class OpenStreetMap extends AbstractWrappableSimulation
     protected java.awt.geom.Rectangle2D.Double makeAnimationRectangle()
     {
         return new Rectangle2D.Double(this.rectangle.getX(), this.rectangle.getY(), this.rectangle.getWidth(),
-                this.rectangle.getHeight());
+            this.rectangle.getHeight());
     }
 }
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Feb 10, 2015 <br>
@@ -318,8 +318,8 @@ class OSMModel implements OTSModelInterface
      * @param pL ProgressListener; the receiver of progress events
      * @param converter Convert; the output converter
      */
-    public OSMModel(final ArrayList<AbstractProperty<?>> properties, final OSMNetwork osmNetwork,
-            final WarningListener wL, final ProgressListener pL, final Convert converter)
+    public OSMModel(final ArrayList<AbstractProperty<?>> properties, final OSMNetwork osmNetwork, final WarningListener wL,
+        final ProgressListener pL, final Convert converter)
     {
         this.osmNetwork = osmNetwork;
         this.warningListener = wL;
@@ -330,10 +330,10 @@ class OSMModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException, RemoteException
+        throws SimRuntimeException, RemoteException
     {
-        Network<String, CrossSectionLink<?, ?>> otsNetwork =
-                new Network<String, CrossSectionLink<?, ?>>(this.osmNetwork.getName());
+        Network<String, NodeGeotools.STR, Link<String, NodeGeotools.STR>> otsNetwork =
+            new Network<String, NodeGeotools.STR, Link<String, NodeGeotools.STR>>(this.osmNetwork.getName());
         for (OSMNode osmNode : this.osmNetwork.getNodes().values())
         {
             try
@@ -347,11 +347,11 @@ class OSMModel implements OTSModelInterface
         }
         for (OSMLink osmLink : this.osmNetwork.getLinks())
         {
-            otsNetwork.add(this.converter.convertLink(osmLink));
+            otsNetwork.add((Link) this.converter.convertLink(osmLink));
         }
         Convert.findSinksandSources(this.osmNetwork, this.progressListener);
         this.progressListener.progress(new ProgressEvent(this.osmNetwork, "Creation the lanes on "
-                + this.osmNetwork.getLinks().size() + " links"));
+            + this.osmNetwork.getLinks().size() + " links"));
         double total = this.osmNetwork.getLinks().size();
         double counter = 0;
         double nextPercentage = 5.0;
@@ -360,7 +360,7 @@ class OSMModel implements OTSModelInterface
             try
             {
                 this.lanes.addAll(this.converter.makeLanes(link, (OTSDEVSSimulatorInterface) theSimulator,
-                        this.warningListener));
+                    this.warningListener));
             }
             catch (NetworkException | NamingException exception)
             {
@@ -375,9 +375,8 @@ class OSMModel implements OTSModelInterface
             }
         }
         /*
-         * System.out.println("Number of Links: " + this.network.getLinks().size());
-         * System.out.println("Number of Nodes: " + this.network.getNodes().size());
-         * System.out.println("Number of Lanes: " + this.lanes.size());
+         * System.out.println("Number of Links: " + this.network.getLinks().size()); System.out.println("Number of Nodes: " +
+         * this.network.getNodes().size()); System.out.println("Number of Lanes: " + this.lanes.size());
          */
     }
 

@@ -41,7 +41,7 @@
     <jdk.version>1.8</jdk.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <sonar.language>java</sonar.language>
+    <sonar.scm.disabled>true</sonar.scm.disabled>
 
     <ots-version>${project.version}</ots-version>
     <dsol-version>3.00.12</dsol-version>
@@ -70,7 +70,7 @@
     <maven.failsafe.version>2.17</maven.failsafe.version>
     <maven.cobertura.version>2.7</maven.cobertura.version>
     <maven.jacoco.version>0.7.4.201502262128</maven.jacoco.version>
-    <maven.findbugs.version>3.0.0</maven.findbugs.version>
+    <maven.findbugs.version>3.0.1</maven.findbugs.version>
     <maven.project-info-reports.version>2.7</maven.project-info-reports.version>
     <maven.jxr.version>2.4</maven.jxr.version>
     <maven.taglist.version>2.4</maven.taglist.version>

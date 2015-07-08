@@ -170,7 +170,7 @@ public class GTM extends AbstractWrappableSimulation
                             LinkGeotools.class, String.class, this.simulator, this.gtuColorer);
             try
             {
-                Network<?, ?> network = nlp.build(url);
+                Network network = nlp.build(url);
                 GTUType<String> gtuType = GTUType.makeGTUType("car");
                 List<Node<?, ?>> fixedRoute = new ArrayList<Node<?, ?>>();
                 // TODO add the destination node the the route
