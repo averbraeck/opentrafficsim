@@ -73,13 +73,13 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @param <ID> the ID type of the network
  * @param <L> Link type of the network
  */
-public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
+public class ExpansionNetwork<ID, N extends Node<?, ?>, L extends Link<?, N>> extends Network<ID, N, L>
 {
     /** */
     private static final long serialVersionUID = 20150104L;
 
     /** Node of which this network is an expansion. */
-    private Node<?, ?> expansionOfNode = null;
+    private N expansionOfNode = null;
 
     /**
      * Construction of an empty network.
@@ -107,7 +107,7 @@ public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
      * @param expansionNode Node of which this network is an expansion.
      * @throws NetworkException when expansion node is part of the initial collection.
      */
-    public ExpansionNetwork(final ID id, final Collection<? extends L> collection, final Node<?, ?> expansionNode)
+    public ExpansionNetwork(final ID id, final Collection<? extends L> collection, final N expansionNode)
             throws NetworkException
     {
         super(id, collection);
@@ -122,7 +122,7 @@ public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
     /**
      * @return expansionOfNode
      */
-    public final Node<?, ?> getExpansionOfNode()
+    public final N getExpansionOfNode()
     {
         return this.expansionOfNode;
     }
@@ -131,7 +131,7 @@ public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
      * @param expansionOfNode set expansionOfNode
      * @throws NetworkException when expansion node is part of the node collection.
      */
-    public final void setExpansionOfNode(final Node<?, ?> expansionOfNode) throws NetworkException
+    public final void setExpansionOfNode(final N expansionOfNode) throws NetworkException
     {
         this.expansionOfNode = expansionOfNode;
     }
@@ -142,7 +142,7 @@ public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
      * @param recurse boolean; if true also search sub-networks
      * @return true or false
      */
-    public final boolean isInNetwork(final Node<?, ?> node, final boolean recurse)
+    public final boolean isInNetwork(final N node, final boolean recurse)
     {
         if (isInNetwork(node))
         {
@@ -150,10 +150,10 @@ public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
         }
         else if (recurse)
         {
-            for (Node<?, ?> n : getNodeSet())
+            for (N n : getNodeSet())
             {
                 // FIXME if (n instanceof AbstractExpansionNode
-                // && ((AbstractExpansionNode<?, ?>) n).getNetwork().isInNetwork(node, true))
+                // && ((AbstractExpansionN) n).getNetwork().isInNetwork(node, true))
                 {
                     return true;
                 }
@@ -168,7 +168,7 @@ public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
      * @return Network
      * @throws NetworkException if the specified node is not contained in this Network or any of its sub Networks
      */
-    public final ExpansionNetwork<?, ?> getSubNetworkConsistNode(final Node<?, ?> node) throws NetworkException
+    public final ExpansionNetwork<ID, N, L> getSubNetworkConsistNode(final N node) throws NetworkException
     {
         if (isInNetwork(node, true))
         {
@@ -179,10 +179,10 @@ public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
             }
             else
             {
-                for (Node<?, ?> n : getNodeSet())
+                for (N n : getNodeSet())
                 {
                     // FIXME if (n instanceof AbstractExpansionNode
-                    // && ((AbstractExpansionNode<?, ?>) n).getNetwork().isInNetwork(node, false))
+                    // && ((AbstractExpansionN) n).getNetwork().isInNetwork(node, false))
                     {
                         return getSubNetworkConsistNode(node);
                     }
@@ -198,7 +198,7 @@ public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
      * @return boolean
      * @throws NetworkException on network inconsistency
      */
-    public final boolean deleteNode(final Node<?, ?> deleteThis) throws NetworkException
+    public final boolean deleteNode(final N deleteThis) throws NetworkException
     {
         // TODO ensure that no links are orphaned due to removal of the node
         if (isInNetwork(deleteThis, true))
@@ -211,7 +211,7 @@ public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
             }
             else
             {
-                ExpansionNetwork<?, ?> n = getSubNetworkConsistNode(deleteThis);
+                ExpansionNetwork<ID, N, L> n = getSubNetworkConsistNode(deleteThis);
                 n.remove(deleteThis);
                 return true;
             }
@@ -225,15 +225,15 @@ public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
      * @param nodesOfSubNetwork HashSet&lt;Node&lt;?, ?&gt;&gt;; the nodes that go into the new sub network
      * @return boolean; Currently always true (because some checks have not been implemented...)
      */
-    public final boolean collapseToNode(final HashSet<Node<?, ?>> nodesOfSubNetwork)
+    public final boolean collapseToNode(final HashSet<N> nodesOfSubNetwork)
     {
-        Link<?, Node<?, ?>>[] setOfLinks = (Link<?, Node<?, ?>>[]) super.toArray();
+        Link<?, N>[] setOfLinks = (Link<?, N>[]) super.toArray();
         Set<L> insideLinks = new HashSet<L>();
         Set<L> neighbourLinks = new HashSet<L>();
 
-        for (Node<?, ?> node : nodesOfSubNetwork)
+        for (N node : nodesOfSubNetwork)
         {
-            for (Link<?, Node<?, ?>> link : setOfLinks)
+            for (Link<?, N> link : setOfLinks)
             {
                 if (nodesOfSubNetwork.contains(link.getStartNode()) && nodesOfSubNetwork.contains(link.getEndNode()))
                 // wrong: if (node.equals(link.getStartNode()) && node.equals(link.getEndNode()))
@@ -272,9 +272,9 @@ public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
      * @param node2 Node; the second node
      * @return true if successful, false there are no links between the nodes
      */
-    public final boolean collapseLinks(final Node<?, ?> node1, final Node<?, ?> node2)
+    public final boolean collapseLinks(final N node1, final N node2)
     {
-        Link<?, Node<?, ?>>[] setOfLinks = (Link<?, Node<?, ?>>[]) super.toArray();
+        Link<?, N>[] setOfLinks = (Link<?, N>[]) super.toArray();
         float forwardCapacity = 0.0f; // One direction
         float reverseCapacity = 0.0f; // Other direction
         DoubleScalar.Rel<LengthUnit> shortestLengthFrom1 =
@@ -284,7 +284,7 @@ public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
 
         int forwardLinksFound = 0;
         int reverseLinksFound = 0;
-        for (Link<?, Node<?, ?>> link : setOfLinks)
+        for (Link<?, N> link : setOfLinks)
         {
             if (node1.equals(link.getStartNode()) && node2.equals(link.getEndNode()))
             {
@@ -340,10 +340,10 @@ public class ExpansionNetwork<ID, L extends Link<?, ?>> extends Network<ID, L>
      */
     public final Set<L> findLinkHierarchyBelow(final int hierarchyLevel) throws NetworkException
     {
-        Link<?, Node<?, ?>>[] setOfLinks = (Link<?, Node<?, ?>>[]) super.toArray();
+        Link<?, N>[] setOfLinks = (Link<?, N>[]) super.toArray();
         Set<L> linksAboveLevel = new HashSet<L>();
 
-        for (Link<?, Node<?, ?>> link : setOfLinks)
+        for (Link<?, N> link : setOfLinks)
         {
             // if (link.getHierarchy() > hierarchyLevel)
             // {

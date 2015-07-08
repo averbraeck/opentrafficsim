@@ -16,9 +16,10 @@ import java.util.Set;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @param <ID> the ID type of the network
+ * @param <N> the node type
  * @param <L> the Link type of the network
  */
-public class Network<ID, L extends Link<?, ?>> extends HashSet<L> implements Serializable
+public class Network<ID, N extends Node<?, ?>, L extends Link<?, N>> extends HashSet<L> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150102L;
@@ -27,7 +28,7 @@ public class Network<ID, L extends Link<?, ?>> extends HashSet<L> implements Ser
     private final ID id;
 
     /** HashSet of Nodes. */
-    private Set<Node<?, ?>> nodeSet = new HashSet<>();
+    private Set<N> nodeSet = new HashSet<>();
 
     /**
      * Construction of an empty network.
@@ -61,7 +62,7 @@ public class Network<ID, L extends Link<?, ?>> extends HashSet<L> implements Ser
     /**
      * @return nodeSet
      */
-    public final Set<Node<?, ?>> getNodeSet()
+    public final Set<N> getNodeSet()
     {
         return this.nodeSet;
     }
@@ -69,7 +70,7 @@ public class Network<ID, L extends Link<?, ?>> extends HashSet<L> implements Ser
     /**
      * @param nodeSet set nodeSet
      */
-    public final void setNodeSet(final Set<Node<?, ?>> nodeSet)
+    public final void setNodeSet(final Set<N> nodeSet)
     {
         this.nodeSet = nodeSet;
     }
@@ -79,7 +80,7 @@ public class Network<ID, L extends Link<?, ?>> extends HashSet<L> implements Ser
      * @param node AbstractNode&lt;?, ?&gt;; the node
      * @return true or false
      */
-    public final boolean isInNetwork(final Node<?, ?> node)
+    public final boolean isInNetwork(final N node)
     {
         return this.nodeSet.contains(node);
     }
@@ -89,7 +90,7 @@ public class Network<ID, L extends Link<?, ?>> extends HashSet<L> implements Ser
      * @param node Node; the node that must be added
      * @throws NetworkException if the node is already part of this network
      */
-    public final void addNode(final Node<?, ?> node) throws NetworkException
+    public final void addNode(final N node) throws NetworkException
     {
         if (isInNetwork(node))
         {
@@ -108,7 +109,7 @@ public class Network<ID, L extends Link<?, ?>> extends HashSet<L> implements Ser
      * @throws NetworkException on network inconsistency Note: method can be overridden, e.g. by the ExpansionNetwork.
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public boolean deleteNode(final Node<?, ?> deleteThis) throws NetworkException
+    public boolean deleteNode(final N deleteThis) throws NetworkException
     {
         // TODO ensure that no Links are orphaned due to removal of the node
         if (isInNetwork(deleteThis))
