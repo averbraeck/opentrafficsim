@@ -26,11 +26,16 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.generator.ListGTUGenerator;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.geotools.LinkGeotools;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
+import org.opentrafficsim.core.network.lane.CrossSectionElement;
+import org.opentrafficsim.core.network.lane.CrossSectionLink;
+import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.lane.NoTrafficLane;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -170,27 +175,51 @@ public class GTM extends AbstractWrappableSimulation
                             LinkGeotools.class, String.class, this.simulator, this.gtuColorer);
             try
             {
-                Network network = nlp.build(url);
-                GTUType<String> gtuType = GTUType.makeGTUType("car");
+                @SuppressWarnings("unchecked")
+                Network<?, Node<?, ?>, ?> network = nlp.build(url);
+                GTUType<String> gtuType = GTUType.makeGTUType("CAR");
                 List<Node<?, ?>> fixedRoute = new ArrayList<Node<?, ?>>();
                 // TODO add the destination node the the route
                 RouteGenerator routeGenerator = new FixedRouteGenerator(fixedRoute);
-                // Collection<Node<?, ?>> nodes = network.getNodeSet();
-                // Node<?, ?> fromNode = null;
-                // for (Node<?, ?> n : nodes)
-                // {
-                // if (n.getId().equals("N1"))
-                // {
-                // fromNode = n;
-                // }
-                // }
-                // if (null == fromNode)
-                // {
-                // throw new Error("Cannot find node N1");
-                // }
+                Collection<Node<?, ?>> nodes = network.getNodeSet();
+                Node<?, ?> fromNode = null;
+                for (Node<?, ?> n : nodes)
+                {
+                    if (n.getId().equals("N1"))
+                    {
+                        fromNode = n;
+                    }
+                }
+                if (null == fromNode)
+                {
+                    throw new Error("Cannot find node N1");
+                }
+                // find the lane
+                Lane lane = null;
+                for (Link<?, ?> link : fromNode.getLinksOut())
+                {
+                    if (link.getEndNode().getId().equals("N2"))
+                    {
+                        if (link instanceof CrossSectionLink)
+                        {
+                            CrossSectionLink<?, ?> csl = (CrossSectionLink<?, ?>) link;
+                            for (CrossSectionElement cse : csl.getCrossSectionElementList())
+                            {
+                                if (cse instanceof Lane && !(cse instanceof NoTrafficLane))
+                                {
+                                    lane = (Lane) cse;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (null == lane)
+                {
+                    throw new NetworkException("Cannot find a Lane on a Link from N1 to N2");
+                }
                 ListGTUGenerator<String> generator =
                         new ListGTUGenerator<String>("generator 1", this.simulator, gtuType, new IDMPlus(),
-                                new Egoistic(), new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR), null,
+                                new Egoistic(), new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR), lane,
                                 new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.SI), routeGenerator, this.gtuColorer,
                                 "D:/java/ots-core/src/main/resources/gtm_list.txt" /* HACK */);
                 /* TODO Replace null for lane as obtained in the commented out code above */
