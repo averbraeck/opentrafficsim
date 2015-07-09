@@ -5,8 +5,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
+ * A GTU type identifies the type of a GTU. <br/>
+ * GTU types are used to check whether a particular GTU can travel over a particular part of infrastructure. E.g. a
+ * (LaneBased)GTU with GTUType CAR can travel over lanes that have a LaneType that has the GTUType CAR in the
+ * compatibility set.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Dec 31, 2014 <br>
@@ -35,7 +40,7 @@ public final class GTUType<ID> implements Serializable
     {
         this.id = id;
     }
-    
+
     /** The set of previously instantiated GTUTypes. */
     private static final Map<Object, GTUType<?>> INSTANTIATEDGTUTYPES = new LinkedHashMap<Object, GTUType<?>>();
 
@@ -67,7 +72,7 @@ public final class GTUType<ID> implements Serializable
     {
         return this.id;
     }
-    
+
     /** {@inheritDoc} */
     public String toString()
     {

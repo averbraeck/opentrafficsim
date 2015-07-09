@@ -6,6 +6,8 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
+ * A simple way to construct a SwitchableGTUColorer set up with the "standard" set of GTUColorers. <br/>
+ * Do not assume that the set of GTUColorers in the result will never change.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.

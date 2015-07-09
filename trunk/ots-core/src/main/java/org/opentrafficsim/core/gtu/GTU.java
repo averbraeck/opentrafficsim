@@ -13,6 +13,8 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
+ * Generalized Travel Unit. <br/>
+ * A GTU is an object (person, car, ship) that can travel over the infrastructure.
  * <p>
  * Copyright (c) 2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -65,7 +67,8 @@ public interface GTU<ID> extends LocatableInterface, Serializable
     void destroy();
 
     /**
-     * @return the current acceleration of the GTU, combining longitudinal, lateral and vertical acceleration components.
+     * @return the current acceleration of the GTU, combining longitudinal, lateral and vertical acceleration
+     *         components.
      * @throws RemoteException on communications failure
      */
     DoubleScalar.Abs<AccelerationUnit> getAcceleration() throws RemoteException;

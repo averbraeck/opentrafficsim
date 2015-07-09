@@ -25,7 +25,7 @@ public class IDGTUColorer implements GTUColorer
     private final ArrayList<LegendEntry> legend;
 
     /**
-     * Construct a new SpeedGTUColorer.
+     * Construct a new IDGTUColorer.
      */
     public IDGTUColorer()
     {

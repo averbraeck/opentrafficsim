@@ -11,7 +11,8 @@ import org.opentrafficsim.core.gtu.GTU;
 /**
  * GTU colorer that uses a coloring method that can be switched by the user of the program.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 28 mei 2015 <br>
@@ -22,12 +23,12 @@ public class SwitchableGTUColorer implements GTUColorer
 {
     /** The currently active GTUColorer. */
     private GTUColorer activeColorer;
-    
+
     /** list of included colorers. */
     private List<GTUColorer> colorers = new ArrayList<>();
-    
+
     /**
-     * Construct a new Switchable GTUColorer based on a list of colorers. The first colorer in the list becomes the active one.
+     * Construct a new Switchable GTUColorer based on a list of colorers.
      * @param activeIndex the index of the initially active colorer in the list (0-based).
      * @param colorers GTUColorers; the list of GTUColorer. List cannot be empty.
      * @throws IndexOutOfBoundsException when activeIndex &lt; 0 or larger than or equal to the number of colorers.
@@ -38,7 +39,7 @@ public class SwitchableGTUColorer implements GTUColorer
         this.colorers.addAll(Arrays.asList(colorers));
         setGTUColorer(activeIndex);
     }
-    
+
     /**
      * Replace the currently active GTUColorer.
      * @param activeIndex the index of the new active colorer in the list (0-based).

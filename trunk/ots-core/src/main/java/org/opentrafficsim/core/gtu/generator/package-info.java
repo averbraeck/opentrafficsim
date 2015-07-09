@@ -1,5 +1,5 @@
 /**
- * Generate GTUs.
+ * Generate GTUs according to some prescription.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, 
  * Delft, the Netherlands. All rights reserved.

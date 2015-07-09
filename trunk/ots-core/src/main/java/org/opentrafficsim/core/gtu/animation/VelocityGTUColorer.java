@@ -30,8 +30,9 @@ public class VelocityGTUColorer implements GTUColorer
     private final DoubleScalar.Abs<SpeedUnit> maximumSpeed;
 
     /**
-     * Construct a new SpeedGTUColorer.
-     * @param maximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed at (and above) which the color will green
+     * Construct a new VelocityGTUColorer.
+     * @param maximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed at (and above) which the returned color will be
+     *            green
      */
     public VelocityGTUColorer(final DoubleScalar.Abs<SpeedUnit> maximumSpeed)
     {

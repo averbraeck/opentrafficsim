@@ -21,7 +21,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * Common code for a family of lane change models like in M. Treiber and A. Kesting <i>Traffic Flow Dynamics</i>,
- * Springer-Verlag Berlin Heidelberg 2013, pp 239-244
+ * Springer-Verlag Berlin Heidelberg 2013, pp 239-244.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>

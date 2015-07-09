@@ -1,5 +1,5 @@
 /**
- * The lane-based GTUs are the Generalized Travel Units that stay in lanes, 
+ * The lane-based GTUs are the Generalized Travel Units that travel in lanes, 
  * and need to switch lanes to overtake. The GTUs have a model that determines
  * acceleration and initial speed for the next time step. They also have a
  * lane changing model that indicates when to change lanes and how long it
