@@ -18,6 +18,8 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
+ * Specific type of LaneBasedGTU. This class adds length, width, maximum velocity and a reference to the simulator to
+ * the AbstractLaneBasedGTU.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>

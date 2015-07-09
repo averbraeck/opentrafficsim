@@ -6,8 +6,11 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
+ * A RelativePosition is a position on a GTU; e.g. the front, rear, position of the driver, etc. <br/>
+ * A RelativePosition stores the offset of the position from the reference position of the GTU.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Dec 30, 2014 <br>
@@ -47,9 +50,9 @@ public class RelativePosition implements Serializable
     public static final TYPE DRIVER = new TYPE("DRIVER");
 
     /** the reference position (always 0, 0, 0). */
-    public static final RelativePosition REFERENCE_POSITION = new RelativePosition(new DoubleScalar.Rel<LengthUnit>(0.0d,
-        LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.0d, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.0d,
-        LengthUnit.METER), RelativePosition.REFERENCE);
+    public static final RelativePosition REFERENCE_POSITION = new RelativePosition(new DoubleScalar.Rel<LengthUnit>(
+            0.0d, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.0d, LengthUnit.METER),
+            new DoubleScalar.Rel<LengthUnit>(0.0d, LengthUnit.METER), RelativePosition.REFERENCE);
 
     /**
      * @param dx positive x is in the normal direction of movement.
@@ -58,7 +61,7 @@ public class RelativePosition implements Serializable
      * @param type type of relative position (FRONT, BACK, etc.).
      */
     public RelativePosition(final DoubleScalar.Rel<LengthUnit> dx, final DoubleScalar.Rel<LengthUnit> dy,
-        final DoubleScalar.Rel<LengthUnit> dz, final TYPE type)
+            final DoubleScalar.Rel<LengthUnit> dz, final TYPE type)
     {
         super();
         this.dx = dx;
@@ -252,4 +255,5 @@ public class RelativePosition implements Serializable
         }
 
     }
+    
 }

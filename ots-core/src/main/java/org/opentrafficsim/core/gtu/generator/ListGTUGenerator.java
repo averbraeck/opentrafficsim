@@ -30,7 +30,6 @@ import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DistContinuousDoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
@@ -78,25 +77,28 @@ public class ListGTUGenerator<ID>
     int carsCreated = 0;
 
     /**
-     * @param name
-     * @param simulator
-     * @param gtuType
-     * @param gtuFollowingModel
-     * @param laneChangeModel
-     * @param initialSpeed
-     * @param lane
-     * @param position
-     * @param routeGenerator
-     * @param gtuColorer
-     * @param fileName
+     * Construct a GTU generator that takes the times to generate another GTU from an external source. <br>
+     * Currently the external input is a text file in the local file system. This should be replaced by a more general
+     * mechanism. Currently, the format of the input is one floating point value per line. This may be changed into
+     * an XML format that can also specify the GTUType, etc. 
+     * @param name String; name if this generator
+     * @param simulator OTSDEVSSimulatorInterface; the simulator
+     * @param gtuType GTUType&lt;ID&gt;; the GTUType of the generated GTUs
+     * @param gtuFollowingModel GTUFollowingModel; the GTU following model of the generated GTUs
+     * @param laneChangeModel LaneChangeModel; the lane change model of the generated GTUs
+     * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the generated GTUs
+     * @param lane Lane; the lane on which the generated GTUs are placed
+     * @param position DoubleScalar.Rel&lt;LengthUnit&gt;; the position on the lane where the generated GTUs are placed
+     * @param routeGenerator RouteGenerator; the route generator that generates the routes of the generated GTUs
+     * @param gtuColorer GTUColorere; the GTUColorer of the generated GTUs
+     * @param fileName String; name of file with the times when another GTU is to be generated (XXXX STUB)
      * @throws RemoteException
      * @throws SimRuntimeException
      * @throws NetworkException
      */
     public ListGTUGenerator(String name, OTSDEVSSimulatorInterface simulator, GTUType<ID> gtuType,
             GTUFollowingModel gtuFollowingModel, LaneChangeModel laneChangeModel,
-            DoubleScalar.Abs<SpeedUnit> initialSpeed, Lane lane,
-            org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel<LengthUnit> position,
+            DoubleScalar.Abs<SpeedUnit> initialSpeed, Lane lane, DoubleScalar.Rel<LengthUnit> position,
             RouteGenerator routeGenerator, GTUColorer gtuColorer, String fileName) throws RemoteException,
             SimRuntimeException, NetworkException
     {
@@ -160,7 +162,7 @@ public class ListGTUGenerator<ID>
     }
 
     /**
-     * Generate cars at a fixed rate (implemented by re-scheduling this method).
+     * Generate one car and re-schedule this method.
      */
     protected final void generateCar()
     {

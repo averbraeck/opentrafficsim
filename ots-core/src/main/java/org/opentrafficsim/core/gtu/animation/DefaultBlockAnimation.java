@@ -14,7 +14,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.lane.LaneBlock;
 
 /**
- * Draw a car.
+ * Draw a road block.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -26,7 +26,7 @@ import org.opentrafficsim.core.gtu.lane.LaneBlock;
 public class DefaultBlockAnimation extends Renderable2D
 {
     /**
-     * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
+     * Construct the DefaultCarAnimation for a LaneBlock (road block).
      * @param source the Car to draw
      * @param simulator the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation

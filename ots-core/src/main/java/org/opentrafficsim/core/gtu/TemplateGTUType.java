@@ -8,6 +8,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DistContinuousDoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
+ * TemplateGTUType stores most of the information that is needed to generate a GTU.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.

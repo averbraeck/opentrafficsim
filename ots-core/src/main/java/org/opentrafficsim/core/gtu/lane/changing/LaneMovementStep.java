@@ -6,7 +6,8 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 /**
  * Acceleration, lane change decision and time until when this movement is committed.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version 6 feb. 2015 <br>
@@ -95,8 +96,7 @@ public class LaneMovementStep
     /** {@inheritDoc} */
     public final String toString()
     {
-        return this.gfmr.toString() + ", "
-                + (null == this.laneChange ? "no lane change" : this.laneChange.toString());
+        return this.gfmr.toString() + ", " + (null == this.laneChange ? "no lane change" : this.laneChange.toString());
     }
 
 }

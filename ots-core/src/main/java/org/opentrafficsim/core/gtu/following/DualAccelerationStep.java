@@ -5,7 +5,8 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
- * Container for two instances of an AccelerationStep.
+ * Container for two instances of an AccelerationStep. One for the GTU that is deciding its move (the leader); one for
+ * the GTU that will/would be the (new) follower of that GTU.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
@@ -33,7 +34,7 @@ public class DualAccelerationStep
         this.leaderAccelerationStep = leaderAccelerationStep;
         this.followerAccelerationStep = followerAccelerationStep;
     }
-    
+
     /**
      * Retrieve the AccelerationStep for the leader GTU.
      * @return AccelerationStep; the acceleration and time step size for the leader
@@ -42,7 +43,7 @@ public class DualAccelerationStep
     {
         return this.leaderAccelerationStep;
     }
-    
+
     /**
      * Retrieve the AccelerationStep for the (new) follower GTU.
      * @return AccelerationStep; the acceleration and time step size for the (new) follower
@@ -51,7 +52,7 @@ public class DualAccelerationStep
     {
         return this.followerAccelerationStep;
     }
-    
+
     /**
      * Return the acceleration of the leader.
      * @return DoubleScalar&lt;AccelerationUnit&gt;; the acceleration of the leader
@@ -87,7 +88,7 @@ public class DualAccelerationStep
     {
         return getFollowerAccelerationStep().getValidUntil();
     }
-    
+
     /** {@inheritDoc} */
     public final String toString()
     {
