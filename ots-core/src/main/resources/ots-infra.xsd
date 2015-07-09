@@ -120,6 +120,12 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:simpleType name="GTUCOLORERTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="ID|VELOCITY|ACCELERATION|LANECHANGEURGE|SWITCHABLE"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:simpleType name="CONTDISTTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -346,7 +352,7 @@
 
         <xsd:element ref="ROADTYPE" minOccurs="0" maxOccurs="1" />
 
-        <!-- TODO EITHER GTU or GTUGROUP should be present... -->
+        <!-- TODO EITHER GTU or GTUMIX should be present... -->
         <!-- TODO Maximum one of ROUTE, ROUTEMIX, SHORTESTROUTE, SHORTESTROUTEMIX should be present... -->
         <xsd:element name="GENERATOR" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>
@@ -360,6 +366,21 @@
             <xsd:attribute name="STARTTIME" type="TIMETYPE" use="optional"></xsd:attribute>
             <xsd:attribute name="ENDTIME" type="TIMETYPE" use="optional"></xsd:attribute>
             <xsd:attribute name="ROUTE" type="xsd:IDREF" use="required"></xsd:attribute>
+            <xsd:attribute name="GTUCOLORER" type="GTUCOLORERTYPE" use="required"></xsd:attribute>
+          </xsd:complexType>
+        </xsd:element>
+
+        <!-- TODO EITHER GTU or GTUMIX should be present... -->
+        <!-- TODO Maximum one of ROUTE, ROUTEMIX, SHORTESTROUTE, SHORTESTROUTEMIX should be present... -->
+        <xsd:element name="LISTGENERATOR" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="URI" type="xsd:anyURI" use="required"></xsd:attribute>
+            <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
+            <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="optional"></xsd:attribute>
+            <xsd:attribute name="GTU" type="xsd:IDREF" use="optional"></xsd:attribute>
+            <xsd:attribute name="GTUMIX" type="xsd:IDREF" use="optional"></xsd:attribute>
+            <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required"></xsd:attribute>
+            <xsd:attribute name="GTUCOLORER" type="GTUCOLORERTYPE" use="required"></xsd:attribute>
           </xsd:complexType>
         </xsd:element>
 

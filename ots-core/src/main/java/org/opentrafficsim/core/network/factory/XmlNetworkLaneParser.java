@@ -5,6 +5,7 @@ import java.awt.geom.Point2D;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayDeque;
@@ -594,6 +595,10 @@ public class XmlNetworkLaneParser
                                         parseGeneratorTag(attributes);
                                         break;
 
+                                    case "LISTGENERATOR":
+                                        parseListGeneratorTag(attributes);
+                                        break;
+
                                     case "BLOCK":
                                         parseBlockTag(attributes);
                                         break;
@@ -807,6 +812,8 @@ public class XmlNetworkLaneParser
                                 case "LANEOVERRIDE":
                                     break;
                                 case "GENERATOR":
+                                    break;
+                                case "LISTGENERATOR":
                                     break;
                                 case "BLOCK":
                                     break;
@@ -1464,7 +1471,86 @@ public class XmlNetworkLaneParser
                 throw new SAXException("GENERATOR: multiple ROUTE tags defined for Lane with NAME " + laneName + " of link "
                     + this.linkTag.name);
 
+            // TODO GTUColorer
+            
             this.linkTag.generatorTags.put(laneName, generatorTag);
+        }
+
+        /**
+         * Parse the LISTGENERATOR tag with GTU generation attributes for a Lane. Note: Only one generator can be defined for
+         * the same lane.
+         * @param attributes the attributes of the XML-tag.
+         * @throws NetworkException in case of OTS logic error.
+         * @throws SAXException in case of parse error.
+         */
+        @SuppressWarnings("checkstyle:needbraces")
+        private void parseListGeneratorTag(final Attributes attributes) throws NetworkException, SAXException
+        {
+            ListGeneratorTag listGeneratorTag = new ListGeneratorTag();
+
+            String uriStr = attributes.getValue("URI");
+            try
+            {
+                listGeneratorTag.uri = new URI(uriStr);
+            }
+            catch (URISyntaxException exception)
+            {
+                throw new NetworkException("LISTGENERATOR: URI " + uriStr + " is not valid", exception);
+            }
+
+            String laneName = attributes.getValue("LANE");
+            if (laneName == null)
+                throw new SAXException("LISTGENERATOR: missing attribute LANE" + " for link " + this.linkTag.name);
+            if (this.linkTag.roadTypeTag == null)
+                throw new NetworkException("LISTGENERATOR: LANE " + laneName.trim() + " no ROADTYPE for link "
+                    + this.linkTag.name);
+            CrossSectionElementTag cseTag = this.linkTag.roadTypeTag.cseTags.get(laneName.trim());
+            if (cseTag == null)
+                throw new NetworkException("LISTGENERATOR: LANE " + laneName.trim() + " not found in elements of link "
+                    + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
+            if (cseTag.elementType != ElementType.LANE)
+                throw new NetworkException("LISTGENERATOR: LANE " + laneName.trim() + " not a real GTU lane for link "
+                    + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
+            if (this.linkTag.generatorTags.containsKey(laneName))
+                throw new SAXException("LISTGENERATOR for LANE with NAME " + laneName + " defined twice");
+
+            String posStr = attributes.getValue("POSITION");
+            listGeneratorTag.position = parseBeginEndPosition(posStr == null ? "END" : posStr, this.linkTag);
+
+            String gtuName = attributes.getValue("GTU");
+            if (gtuName != null)
+            {
+                if (!XmlNetworkLaneParser.this.gtuTags.containsKey(gtuName.trim()))
+                    throw new NetworkException("LISTGENERATOR: LANE " + laneName + " GTU " + gtuName.trim() + " in link "
+                        + this.linkTag.name + " not defined");
+                listGeneratorTag.gtuTag = XmlNetworkLaneParser.this.gtuTags.get(gtuName.trim());
+            }
+
+            String gtuMixName = attributes.getValue("GTUMIX");
+            if (gtuMixName != null)
+            {
+                if (!XmlNetworkLaneParser.this.gtuMixTags.containsKey(gtuMixName.trim()))
+                    throw new NetworkException("LISTGENERATOR: LANE " + laneName + " GTUMIX " + gtuMixName.trim()
+                        + " in link " + this.linkTag.name + " not defined");
+                listGeneratorTag.gtuMixTag = XmlNetworkLaneParser.this.gtuMixTags.get(gtuMixName.trim());
+            }
+
+            if (listGeneratorTag.gtuTag == null && listGeneratorTag.gtuMixTag == null)
+                throw new SAXException("LISTGENERATOR: missing attribute GTU or GTUMIX for Lane with NAME " + laneName
+                    + " of link " + this.linkTag.name);
+
+            if (listGeneratorTag.gtuTag != null && listGeneratorTag.gtuMixTag != null)
+                throw new SAXException("LISTGENERATOR: both attribute GTU and GTUMIX defined for Lane with NAME " + laneName
+                    + " of link " + this.linkTag.name);
+
+            String initialSpeed = attributes.getValue("INITIALSPEED");
+            if (initialSpeed == null)
+                throw new SAXException("LISTGENERATOR: missing attribute INITIALSPEED");
+            listGeneratorTag.initialSpeedDist = parseSpeedDistAbs(initialSpeed);
+
+            // TODO GTUColorer
+            
+            // TODO this.linkTag.listGeneratorTags.put(laneName, listGeneratorTag);
         }
 
         /**
@@ -3610,6 +3696,32 @@ public class XmlNetworkLaneParser
 
         /** Shortest route mix tag. */
         protected ShortestRouteMixTag shortestRouteMixTag = null;
+
+        /** GTU colorer. */
+        protected String gtuColorer;
+    }
+
+    /** ListGenerator element. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected class ListGeneratorTag
+    {
+        /** URI of the list. */
+        protected URI uri = null;
+
+        /** position of the generator on the link, relative to the design line. */
+        DoubleScalar.Rel<LengthUnit> position = null;
+
+        /** GTU tag. */
+        protected GTUTag gtuTag = null;
+
+        /** GTU mix tag. */
+        protected GTUMixTag gtuMixTag = null;
+
+        /** initial speed. */
+        protected DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist = null;
+
+        /** GTU colorer. */
+        protected String gtuColorer;
     }
 
     /** Fill element. */
