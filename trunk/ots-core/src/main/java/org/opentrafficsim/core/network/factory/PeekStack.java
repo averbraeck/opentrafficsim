@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 4 jun. 2015 <br>
+ * $, initial version 24 jun. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <T> type of the objects stored on this PeekStack
  */
