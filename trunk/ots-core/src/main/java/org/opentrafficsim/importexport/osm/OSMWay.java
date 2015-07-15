@@ -11,7 +11,7 @@ import java.util.List;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version31 dec. 2014 <br>
+ * $, initial version 1 dec. 2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
 public class OSMWay

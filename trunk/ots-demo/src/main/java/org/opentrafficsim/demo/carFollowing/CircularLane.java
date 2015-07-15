@@ -75,7 +75,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version21 nov. 2014 <br>
+ * $, initial version 1 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class CircularLane extends AbstractWrappableSimulation implements WrappableSimulation
@@ -292,7 +292,7 @@ public class CircularLane extends AbstractWrappableSimulation implements Wrappab
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version21 nov. 2014 <br>
+ * $, initial version 1 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 class LaneSimulationModel implements OTSModelInterface

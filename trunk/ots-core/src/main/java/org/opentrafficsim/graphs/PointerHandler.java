@@ -17,7 +17,7 @@ import org.jfree.chart.plot.XYPlot;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial versionAug 13, 2014 <br>
+ * $, initial version ug 13, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 abstract class PointerHandler implements MouseListener, MouseMotionListener

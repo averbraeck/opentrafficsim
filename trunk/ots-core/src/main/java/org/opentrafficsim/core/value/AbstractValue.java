@@ -14,7 +14,7 @@ import org.opentrafficsim.core.unit.Unit;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version26 jun, 2015 <br>
+ * $, initial version 6 jun, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> the Unit of the value(s) in this AbstractValue. Used for setting, getting and displaying the value(s)

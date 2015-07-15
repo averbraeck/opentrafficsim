@@ -23,7 +23,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version12 nov. 2014 <br>
+ * $, initial version 2 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulation

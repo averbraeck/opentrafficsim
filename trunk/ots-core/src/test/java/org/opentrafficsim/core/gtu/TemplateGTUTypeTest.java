@@ -34,7 +34,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version15 jan. 2015 <br>
+ * $, initial version 5 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class TemplateGTUTypeTest
@@ -167,7 +167,7 @@ public class TemplateGTUTypeTest
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version14 jan. 2015 <br>
+ * $, initial version 4 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 class DummyModelForTemplateGTUTest implements OTSModelInterface

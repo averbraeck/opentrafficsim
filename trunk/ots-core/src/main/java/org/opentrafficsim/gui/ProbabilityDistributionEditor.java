@@ -23,7 +23,7 @@ import com.bric.multislider.MultiThumbSliderUI.Thumb;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version22 dec. 2014 <br>
+ * $, initial version 2 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class ProbabilityDistributionEditor extends JPanel

@@ -11,7 +11,7 @@ import java.util.Iterator;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version18 dec. 2014 <br>
+ * $, initial version 8 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <T> type of the property
  */
@@ -104,7 +104,7 @@ public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author:
-     * pknoppers $, initial version6 jan. 2015 <br>
+     * pknoppers $, initial version jan. 2015 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
     class PropertyIterator implements Iterator<AbstractProperty<T>>
