@@ -23,7 +23,8 @@ import org.opentrafficsim.demo.ntm.ShapeFileReader;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version22 Feb 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version22 Feb 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -35,7 +36,7 @@ public class ProjectConfigurations
 
     /**
      * @param startMap
-     * @param model 
+     * @param model
      * @throws IOException
      * @throws ParseException
      */
@@ -70,7 +71,7 @@ public class ProjectConfigurations
                 }
                 else
                 {
-               model.getInputNTM().WRITEDATA = false;
+                    model.getInputNTM().WRITEDATA = false;
                 }
             }
             else if (name.equals("COMPRESS_AREAS"))
@@ -199,17 +200,16 @@ public class ProjectConfigurations
                 String value = config[1].trim();
                 model.getInputNTM().setFileDemand(value);
             }
-/*            else if (name.equals("fileCompressedDemand"))
-            {
-                String value = config[1].trim();
-                model.getInputNTM().setFileCompressedDemand(value);
-            }*/
+            /*
+             * else if (name.equals("fileCompressedDemand")) { String value = config[1].trim();
+             * model.getInputNTM().setFileCompressedDemand(value); }
+             */
 
             else if (name.equals("fileProfiles"))
             {
                 String value = config[1].trim();
                 model.getInputNTM().setFileProfiles(value);
-                
+
             }
             else if (name.equals("fileNameCapacityRestraint"))
             {
@@ -310,7 +310,6 @@ public class ProjectConfigurations
                 String value = config[1].trim();
                 model.getInputNTM().setVariantNumber(value);
             }
-            
 
         }
 

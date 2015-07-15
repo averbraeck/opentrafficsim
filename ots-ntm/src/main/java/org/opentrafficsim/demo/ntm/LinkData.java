@@ -2,10 +2,12 @@ package org.opentrafficsim.demo.ntm;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version15 Oct 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version15 Oct 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -14,17 +16,17 @@ package org.opentrafficsim.demo.ntm;
  */
 public class LinkData
 {
-    
+
     private String name;
-    
+
     private String linkTag;
+
     private String wegtype;
+
     private String typeWegVak;
+
     private String typeWeg;
-    
-    
-    
-    
+
     /**
      * @param name
      * @param linkTag
@@ -41,6 +43,7 @@ public class LinkData
         this.typeWegVak = typeWegVak;
         this.typeWeg = typeWeg;
     }
+
     /**
      * @return name.
      */
@@ -48,6 +51,7 @@ public class LinkData
     {
         return this.name;
     }
+
     /**
      * @param name set name.
      */
@@ -55,6 +59,7 @@ public class LinkData
     {
         this.name = name;
     }
+
     /**
      * @return linkTag.
      */
@@ -62,6 +67,7 @@ public class LinkData
     {
         return this.linkTag;
     }
+
     /**
      * @param linkTag set linkTag.
      */
@@ -69,6 +75,7 @@ public class LinkData
     {
         this.linkTag = linkTag;
     }
+
     /**
      * @return wegtype.
      */
@@ -76,6 +83,7 @@ public class LinkData
     {
         return this.wegtype;
     }
+
     /**
      * @param wegtype set wegtype.
      */
@@ -83,6 +91,7 @@ public class LinkData
     {
         this.wegtype = wegtype;
     }
+
     /**
      * @return typeWegVak.
      */
@@ -90,6 +99,7 @@ public class LinkData
     {
         return this.typeWegVak;
     }
+
     /**
      * @param typeWegVak set typeWegVak.
      */
@@ -97,6 +107,7 @@ public class LinkData
     {
         this.typeWegVak = typeWegVak;
     }
+
     /**
      * @return typeWeg.
      */
@@ -104,6 +115,7 @@ public class LinkData
     {
         return this.typeWeg;
     }
+
     /**
      * @param typeWeg set typeWeg.
      */
@@ -111,7 +123,5 @@ public class LinkData
     {
         this.typeWeg = typeWeg;
     }
-    
-    
-    
+
 }

@@ -1,4 +1,5 @@
 package org.opentrafficsim.demo.ntm;
+
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
@@ -17,7 +18,8 @@ import com.vividsolutions.jts.geom.Geometry;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version2 Mar 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version2 Mar 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -28,9 +30,9 @@ public class AreaFlowLink extends Area
 {
     /** */
     private LinkCellTransmission flowLink;
+
     /** */
     private int indexCell;
-
 
     /**
      * @param geometry
@@ -46,8 +48,8 @@ public class AreaFlowLink extends Area
      * @param averageSpeed
      * @param increaseDemandByFactor
      * @param parametersNTM
-     * @param flowLink 
-     * @param indexCell 
+     * @param flowLink
+     * @param indexCell
      */
     public AreaFlowLink(Geometry geometry, String centroidNr, String name, String gemeente, String gebied,
             String regio, double dhb, Coordinate centroid, TrafficBehaviourType trafficBehaviourType,
@@ -91,5 +93,5 @@ public class AreaFlowLink extends Area
     {
         this.indexCell = indexCell;
     }
-    
+
 }

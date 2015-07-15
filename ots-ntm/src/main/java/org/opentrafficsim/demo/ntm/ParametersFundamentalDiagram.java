@@ -14,7 +14,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version26 Sep 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version26 Sep 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -49,7 +50,6 @@ public class ParametersFundamentalDiagram
      * @param freeSpeed
      * @param capacity
      * @param numberOfLanes
-
      */
     public ParametersFundamentalDiagram(final DoubleScalar.Abs<SpeedUnit> freeSpeed,
             final DoubleScalar.Abs<FrequencyUnit> capacity, final int numberOfLanes)
@@ -57,7 +57,7 @@ public class ParametersFundamentalDiagram
         super();
         this.accCritical = new ArrayList<Double>();
         this.accCritical.add((capacity.getInUnit(FrequencyUnit.PER_HOUR) / freeSpeed.getInUnit(SpeedUnit.KM_PER_HOUR)));
-                 //* cellLength.getInUnit(LengthUnit.KILOMETER));
+        // * cellLength.getInUnit(LengthUnit.KILOMETER));
         this.accCritical.add(150.0 * numberOfLanes);
         // * cellLength.getInUnit(LengthUnit.KILOMETER));
         this.freeSpeed = freeSpeed;

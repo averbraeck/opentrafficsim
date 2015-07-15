@@ -8,7 +8,8 @@ import java.util.HashMap;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version27 Nov 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version27 Nov 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -48,11 +49,10 @@ public class TripInfoByDestination
     private double fluxToNeighbour;
 
     /**
-     * @param routeFractionToNeighbours 
-     * @param accumulatedCarsToNeighbour 
-     * @param demandToNeighbour 
+     * @param routeFractionToNeighbours
+     * @param accumulatedCarsToNeighbour
+     * @param demandToNeighbour
      * @param destination
-
      */
     public TripInfoByDestination(HashMap<BoundedNode, Double> routeFractionToNeighbours,
             HashMap<BoundedNode, Double> accumulatedCarsToNeighbour, HashMap<BoundedNode, Double> demandToNeighbour,
@@ -242,13 +242,13 @@ public class TripInfoByDestination
     }
 
     /**
-     * @param tripsInReservoir 
-\     */
+     * @param tripsInReservoir \
+     */
     public void addTripsInReservoir(double tripsInReservoir)
     {
         this.tripsInReservoir += tripsInReservoir;
     }
-    
+
     /**
      * @return arrivedTrips.
      */

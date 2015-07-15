@@ -24,13 +24,16 @@ import org.opentrafficsim.demo.ntm.FlowCell;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionSep 13, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionSep 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class AreaFlowLinkAnimation extends Renderable2D
 {
     private float width;
+
     private int x;
+
     private int y;
 
     private Color colorArea;
@@ -45,8 +48,8 @@ public class AreaFlowLinkAnimation extends Renderable2D
      * @throws NamingException
      * @throws RemoteException
      */
-    public AreaFlowLinkAnimation(AreaFlowLink source, OTSSimulatorInterface simulator, final float width) throws NamingException,
-            RemoteException
+    public AreaFlowLinkAnimation(AreaFlowLink source, OTSSimulatorInterface simulator, final float width)
+            throws NamingException, RemoteException
     {
         super(source, simulator);
         this.width = width;
@@ -54,19 +57,20 @@ public class AreaFlowLinkAnimation extends Renderable2D
         this.y = (int) source.getGeometry().getInteriorPoint().getCoordinate().y;
         FlowCell cell = source.getFlowLink().getCells().get(source.getIndexCell());
         // if (source.getAccumulatedCars() > 0)
-            if (cell.getCellBehaviourFlow().getCurrentSpeed() != null)
+        if (cell.getCellBehaviourFlow().getCurrentSpeed() != null)
+        {
+            if (cell.getCellBehaviourFlow().getCurrentSpeed().getInUnit(SpeedUnit.KM_PER_HOUR) > 0)
             {
-                if (cell.getCellBehaviourFlow().getCurrentSpeed().getInUnit(SpeedUnit.KM_PER_HOUR) > 0)
-                {
-                    this.colorArea = colorFor(normalize(0, 100, cell.getCellBehaviourFlow().getCurrentSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)));
-                    // this.colorArea = Color.RED;
-                }
+                this.colorArea =
+                        colorFor(normalize(0, 100,
+                                cell.getCellBehaviourFlow().getCurrentSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)));
+                // this.colorArea = Color.RED;
             }
-            else
-            {
-                this.colorArea = Color.GREEN;
-            }
-
+        }
+        else
+        {
+            this.colorArea = Color.GREEN;
+        }
 
         //
         // float[] hsv = new float[3];

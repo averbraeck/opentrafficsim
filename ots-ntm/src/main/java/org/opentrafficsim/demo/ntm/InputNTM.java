@@ -7,10 +7,12 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version23 Feb 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version23 Feb 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -34,7 +36,7 @@ public class InputNTM
 
     /** */
     private String inputMap = "";
-    
+
     /** */
     private String outputMap = "";
 
@@ -52,9 +54,11 @@ public class InputNTM
 
     /** */
     private boolean isOnlyCentroidsFileCentroid;
+
     /** */
-    
+
     private boolean returnCentroidsCentroid;
+
     /**
      * @return isOnlyCentroidsFileCentroid.
      */
@@ -120,17 +124,19 @@ public class InputNTM
     }
 
     /** */
-    
+
     private String fileNodes;
 
     /** */
     private boolean isOnlyCentroidsFileNode;
+
     /** */
-    
+
     private boolean returnCentroidsNode;
+
     /** */
-    
-        /** */
+
+    /** */
     private String fileLinks;
 
     /** */
@@ -141,10 +147,10 @@ public class InputNTM
 
     /** */
     private String fileAreas;
-    
+
     /** */
     private String fileAreasBig;
-    
+
     /** */
     private String fileDemand;
 
@@ -195,6 +201,7 @@ public class InputNTM
 
     /** */
     Double linkCapacityNumberOfHours;
+
     /**
      * @return linkCapacityNumberOfHours.
      */
@@ -731,7 +738,4 @@ public class InputNTM
         this.lengthUnitLink = lengthUnitLink;
     }
 
-    
-    
-    
 }

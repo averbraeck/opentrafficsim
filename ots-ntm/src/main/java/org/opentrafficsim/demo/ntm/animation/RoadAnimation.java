@@ -22,16 +22,17 @@ import org.opentrafficsim.demo.ntm.shapeobjects.ShapeObject;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionSep 13, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionSep 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class RoadAnimation extends Renderable2D
-{ 
+{
     /** */
     private float width;
+
     /** */
     private Color color;
-
 
     /**
      * @param source
@@ -39,13 +40,13 @@ public class RoadAnimation extends Renderable2D
      * @throws NamingException
      * @throws RemoteException
      */
-    public RoadAnimation(ShapeObject source, OTSSimulatorInterface simulator, final float width, Color color) throws NamingException, RemoteException
+    public RoadAnimation(ShapeObject source, OTSSimulatorInterface simulator, final float width, Color color)
+            throws NamingException, RemoteException
     {
         super(source, simulator);
         this.width = width;
         this.color = color;
     }
-
 
     /** {@inheritDoc} */
     @Override
@@ -53,20 +54,12 @@ public class RoadAnimation extends Renderable2D
     {
     }
 
-/*    *//** {@inheritDoc} *//*
-    @Override
-    public void paint(Graphics2D graphics, ImageObserver observer) throws RemoteException
-    {
-        graphics.setColor(Color.RED);
-        for (Path2D line : ((ShapeObject) getSource()).getLines())
-        {
-            Stroke oldStroke = graphics.getStroke();
-            graphics.setStroke(new BasicStroke(this.width));
-            graphics.setColor(this.color);
-            graphics.draw(line);
-            graphics.setStroke(oldStroke);
-
-        }
-    }*/
+    /*    *//** {@inheritDoc} */
+    /*
+     * @Override public void paint(Graphics2D graphics, ImageObserver observer) throws RemoteException {
+     * graphics.setColor(Color.RED); for (Path2D line : ((ShapeObject) getSource()).getLines()) { Stroke oldStroke =
+     * graphics.getStroke(); graphics.setStroke(new BasicStroke(this.width)); graphics.setColor(this.color);
+     * graphics.draw(line); graphics.setStroke(oldStroke); } }
+     */
 
 }

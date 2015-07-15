@@ -64,7 +64,7 @@ public class TimeSeriesChart
                 false // URLs?
                 );
         Font font = new Font("Dialog", Font.PLAIN, 20);
-        
+
         chart.getCategoryPlot().getDomainAxis().setLabelFont(font);
         chart.getCategoryPlot().getRangeAxis().setLabelFont(font);
         font = new Font("Dialog", Font.PLAIN, 6);

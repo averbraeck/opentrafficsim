@@ -46,7 +46,8 @@ import com.vividsolutions.jts.geom.Point;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version4 Sep 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version4 Sep 2014 <br>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
 
@@ -236,8 +237,8 @@ public class CsvFileReader
                                 connectors.remove(cordonConnector);
                                 cordonConnector =
                                         new Link(cordonConnector.getGeometry(), cordonConnector.getId(),
-                                                cordonConnector.getLength(), (Node) cordonConnector.getStartNode(), node,
-                                                cordonConnector.getFreeSpeed(), cordonConnector.getTime(),
+                                                cordonConnector.getLength(), (Node) cordonConnector.getStartNode(),
+                                                node, cordonConnector.getFreeSpeed(), cordonConnector.getTime(),
                                                 cordonConnector.getCapacity(), cordonConnector.getBehaviourType(),
                                                 cordonConnector.getLinkData());
                                 connectors.put(name, cordonConnector);
@@ -289,9 +290,10 @@ public class CsvFileReader
                         {
                             // after determining the new cordon centroid, a new area is created around this feeding
                             // link. This becomes a feeder type of area
-//                            Geometry buffer = cordonConnector.getStartNode().getPoint().buffer(40);
+                            // Geometry buffer = cordonConnector.getStartNode().getPoint().buffer(40);
                             GeometryFactory factory = new GeometryFactory();
-                            Geometry point = factory.createPoint(new Coordinate(cordonPoint.getX(), cordonPoint.getY()));
+                            Geometry point =
+                                    factory.createPoint(new Coordinate(cordonPoint.getX(), cordonPoint.getY()));
                             Geometry buffer = point.buffer(40);
                             Coordinate centroid = cordonPoint.getPoint();
                             String nr = cordonPoint.getId();
@@ -304,15 +306,16 @@ public class CsvFileReader
                             double accCritMaxCapStart = 25;
                             double accCritMaxCapEnd = 50;
                             double accCritJam = 100;
-                            ArrayList<java.lang.Double> accCritical = new ArrayList<java.lang.Double>(); 
+                            ArrayList<java.lang.Double> accCritical = new ArrayList<java.lang.Double>();
                             accCritical.add(accCritMaxCapStart);
                             accCritical.add(accCritMaxCapEnd);
                             accCritical.add(accCritJam);
-                            ParametersNTM parametersNTM = new ParametersNTM(accCritical) ;
+                            ParametersNTM parametersNTM = new ParametersNTM(accCritical);
                             Area area =
                                     new Area(buffer, nr, newName, gemeente, gebied, regio, dhb, centroid,
                                             TrafficBehaviourType.CORDON, new Rel<LengthUnit>(0, LengthUnit.METER),
-                                            new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), increaseDemandByFactor, parametersNTM);
+                                            new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), increaseDemandByFactor,
+                                            parametersNTM);
                             areas.put(nr, area);
                         }
 
@@ -376,8 +379,7 @@ public class CsvFileReader
                             }
                             else
                             {
-                                Node destination =
-                                        centroidsAndCordonConnectors.get(orderedZones.get(indexColumn));
+                                Node destination = centroidsAndCordonConnectors.get(orderedZones.get(indexColumn));
                                 /*
                                  * if (destination.equals("2430")) { System.out.println("Strange: 2430"); }
                                  */
@@ -617,7 +619,7 @@ public class CsvFileReader
                             parametersNTM.put(centroidName, parameters);
                         }
                     }
-    
+
                 }
                 // test if the fractions are read correctly
             }
@@ -647,8 +649,6 @@ public class CsvFileReader
         return parametersNTM;
     }
 
-    
-    
     public static HashMap<String, HashMap<String, Abs<FrequencyUnit>>> readCapResNTM(final String csvFileName,
             final String csvSplitBy, final String csvSplitInternalBy) throws IOException, ParseException
     {
@@ -663,7 +663,8 @@ public class CsvFileReader
         {
             url = ShapeFileReader.class.getResource(csvFileName);
         }
-        HashMap<String, HashMap<String, Abs<FrequencyUnit>>> capResMap = new HashMap<String, HashMap<String, Abs<FrequencyUnit>>>();
+        HashMap<String, HashMap<String, Abs<FrequencyUnit>>> capResMap =
+                new HashMap<String, HashMap<String, Abs<FrequencyUnit>>>();
         // double OD = capResMap.get("O").get("D");
         if (url != null)
         {
@@ -698,7 +699,9 @@ public class CsvFileReader
                                 centroidName = dataItem[0];
                                 for (int i = 1; i < dataItem.length; i++)
                                 {
-                                    Abs<FrequencyUnit> capacity = new Abs<FrequencyUnit>(Double.parseDouble(dataItem[i]), FrequencyUnit.PER_HOUR);
+                                    Abs<FrequencyUnit> capacity =
+                                            new Abs<FrequencyUnit>(Double.parseDouble(dataItem[i]),
+                                                    FrequencyUnit.PER_HOUR);
                                     capRes.put(name.get(i), capacity);
                                 }
                             }
@@ -706,7 +709,7 @@ public class CsvFileReader
                     }
                     if (header)
                     {
-                        header = false;                    
+                        header = false;
                     }
                     else
                     {
@@ -740,7 +743,6 @@ public class CsvFileReader
         }
         return capResMap;
     }
-
 
     public static HashMap<String, HashMap<String, Double>> readCapResFactorNTM(final String csvFileName,
             final String csvSplitBy, final String csvSplitInternalBy) throws IOException, ParseException
@@ -799,7 +801,7 @@ public class CsvFileReader
                     }
                     if (header)
                     {
-                        header = false;                    
+                        header = false;
                     }
                     else
                     {

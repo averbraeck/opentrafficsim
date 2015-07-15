@@ -18,10 +18,12 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version13 Nov 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version13 Nov 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -32,9 +34,10 @@ public class ShapeObject implements LocatableInterface
 {
     /** */
     private Geometry geometry;
+
     /** */
     private ArrayList<String> values;
-    
+
     /** the lines for the animation, relative to the centroid. */
     private Set<Path2D> lines = null;
 
@@ -48,45 +51,21 @@ public class ShapeObject implements LocatableInterface
         this.geometry = geometry;
         this.values = values;
     }
-       
-/*    *//**
+
+    /*    *//**
      * @return polygon
      * @throws RemoteException
-     *//*
-    public Set<Path2D> getLines() throws RemoteException
-    {
-        // create the polygon if it did not exist before
-        if (this.lines == null)
-        {
-            double dx = this.getLocation().getX();
-            double dy = this.getLocation().getY();
-            // double dx = 0;
-            // double dy = 0;
-            this.lines = new HashSet<Path2D>();
-            for (int i = 0; i < this.getGeometry().getLineString().getNumGeometries(); i++)
-            {
-                Path2D line = new Path2D.Double();
-                Geometry g = this.getGeometry().getLineString().getGeometryN(i);
-                boolean start = true;
-                for (Coordinate c : g.getCoordinates())
-                {
-                    if (start)
-                    {
-                        line.moveTo(c.x - dx, dy - c.y);
-                        start = false;
-                    }
-                    else
-                    {
-                        line.lineTo(c.x - dx, dy - c.y);
-                    }
-                }
-                this.lines.add(line);
-            }
-        }
-        return this.lines;
-    }
-*/
-    
+     */
+    /*
+     * public Set<Path2D> getLines() throws RemoteException { // create the polygon if it did not exist before if
+     * (this.lines == null) { double dx = this.getLocation().getX(); double dy = this.getLocation().getY(); // double dx
+     * = 0; // double dy = 0; this.lines = new HashSet<Path2D>(); for (int i = 0; i <
+     * this.getGeometry().getLineString().getNumGeometries(); i++) { Path2D line = new Path2D.Double(); Geometry g =
+     * this.getGeometry().getLineString().getGeometryN(i); boolean start = true; for (Coordinate c : g.getCoordinates())
+     * { if (start) { line.moveTo(c.x - dx, dy - c.y); start = false; } else { line.lineTo(c.x - dx, dy - c.y); } }
+     * this.lines.add(line); } } return this.lines; }
+     */
+
     /**
      * @return theGeom.
      */
@@ -94,6 +73,7 @@ public class ShapeObject implements LocatableInterface
     {
         return this.geometry;
     }
+
     /**
      * @param theGeom set theGeom.
      */
@@ -101,6 +81,7 @@ public class ShapeObject implements LocatableInterface
     {
         this.geometry = geometry;
     }
+
     /**
      * @return table.
      */
@@ -108,6 +89,7 @@ public class ShapeObject implements LocatableInterface
     {
         return this.values;
     }
+
     /**
      * @param table set table.
      */
@@ -129,6 +111,5 @@ public class ShapeObject implements LocatableInterface
     {
         return null;
     }
-    
-    
+
 }
