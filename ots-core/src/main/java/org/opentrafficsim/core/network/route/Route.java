@@ -28,7 +28,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * The Node type in the list has generic parameters. This requires callers of getNode(), visitNextNode(), etc. to cast
  * the result as needed. and permits inclusion mixed types of Nodes in one Route.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>

@@ -10,7 +10,7 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 /**
  * The volume flow rate is the volume of fluid which passes through a given surface per unit of time (wikipedia).
  * <p>
- * Copyright (c) 2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers

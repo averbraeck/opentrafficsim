@@ -46,7 +46,7 @@ import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
  * Common code for a contour plot. <br>
  * The data collection code for acceleration assumes constant acceleration during the evaluation period of the GTU.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>

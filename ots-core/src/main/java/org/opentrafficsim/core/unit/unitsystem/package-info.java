@@ -1,7 +1,7 @@
 /**
  * Classes for the unit system, such as SI, SI-derived, Imperial.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, 
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, 
  * Delft, the Netherlands. All rights reserved.
  * <p>
  * See for project information <a href="http://www.opentrafficsim.org/">
