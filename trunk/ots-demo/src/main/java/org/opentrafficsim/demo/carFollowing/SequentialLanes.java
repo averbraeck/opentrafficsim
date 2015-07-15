@@ -76,7 +76,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * Single lane road consisting of three consecutive links.<br>
  * Tests that GTUs correctly transfer themselves onto the next lane and that the graph samplers handle this situation.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
@@ -315,7 +315,7 @@ public class SequentialLanes extends AbstractWrappableSimulation implements Wrap
 /**
  * Build the sequential model.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
