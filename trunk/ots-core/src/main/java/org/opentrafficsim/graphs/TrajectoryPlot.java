@@ -42,7 +42,7 @@ import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 /**
  * Trajectory plot.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
@@ -379,7 +379,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     /**
      * Store trajectory data.
      * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
      * reserved.
      * <p>
      * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.

@@ -15,7 +15,7 @@ import org.reflections.Reflections;
  * meter is stored with conversion factor 1.0, whereas kilometer is stored with a conversion factor 1000.0. This means
  * that if we want to display a meter as kilometers, we have to <i>divide</i> by the conversion factor.
  * <p>
- * Copyright (c) 2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers

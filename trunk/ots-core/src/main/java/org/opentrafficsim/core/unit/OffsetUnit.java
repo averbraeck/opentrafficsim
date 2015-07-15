@@ -9,7 +9,7 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
  * conversion factor 1.0. This means that if we have a Temperature, it is stored in Kelvins, and if we want to display
  * it in degree Celsius, we have to <i>divide</i> by the conversion factor and <i>subtract</i> the offset.
  * <p>
- * Copyright (c) 2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers

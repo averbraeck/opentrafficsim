@@ -9,7 +9,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * This is a sensor that is placed at the end of a Lane to unregister a GTU from the lane, and unregister the lane from
  * the GTU when the back of the vehicle passes over the sensor.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>

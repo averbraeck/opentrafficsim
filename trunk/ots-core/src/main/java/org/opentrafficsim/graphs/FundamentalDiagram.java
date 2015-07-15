@@ -46,7 +46,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * The Fundamental Diagram Graph; see <a href="http://en.wikipedia.org/wiki/Fundamental_diagram_of_traffic_flow">
  * Wikipedia: http://en.wikipedia.org/wiki/Fundamental_diagram_of_traffic_flow</a>.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
@@ -449,7 +449,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     /**
      * Storage for one sample of data collected by a point-detector that accumulates harmonic mean speed and flow.
      * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
      * reserved.
      * <p>
      * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
@@ -586,7 +586,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     /**
      * Internal Sensor class.
      * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
      * reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>

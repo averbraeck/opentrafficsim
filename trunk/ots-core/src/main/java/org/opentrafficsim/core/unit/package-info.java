@@ -3,7 +3,7 @@
  * <p> The unit system ensures that quantities (lengths, temperatures, etc.) 
  * have a suitable unit and cannot be confused with quantities in other units.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, 
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, 
  * Delft, the Netherlands. All rights reserved.
  * <p>
  * See for project information <a href="http://www.opentrafficsim.org/">

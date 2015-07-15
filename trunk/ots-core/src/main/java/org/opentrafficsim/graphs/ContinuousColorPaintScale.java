@@ -11,7 +11,7 @@ import org.jfree.chart.renderer.PaintScale;
  * A continuous color paint scale creates paints (actually simple Colors) by linearly interpolating between a limited
  * set of RGB Color values that correspond to given input values.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
