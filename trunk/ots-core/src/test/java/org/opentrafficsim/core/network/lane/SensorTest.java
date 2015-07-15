@@ -39,10 +39,12 @@ import com.vividsolutions.jts.geom.Coordinate;
 /**
  * Test SensorLaneEnd and SensorLaneStart.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version16 jan. 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version16 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class SensorTest
@@ -65,28 +67,29 @@ public class SensorTest
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForSensorTest();
         final SimpleSimulator simulator =
-            new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
-                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
+                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
+                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
+                                TimeUnit.SECOND), model);
         Lane[] lanes =
-            LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(100,
-                SpeedUnit.KM_PER_HOUR), simulator);
+                LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(
+                        100, SpeedUnit.KM_PER_HOUR), simulator);
         // Check that there is a SensorLaneStart and a SensorLaneEnd on each Lane
         for (Lane l : lanes)
         {
             int sensorsFound = 0;
             for (Sensor sensor : l.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER)))
+                    new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER)))
             {
                 sensorsFound++;
                 if (sensor instanceof SensorLaneStart)
                 {
-                    assertEquals("SensorLaneStart should be at beginning of the Lane", 0, sensor.getLongitudinalPosition()
-                        .getSI(), 0.00001);
+                    assertEquals("SensorLaneStart should be at beginning of the Lane", 0, sensor
+                            .getLongitudinalPosition().getSI(), 0.00001);
                 }
                 else if (sensor instanceof SensorLaneEnd)
                 {
                     assertEquals("SensorLaneEnd should be (almost) at end of the Lane", l.getLength().getSI(), sensor
-                        .getLongitudinalPosition().getSI(), 2 * Math.ulp(l.getLength().getSI()));
+                            .getLongitudinalPosition().getSI(), 2 * Math.ulp(l.getLength().getSI()));
                 }
                 else
                 {
@@ -97,7 +100,7 @@ public class SensorTest
             assertEquals("There should be two sensor on each Lane", 2, sensorsFound);
         }
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
-            new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+                new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         DoubleScalar.Rel<LengthUnit> positionA = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);
         initialLongitudinalPositions.put(lanes[1], positionA);
         // A Car needs an initial speed
@@ -112,13 +115,13 @@ public class SensorTest
         String carID = "theCar";
         // Create an acceleration profile for the car
         FixedAccelerationModel fas =
-            new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0.5, AccelerationUnit.METER_PER_SECOND_2),
-                new DoubleScalar.Rel<TimeUnit>(100, TimeUnit.SECOND));
+                new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0.5,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(100, TimeUnit.SECOND));
         // Create a lane change model for the car
         LaneChangeModel laneChangeModel = new Egoistic();
         // Now we can make a car (GTU) (and we don't even have to hold a pointer to it)
-        new LaneBasedIndividualCar<String>(carID, gtuType, fas, laneChangeModel, initialLongitudinalPositions, initialSpeed,
-            carLength, carWidth, maximumVelocity, new Route(new ArrayList<Node<?, ?>>()), simulator);
+        new LaneBasedIndividualCar<String>(carID, gtuType, fas, laneChangeModel, initialLongitudinalPositions,
+                initialSpeed, carLength, carWidth, maximumVelocity, new Route(new ArrayList<Node<?, ?>>()), simulator);
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(1, TimeUnit.SECOND));
         while (simulator.isRunning())
         {
@@ -148,7 +151,7 @@ public class SensorTest
         // The sensor should be triggered around t=38.3403 (exact value: 10 / 9 * (sqrt(3541) - 25))
         // System.out.println("trigger event is " + triggerEvent);
         assertEquals("Trigger event should be around 38.3403", 38.3403, triggerEvent.getAbsoluteExecutionTime().get()
-            .getSI(), 0.0001);
+                .getSI(), 0.0001);
         // TODO setup a test that verifies trigger of a SensorLaneStart; this is not (yet) possible
     }
 }
@@ -156,10 +159,12 @@ public class SensorTest
 /**
  * Dummy OTSModelInterface.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version14 jan. 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version14 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 class DummyModelForSensorTest implements OTSModelInterface
@@ -176,7 +181,7 @@ class DummyModelForSensorTest implements OTSModelInterface
      *            OTSSimTimeDouble&gt;; the simulator
      */
     public final void setSimulator(
-        SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+            SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
     {
         this.simulator = simulator;
     }
@@ -184,7 +189,7 @@ class DummyModelForSensorTest implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public final void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> arg0)
-        throws SimRuntimeException, RemoteException
+            throws SimRuntimeException, RemoteException
     {
         // Nothing happens here
     }
@@ -192,7 +197,7 @@ class DummyModelForSensorTest implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        throws RemoteException
+            throws RemoteException
     {
         if (null == this.simulator)
         {

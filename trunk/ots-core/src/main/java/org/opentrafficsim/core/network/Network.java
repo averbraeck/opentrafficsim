@@ -8,10 +8,12 @@ import java.util.Set;
 /**
  * A Network consists of a set of links. Each link has, in its turn, a start node and an end node.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionAug 19, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionAug 19, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
@@ -119,6 +121,6 @@ public class Network<ID, N extends Node<?, ?>, L extends Link<?, N>> extends Has
         }
         // FIXME: It is inconsistent to indicate success by returning true and failure by throwing an exception.
         throw new NetworkException("Deleting" + deleteThis.getId().toString() + " failed. Possible cause:"
-            + " node is not a member of the given Network");
+                + " node is not a member of the given Network");
     }
 }

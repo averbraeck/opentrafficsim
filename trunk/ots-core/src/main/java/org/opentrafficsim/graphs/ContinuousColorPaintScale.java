@@ -8,13 +8,15 @@ import org.jfree.chart.renderer.PaintScale;
 /**
  * Create a continuous color paint scale. <br>
  * Primarily intended for the contour plots, but sufficiently abstract for more general use. <br>
- * A continuous color paint scale creates paints (actually simple Colors) by linearly interpolating between a limited set of RGB
- * Color values that correspond to given input values.
+ * A continuous color paint scale creates paints (actually simple Colors) by linearly interpolating between a limited
+ * set of RGB Color values that correspond to given input values.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJul 30, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionJul 30, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class ContinuousColorPaintScale implements PaintScale
@@ -31,7 +33,8 @@ public class ContinuousColorPaintScale implements PaintScale
     /**
      * Create a new ContinuousColorPaintScale.
      * @param format Format string to render the value under the mouse in a human readable format
-     * @param bounds Double[] array of boundary values (all values must be distinct and the number of values must be >= 2)
+     * @param bounds Double[] array of boundary values (all values must be distinct and the number of values must be >=
+     *            2)
      * @param boundColors Color[] array of the colors to use at the boundary values (must have same size as bounds)
      */
     ContinuousColorPaintScale(final String format, final double[] bounds, final Color[] boundColors)
@@ -80,9 +83,9 @@ public class ContinuousColorPaintScale implements PaintScale
     }
 
     /**
-     * Create a mixed color component. When ratio varies from 0.0 to 1.0, the result varies from <i>low</i> to <i>high</i>. If
-     * ratio is outside the range 0.0 to 1.0, the result value can be outside the <i>range</i> <i>low</i> to <i>high</i>.
-     * However, the result is always limited to the range 0..255.
+     * Create a mixed color component. When ratio varies from 0.0 to 1.0, the result varies from <i>low</i> to
+     * <i>high</i>. If ratio is outside the range 0.0 to 1.0, the result value can be outside the <i>range</i>
+     * <i>low</i> to <i>high</i>. However, the result is always limited to the range 0..255.
      * @param ratio Double; value (normally) between 0.0 and 1.0.
      * @param low Integer; this value is returned when ratio equals 0.0
      * @param high Integer; this value is returned when ratio equals 1.0
@@ -121,9 +124,11 @@ public class ContinuousColorPaintScale implements PaintScale
         }
         final double ratio = (value - this.bounds[bucket]) / (this.bounds[bucket + 1] - this.bounds[bucket]);
         Color mix =
-            new Color(mixComponent(ratio, this.boundColors[bucket].getRed(), this.boundColors[bucket + 1].getRed()),
-                mixComponent(ratio, this.boundColors[bucket].getGreen(), this.boundColors[bucket + 1].getGreen()),
-                mixComponent(ratio, this.boundColors[bucket].getBlue(), this.boundColors[bucket + 1].getBlue()));
+                new Color(
+                        mixComponent(ratio, this.boundColors[bucket].getRed(), this.boundColors[bucket + 1].getRed()),
+                        mixComponent(ratio, this.boundColors[bucket].getGreen(),
+                                this.boundColors[bucket + 1].getGreen()), mixComponent(ratio,
+                                this.boundColors[bucket].getBlue(), this.boundColors[bucket + 1].getBlue()));
         return mix;
     }
 

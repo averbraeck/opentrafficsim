@@ -14,10 +14,12 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionAug 22, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionAug 22, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class TrajectoryPlotTest
@@ -172,21 +174,21 @@ public class TrajectoryPlotTest
      * @throws NetworkException when car is not on lane anymore
      * @throws RemoteException on communication failure
      */
-    private void verifyTrajectory(final LaneBasedIndividualCar<?> car, final int series, final TrajectoryPlot tp) throws NetworkException,
-        RemoteException
+    private void verifyTrajectory(final LaneBasedIndividualCar<?> car, final int series, final TrajectoryPlot tp)
+            throws NetworkException, RemoteException
     {
         // XXX we take the first (and only) lane on which the vehicle is registered.
         Lane lane = car.positions(car.getFront()).keySet().iterator().next();
         DoubleScalar.Abs<TimeUnit> initialTime = car.getLastEvaluationTime();
         DoubleScalar.Rel<TimeUnit> duration =
-            DoubleScalar.minus(car.getNextEvaluationTime(), car.getLastEvaluationTime()).immutable();
+                DoubleScalar.minus(car.getNextEvaluationTime(), car.getLastEvaluationTime()).immutable();
         int expectedNumberOfSamples = (int) (duration.getSI() / this.sampleInterval.getSI());
         assertEquals("Number of samples in trajectory should be ", expectedNumberOfSamples, tp.getItemCount(series));
         // Check that the stored trajectory accurately matches the trajectory of the car at all sampling times
         for (int sample = 0; sample < expectedNumberOfSamples; sample++)
         {
             DoubleScalar.Rel<TimeUnit> deltaTime =
-                new DoubleScalar.Rel<TimeUnit>(this.sampleInterval.getSI() * sample, TimeUnit.SECOND);
+                    new DoubleScalar.Rel<TimeUnit>(this.sampleInterval.getSI() * sample, TimeUnit.SECOND);
             DoubleScalar.Abs<TimeUnit> sampleTime = DoubleScalar.plus(initialTime, deltaTime).immutable();
             double sampledTime = tp.getXValue(series, sample);
             assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getSI(), sampledTime, 0.0001);
@@ -195,10 +197,10 @@ public class TrajectoryPlotTest
             DoubleScalar.Rel<LengthUnit> actualPosition = car.position(lane, car.getFront(), sampleTime);
             double sampledPosition = tp.getYValue(series, sample);
             assertEquals("Sample position should have been " + actualPosition, actualPosition.getSI(), sampledPosition,
-                0.0001);
+                    0.0001);
             sampledPosition = tp.getY(series, sample).doubleValue();
             assertEquals("Sample position should have been " + actualPosition, actualPosition.getSI(), sampledPosition,
-                0.0001);
+                    0.0001);
         }
     }
 

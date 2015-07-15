@@ -3,10 +3,12 @@ package org.opentrafficsim.simulationengine.properties;
 /**
  * Exception thrown when an operation is attempted that is not compatible with the indicated property.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version18 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version18 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class PropertyException extends Exception
@@ -58,7 +60,7 @@ public class PropertyException extends Exception
      * @param writableStackTrace boolean; whether or not the stack trace should be writable
      */
     public PropertyException(final String message, final Throwable cause, final boolean enableSuppression,
-        final boolean writableStackTrace)
+            final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);
     }

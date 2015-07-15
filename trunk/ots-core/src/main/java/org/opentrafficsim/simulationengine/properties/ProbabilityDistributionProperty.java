@@ -7,7 +7,8 @@ package org.opentrafficsim.simulationengine.properties;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version18 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version18 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
@@ -202,8 +203,8 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
         System.out.println("copying probabilitydistribution " + this.shortName + ", " + this.getValue(0));
         try
         {
-            return new ProbabilityDistributionProperty(this.shortName, this.description,
-                this.names, this.value, this.readOnly, getDisplayPriority());
+            return new ProbabilityDistributionProperty(this.shortName, this.description, this.names, this.value,
+                    this.readOnly, getDisplayPriority());
         }
         catch (PropertyException exception)
         {

@@ -8,7 +8,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version Oct 22, 2014 <br>
@@ -26,10 +27,10 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
 
     /** the type of GTU, e.g. TruckType, CarType, BusType. */
     private final GTUType<?> gtuType;
-    
+
     /** Route of the gtu to follow. */
     private Route route = null;
-    
+
     /** Total traveled distance. */
     protected DoubleScalar.Abs<LengthUnit> odometer = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.SI);
 
@@ -88,7 +89,7 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
     {
         return RelativePosition.REFERENCE_POSITION;
     }
-    
+
     /**
      * Retrieve the odometer value.
      * @return DoubleScalar.Abs&lt;LengthUnit&gt;; the current odometer value

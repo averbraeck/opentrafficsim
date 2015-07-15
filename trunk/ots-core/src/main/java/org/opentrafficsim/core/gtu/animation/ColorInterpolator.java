@@ -5,11 +5,12 @@ import java.awt.Color;
 /**
  * Interpolate between two color values.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version 27 mei 2015 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
+ *          $, initial version 27 mei 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public final class ColorInterpolator
@@ -19,7 +20,7 @@ public final class ColorInterpolator
     {
         // Cannot be instantiated
     }
-    
+
     /**
      * Generate a Color that is interpolated between two given Color values. Interpolation is simply done per channel
      * (R, G, B).

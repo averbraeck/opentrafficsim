@@ -10,7 +10,8 @@ import java.io.Serializable;
  * Copyright (c) 2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version26 jun, 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version26 jun, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <T> the type of the value that the functions operate on
@@ -124,7 +125,7 @@ public interface MathFunctions<T> extends Serializable
 
     /**
      * Set the value(s) to the signum function of the value(s); zero if the argument is zero, 1.0 if the argument is
-         * greater than zero, -1.0 if the argument is less than zero.
+     * greater than zero, -1.0 if the argument is less than zero.
      * @return T; the modified T
      */
     T signum();

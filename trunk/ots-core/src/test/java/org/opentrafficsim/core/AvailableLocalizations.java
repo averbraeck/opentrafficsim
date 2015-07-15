@@ -7,10 +7,12 @@ import java.util.List;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJun 11, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionJun 11, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public final class AvailableLocalizations
@@ -27,8 +29,8 @@ public final class AvailableLocalizations
      * Build a list of locale names that are available for a given prefix.
      * @param prefix String; the prefix of the localization file names
      * @param path String; the path to the resource directory to scan
-     * @return List&lt;String&gt;; the list of matching locale names (which <b>always</b> starts with "en", even though there
-     *         may not be such a localization file)
+     * @return List&lt;String&gt;; the list of matching locale names (which <b>always</b> starts with "en", even though
+     *         there may not be such a localization file)
      */
     public static List<String> availableLocalizations(final String prefix, final String path)
     {

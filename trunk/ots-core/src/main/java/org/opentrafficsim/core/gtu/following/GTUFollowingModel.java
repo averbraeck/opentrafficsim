@@ -16,11 +16,12 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
  * GTU following model interface. <br>
  * GTU following models following this interface compute an acceleration.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version Jul 2, 2014 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
+ *          $, initial version Jul 2, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public interface GTUFollowingModel
@@ -78,8 +79,9 @@ public interface GTUFollowingModel
      * @throws RemoteException in case of simulator reachability problems
      * @throws NetworkException on network inconsistency
      */
-    DualAccelerationStep computeAcceleration(final LaneBasedGTU<?> referenceGTU, final Collection<HeadwayGTU> otherGTUs,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException;
+    DualAccelerationStep computeAcceleration(final LaneBasedGTU<?> referenceGTU,
+            final Collection<HeadwayGTU> otherGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+            throws RemoteException, NetworkException;
 
     /**
      * Compute the acceleration that would be used if the is not leader in sight.

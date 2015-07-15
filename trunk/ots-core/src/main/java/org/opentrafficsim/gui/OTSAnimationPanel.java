@@ -17,10 +17,12 @@ import org.opentrafficsim.simulationengine.WrappableSimulation;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJun 18, 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionJun 18, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -51,7 +53,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel
      * @throws RemoteException when notification to the animation panel fails.
      */
     public OTSAnimationPanel(final Rectangle2D extent, final Dimension size, final SimpleAnimator simulator,
-        final WrappableSimulation wrappableSimulation, final GTUColorer gtuColorer) throws RemoteException
+            final WrappableSimulation wrappableSimulation, final GTUColorer gtuColorer) throws RemoteException
     {
         super(simulator, wrappableSimulation);
 
@@ -82,8 +84,8 @@ public class OTSAnimationPanel extends OTSSimulationPanel
 
     /**
      * Access the GTUColorer of this animation ControlPanel.
-     * @return GTUColorer the colorer used. If it is a SwitchableGTUColorer, the wrapper with the list will be returned, not the
-     *         actual colorer in use.
+     * @return GTUColorer the colorer used. If it is a SwitchableGTUColorer, the wrapper with the list will be returned,
+     *         not the actual colorer in use.
      */
     public final GTUColorer getGTUColorer()
     {
@@ -91,8 +93,8 @@ public class OTSAnimationPanel extends OTSSimulationPanel
     }
 
     /**
-     * Access the ColorControlPanel of this ControlPanel. If the simulator is not a SimpleAnimator, no ColorControlPanel was
-     * constructed and this method will return null.
+     * Access the ColorControlPanel of this ControlPanel. If the simulator is not a SimpleAnimator, no ColorControlPanel
+     * was constructed and this method will return null.
      * @return ColorControlPanel
      */
     public final ColorControlPanel getColorControlPanel()

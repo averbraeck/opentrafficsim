@@ -6,10 +6,12 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /**
  * "1D" implementation. Mapping on the design line (often the center line) of a road.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionOct 22, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionOct 22, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -23,7 +25,8 @@ public class LinkLocation
 
     /**
      * @param link The link of the location of a point relative to the GTU.
-     * @param fractionalLongitudinalPosition The fractional position (between 0.0 and 1.0) of the reference point on the link.
+     * @param fractionalLongitudinalPosition The fractional position (between 0.0 and 1.0) of the reference point on the
+     *            link.
      */
     public LinkLocation(final Link<?, ?> link, final double fractionalLongitudinalPosition)
     {
@@ -65,12 +68,12 @@ public class LinkLocation
     public final DoubleScalar.Rel<LengthUnit> getLongitudinalPosition()
     {
         return new DoubleScalar.Rel<LengthUnit>(this.link.getLength().getSI() * getFractionalLongitudinalPosition(),
-            LengthUnit.METER);
+                LengthUnit.METER);
     }
 
     /**
-     * Returns the distance to another LinkLocation. If the other location is in front of us, the distance is positive. If it is
-     * behind us, it is negative.
+     * Returns the distance to another LinkLocation. If the other location is in front of us, the distance is positive.
+     * If it is behind us, it is negative.
      * @param loc the link location to find the distance to.
      * @return the distance to another LinkLocation.
      */
@@ -89,6 +92,6 @@ public class LinkLocation
     public final String toString()
     {
         return String.format("%s %.3f%s", getLink(), getLongitudinalPosition().getInUnit(), getLongitudinalPosition()
-            .getUnit());
+                .getUnit());
     }
 }

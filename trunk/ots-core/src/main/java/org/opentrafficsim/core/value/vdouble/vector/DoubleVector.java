@@ -27,19 +27,19 @@ import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
  * Copyright (c) 2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version26 jun, 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version26 jun, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit; the unit of this DoubleVector
  */
-public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> implements
-        Serializable,
-    ReadOnlyDoubleVectorFunctions<U>
+public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> implements Serializable,
+        ReadOnlyDoubleVectorFunctions<U>
 {
     /**  */
     private static final long serialVersionUID = 20150626L;
 
-    /** 
+    /**
      * The internal storage for the vector; internally the values are stored in standard SI unit; storage can be dense
      * or sparse.
      */
@@ -49,7 +49,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * Construct a new Immutable DoubleVector.
      * @param unit U; the unit of the new DoubleVector
      */
-    protected  DoubleVector(final U unit)
+    protected DoubleVector(final U unit)
     {
         super(unit);
         // System.out.println("Created DoubleVector");
@@ -459,7 +459,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         for (int index = 0; index < values.length; index++)
         {
             safeSet(index, values[index].getSI());
-            }
+        }
     }
 
     /**
@@ -673,7 +673,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
     {
         if (size() != other.length)
         {
-        throw new ValueException("The vector and the array have different sizes: " + size() + " != " + other.length);
+            throw new ValueException("The vector and the array have different sizes: " + size() + " != " + other.length);
         }
     }
 
@@ -757,7 +757,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
         }
         if (obj == null)
         {
-        return false;
+            return false;
         }
         if (!(obj instanceof DoubleVector))
         {
@@ -882,7 +882,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             final DoubleVector.Abs<U> right) throws ValueException
     {
         return (MutableDoubleVector.Rel.Dense<U>) new MutableDoubleVector.Rel.Dense<U>(left.deepCopyOfData(),
-                    left.getUnit()).decrementBy(right);
+                left.getUnit()).decrementBy(right);
     }
 
     /**
@@ -897,7 +897,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             final DoubleVector.Abs.Sparse<U> right) throws ValueException
     {
         return (MutableDoubleVector.Rel.Sparse<U>) new MutableDoubleVector.Rel.Sparse<U>(left.deepCopyOfData(),
-                    left.getUnit()).decrementBy(right);
+                left.getUnit()).decrementBy(right);
     }
 
     /**
@@ -912,7 +912,7 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
             final DoubleVector.Abs.Dense<U> right) throws ValueException
     {
         return (MutableDoubleVector.Rel.Dense<U>) new MutableDoubleVector.Rel.Dense<U>(left.deepCopyOfData(),
-                    left.getUnit()).decrementBy(right);
+                left.getUnit()).decrementBy(right);
     }
 
     /**
@@ -1257,8 +1257,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @return MutableDoubleVector.Abs.Dense&lt;U&gt;
      * @throws ValueException when zero and one do not have the same size
      */
-    public static <U extends Unit<U>> MutableDoubleVector.Abs.Dense<U> interpolate(final DoubleVector.Abs.Dense<U> zero,
-            final DoubleVector.Abs.Dense<U> one, final double ratio) throws ValueException
+    public static <U extends Unit<U>> MutableDoubleVector.Abs.Dense<U> interpolate(
+            final DoubleVector.Abs.Dense<U> zero, final DoubleVector.Abs.Dense<U> one, final double ratio)
+            throws ValueException
     {
         MutableDoubleVector.Abs.Dense<U> result = zero.mutable();
         for (int index = result.size(); --index >= 0;)
@@ -1277,8 +1278,9 @@ public abstract class DoubleVector<U extends Unit<U>> extends AbstractValue<U> i
      * @return MutableDoubleVector.Rel.Dense&lt;U&gt;
      * @throws ValueException when zero and one do not have the same size
      */
-    public static <U extends Unit<U>> MutableDoubleVector.Rel.Dense<U> interpolate(final DoubleVector.Rel.Dense<U> zero,
-            final DoubleVector.Rel.Dense<U> one, final double ratio) throws ValueException
+    public static <U extends Unit<U>> MutableDoubleVector.Rel.Dense<U> interpolate(
+            final DoubleVector.Rel.Dense<U> zero, final DoubleVector.Rel.Dense<U> one, final double ratio)
+            throws ValueException
     {
         MutableDoubleVector.Rel.Dense<U> result = zero.mutable();
         for (int index = result.size(); --index >= 0;)

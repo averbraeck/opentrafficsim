@@ -4,26 +4,28 @@ import java.util.EventObject;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version20.03.2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version20.03.2015 <br>
  * @author <a>Moritz Bergmann</a>
  */
 public class ProgressEvent extends EventObject
 {
     /** */
     private static final long serialVersionUID = 1L;
-    
+
     /** Time of first created progress event. */
     private static Long first = null;
-    
+
     /** Textual description of the progress made. */
     private final String progressInformation;
-    
+
     /** Time when the event occurred. */
     private final long when;
-    
+
     /**
      * Construct a new ProgressEvent.
      * @param source Object; the object from which the event originates
@@ -39,7 +41,7 @@ public class ProgressEvent extends EventObject
             first = this.when;
         }
     }
-    
+
     /**
      * @return Progress Information in a String.
      */

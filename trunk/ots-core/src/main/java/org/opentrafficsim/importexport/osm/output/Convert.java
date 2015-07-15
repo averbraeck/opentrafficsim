@@ -51,13 +51,14 @@ import com.vividsolutions.jts.geom.LineString;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version30.12.2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version30.12.2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a>Moritz Bergmann</a>
  */
 public final class Convert
 {
-    
+
     /**
      * Construct a converter.
      */
@@ -65,9 +66,10 @@ public final class Convert
     {
         baseX = Double.NaN;
     }
-    
+
     /** Meridian of least distortion. */
     private static double baseX = Double.NaN;
+
     /**
      * @param c Coordinate in WGS84
      * @return Coordinate in Geocentric Cartesian system
@@ -76,17 +78,18 @@ public final class Convert
      */
     public static Coordinate transform(final Coordinate c) throws FactoryException, TransformException
     {
-        //final CoordinateReferenceSystem wgs84 = DefaultGeographicCRS.WGS84;
-        //final CoordinateReferenceSystem cartesianCRS = DefaultGeocentricCRS.CARTESIAN;
-        //final MathTransform mathTransform;
-        //mathTransform = CRS.findMathTransform(wgs84, cartesianCRS, false);
-        //double[] srcPt = {c.x, c.y};
-        //double[] dstPt = new double[mathTransform.getTargetDimensions()];
+        // final CoordinateReferenceSystem wgs84 = DefaultGeographicCRS.WGS84;
+        // final CoordinateReferenceSystem cartesianCRS = DefaultGeocentricCRS.CARTESIAN;
+        // final MathTransform mathTransform;
+        // mathTransform = CRS.findMathTransform(wgs84, cartesianCRS, false);
+        // double[] srcPt = {c.x, c.y};
+        // double[] dstPt = new double[mathTransform.getTargetDimensions()];
 
-        //mathTransform.transform(srcPt, 0, dstPt, 0, 1);
-        //System.out.println(String.format(Locale.US, "%fkm, %fkm, %fkm", dstPt[0] / 1000, dstPt[1] / 1000, dstPt[2] / 1000));
-        //return new Coordinate(dstPt[1], -dstPt[0]);
-        
+        // mathTransform.transform(srcPt, 0, dstPt, 0, 1);
+        // System.out.println(String.format(Locale.US, "%fkm, %fkm, %fkm", dstPt[0] / 1000, dstPt[1] / 1000, dstPt[2] /
+        // 1000));
+        // return new Coordinate(dstPt[1], -dstPt[0]);
+
         // Simple-minded DIY solution
         double radius = 6371000; // Assume Earth is a perfect sphere
         if (Double.isNaN(baseX))
@@ -95,7 +98,7 @@ public final class Convert
         }
         double x = radius * Math.toRadians(c.x - baseX) * Math.cos(Math.toRadians(c.y));
         double y = radius * Math.toRadians(c.y);
-        //System.out.println(String.format(Locale.US, "%fkm, %fkm, %fkm", x / 1000, y / 1000, radius / 1000));
+        // System.out.println(String.format(Locale.US, "%fkm, %fkm, %fkm", x / 1000, y / 1000, radius / 1000));
         return new Coordinate(x, y);
     }
 
@@ -612,8 +615,7 @@ public final class Convert
      * @throws RemoteException on communications failure
      */
     public List<Lane> makeLanes(final OSMLink osmlink, final OTSDEVSSimulatorInterface simulator,
-            final WarningListener warningListener) throws NetworkException,
-            RemoteException, NamingException
+            final WarningListener warningListener) throws NetworkException, RemoteException, NamingException
     {
         CrossSectionLink<?, ?> otslink = convertLink(osmlink);
         List<Lane> lanes = new ArrayList<Lane>();
@@ -794,7 +796,8 @@ public final class Convert
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionMar 3, 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionMar 3, 2015 <br>
  * @author <a>Moritz Bergmann</a>
  */
 class LaneAttributes

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-
 import org.junit.Test;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TemperatureUnit;
@@ -21,7 +20,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * Copyright (c) 2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version26 jun, 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version26 jun, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -66,7 +66,7 @@ public class DoubleMatrixDenseTest
         for (int row = dm.rows(); --row >= 0;)
         {
             for (int column = dm.columns(); --column >= 0;)
-                {
+            {
                 try
                 {
                     assertEquals("Value should match", reference[row][column], dm.getInUnit(row, column), precision);
@@ -78,8 +78,8 @@ public class DoubleMatrixDenseTest
             }
         }
         assertEquals("Unit should be " + u.toString(), u, dm.getUnit());
-        assertTrue("Should be " + (expectAbsolute ? "Absolute" : "Relative"), 
-                    expectAbsolute ? dm.isAbsolute() : dm.isRelative());
+        assertTrue("Should be " + (expectAbsolute ? "Absolute" : "Relative"),
+                expectAbsolute ? dm.isAbsolute() : dm.isRelative());
     }
 
     /**
@@ -117,7 +117,8 @@ public class DoubleMatrixDenseTest
         {
             TemperatureUnit tempUnit = TemperatureUnit.KELVIN;
             double[][] value = data(3, 5, false, 38.0);
-            MutableDoubleMatrix.Abs.Dense<TemperatureUnit> dm = new MutableDoubleMatrix.Abs.Dense<TemperatureUnit>(value, tempUnit);
+            MutableDoubleMatrix.Abs.Dense<TemperatureUnit> dm =
+                    new MutableDoubleMatrix.Abs.Dense<TemperatureUnit>(value, tempUnit);
             String result = dm.toString(true, true);
             assertTrue("toString result contains \" Abs \"", result.contains(" Abs "));
             assertTrue("toString result contains \"K\"", result.contains("K"));
@@ -141,10 +142,12 @@ public class DoubleMatrixDenseTest
         {
             TemperatureUnit tempUnit = TemperatureUnit.DEGREE_CELSIUS;
             double[][] value = data(3, 5, false, 38.0);
-            DoubleMatrix.Abs.Dense<TemperatureUnit> temperatureDM = new DoubleMatrix.Abs.Dense<TemperatureUnit>(value, tempUnit);
+            DoubleMatrix.Abs.Dense<TemperatureUnit> temperatureDM =
+                    new DoubleMatrix.Abs.Dense<TemperatureUnit>(value, tempUnit);
             checkContentsAndType(temperatureDM, value, 0.001, tempUnit, true);
             assertEquals("Value in SI is equivalent in Kelvin", 311.15, temperatureDM.getSI(0, 0), 0.05);
-            assertEquals("Value in Fahrenheit", 100.4, temperatureDM.getInUnit(0, 0, TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
+            assertEquals("Value in Fahrenheit", 100.4,
+                    temperatureDM.getInUnit(0, 0, TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
             double[][] out = temperatureDM.getValuesInUnit();
             for (int row = 0; row < value.length; row++)
             {
@@ -153,7 +156,8 @@ public class DoubleMatrixDenseTest
                     assertEquals("Value should match", value[row][column], out[row][column], 0.001);
                 }
             }
-            MutableDoubleMatrix.Abs.Dense<TemperatureUnit> mdm = new MutableDoubleMatrix.Abs.Dense<TemperatureUnit>(value, tempUnit);
+            MutableDoubleMatrix.Abs.Dense<TemperatureUnit> mdm =
+                    new MutableDoubleMatrix.Abs.Dense<TemperatureUnit>(value, tempUnit);
             checkContentsAndType(mdm, value, 0.001, tempUnit, true);
             mdm.setSI(0, 0, 73);
             double safe = value[0][0];
@@ -162,7 +166,8 @@ public class DoubleMatrixDenseTest
             value[0][0] = safe; // Restore
             mdm.set(0, 0, temperatureDM.get(0, 0));
             checkContentsAndType(mdm, value, 0.001, tempUnit, true);
-            DoubleMatrix.Abs.Dense<TemperatureUnit> temperature2DM = new DoubleMatrix.Abs.Dense<TemperatureUnit>(temperatureDM.getMatrixSI(), TemperatureUnit.KELVIN);
+            DoubleMatrix.Abs.Dense<TemperatureUnit> temperature2DM =
+                    new DoubleMatrix.Abs.Dense<TemperatureUnit>(temperatureDM.getMatrixSI(), TemperatureUnit.KELVIN);
             assertTrue("temperature2DM should be equal to temperatureDM", temperature2DM.equals(temperatureDM));
             assertTrue("Value is Absolute", temperatureDM.isAbsolute());
             assertFalse("Value is not Relative", temperatureDM.isRelative());
@@ -177,17 +182,19 @@ public class DoubleMatrixDenseTest
                 }
             }
             DoubleScalar.Abs<TemperatureUnit>[][] scalar = new DoubleScalar.Abs[value.length][];
-        for (int row = 0; row < value.length; row++)
+            for (int row = 0; row < value.length; row++)
             {
                 scalar[row] = new DoubleScalar.Abs[value[row].length];
                 for (int column = 0; column < value[row].length; column++)
                 {
-                    scalar[row][column] = new DoubleScalar.Abs<TemperatureUnit>(value[row][column], TemperatureUnit.DEGREE_CELSIUS);
+                    scalar[row][column] =
+                            new DoubleScalar.Abs<TemperatureUnit>(value[row][column], TemperatureUnit.DEGREE_CELSIUS);
                 }
             }
             temperatureDM = new DoubleMatrix.Abs.Dense<TemperatureUnit>(scalar);
             checkContentsAndType(temperatureDM, value, 0.001, tempUnit, true);
-            assertEquals("All cells != 0; cardinality should equal number of cells", value.length * value[0].length, temperatureDM.cardinality());
+            assertEquals("All cells != 0; cardinality should equal number of cells", value.length * value[0].length,
+                    temperatureDM.cardinality());
             double sum = 0;
             for (int row = 0; row < value.length; row++)
             {
@@ -236,7 +243,8 @@ public class DoubleMatrixDenseTest
             checkContentsAndType(mdmCopy, value, 0.001, tempUnit, true);
             checkContentsAndType(mmdm, value, 0.001, tempUnit, true);
             DoubleMatrix.Abs<TemperatureUnit> idm = mdm.immutable();
-            assertTrue("Different value extremely likely results in different hashCode", dm.hashCode() != mdm.hashCode());
+            assertTrue("Different value extremely likely results in different hashCode",
+                    dm.hashCode() != mdm.hashCode());
             // Restore value of mdm
             mdm.setSI(0, 0, dm.getSI(0, 0));
             checkContentsAndType(idm, value2, 0.01, tempUnit, true);
@@ -267,7 +275,8 @@ public class DoubleMatrixDenseTest
         assertFalse("Not equal to some other kind of object; e.g. a String", dm.equals(new String("abc")));
         DoubleScalar.Rel<LengthUnit> dmCounterPart = new DoubleScalar.Rel<LengthUnit>(value, lengthUnit);
         assertFalse("Not equal if one Absolute and other Relative", dm.equals(dmCounterPart));
-        DoubleScalar.Abs<TemperatureUnit> dmWrongBaseUnit = new DoubleScalar.Abs<TemperatureUnit>(value, TemperatureUnit.KELVIN);
+        DoubleScalar.Abs<TemperatureUnit> dmWrongBaseUnit =
+                new DoubleScalar.Abs<TemperatureUnit>(value, TemperatureUnit.KELVIN);
         assertEquals("The underlying SI values are the same", dm.getSI(), dmWrongBaseUnit.getSI(), 0.0001);
         assertFalse("Not equals because the standard SI unit differs", dm.equals(dmWrongBaseUnit));
         DoubleScalar.Abs<LengthUnit> dmCompatibleUnit =
@@ -433,9 +442,9 @@ public class DoubleMatrixDenseTest
                         return Math.log1p(d);
                     }
                 });
-            for (int i = -10; i <= 10; i++)
-            {
-                final double exponent = i * 0.5d;
+                for (int i = -10; i <= 10; i++)
+                {
+                    final double exponent = i * 0.5d;
                     dm = new MutableDoubleMatrix.Abs.Dense<LengthUnit>(input, LengthUnit.METER);
                     dm.pow(exponent);
                     MathTester.tester(input, "pow(" + exponent + ")", dm, 0.001, new DoubleToDouble()
@@ -446,7 +455,7 @@ public class DoubleMatrixDenseTest
                             return Math.pow(d, exponent);
                         }
                     });
-            }
+                }
                 dm = new MutableDoubleMatrix.Abs.Dense<LengthUnit>(input, LengthUnit.METER);
                 dm.rint();
                 MathTester.tester(input, "rint", dm, 0.001, new DoubleToDouble()
@@ -576,14 +585,17 @@ public class DoubleMatrixDenseTest
         {
             double[][] leftValue = data(3, 5, false, 123.4);
             double[][] rightValue = data(3, 5, false, 234.5);
-            DoubleMatrix.Abs.Dense<LengthUnit> left = new DoubleMatrix.Abs.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
-            DoubleMatrix.Rel.Dense<LengthUnit> right = new DoubleMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
+            DoubleMatrix.Abs.Dense<LengthUnit> left =
+                    new DoubleMatrix.Abs.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
+            DoubleMatrix.Rel.Dense<LengthUnit> right =
+                    new DoubleMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableDoubleMatrix.Abs.Dense<?> result = DoubleMatrix.plus(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI plus of contributing elements", left.getSI(i, j) + right.getSI(i, j), result.getSI(i, j), 0.001);
+                    assertEquals("value of element should be SI plus of contributing elements", left.getSI(i, j)
+                            + right.getSI(i, j), result.getSI(i, j), 0.001);
                 }
             }
         }
@@ -604,14 +616,17 @@ public class DoubleMatrixDenseTest
         {
             double[][] leftValue = data(3, 5, false, 123.4);
             double[][] rightValue = data(3, 5, false, 234.5);
-            DoubleMatrix.Abs.Dense<LengthUnit> left = new DoubleMatrix.Abs.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
-            DoubleMatrix.Rel.Dense<LengthUnit> right = new DoubleMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
+            DoubleMatrix.Abs.Dense<LengthUnit> left =
+                    new DoubleMatrix.Abs.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
+            DoubleMatrix.Rel.Dense<LengthUnit> right =
+                    new DoubleMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableDoubleMatrix.Abs.Dense<?> result = DoubleMatrix.minus(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI minus of contributing elements", left.getSI(i, j) - right.getSI(i, j), result.getSI(i, j), 0.001);
+                    assertEquals("value of element should be SI minus of contributing elements", left.getSI(i, j)
+                            - right.getSI(i, j), result.getSI(i, j), 0.001);
                 }
             }
         }
@@ -632,14 +647,17 @@ public class DoubleMatrixDenseTest
         {
             double[][] leftValue = data(3, 5, false, 123.4);
             double[][] rightValue = data(3, 5, false, 234.5);
-            DoubleMatrix.Abs.Dense<LengthUnit> left = new DoubleMatrix.Abs.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
-            DoubleMatrix.Abs.Dense<LengthUnit> right = new DoubleMatrix.Abs.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
+            DoubleMatrix.Abs.Dense<LengthUnit> left =
+                    new DoubleMatrix.Abs.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
+            DoubleMatrix.Abs.Dense<LengthUnit> right =
+                    new DoubleMatrix.Abs.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableDoubleMatrix.Abs.Dense<?> result = DoubleMatrix.times(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI times of contributing elements", left.getSI(i, j) * right.getSI(i, j), result.getSI(i, j), 0.001);
+                    assertEquals("value of element should be SI times of contributing elements", left.getSI(i, j)
+                            * right.getSI(i, j), result.getSI(i, j), 0.001);
                 }
             }
         }
@@ -660,14 +678,17 @@ public class DoubleMatrixDenseTest
         {
             double[][] leftValue = data(3, 5, false, 123.4);
             double[][] rightValue = data(3, 5, false, 234.5);
-            DoubleMatrix.Abs.Dense<LengthUnit> left = new DoubleMatrix.Abs.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
-            DoubleMatrix.Rel.Sparse<LengthUnit> right = new DoubleMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
+            DoubleMatrix.Abs.Dense<LengthUnit> left =
+                    new DoubleMatrix.Abs.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
+            DoubleMatrix.Rel.Sparse<LengthUnit> right =
+                    new DoubleMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableDoubleMatrix.Abs.Dense<?> result = DoubleMatrix.plus(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI plus of contributing elements", left.getSI(i, j) + right.getSI(i, j), result.getSI(i, j), 0.001);
+                    assertEquals("value of element should be SI plus of contributing elements", left.getSI(i, j)
+                            + right.getSI(i, j), result.getSI(i, j), 0.001);
                 }
             }
         }
@@ -688,14 +709,17 @@ public class DoubleMatrixDenseTest
         {
             double[][] leftValue = data(3, 5, false, 123.4);
             double[][] rightValue = data(3, 5, false, 234.5);
-            DoubleMatrix.Abs.Dense<LengthUnit> left = new DoubleMatrix.Abs.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
-            DoubleMatrix.Rel.Sparse<LengthUnit> right = new DoubleMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
+            DoubleMatrix.Abs.Dense<LengthUnit> left =
+                    new DoubleMatrix.Abs.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
+            DoubleMatrix.Rel.Sparse<LengthUnit> right =
+                    new DoubleMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableDoubleMatrix.Abs.Dense<?> result = DoubleMatrix.minus(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI minus of contributing elements", left.getSI(i, j) - right.getSI(i, j), result.getSI(i, j), 0.001);
+                    assertEquals("value of element should be SI minus of contributing elements", left.getSI(i, j)
+                            - right.getSI(i, j), result.getSI(i, j), 0.001);
                 }
             }
         }
@@ -716,14 +740,17 @@ public class DoubleMatrixDenseTest
         {
             double[][] leftValue = data(3, 5, false, 123.4);
             double[][] rightValue = data(3, 5, false, 234.5);
-            DoubleMatrix.Abs.Dense<LengthUnit> left = new DoubleMatrix.Abs.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
-            DoubleMatrix.Abs.Sparse<LengthUnit> right = new DoubleMatrix.Abs.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
+            DoubleMatrix.Abs.Dense<LengthUnit> left =
+                    new DoubleMatrix.Abs.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
+            DoubleMatrix.Abs.Sparse<LengthUnit> right =
+                    new DoubleMatrix.Abs.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableDoubleMatrix.Abs.Sparse<?> result = DoubleMatrix.times(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI times of contributing elements", left.getSI(i, j) * right.getSI(i, j), result.getSI(i, j), 0.001);
+                    assertEquals("value of element should be SI times of contributing elements", left.getSI(i, j)
+                            * right.getSI(i, j), result.getSI(i, j), 0.001);
                 }
             }
         }
@@ -818,7 +845,7 @@ public class DoubleMatrixDenseTest
             try
             {
                 matrix = new DoubleMatrix.Abs.Dense<TemperatureUnit>(in, TemperatureUnit.DEGREE_CELSIUS);
-                 rowCountWrong = data(4, 5, false, 2);
+                rowCountWrong = data(4, 5, false, 2);
             }
             catch (ValueException ve)
             {
@@ -844,8 +871,9 @@ public class DoubleMatrixDenseTest
     {
         try
         {
-            double[][] values = {{1, 2, 3 }, {3, 5, 7 }, {5, 10, 0} };
-            DoubleMatrix.Abs.Dense<TemperatureUnit> matrix = new DoubleMatrix.Abs.Dense<TemperatureUnit>(values, TemperatureUnit.KELVIN);
+            double[][] values = {{1, 2, 3}, {3, 5, 7}, {5, 10, 0}};
+            DoubleMatrix.Abs.Dense<TemperatureUnit> matrix =
+                    new DoubleMatrix.Abs.Dense<TemperatureUnit>(values, TemperatureUnit.KELVIN);
             assertEquals("Determinant should be 15", 15, matrix.det(), 0.001);
         }
         catch (ValueException ve)
@@ -869,7 +897,8 @@ public class DoubleMatrixDenseTest
         try
         {
             double[][] leftIn = data(3, 5, false, -12.34);
-            DoubleMatrix.Abs.Dense<TemperatureUnit> left = new DoubleMatrix.Abs.Dense<TemperatureUnit>(leftIn, TemperatureUnit.KELVIN);
+            DoubleMatrix.Abs.Dense<TemperatureUnit> left =
+                    new DoubleMatrix.Abs.Dense<TemperatureUnit>(leftIn, TemperatureUnit.KELVIN);
             double[][] right = data(3, 5, false, -4.321);
             MutableDoubleMatrix.Abs.Dense<TemperatureUnit> result = DoubleMatrix.times(left, right);
             assertEquals("Result should be in Kelvin", TemperatureUnit.KELVIN, result.getUnit());
@@ -877,7 +906,8 @@ public class DoubleMatrixDenseTest
             {
                 for (int column = right[row].length; --column >= 0;)
                 {
-                    assertEquals("Content should match product of left and right", leftIn[row][column] * right[row][column], result.getSI(row, column), 0.001);
+                    assertEquals("Content should match product of left and right", leftIn[row][column]
+                            * right[row][column], result.getSI(row, column), 0.001);
                 }
             }
         }
@@ -922,7 +952,8 @@ public class DoubleMatrixDenseTest
         {
             TemperatureUnit tempUnit = TemperatureUnit.KELVIN;
             double[][] value = data(3, 5, false, 38.0);
-            MutableDoubleMatrix.Rel.Dense<TemperatureUnit> dm = new MutableDoubleMatrix.Rel.Dense<TemperatureUnit>(value, tempUnit);
+            MutableDoubleMatrix.Rel.Dense<TemperatureUnit> dm =
+                    new MutableDoubleMatrix.Rel.Dense<TemperatureUnit>(value, tempUnit);
             String result = dm.toString(true, true);
             assertTrue("toString result contains \" Rel \"", result.contains(" Rel "));
             assertTrue("toString result contains \"K\"", result.contains("K"));
@@ -946,10 +977,12 @@ public class DoubleMatrixDenseTest
         {
             TemperatureUnit tempUnit = TemperatureUnit.DEGREE_CELSIUS;
             double[][] value = data(3, 5, false, 38.0);
-            DoubleMatrix.Rel.Dense<TemperatureUnit> temperatureDM = new DoubleMatrix.Rel.Dense<TemperatureUnit>(value, tempUnit);
+            DoubleMatrix.Rel.Dense<TemperatureUnit> temperatureDM =
+                    new DoubleMatrix.Rel.Dense<TemperatureUnit>(value, tempUnit);
             checkContentsAndType(temperatureDM, value, 0.001, tempUnit, false);
             assertEquals("Value in SI is equivalent in Kelvin", 311.15, temperatureDM.getSI(0, 0), 0.05);
-            assertEquals("Value in Fahrenheit", 100.4, temperatureDM.getInUnit(0, 0, TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
+            assertEquals("Value in Fahrenheit", 100.4,
+                    temperatureDM.getInUnit(0, 0, TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
             double[][] out = temperatureDM.getValuesInUnit();
             for (int row = 0; row < value.length; row++)
             {
@@ -958,7 +991,8 @@ public class DoubleMatrixDenseTest
                     assertEquals("Value should match", value[row][column], out[row][column], 0.001);
                 }
             }
-            MutableDoubleMatrix.Rel.Dense<TemperatureUnit> mdm = new MutableDoubleMatrix.Rel.Dense<TemperatureUnit>(value, tempUnit);
+            MutableDoubleMatrix.Rel.Dense<TemperatureUnit> mdm =
+                    new MutableDoubleMatrix.Rel.Dense<TemperatureUnit>(value, tempUnit);
             checkContentsAndType(mdm, value, 0.001, tempUnit, false);
             mdm.setSI(0, 0, 73);
             double safe = value[0][0];
@@ -967,7 +1001,8 @@ public class DoubleMatrixDenseTest
             value[0][0] = safe; // Restore
             mdm.set(0, 0, temperatureDM.get(0, 0));
             checkContentsAndType(mdm, value, 0.001, tempUnit, false);
-            DoubleMatrix.Rel.Dense<TemperatureUnit> temperature2DM = new DoubleMatrix.Rel.Dense<TemperatureUnit>(temperatureDM.getMatrixSI(), TemperatureUnit.KELVIN);
+            DoubleMatrix.Rel.Dense<TemperatureUnit> temperature2DM =
+                    new DoubleMatrix.Rel.Dense<TemperatureUnit>(temperatureDM.getMatrixSI(), TemperatureUnit.KELVIN);
             assertTrue("temperature2DM should be equal to temperatureDM", temperature2DM.equals(temperatureDM));
             assertTrue("Value is Relative", temperatureDM.isRelative());
             assertFalse("Value is not Absolute", temperatureDM.isAbsolute());
@@ -982,17 +1017,19 @@ public class DoubleMatrixDenseTest
                 }
             }
             DoubleScalar.Rel<TemperatureUnit>[][] scalar = new DoubleScalar.Rel[value.length][];
-        for (int row = 0; row < value.length; row++)
+            for (int row = 0; row < value.length; row++)
             {
                 scalar[row] = new DoubleScalar.Rel[value[row].length];
                 for (int column = 0; column < value[row].length; column++)
                 {
-                    scalar[row][column] = new DoubleScalar.Rel<TemperatureUnit>(value[row][column], TemperatureUnit.DEGREE_CELSIUS);
+                    scalar[row][column] =
+                            new DoubleScalar.Rel<TemperatureUnit>(value[row][column], TemperatureUnit.DEGREE_CELSIUS);
                 }
             }
             temperatureDM = new DoubleMatrix.Rel.Dense<TemperatureUnit>(scalar);
             checkContentsAndType(temperatureDM, value, 0.001, tempUnit, false);
-            assertEquals("All cells != 0; cardinality should equal number of cells", value.length * value[0].length, temperatureDM.cardinality());
+            assertEquals("All cells != 0; cardinality should equal number of cells", value.length * value[0].length,
+                    temperatureDM.cardinality());
             double sum = 0;
             for (int row = 0; row < value.length; row++)
             {
@@ -1041,7 +1078,8 @@ public class DoubleMatrixDenseTest
             checkContentsAndType(mdmCopy, value, 0.001, tempUnit, false);
             checkContentsAndType(mmdm, value, 0.001, tempUnit, false);
             DoubleMatrix.Rel<TemperatureUnit> idm = mdm.immutable();
-            assertTrue("Different value extremely likely results in different hashCode", dm.hashCode() != mdm.hashCode());
+            assertTrue("Different value extremely likely results in different hashCode",
+                    dm.hashCode() != mdm.hashCode());
             // Restore value of mdm
             mdm.setSI(0, 0, dm.getSI(0, 0));
             checkContentsAndType(idm, value2, 0.01, tempUnit, false);
@@ -1072,7 +1110,8 @@ public class DoubleMatrixDenseTest
         assertFalse("Not equal to some other kind of object; e.g. a String", dm.equals(new String("abc")));
         DoubleScalar.Abs<LengthUnit> dmCounterPart = new DoubleScalar.Abs<LengthUnit>(value, lengthUnit);
         assertFalse("Not equal if one Absolute and other Relative", dm.equals(dmCounterPart));
-        DoubleScalar.Rel<TemperatureUnit> dmWrongBaseUnit = new DoubleScalar.Rel<TemperatureUnit>(value, TemperatureUnit.KELVIN);
+        DoubleScalar.Rel<TemperatureUnit> dmWrongBaseUnit =
+                new DoubleScalar.Rel<TemperatureUnit>(value, TemperatureUnit.KELVIN);
         assertEquals("The underlying SI values are the same", dm.getSI(), dmWrongBaseUnit.getSI(), 0.0001);
         assertFalse("Not equals because the standard SI unit differs", dm.equals(dmWrongBaseUnit));
         DoubleScalar.Rel<LengthUnit> dmCompatibleUnit =
@@ -1238,9 +1277,9 @@ public class DoubleMatrixDenseTest
                         return Math.log1p(d);
                     }
                 });
-            for (int i = -10; i <= 10; i++)
-            {
-                final double exponent = i * 0.5d;
+                for (int i = -10; i <= 10; i++)
+                {
+                    final double exponent = i * 0.5d;
                     dm = new MutableDoubleMatrix.Rel.Dense<LengthUnit>(input, LengthUnit.METER);
                     dm.pow(exponent);
                     MathTester.tester(input, "pow(" + exponent + ")", dm, 0.001, new DoubleToDouble()
@@ -1251,7 +1290,7 @@ public class DoubleMatrixDenseTest
                             return Math.pow(d, exponent);
                         }
                     });
-            }
+                }
                 dm = new MutableDoubleMatrix.Rel.Dense<LengthUnit>(input, LengthUnit.METER);
                 dm.rint();
                 MathTester.tester(input, "rint", dm, 0.001, new DoubleToDouble()
@@ -1381,14 +1420,17 @@ public class DoubleMatrixDenseTest
         {
             double[][] leftValue = data(3, 5, false, 123.4);
             double[][] rightValue = data(3, 5, false, 234.5);
-            DoubleMatrix.Rel.Dense<LengthUnit> left = new DoubleMatrix.Rel.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
-            DoubleMatrix.Rel.Dense<LengthUnit> right = new DoubleMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
+            DoubleMatrix.Rel.Dense<LengthUnit> left =
+                    new DoubleMatrix.Rel.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
+            DoubleMatrix.Rel.Dense<LengthUnit> right =
+                    new DoubleMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableDoubleMatrix.Rel.Dense<?> result = DoubleMatrix.plus(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI plus of contributing elements", left.getSI(i, j) + right.getSI(i, j), result.getSI(i, j), 0.001);
+                    assertEquals("value of element should be SI plus of contributing elements", left.getSI(i, j)
+                            + right.getSI(i, j), result.getSI(i, j), 0.001);
                 }
             }
         }
@@ -1409,14 +1451,17 @@ public class DoubleMatrixDenseTest
         {
             double[][] leftValue = data(3, 5, false, 123.4);
             double[][] rightValue = data(3, 5, false, 234.5);
-            DoubleMatrix.Rel.Dense<LengthUnit> left = new DoubleMatrix.Rel.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
-            DoubleMatrix.Rel.Dense<LengthUnit> right = new DoubleMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
+            DoubleMatrix.Rel.Dense<LengthUnit> left =
+                    new DoubleMatrix.Rel.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
+            DoubleMatrix.Rel.Dense<LengthUnit> right =
+                    new DoubleMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableDoubleMatrix.Rel.Dense<?> result = DoubleMatrix.minus(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI minus of contributing elements", left.getSI(i, j) - right.getSI(i, j), result.getSI(i, j), 0.001);
+                    assertEquals("value of element should be SI minus of contributing elements", left.getSI(i, j)
+                            - right.getSI(i, j), result.getSI(i, j), 0.001);
                 }
             }
         }
@@ -1437,14 +1482,17 @@ public class DoubleMatrixDenseTest
         {
             double[][] leftValue = data(3, 5, false, 123.4);
             double[][] rightValue = data(3, 5, false, 234.5);
-            DoubleMatrix.Rel.Dense<LengthUnit> left = new DoubleMatrix.Rel.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
-            DoubleMatrix.Rel.Dense<LengthUnit> right = new DoubleMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
+            DoubleMatrix.Rel.Dense<LengthUnit> left =
+                    new DoubleMatrix.Rel.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
+            DoubleMatrix.Rel.Dense<LengthUnit> right =
+                    new DoubleMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableDoubleMatrix.Rel.Dense<?> result = DoubleMatrix.times(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI times of contributing elements", left.getSI(i, j) * right.getSI(i, j), result.getSI(i, j), 0.001);
+                    assertEquals("value of element should be SI times of contributing elements", left.getSI(i, j)
+                            * right.getSI(i, j), result.getSI(i, j), 0.001);
                 }
             }
         }
@@ -1465,14 +1513,17 @@ public class DoubleMatrixDenseTest
         {
             double[][] leftValue = data(3, 5, false, 123.4);
             double[][] rightValue = data(3, 5, false, 234.5);
-            DoubleMatrix.Rel.Dense<LengthUnit> left = new DoubleMatrix.Rel.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
-            DoubleMatrix.Rel.Sparse<LengthUnit> right = new DoubleMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
+            DoubleMatrix.Rel.Dense<LengthUnit> left =
+                    new DoubleMatrix.Rel.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
+            DoubleMatrix.Rel.Sparse<LengthUnit> right =
+                    new DoubleMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableDoubleMatrix.Rel.Dense<?> result = DoubleMatrix.plus(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI plus of contributing elements", left.getSI(i, j) + right.getSI(i, j), result.getSI(i, j), 0.001);
+                    assertEquals("value of element should be SI plus of contributing elements", left.getSI(i, j)
+                            + right.getSI(i, j), result.getSI(i, j), 0.001);
                 }
             }
         }
@@ -1493,14 +1544,17 @@ public class DoubleMatrixDenseTest
         {
             double[][] leftValue = data(3, 5, false, 123.4);
             double[][] rightValue = data(3, 5, false, 234.5);
-            DoubleMatrix.Rel.Dense<LengthUnit> left = new DoubleMatrix.Rel.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
-            DoubleMatrix.Rel.Sparse<LengthUnit> right = new DoubleMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
+            DoubleMatrix.Rel.Dense<LengthUnit> left =
+                    new DoubleMatrix.Rel.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
+            DoubleMatrix.Rel.Sparse<LengthUnit> right =
+                    new DoubleMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableDoubleMatrix.Rel.Dense<?> result = DoubleMatrix.minus(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI minus of contributing elements", left.getSI(i, j) - right.getSI(i, j), result.getSI(i, j), 0.001);
+                    assertEquals("value of element should be SI minus of contributing elements", left.getSI(i, j)
+                            - right.getSI(i, j), result.getSI(i, j), 0.001);
                 }
             }
         }
@@ -1521,14 +1575,17 @@ public class DoubleMatrixDenseTest
         {
             double[][] leftValue = data(3, 5, false, 123.4);
             double[][] rightValue = data(3, 5, false, 234.5);
-            DoubleMatrix.Rel.Dense<LengthUnit> left = new DoubleMatrix.Rel.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
-            DoubleMatrix.Rel.Sparse<LengthUnit> right = new DoubleMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
+            DoubleMatrix.Rel.Dense<LengthUnit> left =
+                    new DoubleMatrix.Rel.Dense<LengthUnit>(leftValue, LengthUnit.MILE);
+            DoubleMatrix.Rel.Sparse<LengthUnit> right =
+                    new DoubleMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableDoubleMatrix.Rel.Sparse<?> result = DoubleMatrix.times(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI times of contributing elements", left.getSI(i, j) * right.getSI(i, j), result.getSI(i, j), 0.001);
+                    assertEquals("value of element should be SI times of contributing elements", left.getSI(i, j)
+                            * right.getSI(i, j), result.getSI(i, j), 0.001);
                 }
             }
         }
@@ -1623,7 +1680,7 @@ public class DoubleMatrixDenseTest
             try
             {
                 matrix = new DoubleMatrix.Rel.Dense<TemperatureUnit>(in, TemperatureUnit.DEGREE_CELSIUS);
-                 rowCountWrong = data(4, 5, false, 2);
+                rowCountWrong = data(4, 5, false, 2);
             }
             catch (ValueException ve)
             {
@@ -1649,8 +1706,9 @@ public class DoubleMatrixDenseTest
     {
         try
         {
-            double[][] values = {{1, 2, 3 }, {3, 5, 7 }, {5, 10, 0} };
-            DoubleMatrix.Rel.Dense<TemperatureUnit> matrix = new DoubleMatrix.Rel.Dense<TemperatureUnit>(values, TemperatureUnit.KELVIN);
+            double[][] values = {{1, 2, 3}, {3, 5, 7}, {5, 10, 0}};
+            DoubleMatrix.Rel.Dense<TemperatureUnit> matrix =
+                    new DoubleMatrix.Rel.Dense<TemperatureUnit>(values, TemperatureUnit.KELVIN);
             assertEquals("Determinant should be 15", 15, matrix.det(), 0.001);
         }
         catch (ValueException ve)
@@ -1674,7 +1732,8 @@ public class DoubleMatrixDenseTest
         try
         {
             double[][] leftIn = data(3, 5, false, -12.34);
-            DoubleMatrix.Rel.Dense<TemperatureUnit> left = new DoubleMatrix.Rel.Dense<TemperatureUnit>(leftIn, TemperatureUnit.KELVIN);
+            DoubleMatrix.Rel.Dense<TemperatureUnit> left =
+                    new DoubleMatrix.Rel.Dense<TemperatureUnit>(leftIn, TemperatureUnit.KELVIN);
             double[][] right = data(3, 5, false, -4.321);
             MutableDoubleMatrix.Rel.Dense<TemperatureUnit> result = DoubleMatrix.times(left, right);
             assertEquals("Result should be in Kelvin", TemperatureUnit.KELVIN, result.getUnit());
@@ -1682,7 +1741,8 @@ public class DoubleMatrixDenseTest
             {
                 for (int column = right[row].length; --column >= 0;)
                 {
-                    assertEquals("Content should match product of left and right", leftIn[row][column] * right[row][column], result.getSI(row, column), 0.001);
+                    assertEquals("Content should match product of left and right", leftIn[row][column]
+                            * right[row][column], result.getSI(row, column), 0.001);
                 }
             }
         }
@@ -1731,8 +1791,8 @@ public class DoubleMatrixDenseTest
                         fail("Caught unexpected exception: " + ve.toString());
                     }
                     String description =
-                            String.format("%s(%f->%f should be equal to %f with precision %f", operation, inputValues[i][j],
-                                    expectedResult, got, precision);
+                            String.format("%s(%f->%f should be equal to %f with precision %f", operation,
+                                    inputValues[i][j], expectedResult, got, precision);
                     // System.out.println(description);
                     assertEquals(description, expectedResult, got, precision);
                 }

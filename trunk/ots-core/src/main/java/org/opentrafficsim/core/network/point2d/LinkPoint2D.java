@@ -16,10 +16,12 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJan 4, 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionJan 4, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <IDL> the ID type of the Link, e.g., String or Integer.
@@ -39,7 +41,7 @@ public class LinkPoint2D<IDL, IDN> extends AbstractLink<IDL, IDN, Point2D, NodeP
      * @param capacity link capacity in GTUs per hour
      */
     public LinkPoint2D(final IDL id, final NodePoint2D<IDN> startNode, final NodePoint2D<IDN> endNode,
-        final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
+            final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
     {
         super(id, startNode, endNode, length, capacity);
     }
@@ -52,7 +54,7 @@ public class LinkPoint2D<IDL, IDN> extends AbstractLink<IDL, IDN, Point2D, NodeP
      * @param length link length in a length unit
      */
     public LinkPoint2D(final IDL id, final NodePoint2D<IDN> startNode, final NodePoint2D<IDN> endNode,
-        final DoubleScalar.Rel<LengthUnit> length)
+            final DoubleScalar.Rel<LengthUnit> length)
     {
         super(id, startNode, endNode, length);
     }
@@ -63,7 +65,7 @@ public class LinkPoint2D<IDL, IDN> extends AbstractLink<IDL, IDN, Point2D, NodeP
     {
         double x = (getEndNode().getX() - getStartNode().getX()) / 2.0;
         double y = (getEndNode().getY() - getStartNode().getY()) / 2.0;
-        return new DirectedPoint(new double[] {x, y, 0.0d});
+        return new DirectedPoint(new double[]{x, y, 0.0d});
     }
 
     /** {@inheritDoc} */
@@ -85,7 +87,8 @@ public class LinkPoint2D<IDL, IDN> extends AbstractLink<IDL, IDN, Point2D, NodeP
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJan 4, 2015 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author:
+     * pknoppers $, initial versionJan 4, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -103,7 +106,7 @@ public class LinkPoint2D<IDL, IDN> extends AbstractLink<IDL, IDN, Point2D, NodeP
          * @param capacity link capacity in GTUs per hour
          */
         public STR(final String id, final NodePoint2D.STR startNode, final NodePoint2D.STR endNode,
-            final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
+                final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
         {
             super(id, startNode, endNode, length, capacity);
         }
@@ -116,7 +119,7 @@ public class LinkPoint2D<IDL, IDN> extends AbstractLink<IDL, IDN, Point2D, NodeP
          * @param length link length in a length unit
          */
         public STR(final String id, final NodePoint2D.STR startNode, final NodePoint2D.STR endNode,
-            final DoubleScalar.Rel<LengthUnit> length)
+                final DoubleScalar.Rel<LengthUnit> length)
         {
             super(id, startNode, endNode, length);
         }
@@ -129,7 +132,8 @@ public class LinkPoint2D<IDL, IDN> extends AbstractLink<IDL, IDN, Point2D, NodeP
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJan 4, 2015 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author:
+     * pknoppers $, initial versionJan 4, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -147,7 +151,7 @@ public class LinkPoint2D<IDL, IDN> extends AbstractLink<IDL, IDN, Point2D, NodeP
          * @param capacity link capacity in GTUs per hour
          */
         public INT(final int id, final NodePoint2D.INT startNode, final NodePoint2D.INT endNode,
-            final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
+                final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
         {
             super(id, startNode, endNode, length, capacity);
         }
@@ -160,7 +164,7 @@ public class LinkPoint2D<IDL, IDN> extends AbstractLink<IDL, IDN, Point2D, NodeP
          * @param length link length in a length unit
          */
         public INT(final int id, final NodePoint2D.INT startNode, final NodePoint2D.INT endNode,
-            final DoubleScalar.Rel<LengthUnit> length)
+                final DoubleScalar.Rel<LengthUnit> length)
         {
             super(id, startNode, endNode, length);
         }
