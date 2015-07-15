@@ -18,10 +18,12 @@ import com.bric.multislider.MultiThumbSliderUI.Thumb;
 /**
  * Wrapper for Jeremy Wood's MultiThumbSlider.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version22 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version22 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class ProbabilityDistributionEditor extends JPanel
@@ -38,8 +40,8 @@ public class ProbabilityDistributionEditor extends JPanel
     /**
      * Construct a graphical ProbabilityDistributioneEditor.
      * @param elementNames String[]; the names of the elements of the probability distribution
-     * @param values Double[]; the initial values of the probabilities (should add up to 1.0 and should have same length as
-     *            <cite>elementNames</cite>)
+     * @param values Double[]; the initial values of the probabilities (should add up to 1.0 and should have same length
+     *            as <cite>elementNames</cite>)
      */
     public ProbabilityDistributionEditor(final String[] elementNames, final Double[] values)
     {

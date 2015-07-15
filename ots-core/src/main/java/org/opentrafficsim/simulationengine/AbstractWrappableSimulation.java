@@ -25,10 +25,12 @@ import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJun 18, 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionJun 18, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -53,7 +55,7 @@ public abstract class AbstractWrappableSimulation implements WrappableSimulation
     /** {@inheritDoc} */
     @Override
     public final SimpleAnimator buildSimulator(final ArrayList<AbstractProperty<?>> userModifiedProperties,
-        final Rectangle rect, final boolean eoc) throws RemoteException, SimRuntimeException, NamingException
+            final Rectangle rect, final boolean eoc) throws RemoteException, SimRuntimeException, NamingException
     {
         this.savedUserModifiedProperties = userModifiedProperties;
         this.exitOnClose = eoc;
@@ -65,11 +67,13 @@ public abstract class AbstractWrappableSimulation implements WrappableSimulation
         {
             return null; // Happens when the user cancels the file open dialog in the OpenStreetMap demo.
         }
-        
+
         final SimpleAnimator simulator =
-            new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
-                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
-        this.panel = new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
+                new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
+                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
+                                TimeUnit.SECOND), model);
+        this.panel =
+                new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
         JPanel charts = makeCharts();
         if (null != charts)
         {
@@ -86,7 +90,8 @@ public abstract class AbstractWrappableSimulation implements WrappableSimulation
             frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         }
 
-        frame.setDefaultCloseOperation(this.exitOnClose ? WindowConstants.EXIT_ON_CLOSE : WindowConstants.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(this.exitOnClose ? WindowConstants.EXIT_ON_CLOSE
+                : WindowConstants.DISPOSE_ON_CLOSE);
         return simulator;
     }
 
@@ -117,7 +122,7 @@ public abstract class AbstractWrappableSimulation implements WrappableSimulation
     /** {@inheritDoc} */
     @Override
     public final SimpleSimulation rebuildSimulator(final Rectangle rect) throws SimRuntimeException, RemoteException,
-        NetworkException, NamingException
+            NetworkException, NamingException
     {
         return buildSimulator(this.savedUserModifiedProperties, rect, this.exitOnClose);
     }

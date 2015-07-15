@@ -17,10 +17,12 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionAug 19, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionAug 19, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
@@ -44,7 +46,7 @@ public class CrossSectionLink<IDL, IDN> extends LinkGeotools<IDL, IDN>
      * @param capacity link capacity in vehicles per hour.
      */
     public CrossSectionLink(final IDL id, final NodeGeotools<IDN> startNode, final NodeGeotools<IDN> endNode,
-        final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
+            final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
     {
         super(id, startNode, endNode, length, capacity);
     }
@@ -57,7 +59,7 @@ public class CrossSectionLink<IDL, IDN> extends LinkGeotools<IDL, IDN>
      * @param length link length in a length unit.
      */
     public CrossSectionLink(final IDL id, final NodeGeotools<IDN> startNode, final NodeGeotools<IDN> endNode,
-        final DoubleScalar.Rel<LengthUnit> length)
+            final DoubleScalar.Rel<LengthUnit> length)
     {
         super(id, startNode, endNode, length);
     }
@@ -102,8 +104,9 @@ public class CrossSectionLink<IDL, IDN> extends LinkGeotools<IDL, IDN>
     @Override
     public final Bounds getBounds() throws RemoteException
     {
-        return new BoundingBox(getEndNode().getLocation().x - getStartNode().getLocation().x, getEndNode().getLocation().y
-            - getStartNode().getLocation().y, getEndNode().getLocation().z - getStartNode().getLocation().z);
+        return new BoundingBox(getEndNode().getLocation().x - getStartNode().getLocation().x, getEndNode()
+                .getLocation().y - getStartNode().getLocation().y, getEndNode().getLocation().z
+                - getStartNode().getLocation().z);
     }
 
 }

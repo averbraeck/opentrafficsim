@@ -6,10 +6,12 @@ import org.opentrafficsim.core.gtu.GTUType;
  * Some predefined GTU types.<br>
  * Should be moved into the GTU package.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionFeb 26, 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionFeb 26, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -26,14 +28,14 @@ public final class PredefinedGTUTypes
 
     /** Bicycle. */
     public static final GTUType<String> BIKE = GTUType.makeGTUType("Bike");
-    
+
     /** Car. */
     public static final GTUType<String> CAR = GTUType.makeGTUType("Car");
-    
+
     /** Pedestrian. */
     public static final GTUType<String> PEDESTRIAN = GTUType.makeGTUType("Pedestrian");
-    
+
     /** Boat. */
     public static final GTUType<String> BOAT = GTUType.makeGTUType("Boat");
-    
+
 }

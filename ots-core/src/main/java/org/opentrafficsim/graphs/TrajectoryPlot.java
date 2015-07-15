@@ -46,7 +46,8 @@ import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJul 24, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionJul 24, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart,
@@ -400,8 +401,9 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
      * indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of
      * substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any
      * theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising
-     * in any way out of the use of this software, even if advised of the possibility of such damage.
-     * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJul 24, 2014 <br>
+     * in any way out of the use of this software, even if advised of the possibility of such damage. $LastChangedDate:
+     * 2015-07-15 11:18:39 +0200 (Wed, 15 Jul 2015) $, @version $Revision$, by $Author$, initial
+     * versionJul 24, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
     class Trajectory

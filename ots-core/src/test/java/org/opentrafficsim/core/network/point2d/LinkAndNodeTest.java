@@ -6,7 +6,6 @@ import java.awt.geom.Point2D;
 
 import org.junit.Test;
 
-
 /**
  * Tests for LinkPoint2D and NodePoint2D classes.
  * <p>
@@ -14,7 +13,8 @@ import org.junit.Test;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version17 jan. 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version17 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class LinkAndNodeTest
@@ -35,12 +35,12 @@ public class LinkAndNodeTest
         double toY = 654;
         Point2D.Double toP = new Point2D.Double(toX, toY);
         String toId = "To";
-        NodePoint2D.STR toNode = new NodePoint2D.STR(toId,  toP);
+        NodePoint2D.STR toNode = new NodePoint2D.STR(toId, toP);
         checkFields(fromNode, fromX, fromY, fromId);
         checkFields(toNode, toX, toY, toId);
-        
+
     }
-    
+
     /**
      * Check the fields in a NodePoint2D.STR.
      * @param node NodePoint2D.STR
@@ -56,6 +56,6 @@ public class LinkAndNodeTest
         assertEquals("Z is always 0", 0d, node.getZ(), 0.000001);
         // Test the getPoint method
         assertEquals("Point should be (x,y)", 0, node.getPoint().distance(new Point2D.Double(x, y)), 0.00001);
-    } 
-    
+    }
+
 }

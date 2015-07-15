@@ -14,7 +14,8 @@ import org.opentrafficsim.core.network.NetworkException;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version20 mrt. 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version20 mrt. 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -90,7 +91,7 @@ public class ProbabilisticFixedRouteGenerator implements RouteGenerator
             double bucketSize = this.probabilities[index];
             if (bucketSize >= randomValue)
             {
-                //System.out.println("calling " + this.routes.get(index));
+                // System.out.println("calling " + this.routes.get(index));
                 return this.routes.get(index).generateRoute();
             }
             randomValue -= bucketSize;

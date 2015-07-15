@@ -9,10 +9,12 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version11 Nov 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version11 Nov 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <ID> Name of the node
@@ -40,7 +42,7 @@ public class NodeGeotools<ID> extends AbstractNode<ID, Coordinate>
      * @param slope the slope as an angle.
      */
     public NodeGeotools(final ID id, final Coordinate coordinate, final DoubleScalar.Abs<AnglePlaneUnit> direction,
-        final DoubleScalar.Abs<AngleSlopeUnit> slope)
+            final DoubleScalar.Abs<AngleSlopeUnit> slope)
     {
         super(id, coordinate, direction, slope);
     }
@@ -73,7 +75,8 @@ public class NodeGeotools<ID> extends AbstractNode<ID, Coordinate>
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJan 4, 2015 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author:
+     * pknoppers $, initial versionJan 4, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -90,7 +93,7 @@ public class NodeGeotools<ID> extends AbstractNode<ID, Coordinate>
         {
             super(id, coordinate);
         }
-        
+
         /**
          * Construct a new Node.
          * @param id ID; the String Id of the new Node
@@ -99,7 +102,7 @@ public class NodeGeotools<ID> extends AbstractNode<ID, Coordinate>
          * @param slope the slope as an angle.
          */
         public STR(final String id, final Coordinate coordinate, final DoubleScalar.Abs<AnglePlaneUnit> direction,
-            final DoubleScalar.Abs<AngleSlopeUnit> slope)
+                final DoubleScalar.Abs<AngleSlopeUnit> slope)
         {
             super(id, coordinate, direction, slope);
         }
@@ -112,7 +115,8 @@ public class NodeGeotools<ID> extends AbstractNode<ID, Coordinate>
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJan 4, 2015 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author:
+     * pknoppers $, initial versionJan 4, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -138,7 +142,7 @@ public class NodeGeotools<ID> extends AbstractNode<ID, Coordinate>
          * @param slope the slope as an angle.
          */
         public INT(final int id, final Coordinate coordinate, final DoubleScalar.Abs<AnglePlaneUnit> direction,
-            final DoubleScalar.Abs<AngleSlopeUnit> slope)
+                final DoubleScalar.Abs<AngleSlopeUnit> slope)
         {
             super(id, coordinate, direction, slope);
         }

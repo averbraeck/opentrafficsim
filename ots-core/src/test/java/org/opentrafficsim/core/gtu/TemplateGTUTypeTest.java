@@ -29,10 +29,12 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
 /**
  * Test the TemplateGTUType class.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version15 jan. 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version15 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class TemplateGTUTypeTest
@@ -49,30 +51,32 @@ public class TemplateGTUTypeTest
     {
         String pcId = "passenger car";
         DistContinuousDoubleScalar.Rel<LengthUnit> pcLength =
-            new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 4), LengthUnit.METER);
+                new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 4), LengthUnit.METER);
         DistContinuousDoubleScalar.Rel<LengthUnit> pcWidth =
-            new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 1.6), LengthUnit.METER);
+                new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 1.6), LengthUnit.METER);
         DistContinuousDoubleScalar.Abs<SpeedUnit> pcMaximumSpeed =
-            new DistContinuousDoubleScalar.Abs<SpeedUnit>(new DistConstant(this.stream, 180), SpeedUnit.KM_PER_HOUR);
+                new DistContinuousDoubleScalar.Abs<SpeedUnit>(new DistConstant(this.stream, 180), SpeedUnit.KM_PER_HOUR);
         OTSModelInterface model = new DummyModelForTemplateGTUTest();
         SimpleSimulator simulator =
-            new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
-                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
+                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
+                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
+                                TimeUnit.SECOND), model);
         TemplateGTUType<String> passengerCar =
-            new TemplateGTUType<String>(pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
+                new TemplateGTUType<String>(pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
         verifyFields(passengerCar, pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
         String truckId = "truck";
         DistContinuousDoubleScalar.Rel<LengthUnit> truckLength =
-            new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 18), LengthUnit.METER);
+                new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 18), LengthUnit.METER);
         DistContinuousDoubleScalar.Rel<LengthUnit> truckWidth =
-            new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 2.2), LengthUnit.METER);
+                new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 2.2), LengthUnit.METER);
         DistContinuousDoubleScalar.Abs<SpeedUnit> truckMaximumSpeed =
-            new DistContinuousDoubleScalar.Abs<SpeedUnit>(new DistConstant(this.stream, 110), SpeedUnit.KM_PER_HOUR);
+                new DistContinuousDoubleScalar.Abs<SpeedUnit>(new DistConstant(this.stream, 110), SpeedUnit.KM_PER_HOUR);
         SimpleSimulator truckSimulator =
-            new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
-                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
+                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
+                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
+                                TimeUnit.SECOND), model);
         TemplateGTUType<String> truck =
-            new TemplateGTUType<String>(truckId, truckLength, truckWidth, truckMaximumSpeed, truckSimulator);
+                new TemplateGTUType<String>(truckId, truckLength, truckWidth, truckMaximumSpeed, truckSimulator);
         verifyFields(truck, truckId, truckLength, truckWidth, truckMaximumSpeed, truckSimulator);
         verifyFields(passengerCar, pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
     }
@@ -87,29 +91,31 @@ public class TemplateGTUTypeTest
         // Create some TemplateGTUTypes
         String pcId = "passenger car";
         DistContinuousDoubleScalar.Rel<LengthUnit> pcLength =
-            new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 4), LengthUnit.METER);
+                new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 4), LengthUnit.METER);
         DistContinuousDoubleScalar.Rel<LengthUnit> pcWidth =
-            new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 1.6), LengthUnit.METER);
+                new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 1.6), LengthUnit.METER);
         DistContinuousDoubleScalar.Abs<SpeedUnit> pcMaximumSpeed =
-            new DistContinuousDoubleScalar.Abs<SpeedUnit>(new DistConstant(this.stream, 180), SpeedUnit.KM_PER_HOUR);
+                new DistContinuousDoubleScalar.Abs<SpeedUnit>(new DistConstant(this.stream, 180), SpeedUnit.KM_PER_HOUR);
         OTSModelInterface model = new DummyModelForTemplateGTUTest();
         SimpleSimulator simulator =
-            new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
-                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
+                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
+                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
+                                TimeUnit.SECOND), model);
         TemplateGTUType<String> passengerCar =
-            new TemplateGTUType<String>(pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
+                new TemplateGTUType<String>(pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
         String truckId = "truck";
         DistContinuousDoubleScalar.Rel<LengthUnit> truckLength =
-            new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 18), LengthUnit.METER);
+                new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 18), LengthUnit.METER);
         DistContinuousDoubleScalar.Rel<LengthUnit> truckWidth =
-            new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 2.2), LengthUnit.METER);
+                new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 2.2), LengthUnit.METER);
         DistContinuousDoubleScalar.Abs<SpeedUnit> truckMaximumSpeed =
-            new DistContinuousDoubleScalar.Abs<SpeedUnit>(new DistConstant(this.stream, 110), SpeedUnit.KM_PER_HOUR);
+                new DistContinuousDoubleScalar.Abs<SpeedUnit>(new DistConstant(this.stream, 110), SpeedUnit.KM_PER_HOUR);
         SimpleSimulator truckSimulator =
-            new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
-                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
+                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
+                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
+                                TimeUnit.SECOND), model);
         TemplateGTUType<String> truck =
-            new TemplateGTUType<String>(truckId, truckLength, truckWidth, truckMaximumSpeed, truckSimulator);
+                new TemplateGTUType<String>(truckId, truckLength, truckWidth, truckMaximumSpeed, truckSimulator);
         // Create some LaneTypes
         LaneType<String> trucksForbidden = new LaneType<String>("No Trucks");
         trucksForbidden.addCompatibility(passengerCar.getGtuType());
@@ -140,14 +146,15 @@ public class TemplateGTUTypeTest
      * @param simulator OTSDEVSSimulatorInterface; the expected simulator
      */
     private void verifyFields(final TemplateGTUType<String> templateGTUType, final String id,
-        final DistContinuousDoubleScalar.Rel<LengthUnit> length, final DistContinuousDoubleScalar.Rel<LengthUnit> width,
-        final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeed, final OTSDEVSSimulatorInterface simulator)
+            final DistContinuousDoubleScalar.Rel<LengthUnit> length,
+            final DistContinuousDoubleScalar.Rel<LengthUnit> width,
+            final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeed, final OTSDEVSSimulatorInterface simulator)
     {
         assertTrue("Id should be " + id, id.equals(templateGTUType.getGtuType().getId()));
         assertEquals("Length should be " + length, length.draw().getSI(), templateGTUType.getLength().getSI(), 0.0001);
         assertEquals("Width should be " + width, width.draw().getSI(), templateGTUType.getWidth().getSI(), 0.0001);
         assertEquals("Maximum speed should be " + maximumSpeed, maximumSpeed.draw().getSI(), templateGTUType
-            .getMaximumVelocity().getSI(), 0.0001);
+                .getMaximumVelocity().getSI(), 0.0001);
         assertEquals("Simulator", simulator, templateGTUType.getSimulator());
     }
 }
@@ -155,10 +162,12 @@ public class TemplateGTUTypeTest
 /**
  * Dummy OTSModelInterface.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version14 jan. 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version14 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 class DummyModelForTemplateGTUTest implements OTSModelInterface
@@ -175,7 +184,7 @@ class DummyModelForTemplateGTUTest implements OTSModelInterface
      *            OTSSimTimeDouble&gt;; the simulator
      */
     public void setSimulator(
-        SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+            SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
     {
         this.simulator = simulator;
     }
@@ -183,7 +192,7 @@ class DummyModelForTemplateGTUTest implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> arg0)
-        throws SimRuntimeException, RemoteException
+            throws SimRuntimeException, RemoteException
     {
         // Nothing happens here
     }
@@ -191,7 +200,7 @@ class DummyModelForTemplateGTUTest implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        throws RemoteException
+            throws RemoteException
     {
         if (null == this.simulator)
         {

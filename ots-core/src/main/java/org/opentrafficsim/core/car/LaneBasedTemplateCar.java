@@ -28,13 +28,13 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
- * 
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version Oct 22, 2014 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
+ *          $, initial version Oct 22, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <ID> The type of ID, e.g., String or Integer
@@ -227,7 +227,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
 
         /** CarFollowingModel used by this Car. */
         private GTUFollowingModel gtuFollowingModel = null;
-        
+
         /** Route followed by this Car. */
         private Route route = null;
 
@@ -274,7 +274,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
             this.initialSpeed = initialSpeed;
             return this;
         }
-        
+
         /**
          * @param route Route; the route
          * @return the class itself for chaing the setters

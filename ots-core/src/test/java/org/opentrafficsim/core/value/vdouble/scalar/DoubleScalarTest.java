@@ -18,7 +18,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * Copyright (c) 2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version26 jun, 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version26 jun, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -38,8 +39,8 @@ public class DoubleScalarTest
         assertTrue("DoubleScalar should not be null", null != ds);
         assertEquals("Value should match", reference, ds.getInUnit(), precision);
         assertEquals("Unit should be " + u.toString(), u, ds.getUnit());
-        assertTrue("Should be " + (expectAbsolute ? "Absolute" : "Relative"), 
-                    expectAbsolute ? ds.isAbsolute() : ds.isRelative());
+        assertTrue("Should be " + (expectAbsolute ? "Absolute" : "Relative"),
+                expectAbsolute ? ds.isAbsolute() : ds.isRelative());
     }
 
     /**
@@ -172,7 +173,8 @@ public class DoubleScalarTest
         assertFalse("Not equal to some other kind of object; e.g. a String", ds.equals(new String("abc")));
         DoubleScalar.Rel<LengthUnit> dsCounterPart = new DoubleScalar.Rel<LengthUnit>(value, lengthUnit);
         assertFalse("Not equal if one Absolute and other Relative", ds.equals(dsCounterPart));
-        DoubleScalar.Abs<TemperatureUnit> dsWrongBaseUnit = new DoubleScalar.Abs<TemperatureUnit>(value, TemperatureUnit.KELVIN);
+        DoubleScalar.Abs<TemperatureUnit> dsWrongBaseUnit =
+                new DoubleScalar.Abs<TemperatureUnit>(value, TemperatureUnit.KELVIN);
         assertEquals("The underlying SI values are the same", ds.getSI(), dsWrongBaseUnit.getSI(), 0.0001);
         assertFalse("Not equals because the standard SI unit differs", ds.equals(dsWrongBaseUnit));
         DoubleScalar.Abs<LengthUnit> dsCompatibleUnit =
@@ -214,7 +216,8 @@ public class DoubleScalarTest
         assertFalse("NOT 123km >= 123001m", base.ge(larger));
         assertFalse("NOT 123km <= 122999m", base.le(smaller));
         MutableDoubleScalar.Abs<LengthUnit> same2 = new MutableDoubleScalar.Abs<LengthUnit>(123000, LengthUnit.METER);
-        MutableDoubleScalar.Abs<LengthUnit> smaller2 = new MutableDoubleScalar.Abs<LengthUnit>(122999, LengthUnit.METER);
+        MutableDoubleScalar.Abs<LengthUnit> smaller2 =
+                new MutableDoubleScalar.Abs<LengthUnit>(122999, LengthUnit.METER);
         MutableDoubleScalar.Abs<LengthUnit> larger2 = new MutableDoubleScalar.Abs<LengthUnit>(123001, LengthUnit.METER);
         assertFalse("NOT 123km < 123000m", base.lt(same2));
         assertTrue("123km <= 123000m", base.le(same2));
@@ -579,7 +582,8 @@ public class DoubleScalarTest
         DoubleScalar.Abs<LengthUnit> left = new DoubleScalar.Abs<LengthUnit>(leftValue, LengthUnit.MILE);
         DoubleScalar.Rel<LengthUnit> right = new DoubleScalar.Rel<LengthUnit>(rightValue, LengthUnit.MILE);
         MutableDoubleScalar.Abs<?> result = DoubleScalar.plus(left, right);
-        assertEquals("value of element should be SI plus of contributing elements", left.getSI() + right.getSI(), result.getSI(), 0.001);
+        assertEquals("value of element should be SI plus of contributing elements", left.getSI() + right.getSI(),
+                result.getSI(), 0.001);
     }
 
     /**
@@ -594,7 +598,8 @@ public class DoubleScalarTest
         DoubleScalar.Abs<LengthUnit> left = new DoubleScalar.Abs<LengthUnit>(leftValue, LengthUnit.MILE);
         DoubleScalar.Rel<LengthUnit> right = new DoubleScalar.Rel<LengthUnit>(rightValue, LengthUnit.MILE);
         MutableDoubleScalar.Abs<?> result = DoubleScalar.minus(left, right);
-        assertEquals("value of element should be SI minus of contributing elements", left.getSI() - right.getSI(), result.getSI(), 0.001);
+        assertEquals("value of element should be SI minus of contributing elements", left.getSI() - right.getSI(),
+                result.getSI(), 0.001);
     }
 
     /**
@@ -609,7 +614,8 @@ public class DoubleScalarTest
         DoubleScalar.Abs<LengthUnit> left = new DoubleScalar.Abs<LengthUnit>(leftValue, LengthUnit.MILE);
         DoubleScalar.Abs<LengthUnit> right = new DoubleScalar.Abs<LengthUnit>(rightValue, LengthUnit.MILE);
         MutableDoubleScalar.Abs<?> result = DoubleScalar.multiply(left, right);
-        assertEquals("value of element should be SI multiply of contributing elements", left.getSI() * right.getSI(), result.getSI(), 0.001);
+        assertEquals("value of element should be SI multiply of contributing elements", left.getSI() * right.getSI(),
+                result.getSI(), 0.001);
     }
 
     /**
@@ -624,7 +630,8 @@ public class DoubleScalarTest
         DoubleScalar.Abs<LengthUnit> left = new DoubleScalar.Abs<LengthUnit>(leftValue, LengthUnit.MILE);
         DoubleScalar.Abs<LengthUnit> right = new DoubleScalar.Abs<LengthUnit>(rightValue, LengthUnit.MILE);
         MutableDoubleScalar.Abs<?> result = DoubleScalar.divide(left, right);
-        assertEquals("value of element should be SI divide of contributing elements", left.getSI() / right.getSI(), result.getSI(), 0.001);
+        assertEquals("value of element should be SI divide of contributing elements", left.getSI() / right.getSI(),
+                result.getSI(), 0.001);
     }
 
     /**
@@ -757,7 +764,8 @@ public class DoubleScalarTest
         assertFalse("Not equal to some other kind of object; e.g. a String", ds.equals(new String("abc")));
         DoubleScalar.Abs<LengthUnit> dsCounterPart = new DoubleScalar.Abs<LengthUnit>(value, lengthUnit);
         assertFalse("Not equal if one Absolute and other Relative", ds.equals(dsCounterPart));
-        DoubleScalar.Rel<TemperatureUnit> dsWrongBaseUnit = new DoubleScalar.Rel<TemperatureUnit>(value, TemperatureUnit.KELVIN);
+        DoubleScalar.Rel<TemperatureUnit> dsWrongBaseUnit =
+                new DoubleScalar.Rel<TemperatureUnit>(value, TemperatureUnit.KELVIN);
         assertEquals("The underlying SI values are the same", ds.getSI(), dsWrongBaseUnit.getSI(), 0.0001);
         assertFalse("Not equals because the standard SI unit differs", ds.equals(dsWrongBaseUnit));
         DoubleScalar.Rel<LengthUnit> dsCompatibleUnit =
@@ -799,7 +807,8 @@ public class DoubleScalarTest
         assertFalse("NOT 123km >= 123001m", base.ge(larger));
         assertFalse("NOT 123km <= 122999m", base.le(smaller));
         MutableDoubleScalar.Rel<LengthUnit> same2 = new MutableDoubleScalar.Rel<LengthUnit>(123000, LengthUnit.METER);
-        MutableDoubleScalar.Rel<LengthUnit> smaller2 = new MutableDoubleScalar.Rel<LengthUnit>(122999, LengthUnit.METER);
+        MutableDoubleScalar.Rel<LengthUnit> smaller2 =
+                new MutableDoubleScalar.Rel<LengthUnit>(122999, LengthUnit.METER);
         MutableDoubleScalar.Rel<LengthUnit> larger2 = new MutableDoubleScalar.Rel<LengthUnit>(123001, LengthUnit.METER);
         assertFalse("NOT 123km < 123000m", base.lt(same2));
         assertTrue("123km <= 123000m", base.le(same2));
@@ -1164,7 +1173,8 @@ public class DoubleScalarTest
         DoubleScalar.Rel<LengthUnit> left = new DoubleScalar.Rel<LengthUnit>(leftValue, LengthUnit.MILE);
         DoubleScalar.Rel<LengthUnit> right = new DoubleScalar.Rel<LengthUnit>(rightValue, LengthUnit.MILE);
         MutableDoubleScalar.Rel<?> result = DoubleScalar.plus(left, right);
-        assertEquals("value of element should be SI plus of contributing elements", left.getSI() + right.getSI(), result.getSI(), 0.001);
+        assertEquals("value of element should be SI plus of contributing elements", left.getSI() + right.getSI(),
+                result.getSI(), 0.001);
     }
 
     /**
@@ -1179,7 +1189,8 @@ public class DoubleScalarTest
         DoubleScalar.Rel<LengthUnit> left = new DoubleScalar.Rel<LengthUnit>(leftValue, LengthUnit.MILE);
         DoubleScalar.Rel<LengthUnit> right = new DoubleScalar.Rel<LengthUnit>(rightValue, LengthUnit.MILE);
         MutableDoubleScalar.Rel<?> result = DoubleScalar.minus(left, right);
-        assertEquals("value of element should be SI minus of contributing elements", left.getSI() - right.getSI(), result.getSI(), 0.001);
+        assertEquals("value of element should be SI minus of contributing elements", left.getSI() - right.getSI(),
+                result.getSI(), 0.001);
     }
 
     /**
@@ -1194,7 +1205,8 @@ public class DoubleScalarTest
         DoubleScalar.Rel<LengthUnit> left = new DoubleScalar.Rel<LengthUnit>(leftValue, LengthUnit.MILE);
         DoubleScalar.Rel<LengthUnit> right = new DoubleScalar.Rel<LengthUnit>(rightValue, LengthUnit.MILE);
         MutableDoubleScalar.Rel<?> result = DoubleScalar.multiply(left, right);
-        assertEquals("value of element should be SI multiply of contributing elements", left.getSI() * right.getSI(), result.getSI(), 0.001);
+        assertEquals("value of element should be SI multiply of contributing elements", left.getSI() * right.getSI(),
+                result.getSI(), 0.001);
     }
 
     /**
@@ -1209,7 +1221,8 @@ public class DoubleScalarTest
         DoubleScalar.Rel<LengthUnit> left = new DoubleScalar.Rel<LengthUnit>(leftValue, LengthUnit.MILE);
         DoubleScalar.Rel<LengthUnit> right = new DoubleScalar.Rel<LengthUnit>(rightValue, LengthUnit.MILE);
         MutableDoubleScalar.Rel<?> result = DoubleScalar.divide(left, right);
-        assertEquals("value of element should be SI divide of contributing elements", left.getSI() / right.getSI(), result.getSI(), 0.001);
+        assertEquals("value of element should be SI divide of contributing elements", left.getSI() / right.getSI(),
+                result.getSI(), 0.001);
     }
 
     /** */

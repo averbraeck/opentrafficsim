@@ -13,7 +13,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionDec 30, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionDec 30, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -185,7 +186,8 @@ public class RelativePosition implements Serializable
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * $LastChangedDate$, @version $Revision$, by $Author$, initial versionDec 31, 2014 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author:
+     * pknoppers $, initial versionDec 31, 2014 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -255,5 +257,5 @@ public class RelativePosition implements Serializable
         }
 
     }
-    
+
 }

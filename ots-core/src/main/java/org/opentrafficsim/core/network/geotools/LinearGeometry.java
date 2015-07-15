@@ -23,10 +23,12 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 /**
  * This class implements a geotools-based geometry for a link in a network.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionAug 21, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionAug 21, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
@@ -80,7 +82,7 @@ public class LinearGeometry implements Serializable
                 catch (TransformException te)
                 {
                     throw new NetworkException("When constructing LinearGeometry for link=" + link.toString()
-                        + ": transformation for distance calculation failed in CRS=" + this.crs.toWKT(), te);
+                            + ": transformation for distance calculation failed in CRS=" + this.crs.toWKT(), te);
                 }
             }
             prevPos = p;
@@ -98,8 +100,8 @@ public class LinearGeometry implements Serializable
      * @param crs the Coordinate Reference System for this line.
      * @throws NetworkException when transformation for distance calculation failed.
      */
-    public LinearGeometry(final LinkGeotools<?, ?> link, final LineString lineString, final CoordinateReferenceSystem crs)
-        throws NetworkException
+    public LinearGeometry(final LinkGeotools<?, ?> link, final LineString lineString,
+            final CoordinateReferenceSystem crs) throws NetworkException
     {
         super();
         this.link = link;
@@ -129,16 +131,18 @@ public class LinearGeometry implements Serializable
                     {
                         // TODO see if CRS is in meters...
                         double dx =
-                            prevPos.getDirectPosition().getCoordinate()[0] - pos.getDirectPosition().getCoordinate()[0];
+                                prevPos.getDirectPosition().getCoordinate()[0]
+                                        - pos.getDirectPosition().getCoordinate()[0];
                         double dy =
-                            prevPos.getDirectPosition().getCoordinate()[1] - pos.getDirectPosition().getCoordinate()[1];
+                                prevPos.getDirectPosition().getCoordinate()[1]
+                                        - pos.getDirectPosition().getCoordinate()[1];
                         len += Math.sqrt(dx * dx + dy * dy);
                     }
                 }
                 catch (TransformException te)
                 {
                     throw new NetworkException("When constructing LinearGeometry for link=" + link.toString()
-                        + ": transformation for distance calculation failed in CRS=" + this.crs.toWKT(), te);
+                            + ": transformation for distance calculation failed in CRS=" + this.crs.toWKT(), te);
                 }
             }
             prevPos = pos;

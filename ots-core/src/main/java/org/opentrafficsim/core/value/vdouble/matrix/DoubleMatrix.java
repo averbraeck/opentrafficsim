@@ -33,19 +33,19 @@ import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix2D;
  * Copyright (c) 2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version26 jun, 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version26 jun, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit; the unit of this DoubleMatrix
  */
-public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> implements
-        Serializable,
-    ReadOnlyDoubleMatrixFunctions<U>
+public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> implements Serializable,
+        ReadOnlyDoubleMatrixFunctions<U>
 {
     /**  */
     private static final long serialVersionUID = 20150626L;
 
-    /** 
+    /**
      * The internal storage for the matrix; internally the values are stored in standard SI unit; storage can be dense
      * or sparse.
      */
@@ -55,7 +55,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * Construct a new Immutable DoubleMatrix.
      * @param unit U; the unit of the new DoubleMatrix
      */
-    protected  DoubleMatrix(final U unit)
+    protected DoubleMatrix(final U unit)
     {
         super(unit);
         // System.out.println("Created DoubleMatrix");
@@ -577,7 +577,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             {
                 return new DenseDoubleAlgebra().det(getMatrixSI());
             }
-        throw new ValueException("DoubleMatrix.det -- matrix implements neither Sparse nor Dense");
+            throw new ValueException("DoubleMatrix.det -- matrix implements neither Sparse nor Dense");
         }
         catch (IllegalArgumentException exception)
         {
@@ -586,7 +586,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
                 exception.printStackTrace();
             }
             throw new ValueException(exception.getMessage()); // probably Matrix must be square
-            }
+        }
     }
 
     /** {@inheritDoc} */
@@ -722,7 +722,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         final int otherColumns = 0 == other.length ? 0 : other[0].length;
         if (rows() != other.length || columns() != otherColumns)
         {
-        throw new ValueException("The matrix and the array have different sizes: " + rows() + "x" + columns()
+            throw new ValueException("The matrix and the array have different sizes: " + rows() + "x" + columns()
                     + " != " + other.length + "x" + otherColumns);
         }
         ensureRectangular(other);
@@ -855,7 +855,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         SIUnit targetUnit =
                 Unit.lookupOrCreateSIUnitWithSICoefficients(SICoefficients.divide(b.getUnit().getSICoefficients(),
                         A.getUnit().getSICoefficients()).toString());
-        
+
         // TODO should the algorithm throw an exception when rows/columns do not match when solving A*x = b ?
         DoubleMatrix2D A2D = A.getMatrixSI();
         if (A instanceof SparseData)
@@ -863,7 +863,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             SparseDoubleMatrix1D b1D = new SparseDoubleMatrix1D(b.getValuesSI());
             DoubleMatrix1D x1D = new SparseDoubleAlgebra().solve(A2D, b1D);
             DoubleVector.Abs.Sparse<SIUnit> x = new DoubleVector.Abs.Sparse<SIUnit>(x1D.toArray(), targetUnit);
-        return x;
+            return x;
         }
         if (A instanceof DenseData)
         {
@@ -895,7 +895,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
         }
         if (obj == null)
         {
-        return false;
+            return false;
         }
         if (!(obj instanceof DoubleMatrix))
         {
@@ -1020,7 +1020,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             final DoubleMatrix.Abs<U> right) throws ValueException
     {
         return (MutableDoubleMatrix.Rel.Dense<U>) new MutableDoubleMatrix.Rel.Dense<U>(left.deepCopyOfData(),
-                    left.getUnit()).decrementBy(right);
+                left.getUnit()).decrementBy(right);
     }
 
     /**
@@ -1035,7 +1035,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             final DoubleMatrix.Abs.Sparse<U> right) throws ValueException
     {
         return (MutableDoubleMatrix.Rel.Sparse<U>) new MutableDoubleMatrix.Rel.Sparse<U>(left.deepCopyOfData(),
-                    left.getUnit()).decrementBy(right);
+                left.getUnit()).decrementBy(right);
     }
 
     /**
@@ -1050,7 +1050,7 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
             final DoubleMatrix.Abs.Dense<U> right) throws ValueException
     {
         return (MutableDoubleMatrix.Rel.Dense<U>) new MutableDoubleMatrix.Rel.Dense<U>(left.deepCopyOfData(),
-                    left.getUnit()).decrementBy(right);
+                left.getUnit()).decrementBy(right);
     }
 
     /**
@@ -1395,8 +1395,9 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @return MutableDoubleMatrix.Abs.Dense&lt;U&gt;
      * @throws ValueException when zero and one do not have the same size
      */
-    public static <U extends Unit<U>> MutableDoubleMatrix.Abs.Dense<U> interpolate(final DoubleMatrix.Abs.Dense<U> zero,
-            final DoubleMatrix.Abs.Dense<U> one, final double ratio) throws ValueException
+    public static <U extends Unit<U>> MutableDoubleMatrix.Abs.Dense<U> interpolate(
+            final DoubleMatrix.Abs.Dense<U> zero, final DoubleMatrix.Abs.Dense<U> one, final double ratio)
+            throws ValueException
     {
         MutableDoubleMatrix.Abs.Dense<U> result = zero.mutable();
         for (int row = result.rows(); --row >= 0;)
@@ -1418,8 +1419,9 @@ public abstract class DoubleMatrix<U extends Unit<U>> extends AbstractValue<U> i
      * @return MutableDoubleMatrix.Rel.Dense&lt;U&gt;
      * @throws ValueException when zero and one do not have the same size
      */
-    public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Dense<U> interpolate(final DoubleMatrix.Rel.Dense<U> zero,
-            final DoubleMatrix.Rel.Dense<U> one, final double ratio) throws ValueException
+    public static <U extends Unit<U>> MutableDoubleMatrix.Rel.Dense<U> interpolate(
+            final DoubleMatrix.Rel.Dense<U> zero, final DoubleMatrix.Rel.Dense<U> one, final double ratio)
+            throws ValueException
     {
         MutableDoubleMatrix.Rel.Dense<U> result = zero.mutable();
         for (int row = result.rows(); --row >= 0;)

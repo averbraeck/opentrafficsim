@@ -19,10 +19,12 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /**
  * The Node is a point with an id. It is used in the network to connect Links.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionAug 19, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionAug 19, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
@@ -60,7 +62,7 @@ public abstract class AbstractNode<ID, P> implements Node<ID, P>, LocatableInter
      * @param slope the slope as an angle.
      */
     public AbstractNode(final ID id, final P point, final DoubleScalar.Abs<AnglePlaneUnit> direction,
-        final DoubleScalar.Abs<AngleSlopeUnit> slope)
+            final DoubleScalar.Abs<AngleSlopeUnit> slope)
     {
         this.id = id;
         this.point = point;
@@ -75,8 +77,8 @@ public abstract class AbstractNode<ID, P> implements Node<ID, P>, LocatableInter
      */
     public AbstractNode(final ID id, final P point)
     {
-        this(id, point, new DoubleScalar.Abs<AnglePlaneUnit>(0.0, AnglePlaneUnit.SI), new DoubleScalar.Abs<AngleSlopeUnit>(
-            0.0, AngleSlopeUnit.SI));
+        this(id, point, new DoubleScalar.Abs<AnglePlaneUnit>(0.0, AnglePlaneUnit.SI),
+                new DoubleScalar.Abs<AngleSlopeUnit>(0.0, AngleSlopeUnit.SI));
     }
 
     /**
@@ -160,7 +162,7 @@ public abstract class AbstractNode<ID, P> implements Node<ID, P>, LocatableInter
     @Override
     public final DirectedPoint getLocation() throws RemoteException
     {
-        return new DirectedPoint(new double[] {getX(), getY(), getZ()});
+        return new DirectedPoint(new double[]{getX(), getY(), getZ()});
     }
 
     /** {@inheritDoc} */

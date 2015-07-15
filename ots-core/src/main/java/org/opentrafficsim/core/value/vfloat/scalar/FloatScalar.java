@@ -17,7 +17,8 @@ import org.opentrafficsim.core.value.ValueUtil;
  * Copyright (c) 2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version26 jun, 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version26 jun, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <U> Unit; the unit of this FloatScalar
@@ -34,7 +35,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
      * Construct a new Immutable FloatScalar.
      * @param unit U; the unit of the new FloatScalar
      */
-    protected  FloatScalar(final U unit)
+    protected FloatScalar(final U unit)
     {
         super(unit);
         // System.out.println("Created FloatScalar");
@@ -434,7 +435,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * Initialize the valueSI field. As the provided value is already in the SI standard unit, conversion is never necessary.
+     * Initialize the valueSI field. As the provided value is already in the SI standard unit, conversion is never
+     * necessary.
      * @param value FloatScalar&lt;U&gt;; the value to use for initialization
      */
     protected final void initialize(final FloatScalar<U> value)
@@ -613,7 +615,7 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
         }
         if (obj == null)
         {
-        return false;
+            return false;
         }
         if (!(obj instanceof FloatScalar))
         {
@@ -642,8 +644,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     /**********************************************************************************/
 
     /**
-     * Add a Relative value to an Absolute value. Return a new instance of the value. The unit of the return
-     * value will be the unit of the left argument.
+     * Add a Relative value to an Absolute value. Return a new instance of the value. The unit of the return value will
+     * be the unit of the left argument.
      * @param left FloatScalar.Abs&lt;U&gt;; the left argument
      * @param right FloatScalar.Rel&lt;U&gt;; the right argument
      * @param <U> Unit; the unit of the parameters and the result
@@ -658,8 +660,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * Add a Relative value to a Relative value. Return a new instance of the value. The unit of the return
-     * value will be the unit of the left argument.
+     * Add a Relative value to a Relative value. Return a new instance of the value. The unit of the return value will
+     * be the unit of the left argument.
      * @param left FloatScalar.Rel&lt;U&gt;; the left argument
      * @param right FloatScalar.Rel&lt;U&gt;; the right argument
      * @param <U> Unit; the unit of the parameters and the result
@@ -674,8 +676,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * Subtract a Relative value from an absolute value. Return a new instance of the value. The unit of the
-     * return value will be the unit of the left argument.
+     * Subtract a Relative value from an absolute value. Return a new instance of the value. The unit of the return
+     * value will be the unit of the left argument.
      * @param left FloatScalar.Abs&lt;U&gt;; the left value
      * @param right FloatScalar.Rel&lt;U&gt;; the right value
      * @param <U> Unit; the unit of the parameters and the result
@@ -690,8 +692,8 @@ public abstract class FloatScalar<U extends Unit<U>> extends Scalar<U>
     }
 
     /**
-     * Subtract a relative value from a relative value. Return a new instance of the value. The unit of the
-     * value will be the unit of the first argument.
+     * Subtract a relative value from a relative value. Return a new instance of the value. The unit of the value will
+     * be the unit of the first argument.
      * @param left FloatScalar.Rel&lt;U&gt;; the left value
      * @param right FloatScalar.Rel&lt;U&gt;; the right value
      * @param <U> Unit; the unit of the parameters and the result

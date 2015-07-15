@@ -35,11 +35,12 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /**
  * Generate GTUs at times prescribed in a text file.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version 7 jul. 2015 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
+ *          $, initial version 7 jul. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @param <ID> id type of the GTUs that are generated
@@ -79,8 +80,8 @@ public class ListGTUGenerator<ID>
     /**
      * Construct a GTU generator that takes the times to generate another GTU from an external source. <br>
      * Currently the external input is a text file in the local file system. This should be replaced by a more general
-     * mechanism. Currently, the format of the input is one floating point value per line. This may be changed into
-     * an XML format that can also specify the GTUType, etc. 
+     * mechanism. Currently, the format of the input is one floating point value per line. This may be changed into an
+     * XML format that can also specify the GTUType, etc.
      * @param name String; name if this generator
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @param gtuType GTUType&lt;ID&gt;; the GTUType of the generated GTUs

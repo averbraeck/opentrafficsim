@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-
 import org.junit.Test;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TemperatureUnit;
@@ -21,7 +20,8 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
  * Copyright (c) 2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version26 jun, 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version26 jun, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -66,7 +66,7 @@ public class FloatMatrixSparseTest
         for (int row = fm.rows(); --row >= 0;)
         {
             for (int column = fm.columns(); --column >= 0;)
-                {
+            {
                 try
                 {
                     assertEquals("Value should match", reference[row][column], fm.getInUnit(row, column), precision);
@@ -78,8 +78,8 @@ public class FloatMatrixSparseTest
             }
         }
         assertEquals("Unit should be " + u.toString(), u, fm.getUnit());
-        assertTrue("Should be " + (expectAbsolute ? "Absolute" : "Relative"), 
-                    expectAbsolute ? fm.isAbsolute() : fm.isRelative());
+        assertTrue("Should be " + (expectAbsolute ? "Absolute" : "Relative"),
+                expectAbsolute ? fm.isAbsolute() : fm.isRelative());
     }
 
     /**
@@ -117,7 +117,8 @@ public class FloatMatrixSparseTest
         {
             TemperatureUnit tempUnit = TemperatureUnit.KELVIN;
             float[][] value = data(3, 5, false, 38.0f);
-            MutableFloatMatrix.Abs.Sparse<TemperatureUnit> fm = new MutableFloatMatrix.Abs.Sparse<TemperatureUnit>(value, tempUnit);
+            MutableFloatMatrix.Abs.Sparse<TemperatureUnit> fm =
+                    new MutableFloatMatrix.Abs.Sparse<TemperatureUnit>(value, tempUnit);
             String result = fm.toString(true, true);
             assertTrue("toString result contains \" Abs \"", result.contains(" Abs "));
             assertTrue("toString result contains \"K\"", result.contains("K"));
@@ -141,10 +142,12 @@ public class FloatMatrixSparseTest
         {
             TemperatureUnit tempUnit = TemperatureUnit.DEGREE_CELSIUS;
             float[][] value = data(3, 5, false, 38.0f);
-            FloatMatrix.Abs.Sparse<TemperatureUnit> temperatureFM = new FloatMatrix.Abs.Sparse<TemperatureUnit>(value, tempUnit);
+            FloatMatrix.Abs.Sparse<TemperatureUnit> temperatureFM =
+                    new FloatMatrix.Abs.Sparse<TemperatureUnit>(value, tempUnit);
             checkContentsAndType(temperatureFM, value, 0.001f, tempUnit, true);
             assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFM.getSI(0, 0), 0.05);
-            assertEquals("Value in Fahrenheit", 100.4f, temperatureFM.getInUnit(0, 0, TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
+            assertEquals("Value in Fahrenheit", 100.4f,
+                    temperatureFM.getInUnit(0, 0, TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
             float[][] out = temperatureFM.getValuesInUnit();
             for (int row = 0; row < value.length; row++)
             {
@@ -153,7 +156,8 @@ public class FloatMatrixSparseTest
                     assertEquals("Value should match", value[row][column], out[row][column], 0.001);
                 }
             }
-            MutableFloatMatrix.Abs.Sparse<TemperatureUnit> mfm = new MutableFloatMatrix.Abs.Sparse<TemperatureUnit>(value, tempUnit);
+            MutableFloatMatrix.Abs.Sparse<TemperatureUnit> mfm =
+                    new MutableFloatMatrix.Abs.Sparse<TemperatureUnit>(value, tempUnit);
             checkContentsAndType(mfm, value, 0.001f, tempUnit, true);
             mfm.setSI(0, 0, 73);
             float safe = value[0][0];
@@ -162,7 +166,8 @@ public class FloatMatrixSparseTest
             value[0][0] = safe; // Restore
             mfm.set(0, 0, temperatureFM.get(0, 0));
             checkContentsAndType(mfm, value, 0.001f, tempUnit, true);
-            FloatMatrix.Abs.Sparse<TemperatureUnit> temperature2FM = new FloatMatrix.Abs.Sparse<TemperatureUnit>(temperatureFM.getMatrixSI(), TemperatureUnit.KELVIN);
+            FloatMatrix.Abs.Sparse<TemperatureUnit> temperature2FM =
+                    new FloatMatrix.Abs.Sparse<TemperatureUnit>(temperatureFM.getMatrixSI(), TemperatureUnit.KELVIN);
             assertTrue("temperature2FM should be equal to temperatureFM", temperature2FM.equals(temperatureFM));
             assertTrue("Value is Absolute", temperatureFM.isAbsolute());
             assertFalse("Value is not Relative", temperatureFM.isRelative());
@@ -177,17 +182,19 @@ public class FloatMatrixSparseTest
                 }
             }
             FloatScalar.Abs<TemperatureUnit>[][] scalar = new FloatScalar.Abs[value.length][];
-        for (int row = 0; row < value.length; row++)
+            for (int row = 0; row < value.length; row++)
             {
                 scalar[row] = new FloatScalar.Abs[value[row].length];
                 for (int column = 0; column < value[row].length; column++)
                 {
-                    scalar[row][column] = new FloatScalar.Abs<TemperatureUnit>(value[row][column], TemperatureUnit.DEGREE_CELSIUS);
+                    scalar[row][column] =
+                            new FloatScalar.Abs<TemperatureUnit>(value[row][column], TemperatureUnit.DEGREE_CELSIUS);
                 }
             }
             temperatureFM = new FloatMatrix.Abs.Sparse<TemperatureUnit>(scalar);
             checkContentsAndType(temperatureFM, value, 0.001f, tempUnit, true);
-            assertEquals("All cells != 0; cardinality should equal number of cells", value.length * value[0].length, temperatureFM.cardinality());
+            assertEquals("All cells != 0; cardinality should equal number of cells", value.length * value[0].length,
+                    temperatureFM.cardinality());
             float sum = 0;
             for (int row = 0; row < value.length; row++)
             {
@@ -236,7 +243,8 @@ public class FloatMatrixSparseTest
             checkContentsAndType(mfmCopy, value, 0.001f, tempUnit, true);
             checkContentsAndType(mmfm, value, 0.001f, tempUnit, true);
             FloatMatrix.Abs<TemperatureUnit> ifm = mfm.immutable();
-            assertTrue("Different value extremely likely results in different hashCode", fm.hashCode() != mfm.hashCode());
+            assertTrue("Different value extremely likely results in different hashCode",
+                    fm.hashCode() != mfm.hashCode());
             // Restore value of mfm
             mfm.setSI(0, 0, fm.getSI(0, 0));
             checkContentsAndType(ifm, value2, 0.01f, tempUnit, true);
@@ -267,15 +275,14 @@ public class FloatMatrixSparseTest
         assertFalse("Not equal to some other kind of object; e.g. a String", fm.equals(new String("abc")));
         FloatScalar.Rel<LengthUnit> fmCounterPart = new FloatScalar.Rel<LengthUnit>(value, lengthUnit);
         assertFalse("Not equal if one Absolute and other Relative", fm.equals(fmCounterPart));
-        FloatScalar.Abs<TemperatureUnit> fmWrongBaseUnit = new FloatScalar.Abs<TemperatureUnit>(value, TemperatureUnit.KELVIN);
+        FloatScalar.Abs<TemperatureUnit> fmWrongBaseUnit =
+                new FloatScalar.Abs<TemperatureUnit>(value, TemperatureUnit.KELVIN);
         assertEquals("The underlying SI values are the same", fm.getSI(), fmWrongBaseUnit.getSI(), 0.0001f);
         assertFalse("Not equals because the standard SI unit differs", fm.equals(fmWrongBaseUnit));
-        FloatScalar.Abs<LengthUnit> fmCompatibleUnit =
-                new FloatScalar.Abs<LengthUnit>(38000.0f, LengthUnit.MILLIMETER);
+        FloatScalar.Abs<LengthUnit> fmCompatibleUnit = new FloatScalar.Abs<LengthUnit>(38000.0f, LengthUnit.MILLIMETER);
         assertFalse("Units are different", fm.getUnit().equals(fmCompatibleUnit.getUnit()));
         assertTrue("equals returns true", fm.equals(fmCompatibleUnit));
-        FloatScalar.Abs<LengthUnit> fmDifferentValue =
-                new FloatScalar.Abs<LengthUnit>(123.456f, LengthUnit.MILLIMETER);
+        FloatScalar.Abs<LengthUnit> fmDifferentValue = new FloatScalar.Abs<LengthUnit>(123.456f, LengthUnit.MILLIMETER);
         assertFalse("Different value makes equals return false", fm.equals(fmDifferentValue));
     }
 
@@ -433,9 +440,9 @@ public class FloatMatrixSparseTest
                         return (float) Math.log1p(f);
                     }
                 });
-            for (int i = -10; i <= 10; i++)
-            {
-                final float exponent = i * 0.5f;
+                for (int i = -10; i <= 10; i++)
+                {
+                    final float exponent = i * 0.5f;
                     fm = new MutableFloatMatrix.Abs.Sparse<LengthUnit>(input, LengthUnit.METER);
                     fm.pow(exponent);
                     MathTester.tester(input, "pow(" + exponent + ")", fm, 0.001, new FloatToFloat()
@@ -446,7 +453,7 @@ public class FloatMatrixSparseTest
                             return (float) Math.pow(f, exponent);
                         }
                     });
-            }
+                }
                 fm = new MutableFloatMatrix.Abs.Sparse<LengthUnit>(input, LengthUnit.METER);
                 fm.rint();
                 MathTester.tester(input, "rint", fm, 0.001, new FloatToFloat()
@@ -576,14 +583,17 @@ public class FloatMatrixSparseTest
         {
             float[][] leftValue = data(3, 5, false, 123.4f);
             float[][] rightValue = data(3, 5, false, 234.5f);
-            FloatMatrix.Abs.Sparse<LengthUnit> left = new FloatMatrix.Abs.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
-            FloatMatrix.Rel.Dense<LengthUnit> right = new FloatMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
+            FloatMatrix.Abs.Sparse<LengthUnit> left =
+                    new FloatMatrix.Abs.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
+            FloatMatrix.Rel.Dense<LengthUnit> right =
+                    new FloatMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableFloatMatrix.Abs.Dense<?> result = FloatMatrix.plus(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI plus of contributing elements", left.getSI(i, j) + right.getSI(i, j), result.getSI(i, j), 0.001f);
+                    assertEquals("value of element should be SI plus of contributing elements", left.getSI(i, j)
+                            + right.getSI(i, j), result.getSI(i, j), 0.001f);
                 }
             }
         }
@@ -604,14 +614,17 @@ public class FloatMatrixSparseTest
         {
             float[][] leftValue = data(3, 5, false, 123.4f);
             float[][] rightValue = data(3, 5, false, 234.5f);
-            FloatMatrix.Abs.Sparse<LengthUnit> left = new FloatMatrix.Abs.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
-            FloatMatrix.Rel.Dense<LengthUnit> right = new FloatMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
+            FloatMatrix.Abs.Sparse<LengthUnit> left =
+                    new FloatMatrix.Abs.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
+            FloatMatrix.Rel.Dense<LengthUnit> right =
+                    new FloatMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableFloatMatrix.Abs.Dense<?> result = FloatMatrix.minus(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI minus of contributing elements", left.getSI(i, j) - right.getSI(i, j), result.getSI(i, j), 0.001f);
+                    assertEquals("value of element should be SI minus of contributing elements", left.getSI(i, j)
+                            - right.getSI(i, j), result.getSI(i, j), 0.001f);
                 }
             }
         }
@@ -632,14 +645,17 @@ public class FloatMatrixSparseTest
         {
             float[][] leftValue = data(3, 5, false, 123.4f);
             float[][] rightValue = data(3, 5, false, 234.5f);
-            FloatMatrix.Abs.Sparse<LengthUnit> left = new FloatMatrix.Abs.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
-            FloatMatrix.Abs.Dense<LengthUnit> right = new FloatMatrix.Abs.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
+            FloatMatrix.Abs.Sparse<LengthUnit> left =
+                    new FloatMatrix.Abs.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
+            FloatMatrix.Abs.Dense<LengthUnit> right =
+                    new FloatMatrix.Abs.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableFloatMatrix.Abs.Sparse<?> result = FloatMatrix.times(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI times of contributing elements", left.getSI(i, j) * right.getSI(i, j), result.getSI(i, j), 0.001f);
+                    assertEquals("value of element should be SI times of contributing elements", left.getSI(i, j)
+                            * right.getSI(i, j), result.getSI(i, j), 0.001f);
                 }
             }
         }
@@ -660,14 +676,17 @@ public class FloatMatrixSparseTest
         {
             float[][] leftValue = data(3, 5, false, 123.4f);
             float[][] rightValue = data(3, 5, false, 234.5f);
-            FloatMatrix.Abs.Sparse<LengthUnit> left = new FloatMatrix.Abs.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
-            FloatMatrix.Rel.Sparse<LengthUnit> right = new FloatMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
+            FloatMatrix.Abs.Sparse<LengthUnit> left =
+                    new FloatMatrix.Abs.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
+            FloatMatrix.Rel.Sparse<LengthUnit> right =
+                    new FloatMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableFloatMatrix.Abs.Sparse<?> result = FloatMatrix.plus(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI plus of contributing elements", left.getSI(i, j) + right.getSI(i, j), result.getSI(i, j), 0.001f);
+                    assertEquals("value of element should be SI plus of contributing elements", left.getSI(i, j)
+                            + right.getSI(i, j), result.getSI(i, j), 0.001f);
                 }
             }
         }
@@ -688,14 +707,17 @@ public class FloatMatrixSparseTest
         {
             float[][] leftValue = data(3, 5, false, 123.4f);
             float[][] rightValue = data(3, 5, false, 234.5f);
-            FloatMatrix.Abs.Sparse<LengthUnit> left = new FloatMatrix.Abs.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
-            FloatMatrix.Rel.Sparse<LengthUnit> right = new FloatMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
+            FloatMatrix.Abs.Sparse<LengthUnit> left =
+                    new FloatMatrix.Abs.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
+            FloatMatrix.Rel.Sparse<LengthUnit> right =
+                    new FloatMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableFloatMatrix.Abs.Sparse<?> result = FloatMatrix.minus(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI minus of contributing elements", left.getSI(i, j) - right.getSI(i, j), result.getSI(i, j), 0.001f);
+                    assertEquals("value of element should be SI minus of contributing elements", left.getSI(i, j)
+                            - right.getSI(i, j), result.getSI(i, j), 0.001f);
                 }
             }
         }
@@ -716,14 +738,17 @@ public class FloatMatrixSparseTest
         {
             float[][] leftValue = data(3, 5, false, 123.4f);
             float[][] rightValue = data(3, 5, false, 234.5f);
-            FloatMatrix.Abs.Sparse<LengthUnit> left = new FloatMatrix.Abs.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
-            FloatMatrix.Abs.Sparse<LengthUnit> right = new FloatMatrix.Abs.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
+            FloatMatrix.Abs.Sparse<LengthUnit> left =
+                    new FloatMatrix.Abs.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
+            FloatMatrix.Abs.Sparse<LengthUnit> right =
+                    new FloatMatrix.Abs.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableFloatMatrix.Abs.Sparse<?> result = FloatMatrix.times(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI times of contributing elements", left.getSI(i, j) * right.getSI(i, j), result.getSI(i, j), 0.001f);
+                    assertEquals("value of element should be SI times of contributing elements", left.getSI(i, j)
+                            * right.getSI(i, j), result.getSI(i, j), 0.001f);
                 }
             }
         }
@@ -818,7 +843,7 @@ public class FloatMatrixSparseTest
             try
             {
                 matrix = new FloatMatrix.Abs.Sparse<TemperatureUnit>(in, TemperatureUnit.DEGREE_CELSIUS);
-                 rowCountWrong = data(4, 5, false, 2);
+                rowCountWrong = data(4, 5, false, 2);
             }
             catch (ValueException ve)
             {
@@ -844,8 +869,9 @@ public class FloatMatrixSparseTest
     {
         try
         {
-            float[][] values = {{1, 2, 3 }, {3, 5, 7 }, {5, 10, 0} };
-            FloatMatrix.Abs.Sparse<TemperatureUnit> matrix = new FloatMatrix.Abs.Sparse<TemperatureUnit>(values, TemperatureUnit.KELVIN);
+            float[][] values = {{1, 2, 3}, {3, 5, 7}, {5, 10, 0}};
+            FloatMatrix.Abs.Sparse<TemperatureUnit> matrix =
+                    new FloatMatrix.Abs.Sparse<TemperatureUnit>(values, TemperatureUnit.KELVIN);
             assertEquals("Determinant should be 15", 15, matrix.det(), 0.001);
         }
         catch (ValueException ve)
@@ -869,7 +895,8 @@ public class FloatMatrixSparseTest
         try
         {
             float[][] leftIn = data(3, 5, false, -12.34f);
-            FloatMatrix.Abs.Sparse<TemperatureUnit> left = new FloatMatrix.Abs.Sparse<TemperatureUnit>(leftIn, TemperatureUnit.KELVIN);
+            FloatMatrix.Abs.Sparse<TemperatureUnit> left =
+                    new FloatMatrix.Abs.Sparse<TemperatureUnit>(leftIn, TemperatureUnit.KELVIN);
             float[][] right = data(3, 5, false, -4.321f);
             MutableFloatMatrix.Abs.Sparse<TemperatureUnit> result = FloatMatrix.times(left, right);
             assertEquals("Result should be in Kelvin", TemperatureUnit.KELVIN, result.getUnit());
@@ -877,7 +904,8 @@ public class FloatMatrixSparseTest
             {
                 for (int column = right[row].length; --column >= 0;)
                 {
-                    assertEquals("Content should match product of left and right", leftIn[row][column] * right[row][column], result.getSI(row, column), 0.001f);
+                    assertEquals("Content should match product of left and right", leftIn[row][column]
+                            * right[row][column], result.getSI(row, column), 0.001f);
                 }
             }
         }
@@ -922,7 +950,8 @@ public class FloatMatrixSparseTest
         {
             TemperatureUnit tempUnit = TemperatureUnit.KELVIN;
             float[][] value = data(3, 5, false, 38.0f);
-            MutableFloatMatrix.Rel.Sparse<TemperatureUnit> fm = new MutableFloatMatrix.Rel.Sparse<TemperatureUnit>(value, tempUnit);
+            MutableFloatMatrix.Rel.Sparse<TemperatureUnit> fm =
+                    new MutableFloatMatrix.Rel.Sparse<TemperatureUnit>(value, tempUnit);
             String result = fm.toString(true, true);
             assertTrue("toString result contains \" Rel \"", result.contains(" Rel "));
             assertTrue("toString result contains \"K\"", result.contains("K"));
@@ -946,10 +975,12 @@ public class FloatMatrixSparseTest
         {
             TemperatureUnit tempUnit = TemperatureUnit.DEGREE_CELSIUS;
             float[][] value = data(3, 5, false, 38.0f);
-            FloatMatrix.Rel.Sparse<TemperatureUnit> temperatureFM = new FloatMatrix.Rel.Sparse<TemperatureUnit>(value, tempUnit);
+            FloatMatrix.Rel.Sparse<TemperatureUnit> temperatureFM =
+                    new FloatMatrix.Rel.Sparse<TemperatureUnit>(value, tempUnit);
             checkContentsAndType(temperatureFM, value, 0.001f, tempUnit, false);
             assertEquals("Value in SI is equivalent in Kelvin", 311.15f, temperatureFM.getSI(0, 0), 0.05);
-            assertEquals("Value in Fahrenheit", 100.4f, temperatureFM.getInUnit(0, 0, TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
+            assertEquals("Value in Fahrenheit", 100.4f,
+                    temperatureFM.getInUnit(0, 0, TemperatureUnit.DEGREE_FAHRENHEIT), 0.1);
             float[][] out = temperatureFM.getValuesInUnit();
             for (int row = 0; row < value.length; row++)
             {
@@ -958,7 +989,8 @@ public class FloatMatrixSparseTest
                     assertEquals("Value should match", value[row][column], out[row][column], 0.001);
                 }
             }
-            MutableFloatMatrix.Rel.Sparse<TemperatureUnit> mfm = new MutableFloatMatrix.Rel.Sparse<TemperatureUnit>(value, tempUnit);
+            MutableFloatMatrix.Rel.Sparse<TemperatureUnit> mfm =
+                    new MutableFloatMatrix.Rel.Sparse<TemperatureUnit>(value, tempUnit);
             checkContentsAndType(mfm, value, 0.001f, tempUnit, false);
             mfm.setSI(0, 0, 73);
             float safe = value[0][0];
@@ -967,7 +999,8 @@ public class FloatMatrixSparseTest
             value[0][0] = safe; // Restore
             mfm.set(0, 0, temperatureFM.get(0, 0));
             checkContentsAndType(mfm, value, 0.001f, tempUnit, false);
-            FloatMatrix.Rel.Sparse<TemperatureUnit> temperature2FM = new FloatMatrix.Rel.Sparse<TemperatureUnit>(temperatureFM.getMatrixSI(), TemperatureUnit.KELVIN);
+            FloatMatrix.Rel.Sparse<TemperatureUnit> temperature2FM =
+                    new FloatMatrix.Rel.Sparse<TemperatureUnit>(temperatureFM.getMatrixSI(), TemperatureUnit.KELVIN);
             assertTrue("temperature2FM should be equal to temperatureFM", temperature2FM.equals(temperatureFM));
             assertTrue("Value is Relative", temperatureFM.isRelative());
             assertFalse("Value is not Absolute", temperatureFM.isAbsolute());
@@ -982,17 +1015,19 @@ public class FloatMatrixSparseTest
                 }
             }
             FloatScalar.Rel<TemperatureUnit>[][] scalar = new FloatScalar.Rel[value.length][];
-        for (int row = 0; row < value.length; row++)
+            for (int row = 0; row < value.length; row++)
             {
                 scalar[row] = new FloatScalar.Rel[value[row].length];
                 for (int column = 0; column < value[row].length; column++)
                 {
-                    scalar[row][column] = new FloatScalar.Rel<TemperatureUnit>(value[row][column], TemperatureUnit.DEGREE_CELSIUS);
+                    scalar[row][column] =
+                            new FloatScalar.Rel<TemperatureUnit>(value[row][column], TemperatureUnit.DEGREE_CELSIUS);
                 }
             }
             temperatureFM = new FloatMatrix.Rel.Sparse<TemperatureUnit>(scalar);
             checkContentsAndType(temperatureFM, value, 0.001f, tempUnit, false);
-            assertEquals("All cells != 0; cardinality should equal number of cells", value.length * value[0].length, temperatureFM.cardinality());
+            assertEquals("All cells != 0; cardinality should equal number of cells", value.length * value[0].length,
+                    temperatureFM.cardinality());
             float sum = 0;
             for (int row = 0; row < value.length; row++)
             {
@@ -1041,7 +1076,8 @@ public class FloatMatrixSparseTest
             checkContentsAndType(mfmCopy, value, 0.001f, tempUnit, false);
             checkContentsAndType(mmfm, value, 0.001f, tempUnit, false);
             FloatMatrix.Rel<TemperatureUnit> ifm = mfm.immutable();
-            assertTrue("Different value extremely likely results in different hashCode", fm.hashCode() != mfm.hashCode());
+            assertTrue("Different value extremely likely results in different hashCode",
+                    fm.hashCode() != mfm.hashCode());
             // Restore value of mfm
             mfm.setSI(0, 0, fm.getSI(0, 0));
             checkContentsAndType(ifm, value2, 0.01f, tempUnit, false);
@@ -1072,15 +1108,14 @@ public class FloatMatrixSparseTest
         assertFalse("Not equal to some other kind of object; e.g. a String", fm.equals(new String("abc")));
         FloatScalar.Abs<LengthUnit> fmCounterPart = new FloatScalar.Abs<LengthUnit>(value, lengthUnit);
         assertFalse("Not equal if one Absolute and other Relative", fm.equals(fmCounterPart));
-        FloatScalar.Rel<TemperatureUnit> fmWrongBaseUnit = new FloatScalar.Rel<TemperatureUnit>(value, TemperatureUnit.KELVIN);
+        FloatScalar.Rel<TemperatureUnit> fmWrongBaseUnit =
+                new FloatScalar.Rel<TemperatureUnit>(value, TemperatureUnit.KELVIN);
         assertEquals("The underlying SI values are the same", fm.getSI(), fmWrongBaseUnit.getSI(), 0.0001f);
         assertFalse("Not equals because the standard SI unit differs", fm.equals(fmWrongBaseUnit));
-        FloatScalar.Rel<LengthUnit> fmCompatibleUnit =
-                new FloatScalar.Rel<LengthUnit>(38000.0f, LengthUnit.MILLIMETER);
+        FloatScalar.Rel<LengthUnit> fmCompatibleUnit = new FloatScalar.Rel<LengthUnit>(38000.0f, LengthUnit.MILLIMETER);
         assertFalse("Units are different", fm.getUnit().equals(fmCompatibleUnit.getUnit()));
         assertTrue("equals returns true", fm.equals(fmCompatibleUnit));
-        FloatScalar.Rel<LengthUnit> fmDifferentValue =
-                new FloatScalar.Rel<LengthUnit>(123.456f, LengthUnit.MILLIMETER);
+        FloatScalar.Rel<LengthUnit> fmDifferentValue = new FloatScalar.Rel<LengthUnit>(123.456f, LengthUnit.MILLIMETER);
         assertFalse("Different value makes equals return false", fm.equals(fmDifferentValue));
     }
 
@@ -1238,9 +1273,9 @@ public class FloatMatrixSparseTest
                         return (float) Math.log1p(f);
                     }
                 });
-            for (int i = -10; i <= 10; i++)
-            {
-                final float exponent = i * 0.5f;
+                for (int i = -10; i <= 10; i++)
+                {
+                    final float exponent = i * 0.5f;
                     fm = new MutableFloatMatrix.Rel.Sparse<LengthUnit>(input, LengthUnit.METER);
                     fm.pow(exponent);
                     MathTester.tester(input, "pow(" + exponent + ")", fm, 0.001, new FloatToFloat()
@@ -1251,7 +1286,7 @@ public class FloatMatrixSparseTest
                             return (float) Math.pow(f, exponent);
                         }
                     });
-            }
+                }
                 fm = new MutableFloatMatrix.Rel.Sparse<LengthUnit>(input, LengthUnit.METER);
                 fm.rint();
                 MathTester.tester(input, "rint", fm, 0.001, new FloatToFloat()
@@ -1381,14 +1416,17 @@ public class FloatMatrixSparseTest
         {
             float[][] leftValue = data(3, 5, false, 123.4f);
             float[][] rightValue = data(3, 5, false, 234.5f);
-            FloatMatrix.Rel.Sparse<LengthUnit> left = new FloatMatrix.Rel.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
-            FloatMatrix.Rel.Dense<LengthUnit> right = new FloatMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
+            FloatMatrix.Rel.Sparse<LengthUnit> left =
+                    new FloatMatrix.Rel.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
+            FloatMatrix.Rel.Dense<LengthUnit> right =
+                    new FloatMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableFloatMatrix.Rel.Dense<?> result = FloatMatrix.plus(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI plus of contributing elements", left.getSI(i, j) + right.getSI(i, j), result.getSI(i, j), 0.001f);
+                    assertEquals("value of element should be SI plus of contributing elements", left.getSI(i, j)
+                            + right.getSI(i, j), result.getSI(i, j), 0.001f);
                 }
             }
         }
@@ -1409,14 +1447,17 @@ public class FloatMatrixSparseTest
         {
             float[][] leftValue = data(3, 5, false, 123.4f);
             float[][] rightValue = data(3, 5, false, 234.5f);
-            FloatMatrix.Rel.Sparse<LengthUnit> left = new FloatMatrix.Rel.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
-            FloatMatrix.Rel.Dense<LengthUnit> right = new FloatMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
+            FloatMatrix.Rel.Sparse<LengthUnit> left =
+                    new FloatMatrix.Rel.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
+            FloatMatrix.Rel.Dense<LengthUnit> right =
+                    new FloatMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableFloatMatrix.Rel.Dense<?> result = FloatMatrix.minus(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI minus of contributing elements", left.getSI(i, j) - right.getSI(i, j), result.getSI(i, j), 0.001f);
+                    assertEquals("value of element should be SI minus of contributing elements", left.getSI(i, j)
+                            - right.getSI(i, j), result.getSI(i, j), 0.001f);
                 }
             }
         }
@@ -1437,14 +1478,17 @@ public class FloatMatrixSparseTest
         {
             float[][] leftValue = data(3, 5, false, 123.4f);
             float[][] rightValue = data(3, 5, false, 234.5f);
-            FloatMatrix.Rel.Sparse<LengthUnit> left = new FloatMatrix.Rel.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
-            FloatMatrix.Rel.Dense<LengthUnit> right = new FloatMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
+            FloatMatrix.Rel.Sparse<LengthUnit> left =
+                    new FloatMatrix.Rel.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
+            FloatMatrix.Rel.Dense<LengthUnit> right =
+                    new FloatMatrix.Rel.Dense<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableFloatMatrix.Rel.Sparse<?> result = FloatMatrix.times(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI times of contributing elements", left.getSI(i, j) * right.getSI(i, j), result.getSI(i, j), 0.001f);
+                    assertEquals("value of element should be SI times of contributing elements", left.getSI(i, j)
+                            * right.getSI(i, j), result.getSI(i, j), 0.001f);
                 }
             }
         }
@@ -1465,14 +1509,17 @@ public class FloatMatrixSparseTest
         {
             float[][] leftValue = data(3, 5, false, 123.4f);
             float[][] rightValue = data(3, 5, false, 234.5f);
-            FloatMatrix.Rel.Sparse<LengthUnit> left = new FloatMatrix.Rel.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
-            FloatMatrix.Rel.Sparse<LengthUnit> right = new FloatMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
+            FloatMatrix.Rel.Sparse<LengthUnit> left =
+                    new FloatMatrix.Rel.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
+            FloatMatrix.Rel.Sparse<LengthUnit> right =
+                    new FloatMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableFloatMatrix.Rel.Sparse<?> result = FloatMatrix.plus(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI plus of contributing elements", left.getSI(i, j) + right.getSI(i, j), result.getSI(i, j), 0.001f);
+                    assertEquals("value of element should be SI plus of contributing elements", left.getSI(i, j)
+                            + right.getSI(i, j), result.getSI(i, j), 0.001f);
                 }
             }
         }
@@ -1493,14 +1540,17 @@ public class FloatMatrixSparseTest
         {
             float[][] leftValue = data(3, 5, false, 123.4f);
             float[][] rightValue = data(3, 5, false, 234.5f);
-            FloatMatrix.Rel.Sparse<LengthUnit> left = new FloatMatrix.Rel.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
-            FloatMatrix.Rel.Sparse<LengthUnit> right = new FloatMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
+            FloatMatrix.Rel.Sparse<LengthUnit> left =
+                    new FloatMatrix.Rel.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
+            FloatMatrix.Rel.Sparse<LengthUnit> right =
+                    new FloatMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableFloatMatrix.Rel.Sparse<?> result = FloatMatrix.minus(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI minus of contributing elements", left.getSI(i, j) - right.getSI(i, j), result.getSI(i, j), 0.001f);
+                    assertEquals("value of element should be SI minus of contributing elements", left.getSI(i, j)
+                            - right.getSI(i, j), result.getSI(i, j), 0.001f);
                 }
             }
         }
@@ -1521,14 +1571,17 @@ public class FloatMatrixSparseTest
         {
             float[][] leftValue = data(3, 5, false, 123.4f);
             float[][] rightValue = data(3, 5, false, 234.5f);
-            FloatMatrix.Rel.Sparse<LengthUnit> left = new FloatMatrix.Rel.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
-            FloatMatrix.Rel.Sparse<LengthUnit> right = new FloatMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
+            FloatMatrix.Rel.Sparse<LengthUnit> left =
+                    new FloatMatrix.Rel.Sparse<LengthUnit>(leftValue, LengthUnit.MILE);
+            FloatMatrix.Rel.Sparse<LengthUnit> right =
+                    new FloatMatrix.Rel.Sparse<LengthUnit>(rightValue, LengthUnit.MILE);
             MutableFloatMatrix.Rel.Sparse<?> result = FloatMatrix.times(left, right);
             for (int i = 0; i < leftValue.length; i++)
             {
                 for (int j = 0; j < leftValue[i].length; j++)
                 {
-                    assertEquals("value of element should be SI times of contributing elements", left.getSI(i, j) * right.getSI(i, j), result.getSI(i, j), 0.001f);
+                    assertEquals("value of element should be SI times of contributing elements", left.getSI(i, j)
+                            * right.getSI(i, j), result.getSI(i, j), 0.001f);
                 }
             }
         }
@@ -1623,7 +1676,7 @@ public class FloatMatrixSparseTest
             try
             {
                 matrix = new FloatMatrix.Rel.Sparse<TemperatureUnit>(in, TemperatureUnit.DEGREE_CELSIUS);
-                 rowCountWrong = data(4, 5, false, 2);
+                rowCountWrong = data(4, 5, false, 2);
             }
             catch (ValueException ve)
             {
@@ -1649,8 +1702,9 @@ public class FloatMatrixSparseTest
     {
         try
         {
-            float[][] values = {{1, 2, 3 }, {3, 5, 7 }, {5, 10, 0} };
-            FloatMatrix.Rel.Sparse<TemperatureUnit> matrix = new FloatMatrix.Rel.Sparse<TemperatureUnit>(values, TemperatureUnit.KELVIN);
+            float[][] values = {{1, 2, 3}, {3, 5, 7}, {5, 10, 0}};
+            FloatMatrix.Rel.Sparse<TemperatureUnit> matrix =
+                    new FloatMatrix.Rel.Sparse<TemperatureUnit>(values, TemperatureUnit.KELVIN);
             assertEquals("Determinant should be 15", 15, matrix.det(), 0.001);
         }
         catch (ValueException ve)
@@ -1674,7 +1728,8 @@ public class FloatMatrixSparseTest
         try
         {
             float[][] leftIn = data(3, 5, false, -12.34f);
-            FloatMatrix.Rel.Sparse<TemperatureUnit> left = new FloatMatrix.Rel.Sparse<TemperatureUnit>(leftIn, TemperatureUnit.KELVIN);
+            FloatMatrix.Rel.Sparse<TemperatureUnit> left =
+                    new FloatMatrix.Rel.Sparse<TemperatureUnit>(leftIn, TemperatureUnit.KELVIN);
             float[][] right = data(3, 5, false, -4.321f);
             MutableFloatMatrix.Rel.Sparse<TemperatureUnit> result = FloatMatrix.times(left, right);
             assertEquals("Result should be in Kelvin", TemperatureUnit.KELVIN, result.getUnit());
@@ -1682,7 +1737,8 @@ public class FloatMatrixSparseTest
             {
                 for (int column = right[row].length; --column >= 0;)
                 {
-                    assertEquals("Content should match product of left and right", leftIn[row][column] * right[row][column], result.getSI(row, column), 0.001f);
+                    assertEquals("Content should match product of left and right", leftIn[row][column]
+                            * right[row][column], result.getSI(row, column), 0.001f);
                 }
             }
         }
@@ -1713,8 +1769,8 @@ public class FloatMatrixSparseTest
          * @param precision double; expected accuracy
          * @param function FloatToFloat; encapsulated function that converts one inputValue to an outputValue
          */
-        public static void tester(final float[][] inputValues, final String operation, final FloatMatrix<?> actualResult,
-                final double precision, final FloatToFloat function)
+        public static void tester(final float[][] inputValues, final String operation,
+                final FloatMatrix<?> actualResult, final double precision, final FloatToFloat function)
         {
             for (int i = 0; i < inputValues.length; i++)
             {
@@ -1731,8 +1787,8 @@ public class FloatMatrixSparseTest
                         fail("Caught unexpected exception: " + ve.toString());
                     }
                     String description =
-                            String.format("%s(%f->%f should be equal to %f with precision %f", operation, inputValues[i][j],
-                                    expectedResult, got, precision);
+                            String.format("%s(%f->%f should be equal to %f with precision %f", operation,
+                                    inputValues[i][j], expectedResult, got, precision);
                     // System.out.println(description);
                     assertEquals(description, expectedResult, got, precision);
                 }

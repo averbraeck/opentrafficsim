@@ -20,11 +20,12 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /**
  * Generate GTUs.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version Feb 2, 2015 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
+ *          $, initial version Feb 2, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <ID> the ID of the GTU type, e.g. String or Integer.
@@ -66,19 +67,19 @@ public class GTUGeneratorIndividual<ID> extends AbstractGTUGenerator<ID>
      * @throws RemoteException when remote simulator cannot be reached
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public GTUGeneratorIndividual(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType<ID> gtuType,
-        final Class<?> gtuClass, final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel,
-        final DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist,
-        final DistContinuousDoubleScalar.Rel<TimeUnit> interarrivelTimeDist,
-        final DistContinuousDoubleScalar.Rel<LengthUnit> lengthDist,
-        final DistContinuousDoubleScalar.Rel<LengthUnit> widthDist,
-        final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeedDist, final long maxGTUs,
-        final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Abs<TimeUnit> endTime, final Lane lane,
-        final DoubleScalar.Rel<LengthUnit> position, final RouteGenerator routeGenerator, final GTUColorer gtuColorer)
-        throws RemoteException, SimRuntimeException
+    public GTUGeneratorIndividual(final String name, final OTSDEVSSimulatorInterface simulator,
+            final GTUType<ID> gtuType, final Class<?> gtuClass, final GTUFollowingModel gtuFollowingModel,
+            final LaneChangeModel laneChangeModel, final DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist,
+            final DistContinuousDoubleScalar.Rel<TimeUnit> interarrivelTimeDist,
+            final DistContinuousDoubleScalar.Rel<LengthUnit> lengthDist,
+            final DistContinuousDoubleScalar.Rel<LengthUnit> widthDist,
+            final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeedDist, final long maxGTUs,
+            final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Abs<TimeUnit> endTime, final Lane lane,
+            final DoubleScalar.Rel<LengthUnit> position, final RouteGenerator routeGenerator,
+            final GTUColorer gtuColorer) throws RemoteException, SimRuntimeException
     {
         super(name, simulator, gtuType, gtuClass, gtuFollowingModel, laneChangeModel, initialSpeedDist,
-            interarrivelTimeDist, maxGTUs, startTime, endTime, lane, position, routeGenerator, gtuColorer);
+                interarrivelTimeDist, maxGTUs, startTime, endTime, lane, position, routeGenerator, gtuColorer);
         this.simulator = simulator;
         this.lengthDist = lengthDist;
         this.widthDist = widthDist;

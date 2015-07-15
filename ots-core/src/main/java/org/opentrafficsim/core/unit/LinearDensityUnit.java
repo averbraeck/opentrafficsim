@@ -8,10 +8,12 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 /**
  * Objects per unit of distance.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version11 nov. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version11 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class LinearDensityUnit extends Unit<LinearDensityUnit>
@@ -66,27 +68,37 @@ public class LinearDensityUnit extends Unit<LinearDensityUnit>
         SI = new LinearDensityUnit(LengthUnit.METER, "LinearDensityUnit.per_meter", "LinearDensityUnit./m", SI_DERIVED);
         PER_METER = SI;
         PER_MILLIMETER =
-            new LinearDensityUnit("LinearDensityUnit.per_millimeter", "LinearDensityUnit./mm", SI_DERIVED, PER_METER, 1000.0);
+                new LinearDensityUnit("LinearDensityUnit.per_millimeter", "LinearDensityUnit./mm", SI_DERIVED,
+                        PER_METER, 1000.0);
         PER_CENTIMETER =
-            new LinearDensityUnit("LinearDensityUnit.per_centimeter", "LinearDensityUnit./cm", SI_DERIVED, PER_METER, 100.0);
+                new LinearDensityUnit("LinearDensityUnit.per_centimeter", "LinearDensityUnit./cm", SI_DERIVED,
+                        PER_METER, 100.0);
         PER_DECIMETER =
-            new LinearDensityUnit("LinearDensityUnit.per_decimeter", "LinearDensityUnit./dm", SI_DERIVED, PER_METER, 10.0);
+                new LinearDensityUnit("LinearDensityUnit.per_decimeter", "LinearDensityUnit./dm", SI_DERIVED,
+                        PER_METER, 10.0);
         PER_DEKAMETER =
-            new LinearDensityUnit("LinearDensityUnit.per_dekameter", "LinearDensityUnit./dam", SI_DERIVED, PER_METER, 0.1);
+                new LinearDensityUnit("LinearDensityUnit.per_dekameter", "LinearDensityUnit./dam", SI_DERIVED,
+                        PER_METER, 0.1);
         PER_HECTOMETER =
-            new LinearDensityUnit("LinearDensityUnit.per_hectometer", "LinearDensityUnit./hm", SI_DERIVED, PER_METER, 0.01);
+                new LinearDensityUnit("LinearDensityUnit.per_hectometer", "LinearDensityUnit./hm", SI_DERIVED,
+                        PER_METER, 0.01);
         PER_KILOMETER =
-            new LinearDensityUnit("LinearDensityUnit.per_kilometer", "LinearDensityUnit./km", SI_DERIVED, PER_METER, 0.001);
+                new LinearDensityUnit("LinearDensityUnit.per_kilometer", "LinearDensityUnit./km", SI_DERIVED,
+                        PER_METER, 0.001);
         PER_FOOT =
-            new LinearDensityUnit("LinearDensityUnit.per_foot", "LinearDensityUnit./ft", IMPERIAL, PER_METER, 1.0 / 0.3048);
-        PER_INCH = new LinearDensityUnit("LinearDensityUnit.per_inch", "LinearDensityUnit./in", IMPERIAL, PER_FOOT, 12.0);
+                new LinearDensityUnit("LinearDensityUnit.per_foot", "LinearDensityUnit./ft", IMPERIAL, PER_METER,
+                        1.0 / 0.3048);
+        PER_INCH =
+                new LinearDensityUnit("LinearDensityUnit.per_inch", "LinearDensityUnit./in", IMPERIAL, PER_FOOT, 12.0);
         PER_MILE =
-            new LinearDensityUnit("LinearDensityUnit.per_mile", "LinearDensityUnit./mi", IMPERIAL, PER_FOOT, 1.0 / 5280.0);
+                new LinearDensityUnit("LinearDensityUnit.per_mile", "LinearDensityUnit./mi", IMPERIAL, PER_FOOT,
+                        1.0 / 5280.0);
         PER_NAUTICAL_MILE =
-            new LinearDensityUnit("LinearDensityUnit.per_nauticalMile", "LinearDensityUnit./NM", IMPERIAL, PER_METER,
-                1.0 / 1852.0);
+                new LinearDensityUnit("LinearDensityUnit.per_nauticalMile", "LinearDensityUnit./NM", IMPERIAL,
+                        PER_METER, 1.0 / 1852.0);
         PER_YARD =
-            new LinearDensityUnit("LinearDensityUnit.per_yard", "LinearDensityUnit./yd", IMPERIAL, PER_FOOT, 1.0 / 3.0);
+                new LinearDensityUnit("LinearDensityUnit.per_yard", "LinearDensityUnit./yd", IMPERIAL, PER_FOOT,
+                        1.0 / 3.0);
     }
 
     /**
@@ -97,9 +109,10 @@ public class LinearDensityUnit extends Unit<LinearDensityUnit>
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
     public LinearDensityUnit(final LengthUnit lengthUnit, final String nameKey, final String abbreviationKey,
-        final UnitSystem unitSystem)
+            final UnitSystem unitSystem)
     {
-        super(nameKey, abbreviationKey, unitSystem, PER_METER, 1.0 / lengthUnit.getConversionFactorToStandardUnit(), true);
+        super(nameKey, abbreviationKey, unitSystem, PER_METER, 1.0 / lengthUnit.getConversionFactorToStandardUnit(),
+                true);
         this.lengthUnit = lengthUnit;
     }
 
@@ -109,10 +122,11 @@ public class LinearDensityUnit extends Unit<LinearDensityUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
+     *            reference unit
      */
     public LinearDensityUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
-        final LinearDensityUnit referenceUnit, final double conversionFactorToReferenceUnit)
+            final LinearDensityUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.lengthUnit = referenceUnit.getLengthUnit();

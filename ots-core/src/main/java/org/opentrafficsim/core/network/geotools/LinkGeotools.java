@@ -20,10 +20,12 @@ import com.vividsolutions.jts.geom.Point;
 /**
  * Link using Geotools Coordinates.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJan 4, 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionJan 4, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <IDL> the ID type of the Link, e.g., String or Integer.
@@ -46,7 +48,7 @@ public class LinkGeotools<IDL, IDN> extends AbstractLink<IDL, IDN, Coordinate, N
      * @param capacity link capacity in GTUs per hour
      */
     public LinkGeotools(final IDL id, final NodeGeotools<IDN> startNode, final NodeGeotools<IDN> endNode,
-        final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
+            final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
     {
         super(id, startNode, endNode, length, capacity);
     }
@@ -59,14 +61,14 @@ public class LinkGeotools<IDL, IDN> extends AbstractLink<IDL, IDN, Coordinate, N
      * @param length link length in a length unit
      */
     public LinkGeotools(final IDL id, final NodeGeotools<IDN> startNode, final NodeGeotools<IDN> endNode,
-        final DoubleScalar.Rel<LengthUnit> length)
+            final DoubleScalar.Rel<LengthUnit> length)
     {
         super(id, startNode, endNode, length);
     }
 
     /**
      * @return the geometry of this link. <br>
-     * <b>Do not modify the returned object or chaos will ensue.</b>
+     *         <b>Do not modify the returned object or chaos will ensue.</b>
      */
     public final LinearGeometry getGeometry()
     {
@@ -87,7 +89,7 @@ public class LinkGeotools<IDL, IDN> extends AbstractLink<IDL, IDN, Coordinate, N
     public DirectedPoint getLocation() throws RemoteException
     {
         Point c = getGeometry().getLineString().getCentroid();
-        return new DirectedPoint(new double[] {c.getX(), c.getY(), 0.0d});
+        return new DirectedPoint(new double[]{c.getX(), c.getY(), 0.0d});
     }
 
     /** {@inheritDoc} */
@@ -100,7 +102,7 @@ public class LinkGeotools<IDL, IDN> extends AbstractLink<IDL, IDN, Coordinate, N
         {
             Envelope envelope = getGeometry().getLineString().getEnvelopeInternal();
             return new BoundingBox(new Point3d(envelope.getMinX() - c.x, envelope.getMinY() - c.y, 0.0d), new Point3d(
-                envelope.getMaxX() - c.x, envelope.getMaxY() - c.y, 0.0d));
+                    envelope.getMaxX() - c.x, envelope.getMaxY() - c.y, 0.0d));
         }
         double minX = Math.min(getEndNode().getX(), getStartNode().getX());
         double minY = Math.min(getEndNode().getY(), getStartNode().getY());
@@ -116,7 +118,8 @@ public class LinkGeotools<IDL, IDN> extends AbstractLink<IDL, IDN, Coordinate, N
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJan 4, 2015 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author:
+     * pknoppers $, initial versionJan 4, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -134,7 +137,7 @@ public class LinkGeotools<IDL, IDN> extends AbstractLink<IDL, IDN, Coordinate, N
          * @param capacity link capacity in GTUs per hour
          */
         public STR(final String id, final NodeGeotools.STR startNode, final NodeGeotools.STR endNode,
-            final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
+                final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
         {
             super(id, startNode, endNode, length, capacity);
         }
@@ -147,7 +150,7 @@ public class LinkGeotools<IDL, IDN> extends AbstractLink<IDL, IDN, Coordinate, N
          * @param length link length in a length unit
          */
         public STR(final String id, final NodeGeotools.STR startNode, final NodeGeotools.STR endNode,
-            final DoubleScalar.Rel<LengthUnit> length)
+                final DoubleScalar.Rel<LengthUnit> length)
         {
             super(id, startNode, endNode, length);
         }
@@ -160,7 +163,8 @@ public class LinkGeotools<IDL, IDN> extends AbstractLink<IDL, IDN, Coordinate, N
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJan 4, 2015 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author:
+     * pknoppers $, initial versionJan 4, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -178,7 +182,7 @@ public class LinkGeotools<IDL, IDN> extends AbstractLink<IDL, IDN, Coordinate, N
          * @param capacity link capacity in GTUs per hour
          */
         public INT(final int id, final NodeGeotools.INT startNode, final NodeGeotools.INT endNode,
-            final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
+                final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
         {
             super(id, startNode, endNode, length, capacity);
         }
@@ -191,7 +195,7 @@ public class LinkGeotools<IDL, IDN> extends AbstractLink<IDL, IDN, Coordinate, N
          * @param length link length in a length unit
          */
         public INT(final int id, final NodeGeotools.INT startNode, final NodeGeotools.INT endNode,
-            final DoubleScalar.Rel<LengthUnit> length)
+                final DoubleScalar.Rel<LengthUnit> length)
         {
             super(id, startNode, endNode, length);
         }

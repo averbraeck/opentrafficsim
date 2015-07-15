@@ -31,7 +31,8 @@ import com.vividsolutions.jts.geom.LineString;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version21 jan. 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version21 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class LaneTest
@@ -281,7 +282,8 @@ public class LaneTest
                                                 LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(endLateralOffset,
                                                 LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(startWidth,
                                                 LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(endWidth,
-                                                LengthUnit.METER), laneType, longitudinalDirectionality, f2000, speedLimit);
+                                                LengthUnit.METER), laneType, longitudinalDirectionality, f2000,
+                                                speedLimit);
                                 final Geometry geometry = lane.getContour();
                                 assertNotNull("geometry of the lane should not be null", geometry);
                                 // Verify a couple of points that should be inside the contour of the Lane

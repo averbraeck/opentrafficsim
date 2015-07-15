@@ -15,10 +15,12 @@ import org.opentrafficsim.core.network.Node;
 
 /**
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionOct 17, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionOct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class NodeAnimation extends Renderable2D
@@ -29,7 +31,8 @@ public class NodeAnimation extends Renderable2D
      * @throws NamingException when animation context cannot be found.
      * @throws RemoteException on communications failure for animation context.
      */
-    public NodeAnimation(final Node<?, ?> node, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
+    public NodeAnimation(final Node<?, ?> node, final OTSSimulatorInterface simulator) throws NamingException,
+            RemoteException
     {
         super(node, simulator);
     }

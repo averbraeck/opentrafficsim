@@ -27,7 +27,8 @@ import com.vividsolutions.jts.operation.buffer.BufferParameters;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionOct 17, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionOct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class StripeAnimation extends Renderable2D
@@ -226,8 +227,7 @@ public class StripeAnimation extends Renderable2D
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      */
-    public static enum TYPE
-    {
+    public static enum TYPE {
         /** Single solid line. */
         SOLID,
 

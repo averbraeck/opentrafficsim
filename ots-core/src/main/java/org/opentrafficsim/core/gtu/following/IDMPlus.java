@@ -14,11 +14,12 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
  * There are two nasty type setting errors in equation 7 in this published version of the paper. Both times an equals
  * sign (<cite>=</cite>) after <cite>a<sub>gain</sub></cite> should <b>not</b> be there.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version Jul 4, 2014 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
+ *          $, initial version Jul 4, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class IDMPlus extends AbstractGTUFollowingModel

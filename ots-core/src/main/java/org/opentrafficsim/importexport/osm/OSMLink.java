@@ -14,7 +14,8 @@ import org.opentrafficsim.importexport.osm.events.WarningListener;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version31 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version31 dec. 2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
 public class OSMLink
@@ -334,5 +335,5 @@ public class OSMLink
     {
         return this.tags.containsAll(tagsToCheck);
     }
-    
+
 }

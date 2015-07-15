@@ -18,10 +18,12 @@ import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 /**
  * Let the user select what the colors in the animation mean.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version27 mei 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version27 mei 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class ColorControlPanel extends JPanel implements ActionListener
@@ -37,15 +39,15 @@ public class ColorControlPanel extends JPanel implements ActionListener
 
     /** The GTUColorer that is currently active. */
     private GTUColorer gtuColorer;
-    
+
     /** The SwitchableGTUColorer that is controlled by this ColorControlPanel, if available. */
     private final SwitchableGTUColorer switchableGTUColorer;
-       
 
     /**
-     * Add a ColorControlPanel to an AnimationPanel. Initially the ColorControlPanel will have no items. Items are added with
-     * the <code>addItem</code> method. The first item added automatically becomes the active one.
-     * @param gtuColorer SwitchableGTUColorer; the switchable GTU colorer that will be controlled by this ColorControlPanel
+     * Add a ColorControlPanel to an AnimationPanel. Initially the ColorControlPanel will have no items. Items are added
+     * with the <code>addItem</code> method. The first item added automatically becomes the active one.
+     * @param gtuColorer SwitchableGTUColorer; the switchable GTU colorer that will be controlled by this
+     *            ColorControlPanel
      */
     public ColorControlPanel(final GTUColorer gtuColorer)
     {
@@ -70,7 +72,7 @@ public class ColorControlPanel extends JPanel implements ActionListener
             this.switchableGTUColorer = null;
             rebuildLegend();
         }
-        
+
         this.add(this.legendPanel);
     }
 
@@ -93,7 +95,7 @@ public class ColorControlPanel extends JPanel implements ActionListener
         {
             this.gtuColorer = newColorer;
             rebuildLegend();
-            
+
             if (this.switchableGTUColorer != null)
             {
                 this.switchableGTUColorer.setGTUColorer(this.comboBoxGTUColor.getSelectedIndex());
