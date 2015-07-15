@@ -153,8 +153,9 @@ public class TestXMLParser extends AbstractWrappableSimulation
                 throws SimRuntimeException, RemoteException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
-            URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
-            // URL url = URLResource.getResource("/straight-road-new-gtu-example_2.xml");
+            //URL url = URLResource.getResource("/straight-road-new-gtu-example-noCarsTest.xml");
+            //URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
+            URL url = URLResource.getResource("/straight-road-new-gtu-example_2.xml");
             XmlNetworkLaneParser nlp =
                     new XmlNetworkLaneParser(String.class, NodeGeotools.class, String.class, Coordinate.class,
                             LinkGeotools.class, String.class, this.simulator, this.gtuColorer);

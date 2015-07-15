@@ -3,6 +3,7 @@ package org.opentrafficsim.core.network.lane;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * <p>
@@ -53,9 +54,9 @@ public abstract class AbstractSensor implements Sensor
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<LengthUnit> getLongitudinalPosition()
+    public final Rel<LengthUnit> getLongitudinalPosition()
     {
-        return new DoubleScalar.Abs<LengthUnit>(this.longitudinalPositionSI, LengthUnit.METER);
+        return new DoubleScalar.Rel<LengthUnit>(this.longitudinalPositionSI, LengthUnit.METER);
     }
 
     /** {@inheritDoc} */
