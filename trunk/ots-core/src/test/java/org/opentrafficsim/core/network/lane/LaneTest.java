@@ -5,7 +5,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.geom.Point2D;
 import java.util.List;
+
+import javax.media.j3d.BoundingBox;
+import javax.media.j3d.Bounds;
+import javax.vecmath.Point3d;
+
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.junit.Test;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -305,8 +312,60 @@ public class LaneTest
                                 // One meter before the end, right outside the lane
                                 checkInside(lane, link.getLength().getSI() - 1, endLateralOffset + endWidth / 2 + 1,
                                         false);
-                                // TODO check the result of getBounds (will have to wait until PK knows what that result
-                                // is supposed to be)
+                                // Check the result of getBounds.
+                                DirectedPoint l = lane.getLocation();
+                                Bounds bb = lane.getBounds();
+                                //System.out.println("bb is " + bb);
+                                //System.out.println("l is " + l.x + "," + l.y + "," + l.z);
+                                //System.out.println("start is at " + start.getX() + ", " + start.getY());
+                                //System.out.println("  end is at " + end.getX() + ", " + end.getY());
+                                Point2D.Double[] cornerPoints = new Point2D.Double[4];
+                                cornerPoints[0] =
+                                        new Point2D.Double(xStart - (startLateralOffset + startWidth / 2)
+                                                * Math.sin(angle), yStart + (startLateralOffset + startWidth / 2)
+                                                * Math.cos(angle));
+                                cornerPoints[1] =
+                                        new Point2D.Double(xStart - (startLateralOffset - startWidth / 2)
+                                                * Math.sin(angle), yStart + (startLateralOffset - startWidth / 2)
+                                                * Math.cos(angle));
+                                cornerPoints[2] =
+                                        new Point2D.Double(xEnd - (endLateralOffset + endWidth / 2) * Math.sin(angle),
+                                                yEnd + (endLateralOffset + endWidth / 2) * Math.cos(angle));
+                                cornerPoints[3] =
+                                        new Point2D.Double(xEnd - (endLateralOffset - endWidth / 2) * Math.sin(angle),
+                                                yEnd + (endLateralOffset - endWidth / 2) * Math.cos(angle));
+                                for (int i = 0; i < cornerPoints.length; i++)
+                                {
+                                    //System.out.println("p" + i + ": " + cornerPoints[i].x + "," + cornerPoints[i].y);
+                                }
+                                double minX = cornerPoints[0].getX();
+                                double maxX = cornerPoints[0].getX();
+                                double minY = cornerPoints[0].getY();
+                                double maxY = cornerPoints[0].getY();
+                                for (int i = 1; i < cornerPoints.length; i++)
+                                {
+                                    Point2D.Double p = cornerPoints[i];
+                                    minX = Math.min(minX, p.getX());
+                                    minY = Math.min(minY, p.getY());
+                                    maxX = Math.max(maxX, p.getX());
+                                    maxY = Math.max(maxY, p.getY());
+                                }
+                                Point3d bbLow = new Point3d();
+                                ((BoundingBox) bb).getLower(bbLow);
+                                Point3d bbHigh = new Point3d();
+                                ((BoundingBox) bb).getUpper(bbHigh);
+                                //System.out.println(" my bbox is " + minX + "," + minY + " - " + maxX + "," + maxY);
+                                //System.out.println("the bbox is " + (bbLow.x + l.x) + "," + (bbLow.y + l.y) + " - "
+                                //        + (bbHigh.x + l.x) + "," + (bbHigh.y + l.y));
+                                double boundsMinX = bbLow.x + l.x;
+                                double boundsMinY = bbLow.y + l.y;
+                                double boundsMaxX = bbHigh.x + l.x;
+                                double boundsMaxY = bbHigh.y + l.y;
+                                assertEquals("low x boundary", minX, boundsMinX, 0.1);
+                                assertEquals("low y boundary", minY, boundsMinY, 0.1);
+                                assertEquals("high x boundary", maxX, boundsMaxX, 0.1);
+                                assertEquals("high y boundary", maxY, boundsMaxY, 0.1);
+                                //System.out.println("now what");
                             }
                         }
                     }
