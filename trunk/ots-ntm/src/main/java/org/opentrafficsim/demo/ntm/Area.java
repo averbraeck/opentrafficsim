@@ -47,7 +47,7 @@ import com.vividsolutions.jts.geom.Point;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version Sep 12, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial versionSep 12, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
@@ -60,7 +60,7 @@ public class Area extends GeoObject implements LocatableInterface
      * reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version 10 Oct 2014 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author$, initial version10 Oct 2014 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -117,7 +117,7 @@ public class Area extends GeoObject implements LocatableInterface
      * reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version 7 Oct 2014 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author$, initial version7 Oct 2014 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>

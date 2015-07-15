@@ -31,7 +31,7 @@ import com.vividsolutions.jts.linearref.LengthIndexedLine;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version 28 Jan 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial version28 Jan 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
