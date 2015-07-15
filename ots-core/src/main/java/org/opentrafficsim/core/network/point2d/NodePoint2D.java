@@ -14,7 +14,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version11 Nov 2014 <br>
+ * $, initial version 1 Nov 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <ID> Type of the node name (e.g., String, Integer).
@@ -76,7 +76,7 @@ public class NodePoint2D<ID> extends AbstractNode<ID, Point2D>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author:
-     * pknoppers $, initial versionJan 4, 2015 <br>
+     * pknoppers $, initial version an 4, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -116,7 +116,7 @@ public class NodePoint2D<ID> extends AbstractNode<ID, Point2D>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author:
-     * pknoppers $, initial versionJan 4, 2015 <br>
+     * pknoppers $, initial version an 4, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */

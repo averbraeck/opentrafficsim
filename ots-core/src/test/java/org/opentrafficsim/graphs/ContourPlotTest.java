@@ -54,7 +54,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial versionAug 21, 2014 <br>
+ * $, initial version ug 21, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class ContourPlotTest
@@ -389,8 +389,8 @@ public class ContourPlotTest
                 ie = null; // ignore
             }
         } // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
-        // + car.getPosition(car.getLastEvaluationTime()));
-        // System.out.println("At time " + simulator.getSimulator().getSimulatorTime().get() + " car is at " + car);
+          // + car.getPosition(car.getLastEvaluationTime()));
+          // System.out.println("At time " + simulator.getSimulator().getSimulatorTime().get() + " car is at " + car);
         for (int item = 0; item < bins; item++)
         {
             double x = cp.getXValue(0, item);
@@ -600,7 +600,7 @@ public class ContourPlotTest
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version9 feb. 2015 <br>
+ * $, initial version feb. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 class ContourPlotModel implements OTSModelInterface

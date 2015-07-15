@@ -81,7 +81,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version30 jan. 2015 <br>
+ * $, initial version 0 jan. 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -320,7 +320,7 @@ public class SequentialLanes extends AbstractWrappableSimulation implements Wrap
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version30 jan. 2015 <br>
+ * $, initial version 0 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 class SequentialModel implements OTSModelInterface

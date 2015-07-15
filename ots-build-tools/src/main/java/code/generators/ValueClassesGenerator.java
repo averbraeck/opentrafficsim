@@ -12,7 +12,7 @@ import java.util.Date;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version24 sep. 2014 <br>
+ * $, initial version 4 sep. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public final class ValueClassesGenerator
@@ -1892,7 +1892,7 @@ public final class ValueClassesGenerator
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author:
-     * pknoppers $, initial version30 mrt. 2015 <br>
+     * pknoppers $, initial version 0 mrt. 2015 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
     private static class RelOpTableEntry

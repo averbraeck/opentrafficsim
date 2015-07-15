@@ -51,7 +51,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial versionJul 31, 2014 <br>
+ * $, initial version ul 31, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class FundamentalDiagram extends JFrame implements XYDataset, ActionListener
@@ -591,7 +591,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author:
-     * pknoppers $, initial version3 feb. 2015 <br>
+     * pknoppers $, initial version feb. 2015 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
     class FundamentalDiagramSensor extends AbstractSensor

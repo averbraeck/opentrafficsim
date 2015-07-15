@@ -27,7 +27,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial versionAug 15, 2014 <br>
+ * $, initial version ug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class ShapeTestApplication extends DSOLApplication

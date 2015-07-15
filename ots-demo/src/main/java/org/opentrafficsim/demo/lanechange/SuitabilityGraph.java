@@ -56,7 +56,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version15 apr. 2015 <br>
+ * $, initial version 5 apr. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class SuitabilityGraph implements OTSModelInterface

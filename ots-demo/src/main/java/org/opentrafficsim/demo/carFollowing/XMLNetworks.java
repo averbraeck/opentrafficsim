@@ -79,7 +79,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version4 mrt. 2015 <br>
+ * $, initial version mrt. 2015 <br>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -171,7 +171,7 @@ public class XMLNetworks extends AbstractWrappableSimulation implements Wrappabl
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version4 mrt. 2015 <br>
+ * $, initial version mrt. 2015 <br>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */

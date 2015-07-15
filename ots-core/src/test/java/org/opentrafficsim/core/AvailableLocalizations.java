@@ -12,7 +12,7 @@ import java.util.List;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial versionJun 11, 2014 <br>
+ * $, initial version un 11, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public final class AvailableLocalizations

@@ -65,7 +65,7 @@ import org.opentrafficsim.simulationengine.WrappableSimulation;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version11 dec. 2014 <br>
+ * $, initial version 1 dec. 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -890,7 +890,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
      * http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm</a>
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author:
-     * pknoppers $, initial version12 dec. 2014 <br>
+     * pknoppers $, initial version 2 dec. 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
     static class RegexFormatter extends DefaultFormatter

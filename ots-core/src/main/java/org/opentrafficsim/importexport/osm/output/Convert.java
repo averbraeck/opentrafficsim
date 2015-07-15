@@ -52,7 +52,7 @@ import com.vividsolutions.jts.geom.LineString;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version30.12.2014 <br>
+ * $, initial version 0.12.2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a>Moritz Bergmann</a>
  */
@@ -797,7 +797,7 @@ public final class Convert
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial versionMar 3, 2015 <br>
+ * $, initial version ar 3, 2015 <br>
  * @author <a>Moritz Bergmann</a>
  */
 class LaneAttributes

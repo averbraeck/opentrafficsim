@@ -63,7 +63,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version17 dec. 2014 <br>
+ * $, initial version 7 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class Trajectories extends AbstractWrappableSimulation implements WrappableSimulation
@@ -192,7 +192,7 @@ public class Trajectories extends AbstractWrappableSimulation implements Wrappab
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial versionAug 1, 2014 <br>
+ * $, initial version ug 1, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 class TrajectoriesModel implements OTSModelInterface

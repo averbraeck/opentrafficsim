@@ -8,7 +8,7 @@ package org.opentrafficsim.importexport.osm.output;
  * Enumeration for possible GTU Types for usage during development and testing.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version19.12.2014 <br>
+ * $, initial version 9.12.2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
 public enum GTUTypes {
