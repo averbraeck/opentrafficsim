@@ -54,6 +54,8 @@ public class Lane extends CrossSectionElement
     /** Sensors on the lane to trigger behavior of the GTU, sorted by longitudinal position. */
     private final SortedMap<Double, List<Sensor>> sensors = new TreeMap<>();
 
+    private final StopLineLane stopLine;
+    
     /** GTUs ordered by increasing longitudinal position. */
     private final List<LaneBasedGTU<?>> gtuList = new ArrayList<LaneBasedGTU<?>>();
 
@@ -107,12 +109,16 @@ public class Lane extends CrossSectionElement
         this.directionality = directionality;
         this.capacity = capacity;
         this.speedLimit = speedLimit;
+        this.stopLine = new StopLineLane(this, new DoubleScalar.Rel<LengthUnit>(5,LengthUnit.SI));
         // TODO Take care of directionality.
         try
         {
             addSensor(new SensorLaneStart(this));
             addSensor(new SensorLaneEnd(this));
+            addSensor(new SensorLane(this, new DoubleScalar.Rel<LengthUnit>(10,LengthUnit.SI), new DoubleScalar.Rel<LengthUnit>(2,LengthUnit.SI), "koplus"));            
+                        
         }
+        
         catch (NetworkException exception)
         {
             throw new Error("Oops - Caught NetworkException adding sensor at begin or and of Lane " + exception);
@@ -224,7 +230,11 @@ public class Lane extends CrossSectionElement
         return this.sensors;
     }
 
-    /**
+    public StopLineLane getStopLine() {
+		return stopLine;
+	}
+
+	/**
      * Trigger the sensors for a certain time step; from now until the nextEvaluationTime of the GTU.
      * @param gtu the LaneBasedGTU for which to trigger the sensors.
      * @param referenceStartSI the SI distance of the GTU reference point on the lane at the current time
