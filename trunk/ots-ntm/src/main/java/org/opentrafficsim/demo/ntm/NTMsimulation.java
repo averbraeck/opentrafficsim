@@ -33,7 +33,8 @@ import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version29 Oct 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version29 Oct 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -125,8 +126,8 @@ public class NTMsimulation
         // initial settings of SUPPLY at first step
         if (steps == 1)
         {
-            NTMTestApplication.textArea.append("The simulation has started right now, \n" + "Wait for the next message...  \n"
-                    + "This may take a while! \n" + " \n");
+            NTMTestApplication.textArea.append("The simulation has started right now, \n"
+                    + "Wait for the next message...  \n" + "This may take a while! \n" + " \n");
 
             for (Node node : model.getAreaGraph().vertexSet())
             {

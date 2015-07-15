@@ -74,7 +74,6 @@ public class WriteToShp
 {
     static SimpleFeatureSource featureSource = null;
 
-    
     public static void createShape(Map<String, Area> areas)
     {
         /*
@@ -171,7 +170,7 @@ public class WriteToShp
                     MultiPolygon multiPolygon = null;
                     if (area.getGeometry().getGeometryType().equals("Polygon"))
                     {
-                        Polygon[] polygons = new Polygon[1]; 
+                        Polygon[] polygons = new Polygon[1];
                         polygons[0] = (Polygon) area.getGeometry();
                         multiPolygon = geometryFactory.createMultiPolygon(polygons);
                     }
@@ -296,7 +295,7 @@ public class WriteToShp
 
     }
 
-        /**
+    /**
      * Prompt the user for the name and path to use for the output shapefile
      * @param csvFile the input csv file used to create a default shapefile name
      * @return name and path for the shapefile as a new File object

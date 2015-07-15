@@ -28,7 +28,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version14 Oct 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version14 Oct 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -68,8 +69,7 @@ public class FlowCell implements LocatableInterface
         this.cellLength = cellLength;
         this.maxCapacity = maxCapacity;
         this.numberOfLanes = numberOfLanes;
-        ParametersFundamentalDiagram parametersFD =
-                new ParametersFundamentalDiagram(speed, maxCapacity, numberOfLanes);
+        ParametersFundamentalDiagram parametersFD = new ParametersFundamentalDiagram(speed, maxCapacity, numberOfLanes);
         if (behaviourType == TrafficBehaviourType.FLOW)
         {
             this.cellBehaviour = new CellBehaviourFlow(null, parametersFD);
@@ -83,9 +83,8 @@ public class FlowCell implements LocatableInterface
      * @param param parameters FD
      * @return carProduction
      */
-    public final Abs<FrequencyUnit> retrieveCurrentInflowCapacity(
-            final double accumulatedCarsPerLengthUnit, final Abs<FrequencyUnit> maximumCapacity,
-            final ParametersFundamentalDiagram param)
+    public final Abs<FrequencyUnit> retrieveCurrentInflowCapacity(final double accumulatedCarsPerLengthUnit,
+            final Abs<FrequencyUnit> maximumCapacity, final ParametersFundamentalDiagram param)
     {
         Abs<FrequencyUnit> currentInflowCapacity;
         if (accumulatedCarsPerLengthUnit > param.getAccCritical().get(0))
@@ -127,9 +126,9 @@ public class FlowCell implements LocatableInterface
             speedDouble =
                     currentInflowCapacity.getInUnit(FrequencyUnit.PER_HOUR)
                             / density.getInUnit(LinearDensityUnit.PER_KILOMETER);
-            //speedDouble =
-            //        Math.max(speedDouble, this.getCellBehaviourFlow().getParametersFundamentalDiagram().getFreeSpeed()
-            //                .getInUnit(SpeedUnit.KM_PER_HOUR));
+            // speedDouble =
+            // Math.max(speedDouble, this.getCellBehaviourFlow().getParametersFundamentalDiagram().getFreeSpeed()
+            // .getInUnit(SpeedUnit.KM_PER_HOUR));
         }
         else
         {

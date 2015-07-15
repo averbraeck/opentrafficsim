@@ -20,7 +20,8 @@ import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version26 Sep 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version26 Sep 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -56,7 +57,6 @@ public class CellBehaviourFlow extends CellBehaviour
         this.setParametersFundamentalDiagram(parametersFD);
         // parametersFD.getAccCritical().get(0) * parametersFD.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
     }
-
 
     /**
      * {@inheritDoc}
@@ -103,7 +103,6 @@ public class CellBehaviourFlow extends CellBehaviour
         }
         return demand;
     }
-
 
     /**
      * Retrieves car production from network fundamental diagram.
@@ -163,7 +162,5 @@ public class CellBehaviourFlow extends CellBehaviour
     {
         this.parametersFundamentalDiagram = parametersFundamentalDiagram;
     }
-
-
 
 }

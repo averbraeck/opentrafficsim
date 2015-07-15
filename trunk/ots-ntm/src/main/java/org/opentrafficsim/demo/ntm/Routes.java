@@ -25,7 +25,8 @@ import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version22 Jan 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version22 Jan 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -35,6 +36,7 @@ import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
 public class Routes
 {
     public final static long seed = 100;
+
     public static Random fRandom = new Random(seed);
 
     /**
@@ -63,14 +65,13 @@ public class Routes
         {
 
             // create stochastic link edge weights
-            
+
             for (LinkEdge le : model.getAreaGraph().edgeSet())
             {
                 double rateCongestedVersusFreeTravelTime = 1.0;
                 BoundedNode startNode =
                         (BoundedNode) model.getNodeAreaGraphMap().get(le.getLink().getStartNode().getId());
-                BoundedNode endNode =
-                        (BoundedNode) model.getNodeAreaGraphMap().get(le.getLink().getEndNode().getId());
+                BoundedNode endNode = (BoundedNode) model.getNodeAreaGraphMap().get(le.getLink().getEndNode().getId());
                 if (!initiateSimulation)
                 {
 
@@ -116,7 +117,7 @@ public class Routes
 
                     }
                 }
-                
+
                 if (startNode.getBehaviourType() == TrafficBehaviourType.CORDON
                         || endNode.getBehaviourType() == TrafficBehaviourType.CORDON)
                 {
@@ -124,11 +125,10 @@ public class Routes
                 }
                 double speed = ((Link) le.getLink()).getFreeSpeed().getInUnit(SpeedUnit.METER_PER_SECOND);
                 double length = le.getLink().getLength().getInUnit(LengthUnit.METER);
-                double travelTime =  length / speed;
-//                double weight =
-//                        rateCongestedVersusFreeTravelTime * model.getAreaGraph().getEdgeWeight(le) * Gaussian(VARIANCE, 100);
-                double weight =
-                        rateCongestedVersusFreeTravelTime * travelTime * Gaussian(fRandom, VARIANCE);
+                double travelTime = length / speed;
+                // double weight =
+                // rateCongestedVersusFreeTravelTime * model.getAreaGraph().getEdgeWeight(le) * Gaussian(VARIANCE, 100);
+                double weight = rateCongestedVersusFreeTravelTime * travelTime * Gaussian(fRandom, VARIANCE);
                 model.getAreaGraph().setEdgeWeight(le, weight);
             }
 
@@ -186,8 +186,8 @@ public class Routes
                         // reset the "old" shares with the weight_newRoutes
                         if (i == 0)
                         {
-                            for (BoundedNode node : origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination)
-                                    .getRouteFractionToNeighbours().keySet())
+                            for (BoundedNode node : origin.getCellBehaviour().getTripInfoByDestinationMap()
+                                    .get(destination).getRouteFractionToNeighbours().keySet())
                             {
                                 java.lang.Double oldShare =
                                         origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination)
@@ -212,8 +212,8 @@ public class Routes
                             System.out.println("Share: " + share);
                         }
                     }
-                    origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination).getRouteFractionToNeighbours()
-                            .put(neighbour, share + weightNew * addShare);
+                    origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination)
+                            .getRouteFractionToNeighbours().put(neighbour, share + weightNew * addShare);
                     // create a field to store accumulated cars to a certain neighbour on its path to a destination
                     if (!origin.getCellBehaviour().getTripInfoByDestinationMap().get(destination)
                             .getAccumulatedCarsToNeighbour().containsKey(neighbour))
@@ -253,7 +253,8 @@ public class Routes
                                 TripInfoByDestination tripInfoByNode =
                                         new TripInfoByDestination(neighbours, accumulatedCarsToNeighbour,
                                                 demandToNeighbour, destination);
-                                cell.getCellBehaviourFlow().getTripInfoByDestinationMap().put(destination, tripInfoByNode);
+                                cell.getCellBehaviourFlow().getTripInfoByDestinationMap()
+                                        .put(destination, tripInfoByNode);
                             }
                             else
                             {
@@ -268,7 +269,8 @@ public class Routes
                                     TripInfoByDestination tripInfoByNode =
                                             new TripInfoByDestination(neighbours, accumulatedCarsToNeighbour,
                                                     demandToNeighbour, destination);
-                                    cell.getCellBehaviourFlow().getTripInfoByDestinationMap().put(destination, tripInfoByNode);
+                                    cell.getCellBehaviourFlow().getTripInfoByDestinationMap()
+                                            .put(destination, tripInfoByNode);
                                 }
                             }
                             cell.getCellBehaviourFlow().getTripInfoByDestinationMap().get(destination)
@@ -283,8 +285,8 @@ public class Routes
     }
 
     /**
-     * @param fRandom 
-     * @param VARIANCE 
+     * @param fRandom
+     * @param VARIANCE
      * @return
      */
     public static double Gaussian(Random random, double VARIANCE)

@@ -36,14 +36,14 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.operation.valid.IsValidOp;
 
-
 /**
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version13 Nov 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version13 Nov 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -84,7 +84,7 @@ public class ShapeStore
     public void addAttribute(String newField, String type)
     {
         boolean attributeAlreadyExists = false;
-        for (String variableName: this.getVariableNames())
+        for (String variableName : this.getVariableNames())
         {
             if (newField.equals(variableName))
             {
@@ -99,7 +99,7 @@ public class ShapeStore
             {
                 this.getAttributeClassTypes().put(newField, Double.class);
                 // add empty string
-                for(ShapeObject shape: this.getGeoObjects())
+                for (ShapeObject shape : this.getGeoObjects())
                 {
                     shape.getValues().add("0.0");
                 }
@@ -107,7 +107,7 @@ public class ShapeStore
             else if (type.equals("Long"))
             {
                 this.getAttributeClassTypes().put(newField, Long.class);
-                for(ShapeObject shape: this.getGeoObjects())
+                for (ShapeObject shape : this.getGeoObjects())
                 {
                     shape.getValues().add("0.0");
                 }
@@ -116,7 +116,7 @@ public class ShapeStore
             else if (type.equals("Integer"))
             {
                 this.getAttributeClassTypes().put(newField, Integer.class);
-                for(ShapeObject shape: this.getGeoObjects())
+                for (ShapeObject shape : this.getGeoObjects())
                 {
                     shape.getValues().add("0");
                 }
@@ -125,7 +125,7 @@ public class ShapeStore
             else if (type.equals("String"))
             {
                 this.getAttributeClassTypes().put(newField, String.class);
-                for(ShapeObject shape: this.getGeoObjects())
+                for (ShapeObject shape : this.getGeoObjects())
                 {
                     shape.getValues().add(" ");
                 }
@@ -134,7 +134,7 @@ public class ShapeStore
 
         }
     }
-    
+
     /**
      * @param file
      * @return
@@ -261,7 +261,7 @@ public class ShapeStore
             if ((shape.getGeometry() instanceof Polygon || shape.getGeometry() instanceof MultiPolygon)
                     && !IsValidOp.isValid(shape.getGeometry()))
             {
-                shape.getGeometry().convexHull(); 
+                shape.getGeometry().convexHull();
             }
             if (shape.getGeometry() instanceof MultiPolygon || shape.getGeometry() instanceof Polygon)
             {
@@ -281,12 +281,12 @@ public class ShapeStore
             }
             else if (shape.getGeometry() instanceof MultiLineString)
             {
-                MultiLineString multiLineString= (MultiLineString) shape.getGeometry();
+                MultiLineString multiLineString = (MultiLineString) shape.getGeometry();
                 featureBuilder.add(multiLineString);
             }
             else if (shape.getGeometry() instanceof Point)
             {
-                Point point= (Point) shape.getGeometry();
+                Point point = (Point) shape.getGeometry();
                 featureBuilder.add(point);
             }
             else
@@ -314,7 +314,7 @@ public class ShapeStore
                 {
                     featureBuilder.add(value);
                 }
-                //TODO add the date data type!
+                // TODO add the date data type!
                 index++;
             }
             SimpleFeature feature = featureBuilder.buildFeature(null);
@@ -402,7 +402,6 @@ public class ShapeStore
         return featureType;
     }
 
-    
     /**
      * @return variableName.
      */

@@ -31,7 +31,8 @@ import org.opentrafficsim.demo.ntm.NTMModel;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionAug 15, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionAug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class DataViewerApplication extends DSOLApplication
@@ -56,7 +57,8 @@ public class DataViewerApplication extends DSOLApplication
      * @throws NamingException
      * @throws IOException
      */
-    public static void main(final String[] args) throws SimRuntimeException, RemoteException, NamingException, IOException
+    public static void main(final String[] args) throws SimRuntimeException, RemoteException, NamingException,
+            IOException
     {
         DataViewer model = new DataViewer();
         OTSDEVSAnimator simulator = new OTSDEVSAnimator();

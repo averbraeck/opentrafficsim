@@ -11,7 +11,8 @@ import com.vividsolutions.jts.geom.Coordinate;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial versionSep 12, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial versionSep 12, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -28,7 +29,7 @@ public class BoundedNode extends Node
 
     /** */
     private CellBehaviour cellBehaviour;
-    
+
     private static double zCoordinate(TrafficBehaviourType behaviourType)
     {
         if (null == behaviourType)
@@ -60,7 +61,8 @@ public class BoundedNode extends Node
      * @param behaviourType describes behaviour of the node depending on its type
      * @param parametersNTM
      */
-    public BoundedNode(final Coordinate centroid, final String nr, final Area area, final TrafficBehaviourType behaviourType)
+    public BoundedNode(final Coordinate centroid, final String nr, final Area area,
+            final TrafficBehaviourType behaviourType)
     {
         super(nr, new Coordinate(centroid.x, centroid.y, zCoordinate(behaviourType)), behaviourType);
         this.area = area;
