@@ -22,7 +22,7 @@ import org.opentrafficsim.demo.ntm.Area;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version Sep 13, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial versionSep 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class AreaAnimation extends Renderable2D
