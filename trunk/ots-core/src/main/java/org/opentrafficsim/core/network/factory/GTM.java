@@ -69,7 +69,8 @@ import com.vividsolutions.jts.geom.Coordinate;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$, initial version Oct 17, 2014 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
+ *          $, initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
@@ -151,7 +152,8 @@ public class GTM extends AbstractWrappableSimulation
      * reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial version Jun 27, 2015 <br>
+     * @version $Revision$, $LastChangedDate$, by $Author:
+     *          pknoppers $, initial version Jun 27, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
      */
