@@ -13,7 +13,8 @@ import cern.colt.matrix.tfloat.impl.SparseCCFloatMatrix2D;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version6 mrt. 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
+ * $, initial version6 mrt. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public final class DeterminantProblem
@@ -25,7 +26,7 @@ public final class DeterminantProblem
     {
         // This class should never be instantiated.
     }
-    
+
     /**
      * Execute the demo.
      * @param args String[]; not used
