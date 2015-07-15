@@ -50,7 +50,7 @@ import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version Jul 16, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJul 16, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public abstract class ContourPlot extends JFrame implements ActionListener, XYZDataset, MultipleViewerChart,

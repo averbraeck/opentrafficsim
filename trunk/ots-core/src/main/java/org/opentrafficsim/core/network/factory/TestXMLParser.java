@@ -39,7 +39,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version Oct 17, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial versionOct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class TestXMLParser extends AbstractWrappableSimulation
@@ -118,7 +118,7 @@ public class TestXMLParser extends AbstractWrappableSimulation
      * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
      * All rights reserved. BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version Jun 27, 2015 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJun 27, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */

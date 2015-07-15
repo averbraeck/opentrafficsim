@@ -9,14 +9,11 @@ import org.opentrafficsim.core.gtu.GTU;
 /**
  * Determine the fill color for a GTU.
  * <p>
- * The result of the toString method of a GTUColorer is used to label the choices in the ColorControlPanel.
- * Implementations of GTUColorer should ensure that the toString method returns something in the users locale.
- * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version 27 mei 2015 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$,
+ *          initial version 27 mei 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */

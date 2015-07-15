@@ -27,7 +27,7 @@ import java.util.Set;
  * profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or
  * tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the
  * possibility of such damage.
- * @version 11 Nov 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial version11 Nov 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>

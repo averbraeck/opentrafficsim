@@ -15,7 +15,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version Oct 25, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial versionOct 25, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */

@@ -31,7 +31,7 @@ import com.vividsolutions.jts.geom.LineString;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version 30 okt. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial version30 okt. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public final class LaneFactory

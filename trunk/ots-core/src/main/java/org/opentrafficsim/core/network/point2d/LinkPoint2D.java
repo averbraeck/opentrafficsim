@@ -19,7 +19,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version Jan 4, 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJan 4, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <IDL> the ID type of the Link, e.g., String or Integer.
@@ -85,7 +85,7 @@ public class LinkPoint2D<IDL, IDN> extends AbstractLink<IDL, IDN, Point2D, NodeP
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version Jan 4, 2015 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJan 4, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -129,7 +129,7 @@ public class LinkPoint2D<IDL, IDN> extends AbstractLink<IDL, IDN, Point2D, NodeP
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version Jan 4, 2015 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJan 4, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */

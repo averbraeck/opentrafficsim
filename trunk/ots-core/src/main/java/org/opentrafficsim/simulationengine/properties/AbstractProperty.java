@@ -10,7 +10,7 @@ import java.util.Iterator;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version 18 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial version18 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <T> type of the property
  */
@@ -102,7 +102,7 @@ public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T
      * reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version 6 jan. 2015 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author$, initial version6 jan. 2015 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
     class PropertyIterator implements Iterator<AbstractProperty<T>>

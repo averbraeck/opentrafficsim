@@ -5,7 +5,7 @@ package org.opentrafficsim.importexport.osm.events;
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version 20.03.2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial version20.03.2015 <br>
  * @author <a>Moritz Bergmann</a>
  */
 public class ProgressListenerImpl implements ProgressListener
