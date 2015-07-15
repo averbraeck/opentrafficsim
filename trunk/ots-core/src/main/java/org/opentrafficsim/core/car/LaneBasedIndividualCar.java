@@ -242,7 +242,8 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$, initial Feb 3, 2015 <br>
+     * @version $Revision$, $LastChangedDate$, by $Author:
+     *          pknoppers $, initial Feb 3, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @param <ID> the ID type of the Car, e.g. String or Integer or Long.
      */
