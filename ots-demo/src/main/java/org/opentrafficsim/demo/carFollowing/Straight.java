@@ -77,7 +77,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version 12 nov. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial version12 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class Straight extends AbstractWrappableSimulation implements WrappableSimulation
@@ -324,7 +324,7 @@ public class Straight extends AbstractWrappableSimulation implements WrappableSi
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version Aug 1, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial versionAug 1, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 class StraightModel implements OTSModelInterface
