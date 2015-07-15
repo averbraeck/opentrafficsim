@@ -1,6 +1,6 @@
 ECHO OFF
 REM $HeadURL: https://svn.tbm.tudelft.nl/TBM-SK/DSOL-AOS/dsol-aos/development/mvn-all.bat $
-REM $Id: mvn-all.bat 832 2013-09-18 14:24:04Z averbraeck $
+REM $Id$
 
 ECHO Running Maven commands %* for specified Maven artifacts in relative directories
 
