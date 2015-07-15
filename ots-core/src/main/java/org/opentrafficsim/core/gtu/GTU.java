@@ -74,4 +74,12 @@ public interface GTU<ID> extends LocatableInterface, Serializable
      * @throws RemoteException on communications failure
      */
     DoubleScalar.Abs<AccelerationUnit> getAcceleration() throws RemoteException;
+    
+    /**
+     * Retrieve the odometer value.
+     * @return DoubleScalar.Abs&lt;LengthUnit&gt;; the current odometer value
+     * @throws RemoteException on communications failure
+     */
+    DoubleScalar.Abs<LengthUnit> getOdometer() throws RemoteException;
+
 }

@@ -86,6 +86,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** Time of next evaluation. */
     private DoubleScalar.Abs<TimeUnit> nextEvaluationTime;
 
+    /** Total traveled distance. */
+    private DoubleScalar.Abs<LengthUnit> odometer = new DoubleScalar.Abs<LengthUnit>(0, LengthUnit.SI);
+
     /** Distance to the next required lane change and lateral direction thereof. */
     private LaneChangeUrgeGTUColorer.LaneChangeDistanceAndDirection lastLaneChangeDistanceAndDirection =
             new LaneChangeUrgeGTUColorer.LaneChangeDistanceAndDirection(new DoubleScalar.Rel<LengthUnit>(
