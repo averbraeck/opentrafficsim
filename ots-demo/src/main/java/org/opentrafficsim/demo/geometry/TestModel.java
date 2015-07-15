@@ -64,47 +64,49 @@ public class TestModel implements OTSModelInterface
 
         NodeGeotools.STR n0 = new NodeGeotools.STR("N0", new Coordinate(-25.0, 0.0));
         NodeGeotools.STR n1 = new NodeGeotools.STR("N1", new Coordinate(0.0, 0.0));
-        CrossSectionLink l01 = new CrossSectionLink("L01", n0, n1, new DoubleScalar.Rel<LengthUnit>(25.0, LengthUnit.METER));
+        CrossSectionLink l01 =
+                new CrossSectionLink("L01", n0, n1, new DoubleScalar.Rel<LengthUnit>(25.0, LengthUnit.METER));
         LineString ls01 =
                 factory.createLineString(new Coordinate[]{new Coordinate(-25.0, 0.0), new Coordinate(0.0, 0.0)});
 
         NodeGeotools.STR n2 = new NodeGeotools.STR("N2", new Coordinate(25.0, 20.0));
         CrossSectionLink l12 =
-                new CrossSectionLink("L12", n1, n2,
-                        new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
+                new CrossSectionLink("L12", n1, n2, new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20),
+                        LengthUnit.METER));
         LineString ls12 =
                 factory.createLineString(new Coordinate[]{new Coordinate(0.0, 0.0), new Coordinate(25.0, 20.0)});
 
         NodeGeotools.STR n3 = new NodeGeotools.STR("N3", new Coordinate(50.0, 0.0));
         CrossSectionLink l23 =
-                new CrossSectionLink("L23", n2, n3,
-                        new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
+                new CrossSectionLink("L23", n2, n3, new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20),
+                        LengthUnit.METER));
         LineString ls23 =
                 factory.createLineString(new Coordinate[]{new Coordinate(25.0, 20.0), new Coordinate(50.0, 0.0)});
 
         NodeGeotools.STR n4 = new NodeGeotools.STR("N4", new Coordinate(75.0, -20.0));
         CrossSectionLink l34 =
-                new CrossSectionLink("L34", n3, n4,
-                        new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
+                new CrossSectionLink("L34", n3, n4, new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20),
+                        LengthUnit.METER));
         LineString ls34 =
                 factory.createLineString(new Coordinate[]{new Coordinate(50.0, 0.0), new Coordinate(75.0, -20.0)});
 
         NodeGeotools.STR n5 = new NodeGeotools.STR("N5", new Coordinate(100.0, 0.0));
         CrossSectionLink l45 =
-                new CrossSectionLink("L45", n4, n5,
-                        new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
+                new CrossSectionLink("L45", n4, n5, new DoubleScalar.Rel<LengthUnit>(Math.sqrt(25 * 25 + 20 * 20),
+                        LengthUnit.METER));
         LineString ls45 =
                 factory.createLineString(new Coordinate[]{new Coordinate(75.0, -20.0), new Coordinate(100.0, 0.0)});
 
         NodeGeotools.STR n6 = new NodeGeotools.STR("N6", new Coordinate(125.0, 0.0));
-        CrossSectionLink l56 = new CrossSectionLink("L56", n5, n6, new DoubleScalar.Rel<LengthUnit>(25.0, LengthUnit.METER));
+        CrossSectionLink l56 =
+                new CrossSectionLink("L56", n5, n6, new DoubleScalar.Rel<LengthUnit>(25.0, LengthUnit.METER));
         LineString ls56 =
                 factory.createLineString(new Coordinate[]{new Coordinate(100.0, 0.0), new Coordinate(125.0, 0.0)});
 
         NodeGeotools.STR n7 = new NodeGeotools.STR("N7", new Coordinate(300.0, 0.0));
         CrossSectionLink l67 =
-                new CrossSectionLink("L67", n6, n7, new DoubleScalar.Rel<LengthUnit>(75.0 + 4.0 * Math.sqrt(25 * 25 + 20 * 20),
-                        LengthUnit.METER));
+                new CrossSectionLink("L67", n6, n7, new DoubleScalar.Rel<LengthUnit>(
+                        75.0 + 4.0 * Math.sqrt(25 * 25 + 20 * 20), LengthUnit.METER));
         LineString ls67 =
                 factory.createLineString(new Coordinate[]{new Coordinate(125.0, 0.0), new Coordinate(150.0, 0.0),
                         new Coordinate(175.0, 20.0), new Coordinate(200.0, 0.0), new Coordinate(225.0, -20.0),
