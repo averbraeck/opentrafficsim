@@ -18,7 +18,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version10 Sep 2014 <br>
+ * $, initial version 10 Sep 2014 <br>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
 public class DepartureTimeProfile
