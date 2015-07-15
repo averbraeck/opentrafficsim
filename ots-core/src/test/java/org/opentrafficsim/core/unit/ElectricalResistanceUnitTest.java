@@ -17,7 +17,7 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version Jun 5, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJun 5, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class ElectricalResistanceUnitTest extends AbstractUnitTest<ElectricalResistanceUnit>

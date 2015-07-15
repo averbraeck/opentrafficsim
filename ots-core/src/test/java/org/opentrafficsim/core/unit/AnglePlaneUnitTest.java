@@ -19,7 +19,7 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
  * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version Jun 4, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial versionJun 4, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class AnglePlaneUnitTest extends AbstractUnitTest<AnglePlaneUnit>

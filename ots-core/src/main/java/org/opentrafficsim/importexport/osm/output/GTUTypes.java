@@ -7,7 +7,7 @@ package org.opentrafficsim.importexport.osm.output;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>. This is a preliminary
  * Enumeration for possible GTU Types for usage during development and testing.
  * <p>
- * @version 19.12.2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial version19.12.2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
 public enum GTUTypes 

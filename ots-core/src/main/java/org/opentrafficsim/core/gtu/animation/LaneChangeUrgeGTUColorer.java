@@ -14,11 +14,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * Color GTUs based on their urgency to perform a lane change and the direction of that lane change. <br/>
  * Currently, lane change urge depends solely on the intended route; not on keep right conventions, etc.
  * <p>
- * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version 3 jun. 2015 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$,
+ *          initial version 3 jun. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class LaneChangeUrgeGTUColorer implements GTUColorer
