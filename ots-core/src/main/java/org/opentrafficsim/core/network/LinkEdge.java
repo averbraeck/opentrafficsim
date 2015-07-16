@@ -20,7 +20,7 @@ import org.jgrapht.graph.DefaultWeightedEdge;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version ep 12, 2014 <br>
+ * $, initial version Sep 12, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <L> the link type.
  */

@@ -17,7 +17,7 @@ import org.opentrafficsim.core.locale.DefaultLocale;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version un 4, 2014 <br>
+ * $, initial version Jun 4, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class LengthUnitTest extends AbstractUnitTest<LengthUnit>
