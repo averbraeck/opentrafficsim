@@ -33,7 +33,7 @@
  * arising in any way out of the use of this software, even if advised of the
  * possibility of such damage.
  * 
- * $LastChangedDate$, @version $Revision$, by $Author$, initial version ep 9, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$, initial version Sep 9, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 package floatvectordemo;
