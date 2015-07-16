@@ -17,7 +17,7 @@ import org.opentrafficsim.core.value.vdouble.vector.MutableDoubleVector;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version ul 29, 2014 <br>
+ * $, initial version Jul 29, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class FlowContourPlot extends ContourPlot

@@ -21,7 +21,7 @@ import org.opentrafficsim.core.network.geotools.LinkGeotools;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version ep 13, 2014 <br>
+ * $, initial version Sep 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class GeometryLinkAnimation extends Renderable2D

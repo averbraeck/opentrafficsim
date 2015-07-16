@@ -23,7 +23,7 @@ import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 7 mei 2015 <br>
+ * $, initial version 27 mei 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class ColorControlPanel extends JPanel implements ActionListener

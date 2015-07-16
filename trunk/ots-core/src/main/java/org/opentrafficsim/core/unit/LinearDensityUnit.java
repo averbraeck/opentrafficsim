@@ -13,7 +13,7 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 1 nov. 2014 <br>
+ * $, initial version 11 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class LinearDensityUnit extends Unit<LinearDensityUnit>

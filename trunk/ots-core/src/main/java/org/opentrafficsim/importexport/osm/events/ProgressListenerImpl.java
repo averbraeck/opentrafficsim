@@ -7,7 +7,7 @@ package org.opentrafficsim.importexport.osm.events;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 0.03.2015 <br>
+ * $, initial version 20.03.2015 <br>
  * @author <a>Moritz Bergmann</a>
  */
 public class ProgressListenerImpl implements ProgressListener
