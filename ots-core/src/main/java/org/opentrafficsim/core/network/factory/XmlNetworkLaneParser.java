@@ -12,9 +12,11 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.naming.NamingException;
@@ -72,6 +74,7 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.lane.NoTrafficLane;
 import org.opentrafficsim.core.network.lane.Shoulder;
+import org.opentrafficsim.core.network.lane.SinkLane;
 import org.opentrafficsim.core.network.lane.Stripe;
 import org.opentrafficsim.core.network.lane.Stripe.Permeable;
 import org.opentrafficsim.core.network.point2d.NodePoint2D;
@@ -154,12 +157,11 @@ import com.vividsolutions.jts.geom.LineString;
  * 
  * </pre>
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Feb 6, 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Feb 6, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -345,8 +347,8 @@ public class XmlNetworkLaneParser
      * @param simulator the simulator for creating the animation. Null if no animation needed.
      */
     public XmlNetworkLaneParser(final Class<?> networkIdClass, final Class<?> nodeClass, final Class<?> nodeIdClass,
-            final Class<?> nodePointClass, final Class<?> linkClass, final Class<?> linkIdClass,
-            final OTSDEVSSimulatorInterface simulator, final GTUColorer gtuColorer)
+        final Class<?> nodePointClass, final Class<?> linkClass, final Class<?> linkIdClass,
+        final OTSDEVSSimulatorInterface simulator, final GTUColorer gtuColorer)
     {
         this.networkIdClass = networkIdClass;
         this.nodeClass = nodeClass;
@@ -369,7 +371,7 @@ public class XmlNetworkLaneParser
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public final Network build(final URL url) throws NetworkException, ParserConfigurationException, SAXException,
-            IOException
+        IOException
     {
         // parse the Includes and Nodes.
         this.phase = 0;
@@ -403,7 +405,7 @@ public class XmlNetworkLaneParser
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public final Network build(final String s) throws NetworkException, ParserConfigurationException, SAXException,
-            IOException
+        IOException
     {
         // parse the Includes and Nodes.
         this.phase = 0;
@@ -463,8 +465,8 @@ public class XmlNetworkLaneParser
 
         @Override
         @SuppressWarnings("checkstyle:methodlength")
-        public void startElement(final String uri, final String localName, final String qName,
-                final Attributes attributes) throws SAXException
+        public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
+            throws SAXException
         {
             try
             {
@@ -483,11 +485,11 @@ public class XmlNetworkLaneParser
                         String name = attributes.getValue("FILE");
                         URI includeURI = new URI(name);
                         XmlNetworkLaneParser includeParser =
-                                new XmlNetworkLaneParser(XmlNetworkLaneParser.this.networkIdClass,
-                                        XmlNetworkLaneParser.this.nodeClass, XmlNetworkLaneParser.this.nodeIdClass,
-                                        XmlNetworkLaneParser.this.nodePointClass, XmlNetworkLaneParser.this.linkClass,
-                                        XmlNetworkLaneParser.this.linkIdClass, XmlNetworkLaneParser.this.simulator,
-                                        XmlNetworkLaneParser.this.gtuColorer);
+                            new XmlNetworkLaneParser(XmlNetworkLaneParser.this.networkIdClass,
+                                XmlNetworkLaneParser.this.nodeClass, XmlNetworkLaneParser.this.nodeIdClass,
+                                XmlNetworkLaneParser.this.nodePointClass, XmlNetworkLaneParser.this.linkClass,
+                                XmlNetworkLaneParser.this.linkIdClass, XmlNetworkLaneParser.this.simulator,
+                                XmlNetworkLaneParser.this.gtuColorer);
                         includeParser.build(includeURI.toURL());
                         transferIncludes(includeParser);
                     }
@@ -558,7 +560,7 @@ public class XmlNetworkLaneParser
 
                                     default:
                                         throw new SAXException("NETWORK: Received start tag " + qName
-                                                + ", but stack contains: " + this.stack);
+                                            + ", but stack contains: " + this.stack);
                                 }
                                 break;
 
@@ -570,7 +572,7 @@ public class XmlNetworkLaneParser
                                         break;
                                     default:
                                         throw new SAXException("COMPATIBILITY: Received end tag " + qName
-                                                + ", but stack contains: " + this.stack);
+                                            + ", but stack contains: " + this.stack);
                                 }
                                 break;
 
@@ -597,6 +599,10 @@ public class XmlNetworkLaneParser
                                         parseGeneratorTag(attributes);
                                         break;
 
+                                    case "SINK":
+                                        parseSinkTag(attributes);
+                                        break;
+
                                     case "LISTGENERATOR":
                                         parseListGeneratorTag(attributes);
                                         break;
@@ -611,7 +617,7 @@ public class XmlNetworkLaneParser
 
                                     default:
                                         throw new SAXException("LINK: Received start tag " + qName
-                                                + ", but stack contains: " + this.stack);
+                                            + ", but stack contains: " + this.stack);
                                 }
                                 break;
 
@@ -636,7 +642,7 @@ public class XmlNetworkLaneParser
 
                                     default:
                                         throw new SAXException("ROADTYPE: Received start tag " + qName
-                                                + ", but stack contains: " + this.stack);
+                                            + ", but stack contains: " + this.stack);
                                 }
                                 break;
 
@@ -649,7 +655,7 @@ public class XmlNetworkLaneParser
 
                                     default:
                                         throw new SAXException("GTUMIX: Received start tag " + qName
-                                                + ", but stack contains: " + this.stack);
+                                            + ", but stack contains: " + this.stack);
                                 }
                                 break;
 
@@ -662,7 +668,7 @@ public class XmlNetworkLaneParser
 
                                     default:
                                         throw new SAXException("ROUTEMIX: Received start tag " + qName
-                                                + ", but stack contains: " + this.stack);
+                                            + ", but stack contains: " + this.stack);
                                 }
                                 break;
 
@@ -675,13 +681,13 @@ public class XmlNetworkLaneParser
 
                                     default:
                                         throw new SAXException("SHORTESTROUTEMIX: Received start tag " + qName
-                                                + ", but stack contains: " + this.stack);
+                                            + ", but stack contains: " + this.stack);
                                 }
                                 break;
 
                             default:
                                 throw new SAXException("startElement: Received start tag " + qName
-                                        + ", but stack contains: " + this.stack);
+                                    + ", but stack contains: " + this.stack);
                         }
                     }
                 }
@@ -747,7 +753,7 @@ public class XmlNetworkLaneParser
                                     if (this.linkTag.roadTypeTag == null)
                                     {
                                         throw new SAXException("LINK: " + this.linkTag.name
-                                                + " does not have a ROADTYPE defined");
+                                            + " does not have a ROADTYPE defined");
                                     }
                                     calculateNodeCoordinates(this.linkTag);
                                     @SuppressWarnings("rawtypes")
@@ -784,8 +790,8 @@ public class XmlNetworkLaneParser
                                     break;
 
                                 default:
-                                    throw new SAXException("NETWORK: Received end tag " + qName
-                                            + ", but stack contains: " + this.stack);
+                                    throw new SAXException("NETWORK: Received end tag " + qName + ", but stack contains: "
+                                        + this.stack);
                             }
                             break;
 
@@ -796,7 +802,7 @@ public class XmlNetworkLaneParser
                                     break;
                                 default:
                                     throw new SAXException("COMPATIBILITY: Received end tag " + qName
-                                            + ", but stack contains: " + this.stack);
+                                        + ", but stack contains: " + this.stack);
                             }
                             break;
 
@@ -815,6 +821,8 @@ public class XmlNetworkLaneParser
                                     break;
                                 case "GENERATOR":
                                     break;
+                                case "SINK":
+                                    break;
                                 case "LISTGENERATOR":
                                     break;
                                 case "BLOCK":
@@ -823,7 +831,7 @@ public class XmlNetworkLaneParser
                                     break;
                                 default:
                                     throw new SAXException("LINK: Received end tag " + qName + ", but stack contains: "
-                                            + this.stack);
+                                        + this.stack);
                             }
                             break;
 
@@ -833,8 +841,8 @@ public class XmlNetworkLaneParser
                                 case "GTU":
                                     break;
                                 default:
-                                    throw new SAXException("GTUMIX: Received end tag " + qName
-                                            + ", but stack contains: " + this.stack);
+                                    throw new SAXException("GTUMIX: Received end tag " + qName + ", but stack contains: "
+                                        + this.stack);
                             }
                             break;
 
@@ -850,8 +858,8 @@ public class XmlNetworkLaneParser
                                 case "STRIPE":
                                     break;
                                 default:
-                                    throw new SAXException("ROADTYPE: Received end tag " + qName
-                                            + ", but stack contains: " + this.stack);
+                                    throw new SAXException("ROADTYPE: Received end tag " + qName + ", but stack contains: "
+                                        + this.stack);
                             }
                             break;
 
@@ -861,8 +869,8 @@ public class XmlNetworkLaneParser
                                 case "ROUTE":
                                     break;
                                 default:
-                                    throw new SAXException("ROUTEMIX: Received end tag " + qName
-                                            + ", but stack contains: " + this.stack);
+                                    throw new SAXException("ROUTEMIX: Received end tag " + qName + ", but stack contains: "
+                                        + this.stack);
                             }
                             break;
 
@@ -873,7 +881,7 @@ public class XmlNetworkLaneParser
                                     break;
                                 default:
                                     throw new SAXException("SHORTESTROUTEMIX: Received end tag " + qName
-                                            + ", but stack contains: " + this.stack);
+                                        + ", but stack contains: " + this.stack);
                             }
                             break;
 
@@ -940,7 +948,7 @@ public class XmlNetworkLaneParser
 
             if (attributes.getValue("GTULIST") == null)
                 throw new SAXException("COMPATIBILITY.LANETYPE: missing attribute GTULIST for LANETYPE="
-                        + laneTypeTag.laneType);
+                    + laneTypeTag.laneType);
             laneTypeTag.gtuList = parseGTUList(attributes.getValue("GTULIST"));
 
             addLaneType(laneTypeTag);
@@ -1103,13 +1111,13 @@ public class XmlNetworkLaneParser
             if (dir == null)
                 throw new SAXException("ARC: missing attribute DIRECTION");
             this.linkTag.arcTag.direction =
-                    (dir.equals("L") || dir.equals("LEFT") || dir.equals("COUNTERCLOCKWISE")) ? ArcDirection.LEFT
-                            : ArcDirection.RIGHT;
+                (dir.equals("L") || dir.equals("LEFT") || dir.equals("COUNTERCLOCKWISE")) ? ArcDirection.LEFT
+                    : ArcDirection.RIGHT;
         }
 
         /**
-         * Parse the ROADTYPE tag. As it can appear inside a LINK tag or separate as a macro, don't add it automatically
-         * to the Map of RoadType tags in the main class.
+         * Parse the ROADTYPE tag. As it can appear inside a LINK tag or separate as a macro, don't add it automatically to the
+         * Map of RoadType tags in the main class.
          * @param attributes the attributes of the XML-tag.
          * @throws NetworkException in case of OTS logic error.
          * @throws SAXException in case of parse error.
@@ -1153,12 +1161,11 @@ public class XmlNetworkLaneParser
 
             if (attributes.getValue("TYPE") == null)
                 throw new SAXException("ROADTYPE.LANE: missing attribute TYPE for lane " + this.roadTypeTag.name + "."
-                        + name);
+                    + name);
             cseTag.laneTypeString = attributes.getValue("TYPE");
             if (!XmlNetworkLaneParser.this.laneTypes.containsKey(cseTag.laneTypeString))
-                throw new SAXException("ROADTYPE.LANE: TYPE " + cseTag.laneTypeString + " for lane "
-                        + this.roadTypeTag.name + "." + name
-                        + " does not have compatible GTUs defined in a COMPATIBILITY element");
+                throw new SAXException("ROADTYPE.LANE: TYPE " + cseTag.laneTypeString + " for lane " + this.roadTypeTag.name
+                    + "." + name + " does not have compatible GTUs defined in a COMPATIBILITY element");
             cseTag.laneType = XmlNetworkLaneParser.this.laneTypes.get(cseTag.laneTypeString);
 
             if (attributes.getValue("OFFSET") != null)
@@ -1172,7 +1179,7 @@ public class XmlNetworkLaneParser
                 cseTag.width = this.globalTag.width;
             else
                 throw new SAXException("ROADTYPE.LANE: cannot determine WIDTH for lane: " + this.roadTypeTag.name + "."
-                        + name);
+                    + name);
 
             if (attributes.getValue("SPEED") != null)
                 cseTag.speed = parseSpeedAbs(attributes.getValue("SPEED"));
@@ -1182,11 +1189,11 @@ public class XmlNetworkLaneParser
                 cseTag.speed = this.globalTag.speed;
             else
                 throw new SAXException("ROADTYPE.LANE: cannot determine SPEED for lane: " + this.roadTypeTag.name + "."
-                        + name);
+                    + name);
 
             if (attributes.getValue("DIRECTION") == null)
-                throw new SAXException("ROADTYPE.LANE: missing attribute DIRECTION for lane " + this.roadTypeTag.name
-                        + "." + name);
+                throw new SAXException("ROADTYPE.LANE: missing attribute DIRECTION for lane " + this.roadTypeTag.name + "."
+                    + name);
             cseTag.direction = parseDirection(attributes.getValue("DIRECTION"));
 
             if (attributes.getValue("COLOR") != null)
@@ -1227,7 +1234,7 @@ public class XmlNetworkLaneParser
                 cseTag.width = this.globalTag.width;
             else
                 throw new SAXException("ROADTYPE.NOTRAFFICLANE: cannot determine WIDTH for NOTRAFFICLANE: "
-                        + this.roadTypeTag.name + "." + name);
+                    + this.roadTypeTag.name + "." + name);
 
             if (attributes.getValue("COLOR") != null)
                 cseTag.color = parseColor(attributes.getValue("COLOR"));
@@ -1267,7 +1274,7 @@ public class XmlNetworkLaneParser
                 cseTag.width = this.globalTag.width;
             else
                 throw new SAXException("ROADTYPE.SHOULDER: cannot determine WIDTH for NOTRAFFICLANE: "
-                        + this.roadTypeTag.name + "." + name);
+                    + this.roadTypeTag.name + "." + name);
 
             if (attributes.getValue("COLOR") != null)
                 cseTag.color = parseColor(attributes.getValue("COLOR"));
@@ -1329,12 +1336,11 @@ public class XmlNetworkLaneParser
                 throw new SAXException("LANEOVERRIDE: missing attribute NAME" + " for link " + this.linkTag.name);
             if (this.linkTag.roadTypeTag == null)
                 throw new NetworkException("LANEOVERRIDE: NAME " + name.trim() + " no ROADTYPE for link "
-                        + this.linkTag.name);
+                    + this.linkTag.name);
             CrossSectionElementTag laneTag = this.linkTag.roadTypeTag.cseTags.get(name.trim());
             if (laneTag == null)
-                throw new NetworkException("LANEOVERRIDE: Lane with NAME " + name.trim()
-                        + " not found in elements of link " + this.linkTag.name + " - roadtype "
-                        + this.linkTag.roadTypeTag.name);
+                throw new NetworkException("LANEOVERRIDE: Lane with NAME " + name.trim() + " not found in elements of link "
+                    + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
             if (this.linkTag.laneOverrideTags.containsKey(name))
                 throw new SAXException("LANEOVERRIDE: LANE OVERRIDE with NAME " + name + " defined twice");
 
@@ -1353,8 +1359,8 @@ public class XmlNetworkLaneParser
         }
 
         /**
-         * Parse the GENERATOR tag with GTU generation attributes for a Lane. Note: Only one generator can be defined
-         * for the same lane.
+         * Parse the GENERATOR tag with GTU generation attributes for a Lane. Note: Only one generator can be defined for the
+         * same lane.
          * @param attributes the attributes of the XML-tag.
          * @throws NetworkException in case of OTS logic error.
          * @throws SAXException in case of parse error.
@@ -1369,14 +1375,14 @@ public class XmlNetworkLaneParser
                 throw new SAXException("GENERATOR: missing attribute LANE" + " for link " + this.linkTag.name);
             if (this.linkTag.roadTypeTag == null)
                 throw new NetworkException("GENERATOR: LANE " + laneName.trim() + " no ROADTYPE for link "
-                        + this.linkTag.name);
+                    + this.linkTag.name);
             CrossSectionElementTag cseTag = this.linkTag.roadTypeTag.cseTags.get(laneName.trim());
             if (cseTag == null)
                 throw new NetworkException("GENERATOR: LANE " + laneName.trim() + " not found in elements of link "
-                        + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
+                    + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
             if (cseTag.elementType != ElementType.LANE)
                 throw new NetworkException("GENERATOR: LANE " + laneName.trim() + " not a real GTU lane for link "
-                        + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
+                    + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
             if (this.linkTag.generatorTags.containsKey(laneName))
                 throw new SAXException("GENERATOR for LANE with NAME " + laneName + " defined twice");
 
@@ -1388,7 +1394,7 @@ public class XmlNetworkLaneParser
             {
                 if (!XmlNetworkLaneParser.this.gtuTags.containsKey(gtuName.trim()))
                     throw new NetworkException("GENERATOR: LANE " + laneName + " GTU " + gtuName.trim() + " in link "
-                            + this.linkTag.name + " not defined");
+                        + this.linkTag.name + " not defined");
                 generatorTag.gtuTag = XmlNetworkLaneParser.this.gtuTags.get(gtuName.trim());
             }
 
@@ -1396,18 +1402,18 @@ public class XmlNetworkLaneParser
             if (gtuMixName != null)
             {
                 if (!XmlNetworkLaneParser.this.gtuMixTags.containsKey(gtuMixName.trim()))
-                    throw new NetworkException("GENERATOR: LANE " + laneName + " GTUMIX " + gtuMixName.trim()
-                            + " in link " + this.linkTag.name + " not defined");
+                    throw new NetworkException("GENERATOR: LANE " + laneName + " GTUMIX " + gtuMixName.trim() + " in link "
+                        + this.linkTag.name + " not defined");
                 generatorTag.gtuMixTag = XmlNetworkLaneParser.this.gtuMixTags.get(gtuMixName.trim());
             }
 
             if (generatorTag.gtuTag == null && generatorTag.gtuMixTag == null)
                 throw new SAXException("GENERATOR: missing attribute GTU or GTUMIX for Lane with NAME " + laneName
-                        + " of link " + this.linkTag.name);
+                    + " of link " + this.linkTag.name);
 
             if (generatorTag.gtuTag != null && generatorTag.gtuMixTag != null)
-                throw new SAXException("GENERATOR: both attribute GTU and GTUMIX defined for Lane with NAME "
-                        + laneName + " of link " + this.linkTag.name);
+                throw new SAXException("GENERATOR: both attribute GTU and GTUMIX defined for Lane with NAME " + laneName
+                    + " of link " + this.linkTag.name);
 
             String iat = attributes.getValue("IAT");
             if (iat == null)
@@ -1434,8 +1440,8 @@ public class XmlNetworkLaneParser
             if (routeName != null)
             {
                 if (!XmlNetworkLaneParser.this.routeTags.containsKey(routeName.trim()))
-                    throw new NetworkException("GENERATOR: LANE " + laneName + " ROUTE " + routeName.trim()
-                            + " in link " + this.linkTag.name + " not defined");
+                    throw new NetworkException("GENERATOR: LANE " + laneName + " ROUTE " + routeName.trim() + " in link "
+                        + this.linkTag.name + " not defined");
                 generatorTag.routeTag = XmlNetworkLaneParser.this.routeTags.get(routeName.trim());
                 numberRouteTags++;
             }
@@ -1445,7 +1451,7 @@ public class XmlNetworkLaneParser
             {
                 if (!XmlNetworkLaneParser.this.routeMixTags.containsKey(routeMixName.trim()))
                     throw new NetworkException("GENERATOR: LANE " + laneName + " ROUTEMIX " + routeMixName.trim()
-                            + " in link " + this.linkTag.name + " not defined");
+                        + " in link " + this.linkTag.name + " not defined");
                 generatorTag.routeMixTag = XmlNetworkLaneParser.this.routeMixTags.get(routeMixName.trim());
                 numberRouteTags++;
             }
@@ -1454,10 +1460,9 @@ public class XmlNetworkLaneParser
             if (shortestRouteName != null)
             {
                 if (!XmlNetworkLaneParser.this.shortestRouteTags.containsKey(shortestRouteName.trim()))
-                    throw new NetworkException("GENERATOR: LANE " + laneName + " SHORTESTROUTE "
-                            + shortestRouteName.trim() + " in link " + this.linkTag.name + " not defined");
-                generatorTag.shortestRouteTag =
-                        XmlNetworkLaneParser.this.shortestRouteTags.get(shortestRouteName.trim());
+                    throw new NetworkException("GENERATOR: LANE " + laneName + " SHORTESTROUTE " + shortestRouteName.trim()
+                        + " in link " + this.linkTag.name + " not defined");
+                generatorTag.shortestRouteTag = XmlNetworkLaneParser.this.shortestRouteTags.get(shortestRouteName.trim());
                 numberRouteTags++;
             }
 
@@ -1466,15 +1471,15 @@ public class XmlNetworkLaneParser
             {
                 if (!XmlNetworkLaneParser.this.shortestRouteMixTags.containsKey(shortestRouteMixName.trim()))
                     throw new NetworkException("GENERATOR: LANE " + laneName + " SHORTESTROUTEMIX "
-                            + shortestRouteMixName.trim() + " in link " + this.linkTag.name + " not defined");
+                        + shortestRouteMixName.trim() + " in link " + this.linkTag.name + " not defined");
                 generatorTag.shortestRouteMixTag =
-                        XmlNetworkLaneParser.this.shortestRouteMixTags.get(shortestRouteMixName.trim());
+                    XmlNetworkLaneParser.this.shortestRouteMixTags.get(shortestRouteMixName.trim());
                 numberRouteTags++;
             }
 
             if (numberRouteTags > 1)
-                throw new SAXException("GENERATOR: multiple ROUTE tags defined for Lane with NAME " + laneName
-                        + " of link " + this.linkTag.name);
+                throw new SAXException("GENERATOR: multiple ROUTE tags defined for Lane with NAME " + laneName + " of link "
+                    + this.linkTag.name);
 
             // TODO GTUColorer
 
@@ -1482,8 +1487,35 @@ public class XmlNetworkLaneParser
         }
 
         /**
-         * Parse the LISTGENERATOR tag with GTU generation attributes for a Lane. Note: Only one generator can be
-         * defined for the same lane.
+         * Parse the SINK tag for a Lane. Note: Only one sink can be defined for the same lane.
+         * @param attributes the attributes of the XML-tag.
+         * @throws NetworkException in case of OTS logic error.
+         * @throws SAXException in case of parse error.
+         */
+        @SuppressWarnings("checkstyle:needbraces")
+        private void parseSinkTag(final Attributes attributes) throws NetworkException, SAXException
+        {
+            String laneName = attributes.getValue("LANE");
+            if (laneName == null)
+                throw new SAXException("SINK: missing attribute LANE" + " for link " + this.linkTag.name);
+            if (this.linkTag.roadTypeTag == null)
+                throw new NetworkException("SINK: LANE " + laneName.trim() + " no ROADTYPE for link " + this.linkTag.name);
+            CrossSectionElementTag cseTag = this.linkTag.roadTypeTag.cseTags.get(laneName.trim());
+            if (cseTag == null)
+                throw new NetworkException("SINK: LANE " + laneName.trim() + " not found in elements of link "
+                    + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
+            if (cseTag.elementType != ElementType.LANE)
+                throw new NetworkException("SINK: LANE " + laneName.trim() + " not a real GTU lane for link "
+                    + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
+            if (this.linkTag.sinkLanes.contains(laneName))
+                throw new SAXException("SINK for LANE with NAME " + laneName + " defined twice");
+
+            this.linkTag.sinkLanes.add(laneName);
+        }
+
+        /**
+         * Parse the LISTGENERATOR tag with GTU generation attributes for a Lane. Note: Only one generator can be defined for
+         * the same lane.
          * @param attributes the attributes of the XML-tag.
          * @throws NetworkException in case of OTS logic error.
          * @throws SAXException in case of parse error.
@@ -1508,14 +1540,14 @@ public class XmlNetworkLaneParser
                 throw new SAXException("LISTGENERATOR: missing attribute LANE" + " for link " + this.linkTag.name);
             if (this.linkTag.roadTypeTag == null)
                 throw new NetworkException("LISTGENERATOR: LANE " + laneName.trim() + " no ROADTYPE for link "
-                        + this.linkTag.name);
+                    + this.linkTag.name);
             CrossSectionElementTag cseTag = this.linkTag.roadTypeTag.cseTags.get(laneName.trim());
             if (cseTag == null)
                 throw new NetworkException("LISTGENERATOR: LANE " + laneName.trim() + " not found in elements of link "
-                        + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
+                    + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
             if (cseTag.elementType != ElementType.LANE)
                 throw new NetworkException("LISTGENERATOR: LANE " + laneName.trim() + " not a real GTU lane for link "
-                        + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
+                    + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
             if (this.linkTag.generatorTags.containsKey(laneName))
                 throw new SAXException("LISTGENERATOR for LANE with NAME " + laneName + " defined twice");
 
@@ -1526,8 +1558,8 @@ public class XmlNetworkLaneParser
             if (gtuName != null)
             {
                 if (!XmlNetworkLaneParser.this.gtuTags.containsKey(gtuName.trim()))
-                    throw new NetworkException("LISTGENERATOR: LANE " + laneName + " GTU " + gtuName.trim()
-                            + " in link " + this.linkTag.name + " not defined");
+                    throw new NetworkException("LISTGENERATOR: LANE " + laneName + " GTU " + gtuName.trim() + " in link "
+                        + this.linkTag.name + " not defined");
                 listGeneratorTag.gtuTag = XmlNetworkLaneParser.this.gtuTags.get(gtuName.trim());
             }
 
@@ -1536,17 +1568,17 @@ public class XmlNetworkLaneParser
             {
                 if (!XmlNetworkLaneParser.this.gtuMixTags.containsKey(gtuMixName.trim()))
                     throw new NetworkException("LISTGENERATOR: LANE " + laneName + " GTUMIX " + gtuMixName.trim()
-                            + " in link " + this.linkTag.name + " not defined");
+                        + " in link " + this.linkTag.name + " not defined");
                 listGeneratorTag.gtuMixTag = XmlNetworkLaneParser.this.gtuMixTags.get(gtuMixName.trim());
             }
 
             if (listGeneratorTag.gtuTag == null && listGeneratorTag.gtuMixTag == null)
                 throw new SAXException("LISTGENERATOR: missing attribute GTU or GTUMIX for Lane with NAME " + laneName
-                        + " of link " + this.linkTag.name);
+                    + " of link " + this.linkTag.name);
 
             if (listGeneratorTag.gtuTag != null && listGeneratorTag.gtuMixTag != null)
-                throw new SAXException("LISTGENERATOR: both attribute GTU and GTUMIX defined for Lane with NAME "
-                        + laneName + " of link " + this.linkTag.name);
+                throw new SAXException("LISTGENERATOR: both attribute GTU and GTUMIX defined for Lane with NAME " + laneName
+                    + " of link " + this.linkTag.name);
 
             String initialSpeed = attributes.getValue("INITIALSPEED");
             if (initialSpeed == null)
@@ -1573,16 +1605,14 @@ public class XmlNetworkLaneParser
             if (laneName == null)
                 throw new SAXException("FILL: missing attribute LANE" + " for link " + this.linkTag.name);
             if (this.linkTag.roadTypeTag == null)
-                throw new NetworkException("FILL: NAME " + laneName.trim() + " no ROADTYPE for link "
-                        + this.linkTag.name);
+                throw new NetworkException("FILL: NAME " + laneName.trim() + " no ROADTYPE for link " + this.linkTag.name);
             CrossSectionElementTag cseTag = this.linkTag.roadTypeTag.cseTags.get(laneName.trim());
             if (cseTag == null)
-                throw new NetworkException("FILL: Lane with NAME " + laneName.trim()
-                        + " not found in elements of link " + this.linkTag.name + " - roadtype "
-                        + this.linkTag.roadTypeTag.name);
+                throw new NetworkException("FILL: Lane with NAME " + laneName.trim() + " not found in elements of link "
+                    + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
             if (cseTag.elementType != ElementType.LANE)
                 throw new NetworkException("FILL: Lane with NAME " + laneName.trim() + " not a real GTU lane for link "
-                        + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
+                    + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
             if (this.linkTag.fillTags.containsKey(laneName))
                 throw new SAXException("FILL for LANE with NAME " + laneName + " defined twice");
 
@@ -1591,7 +1621,7 @@ public class XmlNetworkLaneParser
             {
                 if (!XmlNetworkLaneParser.this.gtuTags.containsKey(gtuName.trim()))
                     throw new NetworkException("FILL: LANE " + laneName + " GTU " + gtuName.trim() + " in link "
-                            + this.linkTag.name + " not defined");
+                        + this.linkTag.name + " not defined");
                 fillTag.gtuTag = XmlNetworkLaneParser.this.gtuTags.get(gtuName.trim());
             }
 
@@ -1600,17 +1630,17 @@ public class XmlNetworkLaneParser
             {
                 if (!XmlNetworkLaneParser.this.gtuMixTags.containsKey(gtuMixName.trim()))
                     throw new NetworkException("FILL: LANE " + laneName + " GTUMIX " + gtuMixName.trim() + " in link "
-                            + this.linkTag.name + " not defined");
+                        + this.linkTag.name + " not defined");
                 fillTag.gtuMixTag = XmlNetworkLaneParser.this.gtuMixTags.get(gtuMixName.trim());
             }
 
             if (fillTag.gtuTag == null && fillTag.gtuMixTag == null)
                 throw new SAXException("FILL: missing attribute GTU or GTUMIX for Lane with NAME " + laneName.trim()
-                        + " of link " + this.linkTag.name);
+                    + " of link " + this.linkTag.name);
 
             if (fillTag.gtuTag != null && fillTag.gtuMixTag != null)
                 throw new SAXException("FILL: both attribute GTU and GTUMIX defined for Lane with NAME " + laneName
-                        + " of link " + this.linkTag.name);
+                    + " of link " + this.linkTag.name);
 
             String distance = attributes.getValue("DISTANCE");
             if (distance == null)
@@ -1632,7 +1662,7 @@ public class XmlNetworkLaneParser
             {
                 if (!XmlNetworkLaneParser.this.routeTags.containsKey(routeName.trim()))
                     throw new NetworkException("FILL: LANE " + laneName + " ROUTE " + routeName.trim() + " in link "
-                            + this.linkTag.name + " not defined");
+                        + this.linkTag.name + " not defined");
                 fillTag.routeTag = XmlNetworkLaneParser.this.routeTags.get(routeName.trim());
                 numberRouteTags++;
             }
@@ -1641,8 +1671,8 @@ public class XmlNetworkLaneParser
             if (routeMixName != null)
             {
                 if (!XmlNetworkLaneParser.this.routeMixTags.containsKey(routeMixName.trim()))
-                    throw new NetworkException("FILL: LANE " + laneName + " ROUTEMIX " + routeMixName.trim()
-                            + " in link " + this.linkTag.name + " not defined");
+                    throw new NetworkException("FILL: LANE " + laneName + " ROUTEMIX " + routeMixName.trim() + " in link "
+                        + this.linkTag.name + " not defined");
                 fillTag.routeMixTag = XmlNetworkLaneParser.this.routeMixTags.get(routeMixName.trim());
                 numberRouteTags++;
             }
@@ -1652,7 +1682,7 @@ public class XmlNetworkLaneParser
             {
                 if (!XmlNetworkLaneParser.this.shortestRouteTags.containsKey(shortestRouteName.trim()))
                     throw new NetworkException("FILL: LANE " + laneName + " SHORTESTROUTE " + shortestRouteName.trim()
-                            + " in link " + this.linkTag.name + " not defined");
+                        + " in link " + this.linkTag.name + " not defined");
                 fillTag.shortestRouteTag = XmlNetworkLaneParser.this.shortestRouteTags.get(shortestRouteName.trim());
                 numberRouteTags++;
             }
@@ -1661,16 +1691,16 @@ public class XmlNetworkLaneParser
             if (shortestRouteMixName != null)
             {
                 if (!XmlNetworkLaneParser.this.shortestRouteMixTags.containsKey(shortestRouteMixName.trim()))
-                    throw new NetworkException("FILL: LANE " + laneName + " SHORTESTROUTEMIX "
-                            + shortestRouteMixName.trim() + " in link " + this.linkTag.name + " not defined");
+                    throw new NetworkException("FILL: LANE " + laneName + " SHORTESTROUTEMIX " + shortestRouteMixName.trim()
+                        + " in link " + this.linkTag.name + " not defined");
                 fillTag.shortestRouteMixTag =
-                        XmlNetworkLaneParser.this.shortestRouteMixTags.get(shortestRouteMixName.trim());
+                    XmlNetworkLaneParser.this.shortestRouteMixTags.get(shortestRouteMixName.trim());
                 numberRouteTags++;
             }
 
             if (numberRouteTags > 1)
                 throw new SAXException("FILL: multiple ROUTE tags defined for Lane with NAME " + laneName + " of link "
-                        + this.linkTag.name);
+                    + this.linkTag.name);
 
             this.linkTag.fillTags.put(laneName, fillTag);
         }
@@ -1691,13 +1721,11 @@ public class XmlNetworkLaneParser
                 throw new SAXException("BLOCK: missing attribute LANE" + " for link " + this.linkTag.name);
             CrossSectionElementTag cseTag = this.linkTag.roadTypeTag.cseTags.get(laneName.trim());
             if (cseTag == null)
-                throw new NetworkException("BLOCK: Lane with NAME " + laneName.trim()
-                        + " not found in elements of link " + this.linkTag.name + " - roadtype "
-                        + this.linkTag.roadTypeTag.name);
+                throw new NetworkException("BLOCK: Lane with NAME " + laneName.trim() + " not found in elements of link "
+                    + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
             if (cseTag.elementType != ElementType.LANE)
-                throw new NetworkException("BLOCK: Lane with NAME " + laneName.trim()
-                        + " not a real GTU lane for link " + this.linkTag.name + " - roadtype "
-                        + this.linkTag.roadTypeTag.name);
+                throw new NetworkException("BLOCK: Lane with NAME " + laneName.trim() + " not a real GTU lane for link "
+                    + this.linkTag.name + " - roadtype " + this.linkTag.roadTypeTag.name);
             if (this.linkTag.blockTags.containsKey(laneName))
                 throw new SAXException("BLOCK for LANE with NAME " + laneName + " defined twice");
 
@@ -1752,7 +1780,7 @@ public class XmlNetworkLaneParser
             String weight = attributes.getValue("WEIGHT");
             if (weight == null)
                 throw new NetworkException("GTUMIX: " + this.gtuMixTag.name + " GTU " + gtuName.trim()
-                        + ": weight not defined");
+                    + ": weight not defined");
             this.gtuMixTag.weights.add(Double.parseDouble(weight));
         }
 
@@ -1820,13 +1848,13 @@ public class XmlNetworkLaneParser
                 throw new NetworkException("ROUTEMIX: No ROUTE NAME defined");
             if (!XmlNetworkLaneParser.this.routeTags.containsKey(routeName.trim()))
                 throw new NetworkException("ROUTEMIX: " + this.routeMixTag.name + " ROUTE " + routeName.trim()
-                        + " not defined");
+                    + " not defined");
             this.routeMixTag.routes.add(XmlNetworkLaneParser.this.routeTags.get(routeName.trim()));
 
             String weight = attributes.getValue("WEIGHT");
             if (weight == null)
                 throw new NetworkException("ROUTEMIX: " + this.routeMixTag.name + " ROUTE " + routeName.trim()
-                        + ": weight not defined");
+                    + ": weight not defined");
             this.routeMixTag.weights.add(Double.parseDouble(weight));
         }
 
@@ -1908,7 +1936,7 @@ public class XmlNetworkLaneParser
          */
         @SuppressWarnings("checkstyle:needbraces")
         private void parseShortestRouteMixShortestRouteTag(final Attributes attributes) throws NetworkException,
-                SAXException
+            SAXException
         {
             if (this.shortestRouteMixTag == null)
                 throw new NetworkException("SHORTESTROUTEMIX: parse error");
@@ -1918,14 +1946,14 @@ public class XmlNetworkLaneParser
                 throw new NetworkException("SHORTESTROUTEMIX: No SHORTESTROUTE NAME defined");
             if (!XmlNetworkLaneParser.this.shortestRouteTags.containsKey(shortestRouteName.trim()))
                 throw new NetworkException("SHORTESTROUTEMIX: " + this.shortestRouteMixTag.name + " SHORTESTROUTE "
-                        + shortestRouteName.trim() + " not defined");
-            this.shortestRouteMixTag.shortestRoutes.add(XmlNetworkLaneParser.this.shortestRouteTags
-                    .get(shortestRouteName.trim()));
+                    + shortestRouteName.trim() + " not defined");
+            this.shortestRouteMixTag.shortestRoutes.add(XmlNetworkLaneParser.this.shortestRouteTags.get(shortestRouteName
+                .trim()));
 
             String weight = attributes.getValue("WEIGHT");
             if (weight == null)
                 throw new NetworkException("SHORTESTROUTEMIX: " + this.shortestRouteMixTag.name + " SHORTESTROUTE "
-                        + shortestRouteName.trim() + ": weight not defined");
+                    + shortestRouteName.trim() + ": weight not defined");
             this.shortestRouteMixTag.weights.add(Double.parseDouble(weight));
         }
 
@@ -1967,7 +1995,7 @@ public class XmlNetworkLaneParser
         catch (NumberFormatException nfe)
         {
             throw new NetworkException("Parsing network. ID class " + clazz.getName() + ": cannot instantiate number: "
-                    + ids, nfe);
+                + ids, nfe);
         }
         return id;
     }
@@ -1992,7 +2020,7 @@ public class XmlNetworkLaneParser
         }
         else if (Point2d.class.isAssignableFrom(clazz))
         {
-            point = new Point2d(new double[]{p.x, p.y});
+            point = new Point2d(new double[] {p.x, p.y});
         }
         else if (Coordinate.class.isAssignableFrom(clazz))
         {
@@ -2014,15 +2042,15 @@ public class XmlNetworkLaneParser
      * @throws RemoteException when communication error occurs when trying to find animation context.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected final Node makeNode(final Class<?> clazz, final NodeTag nodeTag) throws NetworkException,
-            RemoteException, NamingException
+    protected final Node makeNode(final Class<?> clazz, final NodeTag nodeTag) throws NetworkException, RemoteException,
+        NamingException
     {
         Object id = makeId(this.nodeIdClass, nodeTag.name);
         Object point = makePoint(this.nodePointClass, nodeTag.coordinate);
         DoubleScalar.Abs<AnglePlaneUnit> angle =
-                nodeTag.angle == null ? new DoubleScalar.Abs<AnglePlaneUnit>(0.0, AnglePlaneUnit.SI) : nodeTag.angle;
+            nodeTag.angle == null ? new DoubleScalar.Abs<AnglePlaneUnit>(0.0, AnglePlaneUnit.SI) : nodeTag.angle;
         DoubleScalar.Abs<AngleSlopeUnit> slope =
-                nodeTag.slope == null ? new DoubleScalar.Abs<AngleSlopeUnit>(0.0, AngleSlopeUnit.SI) : nodeTag.slope;
+            nodeTag.slope == null ? new DoubleScalar.Abs<AngleSlopeUnit>(0.0, AngleSlopeUnit.SI) : nodeTag.slope;
         if (NodeGeotools.class.isAssignableFrom(clazz))
         {
             if (point instanceof Coordinate)
@@ -2032,7 +2060,7 @@ public class XmlNetworkLaneParser
                 return node;
             }
             throw new NetworkException("Parsing network. Node class " + clazz.getName()
-                    + ": cannot instantiate. Wrong Coordinate type: " + point.getClass() + ", coordinate: " + point);
+                + ": cannot instantiate. Wrong Coordinate type: " + point.getClass() + ", coordinate: " + point);
         }
         else if (NodePoint2D.class.isAssignableFrom(clazz))
         {
@@ -2043,7 +2071,7 @@ public class XmlNetworkLaneParser
                 return node;
             }
             throw new NetworkException("Parsing network. Node class " + clazz.getName()
-                    + ": cannot instantiate. Wrong Point2D type: " + point.getClass() + ", coordinate: " + point);
+                + ": cannot instantiate. Wrong Point2D type: " + point.getClass() + ", coordinate: " + point);
         }
         else
         {
@@ -2060,7 +2088,7 @@ public class XmlNetworkLaneParser
      */
     @SuppressWarnings("methodlength")
     protected final void calculateNodeCoordinates(final LinkTag linkTag) throws RemoteException, NetworkException,
-            NamingException
+        NamingException
     {
         // calculate dx, dy and dz for the straight or the arc.
         if (linkTag.nodeFrom != null && linkTag.nodeTo != null)
@@ -2070,21 +2098,21 @@ public class XmlNetworkLaneParser
                 double radiusSI = linkTag.arcTag.radius.getSI();
                 ArcDirection direction = linkTag.arcTag.direction;
                 Point3d coordinate =
-                        new Point3d(linkTag.nodeFrom.getLocation().getX(), linkTag.nodeFrom.getLocation().getY(),
-                                linkTag.nodeFrom.getLocation().getZ());
+                    new Point3d(linkTag.nodeFrom.getLocation().getX(), linkTag.nodeFrom.getLocation().getY(),
+                        linkTag.nodeFrom.getLocation().getZ());
                 double startAngle = linkTag.nodeFrom.getDirection().getSI();
                 if (direction.equals(ArcDirection.LEFT))
                 {
                     linkTag.arcTag.center =
-                            new Point3d(coordinate.x + radiusSI * Math.cos(startAngle + Math.PI / 2.0), coordinate.y
-                                    + radiusSI * Math.sin(startAngle + Math.PI / 2.0), 0.0);
+                        new Point3d(coordinate.x + radiusSI * Math.cos(startAngle + Math.PI / 2.0), coordinate.y + radiusSI
+                            * Math.sin(startAngle + Math.PI / 2.0), 0.0);
                     linkTag.arcTag.startAngle = startAngle - Math.PI / 2.0;
                 }
                 else
                 {
                     linkTag.arcTag.center =
-                            new Point3d(coordinate.x + radiusSI * Math.cos(startAngle - Math.PI / 2.0), coordinate.y
-                                    + radiusSI * Math.sin(startAngle - Math.PI / 2.0), 0.0);
+                        new Point3d(coordinate.x + radiusSI * Math.cos(startAngle - Math.PI / 2.0), coordinate.y + radiusSI
+                            * Math.sin(startAngle - Math.PI / 2.0), 0.0);
                     linkTag.arcTag.startAngle = startAngle + Math.PI / 2.0;
                 }
             }
@@ -2093,8 +2121,7 @@ public class XmlNetworkLaneParser
 
         if (linkTag.nodeFrom == null && linkTag.nodeTo == null)
         {
-            throw new NetworkException("Parsing network. Link: " + linkTag.name
-                    + ", both From-node and To-node are null");
+            throw new NetworkException("Parsing network. Link: " + linkTag.name + ", both From-node and To-node are null");
         }
 
         if (linkTag.straightTag != null)
@@ -2103,8 +2130,8 @@ public class XmlNetworkLaneParser
             if (linkTag.nodeTo == null)
             {
                 Point3d coordinate =
-                        new Point3d(linkTag.nodeFrom.getLocation().getX(), linkTag.nodeFrom.getLocation().getY(),
-                                linkTag.nodeFrom.getLocation().getZ());
+                    new Point3d(linkTag.nodeFrom.getLocation().getX(), linkTag.nodeFrom.getLocation().getY(),
+                        linkTag.nodeFrom.getLocation().getZ());
                 double angle = linkTag.nodeFrom.getDirection().getSI();
                 double slope = linkTag.nodeFrom.getSlope().getSI();
                 coordinate.x += lengthSI * Math.cos(angle);
@@ -2121,8 +2148,8 @@ public class XmlNetworkLaneParser
             else if (linkTag.nodeFrom == null)
             {
                 Point3d coordinate =
-                        new Point3d(linkTag.nodeTo.getLocation().getX(), linkTag.nodeTo.getLocation().getY(),
-                                linkTag.nodeTo.getLocation().getZ());
+                    new Point3d(linkTag.nodeTo.getLocation().getX(), linkTag.nodeTo.getLocation().getY(), linkTag.nodeTo
+                        .getLocation().getZ());
                 double angle = linkTag.nodeTo.getDirection().getSI();
                 double slope = linkTag.nodeTo.getSlope().getSI();
                 coordinate.x -= lengthSI * Math.cos(angle);
@@ -2152,27 +2179,24 @@ public class XmlNetworkLaneParser
                 if (direction.equals(ArcDirection.LEFT))
                 {
                     linkTag.arcTag.center =
-                            new Point3d(linkTag.nodeFrom.getLocation().getX() + radiusSI
-                                    * Math.cos(startAngle + Math.PI / 2.0), linkTag.nodeFrom.getLocation().getY()
-                                    + radiusSI * Math.sin(startAngle + Math.PI / 2.0), 0.0);
+                        new Point3d(linkTag.nodeFrom.getLocation().getX() + radiusSI * Math.cos(startAngle + Math.PI / 2.0),
+                            linkTag.nodeFrom.getLocation().getY() + radiusSI * Math.sin(startAngle + Math.PI / 2.0), 0.0);
                     linkTag.arcTag.startAngle = startAngle - Math.PI / 2.0;
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle + angle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle + angle);
                     nodeTag.angle =
-                            new DoubleScalar.Abs<AnglePlaneUnit>(AnglePlaneUnit.normalize(startAngle + angle),
-                                    AnglePlaneUnit.SI);
+                        new DoubleScalar.Abs<AnglePlaneUnit>(AnglePlaneUnit.normalize(startAngle + angle), AnglePlaneUnit.SI);
                 }
                 else
                 {
                     linkTag.arcTag.center =
-                            new Point3d(coordinate.x + radiusSI * Math.cos(startAngle - Math.PI / 2.0), coordinate.y
-                                    + radiusSI * Math.sin(startAngle - Math.PI / 2.0), 0.0);
+                        new Point3d(coordinate.x + radiusSI * Math.cos(startAngle - Math.PI / 2.0), coordinate.y + radiusSI
+                            * Math.sin(startAngle - Math.PI / 2.0), 0.0);
                     linkTag.arcTag.startAngle = startAngle;
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle - angle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle - angle);
                     nodeTag.angle =
-                            new DoubleScalar.Abs<AnglePlaneUnit>(AnglePlaneUnit.normalize(startAngle - angle),
-                                    AnglePlaneUnit.SI);
+                        new DoubleScalar.Abs<AnglePlaneUnit>(AnglePlaneUnit.normalize(startAngle - angle), AnglePlaneUnit.SI);
                 }
                 coordinate.z = linkTag.nodeFrom.getLocation().getZ() + lengthSI * Math.sin(slope);
                 nodeTag.slope = new DoubleScalar.Abs<AngleSlopeUnit>(slope, AngleSlopeUnit.SI);
@@ -2185,8 +2209,8 @@ public class XmlNetworkLaneParser
             else if (linkTag.nodeFrom == null)
             {
                 Point3d coordinate =
-                        new Point3d(linkTag.nodeTo.getLocation().getX(), linkTag.nodeTo.getLocation().getY(),
-                                linkTag.nodeTo.getLocation().getZ());
+                    new Point3d(linkTag.nodeTo.getLocation().getX(), linkTag.nodeTo.getLocation().getY(), linkTag.nodeTo
+                        .getLocation().getZ());
                 double endAngle = linkTag.nodeTo.getDirection().getSI();
                 double slope = linkTag.nodeTo.getSlope().getSI();
                 double lengthSI = radiusSI * angle;
@@ -2194,26 +2218,26 @@ public class XmlNetworkLaneParser
                 if (direction.equals(ArcDirection.LEFT))
                 {
                     linkTag.arcTag.center =
-                            new Point3d(coordinate.x + radiusSI + Math.cos(endAngle + Math.PI / 2.0), coordinate.y
-                                    + radiusSI * Math.sin(endAngle + Math.PI / 2.0), 0.0);
+                        new Point3d(coordinate.x + radiusSI + Math.cos(endAngle + Math.PI / 2.0), coordinate.y + radiusSI
+                            * Math.sin(endAngle + Math.PI / 2.0), 0.0);
                     linkTag.arcTag.startAngle = endAngle - Math.PI / 2.0 - angle;
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle);
                     nodeTag.angle =
-                            new DoubleScalar.Abs<AnglePlaneUnit>(AnglePlaneUnit.normalize(linkTag.arcTag.startAngle
-                                    + Math.PI / 2.0), AnglePlaneUnit.SI);
+                        new DoubleScalar.Abs<AnglePlaneUnit>(AnglePlaneUnit.normalize(linkTag.arcTag.startAngle + Math.PI
+                            / 2.0), AnglePlaneUnit.SI);
                 }
                 else
                 {
                     linkTag.arcTag.center =
-                            new Point3d(coordinate.x + radiusSI * Math.cos(endAngle - Math.PI / 2.0), coordinate.y
-                                    + radiusSI * Math.sin(endAngle - Math.PI / 2.0), 0.0);
+                        new Point3d(coordinate.x + radiusSI * Math.cos(endAngle - Math.PI / 2.0), coordinate.y + radiusSI
+                            * Math.sin(endAngle - Math.PI / 2.0), 0.0);
                     linkTag.arcTag.startAngle = endAngle + Math.PI / 2.0 + angle;
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle);
                     nodeTag.angle =
-                            new DoubleScalar.Abs<AnglePlaneUnit>(AnglePlaneUnit.normalize(linkTag.arcTag.startAngle
-                                    - Math.PI / 2.0), AnglePlaneUnit.SI);
+                        new DoubleScalar.Abs<AnglePlaneUnit>(AnglePlaneUnit.normalize(linkTag.arcTag.startAngle - Math.PI
+                            / 2.0), AnglePlaneUnit.SI);
                 }
                 coordinate.z -= lengthSI * Math.sin(slope);
                 nodeTag.coordinate = coordinate;
@@ -2235,8 +2259,7 @@ public class XmlNetworkLaneParser
      * @throws RemoteException when communication error occurs when reaching animation context.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected final CrossSectionLink makeLink(final LinkTag linkTag) throws SAXException, RemoteException,
-            NamingException
+    protected final CrossSectionLink makeLink(final LinkTag linkTag) throws SAXException, RemoteException, NamingException
     {
         try
         {
@@ -2262,8 +2285,8 @@ public class XmlNetworkLaneParser
                 else if (linkTag.arcTag != null)
                 {
                     length =
-                            new DoubleScalar.Rel<LengthUnit>(linkTag.arcTag.radius.getInUnit()
-                                    * linkTag.arcTag.angle.getSI(), linkTag.arcTag.radius.getUnit());
+                        new DoubleScalar.Rel<LengthUnit>(linkTag.arcTag.radius.getInUnit() * linkTag.arcTag.angle.getSI(),
+                            linkTag.arcTag.radius.getUnit());
                     double angleStep = linkTag.arcTag.angle.getSI() / points;
                     double slopeStep = (to.coordinate.z - from.coordinate.z) / points;
                     double radiusSI = linkTag.arcTag.radius.getSI();
@@ -2272,11 +2295,10 @@ public class XmlNetworkLaneParser
                         for (int p = 1; p < points - 1; p++)
                         {
                             coordinates[p] =
-                                    new Coordinate(linkTag.arcTag.center.x + radiusSI
-                                            * Math.cos(linkTag.arcTag.startAngle - angleStep * p),
-                                            linkTag.arcTag.center.y + radiusSI
-                                                    * Math.sin(linkTag.arcTag.startAngle - angleStep * p),
-                                            from.coordinate.z + slopeStep * p);
+                                new Coordinate(linkTag.arcTag.center.x + radiusSI
+                                    * Math.cos(linkTag.arcTag.startAngle - angleStep * p), linkTag.arcTag.center.y
+                                    + radiusSI * Math.sin(linkTag.arcTag.startAngle - angleStep * p), from.coordinate.z
+                                    + slopeStep * p);
                         }
                     }
                     else
@@ -2284,16 +2306,15 @@ public class XmlNetworkLaneParser
                         for (int p = 1; p < points - 1; p++)
                         {
                             coordinates[p] =
-                                    new Coordinate(linkTag.arcTag.center.x + radiusSI
-                                            * Math.cos(linkTag.arcTag.startAngle + angleStep * p),
-                                            linkTag.arcTag.center.y + radiusSI
-                                                    * Math.sin(linkTag.arcTag.startAngle + angleStep * p),
-                                            from.coordinate.z + slopeStep * p);
+                                new Coordinate(linkTag.arcTag.center.x + radiusSI
+                                    * Math.cos(linkTag.arcTag.startAngle + angleStep * p), linkTag.arcTag.center.y
+                                    + radiusSI * Math.sin(linkTag.arcTag.startAngle + angleStep * p), from.coordinate.z
+                                    + slopeStep * p);
                         }
                     }
                 }
                 CrossSectionLink link =
-                        new CrossSectionLink(id, (NodeGeotools) linkTag.nodeFrom, (NodeGeotools) linkTag.nodeTo, length);
+                    new CrossSectionLink(id, (NodeGeotools) linkTag.nodeFrom, (NodeGeotools) linkTag.nodeTo, length);
                 GeometryFactory factory = new GeometryFactory();
                 LineString lineString = factory.createLineString(coordinates);
                 geometry = new LinearGeometry(link, lineString, null);
@@ -2302,8 +2323,7 @@ public class XmlNetworkLaneParser
             }
             else
             {
-                throw new SAXException("Parsing network. Link class " + this.linkClass.getName()
-                        + ": cannot instantiate.");
+                throw new SAXException("Parsing network. Link class " + this.linkClass.getName() + ": cannot instantiate.");
             }
         }
         catch (NetworkException ne)
@@ -2321,7 +2341,7 @@ public class XmlNetworkLaneParser
      * @throws RemoteException in case of network problems building the car generator
      */
     protected final void makeGenerator(final GeneratorTag generatorTag, final Lane lane, final String name)
-            throws SimRuntimeException, RemoteException
+        throws SimRuntimeException, RemoteException
     {
         Class<?> gtuClass = LaneBasedIndividualCar.class;
         List<Node<?, ?>> nodeList = new ArrayList<>();
@@ -2330,30 +2350,29 @@ public class XmlNetworkLaneParser
             nodeList.add(this.nodes.get(nodeTag.name));
         }
         DoubleScalar.Abs<TimeUnit> startTime =
-                generatorTag.startTime != null ? generatorTag.startTime : new DoubleScalar.Abs<TimeUnit>(0.0,
-                        TimeUnit.SI);
+            generatorTag.startTime != null ? generatorTag.startTime : new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SI);
         DoubleScalar.Abs<TimeUnit> endTime =
-                generatorTag.endTime != null ? generatorTag.endTime : new DoubleScalar.Abs<TimeUnit>(Double.MAX_VALUE,
-                        TimeUnit.SI);
+            generatorTag.endTime != null ? generatorTag.endTime : new DoubleScalar.Abs<TimeUnit>(Double.MAX_VALUE,
+                TimeUnit.SI);
         RouteGenerator rg = new FixedRouteGenerator(nodeList);
         new GTUGeneratorIndividual<String>(name, this.simulator, generatorTag.gtuTag.gtuType, gtuClass,
-                generatorTag.gtuTag.followingModel, generatorTag.gtuTag.laneChangeModel, generatorTag.initialSpeedDist,
-                generatorTag.iatDist, generatorTag.gtuTag.lengthDist, generatorTag.gtuTag.widthDist,
-                generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime, lane,
-                generatorTag.position, rg, this.gtuColorer);
+            generatorTag.gtuTag.followingModel, generatorTag.gtuTag.laneChangeModel, generatorTag.initialSpeedDist,
+            generatorTag.iatDist, generatorTag.gtuTag.lengthDist, generatorTag.gtuTag.widthDist,
+            generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime, lane, generatorTag.position, rg,
+            this.gtuColorer);
     }
 
     /**
-     * Calculates the offsets and widths of the lanes and stripes in a RoadTypeTag by a forward pass from the first
-     * found offset, and then a backward pass from the end to the beginning. Offsets are always in the middle of a lane
-     * or stripe. Also give each lane a speed.
+     * Calculates the offsets and widths of the lanes and stripes in a RoadTypeTag by a forward pass from the first found
+     * offset, and then a backward pass from the end to the beginning. Offsets are always in the middle of a lane or stripe.
+     * Also give each lane a speed.
      * @param roadTypeTag the road type tag to calculate the offsets for.
      * @param globalTag to provide the global length.
      * @throws SAXException when the width of a lane cannot be calculated.
      */
     @SuppressWarnings("checkstyle:needbraces")
     protected final void calculateRoadTypeOffsets(final RoadTypeTag roadTypeTag, final GlobalTag globalTag)
-            throws SAXException
+        throws SAXException
     {
         // cseTags in a LinkedHashMap to guarantee the order.
         DoubleScalar.Rel<LengthUnit> lastOffset = null;
@@ -2378,7 +2397,7 @@ public class XmlNetworkLaneParser
                     widthSI = globalTag.width.getSI();
                 else
                     throw new SAXException("calculateRoadTypeOffsets for road type " + roadTypeTag.name
-                            + ", no width for CSE " + cseName);
+                        + ", no width for CSE " + cseName);
                 cseTag.width = new DoubleScalar.Rel<LengthUnit>(widthSI, LengthUnit.SI);
             }
 
@@ -2391,7 +2410,7 @@ public class XmlNetworkLaneParser
                     cseTag.speed = globalTag.speed;
                 else
                     throw new SAXException("calculateRoadTypeOffsets for road type " + roadTypeTag.name
-                            + ", no speed for CSE " + cseName);
+                        + ", no speed for CSE " + cseName);
             }
 
             // set the offsets
@@ -2411,8 +2430,7 @@ public class XmlNetworkLaneParser
                         cseTag.offset = lastEdge.copy();
                     else
                     {
-                        cseTag.offset =
-                                new DoubleScalar.Rel<LengthUnit>(lastEdge.getSI() + widthSI / 2.0, LengthUnit.SI);
+                        cseTag.offset = new DoubleScalar.Rel<LengthUnit>(lastEdge.getSI() + widthSI / 2.0, LengthUnit.SI);
                         lastEdge = new DoubleScalar.Rel<LengthUnit>(lastEdge.getSI() + widthSI, LengthUnit.SI);
                     }
                 }
@@ -2443,8 +2461,7 @@ public class XmlNetworkLaneParser
                         cseTag.offset = lastEdge.copy();
                     else
                     {
-                        cseTag.offset =
-                                new DoubleScalar.Rel<LengthUnit>(lastEdge.getSI() - widthSI / 2.0, LengthUnit.SI);
+                        cseTag.offset = new DoubleScalar.Rel<LengthUnit>(lastEdge.getSI() - widthSI / 2.0, LengthUnit.SI);
                         lastEdge = new DoubleScalar.Rel<LengthUnit>(lastEdge.getSI() - widthSI, LengthUnit.SI);
                     }
                 }
@@ -2467,8 +2484,8 @@ public class XmlNetworkLaneParser
      */
     @SuppressWarnings({"checkstyle:needbraces", "rawtypes"})
     protected final void applyRoadTypeToLink(final RoadTypeTag roadTypeTag, final CrossSectionLink csl,
-            final LinkTag linkTag, final GlobalTag globalTag) throws NetworkException, RemoteException,
-            NamingException, SAXException, GTUException, SimRuntimeException
+        final LinkTag linkTag, final GlobalTag globalTag) throws NetworkException, RemoteException, NamingException,
+        SAXException, GTUException, SimRuntimeException
     {
         List<CrossSectionElement> cseList = new ArrayList<>();
         List<Lane> lanes = new ArrayList<>();
@@ -2535,35 +2552,53 @@ public class XmlNetworkLaneParser
 
                 case LANE:
                 {
-                    // TODO Override
-                    Lane lane =
+                    if (linkTag.sinkLanes.contains(cseTag.name))
+                    {
+                        // SINKLANE
+                        SinkLane sinkLane =
+                            new SinkLane(csl, cseTag.offset, cseTag.width, cseTag.laneType, cseTag.direction, cseTag.speed);
+                        cseList.add(sinkLane);
+                        lanes.add(sinkLane);
+                        linkTag.lanes.put(cseTag.name, sinkLane);
+                        if (this.simulator != null)
+                        {
+                            new LaneAnimation(sinkLane, this.simulator, cseTag.color);
+                        }
+                    }
+
+                    else
+
+                    {
+                        // TODO LANEOVERRIDE
+                        Lane lane =
                             new Lane(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width, cseTag.laneType,
-                                    cseTag.direction, new DoubleScalar.Abs<FrequencyUnit>(Double.MAX_VALUE,
-                                            FrequencyUnit.PER_HOUR), cseTag.speed);
-                    cseList.add(lane);
-                    lanes.add(lane);
-                    linkTag.lanes.put(cseTag.name, lane);
-                    if (this.simulator != null)
-                    {
-                        new LaneAnimation(lane, this.simulator, cseTag.color);
+                                cseTag.direction, new DoubleScalar.Abs<FrequencyUnit>(Double.MAX_VALUE,
+                                    FrequencyUnit.PER_HOUR), cseTag.speed);
+                        cseList.add(lane);
+                        lanes.add(lane);
+                        linkTag.lanes.put(cseTag.name, lane);
+                        if (this.simulator != null)
+                        {
+                            new LaneAnimation(lane, this.simulator, cseTag.color);
+                        }
+
+                        // BLOCK
+                        if (linkTag.blockTags.containsKey(cseTag.name))
+                        {
+                            BlockTag blockTag = linkTag.blockTags.get(cseTag.name);
+                            new LaneBlock(lane, blockTag.position, this.simulator, null);
+                        }
+
+                        // GENERATOR
+                        if (linkTag.generatorTags.containsKey(cseTag.name))
+                        {
+                            GeneratorTag generatorTag = linkTag.generatorTags.get(cseTag.name);
+                            makeGenerator(generatorTag, lane, cseTag.name);
+                        }
+
+                        // TODO FILL
+
                     }
-
-                    // BLOCK
-                    if (linkTag.blockTags.containsKey(cseTag.name))
-                    {
-                        BlockTag blockTag = linkTag.blockTags.get(cseTag.name);
-                        new LaneBlock(lane, blockTag.position, this.simulator, null);
-                    }
-
-                    // GENERATOR
-                    if (linkTag.generatorTags.containsKey(cseTag.name))
-                    {
-                        GeneratorTag generatorTag = linkTag.generatorTags.get(cseTag.name);
-                        makeGenerator(generatorTag, lane, cseTag.name);
-                    }
-
-                    // TODO FILL
-
                     break;
                 }
 
@@ -2571,9 +2606,8 @@ public class XmlNetworkLaneParser
                 {
                     // TODO Override
                     Lane lane =
-                            new NoTrafficLane(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width,
-                                    cseTag.laneType, cseTag.direction, new DoubleScalar.Abs<FrequencyUnit>(0.0,
-                                            FrequencyUnit.PER_HOUR), cseTag.speed);
+                        new NoTrafficLane(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width, cseTag.laneType,
+                            cseTag.direction, new DoubleScalar.Abs<FrequencyUnit>(0.0, FrequencyUnit.PER_HOUR), cseTag.speed);
                     cseList.add(lane);
                     if (this.simulator != null)
                     {
@@ -3029,7 +3063,7 @@ public class XmlNetworkLaneParser
      * @throws NetworkException when parsing fails
      */
     protected final DoubleScalar.Rel<LengthUnit> parseBeginEndPosition(final String posStr, final LinkTag linkTag)
-            throws NetworkException
+        throws NetworkException
     {
         if (posStr.trim().equals("BEGIN"))
         {
@@ -3048,7 +3082,7 @@ public class XmlNetworkLaneParser
         else
         {
             throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr
-                    + " invalid for link " + linkTag.name + ": link is neither arc nor straight");
+                + " invalid for link " + linkTag.name + ": link is neither arc nor straight");
         }
 
         if (posStr.trim().equals("END"))
@@ -3065,14 +3099,14 @@ public class XmlNetworkLaneParser
                 if (fraction < 0.0 || fraction > 1.0)
                 {
                     throw new NetworkException("parseBeginEndPosition: attribute POSITION with value " + posStr
-                            + " invalid for link " + linkTag.name + ", should be a percentage between 0 and 100%");
+                        + " invalid for link " + linkTag.name + ", should be a percentage between 0 and 100%");
                 }
                 return new DoubleScalar.Rel<LengthUnit>(length * fraction, LengthUnit.METER);
             }
             catch (NumberFormatException nfe)
             {
                 throw new NetworkException("parseBeginEndPosition: attribute POSITION with value " + posStr
-                        + " invalid for link " + linkTag.name + ", should be a percentage between 0 and 100%", nfe);
+                    + " invalid for link " + linkTag.name + ", should be a percentage between 0 and 100%", nfe);
             }
         }
 
@@ -3083,8 +3117,7 @@ public class XmlNetworkLaneParser
             if (offset > length)
             {
                 throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr
-                        + " invalid for link " + linkTag.name
-                        + ": provided negative offset greater than than link length");
+                    + " invalid for link " + linkTag.name + ": provided negative offset greater than than link length");
             }
             return new DoubleScalar.Rel<LengthUnit>(length - offset, LengthUnit.METER);
         }
@@ -3093,7 +3126,7 @@ public class XmlNetworkLaneParser
         if (offset.getSI() > length)
         {
             throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr
-                    + " invalid for link " + linkTag.name + ": provided offset greater than than link length");
+                + " invalid for link " + linkTag.name + ": provided offset greater than than link length");
         }
         return offset;
     }
@@ -3338,8 +3371,7 @@ public class XmlNetworkLaneParser
         }
         catch (IndexOutOfBoundsException e)
         {
-            throw new NetworkException("makeDistContinuous - wrong number of parameters for distribution function "
-                    + ds);
+            throw new NetworkException("makeDistContinuous - wrong number of parameters for distribution function " + ds);
         }
     }
 
@@ -3349,8 +3381,7 @@ public class XmlNetworkLaneParser
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    protected final DistContinuousDoubleScalar.Rel<LengthUnit> parseLengthDistRel(final String s)
-            throws NetworkException
+    protected final DistContinuousDoubleScalar.Rel<LengthUnit> parseLengthDistRel(final String s) throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];
@@ -3367,8 +3398,7 @@ public class XmlNetworkLaneParser
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    protected final DistContinuousDoubleScalar.Abs<LengthUnit> parseLengthDistAbs(final String s)
-            throws NetworkException
+    protected final DistContinuousDoubleScalar.Abs<LengthUnit> parseLengthDistAbs(final String s) throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];
@@ -3481,22 +3511,16 @@ public class XmlNetworkLaneParser
 
     /** element types. */
     @SuppressWarnings({"javadoc", "checkstyle:javadocvariable"})
-    protected enum ElementType {
-        LANE,
-        NOTRAFFICLANE,
-        SHOULDER,
-        STRIPE
+    protected enum ElementType
+    {
+        LANE, NOTRAFFICLANE, SHOULDER, STRIPE
     };
 
     /** stripe types. */
     @SuppressWarnings({"javadoc", "checkstyle:javadocvariable"})
-    protected enum StripeType {
-        SOLID,
-        DASHED,
-        BLOCKED,
-        DOUBLE,
-        LEFTONLY,
-        RIGHTONLY
+    protected enum StripeType
+    {
+        SOLID, DASHED, BLOCKED, DOUBLE, LEFTONLY, RIGHTONLY
     };
 
     /** CROSSSECTION element. */
@@ -3592,6 +3616,9 @@ public class XmlNetworkLaneParser
 
         /** map of lane name to generated lanes. */
         protected Map<String, Lane> lanes = new HashMap<>();
+
+        /** sink lane names. */
+        protected Set<String> sinkLanes = new HashSet<>();
     }
 
     /** ARC element. */
@@ -3640,7 +3667,8 @@ public class XmlNetworkLaneParser
     }
 
     /** direction of the arc; LEFT or RIGHT. */
-    protected enum ArcDirection {
+    protected enum ArcDirection
+    {
         /** Left = counter-clockwise. */
         LEFT,
         /** Right = clockwise. */

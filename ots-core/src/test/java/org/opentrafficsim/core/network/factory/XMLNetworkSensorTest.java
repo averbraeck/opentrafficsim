@@ -19,6 +19,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -70,14 +71,14 @@ public class XMLNetworkSensorTest
     @Test
     public final void testXMLNetworkSensors()
     {
-        for (double speedFactor : new double[] {1, 10, 100, 1000})
+        for (double speedFactor : new double[] {10, 100, 1000})
         {
             try
             {
                 TestXMLModel model = new TestXMLModel();
                 final SimpleAnimator simulator =
                     new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(
-                        0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(60.0, TimeUnit.SECOND), model);
+                        0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(120.0, TimeUnit.SECOND), model);
 
                 // get the nodes in the network.
                 Set<NodeGeotools<String>> nodeSet = model.getNetwork().getNodeSet();
@@ -129,10 +130,10 @@ public class XMLNetworkSensorTest
                 assertNotNull(lane23);
 
                 // add the sensors
-                lane12
-                    .addSensor(new ReportingSensor(lane12, lane12.getLength(), RelativePosition.FRONT, "12.E.F", simulator));
-                lane12
-                    .addSensor(new ReportingSensor(lane12, lane12.getLength(), RelativePosition.REAR, "12.E.R", simulator));
+                lane12.addSensor(new ReportingSensor(lane12, new DoubleScalar.Rel<LengthUnit>(
+                    lane12.getLength().getSI() - 1E-4, LengthUnit.SI), RelativePosition.FRONT, "12.E.F", simulator));
+                lane12.addSensor(new ReportingSensor(lane12, new DoubleScalar.Rel<LengthUnit>(
+                    lane12.getLength().getSI() - 1E-4, LengthUnit.SI), RelativePosition.REAR, "12.E.R", simulator));
                 lane23.addSensor(new ReportingSensor(lane23, new DoubleScalar.Rel<LengthUnit>(Math.ulp(0.0), LengthUnit.SI),
                     RelativePosition.FRONT, "23.B.F", simulator));
                 lane23.addSensor(new ReportingSensor(lane23, new DoubleScalar.Rel<LengthUnit>(Math.ulp(0.0), LengthUnit.SI),
@@ -154,8 +155,11 @@ public class XMLNetworkSensorTest
                         Set<LaneBasedGTU<?>> gtus = new HashSet<>();
                         gtus.addAll(lane12.getGtuList());
                         gtus.addAll(lane23.getGtuList());
+                        Assert.assertTrue("More than one GTU in the model: " + gtus.size(), gtus.size() <= 1);
                         for (LaneBasedGTU<?> gtu : gtus)
                         {
+                            Assert.assertEquals("Velocity of GTU " + gtu + "<> 10 m/s: " + gtu.getVelocity(), 10.0, gtu
+                                .getVelocity().getSI(), 0.00001);
                             gtu.getLocation();
                             gtu.positions(gtu.getFront());
                             gtu.positions(gtu.getRear());
@@ -216,29 +220,29 @@ public class XMLNetworkSensorTest
                 {
                     // first lane, end, front of GTU
                     // gen at t=0 at 50 m with back, front needs to travel 45 m = 4.5 sec
-                    // next vehicle is 10 seconds later
-                    assertEquals(10.0 * gtuNumber + 4.5, simTimeSec, 0.0001);
+                    // next vehicle is 20 seconds later
+                    assertEquals(20.0 * gtuNumber + 4.5, simTimeSec, 0.0001);
                 }
                 if ("12.E.R".equals(this.id))
                 {
                     // first lane, end, rear of GTU
                     // gen at t=0 at 50 m with back, needs to travel 50 m = 5 sec
-                    // next vehicle is 10 seconds later
-                    assertEquals(10.0 * gtuNumber + 5.0, simTimeSec, 0.0001);
+                    // next vehicle is 20 seconds later
+                    assertEquals(20.0 * gtuNumber + 5.0, simTimeSec, 0.0001);
                 }
                 if ("23.B.F".equals(this.id))
                 {
                     // second lane, start, front of GTU
                     // gen at t=0 at 50 m with back, front needs to travel 45 m = 4.5 sec
-                    // next vehicle is 10 seconds later
-                    assertEquals(10.0 * gtuNumber + 4.5, simTimeSec, 0.0001);
+                    // next vehicle is 20 seconds later
+                    assertEquals(20.0 * gtuNumber + 4.5, simTimeSec, 0.0001);
                 }
                 if ("23.B.R".equals(this.id))
                 {
                     // second lane, end, rear of GTU
                     // gen at t=0 at 50 m with back, needs to travel 50 m = 5 sec
-                    // next vehicle is 10 seconds later
-                    assertEquals(10.0 * gtuNumber + 5.0, simTimeSec, 0.0001);
+                    // next vehicle is 20 seconds later
+                    assertEquals(20.0 * gtuNumber + 5.0, simTimeSec, 0.0001);
                 }
             }
             catch (AssertionError ae)
