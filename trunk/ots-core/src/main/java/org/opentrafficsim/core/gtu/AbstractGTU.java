@@ -1,10 +1,6 @@
 package org.opentrafficsim.core.gtu;
 
-import java.rmi.RemoteException;
-
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Implements id, GtuType, Route and odometer.
