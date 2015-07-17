@@ -1615,17 +1615,20 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                     return new DirectedPoint(Double.MAX_VALUE, Double.MAX_VALUE, 0);
                 }
                 Lane lane = this.lanes.get(0);
-                // TODO solve problem when point is still on previous lane.
                 DoubleScalar.Rel<LengthUnit> longitudinalPos = position(lane, getReference());
+                // The code in the next line "knows" that the reference position is the rear of the GTU.
+                // To get to the center of the GTU add half its length.
                 double fraction = (longitudinalPos.getSI() + getLength().getSI() / 2.0) / lane.getLength().getSI();
                 LineString line = lane.getCenterLine();
                 LengthIndexedLine lil = new LengthIndexedLine(line);
-                // if (fraction > 1)
-                // {
-                // System.out.println("fraction is " + fraction);
-                // }
+                /*
+                 * fraction is the relative position on the center line of the lane.
+                 * fraction may be slightly outside the range 0..1. When that happens we'll extrapolate in the direction
+                 * of the center line at the end of the lane. This direction is obtained (approximated) by using the
+                 * last or first percent of the center line.
+                 */
                 double useFraction = fraction;
-                boolean fractionAdjusted = false;
+                boolean fractionAdjusted = false; // Indicate if extrapolation is needed
                 if (fraction < 0)
                 {
                     useFraction = 0;
