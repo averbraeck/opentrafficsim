@@ -370,7 +370,7 @@ public class GTM extends AbstractWrappableSimulation
         {
             Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
                     new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
-            initialPositions.put(lane, lane.getStopLine().getLongitudinalPosition());
+            // TODO WRONG initialPositions.put(lane, lane.getStopLine().getLongitudinalPosition());
             try
             {
                 this.blockMap.put(lane, new LaneBasedIndividualCar<Integer>(999999, this.gtuType, new IDMPlus(),

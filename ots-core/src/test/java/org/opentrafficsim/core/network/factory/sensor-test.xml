@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NETWORK xmlns="http://www.opentrafficsim.org/ots-infra" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots-infra /ots-infra.xsd">
+
+  <GLOBAL WIDTH="3.6m" SPEED="100km/h" />
+
+  <GTU NAME="CAR" GTUTYPE="CAR" FOLLOWING="IDM+" LENGTH="CONST(5) m" WIDTH="CONST(2) m" LANECHANGE="EGOISTIC"
+    MAXSPEED="CONST(10) m/s" />
+
+  <COMPATIBILITY>
+    <LANETYPE NAME="ROAD" GTULIST="CAR" />
+  </COMPATIBILITY>
+
+  <NODE NAME="N1" COORDINATE="(0.0, 0.0)" ANGLE="90 deg" />
+  <NODE NAME="N2" />
+  <NODE NAME="N3" />
+
+  <ROUTE NAME="LINE" NODELIST="N1 N2 N3" />
+
+  <ROADTYPE NAME="r1">
+    <LANE NAME="A1" TYPE="ROAD" OFFSET="-1.8m" WIDTH="3.6m" DIRECTION="FORWARD" SPEED="10 m/s" />
+  </ROADTYPE>
+
+  <LINK NAME="N1-N2" FROM="N1" TO="N2" ROADTYPE="r1">
+    <STRAIGHT LENGTH="100m" />
+    <GENERATOR LANE="A1" POSITION="50 m" IAT="CONST(10) s" INITIALSPEED="CONST(10.0) m/s" GTU="CAR" ROUTE="LINE" />
+  </LINK>
+
+  <LINK NAME="N2-N3" FROM="N2" TO="N3" ROADTYPE="r1">
+    <STRAIGHT LENGTH="100m" />
+  </LINK>
+
+</NETWORK>
