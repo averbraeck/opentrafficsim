@@ -1219,7 +1219,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             }
             else
             {
-                return headwayRecursiveBackwardSI(lane, this.projectedPosition(lane, this.getRear(), when).getSI(), 0.0, -maxDistance.getSI(), when);
+                return headwayRecursiveBackwardSI(lane, this.projectedPosition(lane, this.getRear(), when).getSI(), 0.0,
+                    -maxDistance.getSI(), when);
             }
         }
     }
@@ -1265,7 +1266,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                     for (Lane nextLane : nextLanes)
                     {
                         // Only follow links on the Route if there is a Route
-                        if (this.getRoute() == null || this.getRoute().size() == 0 /* XXXXX STUB dummy route */
+                        if (this.getRoute() == null || this.getRoute().size() == 0 /* XXX STUB dummy route */
                             || this.getRoute().containsLink(lane.getParentLink()))
                         {
                             double traveledDistanceSI = cumDistanceSI + lane.getLength().getSI() - lanePositionSI;

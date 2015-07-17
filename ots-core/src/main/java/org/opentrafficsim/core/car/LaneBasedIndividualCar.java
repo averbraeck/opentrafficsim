@@ -264,10 +264,10 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         /** The lane change model. */
         private LaneChangeModel laneChangeModel = null;
 
-        /** The maximum length of the GTU (parallel with driving direction). */
+        /** The length of the GTU (parallel with driving direction). */
         private DoubleScalar.Rel<LengthUnit> length = null;
 
-        /** The maximum width of the GTU (perpendicular to driving direction). */
+        /** The width of the GTU (perpendicular to driving direction). */
         private DoubleScalar.Rel<LengthUnit> width = null;
 
         /** The maximum speed of the GTU (in the driving direction). */
@@ -532,9 +532,13 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
                 // TODO Should throw a more specific Exception type
                 throw new GTUException("factory settings incomplete");
             }
-            return new LaneBasedIndividualCar<ID>(this.id, this.gtuType, this.gtuFollowingModel, this.laneChangeModel,
-                this.initialLongitudinalPositions, this.initialSpeed, this.length, this.width, this.maximumVelocity,
-                this.route, this.simulator, this.animationClass, this.gtuColorer);
+            LaneBasedIndividualCar<ID> gtu =
+                new LaneBasedIndividualCar<ID>(this.id, this.gtuType, this.gtuFollowingModel, this.laneChangeModel,
+                    this.initialLongitudinalPositions, this.initialSpeed, this.length, this.width, this.maximumVelocity,
+                    this.route, this.simulator, this.animationClass, this.gtuColorer);
+            System.out.println("Generated GTU " + gtu + " at t=" + this.simulator.getSimulatorTime());
+            return gtu;
+
         }
 
     }

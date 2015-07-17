@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <NETWORK xmlns="http://www.opentrafficsim.org/ots-infra" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots-infra ots-infra.xsd">
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots-infra http://www.opentrafficsim.org/docs/ots-infra.xsd">
 
   <GLOBAL WIDTH="3.6m" SPEED="100km/h" />
 
