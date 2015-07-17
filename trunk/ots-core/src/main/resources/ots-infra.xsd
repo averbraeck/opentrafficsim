@@ -405,6 +405,11 @@
           </xsd:complexType>
         </xsd:element>
 
+        <xsd:element name="SINK" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
+          </xsd:complexType>
+        </xsd:element>
       </xsd:sequence>
 
       <xsd:attribute name="NAME" type="xsd:ID" use="required"></xsd:attribute>

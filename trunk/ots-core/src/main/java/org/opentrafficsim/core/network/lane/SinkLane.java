@@ -88,6 +88,12 @@ public class SinkLane extends Lane
             gtu.destroy();
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return "SinkSensor [Lane=" + this.getLane() + "]";
+        }
     }
 
 }
