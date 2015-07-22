@@ -398,6 +398,80 @@ public class AbstractLaneBasedGTUTest
         // TODO
         // figure out why the added lane has a non-zero position
     }
+
+    /**
+     * Test that the constructor puts the supplied values in the correct fields, then check the motion of the GTU.
+     * @throws Exception when something goes wrong (should not happen)
+     */
+    @Test
+    public void abstractLaneBasedGTUInterpolationTest() throws Exception
+    {
+        NodeGeotools.STR from = new NodeGeotools.STR("AFrom", new Coordinate(0, 0, 0));
+        NodeGeotools.STR to = new NodeGeotools.STR("ATo", new Coordinate(1000, 0, 0));
+        GTUType<String> gtuType = GTUType.makeGTUType("Car");
+        LaneType<String> laneType = new LaneType<String>("CarLane");
+        laneType.addCompatibility(gtuType);
+        // And a simulator, but for that we first need something that implements OTSModelInterface
+        OTSModelInterface model = new DummyModelForTemplateGTUTest();
+        final SimpleSimulation simulator =
+                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
+                        new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
+                                TimeUnit.SECOND), model);
+        Lane[] lanes =
+                LaneFactory.makeMultiLane("AtoB", from, to, null, 1, 0, 0, laneType, new DoubleScalar.Abs<SpeedUnit>(
+                        100, SpeedUnit.KM_PER_HOUR), simulator);
+        // A Car needs a CarFollowingModel
+        DoubleScalar.Abs<AccelerationUnit> acceleration =
+                new DoubleScalar.Abs<AccelerationUnit>(2, AccelerationUnit.METER_PER_SECOND_2);
+        DoubleScalar.Rel<TimeUnit> validFor = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
+        GTUFollowingModel gfm = new FixedAccelerationModel(acceleration, validFor);
+        // A Car needs a lane change model
+        // AbstractLaneChangeModel laneChangeModel = new Egoistic();
+        LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
+        // A Car needs an initial speed
+        DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
+        // Length of the Car
+        DoubleScalar.Rel<LengthUnit> carLength = new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER);
+        // Width of the Car
+        DoubleScalar.Rel<LengthUnit> carWidth = new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER);
+        // Maximum velocity of the Car
+        DoubleScalar.Abs<SpeedUnit> maximumVelocity = new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR);
+        // ID of the Car
+        String carID = "theCar";
+        // List of Nodes visited by the Car
+        List<Node<?, ?>> nodeList = new ArrayList<Node<?, ?>>();
+        nodeList.add(from);
+        nodeList.add(to);
+        // Route of the Car
+        Route route = new Route(nodeList);
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
+                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        // Initial position of the Car
+        DoubleScalar.Rel<LengthUnit> position = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);
+        initialLongitudinalPositions.put(lanes[0], position);
+        // Now we can make a GTU
+        LaneBasedIndividualCar<String> car =
+                new LaneBasedIndividualCar<String>(carID, gtuType, gfm, laneChangeModel, initialLongitudinalPositions,
+                        initialSpeed, carLength, carWidth, maximumVelocity, route, simulator);
+        while (0 == car.getNextEvaluationTime().getSI())
+        {
+            simulator.step();
+        }
+        for (double t = 0; t < validFor.getSI(); t += 0.001)
+        {
+            DoubleScalar.Abs<TimeUnit> when = new DoubleScalar.Abs<TimeUnit>(t, TimeUnit.SI);
+            DoubleScalar.Rel<LengthUnit> actualPosition = car.position(lanes[0], car.getReference(), when);
+            double expectedPosition = position.getSI() + initialSpeed.getSI() * t + 0.5 * acceleration.getSI() * t * t;
+            assertEquals("Interpolated position should be expected position", expectedPosition, actualPosition.getSI(),
+                    0.01);
+            DoubleScalar.Rel<LengthUnit> coveredDistance =
+                    new DoubleScalar.Rel<LengthUnit>(initialSpeed.getSI() * t + 0.5 * acceleration.getSI() * t * t,
+                            LengthUnit.SI);
+            DoubleScalar.Abs<TimeUnit> reportedTime = car.timeAtDistance(coveredDistance);
+            assertEquals("Time at distance should match", t, reportedTime.getSI(), 0.0001);
+        }
+    }
+
 }
 
 /**
