@@ -28,7 +28,9 @@ public class SensorLane extends AbstractSensor {
 	private static final long serialVersionUID = 20141231L;
 
 	private Rel<LengthUnit> width;
-	private String name;
+	private String nameSensor;
+	private String nameJunction;
+	
 	/**
 	 * Place a sensor that is triggered with the back of the GTU one ulp (see
 	 * <code>Math.ulp(double d)</code>) before the end of the lane to make sure
@@ -41,11 +43,12 @@ public class SensorLane extends AbstractSensor {
 	public SensorLane(final Lane lane,
 			DoubleScalar.Rel<LengthUnit> longitudinalPositionFromEnd,
 			DoubleScalar.Rel<LengthUnit> width,
-			String name) {
+			String nameSensor, String nameJunction) {
 		super(lane, new DoubleScalar.Rel<LengthUnit>(lane.getLength().getSI() - longitudinalPositionFromEnd.getSI() ,
                 LengthUnit.METER), RelativePosition.FRONT);
 		this.width = width;
-		this.name = name;
+		this.nameSensor = nameSensor;
+		this.nameJunction = nameJunction;
 	}
 
 	/**
@@ -55,7 +58,7 @@ public class SensorLane extends AbstractSensor {
 	 * triggering the sensor therefore has to do the checking for sensor type.
 	 */
 	@Override
-	public final void trigger(final LaneBasedGTU<?> gtu) {
+	public void trigger(final LaneBasedGTU<?> gtu) {
 		try
 		{
 		    System.out.println(gtu.getSimulator().getSimulatorTime().get() + ": detecting " + gtu + " passing detector at lane " 
@@ -85,12 +88,22 @@ public class SensorLane extends AbstractSensor {
 		this.width = width;
 	}
 
-	public String getName() {
-		return name;
+	public String getNameSensor() {
+		return nameSensor;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setNameSensor(String nameSensor) {
+		this.nameSensor = nameSensor;
 	}
+
+	public String getNameJunction() {
+		return nameJunction;
+	}
+
+	public void setNameJunction(String nameJunction) {
+		this.nameJunction = nameJunction;
+	}
+
+
 
 }
