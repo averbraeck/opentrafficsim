@@ -22,19 +22,18 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedTemplateGTU;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
- *          $, initial version Oct 22, 2014 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$,
+ *          initial version Oct 22, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <ID> The type of ID, e.g., String or Integer
@@ -54,10 +53,10 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
      * @param id ID; the id of the GTU, could be String or Integer
      * @param templateGtuType the template of the GTU
      * @param gtuFollowingModel GTUFollowingModel; the following model, including a reference to the simulator
-     * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial positions of
-     *            the car on one or more lanes
+     * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial positions of the car
+     *            on one or more lanes
      * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the car on the lane
-     * @param route Route of the GTU
+     * @param routeNavigator Route of the GTU
      * @throws NamingException if an error occurs when adding the animation handler.
      * @throws RemoteException when the simulator cannot be reached.
      * @throws NetworkException when the GTU cannot be placed on the given lane.
@@ -65,23 +64,23 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
      * @throws GTUException when gtuFollowingModel is null
      */
     public LaneBasedTemplateCar(final ID id, final TemplateGTUType<?> templateGtuType,
-            final GTUFollowingModel gtuFollowingModel,
-            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-            final DoubleScalar.Abs<SpeedUnit> initialSpeed, final Route route) throws NamingException, RemoteException,
-            NetworkException, SimRuntimeException, GTUException
+        final GTUFollowingModel gtuFollowingModel,
+        final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final LaneBasedRouteNavigator routeNavigator)
+        throws NamingException, RemoteException, NetworkException, SimRuntimeException, GTUException
     {
-        this(id, templateGtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, route,
-                DefaultCarAnimation.class);
+        this(id, templateGtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, routeNavigator,
+            DefaultCarAnimation.class);
     }
 
     /**
      * @param id ID; the id of the GTU, could be String or Integer
      * @param templateGtuType the template of the GTU
      * @param gtuFollowingModel GTUFollowingModel; the following model, including a reference to the simulator
-     * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial positions of
-     *            the car on one or more lanes
+     * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial positions of the car
+     *            on one or more lanes
      * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the car on the lane
-     * @param route Route; the route of the new car
+     * @param routeNavigator Route; the route of the new car
      * @param animationClass Class&lt;? extends Renderable2D&gt;; the class for animation or null if no animation.
      * @throws NamingException if an error occurs when adding the animation handler.
      * @throws RemoteException when the simulator cannot be reached.
@@ -90,23 +89,21 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
      * @throws GTUException when gtuFollowingModel is null
      */
     public LaneBasedTemplateCar(final ID id, final TemplateGTUType<?> templateGtuType,
-            final GTUFollowingModel gtuFollowingModel,
-            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-            final DoubleScalar.Abs<SpeedUnit> initialSpeed, final Route route,
-            final Class<? extends Renderable2D> animationClass) throws NamingException, RemoteException,
-            NetworkException, SimRuntimeException, GTUException
+        final GTUFollowingModel gtuFollowingModel,
+        final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final LaneBasedRouteNavigator routeNavigator,
+        final Class<? extends Renderable2D> animationClass) throws NamingException, RemoteException, NetworkException,
+        SimRuntimeException, GTUException
     {
-        super(id, templateGtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, route);
+        super(id, templateGtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, routeNavigator);
 
         // sensor positions.
         // We take the rear position of the Car to be the reference point. So the front is the length
         // of the Car away from the reference point in the positive (driving) X-direction.
         DoubleScalar.Rel<LengthUnit> zero = new DoubleScalar.Rel<LengthUnit>(0.0d, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> dx = new DoubleScalar.Rel<LengthUnit>(getLength().getSI(), LengthUnit.METER);
-        this.relativePositions
-                .put(RelativePosition.FRONT, new RelativePosition(dx, zero, zero, RelativePosition.FRONT));
-        this.relativePositions
-                .put(RelativePosition.REAR, new RelativePosition(zero, zero, zero, RelativePosition.REAR));
+        this.relativePositions.put(RelativePosition.FRONT, new RelativePosition(dx, zero, zero, RelativePosition.FRONT));
+        this.relativePositions.put(RelativePosition.REAR, new RelativePosition(zero, zero, zero, RelativePosition.REAR));
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
 
         // animation
@@ -115,14 +112,14 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
             try
             {
                 Constructor<?> constructor =
-                        ClassUtil.resolveConstructor(animationClass, new Object[]{this, getSimulator()});
+                    ClassUtil.resolveConstructor(animationClass, new Object[] {this, getSimulator()});
                 this.animation = (Renderable2D) constructor.newInstance(this, getSimulator());
             }
             catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
-                    | IllegalArgumentException | InvocationTargetException exception)
+                | IllegalArgumentException | InvocationTargetException exception)
             {
                 throw new NetworkException("Could not instantiate car animation of type " + animationClass.getName(),
-                        exception);
+                    exception);
             }
         }
     }
@@ -174,8 +171,8 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
     {
         try
         {
-            Map<Lane, DoubleScalar.Rel<LengthUnit>> frontPositions = positions(getFront());
-            Lane frontLane = frontPositions.keySet().iterator().next();
+            Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> frontPositions = positions(getFront());
+            Lane<?, ?> frontLane = frontPositions.keySet().iterator().next();
             return String.format("Car %s front:%s[%s]", getId(), frontLane, frontPositions.get(frontLane));
         }
         catch (RemoteException | NetworkException exception)
@@ -206,8 +203,8 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author:
-     *          pknoppers $, initial Feb 3, 2015 <br>
+     * @version $Revision$, $LastChangedDate$, by $Author$,
+     *          initial Feb 3, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @param <ID> the ID type of the Car, e.g. String or Integer or Long.
      */
@@ -221,7 +218,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
         private TemplateGTUType<?> templateGtuType = null;
 
         /** the initial positions of the car on one or more lanes. */
-        private Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = null;;
+        private Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = null;;
 
         /** the initial speed of the car on the lane. */
         private DoubleScalar.Abs<SpeedUnit> initialSpeed = null;
@@ -230,7 +227,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
         private GTUFollowingModel gtuFollowingModel = null;
 
         /** Route followed by this Car. */
-        private Route route = null;
+        private LaneBasedRouteNavigator routeNavigator = null;
 
         /** animation. */
         private Class<? extends Renderable2D> animationClass = null;
@@ -260,7 +257,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
          * @return the class itself for chaining the setters
          */
         public final LaneBasedTemplateCarBuilder<ID> setInitialLongitudinalPositions(
-                final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions)
+            final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions)
         {
             this.initialLongitudinalPositions = initialLongitudinalPositions;
             return this;
@@ -277,12 +274,12 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
         }
 
         /**
-         * @param route Route; the route
-         * @return the class itself for chaing the setters
+         * @param routeNavigator RouteNavigator; the route
+         * @return the class itself for chaining the setters
          */
-        public final LaneBasedTemplateCarBuilder<ID> setRoute(final Route route)
+        public final LaneBasedTemplateCarBuilder<ID> setRouteNavigator(final LaneBasedRouteNavigator routeNavigator)
         {
-            this.route = route;
+            this.routeNavigator = routeNavigator;
             return this;
         }
 
@@ -290,8 +287,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
          * @param animationClass set animation class
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedTemplateCarBuilder<ID> setAnimationClass(
-                final Class<? extends Renderable2D> animationClass)
+        public final LaneBasedTemplateCarBuilder<ID> setAnimationClass(final Class<? extends Renderable2D> animationClass)
         {
             this.animationClass = animationClass;
             return this;
@@ -306,12 +302,12 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
          * @throws GTUException when gtuFollowingModel is null
          */
         public final LaneBasedTemplateCar<ID> build() throws RemoteException, NamingException, NetworkException,
-                SimRuntimeException, GTUException
+            SimRuntimeException, GTUException
         {
             // TODO check that none of the variables (except animationClass) is null, and throw an exception if it is.
 
             return new LaneBasedTemplateCar<ID>(this.id, this.templateGtuType, this.gtuFollowingModel,
-                    this.initialLongitudinalPositions, this.initialSpeed, this.route, this.animationClass);
+                this.initialLongitudinalPositions, this.initialSpeed, this.routeNavigator, this.animationClass);
         }
     }
 

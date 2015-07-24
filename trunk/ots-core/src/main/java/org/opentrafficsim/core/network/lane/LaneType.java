@@ -25,6 +25,9 @@ public class LaneType<ID>
 
     /** the compatibility of GTUs with this lane type. */
     private final Set<GTUType<?>> compatibilitySet = new HashSet<>();
+    
+    /** lane type that does not allow any vehicles. */
+    public static final LaneType<String> NONE = new LaneType<String>("NONE");
 
     /**
      * @param id the id of the lane type.
@@ -63,7 +66,6 @@ public class LaneType<ID>
     /** {@inheritDoc} */
     public final String toString()
     {
-        String out = "LaneType: " + this.id;
-        return out;
+        return "LaneType: " + this.id;
     }
 }

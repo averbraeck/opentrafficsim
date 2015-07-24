@@ -21,8 +21,10 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * $, initial version Oct 25, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @param <NODEID> the ID type of the Node, e.g., String.
+ * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public abstract class RoadMarkerAlong extends CrossSectionElement
+public abstract class RoadMarkerAlong<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
 {
     /** lateral permeability per GTU type and direction. */
     private final Map<GTUType<?>, Set<LateralDirectionality>> permeabilityMap = new HashMap<>();
@@ -37,7 +39,7 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      * @throws NetworkException on network inconsistency
      */
-    public RoadMarkerAlong(final CrossSectionLink<?, ?> parentLink,
+    public RoadMarkerAlong(final CrossSectionLink<LINKID, NODEID> parentLink,
             final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> beginWidth,
             final DoubleScalar.Rel<LengthUnit> endWidth) throws NetworkException
     {

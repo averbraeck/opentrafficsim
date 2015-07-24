@@ -1,8 +1,5 @@
 package org.opentrafficsim.core.network.route;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opentrafficsim.core.network.Node;
 
 /**
@@ -18,30 +15,42 @@ import org.opentrafficsim.core.network.Node;
 public class FixedRouteGenerator implements RouteGenerator, Comparable<FixedRouteGenerator>
 {
     /** The route that is returned on every call to generateRoute. */
-    private final List<Node<?, ?>> nodeList;
+    private final CompleteRoute<?, ?> route;
 
     /**
      * Construct a new FixedRouteGenerator.
-     * @param nodeList List&lt;Node&lt;?, ?&gt;&gt;; List of Nodes that define the Route (this constructor makes a deep
-     *            copy of the provided List)
+     * @param route the CompleteRoute to generate
      */
-    public FixedRouteGenerator(final List<Node<?, ?>> nodeList)
+    public FixedRouteGenerator(final CompleteRoute<?, ?> route)
     {
-        this.nodeList = new ArrayList<Node<?, ?>>(nodeList);
+        this.route = route;
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
     @Override
-    public final Route generateRoute()
+    public RouteNavigator generateRouteNavigator()
     {
-        return new Route(this.nodeList);
+        return new RouteNavigator(this.route);
+    }
+
+    /**
+     * @return route.
+     */
+    public final CompleteRoute<?, ?> getRoute()
+    {
+        return this.route;
     }
 
     /** {@inheritDoc} */
     @Override
     public final int compareTo(final FixedRouteGenerator o)
     {
-        List<Node<?, ?>> otherNodes = o.nodeList;
+        /*-
+
+        TODO repair compareTo(...)
+        
+        List<Node<?>> otherNodes = o.nodeList;
         String myEndNodeId = this.nodeList.get(this.nodeList.size() - 1).getId().toString();
         String otherEndNodeId = otherNodes.get(otherNodes.size() - 1).getId().toString();
         int result = myEndNodeId.compareTo(otherEndNodeId);
@@ -70,6 +79,8 @@ public class FixedRouteGenerator implements RouteGenerator, Comparable<FixedRout
             }
         }
         // FIXME: this goes VERY wrong if different Nodes can have the same id
+
+         */
         return 0;
     }
 
@@ -79,7 +90,7 @@ public class FixedRouteGenerator implements RouteGenerator, Comparable<FixedRout
         StringBuilder result = new StringBuilder();
         result.append("FixedRouteGenerator");
         String separator = " [";
-        for (Node<?, ?> node : this.nodeList)
+        for (Node<?> node : this.route.getNodes())
         {
             result.append(separator);
             result.append(node);

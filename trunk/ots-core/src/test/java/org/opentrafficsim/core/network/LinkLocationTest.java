@@ -3,12 +3,12 @@ package org.opentrafficsim.core.network;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.opentrafficsim.core.network.geotools.NodeGeotools;
+import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-
-import com.vividsolutions.jts.geom.Coordinate;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * Test the LinkLocation class.
@@ -30,10 +30,11 @@ public class LinkLocationTest
     public void linkLocationTest()
     {
         // Preparations
-        NodeGeotools.STR nodeFrom = new NodeGeotools.STR("From", new Coordinate(0, 0, 0));
-        NodeGeotools.STR nodeTo = new NodeGeotools.STR("To", new Coordinate(1000, 0, 0));
-        DoubleScalar.Rel<LengthUnit> linkLength = new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER);
-        CrossSectionLink<?, ?> link = new CrossSectionLink<String, String>("Link", nodeFrom, nodeTo, linkLength);
+        OTSNode.STR nodeFrom = new OTSNode.STR("From", new OTSPoint3D(0, 0, 0));
+        OTSNode.STR nodeTo = new OTSNode.STR("To", new OTSPoint3D(1000, 0, 0));
+        OTSLine3D line = new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0)});
+        CrossSectionLink.STR link = new CrossSectionLink.STR("Link", nodeFrom, nodeTo, line);
+        DoubleScalar.Rel<LengthUnit> linkLength = line.getLength();
         // Now we can make a LinkLocation.
         DoubleScalar.Rel<LengthUnit> referenceLocationDistance =
                 new DoubleScalar.Rel<LengthUnit>(123, LengthUnit.METER);

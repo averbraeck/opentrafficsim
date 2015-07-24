@@ -31,7 +31,7 @@ public class SpeedContourPlot extends ContourPlot
      * @param caption String; text to show above the SpeedContourPlot
      * @param path List&lt;Lane&gt;; the series of Lanes that will provide the data for this TrajectoryPlot
      */
-    public SpeedContourPlot(final String caption, final List<Lane> path)
+    public SpeedContourPlot(final String caption, final List<Lane<?, ?>> path)
     {
         super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
                 STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), path, 0d, 40d,

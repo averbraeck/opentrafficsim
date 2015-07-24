@@ -3,7 +3,6 @@ package org.opentrafficsim.core.gtu;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.opentrafficsim.core.gtu.GTUType;
 
 /**
  * Test the methods and fields in the GTUType class.

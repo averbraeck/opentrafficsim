@@ -31,7 +31,7 @@ public class NodeAnimation extends Renderable2D
      * @throws NamingException when animation context cannot be found.
      * @throws RemoteException on communications failure for animation context.
      */
-    public NodeAnimation(final Node<?, ?> node, final OTSSimulatorInterface simulator) throws NamingException,
+    public NodeAnimation(final Node<?> node, final OTSSimulatorInterface simulator) throws NamingException,
             RemoteException
     {
         super(node, simulator);

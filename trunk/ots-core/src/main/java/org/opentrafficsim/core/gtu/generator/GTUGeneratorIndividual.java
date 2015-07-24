@@ -10,7 +10,7 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.network.route.RouteGenerator;
+import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -74,8 +74,8 @@ public class GTUGeneratorIndividual<ID> extends AbstractGTUGenerator<ID>
             final DistContinuousDoubleScalar.Rel<LengthUnit> lengthDist,
             final DistContinuousDoubleScalar.Rel<LengthUnit> widthDist,
             final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeedDist, final long maxGTUs,
-            final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Abs<TimeUnit> endTime, final Lane lane,
-            final DoubleScalar.Rel<LengthUnit> position, final RouteGenerator routeGenerator,
+            final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Abs<TimeUnit> endTime, final Lane<?, ?> lane,
+            final DoubleScalar.Rel<LengthUnit> position, final LaneBasedRouteGenerator routeGenerator,
             final GTUColorer gtuColorer) throws RemoteException, SimRuntimeException
     {
         super(name, simulator, gtuType, gtuClass, gtuFollowingModel, laneChangeModel, initialSpeedDist,

@@ -26,7 +26,7 @@ public interface LaneBasedGTUSampler
      * @throws RemoteException on communications failure
      * @throws NetworkException on network-related inconsistency
      */
-    void addData(AbstractLaneBasedGTU<?> gtu, Lane lane) throws RemoteException, NetworkException;
+    void addData(AbstractLaneBasedGTU<?> gtu, Lane<?, ?> lane) throws RemoteException, NetworkException;
 
     /**
      * Force redraw of the graph.

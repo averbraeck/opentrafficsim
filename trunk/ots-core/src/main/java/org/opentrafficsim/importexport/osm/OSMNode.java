@@ -3,7 +3,7 @@ package org.opentrafficsim.importexport.osm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opentrafficsim.core.network.geotools.NodeGeotools;
+import org.opentrafficsim.core.network.OTSNode;
 
 /**
  * OpenStreetmap Node.
@@ -49,7 +49,7 @@ public class OSMNode
     public int linksTerminating = 0;
 
     /** The OTS Node that corresponds to this OSMNode. */
-    private NodeGeotools.STR otsNode = null;
+    private OTSNode.STR otsNode = null;
 
     /**
      * @return Id
@@ -206,9 +206,9 @@ public class OSMNode
     }
 
     /**
-     * @param n NodeGeotools.STR
+     * @param n OTSNode.STR
      */
-    public final void setOtsNode(final NodeGeotools.STR n)
+    public final void setOtsNode(final OTSNode.STR n)
     {
         if (this.otsNode != null)
         {
@@ -218,9 +218,9 @@ public class OSMNode
     }
 
     /**
-     * @return NodeGeotools.STR - The associated OTS Node.
+     * @return OTSNode.STR - The associated OTS Node.
      */
-    public final NodeGeotools.STR getOtsNode()
+    public final OTSNode.STR getOtsNode()
     {
         return this.otsNode;
     }

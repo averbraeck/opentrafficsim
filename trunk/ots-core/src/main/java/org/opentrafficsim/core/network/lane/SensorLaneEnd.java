@@ -27,11 +27,12 @@ public class SensorLaneEnd extends AbstractSensor
      * Place a sensor that is triggered with the back of the GTU one ulp (see <code>Math.ulp(double d)</code>) before
      * the end of the lane to make sure it will always be triggered, independent of the algorithm used to move the GTU.
      * @param lane The lane for which this is a sensor.
+     * @param name the name of the sensor.
      */
-    public SensorLaneEnd(final Lane lane)
+    public SensorLaneEnd(final Lane<?, ?> lane, final String name)
     {
         super(lane, new DoubleScalar.Rel<LengthUnit>(lane.getLength().getSI() - Math.ulp(lane.getLength().getSI()),
-                LengthUnit.METER), RelativePosition.REAR);
+                LengthUnit.METER), RelativePosition.REAR, name);
     }
 
     /**
@@ -42,17 +43,6 @@ public class SensorLaneEnd extends AbstractSensor
     @Override
     public final void trigger(final LaneBasedGTU<?> gtu)
     {
-        /*-
-        try
-        {
-            System.out.println(gtu.getSimulator().getSimulatorTime().get() + ": removing " + gtu + " at end of lane " 
-                    + getLane());
-        }
-        catch (RemoteException exception)
-        {
-            exception.printStackTrace();
-        }
-         */
         gtu.removeLane(getLane());
         getLane().removeGTU(gtu);
     }

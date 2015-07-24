@@ -35,8 +35,10 @@ import org.opentrafficsim.graphs.LaneBasedGTUSampler;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
+ * @param <NODEID> the ID type of the Node, e.g., String.
+ * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public class Lane extends CrossSectionElement
+public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
 {
     /** type of lane to deduce compatibility with GTU types. */
     private final LaneType<?> laneType;
@@ -57,20 +59,20 @@ public class Lane extends CrossSectionElement
     private final List<LaneBasedGTU<?>> gtuList = new ArrayList<LaneBasedGTU<?>>();
 
     /** Adjacent left lanes that some GTU types can change onto. */
-    private Set<Lane> leftNeighbors = new LinkedHashSet<Lane>(1);
+    private Set<Lane<LINKID, NODEID>> leftNeighbors = new LinkedHashSet<Lane<LINKID, NODEID>>(1);
 
     /** Adjacent right lanes that some GTU types can change onto. */
-    private Set<Lane> rightNeighbors = new LinkedHashSet<Lane>(1);
+    private Set<Lane<LINKID, NODEID>> rightNeighbors = new LinkedHashSet<Lane<LINKID, NODEID>>(1);
 
     /**
      * Next lane(s) following this lane. Initially null so we can calculate and cache the first time the method is called.
      */
-    private Set<Lane> nextLanes = null;
+    private Set<Lane<LINKID, NODEID>> nextLanes = null;
 
     /**
      * Next lane(s) following this lane. Initially null so we can calculate and cache the first time the method is called.
      */
-    private Set<Lane> prevLanes = null;
+    private Set<Lane<LINKID, NODEID>> prevLanes = null;
 
     // TODO write interface for samplers
     /** List of graphs that want to sample GTUs on this Lane. */
@@ -91,7 +93,7 @@ public class Lane extends CrossSectionElement
      * @throws NetworkException when creation of the geometry fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public Lane(final CrossSectionLink<?, ?> parentLink, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart,
+    public Lane(final CrossSectionLink<LINKID, NODEID> parentLink, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart,
         final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd, final DoubleScalar.Rel<LengthUnit> beginWidth,
         final DoubleScalar.Rel<LengthUnit> endWidth, final LaneType<?> laneType,
         final LongitudinalDirectionality directionality, final DoubleScalar.Abs<FrequencyUnit> capacity,
@@ -105,8 +107,8 @@ public class Lane extends CrossSectionElement
         // TODO Take care of directionality.
         try
         {
-            addSensor(new SensorLaneStart(this));
-            addSensor(new SensorLaneEnd(this));
+            addSensor(new SensorLaneStart(this, "START@" + toString()));
+            addSensor(new SensorLaneEnd(this, "END@" + toString()));
         }
         catch (NetworkException exception)
         {
@@ -119,7 +121,7 @@ public class Lane extends CrossSectionElement
      * @param direction LateralDirectionality; either LEFT or RIGHT
      * @return Set&lt;Lane&gt;; the indicated set of neighboring Lanes
      */
-    private Set<Lane> neighbors(final LateralDirectionality direction)
+    private Set<Lane<LINKID, NODEID>> neighbors(final LateralDirectionality direction)
     {
         return direction == LateralDirectionality.LEFT ? this.leftNeighbors : this.rightNeighbors;
     }
@@ -129,7 +131,8 @@ public class Lane extends CrossSectionElement
      * @param adjacentLane Lane; the adjacent Lane
      * @param direction LateralDirectionality; the direction in which the Lane is adjacent to this Lane
      */
-    public final void addAccessibleAdjacentLane(final Lane adjacentLane, final LateralDirectionality direction)
+    public final void addAccessibleAdjacentLane(final Lane<LINKID, NODEID> adjacentLane,
+        final LateralDirectionality direction)
     {
         neighbors(direction).add(adjacentLane);
     }
@@ -141,10 +144,10 @@ public class Lane extends CrossSectionElement
      * @param direction LateralDirectionality; the direction in which the Lane was adjacent to this Lane
      * @throws NetworkException when the adjacentLane was not registered as adjacent in the indicated direction
      */
-    public final void removeAccessibleAdjacentLane(final Lane adjacentLane, final LateralDirectionality direction)
-        throws NetworkException
+    public final void removeAccessibleAdjacentLane(final Lane<LINKID, NODEID> adjacentLane,
+        final LateralDirectionality direction) throws NetworkException
     {
-        Set<Lane> neighbors = neighbors(direction);
+        Set<Lane<LINKID, NODEID>> neighbors = neighbors(direction);
         if (!neighbors.contains(adjacentLane))
         {
             throw new NetworkException("Lane " + adjacentLane + " is not among the " + direction + " neighbors of this Lane");
@@ -469,8 +472,8 @@ public class Lane extends CrossSectionElement
      * @param margin DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum accepted alignment error
      * @return boolean; true if the two cross section elements are well enough aligned to be connected
      */
-    private boolean laterallyCloseEnough(final CrossSectionElement incomingCSE, final CrossSectionElement outgoingCSE,
-        final DoubleScalar.Rel<LengthUnit> margin)
+    private boolean laterallyCloseEnough(final CrossSectionElement<LINKID, NODEID> incomingCSE,
+        final CrossSectionElement<LINKID, NODEID> outgoingCSE, final DoubleScalar.Rel<LengthUnit> margin)
     {
         return Math.abs(DoubleScalar.minus(incomingCSE.getLateralCenterPosition(1), outgoingCSE.getLateralCenterPosition(0))
             .getSI()) <= margin.getSI();
@@ -493,21 +496,22 @@ public class Lane extends CrossSectionElement
      * lateral position of this lane.
      * @return set of Lanes following this lane.
      */
-    public final Set<Lane> nextLanes()
+    public final Set<Lane<LINKID, NODEID>> nextLanes()
     {
         if (this.nextLanes == null)
         {
             // Construct (and cache) the result.
-            this.nextLanes = new LinkedHashSet<Lane>(1);
-            for (Link<?, ?> link : getParentLink().getEndNode().getLinksOut())
+            this.nextLanes = new LinkedHashSet<Lane<LINKID, NODEID>>(1);
+            for (Link<?, NODEID> link : getParentLink().getEndNode().getLinksOut())
             {
                 if (link instanceof CrossSectionLink<?, ?>)
                 {
-                    for (CrossSectionElement cse : ((CrossSectionLink<?, ?>) link).getCrossSectionElementList())
+                    for (CrossSectionElement<LINKID, NODEID> cse : ((CrossSectionLink<LINKID, NODEID>) link)
+                        .getCrossSectionElementList())
                     {
                         if (cse instanceof Lane && laterallyCloseEnough(this, cse, LATERAL_MARGIN))
                         {
-                            this.nextLanes.add((Lane) cse);
+                            this.nextLanes.add((Lane<LINKID, NODEID>) cse);
                         }
                     }
                 }
@@ -525,21 +529,22 @@ public class Lane extends CrossSectionElement
      * multiple lanes that match the lateral position of this lane.
      * @return set of Lanes preceding this lane.
      */
-    public final Set<Lane> prevLanes()
+    public final Set<Lane<LINKID, NODEID>> prevLanes()
     {
         if (this.prevLanes == null)
         {
             // Construct (and cache) the result.
-            this.prevLanes = new LinkedHashSet<Lane>(1);
-            for (Link<?, ?> link : getParentLink().getStartNode().getLinksIn())
+            this.prevLanes = new LinkedHashSet<Lane<LINKID, NODEID>>(1);
+            for (Link<?, NODEID> link : getParentLink().getStartNode().getLinksIn())
             {
                 if (link instanceof CrossSectionLink<?, ?>)
                 {
-                    for (CrossSectionElement cse : ((CrossSectionLink<?, ?>) link).getCrossSectionElementList())
+                    for (CrossSectionElement<LINKID, NODEID> cse : ((CrossSectionLink<LINKID, NODEID>) link)
+                        .getCrossSectionElementList())
                     {
                         if (cse instanceof Lane && laterallyCloseEnough(cse, this, LATERAL_MARGIN))
                         {
-                            this.prevLanes.add((Lane) cse);
+                            this.prevLanes.add((Lane<LINKID, NODEID>) cse);
                         }
                     }
                 }
@@ -564,10 +569,11 @@ public class Lane extends CrossSectionElement
      * @return the set of lanes that are accessible, or null if there is no lane that is accessible with a matching driving
      *         direction.
      */
-    public final Set<Lane> accessibleAdjacentLanes(final LateralDirectionality lateralDirection, final GTUType<?> gtuType)
+    public final Set<Lane<LINKID, NODEID>> accessibleAdjacentLanes(final LateralDirectionality lateralDirection,
+        final GTUType<?> gtuType)
     {
-        Set<Lane> candidates = new LinkedHashSet<>();
-        for (Lane l : neighbors(lateralDirection))
+        Set<Lane<LINKID, NODEID>> candidates = new LinkedHashSet<>();
+        for (Lane<LINKID, NODEID> l : neighbors(lateralDirection))
         {
             if (l.getLaneType().isCompatible(gtuType)
                 && (l.getDirectionality().equals(LongitudinalDirectionality.BOTH) || l.getDirectionality().equals(
@@ -599,10 +605,10 @@ public class Lane extends CrossSectionElement
      * @return the lane if it is accessible, or null if there is no lane, it is not accessible, or the driving direction does
      *         not match.
      */
-    public final Lane bestAccessibleAdjacentLane(final LateralDirectionality lateralDirection,
+    public final Lane<LINKID, NODEID> bestAccessibleAdjacentLane(final LateralDirectionality lateralDirection,
         final DoubleScalar.Rel<LengthUnit> longitudinalPosition, final GTUType<?> gtuType)
     {
-        Set<Lane> candidates = accessibleAdjacentLanes(lateralDirection, gtuType);
+        Set<Lane<LINKID, NODEID>> candidates = accessibleAdjacentLanes(lateralDirection, gtuType);
 
         if (candidates.isEmpty())
         {
@@ -613,9 +619,9 @@ public class Lane extends CrossSectionElement
             return candidates.iterator().next(); // There is exactly one adjacent Lane that this GTU type can cross into
         }
         // There are several candidates; find the one that is widest at the beginning.
-        Lane bestLane = null;
+        Lane<LINKID, NODEID> bestLane = null;
         double widthM = -1.0;
-        for (Lane lane : candidates)
+        for (Lane<LINKID, NODEID> lane : candidates)
         {
             if (lane.getWidth(longitudinalPosition).getSI() > widthM)
             {
@@ -722,9 +728,91 @@ public class Lane extends CrossSectionElement
     /** {@inheritDoc} */
     public final String toString()
     {
-        CrossSectionLink<?, ?> link = getParentLink();
+        CrossSectionLink<LINKID, NODEID> link = getParentLink();
         // FIXME indexOf may not be the correct way to determine the rank of a Lane (counts stripes as well)
         return String.format("Lane %d of %s", link.getCrossSectionElementList().indexOf(this), link.toString());
+    }
+
+    /**
+     * String ID class.
+     * <p>
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
+     * All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version Jul 22, 2015 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     */
+    public static class STR extends Lane<String, String>
+    {
+        /**
+         * @param parentLink Cross Section Link to which the element belongs.
+         * @param lateralOffsetAtStart DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
+         *            CrossSectionLink with respect to the design line of the parent Link at the start of the parent Link
+         * @param lateralOffsetAtEnd DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
+         *            CrossSectionLink with respect to the design line of the parent Link at the end of the parent Link
+         * @param beginWidth DoubleScalar.Rel&lt;LengthUnit&gt;; start width, positioned <i>symmetrically around</i> the design
+         *            line
+         * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; end width, positioned <i>symmetrically around</i> the design line
+         * @param laneType type of lane to deduce compatibility with GTU types
+         * @param directionality in direction of geometry, reverse, or both
+         * @param capacity Lane capacity in vehicles per time unit. This is a mutable property (e.g., blockage)
+         * @param speedLimit speed limit on this lane
+         * @throws NetworkException when creation of the geometry fails
+         */
+        @SuppressWarnings("checkstyle:parameternumber")
+        public STR(final CrossSectionLink<String, String> parentLink,
+            final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd,
+            final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth,
+            final LaneType<?> laneType, final LongitudinalDirectionality directionality,
+            final DoubleScalar.Abs<FrequencyUnit> capacity, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+            throws NetworkException
+        {
+            super(parentLink, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, laneType, directionality,
+                capacity, speedLimit);
+        }
+    }
+
+    /**
+     * Integer ID class.
+     * <p>
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
+     * All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version Jul 22, 2015 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     */
+    public static class INT extends Lane<Integer, Integer>
+    {
+        /**
+         * @param parentLink Cross Section Link to which the element belongs.
+         * @param lateralOffsetAtStart DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
+         *            CrossSectionLink with respect to the design line of the parent Link at the start of the parent Link
+         * @param lateralOffsetAtEnd DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
+         *            CrossSectionLink with respect to the design line of the parent Link at the end of the parent Link
+         * @param beginWidth DoubleScalar.Rel&lt;LengthUnit&gt;; start width, positioned <i>symmetrically around</i> the design
+         *            line
+         * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; end width, positioned <i>symmetrically around</i> the design line
+         * @param laneType type of lane to deduce compatibility with GTU types
+         * @param directionality in direction of geometry, reverse, or both
+         * @param capacity Lane capacity in vehicles per time unit. This is a mutable property (e.g., blockage)
+         * @param speedLimit speed limit on this lane
+         * @throws NetworkException when creation of the geometry fails
+         */
+        @SuppressWarnings("checkstyle:parameternumber")
+        public INT(final CrossSectionLink<Integer, Integer> parentLink,
+            final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd,
+            final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth,
+            final LaneType<?> laneType, final LongitudinalDirectionality directionality,
+            final DoubleScalar.Abs<FrequencyUnit> capacity, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+            throws NetworkException
+        {
+            super(parentLink, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, laneType, directionality,
+                capacity, speedLimit);
+        }
     }
 
 }

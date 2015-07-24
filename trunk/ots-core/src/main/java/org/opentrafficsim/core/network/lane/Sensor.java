@@ -22,7 +22,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public interface Sensor extends Serializable, Comparable<Sensor>
 {
     /** @return The lane for which this is a sensor. */
-    Lane getLane();
+    Lane<?, ?> getLane();
 
     /** @return the position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
     DoubleScalar.Rel<LengthUnit> getLongitudinalPosition();
@@ -40,4 +40,8 @@ public interface Sensor extends Serializable, Comparable<Sensor>
      * @throws RemoteException on communications failure
      */
     void trigger(LaneBasedGTU<?> gtu) throws RemoteException;
+    
+    /** @return The name of the sensor. */
+    String getName();
+
 }

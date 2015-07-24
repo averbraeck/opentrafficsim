@@ -10,7 +10,6 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,10 +29,10 @@ import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
-import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
-import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -45,12 +44,11 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Aug 25, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Aug 25, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class FundamentalDiagramPlotTest implements OTSModelInterface
@@ -72,7 +70,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
         LaneType<String> laneType = new LaneType<String>("CarLane");
         GTUType<String> gtuType = GTUType.makeGTUType("Car");
         laneType.addCompatibility(gtuType);
-        Lane lane = CarTest.makeLane(laneType);
+        Lane.STR lane = CarTest.makeLane(laneType);
         FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, lane, position);
         assertEquals("SeriesCount should match numberOfLanes", 1, fd.getSeriesCount());
         assertEquals("Position should match the supplied position", position.getSI(), fd.getPosition().getSI(), 0.0001);
@@ -109,11 +107,11 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
         DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
+        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
         initialLongitudinalPositions.put(lane, carPosition);
         SimpleSimulator simulator =
-                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(
-                        0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800, TimeUnit.SECOND), this);
+            new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0,
+                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800, TimeUnit.SECOND), this);
         simulator.runUpTo(time);
         while (simulator.isRunning())
         {
@@ -129,12 +127,11 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
         int bucket = (int) Math.floor(time.getSI() / aggregationTime.getSI());
         LaneChangeModel laneChangeModel = new Egoistic();
         GTUFollowingModel gtuFollowingModel =
-                new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
-                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(1000, TimeUnit.SECOND));
+            new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2),
+                new DoubleScalar.Rel<TimeUnit>(1000, TimeUnit.SECOND));
         // Construct a car
-        new LaneBasedIndividualCar<Integer>(1, gtuType, gtuFollowingModel, laneChangeModel,
-                initialLongitudinalPositions, speed, length, width, maxSpeed, new Route(new ArrayList<Node<?, ?>>()),
-                simulator);
+        new LaneBasedIndividualCar<Integer>(1, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions,
+            speed, length, width, maxSpeed, new LaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(124, TimeUnit.SECOND));
         while (simulator.isRunning())
         {
@@ -217,9 +214,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
         }
         // Check that harmonic mean speed is computed
         speed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
-        new LaneBasedIndividualCar<Integer>(1234, gtuType, gtuFollowingModel, laneChangeModel,
-                initialLongitudinalPositions, speed, length, width, maxSpeed, new Route(new ArrayList<Node<?, ?>>()),
-                simulator);
+        new LaneBasedIndividualCar<Integer>(1234, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions,
+            speed, length, width, maxSpeed, new LaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(125, TimeUnit.SECOND));
         while (simulator.isRunning())
         {
@@ -315,7 +311,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
         DoubleScalar.Rel<LengthUnit> position = new DoubleScalar.Rel<LengthUnit>(123, LengthUnit.METER);
         LaneType<String> laneType = new LaneType<String>("CarLane");
         FundamentalDiagram fd =
-                new FundamentalDiagram("Fundamental Diagram", aggregationTime, CarTest.makeLane(laneType), position);
+            new FundamentalDiagram("Fundamental Diagram", aggregationTime, CarTest.makeLane(laneType), position);
         // First get the panel that stores the result of updateHint (this is ugly)
         JLabel hintPanel = null;
         ChartPanel chartPanel = null;
@@ -399,7 +395,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> arg0)
-            throws SimRuntimeException, RemoteException
+        throws SimRuntimeException, RemoteException
     {
         // Do nothing
     }

@@ -17,13 +17,16 @@ import org.junit.Test;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.factory.LaneFactory;
-import org.opentrafficsim.core.network.geotools.NodeGeotools;
+import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -33,8 +36,6 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
-
-import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * Test SensorLaneEnd and SensorLaneStart.
@@ -58,8 +59,8 @@ public class SensorTest
     {
         // First we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
-        NodeGeotools.STR nodeAFrom = new NodeGeotools.STR("AFrom", new Coordinate(0, 0, 0));
-        NodeGeotools.STR nodeATo = new NodeGeotools.STR("ATo", new Coordinate(1000, 0, 0));
+        OTSNode.STR nodeAFrom = new OTSNode.STR("AFrom", new OTSPoint3D(0, 0, 0));
+        OTSNode.STR nodeATo = new OTSNode.STR("ATo", new OTSPoint3D(1000, 0, 0));
         LaneType<String> laneType = new LaneType<String>("CarLane");
         // A Car needs a type
         GTUType<String> gtuType = GTUType.makeGTUType("Car");
@@ -70,11 +71,11 @@ public class SensorTest
                 new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND),
                         new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
                                 TimeUnit.SECOND), model);
-        Lane[] lanes =
+        Lane.STR[] lanes =
                 LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(
                         100, SpeedUnit.KM_PER_HOUR), simulator);
         // Check that there is a SensorLaneStart and a SensorLaneEnd on each Lane
-        for (Lane l : lanes)
+        for (Lane<?, ?> l : lanes)
         {
             int sensorsFound = 0;
             for (Sensor sensor : l.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER),
@@ -99,8 +100,8 @@ public class SensorTest
             }
             assertEquals("There should be two sensor on each Lane", 2, sensorsFound);
         }
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
-                new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
+                new HashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
         DoubleScalar.Rel<LengthUnit> positionA = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);
         initialLongitudinalPositions.put(lanes[1], positionA);
         // A Car needs an initial speed
@@ -121,7 +122,8 @@ public class SensorTest
         LaneChangeModel laneChangeModel = new Egoistic();
         // Now we can make a car (GTU) (and we don't even have to hold a pointer to it)
         new LaneBasedIndividualCar<String>(carID, gtuType, fas, laneChangeModel, initialLongitudinalPositions,
-                initialSpeed, carLength, carWidth, maximumVelocity, new Route(new ArrayList<Node<?, ?>>()), simulator);
+                initialSpeed, carLength, carWidth, maximumVelocity, new LaneBasedRouteNavigator(
+                    new CompleteRoute<>("")), simulator);
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(1, TimeUnit.SECOND));
         while (simulator.isRunning())
         {

@@ -24,12 +24,12 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
-import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.geotools.LinkGeotools;
-import org.opentrafficsim.core.network.geotools.NodeGeotools;
+import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.core.network.lane.AbstractSensor;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
@@ -40,8 +40,6 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.xml.sax.SAXException;
-
-import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * Test of the XML Parser.
@@ -74,41 +72,26 @@ public class XMLNetworkGeneratorTest
                     TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(120.0, TimeUnit.SECOND), model);
 
             // get nodes, links, and the lanes.
-            NodeGeotools<String> n1 = null;
-            NodeGeotools<String> n2 = null;
-            Set<NodeGeotools<String>> nodeSet = model.getNetwork().getNodeSet();
-            for (NodeGeotools<String> node : nodeSet)
-            {
-                if ("N1".equals(node.getId()))
-                {
-                    n1 = node;
-                }
-                if ("N2".equals(node.getId()))
-                {
-                    n2 = node;
-                }
-            }
-
+            Node<String> n1 = model.getNetwork().getNodeMap().get("N1");
+            Node<String> n2 = model.getNetwork().getNodeMap().get("N2");
             assertNotNull(n1);
             Assert.assertTrue(n1.getLinksOut() != null);
             Assert.assertTrue(n1.getLinksOut().size() > 0);
-            @SuppressWarnings("unchecked")
-            LinkGeotools<String, String> l12 = (LinkGeotools<String, String>) n1.getLinksOut().iterator().next();
+            Link<?, String> l12 = n1.getLinksOut().iterator().next();
             assertNotNull(l12);
-            CrossSectionLink<String, String> csl12 = (CrossSectionLink<String, String>) l12;
+            CrossSectionLink<?, String> csl12 = (CrossSectionLink<?, String>) l12;
             Assert.assertTrue(csl12.getCrossSectionElementList().size() > 0);
-            Lane lane12 = (Lane) csl12.getCrossSectionElementList().get(0);
+            Lane.STR lane12 = (Lane.STR) csl12.getCrossSectionElementList().get(0);
             assertNotNull(lane12);
 
             assertNotNull(n2);
             Assert.assertTrue(n2.getLinksOut() != null);
             Assert.assertTrue(n2.getLinksOut().size() > 0);
-            @SuppressWarnings("unchecked")
-            LinkGeotools<String, String> l23 = (LinkGeotools<String, String>) n2.getLinksOut().iterator().next();
+            Link<?, String> l23 = n2.getLinksOut().iterator().next();
             assertNotNull(l23);
-            CrossSectionLink<String, String> csl23 = (CrossSectionLink<String, String>) l23;
+            CrossSectionLink<?, String> csl23 = (CrossSectionLink<?, String>) l23;
             Assert.assertTrue(csl23.getCrossSectionElementList().size() > 0);
-            Lane lane23 = (Lane) csl23.getCrossSectionElementList().get(0);
+            Lane.STR lane23 = (Lane.STR) csl23.getCrossSectionElementList().get(0);
             assertNotNull(lane23);
 
             // add a sensor to check the time the vehicles pass
@@ -178,10 +161,10 @@ public class XMLNetworkGeneratorTest
          * @param id the sensor id
          * @param simulator the simulator
          */
-        public ReportingSensor(final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
+        public ReportingSensor(final Lane.STR lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
             final TYPE positionType, final String id, final OTSDEVSSimulatorInterface simulator)
         {
-            super(lane, longitudinalPosition, positionType);
+            super(lane, longitudinalPosition, positionType, "REPORT@" + lane.toString());
             this.id = id;
             this.simulator = simulator;
         }
@@ -248,7 +231,7 @@ public class XMLNetworkGeneratorTest
         private OTSDEVSSimulatorInterface simulator;
 
         /** the generated network. */
-        private Network<String, NodeGeotools<String>, LinkGeotools<String, String>> network;
+        private OTSNetwork<String, String, String> network;
 
         /** */
         public TestXMLModel()
@@ -265,9 +248,7 @@ public class XMLNetworkGeneratorTest
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
             URL url = URLResource.getResource("/org/opentrafficsim/core/network/factory/gen-overlap-test.xml");
-            XmlNetworkLaneParser nlp =
-                new XmlNetworkLaneParser(String.class, NodeGeotools.class, String.class, Coordinate.class,
-                    LinkGeotools.class, String.class, this.simulator, new IDGTUColorer());
+            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(String.class, String.class, String.class, this.simulator);
             try
             {
                 this.network = nlp.build(url);
@@ -288,7 +269,7 @@ public class XMLNetworkGeneratorTest
         /**
          * @return network.
          */
-        public final Network<String, NodeGeotools<String>, LinkGeotools<String, String>> getNetwork()
+        public final OTSNetwork<String, String, String> getNetwork()
         {
             return this.network;
         }

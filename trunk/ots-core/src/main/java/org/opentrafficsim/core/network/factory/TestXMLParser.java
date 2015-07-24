@@ -21,8 +21,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.geotools.LinkGeotools;
-import org.opentrafficsim.core.network.geotools.NodeGeotools;
+import org.opentrafficsim.core.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
@@ -31,16 +30,13 @@ import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.xml.sax.SAXException;
 
-import com.vividsolutions.jts.geom.Coordinate;
-
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Oct 17, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class TestXMLParser extends AbstractWrappableSimulation
@@ -103,7 +99,7 @@ public class TestXMLParser extends AbstractWrappableSimulation
     @Override
     protected final OTSModelInterface makeModel(final GTUColorer colorer)
     {
-        return new TestXMLModel(colorer);
+        return new TestXMLModel();
     }
 
     /** {@inheritDoc} */
@@ -117,11 +113,10 @@ public class TestXMLParser extends AbstractWrappableSimulation
      * Model to test the XML parser.
      * <p>
      * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
-     * All rights reserved. BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim
-     * License</a>.
+     * All rights reserved. BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
-     * $LastChangedDate$, @version $Revision$, by $Author:
-     * pknoppers $, initial version un 27, 2015 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author$,
+     * initial version un 27, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
@@ -133,31 +128,18 @@ public class TestXMLParser extends AbstractWrappableSimulation
         /** the simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
-        /** the gtuColorer. */
-        private final GTUColorer gtuColorer;
-
-        /**
-         * @param gtuColorer the GTUColorer to use.
-         */
-        public TestXMLModel(final GTUColorer gtuColorer)
-        {
-            super();
-            this.gtuColorer = gtuColorer;
-        }
-
         /** {@inheritDoc} */
         @Override
         public final void constructModel(
-                final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
-                throws SimRuntimeException, RemoteException
+            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
+            throws SimRuntimeException, RemoteException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
-            //URL url = URLResource.getResource("/straight-road-new-gtu-example-noCarsTest.xml");
-            //URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
+            // URL url = URLResource.getResource("/straight-road-new-gtu-example-noCarsTest.xml");
+            // URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
             URL url = URLResource.getResource("/straight-road-new-gtu-example_2.xml");
             XmlNetworkLaneParser nlp =
-                    new XmlNetworkLaneParser(String.class, NodeGeotools.class, String.class, Coordinate.class,
-                            LinkGeotools.class, String.class, this.simulator, this.gtuColorer);
+                new XmlNetworkLaneParser(String.class, String.class, String.class, this.simulator);
             try
             {
                 nlp.build(url);

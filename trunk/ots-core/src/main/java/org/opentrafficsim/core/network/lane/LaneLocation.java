@@ -18,7 +18,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public class LaneLocation
 {
     /** The lane of the location of a point relative to the GTU. */
-    private final Lane lane;
+    private final Lane.STR lane;
 
     /** The fractional position (between 0.0 and 1.0) of the reference point on the lane. */
     private final double fractionalLongitudinalPosition;
@@ -28,7 +28,7 @@ public class LaneLocation
      * @param fractionalLongitudinalPosition The fractional position (between 0.0 and 1.0) of the reference point on the
      *            lane.
      */
-    public LaneLocation(final Lane lane, final double fractionalLongitudinalPosition)
+    public LaneLocation(final Lane.STR lane, final double fractionalLongitudinalPosition)
     {
         super();
         this.lane = lane;
@@ -39,7 +39,7 @@ public class LaneLocation
      * @param lane The lane of the location of a point relative to the GTU.
      * @param position The position as a length of the reference point on the lane.
      */
-    public LaneLocation(final Lane lane, final DoubleScalar.Rel<LengthUnit> position)
+    public LaneLocation(final Lane.STR lane, final DoubleScalar.Rel<LengthUnit> position)
     {
         super();
         this.lane = lane;

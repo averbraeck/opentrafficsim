@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
+import java.io.Serializable;
+
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -19,7 +21,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <ID> the ID-type of the GTU, e.g. String or a certain Enum type.
  */
-public class TemplateGTUType<ID>
+public class TemplateGTUType<ID> implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141230L;

@@ -1,5 +1,10 @@
 package org.opentrafficsim.core.network;
 
+import java.io.Serializable;
+
+import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+
+import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -15,19 +20,19 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <ID> the ID type of the Link, e.g., String or Integer.
- * @param <N> the type of node that this link uses.
+ * @param <NODEID> the ID type of the Node, e.g., String.
+ * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public interface Link<ID, N extends Node<?, ?>>
+public interface Link<LINKID, NODEID> extends LocatableInterface, Serializable
 {
     /** @return id. */
-    ID getId();
+    LINKID getId();
 
     /** @return start node. */
-    N getStartNode();
+    Node<NODEID> getStartNode();
 
     /** @return end node. */
-    N getEndNode();
+    Node<NODEID> getEndNode();
 
     /** @return link capacity. */
     DoubleScalar.Abs<FrequencyUnit> getCapacity();
@@ -38,6 +43,9 @@ public interface Link<ID, N extends Node<?, ?>>
      */
     void setCapacity(final DoubleScalar.Abs<FrequencyUnit> capacity);
 
+    /** @return the design line. */
+    OTSLine3D getDesignLine();
+    
     /** @return length of the link. */
     DoubleScalar.Rel<LengthUnit> getLength();
 }
