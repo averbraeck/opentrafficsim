@@ -279,7 +279,7 @@
             <xsd:complexType>
               <xsd:attribute name="NAME" type="xsd:string" use="required"></xsd:attribute>
               <xsd:attribute name="TYPE" type="xsd:IDREF" use="required"></xsd:attribute>
-              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional"></xsd:attribute>
+              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required"></xsd:attribute>
               <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
               <xsd:attribute name="SPEED" type="SPEEDTYPE" use="optional"></xsd:attribute>
               <xsd:attribute name="DIRECTION" type="DIRECTIONTYPE" use="required"></xsd:attribute>
@@ -290,7 +290,7 @@
           <xsd:element name="NOTRAFFICLANE" minOccurs="0" maxOccurs="unbounded">
             <xsd:complexType>
               <xsd:attribute name="NAME" type="xsd:string" use="optional"></xsd:attribute>
-              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional"></xsd:attribute>
+              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required"></xsd:attribute>
               <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
               <xsd:attribute name="COLOR" type="COLORTYPE" use="optional"></xsd:attribute>
             </xsd:complexType>
@@ -299,7 +299,7 @@
           <xsd:element name="SHOULDER" minOccurs="0" maxOccurs="unbounded">
             <xsd:complexType>
               <xsd:attribute name="NAME" type="xsd:string" use="optional"></xsd:attribute>
-              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional"></xsd:attribute>
+              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required"></xsd:attribute>
               <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
               <xsd:attribute name="COLOR" type="COLORTYPE" use="optional"></xsd:attribute>
             </xsd:complexType>
@@ -309,7 +309,7 @@
             <xsd:complexType>
               <xsd:attribute name="NAME" type="xsd:string" use="optional"></xsd:attribute>
               <xsd:attribute name="TYPE" type="STRIPETYPE" use="required"></xsd:attribute>
-              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="optional"></xsd:attribute>
+              <xsd:attribute name="OFFSET" type="SIGNEDLENGTHTYPE" use="required"></xsd:attribute>
               <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
               <xsd:attribute name="COLOR" type="COLORTYPE" use="optional"></xsd:attribute>
             </xsd:complexType>

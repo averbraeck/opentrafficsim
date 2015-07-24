@@ -41,7 +41,6 @@ public class ShoulderAnimation extends Renderable2D
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
         Shoulder shoulder = (Shoulder) getSource();
-        PaintPolygons.paintMultiPolygon(graphics, Color.GREEN, shoulder.getLocation(), shoulder.getContour()
-                .getCoordinates());
+        PaintPolygons.paintMultiPolygon(graphics, Color.GREEN, shoulder.getLocation(), shoulder.getContour());
     }
 }

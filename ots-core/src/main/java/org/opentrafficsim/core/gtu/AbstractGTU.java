@@ -27,7 +27,7 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
     private final GTUType<?> gtuType;
 
     /** Route of the gtu to follow. */
-    private Route route = null;
+    private Route<?, ?> route = null;
 
     /**
      * @param id the id of the GTU, could be String or Integer
@@ -35,7 +35,7 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
      * @param route Route; the route that the GTU will take
      * @throws GTUException when route is null
      */
-    public AbstractGTU(final ID id, final GTUType<?> gtuType, final Route route) throws GTUException
+    public AbstractGTU(final ID id, final GTUType<?> gtuType, final Route<?, ?> route) throws GTUException
     {
         super();
         this.id = id;
@@ -65,7 +65,7 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
     /**
      * @return route.
      */
-    public final Route getRoute()
+    public final Route<?, ?> getRoute()
     {
         return this.route;
     }
@@ -73,7 +73,7 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
     /**
      * @param route set route.
      */
-    public final void setRoute(final Route route)
+    public final void setRoute(final Route<?, ?> route)
     {
         this.route = route;
     }

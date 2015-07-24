@@ -3,7 +3,6 @@ package org.opentrafficsim.core.car;
 import static org.junit.Assert.assertEquals;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +19,8 @@ import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.FixedAccelerationModel;
@@ -28,13 +29,12 @@ import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.geotools.LinearGeometry;
-import org.opentrafficsim.core.network.geotools.NodeGeotools;
+import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
-import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -44,18 +44,13 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Jul 11, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Jul 11, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class CarTest
@@ -70,33 +65,32 @@ public class CarTest
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void carTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException,
-            GTUException
+    public final void carTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException, GTUException
     {
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
         GTUType<String> gtuType = GTUType.makeGTUType("Car");
         LaneType<String> laneType = new LaneType<String>("CarLane");
         laneType.addCompatibility(gtuType);
-        Lane lane = makeLane(laneType);
+        Lane.STR lane = makeLane(laneType);
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(12, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(34, SpeedUnit.KM_PER_HOUR);
         OTSDEVSSimulator simulator = makeSimulator();
         GTUFollowingModel gtuFollowingModel =
-                new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
-                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND));
+            new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2),
+                new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND));
         LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar<Integer> referenceCar =
-                makeReferenceCar(12345, gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
-                        laneChangeModel);
+            makeReferenceCar(12345, gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
+                laneChangeModel);
         assertEquals("The car should store it's ID", 12345, (int) referenceCar.getId());
-        assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(),
-                referenceCar.position(lane, referenceCar.getReference(), initialTime).getSI(), 0.0001);
-        assertEquals("The car should store it's initial speed", initialSpeed.getSI(), referenceCar
-                .getLongitudinalVelocity(initialTime).getSI(), 0.00001);
-        assertEquals("The car should have an initial acceleration equal to 0", 0,
-                referenceCar.getAcceleration(initialTime).getSI(), 0.0001);
-        assertEquals("The gtu following model should be " + gtuFollowingModel, gtuFollowingModel,
-                referenceCar.getGTUFollowingModel());
+        assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(), referenceCar
+            .position(lane, referenceCar.getReference(), initialTime).getSI(), 0.0001);
+        assertEquals("The car should store it's initial speed", initialSpeed.getSI(), referenceCar.getLongitudinalVelocity(
+            initialTime).getSI(), 0.00001);
+        assertEquals("The car should have an initial acceleration equal to 0", 0, referenceCar.getAcceleration(initialTime)
+            .getSI(), 0.0001);
+        assertEquals("The gtu following model should be " + gtuFollowingModel, gtuFollowingModel, referenceCar
+            .getGTUFollowingModel());
         // There is (currently) no way to retrieve the lane change model of a GTU.
     }
 
@@ -112,15 +106,13 @@ public class CarTest
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         Model model = new Model();
         Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> exp =
-                new Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>();
+            new Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>();
         Treatment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> tr =
-                new Treatment<>(exp, "tr1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND)),
-                        new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0,
-                                TimeUnit.SECOND));
+            new Treatment<>(exp, "tr1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND)),
+                new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND));
         exp.setTreatment(tr);
         exp.setModel(model);
-        Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> rep =
-                new Replication<>(exp);
+        Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> rep = new Replication<>(exp);
         simulator.initialize(rep, ReplicationMode.TERMINATING);
         return simulator;
     }
@@ -144,19 +136,19 @@ public class CarTest
      * @throws GTUException when construction of the GTU fails (probably due to an invalid parameter)
      */
     public static LaneBasedIndividualCar<Integer> makeReferenceCar(final int nr, final GTUType<?> gtuType,
-            final Lane lane, final DoubleScalar.Rel<LengthUnit> initialPosition,
-            final DoubleScalar.Abs<SpeedUnit> initialSpeed, final OTSDEVSSimulator simulator,
-            GTUFollowingModel gtuFollowingModel, LaneChangeModel laneChangeModel) throws RemoteException,
-            NamingException, NetworkException, SimRuntimeException, GTUException
+        final Lane.STR lane, final DoubleScalar.Rel<LengthUnit> initialPosition,
+        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final OTSDEVSSimulator simulator,
+        final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel) throws RemoteException,
+        NamingException, NetworkException, SimRuntimeException, GTUException
     {
         DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
+        Map<Lane<?, ?>, Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
         initialLongitudinalPositions.put(lane, initialPosition);
         DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
         return new LaneBasedIndividualCar<Integer>(nr, gtuType, gtuFollowingModel, laneChangeModel,
-                initialLongitudinalPositions, initialSpeed, length, width, maxSpeed, new Route(
-                        new ArrayList<Node<?, ?>>()), simulator);
+            initialLongitudinalPositions, initialSpeed, length, width, maxSpeed, new LaneBasedRouteNavigator(
+                new CompleteRoute<>("")), simulator);
     }
 
     /**
@@ -164,21 +156,17 @@ public class CarTest
      * @return a lane of 1000 m long.
      * @throws NetworkException on network error
      */
-    public static Lane makeLane(LaneType<?> laneType) throws NetworkException
+    public static Lane.STR makeLane(final LaneType<?> laneType) throws NetworkException
     {
-        NodeGeotools.STR n1 = new NodeGeotools.STR("n1", new Coordinate(0, 0));
-        NodeGeotools.STR n2 = new NodeGeotools.STR("n2", new Coordinate(10000.0, 0.0));
-        CrossSectionLink<String, String> link12 =
-                new CrossSectionLink<>("link12", n1, n2, new DoubleScalar.Rel<LengthUnit>(10000.0, LengthUnit.METER));
-        GeometryFactory factory = new GeometryFactory();
-        Coordinate[] coordinates = new Coordinate[]{new Coordinate(0.0, 0.0), new Coordinate(10000.0, 0.0)};
-        LineString line = factory.createLineString(coordinates);
-        new LinearGeometry(link12, line, null);
+        OTSNode.STR n1 = new OTSNode.STR("n1", new OTSPoint3D(0, 0));
+        OTSNode.STR n2 = new OTSNode.STR("n2", new OTSPoint3D(10000.0, 0.0));
+        OTSPoint3D[] coordinates = new OTSPoint3D[] {new OTSPoint3D(0.0, 0.0), new OTSPoint3D(10000.0, 0.0)};
+        CrossSectionLink.STR link12 = new CrossSectionLink.STR("link12", n1, n2, new OTSLine3D(coordinates));
         DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         DoubleScalar.Abs<FrequencyUnit> f200 = new DoubleScalar.Abs<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
-        return new Lane(link12, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f200,
-                new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR));
+        return new Lane.STR(link12, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f200,
+            new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR));
     }
 
     /** the helper model. */
@@ -193,8 +181,8 @@ public class CarTest
         /** {@inheritDoc} */
         @Override
         public final void constructModel(
-                final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-                throws SimRuntimeException, RemoteException
+            final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+            throws SimRuntimeException, RemoteException
         {
             this.simulator = (OTSDEVSSimulator) theSimulator;
         }

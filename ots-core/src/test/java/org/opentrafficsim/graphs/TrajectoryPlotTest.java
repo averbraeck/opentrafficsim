@@ -53,8 +53,8 @@ public class TrajectoryPlotTest
         GTUType<String> carType = new GTUType<String>("Car");
         DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
-        Lane lane = CarTest.makeLane();
+        Map<Lane.STR, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
+        Lane.STR lane = CarTest.makeLane();
         initialLongitudinalPositions.put(lane, initialPosition);
         OTSDEVSSimulator simulator = CarTest.makeSimulator();
         // We want to start the car simulation at t=100s; therefore we have to advance the simulator up to that time.
@@ -178,7 +178,7 @@ public class TrajectoryPlotTest
             throws NetworkException, RemoteException
     {
         // XXX we take the first (and only) lane on which the vehicle is registered.
-        Lane lane = car.positions(car.getFront()).keySet().iterator().next();
+        Lane<?, ?> lane = car.positions(car.getFront()).keySet().iterator().next();
         DoubleScalar.Abs<TimeUnit> initialTime = car.getLastEvaluationTime();
         DoubleScalar.Rel<TimeUnit> duration =
                 DoubleScalar.minus(car.getNextEvaluationTime(), car.getLastEvaluationTime()).immutable();

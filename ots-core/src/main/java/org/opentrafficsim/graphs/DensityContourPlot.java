@@ -30,7 +30,7 @@ public class DensityContourPlot extends ContourPlot
      * @param caption String; text to show above the DensityContourPlot
      * @param path List&lt;Lane&gt;; the series of Lanes that will provide the data for this TrajectoryPlot
      */
-    public DensityContourPlot(final String caption, final List<Lane> path)
+    public DensityContourPlot(final String caption, final List<Lane<?, ?>> path)
     {
         super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
                 STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), path, 120d, 10d,

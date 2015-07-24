@@ -22,20 +22,20 @@ import org.jgrapht.graph.DefaultWeightedEdge;
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version Sep 12, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <L> the link type.
+ * @param <LINK> the link type.
  */
-public class LinkEdge<L extends Link<?, ?>> extends DefaultWeightedEdge
+public class LinkEdge<LINK extends Link<?, ?>> extends DefaultWeightedEdge
 {
     /** */
     private static final long serialVersionUID = 1L;
 
     /** edge object. */
-    private L link;
+    private LINK link;
 
     /**
      * @param link the edge to take into the graph.
      */
-    public LinkEdge(final L link)
+    public LinkEdge(final LINK link)
     {
         super();
         this.link = link;
@@ -44,7 +44,7 @@ public class LinkEdge<L extends Link<?, ?>> extends DefaultWeightedEdge
     /**
      * @return the link that is taken as an edge in the graph.
      */
-    public final L getLink()
+    public final LINK getLink()
     {
         return this.link;
     }

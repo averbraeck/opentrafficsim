@@ -1,126 +1,154 @@
 package org.opentrafficsim.core.network;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import org.opentrafficsim.core.network.route.Route;
+
 /**
- * A Network consists of a set of links. Each link has, in its turn, a start node and an end node.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Aug 19, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Jul 22, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <ID> the ID type of the network
- * @param <N> the node type
- * @param <L> the Link type of the network
+ * @param <NODEID> the ID type of the Node, e.g., String.
+ * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public class Network<ID, N extends Node<?, ?>, L extends Link<?, N>> extends HashSet<L> implements Serializable
+public interface Network<LINKID, NODEID>
 {
-    /** */
-    private static final long serialVersionUID = 20150102L;
+    /** @return the nodes. */
+    Map<NODEID, Node<NODEID>> getNodeMap();
 
-    /** network id. */
-    private final ID id;
+    /** @return the links. */
+    Map<LINKID, Link<LINKID, NODEID>> getLinkMap();
 
-    /** HashSet of Nodes. */
-    private Set<N> nodeSet = new HashSet<>();
-
-    /**
-     * Construction of an empty network.
-     * @param id the network id.
-     */
-    public Network(final ID id)
-    {
-        super();
-        this.id = id;
-    }
+    /** @return the defined routes in the network. */
+    Map<String, Route<LINKID, NODEID>> getRouteMap();
 
     /**
-     * Construction of a network with an initial set of links.
-     * @param id the network id.
-     * @param collection the initial collection of links.
+     * @param nodeFrom the start node.
+     * @param nodeTo the end node.
+     * @return the routes between two nodes in the network.
      */
-    public Network(final ID id, final Collection<? extends L> collection)
-    {
-        super(collection);
-        this.id = id;
-    }
+    Set<Route<LINKID, NODEID>> getRoutesBetween(Node<NODEID> nodeFrom, Node<NODEID> nodeTo);
 
     /**
-     * @return id
+     * @param nodeFrom the start node.
+     * @param nodeTo the end node.
+     * @return the shortest route between two nodes in the network.
      */
-    public final ID getId()
-    {
-        return this.id;
-    }
+    Route<LINKID, NODEID> getShortestRouteBetween(Node<NODEID> nodeFrom, Node<NODEID> nodeTo);
 
     /**
-     * @return nodeSet
+     * @param node the node to add to the network.
+     * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public final Set<N> getNodeSet()
-    {
-        return this.nodeSet;
-    }
+    void addNode(Node<NODEID> node) throws NetworkException;
 
     /**
-     * @param nodeSet set nodeSet
+     * @param node the node to remove from the network.
+     * @throws NetworkException if node does not exist in the network.
      */
-    public final void setNodeSet(final Set<N> nodeSet)
-    {
-        this.nodeSet = nodeSet;
-    }
+    void removeNode(Node<NODEID> node) throws NetworkException;
 
     /**
-     * Determine if a node is part of this Network.
-     * @param node AbstractNode&lt;?, ?&gt;; the node
-     * @return true or false
+     * @param node the node to search for in the network.
+     * @return whether the node is in this network
      */
-    public final boolean isInNetwork(final N node)
-    {
-        return this.nodeSet.contains(node);
-    }
+    boolean containsNode(Node<NODEID> node);
 
     /**
-     * Add a node to this Network.
-     * @param node Node; the node that must be added
-     * @throws NetworkException if the node is already part of this network
+     * @param nodeId the id of the node to search for in the network.
+     * @return whether the node is in this network
      */
-    public final void addNode(final N node) throws NetworkException
-    {
-        if (isInNetwork(node))
-        {
-            throw new NetworkException("Adding Node " + node.getId().toString() + ". This Node is  already in the Set");
-        }
-        else
-        {
-            this.nodeSet.add(node);
-        }
-    }
+    boolean containsNode(NODEID nodeId);
 
     /**
-     * Delete a node from this network.
-     * @param deleteThis AbstractNode&lt;?, ?&gt;; the node that must be deleted
-     * @return boolean
-     * @throws NetworkException on network inconsistency Note: method can be overridden, e.g. by the ExpansionNetwork.
+     * @param nodeId the id of the node to search for in the network.
+     * @return the node or null if not present
      */
-    @SuppressWarnings("checkstyle:designforextension")
-    public boolean deleteNode(final N deleteThis) throws NetworkException
-    {
-        // TODO ensure that no Links are orphaned due to removal of the node
-        if (isInNetwork(deleteThis))
-        {
-            this.nodeSet.remove(deleteThis);
-            return true;
-        }
-        // FIXME: It is inconsistent to indicate success by returning true and failure by throwing an exception.
-        throw new NetworkException("Deleting" + deleteThis.getId().toString() + " failed. Possible cause:"
-                + " node is not a member of the given Network");
-    }
+    Node<NODEID> getNode(NODEID nodeId);
+
+    /**
+     * @param link the link to add to the network.
+     * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
+     *             or the end node of the link are not registered in the network.
+     */
+    void addLink(Link<LINKID, NODEID> link) throws NetworkException;
+
+    /**
+     * @param link the link to remove from the network.
+     * @throws NetworkException if link does not exist in the network.
+     */
+    void removeLink(Link<LINKID, NODEID> link) throws NetworkException;
+
+    /**
+     * @param link the link to search for in the network.
+     * @return whether the link is in this network
+     */
+    boolean containsLink(Link<LINKID, NODEID> link);
+
+    /**
+     * @param link the id of the link to search for in the network.
+     * @return whether the link is in this network
+     */
+    boolean containsLink(LINKID link);
+
+    /**
+     * @param linkId the id of the link to search for in the network.
+     * @return the link or null if not present
+     */
+    Link<LINKID, NODEID> getLink(LINKID linkId);
+
+    /**
+     * Find a link between node1 and node2 and return it if it exists in the network. If not, return null.
+     * @param node1 first node
+     * @param node2 second node
+     * @return the link between node1 and node2 in the network or null if it does not exist.
+     */
+    Link<LINKID, NODEID> getLink(Node<NODEID> node1, Node<NODEID> node2);
+    
+    /**
+     * Find a link between node1 and node2 and return it if it exists in the network. If not, return null.
+     * @param node1 id of the first node
+     * @param node2 id of the second node
+     * @return the link between node1 and node2 in the network or null if it does not exist.
+     * @throws NetworkException if the node(s) cannot be found by their id
+     */
+    Link<LINKID, NODEID> getLink(NODEID node1, NODEID node2) throws NetworkException;
+    
+    /**
+     * @param route the route to add to the network.
+     * @throws NetworkException if route already exists in the network, if name of the route is not unique, if one of the nodes
+     *             of the route are not registered in the network.
+     */
+    void addRoute(Route<LINKID, NODEID> route) throws NetworkException;
+
+    /**
+     * @param route the route to remove from the network.
+     * @throws NetworkException if route does not exist in the network.
+     */
+    void removeRoute(Route<LINKID, NODEID> route) throws NetworkException;
+
+    /**
+     * @param route the route to search for in the network.
+     * @return whether the route is in this network
+     */
+    boolean containsRoute(Route<LINKID, NODEID> route);
+    
+    /**
+     * @param routeId the route to search for in the network.
+     * @return whether the route is in this network
+     */
+    boolean containsRoute(String routeId);
+    
+    /**
+     * @param routeId the route to search for in the network.
+     * @return the route or null if not present
+     */
+    Route<LINKID, NODEID> getRoute(String routeId);
 }

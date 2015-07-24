@@ -29,10 +29,11 @@ public class SensorLaneStart extends AbstractSensor
     /**
      * Place a sensor that is triggered with the front of the GTU at the start of the lane.
      * @param lane The lane for which this is a sensor.
+     * @param name the name of the sensor.
      */
-    public SensorLaneStart(final Lane lane)
+    public SensorLaneStart(final Lane<?, ?> lane, final String name)
     {
-        super(lane, new DoubleScalar.Rel<LengthUnit>(Math.ulp(0.0), LengthUnit.METER), RelativePosition.FRONT);
+        super(lane, new DoubleScalar.Rel<LengthUnit>(Math.ulp(0.0), LengthUnit.METER), RelativePosition.FRONT, name);
     }
 
     /**
@@ -44,17 +45,6 @@ public class SensorLaneStart extends AbstractSensor
     @Override
     public final void trigger(final LaneBasedGTU<?> gtu) throws RemoteException
     {
-        /*-
-        try
-        {
-            System.out.println(gtu.getSimulator().getSimulatorTime().get() + ": adding " + gtu + " at start of lane " 
-                    + getLane());
-        }
-        catch (RemoteException exception)
-        {
-            exception.printStackTrace();
-        }
-         */
         try
         {
             // if the GTU has the front as its reference point: it enters with its front.

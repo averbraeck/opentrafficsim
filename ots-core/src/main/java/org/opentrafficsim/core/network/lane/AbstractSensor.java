@@ -7,12 +7,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Dec 31, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Dec 31, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -22,7 +21,7 @@ public abstract class AbstractSensor implements Sensor
     private static final long serialVersionUID = 20141231L;
 
     /** The lane for which this is a sensor. */
-    private final Lane lane;
+    private final Lane<?, ?> lane;
 
     /** The position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane in SI units. */
     private final double longitudinalPositionSI;
@@ -30,24 +29,29 @@ public abstract class AbstractSensor implements Sensor
     /** the relative position of the vehicle that triggers the sensor. */
     private final RelativePosition.TYPE positionType;
 
+    /** the name of the sensor. */
+    private final String name;
+
     /**
      * @param lane The lane for which this is a sensor.
-     * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the position (between 0.0 and the length of the
-     *            Lane) of the sensor on the design line of the lane.
-     * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that
-     *            triggers the sensor.
+     * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the position (between 0.0 and the length of the Lane) of
+     *            the sensor on the design line of the lane.
+     * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
+     *            the sensor.
+     * @param name the name of the sensor.
      */
-    public AbstractSensor(final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
-            final RelativePosition.TYPE positionType)
+    public AbstractSensor(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
+        final RelativePosition.TYPE positionType, final String name)
     {
         this.lane = lane;
         this.longitudinalPositionSI = longitudinalPosition.getSI();
         this.positionType = positionType;
+        this.name = name;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Lane getLane()
+    public final Lane<?, ?> getLane()
     {
         return this.lane;
     }
@@ -71,6 +75,14 @@ public abstract class AbstractSensor implements Sensor
     public final double getLongitudinalPositionSI()
     {
         return this.longitudinalPositionSI;
+    }
+
+    /**
+     * @return name.
+     */
+    public final String getName()
+    {
+        return this.name;
     }
 
     /** {@inheritDoc} */
@@ -107,8 +119,7 @@ public abstract class AbstractSensor implements Sensor
         }
         else if (!this.lane.equals(other.lane))
             return false;
-        if (Double.doubleToLongBits(this.longitudinalPositionSI) != Double
-                .doubleToLongBits(other.longitudinalPositionSI))
+        if (Double.doubleToLongBits(this.longitudinalPositionSI) != Double.doubleToLongBits(other.longitudinalPositionSI))
             return false;
         if (this.positionType == null)
         {
