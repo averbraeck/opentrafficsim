@@ -62,8 +62,8 @@ public class XmlNetworkLaneParser
     protected Map<String, Link> links = new HashMap<>();
 
     /** the UNprocessed links for further reference. */
-    // @SuppressWarnings("visibilitymodifier")
-    // protected Map<String, LinkTag> linkTags = new HashMap<>();
+     @SuppressWarnings("visibilitymodifier")
+     protected Map<String, LinkTag> linkTags = new HashMap<>();
     
      /** the gtu tags for further reference. */
      @SuppressWarnings("visibilitymodifier")
@@ -152,7 +152,7 @@ public class XmlNetworkLaneParser
         LaneTypeTag.parseCompatibilities(nodeList, this);
         RoadTypeTag.parseRoadTypes(nodeList, this);
         NodeTag.parseNodes(nodeList, this);
-        // parseLinks();
+        // LinkTag.parseLinks(nodeList, this);
         // parseRoutes();
 
         // process the information for which multiple tags have to be combined
@@ -191,6 +191,7 @@ public class XmlNetworkLaneParser
                 this.nodes.putAll(includeParser.nodes);
                 this.roadTypeTags.putAll(includeParser.roadTypeTags);
                 this.nodeTags.putAll(includeParser.nodeTags);
+                this.linkTags.putAll(includeParser.linkTags);
                 // this.routeMixTags.putAll(includeParser.routeMixTags);
                 // this.routeTags.putAll(includeParser.routeTags);
                 // this.shortestRouteMixTags.putAll(includeParser.shortestRouteMixTags);

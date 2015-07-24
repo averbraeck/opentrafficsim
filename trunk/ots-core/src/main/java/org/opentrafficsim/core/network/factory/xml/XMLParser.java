@@ -3,6 +3,7 @@ package org.opentrafficsim.core.network.factory.xml;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opentrafficsim.core.network.NetworkException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -45,6 +46,44 @@ final class XMLParser
         }
         return result;
     }
+
+    /**
+     * Generate an ID of the right type.
+     * @param clazz the class to instantiate.
+     * @param ids the id as a String.
+     * @return the object as an instance of the right class.
+     * @throws NetworkException when id cannot be instantiated
+     */
+    public static Object makeId(final Class<?> clazz, final String ids) throws NetworkException
+    {
+        Object id = null;
+        try
+        {
+            if (String.class.isAssignableFrom(clazz))
+            {
+                id = new String(ids);
+            }
+            else if (int.class.isAssignableFrom(clazz))
+            {
+                id = Integer.valueOf(ids);
+            }
+            else if (long.class.isAssignableFrom(clazz))
+            {
+                id = Long.valueOf(ids);
+            }
+            else
+            {
+                throw new NetworkException("Parsing network. ID class " + clazz.getName() + ": cannot instantiate.");
+            }
+        }
+        catch (NumberFormatException nfe)
+        {
+            throw new NetworkException("Parsing network. ID class " + clazz.getName() + ": cannot instantiate number: "
+                + ids, nfe);
+        }
+        return id;
+    }
+
 
 }
 
