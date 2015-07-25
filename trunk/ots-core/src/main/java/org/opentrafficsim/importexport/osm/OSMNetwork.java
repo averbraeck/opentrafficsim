@@ -14,12 +14,11 @@ import org.opentrafficsim.importexport.osm.events.WarningListener;
 /**
  * Container for all imported entities of an OpenStreetMap file.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 31 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 31 dec. 2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
 public class OSMNetwork
@@ -108,8 +107,8 @@ public class OSMNetwork
 
     /**
      * Retrieve the map of OSMRelations of this OSMNetwork.
-     * @return Map&lt;Long, OSMRelation&gt;; the map of all OSMRelations in the network (modifications of the returned
-     *         object are reflected in this OSMNetwork)
+     * @return Map&lt;Long, OSMRelation&gt;; the map of all OSMRelations in the network (modifications of the returned object
+     *         are reflected in this OSMNetwork)
      */
     public final Map<Long, OSMRelation> getRelations()
     {
@@ -183,8 +182,8 @@ public class OSMNetwork
 
     /**
      * Retrieve the map of OSMWays of this OSMNetwork.
-     * @return ways Map&lt;Long, OSMWay&gt;; the map of OSMWays of this OSMNetwork; modifications of the result are
-     *         reflected in this OSMNetwork
+     * @return ways Map&lt;Long, OSMWay&gt;; the map of OSMWays of this OSMNetwork; modifications of the result are reflected in
+     *         this OSMNetwork
      */
     public final Map<Long, OSMWay> getWays()
     {
@@ -193,8 +192,8 @@ public class OSMNetwork
 
     /**
      * Retrieve the list of OSMLinks of this OSMNetwork.
-     * @return links List&lt;OSMLink&gt;; the list of OSMLinks of this OSMNetwork; modifications of the result are
-     *         reflected in this OSMNetwork
+     * @return links List&lt;OSMLink&gt;; the list of OSMLinks of this OSMNetwork; modifications of the result are reflected in
+     *         this OSMNetwork
      */
     public final List<OSMLink> getLinks()
     {
@@ -208,7 +207,7 @@ public class OSMNetwork
      * @throws IOException on read errors
      */
     public final void makeLinks(final WarningListener warningListener, final ProgressListener progressListener)
-            throws IOException
+        throws IOException
     {
         progressListener.progress(new ProgressEvent(this, "Starting link creation:"));
 
@@ -229,18 +228,17 @@ public class OSMNetwork
                 // Something similar occurs in Duesseldorf (PK), but here the node ids are different; work-around below
                 if (fromNode.getLatitude() == toNode.getLatitude() && fromNode.getLongitude() == toNode.getLongitude())
                 {
-                    warningListener.warning(new WarningEvent(this, String.format("Node clash %s vs %s", fromNode,
-                            toNode)));
+                    warningListener.warning(new WarningEvent(this, String.format("Node clash %s vs %s", fromNode, toNode)));
                     // FIXME: should probably assign all link end points of toNode to fromNode
                     continue;
                 }
                 newLinks.add(new OSMLink(fromNode, toNode, osmWay.getTags(), distanceLongLat(fromNode, toNode),
-                        warningListener));
+                    warningListener));
             }
         }
         this.links = newLinks;
-        progressListener.progress(new ProgressEvent(this, "Link creation finished. Created " + this.links.size()
-                + " links."));
+        progressListener
+            .progress(new ProgressEvent(this, "Link creation finished. Created " + this.links.size() + " links."));
     }
 
     /**
@@ -272,8 +270,8 @@ public class OSMNetwork
     }
 
     /**
-     * FIXME Network looks 'crooked' after using this. This function checks for and removes redundancies between the
-     * networks links.
+     * FIXME Network looks 'crooked' after using this. This function checks for and removes redundancies between the networks
+     * links.
      */
     public final void removeRedundancy()
     {
@@ -287,8 +285,7 @@ public class OSMNetwork
 
     /**
      * This function checks the networks links for redundancy.
-     * @return boolean; true if the Network was modified (further reduction may be possible by calling this method
-     *         again)
+     * @return boolean; true if the Network was modified (further reduction may be possible by calling this method again)
      */
     private boolean redundancyCheck()
     {
@@ -325,9 +322,9 @@ public class OSMNetwork
                     }
                 }
                 if (link1.getEnd().equals(link2.getStart()) && link1Name.equalsIgnoreCase(link2Name)
-                        && link1.getEnd().hasNoTags() && link1.containsAllTags(link2.getTags())
-                        && link1.getLanes() == link2.getLanes() && link1.getForwardLanes() == link2.getForwardLanes()
-                        && link1.getStart() != link2.getEnd())
+                    && link1.getEnd().hasNoTags() && link1.containsAllTags(link2.getTags())
+                    && link1.getLanes() == link2.getLanes() && link1.getForwardLanes() == link2.getForwardLanes()
+                    && link1.getStart() != link2.getEnd())
                 {
                     if (removedLinks.contains(link1))
                     {
@@ -343,8 +340,8 @@ public class OSMNetwork
                     }
                     redundancyRemoved = true;
                     OSMLink replacementLink =
-                            new OSMLink(link1.getStart(), link2.getEnd(), link1.getTags(), link1.getLength()
-                                    + link2.getLength(), link1.getLanes(), link1.getForwardLanes());
+                        new OSMLink(link1.getStart(), link2.getEnd(), link1.getTags(),
+                            link1.getLength() + link2.getLength(), link1.getLanes(), link1.getForwardLanes());
                     if (!link1.getSplineList().isEmpty())
                     {
                         for (OSMNode n1 : link1.getSplineList())
@@ -374,8 +371,7 @@ public class OSMNetwork
     /**
      * Finds the link that follows a given OSMLink.
      * @param link OSMLink for which a successor OSMLink is sought
-     * @return OSMLink (one of) the successor OSMLink(s) of the given OSMLink, or null if the given OSMLink has no
-     *         successors
+     * @return OSMLink (one of) the successor OSMLink(s) of the given OSMLink, or null if the given OSMLink has no successors
      */
     public final OSMLink findFollowingLink(final OSMLink link)
     {

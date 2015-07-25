@@ -23,12 +23,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
  * Common code for a family of lane change models like in M. Treiber and A. Kesting <i>Traffic Flow Dynamics</i>,
  * Springer-Verlag Berlin Heidelberg 2013, pp 239-244.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
- *          $, initial version 4 nov. 2014 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$,
+ *          initial version 4 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public abstract class AbstractLaneChangeModel implements LaneChangeModel
@@ -37,11 +36,11 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
     public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
-            final Collection<HeadwayGTU> sameLaneGTUs, final Collection<HeadwayGTU> preferredLaneGTUs,
-            final Collection<HeadwayGTU> nonPreferredLaneGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit,
-            final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
-            final DoubleScalar.Rel<AccelerationUnit> laneChangeThreshold,
-            final DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException
+        final Collection<HeadwayGTU> sameLaneGTUs, final Collection<HeadwayGTU> preferredLaneGTUs,
+        final Collection<HeadwayGTU> nonPreferredLaneGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit,
+        final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
+        final DoubleScalar.Rel<AccelerationUnit> laneChangeThreshold,
+        final DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException
     {
         try
         {
@@ -59,7 +58,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;
             final LateralDirectionality nonPreferred = LateralDirectionality.LEFT;
             Lane<?, ?> nonPreferredLane =
-                    lane.bestAccessibleAdjacentLane(nonPreferred, longitudinalPosition, gtu.getGTUType());
+                lane.bestAccessibleAdjacentLane(nonPreferred, longitudinalPosition, gtu.getGTUType());
             Lane<?, ?> preferredLane = lane.bestAccessibleAdjacentLane(preferred, longitudinalPosition, gtu.getGTUType());
             GTUFollowingModel gtuFollowingModel = gtu.getGTUFollowingModel();
             if (null == gtuFollowingModel)
@@ -67,37 +66,36 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 throw new Error("GTU " + gtu + " has null GTUFollowingModel");
             }
             DualAccelerationStep straightAccelerationSteps =
-                    gtuFollowingModel.computeAcceleration(gtu, sameLaneGTUs, speedLimit);
+                gtuFollowingModel.computeAcceleration(gtu, sameLaneGTUs, speedLimit);
             if (straightAccelerationSteps.getLeaderAcceleration().getSI() < -9999)
             {
                 System.out.println("Problem");
                 gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneGTUs, speedLimit);
             }
             DoubleScalar.Abs<AccelerationUnit> straightA =
-                    DoubleScalar.plus(applyDriverPersonality(straightAccelerationSteps), laneChangeThreshold)
-                            .immutable();
+                DoubleScalar.plus(applyDriverPersonality(straightAccelerationSteps), laneChangeThreshold).immutable();
             DualAccelerationStep nonPreferrredAccelerationSteps =
-                    null == nonPreferredLane ? null : gtu.getGTUFollowingModel().computeAcceleration(gtu,
-                            nonPreferredLaneGTUs, speedLimit);
+                null == nonPreferredLane ? null : gtu.getGTUFollowingModel().computeAcceleration(gtu, nonPreferredLaneGTUs,
+                    speedLimit);
             if (null != nonPreferrredAccelerationSteps
-                    && nonPreferrredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getGTUFollowingModel()
-                            .maximumSafeDeceleration().getSI())
+                && nonPreferrredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getGTUFollowingModel()
+                    .maximumSafeDeceleration().getSI())
             {
                 nonPreferrredAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
             }
             DoubleScalar.Abs<AccelerationUnit> nonPreferredA =
-                    null == nonPreferredLane ? null : applyDriverPersonality(nonPreferrredAccelerationSteps);
+                null == nonPreferredLane ? null : applyDriverPersonality(nonPreferrredAccelerationSteps);
             DualAccelerationStep preferredAccelerationSteps =
-                    null == preferredLane ? null : gtu.getGTUFollowingModel().computeAcceleration(gtu,
-                            preferredLaneGTUs, speedLimit);
+                null == preferredLane ? null : gtu.getGTUFollowingModel().computeAcceleration(gtu, preferredLaneGTUs,
+                    speedLimit);
             if (null != preferredAccelerationSteps
-                    && preferredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getGTUFollowingModel()
-                            .maximumSafeDeceleration().getSI())
+                && preferredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getGTUFollowingModel()
+                    .maximumSafeDeceleration().getSI())
             {
                 preferredAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
             }
             DoubleScalar.Abs<AccelerationUnit> preferredA =
-                    null == preferredLane ? null : applyDriverPersonality(preferredAccelerationSteps);
+                null == preferredLane ? null : applyDriverPersonality(preferredAccelerationSteps);
             if (null == preferredA)
             {
                 // Lane change to the preferred lane is not possible
@@ -112,8 +110,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                     if (DoubleScalar.plus(nonPreferredA, nonPreferredLaneRouteIncentive).gt(straightA))
                     {
                         // Merge to the nonPreferred lane; i.e. start an overtaking procedure
-                        return new LaneMovementStep(nonPreferrredAccelerationSteps.getLeaderAccelerationStep(),
-                                nonPreferred);
+                        return new LaneMovementStep(nonPreferrredAccelerationSteps.getLeaderAccelerationStep(), nonPreferred);
                     }
                     else
                     {
@@ -139,11 +136,11 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             }
             // All merges are possible
             DoubleScalar.Rel<AccelerationUnit> preferredAttractiveness =
-                    DoubleScalar.minus(DoubleScalar.plus(preferredA, preferredLaneRouteIncentive).immutable(),
-                            straightA).immutable();
+                DoubleScalar.minus(DoubleScalar.plus(preferredA, preferredLaneRouteIncentive).immutable(), straightA)
+                    .immutable();
             DoubleScalar.Rel<AccelerationUnit> nonPreferredAttractiveness =
-                    DoubleScalar.minus(DoubleScalar.plus(nonPreferredA, nonPreferredLaneRouteIncentive).immutable(),
-                            straightA).immutable();
+                DoubleScalar.minus(DoubleScalar.plus(nonPreferredA, nonPreferredLaneRouteIncentive).immutable(), straightA)
+                    .immutable();
             if (preferredAttractiveness.getSI() <= 0 && nonPreferredAttractiveness.getSI() < 0)
             {
                 // Stay in current lane
@@ -162,18 +159,17 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
         {
             exception.printStackTrace();
         }
-        throw new Error(
-                "Cannot happen: computeLaneChangeAndAcceleration failed to decide whether or not to change lane");
+        throw new Error("Cannot happen: computeLaneChangeAndAcceleration failed to decide whether or not to change lane");
     }
 
     /**
-     * Return the weighted acceleration as described by the personality. This incorporates the personality of the driver
-     * to the lane change decisions.
-     * @param accelerationSteps DualAccelerationStep; the DualAccelerationStep that contains the AccelerationStep that
-     *            the reference GTU will make and the AccelerationStep that the (new) follower GTU will make
+     * Return the weighted acceleration as described by the personality. This incorporates the personality of the driver to the
+     * lane change decisions.
+     * @param accelerationSteps DualAccelerationStep; the DualAccelerationStep that contains the AccelerationStep that the
+     *            reference GTU will make and the AccelerationStep that the (new) follower GTU will make
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration that the personality of the driver uses (in a
-     *         comparison to a similarly computed acceleration in the non-, or different-lane-changed state) to decide
-     *         if a lane change should be performed
+     *         comparison to a similarly computed acceleration in the non-, or different-lane-changed state) to decide if a lane
+     *         change should be performed
      */
     public abstract DoubleScalar.Abs<AccelerationUnit> applyDriverPersonality(DualAccelerationStep accelerationSteps);
 }

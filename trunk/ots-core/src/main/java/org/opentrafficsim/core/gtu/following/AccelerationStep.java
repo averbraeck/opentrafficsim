@@ -6,15 +6,13 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Storage for the result of a GTU following model. <br>
- * Currently the result is restricted to a constant acceleration during the period of validity (the time slot) of the
- * result.
+ * Currently the result is restricted to a constant acceleration during the period of validity (the time slot) of the result.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
- *          $, initial version 6 feb. 2015 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$,
+ *          initial version 6 feb. 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -32,7 +30,7 @@ public class AccelerationStep
      * @param validUntil DoubleScalarAbs&lt;TimeUnit&gt;; time when this result expires
      */
     public AccelerationStep(final DoubleScalar.Abs<AccelerationUnit> acceleration,
-            final DoubleScalar.Abs<TimeUnit> validUntil)
+        final DoubleScalar.Abs<TimeUnit> validUntil)
     {
         this.acceleration = acceleration;
         this.validUntil = validUntil;

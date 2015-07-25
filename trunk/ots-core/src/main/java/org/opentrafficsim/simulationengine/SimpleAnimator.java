@@ -16,16 +16,14 @@ import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 11 mei 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 11 mei 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -49,24 +47,24 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
      * @throws NamingException when context for the animation cannot be created
      */
     public SimpleAnimator(final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
-            final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
-            SimRuntimeException, NamingException
+        final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
+        SimRuntimeException, NamingException
     {
         setPauseOnError(true);
         initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime), warmupPeriod,
-                runLength, model), ReplicationMode.TERMINATING);
+            runLength, model), ReplicationMode.TERMINATING);
     }
 
     /**
      * {@inheritDoc}
      */
     public final SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime,
-            final short priority, final Object source, final Object target, final String method, final Object[] args)
-            throws SimRuntimeException
+        final short priority, final Object source, final Object target, final String method, final Object[] args)
+        throws SimRuntimeException
     {
         SimEvent<OTSSimTimeDouble> result =
-                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(
-                        executionTime.getSI(), TimeUnit.SECOND)), priority, source, target, method, args);
+            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(executionTime.getSI(),
+                TimeUnit.SECOND)), priority, source, target, method, args);
         scheduleEvent(result);
         return result;
     }
@@ -86,7 +84,7 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
         DoubleScalar.Rel<TimeUnit> r10 = this.relativeMillis(10.0 * factor); // sim clock change for 10 msec wall clock
 
         while (this.isRunning() && !this.eventList.isEmpty()
-                && this.simulatorTime.le(this.replication.getTreatment().getEndTime()))
+            && this.simulatorTime.le(this.replication.getTreatment().getEndTime()))
         {
             // check if speedFactor has changed. If yes: re-baseline.
             if (factor != getSpeedFactor())
@@ -99,13 +97,12 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
 
             // peek at the first event and determine the time difference relative to RT speed.
             SimEventInterface<OTSSimTimeDouble> event = this.eventList.first();
-            double simTimeDiffMillis =
-                    (event.getAbsoluteExecutionTime().minus(simTime0)).doubleValue() / (msec1 * factor);
+            double simTimeDiffMillis = (event.getAbsoluteExecutionTime().minus(simTime0)).doubleValue() / (msec1 * factor);
 
             /*
-             * simTimeDiff gives the number of milliseconds between the last event and this event. if speed == 1, this
-             * is the number of milliseconds we have to wait. if speed == 10, we have to wait 1/10 of that. If the speed
-             * == 0.1, we have to wait 10 times that amount. We might also be behind.
+             * simTimeDiff gives the number of milliseconds between the last event and this event. if speed == 1, this is the
+             * number of milliseconds we have to wait. if speed == 10, we have to wait 1/10 of that. If the speed == 0.1, we
+             * have to wait 10 times that amount. We might also be behind.
              */
             if (simTimeDiffMillis < (System.currentTimeMillis() - clockTime0))
             {
@@ -161,7 +158,7 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
 
                 // carry out all events scheduled on this simulation time, as long as we are still running.
                 while (this.isRunning() && !this.eventList.isEmpty()
-                        && event.getAbsoluteExecutionTime().eq(this.simulatorTime))
+                    && event.getAbsoluteExecutionTime().eq(this.simulatorTime))
                 {
                     event = this.eventList.removeFirst();
                     try

@@ -28,12 +28,11 @@ import org.opentrafficsim.importexport.osm.events.ProgressListener;
 /**
  * Build a structure from the elements in an OSM file.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 31 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 31 dec. 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/mzhang">Mingxin Zhang </a>
  * @author <a>Moritz Bergmann</a>
  */
@@ -133,8 +132,7 @@ public class OSMParser implements Sink
             {
                 for (Tag wantedTag : this.wantedTags)
                 {
-                    if (entityTag.getKey().equals(wantedTag.getKey())
-                            && entityTag.getValue().equals(wantedTag.getValue()))
+                    if (entityTag.getKey().equals(wantedTag.getKey()) && entityTag.getValue().equals(wantedTag.getValue()))
                     {
                         wanted = true;
                         break checkTags;
@@ -208,8 +206,7 @@ public class OSMParser implements Sink
             }
             if (++counter / total * 100 >= nextPercentage)
             {
-                this.progressListener
-                        .progress(new ProgressEvent(this, "Removing unused nodes " + nextPercentage + "%"));
+                this.progressListener.progress(new ProgressEvent(this, "Removing unused nodes " + nextPercentage + "%"));
                 nextPercentage += percentageStep;
             }
         }
@@ -232,8 +229,7 @@ public class OSMParser implements Sink
             }
             if (++counter / total * 100 >= nextPercentage)
             {
-                this.progressListener
-                        .progress(new ProgressEvent(this, "Removing unused nodes " + nextPercentage + "%"));
+                this.progressListener.progress(new ProgressEvent(this, "Removing unused nodes " + nextPercentage + "%"));
                 nextPercentage += percentageStep;
             }
         }

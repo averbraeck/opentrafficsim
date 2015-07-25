@@ -12,12 +12,11 @@ import org.opentrafficsim.core.locale.DefaultLocale;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Jun 6, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class MassUnitTest extends AbstractUnitTest<MassUnit>
@@ -53,7 +52,7 @@ public class MassUnitTest extends AbstractUnitTest<MassUnit>
         // Check two conversions between non-standard units
         assertEquals("one POUND is 16 OUNCE", 16, getMultiplicationFactorTo(MassUnit.POUND, MassUnit.OUNCE), 0.00001);
         assertEquals("one OUNCE is 0.0625 POUND", 0.0625, getMultiplicationFactorTo(MassUnit.OUNCE, MassUnit.POUND),
-                0.000001);
+            0.000001);
         // Check conversion factor to standard unit for all remaining time units
         checkUnitRatioNameAndAbbreviation(MassUnit.OUNCE, 0.0283495, 0.0000001, "ounce", "oz");
         checkUnitRatioNameAndAbbreviation(MassUnit.TON_LONG, 1016.046906, 0.00001, "long ton", "long tn");
@@ -68,8 +67,8 @@ public class MassUnitTest extends AbstractUnitTest<MassUnit>
     public final void createMassUnit()
     {
         MassUnit myMU =
-                new MassUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "MassUnit.Person",
-                        UnitLocalizationsTest.DONOTCHECKPREFIX + "MassUnit.pn", OTHER, MassUnit.KILOGRAM, 80);
+            new MassUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "MassUnit.Person", UnitLocalizationsTest.DONOTCHECKPREFIX
+                + "MassUnit.pn", OTHER, MassUnit.KILOGRAM, 80);
         assertTrue("Can create a new MassUnit", null != myMU);
         checkUnitRatioNameAndAbbreviation(myMU, 80, 1, "!Person!", "!pn!");
     }

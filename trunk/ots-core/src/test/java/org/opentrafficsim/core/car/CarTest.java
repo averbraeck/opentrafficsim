@@ -47,7 +47,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 /**
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$,
  * initial version Jul 11, 2014 <br>
@@ -160,7 +160,7 @@ public class CarTest
     {
         OTSNode.STR n1 = new OTSNode.STR("n1", new OTSPoint3D(0, 0));
         OTSNode.STR n2 = new OTSNode.STR("n2", new OTSPoint3D(10000.0, 0.0));
-        OTSPoint3D[] coordinates = new OTSPoint3D[] {new OTSPoint3D(0.0, 0.0), new OTSPoint3D(10000.0, 0.0)};
+        OTSPoint3D[] coordinates = new OTSPoint3D[]{new OTSPoint3D(0.0, 0.0), new OTSPoint3D(10000.0, 0.0)};
         CrossSectionLink.STR link12 = new CrossSectionLink.STR("link12", n1, n2, new OTSLine3D(coordinates));
         DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);

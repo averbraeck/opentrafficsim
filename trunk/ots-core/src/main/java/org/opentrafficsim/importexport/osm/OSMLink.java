@@ -10,12 +10,11 @@ import org.opentrafficsim.importexport.osm.events.WarningListener;
 /**
  * OpenStreetMap Link.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 31 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 31 dec. 2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
 public class OSMLink
@@ -51,13 +50,12 @@ public class OSMLink
      * Construct a new OSMLink.
      * @param fromNode OSMNode; the OSMNode where this OSMLinks begins
      * @param toNode OSMNode; the OSMNode where this OSMLink ends
-     * @param tags List&lt;OSMTab&gt;; the OSMTags (inherited from the OSMWay that causes this OSMLink to be
-     *            constructed)
+     * @param tags List&lt;OSMTab&gt;; the OSMTags (inherited from the OSMWay that causes this OSMLink to be constructed)
      * @param length double; the length of the new OSMLink
      * @param warningListener WarningListener; the warning listener that will receive warning events
      */
     public OSMLink(final OSMNode fromNode, final OSMNode toNode, final List<OSMTag> tags, final double length,
-            final WarningListener warningListener)
+        final WarningListener warningListener)
     {
         if (fromNode == toNode)
         {
@@ -100,8 +98,8 @@ public class OSMLink
                 this.forwardLanes = this.lanes;
             }
             if (tag.getKey().equals("highway")
-                    && (tag.getValue().equals("cycleway") || tag.getValue().equals("footway")
-                            || tag.getValue().equals("pedestrian") || tag.getValue().equals("steps")))
+                && (tag.getValue().equals("cycleway") || tag.getValue().equals("footway")
+                    || tag.getValue().equals("pedestrian") || tag.getValue().equals("steps")))
             {
                 this.lanes = 1;
             }
@@ -162,7 +160,7 @@ public class OSMLink
      * @param flanes byte; the number of forward lanes
      */
     public OSMLink(final OSMNode startNode, final OSMNode endNode, final List<OSMTag> tags, final double length,
-            final byte lanes, final byte flanes)
+        final byte lanes, final byte flanes)
     {
         if (startNode == endNode)
         {
@@ -204,8 +202,8 @@ public class OSMLink
 
     /**
      * Retrieve the tags of this OSMLink.
-     * @return List&lt;OSMTab&gt;; the returned object is a copy; modifications of the returned object do not affect
-     *         this OSMLink
+     * @return List&lt;OSMTab&gt;; the returned object is a copy; modifications of the returned object do not affect this
+     *         OSMLink
      */
     public final List<OSMTag> getTags()
     {
@@ -240,8 +238,8 @@ public class OSMLink
     }
 
     /**
-     * Retrieve the total number of forward lanes on this OSMLink; forward lanes are lanes that may only be traveled
-     * from startNode towards endNode.
+     * Retrieve the total number of forward lanes on this OSMLink; forward lanes are lanes that may only be traveled from
+     * startNode towards endNode.
      * @return byte; the number of forward lanes on this OSMLink
      */
     public final byte getForwardLanes()

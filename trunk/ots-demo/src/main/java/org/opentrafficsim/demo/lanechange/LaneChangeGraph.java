@@ -72,7 +72,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version 18 nov. 2014 <br>
@@ -288,8 +288,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
                         new NodeGeotools.STR("From", new Coordinate(LOWERBOUND.getSI(), 0, 0)), new NodeGeotools.STR(
                                 "To", new Coordinate(UPPERBOUND.getSI(), 0, 0)), null, 2, laneType, speedLimit, null);
         // Create the reference vehicle
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
-                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane.STR, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
+                new LinkedHashMap<Lane.STR, DoubleScalar.Rel<LengthUnit>>();
         initialLongitudinalPositions.put(lanes[mergeRight ? 0 : 1], new DoubleScalar.Rel<LengthUnit>(0,
                 LengthUnit.METER));
         // The reference car only needs a simulator
@@ -314,7 +314,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
                         initialLongitudinalPositions, referenceSpeed, new DoubleScalar.Rel<LengthUnit>(4,
                                 LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
                         new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR), new Route(
-                                new ArrayList<Node<?, ?>>()), simpleSimulator);
+                                new ArrayList<Node<?>>()), simpleSimulator);
         Collection<HeadwayGTU> sameLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         sameLaneGTUs.add(new HeadwayGTU(referenceCar, 0));
         // TODO play with the speed limit
@@ -385,8 +385,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
             final Lane otherCarLane, final DoubleScalar.Rel<SpeedUnit> deltaV, final boolean mergeRight)
             throws RemoteException, NamingException, NetworkException, SimRuntimeException, GTUException
     {
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
-                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane.STR, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
+                new LinkedHashMap<Lane.STR, DoubleScalar.Rel<LengthUnit>>();
         initialLongitudinalPositions.put(otherCarLane, otherCarPosition);
         LaneBasedIndividualCar<String> otherCar =
                 new LaneBasedIndividualCar<String>("otherCar", referenceCar.getGTUType(), this.carFollowingModel,
@@ -394,7 +394,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
                                 referenceCar.getLongitudinalVelocity(), deltaV).immutable(),
                         new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(2,
                                 LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR),
-                        new Route(new ArrayList<Node<?, ?>>()), referenceCar.getSimulator());
+                        new Route(new ArrayList<Node<?>>()), referenceCar.getSimulator());
         Collection<HeadwayGTU> preferredLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         Collection<HeadwayGTU> nonPreferredLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         DoubleScalar.Rel<LengthUnit> referenceCarPosition =

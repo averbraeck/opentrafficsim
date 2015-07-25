@@ -3,12 +3,11 @@ package org.opentrafficsim.simulationengine.properties;
 /**
  * Continuous property.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 30 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 30 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class ContinuousProperty extends AbstractProperty<Double>
@@ -47,8 +46,8 @@ public class ContinuousProperty extends AbstractProperty<Double>
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public ContinuousProperty(final String shortName, final String description, final Double initialValue,
-            final Double minimumValue, final Double maximumValue, final String formatString, final boolean readOnly,
-            final int displayPriority)
+        final Double minimumValue, final Double maximumValue, final String formatString, final boolean readOnly,
+        final int displayPriority)
     {
         super(displayPriority);
         this.shortName = shortName;
@@ -108,7 +107,7 @@ public class ContinuousProperty extends AbstractProperty<Double>
         if (this.minimumValue > newValue || this.maximumValue < newValue)
         {
             throw new PropertyException("new value " + newValue + " is out of valid range (" + this.minimumValue + ".."
-                    + this.maximumValue + ")");
+                + this.maximumValue + ")");
         }
         this.value = newValue;
     }
@@ -139,8 +138,8 @@ public class ContinuousProperty extends AbstractProperty<Double>
     @Override
     public AbstractProperty<Double> deepCopy()
     {
-        return new ContinuousProperty(this.shortName, this.description, this.value, this.minimumValue,
-                this.maximumValue, this.format, this.readOnly, getDisplayPriority());
+        return new ContinuousProperty(this.shortName, this.description, this.value, this.minimumValue, this.maximumValue,
+            this.format, this.readOnly, getDisplayPriority());
     }
 
 }

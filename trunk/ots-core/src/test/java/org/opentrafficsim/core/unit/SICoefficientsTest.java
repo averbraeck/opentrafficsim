@@ -8,20 +8,18 @@ import org.junit.Test;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Jun 18, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Jun 18, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class SICoefficientsTest
 {
     /**
-     * Currently the parser throws an Error if something is not right. This behavior may be changed in the future. To
-     * prevent the need to rewrite all parser tests, this wrapper will catch those error and assume null when they
-     * occur.
+     * Currently the parser throws an Error if something is not right. This behavior may be changed in the future. To prevent
+     * the need to rewrite all parser tests, this wrapper will catch those error and assume null when they occur.
      * @param inputString String; the coefficientString to parse
      * @param expectedResult String; the expected output
      */
@@ -38,8 +36,7 @@ public class SICoefficientsTest
             return;
         }
         assertTrue("input \"" + inputString + "\" should not have been parseable", null != expectedResult);
-        assertEquals("input \"" + inputString + "\" did not yield the expected result", expectedResult,
-                result.toString());
+        assertEquals("input \"" + inputString + "\" did not yield the expected result", expectedResult, result.toString());
     }
 
     /**
@@ -89,7 +86,7 @@ public class SICoefficientsTest
             SICoefficients right = new SICoefficients(SICoefficients.parse(rightString));
             SICoefficients product = SICoefficients.multiply(left, right);
             assertEquals("input \"" + leftString + "\" times " + rightString + " did not yield the expected result",
-                    expectedResult, product.toString());
+                expectedResult, product.toString());
         }
         catch (UnitException exception)
         {
@@ -128,7 +125,7 @@ public class SICoefficientsTest
             SICoefficients right = new SICoefficients(SICoefficients.parse(rightString));
             SICoefficients quotient = SICoefficients.divide(left, right);
             assertEquals("input \"" + leftString + "\" times " + rightString + " did not yield the expected result",
-                    expectedResult, quotient.toString());
+                expectedResult, quotient.toString());
         }
         catch (UnitException exception)
         {

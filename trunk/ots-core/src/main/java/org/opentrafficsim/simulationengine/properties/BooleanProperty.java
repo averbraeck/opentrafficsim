@@ -3,12 +3,11 @@ package org.opentrafficsim.simulationengine.properties;
 /**
  * Boolean property.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 29 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 29 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class BooleanProperty extends AbstractProperty<Boolean>
@@ -34,7 +33,7 @@ public class BooleanProperty extends AbstractProperty<Boolean>
      * @param displayPriority int; the displayPriority of the new BooleanProperty
      */
     public BooleanProperty(final String shortName, final String description, final Boolean initialValue,
-            final boolean readOnly, final int displayPriority)
+        final boolean readOnly, final int displayPriority)
     {
         super(displayPriority);
         this.shortName = shortName;
@@ -93,8 +92,7 @@ public class BooleanProperty extends AbstractProperty<Boolean>
     @Override
     public AbstractProperty<Boolean> deepCopy()
     {
-        return new BooleanProperty(this.shortName, this.description, this.value, this.readOnly,
-                this.getDisplayPriority());
+        return new BooleanProperty(this.shortName, this.description, this.value, this.readOnly, this.getDisplayPriority());
     }
 
 }

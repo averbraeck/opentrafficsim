@@ -7,12 +7,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /**
  * The altruistic driver changes lane when that is beneficial for all drivers.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
- *          $, initial version 5 nov. 2014 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$,
+ *          initial version 5 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class Altruistic extends AbstractLaneChangeModel
@@ -28,8 +27,8 @@ public class Altruistic extends AbstractLaneChangeModel
         // This implementation returns the average of the two in order to avoid this sensitivity problem.
         AccelerationUnit unit = accelerationSteps.getLeaderAcceleration().getUnit();
         return new DoubleScalar.Abs<AccelerationUnit>(
-                (accelerationSteps.getLeaderAcceleration().getInUnit() + accelerationSteps.getFollowerAcceleration()
-                        .getInUnit(unit)) / 2, unit);
+            (accelerationSteps.getLeaderAcceleration().getInUnit() + accelerationSteps.getFollowerAcceleration().getInUnit(
+                unit)) / 2, unit);
     }
 
     /** {@inheritDoc} */

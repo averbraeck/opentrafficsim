@@ -53,7 +53,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version 15 apr. 2015 <br>
@@ -167,7 +167,7 @@ public class SuitabilityGraph implements OTSModelInterface
                 for (int laneIndex = 0; laneIndex < LANECOUNT; laneIndex++)
                 {
                     int key = dataset.addSeries("Lane " + (laneIndex + 1));
-                    Lane lane = lanes[laneIndex];
+                    Lane.STR lane = lanes[laneIndex];
                     for (int position = 0; position <= mainLength; position += 10)
                     {
                         DoubleScalar.Rel<LengthUnit> longitudinalPosition =

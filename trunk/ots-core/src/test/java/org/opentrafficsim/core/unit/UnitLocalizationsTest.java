@@ -18,12 +18,11 @@ import org.reflections.Reflections;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Jun 10, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Jun 10, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class UnitLocalizationsTest
@@ -42,8 +41,7 @@ public class UnitLocalizationsTest
         Set<String> usedKeys = new HashSet<String>();
         ArrayList<String> errors = new ArrayList<String>();
         List<String> localeNames =
-                AvailableLocalizations.availableLocalizations(head, this.getClass().getResource("").getPath()
-                        + "../../../../");
+            AvailableLocalizations.availableLocalizations(head, this.getClass().getResource("").getPath() + "../../../../");
         for (String localeName : localeNames)
         {
             // System.out.println("Checking internationalization to " + localeName);
@@ -103,7 +101,7 @@ public class UnitLocalizationsTest
                     if (abbreviation.startsWith("!") && abbreviation.endsWith("!"))
                     {
                         errors.add(String.format("Missing translation for abbreviation %s to %s", abbreviationKey,
-                                localeName));
+                            localeName));
                     }
                     if (name.startsWith("!") && name.endsWith("!"))
                     {
@@ -121,8 +119,7 @@ public class UnitLocalizationsTest
                 middlePart = "_" + localeName;
             }
 
-            String path =
-                    this.getClass().getResource("").getPath() + "../../../../" + head + middlePart + ".properties";
+            String path = this.getClass().getResource("").getPath() + "../../../../" + head + middlePart + ".properties";
             try
             {
                 FileInputStream fileInput = new FileInputStream(path);

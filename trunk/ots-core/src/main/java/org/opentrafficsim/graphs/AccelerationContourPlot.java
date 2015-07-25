@@ -13,12 +13,11 @@ import org.opentrafficsim.core.value.vdouble.vector.MutableDoubleVector;
 /**
  * Acceleration contour plot.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Jul 31, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Jul 31, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class AccelerationContourPlot extends ContourPlot
@@ -34,8 +33,8 @@ public class AccelerationContourPlot extends ContourPlot
     public AccelerationContourPlot(final String caption, final List<Lane<?, ?>> path)
     {
         super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
-                STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), path, -5d, 0d,
-                3d, "acceleration %.1f m/s/s", "%.1f m/s/s", 1d);
+            STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), path, -5d, 0d, 3d,
+            "acceleration %.1f m/s/s", "%.1f m/s/s", 1d);
     }
 
     /** Storage for the total time spent in each cell. */
@@ -61,16 +60,16 @@ public class AccelerationContourPlot extends ContourPlot
             this.cumulativeAccelerations = new ArrayList<MutableDoubleVector.Abs<AccelerationUnit>>();
         }
         int highestBinNeeded =
-                (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit)
-                        * this.getXAxis().getCurrentGranularity() / this.getXAxis().getGranularities()[0]);
+            (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
+                / this.getXAxis().getGranularities()[0]);
         while (highestBinNeeded >= this.cumulativeTimes.size())
         {
             try
             {
                 this.cumulativeTimes.add(new MutableDoubleVector.Abs.Sparse<TimeUnit>(new double[this.getYAxis()
-                        .getBinCount()], TimeUnit.SECOND));
+                    .getBinCount()], TimeUnit.SECOND));
                 this.cumulativeAccelerations.add(new MutableDoubleVector.Abs.Sparse<AccelerationUnit>(new double[this
-                        .getYAxis().getBinCount()], AccelerationUnit.METER_PER_SECOND_2));
+                    .getYAxis().getBinCount()], AccelerationUnit.METER_PER_SECOND_2));
             }
             catch (ValueException exception)
             {
@@ -82,7 +81,7 @@ public class AccelerationContourPlot extends ContourPlot
     /** {@inheritDoc} */
     @Override
     public final void incrementBinData(final int timeBin, final int distanceBin, final double duration,
-            final double distanceCovered, final double acceleration)
+        final double distanceCovered, final double acceleration)
     {
         if (timeBin < 0 || distanceBin < 0 || 0 == duration || distanceBin >= this.getYAxis().getBinCount())
         {
@@ -105,7 +104,7 @@ public class AccelerationContourPlot extends ContourPlot
     /** {@inheritDoc} */
     @Override
     public final double computeZValue(final int firstTimeBin, final int endTimeBin, final int firstDistanceBin,
-            final int endDistanceBin)
+        final int endDistanceBin)
     {
         double cumulativeTimeInSI = 0;
         double cumulativeAccelerationInSI = 0;
@@ -123,7 +122,7 @@ public class AccelerationContourPlot extends ContourPlot
                 }
                 MutableDoubleVector.Abs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBinIndex);
                 MutableDoubleVector.Abs<AccelerationUnit> accelerationValues =
-                        this.cumulativeAccelerations.get(timeBinIndex);
+                    this.cumulativeAccelerations.get(timeBinIndex);
                 for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
                 {
                     cumulativeTimeInSI += timeValues.getSI(distanceBinIndex);
@@ -134,7 +133,7 @@ public class AccelerationContourPlot extends ContourPlot
         catch (ValueException exception)
         {
             System.err.println(String.format("Error in getZValue(timeBinRange=[%d-%d], distanceBinRange=[%d-%d]",
-                    firstTimeBin, endTimeBin, firstDistanceBin, endDistanceBin));
+                firstTimeBin, endTimeBin, firstDistanceBin, endDistanceBin));
             exception.printStackTrace();
         }
         if (0 == cumulativeTimeInSI)

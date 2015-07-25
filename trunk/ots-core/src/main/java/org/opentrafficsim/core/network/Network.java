@@ -8,7 +8,7 @@ import org.opentrafficsim.core.network.route.Route;
 /**
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$,
  * initial version Jul 22, 2015 <br>
@@ -111,7 +111,7 @@ public interface Network<LINKID, NODEID>
      * @return the link between node1 and node2 in the network or null if it does not exist.
      */
     Link<LINKID, NODEID> getLink(Node<NODEID> node1, Node<NODEID> node2);
-    
+
     /**
      * Find a link between node1 and node2 and return it if it exists in the network. If not, return null.
      * @param node1 id of the first node
@@ -120,7 +120,7 @@ public interface Network<LINKID, NODEID>
      * @throws NetworkException if the node(s) cannot be found by their id
      */
     Link<LINKID, NODEID> getLink(NODEID node1, NODEID node2) throws NetworkException;
-    
+
     /**
      * @param route the route to add to the network.
      * @throws NetworkException if route already exists in the network, if name of the route is not unique, if one of the nodes
@@ -139,13 +139,13 @@ public interface Network<LINKID, NODEID>
      * @return whether the route is in this network
      */
     boolean containsRoute(Route<LINKID, NODEID> route);
-    
+
     /**
      * @param routeId the route to search for in the network.
      * @return whether the route is in this network
      */
     boolean containsRoute(String routeId);
-    
+
     /**
      * @param routeId the route to search for in the network.
      * @return the route or null if not present

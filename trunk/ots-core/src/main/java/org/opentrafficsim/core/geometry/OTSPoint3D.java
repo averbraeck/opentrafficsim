@@ -23,7 +23,7 @@ import com.vividsolutions.jts.geom.Point;
  * units, i.e. in meters. A distance between two points is therefore also in meters.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-07-16 10:20:53 +0200 (Thu, 16 Jul 2015) $, @version $Revision: 1124 $, by $Author: pknoppers $,
  * initial version Jul 22, 2015 <br>
@@ -49,14 +49,25 @@ public class OTSPoint3D implements LocatableInterface, Serializable
     public final double z;
 
     /**
+     * The x, y and z in the point are assumed to be in meters relative to an origin.
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @param z z-coordinate
+     */
+    public OTSPoint3D(final double x, final double y, final double z)
+    {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        System.out.println(toString());
+    }
+
+    /**
      * @param xyz array with three elements; x, y and z are assumed to be in meters relative to an origin.
      */
     public OTSPoint3D(final double[] xyz)
     {
-        // TODO check dim >= 2 and dim <= 3
-        this.x = xyz[0];
-        this.y = xyz[1];
-        this.z = (xyz.length > 2) ? xyz[2] : 0.0;
+        this(xyz[0], xyz[1], (xyz.length > 2) ? xyz[2] : 0.0);
     }
 
     /**
@@ -101,7 +112,7 @@ public class OTSPoint3D implements LocatableInterface, Serializable
      */
     public OTSPoint3D(final Coordinate coordinate)
     {
-        this(coordinate.x, coordinate.y, coordinate.z);
+        this(coordinate.x, coordinate.y, (Double.isNaN(coordinate.z)) ? 0.0 : coordinate.z);
     }
 
     /**
@@ -114,28 +125,13 @@ public class OTSPoint3D implements LocatableInterface, Serializable
     }
 
     /**
-     * The x, y and z in the point are assumed to be in meters relative to an origin.
-     * @param x x-coordinate
-     * @param y y-coordinate
-     * @param z z-coordinate
-     */
-    public OTSPoint3D(final double x, final double y, final double z)
-    {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
-    /**
      * The x and y in the point are assumed to be in meters relative to an origin. z will be set to 0.
      * @param x x-coordinate
      * @param y y-coordinate
      */
     public OTSPoint3D(final double x, final double y)
     {
-        this.x = x;
-        this.y = y;
-        this.z = 0.0;
+        this(x, y, 0.0);
     }
 
     /**
@@ -191,6 +187,52 @@ public class OTSPoint3D implements LocatableInterface, Serializable
     public final Bounds getBounds() throws RemoteException
     {
         return new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 0.5);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return String.format("(%.2f,%.2f,%.2f)", this.x, this.y, this.z);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(this.x);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(this.y);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(this.z);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    public boolean equals(final Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OTSPoint3D other = (OTSPoint3D) obj;
+        if (Double.doubleToLongBits(this.x) != Double.doubleToLongBits(other.x))
+            return false;
+        if (Double.doubleToLongBits(this.y) != Double.doubleToLongBits(other.y))
+            return false;
+        if (Double.doubleToLongBits(this.z) != Double.doubleToLongBits(other.z))
+            return false;
+        return true;
     }
 
 }

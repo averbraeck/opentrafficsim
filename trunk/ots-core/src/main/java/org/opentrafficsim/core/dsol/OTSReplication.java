@@ -10,24 +10,22 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
- *          $, initial version Aug 15, 2014 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$,
+ *          initial version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class OTSReplication extends
-        Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
+public class OTSReplication extends Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
 {
     /**
      * @param experiment Experiment
      * @throws NamingException when the context for the replication cannot be created
      */
     public OTSReplication(
-            final Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> experiment)
-            throws NamingException
+        final Experiment<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> experiment)
+        throws NamingException
     {
         super(experiment);
     }
@@ -41,9 +39,8 @@ public class OTSReplication extends
      * @param model OTSModelInterface; the model
      * @throws NamingException when the context for the replication cannot be created
      */
-    public OTSReplication(final String id, final OTSSimTimeDouble startTime,
-            final DoubleScalar.Rel<TimeUnit> warmupPeriod, final DoubleScalar.Rel<TimeUnit> runLength,
-            final OTSModelInterface model) throws NamingException
+    public OTSReplication(final String id, final OTSSimTimeDouble startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
+        final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws NamingException
     {
         super(id, startTime, warmupPeriod, runLength, model);
     }

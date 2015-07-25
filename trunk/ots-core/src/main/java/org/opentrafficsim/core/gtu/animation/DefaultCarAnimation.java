@@ -18,12 +18,11 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 /**
  * Draw a car.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
- *          $, initial version 29 dec. 2014 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$,
+ *          initial version 29 dec. 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -40,7 +39,7 @@ public class DefaultCarAnimation extends Renderable2D
      * @throws RemoteException in case of remote registration failure of the animation
      */
     public DefaultCarAnimation(final LaneBasedIndividualCar<?> source, final OTSSimulatorInterface simulator)
-            throws NamingException, RemoteException
+        throws NamingException, RemoteException
     {
         this(source, simulator, null);
     }
@@ -54,7 +53,7 @@ public class DefaultCarAnimation extends Renderable2D
      * @throws RemoteException in case of remote registration failure of the animation
      */
     public DefaultCarAnimation(final LaneBasedIndividualCar<?> source, final OTSSimulatorInterface simulator,
-            final GTUColorer gtuColorer) throws NamingException, RemoteException
+        final GTUColorer gtuColorer) throws NamingException, RemoteException
     {
         super(source, simulator);
         if (null == gtuColorer)

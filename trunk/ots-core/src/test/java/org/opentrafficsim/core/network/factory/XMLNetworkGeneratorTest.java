@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
@@ -45,7 +46,7 @@ import org.xml.sax.SAXException;
  * Test of the XML Parser.
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-07-15 12:52:42 +0200 (Wed, 15 Jul 2015) $, @version $Revision: 1113 $, by $Author: pknoppers $,
  * initial version Jul 17, 2015 <br>
@@ -215,7 +216,7 @@ public class XMLNetworkGeneratorTest
      * Model to test the XML parser.
      * <p>
      * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
-     * All rights reserved. BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * All rights reserved. BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate: 2015-07-15 12:52:42 +0200 (Wed, 15 Jul 2015) $, @version $Revision: 1113 $, by $Author: pknoppers $,
      * initial version un 27, 2015 <br>
@@ -248,14 +249,15 @@ public class XMLNetworkGeneratorTest
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
             URL url = URLResource.getResource("/org/opentrafficsim/core/network/factory/gen-overlap-test.xml");
-            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(String.class, String.class, String.class, this.simulator);
+            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {
                 this.network = nlp.build(url);
             }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException exception1)
+            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
+                | GTUException exception)
             {
-                exception1.printStackTrace();
+                exception.printStackTrace();
             }
         }
 

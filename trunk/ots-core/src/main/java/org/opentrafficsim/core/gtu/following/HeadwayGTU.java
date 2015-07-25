@@ -7,12 +7,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /**
  * Container for a reference to a LaneBasedGTU and a headway.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
- *          $, initial version 11 feb. 2015 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$,
+ *          initial version 11 feb. 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -45,8 +44,8 @@ public class HeadwayGTU
 
     /**
      * Retrieve the distance to the other GTU in meters.
-     * @return the distance to the other GTU in SI unit for length (meter), the value Double.NaN is used to indicate
-     *         that the other GTU is parallel with the reference GTU
+     * @return the distance to the other GTU in SI unit for length (meter), the value Double.NaN is used to indicate that the
+     *         other GTU is parallel with the reference GTU
      */
     public final double getDistanceSI()
     {
@@ -55,8 +54,8 @@ public class HeadwayGTU
 
     /**
      * Retrieve the strongly typed distance to the other GTU.
-     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the distance to the GTU, return value null indicates that the other
-     *         GTU is parallel to the reference GTU
+     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the distance to the GTU, return value null indicates that the other GTU is
+     *         parallel to the reference GTU
      */
     public final DoubleScalar.Rel<LengthUnit> getDistance()
     {

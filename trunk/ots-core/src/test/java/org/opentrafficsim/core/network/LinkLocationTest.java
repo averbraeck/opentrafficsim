@@ -8,17 +8,15 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * Test the LinkLocation class.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 20 jan. 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 20 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class LinkLocationTest
@@ -36,31 +34,30 @@ public class LinkLocationTest
         CrossSectionLink.STR link = new CrossSectionLink.STR("Link", nodeFrom, nodeTo, line);
         DoubleScalar.Rel<LengthUnit> linkLength = line.getLength();
         // Now we can make a LinkLocation.
-        DoubleScalar.Rel<LengthUnit> referenceLocationDistance =
-                new DoubleScalar.Rel<LengthUnit>(123, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> referenceLocationDistance = new DoubleScalar.Rel<LengthUnit>(123, LengthUnit.METER);
         LinkLocation referenceLocation = new LinkLocation(link, referenceLocationDistance);
         assertEquals("link should be the provided Link", link, referenceLocation.getLink());
         assertEquals("longitudinalPosition should be " + referenceLocationDistance, referenceLocationDistance.getSI(),
-                referenceLocation.getLongitudinalPosition().getSI(), 0.0001);
+            referenceLocation.getLongitudinalPosition().getSI(), 0.0001);
         for (int position = 0; position < 1000; position += 100)
         {
             final double fraction = position / linkLength.getSI();
             LinkLocation linkLocation = new LinkLocation(link, fraction);
             assertEquals("link should be the provided Link", link, linkLocation.getLink());
-            assertEquals("fractionalLongitudinalPosition should be " + fraction, fraction,
-                    linkLocation.getFractionalLongitudinalPosition(), 0.000001);
+            assertEquals("fractionalLongitudinalPosition should be " + fraction, fraction, linkLocation
+                .getFractionalLongitudinalPosition(), 0.000001);
             assertEquals("longitudinalPosition should be " + position, position, linkLocation.getLongitudinalPosition()
-                    .getSI(), 0.0001);
+                .getSI(), 0.0001);
             // Repeat with the other constructor
             linkLocation = new LinkLocation(link, new DoubleScalar.Rel<LengthUnit>(position, LengthUnit.METER));
             assertEquals("link should be the provided Link", link, linkLocation.getLink());
-            assertEquals("fractionalLongitudinalPosition should be " + fraction, fraction,
-                    linkLocation.getFractionalLongitudinalPosition(), 0.000001);
+            assertEquals("fractionalLongitudinalPosition should be " + fraction, fraction, linkLocation
+                .getFractionalLongitudinalPosition(), 0.000001);
             assertEquals("longitudinalPosition should be " + position, position, linkLocation.getLongitudinalPosition()
-                    .getSI(), 0.0001);
+                .getSI(), 0.0001);
             double delta = referenceLocationDistance.getSI() - position;
             assertEquals("distance from reference should be " + delta, delta, linkLocation.distance(referenceLocation)
-                    .getSI(), 0.0001);
+                .getSI(), 0.0001);
             // TODO distance to location on another link (not yet possible; currently ALWAYS returns null)
         }
     }

@@ -6,12 +6,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /**
  * "1D" implementation.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Oct 22, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Oct 22, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -25,8 +24,7 @@ public class LaneLocation
 
     /**
      * @param lane The lane of the location of a point relative to the GTU.
-     * @param fractionalLongitudinalPosition The fractional position (between 0.0 and 1.0) of the reference point on the
-     *            lane.
+     * @param fractionalLongitudinalPosition The fractional position (between 0.0 and 1.0) of the reference point on the lane.
      */
     public LaneLocation(final Lane.STR lane, final double fractionalLongitudinalPosition)
     {
@@ -68,7 +66,7 @@ public class LaneLocation
     public final DoubleScalar.Abs<LengthUnit> getLongitudinalPosition()
     {
         return new DoubleScalar.Abs<LengthUnit>(this.lane.getLength().getSI() * this.fractionalLongitudinalPosition,
-                LengthUnit.METER);
+            LengthUnit.METER);
     }
 
 }

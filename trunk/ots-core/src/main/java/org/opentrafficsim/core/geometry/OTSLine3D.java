@@ -2,6 +2,7 @@ package org.opentrafficsim.core.geometry;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.media.j3d.Bounds;
@@ -22,7 +23,7 @@ import com.vividsolutions.jts.geom.LineString;
 /**
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate: 2015-07-16 10:20:53 +0200 (Thu, 16 Jul 2015) $, @version $Revision: 1124 $, by $Author: pknoppers $,
  * initial version Jul 22, 2015 <br>
@@ -89,7 +90,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
      */
     public OTSLine3D(final List<OTSPoint3D> pointList)
     {
-        this((OTSPoint3D[]) pointList.toArray());
+        this(pointList.toArray(new OTSPoint3D[pointList.size()]));
     }
 
     /**
@@ -220,6 +221,55 @@ public class OTSLine3D implements LocatableInterface, Serializable
             calcCentroidBounds();
         }
         return this.bounds;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.bounds == null) ? 0 : this.bounds.hashCode());
+        result = prime * result + ((this.centroid == null) ? 0 : this.centroid.hashCode());
+        long temp;
+        temp = Double.doubleToLongBits(this.length);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + Arrays.hashCode(this.points);
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    public boolean equals(final Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OTSLine3D other = (OTSLine3D) obj;
+        if (this.bounds == null)
+        {
+            if (other.bounds != null)
+                return false;
+        }
+        else if (!this.bounds.equals(other.bounds))
+            return false;
+        if (this.centroid == null)
+        {
+            if (other.centroid != null)
+                return false;
+        }
+        else if (!this.centroid.equals(other.centroid))
+            return false;
+        if (Double.doubleToLongBits(this.length) != Double.doubleToLongBits(other.length))
+            return false;
+        if (!Arrays.equals(this.points, other.points))
+            return false;
+        return true;
     }
 
 }

@@ -10,12 +10,11 @@ import org.opentrafficsim.core.locale.DefaultLocale;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Jun 5, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Jun 5, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class ElectricalCurrentUnitTest extends AbstractUnitTest<ElectricalCurrentUnit>
@@ -48,10 +47,10 @@ public class ElectricalCurrentUnitTest extends AbstractUnitTest<ElectricalCurren
         checkUnitRatioNameAndAbbreviation(ElectricalCurrentUnit.AMPERE, 1, 0.00000001, "ampere", "A");
         checkUnitRatioNameAndAbbreviation(ElectricalCurrentUnit.MILLIAMPERE, 0.001, 0.000000001, "milliampere", "mA");
         // Check two conversions between two units
-        assertEquals("one AMPERE is 1000 MILLI AMPERE", 1000,
-                getMultiplicationFactorTo(ElectricalCurrentUnit.AMPERE, ElectricalCurrentUnit.MILLIAMPERE), 0.01);
-        assertEquals("one MILLI AMPERE is 0.001 AMPERE", 0.001,
-                getMultiplicationFactorTo(ElectricalCurrentUnit.MILLIAMPERE, ElectricalCurrentUnit.AMPERE), 0.0001);
+        assertEquals("one AMPERE is 1000 MILLI AMPERE", 1000, getMultiplicationFactorTo(ElectricalCurrentUnit.AMPERE,
+            ElectricalCurrentUnit.MILLIAMPERE), 0.01);
+        assertEquals("one MILLI AMPERE is 0.001 AMPERE", 0.001, getMultiplicationFactorTo(ElectricalCurrentUnit.MILLIAMPERE,
+            ElectricalCurrentUnit.AMPERE), 0.0001);
     }
 
 }

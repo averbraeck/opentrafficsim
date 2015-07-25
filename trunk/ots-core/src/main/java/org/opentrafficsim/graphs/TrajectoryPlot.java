@@ -42,16 +42,14 @@ import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 /**
  * Trajectory plot.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Jul 24, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Jul 24, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart,
-        LaneBasedGTUSampler
+public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart, LaneBasedGTUSampler
 {
     /** */
     private static final long serialVersionUID = 20140724L;
@@ -165,8 +163,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         container.add(statusLabel, BorderLayout.SOUTH);
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
         final JFreeChart result =
-                ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false,
-                        false);
+            ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
         // Overrule the default background paint because some of the lines are invisible on top of this default.
         result.getPlot().setBackgroundPaint(new Color(0.9f, 0.9f, 0.9f));
         FixCaption.fixCaption(result);
@@ -333,7 +330,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
 
     /** {@inheritDoc} */
     public final void addData(final AbstractLaneBasedGTU<?> car, final Lane<?, ?> lane) throws NetworkException,
-            RemoteException
+        RemoteException
     {
         // final DoubleScalar.Abs<TimeUnit> startTime = car.getLastEvaluationTime();
         // System.out.println("addData car: " + car + ", lastEval: " + startTime);
@@ -379,8 +376,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     /**
      * Store trajectory data.
      * <p>
-     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
-     * reserved.
+     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <p>
      * See for project information <a href="http://www.simulation.tudelft.nl/"> www.simulation.tudelft.nl</a>.
      * <p>
@@ -388,22 +384,21 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
      * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
      * following conditions are met:
      * <ul>
-     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the
-     * following disclaimer.</li>
-     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
-     * following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse
-     * or promote products derived from this software without specific prior written permission.</li>
+     * <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+     * disclaimer.</li>
+     * <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+     * disclaimer in the documentation and/or other materials provided with the distribution.</li>
+     * <li>Neither the name of Delft University of Technology, nor the names of its contributors may be used to endorse or
+     * promote products derived from this software without specific prior written permission.</li>
      * </ul>
-     * This software is provided by the copyright holders and contributors "as is" and any express or implied
-     * warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular
-     * purpose are disclaimed. In no event shall the copyright holder or contributors be liable for any direct,
-     * indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of
-     * substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any
-     * theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising
-     * in any way out of the use of this software, even if advised of the possibility of such damage. $LastChangedDate:
-     * 2015-07-15 11:18:39 +0200 (Wed, 15 Jul 2015) $, @version $Revision$, by $Author$, initial
-     * versionJul 24, 2014 <br>
+     * This software is provided by the copyright holders and contributors "as is" and any express or implied warranties,
+     * including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are
+     * disclaimed. In no event shall the copyright holder or contributors be liable for any direct, indirect, incidental,
+     * special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services;
+     * loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in
+     * contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this
+     * software, even if advised of the possibility of such damage. $LastChangedDate: 2015-07-15 11:18:39 +0200 (Wed, 15 Jul
+     * 2015) $, @version $Revision$, by $Author$, initial versionJul 24, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
     class Trajectory
@@ -469,14 +464,14 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
          * @throws RemoteException when communication fails
          */
         public final void addSegment(final AbstractLaneBasedGTU<?> car, final Lane<?, ?> lane, final double positionOffset)
-                throws NetworkException, RemoteException
+            throws NetworkException, RemoteException
         {
             final int startSample = (int) Math.ceil(car.getLastEvaluationTime().getSI() / getSampleInterval().getSI());
             final int endSample = (int) (Math.ceil(car.getNextEvaluationTime().getSI() / getSampleInterval().getSI()));
             for (int sample = startSample; sample < endSample; sample++)
             {
                 DoubleScalar.Abs<TimeUnit> sampleTime =
-                        new DoubleScalar.Abs<TimeUnit>(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
+                    new DoubleScalar.Abs<TimeUnit>(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
                 Double position = car.position(lane, car.getReference(), sampleTime).getSI() + positionOffset;
                 if (this.positions.size() > 0 && position < this.currentEndPosition.getSI() - 0.001)
                 {
@@ -514,8 +509,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             }
             this.currentEndTime = car.getNextEvaluationTime();
             this.currentEndPosition =
-                    new DoubleScalar.Rel<LengthUnit>(car.position(lane, car.getReference(), this.currentEndTime)
-                            .getSI() + positionOffset, LengthUnit.METER);
+                new DoubleScalar.Rel<LengthUnit>(car.position(lane, car.getReference(), this.currentEndTime).getSI()
+                    + positionOffset, LengthUnit.METER);
             if (car.getNextEvaluationTime().gt(getMaximumTime()))
             {
                 setMaximumTime(car.getNextEvaluationTime());

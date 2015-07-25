@@ -20,13 +20,13 @@ import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.LinearGeometry;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.animation.GeometryLinkAnimation;
+import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.core.network.animation.LaneAnimation;
 import org.opentrafficsim.core.network.animation.ShoulderAnimation;
-import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
@@ -46,7 +46,7 @@ import com.vividsolutions.jts.geom.Point;
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version Sep 11, 2014 <br>
@@ -352,7 +352,7 @@ public final class ShapeFileReader
             throws RemoteException, NamingException, NetworkException
     {
         // leave out if center line not needed.
-        new GeometryLinkAnimation(link, simulator, 0.1f);
+        new LinkAnimation(link, simulator, 0.1f);
         if (wegType.startsWith("asw") || wegType.startsWith("80"))
         {
             int spits = 0;
@@ -432,7 +432,7 @@ public final class ShapeFileReader
                 LongitudinalDirectionality dir =
                         (i < 0) ? LongitudinalDirectionality.FORWARD : LongitudinalDirectionality.BACKWARD;
                 //
-                Lane laneEM =
+                Lane.STR laneEM =
                         new Lane(link, new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER),
                                 new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER), m05, m05, null,
                                 LongitudinalDirectionality.NONE, f0, speedLimit);
@@ -441,7 +441,7 @@ public final class ShapeFileReader
                 for (int j = 0; j < n; j++)
                 {
                     lat += i * 1.75;
-                    Lane lane =
+                    Lane.STR lane =
                             new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
                                     new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m35, m35, null, dir, f200,
                                     speedLimit);
@@ -452,14 +452,14 @@ public final class ShapeFileReader
                 for (int j = 0; j < spits; j++)
                 {
                     lat += i * 1.75;
-                    Lane lane =
+                    Lane.STR lane =
                             new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
                                     new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m35, m35, null, dir, f0,
                                     speedLimit);
                     new LaneAnimation(lane, simulator, Color.LIGHT_GRAY);
                     lat += i * 1.75;
                 }
-                Lane laneEO =
+                Lane.STR laneEO =
                         new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER),
                                 new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER), m05, m05, null,
                                 LongitudinalDirectionality.NONE, f0, speedLimit);
@@ -507,7 +507,7 @@ public final class ShapeFileReader
                 for (int j = 0; j < n; j++)
                 {
                     lat += i * 1.5;
-                    Lane lane =
+                    Lane.STR lane =
                             new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
                                     new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m30, m30, null, dir, f200,
                                     speedLimit);
@@ -534,7 +534,7 @@ public final class ShapeFileReader
         DoubleScalar.Abs<FrequencyUnit> f50 = new DoubleScalar.Abs<FrequencyUnit>(50.0, FrequencyUnit.PER_HOUR);
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
-        Lane lane =
+        Lane.STR lane =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER),
                         new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m60, m60, null,
                         LongitudinalDirectionality.BOTH, f50, speedLimit);

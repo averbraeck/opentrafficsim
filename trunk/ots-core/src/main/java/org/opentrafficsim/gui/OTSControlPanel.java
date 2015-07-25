@@ -60,12 +60,11 @@ import org.opentrafficsim.simulationengine.WrappableSimulation;
 /**
  * Peter's improved simulation control panel.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 11 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 11 dec. 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -123,7 +122,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         buttonPanel.add(makeButton("stepButton", "/Last_recor.png", "Step", "Execute one event", true));
         buttonPanel.add(makeButton("nextTimeButton", "/NextTrack.png", "NextTime",
-                "Execute all events scheduled for the current time", true));
+            "Execute all events scheduled for the current time", true));
         buttonPanel.add(makeButton("runButton", "/Play.png", "Run", "Run the simulation at maximum speed", true));
         buttonPanel.add(makeButton("pauseButton", "/Pause.png", "Pause", "Pause the simulator", false));
         this.timeWarpPanel = new TimeWarpPanel(0.1, 100, 1, 3, simulator);
@@ -149,7 +148,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
      * @return JButton
      */
     private JButton makeButton(final String name, final String iconPath, final String actionCommand,
-            final String toolTipText, final boolean enabled)
+        final String toolTipText, final boolean enabled)
     {
         // JButton result = new JButton(new ImageIcon(this.getClass().getResource(iconPath)));
         JButton result = new JButton(new ImageIcon(URLResource.getResource(iconPath)));
@@ -172,18 +171,18 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
      * @param eventTarget Object; the object that must execute the event
      * @param method String; the name of the method of <code>target</code> that must execute the event
      * @param args Object[]; the arguments of the <code>method</code> that must execute the event
-     * @return SimEvent&lt;OTSSimTimeDouble&gt;; the event that was scheduled (the caller should save this if a need to
-     *         cancel the event may arise later)
+     * @return SimEvent&lt;OTSSimTimeDouble&gt;; the event that was scheduled (the caller should save this if a need to cancel
+     *         the event may arise later)
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
      * @throws RemoteException on communications failure
      */
-    private SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime,
-            final short priority, final Object source, final Object eventTarget, final String method,
-            final Object[] args) throws SimRuntimeException, RemoteException
+    private SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime, final short priority,
+        final Object source, final Object eventTarget, final String method, final Object[] args) throws SimRuntimeException,
+        RemoteException
     {
         SimEvent<OTSSimTimeDouble> simEvent =
-                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(
-                        executionTime.getSI(), TimeUnit.SECOND)), priority, source, eventTarget, method, args);
+            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(executionTime.getSI(),
+                TimeUnit.SECOND)), priority, source, eventTarget, method, args);
         this.simulator.scheduleEvent(simEvent);
         return simEvent;
     }
@@ -278,13 +277,13 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 try
                 {
                     this.stopAtEvent =
-                            scheduleEvent(new DoubleScalar.Abs<TimeUnit>(now, TimeUnit.SI),
-                                    SimEventInterface.MIN_PRIORITY, this, this, "autoPauseSimulator", null);
+                        scheduleEvent(new DoubleScalar.Abs<TimeUnit>(now, TimeUnit.SI), SimEventInterface.MIN_PRIORITY,
+                            this, this, "autoPauseSimulator", null);
                 }
                 catch (SimRuntimeException exception)
                 {
                     this.logger.logp(Level.SEVERE, "ControlPanel", "autoPauseSimulator", "Caught an exception "
-                            + "while trying to schedule an autoPauseSimulator event at the current simulator time");
+                        + "while trying to schedule an autoPauseSimulator event at the current simulator time");
                 }
                 this.simulator.start();
             }
@@ -430,14 +429,14 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 try
                 {
                     this.stopAtEvent =
-                            scheduleEvent(new DoubleScalar.Abs<TimeUnit>(nextTick, TimeUnit.SI),
-                                    SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
+                        scheduleEvent(new DoubleScalar.Abs<TimeUnit>(nextTick, TimeUnit.SI), SimEventInterface.MAX_PRIORITY,
+                            this, this, "autoPauseSimulator", null);
                     getSimulator().start();
                 }
                 catch (SimRuntimeException | RemoteException exception)
                 {
                     this.logger.logp(Level.SEVERE, "ControlPanel", "autoPauseSimulator",
-                            "Caught an exception while trying to re-schedule an autoPauseEvent at the next real event");
+                        "Caught an exception while trying to re-schedule an autoPauseEvent at the next real event");
                 }
             }
             else
@@ -507,13 +506,13 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             try
             {
                 this.stopAtEvent =
-                        scheduleEvent(new DoubleScalar.Abs<TimeUnit>(stopTime, TimeUnit.SECOND),
-                                SimEventInterface.MAX_PRIORITY, this, this, "autoPauseSimulator", null);
+                    scheduleEvent(new DoubleScalar.Abs<TimeUnit>(stopTime, TimeUnit.SECOND), SimEventInterface.MAX_PRIORITY,
+                        this, this, "autoPauseSimulator", null);
             }
             catch (SimRuntimeException | RemoteException exception)
             {
                 this.logger.logp(Level.SEVERE, "ControlPanel", "propertyChange",
-                        "Caught an exception while trying to schedule an autoPauseSimulator event");
+                    "Caught an exception while trying to schedule an autoPauseSimulator event");
             }
         }
 
@@ -615,32 +614,32 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
 
         /**
          * Construct a new TimeWarpPanel.
-         * @param minimum double; the minimum value on the scale (the displayed scale may extend a little further than
-         *            this value)
-         * @param maximum double; the maximum value on the scale (the displayed scale may extend a little further than
-         *            this value)
+         * @param minimum double; the minimum value on the scale (the displayed scale may extend a little further than this
+         *            value)
+         * @param maximum double; the maximum value on the scale (the displayed scale may extend a little further than this
+         *            value)
          * @param initialValue double; the initially selected value on the scale
          * @param ticksPerDecade int; the number of steps per decade
          * @param simulator SimpleSimulator; the simulator to change the speed of
          */
         public TimeWarpPanel(final double minimum, final double maximum, final double initialValue,
-                final int ticksPerDecade, final DEVSSimulatorInterface<?, ?, ?> simulator)
+            final int ticksPerDecade, final DEVSSimulatorInterface<?, ?, ?> simulator)
         {
             if (minimum <= 0 || minimum > initialValue || initialValue > maximum)
             {
                 throw new Error("Bad (combination of) minimum, maximum and initialValue; "
-                        + "(restrictions: 0 < minimum <= initialValue <= maximum)");
+                    + "(restrictions: 0 < minimum <= initialValue <= maximum)");
             }
             switch (ticksPerDecade)
             {
                 case 1:
-                    this.ratios = new int[]{1};
+                    this.ratios = new int[] {1};
                     break;
                 case 2:
-                    this.ratios = new int[]{1, 3};
+                    this.ratios = new int[] {1, 3};
                     break;
                 case 3:
-                    this.ratios = new int[]{1, 2, 5};
+                    this.ratios = new int[] {1, 2, 5};
                     break;
                 default:
                     throw new Error("Bad ticksPerDecade value (must be 1, 2 or 3)");
@@ -663,7 +662,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             }
             // Figure out the DecimalSymbol
             String decimalSeparator =
-                    "" + ((DecimalFormat) NumberFormat.getInstance()).getDecimalFormatSymbols().getDecimalSeparator();
+                "" + ((DecimalFormat) NumberFormat.getInstance()).getDecimalFormatSymbols().getDecimalSeparator();
             for (int step = -1; step >= minimumTick; step--)
             {
                 StringBuilder text = new StringBuilder();
@@ -711,8 +710,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                     if (!source.getValueIsAdjusting() && simulator instanceof DEVSRealTimeClock)
                     {
                         DEVSRealTimeClock<?, ?, ?> clock = (DEVSRealTimeClock<?, ?, ?>) simulator;
-                        clock.setSpeedFactor(((TimeWarpPanel) source.getParent()).getTickValues()
-                                .get(source.getValue()));
+                        clock.setSpeedFactor(((TimeWarpPanel) source.getParent()).getTickValues().get(source.getValue()));
                     }
                 }
             });
@@ -820,8 +818,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 int seconds = (int) Math.floor(now);
                 int fractionalSeconds = (int) Math.floor(1000 * (now - seconds));
                 getClockLabel().setText(
-                        String.format("  %02d:%02d:%02d.%03d  ", seconds / 3600, seconds / 60 % 60, seconds % 60,
-                                fractionalSeconds));
+                    String.format("  %02d:%02d:%02d.%03d  ", seconds / 3600, seconds / 60 % 60, seconds % 60,
+                        fractionalSeconds));
                 getClockLabel().repaint();
             }
         }
@@ -877,20 +875,18 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             int integerPart = (int) Math.floor(v);
             int fraction = (int) Math.floor((v - integerPart) * 1000);
             String text =
-                    String.format("%04d:%02d:%02d.%03d", integerPart / 3600, integerPart / 60 % 60, integerPart % 60,
-                            fraction);
+                String.format("%04d:%02d:%02d.%03d", integerPart / 3600, integerPart / 60 % 60, integerPart % 60, fraction);
             this.setText(text);
         }
     }
 
     /**
      * Extension of a DefaultFormatter that uses a regular expression. <br>
-     * Derived from <a
-     * href="http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm">
+     * Derived from <a href="http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm">
      * http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm</a>
      * <p>
-     * $LastChangedDate$, @version $Revision$, by $Author:
-     * pknoppers $, initial version 2 dec. 2014 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author$,
+     * initial version 2 dec. 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
     static class RegexFormatter extends DefaultFormatter
