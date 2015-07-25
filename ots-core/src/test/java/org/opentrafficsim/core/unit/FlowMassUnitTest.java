@@ -12,12 +12,11 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Jun 5, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Jun 5, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class FlowMassUnitTest extends AbstractUnitTest<FlowMassUnit>
@@ -50,10 +49,10 @@ public class FlowMassUnitTest extends AbstractUnitTest<FlowMassUnit>
         checkUnitRatioNameAndAbbreviation(FlowMassUnit.KILOGRAM_PER_SECOND, 1, 0.000001, "kilogram per second", "kg/s");
         checkUnitRatioNameAndAbbreviation(FlowMassUnit.POUND_PER_SECOND, 0.453592, 0.0001, "pound per second", "lb/s");
         // Check two conversions between non-standard units
-        assertEquals("one KILOGRAM PER SECOND is about 2.205 POUND PER SECOND", 2.205,
-                getMultiplicationFactorTo(FlowMassUnit.KILOGRAM_PER_SECOND, FlowMassUnit.POUND_PER_SECOND), 0.0005);
-        assertEquals("one POUND PER SECOND is about 0.453592 KILOGRAM PER SECOND", 0.453592,
-                getMultiplicationFactorTo(FlowMassUnit.POUND_PER_SECOND, FlowMassUnit.KILOGRAM_PER_SECOND), 0.0001);
+        assertEquals("one KILOGRAM PER SECOND is about 2.205 POUND PER SECOND", 2.205, getMultiplicationFactorTo(
+            FlowMassUnit.KILOGRAM_PER_SECOND, FlowMassUnit.POUND_PER_SECOND), 0.0005);
+        assertEquals("one POUND PER SECOND is about 0.453592 KILOGRAM PER SECOND", 0.453592, getMultiplicationFactorTo(
+            FlowMassUnit.POUND_PER_SECOND, FlowMassUnit.KILOGRAM_PER_SECOND), 0.0001);
     }
 
     /**
@@ -63,9 +62,9 @@ public class FlowMassUnitTest extends AbstractUnitTest<FlowMassUnit>
     public final void createFlowMassUnit()
     {
         FlowMassUnit myFMU =
-                new FlowMassUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "FlowMassUnit.WaterDropsPerHour",
-                        UnitLocalizationsTest.DONOTCHECKPREFIX + "FlowMassUnit.wdpu", UnitSystem.OTHER,
-                        FlowMassUnit.KILOGRAM_PER_SECOND, 1234);
+            new FlowMassUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "FlowMassUnit.WaterDropsPerHour",
+                UnitLocalizationsTest.DONOTCHECKPREFIX + "FlowMassUnit.wdpu", UnitSystem.OTHER,
+                FlowMassUnit.KILOGRAM_PER_SECOND, 1234);
         assertTrue("Can create a new FlowMassUnit", null != myFMU);
         checkUnitRatioNameAndAbbreviation(myFMU, 1234, 0.0001, "!WaterDropsPerHour!", "!wdpu!");
     }

@@ -10,10 +10,10 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
  * Standard frequency units based on time.
  * <p>
  * Copyright (c) 2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version May 15, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class FrequencyUnit extends Unit<FrequencyUnit>
@@ -73,8 +73,7 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
         TERAHERTZ = new FrequencyUnit("FrequencyUnit.terahertz", "FrequencyUnit.THz", SI_DERIVED, HERTZ, 1.0E12);
         RPM = new FrequencyUnit("FrequencyUnit.revolutions_per_minute", "FrequencyUnit.rpm", OTHER, HERTZ, 1.0 / 60.0);
         PER_MILLISECOND =
-                new FrequencyUnit(TimeUnit.MILLISECOND, "FrequencyUnit.per_millisecond", "FrequencyUnit.1/ms",
-                        SI_DERIVED);
+            new FrequencyUnit(TimeUnit.MILLISECOND, "FrequencyUnit.per_millisecond", "FrequencyUnit.1/ms", SI_DERIVED);
         PER_SECOND = new FrequencyUnit(TimeUnit.SECOND, "FrequencyUnit.per_second", "FrequencyUnit.1/s", SI_DERIVED);
         PER_MINUTE = new FrequencyUnit(TimeUnit.MINUTE, "FrequencyUnit.per_minute", "FrequencyUnit.1/min", SI_ACCEPTED);
         PER_HOUR = new FrequencyUnit(TimeUnit.HOUR, "FrequencyUnit.per_hour", "FrequencyUnit.1/h", SI_ACCEPTED);
@@ -90,7 +89,7 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
     public FrequencyUnit(final TimeUnit timeUnit, final String nameKey, final String abbreviationKey,
-            final UnitSystem unitSystem)
+        final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, HERTZ, 1.0 / timeUnit.getConversionFactorToStandardUnit(), true);
         this.timeUnit = timeUnit;
@@ -102,11 +101,10 @@ public class FrequencyUnit extends Unit<FrequencyUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
-     *            reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
      */
     public FrequencyUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
-            final FrequencyUnit referenceUnit, final double conversionFactorToReferenceUnit)
+        final FrequencyUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.timeUnit = referenceUnit.getTimeUnit();

@@ -16,12 +16,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 /**
  * Code shared between various car following models.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
- *          $, initial version 19 feb. 2015 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$,
+ *          initial version 19 feb. 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -32,18 +31,18 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
 {
     /** Prohibitive deceleration used to construct the TOODANGEROUS result below. */
     private static final AccelerationStep PROHIBITIVEACCELERATIONSTEP = new AccelerationStep(
-            new DoubleScalar.Abs<AccelerationUnit>(Double.NEGATIVE_INFINITY, AccelerationUnit.SI),
-            new DoubleScalar.Abs<TimeUnit>(Double.NaN, TimeUnit.SI));
+        new DoubleScalar.Abs<AccelerationUnit>(Double.NEGATIVE_INFINITY, AccelerationUnit.SI),
+        new DoubleScalar.Abs<TimeUnit>(Double.NaN, TimeUnit.SI));
 
     /** Return value if lane change causes immediate collision. */
     public static final DualAccelerationStep TOODANGEROUS = new DualAccelerationStep(PROHIBITIVEACCELERATIONSTEP,
-            PROHIBITIVEACCELERATIONSTEP);
+        PROHIBITIVEACCELERATIONSTEP);
 
     /** {@inheritDoc} */
     @Override
     public final DualAccelerationStep computeAcceleration(final LaneBasedGTU<?> referenceGTU,
-            final Collection<HeadwayGTU> otherGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit)
-            throws RemoteException, NetworkException
+        final Collection<HeadwayGTU> otherGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException,
+        NetworkException
     {
         DoubleScalar.Abs<TimeUnit> when = referenceGTU.getSimulator().getSimulatorTime().get();
         // Find out if there is an immediate collision
@@ -72,11 +71,9 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
             {
                 // This one is behind
                 AccelerationStep as =
-                        gfm.computeAcceleration(headwayGTU.getOtherGTU(), referenceGTU.getLongitudinalVelocity(when),
-                                new DoubleScalar.Rel<LengthUnit>(-headwayGTU.getDistanceSI(), LengthUnit.SI),
-                                speedLimit);
-                if (null == followerAccelerationStep
-                        || as.getAcceleration().lt(followerAccelerationStep.getAcceleration()))
+                    gfm.computeAcceleration(headwayGTU.getOtherGTU(), referenceGTU.getLongitudinalVelocity(when),
+                        new DoubleScalar.Rel<LengthUnit>(-headwayGTU.getDistanceSI(), LengthUnit.SI), speedLimit);
+                if (null == followerAccelerationStep || as.getAcceleration().lt(followerAccelerationStep.getAcceleration()))
                 {
                     // if (as.getAcceleration().getSI() < -gfm.maximumSafeDeceleration().getSI())
                     // {
@@ -89,10 +86,10 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
             {
                 // This one is ahead
                 AccelerationStep as =
-                        gfm.computeAcceleration(referenceGTU, headwayGTU.getOtherGTU().getLongitudinalVelocity(when),
-                                headwayGTU.getDistance(), speedLimit);
+                    gfm.computeAcceleration(referenceGTU, headwayGTU.getOtherGTU().getLongitudinalVelocity(when), headwayGTU
+                        .getDistance(), speedLimit);
                 if (null == referenceGTUAccelerationStep
-                        || as.getAcceleration().lt(referenceGTUAccelerationStep.getAcceleration()))
+                    || as.getAcceleration().lt(referenceGTUAccelerationStep.getAcceleration()))
                 {
                     referenceGTUAccelerationStep = as;
                 }
@@ -112,14 +109,14 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
     /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
-            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
+        final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
+        final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
     {
         final DoubleScalar.Abs<TimeUnit> currentTime = follower.getNextEvaluationTime();
         final DoubleScalar.Abs<SpeedUnit> followerSpeed = follower.getLongitudinalVelocity(currentTime);
         final DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed = follower.getMaximumVelocity();
         DoubleScalar.Abs<AccelerationUnit> newAcceleration =
-                computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, headway, speedLimit);
+            computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, headway, speedLimit);
         MutableDoubleScalar.Abs<TimeUnit> nextEvaluationTime = currentTime.mutable();
         nextEvaluationTime.incrementBy(getStepSize());
         return new AccelerationStep(newAcceleration, nextEvaluationTime.immutable());
@@ -129,19 +126,18 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
     /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU<?> gtu,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
+        final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
     {
-        return computeAcceleration(gtu, gtu.getLongitudinalVelocity(),
-                Calc.speedSquaredDividedByDoubleAcceleration(gtu.getMaximumVelocity(), maximumSafeDeceleration()),
-                speedLimit);
+        return computeAcceleration(gtu, gtu.getLongitudinalVelocity(), Calc.speedSquaredDividedByDoubleAcceleration(gtu
+            .getMaximumVelocity(), maximumSafeDeceleration()), speedLimit);
     }
 
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> minimumHeadway(final DoubleScalar.Abs<SpeedUnit> followerSpeed,
-            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> precision,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit, final DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed)
-            throws RemoteException
+        final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> precision,
+        final DoubleScalar.Abs<SpeedUnit> speedLimit, final DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed)
+        throws RemoteException
     {
         if (precision.getSI() <= 0)
         {
@@ -151,8 +147,8 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
         // Find a decent interval to bisect
         double minimumSI = 0;
         double minimumSIDeceleration =
-                computeAcceleration(followerSpeed, followerSpeed, leaderSpeed,
-                        new DoubleScalar.Rel<LengthUnit>(minimumSI, LengthUnit.SI), speedLimit).getSI();
+            computeAcceleration(followerSpeed, followerSpeed, leaderSpeed,
+                new DoubleScalar.Rel<LengthUnit>(minimumSI, LengthUnit.SI), speedLimit).getSI();
         if (minimumSIDeceleration >= maximumDeceleration)
         {
             // Weird... The GTU following model allows zero headway
@@ -164,8 +160,8 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
         for (int step = 0; step < 20; step++)
         {
             maximumSIDeceleration =
-                    computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed,
-                            new DoubleScalar.Rel<LengthUnit>(maximumSI, LengthUnit.SI), speedLimit).getSI();
+                computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed,
+                    new DoubleScalar.Rel<LengthUnit>(maximumSI, LengthUnit.SI), speedLimit).getSI();
             if (maximumSIDeceleration > maximumDeceleration)
             {
                 break;
@@ -182,8 +178,8 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
         {
             double midSI = (minimumSI + maximumSI) / 2;
             double midSIAcceleration =
-                    computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed,
-                            new DoubleScalar.Rel<LengthUnit>(midSI, LengthUnit.SI), speedLimit).getSI();
+                computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed,
+                    new DoubleScalar.Rel<LengthUnit>(midSI, LengthUnit.SI), speedLimit).getSI();
             if (midSIAcceleration < maximumDeceleration)
             {
                 minimumSI = midSI;
@@ -193,10 +189,9 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
                 maximumSI = midSI;
             }
         }
-        DoubleScalar.Rel<LengthUnit> result =
-                new DoubleScalar.Rel<LengthUnit>((minimumSI + maximumSI) / 2, LengthUnit.SI);
+        DoubleScalar.Rel<LengthUnit> result = new DoubleScalar.Rel<LengthUnit>((minimumSI + maximumSI) / 2, LengthUnit.SI);
         computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed,
-                new DoubleScalar.Rel<LengthUnit>(result.getSI(), LengthUnit.SI), speedLimit).getSI();
+            new DoubleScalar.Rel<LengthUnit>(result.getSI(), LengthUnit.SI), speedLimit).getSI();
         return result;
     }
 }

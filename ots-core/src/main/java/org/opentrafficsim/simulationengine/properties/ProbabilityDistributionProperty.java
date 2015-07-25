@@ -3,12 +3,11 @@ package org.opentrafficsim.simulationengine.properties;
 /**
  * Property that describes a probability distribution.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 18 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 18 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
@@ -36,12 +35,11 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
      * @param initialValue Double[]; array of Double values
      * @param readOnly boolean; if true this ProbabilityDistributionProperty can not be altered
      * @param displayPriority int; the display priority of the new ProbabilityDistributionProperty
-     * @throws PropertyException when the array is empty, any value is outside the range 0.0 .. 1.0, or when the sum of
-     *             the values is not equal to 1.0 within a small error margin
+     * @throws PropertyException when the array is empty, any value is outside the range 0.0 .. 1.0, or when the sum of the
+     *             values is not equal to 1.0 within a small error margin
      */
-    public ProbabilityDistributionProperty(final String shortName, final String description,
-            final String[] elementNames, final Double[] initialValue, final boolean readOnly, final int displayPriority)
-            throws PropertyException
+    public ProbabilityDistributionProperty(final String shortName, final String description, final String[] elementNames,
+        final Double[] initialValue, final boolean readOnly, final int displayPriority) throws PropertyException
     {
         super(displayPriority);
         this.shortName = shortName;
@@ -59,8 +57,8 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
     /**
      * Verify that a provided array of probability values is acceptable.
      * @param values double[]; the array of values to verify
-     * @throws PropertyException when the number of values is 0, any value is outside [0..1], or the sum of the values
-     *             does not add up to 1.0 within a (very small) error margin
+     * @throws PropertyException when the number of values is 0, any value is outside [0..1], or the sum of the values does not
+     *             add up to 1.0 within a (very small) error margin
      */
     private void verifyProposedValues(final Double[] values) throws PropertyException
     {
@@ -156,8 +154,8 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
     /**
      * Verify proposed values and make a deep copy.
      * @param newValue Double[]; the proposed values
-     * @throws PropertyException when the number of values is 0, any value is outside [0..1], or the sum of the values
-     *             does not add up to 1.0 within a (very small) error margin
+     * @throws PropertyException when the number of values is 0, any value is outside [0..1], or the sum of the values does not
+     *             add up to 1.0 within a (very small) error margin
      */
     private void updateValue(final Double[] newValue) throws PropertyException
     {
@@ -204,12 +202,12 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
         try
         {
             return new ProbabilityDistributionProperty(this.shortName, this.description, this.names, this.value,
-                    this.readOnly, getDisplayPriority());
+                this.readOnly, getDisplayPriority());
         }
         catch (PropertyException exception)
         {
             throw new Error("Cannot happen (the current values should ALWAYS be suitable for constructing a new "
-                    + "ProbabilityDistributionProperty)");
+                + "ProbabilityDistributionProperty)");
         }
     }
 

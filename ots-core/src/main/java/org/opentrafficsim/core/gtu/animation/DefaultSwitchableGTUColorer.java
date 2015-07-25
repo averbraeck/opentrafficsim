@@ -9,12 +9,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * A simple way to construct a SwitchableGTUColorer set up with the "standard" set of GTUColorers. <br/>
  * Do not assume that the set of GTUColorers in the result will never change.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
- *          $, initial version Jun 18, 2015 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$,
+ *          initial version Jun 18, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -29,12 +28,11 @@ public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer
         COLORERS[0] = new IDGTUColorer();
         COLORERS[1] = new VelocityGTUColorer(new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR));
         COLORERS[2] =
-                new AccelerationGTUColorer(new DoubleScalar.Abs<AccelerationUnit>(-4,
-                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(2,
-                        AccelerationUnit.METER_PER_SECOND_2));
+            new AccelerationGTUColorer(new DoubleScalar.Abs<AccelerationUnit>(-4, AccelerationUnit.METER_PER_SECOND_2),
+                new DoubleScalar.Abs<AccelerationUnit>(2, AccelerationUnit.METER_PER_SECOND_2));
         COLORERS[3] =
-                new LaneChangeUrgeGTUColorer(new DoubleScalar.Rel<LengthUnit>(10, LengthUnit.METER),
-                        new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER));
+            new LaneChangeUrgeGTUColorer(new DoubleScalar.Rel<LengthUnit>(10, LengthUnit.METER),
+                new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER));
     }
 
     /**

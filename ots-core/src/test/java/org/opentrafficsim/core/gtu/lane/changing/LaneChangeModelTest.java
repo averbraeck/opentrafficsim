@@ -46,7 +46,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  * Test some very basic properties of lane change models.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$,
  * initial version 14 nov. 2014 <br>
@@ -71,7 +71,7 @@ public class LaneChangeModelTest implements OTSModelInterface
         // TODO create a LinkAnimation if the simulator is compatible with that.
         // FIXME The current LinkAnimation is too bad to use...
         OTSPoint3D[] coordinates =
-            new OTSPoint3D[] {new OTSPoint3D(from.getPoint().x, from.getPoint().y, 0),
+            new OTSPoint3D[]{new OTSPoint3D(from.getPoint().x, from.getPoint().y, 0),
                 new OTSPoint3D(to.getPoint().x, to.getPoint().y, 0)};
         OTSLine3D line = new OTSLine3D(coordinates);
         CrossSectionLink.STR link = new CrossSectionLink.STR(name, from, to, line);

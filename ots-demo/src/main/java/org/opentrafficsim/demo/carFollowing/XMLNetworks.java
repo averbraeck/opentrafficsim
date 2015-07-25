@@ -49,7 +49,7 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.lane.SinkLane;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
-import org.opentrafficsim.core.network.route.ProbabilisticFixedRouteGenerator;
+import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
@@ -76,7 +76,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version 4 mrt. 2015 <br>
@@ -168,7 +168,7 @@ public class XMLNetworks extends AbstractWrappableSimulation implements Wrappabl
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version mrt. 2015 <br>
@@ -403,7 +403,7 @@ class XMLNetworkModel implements OTSModelInterface
             {
                 setupGenerator(LaneFactory.makeMultiLane("From2 to FirstVia", from2, firstVia, null, lanesOnBranch, 0,
                         lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator));
-                this.routeGenerator = new FixedRouteGenerator(new ArrayList<Node<?, ?>>());
+                this.routeGenerator = new FixedRouteGenerator(new ArrayList<Node<?>>());
             }
             else
             {
@@ -411,18 +411,18 @@ class XMLNetworkModel implements OTSModelInterface
                         lanesOnCommon - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator));
                 SortedMap<RouteGenerator, java.lang.Double> routeProbabilities =
                         new TreeMap<RouteGenerator, java.lang.Double>();
-                ArrayList<Node<?, ?>> mainRoute = new ArrayList<Node<?, ?>>();
+                ArrayList<Node<?>> mainRoute = new ArrayList<Node<?>>();
                 mainRoute.add(end);
                 routeProbabilities.put(new FixedRouteGenerator(mainRoute), new java.lang.Double(lanesOnMain));
-                ArrayList<Node<?, ?>> sideRoute = new ArrayList<Node<?, ?>>();
+                ArrayList<Node<?>> sideRoute = new ArrayList<Node<?>>();
                 sideRoute.add(end2);
                 routeProbabilities.put(new FixedRouteGenerator(sideRoute), new java.lang.Double(lanesOnBranch));
-                this.routeGenerator = new ProbabilisticFixedRouteGenerator(routeProbabilities, 1234);
+                this.routeGenerator = new ProbabilisticRouteGenerator(routeProbabilities, 1234);
             }
             for (int index = 0; index < lanesOnCommon; index++)
             {
                 this.paths.add(new ArrayList<Lane>());
-                Lane lane = common[index];
+                Lane.STR lane = common[index];
                 // Follow back
                 while (lane.prevLanes().size() > 0)
                 {
@@ -466,7 +466,7 @@ class XMLNetworkModel implements OTSModelInterface
      */
     private Lane[] setupGenerator(final Lane[] lanes) throws RemoteException, SimRuntimeException
     {
-        for (Lane lane : lanes)
+        for (Lane.STR lane : lanes)
         {
             Object[] arguments = new Object[1];
             arguments[0] = lane;
@@ -492,7 +492,7 @@ class XMLNetworkModel implements OTSModelInterface
         double endY = to.getY() + (endLinkLength / link.getLength().getSI()) * (to.getY() - from.getY());
         NodeGeotools.STR end = new NodeGeotools.STR("END", new Coordinate(endX, endY, to.getZ()));
         CrossSectionLink<?, ?> endLink = LaneFactory.makeLink("endLink", to, end, null);
-        for (Lane lane : lanes)
+        for (Lane.STR lane : lanes)
         {
             new SinkLane(endLink, lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getLaneType(),
                     LongitudinalDirectionality.FORWARD, this.speedLimit);
@@ -510,12 +510,12 @@ class XMLNetworkModel implements OTSModelInterface
      * @throws SimRuntimeException on ???
      * @throws GTUException when construction of the GTU (the block is a GTU) fails
      */
-    private Lane setupBlock(final Lane lane) throws RemoteException, NamingException, NetworkException,
+    private Lane setupBlock(final Lane.STR lane) throws RemoteException, NamingException, NetworkException,
             SimRuntimeException, GTUException
     {
         DoubleScalar.Rel<LengthUnit> initialPosition = lane.getLength();
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
-                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane.STR, DoubleScalar.Rel<LengthUnit>> initialPositions =
+                new LinkedHashMap<Lane.STR, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(lane, initialPosition);
         GTUFollowingModel gfm =
                 new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.SI),
@@ -524,7 +524,7 @@ class XMLNetworkModel implements OTSModelInterface
         new LaneBasedIndividualCar<Integer>(999999, this.gtuType, gfm, lcm, initialPositions,
                 new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(1,
                         LengthUnit.METER), lane.getWidth(1), new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-                new Route(new ArrayList<Node<?, ?>>()), this.simulator);
+                new Route(new ArrayList<Node<?>>()), this.simulator);
         return lane;
     }
 
@@ -554,13 +554,13 @@ class XMLNetworkModel implements OTSModelInterface
      * Generate cars at a fixed rate (implemented by re-scheduling this method).
      * @param lane Lane; the lane on which the generated cars are placed
      */
-    protected final void generateCar(final Lane lane)
+    protected final void generateCar(final Lane.STR lane)
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
-                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane.STR, DoubleScalar.Rel<LengthUnit>> initialPositions =
+                new LinkedHashMap<Lane.STR, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(lane, initialPosition);
         try
         {

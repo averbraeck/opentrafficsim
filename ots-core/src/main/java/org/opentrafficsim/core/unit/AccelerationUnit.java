@@ -10,10 +10,10 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
  * Standard acceleration units based on distance and time.
  * <p>
  * Copyright (c) 2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version May 15, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class AccelerationUnit extends Unit<AccelerationUnit>
@@ -63,36 +63,35 @@ public class AccelerationUnit extends Unit<AccelerationUnit>
     static
     {
         SI =
-                new AccelerationUnit(LengthUnit.METER, TimeUnit.SECOND, "AccelerationUnit.meter_per_second_squared",
-                        "AccelerationUnit.m/s^2", SI_DERIVED);
+            new AccelerationUnit(LengthUnit.METER, TimeUnit.SECOND, "AccelerationUnit.meter_per_second_squared",
+                "AccelerationUnit.m/s^2", SI_DERIVED);
         METER_PER_SECOND_2 = SI;
         KM_PER_HOUR_2 =
-                new AccelerationUnit(LengthUnit.KILOMETER, TimeUnit.HOUR, "AccelerationUnit.km_per_hour_squared",
-                        "AccelerationUnit.km/h^2", SI_DERIVED);
+            new AccelerationUnit(LengthUnit.KILOMETER, TimeUnit.HOUR, "AccelerationUnit.km_per_hour_squared",
+                "AccelerationUnit.km/h^2", SI_DERIVED);
         FOOT_PER_SECOND_2 =
-                new AccelerationUnit(LengthUnit.FOOT, TimeUnit.SECOND, "AccelerationUnit.foot_per_second_squared",
-                        "AccelerationUnit.ft/s^2", IMPERIAL);
+            new AccelerationUnit(LengthUnit.FOOT, TimeUnit.SECOND, "AccelerationUnit.foot_per_second_squared",
+                "AccelerationUnit.ft/s^2", IMPERIAL);
         INCH_PER_SECOND_2 =
-                new AccelerationUnit(LengthUnit.INCH, TimeUnit.SECOND, "AccelerationUnit.inch_per_second_squared",
-                        "AccelerationUnit.in/s^2", IMPERIAL);
+            new AccelerationUnit(LengthUnit.INCH, TimeUnit.SECOND, "AccelerationUnit.inch_per_second_squared",
+                "AccelerationUnit.in/s^2", IMPERIAL);
         MILE_PER_HOUR_2 =
-                new AccelerationUnit(LengthUnit.MILE, TimeUnit.HOUR, "AccelerationUnit.mile_per_hour_squared",
-                        "AccelerationUnit.mi/h^2", IMPERIAL);
+            new AccelerationUnit(LengthUnit.MILE, TimeUnit.HOUR, "AccelerationUnit.mile_per_hour_squared",
+                "AccelerationUnit.mi/h^2", IMPERIAL);
         MILE_PER_SECOND_2 =
-                new AccelerationUnit(LengthUnit.MILE, TimeUnit.SECOND, "AccelerationUnit.mile_per_second_squared",
-                        "AccelerationUnit.mi/s^2", IMPERIAL);
+            new AccelerationUnit(LengthUnit.MILE, TimeUnit.SECOND, "AccelerationUnit.mile_per_second_squared",
+                "AccelerationUnit.mi/s^2", IMPERIAL);
         KNOT_PER_SECOND =
-                new AccelerationUnit(SpeedUnit.KNOT, TimeUnit.SECOND, "AccelerationUnit.knot_per_second",
-                        "AccelerationUnit.kt/s", IMPERIAL);
+            new AccelerationUnit(SpeedUnit.KNOT, TimeUnit.SECOND, "AccelerationUnit.knot_per_second",
+                "AccelerationUnit.kt/s", IMPERIAL);
         MILE_PER_HOUR_PER_SECOND =
-                new AccelerationUnit(SpeedUnit.MILE_PER_HOUR, TimeUnit.SECOND,
-                        "AccelerationUnit.mile_per_hour_per_second", "AccelerationUnit.mi/h/s", IMPERIAL);
+            new AccelerationUnit(SpeedUnit.MILE_PER_HOUR, TimeUnit.SECOND, "AccelerationUnit.mile_per_hour_per_second",
+                "AccelerationUnit.mi/h/s", IMPERIAL);
         STANDARD_GRAVITY =
-                new AccelerationUnit("AccelerationUnit.standard_gravity", "AccelerationUnit.g", SI_DERIVED,
-                        METER_PER_SECOND_2, 9.80665);
+            new AccelerationUnit("AccelerationUnit.standard_gravity", "AccelerationUnit.g", SI_DERIVED, METER_PER_SECOND_2,
+                9.80665);
         GAL =
-                new AccelerationUnit(LengthUnit.CENTIMETER, TimeUnit.SECOND, "AccelerationUnit.gal",
-                        "AccelerationUnit.Gal", CGS);
+            new AccelerationUnit(LengthUnit.CENTIMETER, TimeUnit.SECOND, "AccelerationUnit.gal", "AccelerationUnit.Gal", CGS);
     }
 
     /**
@@ -104,10 +103,10 @@ public class AccelerationUnit extends Unit<AccelerationUnit>
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
     public AccelerationUnit(final LengthUnit lengthUnit, final TimeUnit timeUnit, final String nameKey,
-            final String abbreviationKey, final UnitSystem unitSystem)
+        final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, METER_PER_SECOND_2, lengthUnit.getConversionFactorToStandardUnit()
-                / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()), true);
+            / (timeUnit.getConversionFactorToStandardUnit() * timeUnit.getConversionFactorToStandardUnit()), true);
         this.lengthUnit = lengthUnit;
         this.timeUnit = timeUnit;
     }
@@ -121,10 +120,10 @@ public class AccelerationUnit extends Unit<AccelerationUnit>
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
     public AccelerationUnit(final SpeedUnit speedUnit, final TimeUnit timeUnit, final String nameKey,
-            final String abbreviationKey, final UnitSystem unitSystem)
+        final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, METER_PER_SECOND_2, speedUnit.getConversionFactorToStandardUnit()
-                / timeUnit.getConversionFactorToStandardUnit(), true);
+            / timeUnit.getConversionFactorToStandardUnit(), true);
         this.lengthUnit = speedUnit.getLengthUnit();
         this.timeUnit = timeUnit;
     }
@@ -135,11 +134,10 @@ public class AccelerationUnit extends Unit<AccelerationUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
-     *            reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
      */
     public AccelerationUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
-            final AccelerationUnit referenceUnit, final double conversionFactorToReferenceUnit)
+        final AccelerationUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.lengthUnit = referenceUnit.getLengthUnit();

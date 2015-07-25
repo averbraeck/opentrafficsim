@@ -7,15 +7,15 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.naming.NamingException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.w3c.dom.Document;
@@ -26,72 +26,53 @@ import org.xml.sax.SAXException;
 /**
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version Jul 23, 2015 <br>
+ * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
+ * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class XmlNetworkLaneParser
 {
-    /** the ID class of the Network. */
-    @SuppressWarnings("visibilitymodifier")
-    protected final Class<?> networkIdClass;
-
-    /** the ID class of the Node. */
-    @SuppressWarnings("visibilitymodifier")
-    protected final Class<?> nodeIdClass;
-
-    /** the ID class of the Link. */
-    @SuppressWarnings("visibilitymodifier")
-    protected final Class<?> linkIdClass;
-
     /** global values from the GLOBAL tag. */
     @SuppressWarnings("visibilitymodifier")
     protected GlobalTag globalTag;
-
-    /** the processed nodes for further reference. */
-    @SuppressWarnings({"rawtypes", "visibilitymodifier"})
-    protected Map<String, Node> nodes = new HashMap<>();
 
     /** the UNprocessed nodes for further reference. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, NodeTag> nodeTags = new HashMap<>();
 
-    /** the links for further reference. */
-    @SuppressWarnings({"rawtypes", "visibilitymodifier"})
-    protected Map<String, Link> links = new HashMap<>();
-
     /** the UNprocessed links for further reference. */
-     @SuppressWarnings("visibilitymodifier")
-     protected Map<String, LinkTag> linkTags = new HashMap<>();
-    
-     /** the gtu tags for further reference. */
-     @SuppressWarnings("visibilitymodifier")
-     protected Map<String, GTUTag> gtuTags = new HashMap<>();
-    
-     /** the gtumix tags for further reference. */
-     @SuppressWarnings("visibilitymodifier")
-     protected Map<String, GTUMixTag> gtuMixTags = new HashMap<>();
-    
-    // /** the route tags for further reference. */
-    // @SuppressWarnings("visibilitymodifier")
-    // protected Map<String, RouteTag> routeTags = new HashMap<>();
-    //
-    // /** the route mix tags for further reference. */
-    // @SuppressWarnings("visibilitymodifier")
-    // protected Map<String, RouteMixTag> routeMixTags = new HashMap<>();
-    //
-    // /** the shortest route tags for further reference. */
-    // @SuppressWarnings("visibilitymodifier")
-    // protected Map<String, ShortestRouteTag> shortestRouteTags = new HashMap<>();
-    //
-    // /** the shortest route mix tags for further reference. */
-    // @SuppressWarnings("visibilitymodifier")
-    // protected Map<String, ShortestRouteMixTag> shortestRouteMixTags = new HashMap<>();
-    
-     /** the road type tags for further reference. */
-     @SuppressWarnings("visibilitymodifier")
-     protected Map<String, RoadTypeTag> roadTypeTags = new HashMap<>();
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, LinkTag> linkTags = new HashMap<>();
+
+    /** the gtu tags for further reference. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, GTUTag> gtuTags = new HashMap<>();
+
+    /** the gtumix tags for further reference. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, GTUMixTag> gtuMixTags = new HashMap<>();
+
+    /** the route tags for further reference. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, RouteTag> routeTags = new HashMap<>();
+
+    /** the route mix tags for further reference. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, RouteMixTag> routeMixTags = new HashMap<>();
+
+    /** the shortest route tags for further reference. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, ShortestRouteTag> shortestRouteTags = new HashMap<>();
+
+    /** the shortest route mix tags for further reference. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, ShortestRouteMixTag> shortestRouteMixTags = new HashMap<>();
+
+    /** the road type tags for further reference. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, RoadTypeTag> roadTypeTags = new HashMap<>();
 
     /** the GTUTypes that have been created. */
     @SuppressWarnings("visibilitymodifier")
@@ -110,17 +91,10 @@ public class XmlNetworkLaneParser
     protected OTSDEVSSimulatorInterface simulator;
 
     /**
-     * @param networkIdClass the ID class of the Network.
-     * @param nodeIdClass the ID class of the Node.
-     * @param linkIdClass the ID class of the Link.
      * @param simulator the simulator for creating the animation. Null if no animation needed.
      */
-    public XmlNetworkLaneParser(final Class<?> networkIdClass, final Class<?> nodeIdClass, final Class<?> linkIdClass,
-        final OTSDEVSSimulatorInterface simulator)
+    public XmlNetworkLaneParser(final OTSDEVSSimulatorInterface simulator)
     {
-        this.networkIdClass = networkIdClass;
-        this.nodeIdClass = nodeIdClass;
-        this.linkIdClass = linkIdClass;
         this.simulator = simulator;
         this.laneTypes.put(noTrafficLaneType.getId(), noTrafficLaneType);
     }
@@ -132,10 +106,12 @@ public class XmlNetworkLaneParser
      * @throws SAXException in case of parsing problems.
      * @throws ParserConfigurationException in case of parsing problems.
      * @throws IOException in case of file reading problems.
+     * @throws NamingException in case the animation context cannot be found
+     * @throws GTUException in case of a problem with creating the LaneBlock (which is a GTU right now)
      */
     @SuppressWarnings("rawtypes")
     public final OTSNetwork build(final URL url) throws NetworkException, ParserConfigurationException, SAXException,
-        IOException
+        IOException, NamingException, GTUException
     {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -152,14 +128,25 @@ public class XmlNetworkLaneParser
         LaneTypeTag.parseCompatibilities(nodeList, this);
         RoadTypeTag.parseRoadTypes(nodeList, this);
         NodeTag.parseNodes(nodeList, this);
-        // LinkTag.parseLinks(nodeList, this);
-        // parseRoutes();
+        RouteTag.parseRoutes(nodeList, this);
+        ShortestRouteTag.parseShortestRoutes(nodeList, this);
+        RouteMixTag.parseRouteMix(nodeList, this);
+        ShortestRouteMixTag.parseShortestRouteMix(nodeList, this);
+        LinkTag.parseLinks(nodeList, this);
 
-        // process the information for which multiple tags have to be combined
-        // processLanes();
-        // processFill();
-        // processGenerators();
-        // processSensors();
+        // process nodes and links to calculate coordinates and positions
+        Links.calculateNodeCoordinates(this);
+
+        for (LinkTag linkTag : this.linkTags.values())
+        {
+            // process the information for which multiple tags have to be combined
+            Links.buildLink(linkTag, this, this.simulator);
+            Links.applyRoadTypeToLink(linkTag, this, this.simulator);
+            // processFill();
+            // processGenerators();
+            // processListGenerators();
+            // processSensors();
+        }
 
         // store the structure information in the network
         return makeNetwork(url.toString());
@@ -179,26 +166,24 @@ public class XmlNetworkLaneParser
                 NamedNodeMap attributes = node.getAttributes();
                 String name = attributes.getNamedItem("FILE").getTextContent();
                 URI includeURI = new URI(name);
-                XmlNetworkLaneParser includeParser =
-                    new XmlNetworkLaneParser(this.networkIdClass, this.nodeIdClass, this.linkIdClass, this.simulator);
+                XmlNetworkLaneParser includeParser = new XmlNetworkLaneParser(this.simulator);
                 includeParser.build(includeURI.toURL());
 
                 this.gtuTypes.putAll(includeParser.gtuTypes);
                 this.gtuTags.putAll(includeParser.gtuTags);
                 this.gtuMixTags.putAll(includeParser.gtuMixTags);
-                this.links.putAll(includeParser.links);
                 this.laneTypes.putAll(includeParser.laneTypes);
-                this.nodes.putAll(includeParser.nodes);
                 this.roadTypeTags.putAll(includeParser.roadTypeTags);
                 this.nodeTags.putAll(includeParser.nodeTags);
                 this.linkTags.putAll(includeParser.linkTags);
-                // this.routeMixTags.putAll(includeParser.routeMixTags);
-                // this.routeTags.putAll(includeParser.routeTags);
-                // this.shortestRouteMixTags.putAll(includeParser.shortestRouteMixTags);
-                // this.shortestRouteTags.putAll(includeParser.shortestRouteTags);
+                this.routeMixTags.putAll(includeParser.routeMixTags);
+                this.routeTags.putAll(includeParser.routeTags);
+                this.shortestRouteMixTags.putAll(includeParser.shortestRouteMixTags);
+                this.shortestRouteTags.putAll(includeParser.shortestRouteTags);
             }
         }
-        catch (NetworkException | SAXException | IOException | ParserConfigurationException | URISyntaxException exception)
+        catch (NetworkException | SAXException | IOException | ParserConfigurationException | URISyntaxException
+            | NamingException | GTUException exception)
         {
             throw new SAXException(exception);
         }
@@ -213,13 +198,13 @@ public class XmlNetworkLaneParser
     private OTSNetwork makeNetwork(final String name) throws NetworkException
     {
         OTSNetwork network = new OTSNetwork(name);
-        for (Node node : this.nodes.values())
+        for (NodeTag nodeTag : this.nodeTags.values())
         {
-            network.addNode(node);
+            network.addNode(nodeTag.node);
         }
-        for (Link link : this.links.values())
+        for (LinkTag linkTag : this.linkTags.values())
         {
-            network.addLink(link);
+            network.addLink(linkTag.link);
         }
         // TODO Routes
         return network;

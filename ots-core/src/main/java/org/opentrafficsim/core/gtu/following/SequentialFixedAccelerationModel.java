@@ -16,15 +16,14 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
- * Extended version of FixedAccelerationModel. The addition is that this GTUFollowingModel stores a series of
- * acceleration and duration values. Mostly used for testing.
+ * Extended version of FixedAccelerationModel. The addition is that this GTUFollowingModel stores a series of acceleration and
+ * duration values. Mostly used for testing.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
- *          $, initial version 6 feb. 2015 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$,
+ *          initial version 6 feb. 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -41,7 +40,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
      * @param simulator DEVSSimulator; the simulator (needed to obtain the current simulation time)
      */
     public SequentialFixedAccelerationModel(
-            final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+        final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
     {
         this.simulator = simulator;
     }
@@ -52,8 +51,8 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
      * @param steps Set&lt;FixedAccelerationModel&gt;; the list of FixedAccelerationModel steps.
      */
     public SequentialFixedAccelerationModel(
-            final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator,
-            final Set<FixedAccelerationModel> steps)
+        final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator,
+        final Set<FixedAccelerationModel> steps)
     {
         this(simulator);
         this.steps.addAll(steps);
@@ -133,10 +132,9 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<AccelerationUnit> computeAcceleration(
-            final DoubleScalar.Abs<SpeedUnit> followerSpeed, final DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed,
-            final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
-            final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
+    public final DoubleScalar.Abs<AccelerationUnit> computeAcceleration(final DoubleScalar.Abs<SpeedUnit> followerSpeed,
+        final DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed, final DoubleScalar.Abs<SpeedUnit> leaderSpeed,
+        final DoubleScalar.Rel<LengthUnit> headway, final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
     {
         return getAccelerationModel().getAcceleration();
     }

@@ -24,7 +24,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.AbstractNetwork;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.geotools.LinkGeotools;
@@ -60,7 +60,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version Feb 10, 2015 <br>
@@ -76,7 +76,7 @@ public class OpenStreetMap extends AbstractWrappableSimulation
     private OSMNetwork osmNetwork;
 
     /** The OTS network. */
-    private Network<String, NodeGeotools.STR, Link<String, NodeGeotools.STR>> otsNetwork;
+    private AbstractNetwork<String, NodeGeotools.STR, Link<String, NodeGeotools.STR>> otsNetwork;
 
     /** The ProgressListener. */
     private ProgressListener progressListener;
@@ -208,7 +208,7 @@ public class OpenStreetMap extends AbstractWrappableSimulation
             // net.removeRedundancy(); // Defective; do not call removeRedundancy
             this.osmNetwork = net; // new OSMNetwork(net); // Why would you make a copy?
             this.otsNetwork =
-                    new Network<String, NodeGeotools.STR, Link<String, NodeGeotools.STR>>(this.osmNetwork.getName());
+                    new AbstractNetwork<String, NodeGeotools.STR, Link<String, NodeGeotools.STR>>(this.osmNetwork.getName());
             for (OSMNode osmNode : this.osmNetwork.getNodes().values())
             {
                 try
@@ -287,7 +287,7 @@ public class OpenStreetMap extends AbstractWrappableSimulation
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version eb 10, 2015 <br>
@@ -338,8 +338,8 @@ class OSMModel implements OTSModelInterface
     public void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
-        Network<String, NodeGeotools.STR, Link<String, NodeGeotools.STR>> otsNetwork =
-                new Network<String, NodeGeotools.STR, Link<String, NodeGeotools.STR>>(this.osmNetwork.getName());
+        AbstractNetwork<String, NodeGeotools.STR, Link<String, NodeGeotools.STR>> otsNetwork =
+                new AbstractNetwork<String, NodeGeotools.STR, Link<String, NodeGeotools.STR>>(this.osmNetwork.getName());
         for (OSMNode osmNode : this.osmNetwork.getNodes().values())
         {
             try

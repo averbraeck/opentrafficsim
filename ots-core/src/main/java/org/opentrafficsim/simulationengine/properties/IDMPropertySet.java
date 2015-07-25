@@ -10,12 +10,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /**
  * Compound property for IDM or IDMPlus parameters
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 5 jan. 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 5 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public final class IDMPropertySet
@@ -39,20 +38,20 @@ public final class IDMPropertySet
      * @return CompoundProperty
      */
     public static CompoundProperty makeIDMPropertySet(final String carType, final DoubleScalar.Abs<AccelerationUnit> a,
-            final DoubleScalar.Abs<AccelerationUnit> b, final DoubleScalar.Rel<LengthUnit> s0,
-            final DoubleScalar.Rel<TimeUnit> tSafe, final int displayPriority)
+        final DoubleScalar.Abs<AccelerationUnit> b, final DoubleScalar.Rel<LengthUnit> s0,
+        final DoubleScalar.Rel<TimeUnit> tSafe, final int displayPriority)
     {
         ArrayList<AbstractProperty<?>> subProperties = new ArrayList<AbstractProperty<?>>();
         subProperties.add(new ContinuousProperty("a", "maximum acceleration [m/s/s]", a.getSI(), 0.5, 5.0,
-                "maximum acceleration %.2fm/s\u00b2", false, 0));
+            "maximum acceleration %.2fm/s\u00b2", false, 0));
         subProperties.add(new ContinuousProperty("b", "safe deceleration [m/s/s]", b.getSI(), 1.0, 4.0,
-                "maximum comfortable deceleration %.2fm/s\u00b2", false, 0));
+            "maximum comfortable deceleration %.2fm/s\u00b2", false, 0));
         subProperties.add(new ContinuousProperty("s0", "stationary distance headway [m]", s0.getSI(), 1.0, 10.0,
-                "distance headway %.2fm", false, 2));
-        subProperties.add(new ContinuousProperty("tSafe", "time headway", tSafe.getSI(), 0.5, 1.5,
-                "time headway %.2fs", false, 3));
+            "distance headway %.2fm", false, 2));
+        subProperties.add(new ContinuousProperty("tSafe", "time headway", tSafe.getSI(), 0.5, 1.5, "time headway %.2fs",
+            false, 3));
         return new CompoundProperty("IDM/IDM+ " + carType + " params", "Parameters for the " + carType
-                + " car following parameters", subProperties, true, displayPriority);
+            + " car following parameters", subProperties, true, displayPriority);
     }
 
     /**

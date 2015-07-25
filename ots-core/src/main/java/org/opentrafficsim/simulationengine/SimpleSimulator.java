@@ -18,12 +18,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /**
  * Construct a DSOL DEVSSimulator or DEVSAnimator the easy way.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 12 nov. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 12 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulation
@@ -46,24 +45,24 @@ public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulatio
      * @throws NamingException when the context for the replication cannot be created
      */
     public SimpleSimulator(final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
-            final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
-            SimRuntimeException, NamingException
+        final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
+        SimRuntimeException, NamingException
     {
         setPauseOnError(true);
         initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime), warmupPeriod,
-                runLength, model), ReplicationMode.TERMINATING);
+            runLength, model), ReplicationMode.TERMINATING);
     }
 
     /**
      * {@inheritDoc}
      */
     public final SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime,
-            final short priority, final Object source, final Object target, final String method, final Object[] args)
-            throws SimRuntimeException
+        final short priority, final Object source, final Object target, final String method, final Object[] args)
+        throws SimRuntimeException
     {
         SimEvent<OTSSimTimeDouble> result =
-                new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(
-                        executionTime.getSI(), TimeUnit.SECOND)), priority, source, target, method, args);
+            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(executionTime.getSI(),
+                TimeUnit.SECOND)), priority, source, target, method, args);
         scheduleEvent(result);
         return result;
     }

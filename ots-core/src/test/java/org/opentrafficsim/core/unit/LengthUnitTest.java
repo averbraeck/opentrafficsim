@@ -12,12 +12,11 @@ import org.opentrafficsim.core.locale.DefaultLocale;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Jun 4, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Jun 4, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class LengthUnitTest extends AbstractUnitTest<LengthUnit>
@@ -51,10 +50,10 @@ public class LengthUnitTest extends AbstractUnitTest<LengthUnit>
         checkUnitRatioNameAndAbbreviation(LengthUnit.MILE, 1609, 0.5, "mile", "mi");
         checkUnitRatioNameAndAbbreviation(LengthUnit.CENTIMETER, 0.01, 0.000000001, "centimeter", "cm");
         // Check two conversions between non-standard units
-        assertEquals("one MILE is about 160900 CENTIMETER", 160900,
-                getMultiplicationFactorTo(LengthUnit.MILE, LengthUnit.CENTIMETER), 50);
-        assertEquals("one CENTIMETER is about 0.000006215 MILE", 0.000006215,
-                getMultiplicationFactorTo(LengthUnit.CENTIMETER, LengthUnit.MILE), 0.000000002);
+        assertEquals("one MILE is about 160900 CENTIMETER", 160900, getMultiplicationFactorTo(LengthUnit.MILE,
+            LengthUnit.CENTIMETER), 50);
+        assertEquals("one CENTIMETER is about 0.000006215 MILE", 0.000006215, getMultiplicationFactorTo(
+            LengthUnit.CENTIMETER, LengthUnit.MILE), 0.000000002);
         // Check conversion factor to standard unit for all remaining distance units
         checkUnitRatioNameAndAbbreviation(LengthUnit.MILLIMETER, 0.001, 0.000000001, "millimeter", "mm");
         checkUnitRatioNameAndAbbreviation(LengthUnit.DECIMETER, 0.1, 0.000000001, "decimeter", "dm");
@@ -74,8 +73,8 @@ public class LengthUnitTest extends AbstractUnitTest<LengthUnit>
     public final void createLengthUnit()
     {
         LengthUnit myLU =
-                new LengthUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "LengthUnit.Furlong",
-                        UnitLocalizationsTest.DONOTCHECKPREFIX + "LengthUnit.fl", OTHER, LengthUnit.METER, 201.16800);
+            new LengthUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "LengthUnit.Furlong",
+                UnitLocalizationsTest.DONOTCHECKPREFIX + "LengthUnit.fl", OTHER, LengthUnit.METER, 201.16800);
         assertTrue("Can create a new LengthUnit", null != myLU);
         checkUnitRatioNameAndAbbreviation(myLU, 200, 2, "!Furlong!", "!fl!");
     }

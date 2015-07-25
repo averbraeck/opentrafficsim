@@ -12,12 +12,11 @@ import org.opentrafficsim.core.locale.DefaultLocale;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Jun 6, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class SpeedUnitTest extends AbstractUnitTest<SpeedUnit>
@@ -51,10 +50,10 @@ public class SpeedUnitTest extends AbstractUnitTest<SpeedUnit>
         checkUnitRatioNameAndAbbreviation(SpeedUnit.KM_PER_HOUR, 0.277778, 0.000001, "kilometer per hour", "km/h");
         checkUnitRatioNameAndAbbreviation(SpeedUnit.MILE_PER_HOUR, 0.44704, 0.00001, "mile per hour", "mi/h");
         // Check two conversions between non-standard units
-        assertEquals("one KM PER HOUR is about 0.621371 MILE PER HOUR", 0.621371,
-                getMultiplicationFactorTo(SpeedUnit.KM_PER_HOUR, SpeedUnit.MILE_PER_HOUR), 0.0001);
-        assertEquals("one MILE PER HOUR is about 1.60934 KM PER HOUR", 1.60934,
-                getMultiplicationFactorTo(SpeedUnit.MILE_PER_HOUR, SpeedUnit.KM_PER_HOUR), 0.0001);
+        assertEquals("one KM PER HOUR is about 0.621371 MILE PER HOUR", 0.621371, getMultiplicationFactorTo(
+            SpeedUnit.KM_PER_HOUR, SpeedUnit.MILE_PER_HOUR), 0.0001);
+        assertEquals("one MILE PER HOUR is about 1.60934 KM PER HOUR", 1.60934, getMultiplicationFactorTo(
+            SpeedUnit.MILE_PER_HOUR, SpeedUnit.KM_PER_HOUR), 0.0001);
         // Check conversion factor to standard unit for all remaining time units
         checkUnitRatioNameAndAbbreviation(SpeedUnit.FOOT_PER_SECOND, 0.3048, 0.0001, "foot per second", "ft/s");
         checkUnitRatioNameAndAbbreviation(SpeedUnit.KNOT, 0.514444, 0.000001, "knot", "kt");
@@ -67,9 +66,8 @@ public class SpeedUnitTest extends AbstractUnitTest<SpeedUnit>
     public final void createSpeedUnit()
     {
         SpeedUnit mySU =
-                new SpeedUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "SpeedUnit.Sprinter",
-                        UnitLocalizationsTest.DONOTCHECKPREFIX + "SpeedUnit.sprtr", SI_DERIVED, SpeedUnit.KM_PER_HOUR,
-                        48);
+            new SpeedUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "SpeedUnit.Sprinter",
+                UnitLocalizationsTest.DONOTCHECKPREFIX + "SpeedUnit.sprtr", SI_DERIVED, SpeedUnit.KM_PER_HOUR, 48);
         assertTrue("Can create a new PowerUnit", null != mySU);
         checkUnitRatioNameAndAbbreviation(mySU, 13.3333, 0.0001, "!Sprinter!", "!sprtr!");
     }

@@ -6,6 +6,12 @@
   <!-- ================================================= TYPES ========================================== -->
   <!-- ================================================================================================== -->
 
+  <xsd:simpleType name="CLASSNAMETYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="([A-Za-z_0-9$]+\.)*[A-Za-z_0-9$]+"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:simpleType name="SPEEDTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+[\.]{0,1}\d*\s*(km/h|m/s|mi/h|y/s|ft/s)"></xsd:pattern>
@@ -93,6 +99,12 @@
   <xsd:simpleType name="LANECHANGETYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="EGOISTIC|ALTRUISTIC"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="GTUPOSITIONTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="FRONT|REAR|REFERENCE"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -343,7 +355,7 @@
 
         <xsd:element name="LANEOVERRIDE" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>
-            <xsd:attribute name="NAME" type="xsd:string" use="required"></xsd:attribute>
+            <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
             <xsd:attribute name="SPEED" type="SPEEDTYPE" use="optional"></xsd:attribute>
             <xsd:attribute name="DIRECTION" type="DIRECTIONTYPE" use="optional"></xsd:attribute>
             <xsd:attribute name="COLOR" type="COLORTYPE" use="optional"></xsd:attribute>
@@ -405,9 +417,19 @@
           </xsd:complexType>
         </xsd:element>
 
+        <xsd:element name="SENSOR" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
+            <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required"></xsd:attribute>
+            <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="required"></xsd:attribute>
+            <xsd:attribute name="TRIGGER" type="GTUPOSITIONTYPE" use="required"></xsd:attribute>
+          </xsd:complexType>
+        </xsd:element>
+
         <xsd:element name="SINK" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>
             <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
+            <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required"></xsd:attribute>
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>

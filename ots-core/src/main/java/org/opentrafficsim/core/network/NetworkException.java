@@ -3,12 +3,11 @@ package org.opentrafficsim.core.network;
 /**
  * Exception thrown when network topology is inconsistent.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Aug 22, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Aug 22, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -60,7 +59,7 @@ public class NetworkException extends Exception
      * @param writableStackTrace boolean; whether or not the stack trace should be writable
      */
     public NetworkException(final String message, final Throwable cause, final boolean enableSuppression,
-            final boolean writableStackTrace)
+        final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);
     }

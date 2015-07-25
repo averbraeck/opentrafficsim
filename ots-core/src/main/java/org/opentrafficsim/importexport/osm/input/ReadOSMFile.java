@@ -20,12 +20,11 @@ import crosby.binary.osmosis.OsmosisReader;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 31 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 31 dec. 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/mzhang">Mingxin Zhang </a>
  * @author <a>Moritz Bergmann</a>
  */
@@ -48,8 +47,7 @@ public final class ReadOSMFile
      * @throws MalformedURLException when <cite>location</cite> is not valid
      */
     public ReadOSMFile(final String location, final List<OSMTag> wantedTags, final List<String> filteredKeys,
-            final ProgressListener progressListener) throws URISyntaxException, FileNotFoundException,
-            MalformedURLException
+        final ProgressListener progressListener) throws URISyntaxException, FileNotFoundException, MalformedURLException
     {
         URL url = new URL(location);
         File file = new File(url.toURI());
@@ -74,8 +72,8 @@ public final class ReadOSMFile
         }
 
         RunnableSource reader =
-                protocolBufferBinaryFormat ? new OsmosisReader(new FileInputStream(file)) : new XmlReader(file, false,
-                        compression);
+            protocolBufferBinaryFormat ? new OsmosisReader(new FileInputStream(file)) : new XmlReader(file, false,
+                compression);
 
         reader.setSink(this.sinkImplementation);
 

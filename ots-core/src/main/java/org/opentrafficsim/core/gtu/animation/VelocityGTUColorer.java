@@ -13,12 +13,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /**
  * Color GTU depending on their speed.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
- *          $, initial version 27 mei 2015 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$,
+ *          initial version 27 mei 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -32,8 +31,7 @@ public class VelocityGTUColorer implements GTUColorer
 
     /**
      * Construct a new VelocityGTUColorer.
-     * @param maximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed at (and above) which the returned color will be
-     *            green
+     * @param maximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed at (and above) which the returned color will be green
      */
     public VelocityGTUColorer(final DoubleScalar.Abs<SpeedUnit> maximumSpeed)
     {
@@ -46,7 +44,7 @@ public class VelocityGTUColorer implements GTUColorer
             double ratio = index * 1.0 / (colorTable.length - 1);
             DoubleScalar.Abs<SpeedUnit> speed = DoubleScalar.interpolate(zeroValue, maximumSpeed, ratio).immutable();
             this.legend.add(new LegendEntry(colorTable[index], speed.toString(), index == 0 ? "stationary" : "driving "
-                    + speed.toString()));
+                + speed.toString()));
         }
     }
 
@@ -66,8 +64,8 @@ public class VelocityGTUColorer implements GTUColorer
         }
         // Interpolate
         int floor = (int) Math.floor(ratio);
-        return ColorInterpolator.interpolateColor(this.legend.get(floor).getColor(), this.legend.get(floor + 1)
-                .getColor(), ratio - floor);
+        return ColorInterpolator.interpolateColor(this.legend.get(floor).getColor(), this.legend.get(floor + 1).getColor(),
+            ratio - floor);
     }
 
     /** {@inheritDoc} */

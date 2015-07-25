@@ -13,12 +13,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Oct 25, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Oct 25, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <NODEID> the ID type of the Node, e.g., String.
@@ -30,18 +29,17 @@ public abstract class RoadMarkerAlong<LINKID, NODEID> extends CrossSectionElemen
     private final Map<GTUType<?>, Set<LateralDirectionality>> permeabilityMap = new HashMap<>();
 
     /**
-     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the
-     * direction from the StartNode towards the EndNode as the longitudinal direction.
+     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
+     * the StartNode towards the EndNode as the longitudinal direction.
      * @param parentLink Cross Section Link to which the element belongs.
-     * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section
-     *            Link.
+     * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section Link.
      * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      * @throws NetworkException on network inconsistency
      */
     public RoadMarkerAlong(final CrossSectionLink<LINKID, NODEID> parentLink,
-            final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> beginWidth,
-            final DoubleScalar.Rel<LengthUnit> endWidth) throws NetworkException
+        final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> beginWidth,
+        final DoubleScalar.Rel<LengthUnit> endWidth) throws NetworkException
     {
         super(parentLink, lateralCenterPosition, lateralCenterPosition, beginWidth, endWidth);
     }
@@ -55,9 +53,9 @@ public abstract class RoadMarkerAlong<LINKID, NODEID> extends CrossSectionElemen
 
     /**
      * Add lateral permeability for a GTU type in the direction of the design line of the overarching CrossSectionLink.
-     * Therefore, the lateral directionality of one-sided permeability has to be switched for left lanes. This is done
-     * because the CrossSectionLink has no idea in which direction vehicles will be moving. On a 1+1 lane road with
-     * overtaking possibilities, the longitudinal directionality of both lanes will be BOTH. Example:
+     * Therefore, the lateral directionality of one-sided permeability has to be switched for left lanes. This is done because
+     * the CrossSectionLink has no idea in which direction vehicles will be moving. On a 1+1 lane road with overtaking
+     * possibilities, the longitudinal directionality of both lanes will be BOTH. Example:
      * 
      * <pre>
      * Suppose the design line runs from left to right.

@@ -43,7 +43,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * generation until there is enough room.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$,
  *          initial version Feb 2, 2015 <br>
@@ -414,8 +414,9 @@ public abstract class AbstractGTUGenerator<ID>
      * @throws RemoteException on communications failure
      * @throws NetworkException on network inconsistency
      */
-    public final HeadwayGTU headway(final DoubleScalar.Rel<LengthUnit> maxDistance, final LaneBasedRouteNavigator routeNavigator,
-        final Lane<?, ?> generatorLane) throws RemoteException, NetworkException
+    public final HeadwayGTU headway(final DoubleScalar.Rel<LengthUnit> maxDistance,
+        final LaneBasedRouteNavigator routeNavigator, final Lane<?, ?> generatorLane) throws RemoteException,
+        NetworkException
     {
         return headwayGTUSIForward(maxDistance.getSI(), routeNavigator, generatorLane);
     }

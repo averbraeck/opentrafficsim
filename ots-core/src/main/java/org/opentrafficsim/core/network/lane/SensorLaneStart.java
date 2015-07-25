@@ -9,15 +9,14 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
- * This is a sensor that is placed at the start of a Lane to register a GTU on the lane, and register the lane with the
- * GTU when the front of the vehicle passes over the sensor.
+ * This is a sensor that is placed at the start of a Lane to register a GTU on the lane, and register the lane with the GTU when
+ * the front of the vehicle passes over the sensor.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Jan 1, 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Jan 1, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -38,8 +37,8 @@ public class SensorLaneStart extends AbstractSensor
 
     /**
      * {@inheritDoc} <br>
-     * For this method, we assume that the right sensor triggered this method. In this case the sensor that indicates
-     * the front of the GTU. The code triggering the sensor therefore has to do the checking for sensor type.
+     * For this method, we assume that the right sensor triggered this method. In this case the sensor that indicates the front
+     * of the GTU. The code triggering the sensor therefore has to do the checking for sensor type.
      * @throws RemoteException on communications failure
      */
     @Override
@@ -65,7 +64,7 @@ public class SensorLaneStart extends AbstractSensor
     public String toString()
     {
         return "SensorLaneStart [getLane()=" + this.getLane() + ", getLongitudinalPosition()="
-                + this.getLongitudinalPosition() + ", getPositionType()=" + this.getPositionType() + "]";
+            + this.getLongitudinalPosition() + ", getPositionType()=" + this.getPositionType() + "]";
     }
 
 }

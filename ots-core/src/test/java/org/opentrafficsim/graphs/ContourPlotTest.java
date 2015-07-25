@@ -49,7 +49,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  * Test the non-GUI part of the ContourPlot class.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$,
  * initial version Aug 21, 2014 <br>
@@ -432,7 +432,7 @@ public class ContourPlotTest
                 else
                 {
                     if (Double.isNaN(expectedZValue))
-                    {// FIXME looks wrong / PK
+                    { // FIXME looks wrong / PK
                         assertFalse("Z value should not be NaN", Double.isNaN(z));
                     }
                 }
@@ -586,7 +586,7 @@ public class ContourPlotTest
 /**
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$,
  * initial version feb. 2015 <br>

@@ -6,12 +6,11 @@ import org.junit.Test;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Jul 1, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Jul 1, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class FormatTest
@@ -49,7 +48,7 @@ public class FormatTest
                         }
                         double tolerance = Math.abs(value / Math.pow(10, expectedPrecision));
                         assertEquals("Parsed result should equal original value within tolerance " + tolerance, value,
-                                reverseValue, tolerance);
+                            reverseValue, tolerance);
                     }
                     for (double baseValue : baseValues)
                     {
@@ -66,7 +65,7 @@ public class FormatTest
                         }
                         double tolerance = Math.abs(value / Math.pow(10, expectedPrecision));
                         assertEquals("Parsed result should equal original value within tolerance " + tolerance, value,
-                                reverseValue, tolerance);
+                            reverseValue, tolerance);
                     }
                 }
             }

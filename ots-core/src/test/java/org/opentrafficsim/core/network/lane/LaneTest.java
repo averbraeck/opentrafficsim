@@ -30,13 +30,12 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
 
 /**
  * Test the Lane class.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$,
  * initial version 21 jan. 2015 <br>
@@ -254,19 +253,19 @@ public class LaneTest
                     coordinates[0] = start.getPoint();
                     coordinates[1] = end.getPoint();
                     OTSLine3D line = new OTSLine3D(coordinates);
-                    CrossSectionLink.STR link =
-                        new CrossSectionLink.STR("A to B", start, end, line);
+                    CrossSectionLink.STR link = new CrossSectionLink.STR("A to B", start, end, line);
                     final int[] lateralOffsets = {-10, -3, -1, 0, 1, 3, 10};
                     for (int startLateralOffset : lateralOffsets)
                     {
                         for (int endLateralOffset : lateralOffsets)
                         {
                             int startWidth = 4; // This one is not varied
-                            for (int endWidth : new int[] {2, 4, 6})
+                            for (int endWidth : new int[]{2, 4, 6})
                             {
                                 // Now we can construct a Lane
                                 Lane.STR lane =
-                                    new Lane.STR(link, new DoubleScalar.Rel<LengthUnit>(startLateralOffset, LengthUnit.METER),
+                                    new Lane.STR(link,
+                                        new DoubleScalar.Rel<LengthUnit>(startLateralOffset, LengthUnit.METER),
                                         new DoubleScalar.Rel<LengthUnit>(endLateralOffset, LengthUnit.METER),
                                         new DoubleScalar.Rel<LengthUnit>(startWidth, LengthUnit.METER),
                                         new DoubleScalar.Rel<LengthUnit>(endWidth, LengthUnit.METER), laneType,
@@ -362,7 +361,8 @@ public class LaneTest
      * @param expectedResult boolean; true if the calling method expects the point to be within the contour of the Lane, false
      *            if the calling method expects the point to be outside the contour of the Lane
      */
-    private void checkInside(final Lane.STR lane, final double longitudinal, final double lateral, final boolean expectedResult)
+    private void checkInside(final Lane.STR lane, final double longitudinal, final double lateral,
+        final boolean expectedResult)
     {
         CrossSectionLink<?, ?> parentLink = lane.getParentLink();
         Node<?> start = parentLink.getStartNode();

@@ -60,7 +60,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version 17 dec. 2014 <br>
@@ -189,7 +189,7 @@ public class Trajectories extends AbstractWrappableSimulation implements Wrappab
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version ug 1, 2014 <br>
@@ -234,7 +234,7 @@ class TrajectoriesModel implements OTSModelInterface
     private DoubleScalar.Rel<LengthUnit> maximumDistance = new DoubleScalar.Rel<LengthUnit>(5000, LengthUnit.METER);
 
     /** The Lane containing the simulated Cars. */
-    private Lane lane;
+    private Lane.STR lane;
 
     /** the speed limit. */
     private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
@@ -389,15 +389,15 @@ class TrajectoriesModel implements OTSModelInterface
             GTUException
     {
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(4000, LengthUnit.METER);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
-                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane.STR, DoubleScalar.Rel<LengthUnit>> initialPositions =
+                new LinkedHashMap<Lane.STR, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.getLane(), initialPosition);
         this.block =
                 new LaneBasedIndividualCar<>(999999, this.gtuType, this.carFollowingModelCars, this.laneChangeModel,
                         initialPositions, new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
                         new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1.8,
                                 LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-                        new Route(new ArrayList<Node<?, ?>>()), this.simulator, DefaultCarAnimation.class,
+                        new Route(new ArrayList<Node<?>>()), this.simulator, DefaultCarAnimation.class,
                         this.gtuColorer);
     }
 
@@ -417,8 +417,8 @@ class TrajectoriesModel implements OTSModelInterface
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
-                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane.STR, DoubleScalar.Rel<LengthUnit>> initialPositions =
+                new LinkedHashMap<Lane.STR, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.getLane(), initialPosition);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         try
@@ -434,7 +434,7 @@ class TrajectoriesModel implements OTSModelInterface
             new LaneBasedIndividualCar<>(++this.carsCreated, this.gtuType, generateTruck ? this.carFollowingModelTrucks
                     : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
                     new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                            SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator,
+                            SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?>>()), this.simulator,
                     DefaultCarAnimation.class, this.gtuColorer);
             // Re-schedule this method after headway seconds
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);

@@ -13,12 +13,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /**
  * Color GTUs based on their current acceleration.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author: pknoppers
- *          $, initial version 29 mei 2015 <br>
+ * @version $Revision$, $LastChangedDate$, by $Author$,
+ *          initial version 29 mei 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -41,13 +40,13 @@ public class AccelerationGTUColorer implements GTUColorer
 
     /**
      * Construct a new AccelerationGTUColorer.
-     * @param maximumDeceleration DoubleScalar.Abs&lt;AccelerationUnit&gt;; the deceleration (negative acceleration)
-     *            that corresponds to the first (red) legend entry
-     * @param maximumAcceleration DoubleScalar.Abs&lt;AccelerationUnit&gt;; the deceleration that corresponds to the
-     *            last (blue) legend entry
+     * @param maximumDeceleration DoubleScalar.Abs&lt;AccelerationUnit&gt;; the deceleration (negative acceleration) that
+     *            corresponds to the first (red) legend entry
+     * @param maximumAcceleration DoubleScalar.Abs&lt;AccelerationUnit&gt;; the deceleration that corresponds to the last (blue)
+     *            legend entry
      */
     public AccelerationGTUColorer(final DoubleScalar.Abs<AccelerationUnit> maximumDeceleration,
-            final DoubleScalar.Abs<AccelerationUnit> maximumAcceleration)
+        final DoubleScalar.Abs<AccelerationUnit> maximumAcceleration)
     {
         this.maximumDeceleration = maximumDeceleration;
         this.maximumAcceleration = maximumAcceleration;
@@ -57,17 +56,17 @@ public class AccelerationGTUColorer implements GTUColorer
         {
             double ratio = index * 1.0 / (decelerationColors.length - 1);
             DoubleScalar.Abs<AccelerationUnit> acceleration =
-                    DoubleScalar.interpolate(this.maximumDeceleration, zeroValue, ratio).immutable();
+                DoubleScalar.interpolate(this.maximumDeceleration, zeroValue, ratio).immutable();
             this.legend.add(new LegendEntry(decelerationColors[index], acceleration.toString(), "deceleration"
-                    + acceleration.toString()));
+                + acceleration.toString()));
         }
         for (int index = 0; index < accelerationColors.length; index++)
         {
             double ratio = index * 1.0 / (accelerationColors.length - 1);
             DoubleScalar.Abs<AccelerationUnit> acceleration =
-                    DoubleScalar.interpolate(zeroValue, this.maximumAcceleration, ratio).immutable();
+                DoubleScalar.interpolate(zeroValue, this.maximumAcceleration, ratio).immutable();
             this.legend.add(new LegendEntry(accelerationColors[index], acceleration.toString(), "acceleration"
-                    + acceleration.toString()));
+                + acceleration.toString()));
         }
     }
 
@@ -80,14 +79,14 @@ public class AccelerationGTUColorer implements GTUColorer
         if (acceleration.getSI() < 0)
         {
             ratio =
-                    decelerationColors.length - 1 - acceleration.getSI() / this.maximumDeceleration.getSI()
-                            * (decelerationColors.length - 1);
+                decelerationColors.length - 1 - acceleration.getSI() / this.maximumDeceleration.getSI()
+                    * (decelerationColors.length - 1);
         }
         else
         {
             ratio =
-                    acceleration.getSI() / this.maximumAcceleration.getSI() * (accelerationColors.length - 1)
-                            + decelerationColors.length - 1;
+                acceleration.getSI() / this.maximumAcceleration.getSI() * (accelerationColors.length - 1)
+                    + decelerationColors.length - 1;
         }
         if (ratio <= 0)
         {
@@ -99,8 +98,8 @@ public class AccelerationGTUColorer implements GTUColorer
         }
         // Interpolate
         int floor = (int) Math.floor(ratio);
-        return ColorInterpolator.interpolateColor(this.legend.get(floor).getColor(), this.legend.get(floor + 1)
-                .getColor(), ratio - floor);
+        return ColorInterpolator.interpolateColor(this.legend.get(floor).getColor(), this.legend.get(floor + 1).getColor(),
+            ratio - floor);
     }
 
     /** {@inheritDoc} */

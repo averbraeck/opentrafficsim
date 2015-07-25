@@ -13,11 +13,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.LinearGeometry;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.animation.LaneAnimation;
 import org.opentrafficsim.core.network.animation.ShoulderAnimation;
-import org.opentrafficsim.core.network.geotools.LinearGeometry;
 import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
@@ -37,7 +37,7 @@ import com.vividsolutions.jts.geom.LineString;
 /**
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version ct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -189,38 +189,38 @@ public class TestModel implements OTSModelInterface
 
         Shoulder sL = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(9.0, LengthUnit.METER), m10, m10);
 
-        Lane laneELL =
+        Lane.STR laneELL =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(8.25, LengthUnit.METER),
                         new DoubleScalar.Rel<LengthUnit>(8.25, LengthUnit.METER), m05, m05, null,
                         LongitudinalDirectionality.NONE, f0, speedLimit);
-        Lane laneL1 =
+        Lane.STR laneL1 =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(6.25, LengthUnit.METER),
                         new DoubleScalar.Rel<LengthUnit>(6.25, LengthUnit.METER), m35, m35, null,
                         LongitudinalDirectionality.BACKWARD, f200, speedLimit);
-        Lane laneL2 =
+        Lane.STR laneL2 =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(2.75, LengthUnit.METER),
                         new DoubleScalar.Rel<LengthUnit>(2.75, LengthUnit.METER), m35, m35, null,
                         LongitudinalDirectionality.BACKWARD, f200, speedLimit);
-        Lane laneELM =
+        Lane.STR laneELM =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(0.75, LengthUnit.METER),
                         new DoubleScalar.Rel<LengthUnit>(0.75, LengthUnit.METER), m05, m05, null,
                         LongitudinalDirectionality.NONE, f0, speedLimit);
 
         Shoulder sM = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
 
-        Lane laneERM =
+        Lane.STR laneERM =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(-0.75, LengthUnit.METER),
                         new DoubleScalar.Rel<LengthUnit>(-0.75, LengthUnit.METER), m05, m05, null,
                         LongitudinalDirectionality.NONE, f0, speedLimit);
-        Lane laneR2 =
+        Lane.STR laneR2 =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(-2.75, LengthUnit.METER),
                         new DoubleScalar.Rel<LengthUnit>(-2.75, LengthUnit.METER), m35, m35, null,
                         LongitudinalDirectionality.FORWARD, f200, speedLimit);
-        Lane laneR1 =
+        Lane.STR laneR1 =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(-6.25, LengthUnit.METER),
                         new DoubleScalar.Rel<LengthUnit>(-6.25, LengthUnit.METER), m35, m35, null,
                         LongitudinalDirectionality.FORWARD, f200, speedLimit);
-        Lane laneERR =
+        Lane.STR laneERR =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(-8.25, LengthUnit.METER),
                         new DoubleScalar.Rel<LengthUnit>(-8.25, LengthUnit.METER), m05, m05, null,
                         LongitudinalDirectionality.NONE, f0, speedLimit);

@@ -9,10 +9,10 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
  * The mass flow rate is the mass of a substance which passes through a given surface per unit of time (wikipedia).
  * <p>
  * Copyright (c) 2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version May 15, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class FlowMassUnit extends Unit<FlowMassUnit>
@@ -38,12 +38,11 @@ public class FlowMassUnit extends Unit<FlowMassUnit>
     static
     {
         SI =
-                new FlowMassUnit(MassUnit.KILOGRAM, TimeUnit.SECOND, "FlowMassUnit.kilogram_per_second",
-                        "FlowMassUnit.kg/s", SI_DERIVED);
+            new FlowMassUnit(MassUnit.KILOGRAM, TimeUnit.SECOND, "FlowMassUnit.kilogram_per_second", "FlowMassUnit.kg/s",
+                SI_DERIVED);
         KILOGRAM_PER_SECOND = SI;
         POUND_PER_SECOND =
-                new FlowMassUnit(MassUnit.POUND, TimeUnit.SECOND, "FlowMassUnit.pound_per_second", "FlowMassUnit.lb/s",
-                        IMPERIAL);
+            new FlowMassUnit(MassUnit.POUND, TimeUnit.SECOND, "FlowMassUnit.pound_per_second", "FlowMassUnit.lb/s", IMPERIAL);
     }
 
     /**
@@ -55,10 +54,10 @@ public class FlowMassUnit extends Unit<FlowMassUnit>
      * @param unitSystem the unit system, e.g. SI or Imperial
      */
     public FlowMassUnit(final MassUnit massUnit, final TimeUnit timeUnit, final String nameKey,
-            final String abbreviationKey, final UnitSystem unitSystem)
+        final String abbreviationKey, final UnitSystem unitSystem)
     {
         super(nameKey, abbreviationKey, unitSystem, KILOGRAM_PER_SECOND, massUnit.getConversionFactorToStandardUnit()
-                / timeUnit.getConversionFactorToStandardUnit(), true);
+            / timeUnit.getConversionFactorToStandardUnit(), true);
         this.massUnit = massUnit;
         this.timeUnit = timeUnit;
     }
@@ -69,11 +68,10 @@ public class FlowMassUnit extends Unit<FlowMassUnit>
      * @param abbreviationKey the key to the locale file for the abbreviation of the unit
      * @param unitSystem the unit system, e.g. SI or Imperial
      * @param referenceUnit the unit to convert to
-     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given
-     *            reference unit
+     * @param conversionFactorToReferenceUnit multiply a value in this unit by the factor to convert to the given reference unit
      */
     public FlowMassUnit(final String nameKey, final String abbreviationKey, final UnitSystem unitSystem,
-            final FlowMassUnit referenceUnit, final double conversionFactorToReferenceUnit)
+        final FlowMassUnit referenceUnit, final double conversionFactorToReferenceUnit)
     {
         super(nameKey, abbreviationKey, unitSystem, referenceUnit, conversionFactorToReferenceUnit, true);
         this.massUnit = referenceUnit.getMassUnit();

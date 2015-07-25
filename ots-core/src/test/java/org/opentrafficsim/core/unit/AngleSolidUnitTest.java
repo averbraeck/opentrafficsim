@@ -12,12 +12,11 @@ import org.opentrafficsim.core.locale.DefaultLocale;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Jun 4, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Jun 4, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class AngleSolidUnitTest extends AbstractUnitTest<AngleSolidUnit>
@@ -50,10 +49,10 @@ public class AngleSolidUnitTest extends AbstractUnitTest<AngleSolidUnit>
         checkUnitRatioNameAndAbbreviation(AngleSolidUnit.STERADIAN, 1, 0.0000001, "steradian", "sr");
         checkUnitRatioNameAndAbbreviation(AngleSolidUnit.SQUARE_DEGREE, 1.0 / 3283, 0.0005, "square degree", "sq.deg");
         // Check two conversions between units
-        assertEquals("one STERADIAN is about 3283 SQUARE_DEGREE", 3283,
-                getMultiplicationFactorTo(AngleSolidUnit.STERADIAN, AngleSolidUnit.SQUARE_DEGREE), 0.5);
-        assertEquals("one SQUARE_DEGREE is about 0.0003045 STERADIAN", 0.0003045,
-                getMultiplicationFactorTo(AngleSolidUnit.SQUARE_DEGREE, AngleSolidUnit.STERADIAN), 0.0000005);
+        assertEquals("one STERADIAN is about 3283 SQUARE_DEGREE", 3283, getMultiplicationFactorTo(AngleSolidUnit.STERADIAN,
+            AngleSolidUnit.SQUARE_DEGREE), 0.5);
+        assertEquals("one SQUARE_DEGREE is about 0.0003045 STERADIAN", 0.0003045, getMultiplicationFactorTo(
+            AngleSolidUnit.SQUARE_DEGREE, AngleSolidUnit.STERADIAN), 0.0000005);
     }
 
     /**
@@ -63,9 +62,8 @@ public class AngleSolidUnitTest extends AbstractUnitTest<AngleSolidUnit>
     public final void createAngleUnit()
     {
         AngleSolidUnit myAPU =
-                new AngleSolidUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "AngleSolidUnit.point",
-                        UnitLocalizationsTest.DONOTCHECKPREFIX + "AngleSolidUnit.pt", OTHER, AngleSolidUnit.STERADIAN,
-                        0.19634954085);
+            new AngleSolidUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "AngleSolidUnit.point",
+                UnitLocalizationsTest.DONOTCHECKPREFIX + "AngleSolidUnit.pt", OTHER, AngleSolidUnit.STERADIAN, 0.19634954085);
         assertTrue("Can create a new TimeUnit", null != myAPU);
         checkUnitRatioNameAndAbbreviation(myAPU, 0.19634954085, 0.0000001, "!point!", "!pt!");
     }

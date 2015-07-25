@@ -45,7 +45,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  * As abstract classes cannot be directly
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$,
  * initial version 14 jan. 2015 <br>
@@ -146,13 +146,13 @@ public class AbstractLaneBasedGTUTest
         {
             // Ignore
         }
-        for (Lane.STR[] laneGroup : new Lane.STR[][] {lanesGroupA, lanesGroupB})
+        for (Lane.STR[] laneGroup : new Lane.STR[][]{lanesGroupA, lanesGroupB})
         {
             for (int laneIndex = 0; laneIndex < laneGroup.length; laneIndex++)
             {
                 Lane.STR lane = laneGroup[laneIndex];
                 boolean expectException = 1 != laneIndex;
-                for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})
+                for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
                 {
                     // System.out.println("lane:" + lane + ", expectedException: " + expectException
                     // + ", relativePostion: " + relativePosition);
@@ -231,7 +231,7 @@ public class AbstractLaneBasedGTUTest
             assertEquals("longitudinal velocity is " + expectedLongitudinalVelocity, expectedLongitudinalVelocity,
                 longitudinalVelocity.getSI(), 0.00001);
             assertEquals("lateral velocity is 0", 0, car.getLateralVelocity().getSI(), 0.00001);
-            for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})
+            for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
             {
                 Map<Lane<?, ?>, Double> positions = car.fractionalPositions(relativePosition);
                 assertEquals("Car should be in two lanes", 2, positions.size());
@@ -245,13 +245,13 @@ public class AbstractLaneBasedGTUTest
                 assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos, car
                     .fractionalPosition(lanesGroupB[1], relativePosition), 0.0000001);
             }
-            for (Lane.STR[] laneGroup : new Lane.STR[][] {lanesGroupA, lanesGroupB})
+            for (Lane.STR[] laneGroup : new Lane.STR[][]{lanesGroupA, lanesGroupB})
             {
                 for (int laneIndex = 0; laneIndex < laneGroup.length; laneIndex++)
                 {
                     Lane.STR lane = laneGroup[laneIndex];
                     boolean expectException = 1 != laneIndex;
-                    for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})
+                    for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
                     {
                         // System.out.println("lane:" + lane + ", expectedException: " + expectException
                         // + ", relativePostion: " + relativePosition);
@@ -351,7 +351,7 @@ public class AbstractLaneBasedGTUTest
             LaneFactory.makeMultiLane("C", nodeCFrom, nodeCTo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(100,
                 SpeedUnit.KM_PER_HOUR), simulator);
         car.addLane(lanesGroupC[0], new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.SI));
-        for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})
+        for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
         {
             Map<Lane<?, ?>, Double> positions = car.fractionalPositions(relativePosition);
             assertEquals("Car should be in three lanes", 3, positions.size());
@@ -372,7 +372,7 @@ public class AbstractLaneBasedGTUTest
                 .fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
         }
         car.removeLane(lanesGroupA[1]);
-        for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})
+        for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
         {
             Map<Lane<?, ?>, Double> positions = car.fractionalPositions(relativePosition);
             assertEquals("Car should be in two lanes", 2, positions.size());
@@ -399,7 +399,7 @@ public class AbstractLaneBasedGTUTest
  * Dummy OTSModelInterface.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$,
  * initial version 4 jan. 2015 <br>

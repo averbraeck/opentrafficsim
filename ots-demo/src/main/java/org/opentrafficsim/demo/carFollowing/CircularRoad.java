@@ -72,7 +72,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version 21 nov. 2014 <br>
@@ -316,7 +316,7 @@ public class CircularRoad extends AbstractWrappableSimulation
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version 1 nov. 2014 <br>
@@ -554,7 +554,7 @@ class RoadSimulationModel implements OTSModelInterface
                 double trackLength = lane1Length + lanes2[laneIndex].getLength().getSI();
                 for (double pos = 0; pos <= trackLength - headway - variability;)
                 {
-                    Lane lane = pos >= lane1Length ? lanes2[laneIndex] : lanes1[laneIndex];
+                    Lane.STR lane = pos >= lane1Length ? lanes2[laneIndex] : lanes1[laneIndex];
                     // Actual headway is uniformly distributed around headway
                     double laneRelativePos = pos > lane1Length ? pos - lane1Length : pos;
                     double actualHeadway = headway + (random.nextDouble() * 2 - 1) * variability;
@@ -609,21 +609,21 @@ class RoadSimulationModel implements OTSModelInterface
      * @throws RemoteException on communications failure
      * @throws GTUException when something goes wrong during construction of the car
      */
-    protected final void generateCar(final DoubleScalar.Rel<LengthUnit> initialPosition, final Lane lane,
+    protected final void generateCar(final DoubleScalar.Rel<LengthUnit> initialPosition, final Lane.STR lane,
             final GTUType<String> gtuType) throws NamingException, NetworkException, SimRuntimeException,
             RemoteException, GTUException
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
-                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane.STR, DoubleScalar.Rel<LengthUnit>> initialPositions =
+                new LinkedHashMap<Lane.STR, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(lane, initialPosition);
         DoubleScalar.Rel<LengthUnit> vehicleLength =
                 new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
         new LaneBasedIndividualCar<>(++this.carsCreated, gtuType, generateTruck ? this.carFollowingModelTrucks
                 : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
                 new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                        SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?, ?>>()), this.simulator,
+                        SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?>>()), this.simulator,
                 DefaultCarAnimation.class, this.gtuColorer);
     }
 

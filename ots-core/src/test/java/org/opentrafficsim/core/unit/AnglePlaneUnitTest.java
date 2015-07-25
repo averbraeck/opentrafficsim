@@ -14,12 +14,11 @@ import org.opentrafficsim.core.value.vfloat.scalar.FloatScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Jun 4, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Jun 4, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class AnglePlaneUnitTest extends AbstractUnitTest<AnglePlaneUnit>
@@ -53,15 +52,14 @@ public class AnglePlaneUnitTest extends AbstractUnitTest<AnglePlaneUnit>
         checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.ARCMINUTE, 2 * Math.PI / 360 / 60, 0.0001, "arcminute", "\'");
         checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.GRAD, 2 * Math.PI / 400, 0.00001, "gradian", "grad");
         // Check two conversions between non-standard units
-        assertEquals("one GRAD is about 54 ARCMINUTE", 54,
-                getMultiplicationFactorTo(AnglePlaneUnit.GRAD, AnglePlaneUnit.ARCMINUTE), 0.5);
-        assertEquals("one ARCMINUTE is about 0.0185 GRAD", 0.0185,
-                getMultiplicationFactorTo(AnglePlaneUnit.ARCMINUTE, AnglePlaneUnit.GRAD), 0.0001);
+        assertEquals("one GRAD is about 54 ARCMINUTE", 54, getMultiplicationFactorTo(AnglePlaneUnit.GRAD,
+            AnglePlaneUnit.ARCMINUTE), 0.5);
+        assertEquals("one ARCMINUTE is about 0.0185 GRAD", 0.0185, getMultiplicationFactorTo(AnglePlaneUnit.ARCMINUTE,
+            AnglePlaneUnit.GRAD), 0.0001);
         // Check conversion factor to standard unit for all remaining time units
         checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.CENTESIMAL_ARCMINUTE, 0.00015708, 0.0000001,
-                "centesimal arcminute", "\'");
-        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.CENTESIMAL_ARCSECOND, 1.57079e-6, 0.1, "centesimal arcsecond",
-                "\"");
+            "centesimal arcminute", "\'");
+        checkUnitRatioNameAndAbbreviation(AnglePlaneUnit.CENTESIMAL_ARCSECOND, 1.57079e-6, 0.1, "centesimal arcsecond", "\"");
     }
 
     /**
@@ -71,9 +69,8 @@ public class AnglePlaneUnitTest extends AbstractUnitTest<AnglePlaneUnit>
     public final void createAngleUnit()
     {
         AnglePlaneUnit myAPU =
-                new AnglePlaneUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "AnglePlaneUnit.point",
-                        UnitLocalizationsTest.DONOTCHECKPREFIX + "AnglePlaneUnit.pt", OTHER, AnglePlaneUnit.RADIAN,
-                        0.19634954085);
+            new AnglePlaneUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "AnglePlaneUnit.point",
+                UnitLocalizationsTest.DONOTCHECKPREFIX + "AnglePlaneUnit.pt", OTHER, AnglePlaneUnit.RADIAN, 0.19634954085);
         assertTrue("Can create a new AngleUnit", null != myAPU);
         checkUnitRatioNameAndAbbreviation(myAPU, 0.19634954085, 0.0000001, "!point!", "!pt!");
     }

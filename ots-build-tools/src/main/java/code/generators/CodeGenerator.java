@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version okt. 2014 <br>
@@ -118,7 +118,7 @@ public class CodeGenerator
                     + this.generatorName + ", " + this.when + "\r\n * <p>\r\n"
                     + " * Copyright (c) 2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the "
                     + "Netherlands. All rights" + " reserved. <br>\r\n"
-                    + " * BSD-style license. See <a href=\"http://opentrafficsim.org/node/13\">OpenTrafficSim "
+                    + " * BSD-style license. See <a href=\"http://opentrafficsim.org/docs/license.html\">OpenTrafficSim "
                     + "License</a>.\r\n" + " * <p>\r\n" + " * $" + "LastChangedDate$, @version $" + "Revision$, by $"
                     + "Author$, initial version" + this.when + " <br>\r\n"
                     + " * @author <a href=\"http://www.tbm.tudelft.nl/averbraeck\">Alexander Verbraeck</a>\r\n"

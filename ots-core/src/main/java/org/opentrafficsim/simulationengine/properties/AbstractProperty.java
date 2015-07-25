@@ -6,12 +6,11 @@ import java.util.Iterator;
 /**
  * Abstract property.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 18 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 18 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <T> type of the property
  */
@@ -61,8 +60,8 @@ public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T
     public abstract boolean isReadOnly();
 
     /**
-     * Display priority determines the order in which properties should be displayed. Properties with lower values
-     * should be displayed above or before those with higher values.
+     * Display priority determines the order in which properties should be displayed. Properties with lower values should be
+     * displayed above or before those with higher values.
      * @return int; the display priority of this AbstractProperty
      */
     public final int getDisplayPriority()
@@ -99,12 +98,11 @@ public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T
     /**
      * Really simple iterator for properties.
      * <p>
-     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
-     * reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
-     * $LastChangedDate$, @version $Revision$, by $Author:
-     * pknoppers $, initial version jan. 2015 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author$,
+     * initial version jan. 2015 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
     class PropertyIterator implements Iterator<AbstractProperty<T>>

@@ -5,12 +5,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /**
  * Definition of one axis for a ContourPlot.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Jul 28, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Jul 28, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 class Axis
@@ -40,16 +39,15 @@ class Axis
      * Create a new AxisDefinition.
      * @param minimumValue DoubleScalar; the minimum value along this axis
      * @param maximumValue DoubleScalar; the maximum value along this axis
-     * @param granularities double[]; the aggregation values along this axis (all values must be an integer multiple of
-     *            the first value)
+     * @param granularities double[]; the aggregation values along this axis (all values must be an integer multiple of the
+     *            first value)
      * @param initialGranularity double; initial aggregation value (must be one of the values in granularities)
-     * @param name String; the name to describe the axis and to name the pop up menu that changes the current
-     *            granularity
+     * @param name String; the name to describe the axis and to name the pop up menu that changes the current granularity
      * @param shortName String; the name identifying this axis for use in a menu
      * @param format String; format string for rendering a value along this axis
      */
     public Axis(final DoubleScalar<?> minimumValue, final DoubleScalar<?> maximumValue, final double[] granularities,
-            final double initialGranularity, final String name, final String shortName, final String format)
+        final double initialGranularity, final String name, final String shortName, final String format)
     {
         this.minimumValue = minimumValue;
         this.setMaximumValue(maximumValue);
@@ -99,7 +97,7 @@ class Axis
     public int getAggregatedBinCount()
     {
         return (int) Math.ceil((this.getMaximumValue().getSI() - this.getMinimumValue().getSI())
-                / this.getCurrentGranularity());
+            / this.getCurrentGranularity());
     }
 
     /**
@@ -108,7 +106,7 @@ class Axis
     public int getBinCount()
     {
         return (int) Math.ceil((this.getMaximumValue().getSI() - this.getMinimumValue().getSI())
-                / this.getGranularities()[0]);
+            / this.getGranularities()[0]);
     }
 
     /**

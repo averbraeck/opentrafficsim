@@ -12,12 +12,11 @@ import org.opentrafficsim.core.unit.unitsystem.UnitSystem;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Jun 6, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Jun 6, 2014 <br>
  * @author <a href="http://tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class ForceUnitTest extends AbstractUnitTest<ForceUnit>
@@ -50,10 +49,10 @@ public class ForceUnitTest extends AbstractUnitTest<ForceUnit>
         checkUnitRatioNameAndAbbreviation(ForceUnit.NEWTON, 1, 0.000001, "newton", "N");
         checkUnitRatioNameAndAbbreviation(ForceUnit.DYNE, 0.00001, 0.000000001, "dyne", "dyn");
         // Check two conversions between non-standard units
-        assertEquals("one DYNE is about 1.019716e-6 KILOGRAM FORCE", 1.01971621e-6,
-                getMultiplicationFactorTo(ForceUnit.DYNE, ForceUnit.KILOGRAM_FORCE), 0.00000000001);
-        assertEquals("one KILOGRAM FORCE is about 980665 DYNE", 980665,
-                getMultiplicationFactorTo(ForceUnit.KILOGRAM_FORCE, ForceUnit.DYNE), 0.5);
+        assertEquals("one DYNE is about 1.019716e-6 KILOGRAM FORCE", 1.01971621e-6, getMultiplicationFactorTo(
+            ForceUnit.DYNE, ForceUnit.KILOGRAM_FORCE), 0.00000000001);
+        assertEquals("one KILOGRAM FORCE is about 980665 DYNE", 980665, getMultiplicationFactorTo(ForceUnit.KILOGRAM_FORCE,
+            ForceUnit.DYNE), 0.5);
     }
 
     /**
@@ -63,9 +62,8 @@ public class ForceUnitTest extends AbstractUnitTest<ForceUnit>
     public final void createForceUnit()
     {
         ForceUnit myFU =
-                new ForceUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "ForceUnit.AntForce",
-                        UnitLocalizationsTest.DONOTCHECKPREFIX + "ForceUnit.af", UnitSystem.OTHER,
-                        ForceUnit.KILOGRAM_FORCE, 0.002);
+            new ForceUnit(UnitLocalizationsTest.DONOTCHECKPREFIX + "ForceUnit.AntForce",
+                UnitLocalizationsTest.DONOTCHECKPREFIX + "ForceUnit.af", UnitSystem.OTHER, ForceUnit.KILOGRAM_FORCE, 0.002);
         assertTrue("Can create a new ForceUnit", null != myFU);
         checkUnitRatioNameAndAbbreviation(myFU, 0.002 * 9.8, 0.0001, "!AntForce!", "!af!");
     }

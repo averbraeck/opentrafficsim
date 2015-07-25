@@ -8,15 +8,13 @@ import javax.swing.JPanel;
 import org.opentrafficsim.simulationengine.WrappableSimulation;
 
 /**
- * Wrap a DSOL simulator, or any (descendant of a) JPanel in a JFrame (wrap it in a window). The window will be
- * maximized.
+ * Wrap a DSOL simulator, or any (descendant of a) JPanel in a JFrame (wrap it in a window). The window will be maximized.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 16 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 16 dec. 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */

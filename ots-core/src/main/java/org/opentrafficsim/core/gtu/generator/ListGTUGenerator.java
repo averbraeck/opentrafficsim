@@ -24,7 +24,6 @@ import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
-import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -34,7 +33,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * Generate GTUs at times prescribed in a text file.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$,
  *          initial version 7 jul. 2015 <br>
@@ -99,8 +98,8 @@ public class ListGTUGenerator<ID>
      */
     public ListGTUGenerator(String name, OTSDEVSSimulatorInterface simulator, GTUType<ID> gtuType,
         GTUFollowingModel gtuFollowingModel, LaneChangeModel laneChangeModel, DoubleScalar.Abs<SpeedUnit> initialSpeed,
-        Lane<?, ?> lane, DoubleScalar.Rel<LengthUnit> position, LaneBasedRouteGenerator routeGenerator, GTUColorer gtuColorer,
-        String fileName) throws RemoteException, SimRuntimeException, NetworkException
+        Lane<?, ?> lane, DoubleScalar.Rel<LengthUnit> position, LaneBasedRouteGenerator routeGenerator,
+        GTUColorer gtuColorer, String fileName) throws RemoteException, SimRuntimeException, NetworkException
     {
         if (null == lane)
         {
@@ -142,7 +141,7 @@ public class ListGTUGenerator<ID>
                     return; // End of input; do not re-schedule
                 }
             }
-            while (line.equals(""));// ignore blank lines
+            while (line.equals("")); // ignore blank lines
             double when = Double.parseDouble(line);
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(when, TimeUnit.SECOND), this, this,
                 "generateCar", null);

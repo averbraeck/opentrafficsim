@@ -6,12 +6,11 @@ import java.util.List;
 /**
  * OSMRelation wraps a set of OSMTags, a set of OSMWays and a set of OSMNodes.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 31 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 31 dec. 2014 <br>
  * @author <a>Moritz Bergmann</a>
  */
 public class OSMRelation
@@ -38,8 +37,8 @@ public class OSMRelation
 
     /**
      * Retrieve the list of OSMTags of this OSMRelation.
-     * @return List&lt;OSMTag&gt;; the list of OSMTags of this OSMRelation; <strong>modifications of the returned list
-     *         are reflected in this OSMWay</strong>.
+     * @return List&lt;OSMTag&gt;; the list of OSMTags of this OSMRelation; <strong>modifications of the returned list are
+     *         reflected in this OSMWay</strong>.
      */
     public final List<OSMTag> getTaglist()
     {
@@ -57,8 +56,8 @@ public class OSMRelation
 
     /**
      * Retrieve the list of OSMWay ids of this OSMRelation.
-     * @return List&lt;Long&gt;; the list of OSMWay ids of this OSMRelation; <strong>modifications of the returned list
-     *         are reflected in this OSMWay</strong>.
+     * @return List&lt;Long&gt;; the list of OSMWay ids of this OSMRelation; <strong>modifications of the returned list are
+     *         reflected in this OSMWay</strong>.
      */
     public final List<Long> getWays()
     {
@@ -76,8 +75,8 @@ public class OSMRelation
 
     /**
      * Retrieve the list of OSMNode ids of this OSMRelation.
-     * @return List&lt;Long&gt;; the list of OSMNode ids of this OSMRelation; <strong>modifications of the returned list
-     *         are reflected in this OSMWay</strong>.
+     * @return List&lt;Long&gt;; the list of OSMNode ids of this OSMRelation; <strong>modifications of the returned list are
+     *         reflected in this OSMWay</strong>.
      */
     public final List<Long> getNodes()
     {
@@ -105,8 +104,8 @@ public class OSMRelation
     /**
      * Retrieve the OSMTags of this OSMRelation that have a specified key.
      * @param key String; the key of the returned OSMTags
-     * @return List&lt;OSMTag&gt;; the OSMTags that have the specified key (modifications of the result do not affect
-     *         this OSMRelation)
+     * @return List&lt;OSMTag&gt;; the OSMTags that have the specified key (modifications of the result do not affect this
+     *         OSMRelation)
      */
     public final List<OSMTag> getMatchingTags(final String key)
     {

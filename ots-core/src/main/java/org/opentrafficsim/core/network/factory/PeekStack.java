@@ -5,12 +5,11 @@ import java.util.ArrayList;
 /**
  * Stack object that allows easy verification of the values of the last few entries.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 24 jun. 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 24 jun. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <T> type of the objects stored on this PeekStack
  */
@@ -42,8 +41,8 @@ public class PeekStack<T> extends ArrayList<T>
 
     /**
      * Return the N-from-last element of this PeekStack.
-     * @param offset int; if 0 the last pushed, but not yet popped element is returned; if offset is 1, the before last
-     *            pushed, but not yet popped element is returned; etc.
+     * @param offset int; if 0 the last pushed, but not yet popped element is returned; if offset is 1, the before last pushed,
+     *            but not yet popped element is returned; etc.
      * @return T; the addressed element
      */
     public final T peekNthLast(final int offset)

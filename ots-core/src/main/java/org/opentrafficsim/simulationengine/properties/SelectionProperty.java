@@ -3,12 +3,11 @@ package org.opentrafficsim.simulationengine.properties;
 /**
  * Property that is described by a set of Strings where exactly one can (and must) be true.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 19 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 19 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class SelectionProperty extends AbstractProperty<String>
@@ -38,7 +37,7 @@ public class SelectionProperty extends AbstractProperty<String>
      * @param displayPriority int; the display priority of the new SelectionProperty
      */
     public SelectionProperty(final String shortName, final String description, final String[] options,
-            final int initialDefaultOption, final boolean readOnly, final int displayPriority)
+        final int initialDefaultOption, final boolean readOnly, final int displayPriority)
     {
         super(displayPriority);
         this.shortName = shortName;
@@ -131,7 +130,7 @@ public class SelectionProperty extends AbstractProperty<String>
     public AbstractProperty<String> deepCopy()
     {
         return new SelectionProperty(this.shortName, this.description, this.options, this.currentOption, this.readOnly,
-                getDisplayPriority());
+            getDisplayPriority());
     }
 
 }
