@@ -8,9 +8,9 @@ import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.geometry.OTSBuffering;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -70,11 +70,12 @@ public abstract class CrossSectionElement<LINKID, NODEID> implements LocatableIn
      * @param beginWidth DoubleScalar.Rel&lt;LengthUnit&gt;; width at start, positioned <i>symmetrically around</i> the design
      *            line
      * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; width at end, positioned <i>symmetrically around</i> the design line
-     * @throws NetworkException when creation of the geometry fails
+     * @throws OTSGeometryException when creation of the geometry fails
      */
     public CrossSectionElement(final CrossSectionLink<LINKID, NODEID> parentLink,
         final DoubleScalar.Rel<LengthUnit> lateralOffsetAtBegin, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd,
-        final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth) throws NetworkException
+        final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
+        throws OTSGeometryException
     {
         super();
         this.parentLink = parentLink;
@@ -83,9 +84,11 @@ public abstract class CrossSectionElement<LINKID, NODEID> implements LocatableIn
         this.beginWidth = beginWidth;
         this.endWidth = endWidth;
 
-        this.centerLine = OTSBuffering.offsetGeometry(parentLink.getDesignLine(), lateralOffsetAtBegin.getSI());
+        this.centerLine =
+            OTSBuffering.offsetLine(this.getParentLink().getDesignLine(), this.designLineOffsetAtBegin.getSI(),
+                this.designLineOffsetAtEnd.getSI());
         this.length = this.centerLine.getLength();
-        this.contour = OTSBuffering.offsetGeometry(this.centerLine, beginWidth.getSI());
+        this.contour = OTSBuffering.constructContour(this);
 
         this.parentLink.addCrossSectionElement(this);
     }
@@ -256,7 +259,8 @@ public abstract class CrossSectionElement<LINKID, NODEID> implements LocatableIn
     @SuppressWarnings("checkstyle:designforextension")
     public DirectedPoint getLocation() throws RemoteException
     {
-        return this.contour.getLocation();
+        DirectedPoint centroid = this.contour.getLocation();
+        return new DirectedPoint(centroid.x, centroid.y, getZ());
     }
 
     /** {@inheritDoc} */

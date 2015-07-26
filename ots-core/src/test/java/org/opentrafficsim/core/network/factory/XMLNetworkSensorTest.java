@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
@@ -91,7 +92,7 @@ public class XMLNetworkSensorTest
                 assertNotNull(l23);
 
                 // get the lanes in the network
-                Map<String, Lane.STR> laneMap = new HashMap<>();
+                Map<String, Lane<String, String>> laneMap = new HashMap<>();
                 for (Link<?, String> link : model.getNetwork().getLinkMap().values())
                 {
                     int nr = 1;
@@ -100,14 +101,14 @@ public class XMLNetworkSensorTest
                     {
                         if (cse instanceof Lane)
                         {
-                            laneMap.put(link.getId() + "." + nr, (Lane.STR) cse);
+                            laneMap.put(link.getId() + "." + nr, (Lane<String, String>) cse);
                             nr++;
                         }
                     }
                 }
-                Lane.STR lane12 = laneMap.get("N1-N2.1");
+                Lane<String, String> lane12 = laneMap.get("N1-N2.1");
                 assertNotNull(lane12);
-                Lane.STR lane23 = laneMap.get("N2-N3.1");
+                Lane<String, String> lane23 = laneMap.get("N2-N3.1");
                 assertNotNull(lane23);
 
                 // add the sensors
@@ -180,7 +181,7 @@ public class XMLNetworkSensorTest
          * @param id the sensor id
          * @param simulator the simulator
          */
-        public ReportingSensor(final Lane.STR lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
+        public ReportingSensor(final Lane<String, String> lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
             final TYPE positionType, final String id, final OTSDEVSSimulatorInterface simulator)
         {
             super(lane, longitudinalPosition, positionType, "REPORT@" + lane.toString());
@@ -283,7 +284,7 @@ public class XMLNetworkSensorTest
                 this.network = nlp.build(url);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                | GTUException exception)
+                | GTUException | OTSGeometryException exception)
             {
                 exception.printStackTrace();
                 System.exit(-1);

@@ -17,6 +17,7 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -120,16 +121,16 @@ public final class Convert
         List<OSMNode> nodes = link.getSplineList();
         int coordinateCount = 2 + nodes.size();
         coordinates = new Coordinate[coordinateCount];
-        OTSNode.STR start = link.getStart().getOtsNode();
+        OTSNode<String> start = link.getStart().getOtsNode();
         coordinates[0] = new Coordinate(start.getPoint().x, start.getPoint().y, 0);
         for (int i = 0; i < nodes.size(); i++)
         {
             coordinates[i + 1] = new Coordinate(nodes.get(i).getLongitude(), nodes.get(i).getLatitude());
         }
-        OTSNode.STR end = link.getEnd().getOtsNode();
+        OTSNode<String> end = link.getEnd().getOtsNode();
         coordinates[coordinates.length - 1] = new Coordinate(end.getPoint().x, end.getPoint().y, 0);
         OTSLine3D designLine = new OTSLine3D(coordinates);
-        result = new CrossSectionLink.STR(link.getId(), start, end, designLine);
+        result = new CrossSectionLink<String, String>(link.getId(), start, end, designLine);
         // XXX: new LinearGeometry(result, lineString, null);
         return result;
     }
@@ -139,7 +140,7 @@ public final class Convert
      * @param node OSM Node to be converted
      * @return OTS Node
      */
-    public OTSNode.STR convertNode(final OSMNode node)
+    public OTSNode<String> convertNode(final OSMNode node)
     {
         OSMTag tag = node.getTag("ele");
         if (null != tag)
@@ -172,7 +173,7 @@ public final class Convert
                 Coordinate coordWGS84 = new Coordinate(node.getLongitude(), node.getLatitude(), elevation);
                 try
                 {
-                    return new OTSNode.STR(Objects.toString(node.getId()), new OTSPoint3D(transform(coordWGS84)));
+                    return new OTSNode<String>(Objects.toString(node.getId()), new OTSPoint3D(transform(coordWGS84)));
                 }
                 catch (FactoryException | TransformException exception)
                 {
@@ -188,7 +189,7 @@ public final class Convert
         Coordinate coordWGS84 = new Coordinate(node.getLongitude(), node.getLatitude(), 0d);
         try
         {
-            return new OTSNode.STR(Objects.toString(node.getId()), new OTSPoint3D(Convert.transform(coordWGS84)));
+            return new OTSNode<String>(Objects.toString(node.getId()), new OTSPoint3D(Convert.transform(coordWGS84)));
         }
         catch (FactoryException | TransformException exception)
         {
@@ -591,9 +592,10 @@ public final class Convert
      * @throws NetworkException on network inconsistency
      * @throws NamingException on naming problems (in the animator)
      * @throws RemoteException on communications failure
+     * @throws OTSGeometryException 
      */
     public List<Lane<?, ?>> makeLanes(final OSMLink osmlink, final OTSDEVSSimulatorInterface simulator,
-        final WarningListener warningListener) throws NetworkException, RemoteException, NamingException
+        final WarningListener warningListener) throws NetworkException, RemoteException, NamingException, OTSGeometryException
     {
         CrossSectionLink<?, ?> otslink = convertLink(osmlink);
         List<Lane<?, ?>> lanes = new ArrayList<Lane<?, ?>>();
@@ -610,7 +612,7 @@ public final class Convert
             Color color = Color.LIGHT_GRAY;
             LaneType<?> laneType = laneAttributes.getLaneType();
             DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(offset, LengthUnit.METER);
-            Lane<?, ?> newLane = null;
+            Lane<String, String> newLane = null;
             // FIXME the following code assumes right-hand-side driving.
             if (osmlink.hasTag("hasPreceding") && offset >= 0 || osmlink.hasTag("hasFollowing") && offset < 0)
             {

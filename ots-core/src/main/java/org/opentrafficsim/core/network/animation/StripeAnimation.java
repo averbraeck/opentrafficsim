@@ -13,9 +13,9 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSBuffering;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Stripe;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -114,7 +114,7 @@ public class StripeAnimation extends Renderable2D
         switch (this.type)
         {
             case DASHED:// : - Draw a 3-9 dash pattern on the center line
-                return makeDashes(new LengthIndexedLine(stripe.getCenterLine().getLineString()), 0.2, 0, new double[] {3, 9});
+                return makeDashes(new LengthIndexedLine(stripe.getCenterLine().getLineString()), 0.2, 0, new double[]{3, 9});
 
             case DOUBLE:// ||- Draw two solid lines
                 try
@@ -137,7 +137,7 @@ public class StripeAnimation extends Renderable2D
                     }
                     return result;
                 }
-                catch (NetworkException exception)
+                catch (OTSGeometryException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -149,7 +149,7 @@ public class StripeAnimation extends Renderable2D
                     OTSLine3D centerLine = stripe.getCenterLine();
                     Geometry rightDesignLine = OTSBuffering.offsetGeometry(centerLine, -0.2).getLineString();
                     ArrayList<OTSPoint3D> result =
-                        makeDashes(new LengthIndexedLine(rightDesignLine), 0.2, 0, new double[] {3, 9});
+                        makeDashes(new LengthIndexedLine(rightDesignLine), 0.2, 0, new double[]{3, 9});
                     Geometry leftDesignLine =
                         OTSBuffering.offsetGeometry(centerLine, 0.2).getLineString().buffer(0.1, QUADRANTSEGMENTS,
                             BufferParameters.CAP_FLAT);
@@ -162,7 +162,7 @@ public class StripeAnimation extends Renderable2D
                     result.add(PaintPolygons.NEWPATH);
                     return result;
                 }
-                catch (NetworkException exception)
+                catch (OTSGeometryException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -174,7 +174,7 @@ public class StripeAnimation extends Renderable2D
                     OTSLine3D centerLine = stripe.getCenterLine();
                     Geometry leftDesignLine = OTSBuffering.offsetGeometry(centerLine, 0.2).getLineString();
                     ArrayList<OTSPoint3D> result =
-                        makeDashes(new LengthIndexedLine(leftDesignLine), 0.2, 0, new double[] {3, 9});
+                        makeDashes(new LengthIndexedLine(leftDesignLine), 0.2, 0, new double[]{3, 9});
                     Geometry rightDesignLine =
                         OTSBuffering.offsetGeometry(centerLine, -0.2).getLineString().buffer(0.1, QUADRANTSEGMENTS,
                             BufferParameters.CAP_FLAT);
@@ -187,7 +187,7 @@ public class StripeAnimation extends Renderable2D
                     result.add(PaintPolygons.NEWPATH);
                     return result;
                 }
-                catch (NetworkException exception)
+                catch (OTSGeometryException exception)
                 {
                     exception.printStackTrace();
                 }

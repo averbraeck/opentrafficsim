@@ -65,8 +65,8 @@ public class ContourPlotTest
     private List<Lane<?, ?>> dummyPath(final LaneType<String> laneType) throws Exception
     {
         ArrayList<Lane<?, ?>> result = new ArrayList<Lane<?, ?>>();
-        Lane.STR[] lanes =
-            LaneFactory.makeMultiLane("AtoB", new OTSNode.STR("A", new OTSPoint3D(1234, 0, 0)), new OTSNode.STR("B",
+        Lane<String, String>[] lanes =
+            LaneFactory.makeMultiLane("AtoB", new OTSNode<String>("A", new OTSPoint3D(1234, 0, 0)), new OTSNode<String>("B",
                 new OTSPoint3D(12345, 0, 0)), null, 1, laneType,
                 new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), null);
         result.add(lanes[0]);
@@ -337,7 +337,7 @@ public class ContourPlotTest
             AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND)));
         LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar<Integer> car =
-            CarTest.makeReferenceCar(0, gtuType, (Lane.STR) lane, initialPosition, initialSpeed, simulator,
+            CarTest.makeReferenceCar(0, gtuType, (Lane<String, String>) lane, initialPosition, initialSpeed, simulator,
                 gtuFollowingModel, laneChangeModel);
         // Check that the initial data in the graph contains no trace of any car.
         for (int item = 0; item < bins; item++)

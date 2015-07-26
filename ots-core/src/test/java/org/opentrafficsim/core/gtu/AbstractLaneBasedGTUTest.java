@@ -65,8 +65,8 @@ public class AbstractLaneBasedGTUTest
         // This initialization code should probably be moved to a helper method that will be used in several tests.
         // First we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
-        OTSNode.STR nodeAFrom = new OTSNode.STR("AFrom", new OTSPoint3D(0, 0, 0));
-        OTSNode.STR nodeATo = new OTSNode.STR("ATo", new OTSPoint3D(1000, 0, 0));
+        OTSNode<String> nodeAFrom = new OTSNode<String>("AFrom", new OTSPoint3D(0, 0, 0));
+        OTSNode<String> nodeATo = new OTSNode<String>("ATo", new OTSPoint3D(1000, 0, 0));
         GTUType<String> gtuType = GTUType.makeGTUType("Car");
         LaneType<String> laneType = new LaneType<String>("CarLane");
         laneType.addCompatibility(gtuType);
@@ -76,13 +76,13 @@ public class AbstractLaneBasedGTUTest
             new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
                 TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
 
-        Lane.STR[] lanesGroupA =
+        Lane<String, String>[] lanesGroupA =
             LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(100,
                 SpeedUnit.KM_PER_HOUR), simulator);
         // A GTU can exist on several lanes at once; create another lane group to test that
-        OTSNode.STR nodeBFrom = new OTSNode.STR("BFrom", new OTSPoint3D(10, 0, 0));
-        OTSNode.STR nodeBTo = new OTSNode.STR("BTo", new OTSPoint3D(1000, 100, 0));
-        Lane.STR[] lanesGroupB =
+        OTSNode<String> nodeBFrom = new OTSNode<String>("BFrom", new OTSPoint3D(10, 0, 0));
+        OTSNode<String> nodeBTo = new OTSNode<String>("BTo", new OTSPoint3D(1000, 100, 0));
+        Lane<String, String>[] lanesGroupB =
             LaneFactory.makeMultiLane("B", nodeBFrom, nodeBTo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(100,
                 SpeedUnit.KM_PER_HOUR), simulator);
         Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
@@ -146,11 +146,11 @@ public class AbstractLaneBasedGTUTest
         {
             // Ignore
         }
-        for (Lane.STR[] laneGroup : new Lane.STR[][]{lanesGroupA, lanesGroupB})
+        for (Lane<String, String>[] laneGroup : new Lane[][]{lanesGroupA, lanesGroupB})
         {
             for (int laneIndex = 0; laneIndex < laneGroup.length; laneIndex++)
             {
-                Lane.STR lane = laneGroup[laneIndex];
+                Lane<String, String> lane = laneGroup[laneIndex];
                 boolean expectException = 1 != laneIndex;
                 for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
                 {
@@ -245,11 +245,11 @@ public class AbstractLaneBasedGTUTest
                 assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos, car
                     .fractionalPosition(lanesGroupB[1], relativePosition), 0.0000001);
             }
-            for (Lane.STR[] laneGroup : new Lane.STR[][]{lanesGroupA, lanesGroupB})
+            for (Lane<String, String>[] laneGroup : new Lane[][]{lanesGroupA, lanesGroupB})
             {
                 for (int laneIndex = 0; laneIndex < laneGroup.length; laneIndex++)
                 {
-                    Lane.STR lane = laneGroup[laneIndex];
+                    Lane<String, String> lane = laneGroup[laneIndex];
                     boolean expectException = 1 != laneIndex;
                     for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
                     {
@@ -345,9 +345,9 @@ public class AbstractLaneBasedGTUTest
             }
         }
         // A GTU can exist on several lanes at once; create another lane group to test that
-        OTSNode.STR nodeCFrom = new OTSNode.STR("CFrom", new OTSPoint3D(10, 100, 0));
-        OTSNode.STR nodeCTo = new OTSNode.STR("CTo", new OTSPoint3D(1000, 0, 0));
-        Lane.STR[] lanesGroupC =
+        OTSNode<String> nodeCFrom = new OTSNode<String>("CFrom", new OTSPoint3D(10, 100, 0));
+        OTSNode<String> nodeCTo = new OTSNode<String>("CTo", new OTSPoint3D(1000, 0, 0));
+        Lane<String, String>[] lanesGroupC =
             LaneFactory.makeMultiLane("C", nodeCFrom, nodeCTo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(100,
                 SpeedUnit.KM_PER_HOUR), simulator);
         car.addLane(lanesGroupC[0], new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.SI));

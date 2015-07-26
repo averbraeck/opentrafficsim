@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -65,7 +66,7 @@ public class LaneChangeModelTest implements OTSModelInterface
      * @param width DoubleScalar.Rel&lt;LengthUnit&gt;; the width of the new Link
      * @return Link
      */
-    private static CrossSectionLink.STR makeLink(final String name, final OTSNode.STR from, final OTSNode.STR to,
+    private static CrossSectionLink<String, String> makeLink(final String name, final OTSNode<String> from, final OTSNode<String> to,
         final DoubleScalar.Rel<LengthUnit> width)
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
@@ -74,7 +75,7 @@ public class LaneChangeModelTest implements OTSModelInterface
             new OTSPoint3D[]{new OTSPoint3D(from.getPoint().x, from.getPoint().y, 0),
                 new OTSPoint3D(to.getPoint().x, to.getPoint().y, 0)};
         OTSLine3D line = new OTSLine3D(coordinates);
-        CrossSectionLink.STR link = new CrossSectionLink.STR(name, from, to, line);
+        CrossSectionLink<String, String> link = new CrossSectionLink<String, String>(name, from, to, line);
         return link;
     }
 
@@ -88,15 +89,16 @@ public class LaneChangeModelTest implements OTSModelInterface
      * @return Lane
      * @throws RemoteException on communications failure
      * @throws NamingException on ???
-     * @throws NetworkException
+     * @throws NetworkException on ??
+     * @throws OTSGeometryException when center line or contour of a link or lane cannot be generated
      */
-    private static Lane.STR makeLane(final CrossSectionLink<String, String> link, final LaneType<String> laneType,
+    private static Lane<String, String> makeLane(final CrossSectionLink<String, String> link, final LaneType<String> laneType,
         final DoubleScalar.Rel<LengthUnit> latPos, final DoubleScalar.Rel<LengthUnit> width) throws RemoteException,
-        NamingException, NetworkException
+        NamingException, NetworkException, OTSGeometryException
     {
         DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
-        Lane.STR result =
-            new Lane.STR(link, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f2000,
+        Lane<String, String> result =
+            new Lane<String, String>(link, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f2000,
                 new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR));
         return result;
     }
@@ -108,15 +110,15 @@ public class LaneChangeModelTest implements OTSModelInterface
      * @param to Node; ending node of the new Lane
      * @param laneType LaneType&lt;String&gt;; the type of GTU that can use the lanes
      * @param laneCount int; number of lanes in the road
-     * @return Lane.STR[]; array containing the new Lanes
+     * @return Lane<String, String>[]; array containing the new Lanes
      * @throws Exception when something goes wrong (should not happen)
      */
-    public static Lane.STR[] makeMultiLane(final String name, final OTSNode.STR from, final OTSNode.STR to,
+    public static Lane<String, String>[] makeMultiLane(final String name, final OTSNode<String> from, final OTSNode<String> to,
         final LaneType<String> laneType, final int laneCount) throws Exception
     {
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(laneCount * 4.0, LengthUnit.METER);
         final CrossSectionLink<String, String> link = makeLink(name, from, to, width);
-        Lane.STR[] result = new Lane.STR[laneCount];
+        Lane<String, String>[] result = new Lane[laneCount];
         width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
         {
@@ -149,7 +151,7 @@ public class LaneChangeModelTest implements OTSModelInterface
         LaneType<String> laneType = new LaneType<String>("CarLane");
         laneType.addCompatibility(gtuType);
         Lane<?, ?>[] lanes =
-            makeMultiLane("Road with two lanes", new OTSNode.STR("From", new OTSPoint3D(0, 0, 0)), new OTSNode.STR("To",
+            makeMultiLane("Road with two lanes", new OTSNode<String>("From", new OTSPoint3D(0, 0, 0)), new OTSNode<String>("To",
                 new OTSPoint3D(200, 0, 0)), laneType, 2);
         Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
             new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();

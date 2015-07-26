@@ -88,19 +88,19 @@ public class LaneBasedGTUTest
         laneType.addCompatibility(carType);
         laneType.addCompatibility(truckType);
         // Create a series of Nodes (some closely bunched together)
-        ArrayList<OTSNode.STR> nodes = new ArrayList<OTSNode.STR>();
+        ArrayList<OTSNode<String>> nodes = new ArrayList<OTSNode<String>>();
         int[] linkBoundaries = {0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200};
         for (int xPos : linkBoundaries)
         {
-            nodes.add(new OTSNode.STR("Node at " + xPos, new OTSPoint3D(xPos, 20, 0)));
+            nodes.add(new OTSNode<String>("Node at " + xPos, new OTSPoint3D(xPos, 20, 0)));
         }
         // Now we can build a series of Links with Lanes on them
         ArrayList<CrossSectionLink<?, ?>> links = new ArrayList<CrossSectionLink<?, ?>>();
         final int laneCount = 5;
         for (int i = 1; i < nodes.size(); i++)
         {
-            OTSNode.STR fromNode = nodes.get(i - 1);
-            OTSNode.STR toNode = nodes.get(i);
+            OTSNode<String> fromNode = nodes.get(i - 1);
+            OTSNode<String> toNode = nodes.get(i);
             String linkName = fromNode.getId() + "-" + toNode.getId();
             Lane<?, ?>[] lanes =
                 LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, laneCount, laneType,
@@ -367,8 +367,8 @@ public class LaneBasedGTUTest
             GTUType<String> carType = GTUType.makeGTUType("car");
             LaneType<String> laneType = new LaneType<String>("CarLane");
             laneType.addCompatibility(carType);
-            OTSNode.STR fromNode = new OTSNode.STR("Node A", new OTSPoint3D(0, 0, 0));
-            OTSNode.STR toNode = new OTSNode.STR("Node B", new OTSPoint3D(1000, 0, 0));
+            OTSNode<String> fromNode = new OTSNode<String>("Node A", new OTSPoint3D(0, 0, 0));
+            OTSNode<String> toNode = new OTSNode<String>("Node B", new OTSPoint3D(1000, 0, 0));
             String linkName = "AB";
             Lane<?, ?> lane =
                 LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, new DoubleScalar.Abs<SpeedUnit>(

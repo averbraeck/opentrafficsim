@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
@@ -82,7 +83,7 @@ public class XMLNetworkGeneratorTest
             assertNotNull(l12);
             CrossSectionLink<?, String> csl12 = (CrossSectionLink<?, String>) l12;
             Assert.assertTrue(csl12.getCrossSectionElementList().size() > 0);
-            Lane.STR lane12 = (Lane.STR) csl12.getCrossSectionElementList().get(0);
+            Lane<String, String> lane12 = (Lane<String, String>) csl12.getCrossSectionElementList().get(0);
             assertNotNull(lane12);
 
             assertNotNull(n2);
@@ -92,7 +93,7 @@ public class XMLNetworkGeneratorTest
             assertNotNull(l23);
             CrossSectionLink<?, String> csl23 = (CrossSectionLink<?, String>) l23;
             Assert.assertTrue(csl23.getCrossSectionElementList().size() > 0);
-            Lane.STR lane23 = (Lane.STR) csl23.getCrossSectionElementList().get(0);
+            Lane<String, String> lane23 = (Lane<String, String>) csl23.getCrossSectionElementList().get(0);
             assertNotNull(lane23);
 
             // add a sensor to check the time the vehicles pass
@@ -162,7 +163,7 @@ public class XMLNetworkGeneratorTest
          * @param id the sensor id
          * @param simulator the simulator
          */
-        public ReportingSensor(final Lane.STR lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
+        public ReportingSensor(final Lane<String, String> lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
             final TYPE positionType, final String id, final OTSDEVSSimulatorInterface simulator)
         {
             super(lane, longitudinalPosition, positionType, "REPORT@" + lane.toString());
@@ -255,7 +256,7 @@ public class XMLNetworkGeneratorTest
                 this.network = nlp.build(url);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                | GTUException exception)
+                | GTUException | OTSGeometryException exception)
             {
                 exception.printStackTrace();
             }

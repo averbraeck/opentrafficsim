@@ -39,13 +39,13 @@ public class OTSLine3D implements LocatableInterface, Serializable
     /** the points of the line. */
     private final OTSPoint3D[] points;
 
-    /** the cached length. */
+    /** the cached length; will be calculated when needed for the first time. */
     private double length = Double.NaN;
 
-    /** the cached centroid. */
+    /** the cached centroid; will be calculated when needed for the first time. */
     private OTSPoint3D centroid = null;
 
-    /** the cached bounds. */
+    /** the cached bounds; will be calculated when needed for the first time. */
     private Bounds bounds = null;
 
     /**
@@ -221,6 +221,14 @@ public class OTSLine3D implements LocatableInterface, Serializable
             calcCentroidBounds();
         }
         return this.bounds;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return Arrays.toString(this.points);
     }
 
     /** {@inheritDoc} */

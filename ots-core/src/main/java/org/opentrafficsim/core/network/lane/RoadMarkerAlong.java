@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -35,11 +35,11 @@ public abstract class RoadMarkerAlong<LINKID, NODEID> extends CrossSectionElemen
      * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section Link.
      * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
-     * @throws NetworkException on network inconsistency
+     * @throws OTSGeometryException when creation of the center line or contour geometry fails
      */
     public RoadMarkerAlong(final CrossSectionLink<LINKID, NODEID> parentLink,
         final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> beginWidth,
-        final DoubleScalar.Rel<LengthUnit> endWidth) throws NetworkException
+        final DoubleScalar.Rel<LengthUnit> endWidth) throws OTSGeometryException
     {
         super(parentLink, lateralCenterPosition, lateralCenterPosition, beginWidth, endWidth);
     }
