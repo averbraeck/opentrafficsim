@@ -23,6 +23,8 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
@@ -34,12 +36,12 @@ import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.core.gtu.lane.changing.Altruistic;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.factory.LaneFactory;
-import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
-import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -65,17 +67,14 @@ import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionPro
 import org.opentrafficsim.simulationengine.properties.PropertyException;
 import org.opentrafficsim.simulationengine.properties.SelectionProperty;
 
-import com.vividsolutions.jts.geom.Coordinate;
-
 /**
  * Circular road simulation demo.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 21 nov. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 21 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class CircularRoad extends AbstractWrappableSimulation
@@ -87,31 +86,30 @@ public class CircularRoad extends AbstractWrappableSimulation
     public CircularRoad()
     {
         this.properties.add(new SelectionProperty("Lane changing",
-                "<html>The lane change strategies vary in politeness.<br />"
-                        + "Two types are implemented:<ul><li>Egoistic (looks only at personal gain).</li>"
-                        + "<li>Altruistic (assigns effect on new and current follower the same weight as "
-                        + "the personal gain).</html>", new String[]{"Egoistic", "Altruistic"}, 0, false, 500));
+            "<html>The lane change strategies vary in politeness.<br />"
+                + "Two types are implemented:<ul><li>Egoistic (looks only at personal gain).</li>"
+                + "<li>Altruistic (assigns effect on new and current follower the same weight as "
+                + "the personal gain).</html>", new String[]{"Egoistic", "Altruistic"}, 0, false, 500));
         this.properties.add(new IntegerProperty("Track length", "Circumference of the track", 2000, 500, 6000,
-                "Track length %dm", false, 10));
+            "Track length %dm", false, 10));
         this.properties.add(new ContinuousProperty("Mean density", "Number of vehicles per km", 40.0, 5.0, 45.0,
-                "Density %.1f veh/km", false, 11));
-        this.properties.add(new ContinuousProperty("Density variability",
-                "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", false, 12));
+            "Density %.1f veh/km", false, 11));
+        this.properties.add(new ContinuousProperty("Density variability", "Variability of the number of vehicles per km",
+            0.0, 0.0, 1.0, "%.1f", false, 12));
         ArrayList<AbstractProperty<?>> outputProperties = new ArrayList<AbstractProperty<?>>();
         for (int lane = 1; lane <= 2; lane++)
         {
             String laneId = String.format("Lane %d ", lane);
-            outputProperties.add(new BooleanProperty(laneId + "Density", laneId + "Density contour plot", true, false,
-                    0));
+            outputProperties.add(new BooleanProperty(laneId + "Density", laneId + "Density contour plot", true, false, 0));
             outputProperties.add(new BooleanProperty(laneId + "Flow", laneId + "Flow contour plot", true, false, 1));
             outputProperties.add(new BooleanProperty(laneId + "Speed", laneId + "Speed contour plot", true, false, 2));
-            outputProperties.add(new BooleanProperty(laneId + "Acceleration", laneId + "Acceleration contour plot",
-                    true, false, 3));
-            outputProperties.add(new BooleanProperty(laneId + "Trajectories", laneId
-                    + "Trajectory (time/distance) diagram", true, false, 4));
+            outputProperties.add(new BooleanProperty(laneId + "Acceleration", laneId + "Acceleration contour plot", true,
+                false, 3));
+            outputProperties.add(new BooleanProperty(laneId + "Trajectories", laneId + "Trajectory (time/distance) diagram",
+                true, false, 4));
         }
-        this.properties.add(new CompoundProperty("Output graphs", "Select the graphical output", outputProperties,
-                true, 1000));
+        this.properties.add(new CompoundProperty("Output graphs", "Select the graphical output", outputProperties, true,
+            1000));
     }
 
     /** {@inheritDoc} */
@@ -142,27 +140,27 @@ public class CircularRoad extends AbstractWrappableSimulation
                     try
                     {
                         propertyList.add(new ProbabilityDistributionProperty("Traffic composition",
-                                "<html>Mix of passenger cars and trucks</html>",
-                                new String[]{"passenger car", "truck"}, new Double[]{0.8, 0.2}, false, 10));
+                            "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
+                            new Double[]{0.8, 0.2}, false, 10));
                     }
                     catch (PropertyException exception)
                     {
                         exception.printStackTrace();
                     }
                     propertyList.add(new SelectionProperty("Car following model",
-                            "<html>The car following model determines "
-                                    + "the acceleration that a vehicle will make taking into account "
-                                    + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
-                                    + "curvature of the road) capabilities of the vehicle and personality "
-                                    + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
-                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Car", new DoubleScalar.Abs<AccelerationUnit>(
-                            1.0, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
-                            AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0,
-                            LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 2));
-                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Truck", new DoubleScalar.Abs<AccelerationUnit>(
-                            0.5, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.25,
-                            AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0,
-                            LengthUnit.METER), new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 3));
+                        "<html>The car following model determines "
+                            + "the acceleration that a vehicle will make taking into account "
+                            + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
+                            + "curvature of the road) capabilities of the vehicle and personality "
+                            + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
+                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Car", new DoubleScalar.Abs<AccelerationUnit>(1.0,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
+                        new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 2));
+                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Truck", new DoubleScalar.Abs<AccelerationUnit>(0.5,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.25,
+                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
+                        new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 3));
 
                     circularRoad.buildSimulator(propertyList, null, true);
                 }
@@ -203,7 +201,7 @@ public class CircularRoad extends AbstractWrappableSimulation
     {
         // Make the tab with the plots
         AbstractProperty<?> output =
-                new CompoundProperty("", "", this.properties, false, 0).findByShortName("Output graphs");
+            new CompoundProperty("", "", this.properties, false, 0).findByShortName("Output graphs");
         if (null == output)
         {
             throw new Error("Cannot find output properties");
@@ -246,8 +244,8 @@ public class CircularRoad extends AbstractWrappableSimulation
             if (graphName.contains("Trajectories"))
             {
                 TrajectoryPlot tp =
-                        new TrajectoryPlot(graphName, new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND),
-                                this.model.getPath(lane));
+                    new TrajectoryPlot(graphName, new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), this.model
+                        .getPath(lane));
                 tp.setTitle("Trajectory Graph");
                 tp.setExtendedState(Frame.MAXIMIZED_BOTH);
                 graph = tp;
@@ -303,10 +301,10 @@ public class CircularRoad extends AbstractWrappableSimulation
     public final String description()
     {
         return "<html><h1>Circular Road simulation</h1>"
-                + "Vehicles are unequally distributed over a two lane ring road.<br />"
-                + "When simulation starts, all vehicles begin driving, some lane changes will occurr and some "
-                + "shockwaves should develop.<br />"
-                + "Trajectories and contourplots are generated during the simulation for both lanes.</html>";
+            + "Vehicles are unequally distributed over a two lane ring road.<br />"
+            + "When simulation starts, all vehicles begin driving, some lane changes will occurr and some "
+            + "shockwaves should develop.<br />"
+            + "Trajectories and contourplots are generated during the simulation for both lanes.</html>";
     }
 
 }
@@ -314,12 +312,11 @@ public class CircularRoad extends AbstractWrappableSimulation
 /**
  * Simulate traffic on a circular, two-lane road.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 1 nov. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 1 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 class RoadSimulationModel implements OTSModelInterface
@@ -358,7 +355,7 @@ class RoadSimulationModel implements OTSModelInterface
     private ArrayList<AbstractProperty<?>> properties = null;
 
     /** The sequence of Lanes that all vehicles will follow. */
-    private ArrayList<List<Lane>> paths = new ArrayList<List<Lane>>();
+    private ArrayList<List<Lane<?, ?>>> paths = new ArrayList<List<Lane<?, ?>>>();
 
     /** The random number generator used to decide what kind of GTU to generate. */
     private Random randomGenerator = new Random(12345);
@@ -380,7 +377,7 @@ class RoadSimulationModel implements OTSModelInterface
      * @param index int; the rank number of the path
      * @return List&lt;Lane&gt;; the set of lanes for the specified index
      */
-    public List<Lane> getPath(final int index)
+    public List<Lane<?, ?>> getPath(final int index)
     {
         return this.paths.get(index);
     }
@@ -388,12 +385,12 @@ class RoadSimulationModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException, RemoteException
+        throws SimRuntimeException, RemoteException
     {
         final int laneCount = 2;
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
         {
-            this.paths.add(new ArrayList<Lane>());
+            this.paths.add(new ArrayList<Lane<?, ?>>());
         }
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         double radius = 6000 / 2 / Math.PI;
@@ -417,7 +414,7 @@ class RoadSimulationModel implements OTSModelInterface
                 throw new Error("\"Car following model\" property has wrong type");
             }
             Iterator<AbstractProperty<ArrayList<AbstractProperty<?>>>> iterator =
-                    new CompoundProperty("", "", this.properties, false, 0).iterator();
+                new CompoundProperty("", "", this.properties, false, 0).iterator();
             while (iterator.hasNext())
             {
                 AbstractProperty<?> ap = iterator.next();
@@ -518,27 +515,27 @@ class RoadSimulationModel implements OTSModelInterface
             GTUType<String> gtuType = GTUType.makeGTUType("car");
             LaneType<String> laneType = new LaneType<String>("CarLane");
             laneType.addCompatibility(gtuType);
-            NodeGeotools.STR start = new NodeGeotools.STR("Start", new Coordinate(radius, 0, 0));
-            NodeGeotools.STR halfway = new NodeGeotools.STR("Halfway", new Coordinate(-radius, 0, 0));
+            OTSNode<String> start = new OTSNode<String>("Start", new OTSPoint3D(radius, 0, 0));
+            OTSNode<String> halfway = new OTSNode<String>("Halfway", new OTSPoint3D(-radius, 0, 0));
 
-            Coordinate[] coordsHalf1 = new Coordinate[127];
+            OTSPoint3D[] coordsHalf1 = new OTSPoint3D[127];
             for (int i = 0; i < coordsHalf1.length; i++)
             {
                 double angle = Math.PI * (1 + i) / (1 + coordsHalf1.length);
-                coordsHalf1[i] = new Coordinate(radius * Math.cos(angle), radius * Math.sin(angle), 0);
+                coordsHalf1[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             Lane[] lanes1 =
-                    LaneFactory.makeMultiLane("FirstHalf", start, halfway, coordsHalf1, laneCount, laneType,
-                            this.speedLimit, this.simulator);
-            Coordinate[] coordsHalf2 = new Coordinate[127];
+                LaneFactory.makeMultiLane("FirstHalf", start, halfway, coordsHalf1, laneCount, laneType, this.speedLimit,
+                    this.simulator);
+            OTSPoint3D[] coordsHalf2 = new OTSPoint3D[127];
             for (int i = 0; i < coordsHalf2.length; i++)
             {
                 double angle = Math.PI + Math.PI * (1 + i) / (1 + coordsHalf2.length);
-                coordsHalf2[i] = new Coordinate(radius * Math.cos(angle), radius * Math.sin(angle), 0);
+                coordsHalf2[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             Lane[] lanes2 =
-                    LaneFactory.makeMultiLane("SecondHalf", halfway, start, coordsHalf2, laneCount, laneType,
-                            this.speedLimit, this.simulator);
+                LaneFactory.makeMultiLane("SecondHalf", halfway, start, coordsHalf2, laneCount, laneType, this.speedLimit,
+                    this.simulator);
             for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
             {
                 this.paths.get(laneIndex).add(lanes1[laneIndex]);
@@ -554,7 +551,7 @@ class RoadSimulationModel implements OTSModelInterface
                 double trackLength = lane1Length + lanes2[laneIndex].getLength().getSI();
                 for (double pos = 0; pos <= trackLength - headway - variability;)
                 {
-                    Lane.STR lane = pos >= lane1Length ? lanes2[laneIndex] : lanes1[laneIndex];
+                    Lane<String, String> lane = pos >= lane1Length ? lanes2[laneIndex] : lanes1[laneIndex];
                     // Actual headway is uniformly distributed around headway
                     double laneRelativePos = pos > lane1Length ? pos - lane1Length : pos;
                     double actualHeadway = headway + (random.nextDouble() * 2 - 1) * variability;
@@ -568,9 +565,10 @@ class RoadSimulationModel implements OTSModelInterface
             }
             // Schedule regular updates of the graph
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(9.999, TimeUnit.SECOND), this, this,
-                    "drawGraphs", null);
+                "drawGraphs", null);
         }
-        catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
+        catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException
+            | OTSGeometryException exception)
         {
             exception.printStackTrace();
         }
@@ -588,8 +586,8 @@ class RoadSimulationModel implements OTSModelInterface
         // Re schedule this method
         try
         {
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(this.simulator.getSimulatorTime().get()
-                    .getSI() + 10, TimeUnit.SECOND), this, this, "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(
+                this.simulator.getSimulatorTime().get().getSI() + 10, TimeUnit.SECOND), this, this, "drawGraphs", null);
         }
         catch (RemoteException | SimRuntimeException exception)
         {
@@ -609,22 +607,22 @@ class RoadSimulationModel implements OTSModelInterface
      * @throws RemoteException on communications failure
      * @throws GTUException when something goes wrong during construction of the car
      */
-    protected final void generateCar(final DoubleScalar.Rel<LengthUnit> initialPosition, final Lane.STR lane,
-            final GTUType<String> gtuType) throws NamingException, NetworkException, SimRuntimeException,
-            RemoteException, GTUException
+    protected final void generateCar(final DoubleScalar.Rel<LengthUnit> initialPosition, final Lane<String, String> lane,
+        final GTUType<String> gtuType) throws NamingException, NetworkException, SimRuntimeException, RemoteException,
+        GTUException
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
-        Map<Lane.STR, DoubleScalar.Rel<LengthUnit>> initialPositions =
-                new LinkedHashMap<Lane.STR, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions =
+            new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(lane, initialPosition);
         DoubleScalar.Rel<LengthUnit> vehicleLength =
-                new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
+            new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
         new LaneBasedIndividualCar<>(++this.carsCreated, gtuType, generateTruck ? this.carFollowingModelTrucks
-                : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
-                new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                        SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?>>()), this.simulator,
-                DefaultCarAnimation.class, this.gtuColorer);
+            : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
+            new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
+                SpeedUnit.KM_PER_HOUR), new LaneBasedRouteNavigator(new CompleteRoute<String, String>("")), this.simulator,
+            DefaultCarAnimation.class, this.gtuColorer);
     }
 
     /** {@inheritDoc} */
