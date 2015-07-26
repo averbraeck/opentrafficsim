@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -153,6 +154,7 @@ final class Links
                     new OTSPoint3D(linkTag.nodeFromTag.node.getLocation().getX(), linkTag.nodeFromTag.node.getLocation()
                         .getY(), linkTag.nodeFromTag.node.getLocation().getZ());
                 double startAngle = linkTag.nodeFromTag.node.getDirection().getSI();
+
                 if (direction.equals(ArcDirection.LEFT))
                 {
                     linkTag.arcTag.center =
@@ -217,6 +219,7 @@ final class Links
             double radiusSI = linkTag.arcTag.radius.getSI();
             double angle = linkTag.arcTag.angle.getSI();
             ArcDirection direction = linkTag.arcTag.direction;
+
             if (linkTag.nodeToTag.node == null)
             {
                 XYZ coordinate = new XYZ(0.0, 0.0, 0.0);
@@ -265,7 +268,7 @@ final class Links
                 if (direction.equals(ArcDirection.LEFT))
                 {
                     linkTag.arcTag.center =
-                        new OTSPoint3D(coordinate.x + radiusSI + Math.cos(endAngle + Math.PI / 2.0), coordinate.y + radiusSI
+                        new OTSPoint3D(coordinate.x + radiusSI * Math.cos(endAngle + Math.PI / 2.0), coordinate.y + radiusSI
                             * Math.sin(endAngle + Math.PI / 2.0), 0.0);
                     linkTag.arcTag.startAngle = endAngle - Math.PI / 2.0 - angle;
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle);
@@ -310,13 +313,13 @@ final class Links
         int points = 2;
         if (linkTag.arcTag != null)
         {
-            points = (Math.abs(linkTag.arcTag.angle.getSI()) <= Math.PI / 2.0) ? 32 : 64;
+            points = (Math.abs(linkTag.arcTag.angle.getSI()) <= Math.PI / 2.0) ? 64 : 128;
         }
         NodeTag from = linkTag.nodeFromTag;
         NodeTag to = linkTag.nodeToTag;
-        Coordinate[] coordinates = new Coordinate[points];
-        coordinates[0] = new Coordinate(from.coordinate.x, from.coordinate.y, from.coordinate.z);
-        coordinates[coordinates.length - 1] = new Coordinate(to.coordinate.x, to.coordinate.y, to.coordinate.z);
+        OTSPoint3D[] coordinates = new OTSPoint3D[points];
+        coordinates[0] = new OTSPoint3D(from.coordinate.x, from.coordinate.y, from.coordinate.z);
+        coordinates[coordinates.length - 1] = new OTSPoint3D(to.coordinate.x, to.coordinate.y, to.coordinate.z);
         if (linkTag.arcTag != null)
         {
             double angleStep = linkTag.arcTag.angle.getSI() / points;
@@ -327,7 +330,7 @@ final class Links
                 for (int p = 1; p < points - 1; p++)
                 {
                     coordinates[p] =
-                        new Coordinate(linkTag.arcTag.center.x + radiusSI
+                        new OTSPoint3D(linkTag.arcTag.center.x + radiusSI
                             * Math.cos(linkTag.arcTag.startAngle - angleStep * p), linkTag.arcTag.center.y + radiusSI
                             * Math.sin(linkTag.arcTag.startAngle - angleStep * p), from.coordinate.z + slopeStep * p);
                 }
@@ -337,7 +340,7 @@ final class Links
                 for (int p = 1; p < points - 1; p++)
                 {
                     coordinates[p] =
-                        new Coordinate(linkTag.arcTag.center.x + radiusSI
+                        new OTSPoint3D(linkTag.arcTag.center.x + radiusSI
                             * Math.cos(linkTag.arcTag.startAngle + angleStep * p), linkTag.arcTag.center.y + radiusSI
                             * Math.sin(linkTag.arcTag.startAngle + angleStep * p), from.coordinate.z + slopeStep * p);
                 }
@@ -358,11 +361,12 @@ final class Links
      * @throws NamingException when the /animation/2D tree cannot be found in the context
      * @throws SAXException when the stripe type cannot be parsed correctly
      * @throws GTUException when lane block cannot be created
+     * @throws OTSGeometryException when construction of the offset-line or contour fails
      */
     @SuppressWarnings({"checkstyle:needbraces", "checkstyle:methodlength"})
     static void applyRoadTypeToLink(final LinkTag linkTag, final XmlNetworkLaneParser parser,
         final OTSDEVSSimulatorInterface simulator) throws NetworkException, RemoteException, NamingException, SAXException,
-        GTUException
+        GTUException, OTSGeometryException
     {
         CrossSectionLink<String, String> csl = linkTag.link;
         List<CrossSectionElement<String, String>> cseList = new ArrayList<>();
@@ -509,6 +513,7 @@ final class Links
                 default:
                     throw new SAXException("Unknown Element type: " + cseTag.elementType.toString());
             }
+
         } // for (CrossSectionElementTag cseTag : roadTypeTag.cseTags.values())
 
         // make adjacent lanes

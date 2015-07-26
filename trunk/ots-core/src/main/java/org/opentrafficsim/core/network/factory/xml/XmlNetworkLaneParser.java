@@ -13,6 +13,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -108,10 +109,11 @@ public class XmlNetworkLaneParser
      * @throws IOException in case of file reading problems.
      * @throws NamingException in case the animation context cannot be found
      * @throws GTUException in case of a problem with creating the LaneBlock (which is a GTU right now)
+     * @throws OTSGeometryException when construction of a lane contour or offset design line fails
      */
     @SuppressWarnings("rawtypes")
     public final OTSNetwork build(final URL url) throws NetworkException, ParserConfigurationException, SAXException,
-        IOException, NamingException, GTUException
+        IOException, NamingException, GTUException, OTSGeometryException
     {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -183,7 +185,7 @@ public class XmlNetworkLaneParser
             }
         }
         catch (NetworkException | SAXException | IOException | ParserConfigurationException | URISyntaxException
-            | NamingException | GTUException exception)
+            | NamingException | GTUException | OTSGeometryException exception)
         {
             throw new SAXException(exception);
         }

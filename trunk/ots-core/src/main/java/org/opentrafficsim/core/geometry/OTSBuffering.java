@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.lane.CrossSectionElement;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -25,7 +25,7 @@ import com.vividsolutions.jts.operation.buffer.BufferParameters;
 public final class OTSBuffering
 {
     /** Precision of buffer operations. */
-    private static final int QUADRANTSEGMENTS = 8;
+    private static final int QUADRANTSEGMENTS = 16;
 
     /**
      * 
@@ -55,10 +55,10 @@ public final class OTSBuffering
      * @param referenceLine Geometry; the reference line
      * @param offset double; offset distance from the reference line; positive is Left, negative is Right
      * @return Geometry; the Geometry of a line that has the specified offset from the reference line
-     * @throws NetworkException on failure
+     * @throws OTSGeometryException on failure
      */
     @SuppressWarnings("checkstyle:methodlength")
-    public static OTSLine3D offsetGeometry(final OTSLine3D referenceLine, final double offset) throws NetworkException
+    public static OTSLine3D offsetGeometry(final OTSLine3D referenceLine, final double offset) throws OTSGeometryException
     {
         Coordinate[] referenceCoordinates = referenceLine.getCoordinates();
         // printCoordinates("reference", referenceCoordinates);
@@ -98,11 +98,11 @@ public final class OTSBuffering
         }
         if (startIndexSet.size() != 2)
         {
-            throw new NetworkException("offsetGeometry: startIndexSet.size() = " + startIndexSet.size());
+            throw new OTSGeometryException("offsetGeometry: startIndexSet.size() = " + startIndexSet.size());
         }
         if (endIndexSet.size() != 2)
         {
-            throw new NetworkException("offsetGeometry: endIndexSet.size() = " + endIndexSet.size());
+            throw new OTSGeometryException("offsetGeometry: endIndexSet.size() = " + endIndexSet.size());
         }
 
         // which point(s) are in the right direction of the start / end?
@@ -134,7 +134,7 @@ public final class OTSBuffering
         }
         if (startIndex == -1 || endIndex == -1)
         {
-            throw new NetworkException("offsetGeometry: could not find startIndex or endIndex");
+            throw new OTSGeometryException("offsetGeometry: could not find startIndex or endIndex");
         }
         startIndexSet.remove(startIndex);
         endIndexSet.remove(endIndex);
@@ -183,11 +183,11 @@ public final class OTSBuffering
 
         if (!use1 && !use2)
         {
-            throw new NetworkException("offsetGeometry: could not find path from start to end for offset");
+            throw new OTSGeometryException("offsetGeometry: could not find path from start to end for offset");
         }
         if (use1 && use2)
         {
-            throw new NetworkException("offsetGeometry: Both paths from start to end for offset were found to be ok");
+            throw new OTSGeometryException("offsetGeometry: Both paths from start to end for offset were found to be ok");
         }
         Coordinate[] coordinates;
         if (use1)
@@ -210,10 +210,10 @@ public final class OTSBuffering
      * @param offsetAtStart double; offset at the start of the reference line (positive value is Left, negative value is Right)
      * @param offsetAtEnd double; offset at the end of the reference line (positive value is Left, negative value is Right)
      * @return Geometry; the Geometry of the line at linearly changing offset of the reference line
-     * @throws NetworkException when this method fails to create the offset line
+     * @throws OTSGeometryException when this method fails to create the offset line
      */
     public static OTSLine3D offsetLine(final OTSLine3D referenceLine, final double offsetAtStart, final double offsetAtEnd)
-        throws NetworkException
+        throws OTSGeometryException
     {
         OTSLine3D offsetLineAtStart = offsetGeometry(referenceLine, offsetAtStart);
         if (offsetAtStart == offsetAtEnd)
@@ -258,9 +258,6 @@ public final class OTSBuffering
             Coordinate resultCoordinate =
                 new Coordinate((1 - ratio) * firstCoordinate.x + ratio * secondCoordinate.x, (1 - ratio) * firstCoordinate.y
                     + ratio * secondCoordinate.y);
-            // System.out.println(String.format(Locale.US,
-            // "ratio: %7.5f, first  %8.3f,%8.3f, second: %8.3f,%8.3f -> %8.3f,%8.3f", ratio, firstCoordinate.x,
-            // firstCoordinate.y, secondCoordinate.x, secondCoordinate.y, resultCoordinate.x, resultCoordinate.y));
             if (null == prevCoordinate || resultCoordinate.distance(prevCoordinate) > tooClose)
             {
                 out.add(resultCoordinate);
@@ -278,49 +275,30 @@ public final class OTSBuffering
     /**
      * Construct a buffer geometry by offsetting the linear geometry line with a distance and constructing a so-called "buffer"
      * around it.
+     * @param cse the CrossSectionElement to construct the contour for
      * @return the geometry belonging to this CrossSectionElement.
-     * @throws NetworkException when construction of the geometry fails (which should never happen)
+     * @throws OTSGeometryException when construction of the geometry fails
      */
-    /*-
-    public static Geometry constructGeometry(final AbstractLink<?, ?, ?> parentLink) throws NetworkException
+    public static OTSLine3D constructContour(final CrossSectionElement<?, ?> cse) throws OTSGeometryException
     {
-        GeometryFactory factory = new GeometryFactory();
-        LinearGeometry parentGeometry = parentLink.getGeometry();
-        if (null == parentGeometry)
-        {
-            return null; // If the Link does not have a Geometry; this CrossSectionElement can't have one either
-        }
-        Coordinate[] referenceCoordinates = parentGeometry.getLineString().getCoordinates();
-        if (referenceCoordinates.length < 2)
-        {
-            throw new NetworkException("Parent Link has bad Geometry");
-        }
-        // printCoordinates("Link design line:", referenceCoordinates);
-        Geometry referenceGeometry = factory.createLineString(referenceCoordinates);
-        Geometry resultLine =
-            offsetLine(referenceGeometry, this.designLineOffsetAtBegin.getSI(), this.designLineOffsetAtEnd.getSI());
-        // printCoordinates("Lane design line:", resultLine);
-        this.crossSectionDesignLine = factory.createLineString(resultLine.getCoordinates());
-        Coordinate[] rightBoundary =
-            offsetLine(this.crossSectionDesignLine, -this.beginWidth.getSI() / 2, -this.endWidth.getSI() / 2)
-                .getCoordinates();
-        // printCoordinates("Right boundary:  ", rightBoundary);
-        Coordinate[] leftBoundary =
-            offsetLine(this.crossSectionDesignLine, this.beginWidth.getSI() / 2, this.endWidth.getSI() / 2).getCoordinates();
-        // printCoordinates("Left boundary:   ", leftBoundary);
-        Coordinate[] result = new Coordinate[rightBoundary.length + leftBoundary.length + 1];
+        OTSLine3D crossSectionDesignLine =
+            offsetLine(cse.getParentLink().getDesignLine(), cse.getDesignLineOffsetAtBegin().getSI(), cse
+                .getDesignLineOffsetAtEnd().getSI());
+        OTSLine3D rightBoundary =
+            offsetLine(crossSectionDesignLine, -cse.getBeginWidth().getSI() / 2, -cse.getEndWidth().getSI() / 2);
+        OTSLine3D leftBoundary =
+            offsetLine(crossSectionDesignLine, cse.getBeginWidth().getSI() / 2, cse.getEndWidth().getSI() / 2);
+        OTSPoint3D[] result = new OTSPoint3D[rightBoundary.size() + leftBoundary.size() + 1];
         int resultIndex = 0;
-        for (int index = 0; index < rightBoundary.length; index++)
+        for (int index = 0; index < rightBoundary.size(); index++)
         {
-            result[resultIndex++] = rightBoundary[index];
+            result[resultIndex++] = rightBoundary.get(index);
         }
-        for (int index = leftBoundary.length; --index >= 0;)
+        for (int index = leftBoundary.size(); --index >= 0;)
         {
-            result[resultIndex++] = leftBoundary[index];
+            result[resultIndex++] = leftBoundary.get(index);
         }
-        result[resultIndex] = rightBoundary[0]; // close the contour
-        // printCoordinates("Lane contour:    ", result);
-        return factory.createLineString(result);
+        result[resultIndex] = rightBoundary.get(0); // close the contour
+        return new OTSLine3D(result);
     }
-     */
 }

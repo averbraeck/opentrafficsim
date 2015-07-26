@@ -52,8 +52,8 @@ public class TrajectoryPlotTest
         GTUType<String> carType = new GTUType<String>("Car");
         DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
-        Map<Lane.STR, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
-        Lane.STR lane = CarTest.makeLane();
+        Map<Lane<String, String>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
+        Lane<String, String> lane = CarTest.makeLane();
         initialLongitudinalPositions.put(lane, initialPosition);
         OTSDEVSSimulator simulator = CarTest.makeSimulator();
         // We want to start the car simulation at t=100s; therefore we have to advance the simulator up to that time.

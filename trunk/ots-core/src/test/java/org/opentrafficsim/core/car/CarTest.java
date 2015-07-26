@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -62,16 +63,18 @@ public class CarTest
      * @throws SimRuntimeException on ???
      * @throws NamingException on ???
      * @throws GTUException on ???
+     * @throws OTSGeometryException when center line or contour of a link or lane cannot be generated
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void carTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException, GTUException
+    public final void carTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException,
+        GTUException, OTSGeometryException
     {
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
         GTUType<String> gtuType = GTUType.makeGTUType("Car");
         LaneType<String> laneType = new LaneType<String>("CarLane");
         laneType.addCompatibility(gtuType);
-        Lane.STR lane = makeLane(laneType);
+        Lane<String, String> lane = makeLane(laneType);
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(12, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(34, SpeedUnit.KM_PER_HOUR);
         OTSDEVSSimulator simulator = makeSimulator();
@@ -136,7 +139,7 @@ public class CarTest
      * @throws GTUException when construction of the GTU fails (probably due to an invalid parameter)
      */
     public static LaneBasedIndividualCar<Integer> makeReferenceCar(final int nr, final GTUType<?> gtuType,
-        final Lane.STR lane, final DoubleScalar.Rel<LengthUnit> initialPosition,
+        final Lane<String, String> lane, final DoubleScalar.Rel<LengthUnit> initialPosition,
         final DoubleScalar.Abs<SpeedUnit> initialSpeed, final OTSDEVSSimulator simulator,
         final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel) throws RemoteException,
         NamingException, NetworkException, SimRuntimeException, GTUException
@@ -155,18 +158,19 @@ public class CarTest
      * @param laneType LaneType&lt;String&gt;; the type of the lane
      * @return a lane of 1000 m long.
      * @throws NetworkException on network error
+     * @throws OTSGeometryException when center line or contour of a link or lane cannot be generated
      */
-    public static Lane.STR makeLane(final LaneType<?> laneType) throws NetworkException
+    public static Lane<String, String> makeLane(final LaneType<?> laneType) throws NetworkException, OTSGeometryException
     {
-        OTSNode.STR n1 = new OTSNode.STR("n1", new OTSPoint3D(0, 0));
-        OTSNode.STR n2 = new OTSNode.STR("n2", new OTSPoint3D(10000.0, 0.0));
+        OTSNode<String> n1 = new OTSNode<>("n1", new OTSPoint3D(0, 0));
+        OTSNode<String> n2 = new OTSNode<>("n2", new OTSPoint3D(10000.0, 0.0));
         OTSPoint3D[] coordinates = new OTSPoint3D[]{new OTSPoint3D(0.0, 0.0), new OTSPoint3D(10000.0, 0.0)};
-        CrossSectionLink.STR link12 = new CrossSectionLink.STR("link12", n1, n2, new OTSLine3D(coordinates));
+        CrossSectionLink<String, String> link12 = new CrossSectionLink<>("link12", n1, n2, new OTSLine3D(coordinates));
         DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         DoubleScalar.Abs<FrequencyUnit> f200 = new DoubleScalar.Abs<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
-        return new Lane.STR(link12, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f200,
-            new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR));
+        return new Lane<String, String>(link12, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD,
+            f200, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR));
     }
 
     /** the helper model. */

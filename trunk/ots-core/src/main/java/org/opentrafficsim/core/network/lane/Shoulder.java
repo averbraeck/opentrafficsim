@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.network.lane;
 
-import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -24,10 +24,11 @@ public class Shoulder<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID
      * @param lateralPosition the lateral start position compared to the linear geometry of the Cross Section Link.
      * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
-     * @throws NetworkException on network inconsistency
+     * @throws OTSGeometryException when creation of the center line or contour geometry fails
      */
     public Shoulder(final CrossSectionLink<LINKID, NODEID> parentLink, final DoubleScalar.Rel<LengthUnit> lateralPosition,
-        final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth) throws NetworkException
+        final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
+        throws OTSGeometryException
     {
         super(parentLink, lateralPosition, lateralPosition, beginWidth, endWidth);
     }
@@ -46,66 +47,6 @@ public class Shoulder<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID
     {
         return String.format("Shoulder offset %.2fm..%.2fm, width %.2fm..%.2fm", getDesignLineOffsetAtBegin().getSI(),
             getDesignLineOffsetAtEnd().getSI(), getBeginWidth().getSI(), getEndWidth().getSI());
-    }
-
-    /**
-     * String ID class.
-     * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
-     * All rights reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * <p>
-     * @version Jul 22, 2015 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     */
-    public static class STR extends Shoulder<String, String>
-    {
-        /**
-         * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction
-         * from the StartNode towards the EndNode as the longitudinal direction.
-         * @param parentLink Cross Section Link to which the element belongs.
-         * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section Link.
-         * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
-         * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
-         * @throws NetworkException on network inconsistency
-         */
-        public STR(final CrossSectionLink<String, String> parentLink,
-            final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> beginWidth,
-            final DoubleScalar.Rel<LengthUnit> endWidth) throws NetworkException
-        {
-            super(parentLink, lateralCenterPosition, beginWidth, endWidth);
-        }
-    }
-
-    /**
-     * Integer ID class.
-     * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
-     * All rights reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * <p>
-     * @version Jul 22, 2015 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     */
-    public static class INT extends Shoulder<Integer, Integer>
-    {
-        /**
-         * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction
-         * from the StartNode towards the EndNode as the longitudinal direction.
-         * @param parentLink Cross Section Link to which the element belongs.
-         * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section Link.
-         * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
-         * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
-         * @throws NetworkException on network inconsistency
-         */
-        public INT(final CrossSectionLink<Integer, Integer> parentLink,
-            final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> beginWidth,
-            final DoubleScalar.Rel<LengthUnit> endWidth) throws NetworkException
-        {
-            super(parentLink, lateralCenterPosition, beginWidth, endWidth);
-        }
     }
 
 }

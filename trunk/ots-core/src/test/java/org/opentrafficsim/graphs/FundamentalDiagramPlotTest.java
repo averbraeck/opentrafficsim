@@ -70,7 +70,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
         LaneType<String> laneType = new LaneType<String>("CarLane");
         GTUType<String> gtuType = GTUType.makeGTUType("Car");
         laneType.addCompatibility(gtuType);
-        Lane.STR lane = CarTest.makeLane(laneType);
+        Lane<String, String> lane = CarTest.makeLane(laneType);
         FundamentalDiagram fd = new FundamentalDiagram("Fundamental Diagram", aggregationTime, lane, position);
         assertEquals("SeriesCount should match numberOfLanes", 1, fd.getSeriesCount());
         assertEquals("Position should match the supplied position", position.getSI(), fd.getPosition().getSI(), 0.0001);

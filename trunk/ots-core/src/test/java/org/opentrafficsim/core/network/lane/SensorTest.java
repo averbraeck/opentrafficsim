@@ -55,8 +55,8 @@ public class SensorTest
     {
         // First we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
-        OTSNode.STR nodeAFrom = new OTSNode.STR("AFrom", new OTSPoint3D(0, 0, 0));
-        OTSNode.STR nodeATo = new OTSNode.STR("ATo", new OTSPoint3D(1000, 0, 0));
+        OTSNode<String> nodeAFrom = new OTSNode<String>("AFrom", new OTSPoint3D(0, 0, 0));
+        OTSNode<String> nodeATo = new OTSNode<String>("ATo", new OTSPoint3D(1000, 0, 0));
         LaneType<String> laneType = new LaneType<String>("CarLane");
         // A Car needs a type
         GTUType<String> gtuType = GTUType.makeGTUType("Car");
@@ -66,7 +66,7 @@ public class SensorTest
         final SimpleSimulator simulator =
             new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
                 TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
-        Lane.STR[] lanes =
+        Lane<String, String>[] lanes =
             LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(100,
                 SpeedUnit.KM_PER_HOUR), simulator);
         // Check that there is a SensorLaneStart and a SensorLaneEnd on each Lane

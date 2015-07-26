@@ -51,13 +51,13 @@ public class LaneTest
     public void laneConstructorTest() throws Exception
     {
         // First we need two Nodes
-        OTSNode.STR nodeFrom = new OTSNode.STR("A", new OTSPoint3D(0, 0, 0));
-        OTSNode.STR nodeTo = new OTSNode.STR("B", new OTSPoint3D(1000, 0, 0));
+        OTSNode<String> nodeFrom = new OTSNode<String>("A", new OTSPoint3D(0, 0, 0));
+        OTSNode<String> nodeTo = new OTSNode<String>("B", new OTSPoint3D(1000, 0, 0));
         // Now we can make a Link
         OTSPoint3D[] coordinates = new OTSPoint3D[2];
         coordinates[0] = new OTSPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
-        CrossSectionLink.STR link = new CrossSectionLink.STR("A to B", nodeFrom, nodeTo, new OTSLine3D(coordinates));
+        CrossSectionLink<String, String> link = new CrossSectionLink<String, String>("A to B", nodeFrom, nodeTo, new OTSLine3D(coordinates));
         DoubleScalar.Rel<LengthUnit> startLateralPos = new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> endLateralPos = new DoubleScalar.Rel<LengthUnit>(5, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> startWidth = new DoubleScalar.Rel<LengthUnit>(3, LengthUnit.METER);
@@ -71,8 +71,8 @@ public class LaneTest
         LongitudinalDirectionality longitudinalDirectionality = LongitudinalDirectionality.FORWARD;
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         // Now we can construct a Lane
-        Lane.STR lane =
-            new Lane.STR(link, startLateralPos, endLateralPos, startWidth, endWidth, laneType, longitudinalDirectionality,
+        Lane<String, String> lane =
+            new Lane<String, String>(link, startLateralPos, endLateralPos, startWidth, endWidth, laneType, longitudinalDirectionality,
                 f2000, speedLimit);
         // Verify the easy bits
         assertEquals("Capacity should be " + f2000, f2000.getSI(), lane.getCapacity().getSI(), 0.001);
@@ -142,9 +142,9 @@ public class LaneTest
         coordinates[0] = new OTSPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new OTSPoint3D(200, 100);
         coordinates[2] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
-        link = new CrossSectionLink.STR("A to B with Kink", nodeFrom, nodeTo, new OTSLine3D(coordinates));
+        link = new CrossSectionLink<String, String>("A to B with Kink", nodeFrom, nodeTo, new OTSLine3D(coordinates));
         lane =
-            new Lane.STR(link, startLateralPos, endLateralPos, startWidth, endWidth, laneType, longitudinalDirectionality,
+            new Lane<String, String>(link, startLateralPos, endLateralPos, startWidth, endWidth, laneType, longitudinalDirectionality,
                 f2000, speedLimit);
         // Verify the easy bits
         assertEquals("Capacity should be " + f2000, f2000.getSI(), lane.getCapacity().getSI(), 0.001);
@@ -183,8 +183,8 @@ public class LaneTest
         // System.out.println("Add another Lane at the inside of the corner in the design line");
         DoubleScalar.Rel<LengthUnit> startLateralPos2 = new DoubleScalar.Rel<LengthUnit>(-8, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> endLateralPos2 = new DoubleScalar.Rel<LengthUnit>(-5, LengthUnit.METER);
-        Lane.STR lane2 =
-            new Lane.STR(link, startLateralPos2, endLateralPos2, startWidth, endWidth, laneType, longitudinalDirectionality,
+        Lane<String, String> lane2 =
+            new Lane<String, String>(link, startLateralPos2, endLateralPos2, startWidth, endWidth, laneType, longitudinalDirectionality,
                 f2000, speedLimit);
         // Verify the easy bits
         assertEquals("Capacity should be " + f2000, f2000.getSI(), lane2.getCapacity().getSI(), 0.001);
@@ -244,16 +244,16 @@ public class LaneTest
             {
                 for (double angle : angles)
                 {
-                    OTSNode.STR start = new OTSNode.STR("start", new OTSPoint3D(xStart, yStart));
+                    OTSNode<String> start = new OTSNode<String>("start", new OTSPoint3D(xStart, yStart));
                     double linkLength = 1000;
                     double xEnd = xStart + linkLength * Math.cos(angle);
                     double yEnd = yStart + linkLength * Math.sin(angle);
-                    OTSNode.STR end = new OTSNode.STR("end", new OTSPoint3D(xEnd, yEnd));
+                    OTSNode<String> end = new OTSNode<String>("end", new OTSPoint3D(xEnd, yEnd));
                     OTSPoint3D[] coordinates = new OTSPoint3D[2];
                     coordinates[0] = start.getPoint();
                     coordinates[1] = end.getPoint();
                     OTSLine3D line = new OTSLine3D(coordinates);
-                    CrossSectionLink.STR link = new CrossSectionLink.STR("A to B", start, end, line);
+                    CrossSectionLink<String, String> link = new CrossSectionLink<String, String>("A to B", start, end, line);
                     final int[] lateralOffsets = {-10, -3, -1, 0, 1, 3, 10};
                     for (int startLateralOffset : lateralOffsets)
                     {
@@ -263,8 +263,8 @@ public class LaneTest
                             for (int endWidth : new int[]{2, 4, 6})
                             {
                                 // Now we can construct a Lane
-                                Lane.STR lane =
-                                    new Lane.STR(link,
+                                Lane<String, String> lane =
+                                    new Lane<String, String>(link,
                                         new DoubleScalar.Rel<LengthUnit>(startLateralOffset, LengthUnit.METER),
                                         new DoubleScalar.Rel<LengthUnit>(endLateralOffset, LengthUnit.METER),
                                         new DoubleScalar.Rel<LengthUnit>(startWidth, LengthUnit.METER),
@@ -361,7 +361,7 @@ public class LaneTest
      * @param expectedResult boolean; true if the calling method expects the point to be within the contour of the Lane, false
      *            if the calling method expects the point to be outside the contour of the Lane
      */
-    private void checkInside(final Lane.STR lane, final double longitudinal, final double lateral,
+    private void checkInside(final Lane<String, String> lane, final double longitudinal, final double lateral,
         final boolean expectedResult)
     {
         CrossSectionLink<?, ?> parentLink = lane.getParentLink();

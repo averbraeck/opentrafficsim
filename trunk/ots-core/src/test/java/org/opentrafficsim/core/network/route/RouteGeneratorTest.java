@@ -32,9 +32,9 @@ public class RouteGeneratorTest
         TODO THE ROUTE CLASSES HAVE CHANGED SO THE TESTS HAVE TO BE ADAPTED
          
         List<Node<?>> nodes = new ArrayList<Node<?>>();
-        nodes.add(new OTSNode.STR("n1", new OTSPoint3D(0, 0, 0)));
-        nodes.add(new OTSNode.STR("n2", new OTSPoint3D(1000, 0, 0)));
-        nodes.add(new OTSNode.STR("n3", new OTSPoint3D(1000, 1000, 0)));
+        nodes.add(new OTSNode<String>("n1", new OTSPoint3D(0, 0, 0)));
+        nodes.add(new OTSNode<String>("n2", new OTSPoint3D(1000, 0, 0)));
+        nodes.add(new OTSNode<String>("n3", new OTSPoint3D(1000, 1000, 0)));
         FixedRouteGenerator frg = new FixedRouteGenerator(nodes);
         assertNotNull("The new FixedRouteGenerator should not be null", frg);
         Route r1 = frg.generateRoute();
@@ -144,10 +144,10 @@ public class RouteGeneratorTest
     private FixedRouteGenerator createRouteGenerator(final String endNodeName) throws NetworkException
     {
         List<Node<String>> nodes = new ArrayList<Node<String>>();
-        nodes.add(new OTSNode.STR("n1", new OTSPoint3D(0, 0, 0)));
-        nodes.add(new OTSNode.STR("n2", new OTSPoint3D(1000, 0, 0)));
-        nodes.add(new OTSNode.STR("n3", new OTSPoint3D(1000, 1000, 0)));
-        nodes.add(new OTSNode.STR(endNodeName, new OTSPoint3D(2000, 1000, 0)));
+        nodes.add(new OTSNode<String>("n1", new OTSPoint3D(0, 0, 0)));
+        nodes.add(new OTSNode<String>("n2", new OTSPoint3D(1000, 0, 0)));
+        nodes.add(new OTSNode<String>("n3", new OTSPoint3D(1000, 1000, 0)));
+        nodes.add(new OTSNode<String>(endNodeName, new OTSPoint3D(2000, 1000, 0)));
         return new FixedRouteGenerator(new CompleteRoute<String, String>("fixed route", nodes));
     }
 }

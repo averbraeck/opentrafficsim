@@ -10,6 +10,7 @@ import java.util.TreeMap;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
@@ -90,14 +91,14 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * @param directionality in direction of geometry, reverse, or both
      * @param capacity Lane capacity in vehicles per time unit. This is a mutable property (e.g., blockage)
      * @param speedLimit speed limit on this lane
-     * @throws NetworkException when creation of the geometry fails
+     * @throws OTSGeometryException when creation of the center line or contour geometry fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink<LINKID, NODEID> parentLink, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart,
         final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd, final DoubleScalar.Rel<LengthUnit> beginWidth,
         final DoubleScalar.Rel<LengthUnit> endWidth, final LaneType<?> laneType,
         final LongitudinalDirectionality directionality, final DoubleScalar.Abs<FrequencyUnit> capacity,
-        final DoubleScalar.Abs<SpeedUnit> speedLimit) throws NetworkException
+        final DoubleScalar.Abs<SpeedUnit> speedLimit) throws OTSGeometryException
     {
         super(parentLink, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
         this.laneType = laneType;
@@ -731,88 +732,6 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
         CrossSectionLink<LINKID, NODEID> link = getParentLink();
         // FIXME indexOf may not be the correct way to determine the rank of a Lane (counts stripes as well)
         return String.format("Lane %d of %s", link.getCrossSectionElementList().indexOf(this), link.toString());
-    }
-
-    /**
-     * String ID class.
-     * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
-     * All rights reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * <p>
-     * @version Jul 22, 2015 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     */
-    public static class STR extends Lane<String, String>
-    {
-        /**
-         * @param parentLink Cross Section Link to which the element belongs.
-         * @param lateralOffsetAtStart DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
-         *            CrossSectionLink with respect to the design line of the parent Link at the start of the parent Link
-         * @param lateralOffsetAtEnd DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
-         *            CrossSectionLink with respect to the design line of the parent Link at the end of the parent Link
-         * @param beginWidth DoubleScalar.Rel&lt;LengthUnit&gt;; start width, positioned <i>symmetrically around</i> the design
-         *            line
-         * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; end width, positioned <i>symmetrically around</i> the design line
-         * @param laneType type of lane to deduce compatibility with GTU types
-         * @param directionality in direction of geometry, reverse, or both
-         * @param capacity Lane capacity in vehicles per time unit. This is a mutable property (e.g., blockage)
-         * @param speedLimit speed limit on this lane
-         * @throws NetworkException when creation of the geometry fails
-         */
-        @SuppressWarnings("checkstyle:parameternumber")
-        public STR(final CrossSectionLink<String, String> parentLink,
-            final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd,
-            final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth,
-            final LaneType<?> laneType, final LongitudinalDirectionality directionality,
-            final DoubleScalar.Abs<FrequencyUnit> capacity, final DoubleScalar.Abs<SpeedUnit> speedLimit)
-            throws NetworkException
-        {
-            super(parentLink, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, laneType, directionality,
-                capacity, speedLimit);
-        }
-    }
-
-    /**
-     * Integer ID class.
-     * <p>
-     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
-     * All rights reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * <p>
-     * @version Jul 22, 2015 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     */
-    public static class INT extends Lane<Integer, Integer>
-    {
-        /**
-         * @param parentLink Cross Section Link to which the element belongs.
-         * @param lateralOffsetAtStart DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
-         *            CrossSectionLink with respect to the design line of the parent Link at the start of the parent Link
-         * @param lateralOffsetAtEnd DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
-         *            CrossSectionLink with respect to the design line of the parent Link at the end of the parent Link
-         * @param beginWidth DoubleScalar.Rel&lt;LengthUnit&gt;; start width, positioned <i>symmetrically around</i> the design
-         *            line
-         * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; end width, positioned <i>symmetrically around</i> the design line
-         * @param laneType type of lane to deduce compatibility with GTU types
-         * @param directionality in direction of geometry, reverse, or both
-         * @param capacity Lane capacity in vehicles per time unit. This is a mutable property (e.g., blockage)
-         * @param speedLimit speed limit on this lane
-         * @throws NetworkException when creation of the geometry fails
-         */
-        @SuppressWarnings("checkstyle:parameternumber")
-        public INT(final CrossSectionLink<Integer, Integer> parentLink,
-            final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd,
-            final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth,
-            final LaneType<?> laneType, final LongitudinalDirectionality directionality,
-            final DoubleScalar.Abs<FrequencyUnit> capacity, final DoubleScalar.Abs<SpeedUnit> speedLimit)
-            throws NetworkException
-        {
-            super(parentLink, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, laneType, directionality,
-                capacity, speedLimit);
-        }
     }
 
 }

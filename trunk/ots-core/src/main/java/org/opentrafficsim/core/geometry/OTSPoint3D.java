@@ -59,7 +59,6 @@ public class OTSPoint3D implements LocatableInterface, Serializable
         this.x = x;
         this.y = y;
         this.z = z;
-        System.out.println(toString());
     }
 
     /**

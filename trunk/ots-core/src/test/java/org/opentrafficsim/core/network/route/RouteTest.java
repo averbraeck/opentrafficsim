@@ -58,7 +58,7 @@ public class RouteTest
         assertEquals("lastVisitedNode should return null", null, route.lastVisitedNode());
         assertEquals("visitNextNode should return null", null, route.visitNextNode());
         assertEquals("nextNodeToVisit should return null", null, route.nextNodeToVisit());
-        OTSNode.STR n1 = new OTSNode.STR("N1", new OTSPoint3D(12, 34));
+        OTSNode<String> n1 = new OTSNode<String>("N1", new OTSPoint3D(12, 34));
         assertEquals("indexOf should return -1 for an empty Route", -1, route.indexOf(n1));
         try
         {
@@ -83,7 +83,7 @@ public class RouteTest
         assertEquals("Node 0 of route should be N1", n1, route.getNode(0));
         assertEquals("OriginNode should be N1", n1, route.originNode());
         assertEquals("indexOf N1 should return 0", 0, route.indexOf(n1));
-        OTSNode.STR n2 = new OTSNode.STR("N2", new OTSPoint3D(56, 78));
+        OTSNode<String> n2 = new OTSNode<String>("N2", new OTSPoint3D(56, 78));
         route.addNode(n2);
         assertEquals("Route should now contain two Nodes", 2, route.size());
         assertEquals("Node 0 of route should be N1", n1, route.getNode(0));
@@ -117,11 +117,11 @@ public class RouteTest
         assertEquals("nextNodeToVisit should be n2", n2, route.nextNodeToVisit());
         assertEquals("lastVisitedNode should return n1", n1, route.lastVisitedNode());
         // Currently insertion before the "current" node is allowed and increments the internal lastNode index.
-        OTSNode.STR n0 = new OTSNode.STR("n0", new OTSPoint3D(0, 0));
+        OTSNode<String> n0 = new OTSNode<String>("n0", new OTSPoint3D(0, 0));
         route.addNode(0, n0);
         assertEquals("size should now be 3", 3, route.size());
         assertEquals("nextNodeToVisit should still be n2", n2, route.nextNodeToVisit());
-        OTSNode.STR n3 = new OTSNode.STR("n3", new OTSPoint3D(0, 0));
+        OTSNode<String> n3 = new OTSNode<String>("n3", new OTSPoint3D(0, 0));
         route.addNode(n3);
         assertEquals("size should now be 4", 4, route.size());
         assertEquals("destinationNode should now be n3", n3, route.destinationNode());

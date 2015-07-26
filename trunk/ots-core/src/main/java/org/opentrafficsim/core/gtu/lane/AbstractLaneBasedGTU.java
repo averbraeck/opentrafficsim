@@ -833,7 +833,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 lane.scheduleTriggers(this, lane.positionSI(this.fractionalLinkPositions.get(lane.getParentLink())), moveSI);
             }
 
-            // for (Lane.STR lane : triggerLanes)
+            // for (Lane<String, String> lane : triggerLanes)
             // {
             // double dt = this.nextEvaluationTime.getSI() - this.getLastEvaluationTime().getSI();
             //
@@ -1413,7 +1413,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     {
         Set<Lane<?, ?>> adjacentLanes = adjacentLanes(lateralDirection);
         /*-                       new LinkedHashSet<Lane>();
-        for (Lane.STR lane : this.lanes)
+        for (Lane<String, String> lane : this.lanes)
         {
             adjacentLanes.addAll(lane.accessibleAdjacentLanes(lateralDirection, getGTUType()));
         }

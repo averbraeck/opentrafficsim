@@ -43,6 +43,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -2383,11 +2384,12 @@ public class XmlNetworkLaneParserSax
      * @throws SAXException when the stripe type cannot be parsed correctly
      * @throws GTUException when lane block cannot be created
      * @throws SimRuntimeException when generator cannot be created
+     * @throws OTSGeometryException 
      */
     @SuppressWarnings({"checkstyle:needbraces", "rawtypes", "unchecked"})
     protected final void applyRoadTypeToLink(final RoadTypeTag roadTypeTag, final CrossSectionLink csl,
         final LinkTag linkTag, final GlobalTag globalTag) throws NetworkException, RemoteException, NamingException,
-        SAXException, GTUException, SimRuntimeException
+        SAXException, GTUException, SimRuntimeException, OTSGeometryException
     {
         List<CrossSectionElement> cseList = new ArrayList<>();
         List<Lane> lanes = new ArrayList<>();
@@ -2473,7 +2475,7 @@ public class XmlNetworkLaneParserSax
                     {
                         // TODO LANEOVERRIDE
                         Lane<?, ?> lane =
-                            new Lane.STR(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width, cseTag.laneType,
+                            new Lane<String, String>(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width, cseTag.laneType,
                                 cseTag.direction, new DoubleScalar.Abs<FrequencyUnit>(Double.MAX_VALUE,
                                     FrequencyUnit.PER_HOUR), cseTag.speed);
                         cseList.add(lane);
@@ -2507,7 +2509,7 @@ public class XmlNetworkLaneParserSax
                 case NOTRAFFICLANE:
                 {
                     // TODO Override
-                    Lane<?, ?> lane = new NoTrafficLane.STR(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width);
+                    Lane<?, ?> lane = new NoTrafficLane<String, String>(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width);
                     cseList.add(lane);
                     if (this.simulator != null)
                     {

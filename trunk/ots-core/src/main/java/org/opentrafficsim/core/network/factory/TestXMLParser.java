@@ -19,6 +19,7 @@ import nl.tudelft.simulation.language.io.URLResource;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
@@ -114,7 +115,8 @@ public class TestXMLParser extends AbstractWrappableSimulation
      * Model to test the XML parser.
      * <p>
      * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
-     * All rights reserved. BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * All rights reserved. BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim
+     * License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author$,
      * initial version un 27, 2015 <br>
@@ -136,16 +138,15 @@ public class TestXMLParser extends AbstractWrappableSimulation
             throws SimRuntimeException, RemoteException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
-            // URL url = URLResource.getResource("/straight-road-new-gtu-example-noCarsTest.xml");
-            // URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
-            URL url = URLResource.getResource("/straight-road-new-gtu-example_2.xml");
+            URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
+            // URL url = URLResource.getResource("/straight-road-new-gtu-example_2.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {
                 nlp.build(url);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                | GTUException exception)
+                | GTUException | OTSGeometryException exception)
             {
                 exception.printStackTrace();
             }
