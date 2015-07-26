@@ -21,6 +21,8 @@ import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
@@ -32,14 +34,14 @@ import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.factory.LaneFactory;
-import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.lane.SinkLane;
-import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -52,8 +54,6 @@ import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
 import org.opentrafficsim.simulationengine.properties.SelectionProperty;
-
-import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * Demonstrate the Trajectories plot.
@@ -148,7 +148,7 @@ public class Trajectories extends AbstractWrappableSimulation implements Wrappab
     {
         TablePanel charts = new TablePanel(1, 1);
         DoubleScalar.Rel<TimeUnit> sampleInterval = new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND);
-        List<Lane> path = new ArrayList<Lane>();
+        List<Lane<?, ?>> path = new ArrayList<Lane<?, ?>>();
         path.add(this.model.getLane());
         TrajectoryPlot tp = new TrajectoryPlot("Trajectory Plot", sampleInterval, path);
         tp.setTitle("Density Contour Graph");
@@ -234,7 +234,7 @@ class TrajectoriesModel implements OTSModelInterface
     private DoubleScalar.Rel<LengthUnit> maximumDistance = new DoubleScalar.Rel<LengthUnit>(5000, LengthUnit.METER);
 
     /** The Lane containing the simulated Cars. */
-    private Lane.STR lane;
+    private Lane<String, String> lane;
 
     /** the speed limit. */
     private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
@@ -268,9 +268,9 @@ class TrajectoriesModel implements OTSModelInterface
             throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
-        NodeGeotools.STR from = new NodeGeotools.STR("From", new Coordinate(getMinimumDistance().getSI(), 0, 0));
-        NodeGeotools.STR to = new NodeGeotools.STR("To", new Coordinate(getMaximumDistance().getSI(), 0, 0));
-        NodeGeotools.STR end = new NodeGeotools.STR("End", new Coordinate(getMaximumDistance().getSI() + 50.0, 0, 0));
+        OTSNode<String> from = new OTSNode<String>("From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0));
+        OTSNode<String> to = new OTSNode<String>("To", new OTSPoint3D(getMaximumDistance().getSI(), 0, 0));
+        OTSNode<String> end = new OTSNode<String>("End", new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0));
         LaneType<String> laneType = new LaneType<String>("CarLane");
         laneType.addCompatibility(this.gtuType);
         try
@@ -280,7 +280,7 @@ class TrajectoriesModel implements OTSModelInterface
             new SinkLane(endLink, this.getLane().getLateralCenterPosition(1.0), this.getLane().getWidth(1.0), laneType,
                     LongitudinalDirectionality.FORWARD, this.speedLimit);
         }
-        catch (NamingException | NetworkException exception1)
+        catch (NamingException | NetworkException | OTSGeometryException exception1)
         {
             exception1.printStackTrace();
         }
@@ -389,15 +389,16 @@ class TrajectoriesModel implements OTSModelInterface
             GTUException
     {
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(4000, LengthUnit.METER);
-        Map<Lane.STR, DoubleScalar.Rel<LengthUnit>> initialPositions =
-                new LinkedHashMap<Lane.STR, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions =
+                new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.getLane(), initialPosition);
         this.block =
                 new LaneBasedIndividualCar<>(999999, this.gtuType, this.carFollowingModelCars, this.laneChangeModel,
                         initialPositions, new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
                         new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1.8,
                                 LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-                        new Route(new ArrayList<Node<?>>()), this.simulator, DefaultCarAnimation.class,
+                                new LaneBasedRouteNavigator(
+                                    new CompleteRoute<String, String>("")), this.simulator, DefaultCarAnimation.class,
                         this.gtuColorer);
     }
 
@@ -417,8 +418,8 @@ class TrajectoriesModel implements OTSModelInterface
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
-        Map<Lane.STR, DoubleScalar.Rel<LengthUnit>> initialPositions =
-                new LinkedHashMap<Lane.STR, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions =
+                new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.getLane(), initialPosition);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         try
@@ -434,7 +435,8 @@ class TrajectoriesModel implements OTSModelInterface
             new LaneBasedIndividualCar<>(++this.carsCreated, this.gtuType, generateTruck ? this.carFollowingModelTrucks
                     : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
                     new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                            SpeedUnit.KM_PER_HOUR), new Route(new ArrayList<Node<?>>()), this.simulator,
+                            SpeedUnit.KM_PER_HOUR), new LaneBasedRouteNavigator(
+                                new CompleteRoute<String, String>("")), this.simulator,
                     DefaultCarAnimation.class, this.gtuColorer);
             // Re-schedule this method after headway seconds
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);

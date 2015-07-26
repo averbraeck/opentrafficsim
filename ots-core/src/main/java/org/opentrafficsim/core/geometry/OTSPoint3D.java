@@ -70,6 +70,14 @@ public class OTSPoint3D implements LocatableInterface, Serializable
     }
 
     /**
+     * @param point a point to "clone".
+     */
+    public OTSPoint3D(final OTSPoint3D point)
+    {
+        this(point.x, point.y, point.z);
+    }
+
+    /**
      * @param point javax.vecmath 3D double point; the x, y and z in the point are assumed to be in meters relative to an
      *            origin.
      */

@@ -22,15 +22,13 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.AbstractNetwork;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.geotools.LinkGeotools;
-import org.opentrafficsim.core.network.geotools.NodeGeotools;
-import org.opentrafficsim.core.network.geotools.NodeGeotools.STR;
-import org.opentrafficsim.core.network.lane.CrossSectionLink;
+import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -76,7 +74,7 @@ public class OpenStreetMap extends AbstractWrappableSimulation
     private OSMNetwork osmNetwork;
 
     /** The OTS network. */
-    private AbstractNetwork<String, NodeGeotools.STR, Link<String, NodeGeotools.STR>> otsNetwork;
+    private OTSNetwork<String, String, String> otsNetwork;
 
     /** The ProgressListener. */
     private ProgressListener progressListener;
@@ -208,7 +206,7 @@ public class OpenStreetMap extends AbstractWrappableSimulation
             // net.removeRedundancy(); // Defective; do not call removeRedundancy
             this.osmNetwork = net; // new OSMNetwork(net); // Why would you make a copy?
             this.otsNetwork =
-                    new AbstractNetwork<String, NodeGeotools.STR, Link<String, NodeGeotools.STR>>(this.osmNetwork.getName());
+                    new OTSNetwork<String, String, String>(this.osmNetwork.getName());
             for (OSMNode osmNode : this.osmNetwork.getNodes().values())
             {
                 try
@@ -222,12 +220,13 @@ public class OpenStreetMap extends AbstractWrappableSimulation
             }
             for (OSMLink osmLink : this.osmNetwork.getLinks())
             {
-                Link<String, NodeGeotools.STR> link = (Link) converter.convertLink(osmLink);
-                this.otsNetwork.add(link);
+                @SuppressWarnings("unchecked")
+                Link<String, String> link = (Link<String, String>) converter.convertLink(osmLink);
+                this.otsNetwork.addLink(link);
             }
             this.osmNetwork.makeLinks(this.warningListener, this.progressListener);
         }
-        catch (URISyntaxException | IOException exception)
+        catch (URISyntaxException | IOException | NetworkException exception)
         {
             exception.printStackTrace();
             return null;
@@ -235,18 +234,18 @@ public class OpenStreetMap extends AbstractWrappableSimulation
         this.model =
                 new OSMModel(getUserModifiedProperties(), this.osmNetwork, this.warningListener, this.progressListener,
                         converter);
-        Iterator<NodeGeotools.STR> count = this.otsNetwork.getNodeSet().iterator();
+        Iterator<Node<String>> count = this.otsNetwork.getNodeMap().values().iterator();
         Rectangle2D area = null;
         while (count.hasNext())
         {
-            NodeGeotools.STR node = count.next();
+            Node<String> node = count.next();
             if (null == area)
             {
-                area = new Rectangle2D.Double(node.getX(), node.getY(), 0, 0);
+                area = new Rectangle2D.Double(node.getPoint().x, node.getPoint().y, 0, 0);
             }
             else
             {
-                area = area.createUnion(new Rectangle2D.Double(node.getX(), node.getY(), 0, 0));
+                area = area.createUnion(new Rectangle2D.Double(node.getPoint().x, node.getPoint().y, 0, 0));
             }
         }
         this.rectangle = area;
@@ -306,7 +305,7 @@ class OSMModel implements OTSModelInterface
     private OSMNetwork osmNetwork;
 
     /** Provided lanes. */
-    private List<Lane> lanes = new ArrayList<Lane>();
+    private List<Lane<?, ?>> lanes = new ArrayList<Lane<?, ?>>();
 
     /** */
     private ProgressListener progressListener;
@@ -334,26 +333,22 @@ class OSMModel implements OTSModelInterface
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     @Override
     public void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
-        AbstractNetwork<String, NodeGeotools.STR, Link<String, NodeGeotools.STR>> otsNetwork =
-                new AbstractNetwork<String, NodeGeotools.STR, Link<String, NodeGeotools.STR>>(this.osmNetwork.getName());
+        try
+        {
+        OTSNetwork<String, String, String> otsNetwork =
+                new OTSNetwork<String, String, String>(this.osmNetwork.getName());
         for (OSMNode osmNode : this.osmNetwork.getNodes().values())
         {
-            try
-            {
                 otsNetwork.addNode(this.converter.convertNode(osmNode));
-            }
-            catch (NetworkException ne)
-            {
-                System.out.println(ne.getMessage());
-            }
         }
         for (OSMLink osmLink : this.osmNetwork.getLinks())
         {
-            otsNetwork.add((Link) this.converter.convertLink(osmLink));
+            otsNetwork.addLink((Link<String, String>) this.converter.convertLink(osmLink));
         }
         Convert.findSinksandSources(this.osmNetwork, this.progressListener);
         this.progressListener.progress(new ProgressEvent(this.osmNetwork, "Creation the lanes on "
@@ -363,22 +358,20 @@ class OSMModel implements OTSModelInterface
         double nextPercentage = 5.0;
         for (OSMLink link : this.osmNetwork.getLinks())
         {
-            try
-            {
                 this.lanes.addAll(this.converter.makeLanes(link, (OTSDEVSSimulatorInterface) theSimulator,
                         this.warningListener));
-            }
-            catch (NetworkException | NamingException exception)
-            {
-                exception.printStackTrace();
-            }
             counter++;
             double currentPercentage = counter / total * 100;
             if (currentPercentage >= nextPercentage)
             {
                 this.progressListener.progress(new ProgressEvent(this, nextPercentage + "% Progress"));
                 nextPercentage += 5.0D;
+                }
             }
+        }
+        catch (NetworkException | NamingException | OTSGeometryException ne)
+        {
+            System.out.println(ne.getMessage());
         }
         /*
          * System.out.println("Number of Links: " + this.network.getLinks().size());
