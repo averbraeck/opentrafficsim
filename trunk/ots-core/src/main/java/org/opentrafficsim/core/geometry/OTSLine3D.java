@@ -144,12 +144,12 @@ public class OTSLine3D implements LocatableInterface, Serializable
      */
     public final synchronized double getLengthSI()
     {
-        if (this.length == Double.NaN)
+        if (Double.isNaN(this.length))
         {
             this.length = 0.0;
-            for (int i = 0; i < size() - 2; i++)
+            for (int i = 0; i < size() - 1; i++)
             {
-                this.length += this.points[i].distanceSI(this.points[i + i]);
+                this.length += this.points[i].distanceSI(this.points[i + 1]);
             }
         }
         return this.length;
