@@ -12,6 +12,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -110,10 +112,11 @@ public class XmlNetworkLaneParser
      * @throws NamingException in case the animation context cannot be found
      * @throws GTUException in case of a problem with creating the LaneBlock (which is a GTU right now)
      * @throws OTSGeometryException when construction of a lane contour or offset design line fails
+     * @throws SimRuntimeException when simulator canot be used to schedule GTU generation
      */
     @SuppressWarnings("rawtypes")
     public final OTSNetwork build(final URL url) throws NetworkException, ParserConfigurationException, SAXException,
-        IOException, NamingException, GTUException, OTSGeometryException
+        IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException
     {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -138,14 +141,17 @@ public class XmlNetworkLaneParser
 
         // process nodes and links to calculate coordinates and positions
         Links.calculateNodeCoordinates(this);
-
         for (LinkTag linkTag : this.linkTags.values())
         {
-            // process the information for which multiple tags have to be combined
             Links.buildLink(linkTag, this, this.simulator);
             Links.applyRoadTypeToLink(linkTag, this, this.simulator);
+        }
+        
+        // process the information for which multiple tags have to be combined
+        for (LinkTag linkTag : this.linkTags.values())
+        {
+            GeneratorTag.makeGenerators(linkTag, this, this.simulator);
             // processFill();
-            // processGenerators();
             // processListGenerators();
             // processSensors();
         }
@@ -185,7 +191,7 @@ public class XmlNetworkLaneParser
             }
         }
         catch (NetworkException | SAXException | IOException | ParserConfigurationException | URISyntaxException
-            | NamingException | GTUException | OTSGeometryException exception)
+            | NamingException | GTUException | OTSGeometryException | SimRuntimeException exception)
         {
             throw new SAXException(exception);
         }

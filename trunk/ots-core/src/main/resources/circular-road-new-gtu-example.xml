@@ -2,7 +2,7 @@
 <NETWORK xmlns="http://www.opentrafficsim.org/ots-infra" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.opentrafficsim.org/ots-infra http://www.opentrafficsim.org/docs/ots-infra.xsd">
 
-  <GLOBAL WIDTH="3.6m" SPEED="100km/h" />
+  <GLOBAL DEFAULTLANEWIDTH="3.6m" DEFAULTMAXSPEED="100km/h" />
 
   <!-- extent -->
   <!-- seeds -->
@@ -39,7 +39,7 @@
   <NODE NAME="NE" />
   <NODE NAME="NE2" />
 
-  <ROUTE NAME="CIRCLE" NODELIST="NE2 NE N1 N1a N2 N1" />
+  <ROUTE NAME="CIRCLE" NODELIST="NE N1 N1a N2 N1" />
 
   <ROADTYPE NAME="r1">
     <SHOULDER WIDTH="2m" OFFSET="-7.1m" COLOR="GREEN" />

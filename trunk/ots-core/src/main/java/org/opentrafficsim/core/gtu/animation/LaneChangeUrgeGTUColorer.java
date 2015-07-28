@@ -33,7 +33,7 @@ public class LaneChangeUrgeGTUColorer implements GTUColorer
     private final DoubleScalar.Rel<LengthUnit> horizon;
 
     /** Color for GTUs that are not lane based (and, consequently cannot have a lane change urge). */
-    private final static Color notLaneBasedGTUColor = Color.BLACK;
+    private static final Color NOTLANEBASEDGTUCOLOR = Color.BLACK;
 
     /**
      * Construct a new LaneChangeUrgeGTUColorer.
@@ -87,7 +87,7 @@ public class LaneChangeUrgeGTUColorer implements GTUColorer
             return ColorInterpolator.interpolateColor(this.legend.get(distanceAndDirection.getLeft() ? 0 : 2).getColor(),
                 this.legend.get(1).getColor(), ratio);
         }
-        return notLaneBasedGTUColor;
+        return NOTLANEBASEDGTUCOLOR;
     }
 
     /** {@inheritDoc} */
