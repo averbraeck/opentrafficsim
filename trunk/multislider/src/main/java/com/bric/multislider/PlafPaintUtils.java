@@ -235,7 +235,13 @@ public class PlafPaintUtils
         return paint;
     }
 
-    /** Tweens between the two arguments. */
+    /** 
+     * Tweens between the two arguments.
+     * @param c1 color 1
+     * @param c2 color 2
+     * @param p if 0, r1; if 1, r2; value between 0 and 1 makes it closer to r1 or r2.
+     * @return tweened color
+     */
     private static Color tween(Color c1, Color c2, float p)
     {
         int r1 = c1.getRed();
