@@ -18,6 +18,12 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:simpleType name="ACCELERATIONTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+[\.]{0,1}\d*\s*(km/h\^2|m/s\^2|mi/h\^2|y/s\^2|ft/s\^2)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:simpleType name="LENGTHTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+[\.]{0,1}\d*\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
@@ -224,8 +230,27 @@
 
   <xsd:element name="GLOBAL">
     <xsd:complexType>
-      <xsd:attribute name="SPEED" type="SPEEDTYPE" use="required"></xsd:attribute>
-      <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="required"></xsd:attribute>
+      <xsd:sequence>
+        <xsd:element name="VELOCITYGTUCOLORER" minOccurs="0" maxOccurs="1">
+          <xsd:complexType>
+            <xsd:attribute name="MAXSPEED" type="SPEEDTYPE" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="ACCELERATIONGTUCOLORER" minOccurs="0" maxOccurs="1">
+          <xsd:complexType>
+            <xsd:attribute name="MAXDECELERATION" type="ACCELERATIONTYPE" use="required" />
+            <xsd:attribute name="MAXACCELERATION" type="ACCELERATIONTYPE" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="LANECHANGEURGEGTUCOLORER" minOccurs="0" maxOccurs="1">
+          <xsd:complexType>
+            <xsd:attribute name="MINLANECHANGEDISTANCE" type="LENGTHTYPE" use="required" />
+            <xsd:attribute name="HORIZON" type="LENGTHTYPE" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="DEFAULTMAXSPEED" type="SPEEDTYPE" use="required"></xsd:attribute>
+      <xsd:attribute name="DEFAULTLANEWIDTH" type="LENGTHTYPE" use="required"></xsd:attribute>
     </xsd:complexType>
   </xsd:element>
 

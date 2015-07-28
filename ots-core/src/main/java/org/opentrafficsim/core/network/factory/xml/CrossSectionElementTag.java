@@ -125,8 +125,8 @@ class CrossSectionElementTag
             cseTag.width = LengthUnits.parseLengthRel(attributes.getNamedItem("WIDTH").getNodeValue());
         else if (roadTypeTag.width != null)
             cseTag.width = roadTypeTag.width;
-        else if (parser.globalTag.width != null)
-            cseTag.width = parser.globalTag.width;
+        else if (parser.globalTag.defaultLaneWidth != null)
+            cseTag.width = parser.globalTag.defaultLaneWidth;
         else
             throw new SAXException("ROADTYPE.LANE: cannot determine WIDTH for lane: " + roadTypeTag.name + "." + name);
 
@@ -134,8 +134,8 @@ class CrossSectionElementTag
             cseTag.speed = SpeedUnits.parseSpeedAbs(attributes.getNamedItem("SPEED").getNodeValue());
         else if (roadTypeTag.speed != null)
             cseTag.speed = roadTypeTag.speed;
-        else if (parser.globalTag.speed != null)
-            cseTag.speed = parser.globalTag.speed;
+        else if (parser.globalTag.defaultMaxSpeed != null)
+            cseTag.speed = parser.globalTag.defaultMaxSpeed;
         else
             throw new SAXException("ROADTYPE.LANE: cannot determine SPEED for lane: " + roadTypeTag.name + "." + name);
 
@@ -188,8 +188,8 @@ class CrossSectionElementTag
             cseTag.width = LengthUnits.parseLengthRel(attributes.getNamedItem("WIDTH").getNodeValue());
         else if (roadTypeTag.width != null)
             cseTag.width = roadTypeTag.width;
-        else if (parser.globalTag.width != null)
-            cseTag.width = parser.globalTag.width;
+        else if (parser.globalTag.defaultLaneWidth != null)
+            cseTag.width = parser.globalTag.defaultLaneWidth;
         else
             throw new SAXException("ROADTYPE.NOTRAFFICLANE: cannot determine WIDTH for NOTRAFFICLANE: " + roadTypeTag.name
                 + "." + name);
@@ -239,8 +239,8 @@ class CrossSectionElementTag
             cseTag.width = LengthUnits.parseLengthRel(attributes.getNamedItem("WIDTH").getNodeValue());
         else if (roadTypeTag.width != null)
             cseTag.width = roadTypeTag.width;
-        else if (parser.globalTag.width != null)
-            cseTag.width = parser.globalTag.width;
+        else if (parser.globalTag.defaultLaneWidth != null)
+            cseTag.width = parser.globalTag.defaultLaneWidth;
         else
             throw new SAXException("ROADTYPE.SHOULDER: cannot determine WIDTH for NOTRAFFICLANE: " + roadTypeTag.name + "."
                 + name);

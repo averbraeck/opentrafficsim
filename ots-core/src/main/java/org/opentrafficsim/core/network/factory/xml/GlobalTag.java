@@ -11,6 +11,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * <p>
@@ -25,23 +26,31 @@ class GlobalTag
 {
     /** default speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Abs<SpeedUnit> speed = null;
+    DoubleScalar.Abs<SpeedUnit> defaultMaxSpeed = null;
 
     /** default lane width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Rel<LengthUnit> width = null;
+    DoubleScalar.Rel<LengthUnit> defaultLaneWidth = null;
+
+    /** default VelocityGTUColorer.maxSpeed. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    DoubleScalar.Abs<SpeedUnit> velocityGTUColorerMaxSpeed = null;
+    
+    // TODO add other GTUColorer tags
 
     /**
      * @param nodeList nodeList the top-level nodes of the XML-file
      * @param parser the parser with the lists of information
-     * @throws NetworkException when parsing of GLOBAL tag fails
+     * @throws NetworkException when parsing of units fails
+     * @throws SAXException when parsing of GLOBAL tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseGlobal(final NodeList nodeList, final XmlNetworkLaneParser parser) throws NetworkException
+    static void parseGlobal(final NodeList nodeList, final XmlNetworkLaneParser parser) throws NetworkException,
+        SAXException
     {
         List<Node> nodes = XMLParser.getNodes(nodeList, "GLOBAL");
         if (nodes.size() > 1)
-            throw new NetworkException("More than one tag GLOBAL in the XML-file");
+            throw new SAXException("GLOBAL: More than one tag GLOBAL in the XML-file");
         if (nodes.size() == 1)
         {
             Node node = nodes.get(0);
@@ -49,13 +58,29 @@ class GlobalTag
 
             parser.globalTag = new GlobalTag();
 
-            Node speed = attributes.getNamedItem("SPEED");
+            Node speed = attributes.getNamedItem("DEFAULTMAXSPEED");
             if (speed != null)
-                parser.globalTag.speed = SpeedUnits.parseSpeedAbs(speed.getNodeValue().trim());
+                parser.globalTag.defaultMaxSpeed = SpeedUnits.parseSpeedAbs(speed.getNodeValue().trim());
 
-            Node width = attributes.getNamedItem("WIDTH");
+            Node width = attributes.getNamedItem("DEFAULTLANEWIDTH");
             if (width != null)
-                parser.globalTag.width = LengthUnits.parseLengthRel(width.getNodeValue().trim());
+                parser.globalTag.defaultLaneWidth = LengthUnits.parseLengthRel(width.getNodeValue().trim());
+
+            // VELOCITYGTUCOLORER attributes
+            List<Node> velocityGTUColorerNodes = XMLParser.getNodes(node.getChildNodes(), "VELOCITYGTUCOLORER");
+            if (velocityGTUColorerNodes.size() > 1)
+                throw new SAXException("GLOBAL: More than one tag VELOCITYGTUCOLORER in the XML-file");
+            if (velocityGTUColorerNodes.size() == 1)
+            {
+                Node velocityGTUColorerNode = nodes.get(0);
+                NamedNodeMap velocityGTUColorerAttributes = velocityGTUColorerNode.getAttributes();
+                if (velocityGTUColorerAttributes.getNamedItem("MAXSPEED") == null)
+                    throw new SAXException("GLOBAL: No attribute MAXSPEED for the tag VELOCITYGTUCOLORER");
+                parser.globalTag.velocityGTUColorerMaxSpeed =
+                    SpeedUnits.parseSpeedAbs(velocityGTUColorerAttributes.getNamedItem("MAXSPEED").getNodeValue());
+            }
+            
+            // TODO parse other GTUColorer tags
         }
     }
 }

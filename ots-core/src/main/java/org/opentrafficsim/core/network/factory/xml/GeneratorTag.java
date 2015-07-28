@@ -1,9 +1,23 @@
 package org.opentrafficsim.core.network.factory.xml;
 
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.CrossSectionElementTag.ElementType;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
 import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
+import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.FixedLaneBasedRouteGenerator;
+import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -24,6 +38,10 @@ import org.xml.sax.SAXException;
  */
 class GeneratorTag
 {
+    /** lane name. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    String laneName = null;
+
     /** position of the generator on the link, relative to the design line. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     DoubleScalar.Rel<LengthUnit> position = null;
@@ -74,7 +92,7 @@ class GeneratorTag
 
     /** GTU colorer. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    String gtuColorer;
+    GTUColorer gtuColorer;
 
     /**
      * Parse the GENERATOR tag.
@@ -105,6 +123,7 @@ class GeneratorTag
                 + " - roadtype " + linkTag.roadTypeTag.name);
         if (linkTag.generatorTags.containsKey(laneName))
             throw new SAXException("GENERATOR for LANE with NAME " + laneName + " defined twice");
+        generatorTag.laneName = laneName;
 
         Node position = attributes.getNamedItem("POSITION");
         generatorTag.position =
@@ -201,8 +220,73 @@ class GeneratorTag
             throw new SAXException("GENERATOR: multiple ROUTE tags defined for Lane with NAME " + laneName + " of link "
                 + linkTag.name);
 
-        // TODO GTUColorer
+        if (numberRouteTags == 0)
+            throw new SAXException("GENERATOR: no ROUTE tags defined for Lane with NAME " + laneName + " of link "
+                + linkTag.name);
 
-        linkTag.generatorTags.put(laneName, generatorTag);
+        Node gtuColorerNode = attributes.getNamedItem("GTUCOLORER");
+        if (gtuColorerNode == null)
+            throw new SAXException("GENERATOR: missing attribute GTUCOLORER");
+        generatorTag.gtuColorer = GTUColorerTag.parseGTUColorer(gtuColorerNode.getNodeValue().trim(), parser.globalTag);
+
+        linkTag.generatorTags.put(generatorTag.laneName, generatorTag);
     }
+
+    /**
+     * Make the generators for this link, if available.
+     * @param linkTag the parent LINK tag
+     * @param parser the parser with the lists of information
+     * @param simulator the simulator to schedule GTU generation
+     * @throws SimRuntimeException in case of simulation problems building the car generator
+     * @throws RemoteException in case of network problems building the car generator
+     * @throws NetworkException when route generator cannot be instantiated
+     */
+    static void makeGenerators(final LinkTag linkTag, final XmlNetworkLaneParser parser,
+        final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, RemoteException, NetworkException
+    {
+        for (GeneratorTag generatorTag : linkTag.generatorTags.values())
+        {
+            makeGenerator(generatorTag, parser, linkTag, simulator);
+        }
+    }
+
+    /**
+     * Make a generator.
+     * @param generatorTag XML tag for the generator to build
+     * @param parser the parser with the lists of information
+     * @param linkTag the parent LINK tag
+     * @param simulator the simulator to schedule GTU generation
+     * @throws SimRuntimeException in case of simulation problems building the car generator
+     * @throws RemoteException in case of network problems building the car generator
+     * @throws NetworkException when route generator cannot be instantiated
+     */
+    static void makeGenerator(final GeneratorTag generatorTag, final XmlNetworkLaneParser parser, final LinkTag linkTag,
+        final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, RemoteException, NetworkException
+    {
+        Lane<?, ?> lane = linkTag.lanes.get(generatorTag.laneName);
+        Class<?> gtuClass = LaneBasedIndividualCar.class;
+        List<org.opentrafficsim.core.network.Node<String>> nodeList = new ArrayList<>();
+        for (NodeTag nodeTag : generatorTag.routeTag.routeNodeTags)
+        {
+            nodeList.add(parser.nodeTags.get(nodeTag.name).node);
+        }
+        DoubleScalar.Abs<TimeUnit> startTime =
+            generatorTag.startTime != null ? generatorTag.startTime : new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SI);
+        DoubleScalar.Abs<TimeUnit> endTime =
+            generatorTag.endTime != null ? generatorTag.endTime : new DoubleScalar.Abs<TimeUnit>(Double.MAX_VALUE,
+                TimeUnit.SI);
+        LaneBasedRouteGenerator rg =
+            new FixedLaneBasedRouteGenerator(new CompleteRoute<String, String>("fixed route", nodeList));
+        new GTUGeneratorIndividual<String>(generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType, gtuClass,
+            generatorTag.gtuTag.followingModel, generatorTag.gtuTag.laneChangeModel, generatorTag.initialSpeedDist,
+            generatorTag.iatDist, generatorTag.gtuTag.lengthDist, generatorTag.gtuTag.widthDist,
+            generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime, lane, generatorTag.position, rg,
+            generatorTag.gtuColorer);
+        
+        // TODO GTUMix
+        // TODO RouteMix
+        // TODO ShortestRoute
+        // TODO ShortestRouteMix
+    }
+
 }
