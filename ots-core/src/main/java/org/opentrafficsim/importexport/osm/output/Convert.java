@@ -592,7 +592,7 @@ public final class Convert
      * @throws NetworkException on network inconsistency
      * @throws NamingException on naming problems (in the animator)
      * @throws RemoteException on communications failure
-     * @throws OTSGeometryException 
+     * @throws OTSGeometryException when lane contour or center line cannot be instantiated
      */
     public List<Lane<?, ?>> makeLanes(final OSMLink osmlink, final OTSDEVSSimulatorInterface simulator,
         final WarningListener warningListener) throws NetworkException, RemoteException, NamingException, OTSGeometryException

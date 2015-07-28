@@ -143,7 +143,7 @@ public final class LaneFactory
      * @param laneType LaneType; type of the new Lanes
      * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit on all lanes
      * @param simulator OTSDEVSSimulatorInterface; the simulator
-     * @return Lane<String, String>[]; array containing the new Lanes
+     * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
      * @throws RemoteException on communications failure
      * @throws NetworkException on topological problems
@@ -189,7 +189,7 @@ public final class LaneFactory
      * @param laneType LaneType; type of the new Lanes
      * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt; the speed limit (applies to all generated lanes)
      * @param simulator OTSDEVSSimulatorInterface; the simulator
-     * @return Lane<String, String>[]; array containing the new Lanes
+     * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
      * @throws RemoteException on communications failure
      * @throws NetworkException on topological problems

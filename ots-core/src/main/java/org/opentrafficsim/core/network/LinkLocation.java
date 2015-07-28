@@ -14,7 +14,6 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <NODEID> the ID type of the Node, e.g., String.
- * @param <POINT> the type of the Point, e.g., Coordinate.
  * @param <LINKID> the ID type of the Link, e.g., String.
  */
 public class LinkLocation<LINKID, NODEID>

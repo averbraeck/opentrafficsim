@@ -325,7 +325,7 @@ public abstract class AbstractGTUGenerator<ID>
      * @param cumDistanceSI the distance we have already covered searching on previous lanes
      * @param maxDistanceSI the maximum distance to look for in SI units; stays the same in subsequent calls
      * @param when the current or future time for which to calculate the headway
-     * @param route Route; the route that the GTU intends to follow
+     * @param routeNavigator Route; the route that the GTU intends to follow
      * @return the headway in SI units when we have found the GTU, or a null GTU with a distance of Double.MAX_VALUE meters when
      *         no other GTU could not be found within maxDistanceSI meters
      * @throws RemoteException when the simulation time cannot be retrieved
@@ -382,7 +382,7 @@ public abstract class AbstractGTUGenerator<ID>
     /**
      * Find the first GTU starting on the specified lane following the specified route.
      * @param maxDistanceSI the maximum distance to look for in SI units
-     * @param route Route; the route that the GTU intends to follow
+     * @param routeNavigator Route; the route that the GTU intends to follow
      * @param generatorLane Lane; the lane on which the the search for a leader starts
      * @return the nearest GTU and the net headway to this GTU in SI units when we have found the GTU, or a null GTU with a
      *         distance of Double.MAX_VALUE meters when no other GTU could not be found within maxDistanceSI meters
@@ -408,7 +408,7 @@ public abstract class AbstractGTUGenerator<ID>
     /**
      * Check the available headway for GTU that is about to be constructed.
      * @param maxDistance DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum distance to look for a leader
-     * @param route Route; the route that this GTU intends to take
+     * @param routeNavigator RouteNavigator; the route that this GTU intends to take
      * @param generatorLane Lane; the lane on which the GTU is generated
      * @return HeadwayGTU; the available headway and the GTU at that headway
      * @throws RemoteException on communications failure

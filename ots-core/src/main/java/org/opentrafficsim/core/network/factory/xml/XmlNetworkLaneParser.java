@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.network.factory.xml;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -118,6 +119,10 @@ public class XmlNetworkLaneParser
     public final OTSNetwork build(final URL url) throws NetworkException, ParserConfigurationException, SAXException,
         IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException
     {
+        if (url.getFile().length() > 0 && !(new File(url.getFile()).exists()))
+        {
+            throw new SAXException("XmlNetworkLaneParser.build: File url.getFile() does not exist");
+        }
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(url.openStream());

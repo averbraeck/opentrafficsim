@@ -11,7 +11,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
- * Color GTUs based on their urgency to perform a lane change and the direction of that lane change. <br/>
+ * Color GTUs based on their urgency to perform a lane change and the direction of that lane change. <br>
  * Currently, lane change urge depends solely on the intended route; not on keep right conventions, etc.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>

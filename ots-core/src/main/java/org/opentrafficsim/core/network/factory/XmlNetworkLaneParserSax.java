@@ -2384,7 +2384,7 @@ public class XmlNetworkLaneParserSax
      * @throws SAXException when the stripe type cannot be parsed correctly
      * @throws GTUException when lane block cannot be created
      * @throws SimRuntimeException when generator cannot be created
-     * @throws OTSGeometryException 
+     * @throws OTSGeometryException when OTSLine cannot be generated
      */
     @SuppressWarnings({"checkstyle:needbraces", "rawtypes", "unchecked"})
     protected final void applyRoadTypeToLink(final RoadTypeTag roadTypeTag, final CrossSectionLink csl,

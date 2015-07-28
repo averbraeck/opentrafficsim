@@ -55,8 +55,6 @@ class NodeTag
      * @param parser the parser with the lists of information
      * @throws SAXException when parsing of GTU tag fails
      * @throws NetworkException when parsing of GTU tag fails
-     * @throws NamingException
-     * @throws RemoteException
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parseNodes(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException, NetworkException

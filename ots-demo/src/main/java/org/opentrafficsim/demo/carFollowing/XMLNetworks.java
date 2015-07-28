@@ -157,7 +157,7 @@ public class XMLNetworks extends AbstractWrappableSimulation implements Wrappabl
     public final String description()
     {
         return "<html><h1>Test Networks</h1>Prove that the test networks can be constructed and rendered on screen "
-            + "and that a mix of cars and trucks can run on them.<br/>On the statistics tab, a trajectory plot "
+            + "and that a mix of cars and trucks can run on them.<br>On the statistics tab, a trajectory plot "
             + "is generated for each lane.</html>";
     }
 

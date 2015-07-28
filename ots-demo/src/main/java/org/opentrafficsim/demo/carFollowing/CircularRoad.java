@@ -181,7 +181,7 @@ public class CircularRoad extends AbstractWrappableSimulation
     }
 
     /**
-     * @return
+     * @return the saved user properties for a next run
      */
     private ArrayList<AbstractProperty<?>> getSavedUserModifiedProperties()
     {

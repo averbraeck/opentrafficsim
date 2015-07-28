@@ -59,6 +59,7 @@ public class ContourPlotTest
 {
     /**
      * Create a dummy path for the tests.
+     * @param laneType the lane type
      * @return List&lt;Lane&gt;; the dummy path
      * @throws Exception when something goes wrong (should not happen)
      */
