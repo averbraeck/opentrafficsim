@@ -176,8 +176,23 @@
             <configuration>
               <fromDir>${basedir}/target/site/jacoco-ut</fromDir>
               <includes>.*, .resources/*</includes>
-              <url>ftp://opentrafficsim.org/docs/${ots-version}/${project.artifactId}</url>
+              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs/${ots-version}/${project.artifactId}</url>
               <toDir>jacoco-ut</toDir>
+              <serverId>ots-deployment</serverId>
+            </configuration>
+          </execution>
+          
+          <execution>
+            <id>upload-license</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>upload</goal>
+            </goals>
+            <configuration>
+              <fromDir>${basedir}/src/main/resources</fromDir>
+              <includes>license.html</includes>
+              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org</url>
+              <toDir>docs</toDir>
               <serverId>ots-deployment</serverId>
             </configuration>
           </execution>
@@ -772,7 +787,7 @@
   <licenses>
     <license>
       <name>BSD-style license</name>
-      <url>http://www.opentrafficsim.org/license.html</url>
+      <url>http://www.opentrafficsim.org/docs/license.html</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
