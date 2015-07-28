@@ -104,6 +104,9 @@
       <testResource>
         <directory>${basedir}/src/test/resources</directory>
       </testResource>
+      <testResource>
+        <directory>${basedir}/src/test/java/org/opentrafficsim/core/network/factory/*.xml</directory>
+      </testResource>
     </testResources>
 
     <extensions>

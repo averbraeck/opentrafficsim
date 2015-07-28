@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * A GTU type identifies the type of a GTU. <br/>
+ * A GTU type identifies the type of a GTU. <br>
  * GTU types are used to check whether a particular GTU can travel over a particular part of infrastructure. E.g. a
  * (LaneBased)GTU with GTUType CAR can travel over lanes that have a LaneType that has the GTUType CAR in the compatibility set.
  * <p>

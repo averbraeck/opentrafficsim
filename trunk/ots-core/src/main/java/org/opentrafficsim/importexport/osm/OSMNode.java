@@ -205,7 +205,7 @@ public class OSMNode
     }
 
     /**
-     * @param n OTSNode<String>
+     * @param n OTSNode&lt;String&gt;
      */
     public final void setOtsNode(final OTSNode<String> n)
     {
@@ -217,7 +217,7 @@ public class OSMNode
     }
 
     /**
-     * @return OTSNode<String> - The associated OTS Node.
+     * @return OTSNodeOTSNode&lt;String&gt; - The associated OTS Node.
      */
     public final OTSNode<String> getOtsNode()
     {

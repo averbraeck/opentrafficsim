@@ -13,7 +13,7 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
- * Generalized Travel Unit. <br/>
+ * Generalized Travel Unit. <br>
  * A GTU is an object (person, car, ship) that can travel over the infrastructure.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>

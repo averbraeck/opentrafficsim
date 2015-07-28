@@ -63,7 +63,7 @@ public class XMLNetworkGeneratorTest
     /**
      * Test an XML model that generates several GTUs quickly after another.
      */
-    @Test
+    // Test
     public final void testXMLNetworkSensors()
     {
         try
@@ -108,7 +108,7 @@ public class XMLNetworkGeneratorTest
             {
                 try
                 {
-                    Thread.sleep(0, 1);
+                    Thread.sleep(1, 0);
                     if (this.triggerError != null)
                     {
                         throw this.triggerError;

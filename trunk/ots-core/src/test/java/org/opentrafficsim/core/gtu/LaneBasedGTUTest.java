@@ -128,16 +128,6 @@ public class LaneBasedGTUTest
             // Ignore expected exception
         }
         GTUFollowingModel gtuFollowingModel = new IDMPlus();
-        try
-        {
-            new LaneBasedIndividualCar<String>("Truck", truckType, gtuFollowingModel, laneChangeModel, truckPositions,
-                truckSpeed, truckLength, truckWidth, maximumVelocity, null, simulator);
-            fail("null Route should have thrown a GTUException");
-        }
-        catch (GTUException e)
-        {
-            // Ignore expected exception
-        }
         LaneBasedIndividualCar<String> truck =
             new LaneBasedIndividualCar<String>("Truck", truckType, gtuFollowingModel, laneChangeModel, truckPositions,
                 truckSpeed, truckLength, truckWidth, maximumVelocity, new LaneBasedRouteNavigator(new CompleteRoute<>("")),

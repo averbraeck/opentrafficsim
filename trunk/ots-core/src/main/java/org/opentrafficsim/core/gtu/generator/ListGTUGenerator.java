@@ -92,9 +92,9 @@ public class ListGTUGenerator<ID>
      * @param routeGenerator RouteGenerator; the route generator that generates the routes of the generated GTUs
      * @param gtuColorer GTUColorere; the GTUColorer of the generated GTUs
      * @param fileName String; name of file with the times when another GTU is to be generated (XXXX STUB)
-     * @throws RemoteException
-     * @throws SimRuntimeException
-     * @throws NetworkException
+     * @throws RemoteException on 
+     * @throws SimRuntimeException on 
+     * @throws NetworkException on 
      */
     public ListGTUGenerator(String name, OTSDEVSSimulatorInterface simulator, GTUType<ID> gtuType,
         GTUFollowingModel gtuFollowingModel, LaneChangeModel laneChangeModel, DoubleScalar.Abs<SpeedUnit> initialSpeed,

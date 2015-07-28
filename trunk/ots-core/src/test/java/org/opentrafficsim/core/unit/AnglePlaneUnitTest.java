@@ -77,10 +77,9 @@ public class AnglePlaneUnitTest extends AbstractUnitTest<AnglePlaneUnit>
 
     /**
      * Check normalize for all data types.
-     * @param expected double; expected value after normalization
      * @param input double; value to normalize
      */
-    private void checkDoubleNormalize(double input)
+    private void checkDoubleNormalize(final double input)
     {
         double margin = 0.00000000001;
         double expected = input;
@@ -101,10 +100,9 @@ public class AnglePlaneUnitTest extends AbstractUnitTest<AnglePlaneUnit>
 
     /**
      * Check normalize for all data types.
-     * @param expected double; expected value after normalization
      * @param input double; value to normalize
      */
-    private void checkFloatNormalize(float input)
+    private void checkFloatNormalize(final float input)
     {
         double margin = 0.00001;
         float expected = input;
