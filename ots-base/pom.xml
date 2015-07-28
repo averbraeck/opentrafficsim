@@ -864,25 +864,25 @@
   <!-- Environment Settings -->
 
   <distributionManagement>
-    <downloadUrl>http://www.opentrafficsim.org/maven</downloadUrl>
+    <downloadUrl>http://opentrafficsim.org/maven</downloadUrl>
     <repository>
       <uniqueVersion>false</uniqueVersion>
       <id>ots-deployment</id>
       <name>open traffic sim repository</name>
-      <url>ftp://opentrafficsim.org/maven</url>
+      <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/maven</url>
       <layout>default</layout>
     </repository>
     <snapshotRepository>
       <uniqueVersion>false</uniqueVersion>
       <id>ots-deployment</id>
       <name>open traffic sim snapshot repository</name>
-      <url>ftp://opentrafficsim.org/maven</url>
+      <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/maven</url>
       <layout>default</layout>
     </snapshotRepository>
     <site>
       <id>ots-deployment</id>
       <name>open trafffic sim website</name>
-      <url>ftp://opentrafficsim.org/docs/${ots-version}</url>
+      <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs/${ots-version}</url>
     </site>
   </distributionManagement>
 
