@@ -13,6 +13,33 @@
   <name>Open Traffic Sim core classes</name>
   <description>Open Traffic Sim core classes</description>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>wagon-maven-plugin</artifactId>
+        <version>${wagon.maven.version}</version>
+        <executions>
+          <execution>
+            <id>upload-schema</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>upload</goal>
+            </goals>
+            <configuration>
+              <fromDir>${basedir}/src/main/resources</fromDir>
+              <includes>ots-infra.xsd</includes>
+              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org</url>
+              <toDir>docs</toDir>
+              <serverId>ots-deployment</serverId>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
+
   <dependencies>
 
     <dependency>

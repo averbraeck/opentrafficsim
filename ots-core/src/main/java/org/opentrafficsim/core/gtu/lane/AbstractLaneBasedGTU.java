@@ -184,6 +184,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
     }
 
+    /** very small speed to use for testing with rounding errors. */
+    private static final DoubleScalar.Abs<SpeedUnit> DRIFTINGSPEED = new DoubleScalar.Abs<>(1E-10, SpeedUnit.SI);
+
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Abs<SpeedUnit> getLongitudinalVelocity(final DoubleScalar.Abs<TimeUnit> when)
@@ -191,7 +194,13 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         synchronized (this.lock)
         {
             DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
-            return DoubleScalar.plus(this.speed, Calc.accelerationTimesTime(this.getAcceleration(when), dT)).immutable();
+            DoubleScalar.Abs<SpeedUnit> velocity =
+                DoubleScalar.plus(this.speed, Calc.accelerationTimesTime(this.getAcceleration(when), dT)).immutable();
+            if (velocity.mutable().abs().immutable().lt(DRIFTINGSPEED))
+            {
+                velocity = new DoubleScalar.Abs<>(0.0, SpeedUnit.SI);
+            }
+            return velocity;
         }
     }
 
@@ -361,7 +370,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     {
         if (getLongitudinalVelocity().getSI() < 0)
         {
-            System.out.println("negative velocity: " + this + " " + getLateralVelocity().getSI() + "m/s");
+            System.out.println("negative velocity: " + this + " " + getLongitudinalVelocity().getSI() + "m/s");
         }
         /*-
         if (getId().toString().equals("44") && getSimulator().getSimulatorTime().get().getSI() > 129.4)
@@ -417,7 +426,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         final DoubleScalar.Rel<AccelerationUnit> defaultRightLaneIncentive =
             LateralDirectionality.RIGHT == preferred ? PREFERREDLANEINCENTIVE : NONPREFERREDLANEINCENTIVE;
         DoubleVector.Rel.Dense<AccelerationUnit> defaultLaneIncentives =
-            new DoubleVector.Rel.Dense<AccelerationUnit>(new double[] {defaultLeftLaneIncentive.getSI(),
+            new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{defaultLeftLaneIncentive.getSI(),
                 STAYINCURRENTLANEINCENTIVE.getSI(), defaultRightLaneIncentive.getSI()}, AccelerationUnit.SI);
         DoubleVector.Rel.Dense<AccelerationUnit> laneIncentives = laneIncentives(defaultLaneIncentives);
         LaneMovementStep lcmr =
@@ -552,10 +561,10 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
         if (currentSuitability == LaneBasedRouteNavigator.NOLANECHANGENEEDED)
         {
-            return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[] {acceleration(leftSuitability),
+            return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{acceleration(leftSuitability),
                 defaultLaneIncentives.get(1).getSI(), acceleration(rightSuitability)}, AccelerationUnit.SI);
         }
-        return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[] {acceleration(leftSuitability),
+        return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{acceleration(leftSuitability),
             acceleration(currentSuitability), acceleration(rightSuitability)}, AccelerationUnit.SI);
     }
 
@@ -584,21 +593,21 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
         if (currentSuitability == LaneBasedRouteNavigator.NOLANECHANGENEEDED)
         {
-            return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[] {acceleration(leftSuitability),
+            return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{acceleration(leftSuitability),
                 defaultLaneIncentives.get(1).getSI(), acceleration(rightSuitability)}, AccelerationUnit.SI);
         }
         if (currentSuitability.le(leftSuitability))
         {
-            return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[] {PREFERREDLANEINCENTIVE.getSI(),
+            return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{PREFERREDLANEINCENTIVE.getSI(),
                 NONPREFERREDLANEINCENTIVE.getSI(), LaneBasedRouteNavigator.GETOFFTHISLANENOW.getSI()}, AccelerationUnit.SI);
         }
         if (currentSuitability.le(rightSuitability))
         {
-            return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[] {
+            return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{
                 LaneBasedRouteNavigator.GETOFFTHISLANENOW.getSI(), NONPREFERREDLANEINCENTIVE.getSI(),
                 PREFERREDLANEINCENTIVE.getSI()}, AccelerationUnit.SI);
         }
-        return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[] {acceleration(leftSuitability),
+        return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{acceleration(leftSuitability),
             acceleration(currentSuitability), acceleration(rightSuitability)}, AccelerationUnit.SI);
     }
 

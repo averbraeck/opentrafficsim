@@ -2,7 +2,7 @@
 <NETWORK xmlns="http://www.opentrafficsim.org/ots-infra" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.opentrafficsim.org/ots-infra http://www.opentrafficsim.org/docs/ots-infra.xsd">
 
-  <GLOBAL WIDTH="3.6m" SPEED="100km/h" />
+  <GLOBAL DEFAULTMAXWIDTH="3.6m" DEFAULTLANESPEED="100km/h" />
 
   <GTU NAME="CAR" GTUTYPE="CAR" FOLLOWING="IDM+" LENGTH="CONST(5) m" WIDTH="CONST(2) m" LANECHANGE="EGOISTIC"
     MAXSPEED="CONST(10) m/s" />

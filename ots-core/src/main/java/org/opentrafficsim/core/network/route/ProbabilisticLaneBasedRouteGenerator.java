@@ -53,7 +53,7 @@ public class ProbabilisticLaneBasedRouteGenerator implements LaneBasedRouteGener
         {
             throw new NetworkException("Sum of probabilities or freqencies must be > 0");
         }
-        this.cumulativeProbabilities = new double[this.laneBasedRouteProbabilities.size()];
+        this.cumulativeProbabilities = new double[laneBasedRouteProbabilities.size()];
         int index = 0;
         double cumFreq = 0.0;
         for (LaneBasedRouteProbability rp : laneBasedRouteProbabilities)
