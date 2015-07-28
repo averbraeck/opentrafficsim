@@ -42,6 +42,7 @@ public class JVM
     /**
      * Gets basic information about this session's JVM: the OS name &amp; version, the Java version, and (on Mac)
      * whether Quartz is being used.
+     * @return profile
      */
     public static String getProfile()
     {
@@ -121,6 +122,7 @@ public class JVM
      * For example, this converts "1.6.0_05" to "1.6". <BR>
      * This value is cached as the system property "java.major.version". Although technically this value is a String, it
      * will always be parseable as a float.
+     * @return major java version such as 1.6
      * @throws AccessControlException this may be thrown in unsigned applets! Beware!
      */
     public static float getMajorJavaVersion() throws AccessControlException

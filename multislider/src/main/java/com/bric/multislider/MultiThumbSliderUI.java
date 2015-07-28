@@ -57,6 +57,7 @@ import com.bric.multislider.MultiThumbSlider.Collision;
 
 /**
  * This is the abstract UI for <code>MultiThumbSliders</code>
+ * @param <T> the type
  */
 public abstract class MultiThumbSliderUI<T> extends ComponentUI implements MouseListener, MouseMotionListener
 {
@@ -390,7 +391,12 @@ public abstract class MultiThumbSliderUI<T> extends ComponentUI implements Mouse
             MultiThumbSliderUI.this.slider.setSelectedThumb(this.selectedThumb);
         }
 
-        /** This is a kludgy casting trick to make our arrays mesh with generics. */
+        /**
+         * This is a kludgy casting trick to make our arrays mesh with generics.
+         * @param src source array
+         * @param length the length
+         * @return array of type T
+         */
         private T[] createSimilarArray(T[] src, int length)
         {
             Class<?> componentType = src.getClass().getComponentType();
