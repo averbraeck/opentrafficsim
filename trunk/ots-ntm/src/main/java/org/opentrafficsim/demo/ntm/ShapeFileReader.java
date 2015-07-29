@@ -16,7 +16,7 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opentrafficsim.core.network.geotools.LinearGeometry;
+import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -35,7 +35,7 @@ import com.vividsolutions.jts.geom.Point;
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version Sep 11, 2014 <br>
@@ -120,7 +120,7 @@ public class ShapeFileReader
                 {
                     for (Node node : centroids.values())
                     {
-                        Geometry g = new GeometryFactory().createPoint(node.getPoint());
+                        Geometry g = new GeometryFactory().createPoint(node.getPoint().getCoordinate());
                         if (geometry.contains(g))
                         {
                             centroidNode = node;
@@ -154,7 +154,7 @@ public class ShapeFileReader
                     accCritical.add(accCritJam);
                     ParametersNTM parametersNTM = new ParametersNTM(accCritical);
                     Area area =
-                            new Area(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroidNode.getPoint(),
+                            new Area(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroidNode.getPoint().getCoordinate(),
                                     TrafficBehaviourType.NTM, new Rel<LengthUnit>(0, LengthUnit.METER),
                                     new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), increaseDemandByFactor, parametersNTM);
                     areas.put(centroidNr, area);
@@ -429,16 +429,12 @@ public class ShapeFileReader
                         Link linkBA = null;
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
-                                new Link(null, nr, length, nodeA, nodeB, speed, null, capacity,
+                                new Link(new OTSLine3D(line), nr, length, nodeA, nodeB, speed, null, capacity,
                                         TrafficBehaviourType.ROAD, linkData);
-                        LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
-                        linkAB.setGeometry(linearGeometry);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
-                                new Link(null, nrBA, length, nodeB, nodeA, speed, null, capacity,
+                                new Link(new OTSLine3D(line), nrBA, length, nodeB, nodeA, speed, null, capacity,
                                         TrafficBehaviourType.ROAD, linkData);
-                        linearGeometry = new LinearGeometry(linkBA, line, null);
-                        linkBA.setGeometry(linearGeometry);
                         if (direction == 1)
                         {
                             links.put(nr, linkAB);
@@ -465,7 +461,7 @@ public class ShapeFileReader
                   // but first test the geometry of the node/centroid: is it a node or is it a centroid?
                     if (centroidA != null)
                     {
-                        if (testGeometry(geometry.getCoordinates()[0], centroidA.getPoint()))
+                        if (testGeometry(geometry.getCoordinates()[0], centroidA.getPoint().getCoordinate()))
                         {
                             nodeACentroid = true;
                         }
@@ -473,7 +469,7 @@ public class ShapeFileReader
                     if (centroidB != null)
                     {
                         if (testGeometry(geometry.getCoordinates()[geometry.getCoordinates().length - 1],
-                                centroidA.getPoint()))
+                                centroidA.getPoint().getCoordinate()))
                         {
                             nodeBCentroid = true;
                         }
@@ -489,16 +485,12 @@ public class ShapeFileReader
                         Link linkBA = null;
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
-                                new Link(null, nr, length, centroidA, nodeB, speed, null, capacity,
+                                new Link(new OTSLine3D(line), nr, length, centroidA, nodeB, speed, null, capacity,
                                         TrafficBehaviourType.NTM, linkData);
-                        LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
-                        linkAB.setGeometry(linearGeometry);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
-                                new Link(null, nrBA, length, nodeB, centroidA, speed, null, capacity,
+                                new Link(new OTSLine3D(line), nrBA, length, nodeB, centroidA, speed, null, capacity,
                                         TrafficBehaviourType.NTM, linkData);
-                        linearGeometry = new LinearGeometry(linkBA, line, null);
-                        linkBA.setGeometry(linearGeometry);
                         if (direction == 1)
                         {
                             connectors.put(nr, linkAB);
@@ -520,16 +512,12 @@ public class ShapeFileReader
                         Link linkBA = null;
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
-                                new Link(null, nr, length, nodeA, centroidB, speed, null, capacity,
+                                new Link(new OTSLine3D(line), nr, length, nodeA, centroidB, speed, null, capacity,
                                         TrafficBehaviourType.NTM, linkData);
-                        LinearGeometry linearGeometry = new LinearGeometry(linkAB, line, null);
-                        linkAB.setGeometry(linearGeometry);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
-                                new Link(null, nrBA, length, centroidB, nodeA, speed, null, capacity,
+                                new Link(new OTSLine3D(line), nrBA, length, centroidB, nodeA, speed, null, capacity,
                                         TrafficBehaviourType.NTM, linkData);
-                        linearGeometry = new LinearGeometry(linkBA, line, null);
-                        linkBA.setGeometry(linearGeometry);
                         if (direction == 1)
                         {
                             connectors.put(nr, linkAB);
@@ -550,10 +538,8 @@ public class ShapeFileReader
                     {
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         Link link =
-                                new Link(null, nr, length, nodeA, nodeB, speed, null, capacity,
+                                new Link(new OTSLine3D(line), nr, length, nodeA, nodeB, speed, null, capacity,
                                         TrafficBehaviourType.ROAD, linkData);
-                        LinearGeometry linearGeometry = new LinearGeometry(link, line, null);
-                        link.setGeometry(linearGeometry);
                         links.put(nr, link);
                     }
                 }

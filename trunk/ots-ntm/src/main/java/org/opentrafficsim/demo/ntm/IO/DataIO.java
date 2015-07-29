@@ -17,16 +17,14 @@ import java.util.Map;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeObject;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeStore;
 
-import com.vividsolutions.jts.awt.PointShapeFactory.Point;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.MultiPolygon;
 
 /**
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version 3 Nov 2014 <br>
@@ -42,7 +40,7 @@ public class DataIO
      * <p>
      * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
      * reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author:
      * pknoppers $, initial version 14 Nov 2014 <br>
@@ -263,13 +261,13 @@ public class DataIO
             out = new BufferedWriter(new FileWriter(fileNew));
             for (ShapeObject point : areas.getGeoObjects())
             {
-                com.vividsolutions.jts.geom.Point centroid = point.getGeometry().getCentroid();
+                com.vividsolutions.jts.geom.Point centroid = point.getDesignLine().getCentroid();
                 Coordinate[] coords = new Coordinate[999];
                 // String text = point.getValues().get(0) + " ," + centroid.getCoordinate().x + " ," +
                 // centroid.getCoordinate().y ;
-                Geometry newArea = point.getGeometry().buffer(0.0);
+                Geometry newArea = point.getDesignLine().buffer(0.0);
                 String text = "Area" + point.getValues().get(0) + " ,";
-                coords = point.getGeometry().getCoordinates();
+                coords = point.getDesignLine().getCoordinates();
                 Coordinate[] coords2 = newArea.getCoordinates();
                 for (Coordinate coord : coords)
                 {
@@ -282,13 +280,13 @@ public class DataIO
             }
             for (ShapeObject point : roads.getGeoObjects())
             {
-                com.vividsolutions.jts.geom.Point centroid = point.getGeometry().getCentroid();
+                com.vividsolutions.jts.geom.Point centroid = point.getDesignLine().getCentroid();
                 Coordinate[] coords = new Coordinate[999];
                 // String text = point.getValues().get(0) + " ," + centroid.getCoordinate().x + " ," +
                 // centroid.getCoordinate().y ;
-                Geometry newArea = point.getGeometry().buffer(0.0);
+                Geometry newArea = point.getDesignLine().buffer(0.0);
                 String text = "Road " + point.getValues().get(2) + " ,";
-                coords = point.getGeometry().getCoordinates();
+                coords = point.getDesignLine().getCoordinates();
                 Coordinate[] coords2 = newArea.getCoordinates();
                 for (Coordinate coord : coords)
                 {
@@ -336,7 +334,7 @@ public class DataIO
              * Iterator it = countMap.entrySet().iterator(); while (it.hasNext()) { Map.Entry countIdValue = (Map.Entry)
              * it.next(); Geometry geomToDetect = null; Double length = null; String CTM = null; String STT_NAAM = null;
              * Coordinate coordMiddle = null; if (mapRoads.get(countIdValue.getKey()) != null) { geomToDetect =
-             * mapRoads.get(countIdValue.getKey()).getGeometry(); if (geomToDetect != null) { int numberOfCoords =
+             * mapRoads.get(countIdValue.getKey()).getDesignLine(); if (geomToDetect != null) { int numberOfCoords =
              * geomToDetect.getCoordinates().length; Coordinate coordA = geomToDetect.getCoordinates()[0]; Coordinate
              * coordB = geomToDetect.getCoordinates()[numberOfCoords - 1]; double x = coordA.x + 0.5 * (coordB.x -
              * coordA.x); double y = coordA.y + 0.5 * (coordB.y - coordA.y); coordMiddle = new Coordinate(x, y, 0); }
@@ -586,7 +584,7 @@ public class DataIO
             Coordinate coordMiddle = null;
             if (mapRoads.get(countIdValue.getKey()) != null)
             {
-                geomToDetect = mapRoads.get(countIdValue.getKey()).getGeometry();
+                geomToDetect = mapRoads.get(countIdValue.getKey()).getDesignLine();
                 if (geomToDetect != null)
                 {
                     int numberOfCoords = geomToDetect.getCoordinates().length;
@@ -687,13 +685,13 @@ public class DataIO
             out = new BufferedWriter(new FileWriter(fileNew));
             for (ShapeObject point : searchLocations.getGeoObjects())
             {
-                com.vividsolutions.jts.geom.Point centroid = point.getGeometry().getCentroid();
+                com.vividsolutions.jts.geom.Point centroid = point.getDesignLine().getCentroid();
                 Coordinate[] coords = new Coordinate[999];
                 // String text = point.getValues().get(0) + " ," + centroid.getCoordinate().x + " ," +
                 // centroid.getCoordinate().y ;
-                Geometry newArea = point.getGeometry().buffer(0.0);
+                Geometry newArea = point.getDesignLine().buffer(0.0);
                 String text = point.getValues().get(0) + " ,";
-                coords = point.getGeometry().getCoordinates();
+                coords = point.getDesignLine().getCoordinates();
                 Coordinate[] coords2 = newArea.getCoordinates();
                 for (Coordinate coord : coords)
                 {
@@ -718,7 +716,7 @@ public class DataIO
         for (ShapeObject a : areas.getGeoObjects())
         {
             // could also be contains....
-            if (a.getGeometry().intersects(geom))
+            if (a.getDesignLine().intersects(geom))
             {
                 area = a;
                 break;

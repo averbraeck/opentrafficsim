@@ -21,26 +21,15 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.jgrapht.graph.SimpleWeightedGraph;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
-import org.opentrafficsim.demo.ntm.Area;
-import org.opentrafficsim.demo.ntm.BoundedNode;
-import org.opentrafficsim.demo.ntm.Link;
-import org.opentrafficsim.demo.ntm.NTMsimulation;
-import org.opentrafficsim.demo.ntm.Node;
-import org.opentrafficsim.demo.ntm.animation.AreaAnimation;
-import org.opentrafficsim.demo.ntm.animation.NodeAnimation;
 import org.opentrafficsim.demo.ntm.animation.RoadAnimation;
-import org.opentrafficsim.demo.ntm.animation.ShpLinkAnimation;
-import org.opentrafficsim.demo.ntm.animation.ShpNodeAnimation;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeObject;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeStore;
 
@@ -50,7 +39,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version 3 Nov 2014 <br>
@@ -66,7 +55,7 @@ public class DataViewer implements OTSModelInterface
      * <p>
      * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
      * reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author:
      * pknoppers $, initial version 14 Nov 2014 <br>
@@ -428,7 +417,7 @@ public class DataViewer implements OTSModelInterface
             Geometry geomToDetect = null;
             if (mapRoads.get(countIdValue.getKey()) != null)
             {
-                geomToDetect = mapRoads.get(countIdValue.getKey()).getGeometry();
+                geomToDetect = mapRoads.get(countIdValue.getKey()).getDesignLine();
             }
             ShapeObject area = null;
             if (geomToDetect != null)
@@ -523,7 +512,7 @@ public class DataViewer implements OTSModelInterface
         for (ShapeObject a : areas.getGeoObjects())
         {
             // could also be contains....
-            if (a.getGeometry().intersects(geom))
+            if (a.getDesignLine().intersects(geom))
             {
                 area = a;
                 break;

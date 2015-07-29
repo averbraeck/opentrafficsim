@@ -9,17 +9,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.media.j3d.Bounds;
-import javax.vecmath.Point3d;
-
-import nl.tudelft.simulation.language.d3.BoundingBox;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.geotools.geometry.jts.JTSFactoryFinder;
-import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.geotools.LinearGeometry;
-import org.opentrafficsim.core.network.geotools.LinkGeotools;
-import org.opentrafficsim.core.network.geotools.NodeGeotools;
+import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -30,11 +22,9 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.operation.linemerge.LineMerger;
 
 /**
@@ -45,16 +35,15 @@ import com.vividsolutions.jts.operation.linemerge.LineMerger;
  * and a lot of data attributes such as speed and length
  * </pre>
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Sep 12, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Sep 12, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Link extends LinkGeotools<String, String>
+public class Link extends OTSLink<String, String>
 {
     /** SPEEDAB class java.lang.Double 120.0. */
     private DoubleScalar.Abs<SpeedUnit> freeSpeed;
@@ -92,24 +81,22 @@ public class Link extends LinkGeotools<String, String>
      * @param direction
      */
 
-    public Link(final LinearGeometry geometry, final String nr, final DoubleScalar.Rel<LengthUnit> length,
-            final Node startNode, final Node endNode, DoubleScalar.Abs<SpeedUnit> freeSpeed,
-            DoubleScalar.Rel<TimeUnit> time, final DoubleScalar.Abs<FrequencyUnit> capacity,
-            final TrafficBehaviourType behaviourType, LinkData linkData)
+    public Link(final OTSLine3D geometry, final String nr, final DoubleScalar.Rel<LengthUnit> length, final Node startNode,
+        final Node endNode, DoubleScalar.Abs<SpeedUnit> freeSpeed, DoubleScalar.Rel<TimeUnit> time,
+        final DoubleScalar.Abs<FrequencyUnit> capacity, final TrafficBehaviourType behaviourType, LinkData linkData)
     {
-        super(nr, startNode, endNode, length, capacity);
+        super(nr, startNode, endNode, geometry, capacity);
         if (null == behaviourType)
         {
             System.out.println("behaviourType is null!");
         }
-        // LinkGeotools(final IDL id, final NodeGeotools<IDN> startNode, final NodeGeotools<IDN> endNode,
+        // OTSLink(final IDL id, final OTSNode<IDN> startNode, final OTSNode<IDN> endNode,
         // final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
         this.freeSpeed = freeSpeed;
         this.time = time;
         this.behaviourType = behaviourType;
         this.numberOfLanes = estimateLanes(capacity, freeSpeed);
         this.linkData = linkData;
-        this.setGeometry(geometry);
         if (geometry != null)
         {
             Coordinate[] cc = geometry.getLineString().getCoordinates();
@@ -119,13 +106,13 @@ public class Link extends LinkGeotools<String, String>
             }
             else
             {
-                if (Math.abs(cc[0].x - startNode.getX()) > 0.001 && Math.abs(cc[0].x - endNode.getX()) > 0.001
-                        && Math.abs(cc[cc.length - 1].x - startNode.getX()) > 0.001
-                        && Math.abs(cc[cc.length - 1].x - endNode.getX()) > 0.001)
+                if (Math.abs(cc[0].x - startNode.getPoint().x) > 0.001 && Math.abs(cc[0].x - endNode.getPoint().x) > 0.001
+                    && Math.abs(cc[cc.length - 1].x - startNode.getPoint().x) > 0.001
+                    && Math.abs(cc[cc.length - 1].x - endNode.getPoint().x) > 0.001)
                 {
                     System.out.println("x coordinate non-match for " + nr + " (" + nr + "); cc[0].x=" + cc[0].x
-                            + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x=" + startNode.getX() + ", nodeB.x="
-                            + endNode.getX());
+                        + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x=" + startNode.getPoint().x + ", nodeB.x="
+                        + endNode.getPoint().x);
                 }
             }
         }
@@ -232,25 +219,24 @@ public class Link extends LinkGeotools<String, String>
      */
     public Link(final Link link)
     {
-        super(link.getId(), link.getStartNode(), link.getEndNode(), link.getLength(), link.getCapacity());
-        setGeometry(link.getGeometry());
+        super(link.getId(), link.getStartNode(), link.getEndNode(), link.getDesignLine(), link.getCapacity());
         this.freeSpeed = link.freeSpeed;
         this.numberOfLanes = link.getNumberOfLanes();
         this.behaviourType = link.behaviourType;
-        if (this.getGeometry() != null)
+        if (this.getDesignLine() != null)
         {
-            Coordinate[] cc = this.getGeometry().getLineString().getCoordinates();
+            Coordinate[] cc = this.getDesignLine().getLineString().getCoordinates();
             if (cc.length == 0)
                 System.out.println("cc.length = 0 for " + this.getId() + " (" + this.getId() + ")");
             else
             {
-                if (Math.abs(cc[0].x - this.getStartNode().getX()) > 0.001
-                        && Math.abs(cc[0].x - this.getEndNode().getX()) > 0.001
-                        && Math.abs(cc[cc.length - 1].x - this.getStartNode().getX()) > 0.001
-                        && Math.abs(cc[cc.length - 1].x - this.getEndNode().getX()) > 0.001)
-                    System.out.println("x coordinate non-match for " + this.getId() + " (" + this.getId()
-                            + "); cc[0].x=" + cc[0].x + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x="
-                            + this.getStartNode().getX() + ", nodeB.x=" + this.getEndNode().getX());
+                if (Math.abs(cc[0].x - this.getStartNode().getPoint().x) > 0.001
+                    && Math.abs(cc[0].x - this.getEndNode().getPoint().x) > 0.001
+                    && Math.abs(cc[cc.length - 1].x - this.getStartNode().getPoint().x) > 0.001
+                    && Math.abs(cc[cc.length - 1].x - this.getEndNode().getPoint().x) > 0.001)
+                    System.out.println("x coordinate non-match for " + this.getId() + " (" + this.getId() + "); cc[0].x="
+                        + cc[0].x + ", cc[L].x=" + cc[cc.length - 1].x + ", nodeA.x=" + this.getStartNode().getPoint().x
+                        + ", nodeB.x=" + this.getEndNode().getPoint().x);
             }
         }
     }
@@ -264,29 +250,20 @@ public class Link extends LinkGeotools<String, String>
      * @return
      */
     public static Link createLink(Node startNode, Node endNode, Abs<FrequencyUnit> capacity,
-            DoubleScalar.Abs<SpeedUnit> speed, DoubleScalar.Rel<TimeUnit> time,
-            TrafficBehaviourType trafficBehaviourType)
+        DoubleScalar.Abs<SpeedUnit> speed, DoubleScalar.Rel<TimeUnit> time, TrafficBehaviourType trafficBehaviourType)
 
     {
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
-        Coordinate coordStart = new Coordinate(startNode.getX(), startNode.getY());
-        Coordinate coordEnd = new Coordinate(endNode.getX(), endNode.getY());
+        Coordinate coordStart = new Coordinate(startNode.getPoint().x, startNode.getPoint().y);
+        Coordinate coordEnd = new Coordinate(endNode.getPoint().x, endNode.getPoint().y);
         Coordinate[] coords = new Coordinate[]{coordStart, coordEnd};
         LineString line = geometryFactory.createLineString(coords);
+        OTSLine3D geometry = new OTSLine3D(line);
         DoubleScalar.Rel<LengthUnit> length =
-                new DoubleScalar.Rel<LengthUnit>(startNode.getPoint().distance(endNode.getPoint()), LengthUnit.METER);
+            new DoubleScalar.Rel<LengthUnit>(startNode.getPoint().getCoordinate().distance(
+                endNode.getPoint().getCoordinate()), LengthUnit.METER);
         String nr = startNode.getId() + " - " + endNode.getId();
-        Link newLink =
-                new Link(null, nr, length, startNode, endNode, speed, null, capacity, trafficBehaviourType, null);
-        try
-        {
-            LinearGeometry geometry = new LinearGeometry(newLink, line, null);
-            newLink.setGeometry(geometry);
-        }
-        catch (NetworkException exception)
-        {
-            exception.printStackTrace();
-        }
+        Link newLink = new Link(geometry, nr, length, startNode, endNode, speed, null, capacity, trafficBehaviourType, null);
         return newLink;
     }
 
@@ -296,8 +273,8 @@ public class Link extends LinkGeotools<String, String>
     public static void findSequentialLinks(final Map<String, Link> links, Map<String, Node> nodes)
     {
         // compare all links
-        HashMap<NodeGeotools, ArrayList<Link>> linksStartAtNode = new HashMap<NodeGeotools, ArrayList<Link>>();
-        HashMap<NodeGeotools, ArrayList<Link>> linksEndAtNode = new HashMap<NodeGeotools, ArrayList<Link>>();
+        HashMap<org.opentrafficsim.core.network.Node<String>, ArrayList<Link>> linksStartAtNode = new HashMap<>();
+        HashMap<org.opentrafficsim.core.network.Node<String>, ArrayList<Link>> linksEndAtNode = new HashMap<>();
         // HashMap<Node, Link> endNodeToLinkMap = new HashMap<Node, Link>();
         // HashMap<Node, Integer> numberOfLinksFromStartNodeMap = new HashMap<Node, Integer>();
         // find out how many links start from the endNode of a link
@@ -409,8 +386,8 @@ public class Link extends LinkGeotools<String, String>
                         if (upLinks.get(down).size() == 1)
                         {
                             if (link.getFreeSpeed().equals(down.getFreeSpeed())
-                                    && link.getCapacity().equals(down.getCapacity())
-                                    && link.getBehaviourType().equals(down.getBehaviourType()))
+                                && link.getCapacity().equals(down.getCapacity())
+                                && link.getBehaviourType().equals(down.getBehaviourType()))
                             {
                                 noMoreFound = false;
                                 Link mergedLink = joinLink(link, down);
@@ -490,8 +467,8 @@ public class Link extends LinkGeotools<String, String>
 
     /*
      * String splitBy =";"; String[] idList = down.getId().split(splitBy); int size = idList.length; if
-     * (IdToLinkMap.get(idList[size-1] + "_BA") != null) { outLinks--; } else { if (idList[size-1].contains("_BA")) {
-     * String Id = idList[size-1].replace("_BA", ""); if (IdToLinkMap.get(Id) != null) { outLinks--; } } }
+     * (IdToLinkMap.get(idList[size-1] + "_BA") != null) { outLinks--; } else { if (idList[size-1].contains("_BA")) { String Id
+     * = idList[size-1].replace("_BA", ""); if (IdToLinkMap.get(Id) != null) { outLinks--; } } }
      */
 
     /**
@@ -506,8 +483,8 @@ public class Link extends LinkGeotools<String, String>
         Link mergedLink = null;
         LineMerger lineMerger = new LineMerger();
         Collection<Geometry> lineStrings = new ArrayList<Geometry>();
-        lineStrings.add(down.getGeometry().getLineString());
-        lineStrings.add(up.getGeometry().getLineString());
+        lineStrings.add(down.getDesignLine().getLineString());
+        lineStrings.add(up.getDesignLine().getLineString());
         lineMerger.add(lineStrings);
         Collection<Geometry> mergedLineStrings = lineMerger.getMergedLineStrings();
         Geometry mergedGeometry = mergedLineStrings.iterator().next();
@@ -520,43 +497,16 @@ public class Link extends LinkGeotools<String, String>
         // + down.getLength().doubleValue());
 
         DoubleScalar.Rel<LengthUnit> length =
-                new DoubleScalar.Rel<LengthUnit>(up.getLength().getSI() + down.getLength().getSI(), LengthUnit.METER);
-        mergedLink =
-                new Link(null, nr, length, (Node) up.getStartNode(), (Node) down.getEndNode(), up.getFreeSpeed(),
-                        up.getTime(), up.getCapacity(), up.getBehaviourType(), up.getLinkData());
+            new DoubleScalar.Rel<LengthUnit>(up.getLength().getSI() + down.getLength().getSI(), LengthUnit.METER);
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         Coordinate[] coords = mergedGeometry.getCoordinates();
         LineString line = geometryFactory.createLineString(coords);
-        LinearGeometry geometry;
-        try
-        {
-            geometry = new LinearGeometry(mergedLink, line, null);
-            mergedLink.setGeometry(geometry);
-        }
-        catch (NetworkException exception)
-        {
-            exception.printStackTrace();
-        }
+        OTSLine3D geometry = new OTSLine3D(line);
+        mergedLink =
+            new Link(geometry, nr, length, (Node) up.getStartNode(), (Node) down.getEndNode(), up.getFreeSpeed(), up.getTime(),
+                up.getCapacity(), up.getBehaviourType(), up.getLinkData());
 
         return mergedLink;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public DirectedPoint getLocation() throws RemoteException
-    {
-        Point c = this.getGeometry().getLineString().getCentroid();
-        return new DirectedPoint(new double[]{c.getX(), c.getY(), 0.0d});
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Bounds getBounds() throws RemoteException
-    {
-        DirectedPoint c = getLocation();
-        Envelope envelope = this.getGeometry().getLineString().getEnvelopeInternal();
-        return new BoundingBox(new Point3d(envelope.getMinX() - c.x, envelope.getMinY() - c.y, 0.0d), new Point3d(
-                envelope.getMaxX() - c.x, envelope.getMaxY() - c.y, 0.0d));
     }
 
     /**
@@ -568,15 +518,15 @@ public class Link extends LinkGeotools<String, String>
         // create the polygon if it did not exist before
         if (this.lines == null)
         {
-            double dx = this.getLocation().getX();
-            double dy = this.getLocation().getY();
+            double dx = this.getLocation().x;
+            double dy = this.getLocation().y;
             // double dx = 0;
             // double dy = 0;
             this.lines = new HashSet<Path2D>();
-            for (int i = 0; i < this.getGeometry().getLineString().getNumGeometries(); i++)
+            for (int i = 0; i < this.getDesignLine().getLineString().getNumGeometries(); i++)
             {
                 Path2D line = new Path2D.Double();
-                Geometry g = this.getGeometry().getLineString().getGeometryN(i);
+                Geometry g = this.getDesignLine().getLineString().getGeometryN(i);
                 boolean start = true;
                 for (Coordinate c : g.getCoordinates())
                 {

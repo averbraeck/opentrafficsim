@@ -29,7 +29,7 @@ import com.vividsolutions.jts.linearref.LengthIndexedLine;
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version 28 Jan 2015 <br>
@@ -1345,10 +1345,10 @@ public class WriteOutput
         Coordinate pointA = null;
         Coordinate pointMiddle = null;
         Coordinate pointB = null;
-        LineString line = ctmLink.getGeometry().getLineString();
+        LineString line = ctmLink.getDesignLine().getLineString();
         LengthIndexedLine indexedLine = new LengthIndexedLine(line);
-        if (ctmLink.getStartNode().getPoint().x == line.getCoordinates()[0].x
-                && ctmLink.getStartNode().getPoint().y == line.getCoordinates()[0].y)
+        if (ctmLink.getStartNode().getPoint().getCoordinate().x == line.getCoordinates()[0].x
+                && ctmLink.getStartNode().getPoint().getCoordinate().y == line.getCoordinates()[0].y)
         {
             pointA = indexedLine.extractPoint(line.getLength() * (index) / totalNumberOfCells);
             pointB = indexedLine.extractPoint(line.getLength() * (index + 1) / totalNumberOfCells);

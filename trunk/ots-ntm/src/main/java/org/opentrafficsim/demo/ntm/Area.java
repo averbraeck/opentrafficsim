@@ -45,7 +45,7 @@ import com.vividsolutions.jts.geom.Point;
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version Sep 12, 2014 <br>
@@ -59,7 +59,7 @@ public class Area extends GeoObject implements LocatableInterface
      * <p>
      * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
      * reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author:
      * pknoppers $, initial version 10 Oct 2014 <br>
@@ -117,7 +117,7 @@ public class Area extends GeoObject implements LocatableInterface
      * <p>
      * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
      * reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author:
      * pknoppers $, initial version 7 Oct 2014 <br>
@@ -192,8 +192,8 @@ public class Area extends GeoObject implements LocatableInterface
         // create the polygon if it did not exist before
         if (this.polygons == null)
         {
-            double dx = this.getLocation().getX();
-            double dy = this.getLocation().getY();
+            double dx = this.getLocation().x;
+            double dy = this.getLocation().y;
             this.polygons = new HashSet<Path2D>();
             for (int i = 0; i < this.getGeometry().getNumGeometries(); i++)
             {

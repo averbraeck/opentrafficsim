@@ -3,7 +3,7 @@ package org.opentrafficsim.demo.ntm.IO;
 /**
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version 4 Nov 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
@@ -27,14 +27,6 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.operation.valid.IsValidOp;
 
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.Transaction;
@@ -62,6 +54,14 @@ import org.opengis.feature.FeatureVisitor;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opentrafficsim.demo.ntm.Area;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.operation.valid.IsValidOp;
 
 /**
  * This example reads data for point locations and associated attributes from a comma separated text (CSV) file and
@@ -178,7 +178,7 @@ public class WriteToShp
                     {
                         multiPolygon = (MultiPolygon) area.getGeometry();
                     }
-                    // Point multiPolygon = area.getGeometry().getCentroid();
+                    // Point multiPolygon = area.getDesignLine().getCentroid();
                     featureBuilder.add(multiPolygon);
                     featureBuilder.add(area.getCentroidNr());
                     SimpleFeature feature = featureBuilder.buildFeature(null);
