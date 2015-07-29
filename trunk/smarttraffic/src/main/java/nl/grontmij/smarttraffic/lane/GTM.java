@@ -1,0 +1,484 @@
+package nl.grontmij.smarttraffic.lane;
+
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.naming.NamingException;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.xml.parsers.ParserConfigurationException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.io.URLResource;
+
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSModelInterface;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.core.gtu.following.IDMPlus;
+import org.opentrafficsim.core.gtu.generator.ListGTUGenerator;
+import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
+import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
+import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.core.network.lane.CrossSectionElement;
+import org.opentrafficsim.core.network.lane.CrossSectionLink;
+import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.lane.NoTrafficLane;
+import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
+import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
+import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
+import org.opentrafficsim.core.unit.TimeUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
+import org.opentrafficsim.simulationengine.properties.AbstractProperty;
+import org.xml.sax.SAXException;
+
+/**
+ * <p>
+ * 
+ * @version Oct 17, 2014 <br>
+ *          ======= $LastChangedDate: 2015-07-15 16:11:15 +0200 (Wed, 15 Jul
+ *          2015) $, @version $Revision$, by $Author$,
+ *          initial version ct 17, 2014 <br>
+ *          =======
+ * @version $Revision$, $LastChangedDate: 2015-07-15 16:11:15 +0200 (Wed,
+ *          15 Jul 2015) $, by $Author$, initial version Oct 17,
+ *          2014 <br>
+ *          >>>>>>> .r1123 >>>>>>> .r1113
+ * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander
+ *         Verbraeck</a>
+ * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
+ */
+
+public class GTM extends AbstractWrappableSimulation {
+	/**
+	 * Main program.
+	 * 
+	 * @param args
+	 *            String[]; the command line arguments (not used)
+	 * @throws SimRuntimeException
+	 *             should never happen
+	 * @throws RemoteException
+	 *             on communications failure
+	 */
+
+	public static void main(final String[] args) throws RemoteException,
+			SimRuntimeException {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					GTM xmlModel = new GTM();
+					xmlModel.buildSimulator(
+							new ArrayList<AbstractProperty<?>>(), null, true);
+				} catch (RemoteException | SimRuntimeException
+						| NamingException exception) {
+					exception.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public final String shortName() {
+		return "TestXMLModel";
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public final String description() {
+		return "TestXMLModel";
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public final void stopTimersThreads() {
+		super.stopTimersThreads();
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	protected final JPanel makeCharts() {
+		return null;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	protected final OTSModelInterface makeModel(final GTUColorer colorer) {
+		return new TestXMLModel(colorer);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	protected final Double makeAnimationRectangle() {
+		return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
+	}
+
+	/**
+	 * Model to test the XML parser.
+	 * <p>
+	 * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600
+	 * AA, Delft, the Netherlands. All rights reserved. <br>
+	 * BSD-style license. See <a
+	 * href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+	 * <p>
+	 * 
+	 * @version $Revision$, $LastChangedDate: 2015-07-15 16:11:15 +0200
+	 *          (Wed, 15 Jul 2015) $, by $Author$, initial version
+	 *          Jun 27, 2015 <br>
+	 * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander
+	 *         Verbraeck</a>
+	 * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
+	 */
+
+	class TestXMLModel implements OTSModelInterface {
+		/** */
+		private static final long serialVersionUID = 20141121L;
+
+		/** the simulator. */
+		private OTSDEVSSimulatorInterface simulator;
+		/** The blocking car. */
+		private HashMap<Lane<?, ?>, LaneBasedIndividualCar<Integer>> blockMap = new HashMap<Lane<?, ?>, LaneBasedIndividualCar<Integer>>();
+
+		/** Type of all GTUs. */
+		private GTUType<String> gtuType = GTUType.makeGTUType("CAR");
+
+		/** The lane change model. */
+		private AbstractLaneChangeModel laneChangeModel = new Egoistic();
+
+		/**
+		 * @param gtuColorer
+		 *            the GTUColorer to use.
+		 */
+		public TestXMLModel(final GTUColorer gtuColorer) {
+			super();
+			this.gtuColorer = gtuColorer;
+		}
+
+		/** the gtuColorer. */
+		private final GTUColorer gtuColorer;
+
+		/** {@inheritDoc} */
+		@Override
+		public final void constructModel(
+				final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
+				throws SimRuntimeException, RemoteException {
+
+			this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
+			// URL url = URLResource.getResource("/PNH_TEST.xml");
+			// URL url = URLResource.getResource("/GTM.xml");
+			URL url = URLResource.getResource("C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/GTM.xml");
+			XmlNetworkLaneParser nlp = new XmlNetworkLaneParser( this.simulator);
+
+			try {
+				@SuppressWarnings("unchecked")
+				// build the network from the xml file
+				OTSNetwork<?, ?, ?> network = nlp.build(url);
+
+				// define the type of cars
+				GTUType<String> gtuType = GTUType.makeGTUType("CAR");
+
+				// detectors
+				// define the detectors by type (ENTRANCE, INTERMEDIATE, EXIT)
+				// and select which detectors are on the same corridor.
+
+				// connect the detector and traffic light pulses to the
+				// simulator
+
+				// Module that provides actions if a pulse from a detector is
+				// activated
+				// - Generate a car (ENTRANCE)
+				// - Kill a car (EXIT)
+				// - Compare this pulse to vehicles in the simulation
+				// (INTERMEDIATE)
+				// - if no car is matched: Generate a car
+				// - if matched: reposition that car, and perhaps other cars
+
+				// module that detects a car in the simulation passing a
+				// detector and provide actions:
+				// - if the car is too far downstream, and not matched by a
+				// pulse: we assume it is not matched --> Action: delete the
+				// car.
+				// - 
+
+				// module for logging information
+				// car: time and distance traveled since started
+				// detector: log all cars that pass (ID and time)
+				// road: time and ID for every car entered and exited
+
+				// learning algorithms:
+				// if the cars are traveling faster/slower than the pulses:
+				// decrease/increase the maximum speed
+
+				/*
+				 * Replace with new function for routes
+				 * 
+				 * String id; Route<?, ?> fixedRoute = new CompleteRoute(id, new
+				 * ArrayList<Node<?>>()); // RouteTag routeTag =
+				 * nlp.routeTags.get("STRAIGHT_PARTLY"); fixedRoute =
+				 * network.getRoute("STRAIGHT"); for (Node<?> node :
+				 * route.getNodes()) { for (Node<?> n : nodes.values()) { if
+				 * (n.getId().equals(nodeTag.name)) { fixedRoute.add(n); } } }
+				 * RouteGenerator routeGenerator = new FixedRouteGenerator(
+				 * fixedRoute);
+				 */
+				LaneBasedRouteGenerator routeGenerator = null;
+				Map<?, ?> nodes = network.getNodeMap();
+				Node<?> fromNode = null;
+				Collection<Node<?>> nodeValues = (Collection<Node<?>>) nodes.values();
+				for (Node<?> n :  nodeValues) {
+					if (n.getId().equals("N1")) {
+						fromNode = n;
+					}
+				}
+				if (null == fromNode) {
+					throw new Error("Cannot find node N1");
+				}
+				// find the lane
+				Lane lane = null;
+				for (Link<?, ?> link : fromNode.getLinksOut()) {
+					if (link.getEndNode().getId().equals("N2")) {
+						if (link instanceof CrossSectionLink) {
+							CrossSectionLink<?, ?> csl = (CrossSectionLink<?, ?>) link;
+							for (CrossSectionElement cse : csl
+									.getCrossSectionElementList()) {
+								if (cse instanceof Lane
+										&& !(cse instanceof NoTrafficLane)) {
+									lane = (Lane) cse;
+								}
+							}
+						}
+					}
+				}
+				if (null == lane) {
+					throw new NetworkException(
+							"Cannot find a Lane on a Link from N1 to N2");
+				}
+				new ListGTUGenerator<String>("generator 1", this.simulator,
+						gtuType, new IDMPlus(),
+						new Egoistic(),
+						new DoubleScalar.Abs<SpeedUnit>(50,
+								SpeedUnit.KM_PER_HOUR),
+						lane,
+						new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.SI),
+						routeGenerator,
+						this.gtuColorer,
+						// "D:/java/ots-core/src/main/resources/gtm_list.txt"
+						// "C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/vehicleList_PNH.csv"/*
+						// HACK */);
+						"C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/vehicleList_1.csv"/* HACK */);
+				Integer id = 99999;
+				readTrafficLightState(
+						this.simulator,
+						this.gtuColorer,
+						"C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/trafficLightStateList.txt",
+						lane, id);
+				// "C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/trafficLightStateList_PNH.txt",
+				// lane);
+
+				/*
+				 * fixedRoute = new ArrayList<Node<?>>(); routeTag =
+				 * nlp.routeTags.get("ENTER_N2"); nodes = network.getNodeMap();
+				 * for (NodeTag nodeTag : routeTag.routeNodeTags) { for (Node<?,
+				 * ?> n : nodes.values()) { if (n.getId().equals(nodeTag.name))
+				 * { fixedRoute.add(n); } } } routeGenerator = new
+				 * FixedRouteGenerator(fixedRoute);
+				 */
+				fromNode = null;
+				for (Node<?> n : nodeValues) {
+					if (n.getId().equals("N2a")) {
+						fromNode = n;
+					}
+				}
+				if (null == fromNode) {
+					throw new Error("Cannot find node N2a");
+				}
+				// find the lane
+				lane = null;
+				for (Link<?, ?> link : fromNode.getLinksOut()) {
+					if (link.getEndNode().getId().equals("N2b")) {
+						if (link instanceof CrossSectionLink) {
+							CrossSectionLink<?, ?> csl = (CrossSectionLink<?, ?>) link;
+							for (CrossSectionElement cse : csl
+									.getCrossSectionElementList()) {
+								if (cse instanceof Lane
+										&& !(cse instanceof NoTrafficLane)) {
+									lane = (Lane) cse;
+								}
+							}
+						}
+					}
+				}
+				if (null == lane) {
+					throw new NetworkException(
+							"Cannot find a Lane on a Link from N1 to N2");
+				}
+				new ListGTUGenerator<String>("generator 2", this.simulator,
+						gtuType, new IDMPlus(),
+						new Egoistic(),
+						new DoubleScalar.Abs<SpeedUnit>(50,
+								SpeedUnit.KM_PER_HOUR),
+						lane,
+						new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.SI),
+						routeGenerator,
+						this.gtuColorer,
+						// "D:/java/ots-core/src/main/resources/gtm_list.txt"
+						// "C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/vehicleList_PNH.csv"/*
+						// HACK */);
+						"C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/vehicleList_2.csv"/* HACK */);
+
+				readTrafficLightState(
+						this.simulator,
+						this.gtuColorer,
+						"C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/trafficLightStateList.txt",
+						lane, id++);
+				// "C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/trafficLightStateList_PNH.txt",
+				// lane);
+
+			} catch (NetworkException | ParserConfigurationException
+					| SAXException | IOException | NamingException | GTUException | OTSGeometryException exception1) {
+				exception1.printStackTrace();
+			}
+		}
+
+		private void readTrafficLightState(OTSDEVSSimulatorInterface simulator,
+				GTUColorer gtuColorer, String fileName, Lane lane, Integer id) {
+			/** Reader for the event list. */
+			BufferedReader reader;
+			try {
+				reader = new BufferedReader(new FileReader(new File(fileName)));
+				scheduleTrafficLigthState(reader, lane, id);
+			} catch (FileNotFoundException exception) {
+				exception.printStackTrace();
+			}
+
+		}
+
+		/**
+		 * Schedule generation of the next GTU.
+		 */
+		private void scheduleTrafficLigthState(BufferedReader reader,
+				Lane lane, Integer id) {
+			try {
+				String line = reader.readLine();
+				while (!line.contentEquals("")) {
+					String[] words = line.split(",");
+					double when = 0;
+					for (int i = 0; i < 4; i++) {
+						words[i] = words[i].replaceAll("\\s+", "");
+						if (i == 2) {
+							when = java.lang.Double.parseDouble(words[i]);
+						}
+						if (i == 3) {
+							if (words[i].contentEquals("RED")) {
+								Object[] objects = new Object[2];
+								objects[0] = lane;
+								objects[1] = id;
+
+								this.simulator.scheduleEventAbs(
+										new DoubleScalar.Abs<TimeUnit>(when,
+												TimeUnit.SECOND), this, this,
+										"createBlocks", objects);
+
+							} else if (words[i].contentEquals("GREEN")) {
+								Object[] objects = new Object[1];
+								objects[0] = lane;
+								this.simulator.scheduleEventAbs(
+										new DoubleScalar.Abs<TimeUnit>(when,
+												TimeUnit.SECOND), this, this,
+										"removeBlocks", objects);
+
+							}
+
+						}
+					}
+					line = reader.readLine();
+				}
+			} catch (NumberFormatException exception) {
+				exception.printStackTrace();
+				scheduleTrafficLigthState(reader, lane, id);
+			} catch (IOException exception) {
+				exception.printStackTrace();
+			} catch (SimRuntimeException exception) {
+				exception.printStackTrace();
+			}
+		}
+
+		/** {@inheritDoc} */
+		@Override
+		public SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+				throws RemoteException {
+			return this.simulator;
+		}
+
+		/**
+		 * Set up the block.
+		 * 
+		 * @throws RemoteException
+		 *             on communications failure
+		 */
+		protected final void createBlocks(Lane lane, Integer id)
+				throws RemoteException {
+			Map<Lane<?, ?>, Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
+			initialPositions.put(lane, lane.position(0.95));
+			try {
+				this.blockMap.put(lane,
+						new LaneBasedIndividualCar<Integer>(id, this.gtuType,
+								new IDMPlus(), this.laneChangeModel,
+								initialPositions,
+								new DoubleScalar.Abs<SpeedUnit>(0,
+										SpeedUnit.KM_PER_HOUR),
+								new DoubleScalar.Rel<LengthUnit>(1.0,
+										LengthUnit.METER),
+								new DoubleScalar.Rel<LengthUnit>(1.8,
+										LengthUnit.METER),
+								new DoubleScalar.Abs<SpeedUnit>(0,
+										SpeedUnit.KM_PER_HOUR),
+								new LaneBasedRouteNavigator(null),
+								this.simulator, DefaultCarAnimation.class,
+								this.gtuColorer));
+
+			} catch (RemoteException | SimRuntimeException | NamingException
+					| NetworkException | GTUException exception) {
+				exception.printStackTrace();
+			}
+		}
+
+		/**
+		 * Remove the block.
+		 */
+		protected final void removeBlocks(Lane lane) {
+			this.blockMap.get(lane).destroy();
+			this.blockMap.remove(lane);
+		}
+
+	}
+
+}
