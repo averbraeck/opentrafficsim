@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
-import org.opentrafficsim.core.network.geotools.NodeGeotools;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -34,7 +33,6 @@ import org.opentrafficsim.demo.ntm.trafficdemand.TripInfoTimeDynamic;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 
 /**
  * A Cell extends a Zone and is used for the NetworkTransmissionModel The Cells cover a preferably homogeneous area and
@@ -44,7 +42,7 @@ import com.vividsolutions.jts.geom.Point;
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version 4 Sep 2014 <br>
@@ -225,8 +223,8 @@ public class CsvFileReader
                             // there could be more connectors attached to this node. If so, create a new Node
                             if (centroidsAndCordonConnectors.get(nodeB.getId()) != null)
                             {
-                                double x = nodeB.getX() + 3;
-                                double y = nodeB.getY() + 3;
+                                double x = nodeB.getPoint().x + 3;
+                                double y = nodeB.getPoint().y + 3;
                                 Coordinate point = Node.createPoint(x, y);
                                 String nr = nodeB.getId() + "_" + nodeA.getId();
                                 node = new Node(nr, point, TrafficBehaviourType.CORDON);
@@ -236,7 +234,7 @@ public class CsvFileReader
                                 cordonPoint = node;
                                 connectors.remove(cordonConnector);
                                 cordonConnector =
-                                        new Link(cordonConnector.getGeometry(), cordonConnector.getId(),
+                                        new Link(cordonConnector.getDesignLine(), cordonConnector.getId(),
                                                 cordonConnector.getLength(), (Node) cordonConnector.getStartNode(),
                                                 node, cordonConnector.getFreeSpeed(), cordonConnector.getTime(),
                                                 cordonConnector.getCapacity(), cordonConnector.getBehaviourType(),
@@ -258,8 +256,8 @@ public class CsvFileReader
                             // there could be more connectors attached to this node. If so, create a new Node
                             if (centroidsAndCordonConnectors.get(nodeA.getId()) != null)
                             {
-                                double x = nodeA.getX() + 3;
-                                double y = nodeA.getY() + 3;
+                                double x = nodeA.getPoint().x + 3;
+                                double y = nodeA.getPoint().y + 3;
                                 Coordinate point = Node.createPoint(x, y);
                                 String nr = nodeA.getId() + "_" + nodeB.getId();
                                 node = new Node(nr, point, TrafficBehaviourType.CORDON);
@@ -269,7 +267,7 @@ public class CsvFileReader
                                 cordonPoint = node;
                                 connectors.remove(cordonConnector);
                                 cordonConnector =
-                                        new Link(cordonConnector.getGeometry(), cordonConnector.getId(),
+                                        new Link(cordonConnector.getDesignLine(), cordonConnector.getId(),
                                                 cordonConnector.getLength(), node, (Node) cordonConnector.getEndNode(),
                                                 cordonConnector.getFreeSpeed(), cordonConnector.getTime(),
                                                 cordonConnector.getCapacity(), cordonConnector.getBehaviourType(),
@@ -290,12 +288,12 @@ public class CsvFileReader
                         {
                             // after determining the new cordon centroid, a new area is created around this feeding
                             // link. This becomes a feeder type of area
-                            // Geometry buffer = cordonConnector.getStartNode().getPoint().buffer(40);
+                            // Geometry buffer = cordonConnector.getStartNode().getPoint().getCoordinate().buffer(40);
                             GeometryFactory factory = new GeometryFactory();
                             Geometry point =
-                                    factory.createPoint(new Coordinate(cordonPoint.getX(), cordonPoint.getY()));
+                                    factory.createPoint(new Coordinate(cordonPoint.getPoint().x, cordonPoint.getPoint().y));
                             Geometry buffer = point.buffer(40);
-                            Coordinate centroid = cordonPoint.getPoint();
+                            Coordinate centroid = cordonPoint.getPoint().getCoordinate();
                             String nr = cordonPoint.getId();
                             String newName = cordonConnector.getLinkData().getName();
                             String gemeente = cordonConnector.getLinkData().getName();

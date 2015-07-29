@@ -4,10 +4,7 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
-import org.opentrafficsim.demo.ntm.Area;
-import org.opentrafficsim.demo.ntm.Link;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
-import org.opentrafficsim.demo.ntm.ParametersNTM;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -16,7 +13,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version 2 Mar 2015 <br>

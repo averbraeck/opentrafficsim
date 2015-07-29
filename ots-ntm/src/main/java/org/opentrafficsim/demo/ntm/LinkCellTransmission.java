@@ -2,7 +2,7 @@ package org.opentrafficsim.demo.ntm;
 
 import java.util.ArrayList;
 
-import org.opentrafficsim.core.network.geotools.LinearGeometry;
+import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -15,7 +15,7 @@ import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version 15 Oct 2014 <br>
@@ -51,7 +51,7 @@ public class LinkCellTransmission extends Link
      * @param hierarchy
      */
 
-    public LinkCellTransmission(LinearGeometry geometry, String nr, DoubleScalar.Rel<LengthUnit> length,
+    public LinkCellTransmission(OTSLine3D geometry, String nr, DoubleScalar.Rel<LengthUnit> length,
             Node startNode, Node endNode, DoubleScalar.Abs<SpeedUnit> speed, DoubleScalar.Rel<TimeUnit> time,
             DoubleScalar.Abs<FrequencyUnit> capacity, TrafficBehaviourType behaviourType, LinkData linkData,
             ArrayList<FlowCell> cells, int hierarchy)
@@ -66,7 +66,7 @@ public class LinkCellTransmission extends Link
      */
     public LinkCellTransmission(final Link link, final ArrayList<FlowCell> cells)
     {
-        super(link.getGeometry(), link.getId(), link.getLength(), (Node) link.getStartNode(), (Node) link.getEndNode(),
+        super(link.getDesignLine(), link.getId(), link.getLength(), (Node) link.getStartNode(), (Node) link.getEndNode(),
                 link.getFreeSpeed(), link.getTime(), link.getCapacity(), link.getBehaviourType(), link.getLinkData());
         this.cells = cells;
     }
@@ -80,7 +80,7 @@ public class LinkCellTransmission extends Link
     public LinkCellTransmission(final Link link, BoundedNode startNode, BoundedNode endNode,
             final ArrayList<FlowCell> cells)
     {
-        super(link.getGeometry(), link.getId(), link.getLength(), startNode, endNode, link.getFreeSpeed(), link
+        super(link.getDesignLine(), link.getId(), link.getLength(), startNode, endNode, link.getFreeSpeed(), link
                 .getTime(), link.getCapacity(), link.getBehaviourType(), link.getLinkData());
         this.cells = cells;
     }

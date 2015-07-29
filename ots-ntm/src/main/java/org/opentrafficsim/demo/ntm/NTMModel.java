@@ -56,7 +56,7 @@ import com.vividsolutions.jts.geom.Point;
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version Sep 9, 2014 <br>
@@ -243,10 +243,10 @@ public class NTMModel implements OTSModelInterface
                     accCritical.add(accCritMaxCapEnd);
                     accCritical.add(accCritJam);
                     ParametersNTM parametersNTM = new ParametersNTM(accCritical);
-                    Point p = shape.getGeometry().getCentroid();
+                    Point p = shape.getDesignLine().getCentroid();
                     Coordinate centroid = new Coordinate(p.getX(), p.getY());
                     Area bigArea =
-                            new Area(shape.getGeometry(), areaName, "name", "gemeente", "gebied", "regio", 0, centroid,
+                            new Area(shape.getDesignLine(), areaName, "name", "gemeente", "gebied", "regio", 0, centroid,
                                     TrafficBehaviourType.NTM, new Rel<LengthUnit>(0, LengthUnit.KILOMETER),
                                     new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), this.getInputNTM()
                                             .getScalingFactorDemand(), parametersNTM);
@@ -402,15 +402,15 @@ public class NTMModel implements OTSModelInterface
             int NTM = 0;
             int CORDON = 0;
             String nr = bigArea.getValues().get(0);
-            Point centroidPoint = bigArea.getGeometry().getCentroid();
+            Point centroidPoint = bigArea.getDesignLine().getCentroid();
             Coordinate centroidCoordinate = new Coordinate(centroidPoint.getX(), centroidPoint.getY());
             Node bigCentroid = new Node(nr, centroidCoordinate, TrafficBehaviourType.NTM);
             bigCentroids.put(nr, bigCentroid);
             for (Node centroid : centroids.values())
             {
-                Coordinate nodeCoordinate = centroid.getPoint();
+                Coordinate nodeCoordinate = centroid.getPoint().getCoordinate();
                 Geometry nodeGeometry = new GeometryFactory().createPoint(nodeCoordinate);
-                if (bigArea.getGeometry().covers(nodeGeometry))
+                if (bigArea.getDesignLine().covers(nodeGeometry))
                 {
                     mapSmallAreaToBigArea.put(centroid, bigCentroid);
                     if (centroid.getBehaviourType() == TrafficBehaviourType.CORDON)
@@ -601,14 +601,14 @@ public class NTMModel implements OTSModelInterface
             if (startNode != null)
             {
                 newConnector =
-                        new Link(link.getGeometry(), link.getId(), link.getLength(), startNode,
+                        new Link(link.getDesignLine(), link.getId(), link.getLength(), startNode,
                                 (Node) link.getEndNode(), link.getFreeSpeed(), null, link.getCapacity(),
                                 link.getBehaviourType(), link.getLinkData());
             }
             else if (endNode != null)
             {
                 newConnector =
-                        new Link(link.getGeometry(), link.getId(), link.getLength(), (Node) link.getStartNode(),
+                        new Link(link.getDesignLine(), link.getId(), link.getLength(), (Node) link.getStartNode(),
                                 endNode, link.getFreeSpeed(), null, link.getCapacity(), link.getBehaviourType(),
                                 link.getLinkData());
             }
@@ -633,10 +633,10 @@ public class NTMModel implements OTSModelInterface
         {
             for (Area area : areas.values())
             {
-                if (area.getGeometry().intersects(link.getGeometry().getLineString()))
+                if (area.getGeometry().intersects(link.getDesignLine().getLineString()))
                 {
                     double covers = 0.5;
-                    if (area.getGeometry().contains(link.getGeometry().getLineString()))
+                    if (area.getGeometry().contains(link.getDesignLine().getLineString()))
                     {
                         covers = 1;
                     }
@@ -1115,7 +1115,7 @@ public class NTMModel implements OTSModelInterface
                     && shpLink.getCapacity().doubleValue() > maxCapacity.doubleValue())
             {
                 Link flowLink = new Link(shpLink);
-                if (flowLink.getGeometry() == null)
+                if (flowLink.getDesignLine() == null)
                 {
                     System.out.println("NTMModel line 694 ... no geometry");
                 }
@@ -1275,7 +1275,7 @@ public class NTMModel implements OTSModelInterface
     /*
      * public static Map<String, AreaNTM> createCordonFeederAreas(final Map<String, ShpLink> shpLinks, final Map<String,
      * AreaNTM> areas) { for (ShpLink shpLink : shpLinks.values()) { if (shpLink.getSpeed() > 70 &&
-     * shpLink.getCapacity() > 3400) { Geometry buffer = shpLink.getGeometry().buffer(10); Point centroid =
+     * shpLink.getCapacity() > 3400) { Geometry buffer = shpLink.getDesignLine().buffer(10); Point centroid =
      * buffer.getCentroid(); String nr = shpLink.getNr(); String name = shpLink.getName(); String gemeente =
      * shpLink.getName(); String gebied = shpLink.getName(); String regio = shpLink.getName(); double dhb = 0.0; AreaNTM
      * area = new AreaNTM(buffer, nr, name, gemeente, gebied, regio, dhb, centroid); areas.put(nr, area); } } return

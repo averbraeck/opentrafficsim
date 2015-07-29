@@ -26,7 +26,6 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opentrafficsim.demo.ntm.IO.FileDialog;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -40,7 +39,7 @@ import com.vividsolutions.jts.operation.valid.IsValidOp;
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version 13 Nov 2014 <br>
@@ -258,40 +257,40 @@ public class ShapeStore
         for (ShapeObject shape : shapes.getGeoObjects())
         {
             // Conditionally force valid polygons
-            if ((shape.getGeometry() instanceof Polygon || shape.getGeometry() instanceof MultiPolygon)
-                    && !IsValidOp.isValid(shape.getGeometry()))
+            if ((shape.getDesignLine() instanceof Polygon || shape.getDesignLine() instanceof MultiPolygon)
+                    && !IsValidOp.isValid(shape.getDesignLine()))
             {
-                shape.getGeometry().convexHull();
+                shape.getDesignLine().convexHull();
             }
-            if (shape.getGeometry() instanceof MultiPolygon || shape.getGeometry() instanceof Polygon)
+            if (shape.getDesignLine() instanceof MultiPolygon || shape.getDesignLine() instanceof Polygon)
             {
                 MultiPolygon multiPolygon = null;
-                if (shape.getGeometry() instanceof Polygon)
+                if (shape.getDesignLine() instanceof Polygon)
                 {
                     Polygon[] polygons = new Polygon[1];
-                    polygons[0] = (Polygon) shape.getGeometry();
+                    polygons[0] = (Polygon) shape.getDesignLine();
                     multiPolygon = geometryFactory.createMultiPolygon(polygons);
                 }
                 else
                 {
-                    multiPolygon = (MultiPolygon) shape.getGeometry();
+                    multiPolygon = (MultiPolygon) shape.getDesignLine();
                 }
-                // Point multiPolygon = area.getGeometry().getCentroid();
+                // Point multiPolygon = area.getDesignLine().getCentroid();
                 featureBuilder.add(multiPolygon);
             }
-            else if (shape.getGeometry() instanceof MultiLineString)
+            else if (shape.getDesignLine() instanceof MultiLineString)
             {
-                MultiLineString multiLineString = (MultiLineString) shape.getGeometry();
+                MultiLineString multiLineString = (MultiLineString) shape.getDesignLine();
                 featureBuilder.add(multiLineString);
             }
-            else if (shape.getGeometry() instanceof Point)
+            else if (shape.getDesignLine() instanceof Point)
             {
-                Point point = (Point) shape.getGeometry();
+                Point point = (Point) shape.getDesignLine();
                 featureBuilder.add(point);
             }
             else
             {
-                System.out.println(shape.getGeometry().getGeometryType());
+                System.out.println(shape.getDesignLine());
             }
             // we don't need use the first name ("the_geom") which is left out of the values
             int index = 0;
@@ -372,7 +371,7 @@ public class ShapeStore
         builder.setCRS(DefaultGeographicCRS.WGS84); // DefaultGeographicCRS.WGS84 <- Coordinate reference system
         // add attributes in order
         // builder.add("the_geom", MultiPolygon.class);
-        builder.add("the_geom", shapes.geoObjects.get(0).getGeometry().getClass());
+        builder.add("the_geom", shapes.geoObjects.get(0).getDesignLine().getClass());
         for (String name : shapes.getVariableNames())
         {
             if (shapes.getVariableTypeMap().get(name) == null)

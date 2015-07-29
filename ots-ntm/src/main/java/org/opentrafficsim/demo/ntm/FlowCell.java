@@ -3,9 +3,11 @@ package org.opentrafficsim.demo.ntm;
 import java.awt.geom.Point2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.media.j3d.Bounds;
+
+import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -17,16 +19,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
 
-import com.vividsolutions.jts.geom.Geometry;
-
-import nl.tudelft.simulation.dsol.animation.LocatableInterface;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 /**
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version 14 Oct 2014 <br>

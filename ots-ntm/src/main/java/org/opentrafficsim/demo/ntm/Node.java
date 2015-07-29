@@ -1,28 +1,15 @@
 package org.opentrafficsim.demo.ntm;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Comparator;
-
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.Bounds;
-import javax.vecmath.Point3d;
-
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
-import org.geotools.geometry.jts.JTSFactoryFinder;
-import org.opentrafficsim.core.network.AbstractNode;
-import org.opentrafficsim.core.network.geotools.NodeGeotools;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.network.OTSNode;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 
 /**
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
  * reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
  * $, initial version 7 Oct 2014 <br>
@@ -32,13 +19,13 @@ import com.vividsolutions.jts.geom.Point;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class Node extends NodeGeotools<String> implements Comparable<Node>
+public class Node extends OTSNode<String> implements Comparable<Node>
 {
     /**
      * <p>
      * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
      * reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author:
      * pknoppers $, initial version 10 Oct 2014 <br>
@@ -76,7 +63,7 @@ public class Node extends NodeGeotools<String> implements Comparable<Node>
      */
     public Node(String nr, Coordinate point, TrafficBehaviourType behaviourType)
     {
-        super(nr, point);
+        super(nr, new OTSPoint3D(point));
         // long index = indexNumber++;
         this.behaviourType = behaviourType;
 
@@ -134,10 +121,10 @@ public class Node extends NodeGeotools<String> implements Comparable<Node>
         Node other = (Node) obj;
         if (getPoint() == null)
         {
-            if (other.getPoint() != null)
+            if (other.getPoint().getCoordinate() != null)
                 return false;
         }
-        else if (!getPoint().equals(other.getPoint()))
+        else if (!getPoint().equals(other.getPoint().getCoordinate()))
             return false;
         return true;
     }
