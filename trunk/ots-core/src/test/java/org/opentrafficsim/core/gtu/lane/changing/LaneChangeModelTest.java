@@ -110,7 +110,7 @@ public class LaneChangeModelTest implements OTSModelInterface
      * @param to Node; ending node of the new Lane
      * @param laneType LaneType&lt;String&gt;; the type of GTU that can use the lanes
      * @param laneCount int; number of lanes in the road
-     * @return Lane<String, String>[]; array containing the new Lanes
+     * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws Exception when something goes wrong (should not happen)
      */
     public static Lane<String, String>[] makeMultiLane(final String name, final OTSNode<String> from, final OTSNode<String> to,
