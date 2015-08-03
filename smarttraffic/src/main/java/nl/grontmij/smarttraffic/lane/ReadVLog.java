@@ -1,13 +1,15 @@
 package nl.grontmij.smarttraffic.lane;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoField;
 import java.util.HashMap;
-import java.util.Map;
 
 import nl.tudelft.simulation.language.io.URLResource;
 
@@ -21,39 +23,232 @@ public class ReadVLog {
 		// cannot be instantiated.
 	}
 
-	public static void readVLogFile() {
-		URL url = URLResource
-				.getResource("C:/Users/p070518/Documents/Grontmij/Projecten/OpdrachtenLopend/343090 Smart Traffic N201/VRI/vri201225/VRI201225_20150601_065500.vlg");
+	public static void main(String[] args) throws IOException {
+		System.out.println(parseLong(new StringBuffer("0201"), 4));
+		String map = "C:/Users/p070518/Documents/Grontmij/Projecten/OpdrachtenLopend/343090 Smart Traffic N201/VRI/";
+		String wegNummer = "201";
+		String vriNummer = "225";
+		String vriLocation = "VRI" + wegNummer + vriNummer;
+		URL url = URLResource.getResource(map + vriLocation + ".cfg");
 		BufferedReader bufferedReader = null;
-		String line = "";
 		String path = url.getPath();
-		try {
+		bufferedReader = new BufferedReader(new FileReader(path));
+		readVLogConfigFile(bufferedReader);
 
+		// start met files vanaf tijdstip ....
+		int year = 2015;
+		int month = 6;
+		int day = 1;
+		long hour = 6;
+		int minute = 55;
+		int second = 0;
+		int tenth = 0;
+		boolean readFirstTimeStamp = false;
+		String timeStampFile = String.format("%04d%02d%02d_%02d%02d%02d", year,
+				month, day, hour, minute, second);
+		Instant timeStamp = Instant.parse(String.format(
+				"%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day, hour,
+				minute, second, tenth));
+		while (URLResource.getResource(map + vriLocation + "/" + vriLocation
+				+ "_" + timeStampFile + ".vlg") != null) {
+			url = URLResource.getResource(map + vriLocation + "/" + vriLocation
+					+ "_" + timeStampFile + ".vlg");
+			bufferedReader = null;
+			path = url.getPath();
 			bufferedReader = new BufferedReader(new FileReader(path));
-
-			// read the first line of the demand file from Omnitrans
-			// this line contains the time period of the demand file: as an
-			// example....
-			// TimePeriod: 07:00:00 - 09:00:00
-			if ((line = bufferedReader.readLine()) != null) {
-				//line;
-				
-			}
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (bufferedReader != null) {
-				try {
-					bufferedReader.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			readVLogFile(bufferedReader, readFirstTimeStamp);
+			// increase time with one minute for next file
+			timeStamp = timeStamp.plusSeconds(60);
+			ZoneOffset offset = ZoneOffset.of("-00:00");
+			LocalDateTime ldt = LocalDateTime.ofInstant(timeStamp, offset);
+			hour = ldt.getHour();
+			minute = ldt.getMinute();
+			second = ldt.getSecond();
+			timeStampFile = String.format("%04d%02d%02d_%02d%02d%02d", year,
+					month, day, hour, minute, second);
 		}
 
 	}
+
+	private static void readVLogConfigFile(BufferedReader bufferedReader)
+			throws IOException {
+		String line = "";
+		String weg;
+		String vri;
+
+		while ((line = bufferedReader.readLine()) != null) {
+			StringBuffer buffer = new StringBuffer(line);
+			// zoek //DP
+			if (buffer.length() > 0) {
+
+				// //SYS
+				// SYS,"201225"
+				if (buffer.length() >= 5) {
+					if (buffer.substring(0, 5).contentEquals("//SYS")) {
+						line = bufferedReader.readLine();
+						weg = line.substring(0, 3);
+						vri = line.substring(3, 3);
+					}
+				} else if (buffer.substring(0, 4).contentEquals("//DP")) {
+					line = bufferedReader.readLine();
+					while ((line = bufferedReader.readLine()) != null) {
+						if (line.length() > 0) {
+							if (line.substring(0, 2).contentEquals("DP"))
+							readDetectorSettings(line);
+						}
+						else if (line.length() >=2) {
+							if (line.substring(0, 2).contentEquals("//")) {
+								break;		
+							}
+						}
+					}
+				} else if (buffer.substring(0, 4).contentEquals("//IS")) {
+					//TODO: add IS info als nodig 
+				}
+
+			}
+
+		}
+
+	}
+
+	private static void readDetectorSettings(String line) {
+		String[] buffer = new String[4];
+		buffer = line.split(",");
+		int count = Integer.parseInt(buffer[1]);
+		String name = buffer[2];
+		long l = Long.parseLong(buffer[3]);
+		String strHex = String.format("0x%04X", l);
+		// if ()
+	}
+
+	public static void readVLogFile(BufferedReader bufferedReader,
+			boolean readFirstTimeStamp) throws IOException {
+		String line = "";
+		while ((line = bufferedReader.readLine()) != null) {
+			StringBuffer buffer = new StringBuffer(line);
+			int typeBericht = parseTypebericht(buffer, 2);
+			if (typeBericht == 1) {
+				System.out
+						.println("status tijdsaanduiding resterende string = "
+								+ line);
+				parseTijd(buffer);
+			} else if (typeBericht == 5) {
+				System.out.println("status detectoren = " + line);
+				parseStatus(buffer);
+			} else if (typeBericht == 6) {
+				System.out.println("wijziging detectoren = " + line);
+				parseWijziging(buffer);
+			} else if (typeBericht == 13) {
+				System.out.println("status SignaalGroep = " + line);
+				parseStatus(buffer);
+			} else if (typeBericht == 14) {
+				System.out.println("wijziging SignaalGroep = " + line);
+				parseWijziging(buffer);
+			}
+
+		}
+
+	}
+
+	private static int parseTypebericht(final StringBuffer s, int aantal) {
+		return parseByte(s);
+	}
+
+	private static HashMap<Integer, Integer> parseStatus(final StringBuffer s) {
+		long deltaTijd = parseLong(s, 3);
+		// lees reserve 4Bits
+		parse4Bits(s);
+		int aantal = parseByte(s);
+		HashMap<Integer, Integer> mapDetectieStatus = new HashMap<Integer, Integer>();
+		for (int i = 0; i < aantal; i++) {
+			Integer detectorStatus = (int) parseLong(s, 3);
+			mapDetectieStatus.put(i, detectorStatus);
+		}
+		return mapDetectieStatus;
+	}
+
+	private static HashMap<Integer, Integer> parseWijziging(final StringBuffer s) {
+		long deltaTijd = parseLong(s, 3);
+		int aantal = parse4Bits(s);
+		HashMap<Integer, Integer> mapDetectieWijziging = new HashMap<Integer, Integer>();
+		for (int i = 0; i < aantal; i++) {
+			Integer detectorIndex = parseByte(s);
+			Integer detectorStatus = parseByte(s);
+			mapDetectieWijziging.put(detectorIndex, detectorStatus);
+		}
+		return mapDetectieWijziging;
+	}
+
+	private static Instant parseTijd(final StringBuffer s) {
+		// System.out.println(type + "  " + s);
+		int year = parseNibble(s) * 1000 + parseNibble(s) * 100
+				+ parseNibble(s) * 10 + parseNibble(s);
+		int month = parseNibble(s) * 10 + parseNibble(s);
+		int day = parseNibble(s) * 10 + parseNibble(s);
+		int hour = parseNibble(s) * 10 + parseNibble(s);
+		int minute = parseNibble(s) * 10 + parseNibble(s);
+		int second = parseNibble(s) * 10 + parseNibble(s);
+		int tenth = parseNibble(s);
+		Instant timeStamp = Instant.parse(String.format(
+				"%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day, hour,
+				minute, second, tenth));
+		System.out.println(timeStamp);
+		return timeStamp;
+	}
+
+	private static int parseNibble(final StringBuffer s) {
+		byte b0 = parseChar(s.charAt(0));
+		s.delete(0, 1);
+		return b0;
+	}
+
+	private static long parseLong(final StringBuffer s, int count) {
+		long result = 0;
+		for (int i = 0; i < count; i++) {
+			int b = parseChar(s.charAt(i));
+			result += b * Math.pow(16, (count - i - 1));
+		}
+		s.delete(0, count);
+		return result;
+	}
+
+	private static int parseByte(final StringBuffer s) {
+		byte b0 = parseChar(s.charAt(0));
+		byte b1 = parseChar(s.charAt(1));
+		s.delete(0, 2);
+		return (byte) ((b0 * 16) + b1);
+	}
+
+	private static int parse4Bits(final StringBuffer s) {
+		byte b0 = parseChar(s.charAt(0));
+		s.delete(0, 1);
+		return b0;
+	}
+
+	private static byte parseChar(final char c) {
+		if (c >= '0' && c <= '9') {
+			return (byte) (c - '0');
+		}
+		if (c >= 'A' && c <= 'F') {
+			return (byte) ((byte) (c - 'A') + 10);
+		}
+		throw new RuntimeException("parseChar: character not hex: " + c);
+	}
+
+	class DetectorType {
+		public static final String DETECTIELUS = "0x0001";
+		public static final String DRUKKNOP = "0x0002";
+		public static final String KOPLUS = "0x0100";
+		public static final String LANGELUS = "0x0200";
+		public static final String VERWEGLUS = "0x0400";
+		public static final String DLKOP = "0x0101";
+		public static final String DLLNG = "0x0201";
+		public static final String DLVER = "0x0401";
+	}
+
+	enum DetectorTypes {
+		DETECTIELUS, DRUKKNOP, KOPLUS, LANGELUS, VERWEGLUS, DLKOPLUS, DLLNG, DLVER
+	};
 
 }

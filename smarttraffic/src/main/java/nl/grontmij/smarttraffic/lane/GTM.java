@@ -194,7 +194,7 @@ public class GTM extends AbstractWrappableSimulation {
 			this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
 			// URL url = URLResource.getResource("/PNH_TEST.xml");
 			// URL url = URLResource.getResource("/GTM.xml");
-			URL url = URLResource.getResource("C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/GTM.xml");
+			URL url = URLResource.getResource("C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/smarttraffic/src/main/resources/PNH_NOORD.xml");
 			XmlNetworkLaneParser nlp = new XmlNetworkLaneParser( this.simulator);
 
 			try {
@@ -254,17 +254,17 @@ public class GTM extends AbstractWrappableSimulation {
 				Node<?> fromNode = null;
 				Collection<Node<?>> nodeValues = (Collection<Node<?>>) nodes.values();
 				for (Node<?> n :  nodeValues) {
-					if (n.getId().equals("N1")) {
+					if (n.getId().equals("N1a")) {
 						fromNode = n;
 					}
 				}
 				if (null == fromNode) {
-					throw new Error("Cannot find node N1");
+					throw new Error("Cannot find node N1a");
 				}
 				// find the lane
 				Lane lane = null;
 				for (Link<?, ?> link : fromNode.getLinksOut()) {
-					if (link.getEndNode().getId().equals("N2")) {
+					if (link.getEndNode().getId().equals("N2a")) {
 						if (link instanceof CrossSectionLink) {
 							CrossSectionLink<?, ?> csl = (CrossSectionLink<?, ?>) link;
 							for (CrossSectionElement cse : csl
@@ -279,7 +279,7 @@ public class GTM extends AbstractWrappableSimulation {
 				}
 				if (null == lane) {
 					throw new NetworkException(
-							"Cannot find a Lane on a Link from N1 to N2");
+							"Cannot find a Lane on a Link from N1a to N2a");
 				}
 				new ListGTUGenerator<String>("generator 1", this.simulator,
 						gtuType, new IDMPlus(),
@@ -318,7 +318,7 @@ public class GTM extends AbstractWrappableSimulation {
 					}
 				}
 				if (null == fromNode) {
-					throw new Error("Cannot find node N2a");
+					throw new Error("Cannot find node N1b");
 				}
 				// find the lane
 				lane = null;
@@ -338,7 +338,7 @@ public class GTM extends AbstractWrappableSimulation {
 				}
 				if (null == lane) {
 					throw new NetworkException(
-							"Cannot find a Lane on a Link from N1 to N2");
+							"Cannot find a Lane on a Link from N1b to N2b");
 				}
 				new ListGTUGenerator<String>("generator 2", this.simulator,
 						gtuType, new IDMPlus(),
