@@ -28,7 +28,7 @@
             </goals>
             <configuration>
               <fromDir>${basedir}/src/main/resources</fromDir>
-              <includes>ots-infra.xsd</includes>
+              <includes>ots-types.xsd, ots-definitions.xsd, ots-network.xsd</includes>
               <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org</url>
               <toDir>docs</toDir>
               <serverId>ots-deployment</serverId>
