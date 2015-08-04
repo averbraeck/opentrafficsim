@@ -2,7 +2,12 @@
 <NETWORK xmlns="http://www.opentrafficsim.org/ots" xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.opentrafficsim.org/ots http://www.opentrafficsim.org/docs/ots-network.xsd" xmlns:xi="http://www.w3.org/2001/XInclude">
 
-  <xi:include href="roadtypes.xml" parse="xml" />
+  <!-- fallback included to be able to run in eclipse -->
+  <xi:include href="roadtypes.xml" parse="xml">
+    <xi:fallback>
+      <xi:include href="./target/classes/roadtypes.xml" parse="xml" />
+    </xi:fallback>
+  </xi:include>
 
   <DEFINITIONS>
 
@@ -30,42 +35,23 @@
   </DEFINITIONS>
 
 
-  <NODE NAME="N1" COORDINATE="(0.0, 0.0)" ANGLE="90 deg" />
-  <NODE NAME="N1a" />
-  <NODE NAME="N2" />
-  <NODE NAME="NE" />
-  <NODE NAME="NE2" />
+  <NODE NAME="N1a" COORDINATE="(0.0, 0.0)" ANGLE="90 deg" />
+  <NODE NAME="N1b" />
+  <NODE NAME="N2a" COORDINATE="(100.0, 0.0)" ANGLE="90 deg" />
+  <NODE NAME="N2b" />
+  <NODE NAME="N3a" COORDINATE="(200.0, 0.0)" ANGLE="90 deg" />
+  <NODE NAME="N3b" />
 
-  <ROUTE NAME="CIRCLE" NODELIST="NE N1 N1a N2 N1" />
-
-  <LINK NAME="L1" NODESTART="N1" NODEEND="N1a" ROADTYPE="r3">
-    <ARC RADIUS="1000m" ANGLE="45 deg" DIRECTION="L" />
-    <BLOCK LANE="A1" POSITION="END-10cm" />
-    <BLOCK LANE="A2" POSITION="END-10cm" />
-  </LINK>
-
-  <LINK NAME="L1a" NODESTART="N1a" NODEEND="N2" ROADTYPE="r2">
-    <ARC RADIUS="1000m" ANGLE="135 deg" DIRECTION="L" />
-  </LINK>
-
-  <LINK NAME="L2" NODESTART="N2" NODEEND="N1" ROADTYPE="r2">
-    <ARC RADIUS="1000m" ANGLE="180 deg" DIRECTION="L" />
-    <SENSOR LANE="A1" POSITION="END-13m" CLASS="nl.grontmij.GuusSensor" TRIGGER="FRONT" />
-  </LINK>
-
-  <LINK NAME="ENTRY" NODESTART="NE" NODEEND="N1" ROADTYPE="r1">
+  <LINK NAME="L1" NODESTART="N1a" NODEEND="N1b" ROADTYPE="r3">
     <STRAIGHT LENGTH="200m" />
   </LINK>
 
-  <LINK NAME="ENTRY2" NODESTART="NE2" NODEEND="NE" ROADTYPE="r1">
+  <LINK NAME="L2" NODESTART="N2a" NODEEND="N2b" ROADTYPE="r3" OFFSETSTART="25m">
     <STRAIGHT LENGTH="200m" />
-    <LANEOVERRIDE LANE="A1" SPEED="50 km/h" />
-    <!-- GENERATOR LANE="A1" IAT="EXPO(30) s" INITIALSPEED="CONST(0.0) km/h" MAXGTU="50" GTUMIX="C80T20" ROUTE="CIRCLE" GTUCOLORER="SWITCHABLE" 
-      / -->
-    <!-- GENERATOR LANE="A1" POSITION="10m" IAT="EXPO(30) s" INITIALSPEED="CONST(0.0) km/h" MAXGTU="250" GTU="CAR" ROUTE="CIRCLE" 
-      GTUCOLORER="SWITCHABLE" / -->
-    <GENERATOR LANE="A1" POSITION="10m" IAT="CONST(10) s" INITIALSPEED="CONST(0.0) km/h" MAXGTU="250" GTU="CAR"
-      ROUTE="CIRCLE" GTUCOLORER="SWITCHABLE" />
+  </LINK>
+
+  <LINK NAME="L3" NODESTART="N3a" NODEEND="N3b" ROADTYPE="r3" OFFSETSTART="50m" ROTATIONSTART="-90 deg">
+    <STRAIGHT LENGTH="200m" />
   </LINK>
 
 </NETWORK>
