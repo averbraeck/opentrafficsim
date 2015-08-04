@@ -80,4 +80,26 @@ public final class AngleUnits
         }
     }
 
+    /**
+     * @param s the string to parse
+     * @return the next value.
+     * @throws NetworkException when parsing fails
+     */
+    public static DoubleScalar.Rel<AnglePlaneUnit> parseAngleRel(final String s) throws NetworkException
+    {
+        String us = parseAngleUnit(s);
+        AnglePlaneUnit u = ANGLE_UNITS.get(us);
+        String sv = s.substring(0, s.indexOf(us));
+        try
+        {
+            double value = Double.parseDouble(sv);
+            DoubleScalar.Rel<AnglePlaneUnit> angle = new DoubleScalar.Rel<AnglePlaneUnit>(value, u);
+            return AnglePlaneUnit.normalize(angle);
+        }
+        catch (NumberFormatException nfe)
+        {
+            throw new NetworkException("Parsing network: cannot instantiate scalar: " + s, nfe);
+        }
+    }
+
 }

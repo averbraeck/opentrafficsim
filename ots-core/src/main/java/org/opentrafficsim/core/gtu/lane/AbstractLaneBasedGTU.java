@@ -128,7 +128,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     private final LaneBasedRouteNavigator routeNavigator;
 
     /** the object to lock to make the GTU thread safe. */
-    private Object lock = new Object();
+    // private Object lock = new Object();
 
     /**
      * Construct a Lane Based GTU.
@@ -160,7 +160,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             throw new GTUException("gtuFollowingModel may not be null");
         }
 
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             this.gtuFollowingModel = gtuFollowingModel;
             this.laneChangeModel = laneChangeModel;
@@ -191,7 +191,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     @Override
     public final DoubleScalar.Abs<SpeedUnit> getLongitudinalVelocity(final DoubleScalar.Abs<TimeUnit> when)
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
             DoubleScalar.Abs<SpeedUnit> velocity =
@@ -244,7 +244,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     @Override
     public final DoubleScalar.Abs<AccelerationUnit> getAcceleration() throws RemoteException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             return getAcceleration(getSimulator().getSimulatorTime().get());
         }
@@ -254,7 +254,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     @Override
     public final DoubleScalar.Abs<LengthUnit> getOdometer() throws RemoteException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             return DoubleScalar.plus(this.odometer, deltaX(getSimulator().getSimulatorTime().get())).immutable();
         }
@@ -271,7 +271,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     @Override
     public final void addFrontToSubsequentLane(final Lane<?, ?> lane) throws RemoteException, NetworkException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             if (this.lanes.size() == 0)
             {
@@ -293,7 +293,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     @Override
     public final void addLane(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> position) throws NetworkException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             if (this.lanes.contains(lane))
             {
@@ -315,7 +315,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     @Override
     public final void removeLane(final Lane<?, ?> lane)
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             System.out.println("GTU " + toString() + " to be removed from lane: " + lane);
             this.lanes.remove(lane);
@@ -372,13 +372,15 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             System.out.println("negative velocity: " + this + " " + getLongitudinalVelocity().getSI() + "m/s");
         }
+
         /*-
-        if (getId().toString().equals("44") && getSimulator().getSimulatorTime().get().getSI() > 129.4)
+        if (getId().toString().equals("A1:3") && getSimulator().getSimulatorTime().get().getSI() > 115.0)
         {
             System.out.println("Debug me: " + getSimulator().getSimulatorTime() + " " + this + " " + this.getRoute()
                     + " " + this.getLongitudinalVelocity().getSI());
         }
          */
+
         // Quick sanity check
         if (getSimulator().getSimulatorTime().get().getSI() != getNextEvaluationTime().getSI())
         {
@@ -444,7 +446,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         // So we work from back to front.
         // TODO Put the "update state to current time" code in a separate method and call that method at the start of
         // this (move) method.
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             for (int i = this.lanes.size() - 1; i >= 0; i--)
             {
@@ -625,7 +627,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     private DoubleScalar.Rel<LengthUnit> laneDrop(final LateralDirectionality direction) throws NetworkException,
         RemoteException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             Lane<?, ?> lane = null;
             DoubleScalar.Rel<LengthUnit> longitudinalPosition = null;
@@ -706,7 +708,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     private DoubleScalar.Rel<LengthUnit> suitability(final LateralDirectionality direction) throws NetworkException,
         RemoteException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             Lane<?, ?> lane = null;
             DoubleScalar.Rel<LengthUnit> longitudinalPosition = null;
@@ -745,7 +747,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      */
     private void checkConsistency()
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             for (Lane<?, ?> l : this.lanes)
             {
@@ -784,7 +786,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      */
     private void scheduleTriggers() throws NetworkException, RemoteException, SimRuntimeException, GTUException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             // Does our front reference point enter new lane(s) during the next time step?
             // Note: the trigger at the start of the lane will add the vehicle to that lane at the exact right time.
@@ -868,7 +870,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         final DoubleScalar.Abs<TimeUnit> when, final DoubleScalar.Rel<LengthUnit> maximumForwardHeadway,
         final DoubleScalar.Rel<LengthUnit> maximumReverseHeadway) throws RemoteException, NetworkException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             Collection<HeadwayGTU> result = new LinkedHashSet<HeadwayGTU>();
             for (LaneBasedGTU<?> p : parallel(directionality, when))
@@ -897,7 +899,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> positions(final RelativePosition relativePosition)
         throws NetworkException, RemoteException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             return positions(relativePosition, getSimulator().getSimulatorTime().get());
         }
@@ -908,7 +910,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> positions(final RelativePosition relativePosition,
         final DoubleScalar.Abs<TimeUnit> when) throws NetworkException, RemoteException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> positions = new LinkedHashMap<>();
             for (Lane<?, ?> lane : this.lanes)
@@ -924,7 +926,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public final DoubleScalar.Rel<LengthUnit> position(final Lane<?, ?> lane, final RelativePosition relativePosition)
         throws NetworkException, RemoteException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             return position(lane, relativePosition, getSimulator().getSimulatorTime().get());
         }
@@ -936,7 +938,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         RemoteException
     {
         CrossSectionLink<?, ?> link = projectionLane.getParentLink();
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             for (CrossSectionElement<?, ?> cse : link.getCrossSectionElementList())
             {
@@ -964,7 +966,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             throw new NetworkException("lane is null");
         }
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             if (!this.lanes.contains(lane))
             {
@@ -997,7 +999,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public final Map<Lane<?, ?>, Double> fractionalPositions(final RelativePosition relativePosition)
         throws NetworkException, RemoteException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             return fractionalPositions(relativePosition, getSimulator().getSimulatorTime().get());
         }
@@ -1008,7 +1010,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public final Map<Lane<?, ?>, Double> fractionalPositions(final RelativePosition relativePosition,
         final DoubleScalar.Abs<TimeUnit> when) throws NetworkException, RemoteException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             Map<Lane<?, ?>, Double> positions = new LinkedHashMap<>();
             for (Lane<?, ?> lane : this.lanes)
@@ -1024,7 +1026,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public final double fractionalPosition(final Lane<?, ?> lane, final RelativePosition relativePosition,
         final DoubleScalar.Abs<TimeUnit> when) throws NetworkException, RemoteException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             return position(lane, relativePosition, when).getSI() / lane.getLength().getSI();
         }
@@ -1035,7 +1037,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public final double fractionalPosition(final Lane<?, ?> lane, final RelativePosition relativePosition)
         throws NetworkException, RemoteException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             return position(lane, relativePosition).getSI() / lane.getLength().getSI();
         }
@@ -1058,7 +1060,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         final double cumDistanceSI, final double maxDistanceSI, final DoubleScalar.Abs<TimeUnit> when)
         throws RemoteException, NetworkException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             LaneBasedGTU<?> otherGTU =
                 lane.getGtuAfter(new DoubleScalar.Rel<LengthUnit>(lanePositionSI, LengthUnit.METER), RelativePosition.REAR,
@@ -1126,7 +1128,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         final double cumDistanceSI, final double maxDistanceSI, final DoubleScalar.Abs<TimeUnit> when)
         throws RemoteException, NetworkException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             LaneBasedGTU<?> otherGTU =
                 lane.getGtuBefore(new DoubleScalar.Rel<LengthUnit>(lanePositionSI, LengthUnit.METER),
@@ -1183,7 +1185,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         DoubleScalar.Abs<TimeUnit> when = getSimulator().getSimulatorTime().get();
         HeadwayGTU foundMaxGTUDistanceSI = new HeadwayGTU(null, Double.MAX_VALUE);
         // search for the closest GTU on all current lanes we are registered on.
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             if (maxDistanceSI > 0.0)
             {
@@ -1231,7 +1233,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     public final HeadwayGTU headway(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> maxDistance)
         throws RemoteException, NetworkException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             DoubleScalar.Abs<TimeUnit> when = getSimulator().getSimulatorTime().get();
             if (maxDistance.getSI() > 0.0)
@@ -1265,7 +1267,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         final LaneBasedGTU<?> otherGTU, final double cumDistanceSI, final double maxDistanceSI,
         final DoubleScalar.Abs<TimeUnit> when) throws RemoteException, NetworkException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             if (lane.getGtuList().contains(otherGTU))
             {
@@ -1323,7 +1325,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         final LaneBasedGTU<?> otherGTU, final double cumDistanceSI, final double maxDistanceSI,
         final DoubleScalar.Abs<TimeUnit> when) throws RemoteException, NetworkException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             if (lane.getGtuList().contains(otherGTU))
             {
@@ -1369,7 +1371,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         throws RemoteException, NetworkException
     {
         Set<LaneBasedGTU<?>> gtuSet = new LinkedHashSet<LaneBasedGTU<?>>();
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             for (Lane<?, ?> l : this.lanes)
             {
@@ -1405,7 +1407,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     private Set<Lane<?, ?>> adjacentLanes(final LateralDirectionality lateralDirection)
     {
         Set<Lane<?, ?>> result = new LinkedHashSet<Lane<?, ?>>();
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             for (Lane<?, ?> lane : this.lanes)
             {
@@ -1428,7 +1430,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
          */
         Set<LaneBasedGTU<?>> gtuSet = new LinkedHashSet<LaneBasedGTU<?>>();
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             for (Lane<?, ?> adjacentLane : adjacentLanes)
             {
@@ -1469,7 +1471,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     @SuppressWarnings("checkstyle:designforextension")
     public void destroy()
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             while (!this.lanes.isEmpty())
             {
@@ -1488,7 +1490,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      */
     private DoubleScalar.Rel<LengthUnit> deltaX(final DoubleScalar.Abs<TimeUnit> when) throws RemoteException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
             return DoubleScalar.plus(Calc.speedTimesTime(this.speed, dT),
@@ -1508,7 +1510,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
          * Currently (!) a (Lane based) GTU commits to a constant acceleration until the next evaluation time. When/If that is
          * changed, this method will have to be re-written.
          */
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             double c = -distance.getSI();
             double a = this.acceleration.getSI() / 2;
@@ -1563,7 +1565,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
          * Currently (!) a (Lane based) GTU commits to a constant acceleration until the next evaluation time. When/If that is
          * changed, this method will have to be re-written.
          */
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             double c = -distance.getSI();
             double a = this.acceleration.getSI() / 2;
@@ -1620,7 +1622,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     @Override
     public final DirectedPoint getLocation() throws RemoteException
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             try
             {
@@ -1702,7 +1704,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      */
     public final String toString(final Lane<?, ?> lane, final DoubleScalar.Abs<TimeUnit> when)
     {
-        synchronized (this.lock)
+        // synchronized (this.lock)
         {
             double pos;
             try

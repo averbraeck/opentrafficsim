@@ -1,8 +1,5 @@
 package org.opentrafficsim.core.network.factory.xml;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.w3c.dom.NamedNodeMap;
@@ -21,89 +18,34 @@ import org.xml.sax.SAXException;
  */
 class LaneTypeTag
 {
-    /** lane type name. */
+    /** name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    String laneType = null;
-
-    /** compatible gtu types. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    List<GTUTag> gtuList = new ArrayList<GTUTag>();
+    String name = null;
 
     /**
-     * Parse the COMPATIBILITY and COMPATIBILITY.LANETYPE tag.
+     * Parse the LANETYPE tag.
      * @param nodeList nodeList the top-level nodes of the XML-file
      * @param parser the parser with the lists of information
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseCompatibilities(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException,
+    static void parseLaneTypes(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException,
         NetworkException
     {
-        for (Node node : XMLParser.getNodes(nodeList, "COMPATIBILITY"))
+        for (Node node : XMLParser.getNodes(nodeList, "LANETYPE"))
         {
-            List<Node> ltNodes = XMLParser.getNodes(node.getChildNodes(), "LANETYPE");
-            if (ltNodes.size() == 0)
-                throw new NetworkException("COMPATIBILITY: missing tag LANETYPE");
+            NamedNodeMap attributes = node.getAttributes();
+            LaneTypeTag laneTypeTag = new LaneTypeTag();
 
-            for (Node ltNode : ltNodes)
-            {
-                LaneTypeTag laneTypeTag = new LaneTypeTag();
-                NamedNodeMap attributes = ltNode.getAttributes();
+            if (attributes.getNamedItem("NAME") == null)
+                throw new SAXException("LANETYPE: missing attribute NAME");
+            laneTypeTag.name = attributes.getNamedItem("NAME").getNodeValue().trim();
+            if (parser.laneTypes.keySet().contains(laneTypeTag.name))
+                throw new SAXException("LANETYPE: NAME " + laneTypeTag.name + " defined twice");
 
-                if (attributes.getNamedItem("NAME") == null)
-                    throw new SAXException("COMPATIBILITY.LANETYPE: missing attribute NAME");
-                laneTypeTag.laneType = attributes.getNamedItem("NAME").getNodeValue().trim();
-                if (parser.laneTypes.keySet().contains(laneTypeTag.laneType))
-                    throw new SAXException("COMPATIBILITY.LANETYPE: NAME " + laneTypeTag.laneType + " defined twice");
-
-                if (attributes.getNamedItem("GTULIST") == null)
-                    throw new SAXException("COMPATIBILITY.LANETYPE: missing attribute GTULIST for LANETYPE="
-                        + laneTypeTag.laneType);
-                laneTypeTag.gtuList = parseGTUList(attributes.getNamedItem("GTULIST").getNodeValue(), parser);
-
-                addLaneType(laneTypeTag, parser);
-            }
+            LaneType<String> laneType = new LaneType<String>(laneTypeTag.name);
+            parser.laneTypes.put(laneTypeTag.name, laneType);
         }
     }
-
-    /**
-     * @param gtuNames the GTU names as a space-separated String
-     * @param parser the parser with the lists of information
-     * @return a list of GTUTags
-     * @throws SAXException when node could not be found
-     */
-    private static List<GTUTag> parseGTUList(final String gtuNames, final XmlNetworkLaneParser parser) throws SAXException
-    {
-        List<GTUTag> gtuList = new ArrayList<>();
-        String[] ns = gtuNames.split("\\s");
-        for (String s : ns)
-        {
-            if (!parser.gtuTags.containsKey(s))
-            {
-                throw new SAXException("GTU " + s + " from GTU list [" + gtuNames + "] was not defined");
-            }
-            gtuList.add(parser.gtuTags.get(s));
-        }
-        return gtuList;
-    }
-
-    /**
-     * Add a compatibility type for this lane type.
-     * @param laneTypeTag the parsed LaneTypeTag that contains a relation between a LaneType and one or more GTUTypes.
-     * @param parser the parser with the lists of information
-     */
-    private static void addLaneType(final LaneTypeTag laneTypeTag, final XmlNetworkLaneParser parser)
-    {
-        if (!parser.laneTypes.containsKey(laneTypeTag.laneType))
-        {
-            LaneType<String> laneType = new LaneType<String>(laneTypeTag.laneType);
-            parser.laneTypes.put(laneTypeTag.laneType, laneType);
-        }
-        for (GTUTag gtuTag : laneTypeTag.gtuList)
-        {
-            parser.laneTypes.get(laneTypeTag.laneType).addCompatibility(gtuTag.gtuType);
-        }
-    }
-
 }

@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<NETWORK xmlns="http://www.opentrafficsim.org/ots-infra" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots-infra http://www.opentrafficsim.org/docs/ots-infra.xsd">
+<NETWORK xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots http://www.opentrafficsim.org/docs/ots-network.xsd">
 
-  <GLOBAL DEFAULTLANEWIDTH="3.6m" DEFAULTMAXSPEED="100km/h" />
+  <DEFINITIONS>
 
-  <GTU NAME="CAR" GTUTYPE="CAR" FOLLOWING="IDM+" LENGTH="CONST(5) m" WIDTH="CONST(2) m" LANECHANGE="EGOISTIC"
-    MAXSPEED="CONST(10) m/s" />
+    <GLOBAL DEFAULTLANEWIDTH="3.6m" DEFAULTMAXSPEED="100km/h" />
 
-  <COMPATIBILITY>
-    <LANETYPE NAME="ROAD" GTULIST="CAR" />
-  </COMPATIBILITY>
+    <GTU NAME="CAR" GTUTYPE="CAR" FOLLOWING="IDM+" LENGTH="CONST(5) m" WIDTH="CONST(2) m" LANECHANGE="EGOISTIC"
+      MAXSPEED="CONST(10) m/s" />
+
+    <LANETYPE NAME="ROAD" />
+
+    <COMPATIBILITY LANETYPE="ROAD" GTULIST="CAR" />
+
+    <ROADTYPE NAME="r1">
+      <LANE NAME="A1" TYPE="ROAD" OFFSET="-1.8m" WIDTH="3.6m" DIRECTION="FORWARD" SPEED="10 m/s" />
+    </ROADTYPE>
+
+  </DEFINITIONS>
+
+  <!-- ================================== NETWORK =================================== -->
 
   <NODE NAME="N1" COORDINATE="(0.0, 0.0)" ANGLE="90 deg" />
   <NODE NAME="N2" />
@@ -18,23 +28,19 @@
 
   <ROUTE NAME="LINE" NODELIST="N1 N2 N3 N4" />
 
-  <ROADTYPE NAME="r1">
-    <LANE NAME="A1" TYPE="ROAD" OFFSET="-1.8m" WIDTH="3.6m" DIRECTION="FORWARD" SPEED="10 m/s" />
-  </ROADTYPE>
-
-  <LINK NAME="N1-N2" FROM="N1" TO="N2" ROADTYPE="r1">
+  <LINK NAME="N1-N2" NODESTART="N1" NODEEND="N2" ROADTYPE="r1">
     <STRAIGHT LENGTH="100m" />
     <GENERATOR LANE="A1" POSITION="50 m" IAT="CONST(0) s" INITIALSPEED="CONST(10.0) m/s" GTU="CAR" ROUTE="LINE"
       MAXGTU="10" GTUCOLORER="ID" />
   </LINK>
 
-  <LINK NAME="N2-N3" FROM="N2" TO="N3" ROADTYPE="r1">
+  <LINK NAME="N2-N3" NODESTART="N2" NODEEND="N3" ROADTYPE="r1">
     <STRAIGHT LENGTH="100m" />
   </LINK>
 
-  <LINK NAME="SINK" FROM="N3" TO="N4" ROADTYPE="r1">
+  <LINK NAME="SINK" NODESTART="N3" NODEEND="N4" ROADTYPE="r1">
     <STRAIGHT LENGTH="10m" />
-    <SINK LANE="A1" />
+    <SINK LANE="A1" POSITION="1m" />
   </LINK>
 
 </NETWORK>
