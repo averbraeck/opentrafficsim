@@ -122,6 +122,7 @@ public class XmlNetworkLaneParser
             throw new SAXException("XmlNetworkLaneParser.build: File url.getFile() does not exist");
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
         factory.setXIncludeAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(url.openStream());
