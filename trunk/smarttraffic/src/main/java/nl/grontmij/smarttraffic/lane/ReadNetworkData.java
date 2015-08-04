@@ -21,10 +21,10 @@ public class ReadNetworkData {
 		// cannot be instantiated.
 	}
 
-	public static void readDetectors(OTSNetwork<?, ?, ?> network, HashMap<String, Sensor> mapSensor,
-			HashMap<String, Sensor> mapSensorGenerateCars,
-			HashMap<String, Sensor> mapSensorKillCars,
-			HashMap<String, Sensor> mapSensorCheckCars) {
+	public static void readDetectors(OTSNetwork<?, ?, ?> network, HashMap<String, SensorLaneST> mapSensor,
+			HashMap<String, SensorLaneST> mapSensorGenerateCars,
+			HashMap<String, SensorLaneST> mapSensorKillCars,
+			HashMap<String, SensorLaneST> mapSensorCheckCars) {
 		// Detectors
 		// define the detectors by type (ENTRANCE, INTERMEDIATE, EXIT)
 		// Inventorize all detectors from the network, distinguished by type
@@ -39,12 +39,12 @@ public class ReadNetworkData {
 					if (cse instanceof Lane
 							&& !(cse instanceof NoTrafficLane)) {
 						Lane lane = (Lane) cse;
-						List<Sensor> sensors = lane
+						List<SensorLaneST> sensors = lane
 								.getSensors(
 										new DoubleScalar.Rel<LengthUnit>(0,
 												LengthUnit.METER), lane
 												.getLength());
-						for (Sensor sensor : sensors) {
+						for (SensorLaneST sensor : sensors) {
 							mapSensor.put(sensor.getName(), sensor);
 							if (sensor.getName().startsWith("G")) {
 								mapSensorGenerateCars.put(sensor.getName(),

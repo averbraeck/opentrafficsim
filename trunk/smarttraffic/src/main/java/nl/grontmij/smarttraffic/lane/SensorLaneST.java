@@ -59,6 +59,11 @@ public class SensorLaneST extends AbstractSensor {
 		this.statusByTime = statusByTime;
 	}
 
+	public void addStatusByTime(DoubleScalar.Rel<TimeUnit> timeNow, long status) {
+		this.statusByTime.put(timeNow, status);
+	}
+
+	
 	/**
 	 * @param lane
 	 * @param longitudinalPositionFromEnd

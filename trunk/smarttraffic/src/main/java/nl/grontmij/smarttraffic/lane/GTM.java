@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -91,6 +93,8 @@ public class GTM extends AbstractWrappableSimulation {
 	 *             on communications failure
 	 */
 
+	public static Instant startTimeSimulation;
+	
 	public static void main(final String[] args) throws RemoteException,
 			SimRuntimeException {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -215,10 +219,10 @@ public class GTM extends AbstractWrappableSimulation {
 			GTUType<String> gtuType = GTUType.makeGTUType("CAR");			
 
 			// read and define detectors from the network 
-			HashMap<String, Sensor> mapSensor = new HashMap<String, Sensor>();
-			HashMap<String, Sensor> mapSensorGenerateCars = new HashMap<String, Sensor>();
-			HashMap<String, Sensor> mapSensorKillCars = new HashMap<String, Sensor>();
-			HashMap<String, Sensor> mapSensorCheckCars = new HashMap<String, Sensor>();
+			HashMap<String, SensorLaneST> mapSensor = new HashMap<String, SensorLaneST>();
+			HashMap<String, SensorLaneST> mapSensorGenerateCars = new HashMap<String, SensorLaneST>();
+			HashMap<String, SensorLaneST> mapSensorKillCars = new HashMap<String, SensorLaneST>();
+			HashMap<String, SensorLaneST> mapSensorCheckCars = new HashMap<String, SensorLaneST>();
 			ReadNetworkData.readDetectors(network, mapSensor, mapSensorGenerateCars, mapSensorKillCars, mapSensorCheckCars);
 			
 			// read the configuration files for VLOG (detector/signalgroup: both index and name
@@ -244,11 +248,15 @@ public class GTM extends AbstractWrappableSimulation {
 			int minute = 0;
 			int second = 0;
 			int tenth = 0;
-			Instant timeStampStart = Instant.parse(String.format(
+			Instant timeVLog = Instant.parse(String.format(
 					"%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day, hour,
 					minute, second, tenth));
+			startTimeSimulation = timeVLog;
+			ZoneOffset offset = ZoneOffset.of("-00:00");
+			LocalDateTime ldt = LocalDateTime.ofInstant(timeVLog, offset);
+			ldt = LocalDateTime.ofInstant(timeVLog, offset);
 			try {
-				ReadVLog.readVlogFiles(mapSensor, configVriList, timeStampStart, dirBase + dirLoggings, wegNummer, vriNummer);
+				ReadVLog.readVlogFiles(mapSensor, configVriList, timeVLog, dirBase + dirLoggings, wegNummer, vriNummer);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

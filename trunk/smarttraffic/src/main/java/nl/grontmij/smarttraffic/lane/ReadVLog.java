@@ -7,10 +7,13 @@ import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.opentrafficsim.core.network.lane.Sensor;
+import org.opentrafficsim.core.unit.TimeUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 import nl.grontmij.smarttraffic.lane.ConfigVri;
 import nl.tudelft.simulation.language.io.URLResource;
@@ -102,13 +105,13 @@ public class ReadVLog {
 		return new ConfigVri(nameVRI, detectors, signalGroups);
 	}
 
-	public static void readVlogFiles(HashMap<String, Sensor> mapSensor,
-			HashMap<String, ConfigVri> configVriList, Instant timeStampStart,
+	public static void readVlogFiles(HashMap<String, SensorLaneST> mapSensor,
+			HashMap<String, ConfigVri> configVriList, Instant timeVLog,
 			String dirLoggings, String wegNummer, String[] vriNummer)
 			throws IOException {
 		ZoneOffset offset = ZoneOffset.of("-00:00");
-		LocalDateTime ldt = LocalDateTime.ofInstant(timeStampStart, offset);
-		ldt = LocalDateTime.ofInstant(timeStampStart, offset);
+		LocalDateTime ldt = LocalDateTime.ofInstant(timeVLog, offset);
+		ldt = LocalDateTime.ofInstant(timeVLog, offset);
 		int year = ldt.getYear();
 		int month = ldt.getMonthValue();
 		int day = ldt.getDayOfMonth();
@@ -116,12 +119,14 @@ public class ReadVLog {
 		int minute = ldt.getMinute();
 		int second = ldt.getSecond();
 		for (String vri : vriNummer) {
-			boolean allTrue = false;
+			boolean boolReadyToStartVLog = false;
 			boolean boolReadFirstTimeStamp = false;
 			boolean boolReadFirstDetectorStatus = false;
 			boolean boolReadFirstSignalGroupStatus = false;
 			String vriLocation = "VRI" + wegNummer + vri;
 			String dayString = null;
+			Instant timeFromVLog = null;
+			long deltaTimeFromVLog = 0;
 			String timeStampFile = String.format("%04d%02d%02d_%02d%02d%02d",
 					year, month, day, hour, minute, second);
 			// zoek de eerste "harde" tijdsaanduiding
@@ -134,23 +139,21 @@ public class ReadVLog {
 				BufferedReader bufferedReader = null;
 				String path = url.getPath();
 				bufferedReader = new BufferedReader(new FileReader(path));
-				if (!allTrue) {
-					readStatusVLogFile(mapSensor, bufferedReader,
-							boolReadFirstTimeStamp,
+				if (!boolReadyToStartVLog) {
+					readStatusVLogFile(mapSensor, bufferedReader, timeFromVLog,
+							deltaTimeFromVLog, boolReadFirstTimeStamp,
 							boolReadFirstDetectorStatus,
-							boolReadFirstSignalGroupStatus, configVriList,
-							wegNummer + vri);
-					if (boolReadFirstTimeStamp && boolReadFirstDetectorStatus
-							&& boolReadFirstSignalGroupStatus) {
-						allTrue = true;
-					}
-				} else if (allTrue) {
-					readVLogFile(mapSensor, bufferedReader, configVriList,
-							wegNummer + vri);
+							boolReadFirstSignalGroupStatus,
+							boolReadyToStartVLog, configVriList, wegNummer
+									+ vri);
+				}
+				if (boolReadyToStartVLog) {
+					readVLogFile(mapSensor, bufferedReader, timeFromVLog,
+							deltaTimeFromVLog, configVriList, wegNummer + vri);
 				}
 				// increase time with one minute for next file
-				timeStampStart = timeStampStart.plusSeconds(60);
-				ldt = LocalDateTime.ofInstant(timeStampStart, offset);
+				timeVLog = timeVLog.plusSeconds(60);
+				ldt = LocalDateTime.ofInstant(timeVLog, offset);
 				day = ldt.getDayOfMonth();
 				hour = ldt.getHour();
 				minute = ldt.getMinute();
@@ -161,30 +164,13 @@ public class ReadVLog {
 		}
 	}
 
-	public static void readStatusVLogFile(HashMap<String, Sensor> mapSensor,
-			BufferedReader bufferedReader, boolean boolReadFirstTimeStamp,
-			boolean boolReadFirstDetetctorStatus,
+	public static void readStatusVLogFile(
+			HashMap<String, SensorLaneST> mapSensor,
+			BufferedReader bufferedReader, Instant timeFromVLog,
+			long deltaTimeFromVLog, boolean boolReadFirstTimeStamp,
+			boolean boolReadFirstDetectorStatus,
 			boolean boolReadFirstSignalGroupStatus,
-			HashMap<String, ConfigVri> vriList, String vriName)
-			throws IOException {
-		HashMap<Integer, Integer> mapStatus;
-		String line = "";
-		while ((line = bufferedReader.readLine()) != null) {
-			StringBuffer buffer = new StringBuffer(line);
-			int typeBericht = parseTypebericht(buffer, 2);
-			if (typeBericht == 1) {
-				boolReadFirstTimeStamp = true;
-			} else if (typeBericht == 5) {
-				boolReadFirstDetetctorStatus = true;
-			} else if (typeBericht == 13) {
-				boolReadFirstSignalGroupStatus = true;
-			}
-		}
-
-	}
-
-	public static void readVLogFile(HashMap<String, Sensor> mapSensor,
-			BufferedReader bufferedReader, HashMap<String, ConfigVri> vriList,
+			boolean boolReadyToStartVLog, HashMap<String, ConfigVri> vriList,
 			String vriName) throws IOException {
 		HashMap<Integer, Integer> mapStatus;
 		String line = "";
@@ -192,25 +178,54 @@ public class ReadVLog {
 			StringBuffer buffer = new StringBuffer(line);
 			int typeBericht = parseTypebericht(buffer, 2);
 			if (typeBericht == 1) {
-				System.out
-						.println("status tijdsaanduiding resterende string = "
-								+ line);
-				Instant timeStamp = parseTijd(buffer);
+				timeFromVLog = parseTijd(buffer);
+				boolReadFirstTimeStamp = true;
 			} else if (typeBericht == 5) {
-				System.out.println("status detectoren = " + line);
-				parseStatus(buffer);
-			} else if (typeBericht == 6) {
-				System.out.println("wijziging detectoren = " + line);
-				mapStatus = parseWijziging(buffer);
+				mapStatus = parseStatus(buffer, deltaTimeFromVLog);
 				for (Entry<Integer, Integer> entry : mapStatus.entrySet()) {
-
+					ConfigVri vri = vriList.get(vriName);
+					String nameDetector = vri.getDetectors()
+							.get(entry.getKey());
+					Instant timeVLogNow = timeFromVLog
+							.plusMillis(100*deltaTimeFromVLog);
+					Long milliSecondsPassed = ChronoUnit.MILLIS.between(GTM.startTimeSimulation, timeVLogNow);
+					mapSensor.get(vriName + nameDetector).addStatusByTime(
+							new DoubleScalar.Rel<TimeUnit>(milliSecondsPassed,
+									TimeUnit.MILLISECOND), entry.getValue());
 				}
+				boolReadFirstDetectorStatus = true;
 			} else if (typeBericht == 13) {
-				System.out.println("status SignaalGroep = " + line);
-				parseStatus(buffer);
+				mapStatus = parseStatus(buffer, deltaTimeFromVLog);
+				boolReadFirstSignalGroupStatus = true;
+			}
+			if (boolReadFirstTimeStamp && boolReadFirstDetectorStatus
+					&& boolReadFirstSignalGroupStatus) {
+				boolReadyToStartVLog = true;
+				break;
+			}
+		}
+
+	}
+
+	public static void readVLogFile(HashMap<String, SensorLaneST> mapSensor,
+			BufferedReader bufferedReader, Instant timeFromVLog,
+			long deltaTimeFromVLog, HashMap<String, ConfigVri> vriList,
+			String vriName) throws IOException {
+		HashMap<Integer, Integer> mapStatus;
+		String line = "";
+		while ((line = bufferedReader.readLine()) != null) {
+			StringBuffer buffer = new StringBuffer(line);
+			int typeBericht = parseTypebericht(buffer, 2);
+			if (typeBericht == 1) {
+				timeFromVLog = parseTijd(buffer);
+			} else if (typeBericht == 5) {
+				mapStatus = parseStatus(buffer, deltaTimeFromVLog);
+			} else if (typeBericht == 6) {
+				mapStatus = parseWijziging(buffer, deltaTimeFromVLog);
+			} else if (typeBericht == 13) {
+				mapStatus = parseStatus(buffer, deltaTimeFromVLog);
 			} else if (typeBericht == 14) {
-				System.out.println("wijziging SignaalGroep = " + line);
-				parseWijziging(buffer);
+				mapStatus = parseWijziging(buffer, deltaTimeFromVLog);
 			}
 
 		}
@@ -238,8 +253,9 @@ public class ReadVLog {
 		return timeStamp;
 	}
 
-	private static HashMap<Integer, Integer> parseStatus(final StringBuffer s) {
-		long deltaTijd = parseLong(s, 3);
+	private static HashMap<Integer, Integer> parseStatus(final StringBuffer s,
+			Long deltaTimeFromVLog) {
+		deltaTimeFromVLog = parseLong(s, 3);
 		// lees reserve 4Bits
 		parse4Bits(s);
 		int aantal = parseByte(s);
@@ -251,8 +267,9 @@ public class ReadVLog {
 		return mapDetectieStatus;
 	}
 
-	private static HashMap<Integer, Integer> parseWijziging(final StringBuffer s) {
-		long deltaTijd = parseLong(s, 3);
+	private static HashMap<Integer, Integer> parseWijziging(
+			final StringBuffer s, Long deltaTimeFromVLog) {
+		deltaTimeFromVLog = parseLong(s, 3);
 		int aantal = parse4Bits(s);
 		HashMap<Integer, Integer> mapDetectieWijziging = new HashMap<Integer, Integer>();
 		for (int i = 0; i < aantal; i++) {
