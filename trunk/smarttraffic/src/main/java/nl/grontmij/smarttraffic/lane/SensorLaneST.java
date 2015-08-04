@@ -33,7 +33,7 @@ public class SensorLaneST extends AbstractSensor {
 	private String sensorType;
 	private String nameJunction;
 	private List<SensorLaneST> sensorsParallel = new ArrayList<SensorLaneST>();
-	private HashMap<DoubleScalar.Rel<TimeUnit>, Long> statusByTime= new HashMap<DoubleScalar.Rel<TimeUnit>, Long>(); 
+	private HashMap<DoubleScalar.Rel<TimeUnit>, Integer> statusByTime= new HashMap<DoubleScalar.Rel<TimeUnit>, Integer>(); 
 
 	public final static String ENTRANCE = "ENTRANCE";
 	public final static String INTERMEDIATE = "INTERMEDIATE";
@@ -51,15 +51,15 @@ public class SensorLaneST extends AbstractSensor {
 		return sensorsParallel;
 	}
 
-	public HashMap<DoubleScalar.Rel<TimeUnit>, Long> getStatusByTime() {
+	public HashMap<DoubleScalar.Rel<TimeUnit>, Integer> getStatusByTime() {
 		return statusByTime;
 	}
 
-	public void setStatusByTime(HashMap<DoubleScalar.Rel<TimeUnit>, Long> statusByTime) {
+	public void setStatusByTime(HashMap<DoubleScalar.Rel<TimeUnit>, Integer> statusByTime) {
 		this.statusByTime = statusByTime;
 	}
 
-	public void addStatusByTime(DoubleScalar.Rel<TimeUnit> timeNow, long status) {
+	public void addStatusByTime(DoubleScalar.Rel<TimeUnit> timeNow, Integer status) {
 		this.statusByTime.put(timeNow, status);
 	}
 

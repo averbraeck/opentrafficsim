@@ -37,7 +37,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.generator.ListGTUGenerator;
 import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
@@ -52,6 +51,7 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.NoTrafficLane;
 import org.opentrafficsim.core.network.lane.Sensor;
+import org.opentrafficsim.core.network.lane.stop.StopLineLane;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -94,7 +94,8 @@ public class GTM extends AbstractWrappableSimulation {
 	 */
 
 	public static Instant startTimeSimulation;
-	
+	public static HashMap<Lane<?, ?>, StopLineLane> mapLaneToStopLineLane = new HashMap<Lane<?, ?>, StopLineLane>();
+
 	public static void main(final String[] args) throws RemoteException,
 			SimRuntimeException {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -200,10 +201,10 @@ public class GTM extends AbstractWrappableSimulation {
 			this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
 
 			// base directory (relative to user dir)
-			String dirBase = System.getProperty("user.dir") + "/src/main/resources/";
-			
-			URL url = URLResource
-					.getResource(dirBase + "model/PNH_NOORD.xml");
+			String dirBase = System.getProperty("user.dir")
+					+ "/src/main/resources/";
+
+			URL url = URLResource.getResource(dirBase + "model/PNH_NOORD.xml");
 			XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
 			OTSNetwork<?, ?, ?> network = null;
 			try {
@@ -214,33 +215,43 @@ public class GTM extends AbstractWrappableSimulation {
 				exception1.printStackTrace();
 			}
 			@SuppressWarnings("unchecked")
-
 			// define the type of cars
-			GTUType<String> gtuType = GTUType.makeGTUType("CAR");			
+			GTUType<String> gtuType = GTUType.makeGTUType("CAR");
 
-			// read and define detectors from the network 
+			// read and define detectors from the network
 			HashMap<String, SensorLaneST> mapSensor = new HashMap<String, SensorLaneST>();
 			HashMap<String, SensorLaneST> mapSensorGenerateCars = new HashMap<String, SensorLaneST>();
 			HashMap<String, SensorLaneST> mapSensorKillCars = new HashMap<String, SensorLaneST>();
 			HashMap<String, SensorLaneST> mapSensorCheckCars = new HashMap<String, SensorLaneST>();
-			ReadNetworkData.readDetectors(network, mapSensor, mapSensorGenerateCars, mapSensorKillCars, mapSensorCheckCars);
-			
-			// read the configuration files for VLOG (detector/signalgroup: both index and name
+			try {
+				ReadNetworkData.readDetectors(network, mapSensor,
+						mapSensorGenerateCars, mapSensorKillCars,
+						mapSensorCheckCars);
+			} catch (NetworkException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+
+			// read the configuration files for VLOG (detector/signalgroup: both
+			// index and name
 			String dirConfigVri = "configVRI/";
 			String dirLoggings = "VRI-loggings/";
 			String wegNummer = "201";
-			String[] vriNummer = { "225", "231", "234", "239", "245", "249",
-					"291", "297", "302", "308", "311", "314" };
+//			String[] vriNummer = { "225", "231", "234", "239", "245", "249",
+//					"291", "297", "302", "308", "311", "314" };
+			String[] vriNummer = { "225"};
+			
 			HashMap<String, ConfigVri> configVriList = null;
 			try {
-				configVriList = ReadVLog.readVlogConfigFiles(dirConfigVri,  dirBase, wegNummer, vriNummer);
+				configVriList = ReadVLog.readVlogConfigFiles(dirConfigVri,
+						dirBase, wegNummer, vriNummer);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
+
 			// read the historical (at a later stage streaming) VLOG data
-			// start met inlezen files vanaf tijdstip ....	
+			// start met inlezen files vanaf tijdstip ....
 			int year = 2015;
 			int month = 6;
 			int day = 1;
@@ -249,20 +260,21 @@ public class GTM extends AbstractWrappableSimulation {
 			int second = 0;
 			int tenth = 0;
 			Instant timeVLog = Instant.parse(String.format(
-					"%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day, hour,
-					minute, second, tenth));
+					"%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day,
+					hour, minute, second, tenth));
 			startTimeSimulation = timeVLog;
 			ZoneOffset offset = ZoneOffset.of("-00:00");
 			LocalDateTime ldt = LocalDateTime.ofInstant(timeVLog, offset);
 			ldt = LocalDateTime.ofInstant(timeVLog, offset);
+			// read the vlog data with both detector and signalgroup data
 			try {
-				ReadVLog.readVlogFiles(mapSensor, configVriList, timeVLog, dirBase + dirLoggings, wegNummer, vriNummer);
+				ReadVLog.readVlogFiles(mapSensor, configVriList, timeVLog,
+						dirBase + dirLoggings, wegNummer, vriNummer);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
-			
+
 			// connect the detector and traffic light pulses to the
 			// simulator
 
@@ -291,156 +303,9 @@ public class GTM extends AbstractWrappableSimulation {
 			// if the cars are traveling faster/slower than the pulses:
 			// decrease/increase the maximum speed
 
-			/*
-			 * Replace with new function for routes
-			 * 
-			 * String id; Route<?, ?> fixedRoute = new CompleteRoute(id, new
-			 * ArrayList<Node<?>>()); // RouteTag routeTag =
-			 * nlp.routeTags.get("STRAIGHT_PARTLY"); fixedRoute =
-			 * network.getRoute("STRAIGHT"); for (Node<?> node :
-			 * route.getNodes()) { for (Node<?> n : nodes.values()) { if
-			 * (n.getId().equals(nodeTag.name)) { fixedRoute.add(n); } } }
-			 * RouteGenerator routeGenerator = new FixedRouteGenerator(
-			 * fixedRoute);
-			 */
-			LaneBasedRouteGenerator routeGenerator = null;
-			Map<?, ?> nodes = network.getNodeMap();
-			Node<?> fromNode = null;
-			Collection<Node<?>> nodeValues = (Collection<Node<?>>) nodes
-					.values();
-			for (Node<?> n : nodeValues) {
-				if (n.getId().equals("N1a")) {
-					fromNode = n;
-				}
-			}
-			if (null == fromNode) {
-				throw new Error("Cannot find node N1a");
-			}
-			// find the lane
-			Lane lane = null;
-			for (Link<?, ?> link : fromNode.getLinksOut()) {
-				if (link.getEndNode().getId().equals("N2a")) {
-					if (link instanceof CrossSectionLink) {
-						CrossSectionLink<?, ?> csl = (CrossSectionLink<?, ?>) link;
-						for (CrossSectionElement cse : csl
-								.getCrossSectionElementList()) {
-							if (cse instanceof Lane
-									&& !(cse instanceof NoTrafficLane)) {
-								lane = (Lane) cse;
-								List<Sensor> sensors = lane.getSensors(
-										new DoubleScalar.Rel<LengthUnit>(0,
-												LengthUnit.METER), lane
-												.getLength());
-							}
-							;
-						}
-					}
-				}
-			}
-			if (null == lane) {
-				try {
-					throw new NetworkException(
-							"Cannot find a Lane on a Link from N1a to N2a");
-				} catch (NetworkException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			try {
-				new ListGTUGenerator<String>("generator 1", this.simulator,
-						gtuType, new IDMPlus(),
-						new Egoistic(),
-						new DoubleScalar.Abs<SpeedUnit>(50,
-								SpeedUnit.KM_PER_HOUR),
-						lane,
-						new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.SI),
-						routeGenerator,
-						this.gtuColorer,
-						// "D:/java/ots-core/src/main/resources/gtm_list.txt"
-						// "C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/vehicleList_PNH.csv"/*
-						// HACK */);
-						"C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/vehicleList_1.csv"/* HACK */);
-			} catch (NetworkException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			Integer id = 99999;
-			readTrafficLightState(
-					this.simulator,
-					this.gtuColorer,
-					"C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/trafficLightStateList.txt",
-					lane, id);
-			// "C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/trafficLightStateList_PNH.txt",
-			// lane);
 
-			/*
-			 * fixedRoute = new ArrayList<Node<?>>(); routeTag =
-			 * nlp.routeTags.get("ENTER_N2"); nodes = network.getNodeMap(); for
-			 * (NodeTag nodeTag : routeTag.routeNodeTags) { for (Node<?, ?> n :
-			 * nodes.values()) { if (n.getId().equals(nodeTag.name)) {
-			 * fixedRoute.add(n); } } } routeGenerator = new
-			 * FixedRouteGenerator(fixedRoute);
-			 */
-			fromNode = null;
-			for (Node<?> n : nodeValues) {
-				if (n.getId().equals("N2a")) {
-					fromNode = n;
-				}
-			}
-			if (null == fromNode) {
-				throw new Error("Cannot find node N1b");
-			}
-			// find the lane
-			lane = null;
-			for (Link<?, ?> link : fromNode.getLinksOut()) {
-				if (link.getEndNode().getId().equals("N2b")) {
-					if (link instanceof CrossSectionLink) {
-						CrossSectionLink<?, ?> csl = (CrossSectionLink<?, ?>) link;
-						for (CrossSectionElement cse : csl
-								.getCrossSectionElementList()) {
-							if (cse instanceof Lane
-									&& !(cse instanceof NoTrafficLane)) {
-								lane = (Lane) cse;
-							}
-						}
-					}
-				}
-			}
-			if (null == lane) {
-				try {
-					throw new NetworkException(
-							"Cannot find a Lane on a Link from N1b to N2b");
-				} catch (NetworkException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			try {
-				new ListGTUGenerator<String>("generator 2", this.simulator,
-						gtuType, new IDMPlus(),
-						new Egoistic(),
-						new DoubleScalar.Abs<SpeedUnit>(50,
-								SpeedUnit.KM_PER_HOUR),
-						lane,
-						new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.SI),
-						routeGenerator,
-						this.gtuColorer,
-						// "D:/java/ots-core/src/main/resources/gtm_list.txt"
-						// "C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/vehicleList_PNH.csv"/*
-						// HACK */);
-						"C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/vehicleList_2.csv"/* HACK */);
-			} catch (NetworkException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 
-			readTrafficLightState(
-					this.simulator,
-					this.gtuColorer,
-					"C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/trafficLightStateList.txt",
-					lane, id++);
-			// "C:/Users/p070518/Documents/workspace-sts-3.6.4.RELEASE/ots-core/src/main/resources/trafficLightStateList_PNH.txt",
-			// lane);
+
 
 		}
 
