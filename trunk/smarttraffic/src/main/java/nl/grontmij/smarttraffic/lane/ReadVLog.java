@@ -10,6 +10,8 @@ import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import org.opentrafficsim.core.network.lane.Sensor;
+
 import nl.grontmij.smarttraffic.lane.ConfigVri;
 import nl.tudelft.simulation.language.io.URLResource;
 
@@ -23,25 +25,19 @@ public class ReadVLog {
 		// cannot be instantiated.
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static HashMap<String, ConfigVri> readVlogConfigFiles(
+			String dirConfigVri, String dirBase, String wegNummer,
+			String[] vriNummer) throws IOException {
 		// lijst met de configuratie van de vri's: naam kruispunt, detector
 		// (index en naam) en signaalgroep (index en naam)
 		HashMap<String, ConfigVri> configVriList = new HashMap<String, ConfigVri>();
-
-		String mapConfigVri = "configVRI/";
-		System.out.println(parseLong(new StringBuffer("0201"), 4));
-		String mapBase = "C:/Users/p070518/Documents/Grontmij/Projecten/OpdrachtenLopend/343090 Smart Traffic N201/VRI-loggings/";
-		String wegNummer = "201";
-		String[] vriNummer = { "225", "231", "234", "239", "245", "249", "291",
-				"297", "302", "308", "311", "314" };
-
 		// read VRI config files
 		for (String vri : vriNummer) {
 			String vriName = wegNummer + vri;
 			String vriLocation = "VRI" + vriName;
-			if (URLResource.getResource(mapBase + mapConfigVri + vriLocation
+			if (URLResource.getResource(dirBase + dirConfigVri + vriLocation
 					+ ".cfg") != null) {
-				URL url = URLResource.getResource(mapBase + mapConfigVri
+				URL url = URLResource.getResource(dirBase + dirConfigVri
 						+ vriLocation + ".cfg");
 				BufferedReader bufferedReader = null;
 				String path = url.getPath();
@@ -49,47 +45,7 @@ public class ReadVLog {
 				configVriList.put(vriName, readVLogConfigFile(bufferedReader));
 			}
 		}
-		
-		String mapMonth = "juni/";
-		for (String vri : vriNummer) {			
-			String mapDay = "1";
-			// start met inlezen files vanaf tijdstip ....	
-			int year = 2015;
-			int month = 6;
-			int day = 1;
-			long hour = 0;
-			int minute = 0;
-			int second = 0;
-			int tenth = 0;
-			boolean readFirstTimeStamp = false;
-			String timeStampFile = String.format("%04d%02d%02d_%02d%02d%02d", year,
-					month, day, hour, minute, second);
-			Instant timeStamp = Instant.parse(String.format(
-					"%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day, hour,
-					minute, second, tenth));
-			String vriLocation = "VRI" + wegNummer + vri;
-			while (URLResource.getResource(mapBase + mapMonth + day + "/"
-					+ vriLocation + "/" + vriLocation + "_" + timeStampFile
-					+ ".vlg") != null) {
-				URL url = URLResource.getResource(mapBase + mapMonth + day + "/"
-						+ vriLocation + "/" + vriLocation + "_" + timeStampFile
-						+ ".vlg");
-				BufferedReader bufferedReader = null;
-				String path = url.getPath();
-				bufferedReader = new BufferedReader(new FileReader(path));
-				readVLogFile(bufferedReader, readFirstTimeStamp, configVriList, wegNummer + vri);
-				// increase time with one minute for next file
-				timeStamp = timeStamp.plusSeconds(60);
-				ZoneOffset offset = ZoneOffset.of("-00:00");
-				LocalDateTime ldt = LocalDateTime.ofInstant(timeStamp, offset);
-				day = ldt.getDayOfMonth();
-				hour = ldt.getHour();
-				minute = ldt.getMinute();
-				second = ldt.getSecond();
-				timeStampFile = String.format("%04d%02d%02d_%02d%02d%02d", year,
-						month, day, hour, minute, second);
-			}
-		}
+		return configVriList;
 	}
 
 	private static ConfigVri readVLogConfigFile(BufferedReader bufferedReader)
@@ -146,32 +102,90 @@ public class ReadVLog {
 		return new ConfigVri(nameVRI, detectors, signalGroups);
 	}
 
-	private static void readDetectorSettings(String line,
-			HashMap<Integer, String> detectors) {
-		String[] buffer = new String[4];
-		buffer = line.split(",");
-		int count = Integer.parseInt(buffer[1]);
-		String name = buffer[2];
-		long l = Long.parseLong(buffer[3]);
-		String strHex = String.format("0x%04X", l);
-		detectors.put(count, name);
-		// if ()
+	public static void readVlogFiles(HashMap<String, Sensor> mapSensor,
+			HashMap<String, ConfigVri> configVriList, Instant timeStampStart,
+			String dirLoggings, String wegNummer, String[] vriNummer)
+			throws IOException {
+		ZoneOffset offset = ZoneOffset.of("-00:00");
+		LocalDateTime ldt = LocalDateTime.ofInstant(timeStampStart, offset);
+		ldt = LocalDateTime.ofInstant(timeStampStart, offset);
+		int year = ldt.getYear();
+		int month = ldt.getMonthValue();
+		int day = ldt.getDayOfMonth();
+		int hour = ldt.getHour();
+		int minute = ldt.getMinute();
+		int second = ldt.getSecond();
+		for (String vri : vriNummer) {
+			boolean allTrue = false;
+			boolean boolReadFirstTimeStamp = false;
+			boolean boolReadFirstDetectorStatus = false;
+			boolean boolReadFirstSignalGroupStatus = false;
+			String vriLocation = "VRI" + wegNummer + vri;
+			String dayString = null;
+			String timeStampFile = String.format("%04d%02d%02d_%02d%02d%02d",
+					year, month, day, hour, minute, second);
+			// zoek de eerste "harde" tijdsaanduiding
+			while (URLResource.getResource(dirLoggings + Integer.toString(day)
+					+ "/" + vriLocation + "/" + vriLocation + "_"
+					+ timeStampFile + ".vlg") != null) {
+				URL url = URLResource.getResource(dirLoggings + dayString + "/"
+						+ vriLocation + "/" + vriLocation + "_" + timeStampFile
+						+ ".vlg");
+				BufferedReader bufferedReader = null;
+				String path = url.getPath();
+				bufferedReader = new BufferedReader(new FileReader(path));
+				if (!allTrue) {
+					readStatusVLogFile(mapSensor, bufferedReader,
+							boolReadFirstTimeStamp,
+							boolReadFirstDetectorStatus,
+							boolReadFirstSignalGroupStatus, configVriList,
+							wegNummer + vri);
+					if (boolReadFirstTimeStamp && boolReadFirstDetectorStatus
+							&& boolReadFirstSignalGroupStatus) {
+						allTrue = true;
+					}
+				} else if (allTrue) {
+					readVLogFile(mapSensor, bufferedReader, configVriList,
+							wegNummer + vri);
+				}
+				// increase time with one minute for next file
+				timeStampStart = timeStampStart.plusSeconds(60);
+				ldt = LocalDateTime.ofInstant(timeStampStart, offset);
+				day = ldt.getDayOfMonth();
+				hour = ldt.getHour();
+				minute = ldt.getMinute();
+				second = ldt.getSecond();
+				timeStampFile = String.format("%04d%02d%02d_%02d%02d%02d",
+						year, month, day, hour, minute, second);
+			}
+		}
 	}
 
-	private static void readTrafficlightSettings(String line,
-			HashMap<Integer, String> signalGroups) {
-		String[] buffer = new String[4];
-		buffer = line.split(",");
-		int count = Integer.parseInt(buffer[1]);
-		String name = buffer[2];
-		long l = Long.parseLong(buffer[3]);
-		// String strHex = String.format("0x%04X", l);
-		// if ()
-		signalGroups.put(count, name);
+	public static void readStatusVLogFile(HashMap<String, Sensor> mapSensor,
+			BufferedReader bufferedReader, boolean boolReadFirstTimeStamp,
+			boolean boolReadFirstDetetctorStatus,
+			boolean boolReadFirstSignalGroupStatus,
+			HashMap<String, ConfigVri> vriList, String vriName)
+			throws IOException {
+		HashMap<Integer, Integer> mapStatus;
+		String line = "";
+		while ((line = bufferedReader.readLine()) != null) {
+			StringBuffer buffer = new StringBuffer(line);
+			int typeBericht = parseTypebericht(buffer, 2);
+			if (typeBericht == 1) {
+				boolReadFirstTimeStamp = true;
+			} else if (typeBericht == 5) {
+				boolReadFirstDetetctorStatus = true;
+			} else if (typeBericht == 13) {
+				boolReadFirstSignalGroupStatus = true;
+			}
+		}
+
 	}
 
-	public static void readVLogFile(BufferedReader bufferedReader,
-			boolean readFirstTimeStamp, HashMap<String, ConfigVri> vriList, String vriName) throws IOException {
+	public static void readVLogFile(HashMap<String, Sensor> mapSensor,
+			BufferedReader bufferedReader, HashMap<String, ConfigVri> vriList,
+			String vriName) throws IOException {
 		HashMap<Integer, Integer> mapStatus;
 		String line = "";
 		while ((line = bufferedReader.readLine()) != null) {
@@ -181,15 +195,15 @@ public class ReadVLog {
 				System.out
 						.println("status tijdsaanduiding resterende string = "
 								+ line);
-				parseTijd(buffer);
+				Instant timeStamp = parseTijd(buffer);
 			} else if (typeBericht == 5) {
 				System.out.println("status detectoren = " + line);
+				parseStatus(buffer);
 			} else if (typeBericht == 6) {
 				System.out.println("wijziging detectoren = " + line);
 				mapStatus = parseWijziging(buffer);
-				vriList.get(vriName).getDetectors();
-				for (Entry<Integer, Integer> entry: mapStatus.entrySet()) {
-					
+				for (Entry<Integer, Integer> entry : mapStatus.entrySet()) {
+
 				}
 			} else if (typeBericht == 13) {
 				System.out.println("status SignaalGroep = " + line);
@@ -200,12 +214,28 @@ public class ReadVLog {
 			}
 
 		}
-		
 
 	}
 
 	private static int parseTypebericht(final StringBuffer s, int aantal) {
 		return parseByte(s);
+	}
+
+	private static Instant parseTijd(final StringBuffer s) {
+		// System.out.println(type + "  " + s);
+		int year = parseNibble(s) * 1000 + parseNibble(s) * 100
+				+ parseNibble(s) * 10 + parseNibble(s);
+		int month = parseNibble(s) * 10 + parseNibble(s);
+		int day = parseNibble(s) * 10 + parseNibble(s);
+		int hour = parseNibble(s) * 10 + parseNibble(s);
+		int minute = parseNibble(s) * 10 + parseNibble(s);
+		int second = parseNibble(s) * 10 + parseNibble(s);
+		int tenth = parseNibble(s);
+		Instant timeStamp = Instant.parse(String.format(
+				"%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day, hour,
+				minute, second, tenth));
+		System.out.println(timeStamp);
+		return timeStamp;
 	}
 
 	private static HashMap<Integer, Integer> parseStatus(final StringBuffer s) {
@@ -233,21 +263,28 @@ public class ReadVLog {
 		return mapDetectieWijziging;
 	}
 
-	private static Instant parseTijd(final StringBuffer s) {
-		// System.out.println(type + "  " + s);
-		int year = parseNibble(s) * 1000 + parseNibble(s) * 100
-				+ parseNibble(s) * 10 + parseNibble(s);
-		int month = parseNibble(s) * 10 + parseNibble(s);
-		int day = parseNibble(s) * 10 + parseNibble(s);
-		int hour = parseNibble(s) * 10 + parseNibble(s);
-		int minute = parseNibble(s) * 10 + parseNibble(s);
-		int second = parseNibble(s) * 10 + parseNibble(s);
-		int tenth = parseNibble(s);
-		Instant timeStamp = Instant.parse(String.format(
-				"%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day, hour,
-				minute, second, tenth));
-		System.out.println(timeStamp);
-		return timeStamp;
+	private static void readDetectorSettings(String line,
+			HashMap<Integer, String> detectors) {
+		String[] buffer = new String[4];
+		buffer = line.split(",");
+		int count = Integer.parseInt(buffer[1]);
+		String name = buffer[2];
+		long l = Long.parseLong(buffer[3]);
+		String strHex = String.format("0x%04X", l);
+		detectors.put(count, name);
+		// if ()
+	}
+
+	private static void readTrafficlightSettings(String line,
+			HashMap<Integer, String> signalGroups) {
+		String[] buffer = new String[4];
+		buffer = line.split(",");
+		int count = Integer.parseInt(buffer[1]);
+		String name = buffer[2];
+		long l = Long.parseLong(buffer[3]);
+		// String strHex = String.format("0x%04X", l);
+		// if ()
+		signalGroups.put(count, name);
 	}
 
 	private static int parseNibble(final StringBuffer s) {
