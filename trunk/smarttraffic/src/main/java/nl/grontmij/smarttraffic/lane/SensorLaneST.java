@@ -5,6 +5,7 @@ package nl.grontmij.smarttraffic.lane;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -17,6 +18,7 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.NoTrafficLane;
 import org.opentrafficsim.core.network.lane.Sensor;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
@@ -31,6 +33,7 @@ public class SensorLaneST extends AbstractSensor {
 	private String sensorType;
 	private String nameJunction;
 	private List<SensorLaneST> sensorsParallel = new ArrayList<SensorLaneST>();
+	private HashMap<DoubleScalar.Rel<TimeUnit>, Long> statusByTime= new HashMap<DoubleScalar.Rel<TimeUnit>, Long>(); 
 
 	public final static String ENTRANCE = "ENTRANCE";
 	public final static String INTERMEDIATE = "INTERMEDIATE";
@@ -46,6 +49,14 @@ public class SensorLaneST extends AbstractSensor {
 
 	public List<SensorLaneST> getSensorsParallel() {
 		return sensorsParallel;
+	}
+
+	public HashMap<DoubleScalar.Rel<TimeUnit>, Long> getStatusByTime() {
+		return statusByTime;
+	}
+
+	public void setStatusByTime(HashMap<DoubleScalar.Rel<TimeUnit>, Long> statusByTime) {
+		this.statusByTime = statusByTime;
 	}
 
 	/**
