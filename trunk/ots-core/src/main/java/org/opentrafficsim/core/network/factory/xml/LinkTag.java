@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.factory.xml.units.AngleUnits;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.unit.AnglePlaneUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.w3c.dom.NamedNodeMap;
@@ -32,15 +34,31 @@ final class LinkTag
 
     /** from node tag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    NodeTag nodeFromTag = null;
+    NodeTag nodeStartTag = null;
 
     /** to node tag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    NodeTag nodeToTag = null;
+    NodeTag nodeEndTag = null;
 
     /** road type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     RoadTypeTag roadTypeTag = null;
+
+    /** offset for the link at the start node. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    DoubleScalar.Rel<LengthUnit> offsetStart = null;
+
+    /** offset for the link at the end node. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    DoubleScalar.Rel<LengthUnit> offsetEnd = null;
+
+    /** extra rotation for the link at the start node. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    DoubleScalar.Rel<AnglePlaneUnit> rotationStart = null;
+
+    /** extra rotation for the link at the end node. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    DoubleScalar.Rel<AnglePlaneUnit> rotationEnd = null;
 
     /** straight. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -69,6 +87,10 @@ final class LinkTag
     /** map of lane name to blocks. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, BlockTag> blockTags = new HashMap<>();
+
+    /** map of lane name to on/off blocks. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    Map<String, BlockOnOffTag> blockOnOffTags = new HashMap<>();
 
     /** map of lane name to fill at t=0. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -114,19 +136,31 @@ final class LinkTag
                 throw new SAXException("LINK: ROADTYPE " + roadTypeName + " not found for link " + linkTag.name);
             linkTag.roadTypeTag = parser.roadTypeTags.get(roadTypeName);
 
-            if (attributes.getNamedItem("FROM") == null)
-                throw new SAXException("LINK: missing attribute FROM for link " + linkTag.name);
-            String fromNodeStr = attributes.getNamedItem("FROM").getNodeValue().trim();
-            linkTag.nodeFromTag = parser.nodeTags.get(fromNodeStr);
-            if (linkTag.nodeFromTag == null)
-                throw new SAXException("LINK: FROM node " + fromNodeStr + " for link " + linkTag.name + " not defined");
+            if (attributes.getNamedItem("NODESTART") == null)
+                throw new SAXException("LINK: missing attribute NODESTART for link " + linkTag.name);
+            String fromNodeStr = attributes.getNamedItem("NODESTART").getNodeValue().trim();
+            linkTag.nodeStartTag = parser.nodeTags.get(fromNodeStr);
+            if (linkTag.nodeStartTag == null)
+                throw new SAXException("LINK: NODESTART node " + fromNodeStr + " for link " + linkTag.name + " not defined");
 
-            if (attributes.getNamedItem("TO") == null)
-                throw new SAXException("LINK: missing attribute TO for link " + linkTag.name);
-            String toNodeStr = attributes.getNamedItem("TO").getNodeValue().trim();
-            linkTag.nodeToTag = parser.nodeTags.get(toNodeStr);
-            if (linkTag.nodeToTag == null)
-                throw new SAXException("LINK: TO node " + toNodeStr + " for link " + linkTag.name + " not defined");
+            if (attributes.getNamedItem("NODEEND") == null)
+                throw new SAXException("LINK: missing attribute NODEEND for link " + linkTag.name);
+            String toNodeStr = attributes.getNamedItem("NODEEND").getNodeValue().trim();
+            linkTag.nodeEndTag = parser.nodeTags.get(toNodeStr);
+            if (linkTag.nodeEndTag == null)
+                throw new SAXException("LINK: NODEEND node " + toNodeStr + " for link " + linkTag.name + " not defined");
+
+            if (attributes.getNamedItem("OFFSETSTART") != null)
+                linkTag.offsetStart = LengthUnits.parseLengthRel(attributes.getNamedItem("OFFSETSTART").getNodeValue());
+
+            if (attributes.getNamedItem("OFFSETEND") != null)
+                linkTag.offsetEnd = LengthUnits.parseLengthRel(attributes.getNamedItem("OFFSETEND").getNodeValue());
+
+            if (attributes.getNamedItem("ROTATIONSTART") != null)
+                linkTag.rotationStart = AngleUnits.parseAngleRel(attributes.getNamedItem("ROTATIONSTART").getNodeValue());
+
+            if (attributes.getNamedItem("ROTATIONEND") != null)
+                linkTag.rotationEnd = AngleUnits.parseAngleRel(attributes.getNamedItem("ROTATIONEND").getNodeValue());
 
             List<Node> straightNodes = XMLParser.getNodes(node.getChildNodes(), "STRAIGHT");
             List<Node> arcNodes = XMLParser.getNodes(node.getChildNodes(), "ARC");
@@ -175,6 +209,12 @@ final class LinkTag
             for (Node blockNode : XMLParser.getNodes(node.getChildNodes(), "BLOCK"))
             {
                 BlockTag.parseBlock(blockNode, parser, linkTag);
+            }
+
+            // parse the BLOCKONOFF tags
+            for (Node blockOnOffNode : XMLParser.getNodes(node.getChildNodes(), "BLOCKONOFF"))
+            {
+                BlockOnOffTag.parseBlockOnOff(blockOnOffNode, parser, linkTag);
             }
 
             // parse the SINK tags

@@ -2,10 +2,9 @@ package org.opentrafficsim.core.network.factory.xml;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.naming.NamingException;
@@ -23,7 +22,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -113,36 +112,52 @@ public class XmlNetworkLaneParser
      * @throws NamingException in case the animation context cannot be found
      * @throws GTUException in case of a problem with creating the LaneBlock (which is a GTU right now)
      * @throws OTSGeometryException when construction of a lane contour or offset design line fails
-     * @throws SimRuntimeException when simulator canot be used to schedule GTU generation
+     * @throws SimRuntimeException when simulator cannot be used to schedule GTU generation
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "checkstyle:needbraces"})
     public final OTSNetwork build(final URL url) throws NetworkException, ParserConfigurationException, SAXException,
         IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException
     {
         if (url.getFile().length() > 0 && !(new File(url.getFile()).exists()))
-        {
             throw new SAXException("XmlNetworkLaneParser.build: File url.getFile() does not exist");
-        }
+
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setXIncludeAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(url.openStream());
-        NodeList nodeList = document.getDocumentElement().getChildNodes();
+        NodeList networkNodeList = document.getDocumentElement().getChildNodes();
 
-        // handle the INCLUDE tags first in a recursive manner
-        parseIncludes(nodeList);
+        if (!document.getDocumentElement().getNodeName().equals("NETWORK"))
+            throw new SAXException("XmlNetworkLaneParser.build: XML document does not start with an NETWORK tag, found "
+                + document.getDocumentElement().getNodeName() + " instead");
 
-        // parse the other tags
-        GlobalTag.parseGlobal(nodeList, this);
-        GTUTag.parseGTUs(nodeList, this);
-        GTUMixTag.parseGTUMix(nodeList, this);
-        LaneTypeTag.parseCompatibilities(nodeList, this);
-        RoadTypeTag.parseRoadTypes(nodeList, this);
-        NodeTag.parseNodes(nodeList, this);
-        RouteTag.parseRoutes(nodeList, this);
-        ShortestRouteTag.parseShortestRoutes(nodeList, this);
-        RouteMixTag.parseRouteMix(nodeList, this);
-        ShortestRouteMixTag.parseShortestRouteMix(nodeList, this);
-        LinkTag.parseLinks(nodeList, this);
+        // there should be some definitions using DEFINITIONS tags (could be more than one due to include files)
+        List<Node> definitionNodes = XMLParser.getNodes(networkNodeList, "DEFINITIONS");
+
+        if (definitionNodes.size() == 0)
+            throw new SAXException("XmlNetworkLaneParser.build: XML document does not have a DEFINITIONS tag");
+
+        // parse the DEFINITIONS tags
+        for (Node definitionNode : definitionNodes)
+            GlobalTag.parseGlobal(definitionNode.getChildNodes(), this);
+        for (Node definitionNode : definitionNodes)
+            GTUTag.parseGTUs(definitionNode.getChildNodes(), this);
+        for (Node definitionNode : definitionNodes)
+            GTUMixTag.parseGTUMix(definitionNode.getChildNodes(), this);
+        for (Node definitionNode : definitionNodes)
+            LaneTypeTag.parseLaneTypes(definitionNode.getChildNodes(), this);
+        for (Node definitionNode : definitionNodes)
+            CompatibilityTag.parseCompatibilities(definitionNode.getChildNodes(), this);
+        for (Node definitionNode : definitionNodes)
+            RoadTypeTag.parseRoadTypes(definitionNode.getChildNodes(), this);
+
+        // parse the NETWORK tag
+        NodeTag.parseNodes(networkNodeList, this);
+        RouteTag.parseRoutes(networkNodeList, this);
+        ShortestRouteTag.parseShortestRoutes(networkNodeList, this);
+        RouteMixTag.parseRouteMix(networkNodeList, this);
+        ShortestRouteMixTag.parseShortestRouteMix(networkNodeList, this);
+        LinkTag.parseLinks(networkNodeList, this);
 
         // process nodes and links to calculate coordinates and positions
         Links.calculateNodeCoordinates(this);
@@ -151,7 +166,7 @@ public class XmlNetworkLaneParser
             Links.buildLink(linkTag, this, this.simulator);
             Links.applyRoadTypeToLink(linkTag, this, this.simulator);
         }
-        
+
         // process the information for which multiple tags have to be combined
         for (LinkTag linkTag : this.linkTags.values())
         {
@@ -163,43 +178,6 @@ public class XmlNetworkLaneParser
 
         // store the structure information in the network
         return makeNetwork(url.toString());
-    }
-
-    /**
-     * Parse the INCLUDE node and transfer the tags from the include to this XmlParser.
-     * @param nodeList the top-level nodes of the XML-file
-     * @throws SAXException when parsing of INCLUDE tag fails
-     */
-    private void parseIncludes(final NodeList nodeList) throws SAXException
-    {
-        try
-        {
-            for (org.w3c.dom.Node node : XMLParser.getNodes(nodeList, "INCLUDE"))
-            {
-                NamedNodeMap attributes = node.getAttributes();
-                String name = attributes.getNamedItem("FILE").getTextContent();
-                URI includeURI = new URI(name);
-                XmlNetworkLaneParser includeParser = new XmlNetworkLaneParser(this.simulator);
-                includeParser.build(includeURI.toURL());
-
-                this.gtuTypes.putAll(includeParser.gtuTypes);
-                this.gtuTags.putAll(includeParser.gtuTags);
-                this.gtuMixTags.putAll(includeParser.gtuMixTags);
-                this.laneTypes.putAll(includeParser.laneTypes);
-                this.roadTypeTags.putAll(includeParser.roadTypeTags);
-                this.nodeTags.putAll(includeParser.nodeTags);
-                this.linkTags.putAll(includeParser.linkTags);
-                this.routeMixTags.putAll(includeParser.routeMixTags);
-                this.routeTags.putAll(includeParser.routeTags);
-                this.shortestRouteMixTags.putAll(includeParser.shortestRouteMixTags);
-                this.shortestRouteTags.putAll(includeParser.shortestRouteTags);
-            }
-        }
-        catch (NetworkException | SAXException | IOException | ParserConfigurationException | URISyntaxException
-            | NamingException | GTUException | OTSGeometryException | SimRuntimeException exception)
-        {
-            throw new SAXException(exception);
-        }
     }
 
     /**

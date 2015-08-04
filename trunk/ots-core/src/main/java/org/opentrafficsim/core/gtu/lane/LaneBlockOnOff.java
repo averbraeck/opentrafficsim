@@ -22,7 +22,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
-import org.opentrafficsim.core.gtu.animation.DefaultBlockAnimation;
+import org.opentrafficsim.core.gtu.animation.DefaultBlockOnOffAnimation;
 import org.opentrafficsim.core.gtu.animation.LaneChangeUrgeGTUColorer.LaneChangeDistanceAndDirection;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.HeadwayGTU;
@@ -47,12 +47,12 @@ import com.vividsolutions.jts.linearref.LengthIndexedLine;
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * @version $Revision$, $LastChangedDate$, by $Author$,
+ * @version $Revision: 1155 $, $LastChangedDate: 2015-07-26 01:01:13 +0200 (Sun, 26 Jul 2015) $, by $Author: averbraeck $,
  *          initial version 15 jul. 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBlock extends AbstractGTU<Integer> implements LaneBasedGTU<Integer>
+public class LaneBlockOnOff extends AbstractGTU<Integer> implements LaneBasedGTU<Integer>
 {
     /** */
     private static final long serialVersionUID = 20150624L;
@@ -113,7 +113,7 @@ public class LaneBlock extends AbstractGTU<Integer> implements LaneBasedGTU<Inte
      * @throws RemoteException when the simulator cannot be reached
      * @throws NetworkException when the GTU cannot be placed on the given lane
      */
-    public LaneBlock(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> position,
+    public LaneBlockOnOff(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> position,
         final OTSDEVSSimulatorInterface simulator, final Class<? extends Renderable2D> animationClass) throws GTUException,
         RemoteException, NetworkException, NamingException
     {
@@ -125,15 +125,59 @@ public class LaneBlock extends AbstractGTU<Integer> implements LaneBasedGTU<Inte
         // register the block on the lanes
         lane.addGTU(this, position);
 
-        new DefaultBlockAnimation(this, this.simulator);
+        new DefaultBlockOnOffAnimation(this, this.simulator);
         // animation
         if (simulator instanceof OTSAnimatorInterface && animationClass != null)
         {
             // TODO
         }
-
+        try
+        {
+            this.simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(60.0, TimeUnit.SECOND), this, this,
+                "changeColor", null);
+        }
+        catch (SimRuntimeException exception)
+        {
+            exception.printStackTrace();
+        }
     }
-    
+
+    private boolean blocked = true;
+
+    /**
+     * @return blocked
+     */
+    public final boolean isBlocked()
+    {
+        return this.blocked;
+    }
+
+    protected void changeColor()
+    {
+        this.blocked = !this.blocked;
+
+        try
+        {
+            if (this.blocked)
+            {
+                // add ourselves to the lane
+                this.lane.addGTU(this, this.position);
+            }
+            else
+            {
+                // remove ourselves from the lane
+                this.lane.removeGTU(this);
+
+            }
+            this.simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(60.0, TimeUnit.SECOND), this, this,
+                "changeColor", null);
+        }
+        catch (SimRuntimeException | RemoteException | NetworkException exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> getLength()
