@@ -11,9 +11,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.Sensor;
+import org.opentrafficsim.core.network.lane.stop.StopLineLane;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 import nl.grontmij.smarttraffic.lane.ConfigVri;
 import nl.tudelft.simulation.language.io.URLResource;
@@ -172,6 +175,7 @@ public class ReadVLog {
 			boolean boolReadFirstSignalGroupStatus,
 			boolean boolReadyToStartVLog, HashMap<String, ConfigVri> vriList,
 			String vriName) throws IOException {
+
 		HashMap<Integer, Integer> mapStatus;
 		String line = "";
 		while ((line = bufferedReader.readLine()) != null) {
@@ -182,20 +186,13 @@ public class ReadVLog {
 				boolReadFirstTimeStamp = true;
 			} else if (typeBericht == 5) {
 				mapStatus = parseStatus(buffer, deltaTimeFromVLog);
-				for (Entry<Integer, Integer> entry : mapStatus.entrySet()) {
-					ConfigVri vri = vriList.get(vriName);
-					String nameDetector = vri.getDetectors()
-							.get(entry.getKey());
-					Instant timeVLogNow = timeFromVLog
-							.plusMillis(100*deltaTimeFromVLog);
-					Long milliSecondsPassed = ChronoUnit.MILLIS.between(GTM.startTimeSimulation, timeVLogNow);
-					mapSensor.get(vriName + nameDetector).addStatusByTime(
-							new DoubleScalar.Rel<TimeUnit>(milliSecondsPassed,
-									TimeUnit.MILLISECOND), entry.getValue());
-				}
+				ReadStatusDetector(mapSensor, mapStatus, vriList, vriName,
+						timeFromVLog, deltaTimeFromVLog);
 				boolReadFirstDetectorStatus = true;
 			} else if (typeBericht == 13) {
 				mapStatus = parseStatus(buffer, deltaTimeFromVLog);
+				ReadStatusSignalGroup(mapSensor, mapStatus, vriList, vriName,
+						timeFromVLog, deltaTimeFromVLog);
 				boolReadFirstSignalGroupStatus = true;
 			}
 			if (boolReadFirstTimeStamp && boolReadFirstDetectorStatus
@@ -220,18 +217,113 @@ public class ReadVLog {
 				timeFromVLog = parseTijd(buffer);
 			} else if (typeBericht == 5) {
 				mapStatus = parseStatus(buffer, deltaTimeFromVLog);
+				CheckStatusDetector(mapSensor, mapStatus, vriList, vriName,
+						timeFromVLog, deltaTimeFromVLog);
 			} else if (typeBericht == 6) {
 				mapStatus = parseWijziging(buffer, deltaTimeFromVLog);
+				ReadStatusDetector(mapSensor, mapStatus, vriList, vriName,
+						timeFromVLog, deltaTimeFromVLog);
 			} else if (typeBericht == 13) {
 				mapStatus = parseStatus(buffer, deltaTimeFromVLog);
+				CheckStatusSignalGroup(mapSensor, mapStatus, vriList, vriName,
+						timeFromVLog, deltaTimeFromVLog);
 			} else if (typeBericht == 14) {
 				mapStatus = parseWijziging(buffer, deltaTimeFromVLog);
+				ReadStatusSignalGroup(mapSensor, mapStatus, vriList, vriName,
+						timeFromVLog, deltaTimeFromVLog);
 			}
 
 		}
 
 	}
 
+	private static void ReadStatusDetector(
+			HashMap<String, SensorLaneST> mapSensor,
+			HashMap<Integer, Integer> mapStatus,
+			HashMap<String, ConfigVri> vriList, String vriName,
+			Instant timeFromVLog, long deltaTimeFromVLog) {
+		for (Entry<Integer, Integer> entry : mapStatus.entrySet()) {
+			ConfigVri vri = vriList.get(vriName);
+			String nameDetector = vri.getDetectors().get(entry.getKey());
+			Instant timeVLogNow = timeFromVLog
+					.plusMillis(100 * deltaTimeFromVLog);
+			Long milliSecondsPassed = ChronoUnit.MILLIS.between(
+					GTM.startTimeSimulation, timeVLogNow);
+			mapSensor.get(vriName + nameDetector).addStatusByTime(
+					new DoubleScalar.Rel<TimeUnit>(milliSecondsPassed,
+							TimeUnit.MILLISECOND), entry.getValue());
+		}
+	}
+
+
+	private static void CheckStatusDetector(
+			HashMap<String, SensorLaneST> mapSensor,
+			HashMap<Integer, Integer> mapStatus,
+			HashMap<String, ConfigVri> vriList, String vriName,
+			Instant timeFromVLog, long deltaTimeFromVLog) {
+		for (Entry<Integer, Integer> entry : mapStatus.entrySet()) {
+			ConfigVri vri = vriList.get(vriName);
+			String nameDetector = vri.getDetectors().get(entry.getKey());
+			HashMap<DoubleScalar.Rel<TimeUnit>, Integer> map = mapSensor.get(vriName + nameDetector).getStatusByTime();
+			//compare value of latest change and this status
+			Entry<DoubleScalar.Rel<TimeUnit>, Integer> maxEntry = null;
+			for(Entry<Rel<TimeUnit>, Integer> entry1 : map.entrySet()) {
+			    if (maxEntry == null || entry1.getKey().getSI() > maxEntry.getValue()) {
+			        maxEntry = entry1;
+			    }
+			}
+			if (entry.getValue()!=maxEntry.getValue())  {
+				System.out.println("Status detector verkeerd ingelezen!!!!!");
+			}
+			
+		}
+	}
+	
+	private static void ReadStatusSignalGroup(
+			HashMap<String, SensorLaneST> mapSensor,
+			HashMap<Integer, Integer> mapStatus,
+			HashMap<String, ConfigVri> vriList, String vriName,
+			Instant timeFromVLog, long deltaTimeFromVLog) {
+		for (Entry<Integer, Integer> entry : mapStatus.entrySet()) {
+			ConfigVri vri = vriList.get(vriName);
+			String nameSignalGroup = vri.getSignalGroups().get(
+					entry.getKey());
+			Instant timeVLogNow = timeFromVLog
+					.plusMillis(100 * deltaTimeFromVLog);
+			Long milliSecondsPassed = ChronoUnit.MILLIS.between(
+					GTM.startTimeSimulation, timeVLogNow);
+			Lane<?, ?> lane = mapSensor.get(vriName + nameSignalGroup)
+					.getLane();
+			StopLineLane stopLine = GTM.mapLaneToStopLineLane.get(lane);
+			stopLine.addMapStopTrafficState(
+					new DoubleScalar.Rel<TimeUnit>(milliSecondsPassed,
+							TimeUnit.MILLISECOND), entry.getValue());
+		}
+	}
+	
+	private static void CheckStatusSignalGroup(
+			HashMap<String, SensorLaneST> mapSensor,
+			HashMap<Integer, Integer> mapStatus,
+			HashMap<String, ConfigVri> vriList, String vriName,
+			Instant timeFromVLog, long deltaTimeFromVLog) {
+		for (Entry<Integer, Integer> entry : mapStatus.entrySet()) {
+			ConfigVri vri = vriList.get(vriName);
+			String nameSignalGroup = vri.getSignalGroups().get(
+					entry.getKey());
+			HashMap<DoubleScalar.Rel<TimeUnit>, Integer> map = mapSensor.get(vriName + nameSignalGroup).getStatusByTime();
+			//compare value of latest change and this status
+			Entry<DoubleScalar.Rel<TimeUnit>, Integer> maxEntry = null;
+			for(Entry<Rel<TimeUnit>, Integer> entry1 : map.entrySet()) {
+			    if (maxEntry == null || entry1.getKey().getSI() > maxEntry.getValue()) {
+			        maxEntry = entry1;
+			    }
+			}
+			if (entry.getValue()!=maxEntry.getValue())  {
+				System.out.println("Status signaalgroep verkeerd ingelezen!!!!!");
+			}
+		}
+	}
+	
 	private static int parseTypebericht(final StringBuffer s, int aantal) {
 		return parseByte(s);
 	}
