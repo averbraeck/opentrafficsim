@@ -2,8 +2,10 @@ package org.opentrafficsim.core.network.factory.xml;
 
 import java.util.ArrayList;
 
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.CrossSectionElementTag.ElementType;
+import org.opentrafficsim.core.network.lane.AbstractSensor;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.w3c.dom.NamedNodeMap;
@@ -21,11 +23,22 @@ import org.xml.sax.SAXException;
  */
 class SensorTag
 {
+    /** name. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    String name = null;
+
     /** position of the sensor on the link, relative to the design line. */
+    // name lane position class trigger
     @SuppressWarnings("checkstyle:visibilitymodifier")
     DoubleScalar.Rel<LengthUnit> position = null;
 
-    // TODO add sensor attributes
+    /** class name of the Sensor. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    String className = null;
+
+    /** trigger position of the GTU (FRONT, REAR, etc.). */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    RelativePosition.TYPE triggerPosition;
 
     /**
      * Parse the SENSOR tag.
@@ -61,10 +74,68 @@ class SensorTag
         sensorTag.position =
             LinkTag.parseBeginEndPosition(position == null ? "END" : position.getNodeValue().trim(), linkTag);
 
-        // TODO parse sensor attributes
+        Node name = attributes.getNamedItem("NAME");
+        if (name != null)
+            sensorTag.name = name.getNodeValue().trim();
+
+        Node classNode = attributes.getNamedItem("CLASS");
+        if (classNode == null)
+            throw new SAXException("SENSOR: missing attribute CLASS for sensor " + sensorTag.name + " on lane " + laneName);
+        sensorTag.className = classNode.getNodeValue().trim();
+        try
+        {
+            Class<?> clazz = Class.forName(sensorTag.className);
+            if (!clazz.isAssignableFrom(AbstractSensor.class))
+                throw new SAXException("SENSOR: CLASS NAME " + sensorTag.className + " for sensor " + sensorTag.name
+                    + " on lane " + laneName + " does not extend the AbstractSensor class");
+            
+            // TODO test if the right type of Constructor exists in the class
+        }
+        catch (ClassNotFoundException cnfe)
+        {
+            throw new SAXException("SENSOR: CLASS NAME " + sensorTag.className + " for sensor " + sensorTag.name
+                + " on lane " + laneName + " could not be loaded.");
+        }
+
+        Node triggerNode = attributes.getNamedItem("TRIGGER");
+        if (triggerNode == null)
+            throw new SAXException("SENSOR: missing attribute TRIGGER for sensor " + sensorTag.name + " on lane " + laneName);
+        sensorTag.triggerPosition = parseTriggerPosition(triggerNode.getNodeValue().trim(), sensorTag, laneName);
 
         if (!linkTag.sensorTags.containsKey(laneName))
             linkTag.sensorTags.put(laneName, new ArrayList<SensorTag>());
         linkTag.sensorTags.get(laneName).add(sensorTag);
+    }
+
+    /**
+     * @param trigger String of the trigger position such as FRONT
+     * @param sensorTag the sensor tag for error messages
+     * @param laneName the lane name for error messages
+     * @return a relative position type, such as RelatievPostition.FRONT
+     * @throws SAXException when the trigger position did not exist
+     */
+    static RelativePosition.TYPE
+        parseTriggerPosition(final String trigger, final SensorTag sensorTag, final String laneName) throws SAXException
+    {
+        switch (trigger)
+        {
+            case "FRONT":
+                return RelativePosition.FRONT;
+
+            case "CENTER":
+                return RelativePosition.CENTER;
+
+            case "DRIVER":
+                return RelativePosition.DRIVER;
+
+            case "REAR":
+                return RelativePosition.REAR;
+
+            case "REFERENCE":
+                return RelativePosition.REFERENCE;
+
+            default:
+                throw new SAXException("SENSOR: wrong type of TRIGGER for sensor " + sensorTag.name + " on lane " + laneName);
+        }
     }
 }
