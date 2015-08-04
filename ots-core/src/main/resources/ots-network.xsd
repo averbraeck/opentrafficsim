@@ -112,6 +112,7 @@
 
         <xsd:element name="SENSOR" minOccurs="0" maxOccurs="unbounded">
           <xsd:complexType>
+            <xsd:attribute name="NAME" type="xsd:string" use="optional"></xsd:attribute>
             <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
             <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required"></xsd:attribute>
             <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="required"></xsd:attribute>
