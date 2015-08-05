@@ -213,7 +213,7 @@ public class GTM extends AbstractWrappableSimulation {
 			String dirBase = System.getProperty("user.dir")
 					+ "/src/main/resources/";
 
-			URL url = URLResource.getResource(dirBase + "PNH_test_0805.xml");
+			URL url = URLResource.getResource(dirBase + "PNH_test_0805-2.xml");
 			XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
 			OTSNetwork<?, ?, ?> network = null;
 			try {
