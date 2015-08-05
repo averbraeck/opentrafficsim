@@ -163,10 +163,9 @@ public class XmlNetworkLaneParser
         // process nodes and links to calculate coordinates and positions
         Links.calculateNodeCoordinates(this);
         for (LinkTag linkTag : this.linkTags.values())
-        {
             Links.buildLink(linkTag, this, this.simulator);
+        for (LinkTag linkTag : this.linkTags.values())
             Links.applyRoadTypeToLink(linkTag, this, this.simulator);
-        }
 
         // store the structure information in the network
         return makeNetwork(url.toString());

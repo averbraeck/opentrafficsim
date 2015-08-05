@@ -38,8 +38,8 @@ class StraightTag
         NamedNodeMap straightAttributes = straightNode.getAttributes();
         linkTag.straightTag = new StraightTag();
 
-        if (straightAttributes.getNamedItem("LENGTH") == null)
-            throw new SAXException("STRAIGHT: missing attribute LENGTH");
-        linkTag.straightTag.length = LengthUnits.parseLengthRel(straightAttributes.getNamedItem("LENGTH").getNodeValue());
+        if (straightAttributes.getNamedItem("LENGTH") != null)
+            linkTag.straightTag.length =
+                LengthUnits.parseLengthRel(straightAttributes.getNamedItem("LENGTH").getNodeValue());
     }
 }
