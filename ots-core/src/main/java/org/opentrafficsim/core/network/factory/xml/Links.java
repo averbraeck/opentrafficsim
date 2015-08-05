@@ -146,6 +146,10 @@ final class Links
     static void calculateNodeCoordinates(final LinkTag linkTag, final XmlNetworkLaneParser parser) throws RemoteException,
         NetworkException, NamingException
     {
+        if (linkTag.name.equals("L3aTR"))
+        {
+            System.out.println("L3aTR");
+        }
         // calculate dx, dy and dz for the straight or the arc.
         if (linkTag.nodeStartTag.node != null && linkTag.nodeEndTag.node != null)
         {
@@ -251,9 +255,10 @@ final class Links
                 else
                 {
                     linkTag.arcTag.center =
-                        new OTSPoint3D(coordinate.x + radiusSI * Math.cos(startAngle - Math.PI / 2.0), coordinate.y
-                            + radiusSI * Math.sin(startAngle - Math.PI / 2.0), 0.0);
-                    linkTag.arcTag.startAngle = startAngle;
+                        new OTSPoint3D(linkTag.nodeStartTag.node.getLocation().getX() - radiusSI
+                            * Math.cos(startAngle + Math.PI / 2.0), linkTag.nodeStartTag.node.getLocation().getY()
+                            - radiusSI * Math.sin(startAngle + Math.PI / 2.0), 0.0);
+                    linkTag.arcTag.startAngle = startAngle + Math.PI / 2.0;
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle - angle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle - angle);
                     nodeTag.angle =
