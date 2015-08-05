@@ -213,7 +213,7 @@ public class GTM extends AbstractWrappableSimulation {
 			String dirBase = System.getProperty("user.dir")
 					+ "/src/main/resources/";
 
-			URL url = URLResource.getResource(dirBase + "model/PNH_NOORD.xml");
+			URL url = URLResource.getResource(dirBase + "PNH_test_0805.xml");
 			XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
 			OTSNetwork<?, ?, ?> network = null;
 			try {
@@ -223,7 +223,7 @@ public class GTM extends AbstractWrappableSimulation {
 					| GTUException | OTSGeometryException exception1) {
 				exception1.printStackTrace();
 			}
-			@SuppressWarnings("unchecked")
+/*			@SuppressWarnings("unchecked")
 			// define the type of cars
 			GTUType<String> gtuType = GTUType.makeGTUType("CAR");
 
@@ -310,7 +310,7 @@ public class GTM extends AbstractWrappableSimulation {
 			}
 			
 			
-
+*/
 			// Module that provides actions if a pulse from a detector is
 			// activated
 			// - Generate a car (ENTRANCE)
