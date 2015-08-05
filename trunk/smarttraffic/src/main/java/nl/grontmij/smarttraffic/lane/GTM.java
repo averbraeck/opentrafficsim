@@ -37,10 +37,12 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.generator.ListGTUGenerator;
 import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
+import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -54,6 +56,7 @@ import org.opentrafficsim.core.network.lane.Sensor;
 import org.opentrafficsim.core.network.lane.stop.StopLineLane;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
+import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -181,6 +184,13 @@ public class GTM extends AbstractWrappableSimulation {
 		/** The lane change model. */
 		private AbstractLaneChangeModel laneChangeModel = new Egoistic();
 
+		/** the car following model, e.g. IDM Plus for cars. */
+		private GTUFollowingModel gtuFollowingModel = new IDMPlus();
+
+		private LaneBasedRouteGenerator routeGenerator;
+
+		DoubleScalar.Abs<SpeedUnit> initialSpeed;
+
 		/**
 		 * @param gtuColorer
 		 *            the GTUColorer to use.
@@ -237,10 +247,10 @@ public class GTM extends AbstractWrappableSimulation {
 			String dirConfigVri = "configVRI/";
 			String dirLoggings = "VRI-loggings/";
 			String wegNummer = "201";
-//			String[] vriNummer = { "225", "231", "234", "239", "245", "249",
-//					"291", "297", "302", "308", "311", "314" };
-			String[] vriNummer = { "225"};
-			
+			// String[] vriNummer = { "225", "231", "234", "239", "245", "249",
+			// "291", "297", "302", "308", "311", "314" };
+			String[] vriNummer = { "225" };
+
 			HashMap<String, ConfigVri> configVriList = null;
 			try {
 				configVriList = ReadVLog.readVlogConfigFiles(dirConfigVri,
@@ -275,8 +285,26 @@ public class GTM extends AbstractWrappableSimulation {
 				e1.printStackTrace();
 			}
 
-			// connect the detector and traffic light pulses to the
-			// simulator
+			// connect the detector pulses to the simulator and generate Cars
+
+			try {
+				GenerateCars generateCars = new GenerateCars(gtuType,
+						gtuFollowingModel, laneChangeModel, routeGenerator,
+						gtuColorer, simulator, mapSensorGenerateCars);
+			} catch (NetworkException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			try {
+				ScheduleTrafficLightsStates scheduleTrafficLightStates= new ScheduleTrafficLightsStates(simulator, mapSensorGenerateCars);
+			} catch (NetworkException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
 
 			// Module that provides actions if a pulse from a detector is
 			// activated
@@ -302,10 +330,6 @@ public class GTM extends AbstractWrappableSimulation {
 			// learning algorithms:
 			// if the cars are traveling faster/slower than the pulses:
 			// decrease/increase the maximum speed
-
-
-
-
 
 		}
 

@@ -33,36 +33,11 @@ public class SensorLaneST extends AbstractSensor {
 	private String sensorType;
 	private String nameJunction;
 	private List<SensorLaneST> sensorsParallel = new ArrayList<SensorLaneST>();
-	private HashMap<DoubleScalar.Rel<TimeUnit>, Integer> statusByTime= new HashMap<DoubleScalar.Rel<TimeUnit>, Integer>(); 
+	private HashMap<DoubleScalar.Abs<TimeUnit>, Integer> statusByTime= new HashMap<DoubleScalar.Abs<TimeUnit>, Integer>(); 
 
 	public final static String ENTRANCE = "ENTRANCE";
 	public final static String INTERMEDIATE = "INTERMEDIATE";
 	public final static String EXIT = "EXIT";
-
-	public String getSensorType() {
-		return sensorType;
-	}
-
-	public String getNameJunction() {
-		return nameJunction;
-	}
-
-	public List<SensorLaneST> getSensorsParallel() {
-		return sensorsParallel;
-	}
-
-	public HashMap<DoubleScalar.Rel<TimeUnit>, Integer> getStatusByTime() {
-		return statusByTime;
-	}
-
-	public void setStatusByTime(HashMap<DoubleScalar.Rel<TimeUnit>, Integer> statusByTime) {
-		this.statusByTime = statusByTime;
-	}
-
-	public void addStatusByTime(DoubleScalar.Rel<TimeUnit> timeNow, Integer status) {
-		this.statusByTime.put(timeNow, status);
-	}
-
 	
 	/**
 	 * @param lane
@@ -113,6 +88,30 @@ public class SensorLaneST extends AbstractSensor {
 		return this.sensorsParallel;
 	}
 
+
+	public String getSensorType() {
+		return sensorType;
+	}
+
+	public String getNameJunction() {
+		return nameJunction;
+	}
+
+	public List<SensorLaneST> getSensorsParallel() {
+		return sensorsParallel;
+	}
+
+	public HashMap<DoubleScalar.Abs<TimeUnit>, Integer> getStatusByTime() {
+		return statusByTime;
+	}
+
+	public void setStatusByTime(HashMap<DoubleScalar.Abs<TimeUnit>, Integer> statusByTime) {
+		this.statusByTime = statusByTime;
+	}
+
+	public void addStatusByTime(DoubleScalar.Abs<TimeUnit> timeNow, Integer status) {
+		this.statusByTime.put(timeNow, status);
+	}
 	
 	/**
 	 * {@inheritDoc} <br>
