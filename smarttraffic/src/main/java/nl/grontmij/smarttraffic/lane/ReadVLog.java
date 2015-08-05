@@ -250,7 +250,7 @@ public class ReadVLog {
 			Long milliSecondsPassed = ChronoUnit.MILLIS.between(
 					GTM.startTimeSimulation, timeVLogNow);
 			mapSensor.get(vriName + nameDetector).addStatusByTime(
-					new DoubleScalar.Rel<TimeUnit>(milliSecondsPassed,
+					new DoubleScalar.Abs<TimeUnit>(milliSecondsPassed,
 							TimeUnit.MILLISECOND), entry.getValue());
 		}
 	}
@@ -264,10 +264,10 @@ public class ReadVLog {
 		for (Entry<Integer, Integer> entry : mapStatus.entrySet()) {
 			ConfigVri vri = vriList.get(vriName);
 			String nameDetector = vri.getDetectors().get(entry.getKey());
-			HashMap<DoubleScalar.Rel<TimeUnit>, Integer> map = mapSensor.get(vriName + nameDetector).getStatusByTime();
+			HashMap<DoubleScalar.Abs<TimeUnit>, Integer> map = mapSensor.get(vriName + nameDetector).getStatusByTime();
 			//compare value of latest change and this status
-			Entry<DoubleScalar.Rel<TimeUnit>, Integer> maxEntry = null;
-			for(Entry<Rel<TimeUnit>, Integer> entry1 : map.entrySet()) {
+			Entry<DoubleScalar.Abs<TimeUnit>, Integer> maxEntry = null;
+			for(Entry<DoubleScalar.Abs<TimeUnit>, Integer> entry1 : map.entrySet()) {
 			    if (maxEntry == null || entry1.getKey().getSI() > maxEntry.getValue()) {
 			        maxEntry = entry1;
 			    }
@@ -310,10 +310,10 @@ public class ReadVLog {
 			ConfigVri vri = vriList.get(vriName);
 			String nameSignalGroup = vri.getSignalGroups().get(
 					entry.getKey());
-			HashMap<DoubleScalar.Rel<TimeUnit>, Integer> map = mapSensor.get(vriName + nameSignalGroup).getStatusByTime();
+			HashMap<DoubleScalar.Abs<TimeUnit>, Integer> map = mapSensor.get(vriName + nameSignalGroup).getStatusByTime();
 			//compare value of latest change and this status
-			Entry<DoubleScalar.Rel<TimeUnit>, Integer> maxEntry = null;
-			for(Entry<Rel<TimeUnit>, Integer> entry1 : map.entrySet()) {
+			Entry<DoubleScalar.Abs<TimeUnit>, Integer> maxEntry = null;
+			for(Entry<DoubleScalar.Abs<TimeUnit>, Integer> entry1 : map.entrySet()) {
 			    if (maxEntry == null || entry1.getKey().getSI() > maxEntry.getValue()) {
 			        maxEntry = entry1;
 			    }
