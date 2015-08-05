@@ -214,6 +214,7 @@ public class GTM extends AbstractWrappableSimulation {
 					+ "/src/main/resources/";
 
 			URL url = URLResource.getResource(dirBase + "PNH_test_0805-2.xml");
+
 			XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
 			OTSNetwork<?, ?, ?> network = null;
 			try {
@@ -223,7 +224,7 @@ public class GTM extends AbstractWrappableSimulation {
 					| GTUException | OTSGeometryException exception1) {
 				exception1.printStackTrace();
 			}
-/*			@SuppressWarnings("unchecked")
+			@SuppressWarnings("unchecked")
 			// define the type of cars
 			GTUType<String> gtuType = GTUType.makeGTUType("CAR");
 
@@ -275,6 +276,8 @@ public class GTM extends AbstractWrappableSimulation {
 			ZoneOffset offset = ZoneOffset.of("-00:00");
 			LocalDateTime ldt = LocalDateTime.ofInstant(timeVLog, offset);
 			ldt = LocalDateTime.ofInstant(timeVLog, offset);
+			
+			
 			// read the vlog data with both detector and signalgroup data
 			try {
 				ReadVLog.readVlogFiles(mapSensor, configVriList, timeVLog,
@@ -284,10 +287,14 @@ public class GTM extends AbstractWrappableSimulation {
 				e1.printStackTrace();
 			}
 
+			
+			
 			// connect the detector pulses to the simulator and generate Cars
-
+			// Module that provides actions if a pulse from a detector is
+			// activated
+			// - Generate a car (ENTRANCE)
 			try {
-				GenerateCars generateCars = new GenerateCars(gtuType,
+				ScheduleGenerateCars generateCars = new ScheduleGenerateCars(gtuType,
 						gtuFollowingModel, laneChangeModel, routeGenerator,
 						gtuColorer, simulator, mapSensorGenerateCars);
 			} catch (NetworkException e) {
@@ -308,18 +315,35 @@ public class GTM extends AbstractWrappableSimulation {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
-*/
-			// Module that provides actions if a pulse from a detector is
-			// activated
-			// - Generate a car (ENTRANCE)
-			// - Kill a car (EXIT)
-			// - Compare this pulse to vehicles in the simulation
-			// (INTERMEDIATE)
+
+	
+			// - Compare the (INTERMEDIATE) pulse to vehicles in the simulation
+			// 
 			// - if no car is matched: Generate a car
 			// - if matched: reposition that car, and perhaps other cars
+			try {
+				ScheduleCheckPulses scheduleCheckPulses = new ScheduleCheckPulses(simulator, mapSensorCheckCars);
+			} catch (NetworkException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (GTUException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NamingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 
+			
+			// - Kill a car (EXIT)
+			// connect to the sensorKill
+			
+			
+			
+			
+			
+			
 			// module that detects a car in the simulation passing a
 			// detector and provide actions:
 			// - if the car is too far downstream, and not matched by a
@@ -338,115 +362,12 @@ public class GTM extends AbstractWrappableSimulation {
 
 		}
 
-		private void readTrafficLightState(OTSDEVSSimulatorInterface simulator,
-				GTUColorer gtuColorer, String fileName, Lane lane, Integer id) {
-			/** Reader for the event list. */
-			BufferedReader reader;
-			try {
-				reader = new BufferedReader(new FileReader(new File(fileName)));
-				scheduleTrafficLigthState(reader, lane, id);
-			} catch (FileNotFoundException exception) {
-				exception.printStackTrace();
-			}
-
-		}
-
-		/**
-		 * Schedule generation of the next GTU.
-		 */
-		private void scheduleTrafficLigthState(BufferedReader reader,
-				Lane lane, Integer id) {
-			try {
-				String line = reader.readLine();
-				while (!line.contentEquals("")) {
-					String[] words = line.split(",");
-					double when = 0;
-					for (int i = 0; i < 4; i++) {
-						words[i] = words[i].replaceAll("\\s+", "");
-						if (i == 2) {
-							when = java.lang.Double.parseDouble(words[i]);
-						}
-						if (i == 3) {
-							if (words[i].contentEquals("RED")) {
-								Object[] objects = new Object[2];
-								objects[0] = lane;
-								objects[1] = id;
-
-								this.simulator.scheduleEventAbs(
-										new DoubleScalar.Abs<TimeUnit>(when,
-												TimeUnit.SECOND), this, this,
-										"createBlocks", objects);
-
-							} else if (words[i].contentEquals("GREEN")) {
-								Object[] objects = new Object[1];
-								objects[0] = lane;
-								this.simulator.scheduleEventAbs(
-										new DoubleScalar.Abs<TimeUnit>(when,
-												TimeUnit.SECOND), this, this,
-										"removeBlocks", objects);
-
-							}
-
-						}
-					}
-					line = reader.readLine();
-				}
-			} catch (NumberFormatException exception) {
-				exception.printStackTrace();
-				scheduleTrafficLigthState(reader, lane, id);
-			} catch (IOException exception) {
-				exception.printStackTrace();
-			} catch (SimRuntimeException exception) {
-				exception.printStackTrace();
-			}
-		}
 
 		/** {@inheritDoc} */
 		@Override
 		public SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
 				throws RemoteException {
 			return this.simulator;
-		}
-
-		/**
-		 * Set up the block.
-		 * 
-		 * @throws RemoteException
-		 *             on communications failure
-		 */
-		protected final void createBlocks(Lane lane, Integer id)
-				throws RemoteException {
-			Map<Lane<?, ?>, Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
-			initialPositions.put(lane, lane.position(0.95));
-			try {
-				this.blockMap.put(lane,
-						new LaneBasedIndividualCar<Integer>(id, this.gtuType,
-								new IDMPlus(), this.laneChangeModel,
-								initialPositions,
-								new DoubleScalar.Abs<SpeedUnit>(0,
-										SpeedUnit.KM_PER_HOUR),
-								new DoubleScalar.Rel<LengthUnit>(1.0,
-										LengthUnit.METER),
-								new DoubleScalar.Rel<LengthUnit>(1.8,
-										LengthUnit.METER),
-								new DoubleScalar.Abs<SpeedUnit>(0,
-										SpeedUnit.KM_PER_HOUR),
-								new LaneBasedRouteNavigator(null),
-								this.simulator, DefaultCarAnimation.class,
-								this.gtuColorer));
-
-			} catch (RemoteException | SimRuntimeException | NamingException
-					| NetworkException | GTUException exception) {
-				exception.printStackTrace();
-			}
-		}
-
-		/**
-		 * Remove the block.
-		 */
-		protected final void removeBlocks(Lane lane) {
-			this.blockMap.get(lane).destroy();
-			this.blockMap.remove(lane);
 		}
 
 	}

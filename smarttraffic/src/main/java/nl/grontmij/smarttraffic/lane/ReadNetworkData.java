@@ -44,36 +44,41 @@ public class ReadNetworkData {
 								new DoubleScalar.Rel<LengthUnit>(0,
 										LengthUnit.METER), lane.getLength());
 						if (!sensors.isEmpty()) {
-							for (SensorLaneST sensor : sensors) {
-								mapSensor.put(sensor.getName(), sensor);
-								if (sensor.getName().startsWith("G")) {
-									mapSensorGenerateCars.put(sensor.getName(),
-											sensor);
-								} else if (sensor.getName().startsWith("K")) {
-									mapSensorKillCars.put(sensor.getName(),
-											sensor);
-								} else if (sensor.getName().startsWith("C")) {
-									mapSensorCheckCars.put(sensor.getName(),
-											sensor);
-								}
+							for (Sensor sensor : sensors) {
+								if (sensor instanceof SensorLaneST) {
+									SensorLaneST sensorLaneST = (SensorLaneST) sensor;
+									mapSensor.put(sensor.getName(), sensorLaneST);
+									if (sensorLaneST.getName().startsWith("G")) {
+										mapSensorGenerateCars.put(
+												sensor.getName(), sensorLaneST);
+									} else if (sensorLaneST.getName().startsWith("K")) {
+										mapSensorKillCars.put(sensor.getName(),
+												sensorLaneST);
+									} else if (sensorLaneST.getName().startsWith("C")) {
+										mapSensorCheckCars.put(
+												sensor.getName(), sensorLaneST);
+									}
 
-								if (sensor.getName().startsWith("G")
-										|| sensor.getName().startsWith("C")) {
-									// connect to signalgroup
-									DoubleScalar.Rel<LengthUnit> longitudinalPositionFromEnd = new DoubleScalar.Rel<LengthUnit>(
-											lane.getLength().getInUnit(
-													LengthUnit.METER) - 10,
-											LengthUnit.METER);
-									String name = sensor.getName().substring(1);
-									name = name.replace(".", "");
-									name = ("000" + name).substring(name
-											.length());
-									StopLineLane stopLine = new StopLineLane(
-											lane, longitudinalPositionFromEnd,
-											name);
-									lane.addSensor(stopLine);
-									GTM.mapLaneToStopLineLane.put(lane,
-											stopLine);
+									if (sensorLaneST.getName().startsWith("G")
+											|| sensorLaneST.getName().startsWith("C")) {
+										// connect to signalgroup
+										DoubleScalar.Rel<LengthUnit> longitudinalPositionFromEnd = new DoubleScalar.Rel<LengthUnit>(
+												lane.getLength().getInUnit(
+														LengthUnit.METER) - 10,
+												LengthUnit.METER);
+										String name = sensorLaneST.getName()
+												.substring(1);
+										name = name.replace(".", "");
+										name = ("000" + name).substring(name
+												.length());
+										StopLineLane stopLine = new StopLineLane(
+												lane,
+												longitudinalPositionFromEnd,
+												name);
+										lane.addSensor(stopLine);
+										GTM.mapLaneToStopLineLane.put(lane,
+												stopLine);
+									}
 								}
 
 							}
