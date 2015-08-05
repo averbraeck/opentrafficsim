@@ -2,10 +2,13 @@ package org.opentrafficsim.core.network.factory.xml;
 
 import java.util.ArrayList;
 
+import nl.tudelft.simulation.language.reflection.ClassUtil;
+
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.CrossSectionElementTag.ElementType;
 import org.opentrafficsim.core.network.lane.AbstractSensor;
+import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.w3c.dom.NamedNodeMap;
@@ -88,8 +91,18 @@ class SensorTag
             if (!clazz.isAssignableFrom(AbstractSensor.class))
                 throw new SAXException("SENSOR: CLASS NAME " + sensorTag.className + " for sensor " + sensorTag.name
                     + " on lane " + laneName + " does not extend the AbstractSensor class");
-            
-            // TODO test if the right type of Constructor exists in the class
+
+            try
+            {
+                ClassUtil.resolveConstructor(clazz, new Class[]{Lane.class, DoubleScalar.Rel.class,
+                    RelativePosition.TYPE.class, String.class});
+            }
+            catch (NoSuchMethodException nsme)
+            {
+                throw new SAXException("SENSOR: CLASS NAME " + sensorTag.className + " for sensor " + sensorTag.name
+                    + " on lane " + laneName
+                    + " -- no constructor with arguments (Lane, DoubleScalar.Rel, RelativePosition.TYPE, String)");
+            }
         }
         catch (ClassNotFoundException cnfe)
         {

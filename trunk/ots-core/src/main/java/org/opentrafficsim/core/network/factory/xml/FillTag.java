@@ -1,11 +1,26 @@
 package org.opentrafficsim.core.network.factory.xml;
 
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.CrossSectionElementTag.ElementType;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
+import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.FixedLaneBasedRouteGenerator;
+import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
+import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DistContinuousDoubleScalar;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -21,6 +36,10 @@ import org.xml.sax.SAXException;
  */
 class FillTag
 {
+    /** lane name. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    String laneName = null;
+
     /** GTU tag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     GTUTag gtuTag = null;
@@ -86,6 +105,7 @@ class FillTag
                 + " - roadtype " + linkTag.roadTypeTag.name);
         if (linkTag.generatorTags.containsKey(laneName))
             throw new SAXException("FILL for LANE with NAME " + laneName + " defined twice");
+        fillTag.laneName = laneName;
 
         if (attributes.getNamedItem("GTU") != null)
         {
@@ -176,4 +196,36 @@ class FillTag
 
         linkTag.fillTags.put(laneName, fillTag);
     }
+
+    /**
+     * Make a fill of a Lane.
+     * @param fillTag XML tag for the generator to build
+     * @param parser the parser with the lists of information
+     * @param linkTag the parent LINK tag
+     * @param simulator the simulator to schedule GTU generation
+     * @throws SimRuntimeException in case of simulation problems building the car generator
+     * @throws RemoteException in case of network problems building the car generator
+     * @throws NetworkException when route generator cannot be instantiated
+     */
+    static void makeFill(final FillTag fillTag, final XmlNetworkLaneParser parser, final LinkTag linkTag,
+        final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, RemoteException, NetworkException
+    {
+        Lane<?, ?> lane = linkTag.lanes.get(fillTag.laneName);
+        Class<?> gtuClass = LaneBasedIndividualCar.class;
+        List<org.opentrafficsim.core.network.Node<String>> nodeList = new ArrayList<>();
+        for (NodeTag nodeTag : fillTag.routeTag.routeNodeTags)
+        {
+            nodeList.add(parser.nodeTags.get(nodeTag.name).node);
+        }
+        LaneBasedRouteGenerator rg =
+            new FixedLaneBasedRouteGenerator(new CompleteRoute<String, String>("fixed route", nodeList));
+
+        // TODO create a FILL
+
+        // TODO GTUMix
+        // TODO RouteMix
+        // TODO ShortestRoute
+        // TODO ShortestRouteMix
+    }
+
 }

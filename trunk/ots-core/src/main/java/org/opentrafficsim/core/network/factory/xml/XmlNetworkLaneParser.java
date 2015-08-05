@@ -168,15 +168,6 @@ public class XmlNetworkLaneParser
             Links.applyRoadTypeToLink(linkTag, this, this.simulator);
         }
 
-        // process the information for which multiple tags have to be combined
-        for (LinkTag linkTag : this.linkTags.values())
-        {
-            GeneratorTag.makeGenerators(linkTag, this, this.simulator);
-            // processFill();
-            // processListGenerators();
-            // processSensors();
-        }
-
         // store the structure information in the network
         return makeNetwork(url.toString());
     }
