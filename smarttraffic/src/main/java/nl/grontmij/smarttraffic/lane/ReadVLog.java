@@ -13,7 +13,6 @@ import java.util.Map.Entry;
 
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.Sensor;
-import org.opentrafficsim.core.network.lane.stop.StopLineLane;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
