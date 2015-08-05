@@ -181,6 +181,12 @@ final class Links
             throw new NetworkException("Parsing network. Link: " + linkTag.name + ", both From-node and To-node are null");
         }
 
+        if (linkTag.nodeStartTag.node != null && linkTag.nodeEndTag.node != null && linkTag.straightTag.length != null)
+        {
+            throw new NetworkException("Parsing network. Link: " + linkTag.name
+                + ", Start node and end node given, but also a length specified");
+        }
+
         if (linkTag.straightTag != null)
         {
             double lengthSI = linkTag.straightTag.length.getSI();

@@ -1,9 +1,21 @@
 package org.opentrafficsim.core.network.lane;
 
+import java.rmi.RemoteException;
+
+import javax.media.j3d.Bounds;
+import javax.vecmath.Point3d;
+
+import nl.tudelft.simulation.language.d3.BoundingBox;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.linearref.LengthIndexedLine;
 
 /**
  * <p>
@@ -75,6 +87,64 @@ public abstract class AbstractSensor implements Sensor
     public final double getLongitudinalPositionSI()
     {
         return this.longitudinalPositionSI;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final DirectedPoint getLocation() throws RemoteException
+    {
+        try
+        {
+            double fraction = this.longitudinalPositionSI / this.lane.getLength().getSI();
+            LineString line = this.lane.getCenterLine().getLineString();
+            LengthIndexedLine lil = new LengthIndexedLine(line);
+            /*
+             * fraction is the relative position on the center line of the lane. fraction may be slightly outside the range
+             * 0..1. When that happens we'll extrapolate in the direction of the center line at the end of the lane. This
+             * direction is obtained (approximated) by using the last or first percent of the center line.
+             */
+            double useFraction = fraction;
+            boolean fractionAdjusted = false; // Indicate if extrapolation is needed
+            if (fraction < 0)
+            {
+                useFraction = 0;
+                fractionAdjusted = true;
+            }
+            if (fraction > 0.99)
+            {
+                useFraction = 0.99;
+                fractionAdjusted = true;
+            }
+            // DO NOT MODIFY THE RESULT OF extractPoint (it may be one of the coordinates in line).
+            Coordinate c = new Coordinate(lil.extractPoint(useFraction * line.getLength()));
+            c.z = 0d;
+            Coordinate cb = lil.extractPoint((useFraction + 0.01) * line.getLength());
+            double angle = Math.atan2(cb.y - c.y, cb.x - c.x);
+            if (fractionAdjusted)
+            {
+                c =
+                    new Coordinate(c.x + (fraction - useFraction) * 100 * (cb.x - c.x), c.y + (fraction - useFraction) * 100
+                        * (cb.y - c.y), c.z);
+            }
+            if (Double.isNaN(c.x))
+            {
+                System.out.println("Bad");
+            }
+            return new DirectedPoint(c.x, c.y, c.z + 0.01 /* raise it slightly above the lane surface */, 0.0, 0.0, angle);
+        }
+        catch (Exception ne)
+        {
+            System.err.println(this);
+            ne.printStackTrace();
+            return new DirectedPoint(0, 0, 0);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Bounds getBounds() throws RemoteException
+    {
+        return new BoundingBox(new Point3d(-0.25, -1.8, 0.0), new Point3d(0.25, 1.8, 0.0));
     }
 
     /**

@@ -3,6 +3,8 @@ package org.opentrafficsim.core.network.lane;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
+import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -18,7 +20,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface Sensor extends Serializable, Comparable<Sensor>
+public interface Sensor extends Serializable, Comparable<Sensor>, LocatableInterface
 {
     /** @return The lane for which this is a sensor. */
     Lane<?, ?> getLane();
