@@ -27,7 +27,7 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
-public class GenerateCars<ID> {
+public class ScheduleGenerateCars<ID> {
 
 	/** Lane on which the generated GTUs are placed. */
 	Lane<?, ?> lane;
@@ -58,7 +58,7 @@ public class GenerateCars<ID> {
 	/** Number of GTUs created. */
 	int carsCreated = 0;
 
-	public GenerateCars(GTUType<ID> gtuType,
+	public ScheduleGenerateCars(GTUType<ID> gtuType,
 			GTUFollowingModel gtuFollowingModel,
 			LaneChangeModel laneChangeModel,
 			LaneBasedRouteGenerator routeGenerator,

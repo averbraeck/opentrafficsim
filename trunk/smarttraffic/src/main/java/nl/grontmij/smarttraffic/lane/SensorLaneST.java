@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
@@ -33,28 +34,27 @@ public class SensorLaneST extends AbstractSensor {
 	private String sensorType;
 	private String nameJunction;
 	private List<SensorLaneST> sensorsParallel = new ArrayList<SensorLaneST>();
-	private HashMap<DoubleScalar.Abs<TimeUnit>, Integer> statusByTime= new HashMap<DoubleScalar.Abs<TimeUnit>, Integer>(); 
-
+	private HashMap<DoubleScalar.Abs<TimeUnit>, Integer> statusByTime = new HashMap<DoubleScalar.Abs<TimeUnit>, Integer>();
+	private Set<LaneBasedGTU<?>> gtusDetected = (Set<LaneBasedGTU<?>>) new ArrayList<LaneBasedGTU<?>>();
 	public final static String ENTRANCE = "ENTRANCE";
 	public final static String INTERMEDIATE = "INTERMEDIATE";
 	public final static String EXIT = "EXIT";
-	
+
 	/**
 	 * @param lane
 	 * @param longitudinalPositionFromEnd
 	 * @param nameSensor
 	 * @param nameJunction
 	 */
-	public SensorLaneST(Lane<?, ?> lane, Rel<LengthUnit> longitudinalPositionFromEnd,
-			final RelativePosition.TYPE front, String sensorType,String nameSensor,
-			String nameJunction) {
+	public SensorLaneST(Lane<?, ?> lane,
+			Rel<LengthUnit> longitudinalPositionFromEnd,
+			final RelativePosition.TYPE front, String sensorType,
+			String nameSensor, String nameJunction) {
 		super(lane, longitudinalPositionFromEnd, front, nameSensor);
 		this.nameJunction = nameJunction;
 		this.sensorType = sensorType;
 	}
 
-	
-	
 	// Method to find other parallel detectors (at the start of the simulation)
 	public List<SensorLaneST> findParallelSensors() {
 		// find the lane
@@ -62,7 +62,8 @@ public class SensorLaneST extends AbstractSensor {
 				.getLinksOut()) {
 			if (link instanceof CrossSectionLink) {
 				CrossSectionLink<?, ?> csl = (CrossSectionLink<?, ?>) link;
-				for (CrossSectionElement<?, ?> cse : csl.getCrossSectionElementList()) {
+				for (CrossSectionElement<?, ?> cse : csl
+						.getCrossSectionElementList()) {
 					if (cse instanceof Lane && !(cse instanceof NoTrafficLane)) {
 						Lane<?, ?> lane = (Lane<?, ?>) cse;
 						if (lane.getSensors(new DoubleScalar.Rel<LengthUnit>(0,
@@ -88,7 +89,6 @@ public class SensorLaneST extends AbstractSensor {
 		return this.sensorsParallel;
 	}
 
-
 	public String getSensorType() {
 		return sensorType;
 	}
@@ -105,14 +105,16 @@ public class SensorLaneST extends AbstractSensor {
 		return statusByTime;
 	}
 
-	public void setStatusByTime(HashMap<DoubleScalar.Abs<TimeUnit>, Integer> statusByTime) {
+	public void setStatusByTime(
+			HashMap<DoubleScalar.Abs<TimeUnit>, Integer> statusByTime) {
 		this.statusByTime = statusByTime;
 	}
 
-	public void addStatusByTime(DoubleScalar.Abs<TimeUnit> timeNow, Integer status) {
+	public void addStatusByTime(DoubleScalar.Abs<TimeUnit> timeNow,
+			Integer status) {
 		this.statusByTime.put(timeNow, status);
 	}
-	
+
 	/**
 	 * {@inheritDoc} <br>
 	 * For this method, we assume that the right sensor triggered this method.
@@ -123,6 +125,7 @@ public class SensorLaneST extends AbstractSensor {
 	public void trigger(final LaneBasedGTU<?> gtu) {
 		System.out.println(gtu.getSimulator() + ": detecting " + gtu.toString()
 				+ " passing detector at lane " + getLane());
+		gtusDetected.add(gtu);
 	}
 
 	/** {@inheritDoc} */

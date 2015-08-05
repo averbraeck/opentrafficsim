@@ -254,7 +254,6 @@ public class ReadVLog {
 		}
 	}
 
-
 	private static void CheckStatusDetector(
 			HashMap<String, SensorLaneST> mapSensor,
 			HashMap<Integer, Integer> mapStatus,
@@ -263,21 +262,24 @@ public class ReadVLog {
 		for (Entry<Integer, Integer> entry : mapStatus.entrySet()) {
 			ConfigVri vri = vriList.get(vriName);
 			String nameDetector = vri.getDetectors().get(entry.getKey());
-			HashMap<DoubleScalar.Abs<TimeUnit>, Integer> map = mapSensor.get(vriName + nameDetector).getStatusByTime();
-			//compare value of latest change and this status
+			HashMap<DoubleScalar.Abs<TimeUnit>, Integer> map = mapSensor.get(
+					vriName + nameDetector).getStatusByTime();
+			// compare value of latest change and this status
 			Entry<DoubleScalar.Abs<TimeUnit>, Integer> maxEntry = null;
-			for(Entry<DoubleScalar.Abs<TimeUnit>, Integer> entry1 : map.entrySet()) {
-			    if (maxEntry == null || entry1.getKey().getSI() > maxEntry.getValue()) {
-			        maxEntry = entry1;
-			    }
+			for (Entry<DoubleScalar.Abs<TimeUnit>, Integer> entry1 : map
+					.entrySet()) {
+				if (maxEntry == null
+						|| entry1.getKey().getSI() > maxEntry.getValue()) {
+					maxEntry = entry1;
+				}
 			}
-			if (entry.getValue()!=maxEntry.getValue())  {
+			if (entry.getValue() != maxEntry.getValue()) {
 				System.out.println("Status detector verkeerd ingelezen!!!!!");
 			}
-			
+
 		}
 	}
-	
+
 	private static void ReadStatusSignalGroup(
 			HashMap<String, SensorLaneST> mapSensor,
 			HashMap<Integer, Integer> mapStatus,
@@ -285,8 +287,7 @@ public class ReadVLog {
 			Instant timeFromVLog, long deltaTimeFromVLog) {
 		for (Entry<Integer, Integer> entry : mapStatus.entrySet()) {
 			ConfigVri vri = vriList.get(vriName);
-			String nameSignalGroup = vri.getSignalGroups().get(
-					entry.getKey());
+			String nameSignalGroup = vri.getSignalGroups().get(entry.getKey());
 			Instant timeVLogNow = timeFromVLog
 					.plusMillis(100 * deltaTimeFromVLog);
 			Long milliSecondsPassed = ChronoUnit.MILLIS.between(
@@ -294,12 +295,11 @@ public class ReadVLog {
 			Lane<?, ?> lane = mapSensor.get(vriName + nameSignalGroup)
 					.getLane();
 			StopLineLane stopLine = GTM.mapLaneToStopLineLane.get(lane);
-			stopLine.addMapStopTrafficState(
-					new DoubleScalar.Rel<TimeUnit>(milliSecondsPassed,
-							TimeUnit.MILLISECOND), entry.getValue());
+			stopLine.addMapStopTrafficState(new DoubleScalar.Rel<TimeUnit>(
+					milliSecondsPassed, TimeUnit.MILLISECOND), entry.getValue());
 		}
 	}
-	
+
 	private static void CheckStatusSignalGroup(
 			HashMap<String, SensorLaneST> mapSensor,
 			HashMap<Integer, Integer> mapStatus,
@@ -307,22 +307,25 @@ public class ReadVLog {
 			Instant timeFromVLog, long deltaTimeFromVLog) {
 		for (Entry<Integer, Integer> entry : mapStatus.entrySet()) {
 			ConfigVri vri = vriList.get(vriName);
-			String nameSignalGroup = vri.getSignalGroups().get(
-					entry.getKey());
-			HashMap<DoubleScalar.Abs<TimeUnit>, Integer> map = mapSensor.get(vriName + nameSignalGroup).getStatusByTime();
-			//compare value of latest change and this status
+			String nameSignalGroup = vri.getSignalGroups().get(entry.getKey());
+			HashMap<DoubleScalar.Abs<TimeUnit>, Integer> map = mapSensor.get(
+					vriName + nameSignalGroup).getStatusByTime();
+			// compare value of latest change and this status
 			Entry<DoubleScalar.Abs<TimeUnit>, Integer> maxEntry = null;
-			for(Entry<DoubleScalar.Abs<TimeUnit>, Integer> entry1 : map.entrySet()) {
-			    if (maxEntry == null || entry1.getKey().getSI() > maxEntry.getValue()) {
-			        maxEntry = entry1;
-			    }
+			for (Entry<DoubleScalar.Abs<TimeUnit>, Integer> entry1 : map
+					.entrySet()) {
+				if (maxEntry == null
+						|| entry1.getKey().getSI() > maxEntry.getValue()) {
+					maxEntry = entry1;
+				}
 			}
-			if (entry.getValue()!=maxEntry.getValue())  {
-				System.out.println("Status signaalgroep verkeerd ingelezen!!!!!");
+			if (entry.getValue() != maxEntry.getValue()) {
+				System.out
+						.println("Status signaalgroep verkeerd ingelezen!!!!!");
 			}
 		}
 	}
-	
+
 	private static int parseTypebericht(final StringBuffer s, int aantal) {
 		return parseByte(s);
 	}
