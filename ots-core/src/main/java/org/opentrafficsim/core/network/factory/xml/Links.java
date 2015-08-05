@@ -146,13 +146,10 @@ final class Links
     static void calculateNodeCoordinates(final LinkTag linkTag, final XmlNetworkLaneParser parser) throws RemoteException,
         NetworkException, NamingException
     {
-        if (linkTag.name.equals("L3aTR"))
-        {
-            System.out.println("L3aTR");
-        }
         // calculate dx, dy and dz for the straight or the arc.
         if (linkTag.nodeStartTag.node != null && linkTag.nodeEndTag.node != null)
         {
+            // ARC with both points defined
             if (linkTag.arcTag != null)
             {
                 double radiusSI = linkTag.arcTag.radius.getSI();
@@ -176,19 +173,25 @@ final class Links
                             + radiusSI * Math.sin(startAngle - Math.PI / 2.0), 0.0);
                     linkTag.arcTag.startAngle = startAngle + Math.PI / 2.0;
                 }
+                return;
             }
-            return;
+
+            // STRAIGHT with both nodes defined
+            if (linkTag.straightTag != null)
+            {
+                if (linkTag.straightTag.length != null)
+                {
+                    throw new NetworkException("Parsing network. Link: " + linkTag.name
+                        + ", Start node and end node given, but also a length specified");
+                }
+                linkTag.straightTag.length =
+                    linkTag.nodeStartTag.node.getPoint().distance(linkTag.nodeEndTag.node.getPoint());
+            }
         }
 
         if (linkTag.nodeStartTag.node == null && linkTag.nodeEndTag.node == null)
         {
             throw new NetworkException("Parsing network. Link: " + linkTag.name + ", both From-node and To-node are null");
-        }
-
-        if (linkTag.nodeStartTag.node != null && linkTag.nodeEndTag.node != null && linkTag.straightTag.length != null)
-        {
-            throw new NetworkException("Parsing network. Link: " + linkTag.name
-                + ", Start node and end node given, but also a length specified");
         }
 
         if (linkTag.straightTag != null)
