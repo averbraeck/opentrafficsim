@@ -53,7 +53,6 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.NoTrafficLane;
 import org.opentrafficsim.core.network.lane.Sensor;
-import org.opentrafficsim.core.network.lane.stop.StopLineLane;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.RouteGenerator;
@@ -300,6 +299,12 @@ public class GTM extends AbstractWrappableSimulation {
 			try {
 				ScheduleTrafficLightsStates scheduleTrafficLightStates= new ScheduleTrafficLightsStates(simulator, mapSensorGenerateCars);
 			} catch (NetworkException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (GTUException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NamingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
