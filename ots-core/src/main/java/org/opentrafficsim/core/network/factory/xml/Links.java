@@ -8,12 +8,16 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.language.reflection.ClassUtil;
+
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.LaneBlock;
 import org.opentrafficsim.core.gtu.lane.LaneBlockOnOff;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -230,8 +234,8 @@ final class Links
                 {
                     linkTag.arcTag.center =
                         new OTSPoint3D(linkTag.nodeStartTag.node.getLocation().getX() + radiusSI
-                            * Math.cos(startAngle + Math.PI / 2.0), linkTag.nodeStartTag.node.getLocation().getY() + radiusSI
-                            * Math.sin(startAngle + Math.PI / 2.0), 0.0);
+                            * Math.cos(startAngle + Math.PI / 2.0), linkTag.nodeStartTag.node.getLocation().getY()
+                            + radiusSI * Math.sin(startAngle + Math.PI / 2.0), 0.0);
                     linkTag.arcTag.startAngle = startAngle - Math.PI / 2.0;
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle + angle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle + angle);
@@ -361,11 +365,12 @@ final class Links
      * @throws SAXException when the stripe type cannot be parsed correctly
      * @throws GTUException when lane block cannot be created
      * @throws OTSGeometryException when construction of the offset-line or contour fails
+     * @throws SimRuntimeException when construction of the generator fails
      */
     @SuppressWarnings({"checkstyle:needbraces", "checkstyle:methodlength"})
     static void applyRoadTypeToLink(final LinkTag linkTag, final XmlNetworkLaneParser parser,
         final OTSDEVSSimulatorInterface simulator) throws NetworkException, RemoteException, NamingException, SAXException,
-        GTUException, OTSGeometryException
+        GTUException, OTSGeometryException, SimRuntimeException
     {
         CrossSectionLink<String, String> csl = linkTag.link;
         List<CrossSectionElement<String, String>> cseList = new ArrayList<>();
@@ -481,10 +486,35 @@ final class Links
                         if (linkTag.generatorTags.containsKey(cseTag.name))
                         {
                             GeneratorTag generatorTag = linkTag.generatorTags.get(cseTag.name);
-                            // TODO Generators.makeGenerator(generatorTag, lane, cseTag.name);
+                            GeneratorTag.makeGenerator(generatorTag, parser, linkTag, simulator);
                         }
 
-                        // TODO FILL
+                        // SENSOR
+                        if (linkTag.sensorTags.containsKey(cseTag.name))
+                        {
+                            for (SensorTag sensorTag : linkTag.sensorTags.get(cseTag.name))
+                            {
+                                try
+                                {
+                                    Class<?> clazz = Class.forName(sensorTag.className);
+                                    ClassUtil.resolveConstructor(clazz, new Class[]{Lane.class, DoubleScalar.Rel.class,
+                                        RelativePosition.TYPE.class, String.class});
+                                }
+                                catch (ClassNotFoundException | NoSuchMethodException exception)
+                                {
+                                    throw new NetworkException("SENSOR: CLASS NAME " + sensorTag.className + " for sensor "
+                                        + sensorTag.name + " on lane " + lane.toString()
+                                        + " -- class not found or constructor not right", exception);
+                                }
+                            }
+                        }
+
+                        // FILL
+                        if (linkTag.fillTags.containsKey(cseTag.name))
+                        {
+                            FillTag fillTag = linkTag.fillTags.get(cseTag.name);
+                            FillTag.makeFill(fillTag, parser, linkTag, simulator);
+                        }
 
                     }
                     break;
@@ -492,7 +522,7 @@ final class Links
 
                 case NOTRAFFICLANE:
                 {
-                    // TODO Override
+                    // TODO LANEOVERRIDE
                     Lane<String, String> lane =
                         new NoTrafficLane<>(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width);
                     cseList.add(lane);
@@ -529,5 +559,4 @@ final class Links
             lanes.get(laneIndex).addAccessibleAdjacentLane(lanes.get(laneIndex - 1), LateralDirectionality.LEFT);
         }
     }
-
 }
