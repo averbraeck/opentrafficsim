@@ -570,10 +570,10 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * @return the set of lanes that are accessible, or null if there is no lane that is accessible with a matching driving
      *         direction.
      */
-    public final Set<Lane<LINKID, NODEID>> accessibleAdjacentLanes(final LateralDirectionality lateralDirection,
+    public final Set<Lane<?, ?>> accessibleAdjacentLanes(final LateralDirectionality lateralDirection,
         final GTUType<?> gtuType)
     {
-        Set<Lane<LINKID, NODEID>> candidates = new LinkedHashSet<>();
+        Set<Lane<?, ?>> candidates = new LinkedHashSet<>();
         for (Lane<LINKID, NODEID> l : neighbors(lateralDirection))
         {
             if (l.getLaneType().isCompatible(gtuType)
@@ -606,10 +606,10 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * @return the lane if it is accessible, or null if there is no lane, it is not accessible, or the driving direction does
      *         not match.
      */
-    public final Lane<LINKID, NODEID> bestAccessibleAdjacentLane(final LateralDirectionality lateralDirection,
+    public final Lane<?, ?> bestAccessibleAdjacentLane(final LateralDirectionality lateralDirection,
         final DoubleScalar.Rel<LengthUnit> longitudinalPosition, final GTUType<?> gtuType)
     {
-        Set<Lane<LINKID, NODEID>> candidates = accessibleAdjacentLanes(lateralDirection, gtuType);
+        Set<Lane<?, ?>> candidates = accessibleAdjacentLanes(lateralDirection, gtuType);
 
         if (candidates.isEmpty())
         {
@@ -620,9 +620,9 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
             return candidates.iterator().next(); // There is exactly one adjacent Lane that this GTU type can cross into
         }
         // There are several candidates; find the one that is widest at the beginning.
-        Lane<LINKID, NODEID> bestLane = null;
+        Lane<?, ?> bestLane = null;
         double widthM = -1.0;
-        for (Lane<LINKID, NODEID> lane : candidates)
+        for (Lane<?, ?> lane : candidates)
         {
             if (lane.getWidth(longitudinalPosition).getSI() > widthM)
             {
