@@ -51,6 +51,26 @@ public final class OTSBuffering
     }
 
     /**
+     * @param p1 first point
+     * @param p2 second point
+     * @return the normalized angle of the line between p1 and p2
+     */
+    private static double angle(final OTSPoint3D p1, final OTSPoint3D p2)
+    {
+        return norm(Math.atan2(p2.y - p1.y, p2.x - p1.x));
+    }
+
+    /**
+     * @param c1 first coordinate
+     * @param c2 second coordinate
+     * @return the normalized angle of the line between c1 and c2
+     */
+    private static double angle(final Coordinate c1, final Coordinate c2)
+    {
+        return norm(Math.atan2(c2.y - c1.y, c2.x - c1.x));
+    }
+
+    /**
      * Generate a Geometry that has a fixed offset from a reference Geometry.
      * @param referenceLine Geometry; the reference line
      * @param offset double; offset distance from the reference line; positive is Left, negative is Right
@@ -74,10 +94,10 @@ public final class OTSBuffering
             geometryLine.buffer(bufferOffset, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
         // find the coordinate indices closest to the start point and end point, at a distance of approximately the
         // offset
-        Coordinate sC = referenceCoordinates[0];
+        Coordinate sC0 = referenceCoordinates[0];
         Coordinate sC1 = referenceCoordinates[1];
-        Coordinate eC = referenceCoordinates[referenceCoordinates.length - 1];
-        Coordinate eC1 = referenceCoordinates[referenceCoordinates.length - 2];
+        Coordinate eCm1 = referenceCoordinates[referenceCoordinates.length - 1];
+        Coordinate eCm2 = referenceCoordinates[referenceCoordinates.length - 2];
         Set<Integer> startIndexSet = new HashSet<>();
         Set<Coordinate> startSet = new HashSet<Coordinate>();
         Set<Integer> endIndexSet = new HashSet<>();
@@ -85,12 +105,12 @@ public final class OTSBuffering
         for (int i = 0; i < bufferCoordinates.length; i++) // Note: the last coordinate = the first coordinate
         {
             Coordinate c = bufferCoordinates[i];
-            if (Math.abs(c.distance(sC) - bufferOffset) < bufferOffset * precision && !startSet.contains(c))
+            if (Math.abs(c.distance(sC0) - bufferOffset) < bufferOffset * precision && !startSet.contains(c))
             {
                 startIndexSet.add(i);
                 startSet.add(c);
             }
-            if (Math.abs(c.distance(eC) - bufferOffset) < bufferOffset * precision && !endSet.contains(c))
+            if (Math.abs(c.distance(eCm1) - bufferOffset) < bufferOffset * precision && !endSet.contains(c))
             {
                 endIndexSet.add(i);
                 endSet.add(c);
@@ -108,26 +128,20 @@ public final class OTSBuffering
         // which point(s) are in the right direction of the start / end?
         int startIndex = -1;
         int endIndex = -1;
-        double expectedStartAngle = norm(Math.atan2(sC1.y - sC.y, sC1.x - sC.x) + Math.signum(offset) * Math.PI / 2.0);
-        double expectedEndAngle = norm(Math.atan2(eC.y - eC1.y, eC.x - eC1.x) + Math.signum(offset) * Math.PI / 2.0);
+        double expectedStartAngle = norm(angle(sC0, sC1) - Math.signum(offset) * Math.PI / 2.0);
+        double expectedEndAngle = norm(angle(eCm2, eCm1) - Math.signum(offset) * Math.PI / 2.0);
         for (int ic : startIndexSet)
         {
-            if (Math.abs(norm(Math.atan2(bufferCoordinates[ic].y - sC.y, bufferCoordinates[ic].x - sC.x)
-                - expectedStartAngle)) < Math.PI / 4.0
-                || Math.abs(norm(Math.atan2(bufferCoordinates[ic].y - sC.y, bufferCoordinates[ic].x - sC.x)
-                    - expectedStartAngle)
-                    - 2.0 * Math.PI) < Math.PI / 4.0)
+            if (norm(expectedStartAngle - angle(sC0, bufferCoordinates[ic])) < Math.PI / 4.0
+                || norm(angle(sC0, bufferCoordinates[ic]) - expectedStartAngle) < Math.PI / 4.0)
             {
                 startIndex = ic;
             }
         }
         for (int ic : endIndexSet)
         {
-            if (Math
-                .abs(norm(Math.atan2(bufferCoordinates[ic].y - eC.y, bufferCoordinates[ic].x - eC.x) - expectedEndAngle)) < Math.PI / 4.0
-                || Math.abs(norm(Math.atan2(bufferCoordinates[ic].y - eC.y, bufferCoordinates[ic].x - eC.x)
-                    - expectedEndAngle)
-                    - 2.0 * Math.PI) < Math.PI / 4.0)
+            if (norm(expectedEndAngle - angle(eCm1, bufferCoordinates[ic])) < Math.PI / 4.0
+                || norm(angle(eCm1, bufferCoordinates[ic]) - expectedEndAngle) < Math.PI / 4.0)
             {
                 endIndex = ic;
             }
