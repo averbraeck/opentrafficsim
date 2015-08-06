@@ -189,6 +189,15 @@ public class TrafficLightOnOff extends AbstractGTU<Integer> implements LaneBased
         }
     }
 
+    /**
+     * @return lane
+     */
+    public final Lane<?, ?> getLane()
+    {
+        return this.lane;
+    }
+
+
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> getLength()
