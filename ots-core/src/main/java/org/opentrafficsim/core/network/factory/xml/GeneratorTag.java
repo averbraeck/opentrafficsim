@@ -42,9 +42,9 @@ class GeneratorTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String laneName = null;
 
-    /** position of the generator on the link, relative to the design line. */
+    /** position of the sink on the link, relative to the design line, stored as a string to parse when the length is known. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Rel<LengthUnit> position = null;
+    String positionStr = null;
 
     /** GTU tag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -126,8 +126,10 @@ class GeneratorTag
         generatorTag.laneName = laneName;
 
         Node position = attributes.getNamedItem("POSITION");
-        generatorTag.position =
-            LinkTag.parseBeginEndPosition(position == null ? "END" : position.getNodeValue().trim(), linkTag);
+        if (position == null)
+            throw new NetworkException("GENERATOR: POSITION element not found in elements of link " + linkTag.name
+                + " - roadtype " + linkTag.roadTypeTag.name);
+        generatorTag.positionStr = position.getNodeValue().trim();
 
         if (attributes.getNamedItem("GTU") != null)
         {
@@ -277,10 +279,11 @@ class GeneratorTag
                 TimeUnit.SI);
         LaneBasedRouteGenerator rg =
             new FixedLaneBasedRouteGenerator(new CompleteRoute<String, String>("fixed route", nodeList));
+        DoubleScalar.Rel<LengthUnit> position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, linkTag);
         new GTUGeneratorIndividual<String>(generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType, gtuClass,
             generatorTag.gtuTag.followingModel, generatorTag.gtuTag.laneChangeModel, generatorTag.initialSpeedDist,
             generatorTag.iatDist, generatorTag.gtuTag.lengthDist, generatorTag.gtuTag.widthDist,
-            generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime, lane, generatorTag.position, rg,
+            generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime, lane, position, rg,
             generatorTag.gtuColorer);
         
         // TODO GTUMix

@@ -233,7 +233,8 @@ final class LinkTag
     }
 
     /**
-     * This method parses a length string that can have values such as: BEGIN, END, 10m, END-10m, 98%.
+     * This method parses a length string that can have values such as: BEGIN, END, 10m, END-10m, 98%. Only use the method after
+     * the length of the link or lane is known!
      * @param posStr the position string to parse. Lengths are relative to the design line.
      * @param linkTag the link to retrieve the design line
      * @return the corresponding position as a length on the design line
