@@ -23,16 +23,21 @@ import org.opentrafficsim.core.network.lane.Shoulder;
  */
 public class ShoulderAnimation extends Renderable2D
 {
+    /** the animation color. */
+    private final Color color;
+    
     /**
      * @param source s
      * @param simulator s
+     * @param color the color to draw the shoulder with
      * @throws NamingException ne
      * @throws RemoteException re
      */
-    public ShoulderAnimation(final Shoulder source, final OTSSimulatorInterface simulator) throws NamingException,
+    public ShoulderAnimation(final Shoulder source, final OTSSimulatorInterface simulator, final Color color) throws NamingException,
         RemoteException
     {
         super(source, simulator);
+        this.color = color;
     }
 
     /** {@inheritDoc} */
@@ -40,6 +45,6 @@ public class ShoulderAnimation extends Renderable2D
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
         Shoulder shoulder = (Shoulder) getSource();
-        PaintPolygons.paintMultiPolygon(graphics, Color.GREEN, shoulder.getLocation(), shoulder.getContour());
+        PaintPolygons.paintMultiPolygon(graphics, this.color, shoulder.getLocation(), shoulder.getContour());
     }
 }

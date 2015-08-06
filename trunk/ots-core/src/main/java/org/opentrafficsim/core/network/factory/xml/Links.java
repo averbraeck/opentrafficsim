@@ -492,7 +492,7 @@ final class Links
                         {
                             BlockTag blockTag = linkTag.blockTags.get(cseTag.name);
                             DoubleScalar.Rel<LengthUnit> position =
-                                LinkTag.parseBeginEndPosition(blockTag.positionStr, linkTag);
+                                LinkTag.parseBeginEndPosition(blockTag.positionStr, lane);
                             new LaneBlock(lane, position, simulator, null);
                         }
 
@@ -501,7 +501,7 @@ final class Links
                         {
                             BlockOnOffTag blockOnOffTag = linkTag.blockOnOffTags.get(cseTag.name);
                             DoubleScalar.Rel<LengthUnit> position =
-                                LinkTag.parseBeginEndPosition(blockOnOffTag.positionStr, linkTag);
+                                LinkTag.parseBeginEndPosition(blockOnOffTag.positionStr, lane);
                             new LaneBlockOnOff(lane, position, simulator, null);
                         }
 
@@ -526,7 +526,7 @@ final class Links
                                         ClassUtil.resolveConstructor(clazz, new Class[]{Lane.class, DoubleScalar.Rel.class,
                                             RelativePosition.TYPE.class, String.class});
                                     DoubleScalar.Rel<LengthUnit> position =
-                                        LinkTag.parseBeginEndPosition(sensorTag.positionStr, linkTag);
+                                        LinkTag.parseBeginEndPosition(sensorTag.positionStr, lane);
                                     AbstractSensor sensor =
                                         (AbstractSensor) sensorConstructor.newInstance(new Object[]{lane, position,
                                             sensorTag.triggerPosition, sensorTag.name});
@@ -574,8 +574,7 @@ final class Links
                     cseList.add(shoulder);
                     if (simulator != null)
                     {
-                        new ShoulderAnimation(shoulder, simulator);
-                        // TODO color
+                        new ShoulderAnimation(shoulder, simulator, cseTag.color);
                     }
                     break;
                 }

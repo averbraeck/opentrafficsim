@@ -26,6 +26,9 @@ import org.opentrafficsim.core.gtu.lane.LaneBlock;
  */
 public class DefaultBlockAnimation extends Renderable2D
 {
+    /** the half width left and right of the center line that is used to draw the block. */ 
+    private final double halfWidth;
+    
     /**
      * Construct the DefaultCarAnimation for a LaneBlock (road block).
      * @param source the Car to draw
@@ -37,6 +40,7 @@ public class DefaultBlockAnimation extends Renderable2D
         RemoteException
     {
         super(source, simulator);
+        this.halfWidth = 0.4 * source.getLane().getWidth(0.0).getSI();
     }
 
     /** {@inheritDoc} */
@@ -44,8 +48,7 @@ public class DefaultBlockAnimation extends Renderable2D
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
         graphics.setColor(Color.RED);
-        Rectangle2D rectangle = new Rectangle2D.Double(-0.5, -1.8, 0.5, 1.8);
-        graphics.draw(rectangle);
+        Rectangle2D rectangle = new Rectangle2D.Double(-0.4, -this.halfWidth, 0.8, 2 * this.halfWidth);
         graphics.fill(rectangle);
     }
 

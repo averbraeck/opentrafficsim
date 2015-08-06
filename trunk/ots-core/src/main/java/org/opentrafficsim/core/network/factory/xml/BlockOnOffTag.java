@@ -48,7 +48,7 @@ class BlockOnOffTag
         if (cseTag.elementType != ElementType.LANE)
             throw new NetworkException("BLOCKONOFF: LANE " + laneName + " not a real GTU lane for link " + linkTag.name
                 + " - roadtype " + linkTag.roadTypeTag.name);
-        if (linkTag.generatorTags.containsKey(laneName))
+        if (linkTag.blockOnOffTags.containsKey(laneName))
             throw new SAXException("BLOCKONOFF for LANE with NAME " + laneName + " defined twice");
 
         Node position = attributes.getNamedItem("POSITION");

@@ -178,6 +178,14 @@ public class LaneBlockOnOff extends AbstractGTU<Integer> implements LaneBasedGTU
         }
     }
 
+    /**
+     * @return lane
+     */
+    public final Lane<?, ?> getLane()
+    {
+        return this.lane;
+    }
+
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> getLength()

@@ -279,7 +279,7 @@ class GeneratorTag
                 TimeUnit.SI);
         LaneBasedRouteGenerator rg =
             new FixedLaneBasedRouteGenerator(new CompleteRoute<String, String>("fixed route", nodeList));
-        DoubleScalar.Rel<LengthUnit> position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, linkTag);
+        DoubleScalar.Rel<LengthUnit> position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);
         new GTUGeneratorIndividual<String>(generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType, gtuClass,
             generatorTag.gtuTag.followingModel, generatorTag.gtuTag.laneChangeModel, generatorTag.initialSpeedDist,
             generatorTag.iatDist, generatorTag.gtuTag.lengthDist, generatorTag.gtuTag.widthDist,
