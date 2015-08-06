@@ -2,8 +2,6 @@ package org.opentrafficsim.core.network.factory.xml;
 
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.CrossSectionElementTag.ElementType;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -19,9 +17,9 @@ import org.xml.sax.SAXException;
  */
 class SinkTag
 {
-    /** position of the sink on the link, relative to the design line. */
+    /** position of the sink on the link, relative to the design line, stored as a string to parse when the length is known. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Rel<LengthUnit> position = null;
+    String positionStr = null;
 
     /**
      * Parse the SINK tag.
@@ -54,7 +52,10 @@ class SinkTag
             throw new SAXException("SINK for LANE with NAME " + laneName + " defined twice");
 
         Node position = attributes.getNamedItem("POSITION");
-        sinkTag.position = LinkTag.parseBeginEndPosition(position == null ? "END" : position.getNodeValue().trim(), linkTag);
+        if (position == null)
+            throw new NetworkException("SINK: POSITION element not found in elements of link " + linkTag.name
+                + " - roadtype " + linkTag.roadTypeTag.name);
+        sinkTag.positionStr = position.getNodeValue().trim();
 
         linkTag.sinkTags.put(laneName, sinkTag);
     }
