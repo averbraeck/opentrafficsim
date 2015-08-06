@@ -96,8 +96,10 @@ public class GTM extends AbstractWrappableSimulation {
 	 */
 
 	public static Instant startTimeSimulation;
-	public static HashMap<Lane<?, ?>, StopLineLane> mapLaneToStopLineLane = new HashMap<Lane<?, ?>, StopLineLane>();
+	public static HashMap<String, StopLineLane> mapSignalGroupToStopLineAtJunction = new HashMap<String, StopLineLane>();
 
+	// standaard methode om de simulatie (DSOL) te starten
+	// Ga naar de methode constructModel voor de inhoud
 	public static void main(final String[] args) throws RemoteException,
 			SimRuntimeException {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -213,8 +215,10 @@ public class GTM extends AbstractWrappableSimulation {
 			String dirBase = System.getProperty("user.dir")
 					+ "/src/main/resources/";
 
+			// geef hier de file met het netwerk
 			URL url = URLResource.getResource(dirBase + "PNH_test_0805-2.xml");
 
+			// Bouw het netwerk
 			XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
 			OTSNetwork<?, ?, ?> network = null;
 			try {
@@ -224,33 +228,21 @@ public class GTM extends AbstractWrappableSimulation {
 					| GTUException | OTSGeometryException exception1) {
 				exception1.printStackTrace();
 			}
-			@SuppressWarnings("unchecked")
-			// define the type of cars
-			GTUType<String> gtuType = GTUType.makeGTUType("CAR");
-
-			// read and define detectors from the network
-			HashMap<String, SensorLaneST> mapSensor = new HashMap<String, SensorLaneST>();
-			HashMap<String, SensorLaneST> mapSensorGenerateCars = new HashMap<String, SensorLaneST>();
-			HashMap<String, SensorLaneST> mapSensorKillCars = new HashMap<String, SensorLaneST>();
-			HashMap<String, SensorLaneST> mapSensorCheckCars = new HashMap<String, SensorLaneST>();
-			try {
-				ReadNetworkData.readDetectors(this.simulator, network,
-						mapSensor, mapSensorGenerateCars, mapSensorKillCars,
-						mapSensorCheckCars);
-			} catch (NetworkException | NamingException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
 
 			// read the configuration files for VLOG (detector/signalgroup: both
 			// index and name
 			String dirConfigVri = "configVRI/";
 			String dirLoggings = "VRI-loggings/";
+			// het nummer van de N201 wordt gebruikt in de bestanden
 			String wegNummer = "201";
+			// Geef de numers van de VRI's
 			// String[] vriNummer = { "225", "231", "234", "239", "245", "249",
 			// "291", "297", "302", "308", "311", "314" };
 			String[] vriNummer = { "225" };
 
+			// in de configVriList worden de vri configuraties opgeslagen
+			// De ConfigVri bevat de detectoren (index, naam) en de
+			// signaalgroepen (index, naam)
 			HashMap<String, ConfigVri> configVriList = null;
 			try {
 				configVriList = ReadVLog.readVlogConfigFiles(dirConfigVri,
@@ -260,12 +252,32 @@ public class GTM extends AbstractWrappableSimulation {
 				e1.printStackTrace();
 			}
 
+			// read and define detectors from the network
+			// in mapSensors staan alle detectoren (met de naam als zoeksleutel
+			// (key))
+			HashMap<String, SensorLaneST> mapSensor = new HashMap<String, SensorLaneST>();
+			// Vervolgens worden de verschillende typen ook nog in aparte
+			// HashMaps opgeslagen
+			HashMap<String, SensorLaneST> mapSensorGenerateCars = new HashMap<String, SensorLaneST>();
+			HashMap<String, SensorLaneST> mapSensorKillCars = new HashMap<String, SensorLaneST>();
+			HashMap<String, SensorLaneST> mapSensorCheckCars = new HashMap<String, SensorLaneST>();
+			// alle detectoren uit het netwerk worden verzameld
+			try {
+				ReadNetworkData.readDetectors(this.simulator, network,
+						configVriList, mapSensor, mapSensorGenerateCars,
+						mapSensorKillCars, mapSensorCheckCars);
+			} catch (NetworkException | NamingException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+
 			// read the historical (at a later stage streaming) VLOG data
 			// start met inlezen files vanaf tijdstip ....
+			// nu wordt er nog data van alleen 1 juni ingelezen
 			int year = 2015;
 			int month = 6;
 			int day = 1;
-			long hour = 0;
+			long hour = 6;
 			int minute = 0;
 			int second = 0;
 			int tenth = 0;
@@ -276,15 +288,28 @@ public class GTM extends AbstractWrappableSimulation {
 			ZoneOffset offset = ZoneOffset.of("-00:00");
 			LocalDateTime ldt = LocalDateTime.ofInstant(timeVLog, offset);
 			ldt = LocalDateTime.ofInstant(timeVLog, offset);
-
 			// read the vlog data with both detector and signalgroup data
-			ReadVLog.readVlogFiles(mapSensor, configVriList, timeVLog, dirBase
-					+ dirLoggings, wegNummer, vriNummer);
+			// van alle detectoren worden nu de pulsen toegevoegd (tijdstip en
+			// waarde detectie/signaal)
+			// deze worden opgeslagen in de mapSensor, maar tegelijkertijd ook
+			// in de mappen mapSensorGenerateCars, mapSensorKillCars en
+			// mapSensorCheckCars (omdat daar een verwijzing naar dezelfde objecten is
+			//
+			try {
+				ReadVLog.readVlogFiles(mapSensor, configVriList, timeVLog,
+						dirBase + dirLoggings, wegNummer, vriNummer);
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
 
 			// connect the detector pulses to the simulator and generate Cars
 			// Module that provides actions if a pulse from a detector is
 			// activated
 			// - Generate a car (ENTRANCE)
+			@SuppressWarnings("unchecked")
+			// define the type of cars
+			GTUType<String> gtuType = GTUType.makeGTUType("CAR");
 			try {
 				ScheduleGenerateCars generateCars = new ScheduleGenerateCars(
 						gtuType, gtuFollowingModel, laneChangeModel,

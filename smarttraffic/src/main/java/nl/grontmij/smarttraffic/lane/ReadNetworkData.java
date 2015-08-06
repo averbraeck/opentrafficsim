@@ -29,7 +29,9 @@ public class ReadNetworkData {
 		// cannot be instantiated.
 	}
 
-	public static void readDetectors(OTSDEVSSimulatorInterface simulator, OTSNetwork<?, ?, ?> network,
+	public static void readDetectors(OTSDEVSSimulatorInterface simulator,
+			OTSNetwork<?, ?, ?> network,
+			HashMap<String, ConfigVri> configVriList,
 			HashMap<String, SensorLaneST> mapSensor,
 			HashMap<String, SensorLaneST> mapSensorGenerateCars,
 			HashMap<String, SensorLaneST> mapSensorKillCars,
@@ -51,54 +53,89 @@ public class ReadNetworkData {
 								new DoubleScalar.Rel<LengthUnit>(0,
 										LengthUnit.METER), lane.getLength());
 						if (!sensors.isEmpty()) {
+
 							for (Sensor sensor : sensors) {
 								if (sensor instanceof SensorLaneST) {
 									SensorLaneST sensorLaneST = (SensorLaneST) sensor;
-									mapSensor.put(sensor.getName(), sensorLaneST);
-									if (sensorLaneST.getName().startsWith("G")) {
-										mapSensorGenerateCars.put(
-												sensor.getName(), sensorLaneST);
-								        if (simulator instanceof OTSAnimatorInterface)
-								        {
-												new DefaultSensorAnimation(sensor, simulator, Color.RED);
-								        }
 
-									} else if (sensorLaneST.getName().startsWith("K")) {
-										mapSensorKillCars.put(sensor.getName(),
+									mapSensor.put(
+											sensor.getName().substring(1),
+											sensorLaneST);
+
+									if (sensorLaneST.getName().startsWith("G")) {
+										mapSensorGenerateCars.put(sensor
+												.getName().substring(1),
 												sensorLaneST);
-								        if (simulator instanceof OTSAnimatorInterface)
-								        {
-												new DefaultSensorAnimation(sensor, simulator, Color.ORANGE);
-								        }
-									} else if (sensorLaneST.getName().startsWith("C")) {
-										mapSensorCheckCars.put(
-												sensor.getName(), sensorLaneST);
-								        if (simulator instanceof OTSAnimatorInterface)
-								        {
-												new DefaultSensorAnimation(sensor, simulator, Color.BLUE);
-								        }										
+										if (simulator instanceof OTSAnimatorInterface) {
+											new DefaultSensorAnimation(sensor,
+													simulator, Color.RED);
+										}
+
+									} else if (sensorLaneST.getName()
+											.startsWith("K")) {
+										mapSensorKillCars.put(sensor.getName()
+												.substring(1), sensorLaneST);
+										if (simulator instanceof OTSAnimatorInterface) {
+											new DefaultSensorAnimation(sensor,
+													simulator, Color.ORANGE);
+										}
+									} else if (sensorLaneST.getName()
+											.startsWith("C")) {
+										mapSensorCheckCars.put(sensor.getName()
+												.substring(1), sensorLaneST);
+										if (simulator instanceof OTSAnimatorInterface) {
+											new DefaultSensorAnimation(sensor,
+													simulator, Color.BLUE);
+										}
 									}
 
+									// Generate the stoplines automatically
 									if (sensorLaneST.getName().startsWith("G")
-											|| sensorLaneST.getName().startsWith("C")) {
-										// connect to signalgroup
-										DoubleScalar.Rel<LengthUnit> longitudinalPositionFromEnd = new DoubleScalar.Rel<LengthUnit>(
-												lane.getLength().getInUnit(
-														LengthUnit.METER) - 10,
-												LengthUnit.METER);
+											|| sensorLaneST.getName()
+													.startsWith("C")) {
+										// and connect the name to the traffic
+										// light number and signalgroup
 										String name = sensorLaneST.getName()
 												.substring(1);
-										name = name.replace(".", "");
-										name = ("000" + name).substring(name
-												.length());
-										StopLineLane stopLine = new StopLineLane(
-												lane,
-												longitudinalPositionFromEnd,
-												name);
-										lane.addSensor(stopLine);
-										GTM.mapLaneToStopLineLane.put(lane,
-												stopLine);
+										String nameSplitted[] = name.split("_");
+										String temp = nameSplitted[1];
+										String nameSensor[] = temp.split("\\.");
+										String nameSignalGroup = ("00" + nameSensor[0])
+												.substring(nameSensor[0]
+														.length());
+										if (configVriList.get(nameSplitted[0]) != null) {
+											ConfigVri configVri = configVriList
+													.get(nameSplitted[0]);
+											for (String detector : configVri
+													.getDetectors().values()) {
+												if (detector.startsWith("K")) {
+													if (detector
+															.substring(1)
+															.contentEquals(temp)) {
+														DoubleScalar.Rel<LengthUnit> longitudinalPositionFromEnd = new DoubleScalar.Rel<LengthUnit>(
+																lane.getLength()
+																		.getInUnit(
+																				LengthUnit.METER) - 10,
+																LengthUnit.METER);
+														name = name
+																+ "_"
+																+ nameSignalGroup;
+														StopLineLane stopLine = new StopLineLane(
+																lane,
+																longitudinalPositionFromEnd,
+																name);
+
+														lane.addSensor(stopLine);
+														GTM.mapSignalGroupToStopLineAtJunction
+																.put(name,
+																		stopLine);
+													}
+												}
+											}
+										}
+
 									}
+
 								}
 
 							}
