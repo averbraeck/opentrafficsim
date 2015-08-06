@@ -3,15 +3,18 @@
  */
 package nl.grontmij.smarttraffic.lane;
 
+import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.animation.LaneAnimation;
 import org.opentrafficsim.core.network.lane.AbstractSensor;
 import org.opentrafficsim.core.network.lane.CrossSectionElement;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
@@ -35,11 +38,26 @@ public class SensorLaneST extends AbstractSensor {
 	private String nameJunction;
 	private List<SensorLaneST> sensorsParallel = new ArrayList<SensorLaneST>();
 	private HashMap<DoubleScalar.Abs<TimeUnit>, Integer> statusByTime = new HashMap<DoubleScalar.Abs<TimeUnit>, Integer>();
-	private Set<LaneBasedGTU<?>> gtusDetected = (Set<LaneBasedGTU<?>>) new ArrayList<LaneBasedGTU<?>>();
+	private ArrayList<LaneBasedGTU<?>> gtusDetected = new ArrayList<LaneBasedGTU<?>>();
 	public final static String ENTRANCE = "ENTRANCE";
 	public final static String INTERMEDIATE = "INTERMEDIATE";
 	public final static String EXIT = "EXIT";
 
+/*	*//**
+	 * @param lane
+	 * @param longitudinalPositionFromEnd
+	 * @param nameSensor
+	 * @param nameJunction
+	 *//*
+	public SensorLaneST(Lane<?, ?> lane,
+			Rel<LengthUnit> longitudinalPositionFromEnd,
+			final RelativePosition.TYPE front, String sensorType,
+			String nameSensor, String nameJunction) {
+		super(lane, longitudinalPositionFromEnd, front, nameSensor);
+		this.nameJunction = nameJunction;
+		this.sensorType = sensorType;
+	}*/
+	
 	/**
 	 * @param lane
 	 * @param longitudinalPositionFromEnd
@@ -48,11 +66,8 @@ public class SensorLaneST extends AbstractSensor {
 	 */
 	public SensorLaneST(Lane<?, ?> lane,
 			Rel<LengthUnit> longitudinalPositionFromEnd,
-			final RelativePosition.TYPE front, String sensorType,
-			String nameSensor, String nameJunction) {
+			final RelativePosition.TYPE front, String nameSensor) {
 		super(lane, longitudinalPositionFromEnd, front, nameSensor);
-		this.nameJunction = nameJunction;
-		this.sensorType = sensorType;
 	}
 
 	// Method to find other parallel detectors (at the start of the simulation)

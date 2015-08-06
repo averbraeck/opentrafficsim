@@ -234,10 +234,10 @@ public class GTM extends AbstractWrappableSimulation {
 			HashMap<String, SensorLaneST> mapSensorKillCars = new HashMap<String, SensorLaneST>();
 			HashMap<String, SensorLaneST> mapSensorCheckCars = new HashMap<String, SensorLaneST>();
 			try {
-				ReadNetworkData.readDetectors(network, mapSensor,
-						mapSensorGenerateCars, mapSensorKillCars,
+				ReadNetworkData.readDetectors(this.simulator, network,
+						mapSensor, mapSensorGenerateCars, mapSensorKillCars,
 						mapSensorCheckCars);
-			} catch (NetworkException e2) {
+			} catch (NetworkException | NamingException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
@@ -276,35 +276,28 @@ public class GTM extends AbstractWrappableSimulation {
 			ZoneOffset offset = ZoneOffset.of("-00:00");
 			LocalDateTime ldt = LocalDateTime.ofInstant(timeVLog, offset);
 			ldt = LocalDateTime.ofInstant(timeVLog, offset);
-			
-			
-			// read the vlog data with both detector and signalgroup data
-			try {
-				ReadVLog.readVlogFiles(mapSensor, configVriList, timeVLog,
-						dirBase + dirLoggings, wegNummer, vriNummer);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 
-			
-			
+			// read the vlog data with both detector and signalgroup data
+			ReadVLog.readVlogFiles(mapSensor, configVriList, timeVLog, dirBase
+					+ dirLoggings, wegNummer, vriNummer);
+
 			// connect the detector pulses to the simulator and generate Cars
 			// Module that provides actions if a pulse from a detector is
 			// activated
 			// - Generate a car (ENTRANCE)
 			try {
-				ScheduleGenerateCars generateCars = new ScheduleGenerateCars(gtuType,
-						gtuFollowingModel, laneChangeModel, routeGenerator,
-						gtuColorer, simulator, mapSensorGenerateCars);
-			} catch (NetworkException e) {
+				ScheduleGenerateCars generateCars = new ScheduleGenerateCars(
+						gtuType, gtuFollowingModel, laneChangeModel,
+						routeGenerator, gtuColorer, simulator,
+						mapSensorGenerateCars);
+			} catch (NetworkException e1) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e1.printStackTrace();
 			}
-			
-			
+
 			try {
-				ScheduleTrafficLightsStates scheduleTrafficLightStates= new ScheduleTrafficLightsStates(simulator, mapSensorGenerateCars);
+				ScheduleTrafficLightsStates scheduleTrafficLightStates = new ScheduleTrafficLightsStates(
+						simulator, mapSensorGenerateCars);
 			} catch (NetworkException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -316,13 +309,13 @@ public class GTM extends AbstractWrappableSimulation {
 				e.printStackTrace();
 			}
 
-	
 			// - Compare the (INTERMEDIATE) pulse to vehicles in the simulation
-			// 
+			//
 			// - if no car is matched: Generate a car
 			// - if matched: reposition that car, and perhaps other cars
 			try {
-				ScheduleCheckPulses scheduleCheckPulses = new ScheduleCheckPulses(simulator, mapSensorCheckCars);
+				ScheduleCheckPulses scheduleCheckPulses = new ScheduleCheckPulses(
+						simulator, mapSensorCheckCars);
 			} catch (NetworkException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -333,17 +326,10 @@ public class GTM extends AbstractWrappableSimulation {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 
-			
 			// - Kill a car (EXIT)
 			// connect to the sensorKill
-			
-			
-			
-			
-			
-			
+
 			// module that detects a car in the simulation passing a
 			// detector and provide actions:
 			// - if the car is too far downstream, and not matched by a
@@ -361,7 +347,6 @@ public class GTM extends AbstractWrappableSimulation {
 			// decrease/increase the maximum speed
 
 		}
-
 
 		/** {@inheritDoc} */
 		@Override

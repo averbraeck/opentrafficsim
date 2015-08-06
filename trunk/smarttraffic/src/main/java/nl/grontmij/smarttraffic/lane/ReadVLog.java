@@ -1,6 +1,7 @@
 package nl.grontmij.smarttraffic.lane;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
@@ -66,38 +67,44 @@ public class ReadVLog {
 			if (buffer.length() > 0) {
 				// //SYS
 				// SYS,"201225"
-				if (buffer.length() >= 5) {
-					if (buffer.substring(0, 5).contentEquals("//SYS")) {
+				if (buffer.length() >= 4) {
+					if (buffer.substring(0, 4).contentEquals("//SY")) {
 						line = bufferedReader.readLine();
-						String weg = line.substring(0, 3);
-						String vri = line.substring(3, 3);
+						line = line.replaceAll("\"", "");
+						String[] info = line.split(",");
+						String weg = info[1].substring(0, 3);
+						String vri = info[1].substring(3, 6);
 						nameVRI = weg + vri;
 					}
 
-				} else if (buffer.substring(0, 4).contentEquals("//DP")) {
-					line = bufferedReader.readLine();
-					while ((line = bufferedReader.readLine()) != null) {
-						if (line.length() > 0) {
-							if (line.substring(0, 2).contentEquals("DP"))
-								readDetectorSettings(line, detectors);
-						} else if (line.length() >= 2) {
-							if (line.substring(0, 2).contentEquals("//")) {
-								break;
+					else if (buffer.substring(0, 4).contentEquals("//DP")) {
+						while ((line = bufferedReader.readLine()) != null) {
+							if (line.length() > 0) {
+								if (line.substring(0, 2).contentEquals("DP")) {
+									readDetectorSettings(line, detectors);
+								} else if (line.length() >= 2) {
+									if (line.substring(0, 2)
+											.contentEquals("//")) {
+										break;
+									}
+								}
 							}
 						}
-					}
-				} else if (buffer.substring(0, 4).contentEquals("//IS")) {
-					// TODO: add IS info als nodig
+					} else if (buffer.substring(0, 4).contentEquals("//IS")) {
+						// TODO: add IS info als nodig
 
-				} else if (buffer.substring(0, 4).contentEquals("//FC")) {
-					line = bufferedReader.readLine();
-					while ((line = bufferedReader.readLine()) != null) {
-						if (line.length() > 0) {
-							if (line.substring(0, 2).contentEquals("FC"))
-								readTrafficlightSettings(line, signalGroups);
-						} else if (line.length() >= 2) {
-							if (line.substring(0, 2).contentEquals("//")) {
-								break;
+					} else if (buffer.substring(0, 4).contentEquals("//FC")) {
+						line = bufferedReader.readLine();
+						while ((line = bufferedReader.readLine()) != null) {
+							if (line.length() > 0) {
+								if (line.substring(0, 2).contentEquals("FC")) {
+									readTrafficlightSettings(line, signalGroups);
+								} else if (line.length() >= 2) {
+									if (line.substring(0, 2)
+											.contentEquals("//")) {
+										break;
+									}
+								}
 							}
 						}
 					}
@@ -109,8 +116,7 @@ public class ReadVLog {
 
 	public static void readVlogFiles(HashMap<String, SensorLaneST> mapSensor,
 			HashMap<String, ConfigVri> configVriList, Instant timeVLog,
-			String dirLoggings, String wegNummer, String[] vriNummer)
-			throws IOException {
+			String dirLoggings, String wegNummer, String[] vriNummer) {
 		ZoneOffset offset = ZoneOffset.of("-00:00");
 		LocalDateTime ldt = LocalDateTime.ofInstant(timeVLog, offset);
 		ldt = LocalDateTime.ofInstant(timeVLog, offset);
@@ -132,26 +138,45 @@ public class ReadVLog {
 			String timeStampFile = String.format("%04d%02d%02d_%02d%02d%02d",
 					year, month, day, hour, minute, second);
 			// zoek de eerste "harde" tijdsaanduiding
-			while (URLResource.getResource(dirLoggings + Integer.toString(day)
-					+ "/" + vriLocation + "/" + vriLocation + "_"
-					+ timeStampFile + ".vlg") != null) {
-				URL url = URLResource.getResource(dirLoggings + dayString + "/"
+			while (hour < 20) {
+				String file = dirLoggings + Integer.toString(day) + "/"
 						+ vriLocation + "/" + vriLocation + "_" + timeStampFile
-						+ ".vlg");
-				BufferedReader bufferedReader = null;
-				String path = url.getPath();
-				bufferedReader = new BufferedReader(new FileReader(path));
-				if (!boolReadyToStartVLog) {
-					readStatusVLogFile(mapSensor, bufferedReader, timeFromVLog,
-							deltaTimeFromVLog, boolReadFirstTimeStamp,
-							boolReadFirstDetectorStatus,
-							boolReadFirstSignalGroupStatus,
-							boolReadyToStartVLog, configVriList, wegNummer
-									+ vri);
-				}
-				if (boolReadyToStartVLog) {
-					readVLogFile(mapSensor, bufferedReader, timeFromVLog,
-							deltaTimeFromVLog, configVriList, wegNummer + vri);
+						+ ".vlg";
+				if (URLResource.getResource(file) != null) {
+					URL url = URLResource.getResource(file);
+					BufferedReader bufferedReader = null;
+					String path = url.getPath();
+					try {
+						bufferedReader = new BufferedReader(
+								new FileReader(path));
+					} catch (FileNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					if (!boolReadyToStartVLog) {
+						try {
+							readStatusVLogFile(mapSensor, bufferedReader,
+									timeFromVLog, deltaTimeFromVLog,
+									boolReadFirstTimeStamp,
+									boolReadFirstDetectorStatus,
+									boolReadFirstSignalGroupStatus,
+									boolReadyToStartVLog, configVriList,
+									wegNummer + vri);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					if (boolReadyToStartVLog) {
+						try {
+							readVLogFile(mapSensor, bufferedReader,
+									timeFromVLog, deltaTimeFromVLog,
+									configVriList, wegNummer + vri);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 				}
 				// increase time with one minute for next file
 				timeVLog = timeVLog.plusSeconds(60);

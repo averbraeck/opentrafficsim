@@ -1,13 +1,20 @@
 package nl.grontmij.smarttraffic.lane;
 
+import java.awt.Color;
+import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.NamingException;
+
+import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.animation.DefaultSensorAnimation;
 import org.opentrafficsim.core.network.lane.CrossSectionElement;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
@@ -22,12 +29,12 @@ public class ReadNetworkData {
 		// cannot be instantiated.
 	}
 
-	public static void readDetectors(OTSNetwork<?, ?, ?> network,
+	public static void readDetectors(OTSDEVSSimulatorInterface simulator, OTSNetwork<?, ?, ?> network,
 			HashMap<String, SensorLaneST> mapSensor,
 			HashMap<String, SensorLaneST> mapSensorGenerateCars,
 			HashMap<String, SensorLaneST> mapSensorKillCars,
 			HashMap<String, SensorLaneST> mapSensorCheckCars)
-			throws NetworkException {
+			throws NetworkException, RemoteException, NamingException {
 		// Detectors
 		// define the detectors by type (ENTRANCE, INTERMEDIATE, EXIT)
 		// Inventorize all detectors from the network, distinguished by type
@@ -51,12 +58,25 @@ public class ReadNetworkData {
 									if (sensorLaneST.getName().startsWith("G")) {
 										mapSensorGenerateCars.put(
 												sensor.getName(), sensorLaneST);
+								        if (simulator instanceof OTSAnimatorInterface)
+								        {
+												new DefaultSensorAnimation(sensor, simulator, Color.RED);
+								        }
+
 									} else if (sensorLaneST.getName().startsWith("K")) {
 										mapSensorKillCars.put(sensor.getName(),
 												sensorLaneST);
+								        if (simulator instanceof OTSAnimatorInterface)
+								        {
+												new DefaultSensorAnimation(sensor, simulator, Color.ORANGE);
+								        }
 									} else if (sensorLaneST.getName().startsWith("C")) {
 										mapSensorCheckCars.put(
 												sensor.getName(), sensorLaneST);
+								        if (simulator instanceof OTSAnimatorInterface)
+								        {
+												new DefaultSensorAnimation(sensor, simulator, Color.BLUE);
+								        }										
 									}
 
 									if (sensorLaneST.getName().startsWith("G")
