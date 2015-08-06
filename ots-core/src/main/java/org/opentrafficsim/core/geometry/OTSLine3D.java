@@ -11,6 +11,7 @@ import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -38,6 +39,9 @@ public class OTSLine3D implements LocatableInterface, Serializable
 
     /** the points of the line. */
     private final OTSPoint3D[] points;
+
+    /** the cumulative length of the line at point 'i'. */
+    private double[] lengthIndexedLine = null;
 
     /** the cached length; will be calculated when needed for the first time. */
     private double length = Double.NaN;
@@ -169,6 +173,111 @@ public class OTSLine3D implements LocatableInterface, Serializable
     public final OTSPoint3D[] getPoints()
     {
         return this.points;
+    }
+
+    /**
+     * Get the location at a fraction of the line, with its direction. Fraction should be between 0.0 and 1.0.
+     * @param fraction the fraction for which to calculate the point on the line
+     * @return a directed point
+     * @throws NetworkException when fraction less than 0.0 or more than 1.0.
+     */
+    public final DirectedPoint getLocationFraction(final double fraction) throws NetworkException
+    {
+        if (fraction < 0.0 || fraction > 1.0)
+        {
+            throw new NetworkException("getLocationFraction for line: fraction < 0.0 or > 1.0. fraction = " + fraction);
+        }
+        return getLocationSI(fraction * getLengthSI());
+    }
+
+    /**
+     * Get the location at a position on the line, with its direction. Position should be between 0.0 and line length.
+     * @param position the position on the line for which to calculate the point on the line
+     * @return a directed point
+     * @throws NetworkException when position less than 0.0 or more than line length.
+     */
+    public final DirectedPoint getLocation(final DoubleScalar.Rel<LengthUnit> position) throws NetworkException
+    {
+        return getLocationSI(position.getSI());
+    }
+
+    /**
+     * Binary search for a position on the line.
+     * @param pos the position to look for.
+     * @return the index below the position; the position is between points[index] and points[index+1]
+     * @throws NetworkException when index could not be found
+     */
+    private int find(final double pos) throws NetworkException
+    {
+        int lo = 0;
+        int hi = this.lengthIndexedLine.length - 1;
+        while (lo <= hi)
+        {
+            if (hi - lo <= 1)
+            {
+                return hi - 1;
+            }
+            int mid = lo + (hi - lo) / 2;
+            if (pos < this.lengthIndexedLine[mid])
+            {
+                hi = mid - 1;
+            }
+            else if (pos > this.lengthIndexedLine[mid])
+            {
+                lo = mid + 1;
+            }
+        }
+        throw new NetworkException("Could not find position " + pos + " on line with length indexes: "
+            + this.lengthIndexedLine);
+    }
+
+    /**
+     * Get the location at a position on the line, with its direction. Position should be between 0.0 and line length.
+     * @param positionSI the position on the line for which to calculate the point on the line
+     * @return a directed point
+     * @throws NetworkException when position less than 0.0 or more than line length.
+     */
+    public final DirectedPoint getLocationSI(final double positionSI) throws NetworkException
+    {
+        if (positionSI < 0.0 || positionSI > getLengthSI())
+        {
+            throw new NetworkException("getLocationSI for line: position < 0.0 or > line length. Position = " + positionSI
+                + " m. Length = " + getLengthSI() + " m.");
+        }
+
+        // make the length indexed line if it does not exist yet, and cache it
+        if (this.lengthIndexedLine == null)
+        {
+            this.lengthIndexedLine = new double[this.points.length];
+            this.lengthIndexedLine[0] = 0.0;
+            for (int i = 1; i < this.points.length; i++)
+            {
+                this.lengthIndexedLine[i] = this.lengthIndexedLine[i - 1] + this.points[i - 1].distanceSI(this.points[i]);
+            }
+        }
+
+        // handle special cases: position == 0.0, or position == length
+        if (positionSI == 0.0)
+        {
+            OTSPoint3D p1 = this.points[0];
+            OTSPoint3D p2 = this.points[1];
+            return new DirectedPoint(p1.x, p1.y, p1.z, 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+        }
+        if (positionSI == getLengthSI())
+        {
+            OTSPoint3D p1 = this.points[this.points.length - 2];
+            OTSPoint3D p2 = this.points[this.points.length - 1];
+            return new DirectedPoint(p1.x, p1.y, p1.z, 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+        }
+
+        // find the index of the line segment, use binary search
+        int index = find(positionSI);
+        double remainder = positionSI - this.lengthIndexedLine[index];
+        double fraction = remainder / (this.lengthIndexedLine[index + 1] - this.lengthIndexedLine[index]);
+        OTSPoint3D p1 = this.points[index];
+        OTSPoint3D p2 = this.points[index + 1];
+        return new DirectedPoint(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y), p1.z + fraction
+            * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
     }
 
     /**

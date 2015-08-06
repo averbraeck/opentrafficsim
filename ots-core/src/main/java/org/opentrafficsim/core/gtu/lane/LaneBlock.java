@@ -10,7 +10,6 @@ import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 import javax.vecmath.Point3d;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
@@ -37,10 +36,6 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.linearref.LengthIndexedLine;
-
 /**
  * Special GTU that cannot move, but it can be seen by other GTUs.
  * <p>
@@ -64,10 +59,13 @@ public class LaneBlock extends AbstractGTU<Integer> implements LaneBasedGTU<Inte
     private Renderable2D animation;
 
     /** the lane of the block. */
-    final Lane<?, ?> lane;
+    private final Lane<?, ?> lane;
 
     /** the position of the block on the lane. */
-    final DoubleScalar.Rel<LengthUnit> position;
+    private final DoubleScalar.Rel<LengthUnit> position;
+
+    /** the cached location for animation. */
+    private DirectedPoint location = null;
 
     /** blocking GTU type. */
     public static final GTUType<String> BLOCK_GTU;
@@ -83,7 +81,7 @@ public class LaneBlock extends AbstractGTU<Integer> implements LaneBasedGTU<Inte
         SpeedUnit.METER_PER_SECOND);
 
     /** null time. */
-    private static DoubleScalar.Abs<TimeUnit> TIME_ABS_0 = new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND);
+    private static final DoubleScalar.Abs<TimeUnit> TIME_ABS_0 = new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND);
 
     /** null acceleration. */
     private static final DoubleScalar.Abs<AccelerationUnit> ACCELERATION_ABS_0 = new DoubleScalar.Abs<AccelerationUnit>(0.0,
@@ -125,15 +123,23 @@ public class LaneBlock extends AbstractGTU<Integer> implements LaneBasedGTU<Inte
         // register the block on the lanes
         lane.addGTU(this, position);
 
-        new DefaultBlockAnimation(this, this.simulator);
         // animation
+        new DefaultBlockAnimation(this, this.simulator);
         if (simulator instanceof OTSAnimatorInterface && animationClass != null)
         {
-            // TODO
+            // TODO use animationClass
         }
 
     }
-    
+
+    /**
+     * @return lane
+     */
+    public final Lane<?, ?> getLane()
+    {
+        return this.lane;
+    }
+
     /** {@inheritDoc} */
     @Override
     public final DoubleScalar.Rel<LengthUnit> getLength()
@@ -208,52 +214,20 @@ public class LaneBlock extends AbstractGTU<Integer> implements LaneBasedGTU<Inte
     @Override
     public final DirectedPoint getLocation() throws RemoteException
     {
-        // TODO solve problem when point is still on previous lane.
-        DoubleScalar.Rel<LengthUnit> longitudinalPos;
-        try
+        if (this.location == null)
         {
-            longitudinalPos = position(lane, getReference());
-            double fraction = (longitudinalPos.getSI() + getLength().getSI() / 2.0) / lane.getLength().getSI();
-            LineString line = lane.getCenterLine().getLineString();
-            LengthIndexedLine lil = new LengthIndexedLine(line);
-            // if (fraction > 1)
-            // {
-            // System.out.println("fraction is " + fraction);
-            // }
-            double useFraction = fraction;
-            boolean fractionAdjusted = false;
-            if (fraction < 0)
+            try
             {
-                useFraction = 0;
-                fractionAdjusted = true;
+                this.location = this.lane.getCenterLine().getLocation(this.position);
+                this.location.z = this.lane.getLocation().z + 0.01;
             }
-            if (fraction > 0.99)
+            catch (NetworkException exception)
             {
-                useFraction = 0.99;
-                fractionAdjusted = true;
+                exception.printStackTrace();
+                return null;
             }
-            // DO NOT MODIFY THE RESULT OF extractPoint (it may be one of the coordinates in line).
-            Coordinate c = new Coordinate(lil.extractPoint(useFraction * line.getLength()));
-            c.z = 0d;
-            Coordinate cb = lil.extractPoint((useFraction + 0.01) * line.getLength());
-            double angle = Math.atan2(cb.y - c.y, cb.x - c.x);
-            if (fractionAdjusted)
-            {
-                c =
-                    new Coordinate(c.x + (fraction - useFraction) * 100 * (cb.x - c.x), c.y + (fraction - useFraction) * 100
-                        * (cb.y - c.y), c.z);
-            }
-            if (Double.isNaN(c.x))
-            {
-                System.out.println("Bad");
-            }
-            return new DirectedPoint(c.x, c.y, c.z + 0.01 /* raise it slightly above the lane surface */, 0.0, 0.0, angle);
         }
-        catch (NetworkException exception)
-        {
-            exception.printStackTrace();
-            return null;
-        }
+        return this.location;
     }
 
     /** {@inheritDoc} */

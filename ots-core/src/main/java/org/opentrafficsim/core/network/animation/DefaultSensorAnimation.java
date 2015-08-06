@@ -29,6 +29,9 @@ public class DefaultSensorAnimation extends Renderable2D
     /** the color of the sensor. */
     private final Color color;
 
+    /** the half width left and right of the center line that is used to draw the block. */ 
+    private final double halfWidth;
+
     /**
      * Construct the DefaultCarAnimation for a LaneBlock (road block).
      * @param source the Car to draw
@@ -42,6 +45,7 @@ public class DefaultSensorAnimation extends Renderable2D
     {
         super(source, simulator);
         this.color = color;
+        this.halfWidth = 0.4 * source.getLane().getWidth(0.0).getSI();
     }
 
     /** {@inheritDoc} */
@@ -49,8 +53,7 @@ public class DefaultSensorAnimation extends Renderable2D
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
         graphics.setColor(this.color);
-        Rectangle2D rectangle = new Rectangle2D.Double(-0.25, -1.8, 0.25, 1.8);
-        graphics.draw(rectangle);
+        Rectangle2D rectangle = new Rectangle2D.Double(-0.4, -this.halfWidth, 0.8, 2 * this.halfWidth);
         graphics.fill(rectangle);
     }
 

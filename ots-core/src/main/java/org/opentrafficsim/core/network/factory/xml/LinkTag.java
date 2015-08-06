@@ -7,6 +7,7 @@ import java.util.Map;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.AngleUnits;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
+import org.opentrafficsim.core.network.lane.CrossSectionElement;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.AnglePlaneUnit;
@@ -234,13 +235,13 @@ final class LinkTag
 
     /**
      * This method parses a length string that can have values such as: BEGIN, END, 10m, END-10m, 98%. Only use the method after
-     * the length of the link or lane is known!
-     * @param posStr the position string to parse. Lengths are relative to the design line.
-     * @param linkTag the link to retrieve the design line
-     * @return the corresponding position as a length on the design line
+     * the length of the cross section elements is known!
+     * @param posStr the position string to parse. Lengths are relative to the center line of the cross section element.
+     * @param cse the cross section element to retrieve the center line
+     * @return the corresponding position as a length on the center line
      * @throws NetworkException when parsing fails
      */
-    static DoubleScalar.Rel<LengthUnit> parseBeginEndPosition(final String posStr, final LinkTag linkTag)
+    static DoubleScalar.Rel<LengthUnit> parseBeginEndPosition(final String posStr, final CrossSectionElement<?, ?> cse)
         throws NetworkException
     {
         if (posStr.trim().equals("BEGIN"))
@@ -248,20 +249,7 @@ final class LinkTag
             return new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
         }
 
-        double length;
-        if (linkTag.arcTag != null)
-        {
-            length = linkTag.arcTag.radius.getSI() * linkTag.arcTag.angle.getSI();
-        }
-        else if (linkTag.straightTag != null)
-        {
-            length = linkTag.straightTag.length.getSI();
-        }
-        else
-        {
-            throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr
-                + " invalid for link " + linkTag.name + ": link is neither arc nor straight");
-        }
+        double length = cse.getCenterLine().getLengthSI();
 
         if (posStr.trim().equals("END"))
         {
@@ -277,14 +265,14 @@ final class LinkTag
                 if (fraction < 0.0 || fraction > 1.0)
                 {
                     throw new NetworkException("parseBeginEndPosition: attribute POSITION with value " + posStr
-                        + " invalid for link " + linkTag.name + ", should be a percentage between 0 and 100%");
+                        + " invalid for lane " + cse.toString() + ", should be a percentage between 0 and 100%");
                 }
                 return new DoubleScalar.Rel<LengthUnit>(length * fraction, LengthUnit.METER);
             }
             catch (NumberFormatException nfe)
             {
                 throw new NetworkException("parseBeginEndPosition: attribute POSITION with value " + posStr
-                    + " invalid for link " + linkTag.name + ", should be a percentage between 0 and 100%", nfe);
+                    + " invalid for lane " + cse.toString() + ", should be a percentage between 0 and 100%", nfe);
             }
         }
 
@@ -295,7 +283,7 @@ final class LinkTag
             if (offset > length)
             {
                 throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr
-                    + " invalid for link " + linkTag.name + ": provided negative offset greater than than link length");
+                    + " invalid for lane " + cse.toString() + ": provided negative offset greater than than link length");
             }
             return new DoubleScalar.Rel<LengthUnit>(length - offset, LengthUnit.METER);
         }
@@ -304,7 +292,7 @@ final class LinkTag
         if (offset.getSI() > length)
         {
             throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr
-                + " invalid for link " + linkTag.name + ": provided offset greater than than link length");
+                + " invalid for lane " + cse.toString() + ": provided offset greater than than link length");
         }
         return offset;
     }
