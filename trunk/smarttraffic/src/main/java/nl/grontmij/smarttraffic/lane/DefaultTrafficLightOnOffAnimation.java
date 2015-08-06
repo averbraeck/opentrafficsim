@@ -11,8 +11,6 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.lane.LaneBlock;
-import org.opentrafficsim.core.gtu.lane.LaneBlockOnOff;
 
 /**
  * Draw a road block.
@@ -27,6 +25,9 @@ import org.opentrafficsim.core.gtu.lane.LaneBlockOnOff;
  */
 public class DefaultTrafficLightOnOffAnimation extends Renderable2D
 {
+    /** the half width left and right of the center line that is used to draw the block. */
+    private final double halfWidth;
+
     /**
      * Construct the DefaultCarAnimation for a LaneBlock (road block).
      * @param trafficLightOnOff the Car to draw
@@ -38,13 +39,14 @@ public class DefaultTrafficLightOnOffAnimation extends Renderable2D
         throws NamingException, RemoteException
     {
         super(trafficLightOnOff, simulator);
+        this.halfWidth = 0.4 * trafficLightOnOff.getLane().getWidth(0.0).getSI();
     }
 
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        if (((LaneBlockOnOff) source).isBlocked())
+        if (((TrafficLightOnOff) this.source).isBlocked())
         {
             graphics.setColor(Color.RED);
         }
@@ -52,8 +54,7 @@ public class DefaultTrafficLightOnOffAnimation extends Renderable2D
         {
             graphics.setColor(Color.GREEN);
         }
-        Rectangle2D rectangle = new Rectangle2D.Double(-0.5, -1.8, 0.5, 1.8);
-        graphics.draw(rectangle);
+        Rectangle2D rectangle = new Rectangle2D.Double(-0.4, -this.halfWidth, 0.8, 2 * this.halfWidth);
         graphics.fill(rectangle);
     }
 
