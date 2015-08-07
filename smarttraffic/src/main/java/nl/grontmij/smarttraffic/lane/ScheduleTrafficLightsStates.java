@@ -59,7 +59,7 @@ public class ScheduleTrafficLightsStates<ID> {
 			for (Entry<DoubleScalar.Abs<TimeUnit>, Long> entryPulse : pulses
 					.entrySet()) {
 				DoubleScalar.Abs<TimeUnit> when = entryPulse.getKey();
-				if (stopLine.getTrafficLight() != null) {
+				if (stopLine.getTrafficLight() != null) {							
 					if (entryPulse.getValue() == 0) {
 						stopLine.getTrafficLight().setBlocked(true);
 						stopLine.getTrafficLight().changeFromColor(when);

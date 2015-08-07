@@ -336,7 +336,7 @@ public class GTM extends AbstractWrappableSimulation {
 			}
 */			
 			// Parameters en variabelen om te tunen!!!!
-/*			// creeren van een voertuig als een detector "af" gaat (waarde wordt nul)
+			// creeren van een voertuig als een detector "af" gaat (waarde wordt nul)
 			int generateCar = 0;
 			double lengthCar = 4.5; // lengte voertuig
 			LaneBasedRouteNavigator routeCar = new LaneBasedRouteNavigator(routeA);
@@ -348,7 +348,7 @@ public class GTM extends AbstractWrappableSimulation {
 			} catch (NetworkException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
-			}*/
+			}
 
 			try {
 				ScheduleTrafficLightsStates scheduleTrafficLightStates = new ScheduleTrafficLightsStates(

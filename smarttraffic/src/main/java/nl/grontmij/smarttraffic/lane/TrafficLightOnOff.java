@@ -123,11 +123,11 @@ public class TrafficLightOnOff extends AbstractGTU<Integer> implements LaneBased
      * @throws NetworkException when the GTU cannot be placed on the given lane
      */
     public TrafficLightOnOff(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> position,
-        final Class<? extends Renderable2D> animationClass, StopLineLane stopLine) throws GTUException,
+        final Class<? extends Renderable2D> animationClass, StopLineLane stopLine, OTSDEVSSimulatorInterface simulator) throws GTUException,
         RemoteException, NetworkException, NamingException
     {
         super(0, BLOCK_GTU, new Route(""));
-        //this.simulator = simulator;
+        this.simulator = simulator;
         this.position = position;
         this.lane = lane;
         this.stopLine = stopLine;
