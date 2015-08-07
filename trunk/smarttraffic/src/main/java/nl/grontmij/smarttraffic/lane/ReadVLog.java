@@ -330,7 +330,7 @@ public class ReadVLog {
 					StopLineLane stopLineFound = (StopLineLane) stopLine
 							.getValue();
 					stopLineFound.addMapStopTrafficState(
-							new DoubleScalar.Rel<TimeUnit>(milliSecondsPassed,
+							new DoubleScalar.Abs<TimeUnit>(milliSecondsPassed,
 									TimeUnit.MILLISECOND), entry.getValue());
 				}
 			}

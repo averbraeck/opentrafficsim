@@ -22,6 +22,7 @@ import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
+import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -44,6 +45,13 @@ public class ScheduleGenerateCars<ID> {
 	/** The lane change model used by all generated GTUs. */
 	final LaneBasedRouteGenerator routeGenerator;
 
+	/** The lane change model used by all generated GTUs. */
+	final LaneBasedRouteNavigator routeNavigator;
+
+	final int generateCar;
+	
+	final double lengthCar;
+	
 	/** Initial speed of the generated GTUs. */
 	DoubleScalar.Abs<SpeedUnit> initialSpeed;
 
@@ -64,7 +72,9 @@ public class ScheduleGenerateCars<ID> {
 			LaneBasedRouteGenerator routeGenerator,
 			GTUColorer gtuColorer,
 			OTSDEVSSimulatorInterface simulator,
-			HashMap<String, SensorLaneST> mapSensor) throws RemoteException,
+			HashMap<String, SensorLaneST> mapSensor,
+			LaneBasedRouteNavigator route,
+			int generateCar, double lengthCar) throws RemoteException,
 			SimRuntimeException, NetworkException {
 		this.gtuType = gtuType;
 		this.gtuFollowingModel = gtuFollowingModel;
@@ -73,6 +83,9 @@ public class ScheduleGenerateCars<ID> {
 		this.gtuColorer = gtuColorer;
 		this.simulator = simulator;
 		this.mapSensor = mapSensor;
+		this.routeNavigator = route;
+		this.generateCar= generateCar; 
+		this.lengthCar = lengthCar;
 		generateVehiclesFromDetector();
 	}
 
@@ -93,11 +106,12 @@ public class ScheduleGenerateCars<ID> {
 			for (Entry<DoubleScalar.Abs<TimeUnit>, Integer> entryPulse : pulses
 					.entrySet()) {
 				this.lane = sensor.getLane();
+				DoubleScalar.Rel<LengthUnit> initialPosition = sensor.getLongitudinalPosition();
 				this.initialSpeed = lane.getSpeedLimit();
-				if (entryPulse.getValue() == 1) {
+				if (entryPulse.getValue() == this.generateCar) {
 					DoubleScalar.Abs<TimeUnit> when = entryPulse.getKey();
 					this.simulator.scheduleEventAbs(when, this, this,
-							"generateCar", null);
+							"generateCar", new Object[] {initialPosition});
 				}
 			}
 
@@ -108,9 +122,7 @@ public class ScheduleGenerateCars<ID> {
 	/**
 	 * Generate one car and re-schedule this method.
 	 */
-	protected final void generateCar() {
-		DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(
-				0, LengthUnit.METER);
+	protected final void generateCar(DoubleScalar.Rel<LengthUnit> initialPosition) {
 		Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
 		initialPositions.put(this.lane, initialPosition);
 		try {
@@ -124,9 +136,10 @@ public class ScheduleGenerateCars<ID> {
 					initialPositions,
 					this.initialSpeed,
 					vehicleLength,
-					new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
+					new DoubleScalar.Rel<LengthUnit>(this.lengthCar, LengthUnit.METER),
 					new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR),
-					this.routeGenerator.generateRouteNavigator(),
+//					this.routeGenerator.generateRouteNavigator(),
+					this.routeNavigator,
 					this.simulator, DefaultCarAnimation.class, this.gtuColorer);
 		} catch (RemoteException | SimRuntimeException | NamingException
 				| NetworkException | GTUException exception) {

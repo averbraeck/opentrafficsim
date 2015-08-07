@@ -25,6 +25,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
  */
 public class DefaultTrafficLightOnOffAnimation extends Renderable2D
 {
+
     /** the half width left and right of the center line that is used to draw the block. */
     private final double halfWidth;
 
@@ -41,6 +42,7 @@ public class DefaultTrafficLightOnOffAnimation extends Renderable2D
         super(trafficLightOnOff, simulator);
         this.halfWidth = 0.4 * trafficLightOnOff.getLane().getWidth(0.0).getSI();
     }
+
 
     /** {@inheritDoc} */
     @Override
@@ -62,7 +64,9 @@ public class DefaultTrafficLightOnOffAnimation extends Renderable2D
     @Override
     public final String toString()
     {
-        return "DefaultBlockAnimation [getSource()=" + this.getSource() + "]";
+        return "DefaultBlockOnOffAnimation [getSource()=" + this.getSource() + "]";
     }
+
+
 
 }

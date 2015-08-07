@@ -10,6 +10,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.lane.LaneBlockOnOff;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -21,12 +22,18 @@ public class ScheduleTrafficLightsStates<ID> {
 
 	HashMap<String, SensorLaneST> mapSensor;
 
+	HashMap<String, StopLineLane> mapSignalGroupToStopLineAtJunction;
+
+	TrafficLightOnOff trafficLightOnOff = null;
+
 	public ScheduleTrafficLightsStates(OTSDEVSSimulatorInterface simulator,
-			HashMap<String, SensorLaneST> mapSensor) throws RemoteException,
-			SimRuntimeException, NetworkException, GTUException,
-			NamingException {
+			HashMap<String, SensorLaneST> mapSensor,
+			HashMap<String, StopLineLane> mapSignalGroupToStopLineAtJunction)
+			throws RemoteException, SimRuntimeException, NetworkException,
+			GTUException, NamingException {
 		this.simulator = simulator;
 		this.mapSensor = mapSensor;
+		this.mapSignalGroupToStopLineAtJunction = mapSignalGroupToStopLineAtJunction;
 		scheduleTrafficLightsStatesFromDetector();
 	}
 
@@ -42,26 +49,26 @@ public class ScheduleTrafficLightsStates<ID> {
 	 */
 	public void scheduleTrafficLightsStatesFromDetector()
 			throws RemoteException, SimRuntimeException, GTUException,
-			NetworkException, NamingException 
-	{
-		for (Entry<String, SensorLaneST> entry : this.mapSensor.entrySet()) {
+			NetworkException, NamingException {
+		for (Entry<String, StopLineLane> entry : this.mapSignalGroupToStopLineAtJunction
+				.entrySet()) {
 			entry.getKey();
-			SensorLaneST sensor = entry.getValue();
-			HashMap<DoubleScalar.Abs<TimeUnit>, Integer> pulses = sensor
-					.getStatusByTime();
-			for (Entry<DoubleScalar.Abs<TimeUnit>, Integer> entryPulse : pulses
+			StopLineLane stopLine = entry.getValue();
+			HashMap<DoubleScalar.Abs<TimeUnit>, Long> pulses = stopLine
+					.getMapStopTrafficState();
+			for (Entry<DoubleScalar.Abs<TimeUnit>, Long> entryPulse : pulses
 					.entrySet()) {
-				TrafficLightOnOff trafficLight = new TrafficLightOnOff(
-						sensor.getLane(), sensor.getLongitudinalPosition(),
-						this.simulator, null);
 				DoubleScalar.Abs<TimeUnit> when = entryPulse.getKey();
-				if (entryPulse.getValue() == 1) {
-					trafficLight.setBlocked(true);
+				if (stopLine.getTrafficLight() != null) {
+					if (entryPulse.getValue() == 0) {
+						stopLine.getTrafficLight().setBlocked(true);
+						stopLine.getTrafficLight().changeFromColor(when);
+					} else if (entryPulse.getValue() > 0) {
+						stopLine.getTrafficLight().setBlocked(false);
+						stopLine.getTrafficLight().changeFromColor(when);
+					}
 				}
-				else if (entryPulse.getValue() == 0) {
-					trafficLight.setBlocked(false);
-				}
-				trafficLight.SetColor(when);
+
 			}
 
 		}
