@@ -60,7 +60,7 @@ public class StopLineLane extends AbstractSensor {
 
 	private TrafficLightOnOff trafficLight;
 
-
+	private OTSDEVSSimulatorInterface simulator;
 	/**
 	 * Place a sensor that is triggered with the back of the GTU one ulp (see
 	 * <code>Math.ulp(double d)</code>) before the end of the lane to make sure
@@ -81,11 +81,11 @@ public class StopLineLane extends AbstractSensor {
 
 	public StopLineLane(final Lane<?, ?> lane,
 			final DoubleScalar.Rel<LengthUnit> longitudinalPositionFromEnd,
-			String name) {
+			String name,OTSDEVSSimulatorInterface simulator) {
 		super(lane, longitudinalPositionFromEnd, RelativePosition.FRONT, name);
 		try {
 			this.trafficLight = new TrafficLightOnOff(this.getLane(),
-					this.getLongitudinalPosition(), null, this);
+					this.getLongitudinalPosition(), null, this, simulator);
 		} catch (RemoteException | GTUException | NetworkException
 				| NamingException e) {
 			// TODO Auto-generated catch block

@@ -123,7 +123,7 @@ public class ReadNetworkData {
 														StopLineLane stopLine = new StopLineLane(
 																lane,
 																longitudinalPositionFromEnd,
-																name);
+																name, simulator);
 
 														lane.addSensor(stopLine);
 														if (simulator instanceof OTSAnimatorInterface) {
