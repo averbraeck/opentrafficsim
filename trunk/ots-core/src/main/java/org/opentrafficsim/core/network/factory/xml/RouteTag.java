@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.route.Route;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -27,6 +28,10 @@ class RouteTag
     /** Nodes. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<NodeTag> routeNodeTags = new ArrayList<NodeTag>();
+
+    /** route that has been generated. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    Route<String, String> route;
 
     /**
      * Parse the ROUTE tag.
@@ -56,6 +61,19 @@ class RouteTag
             routeTag.routeNodeTags = NodeTag.parseNodeList(routeNodes, parser);
 
             parser.routeTags.put(routeTag.name, routeTag);
+        }
+    }
+
+    /**
+     * Make the route based on the nodes. This method should be called after the Nodes have been created from the NodeTags.
+     * @throws NetworkException when node cannot be added.
+     */
+    void makeRoute() throws NetworkException
+    {
+        this.route = new Route<String, String>(this.name);
+        for (NodeTag nodeTag : this.routeNodeTags)
+        {
+            this.route.addNode(nodeTag.node);
         }
     }
 }

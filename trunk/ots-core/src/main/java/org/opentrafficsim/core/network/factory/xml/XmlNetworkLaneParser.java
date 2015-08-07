@@ -167,6 +167,11 @@ public class XmlNetworkLaneParser
         for (LinkTag linkTag : this.linkTags.values())
             Links.applyRoadTypeToLink(linkTag, this, this.simulator);
 
+        // process the routes
+        for (RouteTag routeTag : this.routeTags.values())
+            routeTag.makeRoute();
+        // TODO shortestRoute, routeMix, ShortestRouteMix
+        
         // store the structure information in the network
         return makeNetwork(url.toString());
     }
@@ -188,7 +193,10 @@ public class XmlNetworkLaneParser
         {
             network.addLink(linkTag.link);
         }
-        // TODO Routes
+        for (RouteTag routeTag : this.routeTags.values())
+        {
+            network.addRoute(routeTag.route);
+        }
         return network;
     }
 
