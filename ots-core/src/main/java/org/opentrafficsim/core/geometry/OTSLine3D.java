@@ -176,6 +176,46 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
+     * Get the location at a position on the line, with its direction. Position can be below 0 or more than the line length. In
+     * that case, the position will be extrapolated in the direction of the line at its start or end.
+     * @param position the position on the line for which to calculate the point on, before, of after the line
+     * @return a directed point
+     * @throws NetworkException when position could not be calculated
+     */
+    public final DirectedPoint getLocationExtended(final DoubleScalar.Rel<LengthUnit> position) throws NetworkException
+    {
+        return getLocationExtendedSI(position.getSI());
+    }
+
+    /**
+     * Get the location at a position on the line, with its direction. Position can be below 0 or more than the line length. In
+     * that case, the position will be extrapolated in the direction of the line at its start or end.
+     * @param positionSI the position on the line for which to calculate the point on, before, of after the line, in SI units
+     * @return a directed point
+     * @throws NetworkException when position could not be calculated
+     */
+    public final DirectedPoint getLocationExtendedSI(final double positionSI) throws NetworkException
+    {
+        if (positionSI >= 0.0 && positionSI <= getLengthSI())
+        {
+            return getLocationSI(positionSI);
+        }
+
+        // position before start point -- extrapolate
+        if (positionSI < 0.0)
+        {
+            DirectedPoint pos = getLocationSI(0.0);
+            // TODO extrapolate before start point of line
+            return pos;
+        }
+
+        // position beyond end point -- extrapolate
+        DirectedPoint pos = getLocationSI(getLengthSI());
+        // TODO extrapolate beyond end point of line
+        return pos;
+    }
+
+    /**
      * Get the location at a fraction of the line, with its direction. Fraction should be between 0.0 and 1.0.
      * @param fraction the fraction for which to calculate the point on the line
      * @return a directed point

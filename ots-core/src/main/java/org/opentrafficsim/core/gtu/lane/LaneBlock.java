@@ -66,6 +66,9 @@ public class LaneBlock extends AbstractGTU<Integer> implements LaneBasedGTU<Inte
 
     /** the cached location for animation. */
     private DirectedPoint location = null;
+    
+    /** the cached bounds for animation. */
+    private Bounds bounds = null;
 
     /** blocking GTU type. */
     public static final GTUType<String> BLOCK_GTU;
@@ -234,9 +237,12 @@ public class LaneBlock extends AbstractGTU<Integer> implements LaneBasedGTU<Inte
     @Override
     public final Bounds getBounds() throws RemoteException
     {
-        double dx = 2;
-        double dy = 2;
-        return new BoundingBox(new Point3d(-dx, -dy, 0.0), new Point3d(dx, dy, 0.0));
+        if (this.bounds == null)
+        {
+            this.bounds = new BoundingBox(new Point3d(-0.4, -this.lane.getWidth(0.0).getSI() * 0.4, 0.0), 
+                new Point3d(0.4, this.lane.getWidth(0.0).getSI() * 0.4, this.lane.getLocation().z + 0.01));
+        }
+        return this.bounds;
     }
 
     /** {@inheritDoc} */
