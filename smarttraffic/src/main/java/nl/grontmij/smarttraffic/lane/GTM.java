@@ -53,8 +53,10 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.NoTrafficLane;
 import org.opentrafficsim.core.network.lane.Sensor;
+import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -188,8 +190,6 @@ public class GTM extends AbstractWrappableSimulation {
 		/** the car following model, e.g. IDM Plus for cars. */
 		private GTUFollowingModel gtuFollowingModel = new IDMPlus();
 
-		private LaneBasedRouteGenerator routeGenerator;
-
 		DoubleScalar.Abs<SpeedUnit> initialSpeed;
 
 		/**
@@ -210,7 +210,7 @@ public class GTM extends AbstractWrappableSimulation {
 				final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
 				throws SimRuntimeException, RemoteException {
 			this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
-
+			
 			// base directory (relative to user dir)
 			String dirBase = System.getProperty("user.dir")
 					+ "/src/main/resources/";
@@ -310,19 +310,49 @@ public class GTM extends AbstractWrappableSimulation {
 			@SuppressWarnings("unchecked")
 			// define the type of cars
 			GTUType<String> gtuType = GTUType.makeGTUType("CAR");
+			Map<String, ?> mapRoutes = network.getRouteMap();
+			//N2a_N225a_uitR
+			Route<?,?> route =  (Route<?,?>) mapRoutes.get("N2a_N225a_uitR");
+			CompleteRoute routeA = null;
+			try {
+				routeA = new CompleteRoute(route.getId(),route.getNodes());
+			} catch (NetworkException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+//			routeA = (CompleteRoute<?,?>) route;
+/*			Node a = network.getNodeMap().get("N2a");
+			Node b = network.getNodeMap().get("N3a");
+			Node c = network.getNodeMap().get("N225a_uitR");
+			List<Node<?>> route = new ArrayList<Node<?>>();
+			route.add(a);
+			route.add(b);
+			route.add(c);
+			try {
+				routeA = new CompleteRoute("1-2", route);
+			} catch (NetworkException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+*/			
+			// Parameters en variabelen om te tunen!!!!
+/*			// creeren van een voertuig als een detector "af" gaat (waarde wordt nul)
+			int generateCar = 0;
+			double lengthCar = 4.5; // lengte voertuig
+			LaneBasedRouteNavigator routeCar = new LaneBasedRouteNavigator(routeA);
 			try {
 				ScheduleGenerateCars generateCars = new ScheduleGenerateCars(
 						gtuType, gtuFollowingModel, laneChangeModel,
-						routeGenerator, gtuColorer, simulator,
-						mapSensorGenerateCars);
+						null, gtuColorer, simulator,
+						mapSensorGenerateCars, routeCar, generateCar, lengthCar);
 			} catch (NetworkException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
-			}
+			}*/
 
 			try {
 				ScheduleTrafficLightsStates scheduleTrafficLightStates = new ScheduleTrafficLightsStates(
-						simulator, mapSensorGenerateCars);
+						simulator, mapSensorGenerateCars, GTM.mapSignalGroupToStopLineAtJunction);
 			} catch (NetworkException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -338,9 +368,13 @@ public class GTM extends AbstractWrappableSimulation {
 			//
 			// - if no car is matched: Generate a car
 			// - if matched: reposition that car, and perhaps other cars
+			// - de range om te zoeken naar voertuigen:
+			// ------de eerste waarde is de afstand in meters stroomOPwaarts van het voertuig
+			// ------de tweede waarde is de afstand in meters stroomAFwaarts van het voertuig
+			java.lang.Double[] range = new java.lang.Double[] { 50.0, 50.0};
 			try {
 				ScheduleCheckPulses scheduleCheckPulses = new ScheduleCheckPulses(
-						simulator, mapSensorCheckCars);
+						simulator, mapSensorCheckCars, range);
 			} catch (NetworkException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

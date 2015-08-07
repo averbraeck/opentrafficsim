@@ -1,5 +1,6 @@
 package nl.grontmij.smarttraffic.lane;
 
+import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -74,7 +75,10 @@ public class TrafficLightOnOff extends AbstractGTU<Integer> implements LaneBased
 	/** the position of the block on the lane. */
     final DoubleScalar.Rel<LengthUnit> position;
 
-    /** blocking GTU type. */
+	private StopLineLane stopLine;
+
+
+	/** blocking GTU type. */
     public static final GTUType<String> BLOCK_GTU;
 
     /** null length. */
@@ -119,16 +123,17 @@ public class TrafficLightOnOff extends AbstractGTU<Integer> implements LaneBased
      * @throws NetworkException when the GTU cannot be placed on the given lane
      */
     public TrafficLightOnOff(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> position,
-        final OTSDEVSSimulatorInterface simulator, final Class<? extends Renderable2D> animationClass) throws GTUException,
+        final Class<? extends Renderable2D> animationClass, StopLineLane stopLine) throws GTUException,
         RemoteException, NetworkException, NamingException
     {
         super(0, BLOCK_GTU, new Route(""));
-        this.simulator = simulator;
+        //this.simulator = simulator;
         this.position = position;
         this.lane = lane;
+        this.stopLine = stopLine;
 
         // register the block on the lanes
-        lane.addGTU(this, position);
+        //lane.addGTU(this, position);
 
         new DefaultTrafficLightOnOffAnimation(this, this.simulator);
         // animation
@@ -139,6 +144,10 @@ public class TrafficLightOnOff extends AbstractGTU<Integer> implements LaneBased
     }
 
 
+
+    public StopLineLane getStopLine() {
+		return stopLine;
+	}
     /**
      * @return blocked
      */
@@ -152,7 +161,7 @@ public class TrafficLightOnOff extends AbstractGTU<Integer> implements LaneBased
 		this.blocked = blocked;
 	}
     
-    public void SetColor(DoubleScalar.Abs<TimeUnit> when) throws RemoteException {
+    public void changeFromColor(DoubleScalar.Abs<TimeUnit> when) throws RemoteException {
         try
         {
             this.simulator.scheduleEventAbs(when, this, this,
@@ -164,7 +173,7 @@ public class TrafficLightOnOff extends AbstractGTU<Integer> implements LaneBased
         }
     }
     
-    protected void changeColor()
+    protected void changeColor(DoubleScalar.Abs<TimeUnit> when)
     {
 
         try
@@ -173,17 +182,17 @@ public class TrafficLightOnOff extends AbstractGTU<Integer> implements LaneBased
             {
                 // add ourselves to the lane
                 this.lane.addGTU(this, this.position);
+                this.getStopLine().setColorTrafficLight(Color.RED);
             }
             else
             {
                 // remove ourselves from the lane
                 this.lane.removeGTU(this);
+                this.getStopLine().setColorTrafficLight(Color.GREEN);
 
             }
-            this.simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(60.0, TimeUnit.SECOND), this, this,
-                "changeColor", null);
         }
-        catch (SimRuntimeException | RemoteException | NetworkException exception)
+        catch (RemoteException | NetworkException exception)
         {
             exception.printStackTrace();
         }

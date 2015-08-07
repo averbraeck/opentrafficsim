@@ -53,10 +53,13 @@ public class StopLineLane extends AbstractSensor {
 
 	/** color of the stop line, with the default color GREEN. */
 	private Color colorTrafficLight = Color.GREEN;
-	private HashMap<DoubleScalar.Rel<TimeUnit>, Long> mapStopTrafficState = new HashMap<DoubleScalar.Rel<TimeUnit>, Long>();
+	private HashMap<DoubleScalar.Abs<TimeUnit>, Long> mapStopTrafficState = new HashMap<DoubleScalar.Abs<TimeUnit>, Long>();
 
 	/** The blocking car. */
 	private LaneBasedIndividualCar<Integer> stopGTU = null;
+
+	private TrafficLightOnOff trafficLight;
+
 
 	/**
 	 * Place a sensor that is triggered with the back of the GTU one ulp (see
@@ -72,17 +75,23 @@ public class StopLineLane extends AbstractSensor {
 	 */
 	public StopLineLane(final Lane<?, ?> lane,
 			final DoubleScalar.Rel<LengthUnit> longitudinalPositionFromEnd) {
-		super(lane, new DoubleScalar.Rel<LengthUnit>(lane.getLength().getSI()
-				- longitudinalPositionFromEnd.getSI(), LengthUnit.METER),
-				RelativePosition.FRONT, "STOPLINE@" + lane.toString());
+		super(lane, longitudinalPositionFromEnd, RelativePosition.FRONT,
+				"STOPLINE@" + lane.toString());
 	}
 
 	public StopLineLane(final Lane<?, ?> lane,
 			final DoubleScalar.Rel<LengthUnit> longitudinalPositionFromEnd,
 			String name) {
-		super(lane, new DoubleScalar.Rel<LengthUnit>(lane.getLength().getSI()
-				- longitudinalPositionFromEnd.getSI(), LengthUnit.METER),
-				RelativePosition.FRONT, name);
+		super(lane, longitudinalPositionFromEnd, RelativePosition.FRONT, name);
+		try {
+			this.trafficLight = new TrafficLightOnOff(this.getLane(),
+					this.getLongitudinalPosition(), null, this);
+		} catch (RemoteException | GTUException | NetworkException
+				| NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -132,16 +141,21 @@ public class StopLineLane extends AbstractSensor {
 		}
 	}
 
-	public HashMap<DoubleScalar.Rel<TimeUnit>, Long> getMapStopTrafficState() {
+
+	public TrafficLightOnOff getTrafficLight() {
+		return trafficLight;
+	}
+	
+	public HashMap<DoubleScalar.Abs<TimeUnit>, Long> getMapStopTrafficState() {
 		return mapStopTrafficState;
 	}
 
 	public void setMapStopTrafficState(
-			HashMap<DoubleScalar.Rel<TimeUnit>, Long> mapStopTrafficState) {
+			HashMap<DoubleScalar.Abs<TimeUnit>, Long> mapStopTrafficState) {
 		this.mapStopTrafficState = mapStopTrafficState;
 	}
 
-	public void addMapStopTrafficState(DoubleScalar.Rel<TimeUnit> timeNow,
+	public void addMapStopTrafficState(DoubleScalar.Abs<TimeUnit> timeNow,
 			long status) {
 		this.mapStopTrafficState.put(timeNow, status);
 	}
@@ -161,6 +175,14 @@ public class StopLineLane extends AbstractSensor {
 				+ ", getLongitudinalPosition()="
 				+ this.getLongitudinalPosition() + ", getPositionType()="
 				+ this.getPositionType() + "]";
+	}
+
+	public Color getColorTrafficLight() {
+		return colorTrafficLight;
+	}
+
+	public void setColorTrafficLight(Color colorTrafficLight) {
+		this.colorTrafficLight = colorTrafficLight;
 	}
 
 }

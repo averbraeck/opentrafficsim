@@ -113,9 +113,9 @@ public class ReadNetworkData {
 															.substring(1)
 															.contentEquals(temp)) {
 														DoubleScalar.Rel<LengthUnit> longitudinalPositionFromEnd = new DoubleScalar.Rel<LengthUnit>(
-																lane.getLength()
-																		.getInUnit(
-																				LengthUnit.METER) - 10,
+																sensorLaneST
+																		.getLongitudinalPosition()
+																		.getSI() - 2,
 																LengthUnit.METER);
 														name = name
 																+ "_"
@@ -126,6 +126,12 @@ public class ReadNetworkData {
 																name);
 
 														lane.addSensor(stopLine);
+														if (simulator instanceof OTSAnimatorInterface) {
+															new DefaultSensorAnimation(
+																	stopLine,
+																	simulator,
+																	Color.BLACK);
+														}
 														GTM.mapSignalGroupToStopLineAtJunction
 																.put(name,
 																		stopLine);
