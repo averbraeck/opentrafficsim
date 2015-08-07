@@ -209,9 +209,9 @@ public class TestModel implements OTSModelInterface
             new LaneAnimation(laneR1, this.simulator, Color.GRAY);
             new LaneAnimation(laneERR, this.simulator, Color.GRAY);
 
-            new ShoulderAnimation(sL, this.simulator);
-            new ShoulderAnimation(sM, this.simulator);
-            new ShoulderAnimation(sR, this.simulator);
+            new ShoulderAnimation(sL, this.simulator, Color.GREEN);
+            new ShoulderAnimation(sM, this.simulator, Color.GREEN);
+            new ShoulderAnimation(sR, this.simulator, Color.GREEN);
         }
         catch (NamingException | RemoteException ne)
         {

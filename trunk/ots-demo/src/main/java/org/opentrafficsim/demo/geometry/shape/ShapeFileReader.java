@@ -427,7 +427,7 @@ public final class ShapeFileReader
         {
             // middenberm
             Shoulder sM = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
-            new ShoulderAnimation(sM, simulator);
+            new ShoulderAnimation(sM, simulator, Color.GREEN);
             for (int i = -1; i <= 1; i += 2)
             {
                 LongitudinalDirectionality dir =
@@ -465,7 +465,7 @@ public final class ShapeFileReader
                 new LaneAnimation(laneEO, simulator, Color.LIGHT_GRAY);
                 lat += i * 0.5;
                 Shoulder sO = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m10, m10);
-                new ShoulderAnimation(sO, simulator);
+                new ShoulderAnimation(sO, simulator, Color.GREEN);
             }
         }
         catch (NamingException | RemoteException | OTSGeometryException ne)
@@ -496,7 +496,7 @@ public final class ShapeFileReader
             if (middenberm)
             {
                 Shoulder sM = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
-                new ShoulderAnimation(sM, simulator);
+                new ShoulderAnimation(sM, simulator, Color.GREEN);
             }
             for (int i = -1; i <= 1; i += 2)
             {
