@@ -47,8 +47,11 @@ public final class PaintPolygons
         {
             if (NEWPATH.equals(point))
             {
-                path.closePath();
-                graphics.fill(path);
+                if (withinPath)
+                {
+                    path.closePath();
+                    graphics.fill(path);
+                }
                 path = new Path2D.Double();
                 withinPath = false;
             }
