@@ -22,7 +22,6 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
-import org.opentrafficsim.core.gtu.animation.DefaultBlockOnOffAnimation;
 import org.opentrafficsim.core.gtu.animation.LaneChangeUrgeGTUColorer.LaneChangeDistanceAndDirection;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.HeadwayGTU;
@@ -37,10 +36,6 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.linearref.LengthIndexedLine;
 
 /**
  * Special GTU that cannot move, but it can be seen by other GTUs.
@@ -70,6 +65,11 @@ public class TrafficLightOnOff extends AbstractGTU<Integer> implements LaneBased
     /**   */
     private boolean blocked;
 
+    /** the cached location for animation. */
+    private DirectedPoint location = null;
+    
+    /** the cached bounds for animation. */
+    private Bounds bounds = null;
 
 	/** the position of the block on the lane. */
     final DoubleScalar.Rel<LengthUnit> position;
@@ -268,65 +268,37 @@ public class TrafficLightOnOff extends AbstractGTU<Integer> implements LaneBased
         return ACCELERATION_ABS_0;
     }
 
+
     /** {@inheritDoc} */
     @Override
     public final DirectedPoint getLocation() throws RemoteException
     {
-        // TODO solve problem when point is still on previous lane.
-        DoubleScalar.Rel<LengthUnit> longitudinalPos;
-        try
+        if (this.location == null)
         {
-            longitudinalPos = position(lane, getReference());
-            double fraction = (longitudinalPos.getSI() + getLength().getSI() / 2.0) / lane.getLength().getSI();
-            LineString line = lane.getCenterLine().getLineString();
-            LengthIndexedLine lil = new LengthIndexedLine(line);
-            // if (fraction > 1)
-            // {
-            // System.out.println("fraction is " + fraction);
-            // }
-            double useFraction = fraction;
-            boolean fractionAdjusted = false;
-            if (fraction < 0)
+            try
             {
-                useFraction = 0;
-                fractionAdjusted = true;
+                this.location = this.lane.getCenterLine().getLocation(this.position);
+                this.location.z = this.lane.getLocation().z + 0.01;
             }
-            if (fraction > 0.99)
+            catch (NetworkException exception)
             {
-                useFraction = 0.99;
-                fractionAdjusted = true;
+                exception.printStackTrace();
+                return null;
             }
-            // DO NOT MODIFY THE RESULT OF extractPoint (it may be one of the coordinates in line).
-            Coordinate c = new Coordinate(lil.extractPoint(useFraction * line.getLength()));
-            c.z = 0d;
-            Coordinate cb = lil.extractPoint((useFraction + 0.01) * line.getLength());
-            double angle = Math.atan2(cb.y - c.y, cb.x - c.x);
-            if (fractionAdjusted)
-            {
-                c =
-                    new Coordinate(c.x + (fraction - useFraction) * 100 * (cb.x - c.x), c.y + (fraction - useFraction) * 100
-                        * (cb.y - c.y), c.z);
-            }
-            if (Double.isNaN(c.x))
-            {
-                System.out.println("Bad");
-            }
-            return new DirectedPoint(c.x, c.y, c.z + 0.01 /* raise it slightly above the lane surface */, 0.0, 0.0, angle);
         }
-        catch (NetworkException exception)
-        {
-            exception.printStackTrace();
-            return null;
-        }
+        return this.location;
     }
 
     /** {@inheritDoc} */
     @Override
     public final Bounds getBounds() throws RemoteException
     {
-        double dx = 2;
-        double dy = 2;
-        return new BoundingBox(new Point3d(-dx, -dy, 0.0), new Point3d(dx, dy, 0.0));
+        if (this.bounds == null)
+        {
+            this.bounds = new BoundingBox(new Point3d(-0.4, -this.lane.getWidth(0.0).getSI() * 0.4, 0.0), 
+                new Point3d(0.4, this.lane.getWidth(0.0).getSI() * 0.4, this.lane.getLocation().z + 0.01));
+        }
+        return this.bounds;
     }
 
     /** {@inheritDoc} */
