@@ -296,21 +296,14 @@ public class LaneBlock extends AbstractGTU<Integer> implements LaneBasedGTU<Inte
 
     /** {@inheritDoc} */
     @Override
-    public final void addFrontToSubsequentLane(Lane<?, ?> lane) throws RemoteException, NetworkException
+    public final void enterLane(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> position) throws NetworkException
     {
         // do nothing
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void addLane(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> position) throws NetworkException
-    {
-        // do nothing
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void removeLane(final Lane<?, ?> lane)
+    public final void leaveLane(final Lane<?, ?> lane)
     {
         // do nothing
     }

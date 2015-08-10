@@ -131,6 +131,24 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         this.relativePositions.put(RelativePosition.REAR, new RelativePosition(zero, zero, zero, RelativePosition.REAR));
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
 
+        /* REMOVE START
+        if (id.equals("A1:1"))
+        {
+            try
+            {
+                this.simulator = simulator;
+                //this.pwsimloc = new PrintWriter("d:/pwsimloc.xls");
+                //simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.1, TimeUnit.SECOND), this, this, "simloc", null);
+                this.pwthreadloc = new PrintWriter("d:/pwthreadloc.xls");
+                new ClockLocThread().start();
+            }
+            catch (FileNotFoundException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+        /* REMOVE END */
+
         // animation
         if (simulator instanceof OTSAnimatorInterface && animationClass != null)
         {
@@ -140,12 +158,12 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
 
                 if (null == gtuColorer)
                 {
-                    constructor = ClassUtil.resolveConstructor(animationClass, new Object[] {this, simulator});
+                    constructor = ClassUtil.resolveConstructor(animationClass, new Object[]{this, simulator});
                     this.animation = (Renderable2D) constructor.newInstance(this, simulator);
                 }
                 else
                 {
-                    constructor = ClassUtil.resolveConstructor(animationClass, new Object[] {this, simulator, gtuColorer});
+                    constructor = ClassUtil.resolveConstructor(animationClass, new Object[]{this, simulator, gtuColorer});
                     this.animation = (Renderable2D) constructor.newInstance(this, simulator, gtuColorer);
                 }
             }
@@ -157,6 +175,58 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
             }
         }
     }
+
+    /* REMOVE START 
+
+    PrintWriter pwsimloc;
+
+    PrintWriter pwthreadloc;
+    
+    OTSDEVSSimulatorInterface simulator;
+
+    protected void simloc()
+    {
+        try
+        {
+            Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> posmap = positions(getFront());
+            Lane<?, ?> lane = posmap.keySet().iterator().next();
+            pwsimloc.write(getSimulator().getSimulatorTime().get().getSI() + "\t" + lane.toString() + "\t"
+                + posmap.get(lane).getSI() + "\n");
+            pwsimloc.flush();
+            simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.1, TimeUnit.SECOND), this, this, "simloc", null);
+        }
+        catch (RemoteException | NetworkException | SimRuntimeException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    protected class ClockLocThread extends Thread
+    {
+        @Override
+        public void run()
+        {
+            while (true)
+            {
+                try
+                {
+                    Thread.sleep(100);
+                    Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> posmap = positions(getFront());
+                    Lane<?, ?> lane = posmap.keySet().iterator().next();
+                    pwthreadloc.write(getSimulator().getSimulatorTime().get().getSI() + "\t" + lane.toString() + "\t"
+                        + posmap.get(lane).getSI() + "\n");
+                    pwthreadloc.flush();
+                }
+                catch (RemoteException | NetworkException | InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+    /* REMOVE END */
 
     /** {@inheritDoc} */
     @Override

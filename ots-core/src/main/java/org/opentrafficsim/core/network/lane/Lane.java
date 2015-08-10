@@ -106,15 +106,6 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
         this.capacity = capacity;
         this.speedLimit = speedLimit;
         // TODO Take care of directionality.
-        try
-        {
-            addSensor(new SensorLaneStart(this, "START@" + toString()));
-            addSensor(new SensorLaneEnd(this, "END@" + toString()));
-        }
-        catch (NetworkException exception)
-        {
-            throw new Error("Oops - Caught NetworkException adding sensor at begin or and of Lane ", exception);
-        }
     }
 
     /**

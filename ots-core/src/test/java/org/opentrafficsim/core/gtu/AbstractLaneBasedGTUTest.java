@@ -350,7 +350,7 @@ public class AbstractLaneBasedGTUTest
         Lane<String, String>[] lanesGroupC =
             LaneFactory.makeMultiLane("C", nodeCFrom, nodeCTo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(100,
                 SpeedUnit.KM_PER_HOUR), simulator);
-        car.addLane(lanesGroupC[0], new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.SI));
+        car.enterLane(lanesGroupC[0], new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.SI));
         for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
         {
             Map<Lane<?, ?>, Double> positions = car.fractionalPositions(relativePosition);
@@ -371,7 +371,7 @@ public class AbstractLaneBasedGTUTest
             assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos, car
                 .fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
         }
-        car.removeLane(lanesGroupA[1]);
+        car.leaveLane(lanesGroupA[1]);
         for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
         {
             Map<Lane<?, ?>, Double> positions = car.fractionalPositions(relativePosition);
