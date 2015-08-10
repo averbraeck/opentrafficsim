@@ -226,6 +226,10 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
         scheduleTriggers(final LaneBasedGTU<?> gtu, final double referenceStartSI, final double referenceMoveSI)
             throws RemoteException, NetworkException, SimRuntimeException
     {
+        if (toString().contains("endLink"))
+        {
+            System.out.println("gtu=" + gtu.toString() + " - start=" + referenceStartSI + ", move=" + referenceMoveSI);
+        }
         for (List<Sensor> sensorList : this.sensors.values())
         {
             for (Sensor sensor : sensorList)
