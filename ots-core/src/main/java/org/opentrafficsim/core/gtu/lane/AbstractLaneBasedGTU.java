@@ -781,7 +781,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             // if the time is earlier than the end of the timestep: schedule the enterLane method.
             // TODO look if more lanes are entered in one timestep, and continue the algorithm with the remainder of the time...
             double frontPosSI = referenceStartSI + getFront().getDx().getSI();
-            if (frontPosSI < lane.getLength().getSI() && frontPosSI + moveSI > lane.getLength().getSI())
+            double moveFrontOnNextLane = moveSI - (lane.getLength().getSI() - frontPosSI);
+            if (frontPosSI < lane.getLength().getSI() && moveFrontOnNextLane > 0)
             {
                 Lane<?, ?> nextLane = determineNextLane(lane);
                 // we have to register the position at the previous timestep to keep calculations consistent.
@@ -791,7 +792,12 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                         LengthUnit.SI);
                 getSimulator().scheduleEventNow(this, this, "enterLane", new Object[]{nextLane, refPosAtLastTimestep});
                 // schedule any sensor triggers on this lane for the remainder time
-                nextLane.scheduleTriggers(this, 0.0, moveSI - (lane.getLength().getSI() - frontPosSI));
+                if (nextLane.toString().contains("endLink"))
+                {
+                    System.out.println("SINK: nextLane.scheduleTriggers(" + toString() + ", " + refPosAtLastTimestep.getSI()
+                        + ", " + (moveSI));
+                }
+                nextLane.scheduleTriggers(this, refPosAtLastTimestep.getSI(), moveSI);
             }
         }
 

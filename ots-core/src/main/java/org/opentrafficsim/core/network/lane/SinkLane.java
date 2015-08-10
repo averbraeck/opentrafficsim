@@ -73,7 +73,7 @@ public class SinkLane<LINKID, NODEID> extends Lane<LINKID, NODEID>
          */
         public SinkSensor(final Lane<?, ?> lane)
         {
-            super(lane, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), RelativePosition.FRONT, "SINK@"
+            super(lane, new DoubleScalar.Rel<LengthUnit>(0.25, LengthUnit.METER), RelativePosition.FRONT, "SINK@"
                 + lane.toString());
         }
 
