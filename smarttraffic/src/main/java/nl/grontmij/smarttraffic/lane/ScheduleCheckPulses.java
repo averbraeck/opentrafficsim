@@ -147,15 +147,13 @@ public class ScheduleCheckPulses<ID> {
 			gtuNearest = gtuNearestBefore;
 		}
 		if (gtuNearest != null) {
-			gtuNearest.removeLane(laneBefore);
-			laneBefore.removeGTU(gtuNearest);
+			gtuNearest.leaveLane(laneBefore);
 			sensor.getLane().addGTU(
 					gtuNearest,
 					new DoubleScalar.Rel<LengthUnit>(sensor
 							.getLongitudinalPosition().getSI()
 							- gtuNearest.getFront().getDx().getSI(),
 							LengthUnit.SI));
-			gtuNearest.addFrontToSubsequentLane(sensor.getLane());
 		}
 		// TODO  als er geen voertuig is gevonden: creeer dan een nieuw voertuig
 /*		else {
