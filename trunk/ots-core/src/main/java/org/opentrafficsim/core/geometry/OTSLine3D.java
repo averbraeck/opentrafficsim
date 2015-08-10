@@ -204,15 +204,23 @@ public class OTSLine3D implements LocatableInterface, Serializable
         // position before start point -- extrapolate
         if (positionSI < 0.0)
         {
-            DirectedPoint pos = getLocationSI(0.0);
-            // TODO extrapolate before start point of line
-            return pos;
+            double len = positionSI;
+            double fraction = len / (this.lengthIndexedLine[1] - this.lengthIndexedLine[0]);
+            OTSPoint3D p1 = this.points[0];
+            OTSPoint3D p2 = this.points[1];
+            return new DirectedPoint(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y), p1.z + fraction
+                * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
         }
 
         // position beyond end point -- extrapolate
-        DirectedPoint pos = getLocationSI(getLengthSI());
-        // TODO extrapolate beyond end point of line
-        return pos;
+        int n1 = this.lengthIndexedLine.length - 1;
+        int n2 = this.lengthIndexedLine.length - 2;
+        double len = positionSI - getLengthSI();
+        double fraction = len / (this.lengthIndexedLine[n1] - this.lengthIndexedLine[n2]);
+        OTSPoint3D p1 = this.points[n2];
+        OTSPoint3D p2 = this.points[n1];
+        return new DirectedPoint(p2.x + fraction * (p2.x - p1.x), p2.y + fraction * (p2.y - p1.y), p2.z + fraction
+            * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
     }
 
     /**
@@ -249,18 +257,29 @@ public class OTSLine3D implements LocatableInterface, Serializable
      */
     private int find(final double pos) throws NetworkException
     {
+        if (pos == 0)
+        {
+            return 0;
+        }
+        
+        for (int i = 0; i < this.lengthIndexedLine.length - 2; i++)
+        {
+            if (pos > this.lengthIndexedLine[i] && pos <= this.lengthIndexedLine[i + 1])
+            {
+                return i;
+            }
+        }
+        
+        return this.lengthIndexedLine.length - 2;
+
+        /*-
         int lo = 0;
         int hi = this.lengthIndexedLine.length - 1;
         while (lo <= hi)
         {
             if (hi - lo <= 1)
             {
-                if (hi == 0)
-                {
-                    System.err.println("hi=0; pos=" + pos + ", lil=" + this.lengthIndexedLine);
-                    return 0;
-                }
-                return hi - 1;
+                return lo;
             }
             int mid = lo + (hi - lo) / 2;
             if (pos < this.lengthIndexedLine[mid])
@@ -274,6 +293,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         }
         throw new NetworkException("Could not find position " + pos + " on line with length indexes: "
             + this.lengthIndexedLine);
+         */
     }
 
     /**
@@ -312,7 +332,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         {
             OTSPoint3D p1 = this.points[this.points.length - 2];
             OTSPoint3D p2 = this.points[this.points.length - 1];
-            return new DirectedPoint(p1.x, p1.y, p1.z, 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+            return new DirectedPoint(p2.x, p2.y, p2.z, 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
         }
 
         // find the index of the line segment, use binary search
