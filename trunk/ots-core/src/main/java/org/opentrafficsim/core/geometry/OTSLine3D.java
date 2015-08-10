@@ -255,6 +255,11 @@ public class OTSLine3D implements LocatableInterface, Serializable
         {
             if (hi - lo <= 1)
             {
+                if (hi == 0)
+                {
+                    System.err.println("hi=0; pos=" + pos + ", lil=" + this.lengthIndexedLine);
+                    return 0;
+                }
                 return hi - 1;
             }
             int mid = lo + (hi - lo) / 2;

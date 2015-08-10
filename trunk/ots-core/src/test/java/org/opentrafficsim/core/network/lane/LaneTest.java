@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.geom.Point2D;
-import java.util.List;
 
 import javax.media.j3d.BoundingBox;
 import javax.media.j3d.Bounds;
@@ -114,27 +113,6 @@ public class LaneTest
             assertEquals("Right edge at " + longitudinalPosition + " should be " + expectedRightOffset, expectedRightOffset,
                 lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, longitudinalPosition).getSI(), 0.001);
         }
-        List<Sensor> sensors =
-            lane.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(9999,
-                LengthUnit.METER));
-        assertEquals("The lane should have two sensors", 2, sensors.size());
-        sensors =
-            lane.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.1,
-                LengthUnit.METER));
-        assertEquals("There should be one sensor at the start of the lane", 1, sensors.size());
-        assertTrue("The sensor at the start of the lane should be a SensorLaneStart",
-            sensors.get(0) instanceof SensorLaneStart);
-        assertEquals("This sensor should be at 0m", 0, sensors.get(0).getLongitudinalPosition().getSI(), 0.00001);
-        assertEquals("This sensor should be at 0m", 0, sensors.get(0).getLongitudinalPositionSI(), 0.00001);
-        sensors =
-            lane.getSensors(new DoubleScalar.Rel<LengthUnit>(lane.getLength().getSI() - 1, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(9999, LengthUnit.METER));
-        assertEquals("There should be one sensor at the end of the lane", 1, sensors.size());
-        assertTrue("The sensor at the start of the lane should be a SensorLaneEnd", sensors.get(0) instanceof SensorLaneEnd);
-        assertEquals("This sensor should be at the end of the lane", lane.getLength().getSI(), sensors.get(0)
-            .getLongitudinalPosition().getSI(), 0.01);
-        assertEquals("This sensor should be at the end of the lane", lane.getLength().getSI(), sensors.get(0)
-            .getLongitudinalPositionSI(), 0.01);
 
         // Harder case; create a Link with form points along the way
         // System.out.println("Constructing Link and Lane with one form point");
@@ -159,27 +137,6 @@ public class LaneTest
             .getDirectionality());
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane.getLaneType());
-        sensors =
-            lane.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(9999,
-                LengthUnit.METER));
-        assertEquals("The lane should have two sensors", 2, sensors.size());
-        sensors =
-            lane.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.1,
-                LengthUnit.METER));
-        assertEquals("There should be one sensor at the start of the lane", 1, sensors.size());
-        assertTrue("The sensor at the start of the lane should be a SensorLaneStart",
-            sensors.get(0) instanceof SensorLaneStart);
-        assertEquals("This sensor should be at 0m", 0, sensors.get(0).getLongitudinalPosition().getSI(), 0.00001);
-        assertEquals("This sensor should be at 0m", 0, sensors.get(0).getLongitudinalPositionSI(), 0.00001);
-        sensors =
-            lane.getSensors(new DoubleScalar.Rel<LengthUnit>(lane.getLength().getSI() - 1, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(9999, LengthUnit.METER));
-        assertEquals("There should be one sensor at the end of the lane", 1, sensors.size());
-        assertTrue("The sensor at the start of the lane should be a SensorLaneEnd", sensors.get(0) instanceof SensorLaneEnd);
-        assertEquals("This sensor should be at the end of the lane", lane.getLength().getSI(), sensors.get(0)
-            .getLongitudinalPosition().getSI(), 0.01);
-        assertEquals("This sensor should be at the end of the lane", lane.getLength().getSI(), sensors.get(0)
-            .getLongitudinalPositionSI(), 0.01);
         // System.out.println("Add another Lane at the inside of the corner in the design line");
         DoubleScalar.Rel<LengthUnit> startLateralPos2 = new DoubleScalar.Rel<LengthUnit>(-8, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> endLateralPos2 = new DoubleScalar.Rel<LengthUnit>(-5, LengthUnit.METER);
@@ -199,27 +156,6 @@ public class LaneTest
             .getDirectionality());
         assertEquals("There should be no GTUs on the lane", 0, lane2.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane2.getLaneType());
-        sensors =
-            lane2.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(9999,
-                LengthUnit.METER));
-        assertEquals("The lane should have two sensors", 2, sensors.size());
-        sensors =
-            lane2.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.1,
-                LengthUnit.METER));
-        assertEquals("There should be one sensor at the start of the lane", 1, sensors.size());
-        assertTrue("The sensor at the start of the lane should be a SensorLaneStart",
-            sensors.get(0) instanceof SensorLaneStart);
-        assertEquals("This sensor should be at 0m", 0, sensors.get(0).getLongitudinalPosition().getSI(), 0.00001);
-        assertEquals("This sensor should be at 0m", 0, sensors.get(0).getLongitudinalPositionSI(), 0.00001);
-        sensors =
-            lane2.getSensors(new DoubleScalar.Rel<LengthUnit>(lane2.getLength().getSI() - 1, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(9999, LengthUnit.METER));
-        assertEquals("There should be one sensor at the end of the lane", 1, sensors.size());
-        assertTrue("The sensor at the start of the lane should be a SensorLaneEnd", sensors.get(0) instanceof SensorLaneEnd);
-        assertEquals("This sensor should be at the end of the lane", lane2.getLength().getSI(), sensors.get(0)
-            .getLongitudinalPosition().getSI(), 0.01);
-        assertEquals("This sensor should be at the end of the lane", lane2.getLength().getSI(), sensors.get(0)
-            .getLongitudinalPositionSI(), 0.01);
     }
 
     /**

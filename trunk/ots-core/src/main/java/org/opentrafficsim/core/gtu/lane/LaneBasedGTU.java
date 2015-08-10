@@ -72,29 +72,21 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
     DoubleScalar.Abs<TimeUnit> getNextEvaluationTime();
 
     /**
-     * Register the lane with a GTU, at the start of the lane. The reference point will be registered at the time and relative
-     * position of the last evaluation of the GTU to keep calculations consistent.
-     * @param lane the lane to add to the list of lanes on which the GTU is registered.
-     * @throws NetworkException on network inconsistency
-     * @throws RemoteException on communications failure
-     */
-    void addFrontToSubsequentLane(Lane<?, ?> lane) throws RemoteException, NetworkException;
-
-    /**
      * insert GTU at a certain position. This can happen at setup (first initialization), and after a lane change of the GTU.
      * The relative position that will be registered is the referencePosition (dx, dy, dz) = (0, 0, 0). Front and rear positions
      * are relative towards this position.
      * @param lane the lane to add to the list of lanes on which the GTU is registered.
      * @param position the position on the lane.
      * @throws NetworkException on network inconsistency
+     * @throws RemoteException when position cannot be determined at current time
      */
-    void addLane(Lane<?, ?> lane, DoubleScalar.Rel<LengthUnit> position) throws NetworkException;
+    void enterLane(Lane<?, ?> lane, DoubleScalar.Rel<LengthUnit> position) throws NetworkException, RemoteException;
 
     /**
      * Unregister the GTU from a lane.
      * @param lane the lane to remove from the list of lanes on which the GTU is registered.
      */
-    void removeLane(Lane<?, ?> lane);
+    void leaveLane(Lane<?, ?> lane);
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the

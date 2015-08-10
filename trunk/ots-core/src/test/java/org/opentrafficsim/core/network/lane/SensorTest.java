@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.network.lane;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
@@ -69,32 +68,6 @@ public class SensorTest
         Lane<String, String>[] lanes =
             LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(100,
                 SpeedUnit.KM_PER_HOUR), simulator);
-        // Check that there is a SensorLaneStart and a SensorLaneEnd on each Lane
-        for (Lane<?, ?> l : lanes)
-        {
-            int sensorsFound = 0;
-            for (Sensor sensor : l.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER)))
-            {
-                sensorsFound++;
-                if (sensor instanceof SensorLaneStart)
-                {
-                    assertEquals("SensorLaneStart should be at beginning of the Lane", 0, sensor.getLongitudinalPosition()
-                        .getSI(), 0.00001);
-                }
-                else if (sensor instanceof SensorLaneEnd)
-                {
-                    assertEquals("SensorLaneEnd should be (almost) at end of the Lane", l.getLength().getSI(), sensor
-                        .getLongitudinalPosition().getSI(), 2 * Math.ulp(l.getLength().getSI()));
-                }
-                else
-                {
-                    fail("Unexpected sensor: " + sensor.toString());
-                }
-                assertEquals("Lane of sensor should be l", l, sensor.getLane());
-            }
-            assertEquals("There should be two sensor on each Lane", 2, sensorsFound);
-        }
         Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
             new HashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
         DoubleScalar.Rel<LengthUnit> positionA = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);

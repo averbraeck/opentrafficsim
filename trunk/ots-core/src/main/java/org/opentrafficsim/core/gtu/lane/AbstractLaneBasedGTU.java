@@ -44,10 +44,6 @@ import org.opentrafficsim.core.value.conversions.Calc;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.linearref.LengthIndexedLine;
-
 /**
  * This class contains most of the code that is needed to run a lane based GTU. <br>
  * The starting point of a LaneBasedTU is that it can be in <b>multiple lanes</b> at the same time. This can be due to a lane
@@ -269,29 +265,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
 
     /** {@inheritDoc} */
     @Override
-    public final void addFrontToSubsequentLane(final Lane<?, ?> lane) throws RemoteException, NetworkException
-    {
-        // synchronized (this.lock)
-        {
-            if (this.lanes.size() == 0)
-            {
-                throw new NetworkException("addFrontToSubsequentLane, this.lanes.size() = 0 for GTU " + toString()
-                    + " moving to lane " + lane);
-            }
-
-            Lane<?, ?> prevLane = this.lanes.get(0); // TODO is this the right lane?
-            double positionPrevTimeStepSI = position(prevLane, getReference(), this.lastEvaluationTime).getSI();
-            double positionNowSI = position(prevLane, getReference()).getSI();
-            DoubleScalar.Rel<LengthUnit> position =
-                new DoubleScalar.Rel<>(positionPrevTimeStepSI - positionNowSI + getReference().getDx().getSI()
-                    - getFront().getDx().getSI(), LengthUnit.SI);
-            addLane(lane, position);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void addLane(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> position) throws NetworkException
+    public final void enterLane(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> position) throws NetworkException,
+        RemoteException
     {
         // synchronized (this.lock)
         {
@@ -300,20 +275,20 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 throw new NetworkException("GTU " + toString() + " is already registered on this lane: " + lane);
             }
             // if the GTU is already registered on a lane of the same link, do not change its fractional position, as
-            // this
-            // might lead to a "jump".
+            // this might lead to a "jump".
             if (!this.fractionalLinkPositions.containsKey(lane.getParentLink()))
             {
                 this.fractionalLinkPositions.put(lane.getParentLink(), lane.fraction(position));
             }
             this.lanes.add(lane);
+            lane.addGTU(this, position);
             System.out.println("GTU " + toString() + " added to lane: " + lane);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void removeLane(final Lane<?, ?> lane)
+    public final void leaveLane(final Lane<?, ?> lane)
     {
         // synchronized (this.lock)
         {
@@ -332,6 +307,11 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             {
                 this.fractionalLinkPositions.remove(lane.getParentLink());
             }
+        }
+        lane.removeGTU(this);
+        if (this.lanes.size() == 0)
+        {
+            System.err.println("lanes.size() = 0 for GTU " + toString());
         }
     }
 
@@ -472,12 +452,11 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             // Change onto laterally adjacent lane(s) if the LaneMovementStep indicates a lane change
             if (lcmr.getLaneChange() != null)
             {
-                // TODO: make lane changes gradual (not instantaneous; like now)
+                // TODO make lane changes gradual (not instantaneous; like now)
                 Collection<Lane<?, ?>> oldLaneSet = new ArrayList<Lane<?, ?>>(this.lanes);
                 Collection<Lane<?, ?>> newLaneSet = adjacentLanes(lcmr.getLaneChange());
                 // Prepare the remove of this GTU from all of the Lanes that it is on and remember the fractional
-                // position on
-                // each one
+                // position on each one
                 Map<Lane<?, ?>, Double> oldFractionalPositions = new LinkedHashMap<Lane<?, ?>, Double>();
                 for (Lane<?, ?> l : this.lanes)
                 {
@@ -504,8 +483,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                         throw new Error("Program error: Cannot find an oldLane that has newLane " + newLane + " as "
                             + lcmr.getLaneChange() + " neighbor");
                     }
-                    newLane.addGTU(this, fractionalPosition);
-                    addLane(newLane, newLane.getLength().mutable().multiplyBy(fractionalPosition).immutable());
+                    enterLane(newLane, newLane.getLength().mutable().multiplyBy(fractionalPosition).immutable());
                     replacementLanes.add(newLane);
                 }
 
@@ -513,14 +491,14 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 // one
                 for (Lane<?, ?> l : oldFractionalPositions.keySet())
                 {
-                    l.removeGTU(this);
-                    removeLane(l);
+                    leaveLane(l);
                 }
                 System.out.println("GTU " + this + " changed lanes from: " + oldLaneSet + " to " + replacementLanes);
                 checkConsistency();
             }
             // The GTU is now committed to executed the entire movement stored in the LaneChangeModelResult
             // Schedule all sensor triggers that are going to happen until the next evaluation time.
+            // Also schedule the registration and unregistration of lanes when the vehicle enters them.
             scheduleTriggers();
         }
         // Re-schedule this move method at the end of the committed time step.
@@ -778,7 +756,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     }
 
     /**
-     * Schedule the triggers for this GTU during the new time period.
+     * Schedule the triggers for this GTU that are going to happen until the next evaluation time. Also schedule the
+     * registration and unregistration of lanes when the vehicle enters them, at the exact right time. When the method is
+     * called, the acceleration and velocity of this GTU are set to the right values for the coming timestep.
      * @throws NetworkException on network inconsistency
      * @throws RemoteException on communications failure
      * @throws SimRuntimeException should never happen
@@ -786,73 +766,102 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
      */
     private void scheduleTriggers() throws NetworkException, RemoteException, SimRuntimeException, GTUException
     {
-        // synchronized (this.lock)
+        // move the vehicle into any new lanes with the front, and schedule entrance during this time step
+        // and calculate the current position based on the fractional position, because THE POSITION METHOD DOES NOT WORK. IT
+        // CALCULATES THE POSITION BASED ON THE NEWLY CALCULATED ACCELERATION AND VELOCITY AND CAN THEREFORE MAKE AN ERROR.
+        double timestep = this.nextEvaluationTime.getSI() - this.lastEvaluationTime.getSI();
+        double moveSI = getVelocity().getSI() * timestep + 0.5 * getAcceleration().getSI() * timestep * timestep;
+        for (Lane<?, ?> lane : this.lanes)
         {
-            // Does our front reference point enter new lane(s) during the next time step?
-            // Note: the trigger at the start of the lane will add the vehicle to that lane at the exact right time.
-            for (Lane<?, ?> lane : this.lanes)
-            {
-                double frontPosSI = position(lane, getFront(), this.lastEvaluationTime).getSI();
-                double frontPosAtNextEvalSI = position(lane, getFront(), this.nextEvaluationTime).getSI();
-                double remainingDistanceSI = lane.getLength().getSI() - frontPosSI;
-                // double excessNextLaneSI = frontPosAtNextEvalSI - lane.getLength().getSI();
-                double moveSI = frontPosAtNextEvalSI - frontPosSI;
-                if (lane.fractionSI(frontPosSI) <= 1.0 && lane.fractionSI(frontPosAtNextEvalSI) > 1.0)
-                {
-                    int branching = lane.nextLanes().size();
-                    if (1 == branching)
-                    {
-                        // XXX: This is based on the FRONT...
-                        lane.nextLanes().iterator().next().scheduleTriggers(this,
-                            -remainingDistanceSI - getFront().getDx().getSI(), moveSI);
-                    }
-                    else if (branching > 1)
-                    {
-                        if (null == this.getRoute())
-                        {
-                            throw new GTUException(this + " reaches branch but has not route");
-                        }
-                        Node<?> nextNode = this.routeNavigator.nextNodeToVisit();
-                        if (null == nextNode)
-                        {
-                            throw new GTUException(this + " reaches branch and the route returns null as nextNodeToVisit");
-                        }
-                        int continuingLaneCount = 0;
-                        for (Lane<?, ?> nextLane : lane.nextLanes())
-                        {
-                            if (this.lanes.contains(nextLane))
-                            {
-                                continue; // Already on this lane
-                            }
-                            if (nextNode == nextLane.getParentLink().getEndNode())
-                            {
-                                // XXX: This is based on the FRONT...
-                                nextLane.scheduleTriggers(this, -remainingDistanceSI - getFront().getDx().getSI(), moveSI);
-                                continuingLaneCount++;
-                            }
-                        }
-                        if (0 == continuingLaneCount)
-                        {
-                            throw new NetworkException(this
-                                + " reached branch and the route specifies a nextNodeToVisit that is not a next node "
-                                + "at this branch (" + lane.getParentLink().getEndNode() + ")");
-                        }
-                    }
-                }
-                // also schedule any triggers for the current lane(s)
-                // XXX: This is based on the REFERENCE point...
-                lane.scheduleTriggers(this, lane.positionSI(this.fractionalLinkPositions.get(lane.getParentLink())), moveSI);
-            }
+            // schedule triggers on this lane
+            double referenceStartSI = this.fractionalLinkPositions.get(lane.getParentLink()) * lane.getLength().getSI();
+            lane.scheduleTriggers(this, referenceStartSI, moveSI);
 
-            // for (Lane<String, String> lane : triggerLanes)
-            // {
-            // double dt = this.nextEvaluationTime.getSI() - this.getLastEvaluationTime().getSI();
-            //
-            // double frontPosSI = position(lane, getFront(), this.lastEvaluationTime).getSI();
-            // double positionSI = frontPosSI - lane.getLength().getSI() - getFront().getDx().getSI();
-            // fractionalLinkPosition = lane.fractionSI(positionSI);
-            // }
+            // determine when our FRONT will pass the end of this registered lane.
+            // if the time is earlier than the end of the timestep: schedule the enterLane method.
+            // TODO look if more lanes are entered in one timestep, and continue the algorithm with the remainder of the time...
+            double frontPosSI = referenceStartSI + getFront().getDx().getSI();
+            if (frontPosSI < lane.getLength().getSI() && frontPosSI + moveSI > lane.getLength().getSI())
+            {
+                Lane<?, ?> nextLane = determineNextLane(lane);
+                // we have to register the position at the previous timestep to keep calculations consistent.
+                // And we have to correct for the position of the reference point.
+                DoubleScalar.Rel<LengthUnit> refPosAtLastTimestep =
+                    new DoubleScalar.Rel<LengthUnit>(-(lane.getLength().getSI() - frontPosSI) - getFront().getDx().getSI(),
+                        LengthUnit.SI);
+                getSimulator().scheduleEventNow(this, this, "enterLane", new Object[]{nextLane, refPosAtLastTimestep});
+                // schedule any sensor triggers on this lane for the remainder time
+                nextLane.scheduleTriggers(this, 0.0, moveSI - (lane.getLength().getSI() - frontPosSI));
+            }
         }
+
+        // move the vehicle out of any lanes with the back, and schedule exit during this time step
+        for (Lane<?, ?> lane : this.lanes)
+        {
+            // determine when our REAR will pass the end of this registered lane.
+            // if the time is earlier than the end of the timestep: schedule the exitLane method at the END of this timestep
+            // TODO look if more lanes are exited in one timestep, and continue the algorithm with the remainder of the time...
+            double referenceStartSI = this.fractionalLinkPositions.get(lane.getParentLink()) * lane.getLength().getSI();
+            double rearPosSI = referenceStartSI + getRear().getDx().getSI();
+            if (rearPosSI < lane.getLength().getSI() && rearPosSI + moveSI > lane.getLength().getSI())
+            {
+                getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(timestep - Math.ulp(timestep), TimeUnit.SI),
+                    this, this, "leaveLane", new Object[]{lane});
+            }
+        }
+    }
+
+    /**
+     * @param lane the lane to find the successor for
+     * @return the next lane for this GTU
+     * @throws NetworkException when no next lane exists or the route branches into multiple next lanes
+     * @throws GTUException when no route could be found or the routeNavigator returns null
+     */
+    private Lane<?, ?> determineNextLane(final Lane<?, ?> lane) throws NetworkException, GTUException
+    {
+        Lane<?, ?> nextLane = null;
+        if (lane.nextLanes().size() == 1)
+        {
+            nextLane = lane.nextLanes().iterator().next();
+        }
+        else
+        {
+            if (null == this.getRoute())
+            {
+                throw new GTUException(this + " reaches branch but has not route");
+            }
+            Node<?> nextNode = this.routeNavigator.nextNodeToVisit();
+            if (null == nextNode)
+            {
+                throw new GTUException(this + " reaches branch and the route returns null as nextNodeToVisit");
+            }
+            int continuingLaneCount = 0;
+            for (Lane<?, ?> candidateLane : lane.nextLanes())
+            {
+                if (this.lanes.contains(candidateLane))
+                {
+                    continue; // Already on this lane
+                }
+                if (nextNode == candidateLane.getParentLink().getEndNode())
+                {
+                    nextLane = candidateLane;
+                    continuingLaneCount++;
+                }
+            }
+            if (continuingLaneCount == 0)
+            {
+                throw new NetworkException(this
+                    + " reached branch and the route specifies a nextNodeToVisit that is not a next node "
+                    + "at this branch (" + lane.getParentLink().getEndNode() + ")");
+            }
+            if (continuingLaneCount > 1)
+            {
+                throw new NetworkException(this
+                    + " reached branch and the route specifies multiple lanes to continue on at this branch ("
+                    + lane.getParentLink().getEndNode() + "). This is not yet supported");
+            }
+        }
+        return nextLane;
     }
 
     /**
@@ -970,7 +979,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             if (!this.lanes.contains(lane))
             {
-                throw new NetworkException("GTU is not on lane " + lane.toString());
+                throw new NetworkException("position() : GTU " + toString() + " is not on lane " + lane);
             }
             if (!this.fractionalLinkPositions.containsKey(lane.getParentLink()))
             {
@@ -981,7 +990,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             if (longitudinalPosition == null)
             {
                 // According to FindBugs; this cannot happen; PK is unsure whether FindBugs is correct.
-                throw new NetworkException("GetPosition: GTU " + toString() + " not in lane " + lane);
+                throw new NetworkException("position(): GTU " + toString() + " no position for lane " + lane);
             }
             DoubleScalar.Rel<LengthUnit> loc =
                 DoubleScalar.plus(DoubleScalar.plus(longitudinalPosition, deltaX(when)).immutable(),
@@ -1387,6 +1396,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                         {
                             double gtuFractionFront = Math.max(0.0, gtu.fractionalPosition(lane, gtu.getFront(), when));
                             double gtuFractionRear = Math.min(1.0, gtu.fractionalPosition(lane, gtu.getRear(), when));
+                            // TODO is this formula for parallel() okay?
+                            // TODO should it not be extended with several || clauses?
                             if (gtuFractionFront >= posFractionRear && gtuFractionRear <= posFractionFront)
                             {
                                 gtuSet.add(gtu);
@@ -1443,10 +1454,6 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     public final DoubleScalar.Abs<TimeUnit> timeAtDistance(final DoubleScalar.Rel<LengthUnit> distance)
     {
-        if (distance.getSI() < 0.0)
-        {
-            printSolveTimeForDistance(new DoubleScalar.Rel<LengthUnit>(-distance.getSI(), LengthUnit.SI));
-        }
         Double result = solveTimeForDistance(distance);
         if (null == result)
         {
@@ -1476,8 +1483,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             while (!this.lanes.isEmpty())
             {
                 Lane<?, ?> lane = this.lanes.get(0);
-                removeLane(lane);
-                lane.removeGTU(this);
+                leaveLane(lane);
             }
         }
     }
@@ -1501,65 +1507,21 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /**
      * Determine show long it will take for this GTU to cover the specified distance (both time and distance since the last
      * evaluation time).
-     * @param distance double; the distance
+     * @param distance DoubleScalar.Rel&lt;LengthUnit&gt;; the distance
      * @return Double; the relative time, or null when this GTU stops before covering the specified distance
      */
     private Double solveTimeForDistance(final DoubleScalar.Rel<LengthUnit> distance)
     {
-        /*
-         * Currently (!) a (Lane based) GTU commits to a constant acceleration until the next evaluation time. When/If that is
-         * changed, this method will have to be re-written.
-         */
-        // synchronized (this.lock)
-        {
-            double c = -distance.getSI();
-            double a = this.acceleration.getSI() / 2;
-            double b = this.speed.getSI();
-            if (0 == a)
-            {
-                if (b > 0)
-                {
-                    return -c / b;
-                }
-                return null;
-            }
-            // Solve a * t^2 + b * t + c = 0
-            double discriminant = b * b - 4 * a * c;
-            if (discriminant < 0)
-            {
-                return null;
-            }
-            // The solutions are (-b +/- sqrt(discriminant)) / 2 / a
-            double solution1 = (-b - Math.sqrt(discriminant)) / (2 * a);
-            double solution2 = (-b + Math.sqrt(discriminant)) / (2 * a);
-            if (solution1 < 0 && solution2 < 0)
-            {
-                return null;
-            }
-            if (solution1 < 0)
-            {
-                return solution2;
-            }
-            if (solution2 < 0)
-            {
-                return solution1;
-            }
-            // Both are >= 0; return the smallest one
-            if (solution1 < solution2)
-            {
-                return solution1;
-            }
-            return solution2;
-        }
+        return solveTimeForDistanceSI(distance.getSI());
     }
 
     /**
      * Determine show long it will take for this GTU to cover the specified distance (both time and distance since the last
      * evaluation time).
-     * @param distance double; the distance
+     * @param distanceSI double; the distance in SI units
      * @return Double; the relative time, or null when this GTU stops before covering the specified distance
      */
-    private Double printSolveTimeForDistance(final DoubleScalar.Rel<LengthUnit> distance)
+    private Double solveTimeForDistanceSI(final double distanceSI)
     {
         /*
          * Currently (!) a (Lane based) GTU commits to a constant acceleration until the next evaluation time. When/If that is
@@ -1567,7 +1529,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
          */
         // synchronized (this.lock)
         {
-            double c = -distance.getSI();
+            double c = -distanceSI;
             double a = this.acceleration.getSI() / 2;
             double b = this.speed.getSI();
             if (0 == a)
@@ -1587,7 +1549,6 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             // The solutions are (-b +/- sqrt(discriminant)) / 2 / a
             double solution1 = (-b - Math.sqrt(discriminant)) / (2 * a);
             double solution2 = (-b + Math.sqrt(discriminant)) / (2 * a);
-            System.out.println("Solution 1,2 = " + solution1 + ", " + solution2);
             if (solution1 < 0 && solution2 < 0)
             {
                 return null;

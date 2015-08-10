@@ -74,6 +74,123 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
     @SuppressWarnings("checkstyle:designforextension")
     public void run()
     {
+        setAnimationDelay(20); // ________________________________ 50 Hz animation update 
+        AnimationThread animationThread = new AnimationThread(this);
+        animationThread.start();
+
+        long clockTime0 = System.currentTimeMillis(); // _________ current zero for the wall clock
+        OTSSimTimeDouble simTime0 = this.simulatorTime; // _______ current zero for the sim clock
+        double factor = getSpeedFactor(); // _____________________ local copy of speed factor to detect change
+        double msec1 = relativeMillis(1.0).doubleValue(); // _____ translation factor for 1 msec for sim clock
+        DoubleScalar.Rel<TimeUnit> r1 = this.relativeMillis(factor); // sim clock change for 1 msec wall clock
+
+        while (this.isRunning() && !this.eventList.isEmpty()
+            && this.simulatorTime.le(this.replication.getTreatment().getEndTime()))
+        {
+            // check if speedFactor has changed. If yes: re-baseline.
+            if (factor != getSpeedFactor())
+            {
+                clockTime0 = System.currentTimeMillis();
+                simTime0 = this.simulatorTime;
+                factor = getSpeedFactor();
+                r1 = this.relativeMillis(factor);
+            }
+
+            // peek at the first event and determine the time difference relative to RT speed.
+            SimEventInterface<OTSSimTimeDouble> event = this.eventList.first();
+            double simTimeDiffMillis = (event.getAbsoluteExecutionTime().minus(simTime0)).doubleValue() / (msec1 * factor);
+
+            /*
+             * simTimeDiff gives the number of milliseconds between the last event and this event. if speed == 1, this is the
+             * number of milliseconds we have to wait. if speed == 10, we have to wait 1/10 of that. If the speed == 0.1, we
+             * have to wait 10 times that amount. We might also be behind.
+             */
+            if (simTimeDiffMillis < (System.currentTimeMillis() - clockTime0))
+            {
+                // we are behind.
+                if (!isCatchup())
+                {
+                    // if no catch-up: re-baseline.
+                    clockTime0 = System.currentTimeMillis();
+                    simTime0 = this.simulatorTime;
+                }
+                else
+                {
+                    // if catch-up: indicate we were behind.
+                    this.fireTimedEvent(BACKLOG_EVENT, this.simulatorTime, null);
+                }
+            }
+            else
+            {
+                while (simTimeDiffMillis > System.currentTimeMillis() - clockTime0)
+                {
+                    try
+                    {
+                        Thread.sleep(1);
+
+                        // check if speedFactor has changed. If yes: break out of this loop and execute event.
+                        // this could cause a jump.
+                        if (factor != getSpeedFactor())
+                        {
+                            simTimeDiffMillis = 0.0;
+                        }
+
+                    }
+                    catch (InterruptedException ie)
+                    {
+                        // do nothing
+                        ie = null;
+                    }
+
+                    // make a small time step for the animation during wallclock waiting.
+                    // but never beyond the next event time.
+                    if (this.simulatorTime.plus(r1).lt(event.getAbsoluteExecutionTime()))
+                    {
+                        this.simulatorTime.add(r1);
+                    }
+                }
+            }
+
+            synchronized (super.semaphore)
+            {
+                this.simulatorTime = event.getAbsoluteExecutionTime();
+                this.fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, this.simulatorTime, this.simulatorTime);
+
+                // carry out all events scheduled on this simulation time, as long as we are still running.
+                while (this.isRunning() && !this.eventList.isEmpty()
+                    && event.getAbsoluteExecutionTime().eq(this.simulatorTime))
+                {
+                    event = this.eventList.removeFirst();
+                    try
+                    {
+                        event.execute();
+                    }
+                    catch (Exception exception)
+                    {
+                        exception.printStackTrace();
+                        System.err.println(event.toString());
+                        if (this.isPauseOnError())
+                        {
+                            this.stop();
+                        }
+                    }
+                    if (!this.eventList.isEmpty())
+                    {
+                        // peek at next event for while loop.
+                        event = this.eventList.first();
+                    }
+                }
+            }
+        }
+        this.fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, this.simulatorTime, this.simulatorTime);
+        updateAnimation();
+        animationThread.stopAnimation();
+    }
+
+    /** */
+    @SuppressWarnings("checkstyle:designforextension")
+    public void runOld()
+    {
         AnimationThread animationThread = new AnimationThread(this);
         animationThread.start();
 
@@ -146,6 +263,7 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
                     if (this.simulatorTime.plus(r10).lt(event.getAbsoluteExecutionTime()))
                     {
                         this.simulatorTime.add(r10);
+                        this.fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, this.simulatorTime, this.simulatorTime);
                         updateAnimation();
                     }
                 }
@@ -168,6 +286,7 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
                     catch (Exception exception)
                     {
                         exception.printStackTrace();
+                        System.err.println(event.toString());
                         if (this.isPauseOnError())
                         {
                             this.stop();
@@ -185,5 +304,4 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
         updateAnimation();
         animationThread.stopAnimation();
     }
-
 }
