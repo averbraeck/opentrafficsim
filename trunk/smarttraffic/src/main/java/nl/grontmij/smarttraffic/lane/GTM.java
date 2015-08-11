@@ -216,7 +216,7 @@ public class GTM extends AbstractWrappableSimulation {
 					+ "/src/main/resources/";
 
 			// geef hier de file met het netwerk
-			URL url = URLResource.getResource(dirBase + "PNH_test_0805-2.xml");
+			URL url = URLResource.getResource(dirBase + "network.xml");
 
 			// Bouw het netwerk
 			XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
@@ -312,7 +312,7 @@ public class GTM extends AbstractWrappableSimulation {
 			GTUType<String> gtuType = GTUType.makeGTUType("CAR");
 			Map<String, ?> mapRoutes = network.getRouteMap();
 			//N2a_N225a_uitR
-			Route<?,?> route =  (Route<?,?>) mapRoutes.get("N2a_N225a_uitR");
+			Route<?,?> route =  (Route<?,?>) mapRoutes.get("A");
 			CompleteRoute routeA = null;
 			try {
 				routeA = new CompleteRoute(route.getId(),route.getNodes());
