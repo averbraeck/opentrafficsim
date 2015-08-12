@@ -619,7 +619,7 @@ public final class Convert
                 color = Color.RED;
                 newLane =
                     new SinkLane(otslink, latPos, laneAttributes.getWidth(), laneType, laneAttributes.getDirectionality(),
-                        new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR)/* FIXME STUB */);
+                        new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), simulator/* FIXME STUB */);
             }
             else if (osmlink.hasTag("hasPreceding") && offset < 0 || osmlink.hasTag("hasFollowing") && offset >= 0)
             {

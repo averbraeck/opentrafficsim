@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.factory.XMLParser;
 import org.opentrafficsim.core.network.factory.xml.units.AngleUnits;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.core.network.lane.CrossSectionElement;
@@ -89,9 +90,9 @@ final class LinkTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, BlockTag> blockTags = new HashMap<>();
 
-    /** map of lane name to on/off blocks. */
+    /** map of lane name to traffic lights. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<String, BlockOnOffTag> blockOnOffTags = new HashMap<>();
+    Map<String, List<TrafficLightTag>> trafficLightTags = new HashMap<>();
 
     /** map of lane name to fill at t=0. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -212,10 +213,10 @@ final class LinkTag
                 BlockTag.parseBlock(blockNode, parser, linkTag);
             }
 
-            // parse the BLOCKONOFF tags
-            for (Node blockOnOffNode : XMLParser.getNodes(node.getChildNodes(), "BLOCKONOFF"))
+            // parse the TRAFFICLIGHT tags
+            for (Node trafficLightNode : XMLParser.getNodes(node.getChildNodes(), "TRAFFICLIGHT"))
             {
-                BlockOnOffTag.parseBlockOnOff(blockOnOffNode, parser, linkTag);
+                TrafficLightTag.parseTrafficLight(trafficLightNode, parser, linkTag);
             }
 
             // parse the SINK tags

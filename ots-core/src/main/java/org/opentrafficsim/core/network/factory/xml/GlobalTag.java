@@ -3,6 +3,7 @@ package org.opentrafficsim.core.network.factory.xml;
 import java.util.List;
 
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.factory.XMLParser;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
 import org.opentrafficsim.core.unit.LengthUnit;

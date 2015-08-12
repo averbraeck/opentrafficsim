@@ -40,93 +40,107 @@
           </xsd:element>
         </xsd:choice>
 
-        <xsd:element name="LANEOVERRIDE" minOccurs="0" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
-            <xsd:attribute name="SPEED" type="SPEEDTYPE" use="optional"></xsd:attribute>
-            <xsd:attribute name="DIRECTION" type="DIRECTIONTYPE" use="optional"></xsd:attribute>
-            <xsd:attribute name="COLOR" type="COLORTYPE" use="optional"></xsd:attribute>
-          </xsd:complexType>
-        </xsd:element>
-
         <xsd:element ref="ROADTYPE" minOccurs="0" maxOccurs="1" />
 
-        <!-- TODO EITHER GTU or GTUMIX should be present... -->
-        <!-- TODO Maximum one of ROUTE, ROUTEMIX, SHORTESTROUTE, SHORTESTROUTEMIX should be present... -->
-        <xsd:element name="GENERATOR" minOccurs="0" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
-            <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="optional"></xsd:attribute>
-            <xsd:attribute name="GTU" type="xsd:IDREF" use="optional"></xsd:attribute>
-            <xsd:attribute name="GTUMIX" type="xsd:IDREF" use="optional"></xsd:attribute>
-            <xsd:attribute name="IAT" type="TIMEDISTTYPE" use="required"></xsd:attribute>
-            <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required"></xsd:attribute>
-            <xsd:attribute name="MAXGTU" type="xsd:double" use="optional"></xsd:attribute>
-            <xsd:attribute name="STARTTIME" type="TIMETYPE" use="optional"></xsd:attribute>
-            <xsd:attribute name="ENDTIME" type="TIMETYPE" use="optional"></xsd:attribute>
-            <xsd:attribute name="ROUTE" type="xsd:IDREF" use="required"></xsd:attribute>
-            <xsd:attribute name="GTUCOLORER" type="GTUCOLORERTYPE" use="required"></xsd:attribute>
-          </xsd:complexType>
-        </xsd:element>
+        <xsd:sequence>
+          <xsd:choice minOccurs="0" maxOccurs="unbounded">
 
-        <!-- TODO EITHER GTU or GTUMIX should be present... -->
-        <!-- TODO Maximum one of ROUTE, ROUTEMIX, SHORTESTROUTE, SHORTESTROUTEMIX should be present... -->
-        <xsd:element name="LISTGENERATOR" minOccurs="0" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:attribute name="URI" type="xsd:anyURI" use="required"></xsd:attribute>
-            <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
-            <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="optional"></xsd:attribute>
-            <xsd:attribute name="GTU" type="xsd:IDREF" use="optional"></xsd:attribute>
-            <xsd:attribute name="GTUMIX" type="xsd:IDREF" use="optional"></xsd:attribute>
-            <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required"></xsd:attribute>
-            <xsd:attribute name="GTUCOLORER" type="GTUCOLORERTYPE" use="required"></xsd:attribute>
-          </xsd:complexType>
-        </xsd:element>
+            <xsd:element name="LANEOVERRIDE" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
+                <xsd:attribute name="SPEED" type="SPEEDTYPE" use="optional"></xsd:attribute>
+                <xsd:attribute name="DIRECTION" type="DIRECTIONTYPE" use="optional"></xsd:attribute>
+                <xsd:attribute name="COLOR" type="COLORTYPE" use="optional"></xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
 
-        <!-- TODO EITHER GTU or GTUGROUP should be present... -->
-        <!-- TODO Maximum one of ROUTE, ROUTEMIX, SHORTESTROUTE, SHORTESTROUTEMIX should be present... -->
-        <xsd:element name="FILL" minOccurs="0" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
-            <xsd:attribute name="GTU" type="xsd:IDREF" use="optional"></xsd:attribute>
-            <xsd:attribute name="GTUMIX" type="xsd:IDREF" use="optional"></xsd:attribute>
-            <xsd:attribute name="DISTANCE" type="LENGTHDISTTYPE" use="required"></xsd:attribute>
-            <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required"></xsd:attribute>
-            <xsd:attribute name="MAXGTU" type="xsd:double" use="optional"></xsd:attribute>
-            <xsd:attribute name="ROUTE" type="xsd:IDREF" use="required"></xsd:attribute>
-          </xsd:complexType>
-        </xsd:element>
+            <!-- TODO EITHER GTU or GTUMIX should be present... -->
+            <!-- TODO Maximum one of ROUTE, ROUTEMIX, SHORTESTROUTE, SHORTESTROUTEMIX should be present... -->
+            <xsd:element name="GENERATOR" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
+                <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="optional"></xsd:attribute>
+                <xsd:attribute name="GTU" type="xsd:IDREF" use="optional"></xsd:attribute>
+                <xsd:attribute name="GTUMIX" type="xsd:IDREF" use="optional"></xsd:attribute>
+                <xsd:attribute name="IAT" type="TIMEDISTTYPE" use="required"></xsd:attribute>
+                <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required"></xsd:attribute>
+                <xsd:attribute name="MAXGTU" type="xsd:double" use="optional"></xsd:attribute>
+                <xsd:attribute name="STARTTIME" type="TIMETYPE" use="optional"></xsd:attribute>
+                <xsd:attribute name="ENDTIME" type="TIMETYPE" use="optional"></xsd:attribute>
+                <xsd:attribute name="ROUTE" type="xsd:IDREF" use="required"></xsd:attribute>
+                <xsd:attribute name="GTUCOLORER" type="GTUCOLORERTYPE" use="required"></xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
 
-        <xsd:element name="BLOCK" minOccurs="0" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
-            <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required"></xsd:attribute>
-          </xsd:complexType>
-        </xsd:element>
+            <!-- TODO EITHER GTU or GTUMIX should be present... -->
+            <!-- TODO Maximum one of ROUTE, ROUTEMIX, SHORTESTROUTE, SHORTESTROUTEMIX should be present... -->
+            <xsd:element name="LISTGENERATOR" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="URI" type="xsd:anyURI" use="required"></xsd:attribute>
+                <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
+                <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="optional"></xsd:attribute>
+                <xsd:attribute name="GTU" type="xsd:IDREF" use="optional"></xsd:attribute>
+                <xsd:attribute name="GTUMIX" type="xsd:IDREF" use="optional"></xsd:attribute>
+                <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required"></xsd:attribute>
+                <xsd:attribute name="GTUCOLORER" type="GTUCOLORERTYPE" use="required"></xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
 
-        <xsd:element name="BLOCKONOFF" minOccurs="0" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
-            <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required"></xsd:attribute>
-          </xsd:complexType>
-        </xsd:element>
+            <!-- TODO EITHER GTU or GTUGROUP should be present... -->
+            <!-- TODO Maximum one of ROUTE, ROUTEMIX, SHORTESTROUTE, SHORTESTROUTEMIX should be present... -->
+            <xsd:element name="FILL" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
+                <xsd:attribute name="GTU" type="xsd:IDREF" use="optional"></xsd:attribute>
+                <xsd:attribute name="GTUMIX" type="xsd:IDREF" use="optional"></xsd:attribute>
+                <xsd:attribute name="DISTANCE" type="LENGTHDISTTYPE" use="required"></xsd:attribute>
+                <xsd:attribute name="INITIALSPEED" type="SPEEDDISTTYPE" use="required"></xsd:attribute>
+                <xsd:attribute name="MAXGTU" type="xsd:double" use="optional"></xsd:attribute>
+                <xsd:attribute name="ROUTE" type="xsd:IDREF" use="required"></xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
 
-        <xsd:element name="SENSOR" minOccurs="0" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:attribute name="NAME" type="xsd:string" use="optional"></xsd:attribute>
-            <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
-            <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required"></xsd:attribute>
-            <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="required"></xsd:attribute>
-            <xsd:attribute name="TRIGGER" type="GTUPOSITIONTYPE" use="required"></xsd:attribute>
-          </xsd:complexType>
-        </xsd:element>
+            <xsd:element name="BLOCK" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
+                <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required"></xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
 
-        <xsd:element name="SINK" minOccurs="0" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
-            <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required"></xsd:attribute>
-          </xsd:complexType>
-        </xsd:element>
+            <xsd:element name="BLOCKONOFF" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
+                <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required"></xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="SENSOR" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="NAME" type="xsd:string" use="optional"></xsd:attribute>
+                <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
+                <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required"></xsd:attribute>
+                <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="required"></xsd:attribute>
+                <xsd:attribute name="TRIGGER" type="GTUPOSITIONTYPE" use="required"></xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="TRAFFICLIGHT" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="NAME" type="xsd:string" use="optional"></xsd:attribute>
+                <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
+                <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required"></xsd:attribute>
+                <xsd:attribute name="CLASS" type="CLASSNAMETYPE" use="required"></xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="SINK" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:attribute name="LANE" type="xsd:string" use="required"></xsd:attribute>
+                <xsd:attribute name="POSITION" type="LENGTHBEGINENDTYPE" use="required"></xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:choice>
+        </xsd:sequence>
       </xsd:sequence>
 
       <xsd:attribute name="NAME" type="xsd:ID" use="required"></xsd:attribute>

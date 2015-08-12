@@ -47,7 +47,7 @@ public class DefaultBlockAnimation extends Renderable2D
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        graphics.setColor(Color.RED);
+        graphics.setColor(Color.BLACK);
         Rectangle2D rectangle = new Rectangle2D.Double(-0.4, -this.halfWidth, 0.8, 2 * this.halfWidth);
         graphics.fill(rectangle);
     }

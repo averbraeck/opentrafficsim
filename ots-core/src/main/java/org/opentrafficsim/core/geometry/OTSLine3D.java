@@ -272,7 +272,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         
         return this.lengthIndexedLine.length - 2;
 
-        /*-
+        /*- binary variant
         int lo = 0;
         int hi = this.lengthIndexedLine.length - 1;
         while (lo <= hi)

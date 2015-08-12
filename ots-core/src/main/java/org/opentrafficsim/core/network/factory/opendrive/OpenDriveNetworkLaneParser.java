@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.network.factory.xml;
+package org.opentrafficsim.core.network.factory.opendrive;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,48 +36,16 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class XmlNetworkLaneParser
+public class OpenDriveNetworkLaneParser
 {
-    /** global values from the GLOBAL tag. */
+    /** Junction tags. */
     @SuppressWarnings("visibilitymodifier")
-    protected GlobalTag globalTag;
-
-    /** the UNprocessed nodes for further reference. */
+    protected Map<String, JunctionTag> junctionTags = new HashMap<>();
+    
+    /** Road tags. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, NodeTag> nodeTags = new HashMap<>();
-
-    /** the UNprocessed links for further reference. */
-    @SuppressWarnings("visibilitymodifier")
-    protected Map<String, LinkTag> linkTags = new HashMap<>();
-
-    /** the gtu tags for further reference. */
-    @SuppressWarnings("visibilitymodifier")
-    protected Map<String, GTUTag> gtuTags = new HashMap<>();
-
-    /** the gtumix tags for further reference. */
-    @SuppressWarnings("visibilitymodifier")
-    protected Map<String, GTUMixTag> gtuMixTags = new HashMap<>();
-
-    /** the route tags for further reference. */
-    @SuppressWarnings("visibilitymodifier")
-    protected Map<String, RouteTag> routeTags = new HashMap<>();
-
-    /** the route mix tags for further reference. */
-    @SuppressWarnings("visibilitymodifier")
-    protected Map<String, RouteMixTag> routeMixTags = new HashMap<>();
-
-    /** the shortest route tags for further reference. */
-    @SuppressWarnings("visibilitymodifier")
-    protected Map<String, ShortestRouteTag> shortestRouteTags = new HashMap<>();
-
-    /** the shortest route mix tags for further reference. */
-    @SuppressWarnings("visibilitymodifier")
-    protected Map<String, ShortestRouteMixTag> shortestRouteMixTags = new HashMap<>();
-
-    /** the road type tags for further reference. */
-    @SuppressWarnings("visibilitymodifier")
-    protected Map<String, RoadTypeTag> roadTypeTags = new HashMap<>();
-
+    protected Map<String, RoadTag> roadTags = new HashMap<>();
+    
     /** the GTUTypes that have been created. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, GTUType<String>> gtuTypes = new HashMap<>();
@@ -97,7 +65,7 @@ public class XmlNetworkLaneParser
     /**
      * @param simulator the simulator for creating the animation. Null if no animation needed.
      */
-    public XmlNetworkLaneParser(final OTSDEVSSimulatorInterface simulator)
+    public OpenDriveNetworkLaneParser(final OTSDEVSSimulatorInterface simulator)
     {
         this.simulator = simulator;
         this.laneTypes.put(noTrafficLaneType.getId(), noTrafficLaneType);
@@ -120,7 +88,7 @@ public class XmlNetworkLaneParser
         IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException
     {
         if (url.getFile().length() > 0 && !(new File(url.getFile()).exists()))
-            throw new SAXException("XmlNetworkLaneParser.build: File url.getFile() does not exist");
+            throw new SAXException("OpenDriveNetworkLaneParser.build: File url.getFile() does not exist");
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -129,50 +97,43 @@ public class XmlNetworkLaneParser
         Document document = builder.parse(url.openStream());
         NodeList networkNodeList = document.getDocumentElement().getChildNodes();
 
-        if (!document.getDocumentElement().getNodeName().equals("NETWORK"))
-            throw new SAXException("XmlNetworkLaneParser.build: XML document does not start with an NETWORK tag, found "
-                + document.getDocumentElement().getNodeName() + " instead");
+        if (!document.getDocumentElement().getNodeName().equals("OpenDRIVE"))
+            throw new SAXException(
+                "OpenDriveNetworkLaneParser.build: XML document does not start with an OpenDRIVE tag, found "
+                    + document.getDocumentElement().getNodeName() + " instead");
 
-        // there should be some definitions using DEFINITIONS tags (could be more than one due to include files)
-        List<Node> definitionNodes = XMLParser.getNodes(networkNodeList, "DEFINITIONS");
+        // there should be a header tag
+        List<Node> headerNodes = XMLParser.getNodes(networkNodeList, "header");
+        if (headerNodes.size() != 1)
+            throw new SAXException("OpenDriveNetworkLaneParser.build: XML document does not have a header tag");
+        // TODO parse header, geoReference and check version number of OpenDrive
 
-        if (definitionNodes.size() == 0)
-            throw new SAXException("XmlNetworkLaneParser.build: XML document does not have a DEFINITIONS tag");
+        // parse the junction tags
+        List<Node> junctionNodes = XMLParser.getNodes(networkNodeList, "junction");
+        for (Node junctionNode : junctionNodes)
+            JunctionTag.parseJunction(junctionNode, this);
 
-        // parse the DEFINITIONS tags
-        for (Node definitionNode : definitionNodes)
-            GlobalTag.parseGlobal(definitionNode.getChildNodes(), this);
-        for (Node definitionNode : definitionNodes)
-            GTUTag.parseGTUs(definitionNode.getChildNodes(), this);
-        for (Node definitionNode : definitionNodes)
-            GTUMixTag.parseGTUMix(definitionNode.getChildNodes(), this);
-        for (Node definitionNode : definitionNodes)
-            LaneTypeTag.parseLaneTypes(definitionNode.getChildNodes(), this);
-        for (Node definitionNode : definitionNodes)
-            CompatibilityTag.parseCompatibilities(definitionNode.getChildNodes(), this);
-        for (Node definitionNode : definitionNodes)
-            RoadTypeTag.parseRoadTypes(definitionNode.getChildNodes(), this);
+        // parse the road tags
+        List<Node> roadNodes = XMLParser.getNodes(networkNodeList, "road");
+        if (roadNodes.size() == 0)
+            throw new SAXException("OpenDriveNetworkLaneParser.build: XML document does not have a road tag");
+        for (Node roadNode : roadNodes)
+        {
+            RoadTag roadTag = RoadTag.parseRoad(roadNode, this);
+            LinkTag.parseLink(roadNode.getChildNodes(), this, roadTag);
+            TypeTag.parseType(roadNode.getChildNodes(), this, roadTag);
+            /*-
+            PlanViewTag.parsePlanView(roadNode.getChildNodes(), this, roadTag);
+            ElevationProfileTag.parseElevationProfile(roadNode.getChildNodes(), this, roadTag);
+            LateralProfileTag.parseLateralProfile(roadNode.getChildNodes(), this, roadTag);
+            LanesTag.parseLanes(roadNode.getChildNodes(), this, roadTag);
+            ObjectsTag.parseObjects(roadNode.getChildNodes(), this, roadTag);
+            SignalsTag.parseSignals(roadNode.getChildNodes(), this, roadTag);
+            SurfaceTag.parseSurface(roadNode.getChildNodes(), this, roadTag);
+            RailroadTag.parseRailroad(roadNode.getChildNodes(), this, roadTag);
+            */
+        }
 
-        // parse the NETWORK tag
-        NodeTag.parseNodes(networkNodeList, this);
-        RouteTag.parseRoutes(networkNodeList, this);
-        ShortestRouteTag.parseShortestRoutes(networkNodeList, this);
-        RouteMixTag.parseRouteMix(networkNodeList, this);
-        ShortestRouteMixTag.parseShortestRouteMix(networkNodeList, this);
-        LinkTag.parseLinks(networkNodeList, this);
-
-        // process nodes and links to calculate coordinates and positions
-        Links.calculateNodeCoordinates(this);
-        for (LinkTag linkTag : this.linkTags.values())
-            Links.buildLink(linkTag, this, this.simulator);
-        for (LinkTag linkTag : this.linkTags.values())
-            Links.applyRoadTypeToLink(linkTag, this, this.simulator);
-
-        // process the routes
-        for (RouteTag routeTag : this.routeTags.values())
-            routeTag.makeRoute();
-        // TODO shortestRoute, routeMix, ShortestRouteMix
-        
         // store the structure information in the network
         return makeNetwork(url.toString());
     }
@@ -186,6 +147,7 @@ public class XmlNetworkLaneParser
     private OTSNetwork makeNetwork(final String name) throws NetworkException
     {
         OTSNetwork network = new OTSNetwork(name);
+        /*-
         for (NodeTag nodeTag : this.nodeTags.values())
         {
             network.addNode(nodeTag.node);
@@ -198,6 +160,7 @@ public class XmlNetworkLaneParser
         {
             network.addRoute(routeTag.route);
         }
+        */
         return network;
     }
 

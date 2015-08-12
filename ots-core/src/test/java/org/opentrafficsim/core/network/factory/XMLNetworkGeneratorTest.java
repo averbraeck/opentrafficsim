@@ -169,7 +169,7 @@ public class XMLNetworkGeneratorTest
         public ReportingSensor(final Lane<String, String> lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
             final TYPE positionType, final String id, final OTSDEVSSimulatorInterface simulator)
         {
-            super(lane, longitudinalPosition, positionType, "REPORT@" + lane.toString());
+            super(lane, longitudinalPosition, positionType, "REPORT@" + lane.toString(), simulator);
             this.id = id;
             this.simulator = simulator;
         }

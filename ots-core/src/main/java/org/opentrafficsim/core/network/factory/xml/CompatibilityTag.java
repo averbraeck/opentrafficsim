@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.factory.XMLParser;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
