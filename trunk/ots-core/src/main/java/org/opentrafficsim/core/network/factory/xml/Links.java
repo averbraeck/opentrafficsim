@@ -34,8 +34,9 @@ import org.opentrafficsim.core.network.lane.CrossSectionElement;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.NoTrafficLane;
+import org.opentrafficsim.core.network.lane.Sensor;
 import org.opentrafficsim.core.network.lane.Shoulder;
-import org.opentrafficsim.core.network.lane.SinkLane;
+import org.opentrafficsim.core.network.lane.SinkSensor;
 import org.opentrafficsim.core.network.lane.Stripe;
 import org.opentrafficsim.core.network.lane.Stripe.Permeable;
 import org.opentrafficsim.core.unit.AnglePlaneUnit;
@@ -457,122 +458,109 @@ final class Links
 
                 case LANE:
                 {
+                    // TODO LANEOVERRIDE
+                    Lane<String, String> lane =
+                        new Lane<>(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width, cseTag.laneType,
+                            cseTag.direction, new DoubleScalar.Abs<FrequencyUnit>(Double.MAX_VALUE, FrequencyUnit.PER_HOUR),
+                            cseTag.speed);
+                    cseList.add(lane);
+                    lanes.add(lane);
+                    linkTag.lanes.put(cseTag.name, lane);
+                    if (simulator != null)
+                    {
+                        new LaneAnimation(lane, simulator, cseTag.color);
+                    }
+
+                    // SINK
                     if (linkTag.sinkTags.keySet().contains(cseTag.name))
                     {
-                        // SINKLANE
-                        // TODO create a SinkLane with the given position for the Sink?
-                        SinkLane<String, String> sinkLane =
-                            new SinkLane<>(csl, cseTag.offset, cseTag.width, cseTag.laneType, cseTag.direction,
-                                cseTag.speed, simulator);
-                        cseList.add(sinkLane);
-                        lanes.add(sinkLane);
-                        linkTag.lanes.put(cseTag.name, sinkLane);
-                        if (simulator != null)
-                        {
-                            new LaneAnimation(sinkLane, simulator, cseTag.color);
-                        }
+                        SinkTag sinkTag = linkTag.sinkTags.get(cseTag.name);
+                        DoubleScalar.Rel<LengthUnit> position = LinkTag.parseBeginEndPosition(sinkTag.positionStr, lane);
+                        Sensor sensor = new SinkSensor(lane, position, simulator);
+                        lane.addSensor(sensor);
                     }
 
-                    else
-
+                    // BLOCK
+                    if (linkTag.blockTags.containsKey(cseTag.name))
                     {
-                        // TODO LANEOVERRIDE
-                        Lane<String, String> lane =
-                            new Lane<>(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width, cseTag.laneType,
-                                cseTag.direction, new DoubleScalar.Abs<FrequencyUnit>(Double.MAX_VALUE,
-                                    FrequencyUnit.PER_HOUR), cseTag.speed);
-                        cseList.add(lane);
-                        lanes.add(lane);
-                        linkTag.lanes.put(cseTag.name, lane);
-                        if (simulator != null)
-                        {
-                            new LaneAnimation(lane, simulator, cseTag.color);
-                        }
-
-                        // BLOCK
-                        if (linkTag.blockTags.containsKey(cseTag.name))
-                        {
-                            BlockTag blockTag = linkTag.blockTags.get(cseTag.name);
-                            DoubleScalar.Rel<LengthUnit> position =
-                                LinkTag.parseBeginEndPosition(blockTag.positionStr, lane);
-                            new LaneBlock(lane, position, simulator, null);
-                        }
-
-                        // TRAFFICLIGHT
-                        if (linkTag.trafficLightTags.containsKey(cseTag.name))
-                        {
-                            for (TrafficLightTag trafficLightTag : linkTag.trafficLightTags.get(cseTag.name))
-                            {
-                                try
-                                {
-                                    Class<?> clazz = Class.forName(trafficLightTag.className);
-                                    Constructor<?> trafficLightConstructor =
-                                        ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class,
-                                            DoubleScalar.Rel.class, OTSDEVSSimulatorInterface.class});
-                                    DoubleScalar.Rel<LengthUnit> position =
-                                        LinkTag.parseBeginEndPosition(trafficLightTag.positionStr, lane);
-                                    AbstractTrafficLight trafficLight =
-                                        (AbstractTrafficLight) trafficLightConstructor.newInstance(new Object[]{
-                                            trafficLightTag.name, lane, position, simulator});
-                                }
-                                catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
-                                    | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                                    | NetworkException exception)
-                                {
-                                    throw new NetworkException("SENSOR: CLASS NAME " + trafficLightTag.className
-                                        + " for sensor " + trafficLightTag.name + " on lane " + lane.toString()
-                                        + " -- class not found or constructor not right", exception);
-                                }
-                            }
-                        }
-
-                        // GENERATOR
-                        if (linkTag.generatorTags.containsKey(cseTag.name))
-                        {
-                            GeneratorTag generatorTag = linkTag.generatorTags.get(cseTag.name);
-                            GeneratorTag.makeGenerator(generatorTag, parser, linkTag, simulator);
-                        }
-
-                        // TODO LISTGENERATOR
-
-                        // SENSOR
-                        if (linkTag.sensorTags.containsKey(cseTag.name))
-                        {
-                            for (SensorTag sensorTag : linkTag.sensorTags.get(cseTag.name))
-                            {
-                                try
-                                {
-                                    Class<?> clazz = Class.forName(sensorTag.className);
-                                    Constructor<?> sensorConstructor =
-                                        ClassUtil.resolveConstructor(clazz, new Class[]{Lane.class, DoubleScalar.Rel.class,
-                                            RelativePosition.TYPE.class, String.class, OTSSimulatorInterface.class});
-                                    DoubleScalar.Rel<LengthUnit> position =
-                                        LinkTag.parseBeginEndPosition(sensorTag.positionStr, lane);
-                                    AbstractSensor sensor =
-                                        (AbstractSensor) sensorConstructor.newInstance(new Object[]{lane, position,
-                                            sensorTag.triggerPosition, sensorTag.name, simulator});
-                                    lane.addSensor(sensor);
-                                }
-                                catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
-                                    | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                                    | NetworkException exception)
-                                {
-                                    throw new NetworkException("SENSOR: CLASS NAME " + sensorTag.className + " for sensor "
-                                        + sensorTag.name + " on lane " + lane.toString()
-                                        + " -- class not found or constructor not right", exception);
-                                }
-                            }
-                        }
-
-                        // FILL
-                        if (linkTag.fillTags.containsKey(cseTag.name))
-                        {
-                            FillTag fillTag = linkTag.fillTags.get(cseTag.name);
-                            FillTag.makeFill(fillTag, parser, linkTag, simulator);
-                        }
-
+                        BlockTag blockTag = linkTag.blockTags.get(cseTag.name);
+                        DoubleScalar.Rel<LengthUnit> position = LinkTag.parseBeginEndPosition(blockTag.positionStr, lane);
+                        new LaneBlock(lane, position, simulator, null);
                     }
-                    break;
+
+                    // TRAFFICLIGHT
+                    if (linkTag.trafficLightTags.containsKey(cseTag.name))
+                    {
+                        for (TrafficLightTag trafficLightTag : linkTag.trafficLightTags.get(cseTag.name))
+                        {
+                            try
+                            {
+                                Class<?> clazz = Class.forName(trafficLightTag.className);
+                                Constructor<?> trafficLightConstructor =
+                                    ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class,
+                                        DoubleScalar.Rel.class, OTSDEVSSimulatorInterface.class});
+                                DoubleScalar.Rel<LengthUnit> position =
+                                    LinkTag.parseBeginEndPosition(trafficLightTag.positionStr, lane);
+                                AbstractTrafficLight trafficLight =
+                                    (AbstractTrafficLight) trafficLightConstructor.newInstance(new Object[]{
+                                        trafficLightTag.name, lane, position, simulator});
+                            }
+                            catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                                | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                                | NetworkException exception)
+                            {
+                                throw new NetworkException("SENSOR: CLASS NAME " + trafficLightTag.className
+                                    + " for sensor " + trafficLightTag.name + " on lane " + lane.toString()
+                                    + " -- class not found or constructor not right", exception);
+                            }
+                        }
+                    }
+
+                    // GENERATOR
+                    if (linkTag.generatorTags.containsKey(cseTag.name))
+                    {
+                        GeneratorTag generatorTag = linkTag.generatorTags.get(cseTag.name);
+                        GeneratorTag.makeGenerator(generatorTag, parser, linkTag, simulator);
+                    }
+
+                    // TODO LISTGENERATOR
+
+                    // SENSOR
+                    if (linkTag.sensorTags.containsKey(cseTag.name))
+                    {
+                        for (SensorTag sensorTag : linkTag.sensorTags.get(cseTag.name))
+                        {
+                            try
+                            {
+                                Class<?> clazz = Class.forName(sensorTag.className);
+                                Constructor<?> sensorConstructor =
+                                    ClassUtil.resolveConstructor(clazz, new Class[]{Lane.class, DoubleScalar.Rel.class,
+                                        RelativePosition.TYPE.class, String.class, OTSSimulatorInterface.class});
+                                DoubleScalar.Rel<LengthUnit> position =
+                                    LinkTag.parseBeginEndPosition(sensorTag.positionStr, lane);
+                                AbstractSensor sensor =
+                                    (AbstractSensor) sensorConstructor.newInstance(new Object[]{lane, position,
+                                        sensorTag.triggerPosition, sensorTag.name, simulator});
+                                lane.addSensor(sensor);
+                            }
+                            catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                                | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                                | NetworkException exception)
+                            {
+                                throw new NetworkException("SENSOR: CLASS NAME " + sensorTag.className + " for sensor "
+                                    + sensorTag.name + " on lane " + lane.toString()
+                                    + " -- class not found or constructor not right", exception);
+                            }
+                        }
+                    }
+
+                    // FILL
+                    if (linkTag.fillTags.containsKey(cseTag.name))
+                    {
+                        FillTag fillTag = linkTag.fillTags.get(cseTag.name);
+                        FillTag.makeFill(fillTag, parser, linkTag, simulator);
+                    }
+
                 }
 
                 case NOTRAFFICLANE:
