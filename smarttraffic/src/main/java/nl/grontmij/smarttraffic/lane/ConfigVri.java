@@ -1,33 +1,38 @@
 package nl.grontmij.smarttraffic.lane;
 
 import java.util.HashMap;
+import java.util.Map;
 
-public class ConfigVri {
+public class ConfigVri
+{
 
-	private String name;
-	private HashMap<Integer, String> detectors = new HashMap<Integer, String>();
-	private HashMap<Integer, String> signalGroups = new HashMap<Integer, String>();
-	
-	public ConfigVri(String name, HashMap<Integer, String> detectors,
-			HashMap<Integer, String> signalGroups) {
-		super();
-		this.name = name;
-		this.detectors = detectors;
-		this.signalGroups = signalGroups;
-	}
+    private String name;
 
-	public String getName() {
-		return name;
-	}
+    private Map<Integer, String> detectors = new HashMap<Integer, String>();
 
-	public HashMap<Integer, String> getDetectors() {
-		return detectors;
-	}
+    private Map<Integer, String> signalGroups = new HashMap<Integer, String>();
 
-	public HashMap<Integer, String> getSignalGroups() {
-		return signalGroups;
-	}	
-	
-	
+    public ConfigVri(String name, Map<Integer, String> detectors, Map<Integer, String> signalGroups)
+    {
+        super();
+        this.name = name;
+        this.detectors = detectors;
+        this.signalGroups = signalGroups;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public Map<Integer, String> getDetectors()
+    {
+        return detectors;
+    }
+
+    public Map<Integer, String> getSignalGroups()
+    {
+        return signalGroups;
+    }
 
 }

@@ -3,7 +3,9 @@
  */
 package nl.grontmij.smarttraffic.lane;
 
-import java.util.HashMap;
+import java.rmi.RemoteException;
+
+import javax.naming.NamingException;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -11,8 +13,6 @@ import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.lane.AbstractSensor;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
@@ -22,20 +22,6 @@ public class KillSensor extends AbstractSensor
 {
     /** */
     private static final long serialVersionUID = 20141231L;
-
-    private HashMap<DoubleScalar.Abs<TimeUnit>, Integer> statusByTime = new HashMap<DoubleScalar.Abs<TimeUnit>, Integer>();
-
-    /**
-     * @param lane
-     * @param longitudinalPositionFromEnd
-     * @param nameSensor
-     * @param nameJunction
-     */
-    /*
-     * public SensorLaneST(Lane<?, ?> lane, Rel<LengthUnit> longitudinalPositionFromEnd, final RelativePosition.TYPE front,
-     * String sensorType, String nameSensor, String nameJunction) { super(lane, longitudinalPositionFromEnd, front, nameSensor);
-     * this.nameJunction = nameJunction; this.sensorType = sensorType; }
-     */
 
     /**
      * @param lane
@@ -47,21 +33,14 @@ public class KillSensor extends AbstractSensor
         String nameSensor, final OTSSimulatorInterface simulator)
     {
         super(lane, longitudinalPositionFromEnd, front, nameSensor, simulator);
-    }
-
-    public HashMap<DoubleScalar.Abs<TimeUnit>, Integer> getStatusByTime()
-    {
-        return statusByTime;
-    }
-
-    public void setStatusByTime(HashMap<DoubleScalar.Abs<TimeUnit>, Integer> statusByTime)
-    {
-        this.statusByTime = statusByTime;
-    }
-
-    public void addStatusByTime(DoubleScalar.Abs<TimeUnit> timeNow, Integer status)
-    {
-        this.statusByTime.put(timeNow, status);
+        try
+        {
+            new KillSensorAnimation(this, simulator);
+        }
+        catch (RemoteException | NamingException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     /**
@@ -79,7 +58,7 @@ public class KillSensor extends AbstractSensor
     @Override
     public String toString()
     {
-        return "GenerateSensor [getLane()=" + this.getLane() + ", getLongitudinalPosition()=" + this.getLongitudinalPosition()
+        return "KillSensor [getLane()=" + this.getLane() + ", getLongitudinalPosition()=" + this.getLongitudinalPosition()
             + ", getPositionType()=" + this.getPositionType() + "]";
     }
 

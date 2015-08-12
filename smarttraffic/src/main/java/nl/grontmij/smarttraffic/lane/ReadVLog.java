@@ -5,15 +5,20 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.io.URLResource;
 
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.lane.AbstractSensor;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -56,8 +61,8 @@ public class ReadVLog
     {
         String line = "";
         String nameVRI = null;
-        HashMap<Integer, String> detectors = new HashMap<Integer, String>();
-        HashMap<Integer, String> signalGroups = new HashMap<Integer, String>();
+        Map<Integer, String> detectors = new HashMap<Integer, String>();
+        Map<Integer, String> signalGroups = new HashMap<Integer, String>();
 
         while ((line = bufferedReader.readLine()) != null)
         {
@@ -127,23 +132,25 @@ public class ReadVLog
                 }
             }
         }
+        System.out.println(nameVRI + " - " + signalGroups);
         return new ConfigVri(nameVRI, detectors, signalGroups);
     }
 
     public static void readVlogFiles(HashMap<String, AbstractSensor> mapSensor, HashMap<String, ConfigVri> configVriList,
-        Instant timeVLog, String dirLoggings, String wegNummer, String[] vriNummer) throws IOException
+        Instant timeVLog, String dirLoggings, String wegNummer, String[] vriNummer, OTSDEVSSimulatorInterface simulator)
+        throws IOException
     {
-        ZoneOffset offset = ZoneOffset.of("-00:00");
-        LocalDateTime ldt = LocalDateTime.ofInstant(timeVLog, offset);
-        ldt = LocalDateTime.ofInstant(timeVLog, offset);
-        int year = ldt.getYear();
-        int month = ldt.getMonthValue();
-        int day = ldt.getDayOfMonth();
-        int hour = ldt.getHour();
-        int minute = ldt.getMinute();
-        int second = ldt.getSecond();
         for (String vri : vriNummer)
         {
+            ZoneOffset offset = ZoneOffset.of("-00:00");
+            LocalDateTime ldt = LocalDateTime.ofInstant(timeVLog, offset);
+            ldt = LocalDateTime.ofInstant(timeVLog, offset);
+            int year = ldt.getYear();
+            int month = ldt.getMonthValue();
+            int day = ldt.getDayOfMonth();
+            int hour = ldt.getHour();
+            int minute = ldt.getMinute();
+            int second = ldt.getSecond();
             Instant timeVLogStart = timeVLog;
             Boolean[] boolReadyToStartVLog = new Boolean[]{new Boolean(false)};
             String vriLocation = "VRI" + wegNummer + vri;
@@ -158,6 +165,7 @@ public class ReadVLog
                 String file =
                     dirLoggings + Integer.toString(day) + "/" + vriLocation + "/" + vriLocation + "_" + timeStampFile
                         + ".vlg";
+                // System.out.println("vlg file: " + file);
                 if (URLResource.getResource(file) != null)
                 {
                     URL url = URLResource.getResource(file);
@@ -169,30 +177,28 @@ public class ReadVLog
                     }
                     catch (FileNotFoundException e1)
                     {
-                        // TODO Auto-generated catch block
                         e1.printStackTrace();
                     }
-                    // in de vlog bestanden wordt om de x minuten een regel met
-                    // de "harde" tijd gelogd
-                    // vervolgens worden meldingen gedaan met een delta_tijd
-                    // vanaf die "harde" tijd
-                    // in de volgende module wordt eerst een harde starttijd
-                    // gezocht en worden vervolgens de initiele waarden van de
-                    // detectoren en van de signaalgroepen ingelezen
+                    /*
+                     * in de vlog bestanden wordt om de x minuten een regel met de "harde" tijd gelogd vervolgens worden
+                     * meldingen gedaan met een delta_tijd vanaf die "harde" tijd in de volgende module wordt eerst een harde
+                     * starttijd gezocht en worden vervolgens de initiele waarden van de detectoren en van de signaalgroepen
+                     * ingelezen
+                     */
                     if (!boolReadyToStartVLog[0])
                     {
                         readStatusVLogFile(mapSensor, bufferedReader, timeFromVLog, deltaTimeFromVLog, boolReadyToStartVLog,
-                            configVriList, vri);
+                            configVriList, vri, simulator);
 
                     }
-                    // als er eenmaal een referentie naar de tijd is gevonden
-                    // kan vervolgens verder worden gelezen met alleen de
-                    // wijzigingen
-                    // de regels met de statusberichten kunnen wordn
-                    // overgeslagen
+                    /*
+                     * als er eenmaal een referentie naar de tijd is gevonden kan vervolgens verder worden gelezen met alleen de
+                     * wijzigingen de regels met de statusberichten kunnen worden overgeslagen
+                     */
                     if (boolReadyToStartVLog[0])
                     {
-                        readVLogFile(mapSensor, bufferedReader, timeFromVLog, deltaTimeFromVLog, configVriList, vri);
+                        readVLogFile(mapSensor, bufferedReader, timeFromVLog, deltaTimeFromVLog, configVriList, vri,
+                            simulator);
                     }
                 }
                 // increase time with one minute for next file
@@ -212,7 +218,7 @@ public class ReadVLog
     // daarbij worden zowel pulsen van detectoren en signaalgroepen ingelezen
     public static void readStatusVLogFile(HashMap<String, AbstractSensor> mapSensor, BufferedReader bufferedReader,
         Instant[] timeFromVLog, Long[] deltaTimeFromVLog, Boolean[] boolReadyToStartVLog,
-        HashMap<String, ConfigVri> vriList, String vriName) throws IOException
+        HashMap<String, ConfigVri> vriList, String vriName, OTSDEVSSimulatorInterface simulator) throws IOException
     {
         boolean boolReadFirstTimeStamp = false;
         boolean boolReadFirstDetectorStatus = false;
@@ -241,7 +247,7 @@ public class ReadVLog
             {
                 // status signaalgroepen (alle SG's)
                 mapStatus = parseStatus(buffer, deltaTimeFromVLog);
-                ReadStatusSignalGroup(mapSensor, mapStatus, vriList, vriName, timeFromVLog, deltaTimeFromVLog);
+                ReadStatusSignalGroup(mapSensor, mapStatus, vriList, vriName, timeFromVLog, deltaTimeFromVLog, simulator);
                 boolReadFirstSignalGroupStatus = true;
             }
             // als alle initiele gegevens beschikbaar zijn, gaan we naar de
@@ -257,8 +263,8 @@ public class ReadVLog
 
     // alleen de wijzigingsberichten lezen
     public static void readVLogFile(HashMap<String, AbstractSensor> mapSensor, BufferedReader bufferedReader,
-        Instant[] timeFromVLog, Long[] deltaTimeFromVLog, HashMap<String, ConfigVri> vriList, String vriName)
-        throws IOException
+        Instant[] timeFromVLog, Long[] deltaTimeFromVLog, HashMap<String, ConfigVri> vriList, String vriName,
+        OTSDEVSSimulatorInterface simulator) throws IOException
     {
         HashMap<Integer, Integer> mapStatus;
         String line = "";
@@ -292,7 +298,7 @@ public class ReadVLog
             {
                 // wijzigingsberichten inlezen van de signaalgroepen
                 mapStatus = parseWijziging(buffer, deltaTimeFromVLog);
-                ReadStatusSignalGroup(mapSensor, mapStatus, vriList, vriName, timeFromVLog, deltaTimeFromVLog);
+                ReadStatusSignalGroup(mapSensor, mapStatus, vriList, vriName, timeFromVLog, deltaTimeFromVLog, simulator);
             }
         }
     }
@@ -326,6 +332,11 @@ public class ReadVLog
                     ((CheckSensor) sensor).addStatusByTime(new DoubleScalar.Abs<TimeUnit>(milliSecondsPassed,
                         TimeUnit.MILLISECOND), entry.getValue());
                 }
+                else if (sensor instanceof GenerateSensor)
+                {
+                    ((GenerateSensor) sensor).addStatusByTime(new DoubleScalar.Abs<TimeUnit>(milliSecondsPassed,
+                        TimeUnit.MILLISECOND), entry.getValue());
+                }
                 else
                 {
                     System.out.println("Sensor " + searchFor + " triggered -- ignored for now");
@@ -340,7 +351,8 @@ public class ReadVLog
 
     // lees de status van de signaalgroepen
     public static void ReadStatusSignalGroup(HashMap<String, AbstractSensor> mapSensor, HashMap<Integer, Integer> mapStatus,
-        HashMap<String, ConfigVri> vriList, String vriName, Instant[] timeFromVLog, Long[] deltaTimeFromVLog)
+        HashMap<String, ConfigVri> vriList, String vriName, Instant[] timeFromVLog, Long[] deltaTimeFromVLog,
+        OTSDEVSSimulatorInterface simulator)
     {
         // zie ook vorige methode (zelfde aanpak)
         for (Entry<Integer, Integer> entry : mapStatus.entrySet())
@@ -349,24 +361,28 @@ public class ReadVLog
             String nameSignalGroup = vri.getSignalGroups().get(entry.getKey());
             Instant timeVLogNow = timeFromVLog[0].plusMillis(100 * deltaTimeFromVLog[0]);
             Long milliSecondsPassed = ChronoUnit.MILLIS.between(GTM.startTimeSimulation, timeVLogNow);
-            // in de GTM.mapLaneToStopLineLane wordt de relatie tussen de
-            // naam van de signaalgroep en de stopstreep
-            for (Entry stopLine : GTM.mapSignalGroupToStopLineAtJunction.entrySet())
+            if (GTM.signalGroupToTrafficLights.containsKey(vri.getName() + "_" + nameSignalGroup))
             {
-                // in navolgende naam staat de naam van het kruispunt, de
-                // signaalgroep en de weg
-                String name = (String) stopLine.getKey();
-                String splitted[] = name.split("_");
-                if (splitted[0].contentEquals(vriName) && splitted[2].contentEquals(nameSignalGroup))
+                for (TrafficLight trafficLight : GTM.signalGroupToTrafficLights.get(vri.getName() + "_" + nameSignalGroup))
                 {
-                    // koppel de waarde van de signaalgroep aan de stopstreep en
-                    // koppel het tjdstip
-                    StopLineLane stopLineFound = (StopLineLane) stopLine.getValue();
-                    stopLineFound.addMapStopTrafficState(new DoubleScalar.Abs<TimeUnit>(milliSecondsPassed,
-                        TimeUnit.MILLISECOND), entry.getValue());
+                    try
+                    {
+                        simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(milliSecondsPassed, TimeUnit.MILLISECOND),
+                            trafficLight, trafficLight, "changeColor", new Object[]{entry.getValue()});
+                        System.out.println(new DoubleScalar.Abs<TimeUnit>(milliSecondsPassed, TimeUnit.MILLISECOND) + " - "
+                            + vri.getName() + ": " + timeVLogNow + ": " + vri.getName() + "_" + nameSignalGroup + ", status[.,.] = ["
+                            + entry.getKey() + "," + entry.getValue() + "]");
+                    }
+                    catch (RemoteException | SimRuntimeException exception)
+                    {
+                        exception.printStackTrace();
+                    }
                 }
             }
-
+            else
+            {
+                System.out.println("TL nameSignalGroup not found: " + vri.getName() + "_" + nameSignalGroup);
+            }
         }
     }
 
@@ -432,7 +448,7 @@ public class ReadVLog
     }
 
     // lees bij een statusbericht de waarden van de detectoren/signaalgroepen
-    public static void readDetectorSettings(String line, HashMap<Integer, String> detectors)
+    public static void readDetectorSettings(String line, Map<Integer, String> detectors)
     {
         String[] buffer = new String[4];
         buffer = line.split(",");
@@ -462,16 +478,17 @@ public class ReadVLog
 
     // lees bij een wijzigigingsbericht de gewijzigde waarden van de
     // detectoren/signaalgroepen
-    public static void readTrafficlightSettings(String line, HashMap<Integer, String> signalGroups)
+    public static void readTrafficlightSettings(String line, Map<Integer, String> signalGroups)
     {
         String[] buffer = new String[4];
         buffer = line.split(",");
-        int count = Integer.parseInt(buffer[1]);
-        String name = buffer[2].replaceAll("\"", "");
-        long l = Long.parseLong(buffer[3]);
-        // String strHex = String.format("0x%04X", l);
-        // if ()
-        signalGroups.put(count, name);
+        int fc_index = Integer.parseInt(buffer[1]);
+        String fc_code = buffer[2].replaceAll("\"", "");
+        long fc_type = Long.parseLong(buffer[3]); // 1 = motorvoertuig, 2 = voetganger, 4 = fiets, 8 = OV
+        if (fc_type == 1)
+        {
+            signalGroups.put(fc_index, fc_code);
+        }
     }
 
     // toetsen of de dynamisch bepaalde situatie met detectoren overeenkomt met
@@ -500,7 +517,7 @@ public class ReadVLog
                 {
                     System.out.println("Status detector verkeerd ingelezen!!!!!");
                 }
-                */
+                 */
             }
 
         }
@@ -531,7 +548,7 @@ public class ReadVLog
                 {
                     System.out.println("Status signaalgroep verkeerd ingelezen!!!!!");
                 }
-                */
+                 */
             }
         }
     }
