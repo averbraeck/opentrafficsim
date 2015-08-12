@@ -1,7 +1,6 @@
 package nl.grontmij.smarttraffic.lane;
 
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -10,6 +9,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.naming.NamingException;
 import javax.swing.JPanel;
@@ -20,7 +21,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 
-import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -28,38 +28,32 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.core.gtu.following.IDMPlus;
-import org.opentrafficsim.core.gtu.lane.changing.AbstractLaneChangeModel;
-import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
+import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.core.network.lane.AbstractSensor;
+import org.opentrafficsim.core.network.lane.CrossSectionElement;
+import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
-import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.xml.sax.SAXException;
 
 /**
  * <p>
  * @version Oct 17, 2014 <br>
- *          ======= $LastChangedDate$, @version $Revision$, by $Author:
- *          rabma $, initial version ct 17, 2014 <br>
- *          =======
- * @version $Revision$, $LastChangedDate$, by $Author$, initial
- *          version Oct 17, 2014 <br>
- *          >>>>>>> .r1123 >>>>>>> .r1113
+ * @version $Revision$, $LastChangedDate$, by $Author$,
+ *          initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
 
-public class GTM extends AbstractWrappableSimulation
+public class GTM extends AbstractWrappableSimulationST
 {
     /**
      * Main program.
@@ -71,6 +65,9 @@ public class GTM extends AbstractWrappableSimulation
     public static Instant startTimeSimulation;
 
     public static HashMap<String, StopLineLane> mapSignalGroupToStopLineAtJunction = new HashMap<String, StopLineLane>();
+
+    /** a map from the signal group name, e.g., 225_08 to the traffic lights, e.g., [225_08.1, 225_08.2, 225_08.3]. */
+    public static Map<String, List<TrafficLight>> signalGroupToTrafficLights = new HashMap<>();
 
     // standaard methode om de simulatie (DSOL) te starten
     // Ga naar de methode constructModel voor de inhoud
@@ -156,21 +153,6 @@ public class GTM extends AbstractWrappableSimulation
         /** the simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
-        /** The blocking car. */
-        private HashMap<Lane<?, ?>, LaneBasedIndividualCar<Integer>> blockMap =
-            new HashMap<Lane<?, ?>, LaneBasedIndividualCar<Integer>>();
-
-        /** Type of all GTUs. */
-        private GTUType<String> gtuType = GTUType.makeGTUType("CAR");
-
-        /** The lane change model. */
-        private AbstractLaneChangeModel laneChangeModel = new Egoistic();
-
-        /** the car following model, e.g. IDM Plus for cars. */
-        private GTUFollowingModel gtuFollowingModel = new IDMPlus();
-
-        DoubleScalar.Abs<SpeedUnit> initialSpeed;
-
         /**
          * @param gtuColorer the GTUColorer to use.
          */
@@ -210,19 +192,46 @@ public class GTM extends AbstractWrappableSimulation
                 exception1.printStackTrace();
             }
 
-            // read the configuration files for VLOG (detector/signalgroup: both
-            // index and name
+            // get the traffic lights with their name.
+            for (Link<?, ?> link : network.getLinkMap().values())
+            {
+                if (link instanceof CrossSectionLink)
+                {
+                    List<CrossSectionElement<?, ?>> cseList = ((CrossSectionLink) link).getCrossSectionElementList();
+                    for (CrossSectionElement<?, ?> cse : cseList)
+                    {
+                        if (cse instanceof Lane)
+                        {
+                            Lane<?, ?> lane = (Lane<?, ?>) cse;
+                            List<LaneBasedGTU<?>> gtus = lane.getGtuList();
+                            for (LaneBasedGTU<?> gtu : gtus)
+                            {
+                                if (gtu instanceof TrafficLight)
+                                {
+                                    TrafficLight trafficLight = (TrafficLight) gtu;
+                                    String signalGroupName = trafficLight.getId().split("\\.")[0];
+                                    if (!GTM.signalGroupToTrafficLights.containsKey(signalGroupName))
+                                    {
+                                        GTM.signalGroupToTrafficLights.put(signalGroupName, new ArrayList<TrafficLight>());
+                                    }
+                                    GTM.signalGroupToTrafficLights.get(signalGroupName).add(trafficLight);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            System.out.println(GTM.signalGroupToTrafficLights);
+
+            // read the configuration files for VLOG (detector/signalgroup: both index and name
             String dirConfigVri = "configVRI/";
             String dirLoggings = "VRI-loggings/";
             // het nummer van de N201 wordt gebruikt in de bestanden
             String wegNummer = "201";
             // Geef de numers van de VRI's
-            // String[] vriNummer = { "225", "231", "234", "239", "245", "249",
-            // "291", "297", "302", "308", "311", "314" };
-            String[] vriNummer = {"225"};
+            String[] vriNummer = {"225"}; // , "231", "234", "239", "245", "249", "291", "297", "302", "308", "311", "314"};
 
-            // in de configVriList worden de vri configuraties opgeslagen
-            // De ConfigVri bevat de detectoren (index, naam) en de
+            // in de configVriList worden de vri configuraties opgeslagen. De ConfigVri bevat de detectoren (index, naam) en de
             // signaalgroepen (index, naam)
             HashMap<String, ConfigVri> configVriList = null;
             try
@@ -231,16 +240,12 @@ public class GTM extends AbstractWrappableSimulation
             }
             catch (IOException e1)
             {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
 
-            // read and define detectors from the network
-            // in mapSensors staan alle detectoren (met de naam als zoeksleutel
-            // (key))
+            // read and define detectors from the networ. in mapSensors staan alle detectoren (met de naam als zoeksleutel
             HashMap<String, AbstractSensor> mapSensor = new HashMap<String, AbstractSensor>();
-            // Vervolgens worden de verschillende typen ook nog in aparte
-            // HashMaps opgeslagen
+            // Vervolgens worden de verschillende typen ook nog in aparte HashMaps opgeslagen
             HashMap<String, GenerateSensor> mapSensorGenerateCars = new HashMap<String, GenerateSensor>();
             HashMap<String, KillSensor> mapSensorKillCars = new HashMap<String, KillSensor>();
             HashMap<String, CheckSensor> mapSensorCheckCars = new HashMap<String, CheckSensor>();
@@ -252,7 +257,6 @@ public class GTM extends AbstractWrappableSimulation
             }
             catch (NetworkException | NamingException e2)
             {
-                // TODO Auto-generated catch block
                 e2.printStackTrace();
             }
 
@@ -282,11 +286,10 @@ public class GTM extends AbstractWrappableSimulation
             //
             try
             {
-                ReadVLog.readVlogFiles(mapSensor, configVriList, timeVLog, dirBase + dirLoggings, wegNummer, vriNummer);
+                ReadVLog.readVlogFiles(mapSensor, configVriList, timeVLog, dirBase + dirLoggings, wegNummer, vriNummer, simulator);
             }
             catch (IOException e2)
             {
-                // TODO Auto-generated catch block
                 e2.printStackTrace();
             }
 
@@ -315,16 +318,6 @@ public class GTM extends AbstractWrappableSimulation
             }
              */
 
-            try
-            {
-                ScheduleTrafficLightsStates scheduleTrafficLightStates =
-                    new ScheduleTrafficLightsStates(simulator, mapSensorGenerateCars, GTM.mapSignalGroupToStopLineAtJunction);
-            }
-            catch (NetworkException | GTUException | NamingException e)
-            {
-                e.printStackTrace();
-            }
-
             // - Compare the (INTERMEDIATE) pulse to vehicles in the simulation
             //
             // - if no car is matched: Generate a car
@@ -332,7 +325,7 @@ public class GTM extends AbstractWrappableSimulation
             // - de range om te zoeken naar voertuigen:
             // ------de eerste waarde is de afstand in meters stroomOPwaarts van het voertuig
             // ------de tweede waarde is de afstand in meters stroomAFwaarts van het voertuig
-            
+
             /*-
             java.lang.Double[] range = new java.lang.Double[]{50.0, 50.0};
             try
@@ -343,8 +336,8 @@ public class GTM extends AbstractWrappableSimulation
             {
                 e.printStackTrace();
             }
-    */
-            
+             */
+
             // - Kill a car (EXIT)
             // connect to the sensorKill
 

@@ -52,15 +52,24 @@ public class TrafficLight extends AbstractTrafficLight
         }
     }
 
-    public void changeFromColor(DoubleScalar.Abs<TimeUnit> when) throws RemoteException
+    public void changeColor(final int newColor)
     {
-        try
+        switch (newColor)
         {
-            getSimulator().scheduleEventAbs(when, this, this, "changeColor", null);
-        }
-        catch (SimRuntimeException exception)
-        {
-            exception.printStackTrace();
+            case 0:
+                setBlocked(true);
+                break;
+
+            case 1:
+                setBlocked(false);
+                break;
+
+            case 2:
+                setBlocked(false);
+                break;
+
+            default:
+                break;
         }
     }
 
