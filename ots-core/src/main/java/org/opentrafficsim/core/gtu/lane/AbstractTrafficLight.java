@@ -114,8 +114,7 @@ public abstract class AbstractTrafficLight extends AbstractGTU<String> implement
      * @throws NetworkException when the GTU cannot be placed on the given lane
      */
     public AbstractTrafficLight(final String name, final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> position,
-        final OTSDEVSSimulatorInterface simulator) throws GTUException,
-        RemoteException, NetworkException, NamingException
+        final OTSDEVSSimulatorInterface simulator) throws GTUException, RemoteException, NetworkException, NamingException
     {
         super(name, BLOCK_GTU, new Route(""));
         this.simulator = simulator;
@@ -133,7 +132,24 @@ public abstract class AbstractTrafficLight extends AbstractGTU<String> implement
      */
     public final void setBlocked(final boolean blocked)
     {
-        this.blocked = blocked;
+        try
+        {
+            if (this.blocked && !blocked)
+            {
+                // remove ourselves from the lane
+                this.lane.removeGTU(this);
+            }
+            else if (!this.blocked && blocked)
+            {
+                // add ourselves to the lane
+                this.lane.addGTU(this, this.position);
+            }
+            this.blocked = blocked;
+        }
+        catch (RemoteException | NetworkException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     /**
@@ -142,32 +158,6 @@ public abstract class AbstractTrafficLight extends AbstractGTU<String> implement
     public final boolean isBlocked()
     {
         return this.blocked;
-    }
-
-    protected void changeColor()
-    {
-        this.blocked = !this.blocked;
-
-        try
-        {
-            if (this.blocked)
-            {
-                // add ourselves to the lane
-                this.lane.addGTU(this, this.position);
-            }
-            else
-            {
-                // remove ourselves from the lane
-                this.lane.removeGTU(this);
-
-            }
-            this.simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(60.0, TimeUnit.SECOND), this, this,
-                "changeColor", null);
-        }
-        catch (SimRuntimeException | RemoteException | NetworkException exception)
-        {
-            exception.printStackTrace();
-        }
     }
 
     /**

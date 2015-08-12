@@ -82,9 +82,24 @@ public class LaneBlockOnOff extends AbstractTrafficLight
         try
         {
             getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(60.0, TimeUnit.SECOND), this, this,
-                "changeColor", null);
+                "changeColorTime", null);
         }
         catch (SimRuntimeException exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
+    protected void changeColorTime()
+    {
+        setBlocked(!isBlocked());
+
+        try
+        {
+            getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(60.0, TimeUnit.SECOND), this, this,
+                "changeColorTime", null);
+        }
+        catch (SimRuntimeException | RemoteException exception)
         {
             exception.printStackTrace();
         }
