@@ -9,6 +9,7 @@ import javax.naming.NamingException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.network.factory.XMLParser;
 import org.opentrafficsim.core.network.factory.xml.units.AngleUnits;
 import org.opentrafficsim.core.network.factory.xml.units.Coordinates;
 import org.opentrafficsim.core.unit.AnglePlaneUnit;

@@ -30,6 +30,7 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
@@ -219,7 +220,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         this.add(cp, BorderLayout.CENTER);
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
         this.add(this.statusLabel, BorderLayout.SOUTH);
-        new FundamentalDiagramSensor(lane, position);
+        new FundamentalDiagramSensor(lane, position, null);
     }
 
     /**
@@ -598,12 +599,14 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
          * @param lane Lane; the Lane on which the new FundamentalDiagramSensor is to be added
          * @param longitudinalPosition DoubleScalar.Abs&lt;LengthUnit&gt;; longitudinal position on the Lane of the new
          *            FundamentalDiagramSensor
+         * @param simulator simulator to allow animation
          * @throws NetworkException on network inconsistency
          */
-        public FundamentalDiagramSensor(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
-            throws NetworkException
+        public FundamentalDiagramSensor(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
+            final OTSSimulatorInterface simulator) throws NetworkException
         {
-            super(lane, longitudinalPosition, RelativePosition.REFERENCE, "FUNDAMENTAL_DIAGRAM_SENSOR@" + lane.toString());
+            super(lane, longitudinalPosition, RelativePosition.REFERENCE, "FUNDAMENTAL_DIAGRAM_SENSOR@" + lane.toString(),
+                simulator);
             lane.addSensor(this);
         }
 

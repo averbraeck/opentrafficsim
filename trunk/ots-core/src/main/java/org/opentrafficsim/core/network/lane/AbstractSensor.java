@@ -8,6 +8,7 @@ import javax.vecmath.Point3d;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -46,6 +47,9 @@ public abstract class AbstractSensor implements Sensor
 
     /** the cached bounds for animation. */
     private Bounds bounds = null;
+    
+    /** the simulator for being able to generate an animation. */
+    private final OTSSimulatorInterface simulator;
 
     /**
      * @param lane The lane for which this is a sensor.
@@ -54,14 +58,16 @@ public abstract class AbstractSensor implements Sensor
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the sensor.
      * @param name the name of the sensor.
+     * @param simulator the simulator for being able to generate the animation.
      */
     public AbstractSensor(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
-        final RelativePosition.TYPE positionType, final String name)
+        final RelativePosition.TYPE positionType, final String name, final OTSSimulatorInterface simulator)
     {
         this.lane = lane;
         this.longitudinalPositionSI = longitudinalPosition.getSI();
         this.positionType = positionType;
         this.name = name;
+        this.simulator = simulator;
     }
 
     /** {@inheritDoc} */
@@ -131,6 +137,14 @@ public abstract class AbstractSensor implements Sensor
     public final String getName()
     {
         return this.name;
+    }
+
+    /**
+     * @return simulator
+     */
+    public OTSSimulatorInterface getSimulator()
+    {
+        return simulator;
     }
 
     /** {@inheritDoc} */

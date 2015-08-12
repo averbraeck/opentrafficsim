@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.network.factory.xml;
+package org.opentrafficsim.core.network.factory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import org.w3c.dom.NodeList;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-final class XMLParser
+public final class XMLParser
 {
     /** Utility class. */
     private XMLParser()
@@ -29,7 +29,7 @@ final class XMLParser
      * @param tag the tag to look for, e.g., LINK
      * @return the nodes (which can contain nodeLists themselves) with the given tag
      */
-    static List<Node> getNodes(final NodeList nodeList, final String tag)
+    public static List<Node> getNodes(final NodeList nodeList, final String tag)
     {
         List<Node> result = new ArrayList<>();
         for (int i = 0; i < nodeList.getLength(); i++)
