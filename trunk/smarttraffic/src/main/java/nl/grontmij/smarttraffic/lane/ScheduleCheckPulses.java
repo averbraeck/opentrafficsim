@@ -39,10 +39,10 @@ public class ScheduleCheckPulses<ID> {
 	/** The simulator that controls everything. */
 	final OTSDEVSSimulatorInterface simulator;
 
-	HashMap<String, SensorLaneST> mapSensor;
+	HashMap<String, CheckSensor> mapSensor;
 
 	public ScheduleCheckPulses(OTSDEVSSimulatorInterface simulator,
-			HashMap<String, SensorLaneST> mapSensor, Double[] range)
+			HashMap<String, CheckSensor> mapSensor, Double[] range)
 			throws RemoteException, SimRuntimeException, NetworkException,
 			GTUException, NamingException {
 		this.simulator = simulator;
@@ -63,9 +63,9 @@ public class ScheduleCheckPulses<ID> {
 	public void scheduleCheckPulses(Double[] range) throws RemoteException,
 			SimRuntimeException, GTUException, NetworkException,
 			NamingException {
-		for (Entry<String, SensorLaneST> entry : this.mapSensor.entrySet()) {
+		for (Entry<String, CheckSensor> entry : this.mapSensor.entrySet()) {
 			entry.getKey();
-			SensorLaneST sensor = entry.getValue();
+			CheckSensor sensor = entry.getValue();
 			HashMap<DoubleScalar.Abs<TimeUnit>, Integer> pulses = sensor
 					.getStatusByTime();
 			for (Entry<DoubleScalar.Abs<TimeUnit>, Integer> entryPulse : pulses
@@ -81,12 +81,12 @@ public class ScheduleCheckPulses<ID> {
 		}
 	}
 
-	private final void findNearestVehicles(SensorLaneST sensor, Double[] range)
+	private final void findNearestVehicles(CheckSensor sensor, Double[] range)
 			throws RemoteException, NetworkException {
 		Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
 		DoubleScalar.Rel<LengthUnit> initialPosition = sensor
 				.getLongitudinalPosition();
-		List<SensorLaneST> parallelSensors = sensor.findParallelSensors();
+		List<CheckSensor> parallelSensors = sensor.findParallelSensors();
 		Set<Lane<?, ?>> lanes = sensor.getLane().accessibleAdjacentLanes(
 				LateralDirectionality.LEFT, GTUType.ALL);
 		lanes.addAll(sensor.getLane().accessibleAdjacentLanes(
@@ -114,7 +114,7 @@ public class ScheduleCheckPulses<ID> {
 							.get());
 			double dist;
 
-			if (gtuBefore != null && !(gtuBefore instanceof TrafficLightOnOff)) {
+			if (gtuBefore != null && !(gtuBefore instanceof TrafficLight)) {
 				double x = gtuBefore.getLocation().getX();
 				double y = gtuBefore.getLocation().getY();
 				dist = Math.sqrt(Math.pow(2, sX - x) + Math.pow(2, sY - y));
@@ -127,7 +127,7 @@ public class ScheduleCheckPulses<ID> {
 
 			}
 
-			if (gtuAfter != null && !(gtuAfter instanceof TrafficLightOnOff)) {
+			if (gtuAfter != null && !(gtuAfter instanceof TrafficLight)) {
 
 				double x = gtuAfter.getLocation().getX();
 				double y = gtuAfter.getLocation().getY();

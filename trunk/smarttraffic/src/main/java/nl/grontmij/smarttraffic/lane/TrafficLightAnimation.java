@@ -23,7 +23,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class DefaultTrafficLightOnOffAnimation extends Renderable2D
+public class TrafficLightAnimation extends Renderable2D
 {
 
     /** the half width left and right of the center line that is used to draw the block. */
@@ -31,16 +31,16 @@ public class DefaultTrafficLightOnOffAnimation extends Renderable2D
 
     /**
      * Construct the DefaultCarAnimation for a LaneBlock (road block).
-     * @param trafficLightOnOff the Car to draw
+     * @param trafficLight the Car to draw
      * @param simulator the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public DefaultTrafficLightOnOffAnimation(final TrafficLightOnOff trafficLightOnOff, final OTSSimulatorInterface simulator)
+    public TrafficLightAnimation(final TrafficLight trafficLight, final OTSSimulatorInterface simulator)
         throws NamingException, RemoteException
     {
-        super(trafficLightOnOff, simulator);
-        this.halfWidth = 0.4 * trafficLightOnOff.getLane().getWidth(0.0).getSI();
+        super(trafficLight, simulator);
+        this.halfWidth = 0.4 * trafficLight.getLane().getWidth(0.0).getSI();
     }
 
 
@@ -48,7 +48,7 @@ public class DefaultTrafficLightOnOffAnimation extends Renderable2D
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        if (((TrafficLightOnOff) this.source).isBlocked())
+        if (((TrafficLight) this.source).isBlocked())
         {
             graphics.setColor(Color.RED);
         }
@@ -56,7 +56,7 @@ public class DefaultTrafficLightOnOffAnimation extends Renderable2D
         {
             graphics.setColor(Color.GREEN);
         }
-        Rectangle2D rectangle = new Rectangle2D.Double(-0.4, -this.halfWidth, 0.8, 2 * this.halfWidth);
+        Rectangle2D rectangle = new Rectangle2D.Double(-0.25, -this.halfWidth, 0.5, 2 * this.halfWidth);
         graphics.fill(rectangle);
     }
 
