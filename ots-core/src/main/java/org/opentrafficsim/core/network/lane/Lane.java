@@ -208,7 +208,7 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
     /**
      * @return sensors.
      */
-    protected final SortedMap<Double, List<Sensor>> getSensors()
+    public final SortedMap<Double, List<Sensor>> getSensors()
     {
         return this.sensors;
     }

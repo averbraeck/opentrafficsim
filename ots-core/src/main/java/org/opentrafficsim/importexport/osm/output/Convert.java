@@ -28,7 +28,7 @@ import org.opentrafficsim.core.network.animation.LaneAnimation;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
-import org.opentrafficsim.core.network.lane.SinkLane;
+import org.opentrafficsim.core.network.lane.SinkSensor;
 import org.opentrafficsim.core.network.lane.SourceLane;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -595,7 +595,8 @@ public final class Convert
      * @throws OTSGeometryException when lane contour or center line cannot be instantiated
      */
     public List<Lane<?, ?>> makeLanes(final OSMLink osmlink, final OTSDEVSSimulatorInterface simulator,
-        final WarningListener warningListener) throws NetworkException, RemoteException, NamingException, OTSGeometryException
+        final WarningListener warningListener) throws NetworkException, RemoteException, NamingException,
+        OTSGeometryException
     {
         CrossSectionLink<?, ?> otslink = convertLink(osmlink);
         List<Lane<?, ?>> lanes = new ArrayList<Lane<?, ?>>();
@@ -618,8 +619,12 @@ public final class Convert
             {
                 color = Color.RED;
                 newLane =
-                    new SinkLane(otslink, latPos, laneAttributes.getWidth(), laneType, laneAttributes.getDirectionality(),
-                        new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), simulator/* FIXME STUB */);
+                    new Lane(otslink, latPos, latPos, laneAttributes.getWidth(), laneAttributes.getWidth(), laneType,
+                        laneAttributes.getDirectionality(), f2000, new DoubleScalar.Abs<SpeedUnit>(100,
+                            SpeedUnit.KM_PER_HOUR)/* FIXME STUB */);
+                SinkSensor sensor =
+                    new SinkSensor(newLane, new DoubleScalar.Rel<LengthUnit>(0.25, LengthUnit.METER), simulator);
+                newLane.addSensor(sensor);
             }
             else if (osmlink.hasTag("hasPreceding") && offset < 0 || osmlink.hasTag("hasFollowing") && offset >= 0)
             {
