@@ -1646,8 +1646,8 @@
 </LINK>
 <LINK NAME="L71a_in2" NODESTART="N71a_in2" NODEEND="N71a_in" ROADTYPE="RT2ln_ref-1">
 <STRAIGHT LENGTH="40m" />
-<SENSOR NAME="314_02.11" LANE="A1" POSITION="END-27.8m" CLASS="nl.grontmij.smarttraffic.lane.GenerateSensor" TRIGGER="FRONT" />
-<SENSOR NAME="314_02.12" LANE="A2" POSITION="END-28.1m" CLASS="nl.grontmij.smarttraffic.lane.GenerateSensor" TRIGGER="FRONT" />
+<SENSOR NAME="314_2.11" LANE="A1" POSITION="END-27.8m" CLASS="nl.grontmij.smarttraffic.lane.GenerateSensor" TRIGGER="FRONT" />
+<SENSOR NAME="314_2.12" LANE="A2" POSITION="END-28.1m" CLASS="nl.grontmij.smarttraffic.lane.GenerateSensor" TRIGGER="FRONT" />
 </LINK>
 <LINK NAME="L70a_uit" NODESTART="N70a" NODEEND="N70a_uit" ROADTYPE="RT2ln_ref2">
 <ARC RADIUS="95m" ANGLE="5deg" DIRECTION="R" />
@@ -1662,7 +1662,7 @@
 </LINK>
 <LINK NAME="L68b_uit2" NODESTART="N68b_uit" NODEEND="N68b_uit2" ROADTYPE="RT1ln_ref-2">
 <STRAIGHT LENGTH="40m" />
-<SENSOR NAME="311_08.15" LANE="A1" POSITION="END-33.774m" CLASS="nl.grontmij.smarttraffic.lane.CheckSensor" TRIGGER="FRONT" />
+<SENSOR NAME="311_8.15" LANE="A1" POSITION="END-33.774m" CLASS="nl.grontmij.smarttraffic.lane.CheckSensor" TRIGGER="FRONT" />
 <SINK LANE="A1" POSITION="END-10m" />
 </LINK>
 <LINK NAME="L60b_in" NODESTART="N60b_in" NODEEND="N60b" ROADTYPE="RT1ln_ref1">
