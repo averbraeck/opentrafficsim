@@ -175,7 +175,7 @@ public abstract class AbstractGTUGenerator<ID>
         Class<?> getidtype;
         try
         {
-            Method getid = ClassUtil.resolveMethod(this.gtuClass, "getId", new Class<?>[] {});
+            Method getid = ClassUtil.resolveMethod(this.gtuClass, "getId", new Class<?>[]{});
             getidtype = getid.getReturnType();
         }
         catch (NoSuchMethodException exception)
@@ -234,7 +234,7 @@ public abstract class AbstractGTUGenerator<ID>
             {
                 // put the car in the queue and take it from there -- if the headway is enough, build the car.
                 this.carBuilderList.add(carBuilder);
-                System.out.println("GTUGenerator - backlog = " + this.carBuilderList.size());
+                // System.out.println("GTUGenerator - backlog = " + this.carBuilderList.size());
                 if (this.carBuilderList.size() == 1)
                 {
                     // first entry in list - start the watch thread
@@ -281,7 +281,7 @@ public abstract class AbstractGTUGenerator<ID>
             if ((frontNew >= rearGTU && frontNew <= frontGTU) || (rearNew >= rearGTU && rearNew <= frontGTU)
                 || (frontGTU >= rearNew && frontGTU <= frontNew) || (rearGTU >= rearNew && rearGTU <= frontNew))
             {
-                System.out.println(getSimulator().getSimulatorTime() + ", generator overlap with GTU " + gtu);
+                // System.out.println(getSimulator().getSimulatorTime() + ", generator overlap with GTU " + gtu);
                 return false;
             }
         }
@@ -305,15 +305,15 @@ public abstract class AbstractGTUGenerator<ID>
                     .getSI();
             if (acc < 0)
             {
-                System.out.println(getSimulator().getSimulatorTime() + ", generator headway for GTU "
+                System.err.println(getSimulator().getSimulatorTime() + ", generator headway for GTU "
                     + headwayGTU.getOtherGTU() + ", distance " + headwayGTU.getDistanceSI() + " m, max " + minimumHeadway
                     + ", has to brake with a=" + acc + " m/s^2");
                 return false;
             }
         }
 
-        System.out.println(getSimulator().getSimulatorTime() + ", generator headway for GTU " + headwayGTU.getOtherGTU()
-            + ", distance " + headwayGTU.getDistanceSI() + " m, max " + minimumHeadway);
+        // System.out.println(getSimulator().getSimulatorTime() + ", generator headway for GTU " + headwayGTU.getOtherGTU()
+        // + ", distance " + headwayGTU.getDistanceSI() + " m, max " + minimumHeadway);
         return headwayGTU.getDistance().ge(minimumHeadway);
     }
 
