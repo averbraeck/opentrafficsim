@@ -46,10 +46,12 @@ import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
-import org.opentrafficsim.core.network.lane.SinkLane;
+import org.opentrafficsim.core.network.lane.Sensor;
+import org.opentrafficsim.core.network.lane.SinkSensor;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
+import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -423,8 +425,13 @@ class StraightModel implements OTSModelInterface
             this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.speedLimit, this.simulator);
             this.path.add(this.lane);
             CrossSectionLink<?, ?> endLink = LaneFactory.makeLink("endLink", to, end, null);
-            new SinkLane(endLink, this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), laneType,
-                LongitudinalDirectionality.FORWARD, this.speedLimit);
+            Lane sinkLane =
+                new Lane(endLink, this.lane.getLateralCenterPosition(1.0), this.lane.getLateralCenterPosition(1.0),
+                    this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType, LongitudinalDirectionality.FORWARD,
+                    new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY, FrequencyUnit.SI), this.speedLimit);
+            Sensor sensor =
+                new SinkSensor(sinkLane, new DoubleScalar.Rel<LengthUnit>(10.0, LengthUnit.METER), this.simulator);
+            sinkLane.addSensor(sensor);
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", this.properties, false, 0);
             AbstractProperty<?> cfmp = propertyContainer.findByShortName("Car following model");

@@ -281,7 +281,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             }
             this.lanes.add(lane);
             lane.addGTU(this, position);
-            System.out.println("GTU " + toString() + " added to lane: " + lane);
+            // System.out.println("GTU " + toString() + " added to lane: " + lane);
         }
     }
 
@@ -291,7 +291,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     {
         // synchronized (this.lock)
         {
-            System.out.println("GTU " + toString() + " to be removed from lane: " + lane);
+            // System.out.println("GTU " + toString() + " to be removed from lane: " + lane);
             this.lanes.remove(lane);
             // check of there are any lanes for this link left. If not, remove the link.
             boolean found = false;
@@ -492,7 +492,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 {
                     leaveLane(l);
                 }
-                System.out.println("GTU " + this + " changed lanes from: " + oldLaneSet + " to " + replacementLanes);
+                // System.out.println("GTU " + this + " changed lanes from: " + oldLaneSet + " to " + replacementLanes);
                 checkConsistency();
             }
             // The GTU is now committed to executed the entire movement stored in the LaneChangeModelResult
@@ -788,11 +788,12 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                         LengthUnit.SI);
                 getSimulator().scheduleEventNow(this, this, "enterLane", new Object[]{nextLane, refPosAtLastTimestep});
                 // schedule any sensor triggers on this lane for the remainder time
+                /*-
                 if (nextLane.toString().contains("endLink"))
                 {
                     System.out.println("SINK: nextLane.scheduleTriggers(" + toString() + ", " + refPosAtLastTimestep.getSI()
                         + ", " + (moveSI));
-                }
+                } */
                 nextLane.scheduleTriggers(this, refPosAtLastTimestep.getSI(), moveSI);
             }
         }
@@ -822,6 +823,10 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     private Lane<?, ?> determineNextLane(final Lane<?, ?> lane) throws NetworkException, GTUException
     {
         Lane<?, ?> nextLane = null;
+        if (lane.nextLanes().size() == 0)
+        {
+            throw new NetworkException(this + " - lane " + lane + " does not have a successor");
+        }
         if (lane.nextLanes().size() == 1)
         {
             nextLane = lane.nextLanes().iterator().next();
@@ -852,9 +857,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             }
             if (continuingLaneCount == 0)
             {
-                throw new NetworkException(this
-                    + " reached branch and the route specifies a nextNodeToVisit that is not a next node "
-                    + "at this branch (" + lane.getParentLink().getEndNode() + ")");
+                throw new NetworkException(this + " reached branch and the route specifies a nextNodeToVisit (" + nextNode
+                    + ") that is not a next node " + "at this branch at (" + lane.getParentLink().getEndNode() + ")");
             }
             if (continuingLaneCount > 1)
             {

@@ -45,7 +45,8 @@ import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
-import org.opentrafficsim.core.network.lane.SinkLane;
+import org.opentrafficsim.core.network.lane.Sensor;
+import org.opentrafficsim.core.network.lane.SinkSensor;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
@@ -426,18 +427,11 @@ class SequentialModel implements OTSModelInterface
                         .makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, this.speedLimit, this.simulator);
                 if (i == this.nodes.size() - 1)
                 {
-                    CrossSectionLink<?, ?> link = lanes[0].getParentLink();
-                    int index = link.getCrossSectionElementList().indexOf(lanes[0]);
-                    lanes[0] =
-                        new SinkLane(link, lanes[0].getLateralCenterPosition(0), lanes[0].getLateralCenterPosition(1),
-                            lanes[0].getLaneType(), lanes[0].getDirectionality(), this.speedLimit);
-                    link.getCrossSectionElementList().remove(index);
-                    link.getCrossSectionElementList().add(index, lanes[0]); // FIXME - this is horrible
+                    Sensor sensor =
+                        new SinkSensor(lanes[0], new DoubleScalar.Rel<LengthUnit>(10.0, LengthUnit.METER), this.simulator);
+                    lanes[0].addSensor(sensor);
                 }
-                else
-                {
-                    this.path.add(lanes[0]);
-                }
+                this.path.add(lanes[0]);
                 links.add(lanes[0].getParentLink());
                 if (1 == i)
                 {

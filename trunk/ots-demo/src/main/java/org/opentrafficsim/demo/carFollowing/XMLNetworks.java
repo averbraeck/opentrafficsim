@@ -47,7 +47,8 @@ import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
-import org.opentrafficsim.core.network.lane.SinkLane;
+import org.opentrafficsim.core.network.lane.Sensor;
+import org.opentrafficsim.core.network.lane.SinkSensor;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.FixedLaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
@@ -55,6 +56,7 @@ import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.ProbabilisticLaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticLaneBasedRouteGenerator.LaneBasedRouteProbability;
 import org.opentrafficsim.core.unit.AccelerationUnit;
+import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -395,7 +397,7 @@ class XMLNetworkModel implements OTSModelInterface
                 }
             }
             setupSink(LaneFactory.makeMultiLane("SecondVia to end", secondVia, end, null, merge ? lanesOnCommonCompressed
-                : lanesOnMain, laneType, this.speedLimit, this.simulator));
+                : lanesOnMain, laneType, this.speedLimit, this.simulator), laneType);
             if (merge)
             {
                 setupGenerator(LaneFactory.makeMultiLane("From2 to FirstVia", from2, firstVia, null, lanesOnBranch, 0,
@@ -405,17 +407,18 @@ class XMLNetworkModel implements OTSModelInterface
             else
             {
                 setupSink(LaneFactory.makeMultiLane("SecondVia to end2", secondVia, end2, null, lanesOnBranch, lanesOnCommon
-                    - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator));
+                    - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator), laneType);
                 List<LaneBasedRouteProbability> routeProbabilities = new ArrayList<>();
                 ArrayList<Node<?>> mainRoute = new ArrayList<Node<?>>();
                 mainRoute.add(end);
-                routeProbabilities.add(new LaneBasedRouteProbability(new LaneBasedRouteNavigator(new CompleteRoute(
-                    "main", mainRoute)), new java.lang.Double(lanesOnMain)));
+                routeProbabilities.add(new LaneBasedRouteProbability(new LaneBasedRouteNavigator(new CompleteRoute("main",
+                    mainRoute)), new java.lang.Double(lanesOnMain)));
                 ArrayList<Node<?>> sideRoute = new ArrayList<Node<?>>();
                 sideRoute.add(end2);
-                routeProbabilities.add(new LaneBasedRouteProbability(new LaneBasedRouteNavigator(new CompleteRoute("side", sideRoute)),
-                    new java.lang.Double(lanesOnBranch)));
-                this.routeGenerator = new ProbabilisticLaneBasedRouteGenerator(routeProbabilities, new MersenneTwister(1234));
+                routeProbabilities.add(new LaneBasedRouteProbability(new LaneBasedRouteNavigator(new CompleteRoute("side",
+                    sideRoute)), new java.lang.Double(lanesOnBranch)));
+                this.routeGenerator =
+                    new ProbabilisticLaneBasedRouteGenerator(routeProbabilities, new MersenneTwister(1234));
             }
             for (int index = 0; index < lanesOnCommon; index++)
             {
@@ -477,11 +480,13 @@ class XMLNetworkModel implements OTSModelInterface
     /**
      * Append a sink to each lane of an array of Lanes.
      * @param lanes Lane[]; the array of lanes
+     * @param laneType the LaneType for cars
      * @return Lane[]; the lanes
      * @throws NetworkException on network inconsistency
      * @throws OTSGeometryException
      */
-    private Lane<?, ?>[] setupSink(final Lane<?, ?>[] lanes) throws NetworkException, OTSGeometryException
+    private Lane<?, ?>[] setupSink(final Lane<?, ?>[] lanes, final LaneType laneType) throws NetworkException,
+        OTSGeometryException
     {
         CrossSectionLink<?, ?> link = lanes[0].getParentLink();
         OTSNode<String> to = (OTSNode<String>) link.getEndNode();
@@ -493,8 +498,13 @@ class XMLNetworkModel implements OTSModelInterface
         CrossSectionLink<?, ?> endLink = LaneFactory.makeLink("endLink", to, end, null);
         for (Lane<?, ?> lane : lanes)
         {
-            new SinkLane(endLink, lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getLaneType(),
-                LongitudinalDirectionality.FORWARD, this.speedLimit);
+            Lane sinkLane =
+                new Lane(endLink, lane.getLateralCenterPosition(1.0), lane.getLateralCenterPosition(1.0),
+                    lane.getWidth(1.0), lane.getWidth(1.0), laneType, LongitudinalDirectionality.FORWARD,
+                    new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY, FrequencyUnit.SI), this.speedLimit);
+            Sensor sensor =
+                new SinkSensor(sinkLane, new DoubleScalar.Rel<LengthUnit>(10.0, LengthUnit.METER), this.simulator);
+            sinkLane.addSensor(sensor);
         }
         return lanes;
     }

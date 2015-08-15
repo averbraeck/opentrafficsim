@@ -610,7 +610,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
                 new LaneBasedIndividualCar<ID>(this.id, this.gtuType, this.gtuFollowingModel, this.laneChangeModel,
                     this.initialLongitudinalPositions, this.initialSpeed, this.length, this.width, this.maximumVelocity,
                     this.routeGenerator.generateRouteNavigator(), this.simulator, this.animationClass, this.gtuColorer);
-            System.out.println("Generated GTU " + gtu + " at t=" + this.simulator.getSimulatorTime());
+            // System.out.println("Generated GTU " + gtu + " at t=" + this.simulator.getSimulatorTime());
             return gtu;
 
         }

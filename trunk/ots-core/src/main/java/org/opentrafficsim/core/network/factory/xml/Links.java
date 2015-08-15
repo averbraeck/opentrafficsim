@@ -560,7 +560,7 @@ final class Links
                         FillTag fillTag = linkTag.fillTags.get(cseTag.name);
                         FillTag.makeFill(fillTag, parser, linkTag, simulator);
                     }
-
+                    break;
                 }
 
                 case NOTRAFFICLANE:
