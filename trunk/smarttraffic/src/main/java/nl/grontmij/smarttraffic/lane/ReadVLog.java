@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -23,10 +22,11 @@ import org.opentrafficsim.core.network.lane.AbstractSensor;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
+/** Read vlog file and cfg data. */
 public class ReadVLog
 {
 
-    /*
+    /**
      * Functions to read (streaming) V-log files: concentrates on detector and traffic light information
      */
     private ReadVLog()
@@ -34,14 +34,22 @@ public class ReadVLog
         // cannot be instantiated.
     }
 
+    /**
+     * Read vlog config files for the given array of vri numbers in the given folder.
+     * @param dirConfigVri directory
+     * @param dirBase absolute location of VRI directory
+     * @param wegNummer e.g., 201
+     * @param vriNummers e.g., {"231", "232", "233"}
+     * @return a map of Strings to VRIs
+     * @throws IOException on read error
+     */
     public static HashMap<String, ConfigVri> readVlogConfigFiles(String dirConfigVri, String dirBase, String wegNummer,
-        String[] vriNummer) throws IOException
+        String[] vriNummers) throws IOException
     {
-        // lijst met de configuratie van de vri's: naam kruispunt, detector
-        // (index en naam) en signaalgroep (index en naam)
+        // lijst met de configuratie van de vri's: naam kruispunt, detector (index en naam) en signaalgroep (index en naam)
         HashMap<String, ConfigVri> configVriList = new HashMap<String, ConfigVri>();
         // read VRI config files
-        for (String vri : vriNummer)
+        for (String vri : vriNummers)
         {
             String vriName = vri;
             String vriLocation = "VRI" + wegNummer + vriName;
@@ -57,6 +65,12 @@ public class ReadVLog
         return configVriList;
     }
 
+    /**
+     * Read one cfg-file using the BufferedReader.
+     * @param bufferedReader the reader to the file.
+     * @return a VRI configuration object
+     * @throws IOException on read error
+     */
     public static ConfigVri readVLogConfigFile(BufferedReader bufferedReader) throws IOException
     {
         String line = "";
@@ -132,7 +146,7 @@ public class ReadVLog
                 }
             }
         }
-        System.out.println(nameVRI + " - " + signalGroups);
+        System.out.println("cfg read foe vri: " + nameVRI + " - " + signalGroups);
         return new ConfigVri(nameVRI, detectors, signalGroups);
     }
 
@@ -370,8 +384,8 @@ public class ReadVLog
                         simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(milliSecondsPassed, TimeUnit.MILLISECOND),
                             trafficLight, trafficLight, "changeColor", new Object[]{entry.getValue()});
                         System.out.println(new DoubleScalar.Abs<TimeUnit>(milliSecondsPassed, TimeUnit.MILLISECOND) + " - "
-                            + vri.getName() + ": " + timeVLogNow + ": " + vri.getName() + "_" + nameSignalGroup + ", status[.,.] = ["
-                            + entry.getKey() + "," + entry.getValue() + "]");
+                            + vri.getName() + ": " + timeVLogNow + ": " + vri.getName() + "_" + nameSignalGroup
+                            + ", status[.,.] = [" + entry.getKey() + "," + entry.getValue() + "]");
                     }
                     catch (RemoteException | SimRuntimeException exception)
                     {
@@ -485,7 +499,7 @@ public class ReadVLog
         int fc_index = Integer.parseInt(buffer[1]);
         String fc_code = buffer[2].replaceAll("\"", "");
         long fc_type = Long.parseLong(buffer[3]); // 1 = motorvoertuig, 2 = voetganger, 4 = fiets, 8 = OV
-        if (fc_type == 1)
+        // if (fc_type == 1)
         {
             signalGroups.put(fc_index, fc_code);
         }
