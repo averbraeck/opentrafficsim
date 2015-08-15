@@ -55,22 +55,18 @@ import org.xml.sax.SAXException;
 
 public class GTM extends AbstractWrappableSimulationST
 {
-    /**
-     * Main program.
-     * @param args String[]; the command line arguments (not used)
-     * @throws SimRuntimeException should never happen
-     * @throws RemoteException on communications failure
-     */
-
+    /** the start time of the simulation to be able to display and report correct times. */
     public static Instant startTimeSimulation;
-
-    public static HashMap<String, StopLineLane> mapSignalGroupToStopLineAtJunction = new HashMap<String, StopLineLane>();
 
     /** a map from the signal group name, e.g., 225_08 to the traffic lights, e.g., [225_08.1, 225_08.2, 225_08.3]. */
     public static Map<String, List<TrafficLight>> signalGroupToTrafficLights = new HashMap<>();
 
-    // standaard methode om de simulatie (DSOL) te starten
-    // Ga naar de methode constructModel voor de inhoud
+    /**
+     * Main program. GTMModel has the model details.
+     * @param args String[]; the command line arguments (not used)
+     * @throws SimRuntimeException should never happen
+     * @throws RemoteException on communications failure
+     */
     public static void main(final String[] args) throws RemoteException, SimRuntimeException
     {
         SwingUtilities.invokeLater(new Runnable()
@@ -123,7 +119,7 @@ public class GTM extends AbstractWrappableSimulationST
     @Override
     protected final OTSModelInterface makeModel(final GTUColorer colorer)
     {
-        return new GTMModel(colorer);
+        return new GTMModel();
     }
 
     /** {@inheritDoc} */
@@ -134,7 +130,7 @@ public class GTM extends AbstractWrappableSimulationST
     }
 
     /**
-     * Model to test the XML parser.
+     * Model for GTM.
      * <p>
      * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
@@ -148,22 +144,10 @@ public class GTM extends AbstractWrappableSimulationST
     class GTMModel implements OTSModelInterface
     {
         /** */
-        private static final long serialVersionUID = 20141121L;
+        private static final long serialVersionUID = 20150801L;
 
         /** the simulator. */
         private OTSDEVSSimulatorInterface simulator;
-
-        /**
-         * @param gtuColorer the GTUColorer to use.
-         */
-        public GTMModel(final GTUColorer gtuColorer)
-        {
-            super();
-            this.gtuColorer = gtuColorer;
-        }
-
-        /** the gtuColorer. */
-        private final GTUColorer gtuColorer;
 
         /** {@inheritDoc} */
         @Override
@@ -173,10 +157,10 @@ public class GTM extends AbstractWrappableSimulationST
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
 
-            // base directory (relative to user dir)
+            // Base directory (relative to user dir)
             String dirBase = System.getProperty("user.dir") + "/src/main/resources/";
 
-            // geef hier de file met het netwerk
+            // Geef hier de file met het netwerk
             URL url = URLResource.getResource(dirBase + "network.xml");
 
             // Bouw het netwerk
@@ -185,6 +169,7 @@ public class GTM extends AbstractWrappableSimulationST
             try
             {
                 network = nlp.build(url);
+                makeSignalGroupTrafficLightMap(network);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
                 | GTUException | OTSGeometryException exception1)
@@ -192,44 +177,13 @@ public class GTM extends AbstractWrappableSimulationST
                 exception1.printStackTrace();
             }
 
-            // get the traffic lights with their name.
-            for (Link<?, ?> link : network.getLinkMap().values())
-            {
-                if (link instanceof CrossSectionLink)
-                {
-                    List<CrossSectionElement<?, ?>> cseList = ((CrossSectionLink) link).getCrossSectionElementList();
-                    for (CrossSectionElement<?, ?> cse : cseList)
-                    {
-                        if (cse instanceof Lane)
-                        {
-                            Lane<?, ?> lane = (Lane<?, ?>) cse;
-                            List<LaneBasedGTU<?>> gtus = lane.getGtuList();
-                            for (LaneBasedGTU<?> gtu : gtus)
-                            {
-                                if (gtu instanceof TrafficLight)
-                                {
-                                    TrafficLight trafficLight = (TrafficLight) gtu;
-                                    String signalGroupName = trafficLight.getId().split("\\.")[0];
-                                    if (!GTM.signalGroupToTrafficLights.containsKey(signalGroupName))
-                                    {
-                                        GTM.signalGroupToTrafficLights.put(signalGroupName, new ArrayList<TrafficLight>());
-                                    }
-                                    GTM.signalGroupToTrafficLights.get(signalGroupName).add(trafficLight);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            System.out.println(GTM.signalGroupToTrafficLights);
-
             // read the configuration files for VLOG (detector/signalgroup: both index and name
             String dirConfigVri = "configVRI/";
             String dirLoggings = "VRI-loggings/";
             // het nummer van de N201 wordt gebruikt in de bestanden
             String wegNummer = "201";
             // Geef de numers van de VRI's
-            String[] vriNummer = {"225"}; // , "231", "234", "239", "245", "249", "291", "297", "302", "308", "311", "314"};
+            String[] vriNummer = {"225"}; //, "231", "234", "239", "245", "249", "291", "297", "302", "308", "311", "314"};
 
             // in de configVriList worden de vri configuraties opgeslagen. De ConfigVri bevat de detectoren (index, naam) en de
             // signaalgroepen (index, naam)
@@ -243,7 +197,7 @@ public class GTM extends AbstractWrappableSimulationST
                 e1.printStackTrace();
             }
 
-            // read and define detectors from the networ. in mapSensors staan alle detectoren (met de naam als zoeksleutel
+            // read and define detectors from the network. in mapSensors staan alle detectoren (met de naam als zoeksleutel
             HashMap<String, AbstractSensor> mapSensor = new HashMap<String, AbstractSensor>();
             // Vervolgens worden de verschillende typen ook nog in aparte HashMaps opgeslagen
             HashMap<String, GenerateSensor> mapSensorGenerateCars = new HashMap<String, GenerateSensor>();
@@ -277,16 +231,16 @@ public class GTM extends AbstractWrappableSimulationST
             ZoneOffset offset = ZoneOffset.of("-00:00");
             LocalDateTime ldt = LocalDateTime.ofInstant(timeVLog, offset);
             ldt = LocalDateTime.ofInstant(timeVLog, offset);
-            // read the vlog data with both detector and signalgroup data
-            // van alle detectoren worden nu de pulsen toegevoegd (tijdstip en
-            // waarde detectie/signaal)
-            // deze worden opgeslagen in de mapSensor, maar tegelijkertijd ook
-            // in de mappen mapSensorGenerateCars, mapSensorKillCars en
-            // mapSensorCheckCars (omdat daar een verwijzing naar dezelfde objecten is
-            //
+            /*
+             * read the vlog data with both detector and signalgroup. Data van alle detectoren worden nu de pulsen toegevoegd
+             * (tijdstip en waarde detectie/signaal). Deze worden opgeslagen in de mapSensor, maar tegelijkertijd ook in de
+             * mappen mapSensorGenerateCars, mapSensorKillCars en mapSensorCheckCars (omdat daar een verwijzing naar dezelfde
+             * objecten is).
+             */
             try
             {
-                ReadVLog.readVlogFiles(mapSensor, configVriList, timeVLog, dirBase + dirLoggings, wegNummer, vriNummer, simulator);
+                ReadVLog.readVlogFiles(mapSensor, configVriList, timeVLog, dirBase + dirLoggings, wegNummer, vriNummer,
+                    this.simulator);
             }
             catch (IOException e2)
             {
@@ -357,6 +311,44 @@ public class GTM extends AbstractWrappableSimulationST
             // if the cars are traveling faster/slower than the pulses:
             // decrease/increase the maximum speed
 
+        }
+
+        /**
+         * Get the traffic lights with their name.
+         * @param network the parsed network.
+         */
+        private void makeSignalGroupTrafficLightMap(final OTSNetwork<?, ?, ?> network)
+        {
+            for (Link<?, ?> link : network.getLinkMap().values())
+            {
+                if (link instanceof CrossSectionLink)
+                {
+                    @SuppressWarnings({"rawtypes", "unchecked"})
+                    List<CrossSectionElement<?, ?>> cseList = ((CrossSectionLink) link).getCrossSectionElementList();
+                    for (CrossSectionElement<?, ?> cse : cseList)
+                    {
+                        if (cse instanceof Lane)
+                        {
+                            Lane<?, ?> lane = (Lane<?, ?>) cse;
+                            List<LaneBasedGTU<?>> gtus = lane.getGtuList();
+                            for (LaneBasedGTU<?> gtu : gtus)
+                            {
+                                if (gtu instanceof TrafficLight)
+                                {
+                                    TrafficLight trafficLight = (TrafficLight) gtu;
+                                    String signalGroupName = trafficLight.getId().split("\\.")[0];
+                                    if (!GTM.signalGroupToTrafficLights.containsKey(signalGroupName))
+                                    {
+                                        GTM.signalGroupToTrafficLights.put(signalGroupName, new ArrayList<TrafficLight>());
+                                    }
+                                    GTM.signalGroupToTrafficLights.get(signalGroupName).add(trafficLight);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            System.out.println(GTM.signalGroupToTrafficLights);
         }
 
         /** {@inheritDoc} */
