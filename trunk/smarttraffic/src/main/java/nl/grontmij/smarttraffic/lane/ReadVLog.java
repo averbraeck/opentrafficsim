@@ -1,28 +1,29 @@
 package nl.grontmij.smarttraffic.lane;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.rmi.RemoteException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.language.io.URLResource;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.lane.AbstractSensor;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
-/** Read vlog file and cfg data. */
+/** Read vlog file. */
 public class ReadVLog
 {
     /**
@@ -32,82 +33,93 @@ public class ReadVLog
     {
         // cannot be instantiated.
     }
-    
-    public static void readVlogFiles(HashMap<String, AbstractSensor> mapSensor, HashMap<String, ConfigVri> configVriList,
+
+    public static void readVlogZipFiles(HashMap<String, AbstractSensor> mapSensor, HashMap<String, ConfigVri> configVriList,
         Instant timeVLog, String dirLoggings, String wegNummer, String[] vriNummer, OTSDEVSSimulatorInterface simulator)
     {
-        for (String vri : vriNummer)
+        try
         {
-            ZoneOffset offset = ZoneOffset.of("-00:00");
-            LocalDateTime ldt = LocalDateTime.ofInstant(timeVLog, offset);
-            ldt = LocalDateTime.ofInstant(timeVLog, offset);
-            int year = ldt.getYear();
-            int month = ldt.getMonthValue();
-            int day = ldt.getDayOfMonth();
-            int hour = ldt.getHour();
-            int minute = ldt.getMinute();
-            int second = ldt.getSecond();
-            Instant timeVLogStart = timeVLog;
-            Boolean[] boolReadyToStartVLog = new Boolean[]{new Boolean(false)};
-            String vriLocation = "VRI" + wegNummer + vri;
-            Instant timeFromVLog[] = new Instant[]{null};
-            Long deltaTimeFromVLog[] = new Long[]{(long) 0};
-            String timeStampFile = String.format("%04d%02d%02d_%02d%02d%02d", year, month, day, hour, minute, second);
-            // zoek de eerste "harde" tijdsaanduiding
-            // Om alle dagen te simularen gebruik dan de volgende regel:
-            // while (day < 27) {
-            while (hour < 20)
+            Map<String, ZipEntry> zipEntries = new HashMap<>();
+            ZipFile zipFile = new ZipFile(dirLoggings + "vlog.zip");
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements())
             {
-                String file =
-                    dirLoggings + Integer.toString(day) + "/" + vriLocation + "/" + vriLocation + "_" + timeStampFile
-                        + ".vlg";
-                // System.out.println("vlg file: " + file);
-                if (URLResource.getResource(file) != null)
+                ZipEntry entry = entries.nextElement();
+                zipEntries.put(entry.getName(), entry);
+            }
+
+            for (String vri : vriNummer)
+            {
+                ZoneOffset offset = ZoneOffset.of("-00:00");
+                LocalDateTime ldt = LocalDateTime.ofInstant(timeVLog, offset);
+                ldt = LocalDateTime.ofInstant(timeVLog, offset);
+                int year = ldt.getYear();
+                int month = ldt.getMonthValue();
+                int day = ldt.getDayOfMonth();
+                int hour = ldt.getHour();
+                int minute = ldt.getMinute();
+                int second = ldt.getSecond();
+                Instant timeVLogStart = timeVLog;
+                Boolean[] boolReadyToStartVLog = new Boolean[]{new Boolean(false)};
+                String vriLocation = "VRI" + wegNummer + vri;
+                Instant timeFromVLog[] = new Instant[]{null};
+                Long deltaTimeFromVLog[] = new Long[]{(long) 0};
+                String timeStampFile = String.format("%04d%02d%02d_%02d%02d%02d", year, month, day, hour, minute, second);
+                // zoek de eerste "harde" tijdsaanduiding
+                // Om alle dagen te simuleren gebruik dan de volgende regel:
+                // while (day < 27) {
+                while (hour < 20)
                 {
-                    URL url = URLResource.getResource(file);
-                    BufferedReader bufferedReader = null;
-                    String path = url.getPath();
-                    try
+                    String fName =
+                        Integer.toString(day) + "/" + vriLocation + "/" + vriLocation + "_" + timeStampFile + ".vlg";
+                    ZipEntry entry = zipEntries.get(fName);
+                    if (entry != null)
                     {
-                        bufferedReader = new BufferedReader(new FileReader(path));
+                        InputStream stream = zipFile.getInputStream(entry);
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
                         /*
                          * in de vlog bestanden wordt om de x minuten een regel met de "harde" tijd gelogd vervolgens worden
                          * meldingen gedaan met een delta_tijd vanaf die "harde" tijd in de volgende module wordt eerst een
                          * harde starttijd gezocht en worden vervolgens de initiele waarden van de detectoren en van de
                          * signaalgroepen ingelezen
                          */
+
                         if (!boolReadyToStartVLog[0])
                         {
                             readStatusVLogFile(mapSensor, bufferedReader, timeFromVLog, deltaTimeFromVLog,
                                 boolReadyToStartVLog, configVriList, vri, simulator);
-
                         }
                         /*
                          * als er eenmaal een referentie naar de tijd is gevonden kan vervolgens verder worden gelezen met
                          * alleen de wijzigingen de regels met de statusberichten kunnen worden overgeslagen
                          */
+
                         if (boolReadyToStartVLog[0])
                         {
                             readVLogFile(mapSensor, bufferedReader, timeFromVLog, deltaTimeFromVLog, configVriList, vri,
                                 simulator);
                         }
+                        bufferedReader.close();
+                        stream.close();
                     }
-                    catch (IOException e1)
-                    {
-                        e1.printStackTrace();
-                        System.exit(-1);
-                    }
+
+                    // increase time with one minute for next file
+                    //
+                    timeVLogStart = timeVLogStart.plusSeconds(60);
+                    ldt = LocalDateTime.ofInstant(timeVLogStart, offset);
+                    day = ldt.getDayOfMonth();
+                    hour = ldt.getHour();
+                    minute = ldt.getMinute();
+                    second = ldt.getSecond();
+                    timeStampFile = String.format("%04d%02d%02d_%02d%02d%02d", year, month, day, hour, minute, second);
                 }
-                // increase time with one minute for next file
-                //
-                timeVLogStart = timeVLogStart.plusSeconds(60);
-                ldt = LocalDateTime.ofInstant(timeVLogStart, offset);
-                day = ldt.getDayOfMonth();
-                hour = ldt.getHour();
-                minute = ldt.getMinute();
-                second = ldt.getSecond();
-                timeStampFile = String.format("%04d%02d%02d_%02d%02d%02d", year, month, day, hour, minute, second);
             }
+            zipFile.close();
+        }
+        catch (IOException e1)
+        {
+            e1.printStackTrace();
+            System.exit(-1);
         }
     }
 
@@ -287,7 +299,6 @@ public class ReadVLog
         }
     }
 
-
     // toetsen of de dynamisch bepaalde situatie met detectoren overeenkomt met
     // een statusbericht
     public static void CheckStatusDetector(HashMap<String, AbstractSensor> mapSensor, HashMap<Integer, Integer> mapStatus,
@@ -419,7 +430,6 @@ public class ReadVLog
         }
         return mapDetectieWijziging;
     }
-
 
     public static int parseNibble(final StringBuffer s)
     {

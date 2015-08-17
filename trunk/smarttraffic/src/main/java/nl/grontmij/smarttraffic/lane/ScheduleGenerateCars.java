@@ -11,25 +11,20 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
-import org.opentrafficsim.core.car.LaneBasedIndividualCar.LaneBasedIndividualCarBuilder;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.core.gtu.following.HeadwayGTU;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -102,7 +97,8 @@ public class ScheduleGenerateCars
                     DoubleScalar.Abs<TimeUnit> when = entryPulse.getKey();
                     try
                     {
-                        this.simulator.scheduleEventAbs(when, this, this, "generateCar", new Object[]{lane, initialPosition});
+                        this.simulator
+                            .scheduleEventAbs(when, this, this, "generateCar", new Object[]{lane, initialPosition});
                     }
                     catch (RemoteException | SimRuntimeException exception)
                     {
@@ -116,13 +112,27 @@ public class ScheduleGenerateCars
     }
 
     /**
-     * Generate one car and re-schedule this method.
+     * Generate one car and re-schedule this method if there is no space.
      */
     protected final void generateCar(Lane<?, ?> lane, DoubleScalar.Rel<LengthUnit> initialPosition)
     {
+        // is there enough space?
+        if (!enoughSpace(lane, initialPosition.getSI(), this.lengthCar))
+        {
+            try
+            {
+                this.simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.25, TimeUnit.SECOND), this, this,
+                    "generateCar", new Object[]{lane, initialPosition});
+                return;
+            }
+            catch (RemoteException | SimRuntimeException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+
         Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions =
-            new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
-        enoughSpace(lane, initialPosition.getSI(), this.lengthCar);
+                new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(lane, initialPosition);
         if (initialPosition.getSI() + this.lengthCar > lane.getLength().getSI())
         {
@@ -193,7 +203,6 @@ public class ScheduleGenerateCars
                 if ((frontNew >= rearGTU && frontNew <= frontGTU) || (rearNew >= rearGTU && rearNew <= frontGTU)
                     || (frontGTU >= rearNew && frontGTU <= frontNew) || (rearGTU >= rearNew && rearGTU <= frontNew))
                 {
-                    System.err.println("Generator overlap with GTU " + gtu);
                     return false;
                 }
             }

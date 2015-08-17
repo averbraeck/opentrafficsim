@@ -224,7 +224,7 @@ public class GTM extends AbstractWrappableSimulationST
              * mappen mapSensorGenerateCars, mapSensorKillCars en mapSensorCheckCars (omdat daar een verwijzing naar dezelfde
              * objecten is).
              */
-            ReadVLog.readVlogFiles(mapSensor, configVriList, timeVLog, dirBase + dirLoggings, wegNummer, vriNummer,
+            ReadVLog.readVlogZipFiles(mapSensor, configVriList, timeVLog, dirBase + dirLoggings, wegNummer, vriNummer,
                 this.simulator);
 
             // connect the detector pulses to the simulator and generate Cars

@@ -10,7 +10,6 @@ import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * <p>
@@ -31,7 +30,7 @@ public class StraightRouteNavigator extends AbstractLaneBasedRouteNavigator
     /** last visited node on the route. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected int lastVisitedNodeIndex = -1;
-    
+
     /**
      * @param straightRoute
      */
@@ -43,11 +42,23 @@ public class StraightRouteNavigator extends AbstractLaneBasedRouteNavigator
 
     /** {@inheritDoc} */
     @Override
-    public DoubleScalar.Rel<LengthUnit> suitability(Lane<?, ?> lane, Rel<LengthUnit> longitudinalPosition, GTUType<?> gtuType,
-        Rel<TimeUnit> timeHorizon) throws NetworkException
+    public DoubleScalar.Rel<LengthUnit> suitability(Lane<?, ?> lane, DoubleScalar.Rel<LengthUnit> longitudinalPosition,
+        GTUType<?> gtuType, DoubleScalar.Rel<TimeUnit> timeHorizon) throws NetworkException
     {
         // if the lane connects to the main route: good, otherwise: bad
-        return new DoubleScalar.Rel<LengthUnit>(500.0, LengthUnit.METER);
+        if (this.straightRoute.getNodes().contains(lane.getParentLink().getEndNode()))
+        {
+            if (lane.nextLanes().size() == 0) // no choice
+                return NOLANECHANGENEEDED;
+            Lane nextLane = lane.nextLanes().iterator().next();
+            if (nextLane != null && this.straightRoute.getNodes().contains(nextLane.getParentLink().getEndNode()))
+                return NOLANECHANGENEEDED;
+            else
+                return new DoubleScalar.Rel<LengthUnit>(0.1, LengthUnit.METER);
+        }
+        else
+            // Math.max(0.0, lane.getLength().getSI() - longitudinalPosition.getSI())
+            return new DoubleScalar.Rel<LengthUnit>(0.1, LengthUnit.METER);
     }
 
     /** {@inheritDoc} */
@@ -84,6 +95,4 @@ public class StraightRouteNavigator extends AbstractLaneBasedRouteNavigator
         return this.straightRoute.getNodes().get(this.lastVisitedNodeIndex);
     }
 
-
 }
-
