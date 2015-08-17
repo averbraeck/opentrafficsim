@@ -1,5 +1,6 @@
 package nl.grontmij.smarttraffic.lane;
 
+import java.awt.Color;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -29,7 +30,9 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  */
 public class TrafficLight extends AbstractTrafficLight
 {
-
+    /** the color to display. */
+    private Color color = Color.BLACK;
+    
     /**
      * @param lane The lane where the block has to be put
      * @param position the position on the lane as a length
@@ -52,19 +55,45 @@ public class TrafficLight extends AbstractTrafficLight
         }
     }
 
+    /**
+     * @return color
+     */
+    public final Color getColor()
+    {
+        return this.color;
+    }
+
     public void changeColor(final int newColor)
     {
         switch (newColor)
         {
             case 0:
+                this.color = Color.RED;
                 setBlocked(true);
                 break;
 
             case 1:
+                this.color = Color.GREEN;
                 setBlocked(false);
                 break;
 
             case 2:
+                this.color = Color.YELLOW;
+                setBlocked(false);
+                break;
+
+            case 3:
+                this.color = Color.WHITE; // wit knipper
+                setBlocked(false);
+                break;
+
+            case 4:
+                this.color = Color.BLACK;
+                setBlocked(false);
+                break;
+
+            case 5:
+                this.color = Color.WHITE; // geel knipper
                 setBlocked(false);
                 break;
 

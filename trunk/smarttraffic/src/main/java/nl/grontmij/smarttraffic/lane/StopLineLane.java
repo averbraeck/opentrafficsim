@@ -25,7 +25,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.AbstractSensor;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
+import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -122,7 +122,7 @@ public class StopLineLane extends AbstractSensor
                     initialPositions, new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
                     new DoubleScalar.Rel<LengthUnit>(1, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1.8,
                         LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-                    new LaneBasedRouteNavigator(new CompleteRoute<>("")), simulator, DefaultCarAnimation.class,
+                    new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simulator, DefaultCarAnimation.class,
                     new IDGTUColorer());
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)

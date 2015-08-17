@@ -18,6 +18,8 @@ public class ConfigVri
         this.name = name;
         this.detectors = detectors;
         this.signalGroups = signalGroups;
+        System.out.println("cfg read for vri: " + name + " - signalgroups= " + signalGroups);
+        System.out.println("cfg read for vri: " + name + " - detectors   = " + detectors);
     }
 
     public String getName()

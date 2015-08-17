@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.time.Instant;
 
 import javax.naming.NamingException;
 
@@ -29,7 +30,7 @@ public class MeasureSensor extends AbstractSensor
 
     /** filename for sensor write. */
     private static BufferedWriter outputFile;
-
+    
     static
     {
         try
@@ -41,7 +42,8 @@ public class MeasureSensor extends AbstractSensor
                 file.createNewFile();
             }
             outputFile = new BufferedWriter(new FileWriter(file.getAbsoluteFile()));
-        }
+            outputFile.write("Time\tSensor\tCar\n");
+            outputFile.flush();        }
         catch (IOException exception)
         {
             exception.printStackTrace();
@@ -78,7 +80,9 @@ public class MeasureSensor extends AbstractSensor
     {
         try
         {
-            outputFile.write(getSimulator().getSimulatorTime() + "\t" + getName() + "\t" + gtu.getId() + "\n");
+            Instant time = GTM.startTimeSimulation.plusMillis(1000 * getSimulator().getSimulatorTime().get().longValue());
+            String ts = time.toString().replace('T', ' ').replaceFirst("Z", "");
+            outputFile.write(ts + "\t" + getName() + "\t" + gtu.getId() + "\n");
             outputFile.flush();
         }
         catch (IOException exception)

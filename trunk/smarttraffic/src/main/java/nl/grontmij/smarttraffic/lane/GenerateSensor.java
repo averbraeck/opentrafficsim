@@ -34,18 +34,6 @@ public class GenerateSensor extends AbstractSensor
      * @param nameSensor
      * @param nameJunction
      */
-    /*
-     * public SensorLaneST(Lane<?, ?> lane, Rel<LengthUnit> longitudinalPositionFromEnd, final RelativePosition.TYPE front,
-     * String sensorType, String nameSensor, String nameJunction) { super(lane, longitudinalPositionFromEnd, front, nameSensor);
-     * this.nameJunction = nameJunction; this.sensorType = sensorType; }
-     */
-
-    /**
-     * @param lane
-     * @param longitudinalPositionFromEnd
-     * @param nameSensor
-     * @param nameJunction
-     */
     public GenerateSensor(Lane<?, ?> lane, Rel<LengthUnit> longitudinalPositionFromEnd, final RelativePosition.TYPE front,
         String nameSensor, final OTSSimulatorInterface simulator)
     {
