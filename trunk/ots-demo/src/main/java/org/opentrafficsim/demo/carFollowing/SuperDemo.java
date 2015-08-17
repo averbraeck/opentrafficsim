@@ -61,12 +61,11 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
 /**
  * Several demos in one application.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 17 dec. 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 17 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class SuperDemo
@@ -237,11 +236,11 @@ public class SuperDemo
         try
         {
             CompoundProperty simulationSettings =
-                    new CompoundProperty("Simulation settings",
-                            "Select the simulation network and traffic composition", null, false, 0);
+                new CompoundProperty("Simulation settings", "Select the simulation network and traffic composition", null,
+                    false, 0);
             /*
-             * This is ugly, but it gets the job done... Insert a dummy property at the top and later replace the
-             * property editor for the dummy property by the simulationSelection JPanel.
+             * This is ugly, but it gets the job done... Insert a dummy property at the top and later replace the property
+             * editor for the dummy property by the simulationSelection JPanel.
              */
             BooleanProperty dummy = new BooleanProperty("Dummy", "Dummy", false, false, 0);
             simulationSettings.add(dummy);
@@ -268,26 +267,25 @@ public class SuperDemo
                     }
                 }
                 simulationSettings.add(new ProbabilityDistributionProperty("Traffic composition",
-                        "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
-                        new Double[]{0.8, 0.2}, false, 5));
+                    "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"}, new Double[]{
+                        0.8, 0.2}, false, 5));
                 CompoundProperty modelSelection =
-                        new CompoundProperty("Model selection", "Modeling specific settings", null, false, 300);
+                    new CompoundProperty("Model selection", "Modeling specific settings", null, false, 300);
                 modelSelection.add(new SelectionProperty("Simulation scale", "Level of detail of the simulation",
-                        new String[]{"Micro", "Macro", "Meta"}, 0, true, 0));
-                modelSelection.add(new SelectionProperty("Car following model",
-                        "<html>The car following model determines "
-                                + "the acceleration that a vehicle will make taking into account "
-                                + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
-                                + "curvature of the road) capabilities of the vehicle and personality "
-                                + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
+                    new String[]{"Micro", "Macro", "Meta"}, 0, true, 0));
+                modelSelection.add(new SelectionProperty("Car following model", "<html>The car following model determines "
+                    + "the acceleration that a vehicle will make taking into account "
+                    + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
+                    + "curvature of the road) capabilities of the vehicle and personality " + "of the driver.</html>",
+                    new String[]{"IDM", "IDM+"}, 1, false, 1));
                 modelSelection.add(IDMPropertySet.makeIDMPropertySet("Car", new DoubleScalar.Abs<AccelerationUnit>(1.0,
-                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
-                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
-                        new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 2));
-                modelSelection.add(IDMPropertySet.makeIDMPropertySet("Truck", new DoubleScalar.Abs<AccelerationUnit>(
-                        0.5, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.25,
-                        AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
-                        new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 3));
+                    AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
+                    AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
+                    new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 2));
+                modelSelection.add(IDMPropertySet.makeIDMPropertySet("Truck", new DoubleScalar.Abs<AccelerationUnit>(0.5,
+                    AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.25,
+                    AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
+                    new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.SECOND), 3));
                 properties.add(properties.size() > 0 ? 1 : 0, modelSelection);
             }
             properties.add(0, simulationSettings);
@@ -376,7 +374,7 @@ public class SuperDemo
             result.setLayout(new BorderLayout());
             final ProbabilityDistributionProperty pdp = (ProbabilityDistributionProperty) ap;
             final ProbabilityDistributionEditor pdpe =
-                    new ProbabilityDistributionEditor(pdp.getElementNames(), pdp.getValue());
+                new ProbabilityDistributionEditor(pdp.getElementNames(), pdp.getValue());
             pdpe.addPropertyChangeListener(new PropertyChangeListener()
             {
                 @Override
@@ -394,8 +392,7 @@ public class SuperDemo
 
             });
             result.add(pdpe, BorderLayout.LINE_END);
-            result.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) new JLabel("ABC").getPreferredSize()
-                    .getHeight()));
+            result.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) new JLabel("ABC").getPreferredSize().getHeight()));
             result.setToolTipText(pdp.getDescription());
         }
         else if (ap instanceof IntegerProperty)
@@ -409,8 +406,8 @@ public class SuperDemo
             slider.setValue(ip.getValue());
             slider.setPaintTicks(true);
             final JLabel currentValue =
-                    new JLabel(String.format(DefaultLocale.getLocale(), ip.getFormatString(), ip.getValue()),
-                            SwingConstants.RIGHT);
+                new JLabel(String.format(DefaultLocale.getLocale(), ip.getFormatString(), ip.getValue()),
+                    SwingConstants.RIGHT);
             slider.addChangeListener(new ChangeListener()
             {
                 @Override
@@ -447,18 +444,17 @@ public class SuperDemo
             slider.setMaximum(useSteps);
             slider.setMinimum(0);
             slider.setValue((int) (useSteps * (cp.getValue() - cp.getMinimumValue()) / (cp.getMaximumValue() - cp
-                    .getMinimumValue())));
+                .getMinimumValue())));
             final JLabel currentValue =
-                    new JLabel(String.format(DefaultLocale.getLocale(), cp.getFormatString(), cp.getValue()),
-                            SwingConstants.RIGHT);
+                new JLabel(String.format(DefaultLocale.getLocale(), cp.getFormatString(), cp.getValue()),
+                    SwingConstants.RIGHT);
             slider.addChangeListener(new ChangeListener()
             {
                 @Override
                 public void stateChanged(final ChangeEvent changeEvent)
                 {
                     double value =
-                            slider.getValue() * (cp.getMaximumValue() - cp.getMinimumValue()) / useSteps
-                                    + cp.getMinimumValue();
+                        slider.getValue() * (cp.getMaximumValue() - cp.getMinimumValue()) / useSteps + cp.getMinimumValue();
                     currentValue.setText(String.format(DefaultLocale.getLocale(), cp.getFormatString(), value));
                     if (slider.getValueIsAdjusting())
                     {
@@ -535,8 +531,8 @@ class CleverRadioButton extends JRadioButton
 
     /**
      * Construct a JRadioButton that also stores a WrappableSimulation.
-     * @param simulation WrappableSimulation; the simulation to run if this radio button is selected and the start
-     *            simulation button is clicked
+     * @param simulation WrappableSimulation; the simulation to run if this radio button is selected and the start simulation
+     *            button is clicked
      */
     CleverRadioButton(final WrappableSimulation simulation)
     {
