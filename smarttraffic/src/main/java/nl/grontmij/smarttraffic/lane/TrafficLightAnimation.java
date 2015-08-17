@@ -1,6 +1,5 @@
 package nl.grontmij.smarttraffic.lane;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
@@ -43,19 +42,11 @@ public class TrafficLightAnimation extends Renderable2D
         this.halfWidth = 0.4 * trafficLight.getLane().getWidth(0.0).getSI();
     }
 
-
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        if (((TrafficLight) this.source).isBlocked())
-        {
-            graphics.setColor(Color.RED);
-        }
-        else
-        {
-            graphics.setColor(Color.GREEN);
-        }
+        graphics.setColor(((TrafficLight) this.source).getColor());
         Rectangle2D rectangle = new Rectangle2D.Double(-0.25, -this.halfWidth, 0.5, 2 * this.halfWidth);
         graphics.fill(rectangle);
     }
@@ -66,7 +57,5 @@ public class TrafficLightAnimation extends Renderable2D
     {
         return "DefaultBlockOnOffAnimation [getSource()=" + this.getSource() + "]";
     }
-
-
 
 }

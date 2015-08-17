@@ -25,7 +25,6 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /** Read vlog file and cfg data. */
 public class ReadVLog
 {
-
     /**
      * Functions to read (streaming) V-log files: concentrates on detector and traffic light information
      */
@@ -33,126 +32,9 @@ public class ReadVLog
     {
         // cannot be instantiated.
     }
-
-    /**
-     * Read vlog config files for the given array of vri numbers in the given folder.
-     * @param dirConfigVri directory
-     * @param dirBase absolute location of VRI directory
-     * @param wegNummer e.g., 201
-     * @param vriNummers e.g., {"231", "232", "233"}
-     * @return a map of Strings to VRIs
-     * @throws IOException on read error
-     */
-    public static HashMap<String, ConfigVri> readVlogConfigFiles(String dirConfigVri, String dirBase, String wegNummer,
-        String[] vriNummers) throws IOException
-    {
-        // lijst met de configuratie van de vri's: naam kruispunt, detector (index en naam) en signaalgroep (index en naam)
-        HashMap<String, ConfigVri> configVriList = new HashMap<String, ConfigVri>();
-        // read VRI config files
-        for (String vri : vriNummers)
-        {
-            String vriName = vri;
-            String vriLocation = "VRI" + wegNummer + vriName;
-            if (URLResource.getResource(dirBase + dirConfigVri + vriLocation + ".cfg") != null)
-            {
-                URL url = URLResource.getResource(dirBase + dirConfigVri + vriLocation + ".cfg");
-                BufferedReader bufferedReader = null;
-                String path = url.getPath();
-                bufferedReader = new BufferedReader(new FileReader(path));
-                configVriList.put(vriName, readVLogConfigFile(bufferedReader));
-            }
-        }
-        return configVriList;
-    }
-
-    /**
-     * Read one cfg-file using the BufferedReader.
-     * @param bufferedReader the reader to the file.
-     * @return a VRI configuration object
-     * @throws IOException on read error
-     */
-    public static ConfigVri readVLogConfigFile(BufferedReader bufferedReader) throws IOException
-    {
-        String line = "";
-        String nameVRI = null;
-        Map<Integer, String> detectors = new HashMap<Integer, String>();
-        Map<Integer, String> signalGroups = new HashMap<Integer, String>();
-
-        while ((line = bufferedReader.readLine()) != null)
-        {
-            StringBuffer buffer = new StringBuffer(line);
-            // zoek //DP
-            if (buffer.length() > 0)
-            {
-                // //SYS
-                // SYS,"201225"
-                if (buffer.length() >= 4)
-                {
-                    if (buffer.substring(0, 4).contentEquals("//SY"))
-                    {
-                        line = bufferedReader.readLine();
-                        line = line.replaceAll("\"", "");
-                        String[] info = line.split(",");
-                        String weg = info[1].substring(0, 3);
-                        String vri = info[1].substring(3, 6);
-                        nameVRI = vri;
-                    }
-
-                    else if (buffer.substring(0, 4).contentEquals("//DP"))
-                    {
-                        while ((line = bufferedReader.readLine()) != null)
-                        {
-                            if (line.length() > 0)
-                            {
-                                if (line.substring(0, 2).contentEquals("DP"))
-                                {
-                                    readDetectorSettings(line, detectors);
-                                }
-                                else if (line.length() >= 2)
-                                {
-                                    if (line.substring(0, 2).contentEquals("//"))
-                                    {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if (buffer.substring(0, 4).contentEquals("//IS"))
-                    {
-                        // TODO: add IS info als nodig
-
-                    }
-                    else if (buffer.substring(0, 4).contentEquals("//FC"))
-                    {
-                        while ((line = bufferedReader.readLine()) != null)
-                        {
-                            if (line.length() > 0)
-                            {
-                                if (line.substring(0, 2).contentEquals("FC"))
-                                {
-                                    readTrafficlightSettings(line, signalGroups);
-                                }
-                                else if (line.length() >= 2)
-                                {
-                                    if (line.substring(0, 2).contentEquals("//"))
-                                    {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        System.out.println("cfg read foe vri: " + nameVRI + " - " + signalGroups);
-        return new ConfigVri(nameVRI, detectors, signalGroups);
-    }
-
+    
     public static void readVlogFiles(HashMap<String, AbstractSensor> mapSensor, HashMap<String, ConfigVri> configVriList,
         Instant timeVLog, String dirLoggings, String wegNummer, String[] vriNummer, OTSDEVSSimulatorInterface simulator)
-        throws IOException
     {
         for (String vri : vriNummer)
         {
@@ -188,31 +70,32 @@ public class ReadVLog
                     try
                     {
                         bufferedReader = new BufferedReader(new FileReader(path));
+                        /*
+                         * in de vlog bestanden wordt om de x minuten een regel met de "harde" tijd gelogd vervolgens worden
+                         * meldingen gedaan met een delta_tijd vanaf die "harde" tijd in de volgende module wordt eerst een
+                         * harde starttijd gezocht en worden vervolgens de initiele waarden van de detectoren en van de
+                         * signaalgroepen ingelezen
+                         */
+                        if (!boolReadyToStartVLog[0])
+                        {
+                            readStatusVLogFile(mapSensor, bufferedReader, timeFromVLog, deltaTimeFromVLog,
+                                boolReadyToStartVLog, configVriList, vri, simulator);
+
+                        }
+                        /*
+                         * als er eenmaal een referentie naar de tijd is gevonden kan vervolgens verder worden gelezen met
+                         * alleen de wijzigingen de regels met de statusberichten kunnen worden overgeslagen
+                         */
+                        if (boolReadyToStartVLog[0])
+                        {
+                            readVLogFile(mapSensor, bufferedReader, timeFromVLog, deltaTimeFromVLog, configVriList, vri,
+                                simulator);
+                        }
                     }
-                    catch (FileNotFoundException e1)
+                    catch (IOException e1)
                     {
                         e1.printStackTrace();
-                    }
-                    /*
-                     * in de vlog bestanden wordt om de x minuten een regel met de "harde" tijd gelogd vervolgens worden
-                     * meldingen gedaan met een delta_tijd vanaf die "harde" tijd in de volgende module wordt eerst een harde
-                     * starttijd gezocht en worden vervolgens de initiele waarden van de detectoren en van de signaalgroepen
-                     * ingelezen
-                     */
-                    if (!boolReadyToStartVLog[0])
-                    {
-                        readStatusVLogFile(mapSensor, bufferedReader, timeFromVLog, deltaTimeFromVLog, boolReadyToStartVLog,
-                            configVriList, vri, simulator);
-
-                    }
-                    /*
-                     * als er eenmaal een referentie naar de tijd is gevonden kan vervolgens verder worden gelezen met alleen de
-                     * wijzigingen de regels met de statusberichten kunnen worden overgeslagen
-                     */
-                    if (boolReadyToStartVLog[0])
-                    {
-                        readVLogFile(mapSensor, bufferedReader, timeFromVLog, deltaTimeFromVLog, configVriList, vri,
-                            simulator);
+                        System.exit(-1);
                     }
                 }
                 // increase time with one minute for next file
@@ -248,6 +131,7 @@ public class ReadVLog
             if (typeBericht == 1)
             {
                 timeFromVLog[0] = parseTijd(buffer);
+                // System.out.println(timeFromVLog[0]);
                 boolReadFirstTimeStamp = true;
             }
             else if (typeBericht == 5)
@@ -272,7 +156,6 @@ public class ReadVLog
                 break;
             }
         }
-
     }
 
     // alleen de wijzigingsberichten lezen
@@ -289,6 +172,7 @@ public class ReadVLog
             if (typeBericht == 1)
             {
                 timeFromVLog[0] = parseTijd(buffer);
+                // System.out.println(timeFromVLog[0]);
             }
             else if (typeBericht == 5)
             {
@@ -383,127 +267,26 @@ public class ReadVLog
                     {
                         simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(milliSecondsPassed, TimeUnit.MILLISECOND),
                             trafficLight, trafficLight, "changeColor", new Object[]{entry.getValue()});
+                        /*-
                         System.out.println(new DoubleScalar.Abs<TimeUnit>(milliSecondsPassed, TimeUnit.MILLISECOND) + " - "
                             + vri.getName() + ": " + timeVLogNow + ": " + vri.getName() + "_" + nameSignalGroup
                             + ", status[.,.] = [" + entry.getKey() + "," + entry.getValue() + "]");
+                         */
                     }
                     catch (RemoteException | SimRuntimeException exception)
                     {
                         exception.printStackTrace();
+                        System.exit(-1);
                     }
                 }
             }
             else
             {
-                System.out.println("TL nameSignalGroup not found: " + vri.getName() + "_" + nameSignalGroup);
+                // System.out.println("TL nameSignalGroup not found: " + vri.getName() + "_" + nameSignalGroup);
             }
         }
     }
 
-    // HIERONDER volgen een aantal methoden om de regels van de VLog bestanden
-    // in te lezen
-
-    // het type bericht (letter 1 en 2)
-    public static int parseTypebericht(final StringBuffer s, int aantal)
-    {
-        return parseByte(s);
-    }
-
-    // de tijd
-    public static Instant parseTijd(final StringBuffer s)
-    {
-        // System.out.println(type + "  " + s);
-        int year = parseNibble(s) * 1000 + parseNibble(s) * 100 + parseNibble(s) * 10 + parseNibble(s);
-        int month = parseNibble(s) * 10 + parseNibble(s);
-        int day = parseNibble(s) * 10 + parseNibble(s);
-        int hour = parseNibble(s) * 10 + parseNibble(s);
-        // LET OP: LIJKT DAT ER EEN FOUT ZIT IN VLOG
-        hour -= 2;
-        int minute = parseNibble(s) * 10 + parseNibble(s);
-        int second = parseNibble(s) * 10 + parseNibble(s);
-        int tenth = parseNibble(s);
-        Instant timeStamp =
-            Instant.parse(String
-                .format("%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day, hour, minute, second, tenth));
-        System.out.println(timeStamp);
-        return timeStamp;
-    }
-
-    // lees bij een statusbericht de waarden van de detectoren/signaalgroepen
-    public static HashMap<Integer, Integer> parseStatus(final StringBuffer s, Long[] deltaTimeFromVLog)
-    {
-        deltaTimeFromVLog[0] = parseLong(s, 3);
-        // lees reserve 4Bits
-        parse4Bits(s);
-        int aantal = parseByte(s);
-        HashMap<Integer, Integer> mapDetectieStatus = new HashMap<Integer, Integer>();
-        for (int i = 0; i < aantal; i++)
-        {
-            Integer detectorStatus = (int) parseLong(s, 1);
-            mapDetectieStatus.put(i, detectorStatus);
-        }
-        return mapDetectieStatus;
-    }
-
-    // lees bij een wijzigigingsbericht de gewijzigde waarden van de
-    // detectoren/signaalgroepen
-    public static HashMap<Integer, Integer> parseWijziging(final StringBuffer s, Long[] deltaTimeFromVLog)
-    {
-        deltaTimeFromVLog[0] = parseLong(s, 3);
-        int aantal = parse4Bits(s);
-        HashMap<Integer, Integer> mapDetectieWijziging = new HashMap<Integer, Integer>();
-        for (int i = 0; i < aantal; i++)
-        {
-            Integer detectorIndex = parseByte(s);
-            Integer detectorStatus = parseByte(s);
-            mapDetectieWijziging.put(detectorIndex, detectorStatus);
-        }
-        return mapDetectieWijziging;
-    }
-
-    // lees bij een statusbericht de waarden van de detectoren/signaalgroepen
-    public static void readDetectorSettings(String line, Map<Integer, String> detectors)
-    {
-        String[] buffer = new String[4];
-        buffer = line.split(",");
-        int count = Integer.parseInt(buffer[1]);
-        String name = buffer[2].replaceAll("\"", "");
-        String part1;
-        String part2 = name.substring(2, 3);
-        if (name.startsWith("0"))
-        {
-            part1 = name.substring(1, 2);
-        }
-        else
-        {
-            part1 = name.substring(0, 2);
-        }
-        name = part1 + "." + part2;
-        long l = Long.parseLong(buffer[3]);
-        String strHex = String.format("0x%04X", l);
-        if (strHex.substring(3, 4).contentEquals("1")
-            && (strHex.substring(5, 6).contentEquals("1") || strHex.substring(5, 6).contentEquals("4")))
-        {
-            name = "K" + name;
-        }
-        detectors.put(count, name);
-        // if ()
-    }
-
-    // lees bij een wijzigigingsbericht de gewijzigde waarden van de
-    // detectoren/signaalgroepen
-    public static void readTrafficlightSettings(String line, Map<Integer, String> signalGroups)
-    {
-        String[] buffer = new String[4];
-        buffer = line.split(",");
-        int fc_index = Integer.parseInt(buffer[1]);
-        String fc_code = buffer[2].replaceAll("\"", "");
-        long fc_type = Long.parseLong(buffer[3]); // 1 = motorvoertuig, 2 = voetganger, 4 = fiets, 8 = OV
-        // if (fc_type == 1)
-        {
-            signalGroups.put(fc_index, fc_code);
-        }
-    }
 
     // toetsen of de dynamisch bepaalde situatie met detectoren overeenkomt met
     // een statusbericht
@@ -566,6 +349,77 @@ public class ReadVLog
             }
         }
     }
+
+    /*******************************************************************************************************************/
+    /***************************** PARSE ONDERDELEN VAN DE VLOG BESTANDEN (BYTE, NIBBLE, ...) **************************/
+    /*******************************************************************************************************************/
+
+    // het type bericht (letter 1 en 2)
+    public static int parseTypebericht(final StringBuffer s, int aantal)
+    {
+        return parseByte(s);
+    }
+
+    /**
+     * Lees de tijd uit string s
+     * @param s de string met informatie.
+     * @return de tijd als een Instant.
+     */
+    public static Instant parseTijd(final StringBuffer s)
+    {
+        // System.out.println(s);
+        int year = parseNibble(s) * 1000 + parseNibble(s) * 100 + parseNibble(s) * 10 + parseNibble(s);
+        // XXX: some files have a year coded as '0015' instead of '2015'...
+        if (year < 100)
+        {
+            year += 2000;
+        }
+        int month = parseNibble(s) * 10 + parseNibble(s);
+        int day = parseNibble(s) * 10 + parseNibble(s);
+        int hour = parseNibble(s) * 10 + parseNibble(s);
+        // XXX: VLOG files contain a 2-hour difference between the hour in the internal data and the hour in the filename
+        hour -= 2;
+        int minute = parseNibble(s) * 10 + parseNibble(s);
+        int second = parseNibble(s) * 10 + parseNibble(s);
+        int tenth = parseNibble(s);
+        Instant timeStamp =
+            Instant.parse(String
+                .format("%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day, hour, minute, second, tenth));
+        return timeStamp;
+    }
+
+    // lees bij een statusbericht de waarden van de detectoren/signaalgroepen
+    public static HashMap<Integer, Integer> parseStatus(final StringBuffer s, Long[] deltaTimeFromVLog)
+    {
+        deltaTimeFromVLog[0] = parseLong(s, 3);
+        // lees reserve 4Bits
+        parse4Bits(s);
+        int aantal = parseByte(s);
+        HashMap<Integer, Integer> mapDetectieStatus = new HashMap<Integer, Integer>();
+        for (int i = 0; i < aantal; i++)
+        {
+            Integer detectorStatus = (int) parseLong(s, 1);
+            mapDetectieStatus.put(i, detectorStatus);
+        }
+        return mapDetectieStatus;
+    }
+
+    // lees bij een wijzigigingsbericht de gewijzigde waarden van de
+    // detectoren/signaalgroepen
+    public static HashMap<Integer, Integer> parseWijziging(final StringBuffer s, Long[] deltaTimeFromVLog)
+    {
+        deltaTimeFromVLog[0] = parseLong(s, 3);
+        int aantal = parse4Bits(s);
+        HashMap<Integer, Integer> mapDetectieWijziging = new HashMap<Integer, Integer>();
+        for (int i = 0; i < aantal; i++)
+        {
+            Integer detectorIndex = parseByte(s);
+            Integer detectorStatus = parseByte(s);
+            mapDetectieWijziging.put(detectorIndex, detectorStatus);
+        }
+        return mapDetectieWijziging;
+    }
+
 
     public static int parseNibble(final StringBuffer s)
     {

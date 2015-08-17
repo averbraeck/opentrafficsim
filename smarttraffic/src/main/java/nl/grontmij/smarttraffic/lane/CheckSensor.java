@@ -137,7 +137,7 @@ public class CheckSensor extends AbstractSensor
     @Override
     public void trigger(final LaneBasedGTU<?> gtu)
     {
-        System.out.println(gtu.getSimulator() + ": detecting " + gtu.toString() + " passing detector at lane " + getLane());
+        // System.out.println(gtu.getSimulator() + ": detecting " + gtu.toString() + " passing detector at lane " + getLane());
         this.gtusDetected.add(gtu);
     }
 

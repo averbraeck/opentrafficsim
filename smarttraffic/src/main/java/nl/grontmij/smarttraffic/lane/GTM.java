@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,12 +29,15 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.factory.xml.XmlNetworkLaneParser;
 import org.opentrafficsim.core.network.lane.AbstractSensor;
 import org.opentrafficsim.core.network.lane.CrossSectionElement;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
@@ -183,19 +184,13 @@ public class GTM extends AbstractWrappableSimulationST
             // het nummer van de N201 wordt gebruikt in de bestanden
             String wegNummer = "201";
             // Geef de numers van de VRI's
-            String[] vriNummer = {"225"}; //, "231", "234", "239", "245", "249", "291", "297", "302", "308", "311", "314"};
+            // Data van "311" ontbreekt in de meetperiode. Laat weg.
+            String[] vriNummer = {"225", "231", "234", "239", "245", "249", "291", "297", "302", "308", "314"};
 
             // in de configVriList worden de vri configuraties opgeslagen. De ConfigVri bevat de detectoren (index, naam) en de
             // signaalgroepen (index, naam)
             HashMap<String, ConfigVri> configVriList = null;
-            try
-            {
-                configVriList = ReadVLog.readVlogConfigFiles(dirConfigVri, dirBase, wegNummer, vriNummer);
-            }
-            catch (IOException e1)
-            {
-                e1.printStackTrace();
-            }
+            configVriList = ConfigFile.readVlogConfigFiles(dirConfigVri, dirBase, wegNummer, vriNummer);
 
             // read and define detectors from the network. in mapSensors staan alle detectoren (met de naam als zoeksleutel
             HashMap<String, AbstractSensor> mapSensor = new HashMap<String, AbstractSensor>();
@@ -204,15 +199,8 @@ public class GTM extends AbstractWrappableSimulationST
             HashMap<String, KillSensor> mapSensorKillCars = new HashMap<String, KillSensor>();
             HashMap<String, CheckSensor> mapSensorCheckCars = new HashMap<String, CheckSensor>();
             // alle detectoren uit het netwerk worden verzameld
-            try
-            {
-                ReadNetworkData.readDetectors(this.simulator, network, configVriList, mapSensor, mapSensorGenerateCars,
-                    mapSensorKillCars, mapSensorCheckCars);
-            }
-            catch (NetworkException | NamingException e2)
-            {
-                e2.printStackTrace();
-            }
+            ReadNetworkData.readDetectors(this.simulator, network, configVriList, mapSensor, mapSensorGenerateCars,
+                mapSensorKillCars, mapSensorCheckCars);
 
             // read the historical (at a later stage streaming) VLOG data
             // start met inlezen files vanaf tijdstip ....
@@ -227,50 +215,38 @@ public class GTM extends AbstractWrappableSimulationST
             Instant timeVLog =
                 Instant.parse(String.format("%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day, hour, minute, second,
                     tenth));
-            startTimeSimulation = timeVLog;
-            ZoneOffset offset = ZoneOffset.of("-00:00");
-            LocalDateTime ldt = LocalDateTime.ofInstant(timeVLog, offset);
-            ldt = LocalDateTime.ofInstant(timeVLog, offset);
+            startTimeSimulation =
+                Instant.parse(String.format("%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day, 0, 0, 0, 0));
+            // start the simulation at 06:00, but make times relative to 00:00 to display the right time.
             /*
              * read the vlog data with both detector and signalgroup. Data van alle detectoren worden nu de pulsen toegevoegd
              * (tijdstip en waarde detectie/signaal). Deze worden opgeslagen in de mapSensor, maar tegelijkertijd ook in de
              * mappen mapSensorGenerateCars, mapSensorKillCars en mapSensorCheckCars (omdat daar een verwijzing naar dezelfde
              * objecten is).
              */
-            try
-            {
-                ReadVLog.readVlogFiles(mapSensor, configVriList, timeVLog, dirBase + dirLoggings, wegNummer, vriNummer,
-                    this.simulator);
-            }
-            catch (IOException e2)
-            {
-                e2.printStackTrace();
-            }
+            ReadVLog.readVlogFiles(mapSensor, configVriList, timeVLog, dirBase + dirLoggings, wegNummer, vriNummer,
+                this.simulator);
 
             // connect the detector pulses to the simulator and generate Cars
             // Module that provides actions if a pulse from a detector is
-            // activated
-            @SuppressWarnings("unchecked")
-            // define the type of cars
+            // activated: creeren van een voertuig als een detector "af" gaat (waarde wordt nul)
             GTUType<String> gtuType = GTUType.makeGTUType("CAR");
-            // Parameters en variabelen om te tunen!!!!
-            // creeren van een voertuig als een detector "af" gaat (waarde wordt nul)
             int generateCar = 0;
-            double lengthCar = 4.5; // lengte voertuig
-
-            /*-
-            try
+            Map<String, CompleteRoute> routes = new HashMap<>();
+            for (String rName : network.getRouteMap().keySet())
             {
-                ScheduleGenerateCars generateCars =
-                    new ScheduleGenerateCars(gtuType, gtuFollowingModel, laneChangeModel, gtuColorer, simulator,
-                        mapSensorGenerateCars, generateCar, lengthCar);
+                try
+                {
+                    routes.put(rName, new CompleteRoute(rName, network.getRouteMap().get(rName).getNodes()));
+                }
+                catch (NetworkException exception)
+                {
+                    exception.printStackTrace();
+                }
             }
-            catch (NetworkException e1)
-            {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-             */
+            new ScheduleGenerateCars(gtuType, simulator, mapSensorGenerateCars, generateCar, routes);
+            
+            new ReportNumbers(network, simulator);
 
             // - Compare the (INTERMEDIATE) pulse to vehicles in the simulation
             //
@@ -330,7 +306,7 @@ public class GTM extends AbstractWrappableSimulationST
                         if (cse instanceof Lane)
                         {
                             Lane<?, ?> lane = (Lane<?, ?>) cse;
-                            List<LaneBasedGTU<?>> gtus = lane.getGtuList();
+                            List<LaneBasedGTU<?>> gtus = new ArrayList<>(lane.getGtuList());
                             for (LaneBasedGTU<?> gtu : gtus)
                             {
                                 if (gtu instanceof TrafficLight)
@@ -342,6 +318,12 @@ public class GTM extends AbstractWrappableSimulationST
                                         GTM.signalGroupToTrafficLights.put(signalGroupName, new ArrayList<TrafficLight>());
                                     }
                                     GTM.signalGroupToTrafficLights.get(signalGroupName).add(trafficLight);
+                                    // XXX hack: van verkeerslicht 311 ontbreekt alle data in de meetperiode. 
+                                    // Zet de lichten dus op groen...
+                                    if (trafficLight.getId().startsWith("311"))
+                                    {
+                                        trafficLight.changeColor(1);
+                                    }
                                 }
                             }
                         }
