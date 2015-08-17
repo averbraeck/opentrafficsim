@@ -176,6 +176,22 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
+     * make the length indexed line if it does not exist yet, and cache it
+     */
+    private void makeLengthIndexedLine()
+    {
+        if (this.lengthIndexedLine == null)
+        {
+            this.lengthIndexedLine = new double[this.points.length];
+            this.lengthIndexedLine[0] = 0.0;
+            for (int i = 1; i < this.points.length; i++)
+            {
+                this.lengthIndexedLine[i] = this.lengthIndexedLine[i - 1] + this.points[i - 1].distanceSI(this.points[i]);
+            }
+        }
+    }
+
+    /**
      * Get the location at a position on the line, with its direction. Position can be below 0 or more than the line length. In
      * that case, the position will be extrapolated in the direction of the line at its start or end.
      * @param position the position on the line for which to calculate the point on, before, of after the line
@@ -196,6 +212,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
      */
     public final DirectedPoint getLocationExtendedSI(final double positionSI) throws NetworkException
     {
+        makeLengthIndexedLine();
         if (positionSI >= 0.0 && positionSI <= getLengthSI())
         {
             return getLocationSI(positionSI);
@@ -261,7 +278,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         {
             return 0;
         }
-        
+
         for (int i = 0; i < this.lengthIndexedLine.length - 2; i++)
         {
             if (pos > this.lengthIndexedLine[i] && pos <= this.lengthIndexedLine[i + 1])
@@ -269,7 +286,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
                 return i;
             }
         }
-        
+
         return this.lengthIndexedLine.length - 2;
 
         /*- binary variant
@@ -304,21 +321,11 @@ public class OTSLine3D implements LocatableInterface, Serializable
      */
     public final DirectedPoint getLocationSI(final double positionSI) throws NetworkException
     {
+        makeLengthIndexedLine();
         if (positionSI < 0.0 || positionSI > getLengthSI())
         {
             throw new NetworkException("getLocationSI for line: position < 0.0 or > line length. Position = " + positionSI
                 + " m. Length = " + getLengthSI() + " m.");
-        }
-
-        // make the length indexed line if it does not exist yet, and cache it
-        if (this.lengthIndexedLine == null)
-        {
-            this.lengthIndexedLine = new double[this.points.length];
-            this.lengthIndexedLine[0] = 0.0;
-            for (int i = 1; i < this.points.length; i++)
-            {
-                this.lengthIndexedLine[i] = this.lengthIndexedLine[i - 1] + this.points[i - 1].distanceSI(this.points[i]);
-            }
         }
 
         // handle special cases: position == 0.0, or position == length
