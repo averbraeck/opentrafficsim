@@ -23,7 +23,7 @@ import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
+import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -77,7 +77,7 @@ public class IDMPlusTest
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar<Integer> referenceCar =
             new LaneBasedIndividualCar<Integer>(12345, gtuType, carFollowingModel, laneChangeModel,
-                initialLongitudinalPositions, initialSpeed, length, width, maxSpeed, new LaneBasedRouteNavigator(
+                initialLongitudinalPositions, initialSpeed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(
                     new CompleteRoute<>("")), simulator);
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         AccelerationStep cfmr = carFollowingModel.computeAccelerationWithNoLeader(referenceCar, speedLimit);
@@ -96,7 +96,7 @@ public class IDMPlusTest
                 new DoubleScalar.Rel<TimeUnit>(9999, TimeUnit.SECOND));
         LaneBasedIndividualCar<Integer> leaderCar =
             new LaneBasedIndividualCar<Integer>(23456, gtuType, fam, laneChangeModel, leaderPositions, initialSpeed, length,
-                width, maxSpeed, new LaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
+                width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
         HeadwayGTU leader =
             new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI() - initialPosition.getSI());
         cfmr =
@@ -111,7 +111,7 @@ public class IDMPlusTest
         // Exercise the if statement that ignores leaders that are further ahead
         LaneBasedIndividualCar<Integer> leaderCar2 =
             new LaneBasedIndividualCar<Integer>(34567, gtuType, fam, laneChangeModel, leaderPositions, initialSpeed, length,
-                width, maxSpeed, new LaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
+                width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
         // Verify that the result is independent of the order of adding in the Collection
         Collection<HeadwayGTU> leaders = new ArrayList<HeadwayGTU>();
         HeadwayGTU leader2 =
@@ -135,7 +135,7 @@ public class IDMPlusTest
         leaderCar2.destroy();
         leaderCar =
             new LaneBasedIndividualCar<Integer>(23456, gtuType, fam, laneChangeModel, leaderPositions, initialSpeed, length,
-                width, maxSpeed, new LaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
+                width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
         leader =
             new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI() - initialPosition.getSI());
         leaders.add(leader);
@@ -154,7 +154,7 @@ public class IDMPlusTest
             leaderPositions.put(lane, leaderPosition);
             leaderCar =
                 new LaneBasedIndividualCar<Integer>(0, gtuType, fam, laneChangeModel, leaderPositions, initialSpeed, length,
-                    width, maxSpeed, new LaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
+                    width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
             leader =
                 new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
                     - initialPosition.getSI());
@@ -184,13 +184,13 @@ public class IDMPlusTest
             referenceCar.destroy();
             referenceCar =
                 new LaneBasedIndividualCar<Integer>(12345, gtuType, carFollowingModel, laneChangeModel, initialPositions,
-                    initialSpeed, length, width, maxSpeed, new LaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
+                    initialSpeed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
             leaders.clear();
             DoubleScalar.Abs<SpeedUnit> leaderSpeed =
                 new DoubleScalar.Abs<SpeedUnit>(integerLeaderSpeed, SpeedUnit.METER_PER_SECOND);
             leaderCar =
                 new LaneBasedIndividualCar<Integer>(0, gtuType, fam, laneChangeModel, leaderPositions, leaderSpeed, length,
-                    width, maxSpeed, new LaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
+                    width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
             leader =
                 new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
                     - initialPosition.getSI());
@@ -214,13 +214,13 @@ public class IDMPlusTest
         referenceCar.destroy();
         referenceCar =
             new LaneBasedIndividualCar<Integer>(12345, gtuType, carFollowingModel, laneChangeModel, initialPositions,
-                initialSpeed, length, width, maxSpeed, new LaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
+                initialSpeed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
         leaderPosition =
             new DoubleScalar.Rel<LengthUnit>(100 + 3 + referenceCar.getLength().getSI()
                 + referenceCar.position(lane, referenceCar.getFront(), initialTime).getSI(), LengthUnit.METER);
         leaderCar =
             new LaneBasedIndividualCar<Integer>(0, gtuType, fam, laneChangeModel, leaderPositions, initialSpeed, length,
-                width, maxSpeed, new LaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
+                width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
         for (int timeStep = 0; timeStep < 200; timeStep++)
         {
             DoubleScalar.Abs<TimeUnit> simulateUntil = new DoubleScalar.Abs<TimeUnit>(0.1 * timeStep, TimeUnit.SI);

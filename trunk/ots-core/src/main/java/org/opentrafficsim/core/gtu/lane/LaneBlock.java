@@ -28,7 +28,8 @@ import org.opentrafficsim.core.gtu.following.HeadwayGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.CompleteRouteNavigator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -118,7 +119,7 @@ public class LaneBlock extends AbstractGTU<Integer> implements LaneBasedGTU<Inte
         final OTSDEVSSimulatorInterface simulator, final Class<? extends Renderable2D> animationClass) throws GTUException,
         RemoteException, NetworkException, NamingException
     {
-        super(0, BLOCK_GTU, new Route(""));
+        super(0, BLOCK_GTU, new CompleteRouteNavigator(new CompleteRoute("")));
         this.simulator = simulator;
         this.position = position;
         this.lane = lane;

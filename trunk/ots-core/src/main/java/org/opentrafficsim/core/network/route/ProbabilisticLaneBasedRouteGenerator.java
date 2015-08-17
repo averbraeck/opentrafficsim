@@ -68,7 +68,7 @@ public class ProbabilisticLaneBasedRouteGenerator implements LaneBasedRouteGener
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedRouteNavigator generateRouteNavigator()
+    public final CompleteLaneBasedRouteNavigator generateRouteNavigator()
     {
         double randomValue = this.random.draw();
         for (int index = 0; index < this.cumulativeProbabilities.length; index++)
@@ -99,7 +99,7 @@ public class ProbabilisticLaneBasedRouteGenerator implements LaneBasedRouteGener
         private static final long serialVersionUID = 20150722L;
 
         /** the route navigator. */
-        private final LaneBasedRouteNavigator laneBasedRouteNavigator;
+        private final CompleteLaneBasedRouteNavigator laneBasedRouteNavigator;
 
         /** the probability or frequency of the route. */
         private final double probability;
@@ -108,7 +108,7 @@ public class ProbabilisticLaneBasedRouteGenerator implements LaneBasedRouteGener
          * @param routeNavigator the route navigator.
          * @param probability the probability or frequency of the route.
          */
-        public LaneBasedRouteProbability(final LaneBasedRouteNavigator routeNavigator, final double probability)
+        public LaneBasedRouteProbability(final CompleteLaneBasedRouteNavigator routeNavigator, final double probability)
         {
             super();
             this.laneBasedRouteNavigator = routeNavigator;
@@ -118,7 +118,7 @@ public class ProbabilisticLaneBasedRouteGenerator implements LaneBasedRouteGener
         /**
          * @return route.
          */
-        public final LaneBasedRouteNavigator getRouteNavigator()
+        public final CompleteLaneBasedRouteNavigator getRouteNavigator()
         {
             return this.laneBasedRouteNavigator;
         }

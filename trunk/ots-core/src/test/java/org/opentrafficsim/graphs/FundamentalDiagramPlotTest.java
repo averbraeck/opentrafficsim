@@ -32,7 +32,7 @@ import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
+import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -131,7 +131,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
                 new DoubleScalar.Rel<TimeUnit>(1000, TimeUnit.SECOND));
         // Construct a car
         new LaneBasedIndividualCar<Integer>(1, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions,
-            speed, length, width, maxSpeed, new LaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
+            speed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(124, TimeUnit.SECOND));
         while (simulator.isRunning())
         {
@@ -215,7 +215,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
         // Check that harmonic mean speed is computed
         speed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
         new LaneBasedIndividualCar<Integer>(1234, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions,
-            speed, length, width, maxSpeed, new LaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
+            speed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(125, TimeUnit.SECOND));
         while (simulator.isRunning())
         {

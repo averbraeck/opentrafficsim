@@ -33,6 +33,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.lane.CrossSectionElement;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -148,7 +149,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         final OTSDEVSSimulatorInterface simulator) throws RemoteException, NetworkException, SimRuntimeException,
         GTUException
     {
-        super(id, gtuType, routeNavigator.getRoute());
+        super(id, gtuType, routeNavigator);
         this.routeNavigator = routeNavigator;
         if (null == gtuFollowingModel)
         {
@@ -521,7 +522,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         DoubleScalar.Rel<LengthUnit> leftSuitability = suitability(LateralDirectionality.LEFT);
         DoubleScalar.Rel<LengthUnit> currentSuitability = suitability(null);
         DoubleScalar.Rel<LengthUnit> rightSuitability = suitability(LateralDirectionality.RIGHT);
-        if (currentSuitability == LaneBasedRouteNavigator.NOLANECHANGENEEDED)
+        if (currentSuitability == CompleteLaneBasedRouteNavigator.NOLANECHANGENEEDED)
         {
             this.lastLaneChangeDistanceAndDirection =
                 new LaneChangeUrgeGTUColorer.LaneChangeDistanceAndDirection(currentSuitability, null);
@@ -532,13 +533,13 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 new LaneChangeUrgeGTUColorer.LaneChangeDistanceAndDirection(currentSuitability,
                     rightSuitability.getSI() == 0 ? false : leftSuitability.gt(rightSuitability));
         }
-        if ((leftSuitability == LaneBasedRouteNavigator.NOLANECHANGENEEDED || leftSuitability == LaneBasedRouteNavigator.GETOFFTHISLANENOW)
-            && currentSuitability == LaneBasedRouteNavigator.NOLANECHANGENEEDED
-            && (rightSuitability == LaneBasedRouteNavigator.NOLANECHANGENEEDED || rightSuitability == LaneBasedRouteNavigator.GETOFFTHISLANENOW))
+        if ((leftSuitability == CompleteLaneBasedRouteNavigator.NOLANECHANGENEEDED || leftSuitability == CompleteLaneBasedRouteNavigator.GETOFFTHISLANENOW)
+            && currentSuitability == CompleteLaneBasedRouteNavigator.NOLANECHANGENEEDED
+            && (rightSuitability == CompleteLaneBasedRouteNavigator.NOLANECHANGENEEDED || rightSuitability == CompleteLaneBasedRouteNavigator.GETOFFTHISLANENOW))
         {
             return checkLaneDrops(defaultLaneIncentives);
         }
-        if (currentSuitability == LaneBasedRouteNavigator.NOLANECHANGENEEDED)
+        if (currentSuitability == CompleteLaneBasedRouteNavigator.NOLANECHANGENEEDED)
         {
             return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{acceleration(leftSuitability),
                 defaultLaneIncentives.get(1).getSI(), acceleration(rightSuitability)}, AccelerationUnit.SI);
@@ -564,13 +565,13 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         DoubleScalar.Rel<LengthUnit> leftSuitability = laneDrop(LateralDirectionality.LEFT);
         DoubleScalar.Rel<LengthUnit> currentSuitability = laneDrop(null);
         DoubleScalar.Rel<LengthUnit> rightSuitability = laneDrop(LateralDirectionality.RIGHT);
-        if ((leftSuitability == LaneBasedRouteNavigator.NOLANECHANGENEEDED || leftSuitability == LaneBasedRouteNavigator.GETOFFTHISLANENOW)
-            && currentSuitability == LaneBasedRouteNavigator.NOLANECHANGENEEDED
-            && (rightSuitability == LaneBasedRouteNavigator.NOLANECHANGENEEDED || rightSuitability == LaneBasedRouteNavigator.GETOFFTHISLANENOW))
+        if ((leftSuitability == CompleteLaneBasedRouteNavigator.NOLANECHANGENEEDED || leftSuitability == CompleteLaneBasedRouteNavigator.GETOFFTHISLANENOW)
+            && currentSuitability == CompleteLaneBasedRouteNavigator.NOLANECHANGENEEDED
+            && (rightSuitability == CompleteLaneBasedRouteNavigator.NOLANECHANGENEEDED || rightSuitability == CompleteLaneBasedRouteNavigator.GETOFFTHISLANENOW))
         {
             return defaultLaneIncentives;
         }
-        if (currentSuitability == LaneBasedRouteNavigator.NOLANECHANGENEEDED)
+        if (currentSuitability == CompleteLaneBasedRouteNavigator.NOLANECHANGENEEDED)
         {
             return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{acceleration(leftSuitability),
                 defaultLaneIncentives.get(1).getSI(), acceleration(rightSuitability)}, AccelerationUnit.SI);
@@ -578,12 +579,13 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         if (currentSuitability.le(leftSuitability))
         {
             return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{PREFERREDLANEINCENTIVE.getSI(),
-                NONPREFERREDLANEINCENTIVE.getSI(), LaneBasedRouteNavigator.GETOFFTHISLANENOW.getSI()}, AccelerationUnit.SI);
+                NONPREFERREDLANEINCENTIVE.getSI(), CompleteLaneBasedRouteNavigator.GETOFFTHISLANENOW.getSI()},
+                AccelerationUnit.SI);
         }
         if (currentSuitability.le(rightSuitability))
         {
             return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{
-                LaneBasedRouteNavigator.GETOFFTHISLANENOW.getSI(), NONPREFERREDLANEINCENTIVE.getSI(),
+                CompleteLaneBasedRouteNavigator.GETOFFTHISLANENOW.getSI(), NONPREFERREDLANEINCENTIVE.getSI(),
                 PREFERREDLANEINCENTIVE.getSI()}, AccelerationUnit.SI);
         }
         return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{acceleration(leftSuitability),
@@ -632,7 +634,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             }
             if (null == lane)
             {
-                return LaneBasedRouteNavigator.GETOFFTHISLANENOW;
+                return CompleteLaneBasedRouteNavigator.GETOFFTHISLANENOW;
             }
             double remainingLength = lane.getLength().getSI() - longitudinalPosition.getSI();
             double remainingTimeSI = TIMEHORIZON.getSI() - remainingLength / lane.getSpeedLimit().getSI();
@@ -646,13 +648,13 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 }
                 if (branching > 1)
                 {
-                    return LaneBasedRouteNavigator.NOLANECHANGENEEDED;
+                    return CompleteLaneBasedRouteNavigator.NOLANECHANGENEEDED;
                 }
                 lane = lane.nextLanes().iterator().next();
                 remainingTimeSI -= lane.getLength().getSI() / lane.getSpeedLimit().getSI();
                 remainingLength += lane.getLength().getSI();
             }
-            return LaneBasedRouteNavigator.NOLANECHANGENEEDED;
+            return CompleteLaneBasedRouteNavigator.NOLANECHANGENEEDED;
         }
     }
 
@@ -710,7 +712,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             }
             if (null == lane)
             {
-                return LaneBasedRouteNavigator.GETOFFTHISLANENOW;
+                return CompleteLaneBasedRouteNavigator.GETOFFTHISLANENOW;
             }
             return this.routeNavigator.suitability(lane, longitudinalPosition, getGTUType(), TIMEHORIZON);
         }
@@ -833,9 +835,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         }
         else
         {
-            if (null == this.getRoute())
+            if (null == this.getRouteNavigator())
             {
-                throw new GTUException(this + " reaches branch but has not route");
+                throw new GTUException(this + " reaches branch but has no route navigator");
             }
             Node<?> nextNode = this.routeNavigator.nextNodeToVisit();
             if (null == nextNode)
@@ -1100,9 +1102,10 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                     HeadwayGTU foundMaxGTUDistanceSI = new HeadwayGTU(null, Double.MAX_VALUE);
                     for (Lane<?, ?> nextLane : lane.nextLanes())
                     {
-                        // Only follow links on the Route if there is a "real" Route
-                        if (this.getRoute() == null || this.getRoute().size() == 0 /* XXXXX STUB dummy route */
-                            || (this.routeNavigator.getRoute().containsLink((Link) lane.getParentLink())))
+                        // TODO Only follow links on the Route if there is a "real" Route
+                        // TODO use new functions of the Navigator
+                        // if (this.getRoute() == null || this.getRoute().size() == 0 /* XXX STUB dummy route */
+                        // || (this.routeNavigator.getRoute().containsLink((Link) lane.getParentLink())))
                         {
                             double traveledDistanceSI = cumDistanceSI + lane.getLength().getSI() - lanePositionSI;
                             HeadwayGTU closest =
@@ -1301,9 +1304,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
                 // is there a successor link?
                 for (Lane<?, ?> nextLane : lane.nextLanes())
                 {
-                    // Only follow links on the Route if there is a Route
-                    if (this.getRoute() == null || this.getRoute().size() == 0 /* XXX STUB dummy route */
-                        || this.routeNavigator.getRoute().containsLink((Link) lane.getParentLink()))
+                    // TODO Only follow links on the Route if there is a Route
+                    // if (this.getRoute() == null || this.getRoute().size() == 0) /* XXX STUB dummy route */
+                    // || this.routeNavigator.getRoute().containsLink((Link) lane.getParentLink()))
                     {
                         double traveledDistanceSI = cumDistanceSI + lane.getLength().getSI() - lanePositionSI;
                         double headwaySuccessor =

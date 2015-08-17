@@ -68,7 +68,7 @@ public class ProbabilisticRouteGenerator implements RouteGenerator
 
     /** {@inheritDoc} */
     @Override
-    public final RouteNavigator generateRouteNavigator()
+    public final CompleteRouteNavigator generateRouteNavigator()
     {
         double randomValue = this.random.draw();
         for (int index = 0; index < this.cumulativeProbabilities.length; index++)
@@ -99,7 +99,7 @@ public class ProbabilisticRouteGenerator implements RouteGenerator
         private static final long serialVersionUID = 20150722L;
 
         /** the route navigator. */
-        private final RouteNavigator routeNavigator;
+        private final CompleteRouteNavigator routeNavigator;
 
         /** the probability or frequency of the route. */
         private final double probability;
@@ -108,7 +108,7 @@ public class ProbabilisticRouteGenerator implements RouteGenerator
          * @param routeNavigator the route navigator.
          * @param probability the probability or frequency of the route.
          */
-        public RouteProbability(final RouteNavigator routeNavigator, final double probability)
+        public RouteProbability(final CompleteRouteNavigator routeNavigator, final double probability)
         {
             super();
             this.routeNavigator = routeNavigator;
@@ -118,7 +118,7 @@ public class ProbabilisticRouteGenerator implements RouteGenerator
         /**
          * @return route.
          */
-        public final RouteNavigator getRouteNavigator()
+        public final CompleteRouteNavigator getRouteNavigator()
         {
             return this.routeNavigator;
         }

@@ -30,7 +30,7 @@ public class FixedRouteGenerator implements RouteGenerator, Comparable<FixedRout
     @Override
     public RouteNavigator generateRouteNavigator()
     {
-        return new RouteNavigator(this.route);
+        return new CompleteRouteNavigator(this.route);
     }
 
     /**

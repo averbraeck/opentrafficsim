@@ -32,7 +32,7 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
+import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -170,7 +170,7 @@ public class LaneChangeModelTest implements OTSModelInterface
                 new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d), laneChangeModel, initialLongitudinalPositions,
                 new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(4,
                     LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
-                new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR), new LaneBasedRouteNavigator(
+                new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
                     new CompleteRoute<>("")), simpleSimulator);
         Collection<HeadwayGTU> sameLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         sameLaneGTUs.add(new HeadwayGTU(car, 0));
@@ -207,7 +207,7 @@ public class LaneChangeModelTest implements OTSModelInterface
                     new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d), laneChangeModel, otherLongitudinalPositions,
                     new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), vehicleLength,
                     new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
-                        SpeedUnit.KM_PER_HOUR), new LaneBasedRouteNavigator(new CompleteRoute<>("")), simpleSimulator);
+                        SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simpleSimulator);
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU = new HeadwayGTU(collisionCar, pos - reference.getSI());
             preferredLaneGTUs.add(collisionHWGTU);
@@ -233,7 +233,7 @@ public class LaneChangeModelTest implements OTSModelInterface
                     new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d), laneChangeModel, otherLongitudinalPositions,
                     new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), vehicleLength,
                     new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
-                        SpeedUnit.KM_PER_HOUR), new LaneBasedRouteNavigator(new CompleteRoute<>("")), simpleSimulator);
+                        SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simpleSimulator);
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU = new HeadwayGTU(otherCar, pos - car.position(lanes[0], car.getReference()).getSI());
             preferredLaneGTUs.add(collisionHWGTU);
