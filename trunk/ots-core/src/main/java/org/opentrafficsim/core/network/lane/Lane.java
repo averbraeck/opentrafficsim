@@ -264,9 +264,9 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
                             // gtu.timeAtDistance(new DoubleScalar.Rel<LengthUnit>(-d, LengthUnit.METER));
                             // System.exit(-1);
                         }
-                        System.out.println("Time=" + gtu.getSimulator().getSimulatorTime().toString()
-                            + " - Scheduling trigger at " + triggerTime + " for sensor " + sensor + " , gtu " + gtu);
-                        gtu.getSimulator().scheduleEventAbs(triggerTime, this, sensor, "trigger", new Object[] {gtu});
+                        // System.out.println("Time=" + gtu.getSimulator().getSimulatorTime().toString()
+                        // + " - Scheduling trigger at " + triggerTime + " for sensor " + sensor + " , gtu " + gtu);
+                        gtu.getSimulator().scheduleEventAbs(triggerTime, this, sensor, "trigger", new Object[]{gtu});
                     }
                 }
             }

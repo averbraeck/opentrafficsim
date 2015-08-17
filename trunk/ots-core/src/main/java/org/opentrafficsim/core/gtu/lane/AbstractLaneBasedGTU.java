@@ -272,7 +272,10 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             if (this.lanes.contains(lane))
             {
-                throw new NetworkException("GTU " + toString() + " is already registered on this lane: " + lane);
+                // XXX THIS DOES HAPPEN
+                // throw new NetworkException("GTU " + toString() + " is already registered on this lane: " + lane);
+                System.err.println("GTU " + toString() + " is already registered on this lane: " + lane);      
+                return;
             }
             // if the GTU is already registered on a lane of the same link, do not change its fractional position, as
             // this might lead to a "jump".
@@ -991,7 +994,8 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             }
             if (!this.fractionalLinkPositions.containsKey(lane.getParentLink()))
             {
-                throw new NetworkException("GTU does not have a fractional position on " + lane.toString());
+                // DO NOT USE toString() here, as it will cause an endless loop...
+                throw new NetworkException("GTU " + getId() + " does not have a fractional position on " + lane.toString());
             }
             DoubleScalar.Rel<LengthUnit> longitudinalPosition =
                 lane.position(this.fractionalLinkPositions.get(lane.getParentLink()));
