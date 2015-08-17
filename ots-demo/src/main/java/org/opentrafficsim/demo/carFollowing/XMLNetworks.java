@@ -52,7 +52,7 @@ import org.opentrafficsim.core.network.lane.SinkSensor;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.FixedLaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
-import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
+import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.ProbabilisticLaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticLaneBasedRouteGenerator.LaneBasedRouteProbability;
 import org.opentrafficsim.core.unit.AccelerationUnit;
@@ -411,11 +411,11 @@ class XMLNetworkModel implements OTSModelInterface
                 List<LaneBasedRouteProbability> routeProbabilities = new ArrayList<>();
                 ArrayList<Node<?>> mainRoute = new ArrayList<Node<?>>();
                 mainRoute.add(end);
-                routeProbabilities.add(new LaneBasedRouteProbability(new LaneBasedRouteNavigator(new CompleteRoute("main",
+                routeProbabilities.add(new LaneBasedRouteProbability(new CompleteLaneBasedRouteNavigator(new CompleteRoute("main",
                     mainRoute)), new java.lang.Double(lanesOnMain)));
                 ArrayList<Node<?>> sideRoute = new ArrayList<Node<?>>();
                 sideRoute.add(end2);
-                routeProbabilities.add(new LaneBasedRouteProbability(new LaneBasedRouteNavigator(new CompleteRoute("side",
+                routeProbabilities.add(new LaneBasedRouteProbability(new CompleteLaneBasedRouteNavigator(new CompleteRoute("side",
                     sideRoute)), new java.lang.Double(lanesOnBranch)));
                 this.routeGenerator =
                     new ProbabilisticLaneBasedRouteGenerator(routeProbabilities, new MersenneTwister(1234));
@@ -533,7 +533,7 @@ class XMLNetworkModel implements OTSModelInterface
         new LaneBasedIndividualCar<Integer>(999999, this.gtuType, gfm, lcm, initialPositions,
             new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
             new DoubleScalar.Rel<LengthUnit>(1, LengthUnit.METER), lane.getWidth(1), new DoubleScalar.Abs<SpeedUnit>(0,
-                SpeedUnit.KM_PER_HOUR), new LaneBasedRouteNavigator(new CompleteRoute<String, String>("")), this.simulator);
+                SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute<String, String>("")), this.simulator);
         return lane;
     }
 
