@@ -37,7 +37,7 @@ import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
+import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -399,7 +399,7 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
                             this.laneChangeModel, initialPositions, new DoubleScalar.Abs<SpeedUnit>(0,
                                     SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER),
                             new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0,
-                                    SpeedUnit.KM_PER_HOUR), new LaneBasedRouteNavigator(
+                                    SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
                                         new CompleteRoute<String, String>("")), this.simulator,
                             DefaultCarAnimation.class, this.gtuColorer);
         }
@@ -442,7 +442,7 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface
             new LaneBasedIndividualCar<>(++this.carsCreated, this.gtuType, generateTruck ? this.carFollowingModelTrucks
                     : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
                     new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                            SpeedUnit.KM_PER_HOUR), new LaneBasedRouteNavigator(
+                            SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
                                 new CompleteRoute<String, String>("")), this.simulator,
                     DefaultCarAnimation.class, this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);

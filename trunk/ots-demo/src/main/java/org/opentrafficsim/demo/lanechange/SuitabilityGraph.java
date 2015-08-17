@@ -39,7 +39,7 @@ import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
+import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -161,7 +161,7 @@ public class SuitabilityGraph implements OTSModelInterface
                 route.addNode(from);
                 route.addNode(branchPoint);
                 route.addNode(destination);
-                LaneBasedRouteNavigator navigator = new LaneBasedRouteNavigator(route);
+                CompleteLaneBasedRouteNavigator navigator = new CompleteLaneBasedRouteNavigator(route);
                 SuitabilityData dataset = (SuitabilityData) ((XYPlot) (this.charts[row][column].getPlot())).getDataset();
                 for (int laneIndex = 0; laneIndex < LANECOUNT; laneIndex++)
                 {
