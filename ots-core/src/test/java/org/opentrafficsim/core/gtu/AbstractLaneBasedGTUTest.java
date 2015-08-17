@@ -29,7 +29,7 @@ import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
+import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -120,11 +120,10 @@ public class AbstractLaneBasedGTUTest
         // Now we can make a GTU
         LaneBasedIndividualCar<String> car =
             new LaneBasedIndividualCar<String>(carID, gtuType, gfm, laneChangeModel, initialLongitudinalPositions,
-                initialSpeed, carLength, carWidth, maximumVelocity, new LaneBasedRouteNavigator(route), simulator);
+                initialSpeed, carLength, carWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(route), simulator);
         // Now we can verify the various fields in the newly created Car
         assertEquals("ID of the car should be identical to the provided one", carID, car.getId());
         assertEquals("GTU following model should be identical to the provided one", gfm, car.getGTUFollowingModel());
-        assertEquals("Route should be identical to the provided route", route, car.getRoute());
         assertEquals("Width should be identical to the provided width", carWidth, car.getWidth());
         assertEquals("Length should be identical to the provided length", carLength, car.getLength());
         assertEquals("GTU type should be identical to the provided one", gtuType, car.getGTUType());

@@ -24,7 +24,7 @@ public class FixedLaneBasedRouteGenerator extends FixedRouteGenerator implements
     @Override
     public final LaneBasedRouteNavigator generateRouteNavigator()
     {
-        return new LaneBasedRouteNavigator(getRoute());
+        return new CompleteLaneBasedRouteNavigator(getRoute());
     }
 
 }

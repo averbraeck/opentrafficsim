@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.gtu;
 
-import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.network.route.RouteNavigator;
 
 /**
  * Implements id, GtuType, Route and odometer.
@@ -24,26 +24,26 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
 
     /** the type of GTU, e.g. TruckType, CarType, BusType. */
     private final GTUType<?> gtuType;
-
-    /** Route of the gtu to follow. */
-    private Route<?, ?> route = null;
+    
+    /** the route navigator to determine the route. */
+    private RouteNavigator routeNavigator;
 
     /**
      * @param id the id of the GTU, could be String or Integer
      * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
-     * @param route Route; the route that the GTU will take
+     * @param routeNavigator RouteNavigator; the navigator that determines the route that the GTU will take
      * @throws GTUException when route is null
      */
-    public AbstractGTU(final ID id, final GTUType<?> gtuType, final Route<?, ?> route) throws GTUException
+    public AbstractGTU(final ID id, final GTUType<?> gtuType, final RouteNavigator routeNavigator) throws GTUException
     {
         super();
         this.id = id;
         this.gtuType = gtuType;
-        if (null == route)
+        if (null == routeNavigator)
         {
-            throw new GTUException("route may not be null");
+            throw new GTUException("routeNavigator may not be null");
         }
-        this.route = route;
+        this.routeNavigator = routeNavigator;
     }
 
     /** {@inheritDoc} */
@@ -61,27 +61,27 @@ public abstract class AbstractGTU<ID> implements GTU<ID>
         return this.gtuType;
     }
 
-    /**
-     * @return route.
-     */
-    public final Route<?, ?> getRoute()
-    {
-        return this.route;
-    }
-
-    /**
-     * @param route set route.
-     */
-    public final void setRoute(final Route<?, ?> route)
-    {
-        this.route = route;
-    }
-
     /** {@inheritDoc} */
     @Override
     public final RelativePosition getReference()
     {
         return RelativePosition.REFERENCE_POSITION;
+    }
+
+    /**
+     * @return routeNavigator
+     */
+    public final RouteNavigator getRouteNavigator()
+    {
+        return this.routeNavigator;
+    }
+
+    /**
+     * @param routeNavigator set routeNavigator
+     */
+    public final void setRouteNavigator(final RouteNavigator routeNavigator)
+    {
+        this.routeNavigator = routeNavigator;
     }
 
 }

@@ -34,7 +34,7 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
+import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -119,7 +119,7 @@ public class LaneBasedGTUTest
         try
         {
             new LaneBasedIndividualCar<String>("Truck", truckType, null /* GTU following model */, laneChangeModel,
-                truckPositions, truckSpeed, truckLength, truckWidth, maximumVelocity, new LaneBasedRouteNavigator(
+                truckPositions, truckSpeed, truckLength, truckWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(
                     new CompleteRoute<>("")), simulator);
             fail("null GTUFollowingModel should have thrown a GTUException");
         }
@@ -130,7 +130,7 @@ public class LaneBasedGTUTest
         GTUFollowingModel gtuFollowingModel = new IDMPlus();
         LaneBasedIndividualCar<String> truck =
             new LaneBasedIndividualCar<String>("Truck", truckType, gtuFollowingModel, laneChangeModel, truckPositions,
-                truckSpeed, truckLength, truckWidth, maximumVelocity, new LaneBasedRouteNavigator(new CompleteRoute<>("")),
+                truckSpeed, truckLength, truckWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")),
                 simulator);
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
@@ -190,7 +190,7 @@ public class LaneBasedGTUTest
                 LaneBasedIndividualCar<String> car =
                     new LaneBasedIndividualCar<String>("Car", carType, gtuFollowingModel, laneChangeModel, carPositions,
                         carSpeed, carLength, carWidth, maximumVelocity,
-                        new LaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
+                        new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
                 leader = truck.headway(forwardMaxDistance);
                 double actualHeadway = leader.getDistanceSI();
                 double expectedHeadway =
@@ -377,7 +377,7 @@ public class LaneBasedGTUTest
             LaneBasedIndividualCar<String> car =
                 new LaneBasedIndividualCar<String>("Car", carType, fam, laneChangeModel, carPositions, carSpeed,
                     new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1.8,
-                        LengthUnit.METER), maximumVelocity, new LaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
+                        LengthUnit.METER), maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(61, TimeUnit.SECOND));
             while (simulator.isRunning())

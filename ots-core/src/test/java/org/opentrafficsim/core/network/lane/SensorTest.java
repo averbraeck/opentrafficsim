@@ -23,7 +23,7 @@ import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.factory.LaneFactory;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
+import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -90,7 +90,7 @@ public class SensorTest
         LaneChangeModel laneChangeModel = new Egoistic();
         // Now we can make a car (GTU) (and we don't even have to hold a pointer to it)
         new LaneBasedIndividualCar<String>(carID, gtuType, fas, laneChangeModel, initialLongitudinalPositions, initialSpeed,
-            carLength, carWidth, maximumVelocity, new LaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
+            carLength, carWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
         simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(1, TimeUnit.SECOND));
         while (simulator.isRunning())
         {

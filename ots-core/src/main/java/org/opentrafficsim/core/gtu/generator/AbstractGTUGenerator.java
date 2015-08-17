@@ -26,6 +26,7 @@ import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.RouteGenerator;
@@ -357,9 +358,9 @@ public abstract class AbstractGTUGenerator<ID>
                 HeadwayGTU foundMaxGTUDistanceSI = new HeadwayGTU(null, Double.MAX_VALUE);
                 for (Lane<?, ?> nextLane : theLane.nextLanes())
                 {
-                    // Only follow links on the Route if there is a "real" Route
-                    if (routeNavigator.getRoute() == null || routeNavigator.getRoute().size() == 0 /* XXXXX STUB dummy route */
-                        || routeNavigator.getRoute().containsLink((Link) theLane.getParentLink()))
+                    // TODO Only follow links on the Route if there is a "real" Route
+                    // if (routeNavigator.getRoute() == null || routeNavigator.getRoute().size() == 0 /* XXXXX STUB dummy route */
+                    //    || routeNavigator.getRoute().containsLink((Link) theLane.getParentLink()))
                     {
                         double traveledDistanceSI = cumDistanceSI + theLane.getLength().getSI() - lanePositionSI;
                         HeadwayGTU closest =

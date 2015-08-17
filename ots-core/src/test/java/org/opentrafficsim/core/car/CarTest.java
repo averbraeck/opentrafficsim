@@ -35,7 +35,7 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
+import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -150,7 +150,7 @@ public class CarTest
         initialLongitudinalPositions.put(lane, initialPosition);
         DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
         return new LaneBasedIndividualCar<Integer>(nr, gtuType, gtuFollowingModel, laneChangeModel,
-            initialLongitudinalPositions, initialSpeed, length, width, maxSpeed, new LaneBasedRouteNavigator(
+            initialLongitudinalPositions, initialSpeed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(
                 new CompleteRoute<>("")), simulator);
     }
 

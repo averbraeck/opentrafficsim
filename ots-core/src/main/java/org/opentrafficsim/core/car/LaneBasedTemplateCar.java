@@ -22,7 +22,7 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedTemplateGTU;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
+import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -66,7 +66,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
     public LaneBasedTemplateCar(final ID id, final TemplateGTUType<?> templateGtuType,
         final GTUFollowingModel gtuFollowingModel,
         final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final LaneBasedRouteNavigator routeNavigator)
+        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator)
         throws NamingException, RemoteException, NetworkException, SimRuntimeException, GTUException
     {
         this(id, templateGtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, routeNavigator,
@@ -91,7 +91,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
     public LaneBasedTemplateCar(final ID id, final TemplateGTUType<?> templateGtuType,
         final GTUFollowingModel gtuFollowingModel,
         final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final LaneBasedRouteNavigator routeNavigator,
+        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator,
         final Class<? extends Renderable2D> animationClass) throws NamingException, RemoteException, NetworkException,
         SimRuntimeException, GTUException
     {
@@ -227,7 +227,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
         private GTUFollowingModel gtuFollowingModel = null;
 
         /** Route followed by this Car. */
-        private LaneBasedRouteNavigator routeNavigator = null;
+        private CompleteLaneBasedRouteNavigator routeNavigator = null;
 
         /** animation. */
         private Class<? extends Renderable2D> animationClass = null;
@@ -277,7 +277,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
          * @param routeNavigator RouteNavigator; the route
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedTemplateCarBuilder<ID> setRouteNavigator(final LaneBasedRouteNavigator routeNavigator)
+        public final LaneBasedTemplateCarBuilder<ID> setRouteNavigator(final CompleteLaneBasedRouteNavigator routeNavigator)
         {
             this.routeNavigator = routeNavigator;
             return this;
