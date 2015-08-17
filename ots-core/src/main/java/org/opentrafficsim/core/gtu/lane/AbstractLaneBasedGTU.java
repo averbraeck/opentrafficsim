@@ -272,9 +272,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             if (this.lanes.contains(lane))
             {
-                // XXX THIS DOES HAPPEN
-                // throw new NetworkException("GTU " + toString() + " is already registered on this lane: " + lane);
-                System.err.println("GTU " + toString() + " is already registered on this lane: " + lane);      
+                System.err.println("GTU " + toString() + " is already registered on this lane: " + lane);
                 return;
             }
             // if the GTU is already registered on a lane of the same link, do not change its fractional position, as
@@ -292,6 +290,16 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     /** {@inheritDoc} */
     @Override
     public final void leaveLane(final Lane<?, ?> lane)
+    {
+        leaveLane(lane, false);
+    }
+
+    /**
+     * Leave a lane but do not complain about having no lanes left when beingDestroyed is true.
+     * @param lane the lane to leave
+     * @param beingDestroyed if true, no complaints about having no lanes left
+     */
+    protected final void leaveLane(final Lane<?, ?> lane, final boolean beingDestroyed)
     {
         // synchronized (this.lock)
         {
@@ -312,9 +320,9 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             }
         }
         lane.removeGTU(this);
-        if (this.lanes.size() == 0)
+        if (this.lanes.size() == 0 && !beingDestroyed)
         {
-            System.err.println("lanes.size() = 0 for GTU " + toString());
+            System.err.println("lanes.size() = 0 for GTU " + getId());
         }
     }
 
@@ -772,7 +780,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         // CALCULATES THE POSITION BASED ON THE NEWLY CALCULATED ACCELERATION AND VELOCITY AND CAN THEREFORE MAKE AN ERROR.
         double timestep = this.nextEvaluationTime.getSI() - this.lastEvaluationTime.getSI();
         double moveSI = getVelocity().getSI() * timestep + 0.5 * getAcceleration().getSI() * timestep * timestep;
-        for (Lane<?, ?> lane : this.lanes)
+        for (Lane<?, ?> lane : new ArrayList<Lane>(this.lanes)) // use a copy because this.lanes can change
         {
             // schedule triggers on this lane
             double referenceStartSI = this.fractionalLinkPositions.get(lane.getParentLink()) * lane.getLength().getSI();
@@ -786,20 +794,23 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             if (frontPosSI < lane.getLength().getSI() && moveFrontOnNextLane > 0)
             {
                 Lane<?, ?> nextLane = determineNextLane(lane);
-                // we have to register the position at the previous timestep to keep calculations consistent.
-                // And we have to correct for the position of the reference point.
-                DoubleScalar.Rel<LengthUnit> refPosAtLastTimestep =
-                    new DoubleScalar.Rel<LengthUnit>(-(lane.getLength().getSI() - frontPosSI) - getFront().getDx().getSI(),
-                        LengthUnit.SI);
-                getSimulator().scheduleEventNow(this, this, "enterLane", new Object[]{nextLane, refPosAtLastTimestep});
-                // schedule any sensor triggers on this lane for the remainder time
-                /*-
-                if (nextLane.toString().contains("endLink"))
+                if (!this.lanes.contains(nextLane)) // XXX: this happens -- how can that be?
                 {
-                    System.out.println("SINK: nextLane.scheduleTriggers(" + toString() + ", " + refPosAtLastTimestep.getSI()
-                        + ", " + (moveSI));
-                } */
-                nextLane.scheduleTriggers(this, refPosAtLastTimestep.getSI(), moveSI);
+                    // we have to register the position at the previous timestep to keep calculations consistent.
+                    // And we have to correct for the position of the reference point.
+                    DoubleScalar.Rel<LengthUnit> refPosAtLastTimestep =
+                        new DoubleScalar.Rel<LengthUnit>(-(lane.getLength().getSI() - frontPosSI)
+                            - getFront().getDx().getSI(), LengthUnit.SI);
+                    enterLane(nextLane, refPosAtLastTimestep);
+                    // schedule any sensor triggers on this lane for the remainder time
+                    /*-
+                    if (nextLane.toString().contains("endLink"))
+                    {
+                        System.out.println("SINK: nextLane.scheduleTriggers(" + toString() + ", " + refPosAtLastTimestep.getSI()
+                            + ", " + (moveSI));
+                    } */
+                    nextLane.scheduleTriggers(this, refPosAtLastTimestep.getSI(), moveSI);
+                }
             }
         }
 
@@ -814,7 +825,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             if (rearPosSI < lane.getLength().getSI() && rearPosSI + moveSI > lane.getLength().getSI())
             {
                 getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(timestep - Math.ulp(timestep), TimeUnit.SI),
-                    this, this, "leaveLane", new Object[]{lane});
+                    this, this, "leaveLane", new Object[]{lane, new Boolean(true)});
             }
         }
     }
@@ -1496,7 +1507,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             while (!this.lanes.isEmpty())
             {
                 Lane<?, ?> lane = this.lanes.get(0);
-                leaveLane(lane);
+                leaveLane(lane, true);
             }
         }
     }
