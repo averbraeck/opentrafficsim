@@ -68,7 +68,7 @@ public class ReadVLog
                 // zoek de eerste "harde" tijdsaanduiding
                 // Om alle dagen te simuleren gebruik dan de volgende regel:
                 // while (day < 27) {
-                while (hour < 20)
+                while (hour < 21)
                 {
                     String fName =
                         Integer.toString(day) + "/" + vriLocation + "/" + vriLocation + "_" + timeStampFile + ".vlg";
@@ -389,7 +389,7 @@ public class ReadVLog
         int day = parseNibble(s) * 10 + parseNibble(s);
         int hour = parseNibble(s) * 10 + parseNibble(s);
         // XXX: VLOG files contain a 2-hour difference between the hour in the internal data and the hour in the filename
-        hour -= 2;
+        // XXX: but we assume the value IN the file to be correct
         int minute = parseNibble(s) * 10 + parseNibble(s);
         int second = parseNibble(s) * 10 + parseNibble(s);
         int tenth = parseNibble(s);
