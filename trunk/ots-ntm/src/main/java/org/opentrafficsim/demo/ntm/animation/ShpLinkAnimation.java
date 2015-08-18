@@ -10,10 +10,9 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.demo.ntm.Link;
+import org.opentrafficsim.gui.OTSRenderable2D;
 
 /**
  * <p>
@@ -25,7 +24,7 @@ import org.opentrafficsim.demo.ntm.Link;
  * $, initial version Sep 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class ShpLinkAnimation extends Renderable2D
+public class ShpLinkAnimation extends OTSRenderable2D
 {
     /** */
     private float width;
