@@ -9,14 +9,13 @@ import java.util.Arrays;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSBuffering;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.lane.Stripe;
+import org.opentrafficsim.gui.OTSRenderable2D;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -32,7 +31,7 @@ import com.vividsolutions.jts.operation.buffer.BufferParameters;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class StripeAnimation extends Renderable2D
+public class StripeAnimation extends OTSRenderable2D
 {
     /** the line type. */
     private final TYPE type;

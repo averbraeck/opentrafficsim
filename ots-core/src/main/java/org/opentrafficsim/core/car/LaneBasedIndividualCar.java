@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
@@ -30,6 +29,7 @@ import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.gui.OTSRenderable2D;
 
 /**
  * Augments the AbstractLaneBasedIndividualGTU with a LaneBasedIndividualCarBuilder and animation support
@@ -49,7 +49,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
     private static final long serialVersionUID = 20141025L;
 
     /** animation. */
-    private Renderable2D animation;
+    private OTSRenderable2D animation;
 
     /** Sensing positions. */
     private final Map<RelativePosition.TYPE, RelativePosition> relativePositions = new LinkedHashMap<>();
@@ -100,7 +100,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
      * @param maximumVelocity DoubleScalar.Abs&lt;SpeedUnit&gt;;the maximum speed of the GTU (in the driving direction)
      * @param routeNavigator Route the route that the GTU will follow
      * @param simulator OTSDEVSSimulatorInterface; the simulator
-     * @param animationClass Class&lt;? extends Renderable2D&gt;; the class for animation or null if no animation
+     * @param animationClass Class&lt;? extends OTSRenderable2D&gt;; the class for animation or null if no animation
      * @param gtuColorer GTUColorer; the GTUColorer that will be linked from the animation to determine the color (may be null
      *            in which case a default will be used)
      * @throws NamingException if an error occurs when adding the animation handler
@@ -116,7 +116,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
         final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
         final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator,
-        final Class<? extends Renderable2D> animationClass, final GTUColorer gtuColorer) throws NamingException,
+        final Class<? extends OTSRenderable2D> animationClass, final GTUColorer gtuColorer) throws NamingException,
         RemoteException, NetworkException, SimRuntimeException, GTUException
     {
         super(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, length, width,
@@ -159,12 +159,12 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
                 if (null == gtuColorer)
                 {
                     constructor = ClassUtil.resolveConstructor(animationClass, new Object[]{this, simulator});
-                    this.animation = (Renderable2D) constructor.newInstance(this, simulator);
+                    this.animation = (OTSRenderable2D) constructor.newInstance(this, simulator);
                 }
                 else
                 {
                     constructor = ClassUtil.resolveConstructor(animationClass, new Object[]{this, simulator, gtuColorer});
-                    this.animation = (Renderable2D) constructor.newInstance(this, simulator, gtuColorer);
+                    this.animation = (OTSRenderable2D) constructor.newInstance(this, simulator, gtuColorer);
                 }
             }
             catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
@@ -350,7 +350,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         private OTSDEVSSimulatorInterface simulator = null;
 
         /** Animation. */
-        private Class<? extends Renderable2D> animationClass = null;
+        private Class<? extends OTSRenderable2D> animationClass = null;
 
         /** GTUColorer. */
         private GTUColorer gtuColorer = null;
@@ -463,7 +463,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
          * @param animationClass set animation class
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder<ID> setAnimationClass(final Class<? extends Renderable2D> animationClass)
+        public final LaneBasedIndividualCarBuilder<ID> setAnimationClass(final Class<? extends OTSRenderable2D> animationClass)
         {
             this.animationClass = animationClass;
             return this;
@@ -570,7 +570,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         /**
          * @return animationClass.
          */
-        public final Class<? extends Renderable2D> getAnimationClass()
+        public final Class<? extends OTSRenderable2D> getAnimationClass()
         {
             return this.animationClass;
         }

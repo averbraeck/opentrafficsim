@@ -1,6 +1,7 @@
 package org.opentrafficsim.gui;
 
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Rectangle;
@@ -125,7 +126,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             "Execute all events scheduled for the current time", true));
         buttonPanel.add(makeButton("runButton", "/Play.png", "Run", "Run the simulation at maximum speed", true));
         buttonPanel.add(makeButton("pauseButton", "/Pause.png", "Pause", "Pause the simulator", false));
-        this.timeWarpPanel = new TimeWarpPanel(0.1, 100, 1, 3, simulator);
+        this.timeWarpPanel = new TimeWarpPanel(0.1, 1000, 1, 3, simulator);
         buttonPanel.add(this.timeWarpPanel);
         buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", null, false));
         this.clockPanel = new ClockPanel();
@@ -647,6 +648,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             int minimumTick = (int) Math.floor(Math.log10(minimum / initialValue) * ticksPerDecade);
             int maximumTick = (int) Math.ceil(Math.log10(maximum / initialValue) * ticksPerDecade);
             this.slider = new JSlider(SwingConstants.HORIZONTAL, minimumTick, maximumTick, 0);
+            this.slider.setPreferredSize(new Dimension(300, 45));
             Hashtable<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
             for (int step = 0; step <= maximumTick; step++)
             {
@@ -656,8 +658,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 {
                     text.append("0");
                 }
-                labels.put(step, new JLabel(text.toString()));
                 this.tickValues.put(step, Double.parseDouble(text.toString()));
+                labels.put(step, new JLabel(text.toString().replace("000", "K")));
                 // System.out.println("Label " + step + " is \"" + text.toString() + "\"");
             }
             // Figure out the DecimalSymbol
