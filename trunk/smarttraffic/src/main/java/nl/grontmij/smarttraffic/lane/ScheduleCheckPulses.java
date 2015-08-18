@@ -1,9 +1,7 @@
 package nl.grontmij.smarttraffic.lane;
 
-import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,23 +12,15 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
-import org.opentrafficsim.core.car.LaneBasedIndividualCar;
-import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.animation.DefaultSensorAnimation;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
-import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 

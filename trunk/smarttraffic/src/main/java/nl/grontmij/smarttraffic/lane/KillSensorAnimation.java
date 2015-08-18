@@ -8,9 +8,8 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.gui.OTSRenderable2D;
 
 /**
  * Draw a road block.
@@ -23,7 +22,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class KillSensorAnimation extends Renderable2D
+public class KillSensorAnimation extends OTSRenderable2D
 {
     /** the half width left and right of the center line that is used to draw the block. */
     private final double halfWidth;
