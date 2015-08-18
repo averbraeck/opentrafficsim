@@ -12,7 +12,9 @@ import java.time.Instant;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
@@ -91,7 +93,13 @@ public class ReportNumbers
                     {
                         if (cse instanceof Lane)
                         {
-                            nr += ((Lane) cse).getGtuList().size();
+                            for (Object gtu : ((Lane) cse).getGtuList())
+                            {
+                                if (gtu instanceof LaneBasedIndividualCar)
+                                {
+                                    nr++;
+                                }
+                            }
                         }
                     }
                 }
