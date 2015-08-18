@@ -7,10 +7,9 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
-
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.gui.OTSRenderable2D;
 
 /**
  * <p>
@@ -21,7 +20,7 @@ import org.opentrafficsim.core.network.lane.Lane;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class LaneAnimation extends Renderable2D
+public class LaneAnimation extends OTSRenderable2D
 {
     /** color of the lane. */
     private final Color color;

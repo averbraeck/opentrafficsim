@@ -10,7 +10,6 @@ import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 import javax.vecmath.Point3d;
 
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -36,6 +35,7 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.gui.OTSRenderable2D;
 
 /**
  * Special GTU that cannot move, but it can be seen by other GTUs.
@@ -57,7 +57,7 @@ public class LaneBlock extends AbstractGTU<Integer> implements LaneBasedGTU<Inte
     private OTSDEVSSimulatorInterface simulator;
 
     /** animation. */
-    private Renderable2D animation;
+    private OTSRenderable2D animation;
 
     /** the lane of the block. */
     private final Lane<?, ?> lane;
@@ -109,14 +109,14 @@ public class LaneBlock extends AbstractGTU<Integer> implements LaneBasedGTU<Inte
      * @param lane The lane where the block has to be put
      * @param position the position on the lane as a length
      * @param simulator the simulator to avoid NullPointerExceptions
-     * @param animationClass Class&lt;? extends Renderable2D&gt;; the class for animation or null if no animation
+     * @param animationClass Class&lt;? extends OTSRenderable2D&gt;; the class for animation or null if no animation
      * @throws GTUException when GTU cannot be created.
      * @throws NamingException if an error occurs when adding the animation handler
      * @throws RemoteException when the simulator cannot be reached
      * @throws NetworkException when the GTU cannot be placed on the given lane
      */
     public LaneBlock(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> position,
-        final OTSDEVSSimulatorInterface simulator, final Class<? extends Renderable2D> animationClass) throws GTUException,
+        final OTSDEVSSimulatorInterface simulator, final Class<? extends OTSRenderable2D> animationClass) throws GTUException,
         RemoteException, NetworkException, NamingException
     {
         super(0, BLOCK_GTU, new CompleteRouteNavigator(new CompleteRoute("")));

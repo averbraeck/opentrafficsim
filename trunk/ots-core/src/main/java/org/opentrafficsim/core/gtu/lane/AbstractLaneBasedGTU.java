@@ -124,7 +124,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
     private final LaneBasedRouteNavigator routeNavigator;
 
     /** the object to lock to make the GTU thread safe. */
-    // private Object lock = new Object();
+    private Object lock = new Object();
 
     /**
      * Construct a Lane Based GTU.
@@ -437,7 +437,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         // So we work from back to front.
         // TODO Put the "update state to current time" code in a separate method and call that method at the start of
         // this (move) method.
-        // synchronized (this.lock)
+        synchronized (this.lock)
         {
             for (int i = this.lanes.size() - 1; i >= 0; i--)
             {
@@ -997,7 +997,7 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         {
             throw new NetworkException("lane is null");
         }
-        // synchronized (this.lock)
+        synchronized (this.lock)
         {
             if (!this.lanes.contains(lane))
             {
@@ -1623,7 +1623,6 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
             }
             catch (NetworkException exception)
             {
-                exception.printStackTrace();
                 return null;
             }
         }
