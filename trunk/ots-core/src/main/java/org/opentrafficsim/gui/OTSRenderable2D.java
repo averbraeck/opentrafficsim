@@ -278,7 +278,15 @@ public abstract class OTSRenderable2D implements Renderable2DInterface
     @Override
     public void destroy() throws NamingException
     {
-        ContextUtil.unbind(this.context, this);
+        try
+        {
+            ContextUtil.unbind(this.context, this);
+        }
+        catch (Exception e)
+        {
+            // do nothing for now...
+            // TODO find out why sometimes null pointer is thrown.
+        }
     }
 
     /** {@inheritDoc} */
