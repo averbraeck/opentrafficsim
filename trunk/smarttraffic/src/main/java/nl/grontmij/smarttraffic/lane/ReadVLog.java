@@ -11,8 +11,10 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -26,6 +28,12 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /** Read vlog file. */
 public class ReadVLog
 {
+    /** errors for sensors not existing. */
+    private static Set<String> sensorNotFound = new HashSet<>();
+
+    /** names of sensors existing. */
+    private static Set<String> sensorFound = new HashSet<>();
+
     /**
      * Functions to read (streaming) V-log files: concentrates on detector and traffic light information
      */
@@ -224,9 +232,13 @@ public class ReadVLog
             // zoek de naam van de detector uit de array
             String nameDetector = vri.getDetectors().get(entry.getKey());
             // koplus heeft een prefix "K": die halen we eruit
-            if (nameDetector.startsWith("K"))
+            if (nameDetector.startsWith("K") || nameDetector.startsWith("k"))
             {
                 nameDetector = nameDetector.substring(1);
+            }
+            if (nameDetector.matches("\\d\\.\\d") || nameDetector.matches("\\d\\.\\d\\d"))
+            {
+                nameDetector = "0" + nameDetector;
             }
             // het tijdstip
             Instant timeVLogNow = timeFromVLog[0].plusMillis(100 * deltaTimeFromVLog[0]);
@@ -239,6 +251,11 @@ public class ReadVLog
             {
                 if (sensor instanceof CheckSensor)
                 {
+                    if (!sensorFound.contains(searchFor))
+                    {
+                        sensorFound.add(searchFor);
+                        System.out.println("Sensor found: " + searchFor + " @ " + timeVLogNow.toString());
+                    }
                     ((CheckSensor) sensor).addStatusByTime(new DoubleScalar.Abs<TimeUnit>(milliSecondsPassed,
                         TimeUnit.MILLISECOND), entry.getValue());
                 }
@@ -254,7 +271,11 @@ public class ReadVLog
             }
             else
             {
-                // System.out.println("Sensor not in network");
+                if (!sensorNotFound.contains(searchFor))
+                {
+                    sensorNotFound.add(searchFor);
+                    System.out.println("Sensor " + searchFor + " not in network");
+                }
             }
         }
     }

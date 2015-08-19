@@ -158,16 +158,8 @@ public class ConfigFile
         buffer = line.split(",");
         int count = Integer.parseInt(buffer[1]);
         String name = buffer[2].replaceAll("\"", "");
-        String part1;
-        String part2 = name.substring(2, 3);
-        if (name.startsWith("0"))
-        {
-            part1 = name.substring(1, 2);
-        }
-        else
-        {
-            part1 = name.substring(0, 2);
-        }
+        String part1 = name.startsWith("0") ? name.substring(1, 2) : name.substring(0, 2);
+        String part2 = name.length() == 3 ? name.substring(2, 3) : name.substring(2, 4);
         name = part1 + "." + part2;
         long l = Long.parseLong(buffer[3]);
         String strHex = String.format("0x%04X", l);

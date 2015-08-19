@@ -60,6 +60,9 @@ public class GTM extends AbstractWrappableSimulationST
     /** a map from the signal group name, e.g., 225_08 to the traffic lights, e.g., [225_08.1, 225_08.2, 225_08.3]. */
     public static Map<String, List<TrafficLight>> signalGroupToTrafficLights = new HashMap<>();
 
+    /** max speed of cars in km/h. */
+    public static final double MAXSPEED = 80;
+
     /**
      * Main program. GTMModel has the model details.
      * @param args String[]; the command line arguments (not used)
@@ -243,7 +246,7 @@ public class GTM extends AbstractWrappableSimulationST
                 }
             }
             new ScheduleGenerateCars(gtuType, simulator, mapSensorGenerateCars, generateCar, routes);
-            
+
             new ReportNumbers(network, simulator);
 
             // - Compare the (INTERMEDIATE) pulse to vehicles in the simulation
@@ -254,17 +257,15 @@ public class GTM extends AbstractWrappableSimulationST
             // ------de eerste waarde is de afstand in meters stroomOPwaarts van het voertuig
             // ------de tweede waarde is de afstand in meters stroomAFwaarts van het voertuig
 
-            /*-
-            java.lang.Double[] range = new java.lang.Double[]{50.0, 50.0};
             try
             {
-                ScheduleCheckPulses scheduleCheckPulses = new ScheduleCheckPulses(simulator, mapSensorCheckCars, range);
+                new ScheduleCheckPulses(gtuType, simulator, mapSensorCheckCars, 200, 200, new ArrayList<CompleteRoute>(routes
+                    .values()));
             }
             catch (NetworkException | GTUException | NamingException e)
             {
                 e.printStackTrace();
             }
-             */
 
             // - Kill a car (EXIT)
             // connect to the sensorKill
@@ -316,7 +317,7 @@ public class GTM extends AbstractWrappableSimulationST
                                         GTM.signalGroupToTrafficLights.put(signalGroupName, new ArrayList<TrafficLight>());
                                     }
                                     GTM.signalGroupToTrafficLights.get(signalGroupName).add(trafficLight);
-                                    // XXX hack: van verkeerslicht 311 ontbreekt alle data in de meetperiode. 
+                                    // XXX hack: van verkeerslicht 311 ontbreekt alle data in de meetperiode.
                                     // Zet de lichten dus op groen...
                                     if (trafficLight.getId().startsWith("311"))
                                     {
