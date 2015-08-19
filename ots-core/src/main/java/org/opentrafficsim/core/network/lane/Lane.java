@@ -254,13 +254,20 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
                         {
                             throw new NetworkException("scheduleTriggers for gtu: " + gtu + ", d<0 d=" + d);
                         }
+
                         DoubleScalar.Abs<TimeUnit> triggerTime =
                             gtu.timeAtDistance(new DoubleScalar.Rel<LengthUnit>(d, LengthUnit.METER));
                         if (triggerTime.gt(gtu.getNextEvaluationTime()))
                         {
-                            System.out.println("Time=" + gtu.getSimulator().getSimulatorTime().toString()
-                                + " - Scheduling trigger at " + triggerTime + " > " + gtu.getNextEvaluationTime()
-                                + " (nextEvalTime) for sensor " + sensor + " , gtu " + gtu);
+                            System.err.println("Time=" + gtu.getSimulator().getSimulatorTime().get().getSI()
+                                + " - Scheduling trigger at " + triggerTime.getSI() + "s. > "
+                                + gtu.getNextEvaluationTime().getSI() + "s. (nextEvalTime) for sensor " + sensor + " , gtu "
+                                + gtu);
+                            System.err.println("  v=" + gtu.getVelocity() + ", a=" + gtu.getAcceleration() + ", lane="
+                                + toString() + ", refStartSI=" + referenceStartSI + ", moveSI=" + referenceMoveSI);
+                            triggerTime =
+                                new DoubleScalar.Abs<TimeUnit>(gtu.getNextEvaluationTime().getSI()
+                                    - Math.ulp(gtu.getNextEvaluationTime().getSI()), TimeUnit.SI);
                             // gtu.timeAtDistance(new DoubleScalar.Rel<LengthUnit>(-d, LengthUnit.METER));
                             // System.exit(-1);
                         }
@@ -556,7 +563,7 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * or BOTH, it will not be included.<br>
      * A lane is called adjacent to another lane if the lateral edges are not more than a delta distance apart. This means that
      * a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
-     * The algorithm also looks for RoadMarkerAcross elements between the lanes to determine the lateral permeability for a GTU.
+     * TODO The algorithm looks for RoadMarkerAcross elements between the lanes to determine the lateral permeability for a GTU.
      * A RoadMarkerAcross is seen as being between two lanes if its center line is not more than delta distance from the
      * relevant lateral edges of the two adjacent lanes. <br>
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction. <br>
