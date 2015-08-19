@@ -49,16 +49,16 @@ public class StraightRouteNavigator extends AbstractLaneBasedRouteNavigator
         if (this.straightRoute.getNodes().contains(lane.getParentLink().getEndNode()))
         {
             if (lane.nextLanes().size() == 0) // no choice
-                return NOLANECHANGENEEDED;
+                return new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER);
             Lane nextLane = lane.nextLanes().iterator().next();
             if (nextLane != null && this.straightRoute.getNodes().contains(nextLane.getParentLink().getEndNode()))
-                return NOLANECHANGENEEDED;
+                return new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER);
             else
-                return new DoubleScalar.Rel<LengthUnit>(0.1, LengthUnit.METER);
+                return new DoubleScalar.Rel<LengthUnit>(10, LengthUnit.METER);
         }
         else
             // Math.max(0.0, lane.getLength().getSI() - longitudinalPosition.getSI())
-            return new DoubleScalar.Rel<LengthUnit>(0.1, LengthUnit.METER);
+            return new DoubleScalar.Rel<LengthUnit>(10, LengthUnit.METER);
     }
 
     /** {@inheritDoc} */

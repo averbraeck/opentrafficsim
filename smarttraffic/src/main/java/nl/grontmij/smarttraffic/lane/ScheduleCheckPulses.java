@@ -6,38 +6,72 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
+import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.core.gtu.following.IDMPlus;
+import org.opentrafficsim.core.gtu.lane.AbstractTrafficLight;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
+import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 public class ScheduleCheckPulses<ID>
 {
+    /** The type of GTUs generated. */
+    final GTUType<String> gtuType;
+
+    /** The GTU following model used by all generated GTUs. */
+    final GTUFollowingModel gtuFollowingModel;
+
+    /** The lane change model used by all generated GTUs. */
+    final LaneChangeModel laneChangeModel;
+
+    final double lengthCar;
+
+    /** The GTU colorer that will be linked to each generated GTU. */
+    final GTUColorer gtuColorer;
 
     /** The simulator that controls everything. */
-    final OTSDEVSSimulatorInterface simulator;
+    private final OTSDEVSSimulatorInterface simulator;
+
+    /** the routes. */
+    private final List<CompleteRoute> routes;
 
     HashMap<String, CheckSensor> mapSensor;
 
-    public ScheduleCheckPulses(OTSDEVSSimulatorInterface simulator, HashMap<String, CheckSensor> mapSensor, Double[] range)
+    public ScheduleCheckPulses(GTUType<String> gtuType, OTSDEVSSimulatorInterface simulator,
+        HashMap<String, CheckSensor> mapSensor, double backRange, double frontRange, List<CompleteRoute> routes)
         throws RemoteException, SimRuntimeException, NetworkException, GTUException, NamingException
     {
         this.simulator = simulator;
         this.mapSensor = mapSensor;
-        scheduleCheckPulses(range);
+        this.routes = routes;
+        this.gtuType = gtuType;
+        this.gtuFollowingModel = new GTMIDMPlus();
+        this.laneChangeModel = new GTMLaneChangeModel();
+        this.gtuColorer = new IDGTUColorer();
+        this.lengthCar = 4.5;
+        scheduleCheckPulses(backRange, frontRange);
     }
 
     /**
@@ -49,8 +83,8 @@ public class ScheduleCheckPulses<ID>
      * @throws NetworkException
      * @throws GTUException
      */
-    public void scheduleCheckPulses(Double[] range) throws RemoteException, SimRuntimeException, GTUException,
-        NetworkException, NamingException
+    public void scheduleCheckPulses(final double backRange, final double frontRange) throws RemoteException,
+        SimRuntimeException, GTUException, NetworkException, NamingException
     {
         for (Entry<String, CheckSensor> entry : this.mapSensor.entrySet())
         {
@@ -62,128 +96,165 @@ public class ScheduleCheckPulses<ID>
                 if (entryPulse.getValue() == 0)
                 {
                     DoubleScalar.Abs<TimeUnit> when = entryPulse.getKey();
-                    this.simulator.scheduleEventAbs(when, this, this, "findNearestVehicles", new Object[]{sensor, range});
+                    this.simulator.scheduleEventAbs(when, this, this, "findNearestVehicles", new Object[]{sensor, backRange,
+                        frontRange});
                 }
             }
 
         }
     }
 
-    private final void findNearestVehicles(CheckSensor sensor, Double[] range) throws RemoteException, NetworkException
+    private final void findNearestVehicles(final CheckSensor sensor, final double backRange, final double frontRange)
+        throws RemoteException, NetworkException
     {
-        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions =
-            new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
-        DoubleScalar.Rel<LengthUnit> initialPosition = sensor.getLongitudinalPosition();
-        List<CheckSensor> parallelSensors = sensor.findParallelSensors();
-        Set<Lane<?, ?>> lanes = sensor.getLane().accessibleAdjacentLanes(LateralDirectionality.LEFT, GTUType.ALL);
-        lanes.addAll(sensor.getLane().accessibleAdjacentLanes(LateralDirectionality.RIGHT, GTUType.ALL));
-        lanes.add(sensor.getLane());
-        double minDistBefore = range[0];
-        double minDistAfter = range[1];
-        double sX = sensor.getLocation().getX();
-        double sY = sensor.getLocation().getY();
-        LaneBasedGTU<?> gtuNearestBefore = null;
-        LaneBasedGTU<?> gtuNearestAfter = null;
-        LaneBasedGTU<?> gtuNearest = null;
-        LaneBasedGTU<?> gtuMove = null;
-        Lane<?, ?> laneBefore = null;
-        Lane<?, ?> laneAfter = null;
-        double lowestDistBefore = Double.POSITIVE_INFINITY;
-        double lowestDistAfter = Double.POSITIVE_INFINITY;
-
-        for (Lane<?, ?> aLane : lanes)
+        // is the sensor on an exit near a traffic light?
+        Lane sensorLane = sensor.getLane();
+        double sensorPosSI = sensor.getLongitudinalPositionSI();
+        if (sensor.isExitLaneSensor(this.routes))
         {
-            LaneBasedGTU<?> gtuBefore =
-                aLane.getGtuBefore(initialPosition, RelativePosition.FRONT, this.simulator.getSimulatorTime().get());
-            LaneBasedGTU<?> gtuAfter =
-                aLane.getGtuAfter(initialPosition, RelativePosition.FRONT, this.simulator.getSimulatorTime().get());
-            double dist;
-
-            if (gtuBefore != null && !(gtuBefore instanceof TrafficLight))
+            // find near vehicle
+            LaneBasedGTU gtu = nearGTU(sensor, backRange);
+            if (gtu == null)
             {
-                double x = gtuBefore.getLocation().getX();
-                double y = gtuBefore.getLocation().getY();
-                dist = Math.sqrt(Math.pow(2, sX - x) + Math.pow(2, sY - y));
-                if (dist < minDistBefore)
+                gtu = nearGTUfront(sensor, frontRange);
+            }
+            if (gtu != null)
+            {
+                // move GTU
+                for (Object o : gtu.positions(gtu.getReference()).keySet())
                 {
-                    gtuNearestBefore = gtuBefore;
-                    laneBefore = aLane;
-                    lowestDistBefore = dist;
+                    ((LaneBasedIndividualCar) gtu).destroy();
                 }
+                generateCar(sensor.getLane(), new DoubleScalar.Rel<LengthUnit>(sensor.getLongitudinalPositionSI(),
+                    LengthUnit.METER), Integer.parseInt(gtu.getId().toString()));
+                System.out.println("t=" + simulator.getSimulatorTime().get().getSI() + " - gtu " + gtu
+                    + " moved onto exit lane " + sensor.getLane());
             }
             else
             {
-
+                System.out.println("t=" + simulator.getSimulatorTime().get().getSI() + " - no near GTU found for exit lane "
+                    + sensor.getLane());
             }
+        }
+    }
 
-            if (gtuAfter != null && !(gtuAfter instanceof TrafficLight))
+    private final LaneBasedGTU nearGTU(CheckSensor sensor, double range) throws RemoteException
+    {
+        LaneBasedGTU nearestGTU = null;
+        double distanceSI = range;
+        for (Object cse : sensor.getLane().getParentLink().getCrossSectionElementList())
+        {
+            if (cse instanceof Lane)
             {
-
-                double x = gtuAfter.getLocation().getX();
-                double y = gtuAfter.getLocation().getY();
-                dist = Math.sqrt(Math.pow(2, sX - x) + Math.pow(2, sY - y));
-                if (dist < minDistAfter)
+                Lane lane = (Lane) cse;
+                for (Object g : lane.getGtuList())
                 {
-                    gtuNearestAfter = gtuAfter;
-                    laneAfter = aLane;
-                    lowestDistAfter = dist;
+                    LaneBasedGTU gtu = (LaneBasedGTU) g;
+                    if (!(gtu instanceof AbstractTrafficLight))
+                    {
+                        double d = gtu.getLocation().distance(sensor.getLocation());
+                        if (d < distanceSI)
+                        {
+                            distanceSI = d;
+                            nearestGTU = gtu;
+                        }
+                    }
                 }
             }
         }
-        // FIXME aanpassen code hieronder!!!!!!!!!!!!!!!!!!!!!
-        if (lowestDistAfter < lowestDistBefore && gtuNearestAfter != null)
-        {
-            gtuNearest = gtuNearestAfter;
-        }
-        else if (lowestDistAfter >= lowestDistBefore && gtuNearestBefore != null)
-        {
-            gtuNearest = gtuNearestBefore;
-        }
-        if (gtuNearest != null)
-        {
-            gtuNearest.leaveLane(laneBefore);
-            sensor.getLane().addGTU(
-                gtuNearest,
-                new DoubleScalar.Rel<LengthUnit>(sensor.getLongitudinalPosition().getSI()
-                    - gtuNearest.getFront().getDx().getSI(), LengthUnit.SI));
-        }
-        // TODO als er geen voertuig is gevonden: creeer dan een nieuw voertuig
-        /*
-         * else { try { this.simulator .scheduleEventNow(this, this, "generateCar", null); } catch (SimRuntimeException e) { //
-         * TODO Auto-generated catch block e.printStackTrace(); } }
-         */
-
+        return nearestGTU;
     }
 
-    /*	*//**
-     * Generate one car and re-schedule this method.
+    private final LaneBasedGTU nearGTUfront(CheckSensor sensor, double range) throws RemoteException
+    {
+        LaneBasedGTU nearestGTU = null;
+        double distanceSI = range;
+        Lane<?, ?> nextLane = sensor.getLane().nextLanes().iterator().next();
+        for (Object cse : nextLane.getParentLink().getCrossSectionElementList())
+        {
+            if (cse instanceof Lane)
+            {
+                Lane lane = (Lane) cse;
+                for (Object g : lane.getGtuList())
+                {
+                    LaneBasedGTU gtu = (LaneBasedGTU) g;
+                    if (!(gtu instanceof AbstractTrafficLight))
+                    {
+                        double d = gtu.getLocation().distance(sensor.getLocation());
+                        if (d < distanceSI)
+                        {
+                            distanceSI = d;
+                            nearestGTU = gtu;
+                        }
+                    }
+                }
+            }
+        }
+        return nearestGTU;
+    }
+
+    /**
+     * Generate one car and re-schedule this method if there is no space.
+     * @throws NetworkException
      */
-    /*-
-    protected final void generateCar() {
-    DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(
-    		0, LengthUnit.METER);
-    Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
-    initialPositions.put(this.lane, initialPosition);
-    try {
-    	DoubleScalar.Rel<LengthUnit> vehicleLength = new DoubleScalar.Rel<LengthUnit>(
-    			4, LengthUnit.METER);
-    	new LaneBasedIndividualCar<Integer>(
-    			++this.carsCreated,
-    			this.gtuType,
-    			this.gtuFollowingModel,
-    			this.laneChangeModel,
-    			initialPositions,
-    			this.initialSpeed,
-    			vehicleLength,
-    			new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
-    			new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR),
-    			// this.routeGenerator.generateRouteNavigator(),
-    			this.routeNavigator, this.simulator,
-    			DefaultCarAnimation.class, this.gtuColorer);
-    } catch (RemoteException | SimRuntimeException | NamingException
-    		| NetworkException | GTUException exception) {
-    	exception.printStackTrace();
-    }
-    }*/
+    protected final void generateCar(Lane<?, ?> lane, DoubleScalar.Rel<LengthUnit> initialPosition, final int gtuNumber)
+        throws NetworkException
+    {
+        // is there enough space?
+        Lane<?, ?> nextLane = lane.nextLanes().iterator().next();
+        double genSpeedSI = Math.min(lane.getSpeedLimit().getSI(), nextLane.getSpeedLimit().getSI());
+        if (!ScheduleGenerateCars.enoughSpace(lane, initialPosition.getSI(), this.lengthCar, genSpeedSI))
+        {
+            try
+            {
+                this.simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.25, TimeUnit.SECOND), this, this,
+                    "generateCar", new Object[]{lane, initialPosition, gtuNumber});
+                return;
+            }
+            catch (RemoteException | SimRuntimeException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
 
+        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions =
+            new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
+        initialPositions.put(lane, initialPosition);
+        DoubleScalar.Abs<SpeedUnit> initialSpeed = lane.getSpeedLimit();
+        DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(GTM.MAXSPEED, SpeedUnit.KM_PER_HOUR);
+        if (initialPosition.getSI() + this.lengthCar > lane.getLength().getSI())
+        {
+            // also register on next lane.
+            if (lane.nextLanes().size() == 0 || lane.nextLanes().size() > 1)
+            {
+                System.err.println("lane.nextLanes().size() == 0 || lane.nextLanes().size() > 1");
+                System.exit(-1);
+            }
+            DoubleScalar.Rel<LengthUnit> nextPos =
+                new DoubleScalar.Rel<LengthUnit>(initialPosition.getSI() - lane.getLength().getSI(), LengthUnit.METER);
+            initialPositions.put(nextLane, nextPos);
+        }
+        CompleteRoute route = new CompleteRoute("");
+        route.addNode(nextLane.getParentLink().getStartNode());
+        Node node = nextLane.getParentLink().getEndNode();
+        route.addNode(node);
+        while (node.getLinksOut().size() > 0)
+        {
+            CrossSectionLink link = (CrossSectionLink) node.getLinksOut().iterator().next();
+            node = link.getEndNode();
+            route.addNode(node);
+        }
+        LaneBasedRouteNavigator routeNavigator = new CompleteLaneBasedRouteNavigator(route);
+        try
+        {
+            DoubleScalar.Rel<LengthUnit> vehicleLength = new DoubleScalar.Rel<LengthUnit>(this.lengthCar, LengthUnit.METER);
+            new LaneBasedIndividualCar<Integer>(gtuNumber, this.gtuType, this.gtuFollowingModel, this.laneChangeModel,
+                initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
+                maxSpeed, routeNavigator, this.simulator, DefaultCarAnimation.class, this.gtuColorer);
+        }
+        catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
+        {
+            exception.printStackTrace();
+        }
+    }
 }
