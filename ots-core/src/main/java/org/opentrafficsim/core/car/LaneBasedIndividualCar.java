@@ -260,6 +260,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
             try
             {
                 this.animation.destroy();
+                this.animation = null;
             }
             catch (Exception e)
             {

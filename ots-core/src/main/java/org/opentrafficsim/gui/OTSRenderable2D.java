@@ -7,7 +7,10 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
 
+import javax.naming.Binding;
 import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
@@ -99,7 +102,9 @@ public abstract class OTSRenderable2D implements Renderable2DInterface
     protected void bind2Context(final SimulatorInterface<?, ?, ?> simulator) throws NamingException, RemoteException
     {
         this.context = ContextUtil.lookup(simulator.getReplication().getContext(), "/animation/2D");
-        ContextUtil.bind(this.context, this);
+        // ContextUtil.bind(this.context, this);
+        this.context.bind(""+this.hashCode(), this);
+        // System.err.println("bound: " + hashCode() + " for " + toString());
     }
 
     /**
@@ -280,13 +285,68 @@ public abstract class OTSRenderable2D implements Renderable2DInterface
     {
         try
         {
+            //this.context.unbind(""+this.hashCode());
             ContextUtil.unbind(this.context, this);
+            // System.err.println("unbound: " + hashCode() + " for " + toString());
+            // String key = resolveKey(this, this.context, "/");
+            // System.err.println("unbind " + key + " for " + toString());
+            // this.context.unbind(key);
+            // this.context.unbind(""+this.hashCode());
         }
         catch (Exception e)
         {
-            // do nothing for now...
+            System.err.println("could not destroy animation " + hashCode() + " for " + toString());
+            // e.printStackTrace();
             // TODO find out why sometimes null pointer is thrown.
         }
+    }
+
+    /**
+     * resolves the key under which an object is stored in the given context.
+     * @param object the object which key to resolve.
+     * @param context the context.
+     * @param name the name of the parent.
+     * @return the key
+     * @throws NamingException on lookup failure
+     */
+    private static String resolveKey(final Object object, final Context context, final String name)
+            throws NamingException
+    {
+        NamingEnumeration<Binding> list = context.listBindings(name);
+        while (list.hasMore())
+        {
+            Binding binding = list.next();
+            if (binding.getObject() instanceof Context)
+            {
+                String result = resolveKey(object, (Context) binding.getObject(), binding.getName());
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+            else if (binding.getObject().equals(object))
+            {
+                String key = context.getNameInNamespace() + "/" + binding.getName();
+                return key;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * resolves the name of an object under which it is accessible in the initial context.
+     * @param object the object
+     * @return String
+     * @throws NamingException whenever the object cannot be found
+     */
+    public static String resolveKey(final Object object) throws NamingException
+    {
+        String result = resolveKey(object, new InitialContext(), "");
+        if (result == null)
+        {
+            throw new NamingException("could not resolve " + object.toString());
+        }
+        return result;
     }
 
     /** {@inheritDoc} */
