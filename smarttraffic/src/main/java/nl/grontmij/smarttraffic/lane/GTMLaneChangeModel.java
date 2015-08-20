@@ -67,9 +67,9 @@ public class GTMLaneChangeModel implements LaneChangeModel
             if (preferredLane != null && !suitable(preferredLane, gtu))
                 preferredLane = null;
             boolean currSuit = suitable(lane, gtu);
-            if (currSuit && nonPreferredLane != null && gtu.getVelocity().getSI() < 2.7777)
+            if (currSuit && nonPreferredLane != null && gtu.getVelocity().getSI() < 5) // 2.7777)
                 nonPreferredLane = null; // do not change to other lane when slow and on a preferred lane already
-            if (currSuit && preferredLane != null && gtu.getVelocity().getSI() < 2.7777)
+            if (currSuit && preferredLane != null && gtu.getVelocity().getSI() < 5) // 2.7777)
                 preferredLane = null; // do not change to other lane when slow and on a preferred lane already
 
             GTUFollowingModel gtuFollowingModel = gtu.getGTUFollowingModel();
@@ -176,25 +176,28 @@ public class GTMLaneChangeModel implements LaneChangeModel
 
     private boolean suitable(Lane lane, LaneBasedGTU gtu)
     {
-        CompleteRoute route;
-        RouteNavigator navigator = ((LaneBasedIndividualCar) gtu).getRouteNavigator();
-        if (navigator instanceof StraightRouteNavigator)
-            route = ((StraightRouteNavigator) navigator).straightRoute;
-        else 
-            route = ((CompleteLaneBasedRouteNavigator) navigator).getRoute();
-        // if the lane connects to the main route: good, otherwise: bad
-        if (route.getNodes().contains(lane.getParentLink().getEndNode()))
-        {
-            if (lane.nextLanes().size() == 0) // try to get off a lane that is ending
-                return false;
-            Lane nextLane = (Lane) lane.nextLanes().iterator().next();
-            if (nextLane != null && route.getNodes().contains(nextLane.getParentLink().getEndNode()))
-                return true;
-            else
-                return false;
-        }
-        else
+        if (lane.nextLanes().size() == 0) // try to get off a lane that is ending
             return false;
+        return true;
+//        CompleteRoute route;
+//        RouteNavigator navigator = ((LaneBasedIndividualCar) gtu).getRouteNavigator();
+//        if (navigator instanceof StraightRouteNavigator)
+//            route = ((StraightRouteNavigator) navigator).straightRoute;
+//        else 
+//            route = ((CompleteLaneBasedRouteNavigator) navigator).getRoute();
+//        // if the lane connects to the main route: good, otherwise: bad
+//        if (route.getNodes().contains(lane.getParentLink().getEndNode()))
+//        {
+//            if (lane.nextLanes().size() == 0) // try to get off a lane that is ending
+//                return false;
+//            Lane nextLane = (Lane) lane.nextLanes().iterator().next();
+//            if (nextLane != null && route.getNodes().contains(nextLane.getParentLink().getEndNode()))
+//                return true;
+//            else
+//                return false;
+//        }
+//        else
+//            return false;
     }
 
     /**
