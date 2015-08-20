@@ -22,7 +22,9 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.lane.AbstractTrafficLight;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.core.gtu.lane.LaneBlock;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
@@ -113,10 +115,10 @@ public class ScheduleCheckPulses<ID>
         if (sensor.isExitLaneSensor(this.routes))
         {
             // find near vehicle
-            LaneBasedGTU gtu = nearGTU(sensor, backRange);
+            LaneBasedGTU gtu = nearGTUback2(sensor, backRange);
             if (gtu == null)
             {
-                gtu = nearGTUfront(sensor, frontRange);
+                gtu = nearGTUfront2(sensor, frontRange);
             }
             if (gtu != null)
             {
@@ -125,8 +127,8 @@ public class ScheduleCheckPulses<ID>
                 {
                     ((LaneBasedIndividualCar) gtu).destroy();
                 }
-                generateCar(sensor.getLane(), new DoubleScalar.Rel<LengthUnit>(sensor.getLongitudinalPositionSI(),
-                    LengthUnit.METER), Integer.parseInt(gtu.getId().toString()));
+                // generateCar(sensor.getLane(), new DoubleScalar.Rel<LengthUnit>(sensor.getLongitudinalPositionSI(),
+                // LengthUnit.METER), Integer.parseInt(gtu.getId().toString()));
                 System.out.println("t=" + simulator.getSimulatorTime().get().getSI() + " - gtu " + gtu
                     + " moved onto exit lane " + sensor.getLane());
             }
@@ -138,7 +140,131 @@ public class ScheduleCheckPulses<ID>
         }
     }
 
-    private final LaneBasedGTU nearGTU(CheckSensor sensor, double range) throws RemoteException
+    private final LaneBasedGTU nearGTUback2(CheckSensor sensor, double range) throws RemoteException
+    {
+        return nearGTUback2a(sensor, sensor.getLane().getParentLink(), range);
+    }
+
+    private final LaneBasedGTU nearGTUback2a(CheckSensor sensor, CrossSectionLink link, double range) throws RemoteException
+    {
+        if (link.getStartNode().getLocation().distance(sensor.getLocation()) > range
+            && link.getEndNode().getLocation().distance(sensor.getLocation()) > range)
+        {
+            // too far away
+            return null;
+        }
+
+        LaneBasedGTU nearestGTU = null;
+        double distanceSI = range;
+        for (Object cse : link.getCrossSectionElementList())
+        {
+            if (cse instanceof Lane)
+            {
+                Lane lane = (Lane) cse;
+                for (Object g : lane.getGtuList())
+                {
+                    LaneBasedGTU gtu = (LaneBasedGTU) g;
+                    if (gtu instanceof LaneBasedIndividualCar)
+                    {
+                        double d = gtu.getLocation().distance(sensor.getLocation());
+                        if (d < distanceSI)
+                        {
+                            distanceSI = d;
+                            nearestGTU = gtu;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (nearestGTU == null)
+        {
+            // recurse
+            if (link.getStartNode().getLinksIn().size() > 0)
+            {
+                for (Object o : link.getStartNode().getLinksIn())
+                {
+                    if (nearestGTU == null)
+                    {
+                        CrossSectionLink prevLink = (CrossSectionLink) o;
+                        nearestGTU = nearGTUback2a(sensor, prevLink, range);
+                    }
+                }
+            }
+        }
+        return nearestGTU;
+    }
+
+    private final LaneBasedGTU nearGTUfront2(CheckSensor sensor, double range) throws RemoteException
+    {
+        LaneBasedGTU nearestGTU = null;
+        Link link = sensor.getLane().getParentLink();
+        if (link.getEndNode().getLinksOut().size() > 0)
+        {
+            for (Object o : link.getEndNode().getLinksOut())
+            {
+                if (nearestGTU == null)
+                {
+                    CrossSectionLink nextLink = (CrossSectionLink) o;
+                    nearestGTU = nearGTUfront2a(sensor, nextLink, range);
+                }
+            }
+        }
+        return nearestGTU;
+    }
+
+    private final LaneBasedGTU nearGTUfront2a(CheckSensor sensor, CrossSectionLink link, double range) throws RemoteException
+    {
+        if (link.getStartNode().getLocation().distance(sensor.getLocation()) > range
+            && link.getEndNode().getLocation().distance(sensor.getLocation()) > range)
+        {
+            // too far away
+            return null;
+        }
+
+        LaneBasedGTU nearestGTU = null;
+        double distanceSI = range;
+        for (Object cse : link.getCrossSectionElementList())
+        {
+            if (cse instanceof Lane)
+            {
+                Lane lane = (Lane) cse;
+                for (Object g : lane.getGtuList())
+                {
+                    LaneBasedGTU gtu = (LaneBasedGTU) g;
+                    if (gtu instanceof LaneBasedIndividualCar)
+                    {
+                        double d = gtu.getLocation().distance(sensor.getLocation());
+                        if (d < distanceSI)
+                        {
+                            distanceSI = d;
+                            nearestGTU = gtu;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (nearestGTU == null)
+        {
+            // recurse
+            if (link.getEndNode().getLinksOut().size() > 0)
+            {
+                for (Object o : link.getEndNode().getLinksOut())
+                {
+                    if (nearestGTU == null)
+                    {
+                        CrossSectionLink nextLink = (CrossSectionLink) o;
+                        nearestGTU = nearGTUfront2a(sensor, nextLink, range);
+                    }
+                }
+            }
+        }
+        return nearestGTU;
+    }
+
+
+    private final LaneBasedGTU nearGTUback(CheckSensor sensor, double range) throws RemoteException
     {
         LaneBasedGTU nearestGTU = null;
         double distanceSI = range;

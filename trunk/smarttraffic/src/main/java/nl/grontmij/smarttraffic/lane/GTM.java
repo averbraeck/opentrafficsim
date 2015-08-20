@@ -257,15 +257,15 @@ public class GTM extends AbstractWrappableSimulationST
             // ------de eerste waarde is de afstand in meters stroomOPwaarts van het voertuig
             // ------de tweede waarde is de afstand in meters stroomAFwaarts van het voertuig
 
-            try
-            {
-                new ScheduleCheckPulses(gtuType, simulator, mapSensorCheckCars, 200, 200, new ArrayList<CompleteRoute>(routes
-                    .values()));
-            }
-            catch (NetworkException | GTUException | NamingException e)
-            {
-                e.printStackTrace();
-            }
+//            try
+//            {
+//                new ScheduleCheckPulses(gtuType, simulator, mapSensorCheckCars, 400, 400, new ArrayList<CompleteRoute>(routes
+//                    .values()));
+//            }
+//            catch (NetworkException | GTUException | NamingException e)
+//            {
+//                e.printStackTrace();
+//            }
 
             // - Kill a car (EXIT)
             // connect to the sensorKill

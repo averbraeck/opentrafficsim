@@ -45,7 +45,7 @@ public class CheckSensor extends AbstractSensor
 
     private HashMap<DoubleScalar.Abs<TimeUnit>, Integer> statusByTime = new HashMap<DoubleScalar.Abs<TimeUnit>, Integer>();
 
-    private ArrayList<LaneBasedGTU<?>> gtusDetected = new ArrayList<LaneBasedGTU<?>>();
+    // private ArrayList<LaneBasedGTU<?>> gtusDetected = new ArrayList<LaneBasedGTU<?>>();
 
     private Boolean exitLaneSensor = null;
 
@@ -209,7 +209,7 @@ public class CheckSensor extends AbstractSensor
     public void trigger(final LaneBasedGTU<?> gtu)
     {
         // System.out.println(gtu.getSimulator() + ": detecting " + gtu.toString() + " passing detector at lane " + getLane());
-        this.gtusDetected.add(gtu);
+        // this.gtusDetected.add(gtu);
     }
 
     /** {@inheritDoc} */
