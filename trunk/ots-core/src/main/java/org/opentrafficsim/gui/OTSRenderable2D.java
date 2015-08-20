@@ -23,8 +23,6 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 import nl.tudelft.simulation.logger.Logger;
 import nl.tudelft.simulation.naming.context.ContextUtil;
 
-import org.opentrafficsim.core.network.NetworkException;
-
 /**
  * The Renderable2D provides an easy accessible renderable object.
  * <p>
@@ -65,7 +63,7 @@ public abstract class OTSRenderable2D implements Renderable2DInterface
     /**
      * the source of the renderable. TODO Make weak reference and destroy renderable when source ceases to exist
      */
-    protected final LocatableInterface source;
+    protected LocatableInterface source;
 
     /**
      * the context for (un)binding.
@@ -103,7 +101,7 @@ public abstract class OTSRenderable2D implements Renderable2DInterface
     {
         this.context = ContextUtil.lookup(simulator.getReplication().getContext(), "/animation/2D");
         // ContextUtil.bind(this.context, this);
-        this.context.bind(""+this.hashCode(), this);
+        this.context.bind("" + this.hashCode(), this);
         // System.err.println("bound: " + hashCode() + " for " + toString());
     }
 
@@ -283,20 +281,33 @@ public abstract class OTSRenderable2D implements Renderable2DInterface
     @Override
     public void destroy() throws NamingException
     {
+        if (this.source == null)
+            return;
+
+        // this.context.unbind(""+this.hashCode());
+        // ContextUtil.unbind(this.context, this);
+        // String key = this.context.getNameInNamespace() + "/" + this.hashCode();
+        // new InitialContext().unbind(key);
+        // String key = resolveKey(this, this.context, "/");
+        // if (key == null)
+        // throw new NamingException();
+        // this.context.unbind(key);
+        // new InitialContext().unbind(key);
+        String key = this.context.getNameInNamespace() + "/" + this.hashCode();
         try
         {
-            //this.context.unbind(""+this.hashCode());
-            ContextUtil.unbind(this.context, this);
+            new InitialContext().unbind(key);
+            // TODO this.source = null;
             // System.err.println("unbound: " + hashCode() + " for " + toString());
             // String key = resolveKey(this, this.context, "/");
             // System.err.println("unbind " + key + " for " + toString());
             // this.context.unbind(key);
             // this.context.unbind(""+this.hashCode());
         }
-        catch (Exception e)
+        catch (NamingException e)
         {
-            System.err.println("could not destroy animation " + hashCode() + " for " + toString());
-            // e.printStackTrace();
+            //System.err.println("could not destroy animation key " + key + " for " + toString());
+            //e.printStackTrace();
             // TODO find out why sometimes null pointer is thrown.
         }
     }
@@ -309,8 +320,7 @@ public abstract class OTSRenderable2D implements Renderable2DInterface
      * @return the key
      * @throws NamingException on lookup failure
      */
-    private static String resolveKey(final Object object, final Context context, final String name)
-            throws NamingException
+    private static String resolveKey(final Object object, final Context context, final String name) throws NamingException
     {
         NamingEnumeration<Binding> list = context.listBindings(name);
         while (list.hasMore())

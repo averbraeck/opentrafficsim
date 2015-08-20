@@ -354,11 +354,12 @@ public abstract class AbstractLaneBasedGTU<ID> extends AbstractGTU<ID> implement
         // Note: a (Sink) trigger can have 'destroyed' us between the previous evaluation step and this one.
         if (this.lanes.isEmpty())
         {
+            destroy();
             return; // Done; do not re-schedule execution of this move method.
         }
-        DoubleScalar.Rel<LengthUnit> maximumForwardHeadway = new DoubleScalar.Rel<LengthUnit>(500.0, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> maximumForwardHeadway = new DoubleScalar.Rel<LengthUnit>(250.0, LengthUnit.METER);
         // TODO 500?
-        DoubleScalar.Rel<LengthUnit> maximumReverseHeadway = new DoubleScalar.Rel<LengthUnit>(-200.0, LengthUnit.METER);
+        DoubleScalar.Rel<LengthUnit> maximumReverseHeadway = new DoubleScalar.Rel<LengthUnit>(-125.0, LengthUnit.METER);
         // TODO 200?
         DoubleScalar.Abs<SpeedUnit> speedLimit = this.getMaximumVelocity();
         for (Lane<?, ?> lane : this.lanes)
