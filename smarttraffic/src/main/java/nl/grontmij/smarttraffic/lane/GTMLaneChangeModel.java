@@ -4,7 +4,6 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Map;
 
-import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.AbstractGTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.DualAccelerationStep;
@@ -16,9 +15,6 @@ import org.opentrafficsim.core.gtu.lane.changing.LaneMovementStep;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
-import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.network.route.RouteNavigator;
 import org.opentrafficsim.core.unit.AccelerationUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;

@@ -72,7 +72,7 @@ public abstract class AbstractWrappableSimulationST implements WrappableSimulati
 
         final SimpleAnimator simulator =
             new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.HOUR), new DoubleScalar.Rel<TimeUnit>(0.0,
-                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(27*24.0, TimeUnit.HOUR), model);
+                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(GTM.NUMBEROFDAYS * 24.0, TimeUnit.HOUR), model);
         this.panel = new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
         JPanel charts = makeCharts();
         if (null != charts)

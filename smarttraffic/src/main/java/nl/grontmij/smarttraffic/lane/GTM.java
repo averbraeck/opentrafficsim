@@ -63,6 +63,9 @@ public class GTM extends AbstractWrappableSimulationST
     /** max speed of cars in km/h. */
     public static final double MAXSPEED = 80;
 
+    /** max speed of cars in km/h. */
+    public static final double NUMBEROFDAYS = 1;
+
     /**
      * Main program. GTMModel has the model details.
      * @param args String[]; the command line arguments (not used)
