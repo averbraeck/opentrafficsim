@@ -68,58 +68,66 @@ public class ReadVLog
                 int minute = ldt.getMinute();
                 int second = ldt.getSecond();
                 Instant timeVLogStart = timeVLog;
-                Boolean[] boolReadyToStartVLog = new Boolean[]{new Boolean(false)};
-                String vriLocation = "VRI" + wegNummer + vri;
-                Instant timeFromVLog[] = new Instant[]{null};
-                Long deltaTimeFromVLog[] = new Long[]{(long) 0};
-                String timeStampFile = String.format("%04d%02d%02d_%02d%02d%02d", year, month, day, hour, minute, second);
-                // zoek de eerste "harde" tijdsaanduiding
-                // Om alle dagen te simuleren gebruik dan de volgende regel:
-                // while (day < 27) {
-                while (hour < 21)
+                while (day < 27)
                 {
-                    String fName =
-                        Integer.toString(day) + "/" + vriLocation + "/" + vriLocation + "_" + timeStampFile + ".vlg";
-                    ZipEntry entry = zipEntries.get(fName);
-                    if (entry != null)
+                    Boolean[] boolReadyToStartVLog = new Boolean[]{new Boolean(false)};
+                    String vriLocation = "VRI" + wegNummer + vri;
+                    Instant timeFromVLog[] = new Instant[]{null};
+                    Long deltaTimeFromVLog[] = new Long[]{(long) 0};
+                    String timeStampFile =
+                        String.format("%04d%02d%02d_%02d%02d%02d", year, month, day, hour, minute, second);
+                    // zoek de eerste "harde" tijdsaanduiding
+                    // Om alle dagen te simuleren gebruik dan de volgende regel:
+                    System.out.println(vri + " - " + timeStampFile);
+                    while (hour < 21)
                     {
-                        InputStream stream = zipFile.getInputStream(entry);
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
-                        /*
-                         * in de vlog bestanden wordt om de x minuten een regel met de "harde" tijd gelogd vervolgens worden
-                         * meldingen gedaan met een delta_tijd vanaf die "harde" tijd in de volgende module wordt eerst een
-                         * harde starttijd gezocht en worden vervolgens de initiele waarden van de detectoren en van de
-                         * signaalgroepen ingelezen
-                         */
-
-                        if (!boolReadyToStartVLog[0])
+                        String fName =
+                            Integer.toString(day) + "/" + vriLocation + "/" + vriLocation + "_" + timeStampFile + ".vlg";
+                        ZipEntry entry = zipEntries.get(fName);
+                        if (entry != null)
                         {
-                            readStatusVLogFile(mapSensor, bufferedReader, timeFromVLog, deltaTimeFromVLog,
-                                boolReadyToStartVLog, configVriList, vri, simulator);
-                        }
-                        /*
-                         * als er eenmaal een referentie naar de tijd is gevonden kan vervolgens verder worden gelezen met
-                         * alleen de wijzigingen de regels met de statusberichten kunnen worden overgeslagen
-                         */
+                            InputStream stream = zipFile.getInputStream(entry);
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
+                            /*
+                             * in de vlog bestanden wordt om de x minuten een regel met de "harde" tijd gelogd vervolgens worden
+                             * meldingen gedaan met een delta_tijd vanaf die "harde" tijd in de volgende module wordt eerst een
+                             * harde starttijd gezocht en worden vervolgens de initiele waarden van de detectoren en van de
+                             * signaalgroepen ingelezen
+                             */
 
-                        if (boolReadyToStartVLog[0])
-                        {
-                            readVLogFile(mapSensor, bufferedReader, timeFromVLog, deltaTimeFromVLog, configVriList, vri,
-                                simulator);
+                            if (!boolReadyToStartVLog[0])
+                            {
+                                readStatusVLogFile(mapSensor, bufferedReader, timeFromVLog, deltaTimeFromVLog,
+                                    boolReadyToStartVLog, configVriList, vri, simulator);
+                            }
+                            /*
+                             * als er eenmaal een referentie naar de tijd is gevonden kan vervolgens verder worden gelezen met
+                             * alleen de wijzigingen de regels met de statusberichten kunnen worden overgeslagen
+                             */
+
+                            if (boolReadyToStartVLog[0])
+                            {
+                                readVLogFile(mapSensor, bufferedReader, timeFromVLog, deltaTimeFromVLog, configVriList, vri,
+                                    simulator);
+                            }
+                            bufferedReader.close();
+                            stream.close();
                         }
-                        bufferedReader.close();
-                        stream.close();
+
+                        // increase time with one minute for next file
+                        //
+                        timeVLogStart = timeVLogStart.plusSeconds(60);
+                        ldt = LocalDateTime.ofInstant(timeVLogStart, offset);
+                        day = ldt.getDayOfMonth();
+                        hour = ldt.getHour();
+                        minute = ldt.getMinute();
+                        second = ldt.getSecond();
+                        timeStampFile = String.format("%04d%02d%02d_%02d%02d%02d", year, month, day, hour, minute, second);
                     }
-
-                    // increase time with one minute for next file
-                    //
-                    timeVLogStart = timeVLogStart.plusSeconds(60);
-                    ldt = LocalDateTime.ofInstant(timeVLogStart, offset);
-                    day = ldt.getDayOfMonth();
-                    hour = ldt.getHour();
-                    minute = ldt.getMinute();
-                    second = ldt.getSecond();
-                    timeStampFile = String.format("%04d%02d%02d_%02d%02d%02d", year, month, day, hour, minute, second);
+                    day++;
+                    hour = 2;
+                    minute = 0;
+                    second = 0;
                 }
             }
             zipFile.close();
@@ -145,35 +153,42 @@ public class ReadVLog
         String line = "";
         while ((line = bufferedReader.readLine()) != null)
         {
-            StringBuffer buffer = new StringBuffer(line);
-            int typeBericht = parseTypebericht(buffer, 2);
-            // type "1": de harde tijd
-            if (typeBericht == 1)
+            try
             {
-                timeFromVLog[0] = parseTijd(buffer);
-                // System.out.println(timeFromVLog[0]);
-                boolReadFirstTimeStamp = true;
+                StringBuffer buffer = new StringBuffer(line);
+                int typeBericht = parseTypebericht(buffer, 2);
+                // type "1": de harde tijd
+                if (typeBericht == 1)
+                {
+                    timeFromVLog[0] = parseTijd(buffer);
+                    // System.out.println(timeFromVLog[0]);
+                    boolReadFirstTimeStamp = true;
+                }
+                else if (typeBericht == 5)
+                {
+                    // status detectoren (alle detectoren)
+                    mapStatus = parseStatus(buffer, deltaTimeFromVLog);
+                    ReadStatusDetector(mapSensor, mapStatus, vriList, vriName, timeFromVLog, deltaTimeFromVLog);
+                    boolReadFirstDetectorStatus = true;
+                }
+                else if (typeBericht == 13)
+                {
+                    // status signaalgroepen (alle SG's)
+                    mapStatus = parseStatus(buffer, deltaTimeFromVLog);
+                    ReadStatusSignalGroup(mapSensor, mapStatus, vriList, vriName, timeFromVLog, deltaTimeFromVLog, simulator);
+                    boolReadFirstSignalGroupStatus = true;
+                }
+                // als alle initiele gegevens beschikbaar zijn, gaan we naar de
+                // volgende module, die alleen de wijzigingsberichten verwerkt
+                if (boolReadFirstTimeStamp && boolReadFirstDetectorStatus && boolReadFirstSignalGroupStatus)
+                {
+                    boolReadyToStartVLog[0] = true;
+                    break;
+                }
             }
-            else if (typeBericht == 5)
+            catch (Exception e)
             {
-                // status detectoren (alle detectoren)
-                mapStatus = parseStatus(buffer, deltaTimeFromVLog);
-                ReadStatusDetector(mapSensor, mapStatus, vriList, vriName, timeFromVLog, deltaTimeFromVLog);
-                boolReadFirstDetectorStatus = true;
-            }
-            else if (typeBericht == 13)
-            {
-                // status signaalgroepen (alle SG's)
-                mapStatus = parseStatus(buffer, deltaTimeFromVLog);
-                ReadStatusSignalGroup(mapSensor, mapStatus, vriList, vriName, timeFromVLog, deltaTimeFromVLog, simulator);
-                boolReadFirstSignalGroupStatus = true;
-            }
-            // als alle initiele gegevens beschikbaar zijn, gaan we naar de
-            // volgende module, die alleen de wijzigingsberichten verwerkt
-            if (boolReadFirstTimeStamp && boolReadFirstDetectorStatus && boolReadFirstSignalGroupStatus)
-            {
-                boolReadyToStartVLog[0] = true;
-                break;
+                e.printStackTrace();
             }
         }
     }
@@ -187,36 +202,43 @@ public class ReadVLog
         String line = "";
         while ((line = bufferedReader.readLine()) != null)
         {
-            StringBuffer buffer = new StringBuffer(line);
-            int typeBericht = parseTypebericht(buffer, 2);
-            if (typeBericht == 1)
+            try
             {
-                timeFromVLog[0] = parseTijd(buffer);
-                // System.out.println(timeFromVLog[0]);
+                StringBuffer buffer = new StringBuffer(line);
+                int typeBericht = parseTypebericht(buffer, 2);
+                if (typeBericht == 1)
+                {
+                    timeFromVLog[0] = parseTijd(buffer);
+                    // System.out.println(timeFromVLog[0]);
+                }
+                else if (typeBericht == 5)
+                {
+                    // alleen om te checken of de status nog klopt
+                    mapStatus = parseStatus(buffer, deltaTimeFromVLog);
+                    CheckStatusDetector(mapSensor, mapStatus, vriList, vriName);
+                }
+                else if (typeBericht == 6)
+                {
+                    // wijzigingsberichten inlezen van de detectoren
+                    mapStatus = parseWijziging(buffer, deltaTimeFromVLog);
+                    ReadStatusDetector(mapSensor, mapStatus, vriList, vriName, timeFromVLog, deltaTimeFromVLog);
+                }
+                else if (typeBericht == 13)
+                {
+                    // alleen om te checken of de status nog klopt
+                    mapStatus = parseStatus(buffer, deltaTimeFromVLog);
+                    CheckStatusSignalGroup(mapSensor, mapStatus, vriList, vriName);
+                }
+                else if (typeBericht == 14)
+                {
+                    // wijzigingsberichten inlezen van de signaalgroepen
+                    mapStatus = parseWijziging(buffer, deltaTimeFromVLog);
+                    ReadStatusSignalGroup(mapSensor, mapStatus, vriList, vriName, timeFromVLog, deltaTimeFromVLog, simulator);
+                }
             }
-            else if (typeBericht == 5)
+            catch (Exception e)
             {
-                // alleen om te checken of de status nog klopt
-                mapStatus = parseStatus(buffer, deltaTimeFromVLog);
-                CheckStatusDetector(mapSensor, mapStatus, vriList, vriName);
-            }
-            else if (typeBericht == 6)
-            {
-                // wijzigingsberichten inlezen van de detectoren
-                mapStatus = parseWijziging(buffer, deltaTimeFromVLog);
-                ReadStatusDetector(mapSensor, mapStatus, vriList, vriName, timeFromVLog, deltaTimeFromVLog);
-            }
-            else if (typeBericht == 13)
-            {
-                // alleen om te checken of de status nog klopt
-                mapStatus = parseStatus(buffer, deltaTimeFromVLog);
-                CheckStatusSignalGroup(mapSensor, mapStatus, vriList, vriName);
-            }
-            else if (typeBericht == 14)
-            {
-                // wijzigingsberichten inlezen van de signaalgroepen
-                mapStatus = parseWijziging(buffer, deltaTimeFromVLog);
-                ReadStatusSignalGroup(mapSensor, mapStatus, vriList, vriName, timeFromVLog, deltaTimeFromVLog, simulator);
+                e.printStackTrace();
             }
         }
     }
