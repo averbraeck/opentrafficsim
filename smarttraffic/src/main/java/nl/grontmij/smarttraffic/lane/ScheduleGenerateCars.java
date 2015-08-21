@@ -169,7 +169,7 @@ public class ScheduleGenerateCars
             new LaneBasedIndividualCar<Integer>(++this.carsCreated, this.gtuType, this.gtuFollowingModel,
                 this.laneChangeModel, initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(
                     2.0, LengthUnit.METER), maxSpeed, routeNavigatorAB,
-                this.simulator, DefaultCarAnimation.class, this.gtuColorer);
+                this.simulator, /*DefaultCarAnimation.class*/null, this.gtuColorer);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {

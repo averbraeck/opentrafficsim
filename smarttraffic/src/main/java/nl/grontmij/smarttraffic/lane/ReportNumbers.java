@@ -106,6 +106,7 @@ public class ReportNumbers
             }
             outputFile.write(ts + "\t" + nr + "\n");
             outputFile.flush();
+            System.out.println("#gtu " + ts + " = " + nr);
             try
             {
                 simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.MINUTE), this, this, "report", null);
