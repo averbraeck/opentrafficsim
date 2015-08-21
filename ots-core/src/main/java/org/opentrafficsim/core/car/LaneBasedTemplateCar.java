@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
@@ -25,7 +26,6 @@ import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.gui.OTSRenderable2D;
 
 /**
  * <p>
@@ -44,7 +44,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
     private static final long serialVersionUID = 20141025L;
 
     /** animation. */
-    private OTSRenderable2D animation;
+    private Renderable2D animation;
 
     /** Sensing positions. */
     private final Map<RelativePosition.TYPE, RelativePosition> relativePositions = new LinkedHashMap<>();
@@ -81,7 +81,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
      *            on one or more lanes
      * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the car on the lane
      * @param routeNavigator Route; the route of the new car
-     * @param animationClass Class&lt;? extends OTSRenderable2D&gt;; the class for animation or null if no animation.
+     * @param animationClass Class&lt;? extends Renderable2D&gt;; the class for animation or null if no animation.
      * @throws NamingException if an error occurs when adding the animation handler.
      * @throws RemoteException when the simulator cannot be reached.
      * @throws NetworkException when the GTU cannot be placed on the given lane.
@@ -92,7 +92,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
         final GTUFollowingModel gtuFollowingModel,
         final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
         final DoubleScalar.Abs<SpeedUnit> initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator,
-        final Class<? extends OTSRenderable2D> animationClass) throws NamingException, RemoteException, NetworkException,
+        final Class<? extends Renderable2D> animationClass) throws NamingException, RemoteException, NetworkException,
         SimRuntimeException, GTUException
     {
         super(id, templateGtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, routeNavigator);
@@ -113,7 +113,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
             {
                 Constructor<?> constructor =
                     ClassUtil.resolveConstructor(animationClass, new Object[] {this, getSimulator()});
-                this.animation = (OTSRenderable2D) constructor.newInstance(this, getSimulator());
+                this.animation = (Renderable2D) constructor.newInstance(this, getSimulator());
             }
             catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
                 | IllegalArgumentException | InvocationTargetException exception)
@@ -230,7 +230,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
         private CompleteLaneBasedRouteNavigator routeNavigator = null;
 
         /** animation. */
-        private Class<? extends OTSRenderable2D> animationClass = null;
+        private Class<? extends Renderable2D> animationClass = null;
 
         /**
          * @param id set id
@@ -287,7 +287,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
          * @param animationClass set animation class
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedTemplateCarBuilder<ID> setAnimationClass(final Class<? extends OTSRenderable2D> animationClass)
+        public final LaneBasedTemplateCarBuilder<ID> setAnimationClass(final Class<? extends Renderable2D> animationClass)
         {
             this.animationClass = animationClass;
             return this;

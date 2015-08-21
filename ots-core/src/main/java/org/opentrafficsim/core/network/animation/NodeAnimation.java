@@ -8,9 +8,10 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.gui.OTSRenderable2D;
 
 /**
  * <p>
@@ -21,7 +22,7 @@ import org.opentrafficsim.gui.OTSRenderable2D;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class NodeAnimation extends OTSRenderable2D
+public class NodeAnimation extends Renderable2D
 {
     /**
      * @param node n
