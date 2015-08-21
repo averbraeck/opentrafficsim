@@ -15,7 +15,6 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.lane.AbstractSensor;
 import org.opentrafficsim.core.network.lane.CrossSectionElement;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;

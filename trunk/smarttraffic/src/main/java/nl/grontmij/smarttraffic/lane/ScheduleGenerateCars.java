@@ -18,9 +18,7 @@ import org.opentrafficsim.core.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.core.gtu.following.IDMPlus;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.core.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
@@ -29,7 +27,6 @@ import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 
 public class ScheduleGenerateCars
 {
@@ -169,7 +166,7 @@ public class ScheduleGenerateCars
             new LaneBasedIndividualCar<Integer>(++this.carsCreated, this.gtuType, this.gtuFollowingModel,
                 this.laneChangeModel, initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(
                     2.0, LengthUnit.METER), maxSpeed, routeNavigatorAB,
-                this.simulator, /*DefaultCarAnimation.class*/null, this.gtuColorer);
+                this.simulator, DefaultCarAnimation.class, this.gtuColorer);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {

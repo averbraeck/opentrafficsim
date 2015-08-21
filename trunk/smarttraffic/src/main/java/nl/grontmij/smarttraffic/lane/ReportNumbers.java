@@ -9,12 +9,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
@@ -106,7 +107,10 @@ public class ReportNumbers
             }
             outputFile.write(ts + "\t" + nr + "\n");
             outputFile.flush();
-            System.out.println("#gtu " + ts + " = " + nr);
+            if (LocalDateTime.ofInstant(time, ZoneId.of("UTC")).getMinute() == 0)
+            {
+                System.out.println("#gtu " + ts + " = " + nr);
+            }
             try
             {
                 simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.MINUTE), this, this, "report", null);
