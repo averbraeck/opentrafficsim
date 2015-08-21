@@ -10,9 +10,10 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
+
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.demo.ntm.Link;
-import org.opentrafficsim.gui.OTSRenderable2D;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -26,7 +27,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * $, initial version Sep 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class LinkAnimation extends OTSRenderable2D
+public class LinkAnimation extends Renderable2D
 {
     /** stroke width for drawing links. */
     private final float width;

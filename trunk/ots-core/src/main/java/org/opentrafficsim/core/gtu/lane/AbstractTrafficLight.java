@@ -10,6 +10,7 @@ import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
 import javax.vecmath.Point3d;
 
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -33,7 +34,6 @@ import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
-import org.opentrafficsim.gui.OTSRenderable2D;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LineString;
@@ -59,7 +59,7 @@ public abstract class AbstractTrafficLight extends AbstractGTU<String> implement
     private OTSDEVSSimulatorInterface simulator;
 
     /** animation. */
-    private OTSRenderable2D animation;
+    private Renderable2D animation;
 
     /** the lane of the block. */
     final Lane<?, ?> lane;
