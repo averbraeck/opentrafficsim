@@ -68,7 +68,7 @@ public class ReadVLog
                 int minute = ldt.getMinute();
                 int second = ldt.getSecond();
                 Instant timeVLogStart = timeVLog;
-                while (day <= GTM.NUMBEROFDAYS)
+                while (day <= Settings.NUMBEROFDAYS)
                 {
                     Boolean[] boolReadyToStartVLog = new Boolean[]{new Boolean(false)};
                     String vriLocation = "VRI" + wegNummer + vri;

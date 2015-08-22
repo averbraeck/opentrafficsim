@@ -37,7 +37,7 @@ public class GTMLaneChangeModel implements LaneChangeModel
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
-    public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
+    public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
         final Collection<HeadwayGTU> sameLaneGTUs, final Collection<HeadwayGTU> preferredLaneGTUs,
         final Collection<HeadwayGTU> nonPreferredLaneGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit,
         final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
@@ -46,8 +46,8 @@ public class GTMLaneChangeModel implements LaneChangeModel
     {
         try
         {
-            Map<Lane<?, ?>, Rel<LengthUnit>> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
-            Lane<?, ?> lane = positions.keySet().iterator().next();
+            Map<Lane, Rel<LengthUnit>> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
+            Lane lane = positions.keySet().iterator().next();
             DoubleScalar.Rel<LengthUnit> longitudinalPosition = positions.get(lane);
             // TODO make this driving side dependent; i.e. implement a general way to figure out on which side of the
             // road cars are supposed to drive
@@ -55,11 +55,11 @@ public class GTMLaneChangeModel implements LaneChangeModel
             final LateralDirectionality nonPreferred = LateralDirectionality.LEFT;
 
             // Zorg er voor dat er niet wordt afgeslagen van de hoofdroute onder normale omstandigheden.
-            Lane<?, ?> nonPreferredLane =
+            Lane nonPreferredLane =
                 lane.bestAccessibleAdjacentLane(nonPreferred, longitudinalPosition, gtu.getGTUType());
             if (nonPreferredLane != null && !suitable(nonPreferredLane, gtu))
                 nonPreferredLane = null;
-            Lane<?, ?> preferredLane = lane.bestAccessibleAdjacentLane(preferred, longitudinalPosition, gtu.getGTUType());
+            Lane preferredLane = lane.bestAccessibleAdjacentLane(preferred, longitudinalPosition, gtu.getGTUType());
             if (preferredLane != null && !suitable(preferredLane, gtu))
                 preferredLane = null;
             boolean currSuit = suitable(lane, gtu);
