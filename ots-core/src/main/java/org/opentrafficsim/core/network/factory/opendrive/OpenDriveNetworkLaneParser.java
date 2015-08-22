@@ -48,15 +48,15 @@ public class OpenDriveNetworkLaneParser
     
     /** the GTUTypes that have been created. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, GTUType<String>> gtuTypes = new HashMap<>();
+    protected Map<String, GTUType> gtuTypes = new HashMap<>();
 
     /** the LaneTypes that have been created. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, LaneType<String>> laneTypes = new HashMap<>();
+    protected Map<String, LaneType> laneTypes = new HashMap<>();
 
     /** the no traffic LaneType. */
     @SuppressWarnings("visibilitymodifier")
-    protected static LaneType<String> noTrafficLaneType = new LaneType<>("NOTRAFFIC");
+    protected static LaneType noTrafficLaneType = new LaneType("NOTRAFFIC");
 
     /** the simulator for creating the animation. Null if no animation needed. */
     @SuppressWarnings("visibilitymodifier")

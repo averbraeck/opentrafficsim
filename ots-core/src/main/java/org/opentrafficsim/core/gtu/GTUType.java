@@ -16,58 +16,55 @@ import java.util.Map;
  *          initial version Dec 31, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <ID> the ID-type of the GTU, e.g. String or a certain Enum type.
  */
-public final class GTUType<ID> implements Serializable
+public final class GTUType implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141231L;
 
     /** The id of the GTUType to make it identifiable. */
-    private final ID id;
+    private final String id;
 
     /** ALL GTUType to be used only for permeability and accessibility. */
-    public static final GTUType<String> ALL = new GTUType<String>("ALL");
+    public static final GTUType ALL = new GTUType("ALL");
 
     /** NONE GTUType to be used only for permeability and accessibility. */
-    public static final GTUType<String> NONE = new GTUType<String>("NONE");
+    public static final GTUType NONE = new GTUType("NONE");
 
     /**
      * @param id The id of the GTUType to make it identifiable.
      */
-    private GTUType(final ID id)
+    private GTUType(final String id)
     {
         this.id = id;
     }
 
     /** The set of previously instantiated GTUTypes. */
-    private static final Map<Object, GTUType<?>> INSTANTIATEDGTUTYPES = new LinkedHashMap<Object, GTUType<?>>();
+    private static final Map<Object, GTUType> INSTANTIATEDGTUTYPES = new LinkedHashMap<Object, GTUType>();
 
     /**
      * Construct a new GTUType or (if it already exists) return an existing GTUType.
-     * @param id ID; the id of the GTUType
-     * @param <ID> the ID-type of the GTU, e.g. String or a certain Enum type.
+     * @param id String; the id of the GTUType
      * @return GTUType&lt;ID&gt;
      */
-    @SuppressWarnings("unchecked")
-    public static <ID> GTUType<ID> makeGTUType(final ID id)
+    public static GTUType makeGTUType(final String id)
     {
         synchronized (INSTANTIATEDGTUTYPES)
         {
-            GTUType<?> result = INSTANTIATEDGTUTYPES.get(id);
+            GTUType result = INSTANTIATEDGTUTYPES.get(id);
             if (null == result)
             {
-                result = new GTUType<ID>(id);
+                result = new GTUType(id);
                 INSTANTIATEDGTUTYPES.put(id, result);
             }
-            return (GTUType<ID>) result;
+            return result;
         }
     }
 
     /**
      * @return id.
      */
-    public ID getId()
+    public String getId()
     {
         return this.id;
     }

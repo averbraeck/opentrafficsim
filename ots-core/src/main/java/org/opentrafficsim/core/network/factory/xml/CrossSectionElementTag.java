@@ -56,7 +56,7 @@ class CrossSectionElementTag
 
     /** lane type in case elementType is a LANE. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    LaneType<String> laneType = XmlNetworkLaneParser.noTrafficLaneType;
+    LaneType laneType = XmlNetworkLaneParser.noTrafficLaneType;
 
     /** stripe type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

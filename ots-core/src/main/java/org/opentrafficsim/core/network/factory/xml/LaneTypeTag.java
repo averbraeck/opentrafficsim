@@ -45,7 +45,7 @@ class LaneTypeTag
             if (parser.laneTypes.keySet().contains(laneTypeTag.name))
                 throw new SAXException("LANETYPE: NAME " + laneTypeTag.name + " defined twice");
 
-            LaneType<String> laneType = new LaneType<String>(laneTypeTag.name);
+            LaneType laneType = new LaneType(laneTypeTag.name);
             parser.laneTypes.put(laneTypeTag.name, laneType);
         }
     }

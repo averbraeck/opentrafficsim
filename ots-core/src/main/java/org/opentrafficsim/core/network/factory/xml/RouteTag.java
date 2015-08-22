@@ -32,7 +32,7 @@ class RouteTag
 
     /** route that has been generated. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Route<String, String> route;
+    Route route;
 
     /**
      * Parse the ROUTE tag.
@@ -71,7 +71,7 @@ class RouteTag
      */
     void makeRoute() throws NetworkException
     {
-        this.route = new Route<String, String>(this.name);
+        this.route = new Route(this.name);
         for (NodeTag nodeTag : this.routeNodeTags)
         {
             this.route.addNode(nodeTag.node);

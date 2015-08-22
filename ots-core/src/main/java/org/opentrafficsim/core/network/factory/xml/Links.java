@@ -370,8 +370,8 @@ final class Links
             }
         }
         OTSLine3D designLine = new OTSLine3D(coordinates);
-        CrossSectionLink<String, String> link =
-            new CrossSectionLink<>(linkTag.name, linkTag.nodeStartTag.node, linkTag.nodeEndTag.node, designLine);
+        CrossSectionLink link =
+            new CrossSectionLink(linkTag.name, linkTag.nodeStartTag.node, linkTag.nodeEndTag.node, designLine);
         linkTag.link = link;
     }
 
@@ -392,9 +392,9 @@ final class Links
         final OTSDEVSSimulatorInterface simulator) throws NetworkException, RemoteException, NamingException, SAXException,
         GTUException, OTSGeometryException, SimRuntimeException
     {
-        CrossSectionLink<String, String> csl = linkTag.link;
-        List<CrossSectionElement<String, String>> cseList = new ArrayList<>();
-        List<Lane<String, String>> lanes = new ArrayList<>();
+        CrossSectionLink csl = linkTag.link;
+        List<CrossSectionElement> cseList = new ArrayList<>();
+        List<Lane> lanes = new ArrayList<>();
         for (CrossSectionElementTag cseTag : linkTag.roadTypeTag.cseTags.values())
         {
             switch (cseTag.elementType)
@@ -404,7 +404,7 @@ final class Links
                     {
                         case BLOCKED:
                         case DASHED:
-                            Stripe<String, String> dashedLine = new Stripe<>(csl, cseTag.offset, cseTag.width);
+                            Stripe dashedLine = new Stripe(csl, cseTag.offset, cseTag.width);
                             dashedLine.addPermeability(GTUType.ALL, Permeable.BOTH);
                             if (simulator != null)
                             {
@@ -414,7 +414,7 @@ final class Links
                             break;
 
                         case DOUBLE:
-                            Stripe<String, String> doubleLine = new Stripe<>(csl, cseTag.offset, cseTag.width);
+                            Stripe doubleLine = new Stripe(csl, cseTag.offset, cseTag.width);
                             if (simulator != null)
                             {
                                 new StripeAnimation(doubleLine, simulator, StripeAnimation.TYPE.DOUBLE);
@@ -423,7 +423,7 @@ final class Links
                             break;
 
                         case LEFTONLY:
-                            Stripe<String, String> leftOnlyLine = new Stripe<>(csl, cseTag.offset, cseTag.width);
+                            Stripe leftOnlyLine = new Stripe(csl, cseTag.offset, cseTag.width);
                             leftOnlyLine.addPermeability(GTUType.ALL, Permeable.LEFT); // TODO correct?
                             if (simulator != null)
                             {
@@ -433,7 +433,7 @@ final class Links
                             break;
 
                         case RIGHTONLY:
-                            Stripe<String, String> rightOnlyLine = new Stripe<>(csl, cseTag.offset, cseTag.width);
+                            Stripe rightOnlyLine = new Stripe(csl, cseTag.offset, cseTag.width);
                             rightOnlyLine.addPermeability(GTUType.ALL, Permeable.RIGHT); // TODO correct?
                             if (simulator != null)
                             {
@@ -443,7 +443,7 @@ final class Links
                             break;
 
                         case SOLID:
-                            Stripe<String, String> solidLine = new Stripe<>(csl, cseTag.offset, cseTag.width);
+                            Stripe solidLine = new Stripe(csl, cseTag.offset, cseTag.width);
                             if (simulator != null)
                             {
                                 new StripeAnimation(solidLine, simulator, StripeAnimation.TYPE.SOLID);
@@ -459,8 +459,8 @@ final class Links
                 case LANE:
                 {
                     // TODO LANEOVERRIDE
-                    Lane<String, String> lane =
-                        new Lane<>(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width, cseTag.laneType,
+                    Lane lane =
+                        new Lane(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width, cseTag.laneType,
                             cseTag.direction, new DoubleScalar.Abs<FrequencyUnit>(Double.MAX_VALUE, FrequencyUnit.PER_HOUR),
                             cseTag.speed);
                     cseList.add(lane);
@@ -566,8 +566,8 @@ final class Links
                 case NOTRAFFICLANE:
                 {
                     // TODO LANEOVERRIDE
-                    Lane<String, String> lane =
-                        new NoTrafficLane<>(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width);
+                    Lane lane =
+                        new NoTrafficLane(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width);
                     cseList.add(lane);
                     if (simulator != null)
                     {
@@ -579,7 +579,7 @@ final class Links
                 case SHOULDER:
                 {
                     // TODO Override
-                    Shoulder<String, String> shoulder = new Shoulder<>(csl, cseTag.offset, cseTag.width, cseTag.width);
+                    Shoulder shoulder = new Shoulder(csl, cseTag.offset, cseTag.width, cseTag.width);
                     cseList.add(shoulder);
                     if (simulator != null)
                     {

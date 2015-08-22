@@ -28,9 +28,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  *          initial version Jan 1, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <ID> The type of ID, e.g., String or Integer
  */
-public abstract class AbstractLaneBasedIndividualGTU<ID> extends AbstractLaneBasedGTU<ID>
+public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGTU
 {
     /** */
     private static final long serialVersionUID = 20140822L;
@@ -49,7 +48,7 @@ public abstract class AbstractLaneBasedIndividualGTU<ID> extends AbstractLaneBas
 
     /**
      * Construct a new AbstractLaneBasedIndividualGTU.
-     * @param id the id of the GTU, could be String or Integer
+     * @param id the id of the GTU
      * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
      * @param gtuFollowingModel the following model, including a reference to the simulator
      * @param laneChangeModel LaneChangeModel; the lane change model
@@ -66,9 +65,9 @@ public abstract class AbstractLaneBasedIndividualGTU<ID> extends AbstractLaneBas
      * @throws GTUException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractLaneBasedIndividualGTU(final ID id, final GTUType<?> gtuType, final GTUFollowingModel gtuFollowingModel,
+    public AbstractLaneBasedIndividualGTU(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
         final LaneChangeModel laneChangeModel,
-        final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+        final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
         final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
         final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
         final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator) throws RemoteException,

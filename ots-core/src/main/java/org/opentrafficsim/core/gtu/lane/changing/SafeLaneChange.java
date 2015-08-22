@@ -38,7 +38,7 @@ public final class SafeLaneChange
      * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit
      * @return Boolean; true if the resulting deceleration is safe; false if the resulting deceleration is unsafe
      */
-    public static boolean safe(final GTU<?> referenceGTU, final GTU<?> otherGTU,
+    public static boolean safe(final GTU referenceGTU, final GTU otherGTU,
         final DoubleScalar.Rel<AccelerationUnit> maximumDeceleration, final DoubleScalar.Abs<SpeedUnit> speedLimit)
     {
         /*-

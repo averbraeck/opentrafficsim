@@ -37,7 +37,7 @@ public interface GTUFollowingModel
      * @throws RemoteException in case of simulator reachability problems
      * @throws NetworkException on network inconsistency
      */
-    AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower, final DoubleScalar.Abs<SpeedUnit> leaderSpeed,
+    AccelerationStep computeAcceleration(final LaneBasedGTU follower, final DoubleScalar.Abs<SpeedUnit> leaderSpeed,
         final DoubleScalar.Rel<LengthUnit> headway, final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException,
         NetworkException;
 
@@ -77,7 +77,7 @@ public interface GTUFollowingModel
      * @throws RemoteException in case of simulator reachability problems
      * @throws NetworkException on network inconsistency
      */
-    DualAccelerationStep computeAcceleration(final LaneBasedGTU<?> referenceGTU, final Collection<HeadwayGTU> otherGTUs,
+    DualAccelerationStep computeAcceleration(final LaneBasedGTU referenceGTU, final Collection<HeadwayGTU> otherGTUs,
         final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException;
 
     /**
@@ -89,7 +89,7 @@ public interface GTUFollowingModel
      * @throws NetworkException on network inconsistency
      */
     AccelerationStep
-        computeAccelerationWithNoLeader(final LaneBasedGTU<?> gtu, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+        computeAccelerationWithNoLeader(final LaneBasedGTU gtu, final DoubleScalar.Abs<SpeedUnit> speedLimit)
             throws RemoteException, NetworkException;
 
     /**

@@ -23,7 +23,7 @@ public class CompleteRouteNavigator implements RouteNavigator, Serializable
 
     /** The complete route. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final CompleteRoute<?, ?> completeRoute;
+    protected final CompleteRoute completeRoute;
 
     /** last visited node on the route. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -33,14 +33,14 @@ public class CompleteRouteNavigator implements RouteNavigator, Serializable
      * Create a navigator.
      * @param completeRoute the route to follow
      */
-    public CompleteRouteNavigator(final CompleteRoute<?, ?> completeRoute)
+    public CompleteRouteNavigator(final CompleteRoute completeRoute)
     {
         this.completeRoute = completeRoute;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Node<?> lastVisitedNode() throws NetworkException
+    public final Node lastVisitedNode() throws NetworkException
     {
         if (this.lastVisitedNodeIndex == -1)
         {
@@ -51,7 +51,7 @@ public class CompleteRouteNavigator implements RouteNavigator, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final Node<?> nextNodeToVisit() throws NetworkException
+    public final Node nextNodeToVisit() throws NetworkException
     {
         if (this.lastVisitedNodeIndex >= this.completeRoute.size() - 1)
         {
@@ -62,7 +62,7 @@ public class CompleteRouteNavigator implements RouteNavigator, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final Node<?> visitNextNode() throws NetworkException
+    public final Node visitNextNode() throws NetworkException
     {
         if (this.lastVisitedNodeIndex >= this.completeRoute.size() - 1)
         {
@@ -75,7 +75,7 @@ public class CompleteRouteNavigator implements RouteNavigator, Serializable
     /**
      * @return the (complete) route.
      */
-    public final CompleteRoute<?, ?> getRoute()
+    public final CompleteRoute getRoute()
     {
         return this.completeRoute;
     }
@@ -95,7 +95,7 @@ public class CompleteRouteNavigator implements RouteNavigator, Serializable
         }
         for (int index = 0; index < this.completeRoute.size(); index++)
         {
-            Node<?> node = this.completeRoute.getNodes().get(index);
+            Node node = this.completeRoute.getNodes().get(index);
             result.append(separator + node);
             if (index == this.lastVisitedNodeIndex)
             {

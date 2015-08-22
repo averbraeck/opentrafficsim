@@ -22,7 +22,7 @@ public class GTUTypeTest
     @Test
     public void staticsTest()
     {
-        GTUType<String> t = GTUType.ALL;
+        GTUType t = GTUType.ALL;
         assertTrue("Id of ALL is \"ALL\"", "ALL".equals(t.getId()));
         t = GTUType.NONE;
         assertTrue("Id of NONE is \"NONE\"", "NONE".equals(t.getId()));
@@ -34,9 +34,9 @@ public class GTUTypeTest
     @Test
     public void constructorTest()
     {
-        GTUType<String> t = GTUType.makeGTUType("abc");
+        GTUType t = GTUType.makeGTUType("abc");
         assertTrue("Id is stored in the newly created GTUType", "abc".equals(t.getId()));
-        GTUType<String> t2 = GTUType.makeGTUType("pqr");
+        GTUType t2 = GTUType.makeGTUType("pqr");
         assertTrue("Id is stored in the newly created GTUType", "pqr".equals(t2.getId()));
         // prove that the two are really distinct (do not use the same storage for the type string
         assertTrue("Id is stored in the newly created GTUType", "abc".equals(t.getId()));

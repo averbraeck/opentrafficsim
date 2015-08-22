@@ -21,12 +21,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <NODEID> the NODEID type of the Node.
  */
-public interface Node<NODEID> extends LocatableInterface, Serializable
+public interface Node extends LocatableInterface, Serializable
 {
     /** @return node id. */
-    NODEID getId();
+    String getId();
 
     /** @return point. */
     OTSPoint3D getPoint();
@@ -41,17 +40,17 @@ public interface Node<NODEID> extends LocatableInterface, Serializable
      * Add an incoming link to this Node.
      * @param linkIn the link to add.
      */
-    void addLinkIn(Link<?, NODEID> linkIn);
+    void addLinkIn(Link linkIn);
 
     /**
      * Add an outgoing link to this Node.
      * @param linkOut the link to add.
      */
-    void addLinkOut(final Link<?, NODEID> linkOut);
+    void addLinkOut(final Link linkOut);
 
     /** @return linksIn. */
-    Set<Link<?, NODEID>> getLinksIn();
+    Set<Link> getLinksIn();
 
     /** @return linksOut. */
-    Set<Link<?, NODEID>> getLinksOut();
+    Set<Link> getLinksOut();
 }

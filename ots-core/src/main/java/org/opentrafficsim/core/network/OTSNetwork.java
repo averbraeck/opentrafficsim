@@ -18,39 +18,36 @@ import org.opentrafficsim.core.network.route.Route;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <NETWORKID> the ID type of the Network, e.g., String.
- * @param <NODEID> the ID type of the Node, e.g., String.
- * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public class OTSNetwork<NETWORKID, LINKID, NODEID> implements Network<LINKID, NODEID>, Serializable
+public class OTSNetwork implements Network, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150722;
 
     /** network id. */
-    private final NETWORKID id;
+    private final String id;
 
     /** Map of Nodes. */
-    private Map<NODEID, Node<NODEID>> nodeMap = new HashMap<>();
+    private Map<String, Node> nodeMap = new HashMap<>();
 
     /** Map of Links. */
-    private Map<LINKID, Link<LINKID, NODEID>> linkMap = new HashMap<>();
+    private Map<String, Link> linkMap = new HashMap<>();
 
     /** Map of Routes. */
-    private Map<String, Route<LINKID, NODEID>> routeMap = new HashMap<>();
+    private Map<String, Route> routeMap = new HashMap<>();
 
     /**
      * Construction of an empty network.
      * @param id the network id.
      */
-    public OTSNetwork(final NETWORKID id)
+    public OTSNetwork(final String id)
     {
         this.id = id;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void addNode(final Node<NODEID> node) throws NetworkException
+    public final void addNode(final Node node) throws NetworkException
     {
         if (containsNode(node))
         {
@@ -65,7 +62,7 @@ public class OTSNetwork<NETWORKID, LINKID, NODEID> implements Network<LINKID, NO
 
     /** {@inheritDoc} */
     @Override
-    public final void removeNode(final Node<NODEID> node) throws NetworkException
+    public final void removeNode(final Node node) throws NetworkException
     {
         if (!containsNode(node))
         {
@@ -76,28 +73,28 @@ public class OTSNetwork<NETWORKID, LINKID, NODEID> implements Network<LINKID, NO
 
     /** {@inheritDoc} */
     @Override
-    public final boolean containsNode(final Node<NODEID> node)
+    public final boolean containsNode(final Node node)
     {
         return this.nodeMap.keySet().contains(node.getId());
     }
 
     /** {@inheritDoc} */
     @Override
-    public final boolean containsNode(final NODEID nodeId)
+    public final boolean containsNode(final String nodeId)
     {
         return this.nodeMap.keySet().contains(nodeId);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Node<NODEID> getNode(final NODEID nodeId)
+    public final Node getNode(final String nodeId)
     {
         return this.nodeMap.get(nodeId);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void addLink(final Link<LINKID, NODEID> link) throws NetworkException
+    public final void addLink(final Link link) throws NetworkException
     {
         if (containsLink(link))
         {
@@ -117,7 +114,7 @@ public class OTSNetwork<NETWORKID, LINKID, NODEID> implements Network<LINKID, NO
 
     /** {@inheritDoc} */
     @Override
-    public final void removeLink(final Link<LINKID, NODEID> link) throws NetworkException
+    public final void removeLink(final Link link) throws NetworkException
     {
         if (!containsLink(link))
         {
@@ -128,9 +125,9 @@ public class OTSNetwork<NETWORKID, LINKID, NODEID> implements Network<LINKID, NO
 
     /** {@inheritDoc} */
     @Override
-    public final Link<LINKID, NODEID> getLink(final Node<NODEID> node1, final Node<NODEID> node2)
+    public final Link getLink(final Node node1, final Node node2)
     {
-        for (Link<LINKID, NODEID> link : this.linkMap.values())
+        for (Link link : this.linkMap.values())
         {
             if (link.getStartNode().equals(node1) && link.getEndNode().equals(node2))
             {
@@ -142,7 +139,7 @@ public class OTSNetwork<NETWORKID, LINKID, NODEID> implements Network<LINKID, NO
 
     /** {@inheritDoc} */
     @Override
-    public final Link<LINKID, NODEID> getLink(final NODEID nodeId1, final NODEID nodeId2) throws NetworkException
+    public final Link getLink(final String nodeId1, final String nodeId2) throws NetworkException
     {
         if (!containsNode(nodeId1))
         {
@@ -157,28 +154,28 @@ public class OTSNetwork<NETWORKID, LINKID, NODEID> implements Network<LINKID, NO
 
     /** {@inheritDoc} */
     @Override
-    public final boolean containsLink(final Link<LINKID, NODEID> link)
+    public final boolean containsLink(final Link link)
     {
         return this.linkMap.keySet().contains(link.getId());
     }
 
     /** {@inheritDoc} */
     @Override
-    public final boolean containsLink(final LINKID linkId)
+    public final boolean containsLink(final String linkId)
     {
         return this.linkMap.keySet().contains(linkId);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Link<LINKID, NODEID> getLink(final LINKID linkId)
+    public final Link getLink(final String linkId)
     {
         return this.linkMap.get(linkId);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void addRoute(final Route<LINKID, NODEID> route) throws NetworkException
+    public final void addRoute(final Route route) throws NetworkException
     {
         if (containsRoute(route))
         {
@@ -188,7 +185,7 @@ public class OTSNetwork<NETWORKID, LINKID, NODEID> implements Network<LINKID, NO
         {
             throw new NetworkException("Route with name " + route.getId() + " already registered in network " + this.id);
         }
-        for (Node<NODEID> node : route.getNodes())
+        for (Node node : route.getNodes())
         {
             if (!containsNode(node))
             {
@@ -201,7 +198,7 @@ public class OTSNetwork<NETWORKID, LINKID, NODEID> implements Network<LINKID, NO
 
     /** {@inheritDoc} */
     @Override
-    public final void removeRoute(final Route<LINKID, NODEID> route) throws NetworkException
+    public final void removeRoute(final Route route) throws NetworkException
     {
         if (!containsRoute(route))
         {
@@ -212,7 +209,7 @@ public class OTSNetwork<NETWORKID, LINKID, NODEID> implements Network<LINKID, NO
 
     /** {@inheritDoc} */
     @Override
-    public final boolean containsRoute(final Route<LINKID, NODEID> route)
+    public final boolean containsRoute(final Route route)
     {
         return this.routeMap.keySet().contains(route.getId());
     }
@@ -226,52 +223,52 @@ public class OTSNetwork<NETWORKID, LINKID, NODEID> implements Network<LINKID, NO
 
     /** {@inheritDoc} */
     @Override
-    public final Route<LINKID, NODEID> getRoute(final String routeId)
+    public final Route getRoute(final String routeId)
     {
         return this.routeMap.get(routeId);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Set<Route<LINKID, NODEID>> getRoutesBetween(final Node<NODEID> nodeFrom, final Node<NODEID> nodeTo)
+    public final Set<Route> getRoutesBetween(final Node nodeFrom, final Node nodeTo)
     {
         return null;
-        // FIXME getRoutesBetween(Node<NODEID> nodeFrom, Node<NODEID> nodeTo)
+        // FIXME getRoutesBetween(Node nodeFrom, Node nodeTo)
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Route<LINKID, NODEID> getShortestRouteBetween(final Node<NODEID> nodeFrom, final Node<NODEID> nodeTo)
+    public final Route getShortestRouteBetween(final Node nodeFrom, final Node nodeTo)
     {
         return null;
-        // FIXME getShortestRouteBetween(Node<NODEID> nodeFrom, Node<NODEID> nodeTo)
+        // FIXME getShortestRouteBetween(Node nodeFrom, Node nodeTo)
     }
 
     /**
      * @return id
      */
-    public final NETWORKID getId()
+    public final String getId()
     {
         return this.id;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Map<NODEID, Node<NODEID>> getNodeMap()
+    public final Map<String, Node> getNodeMap()
     {
         return this.nodeMap;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Map<LINKID, Link<LINKID, NODEID>> getLinkMap()
+    public final Map<String, Link> getLinkMap()
     {
         return this.linkMap;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Map<String, Route<LINKID, NODEID>> getRouteMap()
+    public final Map<String, Route> getRouteMap()
     {
         return this.routeMap;
     }

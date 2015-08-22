@@ -25,7 +25,7 @@ public interface GTUColorer
      * @return Color; the color for the GTU
      * @throws RemoteException on communications failure
      */
-    Color getColor(GTU<?> gtu) throws RemoteException;
+    Color getColor(GTU gtu) throws RemoteException;
 
     /**
      * Return a list of legend entries (useful to make a legend of the colors used to render the GTUs).

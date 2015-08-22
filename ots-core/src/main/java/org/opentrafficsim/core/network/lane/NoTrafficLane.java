@@ -16,10 +16,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * $LastChangedDate$, @version $Revision$, by $Author$,
  * initial version Feb 28, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <NODEID> the ID type of the Node, e.g., String.
- * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public class NoTrafficLane<LINKID, NODEID> extends Lane<LINKID, NODEID>
+public class NoTrafficLane extends Lane
 {
     /**
      * @param parentLink Cross Section Link to which the element belongs.
@@ -32,7 +30,7 @@ public class NoTrafficLane<LINKID, NODEID> extends Lane<LINKID, NODEID>
      * @throws OTSGeometryException when creation of the geometry fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public NoTrafficLane(final CrossSectionLink<LINKID, NODEID> parentLink,
+    public NoTrafficLane(final CrossSectionLink parentLink,
         final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd,
         final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth) throws OTSGeometryException
     {

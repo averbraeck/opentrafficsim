@@ -35,7 +35,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
-    public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
+    public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
         final Collection<HeadwayGTU> sameLaneGTUs, final Collection<HeadwayGTU> preferredLaneGTUs,
         final Collection<HeadwayGTU> nonPreferredLaneGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit,
         final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
@@ -44,16 +44,16 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
     {
         try
         {
-            Map<Lane<?, ?>, Rel<LengthUnit>> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
-            Lane<?, ?> lane = positions.keySet().iterator().next();
+            Map<Lane, Rel<LengthUnit>> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
+            Lane lane = positions.keySet().iterator().next();
             DoubleScalar.Rel<LengthUnit> longitudinalPosition = positions.get(lane);
             // TODO make this driving side dependent; i.e. implement a general way to figure out on which side of the
             // road cars are supposed to drive
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;
             final LateralDirectionality nonPreferred = LateralDirectionality.LEFT;
-            Lane<?, ?> nonPreferredLane =
+            Lane nonPreferredLane =
                 lane.bestAccessibleAdjacentLane(nonPreferred, longitudinalPosition, gtu.getGTUType());
-            Lane<?, ?> preferredLane = lane.bestAccessibleAdjacentLane(preferred, longitudinalPosition, gtu.getGTUType());
+            Lane preferredLane = lane.bestAccessibleAdjacentLane(preferred, longitudinalPosition, gtu.getGTUType());
             GTUFollowingModel gtuFollowingModel = gtu.getGTUFollowingModel();
             if (null == gtuFollowingModel)
             {

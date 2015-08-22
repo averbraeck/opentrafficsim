@@ -57,40 +57,40 @@ public class TestModel implements OTSModelInterface
 
         // create a small graph and a road around it.
 
-        OTSNode<String> n0 = new OTSNode<String>("N0", new OTSPoint3D(-25.0, 0.0));
-        OTSNode<String> n1 = new OTSNode<String>("N1", new OTSPoint3D(0.0, 0.0));
-        CrossSectionLink<String, String> l01 =
-            new CrossSectionLink<String, String>("L01", n0, n1, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(-25.0, 0.0),
+        OTSNode n0 = new OTSNode("N0", new OTSPoint3D(-25.0, 0.0));
+        OTSNode n1 = new OTSNode("N1", new OTSPoint3D(0.0, 0.0));
+        CrossSectionLink l01 =
+            new CrossSectionLink("L01", n0, n1, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(-25.0, 0.0),
                 new OTSPoint3D(0.0, 0.0)}));
 
-        OTSNode<String> n2 = new OTSNode<String>("N2", new OTSPoint3D(25.0, 20.0));
-        CrossSectionLink<String, String> l12 =
-            new CrossSectionLink<String, String>("L12", n1, n2, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(0.0, 0.0),
+        OTSNode n2 = new OTSNode("N2", new OTSPoint3D(25.0, 20.0));
+        CrossSectionLink l12 =
+            new CrossSectionLink("L12", n1, n2, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(0.0, 0.0),
                 new OTSPoint3D(25.0, 20.0)}));
 
-        OTSNode<String> n3 = new OTSNode<String>("N3", new OTSPoint3D(50.0, 0.0));
-        CrossSectionLink<String, String> l23 =
-            new CrossSectionLink<String, String>("L23", n2, n3, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(25.0, 20.0),
+        OTSNode n3 = new OTSNode("N3", new OTSPoint3D(50.0, 0.0));
+        CrossSectionLink l23 =
+            new CrossSectionLink("L23", n2, n3, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(25.0, 20.0),
                 new OTSPoint3D(50.0, 0.0)}));
 
-        OTSNode<String> n4 = new OTSNode<String>("N4", new OTSPoint3D(75.0, -20.0));
-        CrossSectionLink<String, String> l34 =
-            new CrossSectionLink<String, String>("L34", n3, n4, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(50.0, 0.0),
+        OTSNode n4 = new OTSNode("N4", new OTSPoint3D(75.0, -20.0));
+        CrossSectionLink l34 =
+            new CrossSectionLink("L34", n3, n4, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(50.0, 0.0),
                 new OTSPoint3D(75.0, -20.0)}));
 
-        OTSNode<String> n5 = new OTSNode<String>("N5", new OTSPoint3D(100.0, 0.0));
-        CrossSectionLink<String, String> l45 =
-            new CrossSectionLink<String, String>("L45", n4, n5, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(75.0, -20.0),
+        OTSNode n5 = new OTSNode("N5", new OTSPoint3D(100.0, 0.0));
+        CrossSectionLink l45 =
+            new CrossSectionLink("L45", n4, n5, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(75.0, -20.0),
                 new OTSPoint3D(100.0, 0.0)}));
 
-        OTSNode<String> n6 = new OTSNode<String>("N6", new OTSPoint3D(125.0, 0.0));
-        CrossSectionLink<String, String> l56 =
-            new CrossSectionLink<String, String>("L56", n5, n6, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(100.0, 0.0),
+        OTSNode n6 = new OTSNode("N6", new OTSPoint3D(125.0, 0.0));
+        CrossSectionLink l56 =
+            new CrossSectionLink("L56", n5, n6, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(100.0, 0.0),
                 new OTSPoint3D(125.0, 0.0)}));
 
-        OTSNode<String> n7 = new OTSNode<String>("N7", new OTSPoint3D(300.0, 0.0));
-        CrossSectionLink<String, String> l67 =
-            new CrossSectionLink<String, String>("L67", n6, n7, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(125.0, 0.0),
+        OTSNode n7 = new OTSNode("N7", new OTSPoint3D(300.0, 0.0));
+        CrossSectionLink l67 =
+            new CrossSectionLink("L67", n6, n7, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(125.0, 0.0),
                 new OTSPoint3D(150.0, 0.0), new OTSPoint3D(175.0, 20.0), new OTSPoint3D(200.0, 0.0),
                 new OTSPoint3D(225.0, -20.0), new OTSPoint3D(250.0, 0.0), new OTSPoint3D(300.0, 0.0)}));
 
@@ -115,7 +115,7 @@ public class TestModel implements OTSModelInterface
      * 
      * <pre>
      * ----------------------- +9.50
-     * SSSSS Shoulder<String, String> SL SSSSS +9.00 (width = 1.0)
+     * SSSSS Shoulder SL SSSSS +9.00 (width = 1.0)
      * ----------------------- +8.50
      * EEEEE Emergency ELL EEE +8.25 (width = 0.5)
      * ----------------------- +8.00
@@ -125,7 +125,7 @@ public class TestModel implements OTSModelInterface
      * ----------------------- +1.00
      * EEEEE Emergency ELM EEE +0.75 (width = 0.5)
      * ----------------------- +0.50
-     * SSSSS Shoulder<String, String> SM SSSSS +0.00 (width = 1.0)
+     * SSSSS Shoulder SM SSSSS +0.00 (width = 1.0)
      * ----------------------- -0.50
      * EEEEE Emergency ERM EEE -0.75 (width = 0.5)
      * ----------------------- -1.00
@@ -135,7 +135,7 @@ public class TestModel implements OTSModelInterface
      * ----------------------- -8.00
      * EEEEE Emergency ERR EEE -8.25 (width = 0.5)
      * ----------------------- -8.50
-     * SSSSS Shoulder<String, String> SR SSSSS -9.00 (width = 1.0)
+     * SSSSS Shoulder SR SSSSS -9.00 (width = 1.0)
      * ----------------------- -9.50
      * </pre>
      *
@@ -144,7 +144,7 @@ public class TestModel implements OTSModelInterface
      * @throws NetworkException on network inconsistency
      * @throws OTSGeometryException on network inconsistency
      */
-    private void add2x2Lanes(final CrossSectionLink<String, String> link) throws NetworkException, OTSGeometryException
+    private void add2x2Lanes(final CrossSectionLink link) throws NetworkException, OTSGeometryException
     {
         // four lanes, grass underneath, lines between lane1-2 and lane 2-3, barrier between lane 2-3
         // lane is 3.5 meters wide. gap between 3-4 is one meter. outside 0.5 meters on both sides
@@ -155,48 +155,37 @@ public class TestModel implements OTSModelInterface
         DoubleScalar.Abs<FrequencyUnit> f200 = new DoubleScalar.Abs<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
-        Shoulder<String, String> sL =
-            new Shoulder<String, String>(link, new DoubleScalar.Rel<LengthUnit>(9.0, LengthUnit.METER), m10, m10);
+        Shoulder sL = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(9.0, LengthUnit.METER), m10, m10);
 
-        Lane<String, String> laneELL =
-            new Lane<String, String>(link, new DoubleScalar.Rel<LengthUnit>(8.25, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(8.25, LengthUnit.METER), m05, m05, null, LongitudinalDirectionality.NONE,
-                f0, speedLimit);
-        Lane<String, String> laneL1 =
-            new Lane<String, String>(link, new DoubleScalar.Rel<LengthUnit>(6.25, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(6.25, LengthUnit.METER), m35, m35, null,
-                LongitudinalDirectionality.BACKWARD, f200, speedLimit);
-        Lane<String, String> laneL2 =
-            new Lane<String, String>(link, new DoubleScalar.Rel<LengthUnit>(2.75, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(2.75, LengthUnit.METER), m35, m35, null,
-                LongitudinalDirectionality.BACKWARD, f200, speedLimit);
-        Lane<String, String> laneELM =
-            new Lane<String, String>(link, new DoubleScalar.Rel<LengthUnit>(0.75, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(0.75, LengthUnit.METER), m05, m05, null, LongitudinalDirectionality.NONE,
-                f0, speedLimit);
+        Lane laneELL =
+            new Lane(link, new DoubleScalar.Rel<LengthUnit>(8.25, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(8.25,
+                LengthUnit.METER), m05, m05, null, LongitudinalDirectionality.NONE, f0, speedLimit);
+        Lane laneL1 =
+            new Lane(link, new DoubleScalar.Rel<LengthUnit>(6.25, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(6.25,
+                LengthUnit.METER), m35, m35, null, LongitudinalDirectionality.BACKWARD, f200, speedLimit);
+        Lane laneL2 =
+            new Lane(link, new DoubleScalar.Rel<LengthUnit>(2.75, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(2.75,
+                LengthUnit.METER), m35, m35, null, LongitudinalDirectionality.BACKWARD, f200, speedLimit);
+        Lane laneELM =
+            new Lane(link, new DoubleScalar.Rel<LengthUnit>(0.75, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.75,
+                LengthUnit.METER), m05, m05, null, LongitudinalDirectionality.NONE, f0, speedLimit);
 
-        Shoulder<String, String> sM =
-            new Shoulder<String, String>(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
+        Shoulder sM = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
 
-        Lane<String, String> laneERM =
-            new Lane<String, String>(link, new DoubleScalar.Rel<LengthUnit>(-0.75, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(-0.75, LengthUnit.METER), m05, m05, null, LongitudinalDirectionality.NONE,
-                f0, speedLimit);
-        Lane<String, String> laneR2 =
-            new Lane<String, String>(link, new DoubleScalar.Rel<LengthUnit>(-2.75, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(-2.75, LengthUnit.METER), m35, m35, null,
-                LongitudinalDirectionality.FORWARD, f200, speedLimit);
-        Lane<String, String> laneR1 =
-            new Lane<String, String>(link, new DoubleScalar.Rel<LengthUnit>(-6.25, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(-6.25, LengthUnit.METER), m35, m35, null,
-                LongitudinalDirectionality.FORWARD, f200, speedLimit);
-        Lane<String, String> laneERR =
-            new Lane<String, String>(link, new DoubleScalar.Rel<LengthUnit>(-8.25, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(-8.25, LengthUnit.METER), m05, m05, null, LongitudinalDirectionality.NONE,
-                f0, speedLimit);
+        Lane laneERM =
+            new Lane(link, new DoubleScalar.Rel<LengthUnit>(-0.75, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
+                -0.75, LengthUnit.METER), m05, m05, null, LongitudinalDirectionality.NONE, f0, speedLimit);
+        Lane laneR2 =
+            new Lane(link, new DoubleScalar.Rel<LengthUnit>(-2.75, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
+                -2.75, LengthUnit.METER), m35, m35, null, LongitudinalDirectionality.FORWARD, f200, speedLimit);
+        Lane laneR1 =
+            new Lane(link, new DoubleScalar.Rel<LengthUnit>(-6.25, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
+                -6.25, LengthUnit.METER), m35, m35, null, LongitudinalDirectionality.FORWARD, f200, speedLimit);
+        Lane laneERR =
+            new Lane(link, new DoubleScalar.Rel<LengthUnit>(-8.25, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
+                -8.25, LengthUnit.METER), m05, m05, null, LongitudinalDirectionality.NONE, f0, speedLimit);
 
-        Shoulder<String, String> sR =
-            new Shoulder<String, String>(link, new DoubleScalar.Rel<LengthUnit>(-9.0, LengthUnit.METER), m10, m10);
+        Shoulder sR = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(-9.0, LengthUnit.METER), m10, m10);
 
         try
         {

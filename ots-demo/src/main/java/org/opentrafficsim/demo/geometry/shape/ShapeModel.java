@@ -35,7 +35,7 @@ public class ShapeModel implements OTSModelInterface
     private OTSDEVSSimulatorInterface simulator;
 
     /** nodes from shape file. */
-    private Map<String, OTSNode<String>> nodes;
+    private Map<String, OTSNode> nodes;
 
     /** links from shape file. */
     private Map<String, Link> shpLinks;

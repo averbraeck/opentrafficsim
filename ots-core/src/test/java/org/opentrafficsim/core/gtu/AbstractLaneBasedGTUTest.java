@@ -65,10 +65,10 @@ public class AbstractLaneBasedGTUTest
         // This initialization code should probably be moved to a helper method that will be used in several tests.
         // First we need a set of Lanes
         // To create Lanes we need Nodes and a LaneType
-        OTSNode<String> nodeAFrom = new OTSNode<String>("AFrom", new OTSPoint3D(0, 0, 0));
-        OTSNode<String> nodeATo = new OTSNode<String>("ATo", new OTSPoint3D(1000, 0, 0));
-        GTUType<String> gtuType = GTUType.makeGTUType("Car");
-        LaneType<String> laneType = new LaneType<String>("CarLane");
+        OTSNode nodeAFrom = new OTSNode("AFrom", new OTSPoint3D(0, 0, 0));
+        OTSNode nodeATo = new OTSNode("ATo", new OTSPoint3D(1000, 0, 0));
+        GTUType gtuType = GTUType.makeGTUType("Car");
+        LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(gtuType);
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForTemplateGTUTest();
@@ -76,17 +76,17 @@ public class AbstractLaneBasedGTUTest
             new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
                 TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
 
-        Lane<String, String>[] lanesGroupA =
+        Lane[] lanesGroupA =
             LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(100,
                 SpeedUnit.KM_PER_HOUR), simulator);
         // A GTU can exist on several lanes at once; create another lane group to test that
-        OTSNode<String> nodeBFrom = new OTSNode<String>("BFrom", new OTSPoint3D(10, 0, 0));
-        OTSNode<String> nodeBTo = new OTSNode<String>("BTo", new OTSPoint3D(1000, 100, 0));
-        Lane<String, String>[] lanesGroupB =
+        OTSNode nodeBFrom = new OTSNode("BFrom", new OTSPoint3D(10, 0, 0));
+        OTSNode nodeBTo = new OTSNode("BTo", new OTSPoint3D(1000, 100, 0));
+        Lane[] lanesGroupB =
             LaneFactory.makeMultiLane("B", nodeBFrom, nodeBTo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(100,
                 SpeedUnit.KM_PER_HOUR), simulator);
-        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
-            new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
+            new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
 
         DoubleScalar.Rel<LengthUnit> positionA = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);
         initialLongitudinalPositions.put(lanesGroupA[1], positionA);
@@ -111,15 +111,15 @@ public class AbstractLaneBasedGTUTest
         // ID of the Car
         String carID = "theCar";
         // List of Nodes visited by the Car
-        List<Node<?>> nodeList = new ArrayList<Node<?>>();
+        List<Node> nodeList = new ArrayList<Node>();
         nodeList.add(nodeAFrom);
         nodeList.add(nodeATo);
         // Route of the Car
         @SuppressWarnings({"unchecked", "rawtypes"})
-        CompleteRoute<?, ?> route = new CompleteRoute("Route", nodeList);
+        CompleteRoute route = new CompleteRoute("Route", nodeList);
         // Now we can make a GTU
-        LaneBasedIndividualCar<String> car =
-            new LaneBasedIndividualCar<String>(carID, gtuType, gfm, laneChangeModel, initialLongitudinalPositions,
+        LaneBasedIndividualCar car =
+            new LaneBasedIndividualCar(carID, gtuType, gfm, laneChangeModel, initialLongitudinalPositions,
                 initialSpeed, carLength, carWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(route), simulator);
         // Now we can verify the various fields in the newly created Car
         assertEquals("ID of the car should be identical to the provided one", carID, car.getId());
@@ -145,11 +145,11 @@ public class AbstractLaneBasedGTUTest
         {
             // Ignore
         }
-        for (Lane<String, String>[] laneGroup : new Lane[][]{lanesGroupA, lanesGroupB})
+        for (Lane[] laneGroup : new Lane[][]{lanesGroupA, lanesGroupB})
         {
             for (int laneIndex = 0; laneIndex < laneGroup.length; laneIndex++)
             {
-                Lane<String, String> lane = laneGroup[laneIndex];
+                Lane lane = laneGroup[laneIndex];
                 boolean expectException = 1 != laneIndex;
                 for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
                 {
@@ -232,7 +232,7 @@ public class AbstractLaneBasedGTUTest
             assertEquals("lateral velocity is 0", 0, car.getLateralVelocity().getSI(), 0.00001);
             for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
             {
-                Map<Lane<?, ?>, Double> positions = car.fractionalPositions(relativePosition);
+                Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
                 assertEquals("Car should be in two lanes", 2, positions.size());
                 Double pos = positions.get(lanesGroupA[1]);
                 // System.out.println("Fractional positions: " + positions);
@@ -244,11 +244,11 @@ public class AbstractLaneBasedGTUTest
                 assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos, car
                     .fractionalPosition(lanesGroupB[1], relativePosition), 0.0000001);
             }
-            for (Lane<String, String>[] laneGroup : new Lane[][]{lanesGroupA, lanesGroupB})
+            for (Lane[] laneGroup : new Lane[][]{lanesGroupA, lanesGroupB})
             {
                 for (int laneIndex = 0; laneIndex < laneGroup.length; laneIndex++)
                 {
-                    Lane<String, String> lane = laneGroup[laneIndex];
+                    Lane lane = laneGroup[laneIndex];
                     boolean expectException = 1 != laneIndex;
                     for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
                     {
@@ -344,15 +344,15 @@ public class AbstractLaneBasedGTUTest
             }
         }
         // A GTU can exist on several lanes at once; create another lane group to test that
-        OTSNode<String> nodeCFrom = new OTSNode<String>("CFrom", new OTSPoint3D(10, 100, 0));
-        OTSNode<String> nodeCTo = new OTSNode<String>("CTo", new OTSPoint3D(1000, 0, 0));
-        Lane<String, String>[] lanesGroupC =
+        OTSNode nodeCFrom = new OTSNode("CFrom", new OTSPoint3D(10, 100, 0));
+        OTSNode nodeCTo = new OTSNode("CTo", new OTSPoint3D(1000, 0, 0));
+        Lane[] lanesGroupC =
             LaneFactory.makeMultiLane("C", nodeCFrom, nodeCTo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(100,
                 SpeedUnit.KM_PER_HOUR), simulator);
         car.enterLane(lanesGroupC[0], new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.SI));
         for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
         {
-            Map<Lane<?, ?>, Double> positions = car.fractionalPositions(relativePosition);
+            Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
             assertEquals("Car should be in three lanes", 3, positions.size());
             Double pos = positions.get(lanesGroupA[1]);
             assertTrue("Car should be in lane 1 of lane group A", null != pos);
@@ -373,7 +373,7 @@ public class AbstractLaneBasedGTUTest
         car.leaveLane(lanesGroupA[1]);
         for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
         {
-            Map<Lane<?, ?>, Double> positions = car.fractionalPositions(relativePosition);
+            Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
             assertEquals("Car should be in two lanes", 2, positions.size());
             Double pos = positions.get(lanesGroupB[1]);
             assertTrue("Car should be in lane 1 of lane group B", null != pos);

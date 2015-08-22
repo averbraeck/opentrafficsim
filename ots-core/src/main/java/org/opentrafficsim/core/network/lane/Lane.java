@@ -36,13 +36,11 @@ import org.opentrafficsim.graphs.LaneBasedGTUSampler;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <NODEID> the ID type of the Node, e.g., String.
- * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
+public class Lane extends CrossSectionElement
 {
     /** type of lane to deduce compatibility with GTU types. */
-    private final LaneType<?> laneType;
+    private final LaneType laneType;
 
     /** in direction of geometry, reverse, or both. */
     private final LongitudinalDirectionality directionality;
@@ -57,23 +55,23 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
     private final SortedMap<Double, List<Sensor>> sensors = new TreeMap<>();
 
     /** GTUs ordered by increasing longitudinal position. */
-    private final List<LaneBasedGTU<?>> gtuList = new ArrayList<LaneBasedGTU<?>>();
+    private final List<LaneBasedGTU> gtuList = new ArrayList<LaneBasedGTU>();
 
     /** Adjacent left lanes that some GTU types can change onto. */
-    private Set<Lane<LINKID, NODEID>> leftNeighbors = new LinkedHashSet<Lane<LINKID, NODEID>>(1);
+    private Set<Lane> leftNeighbors = new LinkedHashSet<Lane>(1);
 
     /** Adjacent right lanes that some GTU types can change onto. */
-    private Set<Lane<LINKID, NODEID>> rightNeighbors = new LinkedHashSet<Lane<LINKID, NODEID>>(1);
+    private Set<Lane> rightNeighbors = new LinkedHashSet<Lane>(1);
 
     /**
      * Next lane(s) following this lane. Initially null so we can calculate and cache the first time the method is called.
      */
-    private Set<Lane<LINKID, NODEID>> nextLanes = null;
+    private Set<Lane> nextLanes = null;
 
     /**
      * Next lane(s) following this lane. Initially null so we can calculate and cache the first time the method is called.
      */
-    private Set<Lane<LINKID, NODEID>> prevLanes = null;
+    private Set<Lane> prevLanes = null;
 
     // TODO write interface for samplers
     /** List of graphs that want to sample GTUs on this Lane. */
@@ -94,9 +92,9 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public Lane(final CrossSectionLink<LINKID, NODEID> parentLink, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart,
+    public Lane(final CrossSectionLink parentLink, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart,
         final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd, final DoubleScalar.Rel<LengthUnit> beginWidth,
-        final DoubleScalar.Rel<LengthUnit> endWidth, final LaneType<?> laneType,
+        final DoubleScalar.Rel<LengthUnit> endWidth, final LaneType laneType,
         final LongitudinalDirectionality directionality, final DoubleScalar.Abs<FrequencyUnit> capacity,
         final DoubleScalar.Abs<SpeedUnit> speedLimit) throws OTSGeometryException
     {
@@ -113,7 +111,7 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * @param direction LateralDirectionality; either LEFT or RIGHT
      * @return Set&lt;Lane&gt;; the indicated set of neighboring Lanes
      */
-    private Set<Lane<LINKID, NODEID>> neighbors(final LateralDirectionality direction)
+    private Set<Lane> neighbors(final LateralDirectionality direction)
     {
         return direction == LateralDirectionality.LEFT ? this.leftNeighbors : this.rightNeighbors;
     }
@@ -123,7 +121,7 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * @param adjacentLane Lane; the adjacent Lane
      * @param direction LateralDirectionality; the direction in which the Lane is adjacent to this Lane
      */
-    public final void addAccessibleAdjacentLane(final Lane<LINKID, NODEID> adjacentLane,
+    public final void addAccessibleAdjacentLane(final Lane adjacentLane,
         final LateralDirectionality direction)
     {
         neighbors(direction).add(adjacentLane);
@@ -136,10 +134,10 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * @param direction LateralDirectionality; the direction in which the Lane was adjacent to this Lane
      * @throws NetworkException when the adjacentLane was not registered as adjacent in the indicated direction
      */
-    public final void removeAccessibleAdjacentLane(final Lane<LINKID, NODEID> adjacentLane,
+    public final void removeAccessibleAdjacentLane(final Lane adjacentLane,
         final LateralDirectionality direction) throws NetworkException
     {
-        Set<Lane<LINKID, NODEID>> neighbors = neighbors(direction);
+        Set<Lane> neighbors = neighbors(direction);
         if (!neighbors.contains(adjacentLane))
         {
             throw new NetworkException("Lane " + adjacentLane + " is not among the " + direction + " neighbors of this Lane");
@@ -223,7 +221,7 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * @throws SimRuntimeException when method cannot be scheduled.
      */
     public final void
-        scheduleTriggers(final LaneBasedGTU<?> gtu, final double referenceStartSI, final double referenceMoveSI)
+        scheduleTriggers(final LaneBasedGTU gtu, final double referenceStartSI, final double referenceMoveSI)
             throws RemoteException, NetworkException, SimRuntimeException
     {
         if (toString().contains("endLink"))
@@ -330,14 +328,14 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * @throws NetworkException when the fractionalPosition is outside the range 0..1, or the GTU is already registered on this
      *             Lane
      */
-    public final int addGTU(final LaneBasedGTU<?> gtu, final double fractionalPosition) throws RemoteException,
+    public final int addGTU(final LaneBasedGTU gtu, final double fractionalPosition) throws RemoteException,
         NetworkException
     {
         // figure out the rank for the new GTU
         int index;
         for (index = 0; index < this.gtuList.size(); index++)
         {
-            LaneBasedGTU<?> otherGTU = this.gtuList.get(index);
+            LaneBasedGTU otherGTU = this.gtuList.get(index);
             if (gtu == otherGTU)
             {
                 System.err.println("GTU " + gtu + " already registered on Lane " + this + " [registered lanes: "
@@ -380,7 +378,7 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * @throws RemoteException on communication failure
      * @throws NetworkException when longitudinalPosition is negative or exceeds the length of this Lane
      */
-    public final int addGTU(final LaneBasedGTU<?> gtu, final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
+    public final int addGTU(final LaneBasedGTU gtu, final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
         throws RemoteException, NetworkException
     {
         return addGTU(gtu, longitudinalPosition.getSI() / getLength().getSI());
@@ -390,7 +388,7 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * Remove a GTU from the GTU list of this lane.
      * @param gtu the GTU to remove.
      */
-    public final void removeGTU(final LaneBasedGTU<?> gtu)
+    public final void removeGTU(final LaneBasedGTU gtu)
     {
         this.gtuList.remove(gtu);
     }
@@ -403,11 +401,11 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * @throws NetworkException when there is a problem with the position of the GTUs on the lane.
      * @throws RemoteException on communications failure
      */
-    public final LaneBasedGTU<?> getGtuAfter(final DoubleScalar.Rel<LengthUnit> position,
+    public final LaneBasedGTU getGtuAfter(final DoubleScalar.Rel<LengthUnit> position,
         final RelativePosition.TYPE relativePosition, final DoubleScalar.Abs<TimeUnit> when) throws NetworkException,
         RemoteException
     {
-        for (LaneBasedGTU<?> gtu : this.gtuList)
+        for (LaneBasedGTU gtu : this.gtuList)
         {
             if (relativePosition.equals(RelativePosition.FRONT))
             {
@@ -439,13 +437,13 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * @throws NetworkException when there is a problem with the position of the GTUs on the lane.
      * @throws RemoteException on communications failure
      */
-    public final LaneBasedGTU<?> getGtuBefore(final DoubleScalar.Rel<LengthUnit> position,
+    public final LaneBasedGTU getGtuBefore(final DoubleScalar.Rel<LengthUnit> position,
         final RelativePosition.TYPE relativePosition, final DoubleScalar.Abs<TimeUnit> when) throws NetworkException,
         RemoteException
     {
         for (int i = this.gtuList.size() - 1; i >= 0; i--)
         {
-            LaneBasedGTU<?> gtu = this.gtuList.get(i);
+            LaneBasedGTU gtu = this.gtuList.get(i);
             if (relativePosition.equals(RelativePosition.FRONT))
             {
                 if (gtu.position(this, gtu.getFront(), when).getSI() < position.getSI())
@@ -475,8 +473,8 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * @param margin DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum accepted alignment error
      * @return boolean; true if the two cross section elements are well enough aligned to be connected
      */
-    private boolean laterallyCloseEnough(final CrossSectionElement<LINKID, NODEID> incomingCSE,
-        final CrossSectionElement<LINKID, NODEID> outgoingCSE, final DoubleScalar.Rel<LengthUnit> margin)
+    private boolean laterallyCloseEnough(final CrossSectionElement incomingCSE,
+        final CrossSectionElement outgoingCSE, final DoubleScalar.Rel<LengthUnit> margin)
     {
         return Math.abs(DoubleScalar.minus(incomingCSE.getLateralCenterPosition(1), outgoingCSE.getLateralCenterPosition(0))
             .getSI()) <= margin.getSI();
@@ -499,22 +497,22 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * lateral position of this lane.
      * @return set of Lanes following this lane.
      */
-    public final Set<Lane<LINKID, NODEID>> nextLanes()
+    public final Set<Lane> nextLanes()
     {
         if (this.nextLanes == null)
         {
             // Construct (and cache) the result.
-            this.nextLanes = new LinkedHashSet<Lane<LINKID, NODEID>>(1);
-            for (Link<?, NODEID> link : getParentLink().getEndNode().getLinksOut())
+            this.nextLanes = new LinkedHashSet<Lane>(1);
+            for (Link link : getParentLink().getEndNode().getLinksOut())
             {
-                if (link instanceof CrossSectionLink<?, ?>)
+                if (link instanceof CrossSectionLink)
                 {
-                    for (CrossSectionElement<LINKID, NODEID> cse : ((CrossSectionLink<LINKID, NODEID>) link)
+                    for (CrossSectionElement cse : ((CrossSectionLink) link)
                         .getCrossSectionElementList())
                     {
                         if (cse instanceof Lane && laterallyCloseEnough(this, cse, LATERAL_MARGIN))
                         {
-                            this.nextLanes.add((Lane<LINKID, NODEID>) cse);
+                            this.nextLanes.add((Lane) cse);
                         }
                     }
                 }
@@ -532,22 +530,22 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * multiple lanes that match the lateral position of this lane.
      * @return set of Lanes preceding this lane.
      */
-    public final Set<Lane<LINKID, NODEID>> prevLanes()
+    public final Set<Lane> prevLanes()
     {
         if (this.prevLanes == null)
         {
             // Construct (and cache) the result.
-            this.prevLanes = new LinkedHashSet<Lane<LINKID, NODEID>>(1);
-            for (Link<?, NODEID> link : getParentLink().getStartNode().getLinksIn())
+            this.prevLanes = new LinkedHashSet<Lane>(1);
+            for (Link link : getParentLink().getStartNode().getLinksIn())
             {
-                if (link instanceof CrossSectionLink<?, ?>)
+                if (link instanceof CrossSectionLink)
                 {
-                    for (CrossSectionElement<LINKID, NODEID> cse : ((CrossSectionLink<LINKID, NODEID>) link)
+                    for (CrossSectionElement cse : ((CrossSectionLink) link)
                         .getCrossSectionElementList())
                     {
                         if (cse instanceof Lane && laterallyCloseEnough(cse, this, LATERAL_MARGIN))
                         {
-                            this.prevLanes.add((Lane<LINKID, NODEID>) cse);
+                            this.prevLanes.add((Lane) cse);
                         }
                     }
                 }
@@ -572,11 +570,11 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * @return the set of lanes that are accessible, or null if there is no lane that is accessible with a matching driving
      *         direction.
      */
-    public final Set<Lane<?, ?>> accessibleAdjacentLanes(final LateralDirectionality lateralDirection,
-        final GTUType<?> gtuType)
+    public final Set<Lane> accessibleAdjacentLanes(final LateralDirectionality lateralDirection,
+        final GTUType gtuType)
     {
-        Set<Lane<?, ?>> candidates = new LinkedHashSet<>();
-        for (Lane<LINKID, NODEID> l : neighbors(lateralDirection))
+        Set<Lane> candidates = new LinkedHashSet<>();
+        for (Lane l : neighbors(lateralDirection))
         {
             if (l.getLaneType().isCompatible(gtuType)
                 && (l.getDirectionality().equals(LongitudinalDirectionality.BOTH) || l.getDirectionality().equals(
@@ -608,10 +606,10 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * @return the lane if it is accessible, or null if there is no lane, it is not accessible, or the driving direction does
      *         not match.
      */
-    public final Lane<?, ?> bestAccessibleAdjacentLane(final LateralDirectionality lateralDirection,
-        final DoubleScalar.Rel<LengthUnit> longitudinalPosition, final GTUType<?> gtuType)
+    public final Lane bestAccessibleAdjacentLane(final LateralDirectionality lateralDirection,
+        final DoubleScalar.Rel<LengthUnit> longitudinalPosition, final GTUType gtuType)
     {
-        Set<Lane<?, ?>> candidates = accessibleAdjacentLanes(lateralDirection, gtuType);
+        Set<Lane> candidates = accessibleAdjacentLanes(lateralDirection, gtuType);
 
         if (candidates.isEmpty())
         {
@@ -622,9 +620,9 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
             return candidates.iterator().next(); // There is exactly one adjacent Lane that this GTU type can cross into
         }
         // There are several candidates; find the one that is widest at the beginning.
-        Lane<?, ?> bestLane = null;
+        Lane bestLane = null;
         double widthM = -1.0;
-        for (Lane<?, ?> lane : candidates)
+        for (Lane lane : candidates)
         {
             if (lane.getWidth(longitudinalPosition).getSI() > widthM)
             {
@@ -659,7 +657,7 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
      * @throws NetworkException on network inconsistency
      * @throws RemoteException on communications failure
      */
-    public final void sample(final AbstractLaneBasedGTU<?> gtu) throws RemoteException, NetworkException
+    public final void sample(final AbstractLaneBasedGTU gtu) throws RemoteException, NetworkException
     {
         // FIXME: Hack; do not sample dummy vehicle at lane drop
         if (gtu.getNextEvaluationTime().getSI() == Double.MAX_VALUE)
@@ -699,7 +697,7 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
     /**
      * @return laneType.
      */
-    public final LaneType<?> getLaneType()
+    public final LaneType getLaneType()
     {
         return this.laneType;
     }
@@ -715,7 +713,7 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
     /**
      * @return gtuList.
      */
-    public final List<LaneBasedGTU<?>> getGtuList()
+    public final List<LaneBasedGTU> getGtuList()
     {
         return this.gtuList;
     }
@@ -731,7 +729,7 @@ public class Lane<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
     /** {@inheritDoc} */
     public final String toString()
     {
-        CrossSectionLink<LINKID, NODEID> link = getParentLink();
+        CrossSectionLink link = getParentLink();
         // FIXME indexOf may not be the correct way to determine the rank of a Lane (counts stripes as well)
         return String.format("Lane %d of %s", link.getCrossSectionElementList().indexOf(this), link.toString());
     }

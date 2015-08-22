@@ -19,7 +19,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public class Node extends OTSNode<String> implements Comparable<Node>
+public class Node extends OTSNode implements Comparable<Node>
 {
     /**
      * <p>

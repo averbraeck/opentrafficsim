@@ -22,19 +22,19 @@ public interface RouteNavigator extends Serializable
      * @return the last visited node of the route, and null when no nodes have been visited yet.
      * @throws NetworkException when the index is out of bounds (should never happen).
      */
-    Node<?> lastVisitedNode() throws NetworkException;
+    Node lastVisitedNode() throws NetworkException;
 
     /**
      * This method does <b>not</b> advance the route pointer.
      * @return the next node of the route to visit, and null when we already reached the destination.
      * @throws NetworkException when the index is out of bounds (should never happen).
      */
-    Node<?> nextNodeToVisit() throws NetworkException;
+    Node nextNodeToVisit() throws NetworkException;
 
     /**
      * This method <b>does</b> advance the route pointer (if possible).
      * @return the next node of the route to visit, and null when we already reached the destination.
      * @throws NetworkException when the index is out of bounds (should never happen).
      */
-    Node<?> visitNextNode() throws NetworkException;
+    Node visitNextNode() throws NetworkException;
 }

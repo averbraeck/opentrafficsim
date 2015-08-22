@@ -66,7 +66,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     }
 
     /** The series of Lanes that provide the data for this TrajectoryPlot. */
-    private final ArrayList<Lane<?, ?>> path;
+    private final ArrayList<Lane> path;
 
     /** The cumulative lengths of the elements of path. */
     private final DoubleVector.Rel.Dense<LengthUnit> cumulativeLengths;
@@ -124,16 +124,16 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
      * @param sampleInterval DoubleScalarRel&lt;TimeUnit&gt;; the time between samples of this TrajectoryPlot
      * @param path ArrayList&lt;Lane&gt;; the series of Lanes that will provide the data for this TrajectoryPlot
      */
-    public TrajectoryPlot(final String caption, final DoubleScalar.Rel<TimeUnit> sampleInterval, final List<Lane<?, ?>> path)
+    public TrajectoryPlot(final String caption, final DoubleScalar.Rel<TimeUnit> sampleInterval, final List<Lane> path)
     {
         this.sampleInterval = sampleInterval;
-        this.path = new ArrayList<Lane<?, ?>>(path); // make a copy
+        this.path = new ArrayList<Lane>(path); // make a copy
         double[] endLengths = new double[path.size()];
         double cumulativeLength = 0;
         DoubleVector.Rel.Dense<LengthUnit> lengths = null;
         for (int i = 0; i < path.size(); i++)
         {
-            Lane<?, ?> lane = path.get(i);
+            Lane lane = path.get(i);
             lane.addSampler(this);
             cumulativeLength += lane.getLength().getSI();
             endLengths[i] = cumulativeLength;
@@ -329,7 +329,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     private ArrayList<Trajectory> trajectoryIndices = new ArrayList<Trajectory>();
 
     /** {@inheritDoc} */
-    public final void addData(final AbstractLaneBasedGTU<?> car, final Lane<?, ?> lane) throws NetworkException,
+    public final void addData(final AbstractLaneBasedGTU car, final Lane lane) throws NetworkException,
         RemoteException
     {
         // final DoubleScalar.Abs<TimeUnit> startTime = car.getLastEvaluationTime();
@@ -463,7 +463,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
          * @throws NetworkException when car is not on lane anymore
          * @throws RemoteException when communication fails
          */
-        public final void addSegment(final AbstractLaneBasedGTU<?> car, final Lane<?, ?> lane, final double positionOffset)
+        public final void addSegment(final AbstractLaneBasedGTU car, final Lane lane, final double positionOffset)
             throws NetworkException, RemoteException
         {
             final int startSample = (int) Math.ceil(car.getLastEvaluationTime().getSI() / getSampleInterval().getSI());

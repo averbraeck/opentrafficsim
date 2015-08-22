@@ -34,7 +34,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
 
     /** The complete route. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final CompleteRoute<?, ?> completeRoute;
+    protected final CompleteRoute completeRoute;
 
     /** last visited node on the route. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -44,14 +44,14 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
      * Create a navigator.
      * @param completeRoute the route to follow
      */
-    public CompleteLaneBasedRouteNavigator(final CompleteRoute<?, ?> completeRoute)
+    public CompleteLaneBasedRouteNavigator(final CompleteRoute completeRoute)
     {
         this.completeRoute = completeRoute;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Node<?> lastVisitedNode() throws NetworkException
+    public final Node lastVisitedNode() throws NetworkException
     {
         if (this.lastVisitedNodeIndex == -1)
         {
@@ -62,7 +62,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
 
     /** {@inheritDoc} */
     @Override
-    public final Node<?> nextNodeToVisit() throws NetworkException
+    public final Node nextNodeToVisit() throws NetworkException
     {
         if (this.lastVisitedNodeIndex >= this.completeRoute.size() - 1)
         {
@@ -73,7 +73,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
 
     /** {@inheritDoc} */
     @Override
-    public final Node<?> visitNextNode() throws NetworkException
+    public final Node visitNextNode() throws NetworkException
     {
         if (this.lastVisitedNodeIndex >= this.completeRoute.size() - 1)
         {
@@ -85,17 +85,17 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> suitability(final Lane<?, ?> lane,
-        final DoubleScalar.Rel<LengthUnit> longitudinalPosition, final GTUType<?> gtuType,
+    public final DoubleScalar.Rel<LengthUnit> suitability(final Lane lane,
+        final DoubleScalar.Rel<LengthUnit> longitudinalPosition, final GTUType gtuType,
         final DoubleScalar.Rel<TimeUnit> timeHorizon) throws NetworkException
     {
         double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();
         double spareTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit().getSI();
         // Find the first upcoming Node where there is a branch
-        Node<?> nextNode = lane.getParentLink().getEndNode();
-        Node<?> nextSplitNode = null;
-        Lane<?, ?> currentLane = lane;
-        CrossSectionLink<?, ?> linkBeforeBranch = lane.getParentLink();
+        Node nextNode = lane.getParentLink().getEndNode();
+        Node nextSplitNode = null;
+        Lane currentLane = lane;
+        CrossSectionLink linkBeforeBranch = lane.getParentLink();
         while (null != nextNode)
         {
             if (spareTime <= 0)
@@ -124,13 +124,13 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
             }
             else
             { // Look beyond this nextNode
-                Link<?, ?> nextLink = nextNode.getLinksOut().iterator().next(); // cannot be null
+                Link nextLink = nextNode.getLinksOut().iterator().next(); // cannot be null
                 if (nextLink instanceof CrossSectionLink)
                 {
                     nextNode = nextLink.getEndNode();
                     // Oops: wrong code added the length of linkBeforeBranch in stead of length of nextLink
                     remainingDistance += nextLink.getLength().getSI();
-                    linkBeforeBranch = (CrossSectionLink<?, ?>) nextLink;
+                    linkBeforeBranch = (CrossSectionLink) nextLink;
                     // Figure out the new currentLane
                     if (currentLane.nextLanes().size() == 0)
                     {
@@ -138,7 +138,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                         // by the Route. Perform the forced lane change.
                         if (currentLane.accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType).size() > 0)
                         {
-                            for (Lane<?, ?> adjacentLane : currentLane.accessibleAdjacentLanes(LateralDirectionality.RIGHT,
+                            for (Lane adjacentLane : currentLane.accessibleAdjacentLanes(LateralDirectionality.RIGHT,
                                 gtuType))
                             {
                                 if (adjacentLane.nextLanes().size() > 0)
@@ -150,7 +150,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                                 // first in the set
                             }
                         }
-                        for (Lane<?, ?> adjacentLane : currentLane.accessibleAdjacentLanes(LateralDirectionality.LEFT,
+                        for (Lane adjacentLane : currentLane.accessibleAdjacentLanes(LateralDirectionality.LEFT,
                             gtuType))
                         {
                             if (adjacentLane.nextLanes().size() > 0)
@@ -168,7 +168,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                         }
                     }
                     // Any compulsory lane change(s) have been performed and there is guaranteed a compatible next lane.
-                    for (Lane<?, ?> nextLane : currentLane.nextLanes())
+                    for (Lane nextLane : currentLane.nextLanes())
                     {
                         if (nextLane.getLaneType().isCompatible(gtuType))
                         {
@@ -192,15 +192,15 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
         }
         // We have now found the first upcoming branching Node
         // Which continuing link is the one we need?
-        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> suitabilityOfLanesBeforeBranch =
-            new HashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
-        Link<?, ?> linkAfterBranch = null;
-        for (Link<?, ?> link : nextSplitNode.getLinksOut())
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> suitabilityOfLanesBeforeBranch =
+            new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Link linkAfterBranch = null;
+        for (Link link : nextSplitNode.getLinksOut())
         {
-            Node<?> nextNodeOnLink = link.getEndNode();
+            Node nextNodeOnLink = link.getEndNode();
             for (int i = this.lastVisitedNodeIndex + 1; i < this.completeRoute.size(); i++)
             {
-                Node<?> n = this.completeRoute.getNodes().get(i);
+                Node n = this.completeRoute.getNodes().get(i);
                 if (nextNodeOnLink == n)
                 {
                     if (null != linkAfterBranch)
@@ -218,14 +218,14 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
         {
             throw new NetworkException("Cannot identify the link to follow after " + nextSplitNode + " in " + this);
         }
-        for (CrossSectionElement<?, ?> cse : linkBeforeBranch.getCrossSectionElementList())
+        for (CrossSectionElement cse : linkBeforeBranch.getCrossSectionElementList())
         {
             if (cse instanceof Lane)
             {
-                Lane<?, ?> l = (Lane<?, ?>) cse;
+                Lane l = (Lane) cse;
                 if (l.getLaneType().isCompatible(gtuType))
                 {
-                    for (Lane<?, ?> connectingLane : l.nextLanes())
+                    for (Lane connectingLane : l.nextLanes())
                     {
                         if (connectingLane.getParentLink() == linkAfterBranch
                             && connectingLane.getLaneType().isCompatible(gtuType))
@@ -281,7 +281,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
     /**
      * @return the (complete) route.
      */
-    public final CompleteRoute<?, ?> getRoute()
+    public final CompleteRoute getRoute()
     {
         return this.completeRoute;
     }
@@ -301,7 +301,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
         }
         for (int index = 0; index < this.completeRoute.size(); index++)
         {
-            Node<?> node = this.completeRoute.getNodes().get(index);
+            Node node = this.completeRoute.getNodes().get(index);
             result.append(separator + node);
             if (index == this.lastVisitedNodeIndex)
             {

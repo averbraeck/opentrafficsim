@@ -48,8 +48,8 @@ public final class LaneFactory
      * @param intermediatePoints OTSPoint3D[]; array of intermediate coordinates (may be null)
      * @return Link; the newly constructed Link
      */
-    public static CrossSectionLink<String, String> makeLink(final String name, final OTSNode<String> from,
-        final OTSNode<String> to, final OTSPoint3D[] intermediatePoints)
+    public static CrossSectionLink makeLink(final String name, final OTSNode from,
+        final OTSNode to, final OTSPoint3D[] intermediatePoints)
     {
         int coordinateCount = 2 + (null == intermediatePoints ? 0 : intermediatePoints.length);
         OTSPoint3D[] points = new OTSPoint3D[coordinateCount];
@@ -63,7 +63,7 @@ public final class LaneFactory
             }
         }
         OTSLine3D designLine = new OTSLine3D(points);
-        CrossSectionLink<String, String> link = new CrossSectionLink<String, String>(name, from, to, designLine);
+        CrossSectionLink link = new CrossSectionLink(name, from, to, designLine);
         // XXX: new LinearGeometry(link, lineString, null);
         return link;
     }
@@ -86,15 +86,15 @@ public final class LaneFactory
      * @throws OTSGeometryException when creation of center line or contour fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    private static Lane<String, String> makeLane(final CrossSectionLink<String, String> link,
-        final LaneType<String> laneType, final DoubleScalar.Rel<LengthUnit> latPosAtStart,
+    private static Lane makeLane(final CrossSectionLink link,
+        final LaneType laneType, final DoubleScalar.Rel<LengthUnit> latPosAtStart,
         final DoubleScalar.Rel<LengthUnit> latPosAtEnd, final DoubleScalar.Rel<LengthUnit> width,
         final DoubleScalar.Abs<SpeedUnit> speedLimit, final OTSDEVSSimulatorInterface simulator) throws RemoteException,
         NamingException, NetworkException, OTSGeometryException
     {
         DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
-        Lane<String, String> result =
-            new Lane<String, String>(link, latPosAtStart, latPosAtEnd, width, width, laneType,
+        Lane result =
+            new Lane(link, latPosAtStart, latPosAtEnd, width, width, laneType,
                 LongitudinalDirectionality.FORWARD, f2000, speedLimit);
         if (simulator instanceof OTSAnimatorInterface)
         {
@@ -118,13 +118,13 @@ public final class LaneFactory
      * @throws NetworkException on network inconsistency
      * @throws OTSGeometryException when creation of center line or contour fails
      */
-    public static Lane<String, String> makeLane(final String name, final OTSNode<String> from, final OTSNode<String> to,
-        final OTSPoint3D[] intermediatePoints, final LaneType<String> laneType,
+    public static Lane makeLane(final String name, final OTSNode from, final OTSNode to,
+        final OTSPoint3D[] intermediatePoints, final LaneType laneType,
         final DoubleScalar.Abs<SpeedUnit> speedLimit, final OTSDEVSSimulatorInterface simulator) throws RemoteException,
         NamingException, NetworkException, OTSGeometryException
     {
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
-        final CrossSectionLink<String, String> link = makeLink(name, from, to, intermediatePoints);
+        final CrossSectionLink link = makeLink(name, from, to, intermediatePoints);
         DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
         return makeLane(link, laneType, latPos, latPos, width, speedLimit, simulator);
     }
@@ -150,14 +150,14 @@ public final class LaneFactory
      * @throws OTSGeometryException when creation of center line or contour fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static Lane<String, String>[] makeMultiLane(final String name, final OTSNode<String> from,
-        final OTSNode<String> to, final OTSPoint3D[] intermediatePoints, final int laneCount, final int laneOffsetAtStart,
-        final int laneOffsetAtEnd, final LaneType<String> laneType, final DoubleScalar.Abs<SpeedUnit> speedLimit,
+    public static Lane[] makeMultiLane(final String name, final OTSNode from,
+        final OTSNode to, final OTSPoint3D[] intermediatePoints, final int laneCount, final int laneOffsetAtStart,
+        final int laneOffsetAtEnd, final LaneType laneType, final DoubleScalar.Abs<SpeedUnit> speedLimit,
         final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException, NetworkException,
         OTSGeometryException
     {
-        final CrossSectionLink<String, String> link = makeLink(name, from, to, intermediatePoints);
-        Lane<String, String>[] result = new Lane[laneCount];
+        final CrossSectionLink link = makeLink(name, from, to, intermediatePoints);
+        Lane[] result = new Lane[laneCount];
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
         {
@@ -196,9 +196,9 @@ public final class LaneFactory
      * @throws OTSGeometryException when creation of center line or contour fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static Lane<String, String>[] makeMultiLane(final String name, final OTSNode<String> from,
-        final OTSNode<String> to, final OTSPoint3D[] intermediatePoints, final int laneCount,
-        final LaneType<String> laneType, final DoubleScalar.Abs<SpeedUnit> speedLimit,
+    public static Lane[] makeMultiLane(final String name, final OTSNode from,
+        final OTSNode to, final OTSPoint3D[] intermediatePoints, final int laneCount,
+        final LaneType laneType, final DoubleScalar.Abs<SpeedUnit> speedLimit,
         final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException, NetworkException,
         OTSGeometryException
     {

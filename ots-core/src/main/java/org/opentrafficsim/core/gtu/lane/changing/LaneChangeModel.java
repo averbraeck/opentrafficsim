@@ -45,7 +45,7 @@ public interface LaneChangeModel
      * @throws RemoteException in case the simulation time cannot be retrieved.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
+    LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
         final Collection<HeadwayGTU> sameLaneTraffic, final Collection<HeadwayGTU> rightLaneTraffic,
         final Collection<HeadwayGTU> leftLaneTraffic, final DoubleScalar.Abs<SpeedUnit> speedLimit,
         final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,

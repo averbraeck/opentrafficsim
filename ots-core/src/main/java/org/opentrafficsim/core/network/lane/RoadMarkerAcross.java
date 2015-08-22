@@ -16,7 +16,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public abstract class RoadMarkerAcross
 {
     /** Cross section element for which this is a road marker. Usually this will be a Lane. */
-    private final CrossSectionElement<?, ?> crossSectionElement;
+    private final CrossSectionElement crossSectionElement;
 
     /** Longitudinal position on the cross section element. */
     private final DoubleScalar.Rel<LengthUnit> longitudinalPosition;
@@ -25,7 +25,7 @@ public abstract class RoadMarkerAcross
      * @param crossSectionElement Cross section element for which this is a road marker. Usually this will be a Lane.
      * @param longitudinalPosition Longitudinal position on the cross section element.
      */
-    public RoadMarkerAcross(final CrossSectionElement<?, ?> crossSectionElement,
+    public RoadMarkerAcross(final CrossSectionElement crossSectionElement,
         final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
     {
         super();
@@ -36,7 +36,7 @@ public abstract class RoadMarkerAcross
     /**
      * @return crossSectionElement.
      */
-    public final CrossSectionElement<?, ?> getCrossSectionElement()
+    public final CrossSectionElement getCrossSectionElement()
     {
         return this.crossSectionElement;
     }

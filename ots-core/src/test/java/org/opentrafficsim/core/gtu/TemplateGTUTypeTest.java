@@ -59,8 +59,8 @@ public class TemplateGTUTypeTest
         SimpleSimulator simulator =
             new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
                 TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
-        TemplateGTUType<String> passengerCar =
-            new TemplateGTUType<String>(pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
+        TemplateGTUType passengerCar =
+            new TemplateGTUType(pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
         verifyFields(passengerCar, pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
         String truckId = "truck";
         DistContinuousDoubleScalar.Rel<LengthUnit> truckLength =
@@ -72,8 +72,8 @@ public class TemplateGTUTypeTest
         SimpleSimulator truckSimulator =
             new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
                 TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
-        TemplateGTUType<String> truck =
-            new TemplateGTUType<String>(truckId, truckLength, truckWidth, truckMaximumSpeed, truckSimulator);
+        TemplateGTUType truck =
+            new TemplateGTUType(truckId, truckLength, truckWidth, truckMaximumSpeed, truckSimulator);
         verifyFields(truck, truckId, truckLength, truckWidth, truckMaximumSpeed, truckSimulator);
         verifyFields(passengerCar, pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
     }
@@ -97,8 +97,8 @@ public class TemplateGTUTypeTest
         SimpleSimulator simulator =
             new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
                 TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
-        TemplateGTUType<String> passengerCar =
-            new TemplateGTUType<String>(pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
+        TemplateGTUType passengerCar =
+            new TemplateGTUType(pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
         String truckId = "truck";
         DistContinuousDoubleScalar.Rel<LengthUnit> truckLength =
             new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 18), LengthUnit.METER);
@@ -109,15 +109,15 @@ public class TemplateGTUTypeTest
         SimpleSimulator truckSimulator =
             new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
                 TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
-        TemplateGTUType<String> truck =
-            new TemplateGTUType<String>(truckId, truckLength, truckWidth, truckMaximumSpeed, truckSimulator);
+        TemplateGTUType truck =
+            new TemplateGTUType(truckId, truckLength, truckWidth, truckMaximumSpeed, truckSimulator);
         // Create some LaneTypes
-        LaneType<String> trucksForbidden = new LaneType<String>("No Trucks");
+        LaneType trucksForbidden = new LaneType("No Trucks");
         trucksForbidden.addCompatibility(passengerCar.getGtuType());
-        LaneType<String> trucksOnly = new LaneType<String>("Trucks Only");
+        LaneType trucksOnly = new LaneType("Trucks Only");
         trucksOnly.addCompatibility(truck.getGtuType());
-        LaneType<String> bicycleLane = new LaneType<String>("Bicycles Only");
-        LaneType<String> urbanRoad = new LaneType<String>("Urban road - open to all traffic");
+        LaneType bicycleLane = new LaneType("Bicycles Only");
+        LaneType urbanRoad = new LaneType("Urban road - open to all traffic");
         urbanRoad.addCompatibility(passengerCar.getGtuType());
         urbanRoad.addCompatibility(truck.getGtuType());
         // Now we test all combinations
@@ -140,7 +140,7 @@ public class TemplateGTUTypeTest
      * @param maximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the expected maximum velocity
      * @param simulator OTSDEVSSimulatorInterface; the expected simulator
      */
-    private void verifyFields(final TemplateGTUType<String> templateGTUType, final String id,
+    private void verifyFields(final TemplateGTUType templateGTUType, final String id,
         final DistContinuousDoubleScalar.Rel<LengthUnit> length, final DistContinuousDoubleScalar.Rel<LengthUnit> width,
         final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeed, final OTSDEVSSimulatorInterface simulator)
     {

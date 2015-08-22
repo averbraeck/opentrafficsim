@@ -73,26 +73,26 @@ public class XMLNetworkGeneratorTest
                     TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(120.0, TimeUnit.SECOND), model);
 
             // get nodes, links, and the lanes.
-            Node<String> n1 = model.getNetwork().getNodeMap().get("N1");
-            Node<String> n2 = model.getNetwork().getNodeMap().get("N2");
+            Node n1 = model.getNetwork().getNodeMap().get("N1");
+            Node n2 = model.getNetwork().getNodeMap().get("N2");
             assertNotNull(n1);
             Assert.assertTrue(n1.getLinksOut() != null);
             Assert.assertTrue(n1.getLinksOut().size() > 0);
-            Link<?, String> l12 = n1.getLinksOut().iterator().next();
+            Link l12 = n1.getLinksOut().iterator().next();
             assertNotNull(l12);
-            CrossSectionLink<?, String> csl12 = (CrossSectionLink<?, String>) l12;
+            CrossSectionLink csl12 = (CrossSectionLink) l12;
             Assert.assertTrue(csl12.getCrossSectionElementList().size() > 0);
-            Lane<String, String> lane12 = (Lane<String, String>) csl12.getCrossSectionElementList().get(0);
+            Lane lane12 = (Lane) csl12.getCrossSectionElementList().get(0);
             assertNotNull(lane12);
 
             assertNotNull(n2);
             Assert.assertTrue(n2.getLinksOut() != null);
             Assert.assertTrue(n2.getLinksOut().size() > 0);
-            Link<?, String> l23 = n2.getLinksOut().iterator().next();
+            Link l23 = n2.getLinksOut().iterator().next();
             assertNotNull(l23);
-            CrossSectionLink<?, String> csl23 = (CrossSectionLink<?, String>) l23;
+            CrossSectionLink csl23 = (CrossSectionLink) l23;
             Assert.assertTrue(csl23.getCrossSectionElementList().size() > 0);
-            Lane<String, String> lane23 = (Lane<String, String>) csl23.getCrossSectionElementList().get(0);
+            Lane lane23 = (Lane) csl23.getCrossSectionElementList().get(0);
             assertNotNull(lane23);
 
             // add a sensor to check the time the vehicles pass
@@ -112,10 +112,10 @@ public class XMLNetworkGeneratorTest
                     {
                         throw this.triggerError;
                     }
-                    Set<LaneBasedGTU<?>> gtus = new HashSet<>();
+                    Set<LaneBasedGTU> gtus = new HashSet<>();
                     gtus.addAll(lane12.getGtuList());
                     gtus.addAll(lane23.getGtuList());
-                    for (LaneBasedGTU<?> gtu : gtus)
+                    for (LaneBasedGTU gtu : gtus)
                     {
                         // check that all vehicles drive 10 m/s and never have to break
                         boolean not10ms = Math.abs(gtu.getVelocity().getSI() - 10.0) > 0.0001;
@@ -165,7 +165,7 @@ public class XMLNetworkGeneratorTest
          * @param id the sensor id
          * @param simulator the simulator
          */
-        public ReportingSensor(final Lane<String, String> lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
+        public ReportingSensor(final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
             final TYPE positionType, final String id, final OTSDEVSSimulatorInterface simulator)
         {
             super(lane, longitudinalPosition, positionType, "REPORT@" + lane.toString(), simulator);
@@ -175,7 +175,7 @@ public class XMLNetworkGeneratorTest
 
         /** {@inheritDoc} */
         @Override
-        public void trigger(final LaneBasedGTU<?> gtu) throws RemoteException
+        public void trigger(final LaneBasedGTU gtu) throws RemoteException
         {
             try
             {
@@ -236,7 +236,7 @@ public class XMLNetworkGeneratorTest
         private OTSDEVSSimulatorInterface simulator;
 
         /** the generated network. */
-        private OTSNetwork<String, String, String> network;
+        private OTSNetwork network;
 
         /** */
         public TestXMLModel()
@@ -275,7 +275,7 @@ public class XMLNetworkGeneratorTest
         /**
          * @return network.
          */
-        public final OTSNetwork<String, String, String> getNetwork()
+        public final OTSNetwork getNetwork()
         {
             return this.network;
         }

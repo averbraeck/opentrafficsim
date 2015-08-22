@@ -265,9 +265,9 @@ class GeneratorTag
     static void makeGenerator(final GeneratorTag generatorTag, final XmlNetworkLaneParser parser, final LinkTag linkTag,
         final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, RemoteException, NetworkException
     {
-        Lane<?, ?> lane = linkTag.lanes.get(generatorTag.laneName);
+        Lane lane = linkTag.lanes.get(generatorTag.laneName);
         Class<?> gtuClass = LaneBasedIndividualCar.class;
-        List<org.opentrafficsim.core.network.Node<String>> nodeList = new ArrayList<>();
+        List<org.opentrafficsim.core.network.Node> nodeList = new ArrayList<>();
         for (NodeTag nodeTag : generatorTag.routeTag.routeNodeTags)
         {
             nodeList.add(parser.nodeTags.get(nodeTag.name).node);
@@ -278,9 +278,9 @@ class GeneratorTag
             generatorTag.endTime != null ? generatorTag.endTime : new DoubleScalar.Abs<TimeUnit>(Double.MAX_VALUE,
                 TimeUnit.SI);
         LaneBasedRouteGenerator rg =
-            new FixedLaneBasedRouteGenerator(new CompleteRoute<String, String>("fixed route", nodeList));
+            new FixedLaneBasedRouteGenerator(new CompleteRoute("fixed route", nodeList));
         DoubleScalar.Rel<LengthUnit> position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);
-        new GTUGeneratorIndividual<String>(generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType, gtuClass,
+        new GTUGeneratorIndividual(generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType, gtuClass,
             generatorTag.gtuTag.followingModel, generatorTag.gtuTag.laneChangeModel, generatorTag.initialSpeedDist,
             generatorTag.iatDist, generatorTag.gtuTag.lengthDist, generatorTag.gtuTag.widthDist,
             generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime, lane, position, rg,

@@ -17,16 +17,14 @@ import org.opentrafficsim.core.network.Node;
  * initial version Jan 1, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <NODEID> the ID type of the Node, e.g., String.
- * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public class Route<LINKID, NODEID> implements Serializable
+public class Route implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150101L;
 
     /** The nodes of the route. */
-    private final List<Node<NODEID>> nodes;
+    private final List<Node> nodes;
 
     /** name of the route. */
     private final String id;
@@ -37,7 +35,7 @@ public class Route<LINKID, NODEID> implements Serializable
      */
     public Route(final String id)
     {
-        this.nodes = new ArrayList<Node<NODEID>>();
+        this.nodes = new ArrayList<Node>();
         this.id = id;
     }
 
@@ -46,7 +44,7 @@ public class Route<LINKID, NODEID> implements Serializable
      * @param nodes the initial list of nodes.
      * @param id the name of the route.
      */
-    public Route(final String id, final List<Node<NODEID>> nodes)
+    public Route(final String id, final List<Node> nodes)
     {
         this.id = id;
         this.nodes = nodes;
@@ -58,7 +56,7 @@ public class Route<LINKID, NODEID> implements Serializable
      * @throws NetworkException in case node could not be added to the route.
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public void addNode(final Node<NODEID> node) throws NetworkException
+    public void addNode(final Node node) throws NetworkException
     {
         this.nodes.add(node);
     }
@@ -66,7 +64,7 @@ public class Route<LINKID, NODEID> implements Serializable
     /**
      * @return nodes.
      */
-    public final List<Node<NODEID>> getNodes()
+    public final List<Node> getNodes()
     {
         return this.nodes;
     }
@@ -76,7 +74,7 @@ public class Route<LINKID, NODEID> implements Serializable
      * @return node i.
      * @throws NetworkException if i &lt; 0 or i &gt; size
      */
-    public final Node<NODEID> getNode(final int i) throws NetworkException
+    public final Node getNode(final int i) throws NetworkException
     {
         if (i < 0 || i >= this.nodes.size())
         {
@@ -89,7 +87,7 @@ public class Route<LINKID, NODEID> implements Serializable
      * @return the first node of the route.
      * @throws NetworkException when the list has no nodes.
      */
-    public final Node<NODEID> originNode() throws NetworkException
+    public final Node originNode() throws NetworkException
     {
         if (this.nodes.size() == 0)
         {
@@ -111,7 +109,7 @@ public class Route<LINKID, NODEID> implements Serializable
      * @return the last node of the route.
      * @throws NetworkException when the list has no nodes.
      */
-    public final Node<NODEID> destinationNode() throws NetworkException
+    public final Node destinationNode() throws NetworkException
     {
         if (this.nodes.size() == 0)
         {
@@ -126,7 +124,7 @@ public class Route<LINKID, NODEID> implements Serializable
      * @param node Node&lt;?, ?&gt;; the Node to find
      * @return int;
      */
-    public final int indexOf(final Node<NODEID> node)
+    public final int indexOf(final Node node)
     {
         return this.nodes.indexOf(node);
     }

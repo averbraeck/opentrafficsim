@@ -75,36 +75,36 @@ public class XMLNetworkSensorTest
                         0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(120.0, TimeUnit.SECOND), model);
 
                 // get the nodes in the network.
-                Node<String> n1 = model.getNetwork().getNodeMap().get("N1");
+                Node n1 = model.getNetwork().getNodeMap().get("N1");
                 assertNotNull(n1);
-                Node<String> n2 = model.getNetwork().getNodeMap().get("N2");
+                Node n2 = model.getNetwork().getNodeMap().get("N2");
                 assertNotNull(n2);
-                Node<String> n3 = model.getNetwork().getNodeMap().get("N3");
+                Node n3 = model.getNetwork().getNodeMap().get("N3");
                 assertNotNull(n3);
 
-                Link<?, String> l12 = model.getNetwork().getLink(n1, n2);
+                Link l12 = model.getNetwork().getLink(n1, n2);
                 assertNotNull(l12);
-                Link<?, String> l23 = model.getNetwork().getLink(n2, n3);
+                Link l23 = model.getNetwork().getLink(n2, n3);
                 assertNotNull(l23);
 
                 // get the lanes in the network
-                Map<String, Lane<String, String>> laneMap = new HashMap<>();
-                for (Link<?, String> link : model.getNetwork().getLinkMap().values())
+                Map<String, Lane> laneMap = new HashMap<>();
+                for (Link link : model.getNetwork().getLinkMap().values())
                 {
                     int nr = 1;
-                    CrossSectionLink<?, String> csl = (CrossSectionLink<?, String>) link;
-                    for (CrossSectionElement<?, String> cse : csl.getCrossSectionElementList())
+                    CrossSectionLink csl = (CrossSectionLink) link;
+                    for (CrossSectionElement cse : csl.getCrossSectionElementList())
                     {
                         if (cse instanceof Lane)
                         {
-                            laneMap.put(link.getId() + "." + nr, (Lane<String, String>) cse);
+                            laneMap.put(link.getId() + "." + nr, (Lane) cse);
                             nr++;
                         }
                     }
                 }
-                Lane<String, String> lane12 = laneMap.get("N1-N2.1");
+                Lane lane12 = laneMap.get("N1-N2.1");
                 assertNotNull(lane12);
-                Lane<String, String> lane23 = laneMap.get("N2-N3.1");
+                Lane lane23 = laneMap.get("N2-N3.1");
                 assertNotNull(lane23);
 
                 // add the sensors
@@ -131,11 +131,11 @@ public class XMLNetworkSensorTest
                             throw this.triggerError;
                         }
                         /*-
-                        Set<LaneBasedGTU<?>> gtus = new HashSet<>();
+                        Set<LaneBasedGTU> gtus = new HashSet<>();
                         gtus.addAll(lane12.getGtuList());
                         gtus.addAll(lane23.getGtuList());
                         Assert.assertTrue("More than one GTU in the model: " + gtus.size(), gtus.size() <= 1);
-                        for (LaneBasedGTU<?> gtu : gtus)
+                        for (LaneBasedGTU gtu : gtus)
                         {
                             Assert.assertEquals("Velocity of GTU " + gtu + "<> 10 m/s: " + gtu.getVelocity(), 10.0, gtu
                                 .getVelocity().getSI(), 0.00001);
@@ -179,7 +179,7 @@ public class XMLNetworkSensorTest
          * @param id the sensor id
          * @param simulator the simulator
          */
-        public ReportingSensor(final Lane<String, String> lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
+        public ReportingSensor(final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
             final TYPE positionType, final String id, final OTSDEVSSimulatorInterface simulator)
         {
             super(lane, longitudinalPosition, positionType, "REPORT@" + lane.toString(), simulator);
@@ -189,7 +189,7 @@ public class XMLNetworkSensorTest
 
         /** {@inheritDoc} */
         @Override
-        public void trigger(final LaneBasedGTU<?> gtu) throws RemoteException
+        public void trigger(final LaneBasedGTU gtu) throws RemoteException
         {
             try
             {
@@ -260,7 +260,7 @@ public class XMLNetworkSensorTest
         private OTSDEVSSimulatorInterface simulator;
 
         /** the generated network. */
-        private OTSNetwork<String, String, String> network;
+        private OTSNetwork network;
 
         /** */
         public TestXMLModel()
@@ -300,7 +300,7 @@ public class XMLNetworkSensorTest
         /**
          * @return network.
          */
-        public final OTSNetwork<String, String, String> getNetwork()
+        public final OTSNetwork getNetwork()
         {
             return this.network;
         }

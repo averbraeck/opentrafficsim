@@ -48,15 +48,14 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  *          initial version Feb 2, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <ID> the ID type of the GTU (e.g., String or Integer)
  */
-public abstract class AbstractGTUGenerator<ID>
+public abstract class AbstractGTUGenerator
 {
     /** The generator name. Will be used for generated GTUs as Name:# where # is the id of the GTU when ID is a String. */
     private final String name;
 
     /** The type of GTU to generate. */
-    private final GTUType<ID> gtuType;
+    private final GTUType gtuType;
 
     /** The GTU class to instantiate. */
     private final Class<?> gtuClass;
@@ -86,7 +85,7 @@ public abstract class AbstractGTUGenerator<ID>
     private final DoubleScalar.Abs<TimeUnit> endTime;
 
     /** Lane to generate the GTU on -- at the end for now. */
-    private final Lane<?, ?> lane;
+    private final Lane lane;
 
     /** position on the lane, relative to the design line of the link. */
     private final DoubleScalar.Rel<LengthUnit> position;
@@ -98,7 +97,7 @@ public abstract class AbstractGTUGenerator<ID>
     private final GTUColorer gtuColorer;
 
     /** Car builder list. */
-    private List<LaneBasedIndividualCarBuilder<?>> carBuilderList = new ArrayList<>();
+    private List<LaneBasedIndividualCarBuilder> carBuilderList = new ArrayList<>();
 
     /** Number of generated GTUs. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -124,11 +123,11 @@ public abstract class AbstractGTUGenerator<ID>
      * @throws RemoteException when remote simulator cannot be reached
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType<ID> gtuType,
+    public AbstractGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
         final Class<?> gtuClass, final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel,
         final DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist,
         final DistContinuousDoubleScalar.Rel<TimeUnit> interarrivelTimeDist, final long maxGTUs,
-        final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Abs<TimeUnit> endTime, final Lane<?, ?> lane,
+        final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Abs<TimeUnit> endTime, final Lane lane,
         final DoubleScalar.Rel<LengthUnit> position, final LaneBasedRouteGenerator routeGenerator,
         final GTUColorer gtuColorer) throws RemoteException, SimRuntimeException
     {
@@ -155,7 +154,6 @@ public abstract class AbstractGTUGenerator<ID>
      * Generate a GTU.
      * @throws Exception when something in the generation fails.
      */
-    @SuppressWarnings("unchecked")
     protected final void generate() throws Exception
     {
         // check if we are after the end time
@@ -170,43 +168,14 @@ public abstract class AbstractGTUGenerator<ID>
             return;
         }
 
-        // get the return type of the getID() method of the GTU class
-        Class<?> getidtype;
-        try
-        {
-            Method getid = ClassUtil.resolveMethod(this.gtuClass, "getId", new Class<?>[]{});
-            getidtype = getid.getReturnType();
-        }
-        catch (NoSuchMethodException exception)
-        {
-            throw new GTUException("GTU class " + this.gtuClass.getName() + " does not have getId() method.", exception);
-        }
-
         // create a unique id
-        ID id = null;
         this.numberGTUs++;
-        if (String.class.isAssignableFrom(getidtype))
-        {
-            id = (ID) new String(this.name + ":" + this.numberGTUs);
-        }
-        else if (int.class.isAssignableFrom(getidtype))
-        {
-            id = (ID) new Integer((int) this.numberGTUs);
-        }
-        else if (long.class.isAssignableFrom(getidtype))
-        {
-            id = (ID) new Long(this.numberGTUs);
-        }
-        else
-        {
-            // FIXME throw new GTUException("GTU ID class " + getidtype.getName() + ": cannot instantiate.")
-            id = (ID) new String(this.name + ":" + this.numberGTUs);
-        }
+        String id = this.name + ":" + this.numberGTUs;
 
         // create the GTU
         if (LaneBasedIndividualCar.class.isAssignableFrom(getGtuClass()))
         {
-            LaneBasedIndividualCarBuilder<ID> carBuilder = new LaneBasedIndividualCarBuilder<ID>();
+            LaneBasedIndividualCarBuilder carBuilder = new LaneBasedIndividualCarBuilder();
             carBuilder.setId(id);
             carBuilder.setGtuType(getGtuType());
             carBuilder.setGTUFollowingModel(this.gtuFollowingModel);
@@ -217,7 +186,7 @@ public abstract class AbstractGTUGenerator<ID>
             carBuilder.setMaximumVelocity(getMaximumSpeedDist().draw());
             carBuilder.setInitialSpeed(getInitialSpeedDist().draw());
             carBuilder.setSimulator(getSimulator());
-            Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new LinkedHashMap<>(1);
+            Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new LinkedHashMap<>(1);
             initialLongitudinalPositions.put(this.lane, this.position);
             carBuilder.setInitialLongitudinalPositions(initialLongitudinalPositions);
             carBuilder.setRouteGenerator(this.routeGenerator);
@@ -263,17 +232,17 @@ public abstract class AbstractGTUGenerator<ID>
      * @throws RemoteException if simulator cannot be reached to calculate current position
      * @throws NetworkException if GTU does not have a position on the lane where it is registered
      */
-    protected final boolean enoughSpace(final LaneBasedIndividualCarBuilder<?> carBuilder) throws RemoteException,
+    protected final boolean enoughSpace(final LaneBasedIndividualCarBuilder carBuilder) throws RemoteException,
         NetworkException
     {
-        Lane<?, ?> generatorLane = carBuilder.getInitialLongitudinalPositions().keySet().iterator().next();
+        Lane generatorLane = carBuilder.getInitialLongitudinalPositions().keySet().iterator().next();
         double genPosSI = carBuilder.getInitialLongitudinalPositions().get(generatorLane).getSI();
         double lengthSI = generatorLane.getLength().getSI();
         double frontNew = (genPosSI + carBuilder.getLength().getSI()) / lengthSI;
         double rearNew = genPosSI / lengthSI;
 
         // test for overlap with other GTUs
-        for (LaneBasedGTU<?> gtu : generatorLane.getGtuList())
+        for (LaneBasedGTU gtu : generatorLane.getGtuList())
         {
             double frontGTU = gtu.fractionalPosition(generatorLane, gtu.getFront());
             double rearGTU = gtu.fractionalPosition(generatorLane, gtu.getRear());
@@ -330,11 +299,11 @@ public abstract class AbstractGTUGenerator<ID>
      * @throws RemoteException when the simulation time cannot be retrieved
      * @throws NetworkException when there is a problem with the geometry of the network
      */
-    private HeadwayGTU headwayRecursiveForwardSI(final Lane<?, ?> theLane, final double lanePositionSI,
+    private HeadwayGTU headwayRecursiveForwardSI(final Lane theLane, final double lanePositionSI,
         final double cumDistanceSI, final double maxDistanceSI, final DoubleScalar.Abs<TimeUnit> when,
         final LaneBasedRouteNavigator routeNavigator) throws RemoteException, NetworkException
     {
-        LaneBasedGTU<?> otherGTU =
+        LaneBasedGTU otherGTU =
             theLane.getGtuAfter(new DoubleScalar.Rel<LengthUnit>(lanePositionSI, LengthUnit.METER), RelativePosition.REAR,
                 when);
         if (otherGTU != null)
@@ -354,11 +323,12 @@ public abstract class AbstractGTUGenerator<ID>
             if (theLane.nextLanes().size() > 0)
             {
                 HeadwayGTU foundMaxGTUDistanceSI = new HeadwayGTU(null, Double.MAX_VALUE);
-                for (Lane<?, ?> nextLane : theLane.nextLanes())
+                for (Lane nextLane : theLane.nextLanes())
                 {
                     // TODO Only follow links on the Route if there is a "real" Route
-                    // if (routeNavigator.getRoute() == null || routeNavigator.getRoute().size() == 0 /* XXXXX STUB dummy route */
-                    //    || routeNavigator.getRoute().containsLink((Link) theLane.getParentLink()))
+                    // if (routeNavigator.getRoute() == null || routeNavigator.getRoute().size() == 0 /* XXXXX STUB dummy route
+                    // */
+                    // || routeNavigator.getRoute().containsLink((Link) theLane.getParentLink()))
                     {
                         double traveledDistanceSI = cumDistanceSI + theLane.getLength().getSI() - lanePositionSI;
                         HeadwayGTU closest =
@@ -389,7 +359,7 @@ public abstract class AbstractGTUGenerator<ID>
      * @throws NetworkException when there is a problem with the geometry of the network
      */
     private HeadwayGTU headwayGTUSIForward(final double maxDistanceSI, final LaneBasedRouteNavigator routeNavigator,
-        final Lane<?, ?> generatorLane) throws RemoteException, NetworkException
+        final Lane generatorLane) throws RemoteException, NetworkException
     {
         DoubleScalar.Abs<TimeUnit> when = getSimulator().getSimulatorTime().get();
         HeadwayGTU foundMaxGTUDistanceSI = new HeadwayGTU(null, Double.MAX_VALUE);
@@ -414,7 +384,7 @@ public abstract class AbstractGTUGenerator<ID>
      * @throws NetworkException on network inconsistency
      */
     public final HeadwayGTU headway(final DoubleScalar.Rel<LengthUnit> maxDistance,
-        final LaneBasedRouteNavigator routeNavigator, final Lane<?, ?> generatorLane) throws RemoteException,
+        final LaneBasedRouteNavigator routeNavigator, final Lane generatorLane) throws RemoteException,
         NetworkException
     {
         return headwayGTUSIForward(maxDistance.getSI(), routeNavigator, generatorLane);
@@ -428,7 +398,7 @@ public abstract class AbstractGTUGenerator<ID>
     {
         if (!this.carBuilderList.isEmpty())
         {
-            LaneBasedIndividualCarBuilder<?> carBuilder = this.carBuilderList.get(0);
+            LaneBasedIndividualCarBuilder carBuilder = this.carBuilderList.get(0);
             if (enoughSpace(carBuilder))
             {
                 this.carBuilderList.remove(0);
@@ -467,7 +437,7 @@ public abstract class AbstractGTUGenerator<ID>
     /**
      * @return gtuType.
      */
-    public final GTUType<ID> getGtuType()
+    public final GTUType getGtuType()
     {
         return this.gtuType;
     }

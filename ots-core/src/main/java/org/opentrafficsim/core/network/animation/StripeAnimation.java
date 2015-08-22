@@ -109,7 +109,7 @@ public class StripeAnimation extends Renderable2D
      * @return Coordinate[]; array of Coordinate
      * @throws NamingException when <cite>type</cite> is not supported
      */
-    private ArrayList<OTSPoint3D> makePoints(final Stripe<?, ?> stripe, final TYPE stripeType) throws NamingException
+    private ArrayList<OTSPoint3D> makePoints(final Stripe stripe, final TYPE stripeType) throws NamingException
     {
         switch (this.type)
         {
@@ -209,7 +209,7 @@ public class StripeAnimation extends Renderable2D
      * @throws NamingException ne
      * @throws RemoteException re
      */
-    public StripeAnimation(final Stripe<?, ?> source, final OTSSimulatorInterface simulator, final TYPE type)
+    public StripeAnimation(final Stripe source, final OTSSimulatorInterface simulator, final TYPE type)
         throws NamingException, RemoteException
     {
         super(source, simulator);
@@ -221,7 +221,7 @@ public class StripeAnimation extends Renderable2D
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        PaintPolygons.paintMultiPolygon(graphics, Color.WHITE, ((Stripe<?, ?>) getSource()).getLocation(), this.line);
+        PaintPolygons.paintMultiPolygon(graphics, Color.WHITE, ((Stripe) getSource()).getLocation(), this.line);
     }
 
     /**

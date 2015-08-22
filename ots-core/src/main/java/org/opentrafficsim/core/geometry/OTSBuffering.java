@@ -293,7 +293,7 @@ public final class OTSBuffering
      * @return the geometry belonging to this CrossSectionElement.
      * @throws OTSGeometryException when construction of the geometry fails
      */
-    public static OTSLine3D constructContour(final CrossSectionElement<?, ?> cse) throws OTSGeometryException
+    public static OTSLine3D constructContour(final CrossSectionElement cse) throws OTSGeometryException
     {
         OTSLine3D crossSectionDesignLine =
             offsetLine(cse.getParentLink().getDesignLine(), cse.getDesignLineOffsetAtBegin().getSI(), cse

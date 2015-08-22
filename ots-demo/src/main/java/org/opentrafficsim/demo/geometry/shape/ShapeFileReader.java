@@ -70,7 +70,7 @@ public final class ShapeFileReader
      * @return map of (shape file) nodes with nodenr as the key
      * @throws IOException on error
      */
-    public static Map<String, OTSNode<String>> readNodes(final String shapeFileName, final String numberType,
+    public static Map<String, OTSNode> readNodes(final String shapeFileName, final String numberType,
         final boolean returnCentroid, final boolean allCentroids) throws IOException
     {
         /*-
@@ -93,7 +93,7 @@ public final class ShapeFileReader
         }
         ShapefileDataStore storeNodes = (ShapefileDataStore) FileDataStoreFinder.getDataStore(url);
 
-        Map<String, OTSNode<String>> nodes = new HashMap<>();
+        Map<String, OTSNode> nodes = new HashMap<>();
 
         SimpleFeatureSource featureSourceNodes = storeNodes.getFeatureSource();
         SimpleFeatureCollection featureCollectionNodes = featureSourceNodes.getFeatures();
@@ -126,7 +126,7 @@ public final class ShapeFileReader
                 }
                 if (addThisNode)
                 {
-                    OTSNode<String> node = new OTSNode<String>(nr, new OTSPoint3D(coordinate));
+                    OTSNode node = new OTSNode(nr, new OTSPoint3D(coordinate));
                     nodes.put(nr, node);
                 }
             }
@@ -168,7 +168,7 @@ public final class ShapeFileReader
      * @throws IOException on error
      */
     public static void readLinks(final String shapeFileName, final Map<String, Link> links,
-        final Map<String, OTSNode<String>> nodes, final OTSSimulatorInterface simulator) throws IOException
+        final Map<String, OTSNode> nodes, final OTSSimulatorInterface simulator) throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.MultiLineString MULTILINESTRING ((232250.38755446894 ...
@@ -233,8 +233,8 @@ public final class ShapeFileReader
                     new DoubleScalar.Abs<FrequencyUnit>(capacityIn, FrequencyUnit.PER_HOUR);
                 // new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
                 // create the link or connector to a centroid....
-                OTSNode<String> nodeA = nodes.get(lNodeA);
-                OTSNode<String> nodeB = nodes.get(lNodeB);
+                OTSNode nodeA = nodes.get(lNodeA);
+                OTSNode nodeB = nodes.get(lNodeB);
 
                 if (nodeA != null && nodeB != null)
                 {
@@ -433,7 +433,7 @@ public final class ShapeFileReader
                 LongitudinalDirectionality dir =
                     (i < 0) ? LongitudinalDirectionality.FORWARD : LongitudinalDirectionality.BACKWARD;
                 //
-                Lane<String, String> laneEM =
+                Lane laneEM =
                     new Lane(link, new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER),
                         new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER), m05, m05, null,
                         LongitudinalDirectionality.NONE, f0, speedLimit);
@@ -442,7 +442,7 @@ public final class ShapeFileReader
                 for (int j = 0; j < n; j++)
                 {
                     lat += i * 1.75;
-                    Lane<String, String> lane =
+                    Lane lane =
                         new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
                             new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m35, m35, null, dir, f200, speedLimit);
                     new LaneAnimation(lane, simulator, Color.GRAY);
@@ -452,13 +452,13 @@ public final class ShapeFileReader
                 for (int j = 0; j < spits; j++)
                 {
                     lat += i * 1.75;
-                    Lane<String, String> lane =
+                    Lane lane =
                         new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
                             new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m35, m35, null, dir, f0, speedLimit);
                     new LaneAnimation(lane, simulator, Color.LIGHT_GRAY);
                     lat += i * 1.75;
                 }
-                Lane<String, String> laneEO =
+                Lane laneEO =
                     new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER),
                         new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER), m05, m05, null,
                         LongitudinalDirectionality.NONE, f0, speedLimit);
@@ -506,7 +506,7 @@ public final class ShapeFileReader
                 for (int j = 0; j < n; j++)
                 {
                     lat += i * 1.5;
-                    Lane<String, String> lane =
+                    Lane lane =
                         new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
                             new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m30, m30, null, dir, f200, speedLimit);
                     new LaneAnimation(lane, simulator, Color.DARK_GRAY);
@@ -534,7 +534,7 @@ public final class ShapeFileReader
 
         try
         {
-            Lane<String, String> lane =
+            Lane lane =
                 new Lane(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
                     0.0, LengthUnit.METER), m60, m60, null, LongitudinalDirectionality.BOTH, f50, speedLimit);
             new LaneAnimation(lane, simulator, Color.DARK_GRAY);

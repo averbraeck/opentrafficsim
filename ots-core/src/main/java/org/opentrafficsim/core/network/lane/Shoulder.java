@@ -14,10 +14,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <NODEID> the ID type of the Node, e.g., String.
- * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public class Shoulder<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
+public class Shoulder extends CrossSectionElement
 {
     /**
      * @param parentLink Cross Section Link to which the element belongs.
@@ -26,7 +24,7 @@ public class Shoulder<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      */
-    public Shoulder(final CrossSectionLink<LINKID, NODEID> parentLink, final DoubleScalar.Rel<LengthUnit> lateralPosition,
+    public Shoulder(final CrossSectionLink parentLink, final DoubleScalar.Rel<LengthUnit> lateralPosition,
         final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
         throws OTSGeometryException
     {

@@ -72,7 +72,7 @@ public class AccelerationGTUColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public final Color getColor(final GTU<?> gtu) throws RemoteException
+    public final Color getColor(final GTU gtu) throws RemoteException
     {
         DoubleScalar.Abs<AccelerationUnit> acceleration = gtu.getAcceleration();
         double ratio;

@@ -104,11 +104,11 @@ final class LinkTag
 
     /** map of lane name to generated lanes. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Map<String, Lane<String, String>> lanes = new HashMap<>();
+    Map<String, Lane> lanes = new HashMap<>();
 
     /** the calculated Link. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    CrossSectionLink<String, String> link = null;
+    CrossSectionLink link = null;
 
     /**
      * Parse the LINK tags.
@@ -242,7 +242,7 @@ final class LinkTag
      * @return the corresponding position as a length on the center line
      * @throws NetworkException when parsing fails
      */
-    static DoubleScalar.Rel<LengthUnit> parseBeginEndPosition(final String posStr, final CrossSectionElement<?, ?> cse)
+    static DoubleScalar.Rel<LengthUnit> parseBeginEndPosition(final String posStr, final CrossSectionElement cse)
         throws NetworkException
     {
         if (posStr.trim().equals("BEGIN"))

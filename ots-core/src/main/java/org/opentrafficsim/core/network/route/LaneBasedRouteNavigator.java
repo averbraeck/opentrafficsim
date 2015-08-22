@@ -31,6 +31,6 @@ public interface LaneBasedRouteNavigator extends RouteNavigator
      *         lane.
      * @throws NetworkException on network inconsistency, or when the continuation Link at a branch cannot be determined
      */
-    DoubleScalar.Rel<LengthUnit> suitability(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
-        final GTUType<?> gtuType, final DoubleScalar.Rel<TimeUnit> timeHorizon) throws NetworkException;
+    DoubleScalar.Rel<LengthUnit> suitability(final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
+        final GTUType gtuType, final DoubleScalar.Rel<TimeUnit> timeHorizon) throws NetworkException;
 }

@@ -31,7 +31,7 @@ public abstract class AbstractSensor implements Sensor
     private static final long serialVersionUID = 20141231L;
 
     /** The lane for which this is a sensor. */
-    private final Lane<?, ?> lane;
+    private final Lane lane;
 
     /** The position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane in SI units. */
     private final double longitudinalPositionSI;
@@ -60,7 +60,7 @@ public abstract class AbstractSensor implements Sensor
      * @param name the name of the sensor.
      * @param simulator the simulator for being able to generate the animation.
      */
-    public AbstractSensor(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
+    public AbstractSensor(final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
         final RelativePosition.TYPE positionType, final String name, final OTSSimulatorInterface simulator)
     {
         this.lane = lane;
@@ -72,7 +72,7 @@ public abstract class AbstractSensor implements Sensor
 
     /** {@inheritDoc} */
     @Override
-    public final Lane<?, ?> getLane()
+    public final Lane getLane()
     {
         return this.lane;
     }

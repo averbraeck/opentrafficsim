@@ -13,13 +13,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * initial version Oct 22, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <NODEID> the ID type of the Node, e.g., String.
- * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public class LinkLocation<LINKID, NODEID>
+public class LinkLocation
 {
     /** The link of the location of a point relative to the GTU. */
-    private final Link<LINKID, NODEID> link;
+    private final Link link;
 
     /** The fractional position (between 0.0 and 1.0) of the reference point on the lane. */
     private final double fractionalLongitudinalPosition;
@@ -28,7 +26,7 @@ public class LinkLocation<LINKID, NODEID>
      * @param link The link of the location of a point relative to the GTU.
      * @param fractionalLongitudinalPosition The fractional position (between 0.0 and 1.0) of the reference point on the link.
      */
-    public LinkLocation(final Link<LINKID, NODEID> link, final double fractionalLongitudinalPosition)
+    public LinkLocation(final Link link, final double fractionalLongitudinalPosition)
     {
         super();
         this.link = link;
@@ -39,7 +37,7 @@ public class LinkLocation<LINKID, NODEID>
      * @param link The link of the location of a point relative to the GTU.
      * @param position The position as a length of the reference point on the link.
      */
-    public LinkLocation(final Link<LINKID, NODEID> link, final DoubleScalar.Rel<LengthUnit> position)
+    public LinkLocation(final Link link, final DoubleScalar.Rel<LengthUnit> position)
     {
         super();
         this.link = link;
@@ -49,7 +47,7 @@ public class LinkLocation<LINKID, NODEID>
     /**
      * @return lane.
      */
-    public final Link<LINKID, NODEID> getLink()
+    public final Link getLink()
     {
         return this.link;
     }
@@ -77,7 +75,7 @@ public class LinkLocation<LINKID, NODEID>
      * @param loc the link location to find the distance to.
      * @return the distance to another LinkLocation.
      */
-    public final DoubleScalar.Rel<LengthUnit> distance(final LinkLocation<LINKID, NODEID> loc)
+    public final DoubleScalar.Rel<LengthUnit> distance(final LinkLocation loc)
     {
         if (this.link.equals(loc.getLink()))
         {

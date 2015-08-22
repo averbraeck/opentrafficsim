@@ -49,18 +49,18 @@ public class TrajectoryPlotTest
         // Create a car running 50 km.h
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(2000, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
-        GTUType<String> carType = new GTUType<String>("Car");
+        GTUType carType = new GTUType("Car");
         DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
-        Map<Lane<String, String>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
-        Lane<String, String> lane = CarTest.makeLane();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
+        Lane lane = CarTest.makeLane();
         initialLongitudinalPositions.put(lane, initialPosition);
         OTSDEVSSimulator simulator = CarTest.makeSimulator();
         // We want to start the car simulation at t=100s; therefore we have to advance the simulator up to that time.
         simulateUntil(new DoubleScalar.Abs<TimeUnit>(100, TimeUnit.SECOND), simulator);
         DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
-        Car<Integer> car =
-            new Car<Integer>(12345, carType, null, initialLongitudinalPositions, initialSpeed, length, width, maxSpeed,
+        Car car =
+            new Car(12345, carType, null, initialLongitudinalPositions, initialSpeed, length, width, maxSpeed,
                 simulator);
         // Make the car accelerate with constant acceleration of 0.05 m/s/s for 400 seconds
         DoubleScalar.Rel<TimeUnit> duration = new DoubleScalar.Rel<TimeUnit>(400, TimeUnit.SECOND);
@@ -72,8 +72,8 @@ public class TrajectoryPlotTest
         assertEquals("Number of trajectories should now be 1", 1, tp.getSeriesCount());
         verifyTrajectory(car, 0, tp);
         simulateUntil(new DoubleScalar.Abs<TimeUnit>(150, TimeUnit.SECOND), simulator);
-        Car<Integer> secondCar =
-            new Car<Integer>(2, carType, null, initialLongitudinalPositions, initialSpeed, length, width, maxSpeed,
+        Car secondCar =
+            new Car(2, carType, null, initialLongitudinalPositions, initialSpeed, length, width, maxSpeed,
                 simulator);
         // Make the second car accelerate with constant acceleration of 0.03 m/s/s for 500 seconds
         secondCar.setState(new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.03,
@@ -173,11 +173,11 @@ public class TrajectoryPlotTest
      * @throws NetworkException when car is not on lane anymore
      * @throws RemoteException on communication failure
      */
-    private void verifyTrajectory(final LaneBasedIndividualCar<?> car, final int series, final TrajectoryPlot tp)
+    private void verifyTrajectory(final LaneBasedIndividualCar car, final int series, final TrajectoryPlot tp)
         throws NetworkException, RemoteException
     {
         // XXX we take the first (and only) lane on which the vehicle is registered.
-        Lane<?, ?> lane = car.positions(car.getFront()).keySet().iterator().next();
+        Lane lane = car.positions(car.getFront()).keySet().iterator().next();
         DoubleScalar.Abs<TimeUnit> initialTime = car.getLastEvaluationTime();
         DoubleScalar.Rel<TimeUnit> duration =
             DoubleScalar.minus(car.getNextEvaluationTime(), car.getLastEvaluationTime()).immutable();

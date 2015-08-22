@@ -243,7 +243,7 @@ public class Straight extends AbstractWrappableSimulation implements WrappableSi
             LaneBasedGTUSampler graph;
             if (graphName.contains("Trajectories"))
             {
-                List<Lane<?, ?>> path = new ArrayList<Lane<?, ?>>();
+                List<Lane> path = new ArrayList<Lane>();
                 path.add(this.model.getLane());
                 TrajectoryPlot tp =
                     new TrajectoryPlot("TrajectoryPlot", new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND), path);
@@ -346,7 +346,7 @@ class StraightModel implements OTSModelInterface
     private int carsCreated = 0;
 
     /** Type of all GTUs. */
-    private GTUType<String> gtuType = GTUType.makeGTUType("Car");
+    private GTUType gtuType = GTUType.makeGTUType("Car");
 
     /** the car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModel carFollowingModelCars;
@@ -361,7 +361,7 @@ class StraightModel implements OTSModelInterface
     private AbstractLaneChangeModel laneChangeModel = new Egoistic();
 
     /** The blocking car. */
-    private LaneBasedIndividualCar<Integer> block = null;
+    private LaneBasedIndividualCar block = null;
 
     /** minimum distance. */
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
@@ -370,7 +370,7 @@ class StraightModel implements OTSModelInterface
     private DoubleScalar.Rel<LengthUnit> maximumDistance = new DoubleScalar.Rel<LengthUnit>(5000, LengthUnit.METER);
 
     /** The Lane that contains the simulated Cars. */
-    private Lane<String, String> lane;
+    private Lane lane;
 
     /** the contour plots. */
     private ArrayList<LaneBasedGTUSampler> plots = new ArrayList<LaneBasedGTUSampler>();
@@ -395,7 +395,7 @@ class StraightModel implements OTSModelInterface
     }
 
     /** The sequence of Lanes that all vehicles will follow. */
-    private List<Lane<?, ?>> path = new ArrayList<Lane<?, ?>>();
+    private List<Lane> path = new ArrayList<Lane>();
 
     /** The speed limit on all Lanes. */
     private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
@@ -403,9 +403,9 @@ class StraightModel implements OTSModelInterface
     /**
      * @return List&lt;Lane*gt;; the set of lanes for the specified index
      */
-    public List<Lane<?, ?>> getPath()
+    public List<Lane> getPath()
     {
-        return new ArrayList<Lane<?, ?>>(this.path);
+        return new ArrayList<Lane>(this.path);
     }
 
     /** {@inheritDoc} */
@@ -415,16 +415,16 @@ class StraightModel implements OTSModelInterface
         throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
-        OTSNode<String> from = new OTSNode<String>("From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0));
-        OTSNode<String> to = new OTSNode<String>("To", new OTSPoint3D(getMaximumDistance().getSI(), 0, 0));
-        OTSNode<String> end = new OTSNode<String>("End", new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0));
+        OTSNode from = new OTSNode("From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0));
+        OTSNode to = new OTSNode("To", new OTSPoint3D(getMaximumDistance().getSI(), 0, 0));
+        OTSNode end = new OTSNode("End", new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0));
         try
         {
-            LaneType<String> laneType = new LaneType<String>("CarLane");
+            LaneType laneType = new LaneType("CarLane");
             laneType.addCompatibility(this.gtuType);
             this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.speedLimit, this.simulator);
             this.path.add(this.lane);
-            CrossSectionLink<?, ?> endLink = LaneFactory.makeLink("endLink", to, end, null);
+            CrossSectionLink endLink = LaneFactory.makeLink("endLink", to, end, null);
             Lane sinkLane =
                 new Lane(endLink, this.lane.getLateralCenterPosition(1.0), this.lane.getLateralCenterPosition(1.0),
                     this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType, LongitudinalDirectionality.FORWARD,
@@ -558,17 +558,17 @@ class StraightModel implements OTSModelInterface
     protected final void createBlock() throws RemoteException
     {
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(4000, LengthUnit.METER);
-        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions =
-            new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
+            new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.lane, initialPosition);
         try
         {
             this.block =
-                new LaneBasedIndividualCar<Integer>(999999, this.gtuType, this.carFollowingModelCars, this.laneChangeModel,
+                new LaneBasedIndividualCar("999999", this.gtuType, this.carFollowingModelCars, this.laneChangeModel,
                     initialPositions, new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
                     new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1.8,
                         LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-                    new CompleteLaneBasedRouteNavigator(new CompleteRoute<String, String>("")), this.simulator,
+                    new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator,
                     DefaultCarAnimation.class, this.gtuColorer);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
@@ -594,8 +594,8 @@ class StraightModel implements OTSModelInterface
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions =
-            new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
+            new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.lane, initialPosition);
         try
         {
@@ -606,10 +606,10 @@ class StraightModel implements OTSModelInterface
             {
                 throw new Error("gtuFollowingModel is null");
             }
-            new LaneBasedIndividualCar<Integer>(++this.carsCreated, this.gtuType, gtuFollowingModel, this.laneChangeModel,
+            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, gtuFollowingModel, this.laneChangeModel,
                 initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
                 new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
-                    new CompleteRoute<String, String>("")), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
+                    new CompleteRoute("")), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
@@ -653,7 +653,7 @@ class StraightModel implements OTSModelInterface
     /**
      * @return lane.
      */
-    public Lane<?, ?> getLane()
+    public Lane getLane()
     {
         return this.lane;
     }

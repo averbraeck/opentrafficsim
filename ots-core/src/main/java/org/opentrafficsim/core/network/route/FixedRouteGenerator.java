@@ -14,13 +14,13 @@ import org.opentrafficsim.core.network.Node;
 public class FixedRouteGenerator implements RouteGenerator, Comparable<FixedRouteGenerator>
 {
     /** The route that is returned on every call to generateRoute. */
-    private final CompleteRoute<?, ?> route;
+    private final CompleteRoute route;
 
     /**
      * Construct a new FixedRouteGenerator.
      * @param route the CompleteRoute to generate
      */
-    public FixedRouteGenerator(final CompleteRoute<?, ?> route)
+    public FixedRouteGenerator(final CompleteRoute route)
     {
         this.route = route;
     }
@@ -36,7 +36,7 @@ public class FixedRouteGenerator implements RouteGenerator, Comparable<FixedRout
     /**
      * @return route.
      */
-    public final CompleteRoute<?, ?> getRoute()
+    public final CompleteRoute getRoute()
     {
         return this.route;
     }
@@ -49,7 +49,7 @@ public class FixedRouteGenerator implements RouteGenerator, Comparable<FixedRout
 
         TODO repair compareTo(...)
         
-        List<Node<?>> otherNodes = o.nodeList;
+        List<Node> otherNodes = o.nodeList;
         String myEndNodeId = this.nodeList.get(this.nodeList.size() - 1).getId().toString();
         String otherEndNodeId = otherNodes.get(otherNodes.size() - 1).getId().toString();
         int result = myEndNodeId.compareTo(otherEndNodeId);
@@ -89,7 +89,7 @@ public class FixedRouteGenerator implements RouteGenerator, Comparable<FixedRout
         StringBuilder result = new StringBuilder();
         result.append("FixedRouteGenerator");
         String separator = " [";
-        for (Node<?> node : this.route.getNodes())
+        for (Node node : this.route.getNodes())
         {
             result.append(separator);
             result.append(node);

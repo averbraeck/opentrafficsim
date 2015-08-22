@@ -26,18 +26,17 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  *          initial version Jan 1, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <ID> The type of ID, e.g., String or Integer
  */
-public abstract class AbstractLaneBasedTemplateGTU<ID> extends AbstractLaneBasedGTU<ID>
+public abstract class AbstractLaneBasedTemplateGTU extends AbstractLaneBasedGTU
 {
     /** */
     private static final long serialVersionUID = 20140822L;
 
     /** The TemplateGTUType. */
-    private TemplateGTUType<?> templateGTUType;
+    private TemplateGTUType templateGTUType;
 
     /**
-     * @param id the id of the GTU, could be String or Integer
+     * @param id the id of the GTU
      * @param templateGTUType the TemplateGTUType, e.g. TruckType, CarType, BusType
      * @param gtuFollowingModel the following model, including a reference to the simulator
      * @param initialLongitudinalPositions the initial positions of the car on one or more lanes
@@ -48,9 +47,9 @@ public abstract class AbstractLaneBasedTemplateGTU<ID> extends AbstractLaneBased
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GTUException when gtuFollowingModel is null
      */
-    public AbstractLaneBasedTemplateGTU(final ID id, final TemplateGTUType<?> templateGTUType,
+    public AbstractLaneBasedTemplateGTU(final String id, final TemplateGTUType templateGTUType,
         final GTUFollowingModel gtuFollowingModel,
-        final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+        final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
         final DoubleScalar.Abs<SpeedUnit> initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator)
         throws RemoteException, NetworkException, SimRuntimeException, GTUException
     {
@@ -62,7 +61,7 @@ public abstract class AbstractLaneBasedTemplateGTU<ID> extends AbstractLaneBased
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
-    public GTUType<?> getGTUType()
+    public GTUType getGTUType()
     {
         return super.getGTUType();
     }

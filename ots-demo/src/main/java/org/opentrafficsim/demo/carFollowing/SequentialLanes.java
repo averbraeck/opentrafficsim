@@ -329,7 +329,7 @@ class SequentialModel implements OTSModelInterface
     private OTSDEVSSimulatorInterface simulator;
 
     /** The nodes of our network in the order that all GTUs will visit them. */
-    private ArrayList<OTSNode<String>> nodes = new ArrayList<OTSNode<String>>();
+    private ArrayList<OTSNode> nodes = new ArrayList<OTSNode>();
 
     /** the car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModel carFollowingModelCars;
@@ -350,13 +350,13 @@ class SequentialModel implements OTSModelInterface
     private int carsCreated = 0;
 
     /** Type of all GTUs. */
-    private GTUType<String> gtuType = GTUType.makeGTUType("Car");
+    private GTUType gtuType = GTUType.makeGTUType("Car");
 
     /** minimum distance. */
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
 
     /** The Lane where newly created Cars initially placed on. */
-    private Lane<?, ?> initialLane;
+    private Lane initialLane;
 
     /** maximum distance. */
     private DoubleScalar.Rel<LengthUnit> maximumDistance = new DoubleScalar.Rel<LengthUnit>(2001, LengthUnit.METER);
@@ -371,7 +371,7 @@ class SequentialModel implements OTSModelInterface
     private ArrayList<AbstractProperty<?>> properties = null;
 
     /** The sequence of Lanes that all vehicles will follow. */
-    private List<Lane<?, ?>> path = new ArrayList<Lane<?, ?>>();
+    private List<Lane> path = new ArrayList<Lane>();
 
     /** The speedLimit on all Lanes. */
     private DoubleScalar.Abs<SpeedUnit> speedLimit;
@@ -392,9 +392,9 @@ class SequentialModel implements OTSModelInterface
     /**
      * @return a newly created path (which all GTUs in this simulation will follow).
      */
-    public List<Lane<?, ?>> getPath()
+    public List<Lane> getPath()
     {
-        return new ArrayList<Lane<?, ?>>(this.path);
+        return new ArrayList<Lane>(this.path);
     }
 
     /** {@inheritDoc} */
@@ -404,21 +404,21 @@ class SequentialModel implements OTSModelInterface
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         this.speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-        this.nodes = new ArrayList<OTSNode<String>>();
+        this.nodes = new ArrayList<OTSNode>();
         // TODO use: int[] linkBoundaries = {0, 1000, 1001, 2001, 2200};
         int[] linkBoundaries = {0, 1000, 2001, 2200};
         for (int xPos : linkBoundaries)
         {
-            this.nodes.add(new OTSNode<String>("Node at " + xPos, new OTSPoint3D(xPos, xPos > 1001 ? 200 : -10, 0)));
+            this.nodes.add(new OTSNode("Node at " + xPos, new OTSPoint3D(xPos, xPos > 1001 ? 200 : -10, 0)));
         }
-        LaneType<String> laneType = new LaneType<String>("CarLane");
+        LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(this.gtuType);
         // Now we can build a series of Links with one Lane on them
-        ArrayList<CrossSectionLink<?, ?>> links = new ArrayList<CrossSectionLink<?, ?>>();
+        ArrayList<CrossSectionLink> links = new ArrayList<CrossSectionLink>();
         for (int i = 1; i < this.nodes.size(); i++)
         {
-            OTSNode<String> fromNode = this.nodes.get(i - 1);
-            OTSNode<String> toNode = this.nodes.get(i);
+            OTSNode fromNode = this.nodes.get(i - 1);
+            OTSNode toNode = this.nodes.get(i);
             String linkName = fromNode.getId() + "-" + toNode.getId();
             try
             {
@@ -592,8 +592,8 @@ class SequentialModel implements OTSModelInterface
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions =
-            new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
+            new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.initialLane, initialPosition);
         try
         {
@@ -604,10 +604,10 @@ class SequentialModel implements OTSModelInterface
             {
                 throw new Error("gtuFollowingModel is null");
             }
-            new LaneBasedIndividualCar<>(++this.carsCreated, this.gtuType, generateTruck ? this.carFollowingModelTrucks
+            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, generateTruck ? this.carFollowingModelTrucks
                 : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
                 new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200,
-                    SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute<String, String>("")),
+                    SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")),
                 this.simulator, DefaultCarAnimation.class, this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }

@@ -190,7 +190,7 @@ class XMLNetworkModel implements OTSModelInterface
     private ArrayList<AbstractProperty<?>> properties = null;
 
     /** The sequence of Lanes that all vehicles will follow. */
-    private ArrayList<List<Lane<?, ?>>> paths = new ArrayList<List<Lane<?, ?>>>();
+    private ArrayList<List<Lane>> paths = new ArrayList<List<Lane>>();
 
     /** The average headway (inter-vehicle time). */
     private DoubleScalar.Rel<TimeUnit> averageHeadway;
@@ -208,7 +208,7 @@ class XMLNetworkModel implements OTSModelInterface
     private int carsCreated = 0;
 
     /** type of all GTUs (required to permit lane changing). */
-    private GTUType<String> gtuType = GTUType.makeGTUType("Car");
+    private GTUType gtuType = GTUType.makeGTUType("Car");
 
     /** the car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModel carFollowingModelCars;
@@ -245,7 +245,7 @@ class XMLNetworkModel implements OTSModelInterface
      * @param index int; the rank number of the path
      * @return List&lt;Lane&gt;; the set of lanes for the specified index
      */
-    public final List<Lane<?, ?>> getPath(final int index)
+    public final List<Lane> getPath(final int index)
     {
         return this.paths.get(index);
     }
@@ -275,12 +275,12 @@ class XMLNetworkModel implements OTSModelInterface
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
-        OTSNode<String> from = new OTSNode<String>("From", new OTSPoint3D(0, 0, 0));
-        OTSNode<String> end = new OTSNode<String>("End", new OTSPoint3D(1200, 0, 0));
-        OTSNode<String> from2 = new OTSNode<String>("From2", new OTSPoint3D(0, -50, 0));
-        OTSNode<String> firstVia = new OTSNode<String>("Via1", new OTSPoint3D(800, 0, 0));
-        OTSNode<String> end2 = new OTSNode<String>("End2", new OTSPoint3D(1200, -50, 0));
-        OTSNode<String> secondVia = new OTSNode<String>("Via2", new OTSPoint3D(1000, 0, 0));
+        OTSNode from = new OTSNode("From", new OTSPoint3D(0, 0, 0));
+        OTSNode end = new OTSNode("End", new OTSPoint3D(1200, 0, 0));
+        OTSNode from2 = new OTSNode("From2", new OTSPoint3D(0, -50, 0));
+        OTSNode firstVia = new OTSNode("Via1", new OTSPoint3D(800, 0, 0));
+        OTSNode end2 = new OTSNode("End2", new OTSPoint3D(1200, -50, 0));
+        OTSNode secondVia = new OTSNode("Via2", new OTSPoint3D(1000, 0, 0));
         CompoundProperty cp = new CompoundProperty("", "", this.properties, false, 0);
         String networkType = (String) cp.findByShortName("Network").getValue();
         boolean merge = networkType.startsWith("M");
@@ -289,7 +289,7 @@ class XMLNetworkModel implements OTSModelInterface
         int lanesOnCommon = lanesOnMain + lanesOnBranch;
         int lanesOnCommonCompressed = Integer.parseInt(networkType.split(" ")[merge ? 5 : 1]);
 
-        LaneType<String> laneType = new LaneType<String>("CarLane");
+        LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(this.gtuType);
         try
         {
@@ -386,7 +386,7 @@ class XMLNetworkModel implements OTSModelInterface
 
             setupGenerator(LaneFactory.makeMultiLane("From to FirstVia", from, firstVia, null, merge ? lanesOnMain
                 : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator));
-            Lane<String, String>[] common =
+            Lane[] common =
                 LaneFactory.makeMultiLane("FirstVia to SecondVia", firstVia, secondVia, null, lanesOnCommon, laneType,
                     this.speedLimit, this.simulator);
             if (merge)
@@ -409,11 +409,11 @@ class XMLNetworkModel implements OTSModelInterface
                 setupSink(LaneFactory.makeMultiLane("SecondVia to end2", secondVia, end2, null, lanesOnBranch, lanesOnCommon
                     - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator), laneType);
                 List<LaneBasedRouteProbability> routeProbabilities = new ArrayList<>();
-                ArrayList<Node<?>> mainRoute = new ArrayList<Node<?>>();
+                ArrayList<Node> mainRoute = new ArrayList<Node>();
                 mainRoute.add(end);
                 routeProbabilities.add(new LaneBasedRouteProbability(new CompleteLaneBasedRouteNavigator(new CompleteRoute("main",
                     mainRoute)), new java.lang.Double(lanesOnMain)));
-                ArrayList<Node<?>> sideRoute = new ArrayList<Node<?>>();
+                ArrayList<Node> sideRoute = new ArrayList<Node>();
                 sideRoute.add(end2);
                 routeProbabilities.add(new LaneBasedRouteProbability(new CompleteLaneBasedRouteNavigator(new CompleteRoute("side",
                     sideRoute)), new java.lang.Double(lanesOnBranch)));
@@ -422,8 +422,8 @@ class XMLNetworkModel implements OTSModelInterface
             }
             for (int index = 0; index < lanesOnCommon; index++)
             {
-                this.paths.add(new ArrayList<Lane<?, ?>>());
-                Lane<String, String> lane = common[index];
+                this.paths.add(new ArrayList<Lane>());
+                Lane lane = common[index];
                 // Follow back
                 while (lane.prevLanes().size() > 0)
                 {
@@ -467,7 +467,7 @@ class XMLNetworkModel implements OTSModelInterface
      */
     private Lane[] setupGenerator(final Lane[] lanes) throws RemoteException, SimRuntimeException
     {
-        for (Lane<String, String> lane : lanes)
+        for (Lane lane : lanes)
         {
             Object[] arguments = new Object[1];
             arguments[0] = lane;
@@ -485,18 +485,18 @@ class XMLNetworkModel implements OTSModelInterface
      * @throws NetworkException on network inconsistency
      * @throws OTSGeometryException
      */
-    private Lane<?, ?>[] setupSink(final Lane<?, ?>[] lanes, final LaneType laneType) throws NetworkException,
+    private Lane[] setupSink(final Lane[] lanes, final LaneType laneType) throws NetworkException,
         OTSGeometryException
     {
-        CrossSectionLink<?, ?> link = lanes[0].getParentLink();
-        OTSNode<String> to = (OTSNode<String>) link.getEndNode();
-        OTSNode<String> from = (OTSNode<String>) link.getStartNode();
+        CrossSectionLink link = lanes[0].getParentLink();
+        OTSNode to = (OTSNode) link.getEndNode();
+        OTSNode from = (OTSNode) link.getStartNode();
         double endLinkLength = 50; // [m]
         double endX = to.getPoint().x + (endLinkLength / link.getLength().getSI()) * (to.getPoint().x - from.getPoint().x);
         double endY = to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
-        OTSNode<String> end = new OTSNode<String>("END", new OTSPoint3D(endX, endY, to.getPoint().z));
-        CrossSectionLink<?, ?> endLink = LaneFactory.makeLink("endLink", to, end, null);
-        for (Lane<?, ?> lane : lanes)
+        OTSNode end = new OTSNode("END", new OTSPoint3D(endX, endY, to.getPoint().z));
+        CrossSectionLink endLink = LaneFactory.makeLink("endLink", to, end, null);
+        for (Lane lane : lanes)
         {
             Lane sinkLane =
                 new Lane(endLink, lane.getLateralCenterPosition(1.0), lane.getLateralCenterPosition(1.0),
@@ -519,21 +519,21 @@ class XMLNetworkModel implements OTSModelInterface
      * @throws SimRuntimeException on ???
      * @throws GTUException when construction of the GTU (the block is a GTU) fails
      */
-    private Lane setupBlock(final Lane<String, String> lane) throws RemoteException, NamingException, NetworkException,
+    private Lane setupBlock(final Lane lane) throws RemoteException, NamingException, NetworkException,
         SimRuntimeException, GTUException
     {
         DoubleScalar.Rel<LengthUnit> initialPosition = lane.getLength();
-        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions =
-            new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
+            new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(lane, initialPosition);
         GTUFollowingModel gfm =
             new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.SI),
                 new DoubleScalar.Rel<TimeUnit>(java.lang.Double.MAX_VALUE, TimeUnit.SI));
         LaneChangeModel lcm = new FixedLaneChangeModel(null);
-        new LaneBasedIndividualCar<Integer>(999999, this.gtuType, gfm, lcm, initialPositions,
+        new LaneBasedIndividualCar("999999", this.gtuType, gfm, lcm, initialPositions,
             new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
             new DoubleScalar.Rel<LengthUnit>(1, LengthUnit.METER), lane.getWidth(1), new DoubleScalar.Abs<SpeedUnit>(0,
-                SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute<String, String>("")), this.simulator);
+                SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator);
         return lane;
     }
 
@@ -563,20 +563,20 @@ class XMLNetworkModel implements OTSModelInterface
      * Generate cars at a fixed rate (implemented by re-scheduling this method).
      * @param lane Lane; the lane on which the generated cars are placed
      */
-    protected final void generateCar(final Lane<String, String> lane)
+    protected final void generateCar(final Lane lane)
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
-        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions =
-            new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
+            new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(lane, initialPosition);
         try
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength =
                 new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
             GTUFollowingModel gtuFollowingModel = generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
-            new LaneBasedIndividualCar<Integer>(++this.carsCreated, this.gtuType, gtuFollowingModel, this.laneChangeModel,
+            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, gtuFollowingModel, this.laneChangeModel,
                 initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
                 new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), this.routeGenerator.generateRouteNavigator(),
                 this.simulator, DefaultCarAnimation.class, this.gtuColorer);

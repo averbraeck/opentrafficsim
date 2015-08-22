@@ -139,21 +139,21 @@ public class SuitabilityGraph implements OTSModelInterface
                 DoubleScalar.Abs<SpeedUnit> speedLimit =
                     new DoubleScalar.Abs<SpeedUnit>(SPEEDLIMITS[column], SpeedUnit.KM_PER_HOUR);
                 double mainLength = speedLimit.getSI() * this.timeRange.getSI();
-                OTSNode<String> from = new OTSNode<String>("From", new OTSPoint3D(-mainLength, 0, 0));
-                OTSNode<String> branchPoint = new OTSNode<String>("From", new OTSPoint3D(0, 0, 0));
-                LaneType<String> laneType = new LaneType<String>("CarLane");
-                GTUType<String> gtuType = GTUType.makeGTUType("Car");
+                OTSNode from = new OTSNode("From", new OTSPoint3D(-mainLength, 0, 0));
+                OTSNode branchPoint = new OTSNode("From", new OTSPoint3D(0, 0, 0));
+                LaneType laneType = new LaneType("CarLane");
+                GTUType gtuType = GTUType.makeGTUType("Car");
                 laneType.addCompatibility(gtuType);
                 Lane[] lanes =
                     LaneFactory.makeMultiLane("Test road", from, branchPoint, null, LANECOUNT, laneType, speedLimit,
                         simulator);
-                OTSNode<String> destination =
-                    new OTSNode<String>("Destination", new OTSPoint3D(1000, targetLaneConfiguration > 0 ? 100 : -100, 0));
+                OTSNode destination =
+                    new OTSNode("Destination", new OTSPoint3D(1000, targetLaneConfiguration > 0 ? 100 : -100, 0));
                 LaneFactory.makeMultiLane("DestinationLink", branchPoint, destination, null, Math
                     .abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? 0 : LANECOUNT + targetLaneConfiguration, 0,
                     laneType, speedLimit, simulator);
-                OTSNode<String> nonDestination =
-                    new OTSNode<String>("Non-Destination", new OTSPoint3D(1000, targetLaneConfiguration > 0 ? -100 : 100, 0));
+                OTSNode nonDestination =
+                    new OTSNode("Non-Destination", new OTSPoint3D(1000, targetLaneConfiguration > 0 ? -100 : 100, 0));
                 LaneFactory.makeMultiLane("Non-DestinationLink", branchPoint, nonDestination, null, LANECOUNT
                     - Math.abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? LANECOUNT - targetLaneConfiguration
                     : 0, 0, laneType, speedLimit, simulator);
@@ -166,7 +166,7 @@ public class SuitabilityGraph implements OTSModelInterface
                 for (int laneIndex = 0; laneIndex < LANECOUNT; laneIndex++)
                 {
                     int key = dataset.addSeries("Lane " + (laneIndex + 1));
-                    Lane<String, String> lane = lanes[laneIndex];
+                    Lane lane = lanes[laneIndex];
                     for (int position = 0; position <= mainLength; position += 10)
                     {
                         DoubleScalar.Rel<LengthUnit> longitudinalPosition =

@@ -82,27 +82,27 @@ public class LaneBasedGTUTest
         SimpleSimulator simulator =
             new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
                 TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
-        GTUType<String> carType = GTUType.makeGTUType("car");
-        GTUType<String> truckType = GTUType.makeGTUType("truck");
-        LaneType<String> laneType = new LaneType<String>("CarLane");
+        GTUType carType = GTUType.makeGTUType("car");
+        GTUType truckType = GTUType.makeGTUType("truck");
+        LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(carType);
         laneType.addCompatibility(truckType);
         // Create a series of Nodes (some closely bunched together)
-        ArrayList<OTSNode<String>> nodes = new ArrayList<OTSNode<String>>();
+        ArrayList<OTSNode> nodes = new ArrayList<OTSNode>();
         int[] linkBoundaries = {0, 25, 50, 100, 101, 102, 103, 104, 105, 150, 175, 200};
         for (int xPos : linkBoundaries)
         {
-            nodes.add(new OTSNode<String>("Node at " + xPos, new OTSPoint3D(xPos, 20, 0)));
+            nodes.add(new OTSNode("Node at " + xPos, new OTSPoint3D(xPos, 20, 0)));
         }
         // Now we can build a series of Links with Lanes on them
-        ArrayList<CrossSectionLink<?, ?>> links = new ArrayList<CrossSectionLink<?, ?>>();
+        ArrayList<CrossSectionLink> links = new ArrayList<CrossSectionLink>();
         final int laneCount = 5;
         for (int i = 1; i < nodes.size(); i++)
         {
-            OTSNode<String> fromNode = nodes.get(i - 1);
-            OTSNode<String> toNode = nodes.get(i);
+            OTSNode fromNode = nodes.get(i - 1);
+            OTSNode toNode = nodes.get(i);
             String linkName = fromNode.getId() + "-" + toNode.getId();
-            Lane<?, ?>[] lanes =
+            Lane[] lanes =
                 LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, laneCount, laneType,
                     new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), simulator);
             links.add(lanes[0].getParentLink());
@@ -110,7 +110,7 @@ public class LaneBasedGTUTest
         // Create a long truck with its front (reference) one meter in the last link on the 3rd lane
         DoubleScalar.Rel<LengthUnit> truckPosition = new DoubleScalar.Rel<LengthUnit>(99.5, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> truckLength = new DoubleScalar.Rel<LengthUnit>(15, LengthUnit.METER);
-        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> truckPositions =
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> truckPositions =
             buildPositionsMap(truckPosition, truckLength, links, truckFromLane, truckUpToLane);
         DoubleScalar.Abs<SpeedUnit> truckSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
         DoubleScalar.Rel<LengthUnit> truckWidth = new DoubleScalar.Rel<LengthUnit>(2.5, LengthUnit.METER);
@@ -118,9 +118,9 @@ public class LaneBasedGTUTest
         DoubleScalar.Abs<SpeedUnit> maximumVelocity = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
         try
         {
-            new LaneBasedIndividualCar<String>("Truck", truckType, null /* GTU following model */, laneChangeModel,
+            new LaneBasedIndividualCar("Truck", truckType, null /* GTU following model */, laneChangeModel,
                 truckPositions, truckSpeed, truckLength, truckWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(
-                    new CompleteRoute<>("")), simulator);
+                    new CompleteRoute("")), simulator);
             fail("null GTUFollowingModel should have thrown a GTUException");
         }
         catch (GTUException e)
@@ -128,20 +128,20 @@ public class LaneBasedGTUTest
             // Ignore expected exception
         }
         GTUFollowingModel gtuFollowingModel = new IDMPlus();
-        LaneBasedIndividualCar<String> truck =
-            new LaneBasedIndividualCar<String>("Truck", truckType, gtuFollowingModel, laneChangeModel, truckPositions,
-                truckSpeed, truckLength, truckWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")),
+        LaneBasedIndividualCar truck =
+            new LaneBasedIndividualCar("Truck", truckType, gtuFollowingModel, laneChangeModel, truckPositions,
+                truckSpeed, truckLength, truckWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")),
                 simulator);
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
         int found = 0;
-        for (CrossSectionLink<?, ?> link : links)
+        for (CrossSectionLink link : links)
         {
             for (CrossSectionElement cse : link.getCrossSectionElementList())
             {
                 if (cse instanceof Lane)
                 {
-                    Lane<?, ?> lane = (Lane<?, ?>) cse;
+                    Lane lane = (Lane) cse;
                     if (truckPositions.containsKey(lane))
                     {
                         assertTrue("Truck should be registered on Lane " + lane, lane.getGtuList().contains(truck));
@@ -185,12 +185,12 @@ public class LaneBasedGTUTest
                     continue; // Truck and car would overlap; the result of that placement is not defined :-)
                 }
                 DoubleScalar.Rel<LengthUnit> carPosition = new DoubleScalar.Rel<LengthUnit>(step, LengthUnit.METER);
-                Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> carPositions =
+                Map<Lane, DoubleScalar.Rel<LengthUnit>> carPositions =
                     buildPositionsMap(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
-                LaneBasedIndividualCar<String> car =
-                    new LaneBasedIndividualCar<String>("Car", carType, gtuFollowingModel, laneChangeModel, carPositions,
+                LaneBasedIndividualCar car =
+                    new LaneBasedIndividualCar("Car", carType, gtuFollowingModel, laneChangeModel, carPositions,
                         carSpeed, carLength, carWidth, maximumVelocity,
-                        new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
+                        new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
                 leader = truck.headway(forwardMaxDistance);
                 double actualHeadway = leader.getDistanceSI();
                 double expectedHeadway =
@@ -202,7 +202,7 @@ public class LaneBasedGTUTest
                 // + " laneRank " + laneRank + " expected headway " + expectedHeadway);
                 // The next assert found a subtle bug (">" in stead of ">=")
                 assertEquals("Forward headway should return " + expectedHeadway, expectedHeadway, actualHeadway, 0.1);
-                LaneBasedGTU<?> leaderGTU = leader.getOtherGTU();
+                LaneBasedGTU leaderGTU = leader.getOtherGTU();
                 if (expectedHeadway == Double.MAX_VALUE)
                 {
                     assertEquals("Leader should be null", null, leaderGTU);
@@ -219,7 +219,7 @@ public class LaneBasedGTUTest
                         - carLength.getSI() - step;
                 assertEquals("Reverse headway should return " + expectedReverseHeadway, expectedReverseHeadway,
                     actualReverseHeadway, 0.1);
-                LaneBasedGTU<?> followerGTU = follower.getOtherGTU();
+                LaneBasedGTU followerGTU = follower.getOtherGTU();
                 if (expectedReverseHeadway == Double.MAX_VALUE)
                 {
                     assertEquals("Follower should be null", null, followerGTU);
@@ -232,7 +232,7 @@ public class LaneBasedGTUTest
                 {
                     Lane l = null;
                     double cumulativeDistance = 0;
-                    for (CrossSectionLink<?, ?> csl : links)
+                    for (CrossSectionLink csl : links)
                     {
                         cumulativeDistance += csl.getLength().getSI();
                         if (cumulativeDistance >= truckPosition.getSI())
@@ -278,7 +278,7 @@ public class LaneBasedGTUTest
                         assertEquals("Follower should be null", null, followerGTU);
                     }
                 }
-                Set<LaneBasedGTU<?>> leftParallel =
+                Set<LaneBasedGTU> leftParallel =
                     truck.parallel(LateralDirectionality.LEFT, simulator.getSimulatorTime().get());
                 int expectedLeftSize =
                     laneRank + carLanesCovered - 1 < truckFromLane - 1 || laneRank >= truckUpToLane
@@ -294,7 +294,7 @@ public class LaneBasedGTUTest
                 {
                     assertTrue("Parallel GTU should be the car", leftParallel.contains(car));
                 }
-                Set<LaneBasedGTU<?>> rightParallel =
+                Set<LaneBasedGTU> rightParallel =
                     truck.parallel(LateralDirectionality.RIGHT, simulator.getSimulatorTime().get());
                 int expectedRightSize =
                     laneRank + carLanesCovered - 1 <= truckFromLane || laneRank > truckUpToLane + 1
@@ -306,7 +306,7 @@ public class LaneBasedGTUTest
                 {
                     assertTrue("Parallel GTU should be the car", rightParallel.contains(car));
                 }
-                for (Lane<?, ?> lane : carPositions.keySet())
+                for (Lane lane : carPositions.keySet())
                 {
                     lane.removeGTU(car);
                 }
@@ -354,18 +354,18 @@ public class LaneBasedGTUTest
                     ie = null; // ignore
                 }
             }
-            GTUType<String> carType = GTUType.makeGTUType("car");
-            LaneType<String> laneType = new LaneType<String>("CarLane");
+            GTUType carType = GTUType.makeGTUType("car");
+            LaneType laneType = new LaneType("CarLane");
             laneType.addCompatibility(carType);
-            OTSNode<String> fromNode = new OTSNode<String>("Node A", new OTSPoint3D(0, 0, 0));
-            OTSNode<String> toNode = new OTSNode<String>("Node B", new OTSPoint3D(1000, 0, 0));
+            OTSNode fromNode = new OTSNode("Node A", new OTSPoint3D(0, 0, 0));
+            OTSNode toNode = new OTSNode("Node B", new OTSPoint3D(1000, 0, 0));
             String linkName = "AB";
-            Lane<?, ?> lane =
+            Lane lane =
                 LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, new DoubleScalar.Abs<SpeedUnit>(
-                    100, SpeedUnit.KM_PER_HOUR), simulator)[0];
+                    200, SpeedUnit.KM_PER_HOUR), simulator)[0];
             DoubleScalar.Rel<LengthUnit> carPosition = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);
-            Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> carPositions =
-                new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
+            Map<Lane, DoubleScalar.Rel<LengthUnit>> carPositions =
+                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
             carPositions.put(lane, carPosition);
             DoubleScalar.Abs<SpeedUnit> carSpeed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.METER_PER_SECOND);
             DoubleScalar.Abs<AccelerationUnit> acceleration =
@@ -374,10 +374,10 @@ public class LaneBasedGTUTest
                 new FixedAccelerationModel(acceleration, new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND));
             LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
             DoubleScalar.Abs<SpeedUnit> maximumVelocity = new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR);
-            LaneBasedIndividualCar<String> car =
-                new LaneBasedIndividualCar<String>("Car", carType, fam, laneChangeModel, carPositions, carSpeed,
+            LaneBasedIndividualCar car =
+                new LaneBasedIndividualCar("Car", carType, fam, laneChangeModel, carPositions, carSpeed,
                     new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1.8,
-                        LengthUnit.METER), maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simulator);
+                        LengthUnit.METER), maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(61, TimeUnit.SECOND));
             while (simulator.isRunning())
@@ -428,13 +428,13 @@ public class LaneBasedGTUTest
      * @param uptoLaneRank int; highest rank of lanes that the GTU must be registered on (0-based)
      * @return Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the Map of the Lanes that the GTU is registered on
      */
-    private Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> buildPositionsMap(
+    private Map<Lane, DoubleScalar.Rel<LengthUnit>> buildPositionsMap(
         DoubleScalar.Rel<LengthUnit> totalLongitudinalPosition, DoubleScalar.Rel<LengthUnit> gtuLength,
-        ArrayList<CrossSectionLink<?, ?>> links, int fromLaneRank, int uptoLaneRank)
+        ArrayList<CrossSectionLink> links, int fromLaneRank, int uptoLaneRank)
     {
-        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> result = new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> result = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         double cumulativeLength = 0;
-        for (CrossSectionLink<?, ?> link : links)
+        for (CrossSectionLink link : links)
         {
             double linkLength = link.getLength().getSI();
             double frontPositionInLink = totalLongitudinalPosition.getSI() - cumulativeLength + gtuLength.getSI();
@@ -447,7 +447,7 @@ public class LaneBasedGTUTest
                 // Some part of the GTU is in this Link
                 for (int laneRank = fromLaneRank; laneRank <= uptoLaneRank; laneRank++)
                 {
-                    Lane<?, ?> lane = getNthLane(link, laneRank);
+                    Lane lane = getNthLane(link, laneRank);
                     if (null == lane)
                     {
                         fail("Error in test; canot find lane with rank " + laneRank);
@@ -466,15 +466,15 @@ public class LaneBasedGTUTest
      * @param rank int; the zero-based rank of the Lane to return
      * @return Lane
      */
-    private Lane<?, ?> getNthLane(final CrossSectionLink<?, ?> link, int rank)
+    private Lane getNthLane(final CrossSectionLink link, int rank)
     {
-        for (CrossSectionElement<?, ?> cse : link.getCrossSectionElementList())
+        for (CrossSectionElement cse : link.getCrossSectionElementList())
         {
             if (cse instanceof Lane)
             {
                 if (0 == rank--)
                 {
-                    return (Lane<?, ?>) cse;
+                    return (Lane) cse;
                 }
             }
         }

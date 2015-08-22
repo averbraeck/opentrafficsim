@@ -53,7 +53,7 @@ public class SwitchableGTUColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public final Color getColor(final GTU<?> gtu) throws RemoteException
+    public final Color getColor(final GTU gtu) throws RemoteException
     {
         return this.activeColorer.getColor(gtu);
     }

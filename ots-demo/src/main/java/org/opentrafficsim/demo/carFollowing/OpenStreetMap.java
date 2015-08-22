@@ -72,7 +72,7 @@ public class OpenStreetMap extends AbstractWrappableSimulation
     private OSMNetwork osmNetwork;
 
     /** The OTS network. */
-    private OTSNetwork<String, String, String> otsNetwork;
+    private OTSNetwork otsNetwork;
 
     /** The ProgressListener. */
     private ProgressListener progressListener;
@@ -201,7 +201,7 @@ public class OpenStreetMap extends AbstractWrappableSimulation
             OSMNetwork net = osmf.getNetwork();
             // net.removeRedundancy(); // Defective; do not call removeRedundancy
             this.osmNetwork = net; // new OSMNetwork(net); // Why would you make a copy?
-            this.otsNetwork = new OTSNetwork<String, String, String>(this.osmNetwork.getName());
+            this.otsNetwork = new OTSNetwork(this.osmNetwork.getName());
             for (OSMNode osmNode : this.osmNetwork.getNodes().values())
             {
                 try
@@ -215,8 +215,7 @@ public class OpenStreetMap extends AbstractWrappableSimulation
             }
             for (OSMLink osmLink : this.osmNetwork.getLinks())
             {
-                @SuppressWarnings("unchecked")
-                Link<String, String> link = (Link<String, String>) converter.convertLink(osmLink);
+                Link link = converter.convertLink(osmLink);
                 this.otsNetwork.addLink(link);
             }
             this.osmNetwork.makeLinks(this.warningListener, this.progressListener);
@@ -229,11 +228,11 @@ public class OpenStreetMap extends AbstractWrappableSimulation
         this.model =
             new OSMModel(getUserModifiedProperties(), this.osmNetwork, this.warningListener, this.progressListener,
                 converter);
-        Iterator<Node<String>> count = this.otsNetwork.getNodeMap().values().iterator();
+        Iterator<Node> count = this.otsNetwork.getNodeMap().values().iterator();
         Rectangle2D area = null;
         while (count.hasNext())
         {
-            Node<String> node = count.next();
+            Node node = count.next();
             if (null == area)
             {
                 area = new Rectangle2D.Double(node.getPoint().x, node.getPoint().y, 0, 0);
@@ -299,7 +298,7 @@ class OSMModel implements OTSModelInterface
     private OSMNetwork osmNetwork;
 
     /** Provided lanes. */
-    private List<Lane<?, ?>> lanes = new ArrayList<Lane<?, ?>>();
+    private List<Lane> lanes = new ArrayList<Lane>();
 
     /** */
     private ProgressListener progressListener;
@@ -327,22 +326,21 @@ class OSMModel implements OTSModelInterface
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
     @Override
     public void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
         throws SimRuntimeException, RemoteException
     {
         try
         {
-            OTSNetwork<String, String, String> otsNetwork =
-                new OTSNetwork<String, String, String>(this.osmNetwork.getName());
+            OTSNetwork otsNetwork =
+                new OTSNetwork(this.osmNetwork.getName());
             for (OSMNode osmNode : this.osmNetwork.getNodes().values())
             {
                 otsNetwork.addNode(this.converter.convertNode(osmNode));
             }
             for (OSMLink osmLink : this.osmNetwork.getLinks())
             {
-                otsNetwork.addLink((Link<String, String>) this.converter.convertLink(osmLink));
+                otsNetwork.addLink(this.converter.convertLink(osmLink));
             }
             Convert.findSinksandSources(this.osmNetwork, this.progressListener);
             this.progressListener.progress(new ProgressEvent(this.osmNetwork, "Creation the lanes on "

@@ -35,7 +35,7 @@ class GTUTag
 
     /** type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    GTUType<String> gtuType = null;
+    GTUType gtuType = null;
 
     /** GTU length. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -117,11 +117,11 @@ class GTUTag
      * @param parser the parser with the lists of information
      * @return the GTUType that was retrieved or created.
      */
-    static GTUType<String> parseGTUType(final String typeName, final XmlNetworkLaneParser parser)
+    static GTUType parseGTUType(final String typeName, final XmlNetworkLaneParser parser)
     {
         if (!parser.gtuTypes.containsKey(typeName))
         {
-            GTUType<String> gtuType = GTUType.makeGTUType(typeName);
+            GTUType gtuType = GTUType.makeGTUType(typeName);
             parser.gtuTypes.put(typeName, gtuType);
         }
         return parser.gtuTypes.get(typeName);
