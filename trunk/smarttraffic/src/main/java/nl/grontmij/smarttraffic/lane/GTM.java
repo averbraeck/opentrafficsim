@@ -60,12 +60,6 @@ public class GTM extends AbstractWrappableSimulationST
     /** a map from the signal group name, e.g., 225_08 to the traffic lights, e.g., [225_08.1, 225_08.2, 225_08.3]. */
     public static Map<String, List<TrafficLight>> signalGroupToTrafficLights = new HashMap<>();
 
-    /** max speed of cars in km/h. */
-    public static final double MAXSPEED = 80;
-
-    /** max speed of cars in km/h. */
-    public static final double NUMBEROFDAYS = 1;
-
     /**
      * Main program. GTMModel has the model details.
      * @param args String[]; the command line arguments (not used)
@@ -170,7 +164,7 @@ public class GTM extends AbstractWrappableSimulationST
 
             // Bouw het netwerk
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
-            OTSNetwork<?, ?, ?> network = null;
+            OTSNetwork network = null;
             try
             {
                 network = nlp.build(url);
@@ -234,7 +228,7 @@ public class GTM extends AbstractWrappableSimulationST
             // connect the detector pulses to the simulator and generate Cars
             // Module that provides actions if a pulse from a detector is
             // activated: creeren van een voertuig als een detector "af" gaat (waarde wordt nul)
-            GTUType<String> gtuType = GTUType.makeGTUType("CAR");
+            GTUType gtuType = GTUType.makeGTUType("CAR");
             int generateCar = 0;
             Map<String, CompleteRoute> routes = new HashMap<>();
             for (String rName : network.getRouteMap().keySet())
@@ -295,21 +289,21 @@ public class GTM extends AbstractWrappableSimulationST
          * Get the traffic lights with their name.
          * @param network the parsed network.
          */
-        private void makeSignalGroupTrafficLightMap(final OTSNetwork<?, ?, ?> network)
+        private void makeSignalGroupTrafficLightMap(final OTSNetwork network)
         {
-            for (Link<?, ?> link : network.getLinkMap().values())
+            for (Link link : network.getLinkMap().values())
             {
                 if (link instanceof CrossSectionLink)
                 {
                     @SuppressWarnings({"rawtypes", "unchecked"})
-                    List<CrossSectionElement<?, ?>> cseList = ((CrossSectionLink) link).getCrossSectionElementList();
-                    for (CrossSectionElement<?, ?> cse : cseList)
+                    List<CrossSectionElement> cseList = ((CrossSectionLink) link).getCrossSectionElementList();
+                    for (CrossSectionElement cse : cseList)
                     {
                         if (cse instanceof Lane)
                         {
-                            Lane<?, ?> lane = (Lane<?, ?>) cse;
-                            List<LaneBasedGTU<?>> gtus = new ArrayList<>(lane.getGtuList());
-                            for (LaneBasedGTU<?> gtu : gtus)
+                            Lane lane = (Lane) cse;
+                            List<LaneBasedGTU> gtus = new ArrayList<>(lane.getGtuList());
+                            for (LaneBasedGTU gtu : gtus)
                             {
                                 if (gtu instanceof TrafficLight)
                                 {

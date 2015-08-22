@@ -31,7 +31,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public class ScheduleGenerateCars
 {
     /** The type of GTUs generated. */
-    final GTUType<String> gtuType;
+    final GTUType gtuType;
 
     /** The GTU following model used by all generated GTUs. */
     final GTUFollowingModel gtuFollowingModel;
@@ -57,7 +57,7 @@ public class ScheduleGenerateCars
     /** the routes. A and B. */
     private Map<String, CompleteRoute> routes;
 
-    public ScheduleGenerateCars(GTUType<String> gtuType, OTSDEVSSimulatorInterface simulator,
+    public ScheduleGenerateCars(GTUType gtuType, OTSDEVSSimulatorInterface simulator,
         Map<String, GenerateSensor> mapSensor, int generateCar, Map<String, CompleteRoute> routes)
     {
         this.gtuType = gtuType;
@@ -84,7 +84,7 @@ public class ScheduleGenerateCars
             HashMap<DoubleScalar.Abs<TimeUnit>, Integer> pulses = sensor.getStatusByTime();
             for (Entry<DoubleScalar.Abs<TimeUnit>, Integer> entryPulse : pulses.entrySet())
             {
-                Lane<?, ?> lane = sensor.getLane();
+                Lane lane = sensor.getLane();
                 DoubleScalar.Rel<LengthUnit> initialPosition = sensor.getLongitudinalPosition();
                 if (entryPulse.getValue() == this.generateCar)
                 {
@@ -108,7 +108,7 @@ public class ScheduleGenerateCars
     /**
      * Generate one car and re-schedule this method if there is no space.
      */
-    protected final void generateCar(Lane<?, ?> lane, DoubleScalar.Rel<LengthUnit> initialPosition)
+    protected final void generateCar(Lane lane, DoubleScalar.Rel<LengthUnit> initialPosition)
     {
         // is there enough space?
         Lane nextLane = lane.nextLanes().iterator().next();
@@ -127,11 +127,11 @@ public class ScheduleGenerateCars
             }
         }
 
-        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions =
-                new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
+                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(lane, initialPosition);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(genSpeedSI, SpeedUnit.SI); 
-        DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(GTM.MAXSPEED, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(Settings.MAXSPEED, SpeedUnit.KM_PER_HOUR);
         if (initialPosition.getSI() + this.lengthCar > lane.getLength().getSI())
         {
             // also register on next lane.
@@ -163,7 +163,7 @@ public class ScheduleGenerateCars
         try
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength = new DoubleScalar.Rel<LengthUnit>(this.lengthCar, LengthUnit.METER);
-            new LaneBasedIndividualCar<Integer>(++this.carsCreated, this.gtuType, this.gtuFollowingModel,
+            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, this.gtuFollowingModel,
                 this.laneChangeModel, initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(
                     2.0, LengthUnit.METER), maxSpeed, routeNavigatorAB,
                 this.simulator, DefaultCarAnimation.class, this.gtuColorer);
@@ -182,7 +182,7 @@ public class ScheduleGenerateCars
      * @throws RemoteException if simulator cannot be reached to calculate current position
      * @throws NetworkException if GTU does not have a position on the lane where it is registered
      */
-    public static final boolean enoughSpace(final Lane<?, ?> generatorLane, final double genPosSI, final double carLengthSI,
+    public static final boolean enoughSpace(final Lane generatorLane, final double genPosSI, final double carLengthSI,
         final double genSpeedSI)
     {
         // assume a=2 m/s2
@@ -196,14 +196,14 @@ public class ScheduleGenerateCars
         double frontNew = (genPosSI + carLengthSI) / laneLengthSI;
         double rearNew = genPosSI / laneLengthSI;
         
-        Lane<?, ?> nextLane = generatorLane.nextLanes().iterator().next();
+        Lane nextLane = generatorLane.nextLanes().iterator().next();
         double frontNextNewSI = genPosSI + carLengthSI - laneLengthSI + brakeDistanceSI;
         double rearNextNewSI = genPosSI - laneLengthSI;
         
         try
         {
             // test for overlap with other GTUs
-            for (LaneBasedGTU<?> gtu : generatorLane.getGtuList())
+            for (LaneBasedGTU gtu : generatorLane.getGtuList())
             {
                 double frontGTU;
                 frontGTU = gtu.fractionalPosition(generatorLane, gtu.getFront());
@@ -214,7 +214,7 @@ public class ScheduleGenerateCars
                     return false;
                 }
             }
-            for (LaneBasedGTU<?> gtu : nextLane.getGtuList())
+            for (LaneBasedGTU gtu : nextLane.getGtuList())
             {
                 double frontGTU;
                 frontGTU = gtu.position(nextLane, gtu.getFront()).getSI();

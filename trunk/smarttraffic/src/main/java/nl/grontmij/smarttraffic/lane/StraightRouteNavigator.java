@@ -25,7 +25,7 @@ public class StraightRouteNavigator extends AbstractLaneBasedRouteNavigator
 {
     /** The complete route. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final CompleteRoute<?, ?> straightRoute;
+    protected final CompleteRoute straightRoute;
 
     /** last visited node on the route. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -34,7 +34,7 @@ public class StraightRouteNavigator extends AbstractLaneBasedRouteNavigator
     /**
      * @param straightRoute
      */
-    public StraightRouteNavigator(CompleteRoute<?, ?> straightRoute, Link currentLink)
+    public StraightRouteNavigator(CompleteRoute straightRoute, Link currentLink)
     {
         super();
         this.straightRoute = straightRoute;
@@ -42,8 +42,8 @@ public class StraightRouteNavigator extends AbstractLaneBasedRouteNavigator
 
     /** {@inheritDoc} */
     @Override
-    public DoubleScalar.Rel<LengthUnit> suitability(Lane<?, ?> lane, DoubleScalar.Rel<LengthUnit> longitudinalPosition,
-        GTUType<?> gtuType, DoubleScalar.Rel<TimeUnit> timeHorizon) throws NetworkException
+    public DoubleScalar.Rel<LengthUnit> suitability(Lane lane, DoubleScalar.Rel<LengthUnit> longitudinalPosition,
+        GTUType gtuType, DoubleScalar.Rel<TimeUnit> timeHorizon) throws NetworkException
     {
         // if the lane connects to the main route: good, otherwise: bad
         if (this.straightRoute.getNodes().contains(lane.getParentLink().getEndNode()))
@@ -63,7 +63,7 @@ public class StraightRouteNavigator extends AbstractLaneBasedRouteNavigator
 
     /** {@inheritDoc} */
     @Override
-    public final Node<?> lastVisitedNode() throws NetworkException
+    public final Node lastVisitedNode() throws NetworkException
     {
         if (this.lastVisitedNodeIndex == -1)
         {
@@ -74,7 +74,7 @@ public class StraightRouteNavigator extends AbstractLaneBasedRouteNavigator
 
     /** {@inheritDoc} */
     @Override
-    public final Node<?> nextNodeToVisit() throws NetworkException
+    public final Node nextNodeToVisit() throws NetworkException
     {
         if (this.lastVisitedNodeIndex >= this.straightRoute.size() - 1)
         {
@@ -85,7 +85,7 @@ public class StraightRouteNavigator extends AbstractLaneBasedRouteNavigator
 
     /** {@inheritDoc} */
     @Override
-    public final Node<?> visitNextNode() throws NetworkException
+    public final Node visitNextNode() throws NetworkException
     {
         if (this.lastVisitedNodeIndex >= this.straightRoute.size() - 1)
         {

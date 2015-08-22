@@ -52,7 +52,7 @@ public class StopLineLane extends AbstractSensor
     private HashMap<DoubleScalar.Abs<TimeUnit>, Long> mapStopTrafficState = new HashMap<DoubleScalar.Abs<TimeUnit>, Long>();
 
     /** The blocking car. */
-    private LaneBasedIndividualCar<Integer> stopGTU = null;
+    private LaneBasedIndividualCar stopGTU = null;
 
     private TrafficLight trafficLight;
 
@@ -64,13 +64,13 @@ public class StopLineLane extends AbstractSensor
      * @param lane The lane for which this is a sensor.
      * @param longitudinalPositionFromEnd longitudinal position from the end TODO change for position, not from the end.
      */
-    public StopLineLane(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> longitudinalPositionFromEnd,
+    public StopLineLane(final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPositionFromEnd,
         final OTSSimulatorInterface simulator)
     {
         super(lane, longitudinalPositionFromEnd, RelativePosition.FRONT, "STOPLINE@" + lane.toString(), simulator);
     }
 
-    public StopLineLane(String name,final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition, 
+    public StopLineLane(String name,final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition, 
         OTSDEVSSimulatorInterface simulator)
     {
         super(lane, longitudinalPosition, RelativePosition.FRONT, name, simulator);
@@ -91,7 +91,7 @@ public class StopLineLane extends AbstractSensor
      * of the GTU. The code triggering the sensor therefore has to do the checking for sensor type.
      */
     @Override
-    public final void trigger(final LaneBasedGTU<?> gtu)
+    public final void trigger(final LaneBasedGTU gtu)
     {
         try
         {
@@ -114,15 +114,15 @@ public class StopLineLane extends AbstractSensor
         /** Type of all GTUs. */
         try
         {
-            Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions =
-                new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
+            Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
+                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
             initialPositions.put(this.getLane(), this.getLongitudinalPosition());
             this.stopGTU =
-                new LaneBasedIndividualCar<Integer>(999999, GTUType.makeGTUType("CAR"), new IDMPlus(), new Egoistic(),
+                new LaneBasedIndividualCar("999999", GTUType.makeGTUType("CAR"), new IDMPlus(), new Egoistic(),
                     initialPositions, new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
                     new DoubleScalar.Rel<LengthUnit>(1, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1.8,
                         LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-                    new CompleteLaneBasedRouteNavigator(new CompleteRoute<>("")), simulator, DefaultCarAnimation.class,
+                    new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator, DefaultCarAnimation.class,
                     new IDGTUColorer());
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)

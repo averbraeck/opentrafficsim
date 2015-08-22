@@ -56,7 +56,7 @@ public class MeasureSensor extends AbstractSensor
      * @param position
      * @param nameSensor
      */
-    public MeasureSensor(Lane<?, ?> lane, Rel<LengthUnit> position, final RelativePosition.TYPE front, String nameSensor,
+    public MeasureSensor(Lane lane, Rel<LengthUnit> position, final RelativePosition.TYPE front, String nameSensor,
         final OTSSimulatorInterface simulator)
     {
         super(lane, position, front, nameSensor, simulator);
@@ -76,7 +76,7 @@ public class MeasureSensor extends AbstractSensor
      * of the GTU. The code triggering the sensor therefore has to do the checking for sensor type.
      */
     @Override
-    public void trigger(final LaneBasedGTU<?> gtu)
+    public void trigger(final LaneBasedGTU gtu)
     {
         try
         {

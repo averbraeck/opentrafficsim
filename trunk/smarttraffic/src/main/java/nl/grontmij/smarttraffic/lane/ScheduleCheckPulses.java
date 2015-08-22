@@ -38,7 +38,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public class ScheduleCheckPulses<ID>
 {
     /** The type of GTUs generated. */
-    final GTUType<String> gtuType;
+    final GTUType gtuType;
 
     /** The GTU following model used by all generated GTUs. */
     final GTUFollowingModel gtuFollowingModel;
@@ -59,7 +59,7 @@ public class ScheduleCheckPulses<ID>
 
     HashMap<String, CheckSensor> mapSensor;
 
-    public ScheduleCheckPulses(GTUType<String> gtuType, OTSDEVSSimulatorInterface simulator,
+    public ScheduleCheckPulses(GTUType gtuType, OTSDEVSSimulatorInterface simulator,
         HashMap<String, CheckSensor> mapSensor, double backRange, double frontRange, List<CompleteRoute> routes)
         throws RemoteException, SimRuntimeException, NetworkException, GTUException, NamingException
     {
@@ -293,7 +293,7 @@ public class ScheduleCheckPulses<ID>
     {
         LaneBasedGTU nearestGTU = null;
         double distanceSI = range;
-        Lane<?, ?> nextLane = sensor.getLane().nextLanes().iterator().next();
+        Lane nextLane = sensor.getLane().nextLanes().iterator().next();
         for (Object cse : nextLane.getParentLink().getCrossSectionElementList())
         {
             if (cse instanceof Lane)
@@ -321,11 +321,11 @@ public class ScheduleCheckPulses<ID>
      * Generate one car and re-schedule this method if there is no space.
      * @throws NetworkException
      */
-    protected final void generateCar(Lane<?, ?> lane, DoubleScalar.Rel<LengthUnit> initialPosition, final int gtuNumber)
+    protected final void generateCar(Lane lane, DoubleScalar.Rel<LengthUnit> initialPosition, final int gtuNumber)
         throws NetworkException
     {
         // is there enough space?
-        Lane<?, ?> nextLane = lane.nextLanes().iterator().next();
+        Lane nextLane = lane.nextLanes().iterator().next();
         double genSpeedSI = Math.min(lane.getSpeedLimit().getSI(), nextLane.getSpeedLimit().getSI());
         if (!ScheduleGenerateCars.enoughSpace(lane, initialPosition.getSI(), this.lengthCar, genSpeedSI))
         {
@@ -341,11 +341,11 @@ public class ScheduleCheckPulses<ID>
             }
         }
 
-        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions =
-            new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
+            new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(lane, initialPosition);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = lane.getSpeedLimit();
-        DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(GTM.MAXSPEED, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(Settings.MAXSPEED, SpeedUnit.KM_PER_HOUR);
         if (initialPosition.getSI() + this.lengthCar > lane.getLength().getSI())
         {
             // also register on next lane.
@@ -372,7 +372,7 @@ public class ScheduleCheckPulses<ID>
         try
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength = new DoubleScalar.Rel<LengthUnit>(this.lengthCar, LengthUnit.METER);
-            new LaneBasedIndividualCar<Integer>(gtuNumber, this.gtuType, this.gtuFollowingModel, this.laneChangeModel,
+            new LaneBasedIndividualCar("" + gtuNumber, this.gtuType, this.gtuFollowingModel, this.laneChangeModel,
                 initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
                 maxSpeed, routeNavigator, this.simulator, DefaultCarAnimation.class, this.gtuColorer);
         }

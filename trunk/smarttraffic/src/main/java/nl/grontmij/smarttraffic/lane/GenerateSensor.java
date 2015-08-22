@@ -34,7 +34,7 @@ public class GenerateSensor extends AbstractSensor
      * @param nameSensor
      * @param nameJunction
      */
-    public GenerateSensor(Lane<?, ?> lane, Rel<LengthUnit> longitudinalPositionFromEnd, final RelativePosition.TYPE front,
+    public GenerateSensor(Lane lane, Rel<LengthUnit> longitudinalPositionFromEnd, final RelativePosition.TYPE front,
         String nameSensor, final OTSSimulatorInterface simulator)
     {
         super(lane, longitudinalPositionFromEnd, front, nameSensor, simulator);
@@ -69,7 +69,7 @@ public class GenerateSensor extends AbstractSensor
      * of the GTU. The code triggering the sensor therefore has to do the checking for sensor type.
      */
     @Override
-    public void trigger(final LaneBasedGTU<?> gtu)
+    public void trigger(final LaneBasedGTU gtu)
     {
         // no action needed
     }

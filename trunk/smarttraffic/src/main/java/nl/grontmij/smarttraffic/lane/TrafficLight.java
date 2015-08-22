@@ -39,7 +39,7 @@ public class TrafficLight extends AbstractTrafficLight
      * @throws RemoteException when the simulator cannot be reached
      * @throws NetworkException when the GTU cannot be placed on the given lane
      */
-    public TrafficLight(final String name, final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> position,
+    public TrafficLight(final String name, final Lane lane, final DoubleScalar.Rel<LengthUnit> position,
         OTSDEVSSimulatorInterface simulator) throws GTUException, RemoteException, NetworkException, NamingException
     {
         super(name, lane, position, simulator);

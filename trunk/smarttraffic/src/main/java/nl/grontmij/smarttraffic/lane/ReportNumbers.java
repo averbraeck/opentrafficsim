@@ -38,7 +38,7 @@ public class ReportNumbers
     private final OTSDEVSSimulatorInterface simulator;
 
     /** the network. */
-    private final Network<?, ?> network;
+    private final Network network;
 
     static
     {
@@ -64,7 +64,7 @@ public class ReportNumbers
     /**
      * @param simulator
      */
-    public ReportNumbers(final Network<?, ?> network, final OTSDEVSSimulatorInterface simulator)
+    public ReportNumbers(final Network network, final OTSDEVSSimulatorInterface simulator)
     {
         this.simulator = simulator;
         this.network = network;

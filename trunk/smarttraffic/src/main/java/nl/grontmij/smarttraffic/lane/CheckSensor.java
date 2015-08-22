@@ -44,7 +44,7 @@ public class CheckSensor extends AbstractSensor
 
     private HashMap<DoubleScalar.Abs<TimeUnit>, Integer> statusByTime = new HashMap<DoubleScalar.Abs<TimeUnit>, Integer>();
 
-    // private ArrayList<LaneBasedGTU<?>> gtusDetected = new ArrayList<LaneBasedGTU<?>>();
+    // private ArrayList<LaneBasedGTU> gtusDetected = new ArrayList<LaneBasedGTU>();
 
     private Boolean exitLaneSensor = null;
 
@@ -56,7 +56,7 @@ public class CheckSensor extends AbstractSensor
      * @param nameSensor
      * @param nameJunction
      */
-    public CheckSensor(Lane<?, ?> lane, Rel<LengthUnit> longitudinalPositionFromEnd, final RelativePosition.TYPE front,
+    public CheckSensor(Lane lane, Rel<LengthUnit> longitudinalPositionFromEnd, final RelativePosition.TYPE front,
         String nameSensor, final OTSSimulatorInterface simulator)
     {
         super(lane, longitudinalPositionFromEnd, front, nameSensor, simulator);
@@ -74,16 +74,16 @@ public class CheckSensor extends AbstractSensor
     public List<CheckSensor> findParallelSensors()
     {
         // find the lane
-        for (Link<?, ?> link : this.getLane().getParentLink().getStartNode().getLinksOut())
+        for (Link link : this.getLane().getParentLink().getStartNode().getLinksOut())
         {
             if (link instanceof CrossSectionLink)
             {
-                CrossSectionLink<?, ?> csl = (CrossSectionLink<?, ?>) link;
-                for (CrossSectionElement<?, ?> cse : csl.getCrossSectionElementList())
+                CrossSectionLink csl = (CrossSectionLink) link;
+                for (CrossSectionElement cse : csl.getCrossSectionElementList())
                 {
                     if (cse instanceof Lane && !(cse instanceof NoTrafficLane))
                     {
-                        Lane<?, ?> lane = (Lane<?, ?>) cse;
+                        Lane lane = (Lane) cse;
                         if (lane.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER), lane.getLength()) != null)
                         {
                             List<Sensor> sensors =
@@ -205,7 +205,7 @@ public class CheckSensor extends AbstractSensor
      * of the GTU. The code triggering the sensor therefore has to do the checking for sensor type.
      */
     @Override
-    public void trigger(final LaneBasedGTU<?> gtu)
+    public void trigger(final LaneBasedGTU gtu)
     {
         // System.out.println(gtu.getSimulator() + ": detecting " + gtu.toString() + " passing detector at lane " + getLane());
         // this.gtusDetected.add(gtu);

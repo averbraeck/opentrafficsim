@@ -25,7 +25,7 @@ public class ReadNetworkData
         // cannot be instantiated.
     }
 
-    public static void readDetectors(OTSDEVSSimulatorInterface simulator, OTSNetwork<?, ?, ?> network,
+    public static void readDetectors(OTSDEVSSimulatorInterface simulator, OTSNetwork network,
         HashMap<String, ConfigVri> configVriList, HashMap<String, AbstractSensor> mapSensor,
         HashMap<String, GenerateSensor> mapSensorGenerateCars, HashMap<String, KillSensor> mapSensorKillCars,
         HashMap<String, CheckSensor> mapSensorCheckCars)
@@ -34,18 +34,18 @@ public class ReadNetworkData
         // define the detectors by type (ENTRANCE, INTERMEDIATE, EXIT)
         // Inventorize all detectors from the network, distinguished by type
         Map<?, ?> links = network.getLinkMap();
-        Collection<Link<?, ?>> linkValues = (Collection<Link<?, ?>>) links.values();
-        for (Link<?, ?> link : linkValues)
+        Collection<Link> linkValues = (Collection<Link>) links.values();
+        for (Link link : linkValues)
         {
             if (link instanceof CrossSectionLink)
             {
-                CrossSectionLink<?, ?> csl = (CrossSectionLink<?, ?>) link;
+                CrossSectionLink csl = (CrossSectionLink) link;
                 for (CrossSectionElement cse : csl.getCrossSectionElementList())
                 {
                     if (cse instanceof Lane && !(cse instanceof NoTrafficLane))
                     {
                         Lane lane = (Lane) cse;
-                        List<AbstractSensor> sensors =
+                        List<Sensor> sensors =
                             lane.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER), lane.getLength());
                         if (!sensors.isEmpty())
                         {
