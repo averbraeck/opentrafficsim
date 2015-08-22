@@ -28,15 +28,14 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <NODEID> the NODEID type.
  */
-public class OTSNode<NODEID> implements Node<NODEID>, LocatableInterface, Serializable
+public class OTSNode implements Node, LocatableInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150722L;
 
     /** the node id. */
-    private final NODEID id;
+    private final String id;
 
     /** the point. */
     private final OTSPoint3D point;
@@ -48,10 +47,10 @@ public class OTSNode<NODEID> implements Node<NODEID>, LocatableInterface, Serial
     private final DoubleScalar.Abs<AngleSlopeUnit> slope;
 
     /** the incoming links. */
-    private final Set<Link<?, NODEID>> linksIn = new HashSet<Link<?, NODEID>>();
+    private final Set<Link> linksIn = new HashSet<Link>();
 
     /** the outgoing links. */
-    private final Set<Link<?, NODEID>> linksOut = new HashSet<Link<?, NODEID>>();
+    private final Set<Link> linksOut = new HashSet<Link>();
 
     /**
      * Construction of a Node.
@@ -60,7 +59,7 @@ public class OTSNode<NODEID> implements Node<NODEID>, LocatableInterface, Serial
      * @param direction the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
      * @param slope the slope as an angle.
      */
-    public OTSNode(final NODEID id, final OTSPoint3D point, final DoubleScalar.Abs<AnglePlaneUnit> direction,
+    public OTSNode(final String id, final OTSPoint3D point, final DoubleScalar.Abs<AnglePlaneUnit> direction,
         final DoubleScalar.Abs<AngleSlopeUnit> slope)
     {
         this.id = id;
@@ -74,7 +73,7 @@ public class OTSNode<NODEID> implements Node<NODEID>, LocatableInterface, Serial
      * @param id the id of the Node.
      * @param point the point with usually an x and y setting.
      */
-    public OTSNode(final NODEID id, final OTSPoint3D point)
+    public OTSNode(final String id, final OTSPoint3D point)
     {
         this(id, point, new DoubleScalar.Abs<AnglePlaneUnit>(0.0, AnglePlaneUnit.SI), new DoubleScalar.Abs<AngleSlopeUnit>(
             0.0, AngleSlopeUnit.SI));
@@ -83,7 +82,7 @@ public class OTSNode<NODEID> implements Node<NODEID>, LocatableInterface, Serial
     /**
      * @return node id.
      */
-    public final NODEID getId()
+    public final String getId()
     {
         return this.id;
     }
@@ -98,21 +97,21 @@ public class OTSNode<NODEID> implements Node<NODEID>, LocatableInterface, Serial
 
     /** {@inheritDoc} */
     @Override
-    public final void addLinkIn(final Link<?, NODEID> linkIn)
+    public final void addLinkIn(final Link linkIn)
     {
         this.linksIn.add(linkIn);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void addLinkOut(final Link<?, NODEID> linkOut)
+    public final void addLinkOut(final Link linkOut)
     {
         this.linksOut.add(linkOut);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Set<Link<?, NODEID>> getLinksIn()
+    public final Set<Link> getLinksIn()
     {
         // XXX: should return a copy?
         return this.linksIn;
@@ -120,7 +119,7 @@ public class OTSNode<NODEID> implements Node<NODEID>, LocatableInterface, Serial
 
     /** {@inheritDoc} */
     @Override
-    public final Set<Link<?, NODEID>> getLinksOut()
+    public final Set<Link> getLinksOut()
     {
         // XXX: should return a copy?
         return this.linksOut;
@@ -185,7 +184,7 @@ public class OTSNode<NODEID> implements Node<NODEID>, LocatableInterface, Serial
         if (getClass() != obj.getClass())
             return false;
         @SuppressWarnings("unchecked")
-        OTSNode<NODEID> other = (OTSNode<NODEID>) obj;
+        OTSNode other = (OTSNode) obj;
         if (this.id == null)
         {
             if (other.id != null)

@@ -63,11 +63,8 @@ package org.opentrafficsim.core.network;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <NETWORKID> the ID type of the Network, e.g., String.
- * @param <NODEID> the ID type of the Node, e.g., String.
- * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public abstract class ExpansionNetwork<NETWORKID, LINKID, NODEID> extends OTSNetwork<NETWORKID, LINKID, NODEID>
+public abstract class ExpansionNetwork extends OTSNetwork
 {
     /** */
     private static final long serialVersionUID = 20150104L;
@@ -75,7 +72,7 @@ public abstract class ExpansionNetwork<NETWORKID, LINKID, NODEID> extends OTSNet
     /**
      * @param id the network id.
      */
-    public ExpansionNetwork(final NETWORKID id)
+    public ExpansionNetwork(final String id)
     {
         super(id);
     }

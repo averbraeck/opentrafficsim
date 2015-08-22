@@ -47,9 +47,9 @@ public abstract class AbstractLaneBasedRouteNavigator implements LaneBasedRouteN
      * @param gtuType GTUType&lt;?&gt;; the type of the GTU
      * @return double; the suitability of the <cite>startLane</cite> for following the Route
      */
-    protected final DoubleScalar.Rel<LengthUnit> computeSuitabilityWithLaneChanges(final Lane<?, ?> startLane,
-        final double remainingDistance, final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> suitabilities,
-        final int totalLanes, final LateralDirectionality direction, final GTUType<?> gtuType)
+    protected final DoubleScalar.Rel<LengthUnit> computeSuitabilityWithLaneChanges(final Lane startLane,
+        final double remainingDistance, final Map<Lane, DoubleScalar.Rel<LengthUnit>> suitabilities,
+        final int totalLanes, final LateralDirectionality direction, final GTUType gtuType)
     {
         /*-
          * The time per required lane change seems more relevant than distance per required lane change.
@@ -61,7 +61,7 @@ public abstract class AbstractLaneBasedRouteNavigator implements LaneBasedRouteN
          * ensures that there is a gradient that coaches the GTU towards the most suitable lane.
          */
         int laneChangesUsed = 0;
-        Lane<?, ?> currentLane = startLane;
+        Lane currentLane = startLane;
         DoubleScalar.Rel<LengthUnit> currentSuitability = null;
         while (null == currentSuitability)
         {
@@ -86,14 +86,14 @@ public abstract class AbstractLaneBasedRouteNavigator implements LaneBasedRouteN
      * @param gtuType GTUType; the GTU type
      * @return integer; the number of lanes on the link that are compatible with the GTU type
      */
-    protected final int countCompatibleLanes(final CrossSectionLink<?, ?> link, final GTUType<?> gtuType)
+    protected final int countCompatibleLanes(final CrossSectionLink link, final GTUType gtuType)
     {
         int result = 0;
-        for (CrossSectionElement<?, ?> cse : link.getCrossSectionElementList())
+        for (CrossSectionElement cse : link.getCrossSectionElementList())
         {
             if (cse instanceof Lane)
             {
-                Lane<?, ?> l = (Lane<?, ?>) cse;
+                Lane l = (Lane) cse;
                 if (l.getLaneType().isCompatible(gtuType))
                 {
                     result++;

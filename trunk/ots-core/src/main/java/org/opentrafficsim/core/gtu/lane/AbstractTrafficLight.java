@@ -50,7 +50,7 @@ import com.vividsolutions.jts.linearref.LengthIndexedLine;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractTrafficLight extends AbstractGTU<String> implements LaneBasedGTU<String>
+public abstract class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 {
     /** */
     private static final long serialVersionUID = 20150624L;
@@ -62,13 +62,13 @@ public abstract class AbstractTrafficLight extends AbstractGTU<String> implement
     private Renderable2D animation;
 
     /** the lane of the block. */
-    final Lane<?, ?> lane;
+    final Lane lane;
 
     /** the position of the block on the lane. */
     final DoubleScalar.Rel<LengthUnit> position;
 
     /** blocking GTU type. */
-    public static final GTUType<String> BLOCK_GTU;
+    public static final GTUType BLOCK_GTU;
 
     /** null length. */
     private static final DoubleScalar.Rel<LengthUnit> LENGTH_REL_0 = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
@@ -111,7 +111,7 @@ public abstract class AbstractTrafficLight extends AbstractGTU<String> implement
      * @throws RemoteException when the simulator cannot be reached
      * @throws NetworkException when the GTU cannot be placed on the given lane
      */
-    public AbstractTrafficLight(final String name, final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> position,
+    public AbstractTrafficLight(final String name, final Lane lane, final DoubleScalar.Rel<LengthUnit> position,
         final OTSDEVSSimulatorInterface simulator) throws GTUException, RemoteException, NetworkException, NamingException
     {
         super(name, BLOCK_GTU, new CompleteRouteNavigator(new CompleteRoute("")));
@@ -161,7 +161,7 @@ public abstract class AbstractTrafficLight extends AbstractGTU<String> implement
     /**
      * @return lane
      */
-    public final Lane<?, ?> getLane()
+    public final Lane getLane()
     {
         return this.lane;
     }
@@ -348,31 +348,31 @@ public abstract class AbstractTrafficLight extends AbstractGTU<String> implement
 
     /** {@inheritDoc} */
     @Override
-    public final void enterLane(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> position) throws NetworkException
+    public final void enterLane(final Lane lane, final DoubleScalar.Rel<LengthUnit> position) throws NetworkException
     {
         // do nothing
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void leaveLane(final Lane<?, ?> lane)
+    public final void leaveLane(final Lane lane)
     {
         // do nothing
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> positions(final RelativePosition relativePosition)
+    public final Map<Lane, DoubleScalar.Rel<LengthUnit>> positions(final RelativePosition relativePosition)
         throws NetworkException, RemoteException
     {
-        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> map = new HashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> map = new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         map.put(this.lane, this.position);
         return map;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> positions(final RelativePosition relativePosition,
+    public final Map<Lane, DoubleScalar.Rel<LengthUnit>> positions(final RelativePosition relativePosition,
         final DoubleScalar.Abs<TimeUnit> when) throws NetworkException, RemoteException
     {
         return positions(relativePosition);
@@ -380,7 +380,7 @@ public abstract class AbstractTrafficLight extends AbstractGTU<String> implement
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> position(final Lane<?, ?> lane, final RelativePosition relativePosition)
+    public final DoubleScalar.Rel<LengthUnit> position(final Lane lane, final RelativePosition relativePosition)
         throws NetworkException, RemoteException
     {
         if (this.lane.equals(lane))
@@ -392,7 +392,7 @@ public abstract class AbstractTrafficLight extends AbstractGTU<String> implement
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> position(final Lane<?, ?> lane, final RelativePosition relativePosition,
+    public final DoubleScalar.Rel<LengthUnit> position(final Lane lane, final RelativePosition relativePosition,
         final DoubleScalar.Abs<TimeUnit> when) throws NetworkException, RemoteException
     {
         return position(lane, relativePosition);
@@ -400,27 +400,27 @@ public abstract class AbstractTrafficLight extends AbstractGTU<String> implement
 
     /** {@inheritDoc} */
     @Override
-    public final Map<Lane<?, ?>, Double> fractionalPositions(final RelativePosition relativePosition)
+    public final Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition)
         throws NetworkException, RemoteException
     {
-        Map<Lane<?, ?>, Double> map = new HashMap<Lane<?, ?>, Double>();
+        Map<Lane, Double> map = new HashMap<Lane, Double>();
         map.put(this.lane, this.position.getSI() / this.lane.getLength().getSI());
         return map;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Map<Lane<?, ?>, Double> fractionalPositions(RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
+    public Map<Lane, Double> fractionalPositions(RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
         throws NetworkException, RemoteException
     {
-        Map<Lane<?, ?>, Double> result = new HashMap<Lane<?, ?>, Double>();
+        Map<Lane, Double> result = new HashMap<Lane, Double>();
         result.put(this.lane, this.position.getSI() / this.lane.getLength().getSI());
         return result;
     }
 
     /** {@inheritDoc} */
     @Override
-    public double fractionalPosition(Lane<?, ?> lane, RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
+    public double fractionalPosition(Lane lane, RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
         throws NetworkException, RemoteException
     {
         return this.position.getSI() / lane.getLength().getSI();
@@ -428,7 +428,7 @@ public abstract class AbstractTrafficLight extends AbstractGTU<String> implement
 
     /** {@inheritDoc} */
     @Override
-    public double fractionalPosition(Lane<?, ?> lane, RelativePosition relativePosition) throws NetworkException,
+    public double fractionalPosition(Lane lane, RelativePosition relativePosition) throws NetworkException,
         RemoteException
     {
         return this.position.getSI() / lane.getLength().getSI();
@@ -436,7 +436,7 @@ public abstract class AbstractTrafficLight extends AbstractGTU<String> implement
 
     /** {@inheritDoc} */
     @Override
-    public DoubleScalar.Rel<LengthUnit> projectedPosition(Lane<?, ?> projectionLane, RelativePosition relativePosition,
+    public DoubleScalar.Rel<LengthUnit> projectedPosition(Lane projectionLane, RelativePosition relativePosition,
         DoubleScalar.Abs<TimeUnit> when) throws NetworkException, RemoteException
     {
         return null;
@@ -451,7 +451,7 @@ public abstract class AbstractTrafficLight extends AbstractGTU<String> implement
 
     /** {@inheritDoc} */
     @Override
-    public HeadwayGTU headway(Lane<?, ?> lane, DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException,
+    public HeadwayGTU headway(Lane lane, DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException,
         NetworkException
     {
         return null;
@@ -459,7 +459,7 @@ public abstract class AbstractTrafficLight extends AbstractGTU<String> implement
 
     /** {@inheritDoc} */
     @Override
-    public Set<LaneBasedGTU<?>> parallel(Lane<?, ?> lane, DoubleScalar.Abs<TimeUnit> when) throws RemoteException,
+    public Set<LaneBasedGTU> parallel(Lane lane, DoubleScalar.Abs<TimeUnit> when) throws RemoteException,
         NetworkException
     {
         return null;
@@ -467,7 +467,7 @@ public abstract class AbstractTrafficLight extends AbstractGTU<String> implement
 
     /** {@inheritDoc} */
     @Override
-    public Set<LaneBasedGTU<?>> parallel(LateralDirectionality lateralDirection, DoubleScalar.Abs<TimeUnit> when)
+    public Set<LaneBasedGTU> parallel(LateralDirectionality lateralDirection, DoubleScalar.Abs<TimeUnit> when)
         throws RemoteException, NetworkException
     {
         return null;

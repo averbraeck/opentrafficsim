@@ -18,15 +18,14 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * $LastChangedDate$, @version $Revision$, by $Author$,
  * initial version Jul 8, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @param <ID> the ID-type of the GTU, e.g. String or a certain Enum type.
  */
-public class TemplateGTUType<ID> implements Serializable
+public class TemplateGTUType implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141230L;
 
     /** The type of the GTU. */
-    private final GTUType<ID> gtuType;
+    private final GTUType gtuType;
 
     /** distribution of the length of the GTU. */
     private final DistContinuousDoubleScalar.Rel<LengthUnit> lengthDist;
@@ -47,7 +46,7 @@ public class TemplateGTUType<ID> implements Serializable
      * @param maximumSpeedDist the maximum speed of the GTU type (in the driving direction).
      * @param simulator the simulator.
      */
-    public TemplateGTUType(final ID id, final DistContinuousDoubleScalar.Rel<LengthUnit> lengthDist,
+    public TemplateGTUType(final String id, final DistContinuousDoubleScalar.Rel<LengthUnit> lengthDist,
         final DistContinuousDoubleScalar.Rel<LengthUnit> widthDist,
         final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeedDist, final OTSDEVSSimulatorInterface simulator)
     {
@@ -62,7 +61,7 @@ public class TemplateGTUType<ID> implements Serializable
      * @param laneType lane type to look for compatibility.
      * @return whether the GTUType is compatible with the lane type.
      */
-    public final boolean isCompatible(final LaneType<?> laneType)
+    public final boolean isCompatible(final LaneType laneType)
     {
         return laneType.isCompatible(this.getGtuType());
     }
@@ -102,7 +101,7 @@ public class TemplateGTUType<ID> implements Serializable
     /**
      * @return gtuType.
      */
-    public final GTUType<ID> getGtuType()
+    public final GTUType getGtuType()
     {
         return this.gtuType;
     }

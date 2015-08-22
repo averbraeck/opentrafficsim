@@ -24,14 +24,12 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <NODEID> the ID type of the Node, e.g., String.
- * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public abstract class CrossSectionElement<LINKID, NODEID> implements LocatableInterface
+public abstract class CrossSectionElement implements LocatableInterface
 {
     /** Cross Section Link to which the element belongs. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final CrossSectionLink<LINKID, NODEID> parentLink;
+    protected final CrossSectionLink parentLink;
 
     /** The lateral offset from the design line of the parentLink at the start of the parentLink. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -72,7 +70,7 @@ public abstract class CrossSectionElement<LINKID, NODEID> implements LocatableIn
      * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; width at end, positioned <i>symmetrically around</i> the design line
      * @throws OTSGeometryException when creation of the geometry fails
      */
-    public CrossSectionElement(final CrossSectionLink<LINKID, NODEID> parentLink,
+    public CrossSectionElement(final CrossSectionLink parentLink,
         final DoubleScalar.Rel<LengthUnit> lateralOffsetAtBegin, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd,
         final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
         throws OTSGeometryException
@@ -96,7 +94,7 @@ public abstract class CrossSectionElement<LINKID, NODEID> implements LocatableIn
     /**
      * @return parentLink.
      */
-    public final CrossSectionLink<LINKID, NODEID> getParentLink()
+    public final CrossSectionLink getParentLink()
     {
         return this.parentLink;
     }

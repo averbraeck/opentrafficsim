@@ -19,19 +19,17 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <NODEID> the ID type of the Node, e.g., String.
- * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public interface Link<LINKID, NODEID> extends LocatableInterface, Serializable
+public interface Link extends LocatableInterface, Serializable
 {
     /** @return id. */
-    LINKID getId();
+    String getId();
 
     /** @return start node. */
-    Node<NODEID> getStartNode();
+    Node getStartNode();
 
     /** @return end node. */
-    Node<NODEID> getEndNode();
+    Node getEndNode();
 
     /** @return link capacity. */
     DoubleScalar.Abs<FrequencyUnit> getCapacity();

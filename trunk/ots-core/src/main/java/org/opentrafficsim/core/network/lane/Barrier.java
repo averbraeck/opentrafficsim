@@ -15,10 +15,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * initial version Oct 25, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <NODEID> the ID type of the Node, e.g., String.
- * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public abstract class Barrier<LINKID, NODEID> extends RoadMarkerAlong<LINKID, NODEID>
+public abstract class Barrier extends RoadMarkerAlong
 {
     /**
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
@@ -29,7 +27,7 @@ public abstract class Barrier<LINKID, NODEID> extends RoadMarkerAlong<LINKID, NO
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      */
-    public Barrier(final CrossSectionLink<LINKID, NODEID> parentLink,
+    public Barrier(final CrossSectionLink parentLink,
         final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> beginWidth,
         final DoubleScalar.Rel<LengthUnit> endWidth) throws OTSGeometryException
     {

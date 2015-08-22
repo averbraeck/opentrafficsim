@@ -15,23 +15,22 @@ import org.opentrafficsim.core.gtu.GTUType;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <ID> to identify the ID type (can be String, numeric, object).
  */
-public class LaneType<ID>
+public class LaneType
 {
     /** The id of the LaneType to make it identifiable. */
-    private final ID id;
+    private final String id;
 
     /** the compatibility of GTUs with this lane type. */
-    private final Set<GTUType<?>> compatibilitySet = new HashSet<>();
+    private final Set<GTUType> compatibilitySet = new HashSet<>();
 
     /** lane type that does not allow any vehicles. */
-    public static final LaneType<String> NONE = new LaneType<String>("NONE");
+    public static final LaneType NONE = new LaneType("NONE");
 
     /**
      * @param id the id of the lane type.
      */
-    public LaneType(final ID id)
+    public LaneType(final String id)
     {
         super();
         this.id = id;
@@ -40,7 +39,7 @@ public class LaneType<ID>
     /**
      * @param gtuType GTU type to add compatibility for.
      */
-    public final void addCompatibility(final GTUType<?> gtuType)
+    public final void addCompatibility(final GTUType gtuType)
     {
         this.compatibilitySet.add(gtuType);
     }
@@ -49,7 +48,7 @@ public class LaneType<ID>
      * @param gtuType GTU type to look for compatibility.
      * @return whether the LaneType is compatible with the GTU type.
      */
-    public final boolean isCompatible(final GTUType<?> gtuType)
+    public final boolean isCompatible(final GTUType gtuType)
     {
         return this.compatibilitySet.contains(gtuType);
     }
@@ -57,7 +56,7 @@ public class LaneType<ID>
     /**
      * @return id.
      */
-    public final ID getId()
+    public final String getId()
     {
         return this.id;
     }

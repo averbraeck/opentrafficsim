@@ -19,13 +19,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <LINKID> the ID type of the Link, e.g., String or Integer.
- * @param <NODEID> the ID type of the Node, e.g., String or Integer.
  */
-public class CrossSectionLink<LINKID, NODEID> extends OTSLink<LINKID, NODEID>
+public class CrossSectionLink extends OTSLink
 {
     /** list of cross-section elements. */
-    private final List<CrossSectionElement<LINKID, NODEID>> crossSectionElementList = new ArrayList<>();
+    private final List<CrossSectionElement> crossSectionElementList = new ArrayList<>();
 
     /** */
     private static final long serialVersionUID = 20141015L;
@@ -38,7 +36,7 @@ public class CrossSectionLink<LINKID, NODEID> extends OTSLink<LINKID, NODEID>
      * @param designLine the OTSLine3D design line of the Link
      * @param capacity link capacity in vehicles per hour.
      */
-    public CrossSectionLink(final LINKID id, final Node<NODEID> startNode, final Node<NODEID> endNode,
+    public CrossSectionLink(final String id, final Node startNode, final Node endNode,
         final OTSLine3D designLine, final DoubleScalar.Abs<FrequencyUnit> capacity)
     {
         super(id, startNode, endNode, designLine, capacity);
@@ -51,7 +49,7 @@ public class CrossSectionLink<LINKID, NODEID> extends OTSLink<LINKID, NODEID>
      * @param endNode end node (directional).
      * @param designLine the OTSLine3D design line of the Link
      */
-    public CrossSectionLink(final LINKID id, final Node<NODEID> startNode, final Node<NODEID> endNode,
+    public CrossSectionLink(final String id, final Node startNode, final Node endNode,
         final OTSLine3D designLine)
     {
         super(id, startNode, endNode, designLine);
@@ -62,7 +60,7 @@ public class CrossSectionLink<LINKID, NODEID> extends OTSLink<LINKID, NODEID>
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction.
      * @param cse the cross section element to add.
      */
-    protected final void addCrossSectionElement(final CrossSectionElement<LINKID, NODEID> cse)
+    protected final void addCrossSectionElement(final CrossSectionElement cse)
     {
         this.crossSectionElementList.add(cse);
     }
@@ -73,7 +71,7 @@ public class CrossSectionLink<LINKID, NODEID> extends OTSLink<LINKID, NODEID>
      * @param index the location to insert the element.
      * @param cse the cross section element to add.
      */
-    protected final void addCrossSectionElement(final CrossSectionElement<LINKID, NODEID> cse, final int index)
+    protected final void addCrossSectionElement(final CrossSectionElement cse, final int index)
     {
         this.crossSectionElementList.add(index, cse);
     }
@@ -81,7 +79,7 @@ public class CrossSectionLink<LINKID, NODEID> extends OTSLink<LINKID, NODEID>
     /**
      * @return crossSectionElementList.
      */
-    public final List<CrossSectionElement<LINKID, NODEID>> getCrossSectionElementList()
+    public final List<CrossSectionElement> getCrossSectionElementList()
     {
         return this.crossSectionElementList;
     }

@@ -92,7 +92,7 @@ class CompatibilityTag
     {
         if (!parser.laneTypes.containsKey(laneTypeTag.laneTypeName))
         {
-            LaneType<String> laneType = new LaneType<String>(laneTypeTag.laneTypeName);
+            LaneType laneType = new LaneType(laneTypeTag.laneTypeName);
             parser.laneTypes.put(laneTypeTag.laneTypeName, laneType);
         }
         for (GTUTag gtuTag : laneTypeTag.gtuList)

@@ -36,9 +36,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  *          initial version Oct 22, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <ID> The type of ID, e.g., String or Integer
  */
-public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
+public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
 {
     /** */
     private static final long serialVersionUID = 20141025L;
@@ -50,7 +49,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
     private final Map<RelativePosition.TYPE, RelativePosition> relativePositions = new LinkedHashMap<>();
 
     /**
-     * @param id ID; the id of the GTU, could be String or Integer
+     * @param id ID; the id of the GTU
      * @param templateGtuType the template of the GTU
      * @param gtuFollowingModel GTUFollowingModel; the following model, including a reference to the simulator
      * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial positions of the car
@@ -63,9 +62,9 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
      * @throws SimRuntimeException when the move method cannot be scheduled.
      * @throws GTUException when gtuFollowingModel is null
      */
-    public LaneBasedTemplateCar(final ID id, final TemplateGTUType<?> templateGtuType,
+    public LaneBasedTemplateCar(final String id, final TemplateGTUType templateGtuType,
         final GTUFollowingModel gtuFollowingModel,
-        final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+        final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
         final DoubleScalar.Abs<SpeedUnit> initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator)
         throws NamingException, RemoteException, NetworkException, SimRuntimeException, GTUException
     {
@@ -74,7 +73,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
     }
 
     /**
-     * @param id ID; the id of the GTU, could be String or Integer
+     * @param id ID; the id of the GTU
      * @param templateGtuType the template of the GTU
      * @param gtuFollowingModel GTUFollowingModel; the following model, including a reference to the simulator
      * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial positions of the car
@@ -88,9 +87,9 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
      * @throws SimRuntimeException when the move method cannot be scheduled.
      * @throws GTUException when gtuFollowingModel is null
      */
-    public LaneBasedTemplateCar(final ID id, final TemplateGTUType<?> templateGtuType,
+    public LaneBasedTemplateCar(final String id, final TemplateGTUType templateGtuType,
         final GTUFollowingModel gtuFollowingModel,
-        final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+        final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
         final DoubleScalar.Abs<SpeedUnit> initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator,
         final Class<? extends Renderable2D> animationClass) throws NamingException, RemoteException, NetworkException,
         SimRuntimeException, GTUException
@@ -171,8 +170,8 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
     {
         try
         {
-            Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> frontPositions = positions(getFront());
-            Lane<?, ?> frontLane = frontPositions.keySet().iterator().next();
+            Map<Lane, DoubleScalar.Rel<LengthUnit>> frontPositions = positions(getFront());
+            Lane frontLane = frontPositions.keySet().iterator().next();
             return String.format("Car %s front:%s[%s]", getId(), frontLane, frontPositions.get(frontLane));
         }
         catch (RemoteException | NetworkException exception)
@@ -206,19 +205,18 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
      * @version $Revision$, $LastChangedDate$, by $Author$,
      *          initial Feb 3, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @param <ID> the ID type of the Car, e.g. String or Integer or Long.
      */
     @SuppressWarnings("checkstyle:hiddenfield")
-    public static class LaneBasedTemplateCarBuilder<ID>
+    public static class LaneBasedTemplateCarBuilder
     {
-        /** the id of the GTU, could be String or Integer. */
-        private ID id = null;
+        /** the id of the GTU. */
+        private String id = null;
 
         /** the type of GTU, e.g. TruckType, CarType, BusType. */
-        private TemplateGTUType<?> templateGtuType = null;
+        private TemplateGTUType templateGtuType = null;
 
         /** the initial positions of the car on one or more lanes. */
-        private Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = null;;
+        private Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = null;;
 
         /** the initial speed of the car on the lane. */
         private DoubleScalar.Abs<SpeedUnit> initialSpeed = null;
@@ -236,7 +234,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
          * @param id set id
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedTemplateCarBuilder<ID> setId(final ID id)
+        public final LaneBasedTemplateCarBuilder setId(final String id)
         {
             this.id = id;
             return this;
@@ -246,7 +244,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
          * @param templateGtuType set the template for the gtuType
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedTemplateCarBuilder<ID> setTemplateGtuType(final TemplateGTUType<?> templateGtuType)
+        public final LaneBasedTemplateCarBuilder setTemplateGtuType(final TemplateGTUType templateGtuType)
         {
             this.templateGtuType = templateGtuType;
             return this;
@@ -256,8 +254,8 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
          * @param initialLongitudinalPositions set initialLongitudinalPositions
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedTemplateCarBuilder<ID> setInitialLongitudinalPositions(
-            final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions)
+        public final LaneBasedTemplateCarBuilder setInitialLongitudinalPositions(
+            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions)
         {
             this.initialLongitudinalPositions = initialLongitudinalPositions;
             return this;
@@ -267,7 +265,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
          * @param initialSpeed set initialSpeed
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedTemplateCarBuilder<ID> setInitialSpeed(final DoubleScalar.Abs<SpeedUnit> initialSpeed)
+        public final LaneBasedTemplateCarBuilder setInitialSpeed(final DoubleScalar.Abs<SpeedUnit> initialSpeed)
         {
             this.initialSpeed = initialSpeed;
             return this;
@@ -277,7 +275,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
          * @param routeNavigator RouteNavigator; the route
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedTemplateCarBuilder<ID> setRouteNavigator(final CompleteLaneBasedRouteNavigator routeNavigator)
+        public final LaneBasedTemplateCarBuilder setRouteNavigator(final CompleteLaneBasedRouteNavigator routeNavigator)
         {
             this.routeNavigator = routeNavigator;
             return this;
@@ -287,7 +285,7 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
          * @param animationClass set animation class
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedTemplateCarBuilder<ID> setAnimationClass(final Class<? extends Renderable2D> animationClass)
+        public final LaneBasedTemplateCarBuilder setAnimationClass(final Class<? extends Renderable2D> animationClass)
         {
             this.animationClass = animationClass;
             return this;
@@ -301,12 +299,12 @@ public class LaneBasedTemplateCar<ID> extends AbstractLaneBasedTemplateGTU<ID>
          * @throws SimRuntimeException when the move method cannot be scheduled
          * @throws GTUException when gtuFollowingModel is null
          */
-        public final LaneBasedTemplateCar<ID> build() throws RemoteException, NamingException, NetworkException,
+        public final LaneBasedTemplateCar build() throws RemoteException, NamingException, NetworkException,
             SimRuntimeException, GTUException
         {
             // TODO check that none of the variables (except animationClass) is null, and throw an exception if it is.
 
-            return new LaneBasedTemplateCar<ID>(this.id, this.templateGtuType, this.gtuFollowingModel,
+            return new LaneBasedTemplateCar(this.id, this.templateGtuType, this.gtuFollowingModel,
                 this.initialLongitudinalPositions, this.initialSpeed, this.routeNavigator, this.animationClass);
         }
     }

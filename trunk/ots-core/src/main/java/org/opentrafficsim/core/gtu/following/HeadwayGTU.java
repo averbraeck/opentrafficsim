@@ -18,7 +18,7 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 public class HeadwayGTU
 {
     /** the other GTU. */
-    private final LaneBasedGTU<?> otherGTU;
+    private final LaneBasedGTU otherGTU;
 
     /** the distance to the GTU in meters. */
     private final double distanceSI;
@@ -28,7 +28,7 @@ public class HeadwayGTU
      * @param otherGTU the other GTU
      * @param distanceSI the distance to the other GTU in meters; if the other GTU is parallel, use distance Double.NaN
      */
-    public HeadwayGTU(final LaneBasedGTU<?> otherGTU, final double distanceSI)
+    public HeadwayGTU(final LaneBasedGTU otherGTU, final double distanceSI)
     {
         this.otherGTU = otherGTU;
         this.distanceSI = distanceSI;
@@ -37,7 +37,7 @@ public class HeadwayGTU
     /**
      * @return the other GTU.
      */
-    public final LaneBasedGTU<?> getOtherGTU()
+    public final LaneBasedGTU getOtherGTU()
     {
         return this.otherGTU;
     }

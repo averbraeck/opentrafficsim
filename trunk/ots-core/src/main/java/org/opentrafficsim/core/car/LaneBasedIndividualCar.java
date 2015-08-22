@@ -41,9 +41,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  *          initial version Oct 22, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <ID> The type of ID, e.g., String or Integer
  */
-public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<ID>
+public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
 {
     /** */
     private static final long serialVersionUID = 20141025L;
@@ -55,7 +54,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
     private final Map<RelativePosition.TYPE, RelativePosition> relativePositions = new LinkedHashMap<>();
 
     /**
-     * @param id ID; the id of the GTU, could be String or Integer
+     * @param id ID; the id of the GTU
      * @param gtuType GTUType&lt;?&gt;; the type of GTU, e.g. TruckType, CarType, BusType
      * @param gtuFollowingModel GTUFollowingModel; the following model, including a reference to the simulator
      * @param laneChangeModel LaneChangeModel; the lane change model
@@ -74,9 +73,9 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
      * @throws GTUException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedIndividualCar(final ID id, final GTUType<?> gtuType, final GTUFollowingModel gtuFollowingModel,
+    public LaneBasedIndividualCar(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
         final LaneChangeModel laneChangeModel,
-        final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+        final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
         final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
         final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
         final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator) throws NamingException,
@@ -88,7 +87,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
 
     /**
      * Construct a new LaneBasedIndividualCar.
-     * @param id ID; the id of the GTU, could be String or Integer
+     * @param id ID; the id of the GTU
      * @param gtuType GTUTYpe&lt;?&gt;; the type of GTU, e.g. TruckType, CarType, BusType
      * @param gtuFollowingModel GTUFollowingModel; the following model, including a reference to the simulator
      * @param laneChangeModel LaneChangeModel; the lane change model
@@ -110,9 +109,9 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
      * @throws GTUException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedIndividualCar(final ID id, final GTUType<?> gtuType, final GTUFollowingModel gtuFollowingModel,
+    public LaneBasedIndividualCar(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
         final LaneChangeModel laneChangeModel,
-        final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+        final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
         final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
         final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
         final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator,
@@ -131,23 +130,12 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         this.relativePositions.put(RelativePosition.REAR, new RelativePosition(zero, zero, zero, RelativePosition.REAR));
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
 
-        /* REMOVE START
-        if (id.equals("A1:1"))
-        {
-            try
-            {
-                this.simulator = simulator;
-                //this.pwsimloc = new PrintWriter("d:/pwsimloc.xls");
-                //simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.1, TimeUnit.SECOND), this, this, "simloc", null);
-                this.pwthreadloc = new PrintWriter("d:/pwthreadloc.xls");
-                new ClockLocThread().start();
-            }
-            catch (FileNotFoundException exception)
-            {
-                exception.printStackTrace();
-            }
-        }
-        /* REMOVE END */
+        /*
+         * REMOVE START if (id.equals("A1:1")) { try { this.simulator = simulator; //this.pwsimloc = new
+         * PrintWriter("d:/pwsimloc.xls"); //simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.1, TimeUnit.SECOND),
+         * this, this, "simloc", null); this.pwthreadloc = new PrintWriter("d:/pwthreadloc.xls"); new ClockLocThread().start();
+         * } catch (FileNotFoundException exception) { exception.printStackTrace(); } } /* REMOVE END
+         */
 
         // animation
         if (simulator instanceof OTSAnimatorInterface && animationClass != null)
@@ -176,57 +164,19 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         }
     }
 
-    /* REMOVE START 
-
-    PrintWriter pwsimloc;
-
-    PrintWriter pwthreadloc;
-    
-    OTSDEVSSimulatorInterface simulator;
-
-    protected void simloc()
-    {
-        try
-        {
-            Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> posmap = positions(getFront());
-            Lane<?, ?> lane = posmap.keySet().iterator().next();
-            pwsimloc.write(getSimulator().getSimulatorTime().get().getSI() + "\t" + lane.toString() + "\t"
-                + posmap.get(lane).getSI() + "\n");
-            pwsimloc.flush();
-            simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.1, TimeUnit.SECOND), this, this, "simloc", null);
-        }
-        catch (RemoteException | NetworkException | SimRuntimeException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    protected class ClockLocThread extends Thread
-    {
-        @Override
-        public void run()
-        {
-            while (true)
-            {
-                try
-                {
-                    Thread.sleep(100);
-                    Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> posmap = positions(getFront());
-                    Lane<?, ?> lane = posmap.keySet().iterator().next();
-                    pwthreadloc.write(getSimulator().getSimulatorTime().get().getSI() + "\t" + lane.toString() + "\t"
-                        + posmap.get(lane).getSI() + "\n");
-                    pwthreadloc.flush();
-                }
-                catch (RemoteException | NetworkException | InterruptedException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-    }
-
-    /* REMOVE END */
+    /*
+     * REMOVE START PrintWriter pwsimloc; PrintWriter pwthreadloc; OTSDEVSSimulatorInterface simulator; protected void simloc()
+     * { try { Map<Lane, DoubleScalar.Rel<LengthUnit>> posmap = positions(getFront()); Lane lane =
+     * posmap.keySet().iterator().next(); pwsimloc.write(getSimulator().getSimulatorTime().get().getSI() + "\t" +
+     * lane.toString() + "\t" + posmap.get(lane).getSI() + "\n"); pwsimloc.flush(); simulator.scheduleEventRel(new
+     * DoubleScalar.Rel<TimeUnit>(0.1, TimeUnit.SECOND), this, this, "simloc", null); } catch (RemoteException |
+     * NetworkException | SimRuntimeException e) { e.printStackTrace(); } } protected class ClockLocThread extends Thread {
+     * @Override public void run() { while (true) { try { Thread.sleep(100); Map<Lane, DoubleScalar.Rel<LengthUnit>>
+     * posmap = positions(getFront()); Lane lane = posmap.keySet().iterator().next();
+     * pwthreadloc.write(getSimulator().getSimulatorTime().get().getSI() + "\t" + lane.toString() + "\t" +
+     * posmap.get(lane).getSI() + "\n"); pwthreadloc.flush(); } catch (RemoteException | NetworkException | InterruptedException
+     * e) { e.printStackTrace(); } } } } /* REMOVE END
+     */
 
     /** {@inheritDoc} */
     @Override
@@ -274,7 +224,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
     /** {@inheritDoc} */
     public final String toString()
     {
-        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> frontPositions;
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> frontPositions;
         try
         {
             frontPositions = positions(getFront());
@@ -287,7 +237,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         {
             return String.format("Car %s [NOT ON A LANE]", getId());
         }
-        Lane<?, ?> frontLane = frontPositions.keySet().iterator().next();
+        Lane frontLane = frontPositions.keySet().iterator().next();
         return String.format("Car %s front: %s[%s]", getId(), frontLane, frontPositions.get(frontLane));
     }
 
@@ -315,19 +265,18 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
      * @version $Revision$, $LastChangedDate$, by $Author$,
      *          initial Feb 3, 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @param <ID> the ID type of the Car, e.g. String or Integer or Long.
      */
     @SuppressWarnings("checkstyle:hiddenfield")
-    public static class LaneBasedIndividualCarBuilder<ID>
+    public static class LaneBasedIndividualCarBuilder
     {
-        /** The id of the GTU, could be String or Integer. */
-        private ID id = null;
+        /** The id of the GTU. */
+        private String id = null;
 
         /** The type of GTU, e.g. TruckType, CarType, BusType. */
-        private GTUType<ID> gtuType = null;
+        private GTUType gtuType = null;
 
         /** The initial positions of the car on one or more lanes. */
-        private Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = null;;
+        private Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = null;;
 
         /** The initial speed of the car on the lane. */
         private DoubleScalar.Abs<SpeedUnit> initialSpeed = null;
@@ -363,7 +312,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
          * @param id set id
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder<ID> setId(final ID id)
+        public final LaneBasedIndividualCarBuilder setId(final String id)
         {
             this.id = id;
             return this;
@@ -373,7 +322,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
          * @param gtuType set gtuType
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder<ID> setGtuType(final GTUType<ID> gtuType)
+        public final LaneBasedIndividualCarBuilder setGtuType(final GTUType gtuType)
         {
             this.gtuType = gtuType;
             return this;
@@ -383,7 +332,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
          * @param gtuFollowingModel GTUFollowingModel; the GTU following model used by the built cars
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder<ID> setGTUFollowingModel(final GTUFollowingModel gtuFollowingModel)
+        public final LaneBasedIndividualCarBuilder setGTUFollowingModel(final GTUFollowingModel gtuFollowingModel)
         {
             this.gtuFollowingModel = gtuFollowingModel;
             return this;
@@ -393,7 +342,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
          * @param laneChangeModel AbstractLaneChangeModel; the lane change model
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder<ID> setLaneChangeModel(final LaneChangeModel laneChangeModel)
+        public final LaneBasedIndividualCarBuilder setLaneChangeModel(final LaneChangeModel laneChangeModel)
         {
             this.laneChangeModel = laneChangeModel;
             return this;
@@ -403,8 +352,8 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
          * @param initialLongitudinalPositions set initialLongitudinalPositions
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder<ID> setInitialLongitudinalPositions(
-            final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions)
+        public final LaneBasedIndividualCarBuilder setInitialLongitudinalPositions(
+            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions)
         {
             this.initialLongitudinalPositions = initialLongitudinalPositions;
             return this;
@@ -414,7 +363,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
          * @param initialSpeed set initialSpeed
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder<ID> setInitialSpeed(final DoubleScalar.Abs<SpeedUnit> initialSpeed)
+        public final LaneBasedIndividualCarBuilder setInitialSpeed(final DoubleScalar.Abs<SpeedUnit> initialSpeed)
         {
             this.initialSpeed = initialSpeed;
             return this;
@@ -424,7 +373,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
          * @param length set length
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder<ID> setLength(final DoubleScalar.Rel<LengthUnit> length)
+        public final LaneBasedIndividualCarBuilder setLength(final DoubleScalar.Rel<LengthUnit> length)
         {
             this.length = length;
             return this;
@@ -434,7 +383,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
          * @param width set width
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder<ID> setWidth(final DoubleScalar.Rel<LengthUnit> width)
+        public final LaneBasedIndividualCarBuilder setWidth(final DoubleScalar.Rel<LengthUnit> width)
         {
             this.width = width;
             return this;
@@ -444,7 +393,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
          * @param maximumVelocity set maximumVelocity
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder<ID> setMaximumVelocity(final DoubleScalar.Abs<SpeedUnit> maximumVelocity)
+        public final LaneBasedIndividualCarBuilder setMaximumVelocity(final DoubleScalar.Abs<SpeedUnit> maximumVelocity)
         {
             this.maximumVelocity = maximumVelocity;
             return this;
@@ -454,7 +403,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
          * @param simulator set simulator
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder<ID> setSimulator(final OTSDEVSSimulatorInterface simulator)
+        public final LaneBasedIndividualCarBuilder setSimulator(final OTSDEVSSimulatorInterface simulator)
         {
             this.simulator = simulator;
             return this;
@@ -464,7 +413,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
          * @param animationClass set animation class
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder<ID> setAnimationClass(final Class<? extends Renderable2D> animationClass)
+        public final LaneBasedIndividualCarBuilder setAnimationClass(final Class<? extends Renderable2D> animationClass)
         {
             this.animationClass = animationClass;
             return this;
@@ -474,7 +423,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
          * @param routeGenerator set route generator.
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder<ID> setRouteGenerator(final LaneBasedRouteGenerator routeGenerator)
+        public final LaneBasedIndividualCarBuilder setRouteGenerator(final LaneBasedRouteGenerator routeGenerator)
         {
             this.routeGenerator = routeGenerator;
             return this;
@@ -483,7 +432,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         /**
          * @return id.
          */
-        public final ID getId()
+        public final String getId()
         {
             return this.id;
         }
@@ -499,7 +448,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         /**
          * @return gtuType.
          */
-        public final GTUType<ID> getGtuType()
+        public final GTUType getGtuType()
         {
             return this.gtuType;
         }
@@ -507,7 +456,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
         /**
          * @return initialLongitudinalPositions.
          */
-        public final Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> getInitialLongitudinalPositions()
+        public final Map<Lane, DoubleScalar.Rel<LengthUnit>> getInitialLongitudinalPositions()
         {
             return this.initialLongitudinalPositions;
         }
@@ -597,7 +546,7 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
          * @return the built Car with the set properties
          * @throws Exception when not all required values have been set
          */
-        public final LaneBasedIndividualCar<ID> build() throws Exception
+        public final LaneBasedIndividualCar build() throws Exception
         {
             if (null == this.id || null == this.gtuType || null == this.gtuFollowingModel || null == this.laneChangeModel
                 || null == this.initialLongitudinalPositions || null == this.initialSpeed || null == this.length
@@ -607,8 +556,8 @@ public class LaneBasedIndividualCar<ID> extends AbstractLaneBasedIndividualGTU<I
                 // TODO Should throw a more specific Exception type
                 throw new GTUException("factory settings incomplete");
             }
-            LaneBasedIndividualCar<ID> gtu =
-                new LaneBasedIndividualCar<ID>(this.id, this.gtuType, this.gtuFollowingModel, this.laneChangeModel,
+            LaneBasedIndividualCar gtu =
+                new LaneBasedIndividualCar(this.id, this.gtuType, this.gtuFollowingModel, this.laneChangeModel,
                     this.initialLongitudinalPositions, this.initialSpeed, this.length, this.width, this.maximumVelocity,
                     this.routeGenerator.generateRouteNavigator(), this.simulator, this.animationClass, this.gtuColorer);
             // System.out.println("Generated GTU " + gtu + " at t=" + this.simulator.getSimulatorTime());

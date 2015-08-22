@@ -100,7 +100,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         TimeUnit.SECOND);
 
     /** The series of Lanes that provide the data for this TrajectoryPlot. */
-    private final ArrayList<Lane<?, ?>> path;
+    private final ArrayList<Lane> path;
 
     /** The cumulative lengths of the elements of path. */
     private final DoubleVector.Rel.Dense<LengthUnit> cumulativeLengths;
@@ -117,18 +117,18 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @param legendFormat String; format string for the captions in the color legend
      * @param legendStep Double; increment between color legend entries
      */
-    public ContourPlot(final String caption, final Axis xAxis, final List<Lane<?, ?>> path, final double redValue,
+    public ContourPlot(final String caption, final Axis xAxis, final List<Lane> path, final double redValue,
         final double yellowValue, final double greenValue, final String valueFormat, final String legendFormat,
         final double legendStep)
     {
         this.caption = caption;
-        this.path = new ArrayList<Lane<?, ?>>(path); // make a copy
+        this.path = new ArrayList<Lane>(path); // make a copy
         double[] endLengths = new double[path.size()];
         double cumulativeLength = 0;
         DoubleVector.Rel.Dense<LengthUnit> lengths = null;
         for (int i = 0; i < path.size(); i++)
         {
-            Lane<?, ?> lane = path.get(i);
+            Lane lane = path.get(i);
             lane.addSampler(this);
             cumulativeLength += lane.getLength().getSI();
             endLengths[i] = cumulativeLength;
@@ -558,7 +558,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
 
     /** {@inheritDoc} */
     @Override
-    public final void addData(final AbstractLaneBasedGTU<?> car, final Lane<?, ?> lane) throws RemoteException,
+    public final void addData(final AbstractLaneBasedGTU car, final Lane lane) throws RemoteException,
         NetworkException
     {
         // System.out.println("addData car: " + car + ", lastEval: " + startTime);

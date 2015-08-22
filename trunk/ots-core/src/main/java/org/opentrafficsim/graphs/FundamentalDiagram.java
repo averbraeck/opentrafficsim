@@ -162,7 +162,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @param position DoubleScalarRel&lt;LengthUnit&gt;; longitudinal position of the detector on the Lane
      * @throws NetworkException on network inconsistency
      */
-    public FundamentalDiagram(final String caption, final DoubleScalar.Rel<TimeUnit> aggregationTime, final Lane<?, ?> lane,
+    public FundamentalDiagram(final String caption, final DoubleScalar.Rel<TimeUnit> aggregationTime, final Lane lane,
         final DoubleScalar.Rel<LengthUnit> position) throws NetworkException
     {
         if (aggregationTime.getSI() <= 0)
@@ -268,7 +268,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * Add the effect of one passing car to this Fundamental Diagram.
      * @param gtu AbstractLaneBasedGTU&lt;?&gt;; the GTU that passes the detection point
      */
-    public final void addData(final LaneBasedGTU<?> gtu)
+    public final void addData(final LaneBasedGTU gtu)
     {
         try
         {
@@ -602,7 +602,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
          * @param simulator simulator to allow animation
          * @throws NetworkException on network inconsistency
          */
-        public FundamentalDiagramSensor(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
+        public FundamentalDiagramSensor(final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
             final OTSSimulatorInterface simulator) throws NetworkException
         {
             super(lane, longitudinalPosition, RelativePosition.REFERENCE, "FUNDAMENTAL_DIAGRAM_SENSOR@" + lane.toString(),
@@ -612,7 +612,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
         /** {@inheritDoc} */
         @Override
-        public void trigger(final LaneBasedGTU<?> gtu) throws RemoteException
+        public void trigger(final LaneBasedGTU gtu) throws RemoteException
         {
             addData(gtu);
         }

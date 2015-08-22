@@ -305,7 +305,7 @@ class LaneSimulationModel implements OTSModelInterface
     private int carsCreated = 0;
 
     /** Type of all GTUs. */
-    private GTUType<String> gtuType = GTUType.makeGTUType("Car");
+    private GTUType gtuType = GTUType.makeGTUType("Car");
 
     /** the car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModel carFollowingModelCars;
@@ -323,10 +323,10 @@ class LaneSimulationModel implements OTSModelInterface
     private DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
 
     /** The left Lane that contains simulated Cars. */
-    private Lane<String, String> lane1;
+    private Lane lane1;
 
     /** The right Lane that contains simulated Cars. */
-    private Lane<String, String> lane2;
+    private Lane lane2;
 
     /** the speed limit. */
     private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
@@ -344,7 +344,7 @@ class LaneSimulationModel implements OTSModelInterface
     private Random randomGenerator = new Random(12345);
 
     /** The sequence of Lanes that all vehicles will follow. */
-    private List<Lane<String, String>> path = new ArrayList<Lane<String, String>>();
+    private List<Lane> path = new ArrayList<Lane>();
 
     /** The GTUColorer for the generated vehicles. */
     private final GTUColorer gtuColorer;
@@ -352,9 +352,9 @@ class LaneSimulationModel implements OTSModelInterface
     /**
      * @return a newly created path (which all GTUs in this simulation will follow).
      */
-    public List<Lane<?, ?>> getPath()
+    public List<Lane> getPath()
     {
-        return new ArrayList<Lane<?, ?>>(this.path);
+        return new ArrayList<Lane>(this.path);
     }
 
     /**
@@ -478,9 +478,9 @@ class LaneSimulationModel implements OTSModelInterface
                 }
             }
 
-            OTSNode<String> start = new OTSNode<String>("Start", new OTSPoint3D(radius, 0, 0));
-            OTSNode<String> halfway = new OTSNode<String>("Halfway", new OTSPoint3D(-radius, 0, 0));
-            LaneType<String> laneType = new LaneType<String>("CarLane");
+            OTSNode start = new OTSNode("Start", new OTSPoint3D(radius, 0, 0));
+            OTSNode halfway = new OTSNode("Halfway", new OTSPoint3D(-radius, 0, 0));
+            LaneType laneType = new LaneType("CarLane");
             laneType.addCompatibility(this.gtuType);
 
             OTSPoint3D[] coordsHalf1 = new OTSPoint3D[127];
@@ -572,13 +572,13 @@ class LaneSimulationModel implements OTSModelInterface
      * @param initialPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the initial longitudinal position of the new cars on the lane
      * @throws GTUException should not happen
      */
-    protected final void generateCar(final Lane<String, String> lane, final DoubleScalar.Rel<LengthUnit> initialPosition)
+    protected final void generateCar(final Lane lane, final DoubleScalar.Rel<LengthUnit> initialPosition)
         throws GTUException
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
-        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions =
-            new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
+            new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(lane, initialPosition);
         try
         {
@@ -589,11 +589,11 @@ class LaneSimulationModel implements OTSModelInterface
             {
                 throw new Error("gtuFollowingModel is null");
             }
-            new LaneBasedIndividualCar<Integer>(++this.carsCreated, this.gtuType, generateTruck
+            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, generateTruck
                 ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel, initialPositions,
                 initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
                 new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
-                    new CompleteRoute<String, String>("")), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
+                    new CompleteRoute("")), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
         }
         catch (RemoteException | NamingException | SimRuntimeException | NetworkException exception)
         {

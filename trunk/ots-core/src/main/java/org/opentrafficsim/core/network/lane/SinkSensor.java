@@ -32,7 +32,7 @@ public class SinkSensor extends AbstractSensor
      * @param position the position of the sensor
      * @param simulator the simulator to enable animation.
      */
-    public SinkSensor(final Lane<?, ?> lane, final DoubleScalar.Rel<LengthUnit> position,
+    public SinkSensor(final Lane lane, final DoubleScalar.Rel<LengthUnit> position,
         final OTSSimulatorInterface simulator)
     {
         super(lane, position, RelativePosition.FRONT, "SINK@" + lane.toString(), simulator);
@@ -48,7 +48,7 @@ public class SinkSensor extends AbstractSensor
 
     /** {@inheritDoc} */
     @Override
-    public void trigger(final LaneBasedGTU<?> gtu) throws RemoteException
+    public void trigger(final LaneBasedGTU gtu) throws RemoteException
     {
         gtu.destroy();
     }

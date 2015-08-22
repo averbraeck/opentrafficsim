@@ -28,22 +28,20 @@ import com.vividsolutions.jts.geom.Point;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <NODEID> the ID type of the Node, e.g., String.
- * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public class OTSLink<LINKID, NODEID> implements Link<LINKID, NODEID>, Serializable, LocatableInterface
+public class OTSLink implements Link, Serializable, LocatableInterface
 {
     /** */
     private static final long serialVersionUID = 20150101L;
 
     /** Link id. */
-    private final LINKID id;
+    private final String id;
 
     /** Start node (directional). */
-    private final Node<NODEID> startNode;
+    private final Node startNode;
 
     /** End node (directional). */
-    private final Node<NODEID> endNode;
+    private final Node endNode;
 
     /** Design line of the link. */
     private final OTSLine3D designLine;
@@ -59,7 +57,7 @@ public class OTSLink<LINKID, NODEID> implements Link<LINKID, NODEID>, Serializab
      * @param designLine the OTSLine3D design line of the Link
      * @param capacity link capacity in GTUs per hour
      */
-    public OTSLink(final LINKID id, final Node<NODEID> startNode, final Node<NODEID> endNode, final OTSLine3D designLine,
+    public OTSLink(final String id, final Node startNode, final Node endNode, final OTSLine3D designLine,
         final DoubleScalar.Abs<FrequencyUnit> capacity)
     {
         this.id = id;
@@ -79,7 +77,7 @@ public class OTSLink<LINKID, NODEID> implements Link<LINKID, NODEID>, Serializab
      * @param endNode end node (directional)
      * @param designLine the OTSLine3D design line of the Link
      */
-    public OTSLink(final LINKID id, final Node<NODEID> startNode, final Node<NODEID> endNode, final OTSLine3D designLine)
+    public OTSLink(final String id, final Node startNode, final Node endNode, final OTSLine3D designLine)
     {
         this(id, startNode, endNode, designLine, new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY,
             FrequencyUnit.PER_SECOND));
@@ -87,21 +85,21 @@ public class OTSLink<LINKID, NODEID> implements Link<LINKID, NODEID>, Serializab
 
     /** {@inheritDoc} */
     @Override
-    public final LINKID getId()
+    public final String getId()
     {
         return this.id;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Node<NODEID> getStartNode()
+    public final Node getStartNode()
     {
         return this.startNode;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Node<NODEID> getEndNode()
+    public final Node getEndNode()
     {
         return this.endNode;
     }

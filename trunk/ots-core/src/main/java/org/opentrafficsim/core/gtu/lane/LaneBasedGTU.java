@@ -28,9 +28,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  *          initial version Oct 22, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <ID> The type of ID, e.g., String or Integer
  */
-public interface LaneBasedGTU<ID> extends GTU<ID>
+public interface LaneBasedGTU extends GTU
 {
     /**
      * v(t) = v0 + (t - t0) * a.
@@ -80,13 +79,13 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @throws NetworkException on network inconsistency
      * @throws RemoteException when position cannot be determined at current time
      */
-    void enterLane(Lane<?, ?> lane, DoubleScalar.Rel<LengthUnit> position) throws NetworkException, RemoteException;
+    void enterLane(Lane lane, DoubleScalar.Rel<LengthUnit> position) throws NetworkException, RemoteException;
 
     /**
      * Unregister the GTU from a lane.
      * @param lane the lane to remove from the list of lanes on which the GTU is registered.
      */
-    void leaveLane(Lane<?, ?> lane);
+    void leaveLane(Lane lane);
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
@@ -99,7 +98,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @throws RemoteException when simulator time cannot be retrieved.
      * @throws NetworkException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> positions(RelativePosition relativePosition) throws NetworkException,
+    Map<Lane, DoubleScalar.Rel<LengthUnit>> positions(RelativePosition relativePosition) throws NetworkException,
         RemoteException;
 
     /**
@@ -112,7 +111,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @throws NetworkException when the vehicle is not on one of the lanes on which it is registered.
      * @throws RemoteException on communications failure
      */
-    Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> positions(RelativePosition relativePosition,
+    Map<Lane, DoubleScalar.Rel<LengthUnit>> positions(RelativePosition relativePosition,
         DoubleScalar.Abs<TimeUnit> when) throws NetworkException, RemoteException;
 
     /**
@@ -124,7 +123,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @throws NetworkException when the vehicle is not on the given lane.
      * @throws RemoteException when simulator time cannot be retrieved.
      */
-    DoubleScalar.Rel<LengthUnit> position(Lane<?, ?> lane, RelativePosition relativePosition) throws NetworkException,
+    DoubleScalar.Rel<LengthUnit> position(Lane lane, RelativePosition relativePosition) throws NetworkException,
         RemoteException;
 
     /**
@@ -137,7 +136,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @throws RemoteException on communications failure
      */
     DoubleScalar.Rel<LengthUnit>
-        position(Lane<?, ?> lane, RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
+        position(Lane lane, RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
             throws NetworkException, RemoteException;
 
     /**
@@ -149,7 +148,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @throws RemoteException when simulator time cannot be retrieved.
      * @throws NetworkException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane<?, ?>, Double> fractionalPositions(RelativePosition relativePosition) throws NetworkException, RemoteException;
+    Map<Lane, Double> fractionalPositions(RelativePosition relativePosition) throws NetworkException, RemoteException;
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
@@ -162,7 +161,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @throws NetworkException when the vehicle is not on one of the lanes on which it is registered.
      * @throws RemoteException on communications failure
      */
-    Map<Lane<?, ?>, Double> fractionalPositions(RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
+    Map<Lane, Double> fractionalPositions(RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
         throws NetworkException, RemoteException;
 
     /**
@@ -176,7 +175,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @throws NetworkException when the vehicle is not on the given lane.
      * @throws RemoteException on communications failure
      */
-    double fractionalPosition(Lane<?, ?> lane, RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
+    double fractionalPosition(Lane lane, RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
         throws NetworkException, RemoteException;
 
     /**
@@ -189,7 +188,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @throws NetworkException when the vehicle is not on the given lane.
      * @throws RemoteException when simulator time cannot be retrieved.
      */
-    double fractionalPosition(Lane<?, ?> lane, RelativePosition relativePosition) throws NetworkException, RemoteException;
+    double fractionalPosition(Lane lane, RelativePosition relativePosition) throws NetworkException, RemoteException;
 
     /**
      * Return the longitudinal position that this GTU would have if it were to change to another Lane with a/the current
@@ -201,7 +200,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @throws NetworkException when projectionLane it not in any of the CrossSectionLink that the GTU is on
      * @throws RemoteException on communications failure
      */
-    DoubleScalar.Rel<LengthUnit> projectedPosition(Lane<?, ?> projectionLane, RelativePosition relativePosition,
+    DoubleScalar.Rel<LengthUnit> projectedPosition(Lane projectionLane, RelativePosition relativePosition,
         DoubleScalar.Abs<TimeUnit> when) throws NetworkException, RemoteException;
 
     /**
@@ -236,7 +235,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @throws RemoteException when simulator time cannot be retrieved
      * @throws NetworkException when the vehicle's route is inconclusive or vehicles are not registered correctly on their lanes
      */
-    HeadwayGTU headway(Lane<?, ?> lane, DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException, NetworkException;
+    HeadwayGTU headway(Lane lane, DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException, NetworkException;
 
     /**
      * Determine which GTUs are parallel with us on another lane, based on fractional positions. <br>
@@ -249,7 +248,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      * @throws NetworkException when the vehicle's route is inconclusive, when vehicles are not registered correctly on their
      *             lanes, or when the given lane is not parallel to one of the lanes where we are registered.
      */
-    Set<LaneBasedGTU<?>> parallel(Lane<?, ?> lane, DoubleScalar.Abs<TimeUnit> when) throws RemoteException, NetworkException;
+    Set<LaneBasedGTU> parallel(Lane lane, DoubleScalar.Abs<TimeUnit> when) throws RemoteException, NetworkException;
 
     /**
      * Determine which GTUs are parallel with us in a certain lateral direction, based on fractional positions. <br>
@@ -264,7 +263,7 @@ public interface LaneBasedGTU<ID> extends GTU<ID>
      *             lanes, or when there are no lanes parallel to one of the lanes where we are registered in the given
      *             direction.
      */
-    Set<LaneBasedGTU<?>> parallel(LateralDirectionality lateralDirection, DoubleScalar.Abs<TimeUnit> when)
+    Set<LaneBasedGTU> parallel(LateralDirectionality lateralDirection, DoubleScalar.Abs<TimeUnit> when)
         throws RemoteException, NetworkException;
 
     /**

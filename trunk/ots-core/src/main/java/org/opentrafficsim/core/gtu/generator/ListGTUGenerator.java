@@ -39,42 +39,41 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  *          initial version 7 jul. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <ID> id type of the GTUs that are generated
  */
-public class ListGTUGenerator<ID>
+public class ListGTUGenerator
 {
     /** Name of this ListGTUGenerator. */
-    final String name;
+    private final String name;
 
     /** Lane on which the generated GTUs are placed. */
-    final Lane<?, ?> lane;
+    private final Lane lane;
 
     /** The type of GTUs generated. */
-    final GTUType<ID> gtuType;
+    private final GTUType gtuType;
 
     /** The GTU following model used by all generated GTUs. */
-    final GTUFollowingModel gtuFollowingModel;
+    private final GTUFollowingModel gtuFollowingModel;
 
     /** The lane change model used by all generated GTUs. */
-    final LaneChangeModel laneChangeModel;
+    private final LaneChangeModel laneChangeModel;
 
     /** The lane change model used by all generated GTUs. */
-    final LaneBasedRouteGenerator routeGenerator;
+    private final LaneBasedRouteGenerator routeGenerator;
 
     /** Initial speed of the generated GTUs. */
-    final DoubleScalar.Abs<SpeedUnit> initialSpeed;
+    private final DoubleScalar.Abs<SpeedUnit> initialSpeed;
 
     /** The GTU colorer that will be linked to each generated GTU. */
-    final GTUColorer gtuColorer;
+    private final GTUColorer gtuColorer;
 
     /** The simulator that controls everything. */
-    final OTSDEVSSimulatorInterface simulator;
+    private final OTSDEVSSimulatorInterface simulator;
 
     /** Reader for the event list. */
-    BufferedReader reader;
+    private BufferedReader reader;
 
     /** Number of GTUs created. */
-    int carsCreated = 0;
+    private int carsCreated = 0;
 
     /**
      * Construct a GTU generator that takes the times to generate another GTU from an external source. <br>
@@ -92,14 +91,15 @@ public class ListGTUGenerator<ID>
      * @param routeGenerator RouteGenerator; the route generator that generates the routes of the generated GTUs
      * @param gtuColorer GTUColorere; the GTUColorer of the generated GTUs
      * @param fileName String; name of file with the times when another GTU is to be generated (XXXX STUB)
-     * @throws RemoteException on 
-     * @throws SimRuntimeException on 
-     * @throws NetworkException on 
+     * @throws RemoteException on
+     * @throws SimRuntimeException on
+     * @throws NetworkException on
      */
-    public ListGTUGenerator(String name, OTSDEVSSimulatorInterface simulator, GTUType<ID> gtuType,
-        GTUFollowingModel gtuFollowingModel, LaneChangeModel laneChangeModel, DoubleScalar.Abs<SpeedUnit> initialSpeed,
-        Lane<?, ?> lane, DoubleScalar.Rel<LengthUnit> position, LaneBasedRouteGenerator routeGenerator,
-        GTUColorer gtuColorer, String fileName) throws RemoteException, SimRuntimeException, NetworkException
+    public ListGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
+        final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel,
+        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final Lane lane, final DoubleScalar.Rel<LengthUnit> position,
+        final LaneBasedRouteGenerator routeGenerator, final GTUColorer gtuColorer, final String fileName)
+        throws RemoteException, SimRuntimeException, NetworkException
     {
         if (null == lane)
         {
@@ -167,13 +167,13 @@ public class ListGTUGenerator<ID>
     protected final void generateCar()
     {
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
-        Map<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>> initialPositions =
-            new LinkedHashMap<Lane<?, ?>, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
+            new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(this.lane, initialPosition);
         try
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength = new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER);
-            new LaneBasedIndividualCar<Integer>(++this.carsCreated, this.gtuType, this.gtuFollowingModel,
+            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, this.gtuFollowingModel,
                 this.laneChangeModel, initialPositions, this.initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(
                     1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), this.routeGenerator
                     .generateRouteNavigator(), this.simulator, DefaultCarAnimation.class, this.gtuColorer);

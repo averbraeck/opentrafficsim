@@ -18,10 +18,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * initial version Oct 25, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <NODEID> the ID type of the Node, e.g., String.
- * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public class Stripe<LINKID, NODEID> extends RoadMarkerAlong<LINKID, NODEID>
+public class Stripe extends RoadMarkerAlong
 {
     /**
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
@@ -31,7 +29,7 @@ public class Stripe<LINKID, NODEID> extends RoadMarkerAlong<LINKID, NODEID>
      * @param width positioned <i>symmetrically around</i> the center line given by the lateralCenterPosition.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      */
-    public Stripe(final CrossSectionLink<LINKID, NODEID> parentLink,
+    public Stripe(final CrossSectionLink parentLink,
         final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> width)
         throws OTSGeometryException
     {
@@ -49,12 +47,12 @@ public class Stripe<LINKID, NODEID> extends RoadMarkerAlong<LINKID, NODEID>
      * @param permeable one of the enums of Stripe.Permeable to define the permeability
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      */
-    public Stripe(final CrossSectionLink<LINKID, NODEID> parentLink,
+    public Stripe(final CrossSectionLink parentLink,
         final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> width,
-        final Set<GTUType<?>> gtuTypes, final Permeable permeable) throws OTSGeometryException
+        final Set<GTUType> gtuTypes, final Permeable permeable) throws OTSGeometryException
     {
         super(parentLink, lateralCenterPosition, width, width);
-        for (GTUType<?> gtuType : gtuTypes)
+        for (GTUType gtuType : gtuTypes)
         {
             addPermeability(gtuType, permeable);
         }
@@ -70,7 +68,7 @@ public class Stripe<LINKID, NODEID> extends RoadMarkerAlong<LINKID, NODEID>
      * @param permeable one of the enums of Stripe.Permeable to define the permeability
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      */
-    public Stripe(final CrossSectionLink<LINKID, NODEID> parentLink,
+    public Stripe(final CrossSectionLink parentLink,
         final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> width,
         final Permeable permeable) throws OTSGeometryException
     {
@@ -82,7 +80,7 @@ public class Stripe<LINKID, NODEID> extends RoadMarkerAlong<LINKID, NODEID>
      * @param gtuType GTU type to add permeability for.
      * @param permeable direction(s) to add compared to the direction of the design line.
      */
-    public final void addPermeability(final GTUType<?> gtuType, final Permeable permeable)
+    public final void addPermeability(final GTUType gtuType, final Permeable permeable)
     {
         if (permeable.equals(Permeable.LEFT) || permeable.equals(Permeable.BOTH))
         {

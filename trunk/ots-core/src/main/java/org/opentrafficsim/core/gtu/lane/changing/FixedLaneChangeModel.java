@@ -38,7 +38,7 @@ public class FixedLaneChangeModel implements LaneChangeModel
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
-    public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU<?> gtu,
+    public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
         final Collection<HeadwayGTU> sameLaneTraffic, final Collection<HeadwayGTU> rightLaneTraffic,
         final Collection<HeadwayGTU> leftLaneTraffic, final DoubleScalar.Abs<SpeedUnit> speedLimit,
         final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,

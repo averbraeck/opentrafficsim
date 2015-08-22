@@ -20,13 +20,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * initial version Oct 25, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <NODEID> the ID type of the Node, e.g., String.
- * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public abstract class RoadMarkerAlong<LINKID, NODEID> extends CrossSectionElement<LINKID, NODEID>
+public abstract class RoadMarkerAlong extends CrossSectionElement
 {
     /** lateral permeability per GTU type and direction. */
-    private final Map<GTUType<?>, Set<LateralDirectionality>> permeabilityMap = new HashMap<>();
+    private final Map<GTUType, Set<LateralDirectionality>> permeabilityMap = new HashMap<>();
 
     /**
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
@@ -37,7 +35,7 @@ public abstract class RoadMarkerAlong<LINKID, NODEID> extends CrossSectionElemen
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      */
-    public RoadMarkerAlong(final CrossSectionLink<LINKID, NODEID> parentLink,
+    public RoadMarkerAlong(final CrossSectionLink parentLink,
         final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> beginWidth,
         final DoubleScalar.Rel<LengthUnit> endWidth) throws OTSGeometryException
     {
@@ -87,7 +85,7 @@ public abstract class RoadMarkerAlong<LINKID, NODEID> extends CrossSectionElemen
      * @param gtuType GTU type to add permeability for.
      * @param lateralDirection direction to add (LEFT or RIGHT) compared to the direction of the design line.
      */
-    public final void addPermeability(final GTUType<?> gtuType, final LateralDirectionality lateralDirection)
+    public final void addPermeability(final GTUType gtuType, final LateralDirectionality lateralDirection)
     {
         if (!this.permeabilityMap.containsKey(gtuType))
         {
@@ -101,7 +99,7 @@ public abstract class RoadMarkerAlong<LINKID, NODEID> extends CrossSectionElemen
      * @param lateralDirection direction to look for (LEFT or RIGHT) compared to the direction of the design line.
      * @return whether the road marker is permeable for the GTU type.
      */
-    public final boolean isPermeable(final GTUType<?> gtuType, final LateralDirectionality lateralDirection)
+    public final boolean isPermeable(final GTUType gtuType, final LateralDirectionality lateralDirection)
     {
         if (this.permeabilityMap.containsKey(GTUType.ALL))
         {

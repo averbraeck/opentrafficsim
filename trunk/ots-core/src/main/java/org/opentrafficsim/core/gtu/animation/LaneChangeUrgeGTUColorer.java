@@ -65,12 +65,12 @@ public class LaneChangeUrgeGTUColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public Color getColor(GTU<?> gtu) throws RemoteException
+    public Color getColor(GTU gtu) throws RemoteException
     {
-        if (gtu instanceof LaneBasedGTU<?>)
+        if (gtu instanceof LaneBasedGTU)
         {
             LaneChangeDistanceAndDirection distanceAndDirection =
-                ((LaneBasedGTU<?>) gtu).getLaneChangeDistanceAndDirection();
+                ((LaneBasedGTU) gtu).getLaneChangeDistanceAndDirection();
             Boolean left = distanceAndDirection.getLeft();
             DoubleScalar.Rel<LengthUnit> distance = distanceAndDirection.getDistance();
             if (null == left || distance.ge(this.horizon))

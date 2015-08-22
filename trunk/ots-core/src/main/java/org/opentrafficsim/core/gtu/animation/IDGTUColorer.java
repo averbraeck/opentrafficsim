@@ -44,7 +44,7 @@ public class IDGTUColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public final Color getColor(final GTU<?> gtu) throws RemoteException
+    public final Color getColor(final GTU gtu) throws RemoteException
     {
         String idString = "" + gtu.getId();
         int firstDigit = idString.length();

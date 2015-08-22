@@ -71,10 +71,10 @@ public class CarTest
         GTUException, OTSGeometryException
     {
         DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
-        GTUType<String> gtuType = GTUType.makeGTUType("Car");
-        LaneType<String> laneType = new LaneType<String>("CarLane");
+        GTUType gtuType = GTUType.makeGTUType("Car");
+        LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(gtuType);
-        Lane<String, String> lane = makeLane(laneType);
+        Lane lane = makeLane(laneType);
         DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(12, LengthUnit.METER);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(34, SpeedUnit.KM_PER_HOUR);
         OTSDEVSSimulator simulator = makeSimulator();
@@ -82,10 +82,10 @@ public class CarTest
             new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2),
                 new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND));
         LaneChangeModel laneChangeModel = new Egoistic();
-        LaneBasedIndividualCar<Integer> referenceCar =
-            makeReferenceCar(12345, gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
+        LaneBasedIndividualCar referenceCar =
+            makeReferenceCar("12345", gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
                 laneChangeModel);
-        assertEquals("The car should store it's ID", 12345, (int) referenceCar.getId());
+        assertEquals("The car should store it's ID", "12345", referenceCar.getId());
         assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(), referenceCar
             .position(lane, referenceCar.getReference(), initialTime).getSI(), 0.0001);
         assertEquals("The car should store it's initial speed", initialSpeed.getSI(), referenceCar.getLongitudinalVelocity(
@@ -122,7 +122,7 @@ public class CarTest
 
     /**
      * Create a new Car.
-     * @param nr int; the name (number) of the Car
+     * @param id String; the name (number) of the Car
      * @param gtuType GTUType&lt;?&gt;; the type of the new car
      * @param lane Lane; the lane on which the new Car is positioned
      * @param initialPosition DoubleScalar.Abs&lt;LengthUnit&gt;; the initial longitudinal position of the new Car
@@ -138,20 +138,20 @@ public class CarTest
      * @throws SimRuntimeException when the move method cannot be scheduled.
      * @throws GTUException when construction of the GTU fails (probably due to an invalid parameter)
      */
-    public static LaneBasedIndividualCar<Integer> makeReferenceCar(final int nr, final GTUType<?> gtuType,
-        final Lane<String, String> lane, final DoubleScalar.Rel<LengthUnit> initialPosition,
+    public static LaneBasedIndividualCar makeReferenceCar(final String id, final GTUType gtuType,
+        final Lane lane, final DoubleScalar.Rel<LengthUnit> initialPosition,
         final DoubleScalar.Abs<SpeedUnit> initialSpeed, final OTSDEVSSimulator simulator,
         final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel) throws RemoteException,
         NamingException, NetworkException, SimRuntimeException, GTUException
     {
         DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
-        Map<Lane<?, ?>, Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
+        Map<Lane, Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
         initialLongitudinalPositions.put(lane, initialPosition);
         DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
-        return new LaneBasedIndividualCar<Integer>(nr, gtuType, gtuFollowingModel, laneChangeModel,
+        return new LaneBasedIndividualCar(id, gtuType, gtuFollowingModel, laneChangeModel,
             initialLongitudinalPositions, initialSpeed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(
-                new CompleteRoute<>("")), simulator);
+                new CompleteRoute("")), simulator);
     }
 
     /**
@@ -160,16 +160,16 @@ public class CarTest
      * @throws NetworkException on network error
      * @throws OTSGeometryException when center line or contour of a link or lane cannot be generated
      */
-    public static Lane<String, String> makeLane(final LaneType<?> laneType) throws NetworkException, OTSGeometryException
+    public static Lane makeLane(final LaneType laneType) throws NetworkException, OTSGeometryException
     {
-        OTSNode<String> n1 = new OTSNode<>("n1", new OTSPoint3D(0, 0));
-        OTSNode<String> n2 = new OTSNode<>("n2", new OTSPoint3D(10000.0, 0.0));
-        OTSPoint3D[] coordinates = new OTSPoint3D[]{new OTSPoint3D(0.0, 0.0), new OTSPoint3D(10000.0, 0.0)};
-        CrossSectionLink<String, String> link12 = new CrossSectionLink<>("link12", n1, n2, new OTSLine3D(coordinates));
+        OTSNode n1 = new OTSNode("n1", new OTSPoint3D(0, 0));
+        OTSNode n2 = new OTSNode("n2", new OTSPoint3D(100000.0, 0.0));
+        OTSPoint3D[] coordinates = new OTSPoint3D[]{new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100000.0, 0.0)};
+        CrossSectionLink link12 = new CrossSectionLink("link12", n1, n2, new OTSLine3D(coordinates));
         DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         DoubleScalar.Abs<FrequencyUnit> f200 = new DoubleScalar.Abs<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
-        return new Lane<String, String>(link12, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD,
+        return new Lane(link12, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD,
             f200, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR));
     }
 

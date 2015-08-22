@@ -16,10 +16,8 @@ import org.opentrafficsim.core.network.Node;
  * initial version Jul 22, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <NODEID> the ID type of the Node, e.g., String.
- * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public class CompleteRoute<LINKID, NODEID> extends Route<LINKID, NODEID>
+public class CompleteRoute extends Route
 {
     /** */
     private static final long serialVersionUID = 20150722L;
@@ -40,11 +38,11 @@ public class CompleteRoute<LINKID, NODEID> extends Route<LINKID, NODEID>
      * @param nodes the initial list of nodes.
      * @throws NetworkException if intermediate nodes are missing in the route.
      */
-    public CompleteRoute(final String id, final List<Node<NODEID>> nodes) throws NetworkException
+    public CompleteRoute(final String id, final List<Node> nodes) throws NetworkException
     {
         super(id, nodes);
-        Node<NODEID> fromNode = null;
-        for (Node<NODEID> toNode : getNodes())
+        Node fromNode = null;
+        for (Node toNode : getNodes())
         {
             if (null != fromNode)
             {
@@ -60,11 +58,11 @@ public class CompleteRoute<LINKID, NODEID> extends Route<LINKID, NODEID>
 
     /** {@inheritDoc} */
     @Override
-    public final void addNode(final Node<NODEID> node) throws NetworkException
+    public final void addNode(final Node node) throws NetworkException
     {
         if (getNodes().size() > 0)
         {
-            Node<NODEID> lastNode = getNodes().get(getNodes().size() - 1);
+            Node lastNode = getNodes().get(getNodes().size() - 1);
             if (!isDirectlyConnected(lastNode, node))
             {
                 throw new NetworkException("CompleteRoute: last node " + lastNode + " not directly connected to node "
@@ -80,9 +78,9 @@ public class CompleteRoute<LINKID, NODEID> extends Route<LINKID, NODEID>
      * @param toNode the to node
      * @return whether two nodes are directly linked in the specified direction.
      */
-    private boolean isDirectlyConnected(final Node<NODEID> fromNode, final Node<NODEID> toNode)
+    private boolean isDirectlyConnected(final Node fromNode, final Node toNode)
     {
-        for (Link<?, NODEID> link : fromNode.getLinksOut())
+        for (Link link : fromNode.getLinksOut())
         {
             if (toNode.equals(link.getEndNode()))
             {
@@ -97,10 +95,10 @@ public class CompleteRoute<LINKID, NODEID> extends Route<LINKID, NODEID>
      * @param link the link to check in the route.
      * @return whether the link is part of the route or not.
      */
-    public final boolean containsLink(final Link<LINKID, NODEID> link)
+    public final boolean containsLink(final Link link)
     {
-        Node<NODEID> sn = link.getStartNode();
-        Node<NODEID> en = link.getEndNode();
+        Node sn = link.getStartNode();
+        Node en = link.getEndNode();
         for (int index = 1; index < size(); index++)
         {
             if (getNodes().get(index) == en && getNodes().get(index - 1) == sn)

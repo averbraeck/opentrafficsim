@@ -24,12 +24,11 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @param <ID> The type of ID, e.g., String or Integer
  */
-public interface GTU<ID> extends LocatableInterface, Serializable
+public interface GTU extends LocatableInterface, Serializable
 {
-    /** @return the id of the GTU, could be String or Integer */
-    ID getId();
+    /** @return the id of the GTU */
+    String getId();
 
     /** @return the maximum length of the GTU (parallel with driving direction). */
     DoubleScalar.Rel<LengthUnit> getLength();
@@ -41,7 +40,7 @@ public interface GTU<ID> extends LocatableInterface, Serializable
     DoubleScalar.Abs<SpeedUnit> getMaximumVelocity();
 
     /** @return the type of GTU, e.g. TruckType, CarType, BusType */
-    GTUType<?> getGTUType();
+    GTUType getGTUType();
 
     /** @return the simulator of the GTU. */
     OTSDEVSSimulatorInterface getSimulator();

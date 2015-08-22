@@ -207,15 +207,15 @@ class FillTag
     static void makeFill(final FillTag fillTag, final XmlNetworkLaneParser parser, final LinkTag linkTag,
         final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, RemoteException, NetworkException
     {
-        Lane<?, ?> lane = linkTag.lanes.get(fillTag.laneName);
+        Lane lane = linkTag.lanes.get(fillTag.laneName);
         Class<?> gtuClass = LaneBasedIndividualCar.class;
-        List<org.opentrafficsim.core.network.Node<String>> nodeList = new ArrayList<>();
+        List<org.opentrafficsim.core.network.Node> nodeList = new ArrayList<>();
         for (NodeTag nodeTag : fillTag.routeTag.routeNodeTags)
         {
             nodeList.add(parser.nodeTags.get(nodeTag.name).node);
         }
         LaneBasedRouteGenerator rg =
-            new FixedLaneBasedRouteGenerator(new CompleteRoute<String, String>("fixed route", nodeList));
+            new FixedLaneBasedRouteGenerator(new CompleteRoute("fixed route", nodeList));
 
         // TODO create a FILL
 

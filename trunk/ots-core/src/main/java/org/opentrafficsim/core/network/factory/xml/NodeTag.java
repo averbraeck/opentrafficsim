@@ -49,7 +49,7 @@ class NodeTag
 
     /** the calculated Node, either through a coordinate or after calculation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    org.opentrafficsim.core.network.Node<String> node = null;
+    org.opentrafficsim.core.network.Node node = null;
 
     /**
      * @param nodeList nodeList the top-level nodes of the XML-file
@@ -130,7 +130,7 @@ class NodeTag
      * @throws NamingException when animation context cannot be found.
      * @throws RemoteException when communication error occurs when trying to find animation context.
      */
-    static org.opentrafficsim.core.network.Node<String>
+    static org.opentrafficsim.core.network.Node
         makeOTSNode(final NodeTag nodeTag, final XmlNetworkLaneParser parser) throws NetworkException, RemoteException,
             NamingException
     {
@@ -139,7 +139,7 @@ class NodeTag
             nodeTag.angle == null ? new DoubleScalar.Abs<AnglePlaneUnit>(0.0, AnglePlaneUnit.SI) : nodeTag.angle;
         DoubleScalar.Abs<AngleSlopeUnit> slope =
             nodeTag.slope == null ? new DoubleScalar.Abs<AngleSlopeUnit>(0.0, AngleSlopeUnit.SI) : nodeTag.slope;
-        org.opentrafficsim.core.network.Node<String> node = new OTSNode<String>(id, nodeTag.coordinate, angle, slope);
+        org.opentrafficsim.core.network.Node node = new OTSNode(id, nodeTag.coordinate, angle, slope);
         nodeTag.node = node;
         return node;
     }

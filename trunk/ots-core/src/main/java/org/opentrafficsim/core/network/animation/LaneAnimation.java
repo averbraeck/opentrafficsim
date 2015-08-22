@@ -33,7 +33,7 @@ public class LaneAnimation extends Renderable2D
      * @throws NamingException ne
      * @throws RemoteException re
      */
-    public LaneAnimation(final Lane<?, ?> source, final OTSSimulatorInterface simulator, final Color color)
+    public LaneAnimation(final Lane source, final OTSSimulatorInterface simulator, final Color color)
         throws NamingException, RemoteException
     {
         super(source, simulator);
@@ -44,7 +44,7 @@ public class LaneAnimation extends Renderable2D
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        Lane<?, ?> lane = (Lane<?, ?>) getSource();
+        Lane lane = (Lane) getSource();
         PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour());
     }
 }

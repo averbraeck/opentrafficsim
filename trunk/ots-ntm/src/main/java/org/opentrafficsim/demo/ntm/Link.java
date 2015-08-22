@@ -43,7 +43,7 @@ import com.vividsolutions.jts.operation.linemerge.LineMerger;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Link extends OTSLink<String, String>
+public class Link extends OTSLink
 {
     /** SPEEDAB class java.lang.Double 120.0. */
     private DoubleScalar.Abs<SpeedUnit> freeSpeed;
@@ -273,8 +273,8 @@ public class Link extends OTSLink<String, String>
     public static void findSequentialLinks(final Map<String, Link> links, Map<String, Node> nodes)
     {
         // compare all links
-        HashMap<org.opentrafficsim.core.network.Node<String>, ArrayList<Link>> linksStartAtNode = new HashMap<>();
-        HashMap<org.opentrafficsim.core.network.Node<String>, ArrayList<Link>> linksEndAtNode = new HashMap<>();
+        HashMap<org.opentrafficsim.core.network.Node, ArrayList<Link>> linksStartAtNode = new HashMap<>();
+        HashMap<org.opentrafficsim.core.network.Node, ArrayList<Link>> linksEndAtNode = new HashMap<>();
         // HashMap<Node, Link> endNodeToLinkMap = new HashMap<Node, Link>();
         // HashMap<Node, Integer> numberOfLinksFromStartNodeMap = new HashMap<Node, Integer>();
         // find out how many links start from the endNode of a link

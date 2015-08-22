@@ -17,10 +17,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * initial version Jan 30, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <NODEID> the ID type of the Node, e.g., String.
- * @param <LINKID> the ID type of the Link, e.g., String.
  */
-public class SourceLane<LINKID, NODEID> extends Lane<LINKID, NODEID>
+public class SourceLane extends Lane
 {
     /** the generators on this generation lane; one per GTU type. */
     // NOT USED private final Set<GTUGeneratorIndividual<?>> generators = new HashSet<GTUGeneratorIndividual<?>>();
@@ -37,9 +35,9 @@ public class SourceLane<LINKID, NODEID> extends Lane<LINKID, NODEID>
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public SourceLane(final CrossSectionLink<LINKID, NODEID> parentLink,
+    public SourceLane(final CrossSectionLink parentLink,
         final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart, final DoubleScalar.Rel<LengthUnit> beginWidth,
-        final LaneType<?> laneType, final LongitudinalDirectionality directionality,
+        final LaneType laneType, final LongitudinalDirectionality directionality,
         final DoubleScalar.Abs<SpeedUnit> speedLimit) throws OTSGeometryException
     {
         super(parentLink, lateralOffsetAtStart, lateralOffsetAtStart, beginWidth, beginWidth, laneType, directionality,

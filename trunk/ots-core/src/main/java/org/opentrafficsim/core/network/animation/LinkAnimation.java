@@ -35,7 +35,7 @@ public class LinkAnimation extends Renderable2D
      * @throws NamingException for problems with registering in context
      * @throws RemoteException on communications failure
      */
-    public LinkAnimation(final Link<?, ?> source, final OTSSimulatorInterface simulator, final float width)
+    public LinkAnimation(final Link source, final OTSSimulatorInterface simulator, final float width)
         throws NamingException, RemoteException
     {
         super(source, simulator);
@@ -48,7 +48,7 @@ public class LinkAnimation extends Renderable2D
     {
         Stroke oldStroke = graphics.getStroke();
         graphics.setStroke(new BasicStroke(this.width));
-        PaintPolygons.paintMultiPolygon(graphics, Color.RED, getSource().getLocation(), ((Link<?, ?>) getSource())
+        PaintPolygons.paintMultiPolygon(graphics, Color.RED, getSource().getLocation(), ((Link) getSource())
             .getDesignLine());
         graphics.setStroke(oldStroke);
     }

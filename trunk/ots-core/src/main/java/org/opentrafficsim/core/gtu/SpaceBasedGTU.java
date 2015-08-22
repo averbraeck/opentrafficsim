@@ -10,9 +10,8 @@ package org.opentrafficsim.core.gtu;
  * initial version Oct 22, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <ID> The type of ID, e.g., String or Integer
  */
-public interface SpaceBasedGTU<ID> extends GTU<ID>
+public interface SpaceBasedGTU extends GTU
 {
     // TODO space based interface for a GTU. Can be 2D, 3D.
 }

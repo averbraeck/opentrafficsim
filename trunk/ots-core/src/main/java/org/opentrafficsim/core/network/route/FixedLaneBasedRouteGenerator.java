@@ -15,7 +15,7 @@ public class FixedLaneBasedRouteGenerator extends FixedRouteGenerator implements
     /**
      * @param route the route to use in the generation
      */
-    public FixedLaneBasedRouteGenerator(final CompleteRoute<?, ?> route)
+    public FixedLaneBasedRouteGenerator(final CompleteRoute route)
     {
         super(route);
     }

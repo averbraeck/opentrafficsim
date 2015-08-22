@@ -23,7 +23,7 @@ import org.jgrapht.graph.DefaultWeightedEdge;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @param <LINK> the link type.
  */
-public class LinkEdge<LINK extends Link<?, ?>> extends DefaultWeightedEdge
+public class LinkEdge<LINK extends Link> extends DefaultWeightedEdge
 {
     /** */
     private static final long serialVersionUID = 1L;

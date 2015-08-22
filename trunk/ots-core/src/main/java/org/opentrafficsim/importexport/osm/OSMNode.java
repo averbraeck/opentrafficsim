@@ -48,7 +48,7 @@ public class OSMNode
     public int linksTerminating = 0;
 
     /** The OTS Node that corresponds to this OSMNode. */
-    private OTSNode<String> otsNode = null;
+    private OTSNode otsNode = null;
 
     /**
      * @return Id
@@ -207,7 +207,7 @@ public class OSMNode
     /**
      * @param n OTSNode&lt;String&gt;
      */
-    public final void setOtsNode(final OTSNode<String> n)
+    public final void setOtsNode(final OTSNode n)
     {
         if (this.otsNode != null)
         {
@@ -219,7 +219,7 @@ public class OSMNode
     /**
      * @return OTSNodeOTSNode&lt;String&gt; - The associated OTS Node.
      */
-    public final OTSNode<String> getOtsNode()
+    public final OTSNode getOtsNode()
     {
         return this.otsNode;
     }

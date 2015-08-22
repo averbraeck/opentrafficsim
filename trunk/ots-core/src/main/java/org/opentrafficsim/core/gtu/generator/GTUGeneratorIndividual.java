@@ -27,9 +27,8 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  *          initial version Feb 2, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <ID> the ID of the GTU type, e.g. String or Integer.
  */
-public class GTUGeneratorIndividual<ID> extends AbstractGTUGenerator<ID>
+public class GTUGeneratorIndividual extends AbstractGTUGenerator
 {
     /** simulator to schedule next arrival events. */
     private final OTSDEVSSimulatorInterface simulator;
@@ -66,14 +65,14 @@ public class GTUGeneratorIndividual<ID> extends AbstractGTUGenerator<ID>
      * @throws RemoteException when remote simulator cannot be reached
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public GTUGeneratorIndividual(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType<ID> gtuType,
+    public GTUGeneratorIndividual(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
         final Class<?> gtuClass, final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel,
         final DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist,
         final DistContinuousDoubleScalar.Rel<TimeUnit> interarrivelTimeDist,
         final DistContinuousDoubleScalar.Rel<LengthUnit> lengthDist,
         final DistContinuousDoubleScalar.Rel<LengthUnit> widthDist,
         final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeedDist, final long maxGTUs,
-        final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Abs<TimeUnit> endTime, final Lane<?, ?> lane,
+        final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Abs<TimeUnit> endTime, final Lane lane,
         final DoubleScalar.Rel<LengthUnit> position, final LaneBasedRouteGenerator routeGenerator,
         final GTUColorer gtuColorer) throws RemoteException, SimRuntimeException
     {

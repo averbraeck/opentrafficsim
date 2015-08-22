@@ -40,7 +40,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final DualAccelerationStep computeAcceleration(final LaneBasedGTU<?> referenceGTU,
+    public final DualAccelerationStep computeAcceleration(final LaneBasedGTU referenceGTU,
         final Collection<HeadwayGTU> otherGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException,
         NetworkException
     {
@@ -108,7 +108,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final AccelerationStep computeAcceleration(final LaneBasedGTU<?> follower,
+    public final AccelerationStep computeAcceleration(final LaneBasedGTU follower,
         final DoubleScalar.Abs<SpeedUnit> leaderSpeed, final DoubleScalar.Rel<LengthUnit> headway,
         final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
     {
@@ -125,7 +125,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU<?> gtu,
+    public final AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU gtu,
         final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException, NetworkException
     {
         return computeAcceleration(gtu, gtu.getLongitudinalVelocity(), Calc.speedSquaredDividedByDoubleAcceleration(gtu

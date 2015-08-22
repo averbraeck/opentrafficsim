@@ -106,7 +106,7 @@ public final class Convert
      * @param link OSM Link to be converted
      * @return OTS Link
      */
-    public CrossSectionLink<?, ?> convertLink(final OSMLink link)
+    public CrossSectionLink convertLink(final OSMLink link)
     {
         if (null == link.getStart().getOtsNode())
         {
@@ -116,21 +116,21 @@ public final class Convert
         {
             link.getEnd().setOtsNode(convertNode(link.getEnd()));
         }
-        CrossSectionLink<?, ?> result;
+        CrossSectionLink result;
         Coordinate[] coordinates;
         List<OSMNode> nodes = link.getSplineList();
         int coordinateCount = 2 + nodes.size();
         coordinates = new Coordinate[coordinateCount];
-        OTSNode<String> start = link.getStart().getOtsNode();
+        OTSNode start = link.getStart().getOtsNode();
         coordinates[0] = new Coordinate(start.getPoint().x, start.getPoint().y, 0);
         for (int i = 0; i < nodes.size(); i++)
         {
             coordinates[i + 1] = new Coordinate(nodes.get(i).getLongitude(), nodes.get(i).getLatitude());
         }
-        OTSNode<String> end = link.getEnd().getOtsNode();
+        OTSNode end = link.getEnd().getOtsNode();
         coordinates[coordinates.length - 1] = new Coordinate(end.getPoint().x, end.getPoint().y, 0);
         OTSLine3D designLine = new OTSLine3D(coordinates);
-        result = new CrossSectionLink<String, String>(link.getId(), start, end, designLine);
+        result = new CrossSectionLink(link.getId(), start, end, designLine);
         // XXX: new LinearGeometry(result, lineString, null);
         return result;
     }
@@ -140,7 +140,7 @@ public final class Convert
      * @param node OSM Node to be converted
      * @return OTS Node
      */
-    public OTSNode<String> convertNode(final OSMNode node)
+    public OTSNode convertNode(final OSMNode node)
     {
         OSMTag tag = node.getTag("ele");
         if (null != tag)
@@ -173,7 +173,7 @@ public final class Convert
                 Coordinate coordWGS84 = new Coordinate(node.getLongitude(), node.getLatitude(), elevation);
                 try
                 {
-                    return new OTSNode<String>(Objects.toString(node.getId()), new OTSPoint3D(transform(coordWGS84)));
+                    return new OTSNode(Objects.toString(node.getId()), new OTSPoint3D(transform(coordWGS84)));
                 }
                 catch (FactoryException | TransformException exception)
                 {
@@ -189,7 +189,7 @@ public final class Convert
         Coordinate coordWGS84 = new Coordinate(node.getLongitude(), node.getLatitude(), 0d);
         try
         {
-            return new OTSNode<String>(Objects.toString(node.getId()), new OTSPoint3D(Convert.transform(coordWGS84)));
+            return new OTSNode(Objects.toString(node.getId()), new OTSPoint3D(Convert.transform(coordWGS84)));
         }
         catch (FactoryException | TransformException exception)
         {
@@ -210,7 +210,7 @@ public final class Convert
         SortedMap<Integer, LaneAttributes> structure = new TreeMap<Integer, LaneAttributes>();
         int forwards = osmLink.getForwardLanes();
         int backwards = osmLink.getLanes() - osmLink.getForwardLanes();
-        LaneType<String> laneType;
+        LaneType laneType;
         LaneAttributes laneAttributes;
         for (OSMTag tag : osmLink.getTags())
         {
@@ -271,7 +271,7 @@ public final class Convert
             }
             else if (tag.getKey().equals("highway") && (tag.getValue().equals("path") || tag.getValue().equals("steps")))
             {
-                List<GTUType<String>> types = new ArrayList<GTUType<String>>();
+                List<GTUType> types = new ArrayList<GTUType>();
                 for (OSMTag t2 : osmLink.getTags())
                 {
                     if (t2.getKey().equals("bicycle"))
@@ -338,7 +338,7 @@ public final class Convert
                         structure.put(forwards - 1, laneAttributes);
                         break;
                     case "shared_lane": // cycleway:shared_lane is embedded into the highway.
-                        List<GTUType<String>> types = new ArrayList<GTUType<String>>();
+                        List<GTUType> types = new ArrayList<GTUType>();
                         types.add(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.BIKE);
                         types.add(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.CAR);
                         laneType = makeLaneType(types);
@@ -539,7 +539,7 @@ public final class Convert
                 widthOverride = true;
             }
         }
-        LaneType<?> laneType = laneAttributes.getLaneType();
+        LaneType laneType = laneAttributes.getLaneType();
         if (laneType.isCompatible(org.opentrafficsim.importexport.osm.PredefinedGTUTypes.CAR))
         {
             return defaultLaneWidth;
@@ -594,12 +594,12 @@ public final class Convert
      * @throws RemoteException on communications failure
      * @throws OTSGeometryException when lane contour or center line cannot be instantiated
      */
-    public List<Lane<?, ?>> makeLanes(final OSMLink osmlink, final OTSDEVSSimulatorInterface simulator,
+    public List<Lane> makeLanes(final OSMLink osmlink, final OTSDEVSSimulatorInterface simulator,
         final WarningListener warningListener) throws NetworkException, RemoteException, NamingException,
         OTSGeometryException
     {
-        CrossSectionLink<?, ?> otslink = convertLink(osmlink);
-        List<Lane<?, ?>> lanes = new ArrayList<Lane<?, ?>>();
+        CrossSectionLink otslink = convertLink(osmlink);
+        List<Lane> lanes = new ArrayList<Lane>();
         Map<Double, LaneAttributes> structure = makeStructure(osmlink, warningListener);
 
         DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
@@ -611,9 +611,9 @@ public final class Convert
                 break;
             }
             Color color = Color.LIGHT_GRAY;
-            LaneType<?> laneType = laneAttributes.getLaneType();
+            LaneType laneType = laneAttributes.getLaneType();
             DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(offset, LengthUnit.METER);
-            Lane<String, String> newLane = null;
+            Lane newLane = null;
             // FIXME the following code assumes right-hand-side driving.
             if (osmlink.hasTag("hasPreceding") && offset >= 0 || osmlink.hasTag("hasFollowing") && offset < 0)
             {
@@ -655,10 +655,10 @@ public final class Convert
      * @param gtuTypes List&lt;GTUType&lt;String&gt;&gt;; list of GTUTypes
      * @return LaneType permeable for all of the specific GTUTypes
      */
-    public static LaneType<String> makeLaneType(final List<GTUType<String>> gtuTypes)
+    public static LaneType makeLaneType(final List<GTUType> gtuTypes)
     {
         StringBuilder name = new StringBuilder();
-        for (GTUType<String> gtu : gtuTypes)
+        for (GTUType gtu : gtuTypes)
         {
             if (name.length() > 0)
             {
@@ -666,8 +666,8 @@ public final class Convert
             }
             name.append(gtu.getId());
         }
-        LaneType<String> result = new LaneType<String>(name.toString());
-        for (GTUType<String> gtu : gtuTypes)
+        LaneType result = new LaneType(name.toString());
+        for (GTUType gtu : gtuTypes)
         {
             result.addCompatibility(gtu);
         }
@@ -679,13 +679,13 @@ public final class Convert
      * @param gtuType GTUType; the type of GTU that can travel on the new LaneType
      * @return LaneType
      */
-    public static LaneType<String> makeLaneType(final GTUType<String> gtuType)
+    public static LaneType makeLaneType(final GTUType gtuType)
     {
-        List<GTUType<String>> gtuTypes = new ArrayList<GTUType<String>>(1);
+        List<GTUType> gtuTypes = new ArrayList<GTUType>(1);
         gtuTypes.add(gtuType);
         return makeLaneType(gtuTypes);
         // String name = gtuType.getId();
-        // LaneType<String> result = new LaneType<String>(name);
+        // LaneType result = new LaneType(name);
         // result.addPermeability(gtuType);
         // return result;
     }
@@ -785,7 +785,7 @@ public final class Convert
 class LaneAttributes
 {
     /** Type of the lane (immutable). */
-    private final LaneType<?> laneType;
+    private final LaneType laneType;
 
     /** Drawing color of the lane (immutable). */
     private final Color color;
@@ -801,7 +801,7 @@ class LaneAttributes
      * @param c - Color
      * @param d - LongitudinalDIrectionality
      */
-    public LaneAttributes(final LaneType<?> lt, final Color c, final LongitudinalDirectionality d)
+    public LaneAttributes(final LaneType lt, final Color c, final LongitudinalDirectionality d)
     {
         if (lt == null)
         {
@@ -821,7 +821,7 @@ class LaneAttributes
      * @param directionality - LongitudinalDIrectionality
      * @param width - width
      */
-    public LaneAttributes(final LaneType<?> laneType, final Color color, final LongitudinalDirectionality directionality,
+    public LaneAttributes(final LaneType laneType, final Color color, final LongitudinalDirectionality directionality,
         final Double width)
     {
         if (laneType == null)
@@ -838,9 +838,9 @@ class LaneAttributes
     }
 
     /**
-     * @return LaneType<?>
+     * @return LaneType
      */
-    public LaneType<?> getLaneType()
+    public LaneType getLaneType()
     {
         return this.laneType;
     }

@@ -28,10 +28,10 @@ public class LinkLocationTest
     public void linkLocationTest()
     {
         // Preparations
-        OTSNode<String> nodeFrom = new OTSNode<String>("From", new OTSPoint3D(0, 0, 0));
-        OTSNode<String> nodeTo = new OTSNode<String>("To", new OTSPoint3D(1000, 0, 0));
+        OTSNode nodeFrom = new OTSNode("From", new OTSPoint3D(0, 0, 0));
+        OTSNode nodeTo = new OTSNode("To", new OTSPoint3D(1000, 0, 0));
         OTSLine3D line = new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0)});
-        CrossSectionLink<String, String> link = new CrossSectionLink<String, String>("Link", nodeFrom, nodeTo, line);
+        CrossSectionLink link = new CrossSectionLink("Link", nodeFrom, nodeTo, line);
         DoubleScalar.Rel<LengthUnit> linkLength = line.getLength();
         // Now we can make a LinkLocation.
         DoubleScalar.Rel<LengthUnit> referenceLocationDistance = new DoubleScalar.Rel<LengthUnit>(123, LengthUnit.METER);
