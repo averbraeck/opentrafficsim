@@ -1,0 +1,92 @@
+headway
+
+ null == leader ? new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE, LengthUnit.METER) : DoubleScalar.minus(
+                leader.positionOfRear(thisEvaluationTime).getLongitudinalPosition(),
+                follower.positionOfFront(thisEvaluationTime).getLongitudinalPosition()).immutable();
+
+==============================================================================================================================
+
+LaneChangeModelTest
+
+/**
+ * Local Node class.
+ * <p>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * <p>
+ * @version 14 nov. 2014 <br>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ */
+class Node extends AbstractNode<String, Coordinate>
+{
+    /** */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * @param id id
+     * @param coordinate coordinate
+     */
+    public Node(final String id, final Coordinate coordinate)
+    {
+        super(id, coordinate);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final DirectedPoint getLocation() throws RemoteException
+    {
+        return new DirectedPoint(getPoint().x, getPoint().y, 0.0);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Bounds getBounds() throws RemoteException
+    {
+        return new BoundingBox(0.1, 0.1, 0.0);
+    }
+}
+
+/**
+ * Local Link class.
+ * <p>
+ * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * <p>
+ * @version 14 nov. 2014 <br>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ */
+class Link extends CrossSectionLink<String, Node> implements LocatableInterface
+{
+    /** */
+    private static final long serialVersionUID = 20140921L;
+
+    /** speed. */
+    private double speed;
+
+    /**
+     * @param id the id of the link (String).
+     * @param nodeA the start node of the link.
+     * @param nodeB the end node of the link.
+     * @param length the length of the link with a unit.
+     */
+    public Link(final String id, final Node nodeA, final Node nodeB, final DoubleScalar.Rel<LengthUnit> length)
+    {
+        super(id, nodeA, nodeB, length);
+    }
+
+    /**
+     * @return speed
+     */
+    public final double getSpeed()
+    {
+        return this.speed;
+    }
+
+    /**
+     * @param speed set speed
+     */
+    public final void setSpeed(final double speed)
+    {
+        this.speed = speed;
+    }
+
