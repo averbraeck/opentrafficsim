@@ -111,8 +111,8 @@ public interface LaneBasedGTU extends GTU
      * @throws NetworkException when the vehicle is not on one of the lanes on which it is registered.
      * @throws RemoteException on communications failure
      */
-    Map<Lane, DoubleScalar.Rel<LengthUnit>> positions(RelativePosition relativePosition,
-        DoubleScalar.Abs<TimeUnit> when) throws NetworkException, RemoteException;
+    Map<Lane, DoubleScalar.Rel<LengthUnit>> positions(RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
+        throws NetworkException, RemoteException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane at the current
@@ -135,9 +135,8 @@ public interface LaneBasedGTU extends GTU
      * @throws NetworkException when the vehicle is not on the given lane.
      * @throws RemoteException on communications failure
      */
-    DoubleScalar.Rel<LengthUnit>
-        position(Lane lane, RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
-            throws NetworkException, RemoteException;
+    DoubleScalar.Rel<LengthUnit> position(Lane lane, RelativePosition relativePosition, DoubleScalar.Abs<TimeUnit> when)
+        throws NetworkException, RemoteException;
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
@@ -265,6 +264,29 @@ public interface LaneBasedGTU extends GTU
      */
     Set<LaneBasedGTU> parallel(LateralDirectionality lateralDirection, DoubleScalar.Abs<TimeUnit> when)
         throws RemoteException, NetworkException;
+
+    /**
+     * Determine whether there is a lane to the left or to the right of this lane, which is accessible from this lane, or null
+     * if no lane could be found. The method takes the LongitidinalDirectionality of the lane into account. In other words, if
+     * we drive FORWARD and look for a lane on the LEFT, and there is a lane but the Directionality of that lane is not FORWARD
+     * or BOTH, null will be returned.<br>
+     * A lane is called adjacent to another lane if the lateral edges are not more than a delta distance apart. This means that
+     * a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
+     * The algorithm also looks for RoadMarkerAcross elements between the lanes to determine the lateral permeability for a GTU.
+     * A RoadMarkerAcross is seen as being between two lanes if its center line is not more than delta distance from the
+     * relevant lateral edges of the two adjacent lanes. <br>
+     * When there are multiple lanes that are adjacent, which could e.g. be the case if an overlapping tram lane and a car lane
+     * are adjacent to the current lane, the widest lane that best matches the GTU accessibility of the provided GTUType is
+     * returned. <br>
+     * <b>Note:</b> LEFT is seen as a negative lateral direction, RIGHT as a positive lateral direction. <br>
+     * @param currentLane the lane to look for the best accessible adjacent lane
+     * @param lateralDirection the direction (LEFT, RIGHT) to look at
+     * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the position of the GTU along this Lane
+     * @return the lane if it is accessible, or null if there is no lane, it is not accessible, or the driving direction does
+     *         not match.
+     */
+    Lane bestAccessibleAdjacentLane(Lane currentLane, LateralDirectionality lateralDirection,
+        DoubleScalar.Rel<LengthUnit> longitudinalPosition);
 
     /**
      * Determine the time when this GTU will have covered the specified distance from the position of the last evaluation time.

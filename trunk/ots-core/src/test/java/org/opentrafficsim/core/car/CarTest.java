@@ -123,7 +123,7 @@ public class CarTest
     /**
      * Create a new Car.
      * @param id String; the name (number) of the Car
-     * @param gtuType GTUType&lt;?&gt;; the type of the new car
+     * @param gtuType GTUType; the type of the new car
      * @param lane Lane; the lane on which the new Car is positioned
      * @param initialPosition DoubleScalar.Abs&lt;LengthUnit&gt;; the initial longitudinal position of the new Car
      * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed

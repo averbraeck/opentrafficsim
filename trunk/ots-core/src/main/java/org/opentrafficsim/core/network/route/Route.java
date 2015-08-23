@@ -2,7 +2,9 @@ package org.opentrafficsim.core.network.route;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -26,6 +28,9 @@ public class Route implements Serializable
     /** The nodes of the route. */
     private final List<Node> nodes;
 
+    /** The nodes of the route as a Set for quick containsNode() method. */
+    private final Set<Node> nodeSet = new HashSet<>();
+
     /** name of the route. */
     private final String id;
 
@@ -48,6 +53,7 @@ public class Route implements Serializable
     {
         this.id = id;
         this.nodes = nodes;
+        this.nodeSet.addAll(nodes);
     }
 
     /**
@@ -59,6 +65,7 @@ public class Route implements Serializable
     public void addNode(final Node node) throws NetworkException
     {
         this.nodes.add(node);
+        this.nodeSet.add(node);
     }
 
     /**
@@ -121,12 +128,21 @@ public class Route implements Serializable
     /**
      * Return the index of a Node in this Route, or -1 if this Route does not contain the specified Node. <br>
      * If this route contains the Node more than once, the index of the first is returned.
-     * @param node Node&lt;?, ?&gt;; the Node to find
+     * @param node Node; the Node to find
      * @return int;
      */
     public final int indexOf(final Node node)
     {
         return this.nodes.indexOf(node);
+    }
+
+    /**
+     * @param node Node; the Node to find
+     * @return whether the route contains this node (quick using HashSet);
+     */
+    public final boolean contains(final Node node)
+    {
+        return this.nodeSet.contains(node);
     }
 
     /**

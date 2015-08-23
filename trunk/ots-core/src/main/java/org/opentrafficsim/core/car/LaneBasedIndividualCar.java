@@ -55,7 +55,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
 
     /**
      * @param id ID; the id of the GTU
-     * @param gtuType GTUType&lt;?&gt;; the type of GTU, e.g. TruckType, CarType, BusType
+     * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
      * @param gtuFollowingModel GTUFollowingModel; the following model, including a reference to the simulator
      * @param laneChangeModel LaneChangeModel; the lane change model
      * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial positions of the car
@@ -88,7 +88,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
     /**
      * Construct a new LaneBasedIndividualCar.
      * @param id ID; the id of the GTU
-     * @param gtuType GTUTYpe&lt;?&gt;; the type of GTU, e.g. TruckType, CarType, BusType
+     * @param gtuType GTUTYpe; the type of GTU, e.g. TruckType, CarType, BusType
      * @param gtuFollowingModel GTUFollowingModel; the following model, including a reference to the simulator
      * @param laneChangeModel LaneChangeModel; the lane change model
      * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial positions of the car

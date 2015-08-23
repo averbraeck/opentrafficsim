@@ -25,7 +25,7 @@ public interface WrappableSimulation
 {
     /**
      * Build the simulation.
-     * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;*gt;; the (possibly user-modified) properties. This list must
+     * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user-modified) properties. This list must
      *            contain all the properties returned by getProperties(); any additional properties may be ignored
      * @param rect the x, y, width and height for the window to rebuild. Use null for maximized screen.
      * @param exitOnClose Use EXIT_ON_CLOSE when true, DISPOSE_ON_CLOSE when false on closing of the window.

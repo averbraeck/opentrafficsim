@@ -475,6 +475,14 @@ public abstract class AbstractTrafficLight extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
+    public Lane bestAccessibleAdjacentLane(Lane currentLane, LateralDirectionality lateralDirection,
+        Rel<LengthUnit> longitudinalPosition)
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public DoubleScalar.Abs<TimeUnit> timeAtDistance(Rel<LengthUnit> distance)
     {
         return null;

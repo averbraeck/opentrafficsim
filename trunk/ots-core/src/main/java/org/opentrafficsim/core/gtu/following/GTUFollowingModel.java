@@ -29,7 +29,7 @@ public interface GTUFollowingModel
      * Compute the acceleration that would be used to follow a leader.<br>
      * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their leader,
      * or should slow down for a crossing from accelerating to unsafe speeds.
-     * @param follower LaneBasedGTU&lt;?&gt;; the GTU for which acceleration is computed
+     * @param follower LaneBasedGTU; the GTU for which acceleration is computed
      * @param leaderSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed of the leader
      * @param headway DoubleScalar.Rel&lt;LengthUnit&gt;; the headway of the leader
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
@@ -68,7 +68,7 @@ public interface GTUFollowingModel
      * Two AccelerationStep values are returned in a DualAccelerationStep.<br>
      * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their leader,
      * or should slow down for a crossing from accelerating to unsafe speeds.
-     * @param referenceGTU LaneBasedGTU&lt;?&gt;; the GTU for which the accelerations are computed
+     * @param referenceGTU LaneBasedGTU; the GTU for which the accelerations are computed
      * @param otherGTUs Collection&lt;HeadwayGTU&gt;; the other GTUs. A negative headway value indicates that the other GTU is a
      *            follower. NB. If the referenceGTU is contained in this Collection, it is ignored.
      * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the local speed limit
@@ -82,7 +82,7 @@ public interface GTUFollowingModel
 
     /**
      * Compute the acceleration that would be used if the is not leader in sight.
-     * @param gtu LaneBasedGTU&lt;?&gt;; the GTU for which acceleration is computed
+     * @param gtu LaneBasedGTU; the GTU for which acceleration is computed
      * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the local speed limit
      * @return AccelerationStep; the result of application of the GTU following model
      * @throws RemoteException in case of simulator reachability problems

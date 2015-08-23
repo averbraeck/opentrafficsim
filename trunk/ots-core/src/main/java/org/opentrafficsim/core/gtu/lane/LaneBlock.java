@@ -425,6 +425,14 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
+    public Lane bestAccessibleAdjacentLane(Lane currentLane, LateralDirectionality lateralDirection,
+        Rel<LengthUnit> longitudinalPosition)
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public DoubleScalar.Abs<TimeUnit> timeAtDistance(Rel<LengthUnit> distance)
     {
         return null;

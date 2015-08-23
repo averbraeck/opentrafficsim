@@ -20,7 +20,7 @@ public interface LaneBasedGTUSampler
 {
     /**
      * Add the movement of an AbstractLaneBasedGTU to a graph.
-     * @param gtu AbstractLaneBasedGTU&lt;?&gt;; the AbstractLaneBasedGTU
+     * @param gtu AbstractLaneBasedGTU; the AbstractLaneBasedGTU
      * @param lane Lane; the Lane for which the movement must be added
      * @throws RemoteException on communications failure
      * @throws NetworkException on network-related inconsistency

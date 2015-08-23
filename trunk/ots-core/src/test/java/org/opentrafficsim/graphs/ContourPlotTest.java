@@ -150,7 +150,7 @@ public class ContourPlotTest
      * Test various properties of a ContourPlot that has no observed data added.
      * @param cp ContourPlot; the ContourPlot to test
      * @param lane Lane; the lane on which the test GTUs are run
-     * @param gtuType GTUType&lt;?&gt;; the type of GTU
+     * @param gtuType GTUType; the type of GTU
      * @param expectedZValue double; the value that getZ and getZValue should return for a valid item when no car has passed
      * @param expectedZValueWithTraffic double; the value that getZ and getZValue should return a valid item where a car has
      *            traveled at constant speed of 50 km/h. Supply Double.NaN if the value varies but differs from the value

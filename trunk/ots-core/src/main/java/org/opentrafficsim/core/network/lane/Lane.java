@@ -319,8 +319,8 @@ public class Lane extends CrossSectionElement
     }
 
     /**
-     * Add a LaneBasedGTU&lt;?&gt; to the list of this Lane.
-     * @param gtu LaneBasedGTU&lt;?&gt;; the GTU to add
+     * Add a LaneBasedGTU to the list of this Lane.
+     * @param gtu LaneBasedGTU; the GTU to add
      * @param fractionalPosition double; the fractional position that the newly added GTU will have on this Lane
      * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to
      *         a lane change operation)
@@ -369,8 +369,8 @@ public class Lane extends CrossSectionElement
     }
 
     /**
-     * Add a LaneBasedGTU&lt;?&gt; to the list of this Lane.
-     * @param gtu LaneBasedGTU&lt;?&gt;; the GTU to add
+     * Add a LaneBasedGTU to the list of this Lane.
+     * @param gtu LaneBasedGTU; the GTU to add
      * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the longitudinal position that the newly added GTU will
      *            have on this Lane
      * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to
@@ -587,53 +587,6 @@ public class Lane extends CrossSectionElement
     }
 
     /**
-     * Determine whether there is a lane to the left or to the right of this lane, which is accessible from this lane, or null
-     * if no lane could be found. The method takes the LongitidinalDirectionality of the lane into account. In other words, if
-     * we drive FORWARD and look for a lane on the LEFT, and there is a lane but the Directionality of that lane is not FORWARD
-     * or BOTH, null will be returned.<br>
-     * A lane is called adjacent to another lane if the lateral edges are not more than a delta distance apart. This means that
-     * a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
-     * The algorithm also looks for RoadMarkerAcross elements between the lanes to determine the lateral permeability for a GTU.
-     * A RoadMarkerAcross is seen as being between two lanes if its center line is not more than delta distance from the
-     * relevant lateral edges of the two adjacent lanes. <br>
-     * When there are multiple lanes that are adjacent, which could e.g. be the case if an overlapping tram lane and a car lane
-     * are adjacent to the current lane, the widest lane that best matches the GTU accessibility of the provided GTUType is
-     * returned. <br>
-     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction. <br>
-     * @param lateralDirection LEFT or RIGHT.
-     * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the position of the GTU along this Lane
-     * @param gtuType the type of GTU for which this an adjacent lane.
-     * @return the lane if it is accessible, or null if there is no lane, it is not accessible, or the driving direction does
-     *         not match.
-     */
-    public final Lane bestAccessibleAdjacentLane(final LateralDirectionality lateralDirection,
-        final DoubleScalar.Rel<LengthUnit> longitudinalPosition, final GTUType gtuType)
-    {
-        Set<Lane> candidates = accessibleAdjacentLanes(lateralDirection, gtuType);
-
-        if (candidates.isEmpty())
-        {
-            return null; // There is no adjacent Lane that this GTU type can cross into
-        }
-        if (candidates.size() == 1)
-        {
-            return candidates.iterator().next(); // There is exactly one adjacent Lane that this GTU type can cross into
-        }
-        // There are several candidates; find the one that is widest at the beginning.
-        Lane bestLane = null;
-        double widthM = -1.0;
-        for (Lane lane : candidates)
-        {
-            if (lane.getWidth(longitudinalPosition).getSI() > widthM)
-            {
-                widthM = lane.getWidth(longitudinalPosition).getSI();
-                bestLane = lane;
-            }
-        }
-        return bestLane;
-    }
-
-    /**
      * Register a LaneBasedGTUSampler on this Lane.
      * @param sampler LaneBasedGTUSampler; the sampler to register
      */
@@ -653,7 +606,7 @@ public class Lane extends CrossSectionElement
 
     /**
      * Add the movement of a GTU to all graphs that sample this Lane.
-     * @param gtu AbstractLaneBasedGTU&lt;?&gt;; the GTU to sample
+     * @param gtu AbstractLaneBasedGTU; the GTU to sample
      * @throws NetworkException on network inconsistency
      * @throws RemoteException on communications failure
      */
