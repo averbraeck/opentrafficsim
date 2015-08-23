@@ -55,11 +55,10 @@ public class GTMLaneChangeModel implements LaneChangeModel
             final LateralDirectionality nonPreferred = LateralDirectionality.LEFT;
 
             // Zorg er voor dat er niet wordt afgeslagen van de hoofdroute onder normale omstandigheden.
-            Lane nonPreferredLane =
-                lane.bestAccessibleAdjacentLane(nonPreferred, longitudinalPosition, gtu.getGTUType());
+            Lane nonPreferredLane = gtu.bestAccessibleAdjacentLane(lane, nonPreferred, longitudinalPosition);
             if (nonPreferredLane != null && !suitable(nonPreferredLane, gtu))
                 nonPreferredLane = null;
-            Lane preferredLane = lane.bestAccessibleAdjacentLane(preferred, longitudinalPosition, gtu.getGTUType());
+            Lane preferredLane = gtu.bestAccessibleAdjacentLane(lane, preferred, longitudinalPosition);
             if (preferredLane != null && !suitable(preferredLane, gtu))
                 preferredLane = null;
             boolean currSuit = suitable(lane, gtu);
@@ -175,25 +174,25 @@ public class GTMLaneChangeModel implements LaneChangeModel
         if (lane.nextLanes().size() == 0) // try to get off a lane that is ending
             return false;
         return true;
-//        CompleteRoute route;
-//        RouteNavigator navigator = ((LaneBasedIndividualCar) gtu).getRouteNavigator();
-//        if (navigator instanceof StraightRouteNavigator)
-//            route = ((StraightRouteNavigator) navigator).straightRoute;
-//        else 
-//            route = ((CompleteLaneBasedRouteNavigator) navigator).getRoute();
-//        // if the lane connects to the main route: good, otherwise: bad
-//        if (route.getNodes().contains(lane.getParentLink().getEndNode()))
-//        {
-//            if (lane.nextLanes().size() == 0) // try to get off a lane that is ending
-//                return false;
-//            Lane nextLane = (Lane) lane.nextLanes().iterator().next();
-//            if (nextLane != null && route.getNodes().contains(nextLane.getParentLink().getEndNode()))
-//                return true;
-//            else
-//                return false;
-//        }
-//        else
-//            return false;
+        // CompleteRoute route;
+        // RouteNavigator navigator = ((LaneBasedIndividualCar) gtu).getRouteNavigator();
+        // if (navigator instanceof StraightRouteNavigator)
+        // route = ((StraightRouteNavigator) navigator).straightRoute;
+        // else
+        // route = ((CompleteLaneBasedRouteNavigator) navigator).getRoute();
+        // // if the lane connects to the main route: good, otherwise: bad
+        // if (route.getNodes().contains(lane.getParentLink().getEndNode()))
+        // {
+        // if (lane.nextLanes().size() == 0) // try to get off a lane that is ending
+        // return false;
+        // Lane nextLane = (Lane) lane.nextLanes().iterator().next();
+        // if (nextLane != null && route.getNodes().contains(nextLane.getParentLink().getEndNode()))
+        // return true;
+        // else
+        // return false;
+        // }
+        // else
+        // return false;
     }
 
     /**

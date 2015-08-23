@@ -61,7 +61,7 @@ public class ScheduleGenerateCars
         Map<String, GenerateSensor> mapSensor, int generateCar, Map<String, CompleteRoute> routes)
     {
         this.gtuType = gtuType;
-        this.gtuFollowingModel = new GTMIDMPlus();
+        this.gtuFollowingModel = new GTMIDMPlusSI();
         this.laneChangeModel = new GTMLaneChangeModel();
         this.gtuColorer = new IDGTUColorer();
         this.simulator = simulator;
