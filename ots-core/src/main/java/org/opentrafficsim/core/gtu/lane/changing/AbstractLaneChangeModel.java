@@ -52,8 +52,8 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;
             final LateralDirectionality nonPreferred = LateralDirectionality.LEFT;
             Lane nonPreferredLane =
-                lane.bestAccessibleAdjacentLane(nonPreferred, longitudinalPosition, gtu.getGTUType());
-            Lane preferredLane = lane.bestAccessibleAdjacentLane(preferred, longitudinalPosition, gtu.getGTUType());
+                gtu.bestAccessibleAdjacentLane(lane, nonPreferred, longitudinalPosition);
+            Lane preferredLane = gtu.bestAccessibleAdjacentLane(lane, preferred, longitudinalPosition);
             GTUFollowingModel gtuFollowingModel = gtu.getGTUFollowingModel();
             if (null == gtuFollowingModel)
             {

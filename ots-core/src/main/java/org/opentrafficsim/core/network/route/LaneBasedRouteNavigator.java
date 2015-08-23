@@ -25,7 +25,7 @@ public interface LaneBasedRouteNavigator extends RouteNavigator
      * Determine the suitability of being at a particular longitudinal position in a particular Lane for following this Route.
      * @param lane Lane; the lane to consider
      * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the longitudinal position in the lane
-     * @param gtuType GTUType&lt;?&gt;; the type of the GTU (used to check lane compatibility of lanes)
+     * @param gtuType GTUType; the type of the GTU (used to check lane compatibility of lanes)
      * @param timeHorizon DoubleScalar.Rel&lt;TimeUnit&gt;; the maximum time that a driver may want to look ahead
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; a value that indicates within what distance the GTU should try to vacate this
      *         lane.

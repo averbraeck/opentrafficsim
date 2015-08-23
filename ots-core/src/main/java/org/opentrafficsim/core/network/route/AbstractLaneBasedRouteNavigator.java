@@ -44,7 +44,7 @@ public abstract class AbstractLaneBasedRouteNavigator implements LaneBasedRouteN
      * @param suitabilities Map&lt;Lane, Double&gt;; the set of suitable lanes and their suitability
      * @param totalLanes integer; total number of lanes compatible with the GTU type
      * @param direction LateralDirectionality; the direction of the lane changes to attempt
-     * @param gtuType GTUType&lt;?&gt;; the type of the GTU
+     * @param gtuType GTUType; the type of the GTU
      * @return double; the suitability of the <cite>startLane</cite> for following the Route
      */
     protected final DoubleScalar.Rel<LengthUnit> computeSuitabilityWithLaneChanges(final Lane startLane,
@@ -82,7 +82,7 @@ public abstract class AbstractLaneBasedRouteNavigator implements LaneBasedRouteN
     /**
      * Determine how many lanes on a CrossSectionLink are compatible with a particular GTU type.<br>
      * TODO: this method should probably be moved into the CrossSectionLink class
-     * @param link CrossSectionLink&lt;?, ?&gt;; the link
+     * @param link CrossSectionLink; the link
      * @param gtuType GTUType; the GTU type
      * @return integer; the number of lanes on the link that are compatible with the GTU type
      */
