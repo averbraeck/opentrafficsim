@@ -67,7 +67,7 @@ public class ScheduleCheckPulses<ID>
         this.mapSensor = mapSensor;
         this.routes = routes;
         this.gtuType = gtuType;
-        this.gtuFollowingModel = new GTMIDMPlus();
+        this.gtuFollowingModel = new GTMIDMPlusSI();
         this.laneChangeModel = new GTMLaneChangeModel();
         this.gtuColorer = new IDGTUColorer();
         this.lengthCar = 4.5;

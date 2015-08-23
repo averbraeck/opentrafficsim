@@ -31,6 +31,12 @@ public class StraightRouteNavigator extends AbstractLaneBasedRouteNavigator
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected int lastVisitedNodeIndex = -1;
 
+    /** follow the route - no lane change. */
+    private static final DoubleScalar.Rel<LengthUnit> FOLLOW_ROUTE = new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER);
+    
+    /** leave the route - lane change. */
+    private static final DoubleScalar.Rel<LengthUnit> LEAVE_ROUTE = new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER);
+    
     /**
      * @param straightRoute
      */
@@ -46,19 +52,19 @@ public class StraightRouteNavigator extends AbstractLaneBasedRouteNavigator
         GTUType gtuType, DoubleScalar.Rel<TimeUnit> timeHorizon) throws NetworkException
     {
         // if the lane connects to the main route: good, otherwise: bad
-        if (this.straightRoute.getNodes().contains(lane.getParentLink().getEndNode()))
+        if (this.straightRoute.contains(lane.getParentLink().getEndNode()))
         {
             if (lane.nextLanes().size() == 0) // no choice
-                return new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER);
+                return FOLLOW_ROUTE;
             Lane nextLane = lane.nextLanes().iterator().next();
-            if (nextLane != null && this.straightRoute.getNodes().contains(nextLane.getParentLink().getEndNode()))
-                return new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER);
+            if (nextLane != null && this.straightRoute.contains(nextLane.getParentLink().getEndNode()))
+                return FOLLOW_ROUTE;
             else
-                return new DoubleScalar.Rel<LengthUnit>(10, LengthUnit.METER);
+                return LEAVE_ROUTE;
         }
         else
             // Math.max(0.0, lane.getLength().getSI() - longitudinalPosition.getSI())
-            return new DoubleScalar.Rel<LengthUnit>(10, LengthUnit.METER);
+            return LEAVE_ROUTE;
     }
 
     /** {@inheritDoc} */
