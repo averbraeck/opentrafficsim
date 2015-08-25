@@ -37,7 +37,7 @@ public class ConfigFile
      * @param vriNummers e.g., {"231", "232", "233"}
      * @return a map of Strings to VRIs
      */
-    public static HashMap<String, ConfigVri> readVlogConfigFiles(String dirConfigVri, String dirBase, String wegNummer,
+    public static HashMap<String, ConfigVri> readVlogConfigFiles(String dirBase, String wegNummer,
         String[] vriNummers)
     {
         // lijst met de configuratie van de vri's: naam kruispunt, detector (index en naam) en signaalgroep (index en naam)
@@ -49,9 +49,9 @@ public class ConfigFile
             {
                 String vriName = vri;
                 String vriLocation = "VRI" + wegNummer + vriName;
-                if (URLResource.getResource(dirBase + dirConfigVri + vriLocation + ".cfg") != null)
+                if (URLResource.getResource(dirBase + vriLocation + ".cfg") != null)
                 {
-                    URL url = URLResource.getResource(dirBase + dirConfigVri + vriLocation + ".cfg");
+                    URL url = URLResource.getResource(dirBase + vriLocation + ".cfg");
                     BufferedReader bufferedReader = null;
                     String path = url.getPath();
                     bufferedReader = new BufferedReader(new FileReader(path));
