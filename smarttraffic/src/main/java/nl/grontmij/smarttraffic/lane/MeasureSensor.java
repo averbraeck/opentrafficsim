@@ -29,27 +29,7 @@ public class MeasureSensor extends AbstractSensor
     private static final long serialVersionUID = 20141231L;
 
     /** filename for sensor write. */
-    private static BufferedWriter outputFile;
-    
-    static
-    {
-        try
-        {
-            String dirBase = System.getProperty("user.dir") + "/src/main/resources/";
-            File file = new File(dirBase + "/measure.xls");
-            if (!file.exists())
-            {
-                file.createNewFile();
-            }
-            outputFile = new BufferedWriter(new FileWriter(file.getAbsoluteFile()));
-            outputFile.write("Time\tSensor\tCar\n");
-            outputFile.flush();        }
-        catch (IOException exception)
-        {
-            exception.printStackTrace();
-            System.exit(-1);
-        }
-    }
+    private BufferedWriter outputFile;
 
     /**
      * @param lane
@@ -63,6 +43,7 @@ public class MeasureSensor extends AbstractSensor
         try
         {
             new MeasureSensorAnimation(this, simulator);
+            
         }
         catch (RemoteException | NamingException exception)
         {
@@ -82,8 +63,8 @@ public class MeasureSensor extends AbstractSensor
         {
             Instant time = GTM.startTimeSimulation.plusMillis(1000 * getSimulator().getSimulatorTime().get().longValue());
             String ts = time.toString().replace('T', ' ').replaceFirst("Z", "");
-            outputFile.write(ts + "\t" + getName() + "\t" + gtu.getId() + "\n");
-            outputFile.flush();
+            GTM.outputFileMeasures.write(ts + "\t" + getName() + "\t" + gtu.getId() + "\n");
+            GTM.outputFileMeasures.flush();
         }
         catch (IOException exception)
         {

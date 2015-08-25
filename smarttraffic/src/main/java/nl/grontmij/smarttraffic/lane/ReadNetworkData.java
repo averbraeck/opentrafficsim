@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.lane.AbstractSensor;

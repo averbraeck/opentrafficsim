@@ -27,104 +27,70 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 /**
  * @author p070518
  */
-public class ReportNumbers
-{
-    /** */
-    private static final long serialVersionUID = 20141231L;
+public class ReportNumbers {
+	/** */
+	private static final long serialVersionUID = 20141231L;
 
-    /** filename for sensor write. */
-    private static BufferedWriter outputFile;
 
-    /** simulator. */
-    private final OTSDEVSSimulatorInterface simulator;
+	/** simulator. */
+	private final OTSDEVSSimulatorInterface simulator;
 
-    /** the network. */
-    private final Network network;
-    
-    static
-    {
-        try
-        {
-            String dirBase = System.getProperty("user.dir") + "/src/main/resources/";
-            File file = new File(dirBase + "/reportNumbers.xls");
-            if (!file.exists())
-            {
-                file.createNewFile();
-            }
-            outputFile = new BufferedWriter(new FileWriter(file.getAbsoluteFile()));
-            outputFile.write("Time\tNrCars\n");
-            outputFile.flush();
-        }
-        catch (IOException exception)
-        {
-            exception.printStackTrace();
-            System.exit(-1);
-        }
-    }
+	/** the network. */
+	private final Network network;
 
-    /**
-     * @param simulator
-     */
-    public ReportNumbers(final Network network, final OTSDEVSSimulatorInterface simulator)
-    {
-        this.simulator = simulator;
-        this.network = network;
-        try
-        {
-            simulator.scheduleEventNow(this, this, "report", null);
-        }
-        catch (RemoteException | SimRuntimeException exception)
-        {
-            exception.printStackTrace();
-        }
-    }
+	/**
+	 * @param simulator
+	 */
+	public ReportNumbers(final Network network,
+			final OTSDEVSSimulatorInterface simulator,
+			BufferedWriter outputFileReportNumbers) {
+		this.simulator = simulator;
+		this.network = network;
+		try {
+			simulator.scheduleEventNow(this, this, "report",
+					new Object[] { outputFileReportNumbers });
+		} catch (RemoteException | SimRuntimeException exception) {
+			exception.printStackTrace();
+		}
+	}
 
-    /** report number of cars in the model. */
-    public void report()
-    {
-        try
-        {
-            Instant time = GTM.startTimeSimulation.plusMillis(1000 * this.simulator.getSimulatorTime().get().longValue());
-            String ts = time.toString().replace('T', ' ').replaceFirst("Z", "");
-            int nr = 0;
-            for (Link link : this.network.getLinkMap().values())
-            {
-                if (link instanceof CrossSectionLink)
-                {
-                    for (Object cse : ((CrossSectionLink) link).getCrossSectionElementList())
-                    {
-                        if (cse instanceof Lane)
-                        {
-                            for (Object gtu : ((Lane) cse).getGtuList())
-                            {
-                                if (gtu instanceof LaneBasedIndividualCar)
-                                {
-                                    nr++;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            outputFile.write(ts + "\t" + nr + "\n");
-            outputFile.flush();
-            if (LocalDateTime.ofInstant(time, ZoneId.of("UTC")).getMinute() == 0)
-            {
-                System.out.println("#gtu " + ts + " = " + nr);
-            }
-            try
-            {
-                simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(1.0, TimeUnit.MINUTE), this, this, "report", null);
-            }
-            catch (RemoteException | SimRuntimeException exception)
-            {
-                exception.printStackTrace();
-            }
-        }
-        catch (IOException exception)
-        {
-            exception.printStackTrace();
-        }
-    }
+	/** report number of cars in the model. */
+	public void report(BufferedWriter outputFileReportNumbers) {
+		try {
+			Instant time = GTM.startTimeSimulation
+					.plusMillis(1000 * this.simulator.getSimulatorTime().get()
+							.longValue());
+			String ts = time.toString().replace('T', ' ').replaceFirst("Z", "");
+			int nr = 0;
+			for (Link link : this.network.getLinkMap().values()) {
+				if (link instanceof CrossSectionLink) {
+					for (Object cse : ((CrossSectionLink) link)
+							.getCrossSectionElementList()) {
+						if (cse instanceof Lane) {
+							for (Object gtu : ((Lane) cse).getGtuList()) {
+								if (gtu instanceof LaneBasedIndividualCar) {
+									nr++;
+								}
+							}
+						}
+					}
+				}
+			}
+			outputFileReportNumbers.write(ts + "\t" + nr + "\n");
+			outputFileReportNumbers.flush();
+			if (LocalDateTime.ofInstant(time, ZoneId.of("UTC")).getMinute() == 0) {
+				System.out.println("#gtu " + ts + " = " + nr);
+			}
+			try {
+				simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(1.0,
+						TimeUnit.MINUTE), this, this, "report",
+						new Object[] { outputFileReportNumbers });
+			} catch (RemoteException | SimRuntimeException exception) {
+				exception.printStackTrace();
+			}
+		} catch (IOException exception) {
+			exception.printStackTrace();
+		}
+	}
 
 }

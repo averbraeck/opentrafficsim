@@ -1,8 +1,12 @@
 package nl.grontmij.smarttraffic.lane;
 
 import java.awt.geom.Rectangle2D;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -47,312 +51,364 @@ import org.xml.sax.SAXException;
 
 /**
  * <p>
+ * 
  * @version Oct 17, 2014 <br>
- * @version $Revision$, $LastChangedDate$, by $Author$,
- *          initial version Oct 17, 2014 <br>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @version $Revision$, $LastChangedDate: 2015-08-25 12:57:15 +0200 (Tue,
+ *          25 Aug 2015) $, by $Author$, initial version Oct 17,
+ *          2014 <br>
+ * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander
+ *         Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
 
-public class GTM extends AbstractWrappableSimulationST
-{
-    /** the start time of the simulation to be able to display and report correct times. */
-    public static Instant startTimeSimulation;
+public class GTM extends AbstractWrappableSimulationST {
+	/**
+	 * the start time of the simulation to be able to display and report correct
+	 * times.
+	 */
+	public static Instant startTimeSimulation;
 
-    /** a map from the signal group name, e.g., 225_08 to the traffic lights, e.g., [225_08.1, 225_08.2, 225_08.3]. */
-    public static Map<String, List<TrafficLight>> signalGroupToTrafficLights = new HashMap<>();
+	/**
+	 * a map from the signal group name, e.g., 225_08 to the traffic lights,
+	 * e.g., [225_08.1, 225_08.2, 225_08.3].
+	 */
+	public static Map<String, List<TrafficLight>> signalGroupToTrafficLights = new HashMap<>();
 
-    protected static String CURRENTPROPERTIESFILENAME = "";
+	public static BufferedWriter outputFileMeasures = null;
 
-    /**
-     * Main program. GTMModel has the model details.
-     * @param args String[]; the command line arguments (not used)
-     * @throws SimRuntimeException should never happen
-     * @throws RemoteException on communications failure
-     */
-    public static void main(final String[] args) throws RemoteException, SimRuntimeException
-    {
-        if (args.length != 1)
-        {
-            System.err.println("Give location of properties file as argument!");
-            System.exit(-1);
-        }
+	protected static String CURRENTPROPERTIESFILENAME = "";
 
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    GTM xmlModel = new GTM();
-                    GTM.CURRENTPROPERTIESFILENAME = args[0];
-                    SimpleAnimator animator = xmlModel.buildSimulator(new ArrayList<AbstractProperty<?>>(), null, true);
-                    animator.getEventList().removeLast();
-                    animator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(Settings.getInt(animator, "RUNDAYS"),
-                        TimeUnit.DAY), (short) (SimEventInterface.MIN_PRIORITY - 1), animator, animator, "stop", null);
-                }
-                catch (RemoteException | SimRuntimeException | NamingException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
-        });
-    }
+	/**
+	 * Main program. GTMModel has the model details.
+	 * 
+	 * @param args
+	 *            String[]; the command line arguments (not used)
+	 * @throws SimRuntimeException
+	 *             should never happen
+	 * @throws RemoteException
+	 *             on communications failure
+	 */
+	public static void main(final String[] args) throws RemoteException,
+			SimRuntimeException {
+		if (args.length != 1) {
+			System.err.println("Give location of properties file as argument!");
+			System.exit(-1);
+		}
 
-    /** {@inheritDoc} */
-    @Override
-    public final String shortName()
-    {
-        return "TestXMLModel";
-    }
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					GTM xmlModel = new GTM();
+					GTM.CURRENTPROPERTIESFILENAME = args[0];
+					SimpleAnimator animator = xmlModel.buildSimulator(
+							new ArrayList<AbstractProperty<?>>(), null, true);
+					animator.getEventList().removeLast();
+					animator.scheduleEventAbs(
+							new DoubleScalar.Abs<TimeUnit>(Settings.getInt(
+									animator, "RUNDAYS"), TimeUnit.DAY),
+							(short) (SimEventInterface.MIN_PRIORITY - 1),
+							animator, animator, "stop", null);
+				} catch (RemoteException | SimRuntimeException
+						| NamingException exception) {
+					exception.printStackTrace();
+				}
+			}
+		});
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public final String description()
-    {
-        return "TestXMLModel";
-    }
+	/** {@inheritDoc} */
+	@Override
+	public final String shortName() {
+		return "TestXMLModel";
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public final void stopTimersThreads()
-    {
-        super.stopTimersThreads();
-    }
+	/** {@inheritDoc} */
+	@Override
+	public final String description() {
+		return "TestXMLModel";
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    protected final JPanel makeCharts()
-    {
-        return null;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public final void stopTimersThreads() {
+		super.stopTimersThreads();
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    protected final OTSModelInterface makeModel(final GTUColorer colorer)
-    {
-        return new GTMModel();
-    }
+	/** {@inheritDoc} */
+	@Override
+	protected final JPanel makeCharts() {
+		return null;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    protected final Rectangle2D.Double makeAnimationRectangle()
-    {
-        return new Rectangle2D.Double(-100, 5500, 600, 300);
-    }
+	/** {@inheritDoc} */
+	@Override
+	protected final OTSModelInterface makeModel(final GTUColorer colorer) {
+		return new GTMModel();
+	}
 
-    /**
-     * Model for GTM.
-     * <p>
-     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
-     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
-     * <p>
-     * @version $Revision$, $LastChangedDate$, by $Author$,
-     *          initial version Jun 27, 2015 <br>
-     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
-     */
+	/** {@inheritDoc} */
+	@Override
+	protected final Rectangle2D.Double makeAnimationRectangle() {
+		return new Rectangle2D.Double(-100, 5500, 600, 300);
+	}
 
-    class GTMModel implements OTSModelInterface
-    {
-        /** */
-        private static final long serialVersionUID = 20150801L;
+	/**
+	 * Model for GTM.
+	 * <p>
+	 * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600
+	 * AA, Delft, the Netherlands. All rights reserved. <br>
+	 * BSD-style license. See <a
+	 * href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+	 * <p>
+	 * 
+	 * @version $Revision$, $LastChangedDate: 2015-08-25 12:57:15 +0200
+	 *          (Tue, 25 Aug 2015) $, by $Author$, initial version
+	 *          Jun 27, 2015 <br>
+	 * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander
+	 *         Verbraeck</a>
+	 * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
+	 */
 
-        /** the simulator. */
-        private OTSDEVSSimulatorInterface simulator;
+	class GTMModel implements OTSModelInterface {
+		/** */
+		private static final long serialVersionUID = 20150801L;
 
-        /** {@inheritDoc} */
-        @Override
-        public final void constructModel(
-            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
-            throws SimRuntimeException, RemoteException
-        {
-            this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
+		/** the simulator. */
+		private OTSDEVSSimulatorInterface simulator;
 
-            new Settings(this.simulator, GTM.CURRENTPROPERTIESFILENAME);
+		/** {@inheritDoc} */
+		@Override
+		public final void constructModel(
+				final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
+				throws SimRuntimeException, RemoteException {
+			this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
 
-            // Base directory (relative to user dir)
-            String dirBase = System.getProperty("user.dir") + "/src/main/resources/";
+			new Settings(this.simulator, GTM.CURRENTPROPERTIESFILENAME);
+			// Base directory (relative to user dir)
+			String dirBase = Settings.getString(this.simulator, "BASEDIR")
+					+ "/" + Settings.getString(this.simulator, "PROJECTDIR");
+			String networkFileName = Settings.getString(this.simulator,
+					"NETWORK");
 
-            // Geef hier de file met het netwerk
-            URL url = URLResource.getResource(dirBase + "network.xml");
+			// Geef hier de file met het netwerk
+			URL url = URLResource.getResource(dirBase + "/input/model/"
+					+ networkFileName);
 
-            // Bouw het netwerk
-            XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
-            OTSNetwork network = null;
-            try
-            {
-                network = nlp.build(url);
-                makeSignalGroupTrafficLightMap(network);
-            }
-            catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
-                | GTUException | OTSGeometryException exception1)
-            {
-                exception1.printStackTrace();
-            }
+			// Bouw het netwerk
+			XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
+			OTSNetwork network = null;
+			try {
+				network = nlp.build(url);
+				makeSignalGroupTrafficLightMap(network);
+			} catch (NetworkException | ParserConfigurationException
+					| SAXException | IOException | NamingException
+					| GTUException | OTSGeometryException exception1) {
+				exception1.printStackTrace();
+			}
 
-            // read the configuration files for VLOG (detector/signalgroup: both index and name
-            String dirConfigVri = "configVRI/";
-            String dirLoggings = "VRI-loggings/";
-            // het nummer van de N201 wordt gebruikt in de bestanden
-            String wegNummer = "201";
-            // Geef de numers van de VRI's
-            // Data van "311" ontbreekt in de meetperiode. Laat weg.
-            String[] vriNummer = {"225", "231", "234", "239", "245", "249", "291", "297", "302", "308", "314"};
+			// read the configuration files for VLOG (detector/signalgroup: both
+			// index and name
+			String dirConfigVri = Settings.getString(this.simulator,
+					"CONFIGDIR");// vri configuratie
+			String dirLoggings = Settings.getString(this.simulator,
+					"LOGGINGDIR");// VRI-loggings;
+			// output;
+			// het nummer van de N201 wordt gebruikt in de bestanden
+			String wegNummer = Settings.getString(this.simulator, "WEGNUMMER");// map
+																				// output;
+			// Geef de numers van de VRI's
+			// Data van "311" ontbreekt in de meetperiode. Laat weg.
+			String[] vriNummer = Settings.getStringArray(this.simulator,
+					"VRINUMMERS");// map output;;
 
-            // in de configVriList worden de vri configuraties opgeslagen. De ConfigVri bevat de detectoren (index, naam) en de
-            // signaalgroepen (index, naam)
-            HashMap<String, ConfigVri> configVriList = null;
-            configVriList = ConfigFile.readVlogConfigFiles(dirConfigVri, dirBase, wegNummer, vriNummer);
+			// in de configVriList worden de vri configuraties opgeslagen. De
+			// ConfigVri bevat de detectoren (index, naam) en de
+			// signaalgroepen (index, naam)
+			HashMap<String, ConfigVri> configVriList = null;
+			configVriList = ConfigFile.readVlogConfigFiles(dirBase + "/"
+					+ "input" + "/" + dirConfigVri + "/", wegNummer, vriNummer);
 
-            // read and define detectors from the network. in mapSensors staan alle detectoren (met de naam als zoeksleutel
-            HashMap<String, AbstractSensor> mapSensor = new HashMap<String, AbstractSensor>();
-            // Vervolgens worden de verschillende typen ook nog in aparte HashMaps opgeslagen
-            HashMap<String, GenerateSensor> mapSensorGenerateCars = new HashMap<String, GenerateSensor>();
-            HashMap<String, KillSensor> mapSensorKillCars = new HashMap<String, KillSensor>();
-            HashMap<String, CheckSensor> mapSensorCheckCars = new HashMap<String, CheckSensor>();
-            // alle detectoren uit het netwerk worden verzameld
-            ReadNetworkData.readDetectors(this.simulator, network, configVriList, mapSensor, mapSensorGenerateCars,
-                mapSensorKillCars, mapSensorCheckCars);
+			// read and define detectors from the network. in mapSensors staan
+			// alle detectoren (met de naam als zoeksleutel
+			HashMap<String, AbstractSensor> mapSensor = new HashMap<String, AbstractSensor>();
+			// Vervolgens worden de verschillende typen ook nog in aparte
+			// HashMaps opgeslagen
+			HashMap<String, GenerateSensor> mapSensorGenerateCars = new HashMap<String, GenerateSensor>();
+			HashMap<String, KillSensor> mapSensorKillCars = new HashMap<String, KillSensor>();
+			HashMap<String, CheckSensor> mapSensorCheckCars = new HashMap<String, CheckSensor>();
+			// alle detectoren uit het netwerk worden verzameld
+			ReadNetworkData.readDetectors(this.simulator, network,
+					configVriList, mapSensor, mapSensorGenerateCars,
+					mapSensorKillCars, mapSensorCheckCars);
 
-            // read the historical (at a later stage streaming) VLOG data
-            // start met inlezen files vanaf tijdstip ....
-            // nu wordt er nog data van alleen 1 juni ingelezen
-            int year = 2015;
-            int month = 6;
-            int day = 1;
-            long hour = 2;
-            int minute = 0;
-            int second = 0;
-            int tenth = 0;
-            Instant timeVLog =
-                Instant.parse(String.format("%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day, hour, minute, second,
-                    tenth));
-            startTimeSimulation =
-                Instant.parse(String.format("%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day, 0, 0, 0, 0));
-            // start the simulation at 06:00, but make times relative to 00:00 to display the right time.
-            /*
-             * read the vlog data with both detector and signalgroup. Data van alle detectoren worden nu de pulsen toegevoegd
-             * (tijdstip en waarde detectie/signaal). Deze worden opgeslagen in de mapSensor, maar tegelijkertijd ook in de
-             * mappen mapSensorGenerateCars, mapSensorKillCars en mapSensorCheckCars (omdat daar een verwijzing naar dezelfde
-             * objecten is).
-             */
-            ReadVLog.readVlogZipFiles(mapSensor, configVriList, timeVLog, dirBase + dirLoggings, wegNummer, vriNummer,
-                this.simulator);
+			// read the historical (at a later stage streaming) VLOG data
+			// start met inlezen files vanaf tijdstip ....
+			// nu wordt er nog data van alleen 1 juni ingelezen
+			int year = 2015;
+			int month = 6;
+			int day = 1;
+			long hour = 2;
+			int minute = 0;
+			int second = 0;
+			int tenth = 0;
+			Instant timeVLog = Instant.parse(String.format(
+					"%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day,
+					hour, minute, second, tenth));
+			startTimeSimulation = Instant.parse(String.format(
+					"%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day, 0,
+					0, 0, 0));
+			// start the simulation at 06:00, but make times relative to 00:00
+			// to display the right time.
+			/*
+			 * read the vlog data with both detector and signalgroup. Data van
+			 * alle detectoren worden nu de pulsen toegevoegd (tijdstip en
+			 * waarde detectie/signaal). Deze worden opgeslagen in de mapSensor,
+			 * maar tegelijkertijd ook in de mappen mapSensorGenerateCars,
+			 * mapSensorKillCars en mapSensorCheckCars (omdat daar een
+			 * verwijzing naar dezelfde objecten is).
+			 */
+			ReadVLog.readVlogZipFiles(mapSensor, configVriList, timeVLog,
+					dirBase + "/" + "input" + "/" + dirLoggings + "/",
+					wegNummer, vriNummer, this.simulator);
 
-            // connect the detector pulses to the simulator and generate Cars
-            // Module that provides actions if a pulse from a detector is
-            // activated: creeren van een voertuig als een detector "af" gaat (waarde wordt nul)
-            GTUType gtuType = GTUType.makeGTUType("CAR");
-            int generateCar = 0;
-            Map<String, CompleteRoute> routes = new HashMap<>();
-            for (String rName : network.getRouteMap().keySet())
-            {
-                try
-                {
-                    routes.put(rName, new CompleteRoute(rName, network.getRouteMap().get(rName).getNodes()));
-                }
-                catch (NetworkException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
-            new ScheduleGenerateCars(gtuType, simulator, mapSensorGenerateCars, generateCar, routes);
+			// connect the detector pulses to the simulator and generate Cars
+			// Module that provides actions if a pulse from a detector is
+			// activated: creeren van een voertuig als een detector "af" gaat
+			// (waarde wordt nul)
+			GTUType gtuType = GTUType.makeGTUType("CAR");
+			int generateCar = 0;
+			Map<String, CompleteRoute> routes = new HashMap<>();
+			for (String rName : network.getRouteMap().keySet()) {
+				try {
+					routes.put(rName, new CompleteRoute(rName, network
+							.getRouteMap().get(rName).getNodes()));
+				} catch (NetworkException exception) {
+					exception.printStackTrace();
+				}
+			}
 
-            new ReportNumbers(network, simulator);
+			new ScheduleGenerateCars(gtuType, this.simulator,
+					mapSensorGenerateCars, generateCar, routes);
 
-            if (Settings.getBoolean(simulator, "MOVERAMPS"))
-            {
-                // - Compare the (INTERMEDIATE) pulse to vehicles in the simulation
-                //
-                // - if no car is matched: Generate a car
-                // - if matched: reposition that car, and perhaps other cars
-                // - de range om te zoeken naar voertuigen:
-                // ------de eerste waarde is de afstand in meters stroomOPwaarts van het voertuig
-                // ------de tweede waarde is de afstand in meters stroomAFwaarts van het voertuig
-                try
-                {
-                    new ScheduleCheckPulses(gtuType, simulator, mapSensorCheckCars, 400, 400, new ArrayList<CompleteRoute>(
-                        routes.values()));
-                }
-                catch (NetworkException | GTUException | NamingException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-            // - Kill a car (EXIT)
-            // connect to the sensorKill
+			// create outputMap
+			String outputDir = dirBase + "/output";
 
-            // module that detects a car in the simulation passing a
-            // detector and provide actions:
-            // - if the car is too far downstream, and not matched by a
-            // pulse: we assume it is not matched --> Action: delete the
-            // car.
-            // -
+			FileUtilities.checkAndCreateMap(outputDir);
 
-            // module for logging information
-            // car: time and distance traveled since started
-            // detector: log all cars that pass (ID and time)
-            // road: time and ID for every car entered and exited
+			String dirExperiment = outputDir + "/" + Settings.getString(this.simulator,
+					"EXPERIMENTDIR");
+			BufferedWriter outputFileReportNumbers = Output
+					.initiateReportNumbers(dirExperiment, this.simulator);
+			new ReportNumbers(network, this.simulator, outputFileReportNumbers);
 
-            // learning algorithms:
-            // if the cars are traveling faster/slower than the pulses:
-            // decrease/increase the maximum speed
+			outputFileMeasures = Output.initiateMeasure(dirExperiment,
+					this.simulator);
 
-        }
+			try {
+				Files.copy(
+						Paths.get(dirBase + GTM.CURRENTPROPERTIESFILENAME),
+						Paths.get(dirExperiment + GTM.CURRENTPROPERTIESFILENAME));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 
-        /**
-         * Get the traffic lights with their name.
-         * @param network the parsed network.
-         */
-        private void makeSignalGroupTrafficLightMap(final OTSNetwork network)
-        {
-            for (Link link : network.getLinkMap().values())
-            {
-                if (link instanceof CrossSectionLink)
-                {
-                    @SuppressWarnings({"rawtypes", "unchecked"})
-                    List<CrossSectionElement> cseList = ((CrossSectionLink) link).getCrossSectionElementList();
-                    for (CrossSectionElement cse : cseList)
-                    {
-                        if (cse instanceof Lane)
-                        {
-                            Lane lane = (Lane) cse;
-                            List<LaneBasedGTU> gtus = new ArrayList<>(lane.getGtuList());
-                            for (LaneBasedGTU gtu : gtus)
-                            {
-                                if (gtu instanceof TrafficLight)
-                                {
-                                    TrafficLight trafficLight = (TrafficLight) gtu;
-                                    String signalGroupName = trafficLight.getId().split("\\.")[0];
-                                    if (!GTM.signalGroupToTrafficLights.containsKey(signalGroupName))
-                                    {
-                                        GTM.signalGroupToTrafficLights.put(signalGroupName, new ArrayList<TrafficLight>());
-                                    }
-                                    GTM.signalGroupToTrafficLights.get(signalGroupName).add(trafficLight);
-                                    // XXX hack: van verkeerslicht 311 ontbreekt alle data in de meetperiode.
-                                    // Zet de lichten dus op groen...
-                                    if (trafficLight.getId().startsWith("311"))
-                                    {
-                                        trafficLight.changeColor(1);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            System.out.println(GTM.signalGroupToTrafficLights);
-        }
+			if (Settings.getBoolean(this.simulator, "MOVERAMPS")) {
+				// - Compare the (INTERMEDIATE) pulse to vehicles in the
+				// simulation
+				//
+				// - if no car is matched: Generate a car
+				// - if matched: reposition that car, and perhaps other cars
+				// - de range om te zoeken naar voertuigen:
+				// ------de eerste waarde is de afstand in meters stroomOPwaarts
+				// van het voertuig
+				// ------de tweede waarde is de afstand in meters stroomAFwaarts
+				// van het voertuig
+				try {
+					new ScheduleCheckPulses(gtuType, this.simulator,
+							mapSensorCheckCars, Settings.getDouble(
+									this.simulator, "SEARCHRANGEBACK"),
+							Settings.getDouble(this.simulator,
+									"SEARCHRANGEFRONT"),
+							new ArrayList<CompleteRoute>(routes.values()));
+				} catch (NetworkException | GTUException | NamingException e) {
+					e.printStackTrace();
+				}
+			}
+			// - Kill a car (EXIT)
+			// connect to the sensorKill
 
-        /** {@inheritDoc} */
-        @Override
-        public SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
-        {
-            return this.simulator;
-        }
+			// module that detects a car in the simulation passing a
+			// detector and provide actions:
+			// - if the car is too far downstream, and not matched by a
+			// pulse: we assume it is not matched --> Action: delete the
+			// car.
+			// -
 
-    }
+			// module for logging information
+			// car: time and distance traveled since started
+			// detector: log all cars that pass (ID and time)
+			// road: time and ID for every car entered and exited
+
+			// learning algorithms:
+			// if the cars are traveling faster/slower than the pulses:
+			// decrease/increase the maximum speed
+
+		}
+
+		/**
+		 * Get the traffic lights with their name.
+		 * 
+		 * @param network
+		 *            the parsed network.
+		 */
+		private void makeSignalGroupTrafficLightMap(final OTSNetwork network) {
+			for (Link link : network.getLinkMap().values()) {
+				if (link instanceof CrossSectionLink) {
+					@SuppressWarnings({ "rawtypes", "unchecked" })
+					List<CrossSectionElement> cseList = ((CrossSectionLink) link)
+							.getCrossSectionElementList();
+					for (CrossSectionElement cse : cseList) {
+						if (cse instanceof Lane) {
+							Lane lane = (Lane) cse;
+							List<LaneBasedGTU> gtus = new ArrayList<>(
+									lane.getGtuList());
+							for (LaneBasedGTU gtu : gtus) {
+								if (gtu instanceof TrafficLight) {
+									TrafficLight trafficLight = (TrafficLight) gtu;
+									String signalGroupName = trafficLight
+											.getId().split("\\.")[0];
+									if (!GTM.signalGroupToTrafficLights
+											.containsKey(signalGroupName)) {
+										GTM.signalGroupToTrafficLights.put(
+												signalGroupName,
+												new ArrayList<TrafficLight>());
+									}
+									GTM.signalGroupToTrafficLights.get(
+											signalGroupName).add(trafficLight);
+									// XXX hack: van verkeerslicht 311 ontbreekt
+									// alle data in de meetperiode.
+									// Zet de lichten dus op groen...
+									if (trafficLight.getId().startsWith("311")) {
+										trafficLight.changeColor(1);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			System.out.println(GTM.signalGroupToTrafficLights);
+		}
+
+		/** {@inheritDoc} */
+		@Override
+		public SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+				throws RemoteException {
+			return this.simulator;
+		}
+
+	}
 
 }
