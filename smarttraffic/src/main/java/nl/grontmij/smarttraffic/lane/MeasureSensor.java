@@ -12,12 +12,15 @@ import java.time.Instant;
 
 import javax.naming.NamingException;
 
+import nl.tudelft.simulation.dsol.simtime.TimeUnit;
+
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.lane.AbstractSensor;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
@@ -61,9 +64,20 @@ public class MeasureSensor extends AbstractSensor
     {
         try
         {
-            Instant time = GTM.startTimeSimulation.plusMillis(1000 * getSimulator().getSimulatorTime().get().longValue());
-            String ts = time.toString().replace('T', ' ').replaceFirst("Z", "");
-            GTM.outputFileMeasures.write(ts + "\t" + getName() + "\t" + gtu.getId() + "\n");
+        	Double time = this.getSimulator().getSimulatorTime().get().getInUnit(org.opentrafficsim.core.unit.TimeUnit.SECOND);
+            //Instant time = GTM.startTimeSimulation.plusMillis(1000 * getSimulator().getSimulatorTime().get().longValue());
+            //String ts = time.toString().replace('T', ' ').replaceFirst("Z", "");
+            //GTM.outputFileMeasures.write(ts + "\t" + getName() + "\t" + gtu.getId() + "\n");
+        	String detector = null; 
+        	if (getName().charAt(3)=='a') {
+        		detector =  getName().substring(4, 5);
+        	}
+        	else if (getName().charAt(3)=='b') {
+        		Double det =  Double.parseDouble(getName().substring(4, 5)) + 10;
+        		detector = Double.toString(det);
+        	}
+
+        	GTM.outputFileMeasures.write(time + "\t" + detector + "\t" + gtu.getId() + "\n");
             GTM.outputFileMeasures.flush();
         }
         catch (IOException exception)

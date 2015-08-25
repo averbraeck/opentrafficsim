@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -163,9 +164,10 @@ public class ScheduleGenerateCars
         try
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength = new DoubleScalar.Rel<LengthUnit>(this.lengthCar, LengthUnit.METER);
+            Class<? extends Renderable2D> animationClass= Settings.getBoolean(simulator, "ANIMATECARS")? DefaultCarAnimation.class:null;  
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, this.gtuFollowingModel,
                 this.laneChangeModel, initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(2.0,
-                    LengthUnit.METER), maxSpeed, routeNavigatorAB, this.simulator, DefaultCarAnimation.class,
+                    LengthUnit.METER), maxSpeed, routeNavigatorAB, this.simulator, animationClass,
                 this.gtuColorer);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)

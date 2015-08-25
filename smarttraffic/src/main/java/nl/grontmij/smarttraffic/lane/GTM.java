@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.rmi.RemoteException;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -296,19 +298,19 @@ public class GTM extends AbstractWrappableSimulationST {
 
 			FileUtilities.checkAndCreateMap(outputDir);
 
-			String dirExperiment = outputDir + "/" + Settings.getString(this.simulator,
-					"EXPERIMENTDIR");
+			String dirExperiment = outputDir + "/"
+					+ Settings.getString(this.simulator, "EXPERIMENTDIR");
 			BufferedWriter outputFileReportNumbers = Output
 					.initiateReportNumbers(dirExperiment, this.simulator);
 			new ReportNumbers(network, this.simulator, outputFileReportNumbers);
 
 			outputFileMeasures = Output.initiateMeasure(dirExperiment,
 					this.simulator);
-
+			Path file = Paths.get(GTM.CURRENTPROPERTIESFILENAME).getFileName();
 			try {
-				Files.copy(
-						Paths.get(dirBase + GTM.CURRENTPROPERTIESFILENAME),
-						Paths.get(dirExperiment + GTM.CURRENTPROPERTIESFILENAME));
+				Files.copy(Paths.get(dirBase + "/" + file),
+						Paths.get(dirExperiment + "/" + file),
+						StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
