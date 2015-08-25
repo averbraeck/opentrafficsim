@@ -16,6 +16,7 @@ import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 
@@ -40,6 +41,7 @@ import org.opentrafficsim.core.unit.TimeUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.xml.sax.SAXException;
 
@@ -60,6 +62,8 @@ public class GTM extends AbstractWrappableSimulationST
     /** a map from the signal group name, e.g., 225_08 to the traffic lights, e.g., [225_08.1, 225_08.2, 225_08.3]. */
     public static Map<String, List<TrafficLight>> signalGroupToTrafficLights = new HashMap<>();
 
+    protected static String CURRENTPROPERTIESFILENAME = "";
+
     /**
      * Main program. GTMModel has the model details.
      * @param args String[]; the command line arguments (not used)
@@ -68,6 +72,12 @@ public class GTM extends AbstractWrappableSimulationST
      */
     public static void main(final String[] args) throws RemoteException, SimRuntimeException
     {
+        if (args.length != 1)
+        {
+            System.err.println("Give location of properties file as argument!");
+            System.exit(-1);
+        }
+
         SwingUtilities.invokeLater(new Runnable()
         {
             @Override
@@ -76,7 +86,11 @@ public class GTM extends AbstractWrappableSimulationST
                 try
                 {
                     GTM xmlModel = new GTM();
-                    xmlModel.buildSimulator(new ArrayList<AbstractProperty<?>>(), null, true);
+                    GTM.CURRENTPROPERTIESFILENAME = args[0];
+                    SimpleAnimator animator = xmlModel.buildSimulator(new ArrayList<AbstractProperty<?>>(), null, true);
+                    animator.getEventList().removeLast();
+                    animator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(Settings.getInt(animator, "RUNDAYS"),
+                        TimeUnit.DAY), (short) (SimEventInterface.MIN_PRIORITY - 1), animator, animator, "stop", null);
                 }
                 catch (RemoteException | SimRuntimeException | NamingException exception)
                 {
@@ -155,6 +169,8 @@ public class GTM extends AbstractWrappableSimulationST
             throws SimRuntimeException, RemoteException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
+
+            new Settings(this.simulator, GTM.CURRENTPROPERTIESFILENAME);
 
             // Base directory (relative to user dir)
             String dirBase = System.getProperty("user.dir") + "/src/main/resources/";
@@ -246,24 +262,25 @@ public class GTM extends AbstractWrappableSimulationST
 
             new ReportNumbers(network, simulator);
 
-            // - Compare the (INTERMEDIATE) pulse to vehicles in the simulation
-            //
-            // - if no car is matched: Generate a car
-            // - if matched: reposition that car, and perhaps other cars
-            // - de range om te zoeken naar voertuigen:
-            // ------de eerste waarde is de afstand in meters stroomOPwaarts van het voertuig
-            // ------de tweede waarde is de afstand in meters stroomAFwaarts van het voertuig
-
-//            try
-//            {
-//                new ScheduleCheckPulses(gtuType, simulator, mapSensorCheckCars, 400, 400, new ArrayList<CompleteRoute>(routes
-//                    .values()));
-//            }
-//            catch (NetworkException | GTUException | NamingException e)
-//            {
-//                e.printStackTrace();
-//            }
-
+            if (Settings.getBoolean(simulator, "MOVERAMPS"))
+            {
+                // - Compare the (INTERMEDIATE) pulse to vehicles in the simulation
+                //
+                // - if no car is matched: Generate a car
+                // - if matched: reposition that car, and perhaps other cars
+                // - de range om te zoeken naar voertuigen:
+                // ------de eerste waarde is de afstand in meters stroomOPwaarts van het voertuig
+                // ------de tweede waarde is de afstand in meters stroomAFwaarts van het voertuig
+                try
+                {
+                    new ScheduleCheckPulses(gtuType, simulator, mapSensorCheckCars, 400, 400, new ArrayList<CompleteRoute>(
+                        routes.values()));
+                }
+                catch (NetworkException | GTUException | NamingException e)
+                {
+                    e.printStackTrace();
+                }
+            }
             // - Kill a car (EXIT)
             // connect to the sensorKill
 

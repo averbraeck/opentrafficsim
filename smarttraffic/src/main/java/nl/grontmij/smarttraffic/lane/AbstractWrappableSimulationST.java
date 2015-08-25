@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.gtu.animation.DefaultSwitchableGTUColorer;
@@ -70,9 +71,11 @@ public abstract class AbstractWrappableSimulationST implements WrappableSimulati
             return null; // Happens when the user cancels the file open dialog in the OpenStreetMap demo.
         }
 
+        // NOTE: simulator runs 1 day -- will be overwritten later with right number of days
         final SimpleAnimator simulator =
             new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.HOUR), new DoubleScalar.Rel<TimeUnit>(0.0,
-                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(Settings.NUMBEROFDAYS * 24.0, TimeUnit.HOUR), model);
+                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(24, TimeUnit.HOUR), model);
+        
         this.panel = new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
         JPanel charts = makeCharts();
         if (null != charts)
