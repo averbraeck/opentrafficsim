@@ -59,9 +59,9 @@ public class ScheduleCheckPulses<ID>
 
     HashMap<String, CheckSensor> mapSensor;
 
-    public ScheduleCheckPulses(GTUType gtuType, OTSDEVSSimulatorInterface simulator,
-        HashMap<String, CheckSensor> mapSensor, double backRange, double frontRange, List<CompleteRoute> routes)
-        throws RemoteException, SimRuntimeException, NetworkException, GTUException, NamingException
+    public ScheduleCheckPulses(GTUType gtuType, OTSDEVSSimulatorInterface simulator, HashMap<String, CheckSensor> mapSensor,
+        double backRange, double frontRange, List<CompleteRoute> routes) throws RemoteException, SimRuntimeException,
+        NetworkException, GTUException, NamingException
     {
         this.simulator = simulator;
         this.mapSensor = mapSensor;
@@ -125,8 +125,9 @@ public class ScheduleCheckPulses<ID>
                 {
                     ((LaneBasedIndividualCar) gtu).destroy();
                 }
-                // generateCar(sensor.getLane(), new DoubleScalar.Rel<LengthUnit>(sensor.getLongitudinalPositionSI(),
-                // LengthUnit.METER), Integer.parseInt(gtu.getId().toString()));
+                if (Settings.getBoolean(simulator, "ANIMATERAMPVEHICLES"))
+                    generateCar(sensor.getLane(), new DoubleScalar.Rel<LengthUnit>(sensor.getLongitudinalPositionSI(),
+                        LengthUnit.METER), Integer.parseInt(gtu.getId().toString()));
                 System.out.println("t=" + simulator.getSimulatorTime().get().getSI() + " - gtu " + gtu
                     + " moved onto exit lane " + sensor.getLane());
             }
@@ -211,7 +212,8 @@ public class ScheduleCheckPulses<ID>
         return nearestGTU;
     }
 
-    private final LaneBasedGTU nearGTUfront2a(CheckSensor sensor, CrossSectionLink link, double range) throws RemoteException
+    private final LaneBasedGTU nearGTUfront2a(CheckSensor sensor, CrossSectionLink link, double range)
+        throws RemoteException
     {
         if (link.getStartNode().getLocation().distance(sensor.getLocation()) > range
             && link.getEndNode().getLocation().distance(sensor.getLocation()) > range)
@@ -260,7 +262,6 @@ public class ScheduleCheckPulses<ID>
         }
         return nearestGTU;
     }
-
 
     private final LaneBasedGTU nearGTUback(CheckSensor sensor, double range) throws RemoteException
     {
@@ -341,11 +342,11 @@ public class ScheduleCheckPulses<ID>
             }
         }
 
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
-            new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(lane, initialPosition);
         DoubleScalar.Abs<SpeedUnit> initialSpeed = lane.getSpeedLimit();
-        DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(Settings.MAXSPEED, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<SpeedUnit> maxSpeed =
+            new DoubleScalar.Abs<SpeedUnit>(Settings.getDouble(simulator, "MAXSPEED"), SpeedUnit.KM_PER_HOUR);
         if (initialPosition.getSI() + this.lengthCar > lane.getLength().getSI())
         {
             // also register on next lane.

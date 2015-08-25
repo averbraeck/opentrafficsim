@@ -16,6 +16,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
@@ -39,7 +40,7 @@ public class ReportNumbers
 
     /** the network. */
     private final Network network;
-
+    
     static
     {
         try

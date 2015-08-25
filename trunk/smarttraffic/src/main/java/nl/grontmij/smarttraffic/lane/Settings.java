@@ -1,5 +1,18 @@
 package nl.grontmij.smarttraffic.lane;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import nl.tudelft.simulation.language.io.URLResource;
+
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+
 /**
  * <p>
  * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -12,13 +25,67 @@ package nl.grontmij.smarttraffic.lane;
  */
 public final class Settings
 {
-    /** max speed of cars in km/h. */
-    public static final double MAXSPEED = 80;
+    /** the map from simulator to properties. */
+    private static Map<Integer, Properties> PROPS = new HashMap<>();
 
-    /** max speed of cars in km/h. */
-    public static final double NUMBEROFDAYS = 1;
+    /** instantiate settings per simulator. */
+    public Settings(final OTSDEVSSimulatorInterface simulator, final String propertiesFileName)
+    {
+        Properties props = new Properties();
+        try
+        {
+            InputStream fis = URLResource.getResourceAsStream(propertiesFileName);
+            props.load(new BufferedInputStream(fis));
+            PROPS.put(simulator.hashCode(), props);
+            fis.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+    }
 
-    /** Do not instantiate. */
-    private Settings() {};
+    private static void test(final OTSDEVSSimulatorInterface simulator, final String name)
+    {
+        if (!PROPS.containsKey(simulator.hashCode()))
+        {
+            System.err.println("Cannot find properties for simulator " + simulator.toString());
+            System.exit(-1);
+        }
+
+        if (!PROPS.get(simulator.hashCode()).containsKey(name))
+        {
+            System.err.println("Cannot find property " + name);
+            System.exit(-1);
+        }
+    }
+
+    public static boolean getBoolean(final OTSDEVSSimulatorInterface simulator, final String name)
+    {
+        test(simulator, name);
+        String s = PROPS.get(simulator.hashCode()).getProperty(name);
+        return s.toUpperCase().startsWith("T");
+    }
+
+    public static double getDouble(final OTSDEVSSimulatorInterface simulator, final String name)
+    {
+        test(simulator, name);
+        String s = PROPS.get(simulator.hashCode()).getProperty(name);
+        return Double.parseDouble(s);
+    }
+
+    public static double getInt(final OTSDEVSSimulatorInterface simulator, final String name)
+    {
+        test(simulator, name);
+        String s = PROPS.get(simulator.hashCode()).getProperty(name);
+        return Integer.parseInt(s);
+    }
+
+    public static String getString(final OTSDEVSSimulatorInterface simulator, final String name)
+    {
+        test(simulator, name);
+        return PROPS.get(simulator.hashCode()).getProperty(name);
+    }
+
 }
-

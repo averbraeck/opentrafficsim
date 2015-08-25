@@ -57,8 +57,8 @@ public class ScheduleGenerateCars
     /** the routes. A and B. */
     private Map<String, CompleteRoute> routes;
 
-    public ScheduleGenerateCars(GTUType gtuType, OTSDEVSSimulatorInterface simulator,
-        Map<String, GenerateSensor> mapSensor, int generateCar, Map<String, CompleteRoute> routes)
+    public ScheduleGenerateCars(GTUType gtuType, OTSDEVSSimulatorInterface simulator, Map<String, GenerateSensor> mapSensor,
+        int generateCar, Map<String, CompleteRoute> routes)
     {
         this.gtuType = gtuType;
         this.gtuFollowingModel = new GTMIDMPlusSI();
@@ -127,11 +127,11 @@ public class ScheduleGenerateCars
             }
         }
 
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
-                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialPositions.put(lane, initialPosition);
-        DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(genSpeedSI, SpeedUnit.SI); 
-        DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(Settings.MAXSPEED, SpeedUnit.KM_PER_HOUR);
+        DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(genSpeedSI, SpeedUnit.SI);
+        DoubleScalar.Abs<SpeedUnit> maxSpeed =
+            new DoubleScalar.Abs<SpeedUnit>(Settings.getDouble(simulator, "MAXSPEED"), SpeedUnit.KM_PER_HOUR);
         if (initialPosition.getSI() + this.lengthCar > lane.getLength().getSI())
         {
             // also register on next lane.
@@ -164,9 +164,9 @@ public class ScheduleGenerateCars
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength = new DoubleScalar.Rel<LengthUnit>(this.lengthCar, LengthUnit.METER);
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, this.gtuFollowingModel,
-                this.laneChangeModel, initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(
-                    2.0, LengthUnit.METER), maxSpeed, routeNavigatorAB,
-                this.simulator, DefaultCarAnimation.class, this.gtuColorer);
+                this.laneChangeModel, initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(2.0,
+                    LengthUnit.METER), maxSpeed, routeNavigatorAB, this.simulator, DefaultCarAnimation.class,
+                this.gtuColorer);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
@@ -191,15 +191,15 @@ public class ScheduleGenerateCars
         double t = genSpeedSI / 2.0; // t = V0 / a.
         double brakeDistanceSI = genSpeedSI * t - 0.5 * 2 * t * t; // xt = V0 . t - 0.5 . a . t^2
         brakeDistanceSI += Math.max(3.0, genSpeedSI * 1.2);
-        
+
         double laneLengthSI = generatorLane.getLength().getSI();
         double frontNew = (genPosSI + carLengthSI) / laneLengthSI;
         double rearNew = genPosSI / laneLengthSI;
-        
+
         Lane nextLane = generatorLane.nextLanes().iterator().next();
         double frontNextNewSI = genPosSI + carLengthSI - laneLengthSI + brakeDistanceSI;
         double rearNextNewSI = genPosSI - laneLengthSI;
-        
+
         try
         {
             // test for overlap with other GTUs
@@ -219,8 +219,10 @@ public class ScheduleGenerateCars
                 double frontGTU;
                 frontGTU = gtu.position(nextLane, gtu.getFront()).getSI();
                 double rearGTU = gtu.position(nextLane, gtu.getRear()).getSI();
-                if ((frontNextNewSI >= rearGTU && frontNextNewSI <= frontGTU) || (rearNextNewSI >= rearGTU && rearNextNewSI <= frontGTU)
-                    || (frontGTU >= rearNextNewSI && frontGTU <= frontNextNewSI) || (rearGTU >= rearNextNewSI && rearGTU <= frontNextNewSI))
+                if ((frontNextNewSI >= rearGTU && frontNextNewSI <= frontGTU)
+                    || (rearNextNewSI >= rearGTU && rearNextNewSI <= frontGTU)
+                    || (frontGTU >= rearNextNewSI && frontGTU <= frontNextNewSI)
+                    || (rearGTU >= rearNextNewSI && rearGTU <= frontNextNewSI))
                 {
                     return false;
                 }
