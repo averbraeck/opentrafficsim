@@ -30,8 +30,8 @@ public class Output {
 				}
 				outputFile = new BufferedWriter(new FileWriter(
 						file.getAbsoluteFile()));
-				outputFile.write("Time\tSensor\tCar\n");
-				outputFile.flush();
+				//outputFile.write("Time\tSensor\tCar\n");
+				//outputFile.flush();
 			} catch (IOException exception) {
 				exception.printStackTrace();
 				System.exit(-1);
@@ -54,8 +54,9 @@ public class Output {
 			}
 			outputFile = new BufferedWriter(new FileWriter(
 					file.getAbsoluteFile()));
-			outputFile.write("Time\tNrCars\n");
-			outputFile.flush();
+			
+			//outputFile.write("Time\tNrCars\n");
+			//outputFile.flush();
 		} catch (IOException exception) {
 			exception.printStackTrace();
 			System.exit(-1);

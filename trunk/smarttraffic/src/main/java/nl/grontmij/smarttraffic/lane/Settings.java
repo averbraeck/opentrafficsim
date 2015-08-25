@@ -44,6 +44,7 @@ public final class Settings {
 			PROPS.put(simulator.hashCode(), props);
 			fis.close();
 		} catch (IOException e) {
+			System.err.println(propertiesFileName);
 			e.printStackTrace();
 			System.exit(-1);
 		}
