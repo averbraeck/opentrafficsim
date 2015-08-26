@@ -77,6 +77,10 @@ public class GTM extends AbstractWrappableSimulationST {
 	public static Map<String, List<TrafficLight>> signalGroupToTrafficLights = new HashMap<>();
 
 	public static BufferedWriter outputFileMeasures = null;
+	public static BufferedWriter outputFileLogConfigVRI = null;
+	public static BufferedWriter outputFileLogReadSensor = null;
+	public static BufferedWriter outputFileLogVehicleSimulation = null;
+	
 
 	protected static String CURRENTPROPERTIESFILENAME = "";
 
@@ -187,28 +191,14 @@ public class GTM extends AbstractWrappableSimulationST {
 			this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
 
 			new Settings(this.simulator, GTM.CURRENTPROPERTIESFILENAME);
+			//Read properties
 			// Base directory (relative to user dir)
-			String dirBase = Settings.getString(this.simulator, "BASEDIR")
-					+ "/" + Settings.getString(this.simulator, "PROJECTDIR");
+			String dirBase = Settings.getString(this.simulator, "BASEDIR");
+					//+ "/" + Settings.getString(this.simulator, "PROJECTDIR");
 			String networkFileName = Settings.getString(this.simulator,
 					"NETWORK");
-
-			// Geef hier de file met het netwerk
-			URL url = URLResource.getResource(dirBase + "/input/model/"
-					+ networkFileName);
-
-			// Bouw het netwerk
-			XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
-			OTSNetwork network = null;
-			try {
-				network = nlp.build(url);
-				makeSignalGroupTrafficLightMap(network);
-			} catch (NetworkException | ParserConfigurationException
-					| SAXException | IOException | NamingException
-					| GTUException | OTSGeometryException exception1) {
-				exception1.printStackTrace();
-			}
-
+			String vLogFileName = Settings.getString(this.simulator,
+					"VLOG");
 			// read the configuration files for VLOG (detector/signalgroup: both
 			// index and name
 			String dirConfigVri = Settings.getString(this.simulator,
@@ -224,12 +214,41 @@ public class GTM extends AbstractWrappableSimulationST {
 			String[] vriNummer = Settings.getStringArray(this.simulator,
 					"VRINUMMERS");// map output;;
 
+			// create outputMap
+			String outputDir = dirBase + "/output";
+
+			FileUtilities.checkAndCreateMap(outputDir);
+
+			String dirExperiment = outputDir + "/"
+					+ Settings.getString(this.simulator, "EXPERIMENTDIR");
+			
+			
+			// Lees hier de file met het netwerk
+			URL url = URLResource.getResource(dirBase + "/input/model/"
+					+ networkFileName);
+
+			// Bouw het netwerk
+			XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
+			OTSNetwork network = null;
+			try {
+				network = nlp.build(url);
+				makeSignalGroupTrafficLightMap(network);
+			} catch (NetworkException | ParserConfigurationException
+					| SAXException | IOException | NamingException
+					| GTUException | OTSGeometryException exception1) {
+				exception1.printStackTrace();
+			}
+
+
+
 			// in de configVriList worden de vri configuraties opgeslagen. De
 			// ConfigVri bevat de detectoren (index, naam) en de
 			// signaalgroepen (index, naam)
+			outputFileLogConfigVRI = Output.initiateOutputFile(dirExperiment,
+					this.simulator,"ConfigVri.log","Read config files of traffic light regulated junctions: \n");
 			HashMap<String, ConfigVri> configVriList = null;
 			configVriList = ConfigFile.readVlogConfigFiles(dirBase + "/"
-					+ "input" + "/" + dirConfigVri + "/", wegNummer, vriNummer);
+					+ "input" + "/" + dirConfigVri + "/", wegNummer, vriNummer, outputFileLogConfigVRI);
 
 			// read and define detectors from the network. in mapSensors staan
 			// alle detectoren (met de naam als zoeksleutel
@@ -270,9 +289,11 @@ public class GTM extends AbstractWrappableSimulationST {
 			 * mapSensorKillCars en mapSensorCheckCars (omdat daar een
 			 * verwijzing naar dezelfde objecten is).
 			 */
+			outputFileLogReadSensor = Output.initiateOutputFile(dirExperiment,
+					this.simulator,"ReadAndCheckSensor.log","Read config files of traffic light regulated junctions: \n");
 			ReadVLog.readVlogZipFiles(mapSensor, configVriList, timeVLog,
-					dirBase + "/" + "input" + "/" + dirLoggings + "/",
-					wegNummer, vriNummer, this.simulator);
+					dirBase + "/" + "input" + "/" + dirLoggings + "/",vLogFileName,
+					wegNummer, vriNummer, this.simulator, outputFileLogReadSensor);
 
 			// connect the detector pulses to the simulator and generate Cars
 			// Module that provides actions if a pulse from a detector is
@@ -290,25 +311,20 @@ public class GTM extends AbstractWrappableSimulationST {
 				}
 			}
 
+			
 			new ScheduleGenerateCars(gtuType, this.simulator,
 					mapSensorGenerateCars, generateCar, routes);
 
-			// create outputMap
-			String outputDir = dirBase + "/output";
-
-			FileUtilities.checkAndCreateMap(outputDir);
-
-			String dirExperiment = outputDir + "/"
-					+ Settings.getString(this.simulator, "EXPERIMENTDIR");
 			BufferedWriter outputFileReportNumbers = Output
-					.initiateReportNumbers(dirExperiment, this.simulator);
+					.initiateOutputFile(dirExperiment, this.simulator, "reportNumbers.xls", "Time\tNrCars\n");
+			
 			new ReportNumbers(network, this.simulator, outputFileReportNumbers);
 
-			outputFileMeasures = Output.initiateMeasure(dirExperiment,
-					this.simulator);
+			outputFileMeasures = Output.initiateOutputFile(dirExperiment,
+					this.simulator,"measure.xls","Time\tSensor\tCar\n");
 			Path file = Paths.get(GTM.CURRENTPROPERTIESFILENAME).getFileName();
 			try {
-				Files.copy(Paths.get(dirBase + "/" + file),
+				Files.copy(Paths.get(dirBase + "/"+ "/input/" + file),
 						Paths.get(dirExperiment + "/" + file),
 						StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e1) {
@@ -327,13 +343,15 @@ public class GTM extends AbstractWrappableSimulationST {
 				// van het voertuig
 				// ------de tweede waarde is de afstand in meters stroomAFwaarts
 				// van het voertuig
+				outputFileLogVehicleSimulation = Output
+				.initiateOutputFile(dirExperiment, this.simulator, "vehicleDetectections.log", "Time\tRemark\n");
 				try {
 					new ScheduleCheckPulses(gtuType, this.simulator,
 							mapSensorCheckCars, Settings.getDouble(
 									this.simulator, "SEARCHRANGEBACK"),
 							Settings.getDouble(this.simulator,
 									"SEARCHRANGEFRONT"),
-							new ArrayList<CompleteRoute>(routes.values()));
+							new ArrayList<CompleteRoute>(routes.values()), outputFileLogVehicleSimulation);
 				} catch (NetworkException | GTUException | NamingException e) {
 					e.printStackTrace();
 				}
