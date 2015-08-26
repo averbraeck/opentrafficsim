@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 
 public class Output {
@@ -16,22 +17,25 @@ public class Output {
 		// TODO Auto-generated constructor stub
 	}
 
-	public static BufferedWriter initiateMeasure(String dirOutput,
-			final OTSSimulatorInterface simulator) {
+	public static BufferedWriter initiateOutputFile(String dirOutput,
+			final OTSSimulatorInterface simulator, String fileName, String header) {
 		BufferedWriter outputFile = null;
 		{
 			try {
 				if (!new File(dirOutput).exists()) {
 					Files.createDirectory(Paths.get(dirOutput));
 				}
-				File file = new File(dirOutput + "/measure.xls");
+				File file = new File(dirOutput + "/" + fileName);
 				if (!file.exists()) {
 					file.createNewFile();
 				}
 				outputFile = new BufferedWriter(new FileWriter(
 						file.getAbsoluteFile()));
-				//outputFile.write("Time\tSensor\tCar\n");
-				//outputFile.flush();
+				if (Settings.getBoolean((OTSDEVSSimulatorInterface) simulator,
+						"HEADERS")) {
+					outputFile.write(header);
+					outputFile.flush();
+				}
 			} catch (IOException exception) {
 				exception.printStackTrace();
 				System.exit(-1);
@@ -40,28 +44,4 @@ public class Output {
 		return outputFile;
 	}
 
-	public static BufferedWriter initiateReportNumbers(String dirOutput,
-			final OTSSimulatorInterface simulator) {
-		BufferedWriter outputFile = null;
-
-		try {
-			if (!new File(dirOutput).exists()) {
-				Files.createDirectory(Paths.get(dirOutput));
-			}
-			File file = new File(dirOutput + "/reportNumbers.xls");
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-			outputFile = new BufferedWriter(new FileWriter(
-					file.getAbsoluteFile()));
-			
-			//outputFile.write("Time\tNrCars\n");
-			//outputFile.flush();
-		} catch (IOException exception) {
-			exception.printStackTrace();
-			System.exit(-1);
-		}
-		return outputFile;
-
-	}
 }

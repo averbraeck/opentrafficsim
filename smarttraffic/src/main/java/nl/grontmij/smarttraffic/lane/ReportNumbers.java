@@ -31,7 +31,6 @@ public class ReportNumbers {
 	/** */
 	private static final long serialVersionUID = 20141231L;
 
-
 	/** simulator. */
 	private final OTSDEVSSimulatorInterface simulator;
 
@@ -60,7 +59,8 @@ public class ReportNumbers {
 			Instant time = GTM.startTimeSimulation
 					.plusMillis(1000 * this.simulator.getSimulatorTime().get()
 							.longValue());
-        	Double timeA = this.simulator.getSimulatorTime().get().getInUnit(org.opentrafficsim.core.unit.TimeUnit.SECOND);
+			Double timeA = this.simulator.getSimulatorTime().get()
+					.getInUnit(org.opentrafficsim.core.unit.TimeUnit.SECOND);
 			String ts = time.toString().replace('T', ' ').replaceFirst("Z", "");
 			int nr = 0;
 			for (Link link : this.network.getLinkMap().values()) {
@@ -77,8 +77,12 @@ public class ReportNumbers {
 					}
 				}
 			}
-			//outputFileReportNumbers.write(ts + "\t" + nr + "\n");
-			outputFileReportNumbers.write(timeA + "\t" + nr + "\n");
+			if (Settings.getBoolean((OTSDEVSSimulatorInterface) this.simulator,
+					"OUTPUTNUMERIC")) {
+				outputFileReportNumbers.write(timeA + "\t" + nr + "\n");
+			} else {
+				outputFileReportNumbers.write(ts + "\t" + nr + "\n");
+			}
 			outputFileReportNumbers.flush();
 			if (LocalDateTime.ofInstant(time, ZoneId.of("UTC")).getMinute() == 0) {
 				System.out.println("#gtu " + ts + " = " + nr);

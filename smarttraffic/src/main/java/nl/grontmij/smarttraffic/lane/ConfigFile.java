@@ -1,6 +1,7 @@
 package nl.grontmij.smarttraffic.lane;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
@@ -38,7 +39,7 @@ public class ConfigFile
      * @return a map of Strings to VRIs
      */
     public static HashMap<String, ConfigVri> readVlogConfigFiles(String dirBase, String wegNummer,
-        String[] vriNummers)
+        String[] vriNummers, BufferedWriter outputFileLogConfigVRI)
     {
         // lijst met de configuratie van de vri's: naam kruispunt, detector (index en naam) en signaalgroep (index en naam)
         HashMap<String, ConfigVri> configVriList = new HashMap<String, ConfigVri>();
@@ -55,7 +56,7 @@ public class ConfigFile
                     BufferedReader bufferedReader = null;
                     String path = url.getPath();
                     bufferedReader = new BufferedReader(new FileReader(path));
-                    configVriList.put(vriName, readVLogConfigFile(bufferedReader));
+                    configVriList.put(vriName, readVLogConfigFile(bufferedReader, outputFileLogConfigVRI));
                 }
             }
         }
@@ -73,7 +74,7 @@ public class ConfigFile
      * @return a VRI configuration object
      * @throws IOException on read error
      */
-    public static ConfigVri readVLogConfigFile(BufferedReader bufferedReader) throws IOException
+    public static ConfigVri readVLogConfigFile(BufferedReader bufferedReader, BufferedWriter outputFileLogConfigVRI) throws IOException
     {
         String line = "";
         String nameVRI = null;
@@ -148,7 +149,7 @@ public class ConfigFile
                 }
             }
         }
-        return new ConfigVri(nameVRI, detectors, signalGroups);
+        return new ConfigVri(nameVRI, detectors, signalGroups, outputFileLogConfigVRI);
     }
 
     // lees bij een statusbericht de waarden van de detectoren/signaalgroepen
