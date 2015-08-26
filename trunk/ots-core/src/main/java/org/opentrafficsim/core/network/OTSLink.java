@@ -146,7 +146,7 @@ public class OTSLink implements Link, Serializable, LocatableInterface
     {
         // TODO maybe do without transformation to a LineString and cache the centroid?
         Point c = this.designLine.getLineString().getCentroid();
-        return new DirectedPoint(new double[] {c.getX(), c.getY(), 0.0d});
+        return new DirectedPoint(new double[]{c.getX(), c.getY(), 0.0d});
     }
 
     /** {@inheritDoc} */
@@ -159,5 +159,54 @@ public class OTSLink implements Link, Serializable, LocatableInterface
         return new BoundingBox(new Point3d(envelope.getMinX() - c.x, envelope.getMinY() - c.y, 0.0d), new Point3d(envelope
             .getMaxX()
             - c.x, envelope.getMaxY() - c.y, 0.0d));
+    }
+
+    /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.endNode == null) ? 0 : this.endNode.hashCode());
+        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        result = prime * result + ((this.startNode == null) ? 0 : this.startNode.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @Override
+    public boolean equals(final Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OTSLink other = (OTSLink) obj;
+        if (this.endNode == null)
+        {
+            if (other.endNode != null)
+                return false;
+        }
+        else if (!this.endNode.equals(other.endNode))
+            return false;
+        if (this.id == null)
+        {
+            if (other.id != null)
+                return false;
+        }
+        else if (!this.id.equals(other.id))
+            return false;
+        if (this.startNode == null)
+        {
+            if (other.startNode != null)
+                return false;
+        }
+        else if (!this.startNode.equals(other.startNode))
+            return false;
+        return true;
     }
 }

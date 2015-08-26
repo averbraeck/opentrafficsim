@@ -112,9 +112,9 @@ public class ScheduleGenerateCars
     protected final void generateCar(Lane lane, DoubleScalar.Rel<LengthUnit> initialPosition)
     {
         // is there enough space?
-        Lane nextLane = lane.nextLanes().iterator().next();
+        Lane nextLane = lane.nextLanes(this.gtuType).iterator().next();
         double genSpeedSI = Math.min(lane.getSpeedLimit().getSI(), nextLane.getSpeedLimit().getSI());
-        if (!enoughSpace(lane, initialPosition.getSI(), this.lengthCar, genSpeedSI))
+        if (!enoughSpace(lane, initialPosition.getSI(), this.lengthCar, genSpeedSI, this.gtuType))
         {
             try
             {
@@ -136,7 +136,7 @@ public class ScheduleGenerateCars
         if (initialPosition.getSI() + this.lengthCar > lane.getLength().getSI())
         {
             // also register on next lane.
-            if (lane.nextLanes().size() == 0 || lane.nextLanes().size() > 1)
+            if (lane.nextLanes(this.gtuType).size() == 0 || lane.nextLanes(this.gtuType).size() > 1)
             {
                 System.err.println("lane.nextLanes().size() == 0 || lane.nextLanes().size() > 1");
                 System.exit(-1);
@@ -185,7 +185,7 @@ public class ScheduleGenerateCars
      * @throws NetworkException if GTU does not have a position on the lane where it is registered
      */
     public static final boolean enoughSpace(final Lane generatorLane, final double genPosSI, final double carLengthSI,
-        final double genSpeedSI)
+        final double genSpeedSI, final GTUType gtuType)
     {
         // assume a=2 m/s2
         // safety time = 1.2 sec when driving. distance = genSpeedSI * 1.2.
@@ -198,7 +198,7 @@ public class ScheduleGenerateCars
         double frontNew = (genPosSI + carLengthSI) / laneLengthSI;
         double rearNew = genPosSI / laneLengthSI;
 
-        Lane nextLane = generatorLane.nextLanes().iterator().next();
+        Lane nextLane = generatorLane.nextLanes(gtuType).iterator().next();
         double frontNextNewSI = genPosSI + carLengthSI - laneLengthSI + brakeDistanceSI;
         double rearNextNewSI = genPosSI - laneLengthSI;
 

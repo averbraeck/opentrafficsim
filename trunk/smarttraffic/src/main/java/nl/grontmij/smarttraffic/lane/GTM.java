@@ -69,6 +69,9 @@ public class GTM extends AbstractWrappableSimulationST {
 	 * times.
 	 */
 	public static Instant startTimeSimulation;
+	
+	/** the GTUtype to use in the model (car). */
+	public static GTUType GTUTYPE; 
 
 	/**
 	 * a map from the signal group name, e.g., 225_08 to the traffic lights,
@@ -299,7 +302,7 @@ public class GTM extends AbstractWrappableSimulationST {
 			// Module that provides actions if a pulse from a detector is
 			// activated: creeren van een voertuig als een detector "af" gaat
 			// (waarde wordt nul)
-			GTUType gtuType = GTUType.makeGTUType("CAR");
+			GTUTYPE = GTUType.makeGTUType("CAR");
 			int generateCar = 0;
 			Map<String, CompleteRoute> routes = new HashMap<>();
 			for (String rName : network.getRouteMap().keySet()) {
@@ -312,7 +315,7 @@ public class GTM extends AbstractWrappableSimulationST {
 			}
 
 			
-			new ScheduleGenerateCars(gtuType, this.simulator,
+			new ScheduleGenerateCars(GTUTYPE, this.simulator,
 					mapSensorGenerateCars, generateCar, routes);
 
 			BufferedWriter outputFileReportNumbers = Output
@@ -346,7 +349,7 @@ public class GTM extends AbstractWrappableSimulationST {
 				outputFileLogVehicleSimulation = Output
 				.initiateOutputFile(dirExperiment, this.simulator, "vehicleDetectections.log", "Time\tRemark\n");
 				try {
-					new ScheduleCheckPulses(gtuType, this.simulator,
+					new ScheduleCheckPulses(GTUTYPE, this.simulator,
 							mapSensorCheckCars, Settings.getDouble(
 									this.simulator, "SEARCHRANGEBACK"),
 							Settings.getDouble(this.simulator,

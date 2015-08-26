@@ -132,7 +132,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                     remainingDistance += nextLink.getLength().getSI();
                     linkBeforeBranch = (CrossSectionLink) nextLink;
                     // Figure out the new currentLane
-                    if (currentLane.nextLanes().size() == 0)
+                    if (currentLane.nextLanes(gtuType).size() == 0)
                     {
                         // Lane drop; our lane disappears. This is a compulsory lane change; which is not controlled
                         // by the Route. Perform the forced lane change.
@@ -141,7 +141,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                             for (Lane adjacentLane : currentLane.accessibleAdjacentLanes(LateralDirectionality.RIGHT,
                                 gtuType))
                             {
-                                if (adjacentLane.nextLanes().size() > 0)
+                                if (adjacentLane.nextLanes(gtuType).size() > 0)
                                 {
                                     currentLane = adjacentLane;
                                     break;
@@ -153,7 +153,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                         for (Lane adjacentLane : currentLane.accessibleAdjacentLanes(LateralDirectionality.LEFT,
                             gtuType))
                         {
-                            if (adjacentLane.nextLanes().size() > 0)
+                            if (adjacentLane.nextLanes(gtuType).size() > 0)
                             {
                                 currentLane = adjacentLane;
                                 break;
@@ -161,18 +161,18 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                             // If there are several adjacent lanes that have non empty nextLanes, we simple take the
                             // first in the set
                         }
-                        if (currentLane.nextLanes().size() == 0)
+                        if (currentLane.nextLanes(gtuType).size() == 0)
                         {
                             throw new NetworkException("Lane ends and there is not a compatible adjacent lane that does "
                                 + "not end");
                         }
                     }
                     // Any compulsory lane change(s) have been performed and there is guaranteed a compatible next lane.
-                    for (Lane nextLane : currentLane.nextLanes())
+                    for (Lane nextLane : currentLane.nextLanes(gtuType))
                     {
                         if (nextLane.getLaneType().isCompatible(gtuType))
                         {
-                            currentLane = currentLane.nextLanes().iterator().next();
+                            currentLane = currentLane.nextLanes(gtuType).iterator().next();
                             break;
                         }
                     }
@@ -225,7 +225,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                 Lane l = (Lane) cse;
                 if (l.getLaneType().isCompatible(gtuType))
                 {
-                    for (Lane connectingLane : l.nextLanes())
+                    for (Lane connectingLane : l.nextLanes(gtuType))
                     {
                         if (connectingLane.getParentLink() == linkAfterBranch
                             && connectingLane.getLaneType().isCompatible(gtuType))

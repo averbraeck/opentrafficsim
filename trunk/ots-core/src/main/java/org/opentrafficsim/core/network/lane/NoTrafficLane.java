@@ -19,8 +19,12 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  */
 public class NoTrafficLane extends Lane
 {
+    /** */
+    private static final long serialVersionUID = 20150228L;
+
     /**
      * @param parentLink Cross Section Link to which the element belongs.
+     * @param id String; the id of the lane. Should be unique within the parentLink.
      * @param lateralOffsetAtStart DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
      *            CrossSectionLink with respect to the design line of the parent Link at the start of the parent Link
      * @param lateralOffsetAtEnd DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
@@ -30,11 +34,12 @@ public class NoTrafficLane extends Lane
      * @throws OTSGeometryException when creation of the geometry fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public NoTrafficLane(final CrossSectionLink parentLink,
+    public NoTrafficLane(final CrossSectionLink parentLink, final String id,
         final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd,
-        final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth) throws OTSGeometryException
+        final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
+        throws OTSGeometryException
     {
-        super(parentLink, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, LaneType.NONE,
+        super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, LaneType.NONE,
             LongitudinalDirectionality.NONE, new DoubleScalar.Abs<FrequencyUnit>(0.0, FrequencyUnit.SI),
             new DoubleScalar.Abs<SpeedUnit>(0.0, SpeedUnit.SI));
     }

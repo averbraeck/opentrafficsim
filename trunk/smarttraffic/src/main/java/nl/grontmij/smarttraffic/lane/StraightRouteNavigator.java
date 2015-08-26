@@ -54,9 +54,9 @@ public class StraightRouteNavigator extends AbstractLaneBasedRouteNavigator
         // if the lane connects to the main route: good, otherwise: bad
         if (this.straightRoute.contains(lane.getParentLink().getEndNode()))
         {
-            if (lane.nextLanes().size() == 0) // no choice
+            if (lane.nextLanes(gtuType).size() == 0) // no choice
                 return FOLLOW_ROUTE;
-            Lane nextLane = lane.nextLanes().iterator().next();
+            Lane nextLane = lane.nextLanes(gtuType).iterator().next();
             if (nextLane != null && this.straightRoute.contains(nextLane.getParentLink().getEndNode()))
                 return FOLLOW_ROUTE;
             else

@@ -51,16 +51,6 @@ public final class OTSBuffering
     }
 
     /**
-     * @param p1 first point
-     * @param p2 second point
-     * @return the normalized angle of the line between p1 and p2
-     */
-    private static double angle(final OTSPoint3D p1, final OTSPoint3D p2)
-    {
-        return norm(Math.atan2(p2.y - p1.y, p2.x - p1.x));
-    }
-
-    /**
      * @param c1 first coordinate
      * @param c2 second coordinate
      * @return the normalized angle of the line between c1 and c2
@@ -73,7 +63,7 @@ public final class OTSBuffering
     /**
      * Generate a Geometry that has a fixed offset from a reference Geometry.
      * @param referenceLine Geometry; the reference line
-     * @param offset double; offset distance from the reference line; positive is Left, negative is Right
+     * @param offset double; offset distance from the reference line; positive is LEFT, negative is RIGHT
      * @return Geometry; the Geometry of a line that has the specified offset from the reference line
      * @throws OTSGeometryException on failure
      */
@@ -84,7 +74,7 @@ public final class OTSBuffering
         // printCoordinates("reference", referenceCoordinates);
         double bufferOffset = Math.abs(offset);
         final double precision = 0.00001;
-        if (bufferOffset < precision) // FIXME if this is not added, and offset = 1E-16: CRASH
+        if (bufferOffset < precision) // if this is not added, and offset = 1E-16: CRASH
         {
             // return a copy of the reference line
             return new OTSLine3D(referenceCoordinates);
@@ -128,8 +118,8 @@ public final class OTSBuffering
         // which point(s) are in the right direction of the start / end?
         int startIndex = -1;
         int endIndex = -1;
-        double expectedStartAngle = norm(angle(sC0, sC1) - Math.signum(offset) * Math.PI / 2.0);
-        double expectedEndAngle = norm(angle(eCm2, eCm1) - Math.signum(offset) * Math.PI / 2.0);
+        double expectedStartAngle = norm(angle(sC0, sC1) + Math.signum(offset) * Math.PI / 2.0);
+        double expectedEndAngle = norm(angle(eCm2, eCm1) + Math.signum(offset) * Math.PI / 2.0);
         for (int ic : startIndexSet)
         {
             if (norm(expectedStartAngle - angle(sC0, bufferCoordinates[ic])) < Math.PI / 4.0

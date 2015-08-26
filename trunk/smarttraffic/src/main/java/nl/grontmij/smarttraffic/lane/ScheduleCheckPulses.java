@@ -302,7 +302,7 @@ public class ScheduleCheckPulses<ID> {
 			throws RemoteException {
 		LaneBasedGTU nearestGTU = null;
 		double distanceSI = range;
-		Lane nextLane = sensor.getLane().nextLanes().iterator().next();
+		Lane nextLane = sensor.getLane().nextLanes(this.gtuType).iterator().next();
 		for (Object cse : nextLane.getParentLink().getCrossSectionElementList()) {
 			if (cse instanceof Lane) {
 				Lane lane = (Lane) cse;
@@ -331,11 +331,11 @@ public class ScheduleCheckPulses<ID> {
 			DoubleScalar.Rel<LengthUnit> initialPosition, final int gtuNumber)
 			throws NetworkException {
 		// is there enough space?
-		Lane nextLane = lane.nextLanes().iterator().next();
+		Lane nextLane = lane.nextLanes(this.gtuType).iterator().next();
 		double genSpeedSI = Math.min(lane.getSpeedLimit().getSI(), nextLane
 				.getSpeedLimit().getSI());
 		if (!ScheduleGenerateCars.enoughSpace(lane, initialPosition.getSI(),
-				this.lengthCar, genSpeedSI)) {
+				this.lengthCar, genSpeedSI, this.gtuType)) {
 			try {
 				this.simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(
 						0.25, TimeUnit.SECOND), this, this, "generateCar",
@@ -354,7 +354,7 @@ public class ScheduleCheckPulses<ID> {
 				SpeedUnit.KM_PER_HOUR);
 		if (initialPosition.getSI() + this.lengthCar > lane.getLength().getSI()) {
 			// also register on next lane.
-			if (lane.nextLanes().size() == 0 || lane.nextLanes().size() > 1) {
+			if (lane.nextLanes(this.gtuType).size() == 0 || lane.nextLanes(this.gtuType).size() > 1) {
 				System.err
 						.println("lane.nextLanes().size() == 0 || lane.nextLanes().size() > 1");
 				System.exit(-1);

@@ -23,7 +23,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.AbstractTrafficLight;
 import org.opentrafficsim.core.gtu.lane.LaneBlock;
-import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.animation.LaneAnimation;
 import org.opentrafficsim.core.network.animation.ShoulderAnimation;
@@ -460,9 +459,9 @@ final class Links
                 {
                     // TODO LANEOVERRIDE
                     Lane lane =
-                        new Lane(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width, cseTag.laneType,
-                            cseTag.direction, new DoubleScalar.Abs<FrequencyUnit>(Double.MAX_VALUE, FrequencyUnit.PER_HOUR),
-                            cseTag.speed);
+                        new Lane(csl, cseTag.name, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width,
+                            cseTag.laneType, cseTag.direction, new DoubleScalar.Abs<FrequencyUnit>(Double.MAX_VALUE,
+                                FrequencyUnit.PER_HOUR), cseTag.speed);
                     cseList.add(lane);
                     lanes.add(lane);
                     linkTag.lanes.put(cseTag.name, lane);
@@ -567,7 +566,7 @@ final class Links
                 {
                     // TODO LANEOVERRIDE
                     Lane lane =
-                        new NoTrafficLane(csl, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width);
+                        new NoTrafficLane(csl, cseTag.name, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width);
                     cseList.add(lane);
                     if (simulator != null)
                     {
@@ -579,7 +578,7 @@ final class Links
                 case SHOULDER:
                 {
                     // TODO Override
-                    Shoulder shoulder = new Shoulder(csl, cseTag.offset, cseTag.width, cseTag.width);
+                    Shoulder shoulder = new Shoulder(csl, cseTag.name, cseTag.offset, cseTag.width, cseTag.width);
                     cseList.add(shoulder);
                     if (simulator != null)
                     {
@@ -593,12 +592,5 @@ final class Links
             }
 
         } // for (CrossSectionElementTag cseTag : roadTypeTag.cseTags.values())
-
-        // make adjacent lanes
-        for (int laneIndex = 1; laneIndex < lanes.size(); laneIndex++)
-        {
-            lanes.get(laneIndex - 1).addAccessibleAdjacentLane(lanes.get(laneIndex), LateralDirectionality.RIGHT);
-            lanes.get(laneIndex).addAccessibleAdjacentLane(lanes.get(laneIndex - 1), LateralDirectionality.LEFT);
-        }
     }
 }

@@ -133,7 +133,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** the object to lock to make the GTU thread safe. */
     private Object lock = new Object();
-
+    
     /**
      * Construct a Lane Based GTU.
      * @param id the id of the GTU
@@ -638,7 +638,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         while (remainingTimeSI >= 0)
         {
             // TODO: if (lane.getSensors() contains SinkSensor => return LaneBasedRouteNavigator.NOLANECHANGENEEDED
-            int branching = lane.nextLanes().size();
+            int branching = lane.nextLanes(getGTUType()).size();
             if (branching == 0)
             {
                 return new DoubleScalar.Rel<LengthUnit>(remainingLength, LengthUnit.SI);
@@ -647,7 +647,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             {
                 return AbstractLaneBasedRouteNavigator.NOLANECHANGENEEDED;
             }
-            lane = lane.nextLanes().iterator().next();
+            lane = lane.nextLanes(getGTUType()).iterator().next();
             remainingTimeSI -= lane.getLength().getSI() / lane.getSpeedLimit().getSI();
             remainingLength += lane.getLength().getSI();
         }
@@ -812,13 +812,13 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     private Lane determineNextLane(final Lane lane) throws NetworkException, GTUException
     {
         Lane nextLane = null;
-        if (lane.nextLanes().size() == 0)
+        if (lane.nextLanes(getGTUType()).size() == 0)
         {
             throw new NetworkException(this + " - lane " + lane + " does not have a successor");
         }
-        if (lane.nextLanes().size() == 1)
+        if (lane.nextLanes(getGTUType()).size() == 1)
         {
-            nextLane = lane.nextLanes().iterator().next();
+            nextLane = lane.nextLanes(getGTUType()).iterator().next();
         }
         else
         {
@@ -832,7 +832,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                 throw new GTUException(this + " reaches branch and the route returns null as nextNodeToVisit");
             }
             int continuingLaneCount = 0;
-            for (Lane candidateLane : lane.nextLanes())
+            for (Lane candidateLane : lane.nextLanes(getGTUType()))
             {
                 if (this.lanes.contains(candidateLane))
                 {
@@ -1056,10 +1056,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         if (cumDistanceSI + lane.getLength().getSI() - lanePositionSI < maxDistanceSI)
         {
             // is there a successor link?
-            if (lane.nextLanes().size() > 0)
+            if (lane.nextLanes(getGTUType()).size() > 0)
             {
                 HeadwayGTU foundMaxGTUDistanceSI = new HeadwayGTU(null, Double.MAX_VALUE);
-                for (Lane nextLane : lane.nextLanes())
+                for (Lane nextLane : lane.nextLanes(getGTUType()))
                 {
                     // TODO Only follow links on the Route if there is a "real" Route
                     // TODO use new functions of the Navigator
@@ -1120,10 +1120,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         if (cumDistanceSI + lanePositionSI < maxDistanceSI)
         {
             // is there a predecessor link?
-            if (lane.prevLanes().size() > 0)
+            if (lane.prevLanes(getGTUType()).size() > 0)
             {
                 HeadwayGTU foundMaxGTUDistanceSI = new HeadwayGTU(null, Double.MAX_VALUE);
-                for (Lane prevLane : lane.prevLanes())
+                for (Lane prevLane : lane.prevLanes(getGTUType()))
                 {
                     // What is behind us is INDEPENDENT of the followed route!
                     double traveledDistanceSI = cumDistanceSI + lanePositionSI;
@@ -1246,7 +1246,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         if (cumDistanceSI + lane.getLength().getSI() - lanePositionSI < maxDistanceSI)
         {
             // is there a successor link?
-            for (Lane nextLane : lane.nextLanes())
+            for (Lane nextLane : lane.nextLanes(getGTUType()))
             {
                 // TODO Only follow links on the Route if there is a Route
                 // if (this.getRoute() == null || this.getRoute().size() == 0) /* XXX STUB dummy route */
@@ -1300,7 +1300,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         if (cumDistanceSI + lanePositionSI < maxDistanceSI)
         {
             // is there a predecessor link?
-            for (Lane prevLane : lane.prevLanes())
+            for (Lane prevLane : lane.prevLanes(getGTUType()))
             {
                 // Routes are NOT IMPORTANT when we look backward.
                 double traveledDistanceSI = cumDistanceSI + lanePositionSI;

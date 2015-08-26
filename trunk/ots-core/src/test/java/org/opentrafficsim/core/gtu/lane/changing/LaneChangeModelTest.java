@@ -82,6 +82,7 @@ public class LaneChangeModelTest implements OTSModelInterface
     /**
      * Create one Lane.
      * @param link Link; the link that owns the new Lane
+     * @param id String; the id of the lane, has to be unique within the link
      * @param laneType LaneType&lt;String&gt;; the type of the new Lane
      * @param latPos DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral position of the new Lane with respect to the design line of
      *            the link
@@ -92,13 +93,13 @@ public class LaneChangeModelTest implements OTSModelInterface
      * @throws NetworkException on ??
      * @throws OTSGeometryException when center line or contour of a link or lane cannot be generated
      */
-    private static Lane makeLane(final CrossSectionLink link, final LaneType laneType,
+    private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType,
         final DoubleScalar.Rel<LengthUnit> latPos, final DoubleScalar.Rel<LengthUnit> width) throws RemoteException,
         NamingException, NetworkException, OTSGeometryException
     {
         DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
         Lane result =
-            new Lane(link, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f2000,
+            new Lane(link, id, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f2000,
                 new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR));
         return result;
     }
@@ -113,8 +114,8 @@ public class LaneChangeModelTest implements OTSModelInterface
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws Exception when something goes wrong (should not happen)
      */
-    public static Lane[] makeMultiLane(final String name, final OTSNode from, final OTSNode to,
-        final LaneType laneType, final int laneCount) throws Exception
+    public static Lane[] makeMultiLane(final String name, final OTSNode from, final OTSNode to, final LaneType laneType,
+        final int laneCount) throws Exception
     {
         DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(laneCount * 4.0, LengthUnit.METER);
         final CrossSectionLink link = makeLink(name, from, to, width);
@@ -122,20 +123,10 @@ public class LaneChangeModelTest implements OTSModelInterface
         width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
         {
+            // successive lanes have a more negative offset => more to the RIGHT
             DoubleScalar.Rel<LengthUnit> latPos =
                 new DoubleScalar.Rel<LengthUnit>((-0.5 - laneIndex) * width.getSI(), LengthUnit.METER);
-            result[laneIndex] = makeLane(link, laneType, latPos, width);
-        }
-        for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
-        {
-            if (laneIndex < laneCount - 1)
-            {
-                result[laneIndex].addAccessibleAdjacentLane(result[laneIndex + 1], LateralDirectionality.RIGHT);
-            }
-            if (laneIndex > 0)
-            {
-                result[laneIndex].addAccessibleAdjacentLane(result[laneIndex - 1], LateralDirectionality.LEFT);
-            }
+            result[laneIndex] = makeLane(link, "lane." + laneIndex, laneType, latPos, width);
         }
         return result;
     }
@@ -150,9 +141,23 @@ public class LaneChangeModelTest implements OTSModelInterface
         GTUType gtuType = GTUType.makeGTUType("car");
         LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(gtuType);
+        int laneCount = 2;
         Lane[] lanes =
             makeMultiLane("Road with two lanes", new OTSNode("From", new OTSPoint3D(0, 0, 0)), new OTSNode("To",
-                new OTSPoint3D(200, 0, 0)), laneType, 2);
+                new OTSPoint3D(200, 0, 0)), laneType, laneCount);
+
+        // Let's see if adjacent lanes are accessible
+        // lanes: | 0 : 1 : 2 | in case of three lanes
+        lanes[0].accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType);
+        assertEquals("Leftmost lane should not have accessible adjacent lanes on the LEFT side", 0, lanes[0]
+            .accessibleAdjacentLanes(LateralDirectionality.LEFT, gtuType).size());
+        assertEquals("Leftmost lane should have one accessible adjacent lane on the RIGHT side", 1, lanes[0]
+            .accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType).size());
+        assertEquals("Rightmost lane should have one accessible adjacent lane on the LEFT side", 1, lanes[1]
+            .accessibleAdjacentLanes(LateralDirectionality.LEFT, gtuType).size());
+        assertEquals("Rightmost lane should not have accessible adjacent lanes on the RIGHT side", 0, lanes[1]
+            .accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType).size());
+
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
             new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
         initialLongitudinalPositions.put(lanes[0], new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER));
@@ -164,8 +169,8 @@ public class LaneChangeModelTest implements OTSModelInterface
              */);
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar car =
-            new LaneBasedIndividualCar("ReferenceCar", gtuType, new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(
-                1, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
+            new LaneBasedIndividualCar("ReferenceCar", gtuType, new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1,
+                AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
                 AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
                 new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d), laneChangeModel, initialLongitudinalPositions,
                 new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(4,
@@ -227,8 +232,8 @@ public class LaneChangeModelTest implements OTSModelInterface
                 new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
             otherLongitudinalPositions.put(lanes[1], new DoubleScalar.Rel<LengthUnit>(pos, LengthUnit.METER));
             LaneBasedIndividualCar otherCar =
-                new LaneBasedIndividualCar("OtherCar", gtuType, new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(
-                    1, AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
+                new LaneBasedIndividualCar("OtherCar", gtuType, new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1,
+                    AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Abs<AccelerationUnit>(1.5,
                     AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER),
                     new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d), laneChangeModel, otherLongitudinalPositions,
                     new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), vehicleLength,

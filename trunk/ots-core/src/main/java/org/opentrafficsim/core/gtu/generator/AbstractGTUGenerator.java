@@ -320,10 +320,10 @@ public abstract class AbstractGTUGenerator
         if (cumDistanceSI + theLane.getLength().getSI() - lanePositionSI < maxDistanceSI)
         {
             // is there a successor link?
-            if (theLane.nextLanes().size() > 0)
+            if (theLane.nextLanes(this.gtuType).size() > 0)
             {
                 HeadwayGTU foundMaxGTUDistanceSI = new HeadwayGTU(null, Double.MAX_VALUE);
-                for (Lane nextLane : theLane.nextLanes())
+                for (Lane nextLane : theLane.nextLanes(this.gtuType))
                 {
                     // TODO Only follow links on the Route if there is a "real" Route
                     // if (routeNavigator.getRoute() == null || routeNavigator.getRoute().size() == 0 /* XXXXX STUB dummy route

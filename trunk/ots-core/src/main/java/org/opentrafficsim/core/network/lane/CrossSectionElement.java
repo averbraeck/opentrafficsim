@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.network.lane;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.media.j3d.Bounds;
@@ -25,8 +26,14 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public abstract class CrossSectionElement implements LocatableInterface
+public abstract class CrossSectionElement implements LocatableInterface, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150826L;
+    
+    /** the id. Should be unique within the parentLink. */
+    private final String id;
+
     /** Cross Section Link to which the element belongs. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected final CrossSectionLink parentLink;
@@ -60,6 +67,7 @@ public abstract class CrossSectionElement implements LocatableInterface
     /**
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
      * the StartNode towards the EndNode as the longitudinal direction.
+     * @param id String; The id of the CrosssSectionElement. Should be unique within the parentLink.
      * @param parentLink CrossSectionLink; Link to which the element belongs.
      * @param lateralOffsetAtBegin DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
      *            CrossSectionLink with respect to the design line of the parent Link at the start of the parent Link
@@ -70,12 +78,13 @@ public abstract class CrossSectionElement implements LocatableInterface
      * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; width at end, positioned <i>symmetrically around</i> the design line
      * @throws OTSGeometryException when creation of the geometry fails
      */
-    public CrossSectionElement(final CrossSectionLink parentLink,
+    public CrossSectionElement(final CrossSectionLink parentLink, final String id,
         final DoubleScalar.Rel<LengthUnit> lateralOffsetAtBegin, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd,
         final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
         throws OTSGeometryException
     {
         super();
+        this.id = id;
         this.parentLink = parentLink;
         this.designLineOffsetAtBegin = lateralOffsetAtBegin;
         this.designLineOffsetAtEnd = lateralOffsetAtEnd;
@@ -203,13 +212,12 @@ public abstract class CrossSectionElement implements LocatableInterface
         return this.contour;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public String toString()
+    /**
+     * @return id
+     */
+    public final String getId()
     {
-        return String.format("CSE offset %.2fm..%.2fm, width %.2fm..%.2fm", this.designLineOffsetAtBegin.getSI(),
-            this.designLineOffsetAtEnd.getSI(), this.beginWidth.getSI(), this.endWidth.getSI());
+        return this.id;
     }
 
     /**
@@ -267,6 +275,56 @@ public abstract class CrossSectionElement implements LocatableInterface
     public Bounds getBounds() throws RemoteException
     {
         return this.contour.getBounds();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return String.format("CSE offset %.2fm..%.2fm, width %.2fm..%.2fm", this.designLineOffsetAtBegin.getSI(),
+            this.designLineOffsetAtEnd.getSI(), this.beginWidth.getSI(), this.endWidth.getSI());
+    }
+
+    /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        result = prime * result + ((this.parentLink == null) ? 0 : this.parentLink.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @Override
+    public boolean equals(final Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CrossSectionElement other = (CrossSectionElement) obj;
+        if (this.id == null)
+        {
+            if (other.id != null)
+                return false;
+        }
+        else if (!this.id.equals(other.id))
+            return false;
+        if (this.parentLink == null)
+        {
+            if (other.parentLink != null)
+                return false;
+        }
+        else if (!this.parentLink.equals(other.parentLink))
+            return false;
+        return true;
     }
 
 }
