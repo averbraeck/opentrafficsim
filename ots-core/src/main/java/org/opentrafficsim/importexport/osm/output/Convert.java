@@ -29,7 +29,6 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.lane.SinkSensor;
-import org.opentrafficsim.core.network.lane.SourceLane;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -131,7 +130,6 @@ public final class Convert
         coordinates[coordinates.length - 1] = new Coordinate(end.getPoint().x, end.getPoint().y, 0);
         OTSLine3D designLine = new OTSLine3D(coordinates);
         result = new CrossSectionLink(link.getId(), start, end, designLine);
-        // XXX: new LinearGeometry(result, lineString, null);
         return result;
     }
 
@@ -581,7 +579,7 @@ public final class Convert
     }
 
     /**
-     * This method creates lanes out of an OSM link LaneTypes are not jet extensive and can be further increased through Tags
+     * This method creates lanes out of an OSM link LaneTypes are not yet extensive and can be further increased through Tags
      * provided by OSM. The standard lane width of 3.05 is an estimation based on the European width limitation for vehicles
      * (2.55m) + 25cm each side.
      * @param osmlink Link OSMLink; the OSM link to make lanes for
@@ -603,8 +601,10 @@ public final class Convert
         Map<Double, LaneAttributes> structure = makeStructure(osmlink, warningListener);
 
         DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
+        int laneNum = 0;
         for (Double offset : structure.keySet())
         {
+            laneNum++;
             LaneAttributes laneAttributes = structure.get(offset);
             if (laneAttributes == null)
             {
@@ -619,9 +619,9 @@ public final class Convert
             {
                 color = Color.RED;
                 newLane =
-                    new Lane(otslink, latPos, latPos, laneAttributes.getWidth(), laneAttributes.getWidth(), laneType,
-                        laneAttributes.getDirectionality(), f2000, new DoubleScalar.Abs<SpeedUnit>(100,
-                            SpeedUnit.KM_PER_HOUR)/* FIXME STUB */);
+                    new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(), laneAttributes
+                        .getWidth(), laneType, laneAttributes.getDirectionality(), f2000, new DoubleScalar.Abs<SpeedUnit>(
+                        100, SpeedUnit.KM_PER_HOUR));
                 SinkSensor sensor =
                     new SinkSensor(newLane, new DoubleScalar.Rel<LengthUnit>(0.25, LengthUnit.METER), simulator);
                 newLane.addSensor(sensor);
@@ -630,16 +630,17 @@ public final class Convert
             {
                 color = Color.BLUE;
                 newLane =
-                    new SourceLane(otslink, latPos, laneAttributes.getWidth(), laneType, laneAttributes.getDirectionality(),
-                        new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR)/* FIXME STUB */);
+                    new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(), laneAttributes
+                        .getWidth(), laneType, laneAttributes.getDirectionality(), f2000, new DoubleScalar.Abs<SpeedUnit>(
+                        100, SpeedUnit.KM_PER_HOUR));
             }
             else
             {
                 color = laneAttributes.getColor();
                 newLane =
-                    new Lane(otslink, latPos, latPos, laneAttributes.getWidth(), laneAttributes.getWidth(), laneType,
-                        laneAttributes.getDirectionality(), f2000, new DoubleScalar.Abs<SpeedUnit>(100,
-                            SpeedUnit.KM_PER_HOUR)/* FIXME STUB */);
+                    new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(), laneAttributes
+                        .getWidth(), laneType, laneAttributes.getDirectionality(), f2000, new DoubleScalar.Abs<SpeedUnit>(
+                        100, SpeedUnit.KM_PER_HOUR));
             }
             if (simulator instanceof OTSAnimatorInterface)
             {

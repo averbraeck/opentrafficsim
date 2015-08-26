@@ -155,37 +155,43 @@ public class TestModel implements OTSModelInterface
         DoubleScalar.Abs<FrequencyUnit> f200 = new DoubleScalar.Abs<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
-        Shoulder sL = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(9.0, LengthUnit.METER), m10, m10);
+        Shoulder sL = new Shoulder(link, "sL", new DoubleScalar.Rel<LengthUnit>(9.0, LengthUnit.METER), m10, m10);
 
         Lane laneELL =
-            new Lane(link, new DoubleScalar.Rel<LengthUnit>(8.25, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(8.25,
-                LengthUnit.METER), m05, m05, null, LongitudinalDirectionality.NONE, f0, speedLimit);
+            new Lane(link, "ELL", new DoubleScalar.Rel<LengthUnit>(8.25, LengthUnit.METER),
+                new DoubleScalar.Rel<LengthUnit>(8.25, LengthUnit.METER), m05, m05, null, LongitudinalDirectionality.NONE,
+                f0, speedLimit);
         Lane laneL1 =
-            new Lane(link, new DoubleScalar.Rel<LengthUnit>(6.25, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(6.25,
-                LengthUnit.METER), m35, m35, null, LongitudinalDirectionality.BACKWARD, f200, speedLimit);
+            new Lane(link, "L1", new DoubleScalar.Rel<LengthUnit>(6.25, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
+                6.25, LengthUnit.METER), m35, m35, null, LongitudinalDirectionality.BACKWARD, f200, speedLimit);
         Lane laneL2 =
-            new Lane(link, new DoubleScalar.Rel<LengthUnit>(2.75, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(2.75,
-                LengthUnit.METER), m35, m35, null, LongitudinalDirectionality.BACKWARD, f200, speedLimit);
+            new Lane(link, "L2", new DoubleScalar.Rel<LengthUnit>(2.75, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
+                2.75, LengthUnit.METER), m35, m35, null, LongitudinalDirectionality.BACKWARD, f200, speedLimit);
         Lane laneELM =
-            new Lane(link, new DoubleScalar.Rel<LengthUnit>(0.75, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.75,
-                LengthUnit.METER), m05, m05, null, LongitudinalDirectionality.NONE, f0, speedLimit);
+            new Lane(link, "ELM", new DoubleScalar.Rel<LengthUnit>(0.75, LengthUnit.METER),
+                new DoubleScalar.Rel<LengthUnit>(0.75, LengthUnit.METER), m05, m05, null, LongitudinalDirectionality.NONE,
+                f0, speedLimit);
 
-        Shoulder sM = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
+        Shoulder sM = new Shoulder(link, "sM", new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
 
         Lane laneERM =
-            new Lane(link, new DoubleScalar.Rel<LengthUnit>(-0.75, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
-                -0.75, LengthUnit.METER), m05, m05, null, LongitudinalDirectionality.NONE, f0, speedLimit);
+            new Lane(link, "ERM", new DoubleScalar.Rel<LengthUnit>(-0.75, LengthUnit.METER),
+                new DoubleScalar.Rel<LengthUnit>(-0.75, LengthUnit.METER), m05, m05, null, LongitudinalDirectionality.NONE,
+                f0, speedLimit);
         Lane laneR2 =
-            new Lane(link, new DoubleScalar.Rel<LengthUnit>(-2.75, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
-                -2.75, LengthUnit.METER), m35, m35, null, LongitudinalDirectionality.FORWARD, f200, speedLimit);
+            new Lane(link, "R2", new DoubleScalar.Rel<LengthUnit>(-2.75, LengthUnit.METER),
+                new DoubleScalar.Rel<LengthUnit>(-2.75, LengthUnit.METER), m35, m35, null,
+                LongitudinalDirectionality.FORWARD, f200, speedLimit);
         Lane laneR1 =
-            new Lane(link, new DoubleScalar.Rel<LengthUnit>(-6.25, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
-                -6.25, LengthUnit.METER), m35, m35, null, LongitudinalDirectionality.FORWARD, f200, speedLimit);
+            new Lane(link, "R1", new DoubleScalar.Rel<LengthUnit>(-6.25, LengthUnit.METER),
+                new DoubleScalar.Rel<LengthUnit>(-6.25, LengthUnit.METER), m35, m35, null,
+                LongitudinalDirectionality.FORWARD, f200, speedLimit);
         Lane laneERR =
-            new Lane(link, new DoubleScalar.Rel<LengthUnit>(-8.25, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
-                -8.25, LengthUnit.METER), m05, m05, null, LongitudinalDirectionality.NONE, f0, speedLimit);
+            new Lane(link, "ERR", new DoubleScalar.Rel<LengthUnit>(-8.25, LengthUnit.METER),
+                new DoubleScalar.Rel<LengthUnit>(-8.25, LengthUnit.METER), m05, m05, null, LongitudinalDirectionality.NONE,
+                f0, speedLimit);
 
-        Shoulder sR = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(-9.0, LengthUnit.METER), m10, m10);
+        Shoulder sR = new Shoulder(link, "sR", new DoubleScalar.Rel<LengthUnit>(-9.0, LengthUnit.METER), m10, m10);
 
         try
         {

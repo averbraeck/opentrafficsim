@@ -17,18 +17,22 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  */
 public class Shoulder extends CrossSectionElement
 {
+    /** */
+    private static final long serialVersionUID = 20140819L;
+
     /**
      * @param parentLink Cross Section Link to which the element belongs.
+     * @param id String; the id of the lane. Should be unique within the parentLink.
      * @param lateralPosition the lateral start position compared to the linear geometry of the Cross Section Link.
      * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      */
-    public Shoulder(final CrossSectionLink parentLink, final DoubleScalar.Rel<LengthUnit> lateralPosition,
+    public Shoulder(final CrossSectionLink parentLink, final String id, final DoubleScalar.Rel<LengthUnit> lateralPosition,
         final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
         throws OTSGeometryException
     {
-        super(parentLink, lateralPosition, lateralPosition, beginWidth, endWidth);
+        super(parentLink, id, lateralPosition, lateralPosition, beginWidth, endWidth);
     }
 
     /** {@inheritDoc} */

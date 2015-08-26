@@ -118,9 +118,9 @@ public class LaneBasedGTUTest
         DoubleScalar.Abs<SpeedUnit> maximumVelocity = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
         try
         {
-            new LaneBasedIndividualCar("Truck", truckType, null /* GTU following model */, laneChangeModel,
-                truckPositions, truckSpeed, truckLength, truckWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(
-                    new CompleteRoute("")), simulator);
+            new LaneBasedIndividualCar("Truck", truckType, null /* GTU following model */, laneChangeModel, truckPositions,
+                truckSpeed, truckLength, truckWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute(
+                    "")), simulator);
             fail("null GTUFollowingModel should have thrown a GTUException");
         }
         catch (GTUException e)
@@ -129,8 +129,8 @@ public class LaneBasedGTUTest
         }
         GTUFollowingModel gtuFollowingModel = new IDMPlus();
         LaneBasedIndividualCar truck =
-            new LaneBasedIndividualCar("Truck", truckType, gtuFollowingModel, laneChangeModel, truckPositions,
-                truckSpeed, truckLength, truckWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")),
+            new LaneBasedIndividualCar("Truck", truckType, gtuFollowingModel, laneChangeModel, truckPositions, truckSpeed,
+                truckLength, truckWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")),
                 simulator);
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
@@ -188,9 +188,9 @@ public class LaneBasedGTUTest
                 Map<Lane, DoubleScalar.Rel<LengthUnit>> carPositions =
                     buildPositionsMap(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
                 LaneBasedIndividualCar car =
-                    new LaneBasedIndividualCar("Car", carType, gtuFollowingModel, laneChangeModel, carPositions,
-                        carSpeed, carLength, carWidth, maximumVelocity,
-                        new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
+                    new LaneBasedIndividualCar("Car", carType, gtuFollowingModel, laneChangeModel, carPositions, carSpeed,
+                        carLength, carWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")),
+                        simulator);
                 leader = truck.headway(forwardMaxDistance);
                 double actualHeadway = leader.getDistanceSI();
                 double expectedHeadway =
@@ -284,12 +284,8 @@ public class LaneBasedGTUTest
                     laneRank + carLanesCovered - 1 < truckFromLane - 1 || laneRank >= truckUpToLane
                         || step + carLength.getSI() <= truckPosition.getSI()
                         || step > truckPosition.getSI() + truckLength.getSI() ? 0 : 1;
-                assertEquals("Left parallel set size should be " + expectedLeftSize, expectedLeftSize, leftParallel.size()); // This
-                                                                                                                             // one
-                                                                                                                             // caught
-                                                                                                                             // a
-                                                                                                                             // complex
-                                                                                                                             // bug
+                // This one caught a complex bug
+                assertEquals("Left parallel set size should be " + expectedLeftSize, expectedLeftSize, leftParallel.size());
                 if (leftParallel.size() > 0)
                 {
                     assertTrue("Parallel GTU should be the car", leftParallel.contains(car));
@@ -364,8 +360,7 @@ public class LaneBasedGTUTest
                 LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, new DoubleScalar.Abs<SpeedUnit>(
                     200, SpeedUnit.KM_PER_HOUR), simulator)[0];
             DoubleScalar.Rel<LengthUnit> carPosition = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);
-            Map<Lane, DoubleScalar.Rel<LengthUnit>> carPositions =
-                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+            Map<Lane, DoubleScalar.Rel<LengthUnit>> carPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
             carPositions.put(lane, carPosition);
             DoubleScalar.Abs<SpeedUnit> carSpeed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.METER_PER_SECOND);
             DoubleScalar.Abs<AccelerationUnit> acceleration =
@@ -377,7 +372,8 @@ public class LaneBasedGTUTest
             LaneBasedIndividualCar car =
                 new LaneBasedIndividualCar("Car", carType, fam, laneChangeModel, carPositions, carSpeed,
                     new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1.8,
-                        LengthUnit.METER), maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
+                        LengthUnit.METER), maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")),
+                    simulator);
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(61, TimeUnit.SECOND));
             while (simulator.isRunning())

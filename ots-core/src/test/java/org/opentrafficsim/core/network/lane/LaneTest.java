@@ -71,12 +71,12 @@ public class LaneTest
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
         // Now we can construct a Lane
         Lane lane =
-            new Lane(link, startLateralPos, endLateralPos, startWidth, endWidth, laneType, longitudinalDirectionality,
+            new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType, longitudinalDirectionality,
                 f2000, speedLimit);
         // Verify the easy bits
         assertEquals("Capacity should be " + f2000, f2000.getSI(), lane.getCapacity().getSI(), 0.001);
-        assertEquals("PrevLanes should be empty", 0, lane.prevLanes().size()); // this one caught a bug!
-        assertEquals("NextLanes should be empty", 0, lane.nextLanes().size());
+        assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size()); // this one caught a bug!
+        assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
         double approximateLengthOfContour =
             2 * nodeFrom.getPoint().distanceSI(nodeTo.getPoint()) + startWidth.getSI() + endWidth.getSI();
         assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour, lane
@@ -122,12 +122,12 @@ public class LaneTest
         coordinates[2] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
         link = new CrossSectionLink("A to B with Kink", nodeFrom, nodeTo, new OTSLine3D(coordinates));
         lane =
-            new Lane(link, startLateralPos, endLateralPos, startWidth, endWidth, laneType, longitudinalDirectionality,
+            new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, longitudinalDirectionality,
                 f2000, speedLimit);
         // Verify the easy bits
         assertEquals("Capacity should be " + f2000, f2000.getSI(), lane.getCapacity().getSI(), 0.001);
-        assertEquals("PrevLanes should be empty", 0, lane.prevLanes().size());
-        assertEquals("NextLanes should be empty", 0, lane.nextLanes().size());
+        assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size());
+        assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
         approximateLengthOfContour =
             2 * (coordinates[0].distanceSI(coordinates[1]) + coordinates[1].distanceSI(coordinates[2])) + startWidth.getSI()
                 + endWidth.getSI();
@@ -141,12 +141,12 @@ public class LaneTest
         DoubleScalar.Rel<LengthUnit> startLateralPos2 = new DoubleScalar.Rel<LengthUnit>(-8, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> endLateralPos2 = new DoubleScalar.Rel<LengthUnit>(-5, LengthUnit.METER);
         Lane lane2 =
-            new Lane(link, startLateralPos2, endLateralPos2, startWidth, endWidth, laneType, longitudinalDirectionality,
+            new Lane(link, "lane.2", startLateralPos2, endLateralPos2, startWidth, endWidth, laneType, longitudinalDirectionality,
                 f2000, speedLimit);
         // Verify the easy bits
         assertEquals("Capacity should be " + f2000, f2000.getSI(), lane2.getCapacity().getSI(), 0.001);
-        assertEquals("PrevLanes should be empty", 0, lane2.prevLanes().size());
-        assertEquals("NextLanes should be empty", 0, lane2.nextLanes().size());
+        assertEquals("PrevLanes should be empty", 0, lane2.prevLanes(gtuTypeCar).size());
+        assertEquals("NextLanes should be empty", 0, lane2.nextLanes(gtuTypeCar).size());
         approximateLengthOfContour =
             2 * (coordinates[0].distanceSI(coordinates[1]) + coordinates[1].distanceSI(coordinates[2])) + startWidth.getSI()
                 + endWidth.getSI();
@@ -174,6 +174,7 @@ public class LaneTest
         LongitudinalDirectionality longitudinalDirectionality = LongitudinalDirectionality.FORWARD;
         LaneType laneType = new LaneType("Car");
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
+        int laneNum = 0;
         for (int xStart : startPositions)
         {
             for (int yStart : startPositions)
@@ -200,7 +201,7 @@ public class LaneTest
                             {
                                 // Now we can construct a Lane
                                 Lane lane =
-                                    new Lane(link,
+                                    new Lane(link, "lane." + ++laneNum,
                                         new DoubleScalar.Rel<LengthUnit>(startLateralOffset, LengthUnit.METER),
                                         new DoubleScalar.Rel<LengthUnit>(endLateralOffset, LengthUnit.METER),
                                         new DoubleScalar.Rel<LengthUnit>(startWidth, LengthUnit.METER),
@@ -272,11 +273,10 @@ public class LaneTest
                                 double boundsMinY = bbLow.y + l.y;
                                 double boundsMaxX = bbHigh.x + l.x;
                                 double boundsMaxY = bbHigh.y + l.y;
-                                //TODO left is negative, right is positive...
-                                //TODO assertEquals("low x boundary", minX, boundsMinX, 0.1);
-                                //TODO assertEquals("low y boundary", minY, boundsMinY, 0.1);
-                                //TODO assertEquals("high x boundary", maxX, boundsMaxX, 0.1);
-                                //TODO assertEquals("high y boundary", maxY, boundsMaxY, 0.1);
+                                assertEquals("low x boundary", minX, boundsMinX, 0.1);
+                                assertEquals("low y boundary", minY, boundsMinY, 0.1);
+                                assertEquals("high x boundary", maxX, boundsMaxX, 0.1);
+                                assertEquals("high y boundary", maxY, boundsMaxY, 0.1);
                             }
                         }
                     }
@@ -311,7 +311,7 @@ public class LaneTest
         double ratio = longitudinal / length;
         double designLineX = startX + (endX - startX) * ratio;
         double designLineY = startY + (endY - startY) * ratio;
-        double lateralAngle = Math.atan2(endY - startY, endX - startX) - Math.PI / 2;
+        double lateralAngle = Math.atan2(endY - startY, endX - startX) + Math.PI / 2;
         double px = designLineX + lateral * Math.cos(lateralAngle);
         double py = designLineY + lateral * Math.sin(lateralAngle);
         Geometry contour = lane.getContour().getLineString();

@@ -171,7 +171,7 @@ public class GTMLaneChangeModel implements LaneChangeModel
 
     private boolean suitable(Lane lane, LaneBasedGTU gtu)
     {
-        if (lane.nextLanes().size() == 0) // try to get off a lane that is ending
+        if (lane.nextLanes(gtu.getGTUType()).size() == 0) // try to get off a lane that is ending
             return false;
         return true;
         // CompleteRoute route;

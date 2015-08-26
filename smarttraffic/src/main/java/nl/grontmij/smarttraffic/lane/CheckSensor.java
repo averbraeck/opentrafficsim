@@ -118,9 +118,9 @@ public class CheckSensor extends AbstractSensor
             {
                 if (isOnMainRoute(getLane(), routes))
                 {
-                    if (getLane().nextLanes().size() > 0)
+                    if (getLane().nextLanes(GTM.GTUTYPE).size() > 0)
                     {
-                        Lane nextLane = getLane().nextLanes().iterator().next();
+                        Lane nextLane = getLane().nextLanes(GTM.GTUTYPE).iterator().next();
                         if (!isOnMainRoute(nextLane, routes))
                             this.exitLaneSensor = true;
                     }

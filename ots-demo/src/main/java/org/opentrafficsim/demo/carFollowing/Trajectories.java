@@ -277,7 +277,7 @@ class TrajectoriesModel implements OTSModelInterface
             this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.speedLimit, this.simulator);
             CrossSectionLink endLink = LaneFactory.makeLink("endLink", to, end, null);
             Lane sinkLane =
-                new Lane(endLink, this.lane.getLateralCenterPosition(1.0), this.lane.getLateralCenterPosition(1.0),
+                new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0), this.lane.getLateralCenterPosition(1.0),
                     this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType, LongitudinalDirectionality.FORWARD,
                     new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY, FrequencyUnit.SI), this.speedLimit);
             Sensor sensor =

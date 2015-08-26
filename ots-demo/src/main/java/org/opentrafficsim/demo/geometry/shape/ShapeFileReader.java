@@ -426,7 +426,7 @@ public final class ShapeFileReader
         try
         {
             // middenberm
-            Shoulder sM = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
+            Shoulder sM = new Shoulder(link, "sM", new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
             new ShoulderAnimation(sM, simulator, Color.GREEN);
             for (int i = -1; i <= 1; i += 2)
             {
@@ -434,7 +434,7 @@ public final class ShapeFileReader
                     (i < 0) ? LongitudinalDirectionality.FORWARD : LongitudinalDirectionality.BACKWARD;
                 //
                 Lane laneEM =
-                    new Lane(link, new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER),
+                    new Lane(link, "EM", new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER),
                         new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER), m05, m05, null,
                         LongitudinalDirectionality.NONE, f0, speedLimit);
                 new LaneAnimation(laneEM, simulator, Color.LIGHT_GRAY);
@@ -443,7 +443,7 @@ public final class ShapeFileReader
                 {
                     lat += i * 1.75;
                     Lane lane =
-                        new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
+                        new Lane(link, "lane." + j, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
                             new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m35, m35, null, dir, f200, speedLimit);
                     new LaneAnimation(lane, simulator, Color.GRAY);
                     lat += i * 1.75;
@@ -453,18 +453,18 @@ public final class ShapeFileReader
                 {
                     lat += i * 1.75;
                     Lane lane =
-                        new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
+                        new Lane(link, "extra." + j, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
                             new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m35, m35, null, dir, f0, speedLimit);
                     new LaneAnimation(lane, simulator, Color.LIGHT_GRAY);
                     lat += i * 1.75;
                 }
                 Lane laneEO =
-                    new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER),
+                    new Lane(link, "EO", new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER),
                         new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER), m05, m05, null,
                         LongitudinalDirectionality.NONE, f0, speedLimit);
                 new LaneAnimation(laneEO, simulator, Color.LIGHT_GRAY);
                 lat += i * 0.5;
-                Shoulder sO = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m10, m10);
+                Shoulder sO = new Shoulder(link, "sO", new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m10, m10);
                 new ShoulderAnimation(sO, simulator, Color.GREEN);
             }
         }
@@ -495,7 +495,7 @@ public final class ShapeFileReader
         {
             if (middenberm)
             {
-                Shoulder sM = new Shoulder(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
+                Shoulder sM = new Shoulder(link, "sM", new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
                 new ShoulderAnimation(sM, simulator, Color.GREEN);
             }
             for (int i = -1; i <= 1; i += 2)
@@ -507,7 +507,7 @@ public final class ShapeFileReader
                 {
                     lat += i * 1.5;
                     Lane lane =
-                        new Lane(link, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
+                        new Lane(link, "lane." + j, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
                             new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m30, m30, null, dir, f200, speedLimit);
                     new LaneAnimation(lane, simulator, Color.DARK_GRAY);
                     lat += i * 1.5;
@@ -535,8 +535,9 @@ public final class ShapeFileReader
         try
         {
             Lane lane =
-                new Lane(link, new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
-                    0.0, LengthUnit.METER), m60, m60, null, LongitudinalDirectionality.BOTH, f50, speedLimit);
+                new Lane(link, "lane", new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER),
+                    new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m60, m60, null,
+                    LongitudinalDirectionality.BOTH, f50, speedLimit);
             new LaneAnimation(lane, simulator, Color.DARK_GRAY);
         }
         catch (NamingException | RemoteException | OTSGeometryException ne)

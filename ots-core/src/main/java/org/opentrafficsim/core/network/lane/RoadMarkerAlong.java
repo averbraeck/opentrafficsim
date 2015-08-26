@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -23,6 +24,9 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  */
 public abstract class RoadMarkerAlong extends CrossSectionElement
 {
+    /** */
+    private static final long serialVersionUID = 20141025L;
+
     /** lateral permeability per GTU type and direction. */
     private final Map<GTUType, Set<LateralDirectionality>> permeabilityMap = new HashMap<>();
 
@@ -35,11 +39,11 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      */
-    public RoadMarkerAlong(final CrossSectionLink parentLink,
-        final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> beginWidth,
-        final DoubleScalar.Rel<LengthUnit> endWidth) throws OTSGeometryException
+    public RoadMarkerAlong(final CrossSectionLink parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
+        final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
+        throws OTSGeometryException
     {
-        super(parentLink, lateralCenterPosition, lateralCenterPosition, beginWidth, endWidth);
+        super(parentLink, UUID.randomUUID().toString(), lateralCenterPosition, lateralCenterPosition, beginWidth, endWidth);
     }
 
     /** {@inheritDoc} */

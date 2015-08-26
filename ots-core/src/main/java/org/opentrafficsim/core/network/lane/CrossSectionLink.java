@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.network.lane;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,13 +21,13 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class CrossSectionLink extends OTSLink
+public class CrossSectionLink extends OTSLink implements Serializable
 {
-    /** list of cross-section elements. */
-    private final List<CrossSectionElement> crossSectionElementList = new ArrayList<>();
-
     /** */
     private static final long serialVersionUID = 20141015L;
+    
+    /** list of cross-section elements. */
+    private final List<CrossSectionElement> crossSectionElementList = new ArrayList<>();
 
     /**
      * Construction of a link.
