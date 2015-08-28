@@ -1,8 +1,10 @@
 package nl.grontmij.smarttraffic.lane;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -23,6 +25,7 @@ import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.lane.Sensor;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -53,7 +56,7 @@ public class ScheduleGenerateCars
     Map<String, GenerateSensor> mapSensor;
 
     /** Number of GTUs created. */
-    int carsCreated = 0;
+    public static int carsCreated = 0;
 
     /** the routes. A and B. */
     private Map<String, CompleteRoute> routes;
@@ -169,7 +172,9 @@ public class ScheduleGenerateCars
                 this.laneChangeModel, initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(2.0,
                     LengthUnit.METER), maxSpeed, routeNavigatorAB, this.simulator, animationClass,
                 this.gtuColorer);
-            GTM.listGTUsInNetwork.add(gtu);
+			// add this car to the list of gtu's in the network
+			LinkedList<CheckSensor> linkedList = new LinkedList<CheckSensor>();
+			GTM.listGTUsInNetwork.put((LaneBasedIndividualCar) gtu, linkedList);
             // for logging this event
         	ReportNumbers.reportPassingVehicles(GTM.outputFileVehiclesTriggered, gtu, "G" + sensor.getName(), this.simulator);
         }

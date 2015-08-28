@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -103,7 +104,7 @@ public class GTM extends AbstractWrappableSimulationST {
 
 	protected static String CURRENTPROPERTIESFILENAME = "";
 
-	public static ArrayList<LaneBasedIndividualCar> listGTUsInNetwork = new ArrayList<LaneBasedIndividualCar>();
+	public static HashMap<LaneBasedIndividualCar, LinkedList<CheckSensor>> listGTUsInNetwork = new HashMap<LaneBasedIndividualCar, LinkedList<CheckSensor>>();
 
 	/**
 	 * Main program. GTMModel has the model details.
@@ -388,9 +389,10 @@ public class GTM extends AbstractWrappableSimulationST {
 				} catch (NetworkException | GTUException | NamingException e) {
 					e.printStackTrace();
 				}
+				
+				
 			}
-			// - Kill a car (EXIT)
-			// connect to the sensorKill
+
 
 			// module that detects a car in the simulation passing a
 			// detector and provide actions:

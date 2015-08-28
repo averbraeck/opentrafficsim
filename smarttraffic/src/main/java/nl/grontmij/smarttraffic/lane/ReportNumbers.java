@@ -118,7 +118,7 @@ public class ReportNumbers {
 						.getSimulatorTime()
 						.get()
 						.getInUnit(org.opentrafficsim.core.unit.TimeUnit.SECOND);
-				// for MATLAB only
+				// for MATLAB only: days since year 0
 				time = GTM.startTimeSinceZero + time/86400;
 				String detector = null;
 				if (nameSensor.charAt(3) == 'a') {

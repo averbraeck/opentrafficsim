@@ -3,8 +3,10 @@ package nl.grontmij.smarttraffic.lane;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,6 +32,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.lane.Sensor;
 import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
@@ -112,6 +115,38 @@ public class ScheduleCheckPulses<ID> {
 			}
 
 		}
+		this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0,
+				TimeUnit.SECOND), this, this, "checkTriggeredVehiclesList",
+				new Object[] { GTM.listGTUsInNetwork, backRange,
+						outputFileLogVehicleSimulation });
+	}
+
+	private final void checkTriggeredVehiclesList(
+			final HashMap<LaneBasedIndividualCar, LinkedList<CheckSensor>> listGTUsInNetwork,
+			final double backRange,
+			BufferedWriter outputFileLogVehicleSimulation)
+			throws RemoteException, NetworkException, SimRuntimeException {
+		// is the sensor on an exit near a traffic light?
+		ArrayList<LaneBasedIndividualCar> listGtuToDestroy = new ArrayList<LaneBasedIndividualCar>(); 
+		for (Entry<LaneBasedIndividualCar, LinkedList<CheckSensor>> entry : listGTUsInNetwork
+				.entrySet()) {
+			// destroy the gtu if it is not detected within a certain range
+			if (!entry.getValue().isEmpty()) {
+				if (entry.getValue().get(0).getLocation()
+						.distance(entry.getKey().getLocation()) > backRange) {
+					listGtuToDestroy.add(entry.getKey());
+				}
+			}
+			
+		}
+		for (LaneBasedIndividualCar gtu : listGtuToDestroy) {
+			listGTUsInNetwork.remove(gtu);
+			gtu.destroy();
+		}
+		this.simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.1,
+				TimeUnit.SECOND), this, this, "checkTriggeredVehiclesList",
+				new Object[] { GTM.listGTUsInNetwork, backRange,
+						outputFileLogVehicleSimulation });
 	}
 
 	private final void findNearestVehicles(final CheckSensor sensor,
@@ -124,27 +159,27 @@ public class ScheduleCheckPulses<ID> {
 		if (sensor.isExitLaneSensor(this.routes)) {
 			// find near vehicle
 			// first look in front (vehicles already passed??)
-			LaneBasedGTU gtu = nearGTUback2(sensor, backRange);
+			LaneBasedGTU gtu = nearGTUfront2(sensor, frontRange);
 			if (gtu == null) {
-				gtu = nearGTUfront2(sensor, frontRange);
+				gtu = nearGTUback2(sensor, backRange);
 			}
 			// move vehicle to assumed right position
 			if (gtu != null) {
 				// move GTU
 				for (Object o : gtu.positions(gtu.getReference()).keySet()) {
 					((LaneBasedIndividualCar) gtu).destroy();
+					GTM.listGTUsInNetwork.remove(gtu);
 				}
-				// 
+				//
 				if (Settings.getBoolean(simulator, "ANIMATERAMPVEHICLES"))
-					generateCar(
-							sensor.getLane(),
+					generateCar(sensor.getLane(),
+					// put the car one meter in front of the sensor (so
+					// the car is not triggered again!)
 							new DoubleScalar.Rel<LengthUnit>(sensor
-									.getLongitudinalPositionSI(),
+									.getLongitudinalPositionSI() + 1,
 									LengthUnit.METER), Integer.parseInt(gtu
 									.getId().toString()));
-				// System.out.println("t=" +
-				// simulator.getSimulatorTime().get().getSI() + " - gtu " + gtu
-				// + " moved onto exit lane " + sensor.getLane());
+
 				try {
 					outputFileLogVehicleSimulation.write("t="
 							+ simulator.getSimulatorTime().get().getSI()
@@ -156,15 +191,19 @@ public class ScheduleCheckPulses<ID> {
 				}
 
 			} else {
-				// System.out.println("t=" +
-				// simulator.getSimulatorTime().get().getSI() +
-				// " - no near GTU found for exit lane "
-				// + sensor.getLane());
+				// if no vehicle is triggered, create a new one
 				try {
+					generateCar(sensor.getLane(),
+					// put the car one meter in front of the sensor (so
+					// the car is not triggered again!)
+							new DoubleScalar.Rel<LengthUnit>(sensor
+									.getLongitudinalPositionSI() + 1,
+									LengthUnit.METER), (++ScheduleGenerateCars.carsCreated));
 					outputFileLogVehicleSimulation.write("t="
 							+ simulator.getSimulatorTime().get().getSI()
 							+ " - no near GTU found for exit lane "
 							+ sensor.getLane() + "\n");
+					
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -173,40 +212,23 @@ public class ScheduleCheckPulses<ID> {
 		}
 	}
 
-	
-	public void scheduleCheckGTUs(final double backRange,
-			final double frontRange,
-			BufferedWriter outputFileLogVehicleSimulation)
-			throws RemoteException, SimRuntimeException, GTUException,
-			NetworkException, NamingException {
-		for (Entry<String, CheckSensor> entry : this.mapSensor.entrySet()) {
-			entry.getKey();
-			CheckSensor sensor = entry.getValue();
-			HashMap<DoubleScalar.Abs<TimeUnit>, Integer> pulses = sensor
-					.getStatusByTime();
-			for (Entry<DoubleScalar.Abs<TimeUnit>, Integer> entryPulse : pulses
-					.entrySet()) {
-				if (entryPulse.getValue() == 0) {
-					DoubleScalar.Abs<TimeUnit> when = entryPulse.getKey();
-					this.simulator.scheduleEventAbs(when, this, this,
-							"findNearestVehicles", new Object[] { sensor,
-									backRange, frontRange,
-									outputFileLogVehicleSimulation });
-				}
-			}
-
-		}
+	private final LaneBasedGTU nearGTUfront2(CheckSensor sensor, double range)
+			throws RemoteException {
+		boolean backwards = false;
+		return nearGTU2(sensor, sensor.getLane().getParentLink(), range,
+				backwards);
 	}
-	
-	
-	
+
 	private final LaneBasedGTU nearGTUback2(CheckSensor sensor, double range)
 			throws RemoteException {
-		return nearGTUback2a(sensor, sensor.getLane().getParentLink(), range);
+		boolean backwards = true;
+		return nearGTU2(sensor, sensor.getLane().getParentLink(), range,
+				backwards);
 	}
 
-	private final LaneBasedGTU nearGTUback2a(CheckSensor sensor,
-			CrossSectionLink link, double range) throws RemoteException {
+	private final LaneBasedGTU nearGTU2(CheckSensor sensor,
+			CrossSectionLink link, double range, boolean backwards)
+			throws RemoteException {
 		if (link.getStartNode().getLocation().distance(sensor.getLocation()) > range
 				&& link.getEndNode().getLocation()
 						.distance(sensor.getLocation()) > range) {
@@ -226,7 +248,12 @@ public class ScheduleCheckPulses<ID> {
 								sensor.getLocation());
 						if (d < distanceSI) {
 							distanceSI = d;
-							nearestGTU = gtu;
+							if (GTM.listGTUsInNetwork
+									.get((LaneBasedIndividualCar) gtu) != null
+									&& !backwards) {
+								nearestGTU = gtu;
+								GTM.listGTUsInNetwork.remove(gtu);
+							}
 						}
 					}
 				}
@@ -236,114 +263,22 @@ public class ScheduleCheckPulses<ID> {
 		if (nearestGTU == null) {
 			// recurse
 			if (link.getStartNode().getLinksIn().size() > 0) {
-				for (Object o : link.getStartNode().getLinksIn()) {
-					if (nearestGTU == null) {
-						CrossSectionLink prevLink = (CrossSectionLink) o;
-						nearestGTU = nearGTUback2a(sensor, prevLink, range);
-					}
-				}
-			}
-		}
-		return nearestGTU;
-	}
-
-	private final LaneBasedGTU nearGTUfront2(CheckSensor sensor, double range)
-			throws RemoteException {
-		LaneBasedGTU nearestGTU = null;
-		Link link = sensor.getLane().getParentLink();
-		if (link.getEndNode().getLinksOut().size() > 0) {
-			for (Object o : link.getEndNode().getLinksOut()) {
-				if (nearestGTU == null) {
-					CrossSectionLink nextLink = (CrossSectionLink) o;
-					nearestGTU = nearGTUfront2a(sensor, nextLink, range);
-				}
-			}
-		}
-		return nearestGTU;
-	}
-
-	private final LaneBasedGTU nearGTUfront2a(CheckSensor sensor,
-			CrossSectionLink link, double range) throws RemoteException {
-		if (link.getStartNode().getLocation().distance(sensor.getLocation()) > range
-				&& link.getEndNode().getLocation()
-						.distance(sensor.getLocation()) > range) {
-			// too far away
-			return null;
-		}
-
-		LaneBasedGTU nearestGTU = null;
-		double distanceSI = range;
-		for (Object cse : link.getCrossSectionElementList()) {
-			if (cse instanceof Lane) {
-				Lane lane = (Lane) cse;
-				for (Object g : lane.getGtuList()) {
-					LaneBasedGTU gtu = (LaneBasedGTU) g;
-					if (gtu instanceof LaneBasedIndividualCar) {
-						double d = gtu.getLocation().distance(
-								sensor.getLocation());
-						if (d < distanceSI) {
-							distanceSI = d;
-							nearestGTU = gtu;
+				if (backwards) {
+					for (Object o : link.getStartNode().getLinksIn()) {
+						if (nearestGTU == null) {
+							CrossSectionLink prevLink = (CrossSectionLink) o;
+							nearestGTU = nearGTU2(sensor, prevLink, range,
+									backwards);
 						}
 					}
-				}
-			}
-		}
-
-		if (nearestGTU == null) {
-			// recurse
-			if (link.getEndNode().getLinksOut().size() > 0) {
-				for (Object o : link.getEndNode().getLinksOut()) {
-					if (nearestGTU == null) {
-						CrossSectionLink nextLink = (CrossSectionLink) o;
-						nearestGTU = nearGTUfront2a(sensor, nextLink, range);
-					}
-				}
-			}
-		}
-		return nearestGTU;
-	}
-
-	private final LaneBasedGTU nearGTUback(CheckSensor sensor, double range)
-			throws RemoteException {
-		LaneBasedGTU nearestGTU = null;
-		double distanceSI = range;
-		for (Object cse : sensor.getLane().getParentLink()
-				.getCrossSectionElementList()) {
-			if (cse instanceof Lane) {
-				Lane lane = (Lane) cse;
-				for (Object g : lane.getGtuList()) {
-					LaneBasedGTU gtu = (LaneBasedGTU) g;
-					if (!(gtu instanceof AbstractTrafficLight)) {
-						double d = gtu.getLocation().distance(
-								sensor.getLocation());
-						if (d < distanceSI) {
-							distanceSI = d;
-							nearestGTU = gtu;
-						}
-					}
-				}
-			}
-		}
-		return nearestGTU;
-	}
-
-	private final LaneBasedGTU nearGTUfront(CheckSensor sensor, double range)
-			throws RemoteException {
-		LaneBasedGTU nearestGTU = null;
-		double distanceSI = range;
-		Lane nextLane = sensor.getLane().nextLanes(this.gtuType).iterator().next();
-		for (Object cse : nextLane.getParentLink().getCrossSectionElementList()) {
-			if (cse instanceof Lane) {
-				Lane lane = (Lane) cse;
-				for (Object g : lane.getGtuList()) {
-					LaneBasedGTU gtu = (LaneBasedGTU) g;
-					if (!(gtu instanceof AbstractTrafficLight)) {
-						double d = gtu.getLocation().distance(
-								sensor.getLocation());
-						if (d < distanceSI) {
-							distanceSI = d;
-							nearestGTU = gtu;
+				} else {
+					if (link.getEndNode().getLinksOut().size() > 0) {
+						for (Object o : link.getEndNode().getLinksOut()) {
+							if (nearestGTU == null) {
+								CrossSectionLink nextLink = (CrossSectionLink) o;
+								nearestGTU = nearGTU2(sensor, nextLink, range,
+										!backwards);
+							}
 						}
 					}
 				}
@@ -384,7 +319,8 @@ public class ScheduleCheckPulses<ID> {
 				SpeedUnit.KM_PER_HOUR);
 		if (initialPosition.getSI() + this.lengthCar > lane.getLength().getSI()) {
 			// also register on next lane.
-			if (lane.nextLanes(this.gtuType).size() == 0 || lane.nextLanes(this.gtuType).size() > 1) {
+			if (lane.nextLanes(this.gtuType).size() == 0
+					|| lane.nextLanes(this.gtuType).size() > 1) {
 				System.err
 						.println("lane.nextLanes().size() == 0 || lane.nextLanes().size() > 1");
 				System.exit(-1);
@@ -412,12 +348,16 @@ public class ScheduleCheckPulses<ID> {
 			Class<? extends Renderable2D> animationClass = Settings.getBoolean(
 					simulator, "ANIMATECARS") ? DefaultCarAnimation.class
 					: null;
-			new LaneBasedIndividualCar("" + gtuNumber, this.gtuType,
-					this.gtuFollowingModel, this.laneChangeModel,
-					initialPositions, initialSpeed, vehicleLength,
-					new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER),
-					maxSpeed, routeNavigator, this.simulator, animationClass,
-					this.gtuColorer);
+			LaneBasedIndividualCar gtu = new LaneBasedIndividualCar(""
+					+ gtuNumber, this.gtuType, this.gtuFollowingModel,
+					this.laneChangeModel, initialPositions, initialSpeed,
+					vehicleLength, new DoubleScalar.Rel<LengthUnit>(2.0,
+							LengthUnit.METER), maxSpeed, routeNavigator,
+					this.simulator, animationClass, this.gtuColorer);
+			// add this car to the list of gtu's in the network
+			LinkedList<CheckSensor> linkedList = new LinkedList<CheckSensor>();
+			GTM.listGTUsInNetwork.put((LaneBasedIndividualCar) gtu, linkedList);
+
 		} catch (RemoteException | SimRuntimeException | NamingException
 				| NetworkException | GTUException exception) {
 			exception.printStackTrace();

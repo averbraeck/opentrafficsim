@@ -16,6 +16,7 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.NoTrafficLane;
 import org.opentrafficsim.core.network.lane.Sensor;
+import org.opentrafficsim.core.network.lane.SinkSensor;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -54,6 +55,12 @@ public class ReadNetworkData
 
                             for (Sensor sensor : sensors)
                             {
+                            	if (sensor instanceof SinkSensor)
+                                    {
+                            			sensors.remove(sensor);
+                            			KillSensor killSensor = new KillSensor(sensor.getLane(),sensor.getLongitudinalPosition(),sensor.getName(),((SinkSensor) sensor).getSimulator());
+                            			sensors.add(killSensor);
+                                    }
                                 if (sensor instanceof CheckSensor || sensor instanceof GenerateSensor
                                     || sensor instanceof KillSensor)
                                 {
