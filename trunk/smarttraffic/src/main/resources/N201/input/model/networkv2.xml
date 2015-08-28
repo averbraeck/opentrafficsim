@@ -655,8 +655,8 @@
 </LINK>
 <LINK NAME="L46b" NODESTART="N47b" NODEEND="N46b" ROADTYPE="RT2ln_ref0">
 <STRAIGHT />
-<SENSOR NAME="TT_b5" LANE="A1" POSITION="30m" CLASS="nl.grontmij.smarttraffic.lane.MeasureSensor" TRIGGER="FRONT" />
-<SENSOR NAME="TT_b5" LANE="A2" POSITION="30m" CLASS="nl.grontmij.smarttraffic.lane.MeasureSensor" TRIGGER="FRONT" />
+<SENSOR NAME="TT_b4" LANE="A1" POSITION="30m" CLASS="nl.grontmij.smarttraffic.lane.MeasureSensor" TRIGGER="FRONT" />
+<SENSOR NAME="TT_b4" LANE="A2" POSITION="30m" CLASS="nl.grontmij.smarttraffic.lane.MeasureSensor" TRIGGER="FRONT" />
 </LINK>
 <LINK NAME="L45b" NODESTART="N46b" NODEEND="N45b" ROADTYPE="RT2ln_ref0">
 <STRAIGHT />
@@ -731,8 +731,8 @@
 </LINK>
 <LINK NAME="L27b" NODESTART="N28b" NODEEND="N27b" ROADTYPE="RT2ln_ref0">
 <STRAIGHT />
-<SENSOR NAME="TT_b4" LANE="A1" POSITION="50m" CLASS="nl.grontmij.smarttraffic.lane.MeasureSensor" TRIGGER="FRONT" />
-<SENSOR NAME="TT_b4" LANE="A2" POSITION="50m" CLASS="nl.grontmij.smarttraffic.lane.MeasureSensor" TRIGGER="FRONT" />
+<SENSOR NAME="TT_b3" LANE="A1" POSITION="50m" CLASS="nl.grontmij.smarttraffic.lane.MeasureSensor" TRIGGER="FRONT" />
+<SENSOR NAME="TT_b3" LANE="A2" POSITION="50m" CLASS="nl.grontmij.smarttraffic.lane.MeasureSensor" TRIGGER="FRONT" />
 </LINK>
 <LINK NAME="L26b" NODESTART="N27b" NODEEND="N26b" ROADTYPE="RT2ln_ref0">
 <STRAIGHT />
@@ -806,8 +806,8 @@
 </LINK>
 <LINK NAME="L12b" NODESTART="N13b" NODEEND="N12b" ROADTYPE="RT2ln_ref0">
 <STRAIGHT />
-<SENSOR NAME="TT_b3" LANE="A1" POSITION="60m" CLASS="nl.grontmij.smarttraffic.lane.MeasureSensor" TRIGGER="FRONT" />
-<SENSOR NAME="TT_b3" LANE="A2" POSITION="60m" CLASS="nl.grontmij.smarttraffic.lane.MeasureSensor" TRIGGER="FRONT" />
+<SENSOR NAME="TT_b2" LANE="A1" POSITION="60m" CLASS="nl.grontmij.smarttraffic.lane.MeasureSensor" TRIGGER="FRONT" />
+<SENSOR NAME="TT_b2" LANE="A2" POSITION="60m" CLASS="nl.grontmij.smarttraffic.lane.MeasureSensor" TRIGGER="FRONT" />
 </LINK>
 <LINK NAME="L11b" NODESTART="N12b" NODEEND="N11b" ROADTYPE="RT2ln_ref0">
 <STRAIGHT />
@@ -860,8 +860,8 @@
 </LINK>
 <LINK NAME="L2b" NODESTART="N3b" NODEEND="N2b" ROADTYPE="RT2ln_ref0">
 <STRAIGHT />
-<SENSOR NAME="TT_b2" LANE="A1" POSITION="56m" CLASS="nl.grontmij.smarttraffic.lane.MeasureSensor" TRIGGER="FRONT" />
-<SENSOR NAME="TT_b2" LANE="A2" POSITION="56m" CLASS="nl.grontmij.smarttraffic.lane.MeasureSensor" TRIGGER="FRONT" />
+<SENSOR NAME="TT_b1" LANE="A1" POSITION="56m" CLASS="nl.grontmij.smarttraffic.lane.MeasureSensor" TRIGGER="FRONT" />
+<SENSOR NAME="TT_b1" LANE="A2" POSITION="56m" CLASS="nl.grontmij.smarttraffic.lane.MeasureSensor" TRIGGER="FRONT" />
 </LINK>
 <LINK NAME="L1b" NODESTART="N2b" NODEEND="N1b" ROADTYPE="RT2ln_ref0">
 <STRAIGHT />
