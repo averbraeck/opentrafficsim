@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.network.lane;
 
 import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -18,6 +19,9 @@ import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
  */
 public abstract class Barrier extends RoadMarkerAlong
 {
+    /** */
+    private static final long serialVersionUID = 20141025L;
+
     /**
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
      * the StartNode towards the EndNode as the longitudinal direction.
@@ -26,10 +30,11 @@ public abstract class Barrier extends RoadMarkerAlong
      * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws NetworkException when id equal to null or not unique
      */
     public Barrier(final CrossSectionLink parentLink,
         final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> beginWidth,
-        final DoubleScalar.Rel<LengthUnit> endWidth) throws OTSGeometryException
+        final DoubleScalar.Rel<LengthUnit> endWidth) throws OTSGeometryException, NetworkException
     {
         super(parentLink, lateralCenterPosition, beginWidth, endWidth);
     }

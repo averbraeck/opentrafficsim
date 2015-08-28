@@ -12,6 +12,7 @@ import org.opentrafficsim.core.geometry.OTSBuffering;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -30,7 +31,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
 {
     /** */
     private static final long serialVersionUID = 20150826L;
-    
+
     /** the id. Should be unique within the parentLink. */
     private final String id;
 
@@ -77,13 +78,25 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      *            line
      * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; width at end, positioned <i>symmetrically around</i> the design line
      * @throws OTSGeometryException when creation of the geometry fails
+     * @throws NetworkException when id equal to null or not unique
      */
     public CrossSectionElement(final CrossSectionLink parentLink, final String id,
         final DoubleScalar.Rel<LengthUnit> lateralOffsetAtBegin, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd,
         final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
-        throws OTSGeometryException
+        throws OTSGeometryException, NetworkException
     {
         super();
+        if (id == null)
+        {
+            throw new NetworkException("Constructor of CrossSectionElement -- id cannot be null");
+        }
+        for (CrossSectionElement cse : parentLink.getCrossSectionElementList())
+        {
+            if (cse.getId().equals(id))
+            {
+                throw new NetworkException("Constructor of CrossSectionElement -- id " + id + " not unique within the Link");
+            }
+        }
         this.id = id;
         this.parentLink = parentLink;
         this.designLineOffsetAtBegin = lateralOffsetAtBegin;

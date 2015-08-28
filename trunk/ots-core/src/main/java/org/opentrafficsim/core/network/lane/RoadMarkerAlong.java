@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
@@ -38,10 +39,11 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws NetworkException when id equal to null or not unique
      */
     public RoadMarkerAlong(final CrossSectionLink parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
         final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
-        throws OTSGeometryException
+        throws OTSGeometryException, NetworkException
     {
         super(parentLink, UUID.randomUUID().toString(), lateralCenterPosition, lateralCenterPosition, beginWidth, endWidth);
     }

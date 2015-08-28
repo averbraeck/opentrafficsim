@@ -2,6 +2,7 @@ package org.opentrafficsim.core.network.lane;
 
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
@@ -32,12 +33,13 @@ public class NoTrafficLane extends Lane
      * @param beginWidth DoubleScalar.Rel&lt;LengthUnit&gt;; start width, positioned <i>symmetrically around</i> the design line
      * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; end width, positioned <i>symmetrically around</i> the design line
      * @throws OTSGeometryException when creation of the geometry fails
+     * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public NoTrafficLane(final CrossSectionLink parentLink, final String id,
         final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd,
         final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
-        throws OTSGeometryException
+        throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, LaneType.NONE,
             LongitudinalDirectionality.NONE, new DoubleScalar.Abs<FrequencyUnit>(0.0, FrequencyUnit.SI),
