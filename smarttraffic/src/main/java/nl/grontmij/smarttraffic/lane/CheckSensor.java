@@ -70,41 +70,7 @@ public class CheckSensor extends AbstractSensor
         }
     }
 
-    // Method to find other parallel detectors (at the start of the simulation)
-    public List<CheckSensor> findParallelSensors()
-    {
-        // find the lane
-        for (Link link : this.getLane().getParentLink().getStartNode().getLinksOut())
-        {
-            if (link instanceof CrossSectionLink)
-            {
-                CrossSectionLink csl = (CrossSectionLink) link;
-                for (CrossSectionElement cse : csl.getCrossSectionElementList())
-                {
-                    if (cse instanceof Lane && !(cse instanceof NoTrafficLane))
-                    {
-                        Lane lane = (Lane) cse;
-                        if (lane.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER), lane.getLength()) != null)
-                        {
-                            List<Sensor> sensors =
-                                lane.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER), lane.getLength());
-                            for (Sensor sensor : sensors)
-                            {
-                                if (sensor instanceof CheckSensor)
-                                {
-                                    this.getSensorsParallel().add((CheckSensor) sensor);
-                                }
-                            }
-                        }
-
-                    }
-
-                }
-            }
-        }
-        return this.sensorsParallel;
-    }
-
+   
     /**
      * @return true if the sensor is less than 10 m before the end, the lane is on one of the main routes, and the next lane
      *         does not end as part of one of the main routes (the end node of the next lane is not part of the main routes).
@@ -210,6 +176,7 @@ public class CheckSensor extends AbstractSensor
         // System.out.println(gtu.getSimulator() + ": detecting " + gtu.toString() + " passing detector at lane " + getLane());
         // this.gtusDetected.add(gtu);
     	ReportNumbers.reportPassingVehicles(GTM.outputFileVehiclesTriggered, gtu, "C" + this.getName(), this.getSimulator());
+    	
     }
 
     /** {@inheritDoc} */

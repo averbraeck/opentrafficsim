@@ -26,6 +26,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 
+import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -98,7 +99,11 @@ public class GTM extends AbstractWrappableSimulationST {
 	// The number of vehicles generated from the "checkSensors"
 	public static BufferedWriter outputFileVehiclesTriggered = null;
 
+	public static double startTimeSinceZero = 719529;
+
 	protected static String CURRENTPROPERTIESFILENAME = "";
+
+	public static ArrayList<LaneBasedIndividualCar> listGTUsInNetwork = new ArrayList<LaneBasedIndividualCar>();
 
 	/**
 	 * Main program. GTMModel has the model details.
@@ -239,11 +244,10 @@ public class GTM extends AbstractWrappableSimulationST {
 			String dirExperiment = outputDir + "/"
 					+ Settings.getString(this.simulator, "EXPERIMENTDIR");
 
-			
-			outputFileVehiclesTriggered = Output
-					.initiateOutputFile(dirExperiment, this.simulator,
-							"reportVehiclesPassingCheckSensors.xls", "Time\tNrCars\n");
-			
+			outputFileVehiclesTriggered = Output.initiateOutputFile(
+					dirExperiment, this.simulator,
+					"reportVehiclesPassingCheckSensors.xls", "Time\tNrCars\n");
+
 			outputFileLogConfigVRI = Output
 					.initiateOutputFile(dirExperiment, this.simulator,
 							"ConfigVri.log",
@@ -303,6 +307,7 @@ public class GTM extends AbstractWrappableSimulationST {
 			Instant timeVLog = Instant.parse(String.format(
 					"%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day,
 					hour, minute, second, tenth));
+			startTimeSinceZero += timeVLog.getEpochSecond()/86400;
 			startTimeSimulation = Instant.parse(String.format(
 					"%04d-%02d-%02dT%02d:%02d:%02d.%02dZ", year, month, day, 0,
 					0, 0, 0));
