@@ -43,7 +43,7 @@ import org.opentrafficsim.graphs.LaneBasedGTUSampler;
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$,
- * initial version ug 19, 2014 <br>
+ * initial version Aug 19, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
@@ -118,13 +118,14 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param capacity Lane capacity in vehicles per time unit. This is a mutable property (e.g., blockage)
      * @param speedLimit speed limit on this lane
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id,
         final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd,
         final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth, final LaneType laneType,
         final LongitudinalDirectionality directionality, final DoubleScalar.Abs<FrequencyUnit> capacity,
-        final DoubleScalar.Abs<SpeedUnit> speedLimit) throws OTSGeometryException
+        final DoubleScalar.Abs<SpeedUnit> speedLimit) throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
         this.laneType = laneType;
