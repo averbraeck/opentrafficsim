@@ -93,7 +93,7 @@ public class ScheduleGenerateCars
                     try
                     {
                         this.simulator
-                            .scheduleEventAbs(when, this, this, "generateCar", new Object[]{lane, initialPosition});
+                            .scheduleEventAbs(when, this, this, "generateCar", new Object[]{lane, sensor, initialPosition});
                     }
                     catch (RemoteException | SimRuntimeException exception)
                     {
@@ -109,7 +109,7 @@ public class ScheduleGenerateCars
     /**
      * Generate one car and re-schedule this method if there is no space.
      */
-    protected final void generateCar(Lane lane, DoubleScalar.Rel<LengthUnit> initialPosition)
+    protected final void generateCar(Lane lane, GenerateSensor sensor, DoubleScalar.Rel<LengthUnit> initialPosition)
     {
         // is there enough space?
         Lane nextLane = lane.nextLanes(this.gtuType).iterator().next();
@@ -119,7 +119,7 @@ public class ScheduleGenerateCars
             try
             {
                 this.simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.25, TimeUnit.SECOND), this, this,
-                    "generateCar", new Object[]{lane, initialPosition});
+                    "generateCar", new Object[]{lane, sensor, initialPosition});
                 return;
             }
             catch (RemoteException | SimRuntimeException exception)
@@ -165,10 +165,12 @@ public class ScheduleGenerateCars
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength = new DoubleScalar.Rel<LengthUnit>(this.lengthCar, LengthUnit.METER);
             Class<? extends Renderable2D> animationClass= Settings.getBoolean(simulator, "ANIMATECARS")? DefaultCarAnimation.class:null;  
-            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, this.gtuFollowingModel,
+            LaneBasedIndividualCar gtu = new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, this.gtuFollowingModel,
                 this.laneChangeModel, initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(2.0,
                     LengthUnit.METER), maxSpeed, routeNavigatorAB, this.simulator, animationClass,
                 this.gtuColorer);
+            // for logging this event
+        	ReportNumbers.reportPassingVehicles(GTM.outputFileVehiclesTriggered, gtu, "G" + sensor.getName(), this.simulator);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {

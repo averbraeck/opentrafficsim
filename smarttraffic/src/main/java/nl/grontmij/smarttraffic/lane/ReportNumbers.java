@@ -16,7 +16,9 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
+import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
@@ -53,7 +55,7 @@ public class ReportNumbers {
 		}
 	}
 
-	/** report number of cars in the model. */
+	/** report actual number of cars in the model at a certain time. */
 	public void report(BufferedWriter outputFileReportNumbers) {
 		try {
 			Instant time = GTM.startTimeSimulation
@@ -84,6 +86,7 @@ public class ReportNumbers {
 				outputFileReportNumbers.write(ts + "\t" + nr + "\n");
 			}
 			outputFileReportNumbers.flush();
+
 			if (LocalDateTime.ofInstant(time, ZoneId.of("UTC")).getMinute() == 0) {
 				System.out.println("#gtu " + ts + " = " + nr);
 			}
@@ -94,6 +97,48 @@ public class ReportNumbers {
 			} catch (RemoteException | SimRuntimeException exception) {
 				exception.printStackTrace();
 			}
+		} catch (IOException exception) {
+			exception.printStackTrace();
+		}
+	}
+
+	// used in the trigger function: register cars, detectors and time of passing
+	public static void reportPassingVehicles(BufferedWriter file,
+			final LaneBasedGTU gtu, String nameSensor,
+			OTSSimulatorInterface simulator) {
+
+		try {
+			String result;
+			if (Settings.getBoolean(
+					(OTSDEVSSimulatorInterface) simulator,
+					"OUTPUTNUMERIC")) {
+				// in numbers
+				Double time = simulator
+						.getSimulatorTime()
+						.get()
+						.getInUnit(org.opentrafficsim.core.unit.TimeUnit.SECOND);
+				String detector = null;
+				if (nameSensor.charAt(3) == 'a') {
+					detector = nameSensor.substring(4, 5);
+				} else if (nameSensor.charAt(3) == 'b') {
+					Double det = Double.parseDouble(nameSensor.substring(4, 5)) + 10;
+					detector = Double.toString(det);
+				}
+				result = time + "\t" + detector + "\t" + gtu.getId() + "\n";
+			} else {
+				// as String
+				Instant time = GTM.startTimeSimulation
+						.plusMillis(1000 * simulator.getSimulatorTime()
+								.get().longValue());
+				String ts = time.toString().replace('T', ' ')
+						.replaceFirst("Z", "");
+				result = ts + "\t" + nameSensor + "\t" + gtu.getId() + "\n";
+			}
+			if (file!=null) {
+				file.write(result);
+				file.flush();
+			}
+
 		} catch (IOException exception) {
 			exception.printStackTrace();
 		}

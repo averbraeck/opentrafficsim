@@ -46,7 +46,7 @@ public class ReadVLog {
 			HashMap<String, AbstractSensor> mapSensor,
 			HashMap<String, ConfigVri> configVriList, Instant timeVLog,
 			String dirLoggings, String vLogFileName, String wegNummer,
-			String[] vriNummer, OTSDEVSSimulatorInterface simulator,
+			String[] vriNummer, OTSDEVSSimulatorInterface simulator,Integer startAtHour, Integer stopAtHour,
 			BufferedWriter outputFileLogReadSensor) {
 		try {
 			Map<String, ZipEntry> zipEntries = new HashMap<>();
@@ -80,7 +80,7 @@ public class ReadVLog {
 					// zoek de eerste "harde" tijdsaanduiding
 					// Om alle dagen te simuleren gebruik dan de volgende regel:
 					// System.out.println(vri + " - " + timeStampFile);
-					while (hour < 21) {
+					while (hour < stopAtHour) {
 						String fName = Integer.toString(day) + "/"
 								+ vriLocation + "/" + vriLocation + "_"
 								+ timeStampFile + ".vlg";
@@ -122,8 +122,9 @@ public class ReadVLog {
 							stream.close();
 						}
 
-						// increase time with one minute for next file
+						// increase time with one minute for next VLOG file (which goes by minute)
 						//
+						
 						timeVLogStart = timeVLogStart.plusSeconds(60);
 						ldt = LocalDateTime.ofInstant(timeVLogStart, offset);
 						day = ldt.getDayOfMonth();
@@ -135,7 +136,7 @@ public class ReadVLog {
 								hour, minute, second);
 					}
 					day++;
-					hour = 2;
+					hour = startAtHour;
 					minute = 0;
 					second = 0;
 				}

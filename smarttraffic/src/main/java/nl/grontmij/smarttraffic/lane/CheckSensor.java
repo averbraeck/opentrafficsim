@@ -209,6 +209,7 @@ public class CheckSensor extends AbstractSensor
     {
         // System.out.println(gtu.getSimulator() + ": detecting " + gtu.toString() + " passing detector at lane " + getLane());
         // this.gtusDetected.add(gtu);
+    	ReportNumbers.reportPassingVehicles(GTM.outputFileVehiclesTriggered, gtu, "C" + this.getName(), this.getSimulator());
     }
 
     /** {@inheritDoc} */
