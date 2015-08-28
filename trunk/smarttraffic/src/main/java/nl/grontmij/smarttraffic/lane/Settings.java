@@ -78,7 +78,7 @@ public final class Settings {
 		return Double.parseDouble(s);
 	}
 
-	public static double getInt(final OTSDEVSSimulatorInterface simulator,
+	public static Integer getInt(final OTSDEVSSimulatorInterface simulator,
 			final String name) {
 		test(simulator, name);
 		String s = PROPS.get(simulator.hashCode()).getProperty(name);

@@ -69,9 +69,9 @@ public class GTM extends AbstractWrappableSimulationST {
 	 * times.
 	 */
 	public static Instant startTimeSimulation;
-	
+
 	/** the GTUtype to use in the model (car). */
-	public static GTUType GTUTYPE; 
+	public static GTUType GTUTYPE;
 
 	/**
 	 * a map from the signal group name, e.g., 225_08 to the traffic lights,
@@ -79,11 +79,24 @@ public class GTM extends AbstractWrappableSimulationST {
 	 */
 	public static Map<String, List<TrafficLight>> signalGroupToTrafficLights = new HashMap<>();
 
+	// output files with results
+	// file with the measured number of cars in the network
 	public static BufferedWriter outputFileMeasures = null;
+	// reflecting the VRI input configurations files
 	public static BufferedWriter outputFileLogConfigVRI = null;
+	// reflecting the Sensor input configurations files
 	public static BufferedWriter outputFileLogReadSensor = null;
+
+	// Analysis behaviour
+	// the observation of cars during the simulation: which are vehicles are
+	// triggered and/or rescheduled at the sensors during their travel?
 	public static BufferedWriter outputFileLogVehicleSimulation = null;
-	
+
+	// numbers for evaluation
+	// The number of vehicles generated from the "generateSensors"
+	public static BufferedWriter outputFileVehiclesGenerated = null;
+	// The number of vehicles generated from the "checkSensors"
+	public static BufferedWriter outputFileVehiclesTriggered = null;
 
 	protected static String CURRENTPROPERTIESFILENAME = "";
 
@@ -194,14 +207,13 @@ public class GTM extends AbstractWrappableSimulationST {
 			this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
 
 			new Settings(this.simulator, GTM.CURRENTPROPERTIESFILENAME);
-			//Read properties
+			// Read properties
 			// Base directory (relative to user dir)
 			String dirBase = Settings.getString(this.simulator, "BASEDIR");
-					//+ "/" + Settings.getString(this.simulator, "PROJECTDIR");
+			// + "/" + Settings.getString(this.simulator, "PROJECTDIR");
 			String networkFileName = Settings.getString(this.simulator,
 					"NETWORK");
-			String vLogFileName = Settings.getString(this.simulator,
-					"VLOG");
+			String vLogFileName = Settings.getString(this.simulator, "VLOG");
 			// read the configuration files for VLOG (detector/signalgroup: both
 			// index and name
 			String dirConfigVri = Settings.getString(this.simulator,
@@ -215,7 +227,9 @@ public class GTM extends AbstractWrappableSimulationST {
 			// Geef de numers van de VRI's
 			// Data van "311" ontbreekt in de meetperiode. Laat weg.
 			String[] vriNummer = Settings.getStringArray(this.simulator,
-					"VRINUMMERS");// map output;;
+					"VRINUMMERS");//
+			Integer startAtHour = Settings.getInt(simulator, "STARTATHOUR");
+			Integer stopAtHour = Settings.getInt(simulator, "STOPATHOUR");
 
 			// create outputMap
 			String outputDir = dirBase + "/output";
@@ -224,8 +238,21 @@ public class GTM extends AbstractWrappableSimulationST {
 
 			String dirExperiment = outputDir + "/"
 					+ Settings.getString(this.simulator, "EXPERIMENTDIR");
+
 			
+			outputFileVehiclesTriggered = Output
+					.initiateOutputFile(dirExperiment, this.simulator,
+							"reportVehiclesPassingCheckSensors.xls", "Time\tNrCars\n");
 			
+			outputFileLogConfigVRI = Output
+					.initiateOutputFile(dirExperiment, this.simulator,
+							"ConfigVri.log",
+							"Read config files of traffic light regulated junctions: \n");
+
+			BufferedWriter outputFileReportNumbers = Output.initiateOutputFile(
+					dirExperiment, this.simulator, "reportNumbers.xls",
+					"Time\tNrCars\n");
+
 			// Lees hier de file met het netwerk
 			URL url = URLResource.getResource(dirBase + "/input/model/"
 					+ networkFileName);
@@ -242,16 +269,13 @@ public class GTM extends AbstractWrappableSimulationST {
 				exception1.printStackTrace();
 			}
 
-
-
 			// in de configVriList worden de vri configuraties opgeslagen. De
 			// ConfigVri bevat de detectoren (index, naam) en de
 			// signaalgroepen (index, naam)
-			outputFileLogConfigVRI = Output.initiateOutputFile(dirExperiment,
-					this.simulator,"ConfigVri.log","Read config files of traffic light regulated junctions: \n");
 			HashMap<String, ConfigVri> configVriList = null;
 			configVriList = ConfigFile.readVlogConfigFiles(dirBase + "/"
-					+ "input" + "/" + dirConfigVri + "/", wegNummer, vriNummer, outputFileLogConfigVRI);
+					+ "input" + "/" + dirConfigVri + "/", wegNummer, vriNummer,
+					outputFileLogConfigVRI);
 
 			// read and define detectors from the network. in mapSensors staan
 			// alle detectoren (met de naam als zoeksleutel
@@ -272,7 +296,7 @@ public class GTM extends AbstractWrappableSimulationST {
 			int year = 2015;
 			int month = 6;
 			int day = 1;
-			long hour = 2;
+			long hour = startAtHour;
 			int minute = 0;
 			int second = 0;
 			int tenth = 0;
@@ -292,11 +316,14 @@ public class GTM extends AbstractWrappableSimulationST {
 			 * mapSensorKillCars en mapSensorCheckCars (omdat daar een
 			 * verwijzing naar dezelfde objecten is).
 			 */
-			outputFileLogReadSensor = Output.initiateOutputFile(dirExperiment,
-					this.simulator,"ReadAndCheckSensor.log","Read config files of traffic light regulated junctions: \n");
+			outputFileLogReadSensor = Output
+					.initiateOutputFile(dirExperiment, this.simulator,
+							"ReadAndCheckSensor.log",
+							"Read config files of traffic light regulated junctions: \n");
 			ReadVLog.readVlogZipFiles(mapSensor, configVriList, timeVLog,
-					dirBase + "/" + "input" + "/" + dirLoggings + "/",vLogFileName,
-					wegNummer, vriNummer, this.simulator, outputFileLogReadSensor);
+					dirBase + "/" + "input" + "/" + dirLoggings + "/",
+					vLogFileName, wegNummer, vriNummer, this.simulator,
+					startAtHour, stopAtHour, outputFileLogReadSensor);
 
 			// connect the detector pulses to the simulator and generate Cars
 			// Module that provides actions if a pulse from a detector is
@@ -314,20 +341,16 @@ public class GTM extends AbstractWrappableSimulationST {
 				}
 			}
 
-			
 			new ScheduleGenerateCars(GTUTYPE, this.simulator,
 					mapSensorGenerateCars, generateCar, routes);
 
-			BufferedWriter outputFileReportNumbers = Output
-					.initiateOutputFile(dirExperiment, this.simulator, "reportNumbers.xls", "Time\tNrCars\n");
-			
 			new ReportNumbers(network, this.simulator, outputFileReportNumbers);
 
 			outputFileMeasures = Output.initiateOutputFile(dirExperiment,
-					this.simulator,"measure.xls","Time\tSensor\tCar\n");
+					this.simulator, "measure.xls", "Time\tSensor\tCar\n");
 			Path file = Paths.get(GTM.CURRENTPROPERTIESFILENAME).getFileName();
 			try {
-				Files.copy(Paths.get(dirBase + "/"+ "/input/" + file),
+				Files.copy(Paths.get(dirBase + "/" + "/input/" + file),
 						Paths.get(dirExperiment + "/" + file),
 						StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e1) {
@@ -346,15 +369,17 @@ public class GTM extends AbstractWrappableSimulationST {
 				// van het voertuig
 				// ------de tweede waarde is de afstand in meters stroomAFwaarts
 				// van het voertuig
-				outputFileLogVehicleSimulation = Output
-				.initiateOutputFile(dirExperiment, this.simulator, "vehicleDetectections.log", "Time\tRemark\n");
+				outputFileLogVehicleSimulation = Output.initiateOutputFile(
+						dirExperiment, this.simulator,
+						"vehicleDetectections.log", "Time\tRemark\n");
 				try {
 					new ScheduleCheckPulses(GTUTYPE, this.simulator,
 							mapSensorCheckCars, Settings.getDouble(
 									this.simulator, "SEARCHRANGEBACK"),
 							Settings.getDouble(this.simulator,
 									"SEARCHRANGEFRONT"),
-							new ArrayList<CompleteRoute>(routes.values()), outputFileLogVehicleSimulation);
+							new ArrayList<CompleteRoute>(routes.values()),
+							outputFileLogVehicleSimulation);
 				} catch (NetworkException | GTUException | NamingException e) {
 					e.printStackTrace();
 				}

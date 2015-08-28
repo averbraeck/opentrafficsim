@@ -1,5 +1,6 @@
 package nl.grontmij.smarttraffic.lane;
 
+import java.io.BufferedWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;

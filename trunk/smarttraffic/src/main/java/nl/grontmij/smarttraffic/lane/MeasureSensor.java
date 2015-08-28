@@ -59,40 +59,9 @@ public class MeasureSensor extends AbstractSensor {
 	 */
 	@Override
 	public void trigger(final LaneBasedGTU gtu) {
-		try {
-			if (Settings.getBoolean(
-					(OTSDEVSSimulatorInterface) this.getSimulator(),
-					"OUTPUTNUMERIC")) {
-
-				Double time = this
-						.getSimulator()
-						.getSimulatorTime()
-						.get()
-						.getInUnit(org.opentrafficsim.core.unit.TimeUnit.SECOND);
-				String detector = null;
-				if (getName().charAt(3) == 'a') {
-					detector = getName().substring(4, 5);
-				} else if (getName().charAt(3) == 'b') {
-					Double det = Double.parseDouble(getName().substring(4, 5)) + 10;
-					detector = Double.toString(det);
-				}
-				GTM.outputFileMeasures.write(time + "\t" + detector + "\t"
-						+ gtu.getId() + "\n");
-			} else {
-				Instant time = GTM.startTimeSimulation
-						.plusMillis(1000 * getSimulator().getSimulatorTime()
-								.get().longValue());
-				String ts = time.toString().replace('T', ' ')
-						.replaceFirst("Z", "");
-				GTM.outputFileMeasures.write(ts + "\t" + getName() + "\t"
-						+ gtu.getId() + "\n");
-
-			}
-			GTM.outputFileMeasures.flush();
-		} catch (IOException exception) {
-			exception.printStackTrace();
-		}
+		ReportNumbers.reportPassingVehicles(GTM.outputFileMeasures, gtu, this.getName(), this.getSimulator());
 	}
+
 
 	/** {@inheritDoc} */
 	@Override

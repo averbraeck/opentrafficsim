@@ -123,15 +123,18 @@ public class ScheduleCheckPulses<ID> {
 		double sensorPosSI = sensor.getLongitudinalPositionSI();
 		if (sensor.isExitLaneSensor(this.routes)) {
 			// find near vehicle
+			// first look in front (vehicles already passed??)
 			LaneBasedGTU gtu = nearGTUback2(sensor, backRange);
 			if (gtu == null) {
 				gtu = nearGTUfront2(sensor, frontRange);
 			}
+			// move vehicle to assumed right position
 			if (gtu != null) {
 				// move GTU
 				for (Object o : gtu.positions(gtu.getReference()).keySet()) {
 					((LaneBasedIndividualCar) gtu).destroy();
 				}
+				// 
 				if (Settings.getBoolean(simulator, "ANIMATERAMPVEHICLES"))
 					generateCar(
 							sensor.getLane(),
