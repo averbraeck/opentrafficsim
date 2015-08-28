@@ -169,6 +169,7 @@ public class ScheduleGenerateCars
                 this.laneChangeModel, initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(2.0,
                     LengthUnit.METER), maxSpeed, routeNavigatorAB, this.simulator, animationClass,
                 this.gtuColorer);
+            GTM.listGTUsInNetwork.add(gtu);
             // for logging this event
         	ReportNumbers.reportPassingVehicles(GTM.outputFileVehiclesTriggered, gtu, "G" + sensor.getName(), this.simulator);
         }

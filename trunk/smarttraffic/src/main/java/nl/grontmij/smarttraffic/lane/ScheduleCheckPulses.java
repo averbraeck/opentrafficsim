@@ -173,6 +173,33 @@ public class ScheduleCheckPulses<ID> {
 		}
 	}
 
+	
+	public void scheduleCheckGTUs(final double backRange,
+			final double frontRange,
+			BufferedWriter outputFileLogVehicleSimulation)
+			throws RemoteException, SimRuntimeException, GTUException,
+			NetworkException, NamingException {
+		for (Entry<String, CheckSensor> entry : this.mapSensor.entrySet()) {
+			entry.getKey();
+			CheckSensor sensor = entry.getValue();
+			HashMap<DoubleScalar.Abs<TimeUnit>, Integer> pulses = sensor
+					.getStatusByTime();
+			for (Entry<DoubleScalar.Abs<TimeUnit>, Integer> entryPulse : pulses
+					.entrySet()) {
+				if (entryPulse.getValue() == 0) {
+					DoubleScalar.Abs<TimeUnit> when = entryPulse.getKey();
+					this.simulator.scheduleEventAbs(when, this, this,
+							"findNearestVehicles", new Object[] { sensor,
+									backRange, frontRange,
+									outputFileLogVehicleSimulation });
+				}
+			}
+
+		}
+	}
+	
+	
+	
 	private final LaneBasedGTU nearGTUback2(CheckSensor sensor, double range)
 			throws RemoteException {
 		return nearGTUback2a(sensor, sensor.getLane().getParentLink(), range);

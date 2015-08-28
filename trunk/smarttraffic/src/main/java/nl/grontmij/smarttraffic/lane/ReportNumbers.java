@@ -63,6 +63,7 @@ public class ReportNumbers {
 							.longValue());
 			Double timeA = this.simulator.getSimulatorTime().get()
 					.getInUnit(org.opentrafficsim.core.unit.TimeUnit.SECOND);
+			timeA = GTM.startTimeSinceZero + timeA/86400;
 			String ts = time.toString().replace('T', ' ').replaceFirst("Z", "");
 			int nr = 0;
 			for (Link link : this.network.getLinkMap().values()) {
@@ -117,6 +118,8 @@ public class ReportNumbers {
 						.getSimulatorTime()
 						.get()
 						.getInUnit(org.opentrafficsim.core.unit.TimeUnit.SECOND);
+				// for MATLAB only
+				time = GTM.startTimeSinceZero + time/86400;
 				String detector = null;
 				if (nameSensor.charAt(3) == 'a') {
 					detector = nameSensor.substring(4, 5);
