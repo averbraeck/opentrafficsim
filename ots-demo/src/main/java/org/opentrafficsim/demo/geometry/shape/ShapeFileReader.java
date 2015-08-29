@@ -7,6 +7,7 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.naming.NamingException;
@@ -23,6 +24,7 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -32,6 +34,7 @@ import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.core.network.animation.ShoulderAnimation;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.lane.NoTrafficLane;
 import org.opentrafficsim.core.network.lane.Shoulder;
 import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
@@ -419,8 +422,6 @@ public final class ShapeFileReader
         DoubleScalar.Rel<LengthUnit> m05 = new DoubleScalar.Rel<LengthUnit>(0.5, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> m10 = new DoubleScalar.Rel<LengthUnit>(1.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> m35 = new DoubleScalar.Rel<LengthUnit>(3.5, LengthUnit.METER);
-        DoubleScalar.Abs<FrequencyUnit> f0 = new DoubleScalar.Abs<FrequencyUnit>(0.0, FrequencyUnit.PER_HOUR);
-        DoubleScalar.Abs<FrequencyUnit> f200 = new DoubleScalar.Abs<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
         try
@@ -434,9 +435,8 @@ public final class ShapeFileReader
                     (i < 0) ? LongitudinalDirectionality.FORWARD : LongitudinalDirectionality.BACKWARD;
                 //
                 Lane laneEM =
-                    new Lane(link, "EM", new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER),
-                        new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER), m05, m05, null,
-                        LongitudinalDirectionality.NONE, f0, speedLimit);
+                    new NoTrafficLane(link, "EM", new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER),
+                        new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER), m05, m05);
                 new LaneAnimation(laneEM, simulator, Color.LIGHT_GRAY);
                 double lat = 1;
                 for (int j = 0; j < n; j++)
@@ -444,7 +444,7 @@ public final class ShapeFileReader
                     lat += i * 1.75;
                     Lane lane =
                         new Lane(link, "lane." + j, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
-                            new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m35, m35, null, dir, f200, speedLimit);
+                            new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m35, m35, null, dir, speedLimit);
                     new LaneAnimation(lane, simulator, Color.GRAY);
                     lat += i * 1.75;
                 }
@@ -453,15 +453,14 @@ public final class ShapeFileReader
                 {
                     lat += i * 1.75;
                     Lane lane =
-                        new Lane(link, "extra." + j, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
-                            new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m35, m35, null, dir, f0, speedLimit);
+                        new NoTrafficLane(link, "extra." + j, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
+                            new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m35, m35);
                     new LaneAnimation(lane, simulator, Color.LIGHT_GRAY);
                     lat += i * 1.75;
                 }
                 Lane laneEO =
-                    new Lane(link, "EO", new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER),
-                        new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER), m05, m05, null,
-                        LongitudinalDirectionality.NONE, f0, speedLimit);
+                    new NoTrafficLane(link, "EO", new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER),
+                        new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER), m05, m05);
                 new LaneAnimation(laneEO, simulator, Color.LIGHT_GRAY);
                 lat += i * 0.5;
                 Shoulder sO = new Shoulder(link, "sO", new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m10, m10);
@@ -488,7 +487,6 @@ public final class ShapeFileReader
         // lane is 3.0 meters wide. gap in middle is one meter. outside 0.5 meters on both sides
         DoubleScalar.Rel<LengthUnit> m10 = new DoubleScalar.Rel<LengthUnit>(1.0, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> m30 = new DoubleScalar.Rel<LengthUnit>(3.0, LengthUnit.METER);
-        DoubleScalar.Abs<FrequencyUnit> f200 = new DoubleScalar.Abs<FrequencyUnit>(200.0, FrequencyUnit.PER_HOUR);
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
         try
@@ -508,7 +506,7 @@ public final class ShapeFileReader
                     lat += i * 1.5;
                     Lane lane =
                         new Lane(link, "lane." + j, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
-                            new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m30, m30, null, dir, f200, speedLimit);
+                            new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m30, m30, null, dir, speedLimit);
                     new LaneAnimation(lane, simulator, Color.DARK_GRAY);
                     lat += i * 1.5;
                 }
@@ -529,7 +527,6 @@ public final class ShapeFileReader
         throws NetworkException
     {
         DoubleScalar.Rel<LengthUnit> m60 = new DoubleScalar.Rel<LengthUnit>(6.0, LengthUnit.METER);
-        DoubleScalar.Abs<FrequencyUnit> f50 = new DoubleScalar.Abs<FrequencyUnit>(50.0, FrequencyUnit.PER_HOUR);
         DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
 
         try
@@ -537,7 +534,7 @@ public final class ShapeFileReader
             Lane lane =
                 new Lane(link, "lane", new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER),
                     new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m60, m60, null,
-                    LongitudinalDirectionality.BOTH, f50, speedLimit);
+                    LongitudinalDirectionality.FORWARD, speedLimit);
             new LaneAnimation(lane, simulator, Color.DARK_GRAY);
         }
         catch (NamingException | RemoteException | OTSGeometryException ne)

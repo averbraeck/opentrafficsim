@@ -427,11 +427,10 @@ class StraightModel implements OTSModelInterface
             CrossSectionLink endLink = LaneFactory.makeLink("endLink", to, end, null);
             Lane sinkLane =
                 new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0), this.lane.getLateralCenterPosition(1.0),
-                    this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType, LongitudinalDirectionality.FORWARD,
-                    new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY, FrequencyUnit.SI), this.speedLimit);
+                    this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType, LongitudinalDirectionality.FORWARD, this.speedLimit);
             Sensor sensor =
                 new SinkSensor(sinkLane, new DoubleScalar.Rel<LengthUnit>(10.0, LengthUnit.METER), this.simulator);
-            sinkLane.addSensor(sensor);
+            sinkLane.addSensor(sensor, GTUType.ALL);
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", this.properties, false, 0);
             AbstractProperty<?> cfmp = propertyContainer.findByShortName("Car following model");

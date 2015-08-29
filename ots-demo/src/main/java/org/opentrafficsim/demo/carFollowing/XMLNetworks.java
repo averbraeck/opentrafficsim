@@ -56,7 +56,6 @@ import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticLaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticLaneBasedRouteGenerator.LaneBasedRouteProbability;
 import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -499,11 +498,10 @@ class XMLNetworkModel implements OTSModelInterface
         {
             Lane sinkLane =
                 new Lane(endLink, "sinkLane", lane.getLateralCenterPosition(1.0), lane.getLateralCenterPosition(1.0), lane
-                    .getWidth(1.0), lane.getWidth(1.0), laneType, LongitudinalDirectionality.FORWARD,
-                    new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY, FrequencyUnit.SI), this.speedLimit);
+                    .getWidth(1.0), lane.getWidth(1.0), laneType, LongitudinalDirectionality.FORWARD, this.speedLimit);
             Sensor sensor =
                 new SinkSensor(sinkLane, new DoubleScalar.Rel<LengthUnit>(10.0, LengthUnit.METER), this.simulator);
-            sinkLane.addSensor(sensor);
+            sinkLane.addSensor(sensor, GTUType.ALL);
         }
         return lanes;
     }
