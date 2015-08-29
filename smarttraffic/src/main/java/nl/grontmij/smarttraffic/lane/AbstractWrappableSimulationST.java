@@ -12,14 +12,13 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.gui.OTSAnimationPanel;
 import org.opentrafficsim.gui.SimulatorFrame;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
@@ -75,7 +74,7 @@ public abstract class AbstractWrappableSimulationST implements WrappableSimulati
         final SimpleAnimator simulator =
             new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.HOUR), new DoubleScalar.Rel<TimeUnit>(0.0,
                 TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(24, TimeUnit.HOUR), model);
-        
+
         this.panel = new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
         JPanel charts = makeCharts();
         if (null != charts)

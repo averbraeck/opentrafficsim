@@ -1,7 +1,6 @@
 package nl.grontmij.smarttraffic.lane;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -13,6 +12,10 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -25,12 +28,7 @@ import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.network.lane.Sensor;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 public class ScheduleGenerateCars
 {
@@ -95,8 +93,8 @@ public class ScheduleGenerateCars
                     DoubleScalar.Abs<TimeUnit> when = entryPulse.getKey();
                     try
                     {
-                        this.simulator
-                            .scheduleEventAbs(when, this, this, "generateCar", new Object[]{lane, sensor, initialPosition});
+                        this.simulator.scheduleEventAbs(when, this, this, "generateCar", new Object[]{lane, sensor,
+                            initialPosition});
                     }
                     catch (RemoteException | SimRuntimeException exception)
                     {
@@ -167,16 +165,18 @@ public class ScheduleGenerateCars
         try
         {
             DoubleScalar.Rel<LengthUnit> vehicleLength = new DoubleScalar.Rel<LengthUnit>(this.lengthCar, LengthUnit.METER);
-            Class<? extends Renderable2D> animationClass= Settings.getBoolean(simulator, "ANIMATECARS")? DefaultCarAnimation.class:null;  
-            LaneBasedIndividualCar gtu = new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, this.gtuFollowingModel,
-                this.laneChangeModel, initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(2.0,
-                    LengthUnit.METER), maxSpeed, routeNavigatorAB, this.simulator, animationClass,
-                this.gtuColorer);
-			// add this car to the list of gtu's in the network
-			LinkedList<CheckSensor> linkedList = new LinkedList<CheckSensor>();
-			GTM.listGTUsInNetwork.put((LaneBasedIndividualCar) gtu, linkedList);
+            Class<? extends Renderable2D> animationClass =
+                Settings.getBoolean(simulator, "ANIMATECARS") ? DefaultCarAnimation.class : null;
+            LaneBasedIndividualCar gtu =
+                new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, this.gtuFollowingModel,
+                    this.laneChangeModel, initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(
+                        2.0, LengthUnit.METER), maxSpeed, routeNavigatorAB, this.simulator, animationClass, this.gtuColorer);
+            // add this car to the list of gtu's in the network
+            LinkedList<CheckSensor> linkedList = new LinkedList<CheckSensor>();
+            GTM.listGTUsInNetwork.put((LaneBasedIndividualCar) gtu, linkedList);
             // for logging this event
-        	ReportNumbers.reportPassingVehicles(GTM.outputFileVehiclesTriggered, gtu, "G" + sensor.getName(), this.simulator);
+            ReportNumbers
+                .reportPassingVehicles(GTM.outputFileVehiclesTriggered, gtu, "G" + sensor.getName(), this.simulator);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
