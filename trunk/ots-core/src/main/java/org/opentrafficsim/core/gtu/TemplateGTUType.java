@@ -45,10 +45,12 @@ public class TemplateGTUType implements Serializable
      * @param widthDist the width of the GTU type (perpendicular to driving direction).
      * @param maximumSpeedDist the maximum speed of the GTU type (in the driving direction).
      * @param simulator the simulator.
+     * @throws GTUException when GTUType defined more than once
      */
     public TemplateGTUType(final String id, final DistContinuousDoubleScalar.Rel<LengthUnit> lengthDist,
         final DistContinuousDoubleScalar.Rel<LengthUnit> widthDist,
         final DistContinuousDoubleScalar.Abs<SpeedUnit> maximumSpeedDist, final OTSDEVSSimulatorInterface simulator)
+        throws GTUException
     {
         this.gtuType = GTUType.makeGTUType(id);
         this.lengthDist = lengthDist;

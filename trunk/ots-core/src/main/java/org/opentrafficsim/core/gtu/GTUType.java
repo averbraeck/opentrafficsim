@@ -26,10 +26,22 @@ public final class GTUType implements Serializable
     private final String id;
 
     /** ALL GTUType to be used only for permeability and accessibility. */
-    public static final GTUType ALL = new GTUType("ALL");
+    public static final GTUType ALL;
 
     /** NONE GTUType to be used only for permeability and accessibility. */
-    public static final GTUType NONE = new GTUType("NONE");
+    public static final GTUType NONE;
+
+    /** The set of previously instantiated GTUTypes. */
+    private static final Map<String, GTUType> INSTANTIATEDGTUTYPES = new LinkedHashMap<String, GTUType>();
+
+    static
+    {
+        ALL = new GTUType("ALL");
+        INSTANTIATEDGTUTYPES.put("ALL", GTUType.ALL);
+
+        NONE = new GTUType("NONE");
+        INSTANTIATEDGTUTYPES.put("NONE", GTUType.NONE);
+    }
 
     /**
      * @param id The id of the GTUType to make it identifiable.
@@ -37,10 +49,8 @@ public final class GTUType implements Serializable
     private GTUType(final String id)
     {
         this.id = id;
+        INSTANTIATEDGTUTYPES.put(id, this);
     }
-
-    /** The set of previously instantiated GTUTypes. */
-    private static final Map<Object, GTUType> INSTANTIATEDGTUTYPES = new LinkedHashMap<Object, GTUType>();
 
     /**
      * Construct a new GTUType or (if it already exists) return an existing GTUType.
@@ -55,7 +65,6 @@ public final class GTUType implements Serializable
             if (null == result)
             {
                 result = new GTUType(id);
-                INSTANTIATEDGTUTYPES.put(id, result);
             }
             return result;
         }
@@ -73,6 +82,38 @@ public final class GTUType implements Serializable
     public String toString()
     {
         return "GTUType: " + this.id;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:needbraces")
+    @Override
+    public boolean equals(final Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        GTUType other = (GTUType) obj;
+        if (this.id == null)
+        {
+            if (other.id != null)
+                return false;
+        }
+        else if (!this.id.equals(other.id))
+            return false;
+        return true;
     }
 
 }

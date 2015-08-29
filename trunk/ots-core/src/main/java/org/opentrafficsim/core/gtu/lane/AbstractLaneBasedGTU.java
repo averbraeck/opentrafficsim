@@ -374,9 +374,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         DoubleScalar.Abs<SpeedUnit> speedLimit = this.getMaximumVelocity();
         for (Lane lane : this.lanes)
         {
-            if (lane.getSpeedLimit().lt(speedLimit))
+            if (lane.getSpeedLimit(getGTUType()).lt(speedLimit))
             {
-                speedLimit = lane.getSpeedLimit();
+                speedLimit = lane.getSpeedLimit(getGTUType());
             }
         }
         if (null == this.laneChangeModel)
@@ -634,7 +634,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             return AbstractLaneBasedRouteNavigator.GETOFFTHISLANENOW;
         }
         double remainingLength = lane.getLength().getSI() - longitudinalPosition.getSI();
-        double remainingTimeSI = TIMEHORIZON.getSI() - remainingLength / lane.getSpeedLimit().getSI();
+        double remainingTimeSI = TIMEHORIZON.getSI() - remainingLength / lane.getSpeedLimit(getGTUType()).getSI();
         while (remainingTimeSI >= 0)
         {
             // TODO: if (lane.getSensors() contains SinkSensor => return LaneBasedRouteNavigator.NOLANECHANGENEEDED
@@ -648,7 +648,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                 return AbstractLaneBasedRouteNavigator.NOLANECHANGENEEDED;
             }
             lane = lane.nextLanes(getGTUType()).iterator().next();
-            remainingTimeSI -= lane.getLength().getSI() / lane.getSpeedLimit().getSI();
+            remainingTimeSI -= lane.getLength().getSI() / lane.getSpeedLimit(getGTUType()).getSI();
             remainingLength += lane.getLength().getSI();
         }
         return AbstractLaneBasedRouteNavigator.NOLANECHANGENEEDED;

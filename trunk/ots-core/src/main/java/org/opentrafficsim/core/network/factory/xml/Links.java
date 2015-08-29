@@ -5,7 +5,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.naming.NamingException;
@@ -23,6 +25,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.AbstractTrafficLight;
 import org.opentrafficsim.core.gtu.lane.LaneBlock;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.animation.LaneAnimation;
 import org.opentrafficsim.core.network.animation.ShoulderAnimation;
@@ -40,8 +43,8 @@ import org.opentrafficsim.core.network.lane.Stripe;
 import org.opentrafficsim.core.network.lane.Stripe.Permeable;
 import org.opentrafficsim.core.unit.AnglePlaneUnit;
 import org.opentrafficsim.core.unit.AngleSlopeUnit;
-import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
+import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.xml.sax.SAXException;
 
@@ -458,10 +461,13 @@ final class Links
                 case LANE:
                 {
                     // TODO LANEOVERRIDE
+                    Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
+                    directionality.put(GTUType.ALL, cseTag.direction);
+                    Map<GTUType, DoubleScalar.Abs<SpeedUnit>> speedLimit = new LinkedHashMap<>();
+                    speedLimit.put(GTUType.ALL, cseTag.speed);
                     Lane lane =
                         new Lane(csl, cseTag.name, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width,
-                            cseTag.laneType, cseTag.direction, new DoubleScalar.Abs<FrequencyUnit>(Double.MAX_VALUE,
-                                FrequencyUnit.PER_HOUR), cseTag.speed);
+                            cseTag.laneType, directionality, speedLimit);
                     cseList.add(lane);
                     lanes.add(lane);
                     linkTag.lanes.put(cseTag.name, lane);
@@ -476,7 +482,7 @@ final class Links
                         SinkTag sinkTag = linkTag.sinkTags.get(cseTag.name);
                         DoubleScalar.Rel<LengthUnit> position = LinkTag.parseBeginEndPosition(sinkTag.positionStr, lane);
                         Sensor sensor = new SinkSensor(lane, position, simulator);
-                        lane.addSensor(sensor);
+                        lane.addSensor(sensor, GTUType.ALL);
                     }
 
                     // BLOCK
@@ -540,7 +546,7 @@ final class Links
                                 AbstractSensor sensor =
                                     (AbstractSensor) sensorConstructor.newInstance(new Object[]{lane, position,
                                         sensorTag.triggerPosition, sensorTag.name, simulator});
-                                lane.addSensor(sensor);
+                                lane.addSensor(sensor, GTUType.ALL);
                             }
                             catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
                                 | IllegalAccessException | IllegalArgumentException | InvocationTargetException

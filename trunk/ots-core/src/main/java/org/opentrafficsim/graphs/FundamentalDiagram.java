@@ -31,6 +31,7 @@ import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
@@ -607,7 +608,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         {
             super(lane, longitudinalPosition, RelativePosition.REFERENCE, "FUNDAMENTAL_DIAGRAM_SENSOR@" + lane.toString(),
                 simulator);
-            lane.addSensor(this);
+            lane.addSensor(this, GTUType.ALL);
         }
 
         /** {@inheritDoc} */

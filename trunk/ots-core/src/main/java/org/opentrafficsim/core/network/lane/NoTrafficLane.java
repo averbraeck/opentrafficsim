@@ -1,9 +1,12 @@
 package org.opentrafficsim.core.network.lane;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -22,6 +25,18 @@ public class NoTrafficLane extends Lane
 {
     /** */
     private static final long serialVersionUID = 20150228L;
+
+    /** Map that tells that directionality is NONE for all GTU types. */
+    private static final Map<GTUType, LongitudinalDirectionality> DIRECTIONALITY_NONE = new HashMap<>();
+
+    /** Map that tells that speed is 0.0 for all GTU Types. */
+    private static final Map<GTUType, DoubleScalar.Abs<SpeedUnit>> SPEED_NULL = new HashMap<>();
+
+    static
+    {
+        DIRECTIONALITY_NONE.put(GTUType.ALL, LongitudinalDirectionality.NONE);
+        SPEED_NULL.put(GTUType.ALL, new DoubleScalar.Abs<SpeedUnit>(0.0, SpeedUnit.SI));
+    }
 
     /**
      * @param parentLink Cross Section Link to which the element belongs.
@@ -42,8 +57,7 @@ public class NoTrafficLane extends Lane
         throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, LaneType.NONE,
-            LongitudinalDirectionality.NONE, new DoubleScalar.Abs<FrequencyUnit>(0.0, FrequencyUnit.SI),
-            new DoubleScalar.Abs<SpeedUnit>(0.0, SpeedUnit.SI));
+            DIRECTIONALITY_NONE, SPEED_NULL);
     }
 
     /** {@inheritDoc} */

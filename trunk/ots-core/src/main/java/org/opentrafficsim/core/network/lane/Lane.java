@@ -22,10 +22,10 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
+import org.opentrafficsim.core.value.vdouble.scalar.DOUBLE_SCALAR;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 
@@ -48,7 +48,7 @@ import org.opentrafficsim.graphs.LaneBasedGTUSampler;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Lane extends CrossSectionElement implements Serializable
+public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SCALAR
 {
     /** */
     private static final long serialVersionUID = 20150826L;
@@ -56,23 +56,23 @@ public class Lane extends CrossSectionElement implements Serializable
     /** type of lane to deduce compatibility with GTU types. */
     private final LaneType laneType;
 
-    /** in direction of geometry, reverse, or both. */
-    // TODO this can differ per GTU type. In an overtake lane, cars might overtake and trucks not
-    private final LongitudinalDirectionality directionality;
-
-    /** Lane capacity in vehicles per time unit. This is a mutable property (e.g., blockage); thus not final. */
-    private DoubleScalar.Abs<FrequencyUnit> capacity;
-
-    /** the speed limit of this lane. */
-    // TODO this can differ per GTU type. Cars might be allowed to drive 120 km/h and trucks 90 km/h
-    private DoubleScalar.Abs<SpeedUnit> speedLimit;
+    /**
+     * The direction in which vehicles can drive, i.e., in direction of geometry, reverse, or both. This can differ per GTU
+     * type. In an overtake lane, cars might overtake and trucks not
+     */
+    private final Map<GTUType, LongitudinalDirectionality> directionalityMap;
 
     /**
-     * Sensors on the lane to trigger behavior of the GTU, sorted by longitudinal position. We assume for now that all GTU Types
-     * trigger the sensors in an equal way.
+     * the speed limit of this lane. This can differ per GTU type. Cars might be allowed to drive 120 km/h and trucks 90 km/h.
+     * If the speed limit is the same for all GTU types, GTUType.ALL will be used.
      */
-    // TODO Probably the triggering of sensors has to be done per GTU type.
-    private final SortedMap<Double, List<Sensor>> sensors = new TreeMap<>();
+    private Map<GTUType, DoubleScalar.Abs<SpeedUnit>> speedLimitMap;
+
+    /**
+     * Sensors on the lane to trigger behavior of the GTU, sorted by longitudinal position. The triggering of sensors is done
+     * per GTU type, so different GTUs can trigger different sensors.
+     */
+    private final SortedMap<Double, List<GTUTypeSensor>> sensors = new TreeMap<>();
 
     /** GTUs ordered by increasing longitudinal position. */
     private final List<LaneBasedGTU> gtuList = new ArrayList<LaneBasedGTU>();
@@ -114,28 +114,57 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param beginWidth DoubleScalar.Rel&lt;LengthUnit&gt;; start width, positioned <i>symmetrically around</i> the design line
      * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; end width, positioned <i>symmetrically around</i> the design line
      * @param laneType type of lane to deduce compatibility with GTU types
+     * @param directionalityMap in direction of geometry, reverse, or both, specified per GTU Type
+     * @param speedLimitMap speed limit on this lane, specified per GTU Type
+     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws NetworkException when id equal to null or not unique
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public Lane(final CrossSectionLink parentLink, final String id, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart,
+        final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd, final DoubleScalar.Rel<LengthUnit> beginWidth,
+        final DoubleScalar.Rel<LengthUnit> endWidth, final LaneType laneType,
+        final Map<GTUType, LongitudinalDirectionality> directionalityMap,
+        final Map<GTUType, DoubleScalar.Abs<SpeedUnit>> speedLimitMap) throws OTSGeometryException, NetworkException
+    {
+        super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
+        this.laneType = laneType;
+        this.directionalityMap = directionalityMap;
+        this.speedLimitMap = speedLimitMap;
+    }
+
+    /**
+     * @param parentLink Cross Section Link to which the element belongs.
+     * @param id the id of this lane within the link; should be unique within the link.
+     * @param lateralOffsetAtStart DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
+     *            CrossSectionLink with respect to the design line of the parent Link at the start of the parent Link
+     * @param lateralOffsetAtEnd DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
+     *            CrossSectionLink with respect to the design line of the parent Link at the end of the parent Link
+     * @param beginWidth DoubleScalar.Rel&lt;LengthUnit&gt;; start width, positioned <i>symmetrically around</i> the design line
+     * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; end width, positioned <i>symmetrically around</i> the design line
+     * @param laneType type of lane to deduce compatibility with GTU types
      * @param directionality in direction of geometry, reverse, or both
-     * @param capacity Lane capacity in vehicles per time unit. This is a mutable property (e.g., blockage)
      * @param speedLimit speed limit on this lane
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public Lane(final CrossSectionLink parentLink, final String id,
-        final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd,
-        final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth, final LaneType laneType,
-        final LongitudinalDirectionality directionality, final DoubleScalar.Abs<FrequencyUnit> capacity,
+    public Lane(final CrossSectionLink parentLink, final String id, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart,
+        final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd, final DoubleScalar.Rel<LengthUnit> beginWidth,
+        final DoubleScalar.Rel<LengthUnit> endWidth, final LaneType laneType,
+        final LongitudinalDirectionality directionality,
         final DoubleScalar.Abs<SpeedUnit> speedLimit) throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
         this.laneType = laneType;
-        this.directionality = directionality;
-        this.capacity = capacity;
-        this.speedLimit = speedLimit;
+        this.directionalityMap = new LinkedHashMap<>(1);
+        this.directionalityMap.put(GTUType.ALL, directionality);
+        this.speedLimitMap = new LinkedHashMap<>();
+        this.speedLimitMap.put(GTUType.ALL, speedLimit);
     }
 
     /**
-     * Retrieve one of the sets of neighboring Lanes.
+     * Retrieve one of the sets of neighboring Lanes that is accessible for the given type of GTU. A defensive copy of the
+     * internal data structure is returned.
      * @param direction LateralDirectionality; either LEFT or RIGHT, relative to the DESIGN LINE of the link
      * @param gtuType the GTU type to check the accessibility for
      * @return Set&lt;Lane&gt;; the indicated set of neighboring Lanes
@@ -147,6 +176,7 @@ public class Lane extends CrossSectionElement implements Serializable
             this.leftNeighbors = new LinkedHashMap<>(1);
             this.rightNeighbors = new LinkedHashMap<>(1);
         }
+
         if (!this.leftNeighbors.containsKey(gtuType) || !this.rightNeighbors.containsKey(gtuType))
         {
             Set<Lane> leftSet = new LinkedHashSet<>(1);
@@ -169,16 +199,26 @@ public class Lane extends CrossSectionElement implements Serializable
                 }
             }
         }
-        return direction == LateralDirectionality.LEFT ? this.leftNeighbors.get(gtuType) : this.rightNeighbors.get(gtuType);
+        
+        Set<Lane> lanes = new LinkedHashSet<>();
+        if (direction == LateralDirectionality.LEFT)
+        {
+            lanes.addAll(this.leftNeighbors.get(gtuType));
+        }
+        else
+        {
+            lanes.addAll(this.rightNeighbors.get(gtuType));
+        }
+        return lanes;
     }
 
     /** Lateral alignment margin for longitudinally connected Lanes. */
-    static final DoubleScalar.Rel<LengthUnit> ADJACENT_MARGIN = new DoubleScalar.Rel<LengthUnit>(0.2, LengthUnit.METER);
+    static final Length.Rel ADJACENT_MARGIN = new Length.Rel(0.2, METER);
 
     /**
      * Determine whether another lane is adjacent to this lane (dependent on distance) and accessible (dependent on stripes) for
      * a certain GTU type (dependent on usability of the adjacent lane for that GTU type). This method assumes that when there
-     * is NO stripe between two adjacent lanes that are accessible for the GTU type, the GTU can enter that lane.
+     * is NO stripe between two adjacent lanes that are accessible for the GTU type, the GTU can enter that lane. <br>
      * @param lane the other lane to evaluate
      * @param direction the direction to look at, relative to the DESIGN LINE of the link. This is a very important aspect to
      *            note: all information is stored relative to the direction of the design line, and not in a driving direction,
@@ -189,7 +229,7 @@ public class Lane extends CrossSectionElement implements Serializable
     private boolean laterallyAdjacentAndAccessible(final Lane lane, final LateralDirectionality direction,
         final GTUType gtuType)
     {
-        if (!lane.getLaneType().isCompatible(gtuType))
+        if (!lane.getLaneType().isCompatible(gtuType) || gtuType.equals(GTUType.ALL) || gtuType.equals(GTUType.NONE))
         {
             // not accessible for the given GTU type
             return false;
@@ -227,7 +267,8 @@ public class Lane extends CrossSectionElement implements Serializable
             }
         }
 
-        else // direction.equals(LateralDirectionality.RIGHT)
+        else
+        // direction.equals(LateralDirectionality.RIGHT)
         {
             if (Math.abs((this.designLineOffsetAtBegin.getSI() - this.beginWidth.getSI() / 2.0)
                 - (lane.designLineOffsetAtBegin.getSI() + lane.beginWidth.getSI() / 2.0)) < ADJACENT_MARGIN.getSI()
@@ -258,7 +299,7 @@ public class Lane extends CrossSectionElement implements Serializable
                 return true;
             }
         }
-        
+
         // no lanes were found that are close enough laterally.
         return false;
     }
@@ -266,9 +307,10 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * Insert the sensor at the right place in the sensor list of this lane.
      * @param sensor the sensor to add
+     * @param gtuType the GTU type that triggers this sensor; use GTUType.ALL is all GTUs trigger it
      * @throws NetworkException when the position of the sensor is beyond (or before) the range of this Lane
      */
-    public final void addSensor(final Sensor sensor) throws NetworkException
+    public final void addSensor(final Sensor sensor, final GTUType gtuType) throws NetworkException
     {
         double position = sensor.getLongitudinalPositionSI();
         if (position < 0 || position > getLength().getSI())
@@ -276,13 +318,13 @@ public class Lane extends CrossSectionElement implements Serializable
             throw new NetworkException("Illegal position for sensor " + position + " valid range is 0.."
                 + getLength().getSI());
         }
-        List<Sensor> sensorList = this.sensors.get(position);
+        List<GTUTypeSensor> sensorList = this.sensors.get(position);
         if (null == sensorList)
         {
-            sensorList = new ArrayList<Sensor>(1);
+            sensorList = new ArrayList<GTUTypeSensor>(1);
             this.sensors.put(position, sensorList);
         }
-        sensorList.add(sensor);
+        sensorList.add(new GTUTypeSensor(gtuType, sensor));
     }
 
     /**
@@ -292,29 +334,48 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final void removeSensor(final Sensor sensor) throws NetworkException
     {
-        List<Sensor> sensorList = this.sensors.get(sensor.getLongitudinalPosition().getSI());
+        List<GTUTypeSensor> sensorList = this.sensors.get(sensor.getLongitudinalPosition().getSI());
         if (null == sensorList)
         {
             throw new NetworkException("No sensor at " + sensor.getLongitudinalPositionSI());
         }
-        sensorList.remove(sensor);
-        if (sensorList.size() == 0)
+        List<GTUTypeSensor> sensorList2 = new ArrayList<GTUTypeSensor>(1);
+        for (GTUTypeSensor gs : sensorList)
+        {
+            if (!gs.getSensor().equals(sensor))
+            {
+                sensorList2.add(gs);
+            }
+        }
+        if (sensorList2.size() == 0)
         {
             this.sensors.remove(sensor.getLongitudinalPosition().getSI());
+        }
+        else
+        {
+            this.sensors.put(sensor.getLongitudinalPosition().getSI(), sensorList2);
         }
     }
 
     /**
-     * Retrieve the list of Sensors of this Lane in the specified distance range.
+     * Retrieve the list of Sensors of this Lane in the specified distance range for the given GTUType. The sensors that are
+     * triggered by GTUTypes.ALL are added as well. The resulting list is a defensive copy.
      * @param minimumPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the minimum distance on the Lane
      * @param maximumPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum distance on the Lane
+     * @param gtuType the GTU type to provide the sensors for
      * @return List&lt;Sensor&gt;; list of the sensor in the specified range
      */
     public final List<Sensor> getSensors(final DoubleScalar.Rel<LengthUnit> minimumPosition,
-        final DoubleScalar.Rel<LengthUnit> maximumPosition)
+        final DoubleScalar.Rel<LengthUnit> maximumPosition, final GTUType gtuType)
     {
         ArrayList<Sensor> result = new ArrayList<Sensor>();
-        for (List<Sensor> sensorList : this.sensors.subMap(minimumPosition.getSI(), maximumPosition.getSI()).values())
+        for (List<Sensor> sensorList : this.getSensors(gtuType).subMap(minimumPosition.getSI(), maximumPosition.getSI())
+            .values())
+        {
+            result.addAll(sensorList);
+        }
+        for (List<Sensor> sensorList : this.getSensors(GTUType.ALL).subMap(minimumPosition.getSI(), maximumPosition.getSI())
+            .values())
         {
             result.addAll(sensorList);
         }
@@ -322,11 +383,30 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
-     * @return sensors.
+     * Retrieve the list of Sensors of this Lane for the given GTUType. The sensors that are triggered by GTUTypes.ALL are added
+     * as well. The resulting Map is a defensive copy.
+     * @param gtuType the GTU type to provide the sensors for
+     * @return all sensors on this lane for the given GTUType.
      */
-    public final SortedMap<Double, List<Sensor>> getSensors()
+    public final SortedMap<Double, List<Sensor>> getSensors(final GTUType gtuType)
     {
-        return this.sensors;
+        SortedMap<Double, List<Sensor>> sensorMap = new TreeMap<>();
+        for (double d : this.sensors.keySet())
+        {
+            List<Sensor> sensorList = new ArrayList<>(1);
+            for (GTUTypeSensor gs : this.sensors.get(d))
+            {
+                if (gs.getGtuType().equals(gtuType) || gs.getGtuType().equals(GTUType.ALL))
+                {
+                    sensorList.add(gs.getSensor());
+                }
+            }
+            if (sensorList.size() > 0)
+            {
+                sensorMap.put(d, sensorList);
+            }
+        }
+        return sensorMap;
     }
 
     /**
@@ -341,7 +421,7 @@ public class Lane extends CrossSectionElement implements Serializable
     public final void scheduleTriggers(final LaneBasedGTU gtu, final double referenceStartSI, final double referenceMoveSI)
         throws RemoteException, NetworkException, SimRuntimeException
     {
-        for (List<Sensor> sensorList : this.sensors.values())
+        for (List<Sensor> sensorList : getSensors(gtu.getGTUType()).values())
         {
             for (Sensor sensor : sensorList)
             {
@@ -576,7 +656,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * acceptable.
      */
     /** Lateral alignment margin for longitudinally connected Lanes. */
-    static final DoubleScalar.Rel<LengthUnit> LATERAL_MARGIN = new DoubleScalar.Rel<LengthUnit>(0.5, LengthUnit.METER);
+    static final Length.Rel LATERAL_MARGIN = new Length.Rel(0.5, METER);
 
     /**
      * The next lane(s) are cached, as it is too expensive to make the calculation every time. There are several possibilities:
@@ -676,8 +756,8 @@ public class Lane extends CrossSectionElement implements Serializable
         Set<Lane> candidates = new LinkedHashSet<>(1);
         for (Lane lane : neighbors(lateralDirection, gtuType))
         {
-            if (lane.getDirectionality().equals(LongitudinalDirectionality.BOTH)
-                || lane.getDirectionality().equals(this.getDirectionality()))
+            if (lane.getDirectionality(gtuType).equals(LongitudinalDirectionality.BOTH)
+                || lane.getDirectionality(gtuType).equals(this.getDirectionality(gtuType)))
             {
                 candidates.add(lane);
             }
@@ -723,27 +803,20 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
-     * @return capacity.
-     */
-    public final DoubleScalar.Abs<FrequencyUnit> getCapacity()
-    {
-        return this.capacity;
-    }
-
-    /**
-     * @param capacity set capacity.
-     */
-    public final void setCapacity(final DoubleScalar.Abs<FrequencyUnit> capacity)
-    {
-        this.capacity = capacity;
-    }
-
-    /**
+     * @param gtuType the GTU type to provide the speed limit for
      * @return speedLimit.
      */
-    public final DoubleScalar.Abs<SpeedUnit> getSpeedLimit()
+    public final DoubleScalar.Abs<SpeedUnit> getSpeedLimit(final GTUType gtuType)
     {
-        return this.speedLimit;
+        if (this.speedLimitMap.containsKey(gtuType))
+        {
+            return this.speedLimitMap.get(gtuType);
+        }
+        if (this.speedLimitMap.containsKey(GTUType.ALL))
+        {
+            return this.speedLimitMap.get(GTUType.ALL);
+        }
+        return new Speed.Abs(0.0, METER_PER_SECOND); // XXX is this what we want, or should we throw exception?
     }
 
     /**
@@ -755,11 +828,20 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
+     * @param gtuType the GTU type to provide the directionality for
      * @return directionality.
      */
-    public final LongitudinalDirectionality getDirectionality()
+    public final LongitudinalDirectionality getDirectionality(final GTUType gtuType)
     {
-        return this.directionality;
+        if (this.directionalityMap.containsKey(gtuType))
+        {
+            return this.directionalityMap.get(gtuType);
+        }
+        if (this.directionalityMap.containsKey(GTUType.ALL))
+        {
+            return this.directionalityMap.get(GTUType.ALL);
+        }
+        return LongitudinalDirectionality.NONE;
     }
 
     /**
@@ -818,4 +900,52 @@ public class Lane extends CrossSectionElement implements Serializable
         return true;
     }
 
+    /**
+     * The combination of GTUType and Sensor in one record.
+     * <p>
+     * Copyright (c) 2013-2014 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * <p>
+     * $LastChangedDate$, @version $Revision$, by $Author$,
+     * initial version Aug 28, 2015 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     */
+    private class GTUTypeSensor implements Serializable
+    {
+        /** */
+        private static final long serialVersionUID = 20150828L;
+
+        /** the GTU type that triggers this sensor; GTUType.ALL if all GTU types trigger the sensor. */
+        private final GTUType gtuType;
+
+        /** the sensor that is triggers by the gtuType. */
+        private final Sensor sensor;
+
+        /**
+         * @param gtuType the GTU type that triggers this sensor; GTUType.ALL if all GTU types trigger the sensor
+         * @param sensor the sensor that is triggers by the gtuType
+         */
+        public GTUTypeSensor(final GTUType gtuType, final Sensor sensor)
+        {
+            this.gtuType = gtuType;
+            this.sensor = sensor;
+        }
+
+        /**
+         * @return gtuType
+         */
+        public final GTUType getGtuType()
+        {
+            return this.gtuType;
+        }
+
+        /**
+         * @return sensor
+         */
+        public final Sensor getSensor()
+        {
+            return this.sensor;
+        }
+    }
 }

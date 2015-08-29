@@ -2,6 +2,8 @@ package org.opentrafficsim.core.network.factory;
 
 import java.awt.Color;
 import java.rmi.RemoteException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.naming.NamingException;
 
@@ -10,6 +12,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
@@ -17,7 +20,6 @@ import org.opentrafficsim.core.network.animation.LaneAnimation;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
-import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -91,10 +93,11 @@ public final class LaneFactory
         final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException, NetworkException,
         OTSGeometryException
     {
-        DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
-        Lane result =
-            new Lane(link, id, latPosAtStart, latPosAtEnd, width, width, laneType, LongitudinalDirectionality.FORWARD,
-                f2000, speedLimit);
+        Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
+        directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.FORWARD);
+        Map<GTUType, DoubleScalar.Abs<SpeedUnit>> speedMap = new LinkedHashMap<>();
+        speedMap.put(GTUType.ALL, speedLimit);
+        Lane result = new Lane(link, id, latPosAtStart, latPosAtEnd, width, width, laneType, directionalityMap, speedMap);
         if (simulator instanceof OTSAnimatorInterface)
         {
             new LaneAnimation(result, simulator, Color.LIGHT_GRAY);

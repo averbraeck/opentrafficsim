@@ -83,7 +83,7 @@ public class SensorTest
             TriggerSensor sensor =
                 new TriggerSensor(lane, longitudinalPosition, RelativePosition.REFERENCE, "Trigger@" + lane.toString(),
                     simulator);
-            lane.addSensor(sensor);
+            lane.addSensor(sensor, GTUType.ALL);
         }
 
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =

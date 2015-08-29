@@ -23,6 +23,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
@@ -97,7 +98,7 @@ public class XMLNetworkGeneratorTest
 
             // add a sensor to check the time the vehicles pass
             lane23.addSensor(new ReportingSensor(lane23, new DoubleScalar.Rel<LengthUnit>(1E-4, LengthUnit.SI),
-                RelativePosition.REFERENCE, "LANE23.START", simulator));
+                RelativePosition.REFERENCE, "LANE23.START", simulator), GTUType.ALL);
 
             simulator.setSpeedFactor(1000);
             simulator.start();

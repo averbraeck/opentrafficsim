@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu.generator;
 
-import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -8,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar.LaneBasedIndividualCarBuilder;
@@ -266,7 +264,7 @@ public abstract class AbstractGTUGenerator
             minimumHeadway =
                 followingModel.minimumHeadway(carBuilder.getInitialSpeed(), headwayGTU.getOtherGTU()
                     .getLongitudinalVelocity(), new DoubleScalar.Rel<LengthUnit>(1.0, LengthUnit.CENTIMETER), generatorLane
-                    .getSpeedLimit(), carBuilder.getMaximumVelocity());
+                    .getSpeedLimit(carBuilder.getGtuType()), carBuilder.getMaximumVelocity());
             double acc =
                 followingModel.computeAcceleration(carBuilder.getInitialSpeed(), carBuilder.getMaximumVelocity(),
                     headwayGTU.getOtherGTU().getLongitudinalVelocity(), minimumHeadway, carBuilder.getMaximumVelocity())
