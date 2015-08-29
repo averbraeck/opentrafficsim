@@ -429,7 +429,7 @@ class SequentialModel implements OTSModelInterface
                 {
                     Sensor sensor =
                         new SinkSensor(lanes[0], new DoubleScalar.Rel<LengthUnit>(10.0, LengthUnit.METER), this.simulator);
-                    lanes[0].addSensor(sensor);
+                    lanes[0].addSensor(sensor, GTUType.ALL);
                 }
                 this.path.add(lanes[0]);
                 links.add(lanes[0].getParentLink());
