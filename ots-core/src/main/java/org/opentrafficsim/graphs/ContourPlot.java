@@ -20,6 +20,11 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingConstants;
 import javax.swing.event.EventListenerList;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.ValueException;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.vector.DoubleVector;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItem;
@@ -36,11 +41,6 @@ import org.jfree.data.xy.XYZDataset;
 import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
 /**
  * Common code for a contour plot. <br>
@@ -558,8 +558,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
 
     /** {@inheritDoc} */
     @Override
-    public final void addData(final AbstractLaneBasedGTU car, final Lane lane) throws RemoteException,
-        NetworkException
+    public final void addData(final AbstractLaneBasedGTU car, final Lane lane) throws RemoteException, NetworkException
     {
         // System.out.println("addData car: " + car + ", lastEval: " + startTime);
         // Convert the position of the car to a position on path.

@@ -8,6 +8,12 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -23,12 +29,6 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.NoTrafficLane;
 import org.opentrafficsim.core.network.lane.Shoulder;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * <p>

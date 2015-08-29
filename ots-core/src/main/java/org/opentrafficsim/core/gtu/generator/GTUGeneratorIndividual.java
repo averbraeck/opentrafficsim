@@ -4,6 +4,10 @@ import java.rmi.RemoteException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
@@ -11,11 +15,7 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DistContinuousDoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.units.distributions.DistContinuousDoubleScalar;
 
 /**
  * Generate GTUs.

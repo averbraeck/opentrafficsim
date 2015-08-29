@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.lane.AbstractTrafficLight;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.CrossSectionElementTag.ElementType;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -106,7 +106,7 @@ class TrafficLightTag
             throw new SAXException("TRAFFICLIGHT: CLASS NAME " + trafficLightTag.className + " for trafficLight "
                 + trafficLightTag.name + " on lane " + laneName + " could not be loaded.");
         }
-        
+
         if (!linkTag.trafficLightTags.containsKey(laneName))
             linkTag.trafficLightTags.put(laneName, new ArrayList<TrafficLightTag>());
         linkTag.trafficLightTags.get(laneName).add(trafficLightTag);

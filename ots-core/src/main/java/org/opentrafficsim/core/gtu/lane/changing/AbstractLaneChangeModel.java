@@ -4,6 +4,10 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Map;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.AbstractGTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.DualAccelerationStep;
@@ -13,11 +17,6 @@ import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * Common code for a family of lane change models like in M. Treiber and A. Kesting <i>Traffic Flow Dynamics</i>,
@@ -44,15 +43,14 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
     {
         try
         {
-            Map<Lane, Rel<LengthUnit>> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
+            Map<Lane, DoubleScalar.Rel<LengthUnit>> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
             Lane lane = positions.keySet().iterator().next();
             DoubleScalar.Rel<LengthUnit> longitudinalPosition = positions.get(lane);
             // TODO make this driving side dependent; i.e. implement a general way to figure out on which side of the
             // road cars are supposed to drive
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;
             final LateralDirectionality nonPreferred = LateralDirectionality.LEFT;
-            Lane nonPreferredLane =
-                gtu.bestAccessibleAdjacentLane(lane, nonPreferred, longitudinalPosition);
+            Lane nonPreferredLane = gtu.bestAccessibleAdjacentLane(lane, nonPreferred, longitudinalPosition);
             Lane preferredLane = gtu.bestAccessibleAdjacentLane(lane, preferred, longitudinalPosition);
             GTUFollowingModel gtuFollowingModel = gtu.getGTUFollowingModel();
             if (null == gtuFollowingModel)

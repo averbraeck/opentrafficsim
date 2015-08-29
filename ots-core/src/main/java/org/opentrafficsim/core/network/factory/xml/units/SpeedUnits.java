@@ -3,9 +3,9 @@ package org.opentrafficsim.core.network.factory.xml.units;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>

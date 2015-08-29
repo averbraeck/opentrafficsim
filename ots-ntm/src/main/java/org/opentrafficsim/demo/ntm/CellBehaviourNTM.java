@@ -3,24 +3,23 @@ package org.opentrafficsim.demo.ntm;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-import org.opentrafficsim.core.unit.FrequencyUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.LinearDensityUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.unit.FrequencyUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.LinearDensityUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 26 Sep 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 26 Sep 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -64,8 +63,8 @@ public class CellBehaviourNTM extends CellBehaviour
         // parametersNTM.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)
         // * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
         double maxCap =
-                parametersNTM.getCapacity().getInUnit(FrequencyUnit.PER_HOUR)
-                        * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
+            parametersNTM.getCapacity().getInUnit(FrequencyUnit.PER_HOUR)
+                * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
         this.maxCapacityNTMArea = new Abs<FrequencyUnit>(maxCap, FrequencyUnit.PER_HOUR);
         this.area = area;
     }
@@ -74,20 +73,19 @@ public class CellBehaviourNTM extends CellBehaviour
      * @param accumulatedCars
      * @return actualSpeed.
      */
-    public DoubleScalar.Abs<SpeedUnit> retrieveCurrentSpeed(final double accumulatedCars,
-            final Rel<LengthUnit> roadLength)
+    public DoubleScalar.Abs<SpeedUnit> retrieveCurrentSpeed(final double accumulatedCars, final Rel<LengthUnit> roadLength)
     {
         double densityPerUnitDouble = this.getAccumulatedCars() / roadLength.getInUnit(LengthUnit.KILOMETER);
         double speedDouble;
         if (densityPerUnitDouble > this.getParametersNTM().getAccCritical().get(0))
         {
             Abs<LinearDensityUnit> densityPerUnit =
-                    new DoubleScalar.Abs<LinearDensityUnit>(densityPerUnitDouble, LinearDensityUnit.PER_KILOMETER);
+                new DoubleScalar.Abs<LinearDensityUnit>(densityPerUnitDouble, LinearDensityUnit.PER_KILOMETER);
             Abs<FrequencyUnit> capacityPerUnit =
-                    retrieveSupplyPerLengthUnit(accumulatedCars, roadLength, this.getParametersNTM());
+                retrieveSupplyPerLengthUnit(accumulatedCars, roadLength, this.getParametersNTM());
             speedDouble =
-                    capacityPerUnit.getInUnit(FrequencyUnit.PER_HOUR)
-                            / densityPerUnit.getInUnit(LinearDensityUnit.PER_KILOMETER);
+                capacityPerUnit.getInUnit(FrequencyUnit.PER_HOUR)
+                    / densityPerUnit.getInUnit(LinearDensityUnit.PER_KILOMETER);
         }
         else
         {
@@ -104,8 +102,8 @@ public class CellBehaviourNTM extends CellBehaviour
      * @return
      */
     // @Override
-    public Abs<FrequencyUnit> retrieveSupplyPerLengthUnit(final Double accumulatedCars,
-            final Rel<LengthUnit> roadLength, final ParametersNTM parametersNTM)
+    public Abs<FrequencyUnit> retrieveSupplyPerLengthUnit(final Double accumulatedCars, final Rel<LengthUnit> roadLength,
+        final ParametersNTM parametersNTM)
     {
         Abs<FrequencyUnit> supply = parametersNTM.getCapacity();
         double densityPerUnitDouble = this.getAccumulatedCars() / roadLength.getInUnit(LengthUnit.KILOMETER);
@@ -124,7 +122,7 @@ public class CellBehaviourNTM extends CellBehaviour
      * @return carProduction
      */
     public final Abs<FrequencyUnit> retrieveDemandPerLengthUnit(final double accumulatedCars,
-            final Rel<LengthUnit> roadLength, final ParametersNTM parametersNTM)
+        final Rel<LengthUnit> roadLength, final ParametersNTM parametersNTM)
     {
         double densityPerUnitDouble = this.getAccumulatedCars() / roadLength.getInUnit(LengthUnit.KILOMETER);
         ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
@@ -132,23 +130,20 @@ public class CellBehaviourNTM extends CellBehaviour
         p.setLocation(0, 0);
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(parametersNTM.getAccCritical().get(0),
-                parametersNTM.getCapacity().getInUnit(FrequencyUnit.PER_HOUR));
+        p.setLocation(parametersNTM.getAccCritical().get(0), parametersNTM.getCapacity().getInUnit(FrequencyUnit.PER_HOUR));
         xyPairs.add(p);
         p = new Point2D.Double();
-        p.setLocation(parametersNTM.getAccCritical().get(1),
-                parametersNTM.getCapacity().getInUnit(FrequencyUnit.PER_HOUR));
+        p.setLocation(parametersNTM.getAccCritical().get(1), parametersNTM.getCapacity().getInUnit(FrequencyUnit.PER_HOUR));
         xyPairs.add(p);
         p = new Point2D.Double();
         p.setLocation(parametersNTM.getAccCritical().get(2), 0);
         xyPairs.add(p);
         double carProduction =
-                FundamentalDiagram.PieceWiseLinear(xyPairs, densityPerUnitDouble).getInUnit(FrequencyUnit.PER_HOUR);
+            FundamentalDiagram.PieceWiseLinear(xyPairs, densityPerUnitDouble).getInUnit(FrequencyUnit.PER_HOUR);
         if (densityPerUnitDouble > parametersNTM.getAccCritical().get(1))
         {
             Double MINCAP = 0.1;
-            carProduction =
-                    Math.max(MINCAP * parametersNTM.getCapacity().getInUnit(FrequencyUnit.PER_HOUR), carProduction);
+            carProduction = Math.max(MINCAP * parametersNTM.getCapacity().getInUnit(FrequencyUnit.PER_HOUR), carProduction);
         }
         return new DoubleScalar.Abs<FrequencyUnit>(carProduction, FrequencyUnit.PER_HOUR);
     }

@@ -6,16 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.djunits.unit.FrequencyUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.opentrafficsim.core.network.LinkEdge;
-import org.opentrafficsim.core.unit.FrequencyUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -28,12 +28,11 @@ import com.vividsolutions.jts.index.strtree.STRtree;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 29 Oct 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 29 Oct 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -46,7 +45,7 @@ public class BuildGraph
      * Build the graph using roads between touching areas, flowLinks and Cordon areas (artificially created).
      */
     static void buildGraph(NTMModel model, Map<String, Area> areasToUse, Map<String, Node> centroidsToUse,
-            Map<String, Link> shpConnectorsToUse)
+        Map<String, Link> shpConnectorsToUse)
     {
         /** debug information?. */
         final boolean DEBUG = false;
@@ -104,16 +103,16 @@ public class BuildGraph
                 if (nodeA == null)
                 {
                     nodeA =
-                            addNodeToAreaGraph(shpLink, (Node) shpLink.getStartNode(), model.getNodeAreaGraphMap(),
-                                    areaNodeCentroidMap, areasToUse.values(), model);
+                        addNodeToAreaGraph(shpLink, (Node) shpLink.getStartNode(), model.getNodeAreaGraphMap(),
+                            areaNodeCentroidMap, areasToUse.values(), model);
                 }
 
                 nodeB = (BoundedNode) model.getNodeAreaGraphMap().get(shpLink.getEndNode().getId());
                 if (nodeB == null)
                 {
                     nodeB =
-                            addNodeToAreaGraph(shpLink, (Node) shpLink.getEndNode(), model.getNodeAreaGraphMap(),
-                                    areaNodeCentroidMap, areasToUse.values(), model);
+                        addNodeToAreaGraph(shpLink, (Node) shpLink.getEndNode(), model.getNodeAreaGraphMap(),
+                            areaNodeCentroidMap, areasToUse.values(), model);
                 }
             }
         }
@@ -187,8 +186,8 @@ public class BuildGraph
             Area aB;
 
             /*
-             * if (le.getLink().getStartNode().getId().equals("65800") &&
-             * le.getLink().getEndNode().getId().equals("78816")) { System.out.println("no"); }
+             * if (le.getLink().getStartNode().getId().equals("65800") && le.getLink().getEndNode().getId().equals("78816")) {
+             * System.out.println("no"); }
              */
             aA = findArea(le.getLink().getStartNode().getPoint().getCoordinate(), areasToUse.values());
             aB = findArea(le.getLink().getEndNode().getPoint().getCoordinate(), areasToUse.values());
@@ -202,7 +201,7 @@ public class BuildGraph
                 // every CTM link receives a set of FlowCells that will be simulated as a nested process within the
                 // Network Transmission Model
                 createFlowConnectors(aA, aB, le, linkMap, areaNodeCentroidMap, model.getNodeAreaGraphMap(), model,
-                        areasToUse);
+                    areasToUse);
             }
             // for all other links, inspect if they connect areas (startNode in areaA and endNode in area B (or vice
             // versa))
@@ -218,18 +217,17 @@ public class BuildGraph
                 {
                     if (model.getAreaGraph().containsEdge(cA, cB))
                     {
-                        if (le.getLink().getCapacity() != null
-                                && model.getAreaGraph().getEdge(cA, cB).getLink() != null)
+                        if (le.getLink().getCapacity() != null && model.getAreaGraph().getEdge(cA, cB).getLink() != null)
                         {
                             if (model.getAreaGraph().getEdge(cA, cB).getLink().getCorridorCapacity() != null)
                             {
-                                model.getAreaGraph().getEdge(cA, cB).getLink()
-                                        .addCorridorCapacity(le.getLink().getCapacity());
+                                model.getAreaGraph().getEdge(cA, cB).getLink().addCorridorCapacity(
+                                    le.getLink().getCapacity());
                             }
                             else
                             {
-                                System.out.println("no corridorCapacity computed for this link/edge: node " + cA
-                                        + " , " + cB);
+                                System.out.println("no corridorCapacity computed for this link/edge: node " + cA + " , "
+                                    + cB);
                             }
 
                         }
@@ -329,8 +327,7 @@ public class BuildGraph
             {
                 BoundedNode cSch = (BoundedNode) areaNodeCentroidMap.get(aSch);
                 BoundedNode cVb = (BoundedNode) areaNodeCentroidMap.get(aVb);
-                DijkstraShortestPath<Node, LinkEdge<Link>> sp =
-                        new DijkstraShortestPath<>(model.getAreaGraph(), cSch, cVb);
+                DijkstraShortestPath<Node, LinkEdge<Link>> sp = new DijkstraShortestPath<>(model.getAreaGraph(), cSch, cVb);
                 System.out.println("Length=" + sp.getPathLength());
                 List<LinkEdge<Link>> spList = sp.getPathEdgeList();
                 if (spList != null)
@@ -353,7 +350,7 @@ public class BuildGraph
      * @param cBVertex
      */
     private static void addGraphConnector(NTMModel model, Node cAVertex, Node cBVertex, Abs<SpeedUnit> speedA,
-            Abs<SpeedUnit> speedB, LinkEdge le, TrafficBehaviourType trafficBehaviourType)
+        Abs<SpeedUnit> speedB, LinkEdge le, TrafficBehaviourType trafficBehaviourType)
     {
         DijkstraShortestPath<Node, LinkEdge<Link>> sp = null;
         // if (model.getLinkGraph().containsVertex(cAVertex) && model.getLinkGraph().containsVertex(cBVertex))
@@ -380,7 +377,7 @@ public class BuildGraph
                 double timeDouble = 0.5 * distance / speedA.getSI() + 0.5 * distance / speedB.getSI();
                 time = new DoubleScalar.Rel<TimeUnit>(timeDouble, TimeUnit.SECOND);
                 double speedDouble =
-                        0.5 * speedA.getInUnit(SpeedUnit.KM_PER_HOUR) + 0.5 * speedB.getInUnit(SpeedUnit.KM_PER_HOUR);
+                    0.5 * speedA.getInUnit(SpeedUnit.KM_PER_HOUR) + 0.5 * speedB.getInUnit(SpeedUnit.KM_PER_HOUR);
                 DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(speedDouble, SpeedUnit.KM_PER_HOUR);
                 Link newLink = Link.createLink(cAVertex, cBVertex, null, speed, time, trafficBehaviourType);
                 if (le.getLink().getCapacity() != null)
@@ -397,8 +394,8 @@ public class BuildGraph
             }
             else
             {
-                System.out.println("No path between these nodes, while trying to connect areas" + cAVertex + ", "
-                        + cBVertex);
+                System.out
+                    .println("No path between these nodes, while trying to connect areas" + cAVertex + ", " + cBVertex);
             }
         }
     }
@@ -412,7 +409,7 @@ public class BuildGraph
      * @param type
      */
     private static void addLinkEdge(Node flowNodeA, Node flowNodeB, LinkEdge<Link> linkEdge, TrafficBehaviourType type,
-            SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph)
+        SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> graph)
     {
 
         if (!graph.containsEdge(flowNodeA, flowNodeB))
@@ -431,8 +428,8 @@ public class BuildGraph
                         else
                         {
                             java.lang.Double timeDouble =
-                                    linkEdge.getLink().getLength().getInUnit(LengthUnit.KILOMETER)
-                                            / linkEdge.getLink().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+                                linkEdge.getLink().getLength().getInUnit(LengthUnit.KILOMETER)
+                                    / linkEdge.getLink().getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
                             DoubleScalar.Rel<TimeUnit> time = new DoubleScalar.Rel<TimeUnit>(timeDouble, TimeUnit.HOUR);
                             linkEdge.getLink().setTime(time);
                             graph.setEdgeWeight(linkEdge, linkEdge.getLink().getTime().getInUnit(TimeUnit.HOUR));
@@ -466,7 +463,7 @@ public class BuildGraph
      * @param map receives node
      */
     private static BoundedNode addNodeToLinkGraph(Link shpLink, Node shpLinkNode, Map<String, Node> map,
-            Collection<Area> areas, NTMModel model)
+        Collection<Area> areas, NTMModel model)
     {
         Area area = findArea(shpLinkNode.getPoint().getCoordinate(), areas);
         /*
@@ -475,7 +472,7 @@ public class BuildGraph
         // BoundedNode node1 = (BoundedNode) shpLinkNode;
         // node1.setArea(area);
         BoundedNode node =
-                new BoundedNode(shpLinkNode.getPoint().getCoordinate(), shpLinkNode.getId(), area, shpLink.getBehaviourType());
+            new BoundedNode(shpLinkNode.getPoint().getCoordinate(), shpLinkNode.getId(), area, shpLink.getBehaviourType());
         map.put(shpLinkNode.getId(), node);
         if (!model.getLinkGraph().containsVertex(node))
         {
@@ -494,7 +491,7 @@ public class BuildGraph
      * @param nodeGraphMap receives node
      */
     private static BoundedNode addNodeToAreaGraph(Link shpLink, Node shpLinkNode, Map<String, Node> nodeGraphMap,
-            Map<Area, Node> areaNodeCentroidMap, Collection<Area> areas, NTMModel model)
+        Map<Area, Node> areaNodeCentroidMap, Collection<Area> areas, NTMModel model)
     {
         Area area = findArea(shpLinkNode.getPoint().getCoordinate(), areas);
         /*
@@ -503,7 +500,7 @@ public class BuildGraph
         // BoundedNode node1 = (BoundedNode) shpLinkNode;
         // node1.setArea(area);
         BoundedNode node =
-                new BoundedNode(shpLinkNode.getPoint().getCoordinate(), shpLinkNode.getId(), area, shpLink.getBehaviourType());
+            new BoundedNode(shpLinkNode.getPoint().getCoordinate(), shpLinkNode.getId(), area, shpLink.getBehaviourType());
         nodeGraphMap.put(shpLinkNode.getId(), node);
         areaNodeCentroidMap.put(area, node);
         shpLinkNode = node;
@@ -598,7 +595,7 @@ public class BuildGraph
         catch (TopologyException te)
         {
             System.out.println("TopologyException " + te.getMessage() + " when checking border of " + geom1 + " and "
-                    + geom2);
+                + geom2);
         }
         return touch;
     }
@@ -611,7 +608,7 @@ public class BuildGraph
      * @param areas2
      */
     private static void connectIsolatedAreas(final NTMModel model, final Map<String, Node> nodeGraphMap,
-            final Map<Area, Node> areaNodeCentroidMap, final Collection<Area> areas)
+        final Map<Area, Node> areaNodeCentroidMap, final Collection<Area> areas)
     {
         final SpatialIndex index = new STRtree();
         for (Area areaIndex : areas)
@@ -635,7 +632,7 @@ public class BuildGraph
             if (isolatedArea.getTouchingAreas().size() == 0)
             {
                 System.out.println("no touching area for number " + isolatedArea.getCentroidNr() + ", Area type: "
-                        + isolatedArea.getTrafficBehaviourType());
+                    + isolatedArea.getTrafficBehaviourType());
                 if (isolatedArea.getCentroidNr().equals("3794"))
                 {
                     System.out.println("no ");
@@ -646,8 +643,8 @@ public class BuildGraph
                 double searchDistance = MAX_SEARCH_DISTANCE;
                 search.expandBy(searchDistance);
                 /*
-                 * Query the spatial index for objects within the search envelope. Note that this just compares the
-                 * point envelope to the line envelopes so it is possible that the point is actually more distant than
+                 * Query the spatial index for objects within the search envelope. Note that this just compares the point
+                 * envelope to the line envelopes so it is possible that the point is actually more distant than
                  * MAX_SEARCH_DISTANCE from a line.
                  */
                 @SuppressWarnings("unchecked")
@@ -679,7 +676,7 @@ public class BuildGraph
                         else
                         {
                             DijkstraShortestPath<Node, LinkEdge<Link>> sp =
-                                    new DijkstraShortestPath<>(model.getLinkGraph(), nodeIsolated, nodeNear);
+                                new DijkstraShortestPath<>(model.getLinkGraph(), nodeIsolated, nodeNear);
                             List<LinkEdge<Link>> spList = sp.getPathEdgeList();
                             if (spList != null)
                             {
@@ -693,7 +690,7 @@ public class BuildGraph
                                     cumulativeLength += length;
                                     Area enteredArea = findArea(le.getLink().getEndNode().getPoint().getCoordinate(), areas);
                                     if (enteredArea != null && enteredArea != isolatedArea
-                                            && le.getLink().getBehaviourType() != TrafficBehaviourType.FLOW)
+                                        && le.getLink().getBehaviourType() != TrafficBehaviourType.FLOW)
                                     {
                                         isolatedArea.getTouchingAreas().add(enteredArea);
                                         Node centroidEntered = areaNodeCentroidMap.get(enteredArea);
@@ -702,20 +699,18 @@ public class BuildGraph
                                             System.out.println("No node in this area");
                                         }
                                         Abs<SpeedUnit> speedA =
-                                                new Abs<SpeedUnit>(cumulativeLength / cumulativeTime,
-                                                        SpeedUnit.KM_PER_HOUR);
+                                            new Abs<SpeedUnit>(cumulativeLength / cumulativeTime, SpeedUnit.KM_PER_HOUR);
                                         addGraphConnector(model, nodeIsolated, centroidEntered, speedA, speedA, le,
-                                                nodeIsolated.getBehaviourType());
+                                            nodeIsolated.getBehaviourType());
                                         break;
                                     }
                                     else if (le.getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
                                     {
                                         Node bN = nodeGraphMap.get(le.getLink().getStartNode().getId());
                                         Abs<SpeedUnit> speedA =
-                                                new Abs<SpeedUnit>(cumulativeLength / cumulativeTime,
-                                                        SpeedUnit.KM_PER_HOUR);
-                                        addGraphConnector(model, nodeIsolated, bN, speedA, speedA, le,
-                                                nodeIsolated.getBehaviourType());
+                                            new Abs<SpeedUnit>(cumulativeLength / cumulativeTime, SpeedUnit.KM_PER_HOUR);
+                                        addGraphConnector(model, nodeIsolated, bN, speedA, speedA, le, nodeIsolated
+                                            .getBehaviourType());
 
                                         break;
                                     }
@@ -736,7 +731,7 @@ public class BuildGraph
                                     cumulativeLength += length;
                                     Area enteredArea = findArea(le.getLink().getEndNode().getPoint().getCoordinate(), areas);
                                     if (enteredArea != null && enteredArea != isolatedArea
-                                            && le.getLink().getBehaviourType() != TrafficBehaviourType.FLOW)
+                                        && le.getLink().getBehaviourType() != TrafficBehaviourType.FLOW)
                                     {
                                         isolatedArea.getTouchingAreas().add(enteredArea);
                                         Node centroidEntered = areaNodeCentroidMap.get(enteredArea);
@@ -745,20 +740,18 @@ public class BuildGraph
                                             System.out.println("No node in this area");
                                         }
                                         Abs<SpeedUnit> speedA =
-                                                new Abs<SpeedUnit>(cumulativeLength / cumulativeTime,
-                                                        SpeedUnit.KM_PER_HOUR);
+                                            new Abs<SpeedUnit>(cumulativeLength / cumulativeTime, SpeedUnit.KM_PER_HOUR);
                                         addGraphConnector(model, centroidEntered, nodeIsolated, speedA, speedA, le,
-                                                nodeIsolated.getBehaviourType());
+                                            nodeIsolated.getBehaviourType());
                                         break;
                                     }
                                     else if (le.getLink().getBehaviourType() == TrafficBehaviourType.FLOW)
                                     {
                                         Node bN = nodeGraphMap.get(le.getLink().getStartNode().getId());
                                         Abs<SpeedUnit> speedA =
-                                                new Abs<SpeedUnit>(cumulativeLength / cumulativeTime,
-                                                        SpeedUnit.KM_PER_HOUR);
-                                        addGraphConnector(model, bN, nodeIsolated, speedA, speedA, le,
-                                                nodeIsolated.getBehaviourType());
+                                            new Abs<SpeedUnit>(cumulativeLength / cumulativeTime, SpeedUnit.KM_PER_HOUR);
+                                        addGraphConnector(model, bN, nodeIsolated, speedA, speedA, le, nodeIsolated
+                                            .getBehaviourType());
 
                                         break;
                                     }
@@ -786,8 +779,8 @@ public class BuildGraph
      * @param areaNodeCentroidMap
      */
     private static void createFlowConnectors(final Area areaStart, final Area areaEnd, final LinkEdge<Link> le,
-            final Map<String, LinkEdge<Link>> linkMap, final Map<Area, Node> areaNodeCentroidMap,
-            final Map<String, Node> nodeGraphMap, NTMModel model, Map<String, Area> areasToUse)
+        final Map<String, LinkEdge<Link>> linkMap, final Map<Area, Node> areaNodeCentroidMap,
+        final Map<String, Node> nodeGraphMap, NTMModel model, Map<String, Area> areasToUse)
     {
         Node node = (Node) le.getLink().getStartNode();
         BoundedNode flowNodeStart = (BoundedNode) nodeGraphMap.get(node.getId());
@@ -806,8 +799,7 @@ public class BuildGraph
 
         Link link = le.getLink();
         ArrayList<FlowCell> cells =
-                LinkCellTransmission.createCells(link, model.getSettingsNTM()
-                        .getTimeStepDurationCellTransmissionModel());
+            LinkCellTransmission.createCells(link, model.getSettingsNTM().getTimeStepDurationCellTransmissionModel());
         LinkCellTransmission linkCTM = new LinkCellTransmission(link, flowNodeStart, flowNodeEnd, cells);
         @SuppressWarnings({"unchecked", "rawtypes"})
         LinkEdge leNew = new LinkEdge(linkCTM);
@@ -820,12 +812,13 @@ public class BuildGraph
         for (LinkEdge<Link> urbanLink : linkMap.values())
         {
             if (urbanLink.getLink().getBehaviourType() == TrafficBehaviourType.ROAD
-                    || urbanLink.getLink().getBehaviourType() == TrafficBehaviourType.NTM)
+                || urbanLink.getLink().getBehaviourType() == TrafficBehaviourType.NTM)
             {
                 if (urbanLink.getLink().getEndNode().getId().equals(flowNodeStart.getId()))
                 {
                     // from urban (Area) to Highway (flow)
-                    Area aStart = findArea(urbanLink.getLink().getStartNode().getPoint().getCoordinate(), areasToUse.values());
+                    Area aStart =
+                        findArea(urbanLink.getLink().getStartNode().getPoint().getCoordinate(), areasToUse.values());
                     cA = (BoundedNode) areaNodeCentroidMap.get(aStart);
                     if (aStart != null)
                     {
@@ -837,8 +830,7 @@ public class BuildGraph
                         DoubleScalar.Abs<FrequencyUnit> capacity =
 
                         new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
-                        Link newLink =
-                                Link.createLink(cA, flowNodeStart, capacity, speed, null, TrafficBehaviourType.NTM);
+                        Link newLink = Link.createLink(cA, flowNodeStart, capacity, speed, null, TrafficBehaviourType.NTM);
                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
                         addLinkEdge(cA, flowNodeStart, newLinkEdge, TrafficBehaviourType.NTM, model.getAreaGraph());
 
@@ -846,7 +838,7 @@ public class BuildGraph
                     else
                     {
                         System.out.println("BuildGraph line 785: this Node is outside any area: "
-                                + urbanLink.getLink().getStartNode().getId());
+                            + urbanLink.getLink().getStartNode().getId());
                     }
 
                 }
@@ -864,16 +856,15 @@ public class BuildGraph
 
                         DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                         DoubleScalar.Abs<FrequencyUnit> capacity =
-                                new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
-                        Link newLink =
-                                Link.createLink(flowNodeEnd, cB, capacity, speed, null, TrafficBehaviourType.NTM);
+                            new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
+                        Link newLink = Link.createLink(flowNodeEnd, cB, capacity, speed, null, TrafficBehaviourType.NTM);
                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
                         addLinkEdge(flowNodeEnd, cB, newLinkEdge, TrafficBehaviourType.NTM, model.getAreaGraph());
                     }
                     else
                     {
                         System.out.println("BuildGraph line 812 this Node is outside any area: "
-                                + urbanLink.getLink().getEndNode().getId());
+                            + urbanLink.getLink().getEndNode().getId());
                     }
 
                 }
@@ -897,9 +888,9 @@ public class BuildGraph
                         }
                         DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                         DoubleScalar.Abs<FrequencyUnit> capacity =
-                                new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
+                            new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
                         Link newLink =
-                                Link.createLink(cA, flowNodeStart, capacity, speed, null, TrafficBehaviourType.CORDON);
+                            Link.createLink(cA, flowNodeStart, capacity, speed, null, TrafficBehaviourType.CORDON);
                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
                         addLinkEdge(cA, flowNodeStart, newLinkEdge, TrafficBehaviourType.CORDON, model.getAreaGraph());
                     }
@@ -921,9 +912,8 @@ public class BuildGraph
                         }
                         DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
                         DoubleScalar.Abs<FrequencyUnit> capacity =
-                                new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
-                        Link newLink =
-                                Link.createLink(flowNodeEnd, cB, capacity, speed, null, TrafficBehaviourType.CORDON);
+                            new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
+                        Link newLink = Link.createLink(flowNodeEnd, cB, capacity, speed, null, TrafficBehaviourType.CORDON);
                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
                         addLinkEdge(flowNodeEnd, cB, newLinkEdge, TrafficBehaviourType.CORDON, model.getAreaGraph());
                     }
@@ -952,9 +942,9 @@ public class BuildGraph
         Double increaseDemandByFactor = 1.0;
         ParametersNTM parametersNTM = new ParametersNTM();
         Area area =
-                new Area(buffer, nr, name, gemeente, gebied, regio, dhb, centroid.getPoint().getCoordinate(), TrafficBehaviourType.NTM,
-                        new Rel<LengthUnit>(0, LengthUnit.METER), new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-                        increaseDemandByFactor, parametersNTM);
+            new Area(buffer, nr, name, gemeente, gebied, regio, dhb, centroid.getPoint().getCoordinate(),
+                TrafficBehaviourType.NTM, new Rel<LengthUnit>(0, LengthUnit.METER), new Abs<SpeedUnit>(0,
+                    SpeedUnit.KM_PER_HOUR), increaseDemandByFactor, parametersNTM);
         return area;
     }
 

@@ -16,6 +16,11 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 import javax.swing.event.EventListenerList;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.ValueException;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.vector.DoubleVector;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -33,11 +38,6 @@ import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
 /**
  * Trajectory plot.
@@ -329,8 +329,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     private ArrayList<Trajectory> trajectoryIndices = new ArrayList<Trajectory>();
 
     /** {@inheritDoc} */
-    public final void addData(final AbstractLaneBasedGTU car, final Lane lane) throws NetworkException,
-        RemoteException
+    public final void addData(final AbstractLaneBasedGTU car, final Lane lane) throws NetworkException, RemoteException
     {
         // final DoubleScalar.Abs<TimeUnit> startTime = car.getLastEvaluationTime();
         // System.out.println("addData car: " + car + ", lastEval: " + startTime);

@@ -6,6 +6,8 @@ import java.util.List;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
@@ -15,9 +17,7 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.FixedLaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DistContinuousDoubleScalar;
+import org.opentrafficsim.units.distributions.DistContinuousDoubleScalar;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -214,8 +214,7 @@ class FillTag
         {
             nodeList.add(parser.nodeTags.get(nodeTag.name).node);
         }
-        LaneBasedRouteGenerator rg =
-            new FixedLaneBasedRouteGenerator(new CompleteRoute("fixed route", nodeList));
+        LaneBasedRouteGenerator rg = new FixedLaneBasedRouteGenerator(new CompleteRoute("fixed route", nodeList));
 
         // TODO create a FILL
 

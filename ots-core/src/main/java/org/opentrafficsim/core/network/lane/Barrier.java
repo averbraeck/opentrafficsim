@@ -1,9 +1,9 @@
 package org.opentrafficsim.core.network.lane;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Typically, a barrier will have no lateral permeability. Sometimes, pedestrians can be given lateral permeability for the
@@ -32,9 +32,9 @@ public abstract class Barrier extends RoadMarkerAlong
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Barrier(final CrossSectionLink parentLink,
-        final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> beginWidth,
-        final DoubleScalar.Rel<LengthUnit> endWidth) throws OTSGeometryException, NetworkException
+    public Barrier(final CrossSectionLink parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
+        final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
+        throws OTSGeometryException, NetworkException
     {
         super(parentLink, lateralCenterPosition, beginWidth, endWidth);
     }

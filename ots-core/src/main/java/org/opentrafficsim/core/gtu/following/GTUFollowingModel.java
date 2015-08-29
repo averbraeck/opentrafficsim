@@ -3,14 +3,13 @@ package org.opentrafficsim.core.gtu.following;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
 
 /**
  * GTU following model interface. <br>
@@ -57,7 +56,7 @@ public interface GTUFollowingModel
      * @throws RemoteException on communications failure
      */
     DoubleScalar.Abs<AccelerationUnit> computeAcceleration(final DoubleScalar.Abs<SpeedUnit> followerSpeed,
-        Abs<SpeedUnit> followerMaximumSpeed, final DoubleScalar.Abs<SpeedUnit> leaderSpeed,
+        DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed, final DoubleScalar.Abs<SpeedUnit> leaderSpeed,
         final DoubleScalar.Rel<LengthUnit> headway, final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException;
 
     /**
@@ -88,9 +87,8 @@ public interface GTUFollowingModel
      * @throws RemoteException in case of simulator reachability problems
      * @throws NetworkException on network inconsistency
      */
-    AccelerationStep
-        computeAccelerationWithNoLeader(final LaneBasedGTU gtu, final DoubleScalar.Abs<SpeedUnit> speedLimit)
-            throws RemoteException, NetworkException;
+    AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU gtu, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+        throws RemoteException, NetworkException;
 
     /**
      * Compute the minimum <b>net</b> headway given the speed of the follower and the leader.<br>
@@ -104,8 +102,8 @@ public interface GTUFollowingModel
      * @throws RemoteException on communications failure
      */
     DoubleScalar.Rel<LengthUnit> minimumHeadway(DoubleScalar.Abs<SpeedUnit> followerSpeed,
-        DoubleScalar.Abs<SpeedUnit> leaderSpeed, DoubleScalar.Rel<LengthUnit> precision, Abs<SpeedUnit> speedLimit,
-        Abs<SpeedUnit> followerMaximumSpeed) throws RemoteException;
+        DoubleScalar.Abs<SpeedUnit> leaderSpeed, DoubleScalar.Rel<LengthUnit> precision,
+        DoubleScalar.Abs<SpeedUnit> speedLimit, DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed) throws RemoteException;
 
     /**
      * Return the maximum safe deceleration for use in gap acceptance models. This is the deceleration that may be enforced upon

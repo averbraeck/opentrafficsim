@@ -3,13 +3,13 @@ package org.opentrafficsim.demo.ntm.fundamentaldiagrams;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-import org.opentrafficsim.core.unit.FrequencyUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.djunits.unit.FrequencyUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.demo.ntm.LinearFunctionLibrary;
 
 /**
- * * A (Network) Fundamental diagram shows the network production as a function of (network or link) density (number of
- * cars in a CELL). An example (PieceWiseLinear) is shown below:
+ * * A (Network) Fundamental diagram shows the network production as a function of (network or link) density (number of cars in
+ * a CELL). An example (PieceWiseLinear) is shown below:
  * 
  * <pre>
  *   production
@@ -25,12 +25,11 @@ import org.opentrafficsim.demo.ntm.LinearFunctionLibrary;
  *         accCritica     accCritical2    accJam
  * </pre>
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 9 Sep 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 9 Sep 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>

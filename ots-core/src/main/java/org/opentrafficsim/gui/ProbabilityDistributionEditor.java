@@ -9,7 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import org.opentrafficsim.core.locale.DefaultLocale;
+import org.djunits.locale.DefaultLocale;
 
 import com.bric.multislider.MultiThumbSlider;
 import com.bric.multislider.MultiThumbSliderUI;

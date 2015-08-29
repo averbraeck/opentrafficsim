@@ -9,16 +9,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.djunits.unit.FrequencyUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.OTSLink;
-import org.opentrafficsim.core.unit.FrequencyUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -503,8 +503,8 @@ public class Link extends OTSLink
         LineString line = geometryFactory.createLineString(coords);
         OTSLine3D geometry = new OTSLine3D(line);
         mergedLink =
-            new Link(geometry, nr, length, (Node) up.getStartNode(), (Node) down.getEndNode(), up.getFreeSpeed(), up.getTime(),
-                up.getCapacity(), up.getBehaviourType(), up.getLinkData());
+            new Link(geometry, nr, length, (Node) up.getStartNode(), (Node) down.getEndNode(), up.getFreeSpeed(), up
+                .getTime(), up.getCapacity(), up.getBehaviourType(), up.getLinkData());
 
         return mergedLink;
     }

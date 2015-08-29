@@ -172,7 +172,7 @@ public class XmlNetworkLaneParser
         for (RouteTag routeTag : this.routeTags.values())
             routeTag.makeRoute();
         // TODO shortestRoute, routeMix, ShortestRouteMix
-        
+
         // store the structure information in the network
         return makeNetwork(url.toString());
     }

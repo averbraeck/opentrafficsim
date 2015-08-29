@@ -3,11 +3,11 @@ package org.opentrafficsim.core.gtu.lane.changing;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.following.HeadwayGTU;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * All lane change models must implement this interface.
@@ -45,10 +45,9 @@ public interface LaneChangeModel
      * @throws RemoteException in case the simulation time cannot be retrieved.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
-        final Collection<HeadwayGTU> sameLaneTraffic, final Collection<HeadwayGTU> rightLaneTraffic,
-        final Collection<HeadwayGTU> leftLaneTraffic, final DoubleScalar.Abs<SpeedUnit> speedLimit,
-        final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
+    LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu, final Collection<HeadwayGTU> sameLaneTraffic,
+        final Collection<HeadwayGTU> rightLaneTraffic, final Collection<HeadwayGTU> leftLaneTraffic,
+        final DoubleScalar.Abs<SpeedUnit> speedLimit, final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
         final DoubleScalar.Rel<AccelerationUnit> laneChangeThreshold,
         final DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException;
 

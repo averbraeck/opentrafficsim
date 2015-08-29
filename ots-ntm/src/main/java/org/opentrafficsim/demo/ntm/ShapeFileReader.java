@@ -8,6 +8,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.djunits.unit.FrequencyUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -17,12 +23,6 @@ import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.unit.FrequencyUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -33,12 +33,11 @@ import com.vividsolutions.jts.geom.Point;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Sep 11, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Sep 11, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
@@ -52,7 +51,7 @@ public class ShapeFileReader
      * @throws IOException on error
      */
     public static Map<String, Area> readAreas(final String shapeFileName, final Map<String, Node> centroids,
-            double scalingFactorDemand) throws IOException
+        double scalingFactorDemand) throws IOException
     {
         /*-
         the_geom class com.vividsolutions.jts.geom.MultiPolygon MULTIPOLYGON (((81816.4228569232, ...
@@ -139,8 +138,8 @@ public class ShapeFileReader
                 {
                     if (areas.containsKey(centroidNr))
                     {
-                        System.out.println("Area number " + centroidNr + "(" + name
-                                + ") already exists. Number not unique!");
+                        System.out
+                            .println("Area number " + centroidNr + "(" + name + ") already exists. Number not unique!");
                         newNr++;
                         centroidNr = newNr.toString();
                     }
@@ -154,9 +153,9 @@ public class ShapeFileReader
                     accCritical.add(accCritJam);
                     ParametersNTM parametersNTM = new ParametersNTM(accCritical);
                     Area area =
-                            new Area(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroidNode.getPoint().getCoordinate(),
-                                    TrafficBehaviourType.NTM, new Rel<LengthUnit>(0, LengthUnit.METER),
-                                    new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), increaseDemandByFactor, parametersNTM);
+                        new Area(geometry, centroidNr, name, gemeente, gebied, regio, dhb, centroidNode.getPoint()
+                            .getCoordinate(), TrafficBehaviourType.NTM, new Rel<LengthUnit>(0, LengthUnit.METER),
+                            new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), increaseDemandByFactor, parametersNTM);
                     areas.put(centroidNr, area);
                     numberOfAreasWithCentroid++;
                 }
@@ -209,8 +208,8 @@ public class ShapeFileReader
      * @return map of (shape file) nodes with nodenr as the key
      * @throws IOException on error
      */
-    public static Map<String, Node> ReadNodes(final String shapeFileName, final String numberType,
-            boolean returnCentroid, boolean allCentroids) throws IOException
+    public static Map<String, Node> ReadNodes(final String shapeFileName, final String numberType, boolean returnCentroid,
+        boolean allCentroids) throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.Point POINT (190599 325650)
@@ -307,8 +306,8 @@ public class ShapeFileReader
      */
     /*
      * public static String NodeCentroidNumber(String number) { // String nr = null; number =
-     * CsvFileReader.removeQuotes(number); String[] names = number.split(":"); String name = names[0]; if
-     * (name.charAt(0) == 'C') { name = name.substring(1); // nr = (long) Long.parseLong(name); } return name; }
+     * CsvFileReader.removeQuotes(number); String[] names = number.split(":"); String name = names[0]; if (name.charAt(0) ==
+     * 'C') { name = name.substring(1); // nr = (long) Long.parseLong(name); } return name; }
      */
     /**
      * @param number
@@ -338,8 +337,8 @@ public class ShapeFileReader
      * @throws IOException on error
      */
     public static void readLinks(final String shapeFileName, Map<String, Link> links, Map<String, Link> connectors,
-            Map<String, Node> nodes, Map<String, Node> centroids, String lengthUnit, Double linkCapacityNumberOfHours)
-            throws IOException
+        Map<String, Node> nodes, Map<String, Node> centroids, String lengthUnit, Double linkCapacityNumberOfHours)
+        throws IOException
     {
         /*-
          * the_geom class com.vividsolutions.jts.geom.MultiLineString MULTILINESTRING ((232250.38755446894 ...
@@ -407,10 +406,9 @@ public class ShapeFileReader
                 Double speedIn = Double.parseDouble(String.valueOf(feature.getAttribute("SPEEDAB")));
                 DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(speedIn, SpeedUnit.KM_PER_HOUR);
                 double capacityIn =
-                        Double.parseDouble(String.valueOf(feature.getAttribute("CAPACITYAB")))
-                                / linkCapacityNumberOfHours;
+                    Double.parseDouble(String.valueOf(feature.getAttribute("CAPACITYAB"))) / linkCapacityNumberOfHours;
                 DoubleScalar.Abs<FrequencyUnit> capacity =
-                        new DoubleScalar.Abs<FrequencyUnit>(capacityIn, FrequencyUnit.PER_HOUR);
+                    new DoubleScalar.Abs<FrequencyUnit>(capacityIn, FrequencyUnit.PER_HOUR);
                 int hierarchy = 0;
                 // new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
                 // create the link or connector to a centroid....
@@ -429,12 +427,12 @@ public class ShapeFileReader
                         Link linkBA = null;
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
-                                new Link(new OTSLine3D(line), nr, length, nodeA, nodeB, speed, null, capacity,
-                                        TrafficBehaviourType.ROAD, linkData);
+                            new Link(new OTSLine3D(line), nr, length, nodeA, nodeB, speed, null, capacity,
+                                TrafficBehaviourType.ROAD, linkData);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
-                                new Link(new OTSLine3D(line), nrBA, length, nodeB, nodeA, speed, null, capacity,
-                                        TrafficBehaviourType.ROAD, linkData);
+                            new Link(new OTSLine3D(line), nrBA, length, nodeB, nodeA, speed, null, capacity,
+                                TrafficBehaviourType.ROAD, linkData);
                         if (direction == 1)
                         {
                             links.put(nr, linkAB);
@@ -452,8 +450,8 @@ public class ShapeFileReader
                     }
                     else
                     {
-                        System.out.println("Node lNodeA=" + lNodeA + " or lNodeB=" + lNodeB + " not found for linknr="
-                                + nr + ", name=" + name);
+                        System.out.println("Node lNodeA=" + lNodeA + " or lNodeB=" + lNodeB + " not found for linknr=" + nr
+                            + ", name=" + name);
                     }
                 }
                 else
@@ -468,8 +466,8 @@ public class ShapeFileReader
                     }
                     if (centroidB != null)
                     {
-                        if (testGeometry(geometry.getCoordinates()[geometry.getCoordinates().length - 1],
-                                centroidA.getPoint().getCoordinate()))
+                        if (testGeometry(geometry.getCoordinates()[geometry.getCoordinates().length - 1], centroidA
+                            .getPoint().getCoordinate()))
                         {
                             nodeBCentroid = true;
                         }
@@ -477,7 +475,7 @@ public class ShapeFileReader
                     if (nodeACentroid && nodeBCentroid) // should not happen
                     {
                         System.out.println("Strange connector!!!: both Centroids lNodeA= " + centroidA + " or lNodeB= "
-                                + centroidB + " connected to linknr=" + nr + ", name=" + name);
+                            + centroidB + " connected to linknr=" + nr + ", name=" + name);
                     }
                     else if (nodeACentroid)
                     {
@@ -485,12 +483,12 @@ public class ShapeFileReader
                         Link linkBA = null;
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
-                                new Link(new OTSLine3D(line), nr, length, centroidA, nodeB, speed, null, capacity,
-                                        TrafficBehaviourType.NTM, linkData);
+                            new Link(new OTSLine3D(line), nr, length, centroidA, nodeB, speed, null, capacity,
+                                TrafficBehaviourType.NTM, linkData);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
-                                new Link(new OTSLine3D(line), nrBA, length, nodeB, centroidA, speed, null, capacity,
-                                        TrafficBehaviourType.NTM, linkData);
+                            new Link(new OTSLine3D(line), nrBA, length, nodeB, centroidA, speed, null, capacity,
+                                TrafficBehaviourType.NTM, linkData);
                         if (direction == 1)
                         {
                             connectors.put(nr, linkAB);
@@ -512,12 +510,12 @@ public class ShapeFileReader
                         Link linkBA = null;
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         linkAB =
-                                new Link(new OTSLine3D(line), nr, length, nodeA, centroidB, speed, null, capacity,
-                                        TrafficBehaviourType.NTM, linkData);
+                            new Link(new OTSLine3D(line), nr, length, nodeA, centroidB, speed, null, capacity,
+                                TrafficBehaviourType.NTM, linkData);
                         linkData = new LinkData(name + "_BA", linkTag, wegtype, typeWegVak, typeWeg);
                         linkBA =
-                                new Link(new OTSLine3D(line), nrBA, length, centroidB, nodeA, speed, null, capacity,
-                                        TrafficBehaviourType.NTM, linkData);
+                            new Link(new OTSLine3D(line), nrBA, length, centroidB, nodeA, speed, null, capacity,
+                                TrafficBehaviourType.NTM, linkData);
                         if (direction == 1)
                         {
                             connectors.put(nr, linkAB);
@@ -538,8 +536,8 @@ public class ShapeFileReader
                     {
                         LinkData linkData = new LinkData(name, linkTag, wegtype, typeWegVak, typeWeg);
                         Link link =
-                                new Link(new OTSLine3D(line), nr, length, nodeA, nodeB, speed, null, capacity,
-                                        TrafficBehaviourType.ROAD, linkData);
+                            new Link(new OTSLine3D(line), nr, length, nodeA, nodeB, speed, null, capacity,
+                                TrafficBehaviourType.ROAD, linkData);
                         links.put(nr, link);
                     }
                 }

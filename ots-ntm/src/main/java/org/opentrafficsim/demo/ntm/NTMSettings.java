@@ -2,19 +2,18 @@ package org.opentrafficsim.demo.ntm;
 
 import java.util.Calendar;
 
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 10 Sep 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 10 Sep 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -83,9 +82,9 @@ public class NTMSettings
      * @param scalingFactorDemand
      */
     public NTMSettings(Calendar startTime, Rel<TimeUnit> durationOfSimulation, String descriptionProject,
-            Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM, Rel<TimeUnit> reRouteTimeInterval,
-            int numberOfRoutes, double weightNewRoutes, double varianceRoutes, boolean reRoute, String path,
-            boolean increaseDemandByArea, double scalingFactorDemand)
+        Rel<TimeUnit> timeStepDurationNTM, Rel<TimeUnit> timeStepDurationCTM, Rel<TimeUnit> reRouteTimeInterval,
+        int numberOfRoutes, double weightNewRoutes, double varianceRoutes, boolean reRoute, String path,
+        boolean increaseDemandByArea, double scalingFactorDemand)
     {
         this.setStartTime(new DoubleScalar.Abs<TimeUnit>(startTime.getTimeInMillis(), TimeUnit.MILLISECOND));
         int hour = startTime.get(Calendar.HOUR_OF_DAY);
@@ -202,8 +201,7 @@ public class NTMSettings
     /**
      * @param timeStepDurationCellTransmissionModel set timeStepDurationCellTransmissionModel.
      */
-    public void setTimeStepDurationCellTransmissionModel(
-            DoubleScalar.Rel<TimeUnit> timeStepDurationCellTransmissionModel)
+    public void setTimeStepDurationCellTransmissionModel(DoubleScalar.Rel<TimeUnit> timeStepDurationCellTransmissionModel)
     {
         this.timeStepDurationCellTransmissionModel = timeStepDurationCellTransmissionModel;
     }

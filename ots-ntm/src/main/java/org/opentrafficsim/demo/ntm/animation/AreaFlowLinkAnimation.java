@@ -12,20 +12,19 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
+import org.djunits.unit.SpeedUnit;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.demo.ntm.Area;
 import org.opentrafficsim.demo.ntm.AreaFlowLink;
 import org.opentrafficsim.demo.ntm.FlowCell;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Sep 13, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Sep 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class AreaFlowLinkAnimation extends Renderable2D
@@ -49,7 +48,7 @@ public class AreaFlowLinkAnimation extends Renderable2D
      * @throws RemoteException
      */
     public AreaFlowLinkAnimation(AreaFlowLink source, OTSSimulatorInterface simulator, final float width)
-            throws NamingException, RemoteException
+        throws NamingException, RemoteException
     {
         super(source, simulator);
         this.width = width;
@@ -62,8 +61,8 @@ public class AreaFlowLinkAnimation extends Renderable2D
             if (cell.getCellBehaviourFlow().getCurrentSpeed().getInUnit(SpeedUnit.KM_PER_HOUR) > 0)
             {
                 this.colorArea =
-                        colorFor(normalize(0, 100,
-                                cell.getCellBehaviourFlow().getCurrentSpeed().getInUnit(SpeedUnit.KM_PER_HOUR)));
+                    colorFor(normalize(0, 100, cell.getCellBehaviourFlow().getCurrentSpeed()
+                        .getInUnit(SpeedUnit.KM_PER_HOUR)));
                 // this.colorArea = Color.RED;
             }
         }

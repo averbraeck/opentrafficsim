@@ -18,21 +18,20 @@ import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
 
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSDEVSAnimator;
 import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.demo.ntm.IO.ProjectConfigurations;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Aug 15, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class NTMTestApplication extends DSOLApplication
@@ -42,7 +41,7 @@ public class NTMTestApplication extends DSOLApplication
      * @param panel
      */
     public NTMTestApplication(String title,
-            DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
+        DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         super(title, panel);
     }
@@ -75,13 +74,11 @@ public class NTMTestApplication extends DSOLApplication
         // model.getSettingsNTM().getStartTimeSinceMidnight().getInUnit(TimeUnit.SECOND)
         OTSSimTimeDouble startTime = new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND));
         OTSReplication replication =
-                new OTSReplication("rep1", startTime, new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND),
-                        new DoubleScalar.Rel<TimeUnit>(10800.0, TimeUnit.SECOND), model);
+            new OTSReplication("rep1", startTime, new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND),
+                new DoubleScalar.Rel<TimeUnit>(10800.0, TimeUnit.SECOND), model);
         // simulator.initialize(replication, ReplicationMode.TERMINATING);
 
-        panel =
-                new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model,
-                        simulator);
+        panel = new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model, simulator);
         addInfoTab(panel);
 
         Rectangle2D extent = new Rectangle2D.Double(65000.0, 440000.0, 55000.0, 30000.0);
@@ -89,8 +86,8 @@ public class NTMTestApplication extends DSOLApplication
         AnimationPanel animationPanel = new AnimationPanel(extent, size, simulator);
         panel.getTabbedPane().addTab(0, "animation", animationPanel);
         String content =
-                "The simulation starts with the import of alle data, and initializes the NTM model\n"
-                        + "Wait untill this process has finished...\n" + " \n";
+            "The simulation starts with the import of alle data, and initializes the NTM model\n"
+                + "Wait untill this process has finished...\n" + " \n";
         int index = panel.getTabbedPane().getSelectedIndex();
         textArea = new JTextArea(content);
         panel.getTabbedPane().setComponentAt(index, textArea);
@@ -115,7 +112,7 @@ public class NTMTestApplication extends DSOLApplication
      * @param panel
      */
     private static void addInfoTab(
-            final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
+        final DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel)
     {
         // Let's find some content for our infoscreen and add it to our tabbedPane
         String helpSource = "/" + NTMModel.class.getPackage().getName().replace('.', '/') + "/html/ntm.html";

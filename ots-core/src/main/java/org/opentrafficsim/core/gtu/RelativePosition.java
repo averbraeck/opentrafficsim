@@ -2,8 +2,8 @@ package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 
 /**
  * A RelativePosition is a position on a GTU; e.g. the front, rear, position of the driver, etc. <br>

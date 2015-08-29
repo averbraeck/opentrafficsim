@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.junit.Test;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>

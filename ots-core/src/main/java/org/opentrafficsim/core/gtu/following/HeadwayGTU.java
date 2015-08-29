@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.gtu.following;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Container for a reference to a LaneBasedGTU and a headway.

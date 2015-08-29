@@ -2,10 +2,10 @@ package org.opentrafficsim.simulationengine.properties;
 
 import java.util.ArrayList;
 
-import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Compound property for IDM or IDMPlus parameters

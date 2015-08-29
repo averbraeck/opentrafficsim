@@ -5,10 +5,10 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Color GTUs based on their urgency to perform a lane change and the direction of that lane change. <br>
@@ -69,8 +69,7 @@ public class LaneChangeUrgeGTUColorer implements GTUColorer
     {
         if (gtu instanceof LaneBasedGTU)
         {
-            LaneChangeDistanceAndDirection distanceAndDirection =
-                ((LaneBasedGTU) gtu).getLaneChangeDistanceAndDirection();
+            LaneChangeDistanceAndDirection distanceAndDirection = ((LaneBasedGTU) gtu).getLaneChangeDistanceAndDirection();
             Boolean left = distanceAndDirection.getLeft();
             DoubleScalar.Rel<LengthUnit> distance = distanceAndDirection.getDistance();
             if (null == left || distance.ge(this.horizon))

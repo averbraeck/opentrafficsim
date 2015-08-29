@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.gtu.following;
 
-import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Container for two instances of an AccelerationStep. One for the GTU that is deciding its move (the leader); one for the GTU

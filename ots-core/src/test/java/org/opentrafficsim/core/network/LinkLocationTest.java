@@ -2,12 +2,12 @@ package org.opentrafficsim.core.network;
 
 import static org.junit.Assert.assertEquals;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.junit.Test;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Test the LinkLocation class.

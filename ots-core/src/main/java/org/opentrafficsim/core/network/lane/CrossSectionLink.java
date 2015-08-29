@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djunits.unit.FrequencyUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSLink;
-import org.opentrafficsim.core.unit.FrequencyUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -25,7 +25,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141015L;
-    
+
     /** list of cross-section elements. */
     private final List<CrossSectionElement> crossSectionElementList = new ArrayList<>();
 
@@ -37,8 +37,8 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * @param designLine the OTSLine3D design line of the Link
      * @param capacity link capacity in vehicles per hour.
      */
-    public CrossSectionLink(final String id, final Node startNode, final Node endNode,
-        final OTSLine3D designLine, final DoubleScalar.Abs<FrequencyUnit> capacity)
+    public CrossSectionLink(final String id, final Node startNode, final Node endNode, final OTSLine3D designLine,
+        final DoubleScalar.Abs<FrequencyUnit> capacity)
     {
         super(id, startNode, endNode, designLine, capacity);
     }
@@ -50,8 +50,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * @param endNode end node (directional).
      * @param designLine the OTSLine3D design line of the Link
      */
-    public CrossSectionLink(final String id, final Node startNode, final Node endNode,
-        final OTSLine3D designLine)
+    public CrossSectionLink(final String id, final Node startNode, final Node endNode, final OTSLine3D designLine)
     {
         super(id, startNode, endNode, designLine);
     }

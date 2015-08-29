@@ -10,12 +10,12 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSDEVSRealTimeClock;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -74,7 +74,7 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
     @SuppressWarnings("checkstyle:designforextension")
     public void run()
     {
-        setAnimationDelay(20); // ________________________________ 50 Hz animation update 
+        setAnimationDelay(20); // ________________________________ 50 Hz animation update
         AnimationThread animationThread = new AnimationThread(this);
         animationThread.start();
 

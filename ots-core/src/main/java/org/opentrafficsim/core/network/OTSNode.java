@@ -12,10 +12,10 @@ import javax.vecmath.Point3d;
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.djunits.unit.AnglePlaneUnit;
+import org.djunits.unit.AngleSlopeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.unit.AnglePlaneUnit;
-import org.opentrafficsim.core.unit.AngleSlopeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * The Node is a point with an id. It is used in the network to connect Links.

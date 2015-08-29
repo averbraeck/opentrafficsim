@@ -41,11 +41,11 @@ public class OpenDriveNetworkLaneParser
     /** Junction tags. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, JunctionTag> junctionTags = new HashMap<>();
-    
+
     /** Road tags. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, RoadTag> roadTags = new HashMap<>();
-    
+
     /** the GTUTypes that have been created. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, GTUType> gtuTypes = new HashMap<>();
@@ -131,7 +131,7 @@ public class OpenDriveNetworkLaneParser
             SignalsTag.parseSignals(roadNode.getChildNodes(), this, roadTag);
             SurfaceTag.parseSurface(roadNode.getChildNodes(), this, roadTag);
             RailroadTag.parseRailroad(roadNode.getChildNodes(), this, roadTag);
-            */
+             */
         }
 
         // store the structure information in the network
@@ -160,7 +160,7 @@ public class OpenDriveNetworkLaneParser
         {
             network.addRoute(routeTag.route);
         }
-        */
+         */
         return network;
     }
 

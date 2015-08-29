@@ -13,6 +13,11 @@ import java.util.Map;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.junit.Test;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -30,13 +35,6 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.simulationengine.SimpleSimulation;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
@@ -119,8 +117,8 @@ public class AbstractLaneBasedGTUTest
         CompleteRoute route = new CompleteRoute("Route", nodeList);
         // Now we can make a GTU
         LaneBasedIndividualCar car =
-            new LaneBasedIndividualCar(carID, gtuType, gfm, laneChangeModel, initialLongitudinalPositions,
-                initialSpeed, carLength, carWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(route), simulator);
+            new LaneBasedIndividualCar(carID, gtuType, gfm, laneChangeModel, initialLongitudinalPositions, initialSpeed,
+                carLength, carWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(route), simulator);
         // Now we can verify the various fields in the newly created Car
         assertEquals("ID of the car should be identical to the provided one", carID, car.getId());
         assertEquals("GTU following model should be identical to the provided one", gfm, car.getGTUFollowingModel());
@@ -425,7 +423,8 @@ class DummyModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> arg0)
+    public void constructModel(
+        SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> arg0)
         throws SimRuntimeException, RemoteException
     {
         // Nothing happens here

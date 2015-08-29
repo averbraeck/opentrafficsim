@@ -1,9 +1,9 @@
 package org.opentrafficsim.core.gtu.animation;
 
-import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 
 /**
  * A simple way to construct a SwitchableGTUColorer set up with the "standard" set of GTUColorers. <br>

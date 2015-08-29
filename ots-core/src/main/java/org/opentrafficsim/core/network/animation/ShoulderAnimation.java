@@ -25,7 +25,7 @@ public class ShoulderAnimation extends Renderable2D
 {
     /** the animation color. */
     private final Color color;
-    
+
     /**
      * @param source s
      * @param simulator s
@@ -33,8 +33,8 @@ public class ShoulderAnimation extends Renderable2D
      * @throws NamingException ne
      * @throws RemoteException re
      */
-    public ShoulderAnimation(final Shoulder source, final OTSSimulatorInterface simulator, final Color color) throws NamingException,
-        RemoteException
+    public ShoulderAnimation(final Shoulder source, final OTSSimulatorInterface simulator, final Color color)
+        throws NamingException, RemoteException
     {
         super(source, simulator);
         this.color = color;

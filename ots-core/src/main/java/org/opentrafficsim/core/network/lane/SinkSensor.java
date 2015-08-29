@@ -4,11 +4,11 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * sensor that deletes the GTU.
@@ -32,8 +32,7 @@ public class SinkSensor extends AbstractSensor
      * @param position the position of the sensor
      * @param simulator the simulator to enable animation.
      */
-    public SinkSensor(final Lane lane, final DoubleScalar.Rel<LengthUnit> position,
-        final OTSSimulatorInterface simulator)
+    public SinkSensor(final Lane lane, final DoubleScalar.Rel<LengthUnit> position, final OTSSimulatorInterface simulator)
     {
         super(lane, position, RelativePosition.FRONT, "SINK@" + lane.toString(), simulator);
         try

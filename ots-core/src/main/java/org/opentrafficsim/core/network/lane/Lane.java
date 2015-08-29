@@ -13,6 +13,11 @@ import java.util.TreeMap;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -22,11 +27,6 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DOUBLE_SCALAR;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 
 /**
@@ -151,8 +151,8 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
     public Lane(final CrossSectionLink parentLink, final String id, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart,
         final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd, final DoubleScalar.Rel<LengthUnit> beginWidth,
         final DoubleScalar.Rel<LengthUnit> endWidth, final LaneType laneType,
-        final LongitudinalDirectionality directionality,
-        final DoubleScalar.Abs<SpeedUnit> speedLimit) throws OTSGeometryException, NetworkException
+        final LongitudinalDirectionality directionality, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+        throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
         this.laneType = laneType;
@@ -199,7 +199,7 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
                 }
             }
         }
-        
+
         Set<Lane> lanes = new LinkedHashSet<>();
         if (direction == LateralDirectionality.LEFT)
         {

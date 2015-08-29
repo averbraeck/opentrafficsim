@@ -3,6 +3,9 @@ package org.opentrafficsim.core.network.route;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -11,9 +14,6 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.lane.CrossSectionElement;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * A RouteNavigator helps to navigate on a route. In addition, helper methods are available to see if the GTU needs to change
@@ -150,8 +150,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                                 // first in the set
                             }
                         }
-                        for (Lane adjacentLane : currentLane.accessibleAdjacentLanes(LateralDirectionality.LEFT,
-                            gtuType))
+                        for (Lane adjacentLane : currentLane.accessibleAdjacentLanes(LateralDirectionality.LEFT, gtuType))
                         {
                             if (adjacentLane.nextLanes(gtuType).size() > 0)
                             {

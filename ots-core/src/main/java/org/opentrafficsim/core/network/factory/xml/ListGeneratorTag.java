@@ -3,11 +3,11 @@ package org.opentrafficsim.core.network.factory.xml;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.djunits.unit.SpeedUnit;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.CrossSectionElementTag.ElementType;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DistContinuousDoubleScalar;
+import org.opentrafficsim.units.distributions.DistContinuousDoubleScalar;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;

@@ -64,11 +64,10 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.operation.valid.IsValidOp;
 
 /**
- * This example reads data for point locations and associated attributes from a comma separated text (CSV) file and
- * exports them as a new shapefile. It illustrates how to build a feature type.
+ * This example reads data for point locations and associated attributes from a comma separated text (CSV) file and exports them
+ * as a new shapefile. It illustrates how to build a feature type.
  * <p>
- * Note: to keep things simple in the code below the input file should not have additional spaces or tabs between
- * fields.
+ * Note: to keep things simple in the code below the input file should not have additional spaces or tabs between fields.
  */
 public class WriteToShp
 {
@@ -128,8 +127,7 @@ public class WriteToShp
          */
         List<SimpleFeature> features = new ArrayList<SimpleFeature>();
         /*
-         * GeometryFactory will be used to create the geometry attribute of each feature, using a Point object for the
-         * location.
+         * GeometryFactory will be used to create the geometry attribute of each feature, using a Point object for the location.
          */
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(TYPE);
@@ -159,12 +157,12 @@ public class WriteToShp
             {
                 // Conditionally force valid polygons
                 if ((area.getGeometry() instanceof Polygon || area.getGeometry() instanceof MultiPolygon)
-                        && !IsValidOp.isValid(area.getGeometry()))
+                    && !IsValidOp.isValid(area.getGeometry()))
                 {
                     area.getGeometry().convexHull(); // or even: geom = geom.getEnvelope();
                 }
                 if (area.getGeometry().getGeometryType().equals("MultiPolygon")
-                        || area.getGeometry().getGeometryType().equals("Polygon"))
+                    || area.getGeometry().getGeometryType().equals("Polygon"))
                 {
                     String Id = Integer.toString(i);
                     MultiPolygon multiPolygon = null;
@@ -218,10 +216,10 @@ public class WriteToShp
         }
         SimpleFeatureType SHAPE_TYPE = featureSource.getSchema();
         /*
-         * The Shapefile format has a couple limitations: - "the_geom" is always first, and used for the geometry
-         * attribute name - "the_geom" must be of type Point, MultiPoint, MuiltiLineString, MultiPolygon - Attribute
-         * names are limited in length - Not all data types are supported (example Timestamp represented as Date) Each
-         * data store has different limitations so check the resulting SimpleFeatureType.
+         * The Shapefile format has a couple limitations: - "the_geom" is always first, and used for the geometry attribute name
+         * - "the_geom" must be of type Point, MultiPoint, MuiltiLineString, MultiPolygon - Attribute names are limited in
+         * length - Not all data types are supported (example Timestamp represented as Date) Each data store has different
+         * limitations so check the resulting SimpleFeatureType.
          */
         System.out.println("SHAPE:" + SHAPE_TYPE);
 
@@ -320,9 +318,9 @@ public class WriteToShp
     /**
      * Here is how you can use a SimpleFeatureType builder to create the schema for your shapefile dynamically.
      * <p>
-     * This method is an improvement on the code used in the main method above (where we used
-     * DataUtilities.createFeatureType) because we can set a Coordinate Reference System for the FeatureType and a a
-     * maximum field length for the 'name' field dddd
+     * This method is an improvement on the code used in the main method above (where we used DataUtilities.createFeatureType)
+     * because we can set a Coordinate Reference System for the FeatureType and a a maximum field length for the 'name' field
+     * dddd
      */
     private static SimpleFeatureType createFeatureTypeMultiPolygon()
     {
@@ -341,9 +339,9 @@ public class WriteToShp
     /**
      * Here is how you can use a SimpleFeatureType builder to create the schema for your shapefile dynamically.
      * <p>
-     * This method is an improvement on the code used in the main method above (where we used
-     * DataUtilities.createFeatureType) because we can set a Coordinate Reference System for the FeatureType and a a
-     * maximum field length for the 'name' field dddd
+     * This method is an improvement on the code used in the main method above (where we used DataUtilities.createFeatureType)
+     * because we can set a Coordinate Reference System for the FeatureType and a a maximum field length for the 'name' field
+     * dddd
      */
     private static SimpleFeatureType createFeatureTypePoint()
     {

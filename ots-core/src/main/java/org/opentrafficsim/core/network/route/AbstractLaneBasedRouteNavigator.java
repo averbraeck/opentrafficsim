@@ -3,13 +3,13 @@ package org.opentrafficsim.core.network.route;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.lane.CrossSectionElement;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * A RouteNavigator helps to navigate on a route. In addition, helper methods are available to see if the GTU needs to change
@@ -48,8 +48,8 @@ public abstract class AbstractLaneBasedRouteNavigator implements LaneBasedRouteN
      * @return double; the suitability of the <cite>startLane</cite> for following the Route
      */
     protected final DoubleScalar.Rel<LengthUnit> computeSuitabilityWithLaneChanges(final Lane startLane,
-        final double remainingDistance, final Map<Lane, DoubleScalar.Rel<LengthUnit>> suitabilities,
-        final int totalLanes, final LateralDirectionality direction, final GTUType gtuType)
+        final double remainingDistance, final Map<Lane, DoubleScalar.Rel<LengthUnit>> suitabilities, final int totalLanes,
+        final LateralDirectionality direction, final GTUType gtuType)
     {
         /*-
          * The time per required lane change seems more relevant than distance per required lane change.

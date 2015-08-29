@@ -32,7 +32,8 @@ class JunctionTag
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseJunction(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException, NetworkException
+    static void parseJunction(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException,
+        NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         JunctionTag junctionTag = new JunctionTag();
@@ -48,7 +49,7 @@ class JunctionTag
         if (name == null)
             throw new SAXException("JUNCTION: missing attribute NAME for ID=" + junctionTag.id);
         junctionTag.name = name.getNodeValue().trim();
-        
+
         // TODO parse junction.connection
         // TODO parse junction.laneLink
         // TODO parse junction.priority

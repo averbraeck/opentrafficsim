@@ -2,12 +2,12 @@ package org.opentrafficsim.core.network.lane;
 
 import java.util.Set;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Longitudinal road stripes.
@@ -34,9 +34,8 @@ public class Stripe extends RoadMarkerAlong
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Stripe(final CrossSectionLink parentLink,
-        final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> width)
-        throws OTSGeometryException, NetworkException
+    public Stripe(final CrossSectionLink parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
+        final DoubleScalar.Rel<LengthUnit> width) throws OTSGeometryException, NetworkException
     {
         super(parentLink, lateralCenterPosition, width, width);
     }
@@ -53,9 +52,9 @@ public class Stripe extends RoadMarkerAlong
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Stripe(final CrossSectionLink parentLink,
-        final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> width,
-        final Set<GTUType> gtuTypes, final Permeable permeable) throws OTSGeometryException, NetworkException
+    public Stripe(final CrossSectionLink parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
+        final DoubleScalar.Rel<LengthUnit> width, final Set<GTUType> gtuTypes, final Permeable permeable)
+        throws OTSGeometryException, NetworkException
     {
         super(parentLink, lateralCenterPosition, width, width);
         for (GTUType gtuType : gtuTypes)
@@ -75,9 +74,8 @@ public class Stripe extends RoadMarkerAlong
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Stripe(final CrossSectionLink parentLink,
-        final DoubleScalar.Rel<LengthUnit> lateralCenterPosition, final DoubleScalar.Rel<LengthUnit> width,
-        final Permeable permeable) throws OTSGeometryException, NetworkException
+    public Stripe(final CrossSectionLink parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
+        final DoubleScalar.Rel<LengthUnit> width, final Permeable permeable) throws OTSGeometryException, NetworkException
     {
         super(parentLink, lateralCenterPosition, width, width);
         addPermeability(GTUType.ALL, permeable);

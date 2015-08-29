@@ -12,11 +12,11 @@ import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -43,12 +43,11 @@ import com.vividsolutions.jts.geom.Point;
  * AREATAG class java.lang.String
  * </pre>
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Sep 12, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Sep 12, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
@@ -57,12 +56,11 @@ public class Area extends GeoObject implements LocatableInterface
 
     /**
      * <p>
-     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
-     * reserved. <br>
+     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
-     * $LastChangedDate$, @version $Revision$, by $Author:
-     * pknoppers $, initial version 10 Oct 2014 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author$,
+     * initial version 10 Oct 2014 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -115,12 +113,11 @@ public class Area extends GeoObject implements LocatableInterface
 
     /**
      * <p>
-     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
-     * reserved. <br>
+     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
-     * $LastChangedDate$, @version $Revision$, by $Author:
-     * pknoppers $, initial version 7 Oct 2014 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author$,
+     * initial version 7 Oct 2014 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -146,9 +143,9 @@ public class Area extends GeoObject implements LocatableInterface
      * @param increaseDemandByFactor
      */
     public Area(final Geometry geometry, final String centroidNr, final String name, final String gemeente,
-            final String gebied, final String regio, final double dhb, final Coordinate centroid,
-            final TrafficBehaviourType trafficBehaviourType, Rel<LengthUnit> roadLength, Abs<SpeedUnit> averageSpeed,
-            double increaseDemandByFactor, ParametersNTM parametersNTM)
+        final String gebied, final String regio, final double dhb, final Coordinate centroid,
+        final TrafficBehaviourType trafficBehaviourType, Rel<LengthUnit> roadLength, Abs<SpeedUnit> averageSpeed,
+        double increaseDemandByFactor, ParametersNTM parametersNTM)
     {
         super(geometry);
         this.centroidNr = centroidNr;
@@ -179,8 +176,9 @@ public class Area extends GeoObject implements LocatableInterface
     {
         DirectedPoint d = getLocation();
         Envelope envelope = this.getGeometry().getEnvelopeInternal();
-        return new BoundingBox(new Point3d(envelope.getMinX() - d.x, d.y - envelope.getMinY(), 0.0d), new Point3d(
-                envelope.getMaxX() - d.x, d.y - envelope.getMaxY(), 0.0d));
+        return new BoundingBox(new Point3d(envelope.getMinX() - d.x, d.y - envelope.getMinY(), 0.0d), new Point3d(envelope
+            .getMaxX()
+            - d.x, d.y - envelope.getMaxY(), 0.0d));
     }
 
     /**

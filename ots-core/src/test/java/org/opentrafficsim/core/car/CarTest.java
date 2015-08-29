@@ -15,6 +15,11 @@ import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.experiment.Treatment;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -36,13 +41,6 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DOUBLE_SCALAR;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * <p>
@@ -144,7 +142,7 @@ public class CarTest implements DOUBLE_SCALAR
     {
         Length.Rel length = new Length.Rel(5.0, METER);
         Length.Rel width = new Length.Rel(2.0, METER);
-        Map<Lane, Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
+        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
         initialLongitudinalPositions.put(lane, initialPosition);
         Speed.Abs maxSpeed = new Speed.Abs(120, KM_PER_HOUR);
         return new LaneBasedIndividualCar(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions,
@@ -181,7 +179,7 @@ public class CarTest implements DOUBLE_SCALAR
         /** {@inheritDoc} */
         @Override
         public final void constructModel(
-            final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
         {
             this.simulator = (OTSDEVSSimulator) theSimulator;

@@ -4,7 +4,7 @@
 
   <groupId>opentrafficsim</groupId>
   <artifactId>ots-base</artifactId>
-  <version>0.02.04</version>
+  <version>0.03.01</version>
   <packaging>pom</packaging>
 
   <name>OpenTrafficSim base project</name>
@@ -43,20 +43,19 @@
 
     <sonar.scm.disabled>true</sonar.scm.disabled>
 
-    <ots-version>${project.version}</ots-version>
-    <dsol-version>3.00.14</dsol-version>
+    <ots.version>${project.version}</ots.version>
+    <djunits.version>1.00.01</djunits.version>
+    <dsol.version>3.00.14</dsol.version>
     <junit.version>4.11</junit.version>
     <java3d.version>1.5.1</java3d.version>
-    <parallelcolt.version>0.10.1</parallelcolt.version>
     <geotools.version>12.0</geotools.version>
     <osmosis.version>0.43.1</osmosis.version>
     <jfreechart.version>1.0.17</jfreechart.version>
-    <reflections.version>0.9.9-RC1</reflections.version>
-    <xml-apis-version>1.4.01</xml-apis-version>
-    <apache-poi-version>3.8</apache-poi-version>
-    <jgrapht-version>0.9.0</jgrapht-version>
-    <multislider-version>1.0</multislider-version>
-    <ojalgo-version>37.1</ojalgo-version>
+    <xml-apis.version>1.4.01</xml-apis.version>
+    <apache.poi.version>3.8</apache.poi.version>
+    <jgrapht.version>0.9.0</jgrapht.version>
+    <multislider.version>1.0</multislider.version>
+    <ojalgo.version>37.1</ojalgo.version>
 
     <maven.compiler.version>3.1</maven.compiler.version>
     <maven.site.version>3.4</maven.site.version>
@@ -170,6 +169,7 @@
         <artifactId>wagon-maven-plugin</artifactId>
         <version>${wagon.maven.version}</version>
         <executions>
+        
           <execution>
             <id>upload-jacoco-dot-files</id>
             <phase>site-deploy</phase>
@@ -179,7 +179,7 @@
             <configuration>
               <fromDir>${basedir}/target/site/jacoco-ut</fromDir>
               <includes>.*, .resources/*</includes>
-              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs/${ots-version}/${project.artifactId}</url>
+              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs/${ots.version}/${project.artifactId}</url>
               <toDir>jacoco-ut</toDir>
               <serverId>ots-deployment</serverId>
             </configuration>
@@ -199,6 +199,22 @@
               <serverId>ots-deployment</serverId>
             </configuration>
           </execution>
+          
+          <execution>
+            <id>upload-last-site</id>
+            <phase>site-deploy</phase>
+            <goals>
+              <goal>upload</goal>
+            </goals>
+            <configuration>
+              <fromDir>${basedir}/target/site</fromDir>
+              <includes>**/**</includes>
+              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org</url>
+              <toDir>docs/last</toDir>
+              <serverId>ots-deployment</serverId>
+            </configuration>
+          </execution>
+          
         </executions>
       </plugin>
 
@@ -238,7 +254,6 @@
             <link>http://simulation.tudelft.nl/dsol/3.0/dsol-base/apidocs/</link>
             <link>http://simulation.tudelft.nl/dsol/3.0/dsol-core/apidocs/</link>
             <link>http://simulation.tudelft.nl/dsol/3.0/dsol-swing/apidocs/</link>
-            <link>http://simulation.tudelft.nl/parallelcolt/apidocs/</link>
           </links>
           <additionalJOption>-J-Xmx1024m</additionalJOption>
           <detectJavaApiLink>true</detectJavaApiLink>
@@ -263,7 +278,7 @@
           <dependency>
             <groupId>opentrafficsim</groupId>
             <artifactId>ots-build-tools</artifactId>
-            <version>${ots-version}</version>
+            <version>${ots.version}</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -606,21 +621,21 @@
       </dependency>
 
       <dependency>
-        <groupId>net.sourceforge.parallelcolt</groupId>
-        <artifactId>parallelcolt</artifactId>
-        <version>${parallelcolt.version}</version>
+        <groupId>org.djunits</groupId>
+        <artifactId>djunits</artifactId>
+        <version>${djunits.version}</version>
       </dependency>
 
       <dependency>
         <groupId>dsol</groupId>
         <artifactId>dsol-core</artifactId>
-        <version>${dsol-version}</version>
+        <version>${dsol.version}</version>
       </dependency>
 
       <dependency>
         <groupId>opentrafficsim</groupId>
         <artifactId>ots-core</artifactId>
-        <version>${ots-version}</version>
+        <version>${ots.version}</version>
       </dependency>
 
       <dependency>
@@ -630,39 +645,33 @@
       </dependency>
 
       <dependency>
-        <groupId>org.reflections</groupId>
-        <artifactId>reflections</artifactId>
-        <version>${reflections.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>dsol</groupId>
         <artifactId>dsol-swing</artifactId>
-        <version>${dsol-version}</version>
+        <version>${dsol.version}</version>
       </dependency>
 
       <dependency>
         <groupId>dsol</groupId>
         <artifactId>dsol-fx</artifactId>
-        <version>${dsol-version}</version>
+        <version>${dsol.version}</version>
       </dependency>
 
       <dependency>
         <groupId>dsol</groupId>
         <artifactId>dsol-base</artifactId>
-        <version>${dsol-version}</version>
+        <version>${dsol.version}</version>
       </dependency>
 
       <dependency>
         <groupId>dsol</groupId>
         <artifactId>dsol-web</artifactId>
-        <version>${dsol-version}</version>
+        <version>${dsol.version}</version>
       </dependency>
 
       <dependency>
         <groupId>xml-apis</groupId>
         <artifactId>xml-apis</artifactId>
-        <version>${xml-apis-version}</version>
+        <version>${xml-apis.version}</version>
       </dependency>
 
       <dependency>
@@ -698,37 +707,37 @@
       <dependency>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi</artifactId>
-        <version>${apache-poi-version}</version>
+        <version>${apache.poi.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-ooxml</artifactId>
-        <version>${apache-poi-version}</version>
+        <version>${apache.poi.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.jgrapht</groupId>
         <artifactId>jgrapht-core</artifactId>
-        <version>${jgrapht-version}</version>
+        <version>${jgrapht.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.jgrapht</groupId>
         <artifactId>jgrapht-ext</artifactId>
-        <version>${jgrapht-version}</version>
+        <version>${jgrapht.version}</version>
       </dependency>
 
       <dependency>
         <groupId>com.bric</groupId>
         <artifactId>multislider</artifactId>
-        <version>${multislider-version}</version>
+        <version>${multislider.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.ojalgo</groupId>
         <artifactId>ojalgo</artifactId>
-        <version>${ojalgo-version}</version>
+        <version>${ojalgo.version}</version>
       </dependency>
 
     </dependencies>
@@ -747,6 +756,12 @@
       <name>DSOL Public Repository</name>
       <id>dsol</id>
       <url>http://simulation.tudelft.nl/maven</url>
+    </repository>
+
+    <repository>
+      <name>djunits Public Repository</name>
+      <id>djunits</id>
+      <url>http://djunits.org/maven</url>
     </repository>
 
     <repository>
@@ -900,7 +915,7 @@
     <site>
       <id>ots-deployment</id>
       <name>open trafffic sim website</name>
-      <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs/${ots-version}</url>
+      <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs/${ots.version}</url>
     </site>
   </distributionManagement>
 

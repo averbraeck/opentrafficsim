@@ -38,12 +38,12 @@ import javax.swing.event.ChangeListener;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
-import org.opentrafficsim.core.locale.DefaultLocale;
+import org.djunits.locale.DefaultLocale;
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.gui.LabeledPanel;
 import org.opentrafficsim.gui.ProbabilityDistributionEditor;
 import org.opentrafficsim.gui.SimulatorFrame;

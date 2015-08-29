@@ -19,6 +19,14 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.ValueException;
+import org.djunits.value.conversions.Calc;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.vector.DoubleVector;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -38,14 +46,6 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.AbstractLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
-import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.conversions.Calc;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.vector.DoubleVector;
 
 /**
  * This class contains most of the code that is needed to run a lane based GTU. <br>
@@ -133,7 +133,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** the object to lock to make the GTU thread safe. */
     private Object lock = new Object();
-    
+
     /**
      * Construct a Lane Based GTU.
      * @param id the id of the GTU

@@ -31,17 +31,17 @@ public class TimeSeriesChart
         final XYDataset dataset = (XYDataset) new TimeSeriesCollection(series);
         final DefaultCategoryDataset datasetCat = new DefaultCategoryDataset();
         JFreeChart timechart =
-                ChartFactory.createTimeSeriesChart("Computing Test", "Seconds", "Value", dataset, false, false, false);
+            ChartFactory.createTimeSeriesChart("Computing Test", "Seconds", "Value", dataset, false, false, false);
 
         JFreeChart chart = ChartFactory.createBarChart("Bar Chart Demo", // chart title
-                "Category", // domain axis label
-                "Value", // range axis label
-                datasetCat, // data
-                PlotOrientation.VERTICAL, // orientation
-                true, // include legend
-                true, // tooltips?
-                false // URLs?
-                );
+            "Category", // domain axis label
+            "Value", // range axis label
+            datasetCat, // data
+            PlotOrientation.VERTICAL, // orientation
+            true, // include legend
+            true, // tooltips?
+            false // URLs?
+            );
 
         int width = 560; /* Width of the image */
         int height = 370; /* Height of the image */
@@ -53,14 +53,14 @@ public class TimeSeriesChart
     {
 
         JFreeChart chart = ChartFactory.createBarChart("Bar Chart Demo", // chart title
-                "Category", // domain axis label
-                "Value", // range axis label
-                datasetCategory, // data
-                PlotOrientation.VERTICAL, // orientation
-                true, // include legend
-                true, // tooltips?
-                false // URLs?
-                );
+            "Category", // domain axis label
+            "Value", // range axis label
+            datasetCategory, // data
+            PlotOrientation.VERTICAL, // orientation
+            true, // include legend
+            true, // tooltips?
+            false // URLs?
+            );
         Font font = new Font("Dialog", Font.PLAIN, 20);
 
         chart.getCategoryPlot().getDomainAxis().setLabelFont(font);

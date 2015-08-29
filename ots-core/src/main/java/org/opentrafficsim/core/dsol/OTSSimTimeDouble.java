@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 import nl.tudelft.simulation.dsol.simtime.SimTime;
 
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.MutableDoubleScalar;
 
 /**
  * <p>

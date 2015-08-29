@@ -9,12 +9,11 @@ import cern.colt.matrix.tfloat.impl.SparseCCFloatMatrix2D;
 /**
  * Demonstrate the determinant has wrong sign problem.
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version mrt. 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version mrt. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public final class DeterminantProblem
@@ -49,7 +48,7 @@ public final class DeterminantProblem
         System.out.println("sparse matrix: " + sparseFloatMatrix2D.toString());
         float sparseDeterminant = new SparseFloatAlgebra().det(sparseFloatMatrix2D);
         System.out.println("determinant returned by det() is " + sparseDeterminant
-                + " (prints -15.0; correct value is 15.0)");
+            + " (prints -15.0; correct value is 15.0)");
         System.out.println("");
         System.out.println("dense matrix: " + denseFloatMatrix2D.toString());
         float denseDeterminant = new DenseFloatAlgebra().det(denseFloatMatrix2D);
@@ -57,7 +56,7 @@ public final class DeterminantProblem
 
         System.out.println("");
         System.out.println("The L and U matrices of the LU decompositions look fine and are identical (except for "
-                + "one being sparse and the other dense).");
+            + "one being sparse and the other dense).");
         SparseFloatLUDecomposition sparseLU = new SparseFloatLUDecomposition(sparseFloatMatrix2D, 0, true);
         DenseFloatLUDecomposition denseLU = new DenseFloatLUDecomposition(denseFloatMatrix2D);
 
