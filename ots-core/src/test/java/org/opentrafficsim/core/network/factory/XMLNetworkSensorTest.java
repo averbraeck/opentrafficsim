@@ -22,6 +22,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
@@ -109,13 +110,15 @@ public class XMLNetworkSensorTest
 
                 // add the sensors
                 lane12.addSensor(new ReportingSensor(lane12, new DoubleScalar.Rel<LengthUnit>(
-                    lane12.getLength().getSI() - 1E-4, LengthUnit.SI), RelativePosition.FRONT, "12.E.F", simulator));
+                    lane12.getLength().getSI() - 1E-4, LengthUnit.SI), RelativePosition.FRONT, "12.E.F", simulator),
+                    GTUType.ALL);
                 lane12.addSensor(new ReportingSensor(lane12, new DoubleScalar.Rel<LengthUnit>(
-                    lane12.getLength().getSI() - 1E-4, LengthUnit.SI), RelativePosition.REAR, "12.E.R", simulator));
+                    lane12.getLength().getSI() - 1E-4, LengthUnit.SI), RelativePosition.REAR, "12.E.R", simulator),
+                    GTUType.ALL);
                 lane23.addSensor(new ReportingSensor(lane23, new DoubleScalar.Rel<LengthUnit>(Math.ulp(0.0), LengthUnit.SI),
-                    RelativePosition.FRONT, "23.B.F", simulator));
+                    RelativePosition.FRONT, "23.B.F", simulator), GTUType.ALL);
                 lane23.addSensor(new ReportingSensor(lane23, new DoubleScalar.Rel<LengthUnit>(Math.ulp(0.0), LengthUnit.SI),
-                    RelativePosition.REAR, "23.B.R", simulator));
+                    RelativePosition.REAR, "23.B.R", simulator), GTUType.ALL);
 
                 simulator.setSpeedFactor(speedFactor);
                 simulator.start();

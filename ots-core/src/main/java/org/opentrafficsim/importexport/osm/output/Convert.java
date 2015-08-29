@@ -600,7 +600,6 @@ public final class Convert
         List<Lane> lanes = new ArrayList<Lane>();
         Map<Double, LaneAttributes> structure = makeStructure(osmlink, warningListener);
 
-        DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
         int laneNum = 0;
         for (Double offset : structure.keySet())
         {
@@ -613,6 +612,10 @@ public final class Convert
             Color color = Color.LIGHT_GRAY;
             LaneType laneType = laneAttributes.getLaneType();
             DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(offset, LengthUnit.METER);
+            Map<GTUType, LongitudinalDirectionality> directionality = new HashMap<>();
+            directionality.put(GTUType.ALL, laneAttributes.getDirectionality());
+            Map<GTUType, DoubleScalar.Abs<SpeedUnit>> speedLimit = new HashMap<>();
+            speedLimit.put(GTUType.ALL, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR));
             Lane newLane = null;
             // FIXME the following code assumes right-hand-side driving.
             if (osmlink.hasTag("hasPreceding") && offset >= 0 || osmlink.hasTag("hasFollowing") && offset < 0)
@@ -620,27 +623,24 @@ public final class Convert
                 color = Color.RED;
                 newLane =
                     new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(), laneAttributes
-                        .getWidth(), laneType, laneAttributes.getDirectionality(), f2000, new DoubleScalar.Abs<SpeedUnit>(
-                        100, SpeedUnit.KM_PER_HOUR));
+                        .getWidth(), laneType, directionality, speedLimit);
                 SinkSensor sensor =
                     new SinkSensor(newLane, new DoubleScalar.Rel<LengthUnit>(0.25, LengthUnit.METER), simulator);
-                newLane.addSensor(sensor);
+                newLane.addSensor(sensor, GTUType.ALL);
             }
             else if (osmlink.hasTag("hasPreceding") && offset < 0 || osmlink.hasTag("hasFollowing") && offset >= 0)
             {
                 color = Color.BLUE;
                 newLane =
                     new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(), laneAttributes
-                        .getWidth(), laneType, laneAttributes.getDirectionality(), f2000, new DoubleScalar.Abs<SpeedUnit>(
-                        100, SpeedUnit.KM_PER_HOUR));
+                        .getWidth(), laneType, directionality, speedLimit);
             }
             else
             {
                 color = laneAttributes.getColor();
                 newLane =
                     new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(), laneAttributes
-                        .getWidth(), laneType, laneAttributes.getDirectionality(), f2000, new DoubleScalar.Abs<SpeedUnit>(
-                        100, SpeedUnit.KM_PER_HOUR));
+                        .getWidth(), laneType, directionality, speedLimit);
             }
             if (simulator instanceof OTSAnimatorInterface)
             {

@@ -116,7 +116,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
 
         // add a sink 100 meter before the end of the lane.
         lane.addSensor(new SinkSensor(lane, new DoubleScalar.Rel<LengthUnit>(lane.getLength().getSI() - 100,
-            LengthUnit.METER), simulator));
+            LengthUnit.METER), simulator), GTUType.ALL);
 
         simulator.runUpTo(time);
         while (simulator.isRunning())

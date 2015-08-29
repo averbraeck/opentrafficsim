@@ -473,7 +473,7 @@ public interface DOUBLE_SCALAR
     /*************************************************** ENERGY *****************************************************/ 
     /****************************************************************************************************************/
 
-    EnergyUnit JOULE      = EnergyUnit.JOULE;
+    EnergyUnit JOULE              = EnergyUnit.JOULE;
     EnergyUnit BTU_ISO            = EnergyUnit.BTU_ISO;
     EnergyUnit BTU_IT             = EnergyUnit.BTU_IT;
     EnergyUnit CALORIE_IT         = EnergyUnit.CALORIE_IT;

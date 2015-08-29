@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.network.factory.xml;
 
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.following.IDM;
@@ -62,9 +63,11 @@ class GTUTag
      * @param parser the parser with the lists of information
      * @throws SAXException when parsing of GTU tag fails
      * @throws NetworkException when parsing of GTU tag fails
+     * @throws GTUException if GTUType defined twice
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseGTUs(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException, NetworkException
+    static void parseGTUs(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException, NetworkException,
+        GTUException
     {
         for (Node node : XMLParser.getNodes(nodeList, "GTU"))
         {
@@ -116,8 +119,9 @@ class GTUTag
      * @param typeName the name of the GTU type.
      * @param parser the parser with the lists of information
      * @return the GTUType that was retrieved or created.
+     * @throws GTUException if GTUType defined twice
      */
-    static GTUType parseGTUType(final String typeName, final XmlNetworkLaneParser parser)
+    static GTUType parseGTUType(final String typeName, final XmlNetworkLaneParser parser) throws GTUException
     {
         if (!parser.gtuTypes.containsKey(typeName))
         {

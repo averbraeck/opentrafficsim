@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.geom.Point2D;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.media.j3d.BoundingBox;
 import javax.media.j3d.Bounds;
@@ -21,7 +23,6 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
@@ -66,24 +67,25 @@ public class LaneTest
         LaneType laneType = new LaneType("Car");
         laneType.addCompatibility(gtuTypeCar);
         laneType.addCompatibility(gtuTypeTruck);
-        DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000, FrequencyUnit.PER_HOUR);
-        LongitudinalDirectionality longitudinalDirectionality = LongitudinalDirectionality.FORWARD;
-        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
+        directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.FORWARD);
+        Map<GTUType, DoubleScalar.Abs<SpeedUnit>> speedMap = new LinkedHashMap<>();
+        speedMap.put(GTUType.ALL, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR));
         // Now we can construct a Lane
         Lane lane =
-            new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType, longitudinalDirectionality,
-                f2000, speedLimit);
+            new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType, directionalityMap,
+                speedMap);
         // Verify the easy bits
-        assertEquals("Capacity should be " + f2000, f2000.getSI(), lane.getCapacity().getSI(), 0.001);
         assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size()); // this one caught a bug!
         assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
         double approximateLengthOfContour =
             2 * nodeFrom.getPoint().distanceSI(nodeTo.getPoint()) + startWidth.getSI() + endWidth.getSI();
         assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour, lane
             .getContour().getLengthSI(), 0.1);
-        assertEquals("Directionality should be " + longitudinalDirectionality, longitudinalDirectionality, lane
-            .getDirectionality());
-        assertEquals("SpeedLimit should be " + speedLimit, speedLimit, lane.getSpeedLimit());
+        assertEquals("Directionality should be " + LongitudinalDirectionality.FORWARD, LongitudinalDirectionality.FORWARD,
+            lane.getDirectionality(GTUType.ALL));
+        assertEquals("SpeedLimit should be " + (new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR)),
+            new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), lane.getSpeedLimit(GTUType.ALL));
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane.getLaneType());
         for (int i = 0; i < 10; i++)
@@ -122,10 +124,9 @@ public class LaneTest
         coordinates[2] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
         link = new CrossSectionLink("A to B with Kink", nodeFrom, nodeTo, new OTSLine3D(coordinates));
         lane =
-            new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, longitudinalDirectionality,
-                f2000, speedLimit);
+            new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, directionalityMap,
+                speedMap);
         // Verify the easy bits
-        assertEquals("Capacity should be " + f2000, f2000.getSI(), lane.getCapacity().getSI(), 0.001);
         assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size());
         assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
         approximateLengthOfContour =
@@ -133,18 +134,15 @@ public class LaneTest
                 + endWidth.getSI();
         assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour, lane
             .getContour().getLengthSI(), 4); // This lane takes a path that is about 3m longer
-        assertEquals("Directionality should be " + longitudinalDirectionality, longitudinalDirectionality, lane
-            .getDirectionality());
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane.getLaneType());
         // System.out.println("Add another Lane at the inside of the corner in the design line");
         DoubleScalar.Rel<LengthUnit> startLateralPos2 = new DoubleScalar.Rel<LengthUnit>(-8, LengthUnit.METER);
         DoubleScalar.Rel<LengthUnit> endLateralPos2 = new DoubleScalar.Rel<LengthUnit>(-5, LengthUnit.METER);
         Lane lane2 =
-            new Lane(link, "lane.2", startLateralPos2, endLateralPos2, startWidth, endWidth, laneType, longitudinalDirectionality,
-                f2000, speedLimit);
+            new Lane(link, "lane.2", startLateralPos2, endLateralPos2, startWidth, endWidth, laneType, directionalityMap,
+                speedMap);
         // Verify the easy bits
-        assertEquals("Capacity should be " + f2000, f2000.getSI(), lane2.getCapacity().getSI(), 0.001);
         assertEquals("PrevLanes should be empty", 0, lane2.prevLanes(gtuTypeCar).size());
         assertEquals("NextLanes should be empty", 0, lane2.nextLanes(gtuTypeCar).size());
         approximateLengthOfContour =
@@ -152,8 +150,6 @@ public class LaneTest
                 + endWidth.getSI();
         assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour, lane2
             .getContour().getLengthSI(), 12); // This lane takes a path that is about 11 meters shorter
-        assertEquals("Directionality should be " + longitudinalDirectionality, longitudinalDirectionality, lane2
-            .getDirectionality());
         assertEquals("There should be no GTUs on the lane", 0, lane2.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane2.getLaneType());
     }
@@ -170,10 +166,11 @@ public class LaneTest
         final double[] angles =
             {0, Math.PI * 0.01, Math.PI / 3, Math.PI / 2, Math.PI * 2 / 3, Math.PI * 0.99, Math.PI, Math.PI * 1.01,
                 Math.PI * 4 / 3, Math.PI * 3 / 2, Math.PI * 1.99, Math.PI * 2, Math.PI * (-0.2)};
-        DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000, FrequencyUnit.PER_HOUR);
-        LongitudinalDirectionality longitudinalDirectionality = LongitudinalDirectionality.FORWARD;
         LaneType laneType = new LaneType("Car");
-        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
+        Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
+        directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.FORWARD);
+        Map<GTUType, DoubleScalar.Abs<SpeedUnit>> speedMap = new LinkedHashMap<>();
+        speedMap.put(GTUType.ALL, new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR));
         int laneNum = 0;
         for (int xStart : startPositions)
         {
@@ -201,12 +198,11 @@ public class LaneTest
                             {
                                 // Now we can construct a Lane
                                 Lane lane =
-                                    new Lane(link, "lane." + ++laneNum,
-                                        new DoubleScalar.Rel<LengthUnit>(startLateralOffset, LengthUnit.METER),
-                                        new DoubleScalar.Rel<LengthUnit>(endLateralOffset, LengthUnit.METER),
-                                        new DoubleScalar.Rel<LengthUnit>(startWidth, LengthUnit.METER),
+                                    new Lane(link, "lane." + ++laneNum, new DoubleScalar.Rel<LengthUnit>(startLateralOffset,
+                                        LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(endLateralOffset,
+                                        LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(startWidth, LengthUnit.METER),
                                         new DoubleScalar.Rel<LengthUnit>(endWidth, LengthUnit.METER), laneType,
-                                        longitudinalDirectionality, f2000, speedLimit);
+                                        directionalityMap, speedMap);
                                 final Geometry geometry = lane.getContour().getLineString();
                                 assertNotNull("geometry of the lane should not be null", geometry);
                                 // Verify a couple of points that should be inside the contour of the Lane
@@ -297,8 +293,7 @@ public class LaneTest
      * @param expectedResult boolean; true if the calling method expects the point to be within the contour of the Lane, false
      *            if the calling method expects the point to be outside the contour of the Lane
      */
-    private void checkInside(final Lane lane, final double longitudinal, final double lateral,
-        final boolean expectedResult)
+    private void checkInside(final Lane lane, final double longitudinal, final double lateral, final boolean expectedResult)
     {
         CrossSectionLink parentLink = lane.getParentLink();
         Node start = parentLink.getStartNode();

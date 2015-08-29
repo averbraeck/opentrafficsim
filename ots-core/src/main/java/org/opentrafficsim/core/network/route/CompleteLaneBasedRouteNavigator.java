@@ -90,7 +90,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
         final DoubleScalar.Rel<TimeUnit> timeHorizon) throws NetworkException
     {
         double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();
-        double spareTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit().getSI();
+        double spareTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit(gtuType).getSI();
         // Find the first upcoming Node where there is a branch
         Node nextNode = lane.getParentLink().getEndNode();
         Node nextSplitNode = null;
@@ -176,7 +176,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                             break;
                         }
                     }
-                    spareTime -= currentLane.getLength().getSI() / currentLane.getSpeedLimit().getSI();
+                    spareTime -= currentLane.getLength().getSI() / currentLane.getSpeedLimit(gtuType).getSI();
                 }
                 else
                 {

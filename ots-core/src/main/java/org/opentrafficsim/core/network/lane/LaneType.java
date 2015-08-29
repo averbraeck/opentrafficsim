@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.network.lane;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,8 +17,11 @@ import org.opentrafficsim.core.gtu.GTUType;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class LaneType
+public class LaneType implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20140821L;
+
     /** The id of the LaneType to make it identifiable. */
     private final String id;
 
@@ -46,11 +50,11 @@ public class LaneType
 
     /**
      * @param gtuType GTU type to look for compatibility.
-     * @return whether the LaneType is compatible with the GTU type.
+     * @return whether the LaneType is compatible with the GTU type, or compatible with all GTU types.
      */
     public final boolean isCompatible(final GTUType gtuType)
     {
-        return this.compatibilitySet.contains(gtuType);
+        return this.compatibilitySet.contains(gtuType) || this.compatibilitySet.contains(GTUType.ALL);
     }
 
     /**

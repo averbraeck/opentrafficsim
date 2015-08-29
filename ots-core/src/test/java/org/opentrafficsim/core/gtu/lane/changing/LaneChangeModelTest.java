@@ -34,7 +34,6 @@ import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.FrequencyUnit;
 import org.opentrafficsim.core.unit.LengthUnit;
 import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.core.unit.TimeUnit;
@@ -97,10 +96,11 @@ public class LaneChangeModelTest implements OTSModelInterface
         final DoubleScalar.Rel<LengthUnit> latPos, final DoubleScalar.Rel<LengthUnit> width) throws RemoteException,
         NamingException, NetworkException, OTSGeometryException
     {
-        DoubleScalar.Abs<FrequencyUnit> f2000 = new DoubleScalar.Abs<FrequencyUnit>(2000.0, FrequencyUnit.PER_HOUR);
-        Lane result =
-            new Lane(link, id, latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD, f2000,
-                new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR));
+        Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
+        directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.FORWARD);
+        Map<GTUType, DoubleScalar.Abs<SpeedUnit>> speedMap = new LinkedHashMap<>();
+        speedMap.put(GTUType.ALL, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR));
+        Lane result = new Lane(link, id, latPos, latPos, width, width, laneType, directionalityMap, speedMap);
         return result;
     }
 
