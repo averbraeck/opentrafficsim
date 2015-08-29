@@ -2,13 +2,13 @@ package org.opentrafficsim.core.network.factory.xml;
 
 import java.util.List;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.XMLParser;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -36,7 +36,7 @@ class GlobalTag
     /** default VelocityGTUColorer.maxSpeed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     DoubleScalar.Abs<SpeedUnit> velocityGTUColorerMaxSpeed = null;
-    
+
     // TODO add other GTUColorer tags
 
     /**
@@ -80,7 +80,7 @@ class GlobalTag
                 parser.globalTag.velocityGTUColorerMaxSpeed =
                     SpeedUnits.parseSpeedAbs(velocityGTUColorerAttributes.getNamedItem("MAXSPEED").getNodeValue());
             }
-            
+
             // TODO parse other GTUColorer tags
         }
     }

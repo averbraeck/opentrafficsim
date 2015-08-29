@@ -21,14 +21,14 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.demo.ntm.animation.RoadAnimation;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeObject;
 import org.opentrafficsim.demo.ntm.shapeobjects.ShapeStore;
@@ -37,12 +37,11 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 3 Nov 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 3 Nov 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -53,26 +52,20 @@ public class DataViewer implements OTSModelInterface
 {
     /**
      * <p>
-     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
-     * reserved. <br>
+     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
-     * $LastChangedDate$, @version $Revision$, by $Author:
-     * pknoppers $, initial version 14 Nov 2014 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author$,
+     * initial version 14 Nov 2014 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
      * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
      */
-    public enum days {
-        Sat,
-        Sun,
-        Mon,
-        Tue,
-        Wed,
-        Thu,
-        Fri
+    public enum days
+    {
+        Sat, Sun, Mon, Tue, Wed, Thu, Fri
     };
 
     /** */
@@ -96,8 +89,8 @@ public class DataViewer implements OTSModelInterface
      */
     @Override
     public final void constructModel(
-            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
-            throws RemoteException, SimRuntimeException
+        final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
+        throws RemoteException, SimRuntimeException
     {
         this.simulator = (OTSDEVSSimulatorInterface) _simulator;
         String startMap = "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data";
@@ -108,7 +101,7 @@ public class DataViewer implements OTSModelInterface
         // "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/TheHagueNetwork_Unidirectional_v2.shp";
 
         String filePathData =
-                "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/20141016 Oplevering/Oplevering o.b.v. VLOG data/di-do-2014/";
+            "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/20141016 Oplevering/Oplevering o.b.v. VLOG data/di-do-2014/";
         String fileNameStarts = "I_";
         boolean fileNameDay = false;
 
@@ -123,15 +116,15 @@ public class DataViewer implements OTSModelInterface
 
         /*
          * filePathData =
-         * "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/20141016 Oplevering/Oplevering o.b.v. NDW data_v2/"
-         * ; fileNameStarts = "I_"; fileNameDay = true; try { addArea(fileArea, fileRoads, filePathData, fileNameStarts,
-         * fileNameDay); } catch (IOException exception) { exception.printStackTrace(); } fileNameStarts = "VL_";
-         * fileNameDay = true; try { addArea(fileArea, fileRoads, filePathData, fileNameStarts, fileNameDay); } catch
-         * (IOException exception) { exception.printStackTrace(); }
+         * "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data/20141016 Oplevering/Oplevering o.b.v. NDW data_v2/" ;
+         * fileNameStarts = "I_"; fileNameDay = true; try { addArea(fileArea, fileRoads, filePathData, fileNameStarts,
+         * fileNameDay); } catch (IOException exception) { exception.printStackTrace(); } fileNameStarts = "VL_"; fileNameDay =
+         * true; try { addArea(fileArea, fileRoads, filePathData, fileNameStarts, fileNameDay); } catch (IOException exception)
+         * { exception.printStackTrace(); }
          */
 
-        this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
-                "ntmFlowTimestep", null);
+        this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this, "ntmFlowTimestep",
+            null);
     }
 
     /**
@@ -168,7 +161,7 @@ public class DataViewer implements OTSModelInterface
      * @throws IOException
      */
     public static HashMap<String, ShapeObject> addArea(String fileArea, String fileRoads, String pathData,
-            String fileNameStarts, boolean fileNameDay) throws IOException
+        String fileNameStarts, boolean fileNameDay) throws IOException
     {
         ShapeStore roads = null;
         // Map<String, Area> areas = new HashMap<String, Area>();
@@ -212,19 +205,18 @@ public class DataViewer implements OTSModelInterface
                 {
                     for (days dayName : days.values())
                     {
-                        String inputFile =
-                                pathData + fileNameStarts + year + month + day + "_" + dayName + "_GV[none].csv";
+                        String inputFile = pathData + fileNameStarts + year + month + day + "_" + dayName + "_GV[none].csv";
                         Map<String, ArrayList<java.lang.Double>> countMap = readData(inputFile, ";", pathData, year, 5);
                         if (countMap.size() > 0)
                         {
                             String outputFile =
-                                    pathData + "new/" + fileNameStarts + year + month + day + "_" + dayName
-                                            + "_area_GV[none].csv";
+                                pathData + "new/" + fileNameStarts + year + month + day + "_" + dayName
+                                    + "_area_GV[none].csv";
                             String outputShapeFile =
-                                    pathData + "new/" + fileNameStarts + year + month + day + "_" + dayName + ".shp";
+                                pathData + "new/" + fileNameStarts + year + month + day + "_" + dayName + ".shp";
                             mapRoads =
-                                    detectLocationOfObject(outputShapeFile, outputFile, countMap, roads, areas,
-                                            "LINK_ID", "Name");
+                                detectLocationOfObject(outputShapeFile, outputFile, countMap, roads, areas, "LINK_ID",
+                                    "Name");
                         }
 
                     }
@@ -238,8 +230,7 @@ public class DataViewer implements OTSModelInterface
                         String outputShapeFile = pathData + "new/" + fileNameStarts + year + month + day + ".shp";
                         String outputFile = pathData + "new/" + fileNameStarts + year + month + day + "_area.csv";
                         mapRoads =
-                                detectLocationOfObject(outputShapeFile, outputFile, countMap, roads, areas, "LINK_ID",
-                                        "Name");
+                            detectLocationOfObject(outputShapeFile, outputFile, countMap, roads, areas, "LINK_ID", "Name");
                     }
                 }
             }
@@ -256,7 +247,7 @@ public class DataViewer implements OTSModelInterface
      * @throws FileNotFoundException
      */
     public static Map<String, ArrayList<java.lang.Double>> readData(String inputFile, String csvSplitBy, String path,
-            String year, Integer aggregateBy) throws FileNotFoundException
+        String year, Integer aggregateBy) throws FileNotFoundException
     {
         Map<String, ArrayList<java.lang.Double>> countMap = new HashMap<String, ArrayList<java.lang.Double>>();
         BufferedReader in = null;
@@ -368,8 +359,8 @@ public class DataViewer implements OTSModelInterface
      */
 
     public static HashMap<String, ShapeObject> detectLocationOfObject(String outputShapeFile, String outputFile,
-            Map<String, ArrayList<java.lang.Double>> countMap, ShapeStore objectsToDetect, ShapeStore searchLocations,
-            String fieldNameToDetect, String fieldNameSearchAreas) throws IOException
+        Map<String, ArrayList<java.lang.Double>> countMap, ShapeStore objectsToDetect, ShapeStore searchLocations,
+        String fieldNameToDetect, String fieldNameSearchAreas) throws IOException
     {
         File fileNew = new File(outputFile);
         BufferedWriter out = null;
@@ -469,8 +460,8 @@ public class DataViewer implements OTSModelInterface
 
         /*
          * if (new File(outputShapeFile).isAbsolute()) { File file = new File(outputShapeFile);
-         * ShapeStore.createShapeFile(searchLocations, file); } if (new File(outputShapeFile).isAbsolute()) { File file
-         * = new File(outputShapeFile); ShapeStore.createShapeFile(objectsToDetect, file); }
+         * ShapeStore.createShapeFile(searchLocations, file); } if (new File(outputShapeFile).isAbsolute()) { File file = new
+         * File(outputShapeFile); ShapeStore.createShapeFile(objectsToDetect, file); }
          */
         out.close();
         return mapRoads;

@@ -1,16 +1,15 @@
 package org.opentrafficsim.demo.ntm.trafficdemand;
 
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 12 Sep 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 12 Sep 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -35,7 +34,7 @@ public class FractionOfTripDemandByTimeSegment
      * @param shareOfDemand amount of trips of this segment relatively to the total simulation period
      */
     public FractionOfTripDemandByTimeSegment(final DoubleScalar.Abs<TimeUnit> timeSinceMidnight,
-            final DoubleScalar.Rel<TimeUnit> duration, final double shareOfDemand)
+        final DoubleScalar.Rel<TimeUnit> duration, final double shareOfDemand)
     {
         this.timeSinceMidnight = timeSinceMidnight;
         this.duration = duration;

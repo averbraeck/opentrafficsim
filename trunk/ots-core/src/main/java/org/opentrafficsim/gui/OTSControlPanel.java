@@ -50,12 +50,10 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.simulationengine.WrappableSimulation;
 
 /**
@@ -525,7 +523,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
     @SuppressWarnings("unchecked")
     public final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
     {
-        return (DEVSSimulator<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble>) this.simulator;
+        return (DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>) this.simulator;
     }
 
     /** {@inheritDoc} */
@@ -634,13 +632,13 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             switch (ticksPerDecade)
             {
                 case 1:
-                    this.ratios = new int[] {1};
+                    this.ratios = new int[]{1};
                     break;
                 case 2:
-                    this.ratios = new int[] {1, 3};
+                    this.ratios = new int[]{1, 3};
                     break;
                 case 3:
-                    this.ratios = new int[] {1, 2, 5};
+                    this.ratios = new int[]{1, 2, 5};
                     break;
                 default:
                     throw new Error("Bad ticksPerDecade value (must be 1, 2 or 3)");

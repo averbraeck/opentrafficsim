@@ -23,7 +23,7 @@ public abstract class AbstractGTU implements GTU
 
     /** the type of GTU, e.g. TruckType, CarType, BusType. */
     private final GTUType gtuType;
-    
+
     /** the route navigator to determine the route. */
     private RouteNavigator routeNavigator;
 

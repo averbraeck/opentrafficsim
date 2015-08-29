@@ -1,6 +1,6 @@
 package org.opentrafficsim.graphs;
 
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Definition of one axis for a ContourPlot.

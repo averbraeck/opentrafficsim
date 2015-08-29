@@ -12,18 +12,17 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
+import org.djunits.unit.SpeedUnit;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.unit.SpeedUnit;
 import org.opentrafficsim.demo.ntm.Area;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Sep 13, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Sep 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class AreaAnimation extends Renderable2D
@@ -47,7 +46,7 @@ public class AreaAnimation extends Renderable2D
      * @throws RemoteException
      */
     public AreaAnimation(Area source, OTSSimulatorInterface simulator, final float width) throws NamingException,
-            RemoteException
+        RemoteException
     {
         super(source, simulator);
         this.width = width;

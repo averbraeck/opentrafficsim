@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.gtu.following;
 
-import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Storage for the result of a GTU following model. <br>

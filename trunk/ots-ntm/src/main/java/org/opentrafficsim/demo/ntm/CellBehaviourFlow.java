@@ -3,20 +3,19 @@ package org.opentrafficsim.demo.ntm;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-import org.opentrafficsim.core.unit.FrequencyUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.djunits.unit.FrequencyUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
 
 /**
  * The CellBehaviourFlow is used for cell transmission models and can be linked to the cells of a Link
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 26 Sep 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 26 Sep 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -62,7 +61,7 @@ public class CellBehaviourFlow extends CellBehaviour
      */
     // @Override
     public DoubleScalar.Abs<FrequencyUnit> retrieveSupply(final Double accumulatedCars,
-            final ParametersFundamentalDiagram param)
+        final ParametersFundamentalDiagram param)
     {
         DoubleScalar.Abs<FrequencyUnit> supply;
         if (accumulatedCars > param.getAccCritical().get(0))
@@ -85,7 +84,7 @@ public class CellBehaviourFlow extends CellBehaviour
      * @return carProduction
      */
     public final DoubleScalar.Abs<FrequencyUnit> retrieveDemand(final double accumulatedCars,
-            final ParametersFundamentalDiagram param)
+        final ParametersFundamentalDiagram param)
     {
         DoubleScalar.Abs<FrequencyUnit> demand;
         if (accumulatedCars <= param.getAccCritical().get(0))
@@ -108,7 +107,7 @@ public class CellBehaviourFlow extends CellBehaviour
      * @return carProduction
      */
     public final DoubleScalar.Abs<FrequencyUnit> retrieveFD(final double accumulatedCars,
-            final ParametersFundamentalDiagram param)
+        final ParametersFundamentalDiagram param)
     {
         ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
         Point2D p = new Point2D.Double();

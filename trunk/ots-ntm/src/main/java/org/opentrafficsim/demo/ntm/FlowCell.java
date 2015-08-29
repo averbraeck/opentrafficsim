@@ -9,24 +9,23 @@ import javax.media.j3d.Bounds;
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.opentrafficsim.core.unit.FrequencyUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.LinearDensityUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.unit.FrequencyUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.LinearDensityUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 14 Oct 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 14 Oct 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -61,7 +60,7 @@ public class FlowCell implements LocatableInterface
      * @param behaviourType
      */
     public FlowCell(final DoubleScalar.Rel<LengthUnit> cellLength, final DoubleScalar.Abs<FrequencyUnit> maxCapacity,
-            DoubleScalar.Abs<SpeedUnit> speed, final int numberOfLanes, final TrafficBehaviourType behaviourType)
+        DoubleScalar.Abs<SpeedUnit> speed, final int numberOfLanes, final TrafficBehaviourType behaviourType)
     {
         this.cellLength = cellLength;
         this.maxCapacity = maxCapacity;
@@ -81,7 +80,7 @@ public class FlowCell implements LocatableInterface
      * @return carProduction
      */
     public final Abs<FrequencyUnit> retrieveCurrentInflowCapacity(final double accumulatedCarsPerLengthUnit,
-            final Abs<FrequencyUnit> maximumCapacity, final ParametersFundamentalDiagram param)
+        final Abs<FrequencyUnit> maximumCapacity, final ParametersFundamentalDiagram param)
     {
         Abs<FrequencyUnit> currentInflowCapacity;
         if (accumulatedCarsPerLengthUnit > param.getAccCritical().get(0))
@@ -113,16 +112,15 @@ public class FlowCell implements LocatableInterface
     {
         double speedDouble;
         Abs<FrequencyUnit> currentInflowCapacity =
-                retrieveCurrentInflowCapacity(accumulatedCarsPerLengthUnit, this.maxCapacity,
-                        this.cellBehaviour.getParametersFundamentalDiagram());
+            retrieveCurrentInflowCapacity(accumulatedCarsPerLengthUnit, this.maxCapacity, this.cellBehaviour
+                .getParametersFundamentalDiagram());
         Abs<LinearDensityUnit> density =
-                new DoubleScalar.Abs<LinearDensityUnit>(accumulatedCarsPerLengthUnit, LinearDensityUnit.PER_KILOMETER);
+            new DoubleScalar.Abs<LinearDensityUnit>(accumulatedCarsPerLengthUnit, LinearDensityUnit.PER_KILOMETER);
         if (density.getInUnit(LinearDensityUnit.PER_KILOMETER) > this.cellBehaviour.getParametersFundamentalDiagram()
-                .getAccCritical().get(0))
+            .getAccCritical().get(0))
         {
             speedDouble =
-                    currentInflowCapacity.getInUnit(FrequencyUnit.PER_HOUR)
-                            / density.getInUnit(LinearDensityUnit.PER_KILOMETER);
+                currentInflowCapacity.getInUnit(FrequencyUnit.PER_HOUR) / density.getInUnit(LinearDensityUnit.PER_KILOMETER);
             // speedDouble =
             // Math.max(speedDouble, this.getCellBehaviourFlow().getParametersFundamentalDiagram().getFreeSpeed()
             // .getInUnit(SpeedUnit.KM_PER_HOUR));
@@ -130,9 +128,8 @@ public class FlowCell implements LocatableInterface
         else
         {
             speedDouble =
-                    this.cellBehaviour.getParametersFundamentalDiagram().getCapacity()
-                            .getInUnit(FrequencyUnit.PER_HOUR)
-                            / this.cellBehaviour.getParametersFundamentalDiagram().getAccCritical().get(0);
+                this.cellBehaviour.getParametersFundamentalDiagram().getCapacity().getInUnit(FrequencyUnit.PER_HOUR)
+                    / this.cellBehaviour.getParametersFundamentalDiagram().getAccCritical().get(0);
         }
         return this.setActualSpeed(new DoubleScalar.Abs<SpeedUnit>(speedDouble, SpeedUnit.KM_PER_HOUR));
     }
@@ -144,10 +141,10 @@ public class FlowCell implements LocatableInterface
     public DoubleScalar.Abs<TimeUnit> retrieveCurrentTravelTime()
     {
         double densityPerLengthUnit =
-                this.getCellBehaviourFlow().getAccumulatedCars() / this.cellLength.getInUnit(LengthUnit.KILOMETER);
+            this.getCellBehaviourFlow().getAccumulatedCars() / this.cellLength.getInUnit(LengthUnit.KILOMETER);
         double timeDouble =
-                this.cellLength.getInUnit(LengthUnit.KILOMETER)
-                        / retrieveCurrentSpeed(densityPerLengthUnit).getInUnit(SpeedUnit.KM_PER_HOUR);
+            this.cellLength.getInUnit(LengthUnit.KILOMETER)
+                / retrieveCurrentSpeed(densityPerLengthUnit).getInUnit(SpeedUnit.KM_PER_HOUR);
         double UPPERBOUND_TRAVELTIME_HOUR = 99;
         timeDouble = Math.min(UPPERBOUND_TRAVELTIME_HOUR, timeDouble);
         return this.setCurrentTravelTime(new DoubleScalar.Abs(timeDouble, TimeUnit.HOUR));

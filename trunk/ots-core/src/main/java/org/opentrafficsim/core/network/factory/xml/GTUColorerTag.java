@@ -1,15 +1,15 @@
 package org.opentrafficsim.core.network.factory.xml;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.animation.LaneChangeUrgeGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
-import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.xml.sax.SAXException;
 
 /**
@@ -60,7 +60,7 @@ final class GTUColorerTag
                     + " not one of ID|VELOCITY|ACCELERATION|LANECHANGEURGE|SWITCHABLE");
         }
     }
-    
+
     /**
      * @param globalTag to define the default parameters of the colorers
      * @return the corresponding GTUColorer
@@ -73,7 +73,6 @@ final class GTUColorerTag
         }
         return new VelocityGTUColorer(new DoubleScalar.Abs<SpeedUnit>(100.0, SpeedUnit.KM_PER_HOUR));
     }
-
 
     /**
      * @param globalTag to define the default parameters of the colorers
@@ -103,8 +102,9 @@ final class GTUColorerTag
      */
     static GTUColorer makeSwitchableGTUColorer(final GlobalTag globalTag)
     {
-        GTUColorer[] gtuColorers = new GTUColorer[]{new IDGTUColorer(), makeVelocityGTUColorer(globalTag),
-            makeAccelerationGTUColorer(globalTag), makeLaneChangeUrgeGTUColorer(globalTag)};
+        GTUColorer[] gtuColorers =
+            new GTUColorer[]{new IDGTUColorer(), makeVelocityGTUColorer(globalTag), makeAccelerationGTUColorer(globalTag),
+                makeLaneChangeUrgeGTUColorer(globalTag)};
         // TODO default colorer
         return new SwitchableGTUColorer(0, gtuColorers);
     }

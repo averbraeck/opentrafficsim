@@ -1,18 +1,17 @@
 package org.opentrafficsim.demo.ntm;
 
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version Sep 12, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version Sep 12, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -61,8 +60,7 @@ public class BoundedNode extends Node
      * @param behaviourType describes behaviour of the node depending on its type
      * @param parametersNTM
      */
-    public BoundedNode(final Coordinate centroid, final String nr, final Area area,
-            final TrafficBehaviourType behaviourType)
+    public BoundedNode(final Coordinate centroid, final String nr, final Area area, final TrafficBehaviourType behaviourType)
     {
         super(nr, new Coordinate(centroid.x, centroid.y, zCoordinate(behaviourType)), behaviourType);
         this.area = area;

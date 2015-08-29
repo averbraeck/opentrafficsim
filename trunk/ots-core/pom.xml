@@ -5,7 +5,7 @@
   <parent>
     <groupId>opentrafficsim</groupId>
     <artifactId>ots-base</artifactId>
-    <version>0.02.04</version>
+    <version>0.03.01</version>
     <relativePath>../ots-base/pom.xml</relativePath>
   </parent>
 
@@ -48,16 +48,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.reflections</groupId>
-      <artifactId>reflections</artifactId>
+      <groupId>org.djunits</groupId>
+      <artifactId>djunits</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>net.sourceforge.parallelcolt</groupId>
-      <artifactId>parallelcolt</artifactId>
-    </dependency>
-
-    <!-- dependency> <groupId>org.ojalgo</groupId> <artifactId>ojalgo</artifactId> </dependency -->
 
     <dependency>
       <groupId>org.jfree</groupId>

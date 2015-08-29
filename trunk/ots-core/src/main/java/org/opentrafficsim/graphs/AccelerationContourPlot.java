@@ -3,12 +3,12 @@ package org.opentrafficsim.graphs;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.ValueException;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.vector.MutableDoubleVector;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.ValueException;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.vector.MutableDoubleVector;
 
 /**
  * Acceleration contour plot.

@@ -16,11 +16,11 @@ import nl.tudelft.simulation.jstats.distributions.DistWeibull;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DistContinuousDoubleScalar;
+import org.opentrafficsim.units.distributions.DistContinuousDoubleScalar;
 
 /**
  * <p>

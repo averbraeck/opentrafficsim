@@ -19,13 +19,13 @@ public class FileDialog
 {
     /**
      * Show a file selector dialog to the user.
-     * @param reading Boolean; set to true if only existing files may be selected, set to false if a non-existing file
-     *            may be returned and new directories may be created. If reading is false and an existing file is
-     *            selected that is not equal to the defaultName, an overwrite warning dialog will be displayed.
+     * @param reading Boolean; set to true if only existing files may be selected, set to false if a non-existing file may be
+     *            returned and new directories may be created. If reading is false and an existing file is selected that is not
+     *            equal to the defaultName, an overwrite warning dialog will be displayed.
      * @param fileType String; expected file type
      * @param fileTypeDescription String; description of expected file type
-     * @param defaultName String; path to directory shown initially in the file selector dialog; if it ends on an
-     *            existing file name, that file is initially selected
+     * @param defaultName String; path to directory shown initially in the file selector dialog; if it ends on an existing file
+     *            name, that file is initially selected
      * @return String; absolute path of the selected file (or null when the operation was cancelled by the user)
      */
     public static String showFileDialog(boolean reading, String fileType, String fileTypeDescription, String defaultName)
@@ -66,7 +66,7 @@ public class FileDialog
                 fullName += "." + fileType;
             if ((!reading) && (!defaultName.equals(fullName)) && (new File(fullName).exists()))
                 if (JOptionPane.showConfirmDialog(null, String.format("Overwrite existing file \"%s\"?", fullName),
-                        "Overwrite file", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION)
+                    "Overwrite file", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION)
                     return null;
             return fullName;
         }

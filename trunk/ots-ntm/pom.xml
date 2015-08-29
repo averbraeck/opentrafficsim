@@ -9,7 +9,7 @@
   <properties>
     <jdk.version>1.8</jdk.version>
 
-    <ots-version>0.02.04</ots-version>
+    <ots-version>0.03.01</ots-version>
     <junit.version>4.11</junit.version>
     <geotools.version>12.0</geotools.version>
     <osmosis.version>0.43.1</osmosis.version>

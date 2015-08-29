@@ -15,6 +15,11 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
@@ -31,12 +36,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.CompleteRouteNavigator;
-import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * Special GTU that cannot move, but it can be seen by other GTUs.
@@ -68,7 +67,7 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
 
     /** the cached location for animation. */
     private DirectedPoint location = null;
-    
+
     /** the cached bounds for animation. */
     private Bounds bounds = null;
 
@@ -241,8 +240,9 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
     {
         if (this.bounds == null)
         {
-            this.bounds = new BoundingBox(new Point3d(-0.4, -this.lane.getWidth(0.0).getSI() * 0.4, 0.0), 
-                new Point3d(0.4, this.lane.getWidth(0.0).getSI() * 0.4, this.lane.getLocation().z + 0.01));
+            this.bounds =
+                new BoundingBox(new Point3d(-0.4, -this.lane.getWidth(0.0).getSI() * 0.4, 0.0), new Point3d(0.4, this.lane
+                    .getWidth(0.0).getSI() * 0.4, this.lane.getLocation().z + 0.01));
         }
         return this.bounds;
     }
@@ -350,8 +350,8 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public final Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition)
-        throws NetworkException, RemoteException
+    public final Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition) throws NetworkException,
+        RemoteException
     {
         Map<Lane, Double> map = new HashMap<Lane, Double>();
         map.put(this.lane, this.position.getSI() / this.lane.getLength().getSI());
@@ -378,8 +378,7 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public double fractionalPosition(Lane lane, RelativePosition relativePosition) throws NetworkException,
-        RemoteException
+    public double fractionalPosition(Lane lane, RelativePosition relativePosition) throws NetworkException, RemoteException
     {
         return this.position.getSI() / lane.getLength().getSI();
     }
@@ -394,23 +393,21 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public HeadwayGTU headway(Rel<LengthUnit> maxDistance) throws RemoteException, NetworkException
+    public HeadwayGTU headway(DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException, NetworkException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public HeadwayGTU headway(Lane lane, DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException,
-        NetworkException
+    public HeadwayGTU headway(Lane lane, DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException, NetworkException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Set<LaneBasedGTU> parallel(Lane lane, DoubleScalar.Abs<TimeUnit> when) throws RemoteException,
-        NetworkException
+    public Set<LaneBasedGTU> parallel(Lane lane, DoubleScalar.Abs<TimeUnit> when) throws RemoteException, NetworkException
     {
         return null;
     }
@@ -426,21 +423,21 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
     /** {@inheritDoc} */
     @Override
     public Lane bestAccessibleAdjacentLane(Lane currentLane, LateralDirectionality lateralDirection,
-        Rel<LengthUnit> longitudinalPosition)
+        DoubleScalar.Rel<LengthUnit> longitudinalPosition)
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public DoubleScalar.Abs<TimeUnit> timeAtDistance(Rel<LengthUnit> distance)
+    public DoubleScalar.Abs<TimeUnit> timeAtDistance(DoubleScalar.Rel<LengthUnit> distance)
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public DoubleScalar.Rel<TimeUnit> deltaTimeForDistance(Rel<LengthUnit> distance)
+    public DoubleScalar.Rel<TimeUnit> deltaTimeForDistance(DoubleScalar.Rel<LengthUnit> distance)
     {
         return null;
     }

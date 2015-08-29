@@ -12,19 +12,17 @@ import nl.tudelft.simulation.jstats.distributions.DistConstant;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.network.lane.LaneType;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DistContinuousDoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+import org.opentrafficsim.units.distributions.DistContinuousDoubleScalar;
 
 /**
  * Test the TemplateGTUType class.
@@ -59,8 +57,7 @@ public class TemplateGTUTypeTest
         SimpleSimulator simulator =
             new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
                 TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
-        TemplateGTUType passengerCar =
-            new TemplateGTUType(pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
+        TemplateGTUType passengerCar = new TemplateGTUType(pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
         verifyFields(passengerCar, pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
         String truckId = "truck";
         DistContinuousDoubleScalar.Rel<LengthUnit> truckLength =
@@ -72,8 +69,7 @@ public class TemplateGTUTypeTest
         SimpleSimulator truckSimulator =
             new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
                 TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
-        TemplateGTUType truck =
-            new TemplateGTUType(truckId, truckLength, truckWidth, truckMaximumSpeed, truckSimulator);
+        TemplateGTUType truck = new TemplateGTUType(truckId, truckLength, truckWidth, truckMaximumSpeed, truckSimulator);
         verifyFields(truck, truckId, truckLength, truckWidth, truckMaximumSpeed, truckSimulator);
         verifyFields(passengerCar, pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
     }
@@ -97,8 +93,7 @@ public class TemplateGTUTypeTest
         SimpleSimulator simulator =
             new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
                 TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
-        TemplateGTUType passengerCar =
-            new TemplateGTUType(pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
+        TemplateGTUType passengerCar = new TemplateGTUType(pcId, pcLength, pcWidth, pcMaximumSpeed, simulator);
         String truckId = "truck";
         DistContinuousDoubleScalar.Rel<LengthUnit> truckLength =
             new DistContinuousDoubleScalar.Rel<LengthUnit>(new DistConstant(this.stream, 18), LengthUnit.METER);
@@ -109,8 +104,7 @@ public class TemplateGTUTypeTest
         SimpleSimulator truckSimulator =
             new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
                 TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
-        TemplateGTUType truck =
-            new TemplateGTUType(truckId, truckLength, truckWidth, truckMaximumSpeed, truckSimulator);
+        TemplateGTUType truck = new TemplateGTUType(truckId, truckLength, truckWidth, truckMaximumSpeed, truckSimulator);
         // Create some LaneTypes
         LaneType trucksForbidden = new LaneType("No Trucks");
         trucksForbidden.addCompatibility(passengerCar.getGtuType());
@@ -184,7 +178,8 @@ class DummyModelForTemplateGTUTest implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> arg0)
+    public void constructModel(
+        SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> arg0)
         throws SimRuntimeException, RemoteException
     {
         // Nothing happens here

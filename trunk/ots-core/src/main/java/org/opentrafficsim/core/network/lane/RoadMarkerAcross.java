@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.network.lane;
 
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>

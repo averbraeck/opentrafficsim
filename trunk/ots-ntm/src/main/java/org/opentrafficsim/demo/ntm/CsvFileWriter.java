@@ -4,18 +4,17 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 
-import org.opentrafficsim.core.unit.FrequencyUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
+import org.djunits.unit.FrequencyUnit;
+import org.djunits.unit.LengthUnit;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 27 Jan 2015 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 27 Jan 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -47,8 +46,8 @@ public class CsvFileWriter
                 textOut += String.format("%.1f", nodeBehaviour.getParametersNTM().getAccCritical().get(2));
                 textOut += ", ";
                 textOut +=
-                        String.format("%.1f", (nodeBehaviour.getMaxCapacityNTMArea().getInUnit(FrequencyUnit.PER_HOUR))
-                                / nodeBehaviour.getParametersNTM().getRoadLength().getInUnit(LengthUnit.KILOMETER));
+                    String.format("%.1f", (nodeBehaviour.getMaxCapacityNTMArea().getInUnit(FrequencyUnit.PER_HOUR))
+                        / nodeBehaviour.getParametersNTM().getRoadLength().getInUnit(LengthUnit.KILOMETER));
                 parametersNTMOut.write(textOut + " \n");
             }
         }
@@ -66,14 +65,14 @@ public class CsvFileWriter
         for (Node origin : model.getAreaGraph().vertexSet())
         {
             if (origin.getBehaviourType() == TrafficBehaviourType.NTM
-                    | origin.getBehaviourType() == TrafficBehaviourType.CORDON)
+                | origin.getBehaviourType() == TrafficBehaviourType.CORDON)
             {
                 String textOutCapRes = origin.getId();
                 String textHeader = "Capacity";
                 for (Node destination : model.getAreaGraph().vertexSet())
                 {
                     if (destination.getBehaviourType() == TrafficBehaviourType.NTM
-                            | destination.getBehaviourType() == TrafficBehaviourType.CORDON)
+                        | destination.getBehaviourType() == TrafficBehaviourType.CORDON)
                     {
                         if (header)
                         {
@@ -88,8 +87,8 @@ public class CsvFileWriter
                                 if (factor == 0.0)
                                 {
                                     capacity =
-                                            model.getAreaGraph().getEdge(origin, destination).getLink()
-                                                    .getCorridorCapacity().getInUnit(FrequencyUnit.PER_HOUR);
+                                        model.getAreaGraph().getEdge(origin, destination).getLink().getCorridorCapacity()
+                                            .getInUnit(FrequencyUnit.PER_HOUR);
                                 }
                                 else
                                 {

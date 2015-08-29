@@ -12,6 +12,9 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -23,9 +26,6 @@ import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedTemplateGTU;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -111,7 +111,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
             try
             {
                 Constructor<?> constructor =
-                    ClassUtil.resolveConstructor(animationClass, new Object[] {this, getSimulator()});
+                    ClassUtil.resolveConstructor(animationClass, new Object[]{this, getSimulator()});
                 this.animation = (Renderable2D) constructor.newInstance(this, getSimulator());
             }
             catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException

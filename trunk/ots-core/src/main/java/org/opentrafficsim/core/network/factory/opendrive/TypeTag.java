@@ -1,10 +1,10 @@
 package org.opentrafficsim.core.network.factory.opendrive;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.XMLParser;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -56,7 +56,6 @@ class TypeTag
             if (s == null)
                 throw new SAXException("ROAD.TYPE: missing attribute s for ROAD.ID=" + roadTag.id);
             typeTag.s = new DoubleScalar.Rel<LengthUnit>(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
-            
 
             roadTag.typeTags.put(typeTag.s.doubleValue(), typeTag);
         }

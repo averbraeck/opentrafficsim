@@ -37,12 +37,11 @@ import com.vividsolutions.jts.operation.valid.IsValidOp;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 13 Nov 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 13 Nov 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -71,7 +70,7 @@ public class ShapeStore
      * @param attributeClassTypes
      */
     public ShapeStore(ArrayList<ShapeObject> geoObjects, ArrayList<String> variableNames,
-            HashMap<String, String> variableTypeMap, HashMap<String, Class<? extends Object>> attributeClassTypes)
+        HashMap<String, String> variableTypeMap, HashMap<String, Class<? extends Object>> attributeClassTypes)
     {
         super();
         this.geoObjects = geoObjects;
@@ -153,8 +152,7 @@ public class ShapeStore
             ArrayList<ShapeObject> shapeObjects = new ArrayList<ShapeObject>();
             ArrayList<String> attributeNames = new ArrayList<String>();
             HashMap<String, String> attributeTypes = new HashMap<String, String>();
-            HashMap<String, Class<? extends Object>> attributeClassTypes =
-                    new HashMap<String, Class<? extends Object>>();
+            HashMap<String, Class<? extends Object>> attributeClassTypes = new HashMap<String, Class<? extends Object>>();
             while (iterator.hasNext())
             {
                 SimpleFeature feature = iterator.next();
@@ -246,8 +244,7 @@ public class ShapeStore
          */
         List<SimpleFeature> features = new ArrayList<SimpleFeature>();
         /*
-         * GeometryFactory will be used to create the geometry attribute of each feature, using a Point object for the
-         * location.
+         * GeometryFactory will be used to create the geometry attribute of each feature, using a Point object for the location.
          */
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureType);
@@ -258,7 +255,7 @@ public class ShapeStore
         {
             // Conditionally force valid polygons
             if ((shape.getDesignLine() instanceof Polygon || shape.getDesignLine() instanceof MultiPolygon)
-                    && !IsValidOp.isValid(shape.getDesignLine()))
+                && !IsValidOp.isValid(shape.getDesignLine()))
             {
                 shape.getDesignLine().convexHull();
             }
@@ -329,10 +326,10 @@ public class ShapeStore
         typeName = newDataStore.getTypeNames()[0];
         featureSource = newDataStore.getFeatureSource(typeName);
         /*
-         * The Shapefile format has a couple limitations: - "the_geom" is always first, and used for the geometry
-         * attribute name - "the_geom" must be of type Point, MultiPoint, MuiltiLineString, MultiPolygon - Attribute
-         * names are limited in length - Not all data types are supported (example Timestamp represented as Date) Each
-         * data store has different limitations so check the resulting SimpleFeatureType.
+         * The Shapefile format has a couple limitations: - "the_geom" is always first, and used for the geometry attribute name
+         * - "the_geom" must be of type Point, MultiPoint, MuiltiLineString, MultiPolygon - Attribute names are limited in
+         * length - Not all data types are supported (example Timestamp represented as Date) Each data store has different
+         * limitations so check the resulting SimpleFeatureType.
          */
 
         if (featureSource instanceof SimpleFeatureStore)
@@ -360,9 +357,9 @@ public class ShapeStore
     /**
      * Here is how you can use a SimpleFeatureType builder to create the schema for your shapefile dynamically.
      * <p>
-     * This method is an improvement on the code used in the main method above (where we used
-     * DataUtilities.createFeatureType) because we can set a Coordinate Reference System for the FeatureType and a a
-     * maximum field length for the 'name' field dddd
+     * This method is an improvement on the code used in the main method above (where we used DataUtilities.createFeatureType)
+     * because we can set a Coordinate Reference System for the FeatureType and a a maximum field length for the 'name' field
+     * dddd
      */
     private static SimpleFeatureType createFeatureType(final ShapeStore shapes)
     {

@@ -6,15 +6,15 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.animation.DefaultBlockOnOffAnimation;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Special GTU that cannot move, but it can be seen by other GTUs.
@@ -43,11 +43,10 @@ public class LaneBlockOnOff extends AbstractTrafficLight
      * @throws NetworkException when the GTU cannot be placed on the given lane
      */
     public LaneBlockOnOff(final String name, final Lane lane, final DoubleScalar.Rel<LengthUnit> position,
-        final OTSDEVSSimulatorInterface simulator) throws GTUException,
-        RemoteException, NetworkException, NamingException
+        final OTSDEVSSimulatorInterface simulator) throws GTUException, RemoteException, NetworkException, NamingException
     {
         super(name, lane, position, simulator);
-        
+
         new DefaultBlockOnOffAnimation(this, getSimulator());
         // animation
         if (simulator instanceof OTSAnimatorInterface)

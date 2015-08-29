@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.gtu.lane.changing;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.following.DualAccelerationStep;
-import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * The egoistic drive changes lane when this yields is personal advantage (totally ignoring any disadvantage to others).

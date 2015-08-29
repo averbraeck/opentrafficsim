@@ -5,19 +5,18 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.opentrafficsim.demo.ntm.Node;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 12 Sep 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 12 Sep 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
@@ -61,7 +60,7 @@ public class TripDemand<TripInformation>
      * @return
      */
     public static TripDemand<TripInfoTimeDynamic> compressTripDemand(TripDemand<TripInfoTimeDynamic> tripDemand,
-            Map<String, Node> centroids, HashMap<Node, Node> mapSmallAreaToBigArea)
+        Map<String, Node> centroids, HashMap<Node, Node> mapSmallAreaToBigArea)
     {
         TripDemand<TripInfoTimeDynamic> compressedTripDemand = new TripDemand<TripInfoTimeDynamic>();
         compressedTripDemand.tripInfo = new HashMap<String, Map<String, TripInfoTimeDynamic>>();
@@ -79,8 +78,7 @@ public class TripDemand<TripInformation>
                 if (mapSmallAreaToBigArea.get(node).getId() != null)
                 {
                     bigTripDemandRow =
-                            compressedTripDemand.getTripDemandOriginToAllDestinations(mapSmallAreaToBigArea.get(node)
-                                    .getId());
+                        compressedTripDemand.getTripDemandOriginToAllDestinations(mapSmallAreaToBigArea.get(node).getId());
                 }
                 else
                 // if not found we keep the old centroid
@@ -115,7 +113,7 @@ public class TripDemand<TripInformation>
                                 // System.out.println("node " + destination.getId() + "bigNode ID "
                                 // + mapSmallAreaToBigArea.get(destination).getId());
                                 TripInfoTimeDynamic bigTripInfo =
-                                        bigTripDemandRow.get(mapSmallAreaToBigArea.get(destination).getId());
+                                    bigTripDemandRow.get(mapSmallAreaToBigArea.get(destination).getId());
                                 if (bigTripInfo == null)
                                 {
                                     bigTripInfo = new TripInfoTimeDynamic(0, null);
@@ -174,9 +172,8 @@ public class TripDemand<TripInformation>
      * @param destination
      * @return mapDestinations a hashmap with destination as key and tripInfo as values
      */
-    public static final double getTotalNumberOfTripsFromOrigin(TripDemand<TripInfoTimeDynamic> thisDemand,
-            String originID, DoubleScalar.Abs<TimeUnit> currentTime,
-            final DoubleScalar.Rel<TimeUnit> timeStepDurationNTM)
+    public static final double getTotalNumberOfTripsFromOrigin(TripDemand<TripInfoTimeDynamic> thisDemand, String originID,
+        DoubleScalar.Abs<TimeUnit> currentTime, final DoubleScalar.Rel<TimeUnit> timeStepDurationNTM)
     {
         Map<String, Map<String, TripInfoTimeDynamic>> demand = thisDemand.getTripInfo();
         Map<String, TripInfoTimeDynamic> mapDestinations = demand.get(originID);
@@ -186,8 +183,8 @@ public class TripDemand<TripInformation>
             for (Entry<String, TripInfoTimeDynamic> tripInfo : mapDestinations.entrySet())
             {
                 double trips =
-                        getTotalNumberOfTripsFromOriginToDestinationByTimeStep(thisDemand, originID, tripInfo.getKey(),
-                                currentTime, timeStepDurationNTM);
+                    getTotalNumberOfTripsFromOriginToDestinationByTimeStep(thisDemand, originID, tripInfo.getKey(),
+                        currentTime, timeStepDurationNTM);
                 rowTotal += trips;
             }
         }
@@ -195,15 +192,15 @@ public class TripDemand<TripInformation>
     }
 
     public static final double getTotalNumberOfTripsFromOriginToDestinationByTimeStep(
-            TripDemand<TripInfoTimeDynamic> thisDemand, String originID, String destination,
-            DoubleScalar.Abs<TimeUnit> currentTime, final DoubleScalar.Rel<TimeUnit> timeStepDurationNTM)
+        TripDemand<TripInfoTimeDynamic> thisDemand, String originID, String destination,
+        DoubleScalar.Abs<TimeUnit> currentTime, final DoubleScalar.Rel<TimeUnit> timeStepDurationNTM)
     {
         Map<String, Map<String, TripInfoTimeDynamic>> demand = thisDemand.getTripInfo();
         Map<String, TripInfoTimeDynamic> mapDestinations = demand.get(originID);
         double cellTotal = 0.0;
         TripInfoTimeDynamic tripInfo = mapDestinations.get(destination);
         NavigableMap<Abs<TimeUnit>, FractionOfTripDemandByTimeSegment> curve =
-                tripInfo.getDepartureTimeProfile().getDepartureTimeCurve();
+            tripInfo.getDepartureTimeProfile().getDepartureTimeCurve();
         Object ceilingKey = curve.floorKey(currentTime);
         if (ceilingKey == null)
         {
@@ -258,7 +255,7 @@ public class TripDemand<TripInformation>
      * @return
      */
     public final Map<String, Map<String, TripInformation>> setTripDemandOriginToDestination(final String origin,
-            final String destination, TripInformation tripInfo, Map<String, Map<String, TripInformation>> tripInfoAll)
+        final String destination, TripInformation tripInfo, Map<String, Map<String, TripInformation>> tripInfoAll)
     {
         Map<String, TripInformation> map = tripInfoAll.get(origin);
         if (map == null)

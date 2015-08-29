@@ -26,9 +26,9 @@ import org.opentrafficsim.core.gtu.lane.LaneBlock;
  */
 public class DefaultBlockAnimation extends Renderable2D
 {
-    /** the half width left and right of the center line that is used to draw the block. */ 
+    /** the half width left and right of the center line that is used to draw the block. */
     private final double halfWidth;
-    
+
     /**
      * Construct the DefaultCarAnimation for a LaneBlock (road block).
      * @param source the Car to draw

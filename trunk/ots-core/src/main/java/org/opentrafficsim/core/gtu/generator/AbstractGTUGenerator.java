@@ -8,6 +8,10 @@ import java.util.Map;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar.LaneBasedIndividualCarBuilder;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -26,11 +30,7 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.RouteGenerator;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DistContinuousDoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.units.distributions.DistContinuousDoubleScalar;
 
 /**
  * Common code for LaneBasedGTU generators that may have to postpone putting a GTU on the road due to congestion growing into
@@ -382,8 +382,7 @@ public abstract class AbstractGTUGenerator
      * @throws NetworkException on network inconsistency
      */
     public final HeadwayGTU headway(final DoubleScalar.Rel<LengthUnit> maxDistance,
-        final LaneBasedRouteNavigator routeNavigator, final Lane generatorLane) throws RemoteException,
-        NetworkException
+        final LaneBasedRouteNavigator routeNavigator, final Lane generatorLane) throws RemoteException, NetworkException
     {
         return headwayGTUSIForward(maxDistance.getSI(), routeNavigator, generatorLane);
     }

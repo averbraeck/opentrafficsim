@@ -14,6 +14,11 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -28,12 +33,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.CompleteRouteNavigator;
-import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LineString;
@@ -443,7 +442,7 @@ public abstract class AbstractTrafficLight extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public HeadwayGTU headway(Rel<LengthUnit> maxDistance) throws RemoteException, NetworkException
+    public HeadwayGTU headway(DoubleScalar.Rel<LengthUnit> maxDistance) throws RemoteException, NetworkException
     {
         return null;
     }
@@ -473,21 +472,21 @@ public abstract class AbstractTrafficLight extends AbstractGTU implements LaneBa
     /** {@inheritDoc} */
     @Override
     public Lane bestAccessibleAdjacentLane(Lane currentLane, LateralDirectionality lateralDirection,
-        Rel<LengthUnit> longitudinalPosition)
+        DoubleScalar.Rel<LengthUnit> longitudinalPosition)
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public DoubleScalar.Abs<TimeUnit> timeAtDistance(Rel<LengthUnit> distance)
+    public DoubleScalar.Abs<TimeUnit> timeAtDistance(DoubleScalar.Rel<LengthUnit> distance)
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public DoubleScalar.Rel<TimeUnit> deltaTimeForDistance(Rel<LengthUnit> distance)
+    public DoubleScalar.Rel<TimeUnit> deltaTimeForDistance(DoubleScalar.Rel<LengthUnit> distance)
     {
         return null;
     }

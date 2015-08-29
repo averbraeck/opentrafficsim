@@ -6,15 +6,15 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.AnglePlaneUnit;
+import org.djunits.unit.AngleSlopeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.factory.XMLParser;
 import org.opentrafficsim.core.network.factory.xml.units.AngleUnits;
 import org.opentrafficsim.core.network.factory.xml.units.Coordinates;
-import org.opentrafficsim.core.unit.AnglePlaneUnit;
-import org.opentrafficsim.core.unit.AngleSlopeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -130,9 +130,8 @@ class NodeTag
      * @throws NamingException when animation context cannot be found.
      * @throws RemoteException when communication error occurs when trying to find animation context.
      */
-    static org.opentrafficsim.core.network.Node
-        makeOTSNode(final NodeTag nodeTag, final XmlNetworkLaneParser parser) throws NetworkException, RemoteException,
-            NamingException
+    static org.opentrafficsim.core.network.Node makeOTSNode(final NodeTag nodeTag, final XmlNetworkLaneParser parser)
+        throws NetworkException, RemoteException, NamingException
     {
         String id = nodeTag.name;
         DoubleScalar.Abs<AnglePlaneUnit> angle =

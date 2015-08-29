@@ -16,14 +16,14 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
-import org.opentrafficsim.core.unit.FrequencyUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
-import org.opentrafficsim.core.value.vdouble.scalar.MutableDoubleScalar;
+import org.djunits.unit.FrequencyUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.MutableDoubleScalar;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.trafficdemand.DepartureTimeProfile;
 import org.opentrafficsim.demo.ntm.trafficdemand.FractionOfTripDemandByTimeSegment;
@@ -35,17 +35,16 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 /**
- * A Cell extends a Zone and is used for the NetworkTransmissionModel The Cells cover a preferably homogeneous area and
- * have their specific characteristics such as their free speed, a capacity and an NFD diagram A trip matrix quantifies
- * the amount of trips between Cells in a network. The connection of neighbouring Cells are expressed by Links
- * (connectors) The cost to go from one to another Cell is quantified through the weights on the Connectors </pre>
+ * A Cell extends a Zone and is used for the NetworkTransmissionModel The Cells cover a preferably homogeneous area and have
+ * their specific characteristics such as their free speed, a capacity and an NFD diagram A trip matrix quantifies the amount of
+ * trips between Cells in a network. The connection of neighbouring Cells are expressed by Links (connectors) The cost to go
+ * from one to another Cell is quantified through the weights on the Connectors </pre>
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author: pknoppers
- * $, initial version 4 Sep 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version 4 Sep 2014 <br>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
 
@@ -67,9 +66,9 @@ public class CsvFileReader
      * @throws Throwable
      */
     public static TripDemand<TripInfoTimeDynamic> readOmnitransExportDemand(final String csvFileName,
-            final String csvSplitBy, final String csvSplitByTwo, final Map<String, Node> centroids,
-            final Map<String, Link> links, final Map<String, Link> connectors, final NTMSettings settingsNTM,
-            final ArrayList<DepartureTimeProfile> profiles, final Map<String, Area> areas) throws Throwable
+        final String csvSplitBy, final String csvSplitByTwo, final Map<String, Node> centroids,
+        final Map<String, Link> links, final Map<String, Link> connectors, final NTMSettings settingsNTM,
+        final ArrayList<DepartureTimeProfile> profiles, final Map<String, Area> areas) throws Throwable
     {
         BufferedReader bufferedReader = null;
         String line = "";
@@ -111,18 +110,16 @@ public class CsvFileReader
                             if (counter == 0)
                             {
                                 DoubleScalar.Abs<TimeUnit> startTime =
-                                        new DoubleScalar.Abs<TimeUnit>(timeInstance.getTimeInMillis() / 1000,
-                                                TimeUnit.SECOND);
+                                    new DoubleScalar.Abs<TimeUnit>(timeInstance.getTimeInMillis() / 1000, TimeUnit.SECOND);
                                 tripDemand.setStartTime(startTime);
                                 settingsNTM.setStartTimeSinceMidnight(startTime);
                             }
                             else if (counter == 1)
                             {
                                 DoubleScalar.Abs<TimeUnit> endTime =
-                                        new DoubleScalar.Abs<TimeUnit>(timeInstance.getTimeInMillis() / 1000,
-                                                TimeUnit.SECOND);
+                                    new DoubleScalar.Abs<TimeUnit>(timeInstance.getTimeInMillis() / 1000, TimeUnit.SECOND);
                                 DoubleScalar.Rel<TimeUnit> timeSpan =
-                                        MutableDoubleScalar.Abs.minus(endTime, tripDemand.getStartTime()).immutable();
+                                    MutableDoubleScalar.Abs.minus(endTime, tripDemand.getStartTime()).immutable();
 
                                 tripDemand.setTimeSpan(timeSpan);
                                 settingsNTM.setDurationOfSimulation(timeSpan);
@@ -163,7 +160,7 @@ public class CsvFileReader
                     // this is often a dangling link, but not always!
                     // we add the Node of the cordon Link to the "centroidsAndCordonConnectors"
                     else if (links.get(name) != null || connectors.get(name) != null || links.get(nameBA) != null
-                            || connectors.get(nameBA) != null)
+                        || connectors.get(nameBA) != null)
                     {
                         if (links.get(name) == null && connectors.get(name) == null)
                         {
@@ -234,11 +231,10 @@ public class CsvFileReader
                                 cordonPoint = node;
                                 connectors.remove(cordonConnector);
                                 cordonConnector =
-                                        new Link(cordonConnector.getDesignLine(), cordonConnector.getId(),
-                                                cordonConnector.getLength(), (Node) cordonConnector.getStartNode(),
-                                                node, cordonConnector.getFreeSpeed(), cordonConnector.getTime(),
-                                                cordonConnector.getCapacity(), cordonConnector.getBehaviourType(),
-                                                cordonConnector.getLinkData());
+                                    new Link(cordonConnector.getDesignLine(), cordonConnector.getId(), cordonConnector
+                                        .getLength(), (Node) cordonConnector.getStartNode(), node, cordonConnector
+                                        .getFreeSpeed(), cordonConnector.getTime(), cordonConnector.getCapacity(),
+                                        cordonConnector.getBehaviourType(), cordonConnector.getLinkData());
                                 connectors.put(name, cordonConnector);
                             }
                             else
@@ -267,11 +263,10 @@ public class CsvFileReader
                                 cordonPoint = node;
                                 connectors.remove(cordonConnector);
                                 cordonConnector =
-                                        new Link(cordonConnector.getDesignLine(), cordonConnector.getId(),
-                                                cordonConnector.getLength(), node, (Node) cordonConnector.getEndNode(),
-                                                cordonConnector.getFreeSpeed(), cordonConnector.getTime(),
-                                                cordonConnector.getCapacity(), cordonConnector.getBehaviourType(),
-                                                cordonConnector.getLinkData());
+                                    new Link(cordonConnector.getDesignLine(), cordonConnector.getId(), cordonConnector
+                                        .getLength(), node, (Node) cordonConnector.getEndNode(), cordonConnector
+                                        .getFreeSpeed(), cordonConnector.getTime(), cordonConnector.getCapacity(),
+                                        cordonConnector.getBehaviourType(), cordonConnector.getLinkData());
 
                                 connectors.put(name, cordonConnector);
                             }
@@ -291,7 +286,7 @@ public class CsvFileReader
                             // Geometry buffer = cordonConnector.getStartNode().getPoint().getCoordinate().buffer(40);
                             GeometryFactory factory = new GeometryFactory();
                             Geometry point =
-                                    factory.createPoint(new Coordinate(cordonPoint.getPoint().x, cordonPoint.getPoint().y));
+                                factory.createPoint(new Coordinate(cordonPoint.getPoint().x, cordonPoint.getPoint().y));
                             Geometry buffer = point.buffer(40);
                             Coordinate centroid = cordonPoint.getPoint().getCoordinate();
                             String nr = cordonPoint.getId();
@@ -310,10 +305,9 @@ public class CsvFileReader
                             accCritical.add(accCritJam);
                             ParametersNTM parametersNTM = new ParametersNTM(accCritical);
                             Area area =
-                                    new Area(buffer, nr, newName, gemeente, gebied, regio, dhb, centroid,
-                                            TrafficBehaviourType.CORDON, new Rel<LengthUnit>(0, LengthUnit.METER),
-                                            new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), increaseDemandByFactor,
-                                            parametersNTM);
+                                new Area(buffer, nr, newName, gemeente, gebied, regio, dhb, centroid,
+                                    TrafficBehaviourType.CORDON, new Rel<LengthUnit>(0, LengthUnit.METER),
+                                    new Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), increaseDemandByFactor, parametersNTM);
                             areas.put(nr, area);
                         }
 
@@ -366,11 +360,11 @@ public class CsvFileReader
                             DepartureTimeProfile profile = profiles.get(0);
                             Abs<TimeUnit> startSimulationTimeSinceMidnight = settingsNTM.getStartTimeSinceMidnight();
                             NavigableMap<Abs<TimeUnit>, FractionOfTripDemandByTimeSegment> profileList =
-                                    profile.checkAndNormalizeCurve(startSimulationTimeSinceMidnight,
-                                            settingsNTM.getDurationOfSimulation(), profile.getDepartureTimeCurve());
+                                profile.checkAndNormalizeCurve(startSimulationTimeSinceMidnight, settingsNTM
+                                    .getDurationOfSimulation(), profile.getDepartureTimeCurve());
                             profile.setDepartureTimeCurve(profileList);
                             TripInfoTimeDynamic tripInfo =
-                                    new TripInfoTimeDynamic(Double.parseDouble(numberOfTrips), profile);
+                                new TripInfoTimeDynamic(Double.parseDouble(numberOfTrips), profile);
                             if (centroidsAndCordonConnectors.get(orderedZones.get(indexColumn)) == null)
                             {
                                 System.out.println("Strange: no destination????");
@@ -435,7 +429,7 @@ public class CsvFileReader
      * @throws ParseException
      */
     public static ArrayList<DepartureTimeProfile> readDepartureTimeProfiles(final String csvFileName,
-            final String csvSplitBy, final String csvSplitInternalBy) throws IOException, ParseException
+        final String csvSplitBy, final String csvSplitInternalBy) throws IOException, ParseException
     {
         BufferedReader bufferedReader = null;
         String line = "";
@@ -458,7 +452,7 @@ public class CsvFileReader
 
         ArrayList<DepartureTimeProfile> profiles = new ArrayList<DepartureTimeProfile>();
         NavigableMap<DoubleScalar.Abs<TimeUnit>, FractionOfTripDemandByTimeSegment> fractions =
-                new TreeMap<DoubleScalar.Abs<TimeUnit>, FractionOfTripDemandByTimeSegment>();
+            new TreeMap<DoubleScalar.Abs<TimeUnit>, FractionOfTripDemandByTimeSegment>();
         DepartureTimeProfile profile = null;
         DoubleScalar.Rel<TimeUnit> duration = null;
         DoubleScalar.Abs<TimeUnit> segmentStartTime = null;
@@ -496,9 +490,8 @@ public class CsvFileReader
                             segmentEnd.setTime(sdf.parse(timeSpan));
                             segmentStart.setTime(sdf.parse(TIMEZERO));
                             duration =
-                                    new DoubleScalar.Rel<TimeUnit>(
-                                            (segmentEnd.getTimeInMillis() - segmentStart.getTimeInMillis()) / 1000,
-                                            TimeUnit.SECOND);
+                                new DoubleScalar.Rel<TimeUnit>((segmentEnd.getTimeInMillis() - segmentStart
+                                    .getTimeInMillis()) / 1000, TimeUnit.SECOND);
                         }
                         // detects the specific Time that relates to the next fractions
                         else if (dataItem[0].equals(TIME))
@@ -509,13 +502,13 @@ public class CsvFileReader
                             startTime.setTime(sdf.parse(segmentTime));
                             DoubleScalar.Abs<TimeUnit> prevStartTime = segmentStartTime;
                             segmentStartTime =
-                                    new DoubleScalar.Abs<TimeUnit>(startTime.getTimeInMillis() / 1000, TimeUnit.SECOND);
+                                new DoubleScalar.Abs<TimeUnit>(startTime.getTimeInMillis() / 1000, TimeUnit.SECOND);
                             if (prevStartTime != null)
                             {
                                 while (MutableDoubleScalar.Abs.minus(segmentStartTime, prevStartTime).doubleValue() > 0)
                                 {
                                     FractionOfTripDemandByTimeSegment newFraction =
-                                            new FractionOfTripDemandByTimeSegment(segmentStartTime, duration, fraction);
+                                        new FractionOfTripDemandByTimeSegment(segmentStartTime, duration, fraction);
                                     fractions.put(segmentStartTime, newFraction);
                                     prevStartTime = MutableDoubleScalar.Abs.plus(prevStartTime, duration).immutable();
                                 }
@@ -529,7 +522,7 @@ public class CsvFileReader
                             {
                                 fraction = Double.parseDouble(dataItem[i]);
                                 FractionOfTripDemandByTimeSegment newFraction =
-                                        new FractionOfTripDemandByTimeSegment(segmentStartTime, duration, fraction);
+                                    new FractionOfTripDemandByTimeSegment(segmentStartTime, duration, fraction);
                                 fractions.put(segmentStartTime, newFraction);
                                 segmentStartTime = MutableDoubleScalar.Abs.plus(segmentStartTime, duration).immutable();
                             }
@@ -573,8 +566,8 @@ public class CsvFileReader
      * @throws IOException
      * @throws ParseException
      */
-    public static HashMap<String, ArrayList<Double>> readParametersNTM(final String csvFileName,
-            final String csvSplitBy, final String csvSplitInternalBy) throws IOException, ParseException
+    public static HashMap<String, ArrayList<Double>> readParametersNTM(final String csvFileName, final String csvSplitBy,
+        final String csvSplitInternalBy) throws IOException, ParseException
     {
         BufferedReader bufferedReader = null;
         String line = "";
@@ -648,7 +641,7 @@ public class CsvFileReader
     }
 
     public static HashMap<String, HashMap<String, Abs<FrequencyUnit>>> readCapResNTM(final String csvFileName,
-            final String csvSplitBy, final String csvSplitInternalBy) throws IOException, ParseException
+        final String csvSplitBy, final String csvSplitInternalBy) throws IOException, ParseException
     {
         BufferedReader bufferedReader = null;
         String line = "";
@@ -662,7 +655,7 @@ public class CsvFileReader
             url = ShapeFileReader.class.getResource(csvFileName);
         }
         HashMap<String, HashMap<String, Abs<FrequencyUnit>>> capResMap =
-                new HashMap<String, HashMap<String, Abs<FrequencyUnit>>>();
+            new HashMap<String, HashMap<String, Abs<FrequencyUnit>>>();
         // double OD = capResMap.get("O").get("D");
         if (url != null)
         {
@@ -698,8 +691,7 @@ public class CsvFileReader
                                 for (int i = 1; i < dataItem.length; i++)
                                 {
                                     Abs<FrequencyUnit> capacity =
-                                            new Abs<FrequencyUnit>(Double.parseDouble(dataItem[i]),
-                                                    FrequencyUnit.PER_HOUR);
+                                        new Abs<FrequencyUnit>(Double.parseDouble(dataItem[i]), FrequencyUnit.PER_HOUR);
                                     capRes.put(name.get(i), capacity);
                                 }
                             }
@@ -743,7 +735,7 @@ public class CsvFileReader
     }
 
     public static HashMap<String, HashMap<String, Double>> readCapResFactorNTM(final String csvFileName,
-            final String csvSplitBy, final String csvSplitInternalBy) throws IOException, ParseException
+        final String csvSplitBy, final String csvSplitInternalBy) throws IOException, ParseException
     {
         BufferedReader bufferedReader = null;
         String line = "";
@@ -853,9 +845,9 @@ public class CsvFileReader
      * @return name as a long
      */
     /*
-     * public static String returnNumber(final String name) { // replace double quotes at start and end of string String
-     * nr = removeQuotes(name); if (name.startsWith("Links")) { nr = null; } else { nr =
-     * ShapeFileReader.NodeCentroidNumber(nr); } return nr; }
+     * public static String returnNumber(final String name) { // replace double quotes at start and end of string String nr =
+     * removeQuotes(name); if (name.startsWith("Links")) { nr = null; } else { nr = ShapeFileReader.NodeCentroidNumber(nr); }
+     * return nr; }
      */
 
 }

@@ -12,6 +12,9 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -27,9 +30,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Augments the AbstractLaneBasedIndividualGTU with a LaneBasedIndividualCarBuilder and animation support
@@ -74,8 +74,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualCar(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
-        final LaneChangeModel laneChangeModel,
-        final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+        final LaneChangeModel laneChangeModel, final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
         final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
         final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
         final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator) throws NamingException,
@@ -110,8 +109,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualCar(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
-        final LaneChangeModel laneChangeModel,
-        final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
+        final LaneChangeModel laneChangeModel, final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
         final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
         final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
         final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator,
@@ -171,8 +169,8 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
      * lane.toString() + "\t" + posmap.get(lane).getSI() + "\n"); pwsimloc.flush(); simulator.scheduleEventRel(new
      * DoubleScalar.Rel<TimeUnit>(0.1, TimeUnit.SECOND), this, this, "simloc", null); } catch (RemoteException |
      * NetworkException | SimRuntimeException e) { e.printStackTrace(); } } protected class ClockLocThread extends Thread {
-     * @Override public void run() { while (true) { try { Thread.sleep(100); Map<Lane, DoubleScalar.Rel<LengthUnit>>
-     * posmap = positions(getFront()); Lane lane = posmap.keySet().iterator().next();
+     * @Override public void run() { while (true) { try { Thread.sleep(100); Map<Lane, DoubleScalar.Rel<LengthUnit>> posmap =
+     * positions(getFront()); Lane lane = posmap.keySet().iterator().next();
      * pwthreadloc.write(getSimulator().getSimulatorTime().get().getSI() + "\t" + lane.toString() + "\t" +
      * posmap.get(lane).getSI() + "\n"); pwthreadloc.flush(); } catch (RemoteException | NetworkException | InterruptedException
      * e) { e.printStackTrace(); } } } } /* REMOVE END

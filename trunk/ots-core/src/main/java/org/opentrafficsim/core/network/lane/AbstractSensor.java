@@ -8,12 +8,11 @@ import javax.vecmath.Point3d;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * <p>
@@ -47,7 +46,7 @@ public abstract class AbstractSensor implements Sensor
 
     /** the cached bounds for animation. */
     private Bounds bounds = null;
-    
+
     /** the simulator for being able to generate an animation. */
     private final OTSSimulatorInterface simulator;
 
@@ -79,7 +78,7 @@ public abstract class AbstractSensor implements Sensor
 
     /** {@inheritDoc} */
     @Override
-    public final Rel<LengthUnit> getLongitudinalPosition()
+    public final DoubleScalar.Rel<LengthUnit> getLongitudinalPosition()
     {
         return new DoubleScalar.Rel<LengthUnit>(this.longitudinalPositionSI, LengthUnit.METER);
     }
