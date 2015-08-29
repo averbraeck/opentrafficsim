@@ -5,14 +5,14 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.lane.AbstractTrafficLight;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Special GTU that cannot move, but it can be seen by other GTUs.
@@ -29,7 +29,7 @@ public class TrafficLight extends AbstractTrafficLight
 {
     /** the color to display. */
     private Color color = Color.BLACK;
-    
+
     /**
      * @param lane The lane where the block has to be put
      * @param position the position on the lane as a length

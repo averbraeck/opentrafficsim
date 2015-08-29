@@ -1,5 +1,8 @@
 package nl.grontmij.smarttraffic.lane;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -7,9 +10,6 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.AbstractLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>
@@ -32,11 +32,12 @@ public class StraightRouteNavigator extends AbstractLaneBasedRouteNavigator
     protected int lastVisitedNodeIndex = -1;
 
     /** follow the route - no lane change. */
-    private static final DoubleScalar.Rel<LengthUnit> FOLLOW_ROUTE = new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER);
-    
+    private static final DoubleScalar.Rel<LengthUnit> FOLLOW_ROUTE =
+        new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER);
+
     /** leave the route - lane change. */
     private static final DoubleScalar.Rel<LengthUnit> LEAVE_ROUTE = new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER);
-    
+
     /**
      * @param straightRoute
      */

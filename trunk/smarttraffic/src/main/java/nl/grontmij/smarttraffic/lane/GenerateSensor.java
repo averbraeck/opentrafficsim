@@ -8,15 +8,15 @@ import java.util.HashMap;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.lane.AbstractSensor;
 import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar.Rel;
 
 /**
  * @author p070518
@@ -78,8 +78,8 @@ public class GenerateSensor extends AbstractSensor
     @Override
     public String toString()
     {
-        return "GenerateSensor [getLane()=" + this.getLane() + ", getLongitudinalPosition()=" + this.getLongitudinalPosition()
-            + ", getPositionType()=" + this.getPositionType() + "]";
+        return "GenerateSensor [getLane()=" + this.getLane() + ", getLongitudinalPosition()="
+            + this.getLongitudinalPosition() + ", getPositionType()=" + this.getPositionType() + "]";
     }
 
 }

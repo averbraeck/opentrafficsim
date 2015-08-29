@@ -35,8 +35,8 @@ public class GenerateSensorAnimation extends Renderable2D
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public GenerateSensorAnimation(final GenerateSensor sensor, final OTSSimulatorInterface simulator) throws NamingException,
-        RemoteException
+    public GenerateSensorAnimation(final GenerateSensor sensor, final OTSSimulatorInterface simulator)
+        throws NamingException, RemoteException
     {
         super(sensor, simulator);
         this.halfWidth = 0.4 * sensor.getLane().getWidth(0.0).getSI();

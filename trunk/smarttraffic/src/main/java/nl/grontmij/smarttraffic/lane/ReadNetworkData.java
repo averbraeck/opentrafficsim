@@ -1,13 +1,13 @@
 package nl.grontmij.smarttraffic.lane;
 
-import java.io.BufferedWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.lane.AbstractSensor;
@@ -17,8 +17,6 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.NoTrafficLane;
 import org.opentrafficsim.core.network.lane.Sensor;
 import org.opentrafficsim.core.network.lane.SinkSensor;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 public class ReadNetworkData
 {
@@ -49,18 +47,21 @@ public class ReadNetworkData
                     {
                         Lane lane = (Lane) cse;
                         List<Sensor> sensors =
-                            lane.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER), lane.getLength(), GTM.GTUTYPE);
+                            lane.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER), lane.getLength(),
+                                GTM.GTUTYPE);
                         if (!sensors.isEmpty())
                         {
 
                             for (Sensor sensor : sensors)
                             {
-                            	if (sensor instanceof SinkSensor)
-                                    {
-                            			sensors.remove(sensor);
-                            			KillSensor killSensor = new KillSensor(sensor.getLane(),sensor.getLongitudinalPosition(),sensor.getName(),((SinkSensor) sensor).getSimulator());
-                            			sensors.add(killSensor);
-                                    }
+                                if (sensor instanceof SinkSensor)
+                                {
+                                    sensors.remove(sensor);
+                                    KillSensor killSensor =
+                                        new KillSensor(sensor.getLane(), sensor.getLongitudinalPosition(), sensor.getName(),
+                                            ((SinkSensor) sensor).getSimulator());
+                                    sensors.add(killSensor);
+                                }
                                 if (sensor instanceof CheckSensor || sensor instanceof GenerateSensor
                                     || sensor instanceof KillSensor)
                                 {

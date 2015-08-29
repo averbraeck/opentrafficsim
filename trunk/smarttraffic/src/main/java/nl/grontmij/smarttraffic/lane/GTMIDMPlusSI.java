@@ -1,11 +1,11 @@
 package nl.grontmij.smarttraffic.lane;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.following.AbstractGTUFollowingModel;
-import org.opentrafficsim.core.unit.AccelerationUnit;
-import org.opentrafficsim.core.unit.LengthUnit;
-import org.opentrafficsim.core.unit.SpeedUnit;
-import org.opentrafficsim.core.unit.TimeUnit;
-import org.opentrafficsim.core.value.vdouble.scalar.DoubleScalar;
 
 /**
  * IDMPlus implements the <i>Integrated Lane Change Model with Relaxation and Synchronization</i> as published by Wouter J.
@@ -45,7 +45,7 @@ public class GTMIDMPlusSI extends AbstractGTUFollowingModel
      * speed and accuracy).
      */
     private final double stepSize = 0.5;
-    
+
     /** store 2 * sqrt(a*b). */
     private final double logWeightedAccelerationTimes2;
 
@@ -114,7 +114,8 @@ public class GTMIDMPlusSI extends AbstractGTUFollowingModel
             leftComponent = 0;
         }
         double dV = followerSpeedSI - leaderSpeedSI;
-        double sStar = (this.s0 + followerSpeedSI * this.tSafe) + (dV * followerSpeedSI / this.logWeightedAccelerationTimes2);
+        double sStar =
+            (this.s0 + followerSpeedSI * this.tSafe) + (dV * followerSpeedSI / this.logWeightedAccelerationTimes2);
         if (sStar < 0)
         {
             // Negative value should be treated as 0? This is NOT in the LMRS paper

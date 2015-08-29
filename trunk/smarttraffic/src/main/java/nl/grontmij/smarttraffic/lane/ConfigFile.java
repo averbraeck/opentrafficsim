@@ -38,8 +38,8 @@ public class ConfigFile
      * @param vriNummers e.g., {"231", "232", "233"}
      * @return a map of Strings to VRIs
      */
-    public static HashMap<String, ConfigVri> readVlogConfigFiles(String dirBase, String wegNummer,
-        String[] vriNummers, BufferedWriter outputFileLogConfigVRI)
+    public static HashMap<String, ConfigVri> readVlogConfigFiles(String dirBase, String wegNummer, String[] vriNummers,
+        BufferedWriter outputFileLogConfigVRI)
     {
         // lijst met de configuratie van de vri's: naam kruispunt, detector (index en naam) en signaalgroep (index en naam)
         HashMap<String, ConfigVri> configVriList = new HashMap<String, ConfigVri>();
@@ -74,7 +74,8 @@ public class ConfigFile
      * @return a VRI configuration object
      * @throws IOException on read error
      */
-    public static ConfigVri readVLogConfigFile(BufferedReader bufferedReader, BufferedWriter outputFileLogConfigVRI) throws IOException
+    public static ConfigVri readVLogConfigFile(BufferedReader bufferedReader, BufferedWriter outputFileLogConfigVRI)
+        throws IOException
     {
         String line = "";
         String nameVRI = null;
@@ -189,4 +190,3 @@ public class ConfigFile
     }
 
 }
-
