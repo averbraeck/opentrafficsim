@@ -49,7 +49,7 @@ public class ReadNetworkData
                     {
                         Lane lane = (Lane) cse;
                         List<Sensor> sensors =
-                            lane.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER), lane.getLength());
+                            lane.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER), lane.getLength(), GTM.GTUTYPE);
                         if (!sensors.isEmpty())
                         {
 

@@ -116,7 +116,7 @@ public class ScheduleGenerateCars
     {
         // is there enough space?
         Lane nextLane = lane.nextLanes(this.gtuType).iterator().next();
-        double genSpeedSI = Math.min(lane.getSpeedLimit().getSI(), nextLane.getSpeedLimit().getSI());
+        double genSpeedSI = Math.min(lane.getSpeedLimit(GTM.GTUTYPE).getSI(), nextLane.getSpeedLimit(GTM.GTUTYPE).getSI());
         if (!enoughSpace(lane, initialPosition.getSI(), this.lengthCar, genSpeedSI, this.gtuType))
         {
             try
