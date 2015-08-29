@@ -297,8 +297,8 @@ public class ScheduleCheckPulses<ID> {
 			throws NetworkException {
 		// is there enough space?
 		Lane nextLane = lane.nextLanes(this.gtuType).iterator().next();
-		double genSpeedSI = Math.min(lane.getSpeedLimit().getSI(), nextLane
-				.getSpeedLimit().getSI());
+		double genSpeedSI = Math.min(lane.getSpeedLimit(GTM.GTUTYPE).getSI(), nextLane
+				.getSpeedLimit(GTM.GTUTYPE).getSI());
 		if (!ScheduleGenerateCars.enoughSpace(lane, initialPosition.getSI(),
 				this.lengthCar, genSpeedSI, this.gtuType)) {
 			try {
@@ -313,7 +313,7 @@ public class ScheduleCheckPulses<ID> {
 
 		Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
 		initialPositions.put(lane, initialPosition);
-		DoubleScalar.Abs<SpeedUnit> initialSpeed = lane.getSpeedLimit();
+		DoubleScalar.Abs<SpeedUnit> initialSpeed = lane.getSpeedLimit(GTM.GTUTYPE);
 		DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(
 				Settings.getDouble(simulator, "MAXSPEED"),
 				SpeedUnit.KM_PER_HOUR);
