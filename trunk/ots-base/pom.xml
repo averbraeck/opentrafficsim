@@ -201,7 +201,7 @@
           </execution>
           
           <execution>
-            <id>upload-last-site</id>
+            <id>upload-current-site</id>
             <phase>site-deploy</phase>
             <goals>
               <goal>upload</goal>
@@ -210,7 +210,7 @@
               <fromDir>${basedir}/target/site</fromDir>
               <includes>**/**</includes>
               <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org</url>
-              <toDir>docs/last</toDir>
+              <toDir>docs/current</toDir>
               <serverId>ots-deployment</serverId>
             </configuration>
           </execution>
