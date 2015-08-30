@@ -237,7 +237,7 @@ public class CellBehaviour
             Abs<FrequencyUnit> zeroCap = new Abs<FrequencyUnit>(0.0, FrequencyUnit.PER_HOUR);
             this.getBorderDemand().put(node, zeroCap);
         }
-        Abs<FrequencyUnit> total = DoubleScalar.plus(this.getBorderDemand().get(node), addCap).immutable();
+        Abs<FrequencyUnit> total = DoubleScalar.plus(this.getBorderDemand().get(node), addCap);
         this.getBorderDemand().put(node, total);
     }
 

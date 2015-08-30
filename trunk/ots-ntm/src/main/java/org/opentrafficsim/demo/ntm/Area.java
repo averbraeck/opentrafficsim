@@ -326,7 +326,7 @@ public class Area extends GeoObject implements LocatableInterface
      */
     public void addRoadLength(Rel<LengthUnit> rel)
     {
-        this.roadLength = DoubleScalar.plus(rel, this.roadLength).immutable();
+        this.roadLength = DoubleScalar.plus(rel, this.roadLength);
     }
 
     /**
