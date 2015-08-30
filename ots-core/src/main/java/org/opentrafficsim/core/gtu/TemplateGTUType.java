@@ -7,7 +7,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.lane.LaneType;
-import org.opentrafficsim.units.distributions.DistContinuousDoubleScalar;
+import org.opentrafficsim.core.units.distributions.DistContinuousDoubleScalar;
 
 /**
  * TemplateGTUType stores most of the information that is needed to generate a GTU.

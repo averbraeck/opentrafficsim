@@ -79,7 +79,7 @@ public class LinkLocation
     {
         if (this.link.equals(loc.getLink()))
         {
-            return DoubleScalar.minus(loc.getLongitudinalPosition(), this.getLongitudinalPosition()).immutable();
+            return DoubleScalar.minus(loc.getLongitudinalPosition(), this.getLongitudinalPosition());
         }
 
         // TODO not on the same link. Find shortest path...

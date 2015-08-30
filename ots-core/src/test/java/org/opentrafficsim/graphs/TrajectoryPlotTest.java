@@ -64,7 +64,7 @@ public class TrajectoryPlotTest
                 simulator);
         // Make the car accelerate with constant acceleration of 0.05 m/s/s for 400 seconds
         DoubleScalar.Rel<TimeUnit> duration = new DoubleScalar.Rel<TimeUnit>(400, TimeUnit.SECOND);
-        DoubleScalar.Abs<TimeUnit> endTime = DoubleScalar.plus(simulator.getSimulatorTime().get(), duration).immutable();
+        DoubleScalar.Abs<TimeUnit> endTime = DoubleScalar.plus(simulator.getSimulatorTime().get(), duration);
         car.setState(new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.05,
             AccelerationUnit.METER_PER_SECOND_2), endTime));
         // System.out.println("Car end position " + car.getPosition(car.getNextEvaluationTime()));
@@ -180,7 +180,7 @@ public class TrajectoryPlotTest
         Lane lane = car.positions(car.getFront()).keySet().iterator().next();
         DoubleScalar.Abs<TimeUnit> initialTime = car.getLastEvaluationTime();
         DoubleScalar.Rel<TimeUnit> duration =
-            DoubleScalar.minus(car.getNextEvaluationTime(), car.getLastEvaluationTime()).immutable();
+            DoubleScalar.minus(car.getNextEvaluationTime(), car.getLastEvaluationTime());
         int expectedNumberOfSamples = (int) (duration.getSI() / this.sampleInterval.getSI());
         assertEquals("Number of samples in trajectory should be ", expectedNumberOfSamples, tp.getItemCount(series));
         // Check that the stored trajectory accurately matches the trajectory of the car at all sampling times
@@ -188,7 +188,7 @@ public class TrajectoryPlotTest
         {
             DoubleScalar.Rel<TimeUnit> deltaTime =
                 new DoubleScalar.Rel<TimeUnit>(this.sampleInterval.getSI() * sample, TimeUnit.SECOND);
-            DoubleScalar.Abs<TimeUnit> sampleTime = DoubleScalar.plus(initialTime, deltaTime).immutable();
+            DoubleScalar.Abs<TimeUnit> sampleTime = DoubleScalar.plus(initialTime, deltaTime);
             double sampledTime = tp.getXValue(series, sample);
             assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getSI(), sampledTime, 0.0001);
             sampledTime = tp.getX(series, sample).doubleValue();

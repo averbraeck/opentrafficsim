@@ -30,7 +30,7 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.RouteGenerator;
-import org.opentrafficsim.units.distributions.DistContinuousDoubleScalar;
+import org.opentrafficsim.core.units.distributions.DistContinuousDoubleScalar;
 
 /**
  * Common code for LaneBasedGTU generators that may have to postpone putting a GTU on the road due to congestion growing into

@@ -15,7 +15,7 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
-import org.opentrafficsim.units.distributions.DistContinuousDoubleScalar;
+import org.opentrafficsim.core.units.distributions.DistContinuousDoubleScalar;
 
 /**
  * Generate GTUs.

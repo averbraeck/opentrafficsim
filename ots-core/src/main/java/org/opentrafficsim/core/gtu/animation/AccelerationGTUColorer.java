@@ -56,7 +56,7 @@ public class AccelerationGTUColorer implements GTUColorer
         {
             double ratio = index * 1.0 / (decelerationColors.length - 1);
             DoubleScalar.Abs<AccelerationUnit> acceleration =
-                DoubleScalar.interpolate(this.maximumDeceleration, zeroValue, ratio).immutable();
+                DoubleScalar.interpolate(this.maximumDeceleration, zeroValue, ratio);
             this.legend.add(new LegendEntry(decelerationColors[index], acceleration.toString(), "deceleration"
                 + acceleration.toString()));
         }
@@ -64,7 +64,7 @@ public class AccelerationGTUColorer implements GTUColorer
         {
             double ratio = index * 1.0 / (accelerationColors.length - 1);
             DoubleScalar.Abs<AccelerationUnit> acceleration =
-                DoubleScalar.interpolate(zeroValue, this.maximumAcceleration, ratio).immutable();
+                DoubleScalar.interpolate(zeroValue, this.maximumAcceleration, ratio);
             this.legend.add(new LegendEntry(accelerationColors[index], acceleration.toString(), "acceleration"
                 + acceleration.toString()));
         }

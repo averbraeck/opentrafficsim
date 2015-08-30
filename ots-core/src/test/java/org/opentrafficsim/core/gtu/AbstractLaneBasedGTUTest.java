@@ -167,7 +167,7 @@ public class AbstractLaneBasedGTUTest
                             // FIXME There should be a better way to check equality of RelativePosition
                             if (relativePosition.getDx().getSI() != 0)
                             {
-                                expectedPosition = DoubleScalar.plus(expectedPosition, carLength).immutable();
+                                expectedPosition = DoubleScalar.plus(expectedPosition, carLength);
                             }
                             // System.out.println("reported position: " + position);
                             // System.out.println("expected position: " + expectedPosition);
@@ -269,16 +269,16 @@ public class AbstractLaneBasedGTUTest
                                     DoubleScalar.plus(
                                         expectedPosition,
                                         new DoubleScalar.Rel<LengthUnit>(stepTime.getSI() * initialSpeed.getSI(),
-                                            LengthUnit.SI)).immutable();
+                                            LengthUnit.SI));
                                 expectedPosition =
                                     DoubleScalar.plus(
                                         expectedPosition,
                                         new DoubleScalar.Rel<LengthUnit>(0.5 * acceleration.getSI() * stepTime.getSI()
-                                            * stepTime.getSI(), LengthUnit.SI)).immutable();
+                                            * stepTime.getSI(), LengthUnit.SI));
                                 // FIXME There should be a (better) way to check equality of RelativePosition
                                 if (relativePosition.getDx().getSI() != 0)
                                 {
-                                    expectedPosition = DoubleScalar.plus(expectedPosition, carLength).immutable();
+                                    expectedPosition = DoubleScalar.plus(expectedPosition, carLength);
                                 }
                                 // System.out.println("reported position: " + position);
                                 // System.out.println("expected position: " + expectedPosition);
@@ -310,16 +310,16 @@ public class AbstractLaneBasedGTUTest
                                     DoubleScalar.plus(
                                         expectedPosition,
                                         new DoubleScalar.Rel<LengthUnit>(stepTime.getSI() * initialSpeed.getSI(),
-                                            LengthUnit.SI)).immutable();
+                                            LengthUnit.SI));
                                 expectedPosition =
                                     DoubleScalar.plus(
                                         expectedPosition,
                                         new DoubleScalar.Rel<LengthUnit>(0.5 * acceleration.getSI() * stepTime.getSI()
-                                            * stepTime.getSI(), LengthUnit.SI)).immutable();
+                                            * stepTime.getSI(), LengthUnit.SI));
                                 // FIXME There should be a (better) way to check equality of RelativePosition
                                 if (relativePosition.getDx().getSI() != 0)
                                 {
-                                    expectedPosition = DoubleScalar.plus(expectedPosition, carLength).immutable();
+                                    expectedPosition = DoubleScalar.plus(expectedPosition, carLength);
                                 }
                                 // System.out.println("reported position: " + position);
                                 // System.out.println("expected position: " + expectedPosition);

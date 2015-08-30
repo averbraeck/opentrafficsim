@@ -65,7 +65,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneGTUs, speedLimit);
             }
             DoubleScalar.Abs<AccelerationUnit> straightA =
-                DoubleScalar.plus(applyDriverPersonality(straightAccelerationSteps), laneChangeThreshold).immutable();
+                DoubleScalar.plus(applyDriverPersonality(straightAccelerationSteps), laneChangeThreshold);
             DualAccelerationStep nonPreferrredAccelerationSteps =
                 null == nonPreferredLane ? null : gtu.getGTUFollowingModel().computeAcceleration(gtu, nonPreferredLaneGTUs,
                     speedLimit);
@@ -128,11 +128,11 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             }
             // All merges are possible
             DoubleScalar.Rel<AccelerationUnit> preferredAttractiveness =
-                DoubleScalar.minus(DoubleScalar.plus(preferredA, preferredLaneRouteIncentive).immutable(), straightA)
-                    .immutable();
+                DoubleScalar.minus(DoubleScalar.plus(preferredA, preferredLaneRouteIncentive), straightA)
+                    ;
             DoubleScalar.Rel<AccelerationUnit> nonPreferredAttractiveness =
-                DoubleScalar.minus(DoubleScalar.plus(nonPreferredA, nonPreferredLaneRouteIncentive).immutable(), straightA)
-                    .immutable();
+                DoubleScalar.minus(DoubleScalar.plus(nonPreferredA, nonPreferredLaneRouteIncentive), straightA)
+                    ;
             if (preferredAttractiveness.getSI() <= 0 && nonPreferredAttractiveness.getSI() < 0)
             {
                 // Stay in current lane

@@ -12,7 +12,6 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.MutableDoubleScalar;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 
 /**
@@ -95,12 +94,12 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
      */
     public final DoubleScalar.Abs<TimeUnit> timeAfterCompletionOfStep(final int index)
     {
-        MutableDoubleScalar.Abs<TimeUnit> sum = new MutableDoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
+        DoubleScalar.Abs<TimeUnit> sum = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
         for (int i = 0; i <= index; i++)
         {
-            sum.incrementBy(this.steps.get(i).getDuration());
+            sum = sum.plus(this.steps.get(i).getDuration());
         }
-        return sum.immutable();
+        return sum;
     }
 
     /** Maximum error of the simulator clock. */

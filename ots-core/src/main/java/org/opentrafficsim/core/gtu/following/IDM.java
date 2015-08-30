@@ -4,9 +4,8 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.conversions.Calc;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.MutableDoubleScalar;
+import org.opentrafficsim.core.units.calc.Calc;
 
 /**
  * The Intelligent Driver Model by Treiber, Hennecke and Helbing.
@@ -97,7 +96,7 @@ public class IDM extends AbstractGTUFollowingModel
     {
         // System.out.println("Applying IDM for " + follower + " headway is " + headway);
         // dV is the approach speed
-        DoubleScalar.Rel<SpeedUnit> dV = DoubleScalar.minus(followerSpeed, leaderSpeed).immutable();
+        DoubleScalar.Rel<SpeedUnit> dV = DoubleScalar.minus(followerSpeed, leaderSpeed);
         DoubleScalar.Abs<AccelerationUnit> aFree =
             new DoubleScalar.Abs<AccelerationUnit>(this.a.getSI()
                 * (1 - Math.pow(followerSpeed.getSI() / vDes(speedLimit, followerMaximumSpeed).getSI(), 4)),
@@ -106,28 +105,27 @@ public class IDM extends AbstractGTUFollowingModel
         {
             aFree = new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.SI);
         }
-        MutableDoubleScalar.Rel<AccelerationUnit> logWeightedAccelerationTimes2 =
-            new MutableDoubleScalar.Rel<AccelerationUnit>(Math.sqrt(this.a.getSI() * this.b.getSI()),
-                AccelerationUnit.METER_PER_SECOND_2);
-        logWeightedAccelerationTimes2.multiplyBy(2); // don't forget the times 2
+        DoubleScalar.Rel<AccelerationUnit> logWeightedAccelerationTimes2 =
+            new DoubleScalar.Rel<AccelerationUnit>(Math.sqrt(this.a.getSI() * this.b.getSI()),
+                AccelerationUnit.METER_PER_SECOND_2).multiplyBy(2); // don't forget the times 2
         // TODO compute logWeightedAccelerationTimes2 only once per run
         /*
          * DoubleScalar.Rel<LengthUnit> sStar = DoubleScalar.plus( DoubleScalar.plus(this.s0,
-         * Calc.speedTimesTime(follower.getLongitudinalVelocity(thisEvaluationTime), this.tSafe)) .immutable(),
+         * Calc.speedTimesTime(follower.getLongitudinalVelocity(thisEvaluationTime), this.tSafe)) ,
          * Calc.speedTimesTime( dV, Calc.speedDividedByAcceleration(followerCurrentSpeed,
-         * logWeightedAccelerationTimes2.immutable()))).immutable();
+         * logWeightedAccelerationTimes2)));
          */
         DoubleScalar.Rel<LengthUnit> right =
             DoubleScalar.plus(
                 Calc.speedTimesTime(followerSpeed, this.tSafe),
                 Calc.speedTimesTime(dV, Calc.speedDividedByAcceleration(followerSpeed, logWeightedAccelerationTimes2
-                    .immutable()))).immutable();
+                    )));
         if (right.getSI() < 0)
         {
             // System.out.println("Fixing negative right");
             right = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
         }
-        DoubleScalar.Rel<LengthUnit> sStar = DoubleScalar.plus(this.s0, right).immutable();
+        DoubleScalar.Rel<LengthUnit> sStar = DoubleScalar.plus(this.s0, right);
         if (sStar.getSI() < 0) // Negative value should be treated as 0
         {
             System.out.println("sStar is negative");
@@ -137,7 +135,7 @@ public class IDM extends AbstractGTUFollowingModel
         DoubleScalar.Rel<AccelerationUnit> aInteraction =
             new DoubleScalar.Rel<AccelerationUnit>(-Math.pow(this.a.getSI() * sStar.getSI() / headway.getSI(), 2),
                 AccelerationUnit.METER_PER_SECOND_2);
-        DoubleScalar.Abs<AccelerationUnit> newAcceleration = DoubleScalar.plus(aFree, aInteraction).immutable();
+        DoubleScalar.Abs<AccelerationUnit> newAcceleration = DoubleScalar.plus(aFree, aInteraction);
         if (newAcceleration.getSI() * this.stepSize.getSI() + followerSpeed.getSI() < 0)
         {
             // System.out.println("Limiting deceleration to prevent moving backwards");

@@ -128,8 +128,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      */
     public final DoubleScalar.Rel<LengthUnit> getLateralCenterPosition(final double fractionalPosition)
     {
-        return DoubleScalar.interpolate(this.designLineOffsetAtBegin, this.designLineOffsetAtEnd, fractionalPosition)
-            .immutable();
+        return DoubleScalar.interpolate(this.designLineOffsetAtBegin, this.designLineOffsetAtEnd, fractionalPosition);
     }
 
     /**
@@ -160,7 +159,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      */
     public final DoubleScalar.Rel<LengthUnit> getWidth(final double fractionalPosition)
     {
-        return DoubleScalar.interpolate(this.beginWidth, this.endWidth, fractionalPosition).immutable();
+        return DoubleScalar.interpolate(this.beginWidth, this.endWidth, fractionalPosition);
     }
 
     /**
@@ -245,16 +244,15 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     {
         DoubleScalar.Rel<LengthUnit> designLineOffset =
             DoubleScalar.interpolate(this.designLineOffsetAtBegin, this.designLineOffsetAtEnd,
-                fractionalLongitudinalPosition).immutable();
+                fractionalLongitudinalPosition);
         DoubleScalar.Rel<LengthUnit> halfWidth =
-            DoubleScalar.interpolate(this.beginWidth, this.endWidth, fractionalLongitudinalPosition).multiplyBy(0.5)
-                .immutable();
+            DoubleScalar.interpolate(this.beginWidth, this.endWidth, fractionalLongitudinalPosition).multiplyBy(0.5);
         switch (lateralDirection)
         {
             case LEFT:
-                return DoubleScalar.minus(designLineOffset, halfWidth).immutable();
+                return DoubleScalar.minus(designLineOffset, halfWidth);
             case RIGHT:
-                return DoubleScalar.plus(designLineOffset, halfWidth).immutable();
+                return DoubleScalar.plus(designLineOffset, halfWidth);
             default:
                 throw new Error("Bad switch on LateralDirectionality " + lateralDirection);
         }
