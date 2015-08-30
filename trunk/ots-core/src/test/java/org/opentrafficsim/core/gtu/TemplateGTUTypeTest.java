@@ -21,8 +21,8 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.network.lane.LaneType;
+import org.opentrafficsim.core.units.distributions.DistContinuousDoubleScalar;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
-import org.opentrafficsim.units.distributions.DistContinuousDoubleScalar;
 
 /**
  * Test the TemplateGTUType class.

@@ -99,13 +99,13 @@ public class GTUFollowingModelTest implements OTSModelInterface
         LaneBasedIndividualCar gtu =
             new LaneBasedIndividualCar("12345", carType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions,
                 speed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
-        DoubleScalar.Rel<LengthUnit> longerHeadway = DoubleScalar.plus(minimumHeadway, precision).immutable();
+        DoubleScalar.Rel<LengthUnit> longerHeadway = DoubleScalar.plus(minimumHeadway, precision);
         DoubleScalar.Abs<AccelerationUnit> longerHeadwayAcceleration =
             gtuFollowingModel.computeAcceleration(speed, maxSpeed, speed, longerHeadway, speedLimit);
         // System.out.println("acceleration at headway " + longerHeadway + " is " + longerHeadwayAcceleration);
         assertTrue("deceleration with longer headway than minimum should be >= -maximumSafeDeceleration",
             -maxSafeDeceleration.getSI() <= longerHeadwayAcceleration.getSI());
-        DoubleScalar.Rel<LengthUnit> shorterHeadway = DoubleScalar.minus(minimumHeadway, precision).immutable();
+        DoubleScalar.Rel<LengthUnit> shorterHeadway = DoubleScalar.minus(minimumHeadway, precision);
         DoubleScalar.Abs<AccelerationUnit> shorterHeadwayAcceleration =
             gtuFollowingModel.computeAcceleration(speed, maxSpeed, speed, shorterHeadway, speedLimit);
         // System.out.println("acceleration at headway " + shorterHeadway + " is " + shorterHeadwayAcceleration);
@@ -140,7 +140,7 @@ public class GTUFollowingModelTest implements OTSModelInterface
         }
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions50 = new HashMap<>();
         DoubleScalar.Rel<LengthUnit> headway50m = new DoubleScalar.Rel<LengthUnit>(50, LengthUnit.METER);
-        initialLongitudinalPositions50.put(lane, DoubleScalar.plus(initialPosition, headway50m).immutable());
+        initialLongitudinalPositions50.put(lane, DoubleScalar.plus(initialPosition, headway50m));
         LaneBasedIndividualCar gtu50m =
             new LaneBasedIndividualCar("100050", carType, gtuFollowingModel, laneChangeModel,
                 initialLongitudinalPositions50, speed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(
@@ -167,7 +167,7 @@ public class GTUFollowingModelTest implements OTSModelInterface
             expectedValidUntil);
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions100 = new HashMap<>();
         DoubleScalar.Rel<LengthUnit> headway100m = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);
-        initialLongitudinalPositions100.put(lane, DoubleScalar.plus(initialPosition, headway100m).immutable());
+        initialLongitudinalPositions100.put(lane, DoubleScalar.plus(initialPosition, headway100m));
         LaneBasedIndividualCar gtu100m =
             new LaneBasedIndividualCar("100100", carType, gtuFollowingModel, laneChangeModel,
                 initialLongitudinalPositions50, speed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(
@@ -197,7 +197,7 @@ public class GTUFollowingModelTest implements OTSModelInterface
         // Add an overlapping GTU. Immediate collision situation should return TOODANGEROUS
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositionsOverlapping = new HashMap<>();
         initialLongitudinalPositionsOverlapping.put(lane, DoubleScalar.plus(initialPosition,
-            new DoubleScalar.Rel<LengthUnit>(1, LengthUnit.METER)).immutable());
+            new DoubleScalar.Rel<LengthUnit>(1, LengthUnit.METER)));
         LaneBasedIndividualCar gtu1m =
             new LaneBasedIndividualCar("100100", carType, gtuFollowingModel, laneChangeModel,
                 initialLongitudinalPositions50, speed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(
@@ -214,7 +214,7 @@ public class GTUFollowingModelTest implements OTSModelInterface
         // Follower at 75m
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositionsMinus75 = new HashMap<>();
         DoubleScalar.Rel<LengthUnit> headwayMinus75m = new DoubleScalar.Rel<LengthUnit>(-75, LengthUnit.METER);
-        initialLongitudinalPositionsMinus75.put(lane, DoubleScalar.plus(initialPosition, headwayMinus75m).immutable());
+        initialLongitudinalPositionsMinus75.put(lane, DoubleScalar.plus(initialPosition, headwayMinus75m));
         LaneBasedIndividualCar gtuMinus75m =
             new LaneBasedIndividualCar("100075", carType, gtuFollowingModel, laneChangeModel,
                 initialLongitudinalPositionsMinus75, speed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(
@@ -230,7 +230,7 @@ public class GTUFollowingModelTest implements OTSModelInterface
         // Another follower at 200m
         Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositionsMinus200 = new HashMap<>();
         DoubleScalar.Rel<LengthUnit> headwayMinus200m = new DoubleScalar.Rel<LengthUnit>(-200, LengthUnit.METER);
-        initialLongitudinalPositionsMinus200.put(lane, DoubleScalar.plus(initialPosition, headwayMinus200m).immutable());
+        initialLongitudinalPositionsMinus200.put(lane, DoubleScalar.plus(initialPosition, headwayMinus200m));
         LaneBasedIndividualCar gtuMinus200m =
             new LaneBasedIndividualCar("100200", carType, gtuFollowingModel, laneChangeModel,
                 initialLongitudinalPositionsMinus200, speed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(

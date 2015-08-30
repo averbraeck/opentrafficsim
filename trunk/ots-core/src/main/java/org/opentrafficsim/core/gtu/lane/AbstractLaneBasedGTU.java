@@ -24,7 +24,6 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
-import org.djunits.value.conversions.Calc;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.vector.DoubleVector;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -46,6 +45,7 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.AbstractLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
+import org.opentrafficsim.core.units.calc.Calc;
 
 /**
  * This class contains most of the code that is needed to run a lane based GTU. <br>
@@ -191,10 +191,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @Override
     public final DoubleScalar.Abs<SpeedUnit> getLongitudinalVelocity(final DoubleScalar.Abs<TimeUnit> when)
     {
-        DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
+        DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime);
         DoubleScalar.Abs<SpeedUnit> velocity =
-            DoubleScalar.plus(this.speed, Calc.accelerationTimesTime(this.getAcceleration(when), dT)).immutable();
-        if (velocity.mutable().abs().immutable().lt(DRIFTINGSPEED))
+            DoubleScalar.plus(this.speed, Calc.accelerationTimesTime(this.getAcceleration(when), dT));
+        if (velocity.abs().lt(DRIFTINGSPEED))
         {
             velocity = new DoubleScalar.Abs<>(0.0, SpeedUnit.SI);
         }
@@ -248,7 +248,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @Override
     public final DoubleScalar.Abs<LengthUnit> getOdometer() throws RemoteException
     {
-        return DoubleScalar.plus(this.odometer, deltaX(getSimulator().getSimulatorTime().get())).immutable();
+        return DoubleScalar.plus(this.odometer, deltaX(getSimulator().getSimulatorTime().get()));
     }
 
     /** {@inheritDoc} */
@@ -435,7 +435,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     this.nextEvaluationTime)));
             }
             // Update the odometer value
-            this.odometer = DoubleScalar.plus(this.odometer, deltaX(this.nextEvaluationTime)).immutable();
+            this.odometer = DoubleScalar.plus(this.odometer, deltaX(this.nextEvaluationTime));
             // Compute and set the current speed using the "old" nextEvaluationTime and acceleration
             this.speed = getLongitudinalVelocity(this.nextEvaluationTime);
             // Now update last evaluation time
@@ -483,7 +483,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                         throw new Error("Program error: Cannot find an oldLane that has newLane " + newLane + " as "
                             + lcmr.getLaneChange() + " neighbor");
                     }
-                    enterLane(newLane, newLane.getLength().mutable().multiplyBy(fractionalPosition).immutable());
+                    enterLane(newLane, newLane.getLength().multiplyBy(fractionalPosition));
                 }
 
                 // Remove this GTU from all of the Lanes that it is on and remember the fractional position on each
@@ -977,8 +977,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                 throw new NetworkException("position(): GTU " + toString() + " no position for lane " + lane);
             }
             DoubleScalar.Rel<LengthUnit> loc =
-                DoubleScalar.plus(DoubleScalar.plus(longitudinalPosition, deltaX(when)).immutable(),
-                    relativePosition.getDx()).immutable();
+                DoubleScalar.plus(DoubleScalar.plus(longitudinalPosition, deltaX(when)),
+                    relativePosition.getDx());
             if (Double.isNaN(loc.getSI()))
             {
                 System.out.println("loc is NaN");
@@ -1469,9 +1469,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      */
     private DoubleScalar.Rel<LengthUnit> deltaX(final DoubleScalar.Abs<TimeUnit> when) throws RemoteException
     {
-        DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime).immutable();
+        DoubleScalar.Rel<TimeUnit> dT = DoubleScalar.minus(when, this.lastEvaluationTime);
         return DoubleScalar.plus(Calc.speedTimesTime(this.speed, dT),
-            Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(), dT)).immutable();
+            Calc.accelerationTimesTimeSquaredDiv2(this.getAcceleration(), dT));
     }
 
     /**

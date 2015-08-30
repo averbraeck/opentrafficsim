@@ -20,7 +20,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.units.distributions.DistContinuousDoubleScalar;
+import org.opentrafficsim.core.units.distributions.DistContinuousDoubleScalar;
 
 /**
  * <p>

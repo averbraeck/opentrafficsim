@@ -22,7 +22,7 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.FixedLaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
-import org.opentrafficsim.units.distributions.DistContinuousDoubleScalar;
+import org.opentrafficsim.core.units.distributions.DistContinuousDoubleScalar;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;

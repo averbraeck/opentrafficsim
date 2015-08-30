@@ -7,11 +7,10 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.conversions.Calc;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.MutableDoubleScalar;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.units.calc.Calc;
 
 /**
  * Code shared between various car following models.
@@ -117,9 +116,9 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
         final DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed = follower.getMaximumVelocity();
         DoubleScalar.Abs<AccelerationUnit> newAcceleration =
             computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, headway, speedLimit);
-        MutableDoubleScalar.Abs<TimeUnit> nextEvaluationTime = currentTime.mutable();
-        nextEvaluationTime.incrementBy(getStepSize());
-        return new AccelerationStep(newAcceleration, nextEvaluationTime.immutable());
+        DoubleScalar.Abs<TimeUnit> nextEvaluationTime = currentTime;
+        nextEvaluationTime = nextEvaluationTime.plus(getStepSize());
+        return new AccelerationStep(newAcceleration, nextEvaluationTime);
 
     }
 

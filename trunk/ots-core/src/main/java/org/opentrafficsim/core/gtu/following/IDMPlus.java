@@ -4,9 +4,8 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.conversions.Calc;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.MutableDoubleScalar;
+import org.opentrafficsim.core.units.calc.Calc;
 
 /**
  * IDMPlus implements the <i>Integrated Lane Change Model with Relaxation and Synchronization</i> as published by Wouter J.
@@ -109,20 +108,17 @@ public class IDMPlus extends AbstractGTUFollowingModel
         // {
         // System.out.println("leftComponent is " + leftComponent);
         // }
-        MutableDoubleScalar.Rel<AccelerationUnit> logWeightedAccelerationTimes2 =
-            new MutableDoubleScalar.Rel<AccelerationUnit>(Math.sqrt(this.a.getSI() * this.b.getSI()),
-                AccelerationUnit.METER_PER_SECOND_2);
-        logWeightedAccelerationTimes2.multiplyBy(2); // don't forget the times 2
+        DoubleScalar.Rel<AccelerationUnit> logWeightedAccelerationTimes2 =
+            new DoubleScalar.Rel<AccelerationUnit>(Math.sqrt(this.a.getSI() * this.b.getSI()),
+                AccelerationUnit.METER_PER_SECOND_2).multiplyBy(2); // don't forget the times 2
 
-        DoubleScalar.Rel<SpeedUnit> dV = DoubleScalar.minus(followerSpeed, leaderSpeed).immutable();
+        DoubleScalar.Rel<SpeedUnit> dV = DoubleScalar.minus(followerSpeed, leaderSpeed);
         // System.out.println("dV is " + dV);
         // System.out.println(" v is " + gtu.speed(thisEvaluationTime));
         // System.out.println("s0 is " + this.s0);
         DoubleScalar.Rel<LengthUnit> sStar =
-            DoubleScalar.plus(
-                DoubleScalar.plus(this.s0, Calc.speedTimesTime(followerSpeed, this.tSafe)).immutable(),
-                Calc.speedTimesTime(dV, Calc.speedDividedByAcceleration(followerSpeed, logWeightedAccelerationTimes2
-                    .immutable()))).immutable();
+            DoubleScalar.plus(DoubleScalar.plus(this.s0, Calc.speedTimesTime(followerSpeed, this.tSafe)), Calc
+                .speedTimesTime(dV, Calc.speedDividedByAcceleration(followerSpeed, logWeightedAccelerationTimes2)));
         if (sStar.getSI() < 0)
         {
             // Negative value should be treated as 0? This is NOT in the LMRS paper
@@ -136,18 +132,18 @@ public class IDMPlus extends AbstractGTUFollowingModel
         // {
         // System.out.println("rightComponent is " + rightComponent);
         // }
-        MutableDoubleScalar.Abs<AccelerationUnit> newAcceleration = new MutableDoubleScalar.Abs<AccelerationUnit>(this.a);
-        newAcceleration.multiplyBy(Math.min(leftComponent, rightComponent));
+        DoubleScalar.Abs<AccelerationUnit> newAcceleration =
+            new DoubleScalar.Abs<AccelerationUnit>(this.a).multiplyBy(Math.min(leftComponent, rightComponent));
         // System.out.println("newAcceleration is " + newAcceleration);
         if (newAcceleration.getSI() * this.stepSize.getSI() + followerSpeed.getSI() < 0)
         {
             // System.out.println("Preventing follower from driving backwards " + follower);
             newAcceleration =
-                new MutableDoubleScalar.Abs<AccelerationUnit>(-followerSpeed.getSI() / this.stepSize.getSI(),
+                new DoubleScalar.Abs<AccelerationUnit>(-followerSpeed.getSI() / this.stepSize.getSI(),
                     AccelerationUnit.METER_PER_SECOND_2);
         }
         // System.out.println("newAcceleration is " + newAcceleration);
-        return newAcceleration.immutable();
+        return newAcceleration;
     }
 
     /** {@inheritDoc} */

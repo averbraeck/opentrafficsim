@@ -42,7 +42,7 @@ public class VelocityGTUColorer implements GTUColorer
         for (int index = 0; index < colorTable.length; index++)
         {
             double ratio = index * 1.0 / (colorTable.length - 1);
-            DoubleScalar.Abs<SpeedUnit> speed = DoubleScalar.interpolate(zeroValue, maximumSpeed, ratio).immutable();
+            DoubleScalar.Abs<SpeedUnit> speed = DoubleScalar.interpolate(zeroValue, maximumSpeed, ratio);
             this.legend.add(new LegendEntry(colorTable[index], speed.toString(), index == 0 ? "stationary" : "driving "
                 + speed.toString()));
         }

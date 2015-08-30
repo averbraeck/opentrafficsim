@@ -358,7 +358,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         // System.out.println("lane index is " + index + " car is " + car);
         // final DoubleScalar.Rel<LengthUnit> startPosition =
         // DoubleScalar.plus(new DoubleScalar.Rel<LengthUnit>(lengthOffset, LengthUnit.SI),
-        // car.position(lane, car.getReference(), startTime)).immutable();
+        // car.position(lane, car.getReference(), startTime));
         String key = car.getId().toString();
         Trajectory carTrajectory = this.trajectories.get(key);
         if (null == carTrajectory)

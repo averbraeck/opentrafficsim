@@ -194,9 +194,9 @@ public class LaneChangeModelTest implements OTSModelInterface
         // System.out.println("rear:      " + rear);
         // System.out.println("front:     " + front);
         // System.out.println("reference: " + reference);
-        DoubleScalar.Rel<LengthUnit> vehicleLength = DoubleScalar.minus(front, rear).immutable();
-        DoubleScalar.Rel<LengthUnit> collisionStart = DoubleScalar.minus(reference, vehicleLength).immutable();
-        DoubleScalar.Rel<LengthUnit> collisionEnd = DoubleScalar.plus(reference, vehicleLength).immutable();
+        DoubleScalar.Rel<LengthUnit> vehicleLength = DoubleScalar.minus(front, rear);
+        DoubleScalar.Rel<LengthUnit> collisionStart = DoubleScalar.minus(reference, vehicleLength);
+        DoubleScalar.Rel<LengthUnit> collisionEnd = DoubleScalar.plus(reference, vehicleLength);
         for (double pos = collisionStart.getSI() + 0.01; pos < collisionEnd.getSI() - 0.01; pos += 0.1)
         {
             Map<Lane, DoubleScalar.Rel<LengthUnit>> otherLongitudinalPositions =
