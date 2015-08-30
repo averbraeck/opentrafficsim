@@ -578,7 +578,7 @@ public class Link extends OTSLink
     {
         double cap = roadCapacity.getInUnit(FrequencyUnit.PER_HOUR);
         Rel<FrequencyUnit> addCap = new Rel<FrequencyUnit>(cap, FrequencyUnit.PER_HOUR);
-        this.corridorCapacity = DoubleScalar.plus(this.getCorridorCapacity(), addCap).immutable();
+        this.corridorCapacity = DoubleScalar.plus(this.getCorridorCapacity(), addCap);
     }
 
     /**

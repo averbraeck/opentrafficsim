@@ -28,7 +28,6 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
-import org.djunits.value.vdouble.scalar.MutableDoubleScalar;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -319,9 +318,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
             final int stepsNeeded = (int) Math.ceil(Math.log(DoubleScalar.minus(high, low).getSI() / delta) / Math.log(2));
             for (int step = 0; step < stepsNeeded; step++)
             {
-                MutableDoubleScalar.Rel<LengthUnit> mutableMid = DoubleScalar.plus(low, high);
-                mutableMid.divideBy(2);
-                mid = mutableMid.immutable();
+                DoubleScalar.Rel<LengthUnit> mutableMid = DoubleScalar.plus(low, high).divideBy(2);
+                mid = mutableMid;
                 LaneMovementStep midResult =
                     computeLaneChange(referenceCar, sameLaneGTUs, speedLimit, laneChangeModel, mid, lanes[1],
                         speedDifference, mergeRight);
@@ -374,7 +372,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface
         initialLongitudinalPositions.put(otherCarLane, otherCarPosition);
         LaneBasedIndividualCar otherCar =
             new LaneBasedIndividualCar("otherCar", referenceCar.getGTUType(), this.carFollowingModel, laneChangeModel,
-                initialLongitudinalPositions, DoubleScalar.plus(referenceCar.getLongitudinalVelocity(), deltaV).immutable(),
+                initialLongitudinalPositions, DoubleScalar.plus(referenceCar.getLongitudinalVelocity(), deltaV),
                 new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER),
                 new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(150,
                     SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), referenceCar

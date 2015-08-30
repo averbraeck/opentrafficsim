@@ -23,7 +23,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
-import org.djunits.value.vdouble.scalar.MutableDoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.trafficdemand.DepartureTimeProfile;
 import org.opentrafficsim.demo.ntm.trafficdemand.FractionOfTripDemandByTimeSegment;
@@ -119,7 +119,7 @@ public class CsvFileReader
                                 DoubleScalar.Abs<TimeUnit> endTime =
                                     new DoubleScalar.Abs<TimeUnit>(timeInstance.getTimeInMillis() / 1000, TimeUnit.SECOND);
                                 DoubleScalar.Rel<TimeUnit> timeSpan =
-                                    MutableDoubleScalar.Abs.minus(endTime, tripDemand.getStartTime()).immutable();
+                                    DoubleScalar.Abs.minus(endTime, tripDemand.getStartTime());
 
                                 tripDemand.setTimeSpan(timeSpan);
                                 settingsNTM.setDurationOfSimulation(timeSpan);
@@ -505,12 +505,12 @@ public class CsvFileReader
                                 new DoubleScalar.Abs<TimeUnit>(startTime.getTimeInMillis() / 1000, TimeUnit.SECOND);
                             if (prevStartTime != null)
                             {
-                                while (MutableDoubleScalar.Abs.minus(segmentStartTime, prevStartTime).doubleValue() > 0)
+                                while (DoubleScalar.Abs.minus(segmentStartTime, prevStartTime).doubleValue() > 0)
                                 {
                                     FractionOfTripDemandByTimeSegment newFraction =
                                         new FractionOfTripDemandByTimeSegment(segmentStartTime, duration, fraction);
                                     fractions.put(segmentStartTime, newFraction);
-                                    prevStartTime = MutableDoubleScalar.Abs.plus(prevStartTime, duration).immutable();
+                                    prevStartTime = DoubleScalar.Abs.plus(prevStartTime, duration);
                                 }
                             }
                             profile.setDepartureTimeCurve(fractions);
@@ -524,7 +524,7 @@ public class CsvFileReader
                                 FractionOfTripDemandByTimeSegment newFraction =
                                     new FractionOfTripDemandByTimeSegment(segmentStartTime, duration, fraction);
                                 fractions.put(segmentStartTime, newFraction);
-                                segmentStartTime = MutableDoubleScalar.Abs.plus(segmentStartTime, duration).immutable();
+                                segmentStartTime = DoubleScalar.Abs.plus(segmentStartTime, duration);
                             }
                         }
                     }
