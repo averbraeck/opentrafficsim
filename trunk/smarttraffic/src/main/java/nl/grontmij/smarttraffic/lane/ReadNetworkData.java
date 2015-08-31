@@ -1,5 +1,6 @@
 package nl.grontmij.smarttraffic.lane;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -51,16 +52,17 @@ public class ReadNetworkData
                                 GTM.GTUTYPE);
                         if (!sensors.isEmpty())
                         {
-
+                        	List<SinkSensor> sinks = new ArrayList<SinkSensor>();
+                        	List<KillSensor> kills = new ArrayList<KillSensor>();
                             for (Sensor sensor : sensors)
                             {
                                 if (sensor instanceof SinkSensor)
                                 {
-                                    sensors.remove(sensor);
+                                	sinks.add((SinkSensor) sensor);
                                     KillSensor killSensor =
                                         new KillSensor(sensor.getLane(), sensor.getLongitudinalPosition(), sensor.getName(),
                                             ((SinkSensor) sensor).getSimulator());
-                                    sensors.add(killSensor);
+                                    kills.add(killSensor);
                                 }
                                 if (sensor instanceof CheckSensor || sensor instanceof GenerateSensor
                                     || sensor instanceof KillSensor)
@@ -79,6 +81,10 @@ public class ReadNetworkData
                                 {
                                     mapSensorCheckCars.put(sensor.getName(), (CheckSensor) sensor);
                                 }
+                            }
+                            if (!sinks.isEmpty()) {
+                                sensors.removeAll(sinks);
+                                sensors.addAll(kills);
                             }
                         }
                     }
