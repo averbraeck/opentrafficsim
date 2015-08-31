@@ -40,6 +40,8 @@ public class CheckSensor extends AbstractSensor
     private List<CheckSensor> sensorsParallel = new ArrayList<CheckSensor>();
 
     private HashMap<DoubleScalar.Abs<TimeUnit>, Integer> statusByTime = new HashMap<DoubleScalar.Abs<TimeUnit>, Integer>();
+    
+    private Integer currentStatus;
 
     // private ArrayList<LaneBasedGTU> gtusDetected = new
     // ArrayList<LaneBasedGTU>();
@@ -195,5 +197,13 @@ public class CheckSensor extends AbstractSensor
         return "SensorAtLane [getLane()=" + this.getLane() + ", getLongitudinalPosition()=" + this.getLongitudinalPosition()
             + ", getPositionType()=" + this.getPositionType() + "]";
     }
+
+	public Integer getCurrentStatus() {
+		return currentStatus;
+	}
+
+	public void setCurrentStatus(Integer currentStatus) {
+		this.currentStatus = currentStatus;
+	}
 
 }

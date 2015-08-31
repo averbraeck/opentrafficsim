@@ -10,7 +10,13 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.gtu.lane.AbstractTrafficLight;
+import org.opentrafficsim.core.gtu.lane.LaneBlockOnOff;
+import org.opentrafficsim.core.network.lane.AbstractSensor;
 
 /**
  * Draw a road block.
@@ -46,7 +52,15 @@ public class CheckSensorAnimation extends Renderable2D
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        graphics.setColor(Color.BLUE);
+        if ( ((CheckSensor) this.source).getCurrentStatus()==0)
+        {
+            graphics.setColor(Color.BLUE);
+        }
+        else
+        {
+            graphics.setColor(Color.MAGENTA);
+        }
+//        graphics.setColor(Color.BLUE);
         Rectangle2D rectangle = new Rectangle2D.Double(-0.25, -this.halfWidth, 0.5, 2 * this.halfWidth);
         graphics.fill(rectangle);
     }
