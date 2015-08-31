@@ -180,7 +180,7 @@ public class GTM extends AbstractWrappableSimulationST
     @Override
     protected final Rectangle2D.Double makeAnimationRectangle()
     {
-        return new Rectangle2D.Double(-100, 5500, 600, 300);
+        return new Rectangle2D.Double(0, 3750, 380, 220);
     }
 
     /**

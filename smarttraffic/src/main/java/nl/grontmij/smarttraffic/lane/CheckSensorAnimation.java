@@ -52,7 +52,11 @@ public class CheckSensorAnimation extends Renderable2D
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        if ( ((CheckSensor) this.source).getCurrentStatus()==0)
+        if ( ((CheckSensor) this.source).getCurrentStatus()==null)
+        {
+            graphics.setColor(Color.BLACK);
+        }
+        else if ( ((CheckSensor) this.source).getCurrentStatus()==0)
         {
             graphics.setColor(Color.BLUE);
         }
