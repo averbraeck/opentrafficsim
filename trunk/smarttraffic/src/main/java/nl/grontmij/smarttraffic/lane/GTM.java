@@ -371,8 +371,8 @@ public class GTM extends AbstractWrappableSimulationST
                 try
                 {
                     new ScheduleCheckPulses(GTUTYPE, this.simulator, mapSensorCheckCars, Settings.getDouble(this.simulator,
-                        "SEARCHRANGEBACK"), Settings.getDouble(this.simulator, "SEARCHRANGEFRONT"),
-                        new ArrayList<CompleteRoute>(routes.values()), outputFileLogVehicleSimulation);
+                        "SEARCHRANGEBACK"), Settings.getDouble(this.simulator, "SEARCHRANGEFRONT"), routes,
+                         outputFileLogVehicleSimulation);
                 }
                 catch (NetworkException | GTUException | NamingException e)
                 {

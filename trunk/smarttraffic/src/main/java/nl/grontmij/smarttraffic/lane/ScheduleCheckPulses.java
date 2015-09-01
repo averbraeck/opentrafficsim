@@ -56,15 +56,15 @@ public class ScheduleCheckPulses<ID> {
 	/** The simulator that controls everything. */
 	private final OTSDEVSSimulatorInterface simulator;
 
-	/** the routes. */
-	private final List<CompleteRoute> routes;
+    /** the routes. A and B. */
+    private Map<String, CompleteRoute> routes;
 
 	HashMap<String, CheckSensor> mapSensor;
 
 	public ScheduleCheckPulses(GTUType gtuType,
 			OTSDEVSSimulatorInterface simulator,
 			HashMap<String, CheckSensor> mapSensor, double backRange,
-			double frontRange, List<CompleteRoute> routes,
+			double frontRange, Map<String, CompleteRoute> routes,
 			BufferedWriter outputFileLogVehicleSimulation)
 			throws RemoteException, SimRuntimeException, NetworkException,
 			GTUException, NamingException {
@@ -103,6 +103,9 @@ public class ScheduleCheckPulses<ID> {
 			for (Entry<DoubleScalar.Abs<TimeUnit>, Integer> entryPulse : pulses
 					.entrySet()) {
 				DoubleScalar.Abs<TimeUnit> when = entryPulse.getKey();
+				// if a car is detected and leaves the sensor, look for the
+				// nearest simulation vehicle
+				// if that vehicle is found move it to the sensor
 				if (entryPulse.getValue() == 0) {
 					this.simulator.scheduleEventAbs(when, this, this,
 							"findNearestVehicles", new Object[] { sensor,
@@ -111,7 +114,8 @@ public class ScheduleCheckPulses<ID> {
 				}
 				sensor.setCurrentStatus(entryPulse.getValue());
 				this.simulator.scheduleEventAbs(when, this, this,
-						"changeAnimationStatusDetector", new Object[] {sensor});
+						"changeAnimationStatusDetector",
+						new Object[] { sensor });
 			}
 
 		}
@@ -177,7 +181,7 @@ public class ScheduleCheckPulses<ID> {
 						new DoubleScalar.Rel<LengthUnit>(sensor
 								.getLongitudinalPositionSI() + 1,
 								LengthUnit.METER), Integer.parseInt(gtu.getId()
-								.toString()));
+								.toString()), sensor);
 
 			try {
 				outputFileLogVehicleSimulation.write("t="
@@ -199,7 +203,7 @@ public class ScheduleCheckPulses<ID> {
 						new DoubleScalar.Rel<LengthUnit>(sensor
 								.getLongitudinalPositionSI() + 1,
 								LengthUnit.METER),
-						(++ScheduleGenerateCars.carsCreated));
+						(++ScheduleGenerateCars.carsCreated), sensor);
 				outputFileLogVehicleSimulation.write("t="
 						+ simulator.getSimulatorTime().get().getSI()
 						+ " - no near GTU found for exit lane "
@@ -299,8 +303,8 @@ public class ScheduleCheckPulses<ID> {
 	 * @throws NetworkException
 	 */
 	protected final void generateCar(Lane lane,
-			DoubleScalar.Rel<LengthUnit> initialPosition, final int gtuNumber)
-			throws NetworkException {
+			DoubleScalar.Rel<LengthUnit> initialPosition, final int gtuNumber,
+			CheckSensor sensor) throws NetworkException {
 		// is there enough space?
 		Lane nextLane = lane.nextLanes(this.gtuType).iterator().next();
 		double genSpeedSI = Math.min(lane.getSpeedLimit(GTM.GTUTYPE).getSI(),
@@ -337,15 +341,34 @@ public class ScheduleCheckPulses<ID> {
 					LengthUnit.METER);
 			initialPositions.put(nextLane, nextPos);
 		}
+		// this is for cars leaving the main route. A new route is created
 		CompleteRoute route = new CompleteRoute("");
-		route.addNode(nextLane.getParentLink().getStartNode());
-		Node node = nextLane.getParentLink().getEndNode();
-		route.addNode(node);
-		while (node.getLinksOut().size() > 0) {
-			CrossSectionLink link = (CrossSectionLink) node.getLinksOut()
-					.iterator().next();
-			node = link.getEndNode();
+		List<CompleteRoute> routesList = new ArrayList<CompleteRoute>();
+		for (CompleteRoute routeA: this.routes.values()) {
+			routesList.add(routeA);
+		}
+		if (sensor.isExitLaneSensor( routesList)) {
+			route.addNode(nextLane.getParentLink().getStartNode());
+			Node node = nextLane.getParentLink().getEndNode();
 			route.addNode(node);
+			while (node.getLinksOut().size() > 0) {
+				CrossSectionLink link = (CrossSectionLink) node.getLinksOut()
+						.iterator().next();
+				node = link.getEndNode();
+				route.addNode(node);
+			}
+		}
+		else {
+			// complete route TODO
+	        String linkName = lane.getParentLink().getId().toString();
+	        if (linkName.contains("a_in") || linkName.endsWith("a"))
+	        {
+	            route = this.routes.get("A");
+	        }
+	        else if (linkName.contains("b_in") || linkName.endsWith("b"))
+	        {
+	            route = this.routes.get("B");
+	        }
 		}
 		LaneBasedRouteNavigator routeNavigator = new CompleteLaneBasedRouteNavigator(
 				route);
