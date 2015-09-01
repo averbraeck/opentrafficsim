@@ -177,6 +177,7 @@ public class CheckSensor extends AbstractSensor
     @Override
     public void trigger(final LaneBasedGTU gtu)
     {
+    	// add the sensor that has been triggered
         if (GTM.listGTUsInNetwork.get((LaneBasedIndividualCar) gtu) != null)
         {
             GTM.listGTUsInNetwork.get((LaneBasedIndividualCar) gtu).add(this);
