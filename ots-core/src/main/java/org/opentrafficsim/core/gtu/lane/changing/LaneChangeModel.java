@@ -3,9 +3,7 @@ package org.opentrafficsim.core.gtu.lane.changing;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.gtu.following.HeadwayGTU;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 
@@ -23,7 +21,7 @@ import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public interface LaneChangeModel
+public interface LaneChangeModel extends OTS_SCALAR
 {
     /**
      * Compute the acceleration and lane change.
@@ -47,9 +45,9 @@ public interface LaneChangeModel
     @SuppressWarnings("checkstyle:parameternumber")
     LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu, final Collection<HeadwayGTU> sameLaneTraffic,
         final Collection<HeadwayGTU> rightLaneTraffic, final Collection<HeadwayGTU> leftLaneTraffic,
-        final DoubleScalar.Abs<SpeedUnit> speedLimit, final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
-        final DoubleScalar.Rel<AccelerationUnit> laneChangeThreshold,
-        final DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException;
+        final Speed.Abs speedLimit, final Acceleration.Rel preferredLaneRouteIncentive,
+        final Acceleration.Rel laneChangeThreshold, final Acceleration.Rel nonPreferredLaneRouteIncentive)
+        throws RemoteException;
 
     /**
      * Return the name of this GTU following model.

@@ -2,6 +2,7 @@ package org.opentrafficsim.core.network.route;
 
 import java.io.Serializable;
 
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 
@@ -16,7 +17,7 @@ import org.opentrafficsim.core.network.Node;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface RouteNavigator extends Serializable
+public interface RouteNavigator extends Serializable, OTS_SCALAR
 {
     /**
      * @return the last visited node of the route, and null when no nodes have been visited yet.

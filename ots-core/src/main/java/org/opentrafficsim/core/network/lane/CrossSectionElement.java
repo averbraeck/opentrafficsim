@@ -8,8 +8,7 @@ import javax.media.j3d.Bounds;
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.geometry.OTSBuffering;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -27,7 +26,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public abstract class CrossSectionElement implements LocatableInterface, Serializable
+public abstract class CrossSectionElement implements LocatableInterface, Serializable, OTS_SCALAR
 {
     /** */
     private static final long serialVersionUID = 20150826L;
@@ -41,23 +40,23 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
 
     /** The lateral offset from the design line of the parentLink at the start of the parentLink. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final DoubleScalar.Rel<LengthUnit> designLineOffsetAtBegin;
+    protected final Length.Rel designLineOffsetAtBegin;
 
     /** The lateral offset from the design line of the parentLink at the end of the parentLink. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final DoubleScalar.Rel<LengthUnit> designLineOffsetAtEnd;
+    protected final Length.Rel designLineOffsetAtEnd;
 
     /** Start width, positioned <i>symmetrically around</i> the lateral start position. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final DoubleScalar.Rel<LengthUnit> beginWidth;
+    protected final Length.Rel beginWidth;
 
     /** End width, positioned <i>symmetrically around</i> the lateral end position. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final DoubleScalar.Rel<LengthUnit> endWidth;
+    protected final Length.Rel endWidth;
 
     /** The length of the line. Calculated once at the creation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final DoubleScalar.Rel<LengthUnit> length;
+    protected final Length.Rel length;
 
     /** The center line of the element. Calculated once at the creation. */
     private final OTSLine3D centerLine;
@@ -80,9 +79,8 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      * @throws OTSGeometryException when creation of the geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public CrossSectionElement(final CrossSectionLink parentLink, final String id,
-        final DoubleScalar.Rel<LengthUnit> lateralOffsetAtBegin, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd,
-        final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
+    public CrossSectionElement(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffsetAtBegin,
+        final Length.Rel lateralOffsetAtEnd, final Length.Rel beginWidth, final Length.Rel endWidth)
         throws OTSGeometryException, NetworkException
     {
         super();
@@ -126,9 +124,9 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      * @param fractionalPosition double; fractional longitudinal position on this Lane
      * @return DoubleScalar.Rel&lt;LengthUnit&gt; the lateralCenterPosition at the specified longitudinal position
      */
-    public final DoubleScalar.Rel<LengthUnit> getLateralCenterPosition(final double fractionalPosition)
+    public final Length.Rel getLateralCenterPosition(final double fractionalPosition)
     {
-        return DoubleScalar.interpolate(this.designLineOffsetAtBegin, this.designLineOffsetAtEnd, fractionalPosition);
+        return Length.Rel.interpolate(this.designLineOffsetAtBegin, this.designLineOffsetAtEnd, fractionalPosition);
     }
 
     /**
@@ -136,7 +134,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the longitudinal position on this Lane
      * @return DoubleScalar.Rel&lt;LengthUnit&gt; the lateralCenterPosition at the specified longitudinal position
      */
-    public final DoubleScalar<LengthUnit> getLateralCenterPosition(final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
+    public final Length.Rel getLateralCenterPosition(final Length.Rel longitudinalPosition)
     {
         return getLateralCenterPosition(longitudinalPosition.getSI() / getLength().getSI());
     }
@@ -146,7 +144,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      * @param longitudinalPosition DoubleScalar&lt;LengthUnit&gt;; the longitudinal position
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the width of this CrossSectionElement at the specified longitudinal position.
      */
-    public final DoubleScalar.Rel<LengthUnit> getWidth(final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
+    public final Length.Rel getWidth(final Length.Rel longitudinalPosition)
     {
         return getWidth(longitudinalPosition.getSI() / getLength().getSI());
     }
@@ -157,16 +155,16 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the width of this CrossSectionElement at the specified fractional
      *         longitudinal position.
      */
-    public final DoubleScalar.Rel<LengthUnit> getWidth(final double fractionalPosition)
+    public final Length.Rel getWidth(final double fractionalPosition)
     {
-        return DoubleScalar.interpolate(this.beginWidth, this.endWidth, fractionalPosition);
+        return Length.Rel.interpolate(this.beginWidth, this.endWidth, fractionalPosition);
     }
 
     /**
      * Return the length of this CrossSectionElement as measured along the design line (which equals the center line).
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the length of this CrossSectionElement
      */
-    public final DoubleScalar.Rel<LengthUnit> getLength()
+    public final Length.Rel getLength()
     {
         return this.length;
     }
@@ -174,7 +172,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     /**
      * @return designLineOffsetAtBegin.
      */
-    public final DoubleScalar.Rel<LengthUnit> getDesignLineOffsetAtBegin()
+    public final Length.Rel getDesignLineOffsetAtBegin()
     {
         return this.designLineOffsetAtBegin;
     }
@@ -182,7 +180,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     /**
      * @return designLineOffsetAtEnd.
      */
-    public final DoubleScalar.Rel<LengthUnit> getDesignLineOffsetAtEnd()
+    public final Length.Rel getDesignLineOffsetAtEnd()
     {
         return this.designLineOffsetAtEnd;
     }
@@ -190,7 +188,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     /**
      * @return beginWidth.
      */
-    public final DoubleScalar.Rel<LengthUnit> getBeginWidth()
+    public final Length.Rel getBeginWidth()
     {
         return this.beginWidth;
     }
@@ -198,7 +196,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     /**
      * @return endWidth.
      */
-    public final DoubleScalar.Rel<LengthUnit> getEndWidth()
+    public final Length.Rel getEndWidth()
     {
         return this.endWidth;
     }
@@ -239,20 +237,19 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      * @param fractionalLongitudinalPosition double; ranges from 0.0 (begin of parentLink) to 1.0 (end of parentLink)
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;
      */
-    public final DoubleScalar.Rel<LengthUnit> getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
+    public final Length.Rel getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
         final double fractionalLongitudinalPosition)
     {
-        DoubleScalar.Rel<LengthUnit> designLineOffset =
-            DoubleScalar.interpolate(this.designLineOffsetAtBegin, this.designLineOffsetAtEnd,
-                fractionalLongitudinalPosition);
-        DoubleScalar.Rel<LengthUnit> halfWidth =
-            DoubleScalar.interpolate(this.beginWidth, this.endWidth, fractionalLongitudinalPosition).multiplyBy(0.5);
+        Length.Rel designLineOffset =
+            Length.Rel.interpolate(this.designLineOffsetAtBegin, this.designLineOffsetAtEnd, fractionalLongitudinalPosition);
+        Length.Rel halfWidth =
+            Length.Rel.interpolate(this.beginWidth, this.endWidth, fractionalLongitudinalPosition).multiplyBy(0.5);
         switch (lateralDirection)
         {
             case LEFT:
-                return DoubleScalar.minus(designLineOffset, halfWidth);
+                return designLineOffset.minus(halfWidth);
             case RIGHT:
-                return DoubleScalar.plus(designLineOffset, halfWidth);
+                return designLineOffset.plus(halfWidth);
             default:
                 throw new Error("Bad switch on LateralDirectionality " + lateralDirection);
         }
@@ -265,8 +262,8 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the position along the length of this CrossSectionElement
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;
      */
-    public final DoubleScalar.Rel<LengthUnit> getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
-        final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
+    public final Length.Rel getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
+        final Length.Rel longitudinalPosition)
     {
         return getLateralBoundaryPosition(lateralDirection, longitudinalPosition.getSI() / getLength().getSI());
     }

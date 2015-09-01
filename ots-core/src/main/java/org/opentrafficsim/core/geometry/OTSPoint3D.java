@@ -13,7 +13,7 @@ import nl.tudelft.simulation.language.d3.CartesianPoint;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
@@ -31,7 +31,7 @@ import com.vividsolutions.jts.geom.Point;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class OTSPoint3D implements LocatableInterface, Serializable
+public class OTSPoint3D implements LocatableInterface, Serializable, OTS_SCALAR
 {
     /** */
     private static final long serialVersionUID = 20150722L;
@@ -158,9 +158,9 @@ public class OTSPoint3D implements LocatableInterface, Serializable
      * @param point the point to which the distance has to be calculated.
      * @return the distance in 3D according to Pythagoras
      */
-    public final DoubleScalar.Rel<LengthUnit> distance(final OTSPoint3D point)
+    public final Length.Rel distance(final OTSPoint3D point)
     {
-        return new DoubleScalar.Rel<LengthUnit>(distanceSI(point), LengthUnit.SI);
+        return new Length.Rel(distanceSI(point), LengthUnit.SI);
     }
 
     /**

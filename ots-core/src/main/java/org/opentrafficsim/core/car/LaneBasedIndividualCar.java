@@ -13,8 +13,6 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -74,9 +72,8 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualCar(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
-        final LaneChangeModel laneChangeModel, final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
-        final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
+        final LaneChangeModel laneChangeModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
+        final Speed.Abs initialSpeed, final Length.Rel length, final Length.Rel width, final Speed.Abs maximumVelocity,
         final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator) throws NamingException,
         RemoteException, NetworkException, SimRuntimeException, GTUException
     {
@@ -109,9 +106,8 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualCar(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
-        final LaneChangeModel laneChangeModel, final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
-        final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
+        final LaneChangeModel laneChangeModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
+        final Speed.Abs initialSpeed, final Length.Rel length, final Length.Rel width, final Speed.Abs maximumVelocity,
         final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator,
         final Class<? extends Renderable2D> animationClass, final GTUColorer gtuColorer) throws NamingException,
         RemoteException, NetworkException, SimRuntimeException, GTUException
@@ -122,19 +118,12 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         // sensor positions.
         // We take the rear position of the Car to be the reference point. So the front is the length
         // of the Car away from the reference point in the positive (driving) X-direction.
-        DoubleScalar.Rel<LengthUnit> zero = new DoubleScalar.Rel<LengthUnit>(0.0d, LengthUnit.METER);
-        DoubleScalar.Rel<LengthUnit> dx = new DoubleScalar.Rel<LengthUnit>(getLength().getSI(), LengthUnit.METER);
+        Length.Rel zero = new Length.Rel(0.0d, LengthUnit.METER);
+        Length.Rel dx = new Length.Rel(getLength().getSI(), LengthUnit.METER);
         this.relativePositions.put(RelativePosition.FRONT, new RelativePosition(dx, zero, zero, RelativePosition.FRONT));
         this.relativePositions.put(RelativePosition.REAR, new RelativePosition(zero, zero, zero, RelativePosition.REAR));
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
-
-        /*
-         * REMOVE START if (id.equals("A1:1")) { try { this.simulator = simulator; //this.pwsimloc = new
-         * PrintWriter("d:/pwsimloc.xls"); //simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.1, TimeUnit.SECOND),
-         * this, this, "simloc", null); this.pwthreadloc = new PrintWriter("d:/pwthreadloc.xls"); new ClockLocThread().start();
-         * } catch (FileNotFoundException exception) { exception.printStackTrace(); } } /* REMOVE END
-         */
-
+        
         // animation
         if (simulator instanceof OTSAnimatorInterface && animationClass != null)
         {
@@ -164,14 +153,14 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
 
     /*
      * REMOVE START PrintWriter pwsimloc; PrintWriter pwthreadloc; OTSDEVSSimulatorInterface simulator; protected void simloc()
-     * { try { Map<Lane, DoubleScalar.Rel<LengthUnit>> posmap = positions(getFront()); Lane lane =
-     * posmap.keySet().iterator().next(); pwsimloc.write(getSimulator().getSimulatorTime().get().getSI() + "\t" +
-     * lane.toString() + "\t" + posmap.get(lane).getSI() + "\n"); pwsimloc.flush(); simulator.scheduleEventRel(new
-     * DoubleScalar.Rel<TimeUnit>(0.1, TimeUnit.SECOND), this, this, "simloc", null); } catch (RemoteException |
-     * NetworkException | SimRuntimeException e) { e.printStackTrace(); } } protected class ClockLocThread extends Thread {
-     * @Override public void run() { while (true) { try { Thread.sleep(100); Map<Lane, DoubleScalar.Rel<LengthUnit>> posmap =
+     * { try { Map<Lane, Length.Rel> posmap = positions(getFront()); Lane lane = posmap.keySet().iterator().next();
+     * pwsimloc.write(getSimulator().getSimulatorTime().getTime().getSI() + "\t" + lane.toString() + "\t" + posmap.get(lane).getSI()
+     * + "\n"); pwsimloc.flush(); simulator.scheduleEventRel(new Time.Rel(0.1, TimeUnit.SECOND), this, this, "simloc", null); }
+     * catch (RemoteException | NetworkException | SimRuntimeException e) { e.printStackTrace(); } } protected class
+     * ClockLocThread extends Thread {
+     * @Override public void run() { while (true) { try { Thread.sleep(100); Map<Lane, Length.Rel> posmap =
      * positions(getFront()); Lane lane = posmap.keySet().iterator().next();
-     * pwthreadloc.write(getSimulator().getSimulatorTime().get().getSI() + "\t" + lane.toString() + "\t" +
+     * pwthreadloc.write(getSimulator().getSimulatorTime().getTime().getSI() + "\t" + lane.toString() + "\t" +
      * posmap.get(lane).getSI() + "\n"); pwthreadloc.flush(); } catch (RemoteException | NetworkException | InterruptedException
      * e) { e.printStackTrace(); } } } } /* REMOVE END
      */
@@ -222,7 +211,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
     /** {@inheritDoc} */
     public final String toString()
     {
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> frontPositions;
+        Map<Lane, Length.Rel> frontPositions;
         try
         {
             frontPositions = positions(getFront());
@@ -274,10 +263,10 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         private GTUType gtuType = null;
 
         /** The initial positions of the car on one or more lanes. */
-        private Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = null;;
+        private Map<Lane, Length.Rel> initialLongitudinalPositions = null;;
 
         /** The initial speed of the car on the lane. */
-        private DoubleScalar.Abs<SpeedUnit> initialSpeed = null;
+        private Speed.Abs initialSpeed = null;
 
         /** CarFollowingModel used by this Car. */
         private GTUFollowingModel gtuFollowingModel = null;
@@ -286,13 +275,13 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         private LaneChangeModel laneChangeModel = null;
 
         /** The length of the GTU (parallel with driving direction). */
-        private DoubleScalar.Rel<LengthUnit> length = null;
+        private Length.Rel length = null;
 
         /** The width of the GTU (perpendicular to driving direction). */
-        private DoubleScalar.Rel<LengthUnit> width = null;
+        private Length.Rel width = null;
 
         /** The maximum speed of the GTU (in the driving direction). */
-        private DoubleScalar.Abs<SpeedUnit> maximumVelocity = null;
+        private Speed.Abs maximumVelocity = null;
 
         /** The simulator. */
         private OTSDEVSSimulatorInterface simulator = null;
@@ -351,7 +340,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
          * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder setInitialLongitudinalPositions(
-            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions)
+            final Map<Lane, Length.Rel> initialLongitudinalPositions)
         {
             this.initialLongitudinalPositions = initialLongitudinalPositions;
             return this;
@@ -361,7 +350,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
          * @param initialSpeed set initialSpeed
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder setInitialSpeed(final DoubleScalar.Abs<SpeedUnit> initialSpeed)
+        public final LaneBasedIndividualCarBuilder setInitialSpeed(final Speed.Abs initialSpeed)
         {
             this.initialSpeed = initialSpeed;
             return this;
@@ -371,7 +360,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
          * @param length set length
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder setLength(final DoubleScalar.Rel<LengthUnit> length)
+        public final LaneBasedIndividualCarBuilder setLength(final Length.Rel length)
         {
             this.length = length;
             return this;
@@ -381,7 +370,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
          * @param width set width
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder setWidth(final DoubleScalar.Rel<LengthUnit> width)
+        public final LaneBasedIndividualCarBuilder setWidth(final Length.Rel width)
         {
             this.width = width;
             return this;
@@ -391,7 +380,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
          * @param maximumVelocity set maximumVelocity
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder setMaximumVelocity(final DoubleScalar.Abs<SpeedUnit> maximumVelocity)
+        public final LaneBasedIndividualCarBuilder setMaximumVelocity(final Speed.Abs maximumVelocity)
         {
             this.maximumVelocity = maximumVelocity;
             return this;
@@ -454,7 +443,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         /**
          * @return initialLongitudinalPositions.
          */
-        public final Map<Lane, DoubleScalar.Rel<LengthUnit>> getInitialLongitudinalPositions()
+        public final Map<Lane, Length.Rel> getInitialLongitudinalPositions()
         {
             return this.initialLongitudinalPositions;
         }
@@ -462,7 +451,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         /**
          * @return initialSpeed.
          */
-        public final DoubleScalar.Abs<SpeedUnit> getInitialSpeed()
+        public final Speed.Abs getInitialSpeed()
         {
             return this.initialSpeed;
         }
@@ -486,7 +475,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         /**
          * @return length.
          */
-        public final DoubleScalar.Rel<LengthUnit> getLength()
+        public final Length.Rel getLength()
         {
             return this.length;
         }
@@ -494,7 +483,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         /**
          * @return width.
          */
-        public final DoubleScalar.Rel<LengthUnit> getWidth()
+        public final Length.Rel getWidth()
         {
             return this.width;
         }
@@ -502,7 +491,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         /**
          * @return maximumVelocity.
          */
-        public final DoubleScalar.Abs<SpeedUnit> getMaximumVelocity()
+        public final Speed.Abs getMaximumVelocity()
         {
             return this.maximumVelocity;
         }

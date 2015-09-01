@@ -42,7 +42,7 @@ public class LaneBlockOnOff extends AbstractTrafficLight
      * @throws RemoteException when the simulator cannot be reached
      * @throws NetworkException when the GTU cannot be placed on the given lane
      */
-    public LaneBlockOnOff(final String name, final Lane lane, final DoubleScalar.Rel<LengthUnit> position,
+    public LaneBlockOnOff(final String name, final Lane lane, final Length.Rel position,
         final OTSDEVSSimulatorInterface simulator) throws GTUException, RemoteException, NetworkException, NamingException
     {
         super(name, lane, position, simulator);
@@ -55,7 +55,7 @@ public class LaneBlockOnOff extends AbstractTrafficLight
         }
         try
         {
-            getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(60.0, TimeUnit.SECOND), this, this,
+            getSimulator().scheduleEventRel(new Time.Rel(60.0, TimeUnit.SECOND), this, this,
                 "changeColorTime", null);
         }
         catch (SimRuntimeException exception)
@@ -70,7 +70,7 @@ public class LaneBlockOnOff extends AbstractTrafficLight
 
         try
         {
-            getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(60.0, TimeUnit.SECOND), this, this,
+            getSimulator().scheduleEventRel(new Time.Rel(60.0, TimeUnit.SECOND), this, this,
                 "changeColorTime", null);
         }
         catch (SimRuntimeException | RemoteException exception)

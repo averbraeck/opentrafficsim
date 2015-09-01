@@ -5,8 +5,7 @@ import java.rmi.RemoteException;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 
-import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 
@@ -20,13 +19,13 @@ import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface Sensor extends Serializable, Comparable<Sensor>, LocatableInterface
+public interface Sensor extends Serializable, Comparable<Sensor>, LocatableInterface, OTS_SCALAR
 {
     /** @return The lane for which this is a sensor. */
     Lane getLane();
 
     /** @return the position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
-    DoubleScalar.Rel<LengthUnit> getLongitudinalPosition();
+    Length.Rel getLongitudinalPosition();
 
     /** @return the position as a double in SI units for quick sorting and sensor triggering. */
     double getLongitudinalPositionSI();

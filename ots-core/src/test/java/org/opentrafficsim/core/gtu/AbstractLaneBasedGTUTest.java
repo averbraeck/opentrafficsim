@@ -19,6 +19,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.junit.Test;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -50,7 +51,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class AbstractLaneBasedGTUTest
+public class AbstractLaneBasedGTUTest implements OTS_SCALAR
 {
 
     /**
@@ -71,41 +72,39 @@ public class AbstractLaneBasedGTUTest
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForTemplateGTUTest();
         final SimpleSimulation simulator =
-            new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
-                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
+            new SimpleSimulator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(0.0, TimeUnit.SECOND), new Time.Rel(3600.0,
+                TimeUnit.SECOND), model);
 
         Lane[] lanesGroupA =
-            LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(100,
-                SpeedUnit.KM_PER_HOUR), simulator);
+            LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new Speed.Abs(100, SpeedUnit.KM_PER_HOUR),
+                simulator);
         // A GTU can exist on several lanes at once; create another lane group to test that
         OTSNode nodeBFrom = new OTSNode("BFrom", new OTSPoint3D(10, 0, 0));
         OTSNode nodeBTo = new OTSNode("BTo", new OTSPoint3D(1000, 100, 0));
         Lane[] lanesGroupB =
-            LaneFactory.makeMultiLane("B", nodeBFrom, nodeBTo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(100,
-                SpeedUnit.KM_PER_HOUR), simulator);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions =
-            new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+            LaneFactory.makeMultiLane("B", nodeBFrom, nodeBTo, null, 3, laneType, new Speed.Abs(100, SpeedUnit.KM_PER_HOUR),
+                simulator);
+        Map<Lane, Length.Rel> initialLongitudinalPositions = new LinkedHashMap<Lane, Length.Rel>();
 
-        DoubleScalar.Rel<LengthUnit> positionA = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);
+        Length.Rel positionA = new Length.Rel(100, LengthUnit.METER);
         initialLongitudinalPositions.put(lanesGroupA[1], positionA);
-        DoubleScalar.Rel<LengthUnit> positionB = new DoubleScalar.Rel<LengthUnit>(90, LengthUnit.METER);
+        Length.Rel positionB = new Length.Rel(90, LengthUnit.METER);
         initialLongitudinalPositions.put(lanesGroupB[1], positionB);
         // A Car needs a CarFollowingModel
-        DoubleScalar.Abs<AccelerationUnit> acceleration =
-            new DoubleScalar.Abs<AccelerationUnit>(2, AccelerationUnit.METER_PER_SECOND_2);
-        DoubleScalar.Rel<TimeUnit> validFor = new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND);
+        Acceleration.Abs acceleration = new Acceleration.Abs(2, AccelerationUnit.METER_PER_SECOND_2);
+        Time.Rel validFor = new Time.Rel(10, TimeUnit.SECOND);
         GTUFollowingModel gfm = new FixedAccelerationModel(acceleration, validFor);
         // A Car needs a lane change model
         // AbstractLaneChangeModel laneChangeModel = new Egoistic();
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
         // A Car needs an initial speed
-        DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
+        Speed.Abs initialSpeed = new Speed.Abs(50, SpeedUnit.KM_PER_HOUR);
         // Length of the Car
-        DoubleScalar.Rel<LengthUnit> carLength = new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER);
+        Length.Rel carLength = new Length.Rel(4, LengthUnit.METER);
         // Width of the Car
-        DoubleScalar.Rel<LengthUnit> carWidth = new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER);
+        Length.Rel carWidth = new Length.Rel(1.8, LengthUnit.METER);
         // Maximum velocity of the Car
-        DoubleScalar.Abs<SpeedUnit> maximumVelocity = new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR);
+        Speed.Abs maximumVelocity = new Speed.Abs(200, SpeedUnit.KM_PER_HOUR);
         // ID of the Car
         String carID = "theCar";
         // List of Nodes visited by the Car
@@ -155,7 +154,7 @@ public class AbstractLaneBasedGTUTest
                     // + ", relativePostion: " + relativePosition);
                     try
                     {
-                        DoubleScalar.Rel<LengthUnit> position = car.position(lane, relativePosition);
+                        Length.Rel position = car.position(lane, relativePosition);
                         if (expectException)
                         {
                             // System.out.println("position: " + position);
@@ -163,11 +162,11 @@ public class AbstractLaneBasedGTUTest
                         }
                         else
                         {
-                            DoubleScalar.Rel<LengthUnit> expectedPosition = laneGroup == lanesGroupA ? positionA : positionB;
+                            Length.Rel expectedPosition = laneGroup == lanesGroupA ? positionA : positionB;
                             // FIXME There should be a better way to check equality of RelativePosition
                             if (relativePosition.getDx().getSI() != 0)
                             {
-                                expectedPosition = DoubleScalar.plus(expectedPosition, carLength);
+                                expectedPosition = expectedPosition.plus(carLength);
                             }
                             // System.out.println("reported position: " + position);
                             // System.out.println("expected position: " + expectedPosition);
@@ -194,7 +193,7 @@ public class AbstractLaneBasedGTUTest
         double step = 0.01d;
         for (int i = 0;; i++)
         {
-            DoubleScalar.Abs<TimeUnit> stepTime = new DoubleScalar.Abs<TimeUnit>(i * step, TimeUnit.SECOND);
+            Time.Abs stepTime = new Time.Abs(i * step, TimeUnit.SECOND);
             if (stepTime.getSI() > validFor.getSI())
             {
                 break;
@@ -223,7 +222,7 @@ public class AbstractLaneBasedGTUTest
                     0.0001);
                 assertEquals("acceleration is " + acceleration, acceleration.getSI(), car.getAcceleration().getSI(), 0.00001);
             }
-            DoubleScalar.Abs<SpeedUnit> longitudinalVelocity = car.getLongitudinalVelocity();
+            Speed.Abs longitudinalVelocity = car.getLongitudinalVelocity();
             double expectedLongitudinalVelocity = initialSpeed.getSI() + stepTime.getSI() * acceleration.getSI();
             assertEquals("longitudinal velocity is " + expectedLongitudinalVelocity, expectedLongitudinalVelocity,
                 longitudinalVelocity.getSI(), 0.00001);
@@ -254,7 +253,7 @@ public class AbstractLaneBasedGTUTest
                         // + ", relativePostion: " + relativePosition);
                         try
                         {
-                            DoubleScalar.Rel<LengthUnit> position = car.position(lane, relativePosition);
+                            Length.Rel position = car.position(lane, relativePosition);
                             if (expectException)
                             {
                                 // System.out.println("position: " + position);
@@ -263,22 +262,17 @@ public class AbstractLaneBasedGTUTest
                             }
                             else
                             {
-                                DoubleScalar.Rel<LengthUnit> expectedPosition =
-                                    laneGroup == lanesGroupA ? positionA : positionB;
+                                Length.Rel expectedPosition = laneGroup == lanesGroupA ? positionA : positionB;
                                 expectedPosition =
-                                    DoubleScalar.plus(
-                                        expectedPosition,
-                                        new DoubleScalar.Rel<LengthUnit>(stepTime.getSI() * initialSpeed.getSI(),
-                                            LengthUnit.SI));
+                                    expectedPosition.plus(new Length.Rel(stepTime.getSI() * initialSpeed.getSI(),
+                                        LengthUnit.SI));
                                 expectedPosition =
-                                    DoubleScalar.plus(
-                                        expectedPosition,
-                                        new DoubleScalar.Rel<LengthUnit>(0.5 * acceleration.getSI() * stepTime.getSI()
-                                            * stepTime.getSI(), LengthUnit.SI));
+                                    expectedPosition.plus(new Length.Rel(0.5 * acceleration.getSI() * stepTime.getSI()
+                                        * stepTime.getSI(), LengthUnit.SI));
                                 // FIXME There should be a (better) way to check equality of RelativePosition
                                 if (relativePosition.getDx().getSI() != 0)
                                 {
-                                    expectedPosition = DoubleScalar.plus(expectedPosition, carLength);
+                                    expectedPosition = expectedPosition.plus(carLength);
                                 }
                                 // System.out.println("reported position: " + position);
                                 // System.out.println("expected position: " + expectedPosition);
@@ -304,22 +298,17 @@ public class AbstractLaneBasedGTUTest
                             }
                             else
                             {
-                                DoubleScalar.Rel<LengthUnit> expectedPosition =
-                                    laneGroup == lanesGroupA ? positionA : positionB;
+                                Length.Rel expectedPosition = laneGroup == lanesGroupA ? positionA : positionB;
                                 expectedPosition =
-                                    DoubleScalar.plus(
-                                        expectedPosition,
-                                        new DoubleScalar.Rel<LengthUnit>(stepTime.getSI() * initialSpeed.getSI(),
-                                            LengthUnit.SI));
+                                    expectedPosition.plus(new Length.Rel(stepTime.getSI() * initialSpeed.getSI(),
+                                        LengthUnit.SI));
                                 expectedPosition =
-                                    DoubleScalar.plus(
-                                        expectedPosition,
-                                        new DoubleScalar.Rel<LengthUnit>(0.5 * acceleration.getSI() * stepTime.getSI()
-                                            * stepTime.getSI(), LengthUnit.SI));
+                                    expectedPosition.plus(new Length.Rel(0.5 * acceleration.getSI() * stepTime.getSI()
+                                        * stepTime.getSI(), LengthUnit.SI));
                                 // FIXME There should be a (better) way to check equality of RelativePosition
                                 if (relativePosition.getDx().getSI() != 0)
                                 {
-                                    expectedPosition = DoubleScalar.plus(expectedPosition, carLength);
+                                    expectedPosition = expectedPosition.plus(carLength);
                                 }
                                 // System.out.println("reported position: " + position);
                                 // System.out.println("expected position: " + expectedPosition);
@@ -345,9 +334,9 @@ public class AbstractLaneBasedGTUTest
         OTSNode nodeCFrom = new OTSNode("CFrom", new OTSPoint3D(10, 100, 0));
         OTSNode nodeCTo = new OTSNode("CTo", new OTSPoint3D(1000, 0, 0));
         Lane[] lanesGroupC =
-            LaneFactory.makeMultiLane("C", nodeCFrom, nodeCTo, null, 3, laneType, new DoubleScalar.Abs<SpeedUnit>(100,
-                SpeedUnit.KM_PER_HOUR), simulator);
-        car.enterLane(lanesGroupC[0], new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.SI));
+            LaneFactory.makeMultiLane("C", nodeCFrom, nodeCTo, null, 3, laneType, new Speed.Abs(100, SpeedUnit.KM_PER_HOUR),
+                simulator);
+        car.enterLane(lanesGroupC[0], new Length.Rel(0.0, LengthUnit.SI));
         for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
         {
             Map<Lane, Double> positions = car.fractionalPositions(relativePosition);

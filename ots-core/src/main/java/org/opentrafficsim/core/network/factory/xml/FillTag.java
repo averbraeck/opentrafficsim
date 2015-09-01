@@ -6,8 +6,8 @@ import java.util.List;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
+import org.opentrafficsim.core.OTS_DIST;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
@@ -17,7 +17,6 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.FixedLaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
-import org.opentrafficsim.core.units.distributions.DistContinuousDoubleScalar;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -31,7 +30,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class FillTag
+class FillTag implements OTS_SCALAR, OTS_DIST
 {
     /** lane name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -47,11 +46,11 @@ class FillTag
 
     /** inter-vehicle distance. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DistContinuousDoubleScalar.Rel<LengthUnit> distanceDist = null;
+    LengthContinuousDist.Rel distanceDist = null;
 
     /** initial speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist = null;
+    SpeedContinuousDist.Abs initialSpeedDist = null;
 
     /** max number of generated GTUs. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

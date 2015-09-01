@@ -1,8 +1,6 @@
 package org.opentrafficsim.core.gtu.following;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 
 /**
  * Container for two instances of an AccelerationStep. One for the GTU that is deciding its move (the leader); one for the GTU
@@ -15,7 +13,7 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  *          initial version 11 mrt. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class DualAccelerationStep
+public class DualAccelerationStep implements OTS_SCALAR
 {
     /** AccelerationStep for the leader. */
     private final AccelerationStep leaderAccelerationStep;
@@ -57,7 +55,7 @@ public class DualAccelerationStep
      * Return the acceleration of the leader.
      * @return DoubleScalar&lt;AccelerationUnit&gt;; the acceleration of the leader
      */
-    public final DoubleScalar.Abs<AccelerationUnit> getLeaderAcceleration()
+    public final Acceleration.Abs getLeaderAcceleration()
     {
         return getLeaderAccelerationStep().getAcceleration();
     }
@@ -66,7 +64,7 @@ public class DualAccelerationStep
      * Return the acceleration of the follower.
      * @return DoubleScalar&lt;AccelerationUnit&gt;; the acceleration of the follower
      */
-    public final DoubleScalar.Abs<AccelerationUnit> getFollowerAcceleration()
+    public final Acceleration.Abs getFollowerAcceleration()
     {
         return getFollowerAccelerationStep().getAcceleration();
     }
@@ -75,7 +73,7 @@ public class DualAccelerationStep
      * Return the time up to which the result of the leader is valid.
      * @return DoubleScalar&lt;TimeUnit&gt;; the time up to which the result of the leader is valid
      */
-    public final DoubleScalar.Abs<TimeUnit> getLeaderValidUntil()
+    public final Time.Abs getLeaderValidUntil()
     {
         return getLeaderAccelerationStep().getValidUntil();
     }
@@ -84,7 +82,7 @@ public class DualAccelerationStep
      * Return the time up to which the result of the follower is valid.
      * @return DoubleScalar&lt;TimeUnit&gt;; the time up to which the result of the follower is valid
      */
-    public final DoubleScalar.Abs<TimeUnit> getFollowerValidUntil()
+    public final Time.Abs getFollowerValidUntil()
     {
         return getFollowerAccelerationStep().getValidUntil();
     }

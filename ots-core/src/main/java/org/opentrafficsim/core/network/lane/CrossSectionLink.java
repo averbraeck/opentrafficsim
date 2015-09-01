@@ -38,7 +38,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * @param capacity link capacity in vehicles per hour.
      */
     public CrossSectionLink(final String id, final Node startNode, final Node endNode, final OTSLine3D designLine,
-        final DoubleScalar.Abs<FrequencyUnit> capacity)
+        final Frequency.Abs capacity)
     {
         super(id, startNode, endNode, designLine, capacity);
     }

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -16,7 +16,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public final class SpeedUnits
+public final class SpeedUnits implements OTS_SCALAR
 {
     /** the speed units. */
     public static final Map<String, SpeedUnit> SPEED_UNITS = new HashMap<>();
@@ -64,7 +64,7 @@ public final class SpeedUnits
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static DoubleScalar.Abs<SpeedUnit> parseSpeedAbs(final String s) throws NetworkException
+    public static Speed.Abs parseSpeedAbs(final String s) throws NetworkException
     {
         String us = parseSpeedUnit(s);
         SpeedUnit u = SPEED_UNITS.get(us);
@@ -72,7 +72,7 @@ public final class SpeedUnits
         try
         {
             double value = Double.parseDouble(sv);
-            return new DoubleScalar.Abs<SpeedUnit>(value, u);
+            return new Speed.Abs(value, u);
         }
         catch (NumberFormatException nfe)
         {
@@ -85,7 +85,7 @@ public final class SpeedUnits
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static DoubleScalar.Rel<SpeedUnit> parseSpeedRel(final String s) throws NetworkException
+    public static Speed.Rel parseSpeedRel(final String s) throws NetworkException
     {
         String us = parseSpeedUnit(s);
         SpeedUnit u = SPEED_UNITS.get(us);
@@ -93,7 +93,7 @@ public final class SpeedUnits
         try
         {
             double value = Double.parseDouble(sv);
-            return new DoubleScalar.Rel<SpeedUnit>(value, u);
+            return new Speed.Rel(value, u);
         }
         catch (NumberFormatException nfe)
         {

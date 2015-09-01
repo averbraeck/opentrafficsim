@@ -35,6 +35,7 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
@@ -49,18 +50,19 @@ import org.opentrafficsim.core.network.lane.Lane;
  * initial version Jul 24, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart, LaneBasedGTUSampler
+public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart, LaneBasedGTUSampler,
+    OTS_SCALAR
 {
     /** */
     private static final long serialVersionUID = 20140724L;
 
     /** Sample interval of this TrajectoryPlot. */
-    private final DoubleScalar.Rel<TimeUnit> sampleInterval;
+    private final Time.Rel sampleInterval;
 
     /**
      * @return sampleInterval
      */
-    public final DoubleScalar.Rel<TimeUnit> getSampleInterval()
+    public final Time.Rel getSampleInterval()
     {
         return this.sampleInterval;
     }
@@ -76,12 +78,12 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
      * @param index int; the index of the path element; if -1, the total length of the path is returned
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the cumulative length at the end of the specified path element
      */
-    public final DoubleScalar.Rel<LengthUnit> getCumulativeLength(final int index)
+    public final Length.Rel getCumulativeLength(final int index)
     {
         int useIndex = -1 == index ? this.cumulativeLengths.size() - 1 : index;
         try
         {
-            return this.cumulativeLengths.get(useIndex);
+            return new Length.Rel(this.cumulativeLengths.get(useIndex));
         }
         catch (ValueException exception)
         {
@@ -91,12 +93,12 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     }
 
     /** Maximum of the time axis. */
-    private DoubleScalar.Abs<TimeUnit> maximumTime = new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND);
+    private Time.Abs maximumTime = new Time.Abs(300, TimeUnit.SECOND);
 
     /**
      * @return maximumTime
      */
-    public final DoubleScalar.Abs<TimeUnit> getMaximumTime()
+    public final Time.Abs getMaximumTime()
     {
         return this.maximumTime;
     }
@@ -104,7 +106,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     /**
      * @param maximumTime set maximumTime
      */
-    public final void setMaximumTime(final DoubleScalar.Abs<TimeUnit> maximumTime)
+    public final void setMaximumTime(final Time.Abs maximumTime)
     {
         this.maximumTime = maximumTime;
     }
@@ -124,7 +126,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
      * @param sampleInterval DoubleScalarRel&lt;TimeUnit&gt;; the time between samples of this TrajectoryPlot
      * @param path ArrayList&lt;Lane&gt;; the series of Lanes that will provide the data for this TrajectoryPlot
      */
-    public TrajectoryPlot(final String caption, final DoubleScalar.Rel<TimeUnit> sampleInterval, final List<Lane> path)
+    public TrajectoryPlot(final String caption, final Time.Rel sampleInterval, final List<Lane> path)
     {
         this.sampleInterval = sampleInterval;
         this.path = new ArrayList<Lane>(path); // make a copy
@@ -177,8 +179,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         result.getXYPlot().setDomainAxis(xAxis);
         result.getXYPlot().setRangeAxis(yAxis);
-        DoubleScalar.Rel<LengthUnit> minimumPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.SI);
-        DoubleScalar.Rel<LengthUnit> maximumPosition = getCumulativeLength(-1);
+        Length.Rel minimumPosition = new Length.Rel(0, LengthUnit.SI);
+        Length.Rel maximumPosition = getCumulativeLength(-1);
         configureAxis(result.getXYPlot().getRangeAxis(), DoubleScalar.minus(maximumPosition, minimumPosition).getSI());
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) result.getXYPlot().getRenderer();
         renderer.setBaseLinesVisible(true);
@@ -331,7 +333,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     /** {@inheritDoc} */
     public final void addData(final AbstractLaneBasedGTU car, final Lane lane) throws NetworkException, RemoteException
     {
-        // final DoubleScalar.Abs<TimeUnit> startTime = car.getLastEvaluationTime();
+        // final Time.Abs startTime = car.getLastEvaluationTime();
         // System.out.println("addData car: " + car + ", lastEval: " + startTime);
         // Convert the position of the car to a position on path.
         // Find a (the first) lane that car is on that is in our path.
@@ -356,8 +358,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             throw new Error("Car is not on any lane in the path");
         }
         // System.out.println("lane index is " + index + " car is " + car);
-        // final DoubleScalar.Rel<LengthUnit> startPosition =
-        // DoubleScalar.plus(new DoubleScalar.Rel<LengthUnit>(lengthOffset, LengthUnit.SI),
+        // final Length.Rel startPosition =
+        // DoubleScalar.plus(new Length.Rel(lengthOffset, LengthUnit.SI),
         // car.position(lane, car.getReference(), startTime));
         String key = car.getId().toString();
         Trajectory carTrajectory = this.trajectories.get(key);
@@ -403,25 +405,25 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     class Trajectory
     {
         /** Time of (current) end of trajectory. */
-        private DoubleScalar.Abs<TimeUnit> currentEndTime;
+        private Time.Abs currentEndTime;
 
         /**
          * Retrieve the current end time of this Trajectory.
          * @return currentEndTime
          */
-        public final DoubleScalar.Abs<TimeUnit> getCurrentEndTime()
+        public final Time.Abs getCurrentEndTime()
         {
             return this.currentEndTime;
         }
 
         /** Position of (current) end of trajectory. */
-        private DoubleScalar.Rel<LengthUnit> currentEndPosition;
+        private Length.Rel currentEndPosition;
 
         /**
          * Retrieve the current end position of this Trajectory.
          * @return currentEndPosition
          */
-        public final DoubleScalar.Rel<LengthUnit> getCurrentEndPosition()
+        public final Length.Rel getCurrentEndPosition()
         {
             return this.currentEndPosition;
         }
@@ -469,8 +471,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             final int endSample = (int) (Math.ceil(car.getNextEvaluationTime().getSI() / getSampleInterval().getSI()));
             for (int sample = startSample; sample < endSample; sample++)
             {
-                DoubleScalar.Abs<TimeUnit> sampleTime =
-                    new DoubleScalar.Abs<TimeUnit>(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
+                Time.Abs sampleTime = new Time.Abs(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
                 Double position = car.position(lane, car.getReference(), sampleTime).getSI() + positionOffset;
                 if (this.positions.size() > 0 && position < this.currentEndPosition.getSI() - 0.001)
                 {
@@ -508,8 +509,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             }
             this.currentEndTime = car.getNextEvaluationTime();
             this.currentEndPosition =
-                new DoubleScalar.Rel<LengthUnit>(car.position(lane, car.getReference(), this.currentEndTime).getSI()
-                    + positionOffset, LengthUnit.METER);
+                new Length.Rel(car.position(lane, car.getReference(), this.currentEndTime).getSI() + positionOffset,
+                    LengthUnit.METER);
             if (car.getNextEvaluationTime().gt(getMaximumTime()))
             {
                 setMaximumTime(car.getNextEvaluationTime());

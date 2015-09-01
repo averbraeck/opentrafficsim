@@ -3,7 +3,7 @@ package org.opentrafficsim.core.network.factory.xml;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
@@ -21,7 +21,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 28, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-final class GTUColorerTag
+final class GTUColorerTag implements OTS_SCALAR
 {
     /** Utility class. */
     private GTUColorerTag()
@@ -71,7 +71,7 @@ final class GTUColorerTag
         {
             return new VelocityGTUColorer(globalTag.velocityGTUColorerMaxSpeed);
         }
-        return new VelocityGTUColorer(new DoubleScalar.Abs<SpeedUnit>(100.0, SpeedUnit.KM_PER_HOUR));
+        return new VelocityGTUColorer(new Speed.Abs(100.0, SpeedUnit.KM_PER_HOUR));
     }
 
     /**
@@ -81,8 +81,8 @@ final class GTUColorerTag
     static GTUColorer makeAccelerationGTUColorer(final GlobalTag globalTag)
     {
         // TODO use parameters for AccelerationGTUColorer
-        return new AccelerationGTUColorer(new DoubleScalar.Abs<AccelerationUnit>(1.0, AccelerationUnit.METER_PER_SECOND_2),
-            new DoubleScalar.Abs<AccelerationUnit>(1.0, AccelerationUnit.METER_PER_SECOND_2));
+        return new AccelerationGTUColorer(new Acceleration.Abs(1.0, AccelerationUnit.METER_PER_SECOND_2),
+            new Acceleration.Abs(1.0, AccelerationUnit.METER_PER_SECOND_2));
     }
 
     /**
@@ -92,8 +92,7 @@ final class GTUColorerTag
     static GTUColorer makeLaneChangeUrgeGTUColorer(final GlobalTag globalTag)
     {
         // TODO use parameters for LaneChangeUrgeGTUColorer
-        return new LaneChangeUrgeGTUColorer(new DoubleScalar.Rel<LengthUnit>(100.0, LengthUnit.METER),
-            new DoubleScalar.Rel<LengthUnit>(100.0, LengthUnit.METER));
+        return new LaneChangeUrgeGTUColorer(new Length.Rel(100.0, LengthUnit.METER), new Length.Rel(100.0, LengthUnit.METER));
     }
 
     /**

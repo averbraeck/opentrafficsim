@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.djunits.unit.AnglePlaneUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -16,7 +16,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public final class AngleUnits
+public final class AngleUnits implements OTS_SCALAR
 {
     /** the angle units. */
     public static final Map<String, AnglePlaneUnit> ANGLE_UNITS = new HashMap<>();
@@ -63,7 +63,7 @@ public final class AngleUnits
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static DoubleScalar.Abs<AnglePlaneUnit> parseAngleAbs(final String s) throws NetworkException
+    public static AnglePlane.Abs parseAngleAbs(final String s) throws NetworkException
     {
         String us = parseAngleUnit(s);
         AnglePlaneUnit u = ANGLE_UNITS.get(us);
@@ -71,8 +71,8 @@ public final class AngleUnits
         try
         {
             double value = Double.parseDouble(sv);
-            DoubleScalar.Abs<AnglePlaneUnit> angle = new DoubleScalar.Abs<AnglePlaneUnit>(value, u);
-            return AnglePlaneUnit.normalize(angle);
+            AnglePlane.Abs angle = new AnglePlane.Abs(value, u);
+            return new AnglePlane.Abs(AnglePlaneUnit.normalize(angle));
         }
         catch (NumberFormatException nfe)
         {
@@ -85,7 +85,7 @@ public final class AngleUnits
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static DoubleScalar.Rel<AnglePlaneUnit> parseAngleRel(final String s) throws NetworkException
+    public static AnglePlane.Rel parseAngleRel(final String s) throws NetworkException
     {
         String us = parseAngleUnit(s);
         AnglePlaneUnit u = ANGLE_UNITS.get(us);
@@ -93,8 +93,8 @@ public final class AngleUnits
         try
         {
             double value = Double.parseDouble(sv);
-            DoubleScalar.Rel<AnglePlaneUnit> angle = new DoubleScalar.Rel<AnglePlaneUnit>(value, u);
-            return AnglePlaneUnit.normalize(angle);
+            AnglePlane.Rel angle = new AnglePlane.Rel(value, u);
+            return new AnglePlane.Rel(AnglePlaneUnit.normalize(angle));
         }
         catch (NumberFormatException nfe)
         {

@@ -76,7 +76,7 @@ public class CarTest implements DOUBLE_SCALAR
         Speed.Abs initialSpeed = new Speed.Abs(34, KM_PER_HOUR);
         OTSDEVSSimulator simulator = makeSimulator();
         GTUFollowingModel gtuFollowingModel =
-            new FixedAccelerationModel(new Acceleration.Abs(0, METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(10,
+            new FixedAccelerationModel(new Acceleration.Abs(0, METER_PER_SECOND_2), new Time.Rel(10,
                 SECOND));
         LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar referenceCar =
@@ -136,13 +136,13 @@ public class CarTest implements DOUBLE_SCALAR
      * @throws GTUException when construction of the GTU fails (probably due to an invalid parameter)
      */
     public static LaneBasedIndividualCar makeReferenceCar(final String id, final GTUType gtuType, final Lane lane,
-        final DoubleScalar.Rel<LengthUnit> initialPosition, final DoubleScalar.Abs<SpeedUnit> initialSpeed,
+        final Length.Rel initialPosition, final Speed.Abs initialSpeed,
         final OTSDEVSSimulator simulator, final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel)
         throws RemoteException, NamingException, NetworkException, SimRuntimeException, GTUException
     {
         Length.Rel length = new Length.Rel(5.0, METER);
         Length.Rel width = new Length.Rel(2.0, METER);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
+        Map<Lane, Length.Rel> initialLongitudinalPositions = new HashMap<>();
         initialLongitudinalPositions.put(lane, initialPosition);
         Speed.Abs maxSpeed = new Speed.Abs(120, KM_PER_HOUR);
         return new LaneBasedIndividualCar(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions,

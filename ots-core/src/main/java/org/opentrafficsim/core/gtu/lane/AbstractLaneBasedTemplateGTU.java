@@ -49,8 +49,8 @@ public abstract class AbstractLaneBasedTemplateGTU extends AbstractLaneBasedGTU
      */
     public AbstractLaneBasedTemplateGTU(final String id, final TemplateGTUType templateGTUType,
         final GTUFollowingModel gtuFollowingModel,
-        final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator)
+        final Map<Lane, Length.Rel> initialLongitudinalPositions,
+        final Speed.Abs initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator)
         throws RemoteException, NetworkException, SimRuntimeException, GTUException
     {
         super(id, templateGTUType.getGtuType(), gtuFollowingModel, null /* LaneChangeModel */, initialLongitudinalPositions,
@@ -68,21 +68,21 @@ public abstract class AbstractLaneBasedTemplateGTU extends AbstractLaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> getLength()
+    public final Length.Rel getLength()
     {
         return this.templateGTUType.getLength();
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> getWidth()
+    public final Length.Rel getWidth()
     {
         return this.templateGTUType.getWidth();
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<SpeedUnit> getMaximumVelocity()
+    public final Speed.Abs getMaximumVelocity()
     {
         return this.templateGTUType.getMaximumVelocity();
     }

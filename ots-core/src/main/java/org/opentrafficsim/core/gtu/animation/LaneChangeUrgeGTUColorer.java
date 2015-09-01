@@ -27,10 +27,10 @@ public class LaneChangeUrgeGTUColorer implements GTUColorer
     private final ArrayList<LegendEntry> legend;
 
     /** Minimum distance . */
-    private final DoubleScalar.Rel<LengthUnit> minimumLaneChangeDistance;
+    private final Length.Rel minimumLaneChangeDistance;
 
     /** Maximum distance . */
-    private final DoubleScalar.Rel<LengthUnit> horizon;
+    private final Length.Rel horizon;
 
     /** Color for GTUs that are not lane based (and, consequently cannot have a lane change urge). */
     private static final Color NOTLANEBASEDGTUCOLOR = Color.BLACK;
@@ -42,8 +42,8 @@ public class LaneChangeUrgeGTUColorer implements GTUColorer
      * @param horizon DoubleScalar.Rel&lt;LengthUnit&gt;; the distance horizon; if a GTU can stay in its current lane for at
      *            least this distance, this GTU will be painted in the neutral color.
      */
-    public LaneChangeUrgeGTUColorer(final DoubleScalar.Rel<LengthUnit> minimumLaneChangeDistance,
-        final DoubleScalar.Rel<LengthUnit> horizon)
+    public LaneChangeUrgeGTUColorer(final Length.Rel minimumLaneChangeDistance,
+        final Length.Rel horizon)
     {
         this.minimumLaneChangeDistance = minimumLaneChangeDistance;
         this.horizon = horizon;
@@ -71,7 +71,7 @@ public class LaneChangeUrgeGTUColorer implements GTUColorer
         {
             LaneChangeDistanceAndDirection distanceAndDirection = ((LaneBasedGTU) gtu).getLaneChangeDistanceAndDirection();
             Boolean left = distanceAndDirection.getLeft();
-            DoubleScalar.Rel<LengthUnit> distance = distanceAndDirection.getDistance();
+            Length.Rel distance = distanceAndDirection.getDistance();
             if (null == left || distance.ge(this.horizon))
             {
                 return this.legend.get(1).getColor();
@@ -105,7 +105,7 @@ public class LaneChangeUrgeGTUColorer implements GTUColorer
     public static class LaneChangeDistanceAndDirection
     {
         /** The distance available to complete the next required lane change. */
-        public final DoubleScalar.Rel<LengthUnit> distance;
+        public final Length.Rel distance;
 
         /**
          * The lateral direction of the next required lane change is left (if this field is true); right (if this field is
@@ -119,7 +119,7 @@ public class LaneChangeUrgeGTUColorer implements GTUColorer
          * @param left Boolean; if true the lane change to perform is to the left; if false, the lane change to perform is to
          *            the right; if null, no lane change is needed, or possible
          */
-        public LaneChangeDistanceAndDirection(final DoubleScalar.Rel<LengthUnit> distance, final Boolean left)
+        public LaneChangeDistanceAndDirection(final Length.Rel distance, final Boolean left)
         {
             this.distance = distance;
             this.left = left;
@@ -129,7 +129,7 @@ public class LaneChangeUrgeGTUColorer implements GTUColorer
          * Retrieve the distance available to complete the next required lane change.
          * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the distance available to complete the next required lane change
          */
-        public final DoubleScalar.Rel<LengthUnit> getDistance()
+        public final Length.Rel getDistance()
         {
             return this.distance;
         }

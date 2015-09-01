@@ -18,6 +18,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.junit.Test;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.car.CarTest;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -40,7 +41,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  * initial version Jul 11, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class IDMPlusTest
+public class IDMPlusTest implements OTS_SCALAR
 {
 
     /**
@@ -53,44 +54,44 @@ public class IDMPlusTest
     {
         // Check a car standing still with no leaders accelerates with maximum acceleration
         SimpleSimulator simulator =
-            new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0,
-                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600, TimeUnit.SECOND), new IDMPlusTestModel());
-        DoubleScalar.Rel<LengthUnit> s0 = new DoubleScalar.Rel<LengthUnit>(2, LengthUnit.METER);
+            new SimpleSimulator(new Time.Abs(0, TimeUnit.SECOND), new Time.Rel(0,
+                TimeUnit.SECOND), new Time.Rel(3600, TimeUnit.SECOND), new IDMPlusTestModel());
+        Length.Rel s0 = new Length.Rel(2, LengthUnit.METER);
         GTUFollowingModel carFollowingModel =
-            new IDMPlus(new DoubleScalar.Abs<AccelerationUnit>(1.25, AccelerationUnit.METER_PER_SECOND_2),
-                new DoubleScalar.Abs<AccelerationUnit>(1.5, AccelerationUnit.METER_PER_SECOND_2), s0,
-                new DoubleScalar.Rel<TimeUnit>(1, TimeUnit.SECOND), 1d);
+            new IDMPlus(new Acceleration.Abs(1.25, AccelerationUnit.METER_PER_SECOND_2),
+                new Acceleration.Abs(1.5, AccelerationUnit.METER_PER_SECOND_2), s0,
+                new Time.Rel(1, TimeUnit.SECOND), 1d);
         GTUType gtuType = GTUType.makeGTUType("Car");
         LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(gtuType);
         Lane lane = CarTest.makeLane(laneType);
-        DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
-        DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(123.456, LengthUnit.METER);
-        DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
-        DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
-        DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new LinkedHashMap<>();
+        Time.Abs initialTime = new Time.Abs(0, TimeUnit.SECOND);
+        Length.Rel initialPosition = new Length.Rel(123.456, LengthUnit.METER);
+        Speed.Abs initialSpeed = new Speed.Abs(0, SpeedUnit.KM_PER_HOUR);
+        Length.Rel length = new Length.Rel(5.0, LengthUnit.METER);
+        Length.Rel width = new Length.Rel(2.0, LengthUnit.METER);
+        Map<Lane, Length.Rel> initialLongitudinalPositions = new LinkedHashMap<>();
         initialLongitudinalPositions.put(lane, initialPosition);
-        DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
+        Speed.Abs maxSpeed = new Speed.Abs(120, SpeedUnit.KM_PER_HOUR);
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar referenceCar =
             new LaneBasedIndividualCar("12345", gtuType, carFollowingModel, laneChangeModel, initialLongitudinalPositions,
                 initialSpeed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
-        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        Speed.Abs speedLimit = new Speed.Abs(100, SpeedUnit.KM_PER_HOUR);
         AccelerationStep cfmr = carFollowingModel.computeAccelerationWithNoLeader(referenceCar, speedLimit);
         assertEquals("Standard time slice in IDM+ is 0.5s", 0.5, cfmr.getValidUntil().getSI(), 0.0001);
         assertEquals("Acceleration should be maximum", 1.25, cfmr.getAcceleration().getSI(), 0.0001);
         // Create another car at exactly the stationary following distance
         // Check that the follower remains stationary
-        DoubleScalar.Rel<LengthUnit> leaderPosition =
-            new DoubleScalar.Rel<LengthUnit>(2 + referenceCar.getLength().getSI()
+        Length.Rel leaderPosition =
+            new Length.Rel(2 + referenceCar.getLength().getSI()
                 + referenceCar.position(lane, referenceCar.getReference(), initialTime).getSI(), LengthUnit.METER);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> leaderPositions = new LinkedHashMap<>();
+        Map<Lane, Length.Rel> leaderPositions = new LinkedHashMap<>();
         leaderPositions.put(lane, leaderPosition);
         // The leader gets a car following model that makes it stay in place for a loooong time
         FixedAccelerationModel fam =
-            new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2),
-                new DoubleScalar.Rel<TimeUnit>(9999, TimeUnit.SECOND));
+            new FixedAccelerationModel(new Acceleration.Abs(0, AccelerationUnit.METER_PER_SECOND_2),
+                new Time.Rel(9999, TimeUnit.SECOND));
         LaneBasedIndividualCar leaderCar =
             new LaneBasedIndividualCar("23456", gtuType, fam, laneChangeModel, leaderPositions, initialSpeed, length, width,
                 maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
@@ -101,7 +102,7 @@ public class IDMPlusTest
                 speedLimit);
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         leaderPosition =
-            new DoubleScalar.Rel<LengthUnit>(1000 + (3 + referenceCar.getLength().getSI() + referenceCar.position(lane,
+            new Length.Rel(1000 + (3 + referenceCar.getLength().getSI() + referenceCar.position(lane,
                 referenceCar.getFront(), initialTime).getSI()), LengthUnit.METER);
         leaderPositions = new LinkedHashMap<>();
         leaderPositions.put(lane, leaderPosition);
@@ -124,7 +125,7 @@ public class IDMPlusTest
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         leaders.clear();
         leaderPosition =
-            new DoubleScalar.Rel<LengthUnit>(-(3 + referenceCar.getLength().getSI() + referenceCar.position(lane,
+            new Length.Rel(-(3 + referenceCar.getLength().getSI() + referenceCar.position(lane,
                 referenceCar.getFront(), initialTime).getSI()), LengthUnit.METER);
         leaderPositions = new LinkedHashMap<>();
         leaderPositions.put(lane, leaderPosition);
@@ -144,7 +145,7 @@ public class IDMPlusTest
         {
             leaders.clear();
             leaderPosition =
-                new DoubleScalar.Rel<LengthUnit>(spareDistance
+                new Length.Rel(spareDistance
                     + (3 + referenceCar.getLength().getSI() + referenceCar.position(lane, referenceCar.getFront(),
                         initialTime).getSI()), LengthUnit.METER);
             leaderPositions = new LinkedHashMap<>();
@@ -169,15 +170,15 @@ public class IDMPlusTest
         // System.out.println("");
         referenceAcceleration = Double.NEGATIVE_INFINITY;
         leaderPosition =
-            new DoubleScalar.Rel<LengthUnit>(2 + 3 + referenceCar.getLength().getSI()
+            new Length.Rel(2 + 3 + referenceCar.getLength().getSI()
                 + referenceCar.position(lane, referenceCar.getFront(), initialTime).getSI(), LengthUnit.METER);
         leaderPositions = new LinkedHashMap<>();
         leaderPositions.put(lane, leaderPosition);
         // In IDM+ the reference car must have non-zero speed for the leader speed to have any effect
-        initialSpeed = new DoubleScalar.Abs<SpeedUnit>(2, SpeedUnit.METER_PER_SECOND);
+        initialSpeed = new Speed.Abs(2, SpeedUnit.METER_PER_SECOND);
         for (int integerLeaderSpeed = 0; integerLeaderSpeed <= 40; integerLeaderSpeed++)
         {
-            Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<>();
+            Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<>();
             initialPositions.put(lane, initialPosition);
             referenceCar.destroy();
             referenceCar =
@@ -185,8 +186,8 @@ public class IDMPlusTest
                     initialSpeed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")),
                     simulator);
             leaders.clear();
-            DoubleScalar.Abs<SpeedUnit> leaderSpeed =
-                new DoubleScalar.Abs<SpeedUnit>(integerLeaderSpeed, SpeedUnit.METER_PER_SECOND);
+            Speed.Abs leaderSpeed =
+                new Speed.Abs(integerLeaderSpeed, SpeedUnit.METER_PER_SECOND);
             leaderCar =
                 new LaneBasedIndividualCar("0", gtuType, fam, laneChangeModel, leaderPositions, leaderSpeed, length, width,
                     maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
@@ -207,23 +208,23 @@ public class IDMPlusTest
         assertTrue("Highest acceleration should be less than max", referenceAcceleration <= 1.25);
         // Check that a car that is 100m behind a stationary car accelerates, then decelerates and stops at the right
         // point. (In IDM+ the car oscillates a while around the final position with pretty good damping.)
-        initialPosition = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<>();
+        initialPosition = new Length.Rel(100, LengthUnit.METER);
+        Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<>();
         initialPositions.put(lane, initialPosition);
-        initialSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.METER_PER_SECOND);
+        initialSpeed = new Speed.Abs(0, SpeedUnit.METER_PER_SECOND);
         referenceCar.destroy();
         referenceCar =
             new LaneBasedIndividualCar("12345", gtuType, carFollowingModel, laneChangeModel, initialPositions, initialSpeed,
                 length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
         leaderPosition =
-            new DoubleScalar.Rel<LengthUnit>(100 + 3 + referenceCar.getLength().getSI()
+            new Length.Rel(100 + 3 + referenceCar.getLength().getSI()
                 + referenceCar.position(lane, referenceCar.getFront(), initialTime).getSI(), LengthUnit.METER);
         leaderCar =
             new LaneBasedIndividualCar("0", gtuType, fam, laneChangeModel, leaderPositions, initialSpeed, length, width,
                 maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
         for (int timeStep = 0; timeStep < 200; timeStep++)
         {
-            DoubleScalar.Abs<TimeUnit> simulateUntil = new DoubleScalar.Abs<TimeUnit>(0.1 * timeStep, TimeUnit.SI);
+            Time.Abs simulateUntil = new Time.Abs(0.1 * timeStep, TimeUnit.SI);
             simulator.runUpTo(simulateUntil);
             while (simulator.isRunning())
             {

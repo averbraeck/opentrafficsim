@@ -3,9 +3,7 @@ package org.opentrafficsim.core.network.factory.xml;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.XMLParser;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
@@ -24,7 +22,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class RoadTypeTag
+class RoadTypeTag implements OTS_SCALAR
 {
     /** name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -32,11 +30,11 @@ class RoadTypeTag
 
     /** default speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Abs<SpeedUnit> speed = null;
+    Speed.Abs speed = null;
 
     /** default lane width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Rel<LengthUnit> width = null;
+    Length.Rel width = null;
 
     /** CrossSectionElementTags, order is important, so a LinkedHashMap. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -17,7 +17,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public final class TimeUnits
+public final class TimeUnits implements OTS_SCALAR
 {
     /** the time units. */
     public static final Map<String, TimeUnit> TIME_UNITS = new HashMap<>();
@@ -86,7 +86,7 @@ public final class TimeUnits
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static DoubleScalar.Abs<TimeUnit> parseTimeAbs(final String s) throws NetworkException
+    public static Time.Abs parseTimeAbs(final String s) throws NetworkException
     {
         String us = parseTimeUnit(s);
         TimeUnit u = TIME_UNITS.get(us);
@@ -94,7 +94,7 @@ public final class TimeUnits
         try
         {
             double value = Double.parseDouble(sv);
-            return new DoubleScalar.Abs<TimeUnit>(value, u);
+            return new Time.Abs(value, u);
         }
         catch (NumberFormatException nfe)
         {
@@ -107,7 +107,7 @@ public final class TimeUnits
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static DoubleScalar.Rel<TimeUnit> parseTimeRel(final String s) throws NetworkException
+    public static Time.Rel parseTimeRel(final String s) throws NetworkException
     {
         String us = parseTimeUnit(s);
         TimeUnit u = TIME_UNITS.get(us);
@@ -115,7 +115,7 @@ public final class TimeUnits
         try
         {
             double value = Double.parseDouble(sv);
-            return new DoubleScalar.Rel<TimeUnit>(value, u);
+            return new Time.Rel(value, u);
         }
         catch (NumberFormatException nfe)
         {
@@ -153,7 +153,7 @@ public final class TimeUnits
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static DoubleScalar.Abs<FrequencyUnit> parsePerTimeAbs(final String s) throws NetworkException
+    public static Frequency.Abs parsePerTimeAbs(final String s) throws NetworkException
     {
         String us = parsePerTimeUnit(s);
         FrequencyUnit u = PER_TIME_UNITS.get(us);
@@ -161,7 +161,7 @@ public final class TimeUnits
         try
         {
             double value = Double.parseDouble(sv);
-            return new DoubleScalar.Abs<FrequencyUnit>(value, u);
+            return new Frequency.Abs(value, u);
         }
         catch (NumberFormatException nfe)
         {

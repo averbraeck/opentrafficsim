@@ -4,9 +4,7 @@ import java.io.Serializable;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 
-import org.djunits.unit.FrequencyUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 
 /**
@@ -20,7 +18,7 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public interface Link extends LocatableInterface, Serializable
+public interface Link extends LocatableInterface, Serializable, OTS_SCALAR
 {
     /** @return id. */
     String getId();
@@ -32,17 +30,17 @@ public interface Link extends LocatableInterface, Serializable
     Node getEndNode();
 
     /** @return link capacity. */
-    DoubleScalar.Abs<FrequencyUnit> getCapacity();
+    Frequency.Abs getCapacity();
 
     /**
      * Set the link capacity.
      * @param capacity the new capacity of the link as a frequency in GTUs per time unit.
      */
-    void setCapacity(final DoubleScalar.Abs<FrequencyUnit> capacity);
+    void setCapacity(final Frequency.Abs capacity);
 
     /** @return the design line. */
     OTSLine3D getDesignLine();
 
     /** @return length of the link. */
-    DoubleScalar.Rel<LengthUnit> getLength();
+    Length.Rel getLength();
 }

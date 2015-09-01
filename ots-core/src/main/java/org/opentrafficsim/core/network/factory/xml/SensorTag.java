@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class SensorTag
+class SensorTag implements OTS_SCALAR
 {
     /** name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -95,14 +95,14 @@ class SensorTag
 
             try
             {
-                ClassUtil.resolveConstructor(clazz, new Class[]{Lane.class, DoubleScalar.Rel.class,
+                ClassUtil.resolveConstructor(clazz, new Class[]{Lane.class, Length.Rel.class,
                     RelativePosition.TYPE.class, String.class, OTSSimulatorInterface.class});
             }
             catch (NoSuchMethodException nsme)
             {
                 throw new SAXException("SENSOR: CLASS NAME " + sensorTag.className + " for sensor " + sensorTag.name
                     + " on lane " + laneName
-                    + " -- no constructor with arguments (Lane, DoubleScalar.Rel, RelativePosition.TYPE,"
+                    + " -- no constructor with arguments (Lane, Length.Rel, RelativePosition.TYPE,"
                     + " String, OTSSimulatorInterface)");
             }
         }

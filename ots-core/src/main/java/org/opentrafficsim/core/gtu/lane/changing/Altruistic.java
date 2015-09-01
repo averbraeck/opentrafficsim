@@ -19,14 +19,14 @@ public class Altruistic extends AbstractLaneChangeModel
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<AccelerationUnit> applyDriverPersonality(final DualAccelerationStep accelerationSteps)
+    public final Acceleration.Abs applyDriverPersonality(final DualAccelerationStep accelerationSteps)
     {
         // The unit of the result is the acceleration unit of the leader acceleration.
         // Discussion. The altruistic driver personality in Treiber adds two accelerations together. This reduces the
         // "sensitivity" for keep lane, keep right and follow route incentives.
         // This implementation returns the average of the two in order to avoid this sensitivity problem.
         AccelerationUnit unit = accelerationSteps.getLeaderAcceleration().getUnit();
-        return new DoubleScalar.Abs<AccelerationUnit>(
+        return new Acceleration.Abs(
             (accelerationSteps.getLeaderAcceleration().getInUnit() + accelerationSteps.getFollowerAcceleration().getInUnit(
                 unit)) / 2, unit);
     }

@@ -59,7 +59,7 @@ public abstract class AbstractSensor implements Sensor
      * @param name the name of the sensor.
      * @param simulator the simulator for being able to generate the animation.
      */
-    public AbstractSensor(final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
+    public AbstractSensor(final Lane lane, final Length.Rel longitudinalPosition,
         final RelativePosition.TYPE positionType, final String name, final OTSSimulatorInterface simulator)
     {
         this.lane = lane;
@@ -78,9 +78,9 @@ public abstract class AbstractSensor implements Sensor
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> getLongitudinalPosition()
+    public final Length.Rel getLongitudinalPosition()
     {
-        return new DoubleScalar.Rel<LengthUnit>(this.longitudinalPositionSI, LengthUnit.METER);
+        return new Length.Rel(this.longitudinalPositionSI, LengthUnit.METER);
     }
 
     /** {@inheritDoc} */

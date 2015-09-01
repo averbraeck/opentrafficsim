@@ -12,7 +12,7 @@ import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -32,7 +32,7 @@ import com.vividsolutions.jts.geom.LineString;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class OTSLine3D implements LocatableInterface, Serializable
+public class OTSLine3D implements LocatableInterface, Serializable, OTS_SCALAR
 {
     /** */
     private static final long serialVersionUID = 20150722L;
@@ -162,9 +162,9 @@ public class OTSLine3D implements LocatableInterface, Serializable
     /**
      * @return the length of the line.
      */
-    public final DoubleScalar.Rel<LengthUnit> getLength()
+    public final Length.Rel getLength()
     {
-        return new DoubleScalar.Rel<LengthUnit>(getLengthSI(), LengthUnit.SI);
+        return new Length.Rel(getLengthSI(), LengthUnit.SI);
     }
 
     /**
@@ -176,7 +176,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
-     * make the length indexed line if it does not exist yet, and cache it
+     * make the length indexed line if it does not exist yet, and cache it.
      */
     private void makeLengthIndexedLine()
     {
@@ -198,7 +198,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * @return a directed point
      * @throws NetworkException when position could not be calculated
      */
-    public final DirectedPoint getLocationExtended(final DoubleScalar.Rel<LengthUnit> position) throws NetworkException
+    public final DirectedPoint getLocationExtended(final Length.Rel position) throws NetworkException
     {
         return getLocationExtendedSI(position.getSI());
     }
@@ -261,7 +261,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * @return a directed point
      * @throws NetworkException when position less than 0.0 or more than line length.
      */
-    public final DirectedPoint getLocation(final DoubleScalar.Rel<LengthUnit> position) throws NetworkException
+    public final DirectedPoint getLocation(final Length.Rel position) throws NetworkException
     {
         return getLocationSI(position.getSI());
     }

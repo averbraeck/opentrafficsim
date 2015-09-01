@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.gtu.GTU;
 
 /**
@@ -21,16 +21,16 @@ import org.opentrafficsim.core.gtu.GTU;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class AccelerationGTUColorer implements GTUColorer
+public class AccelerationGTUColorer implements GTUColorer, OTS_SCALAR
 {
     /** The legend. */
     private final ArrayList<LegendEntry> legend;
 
     /** The deceleration that corresponds to the first entry in the legend. */
-    private final DoubleScalar.Abs<AccelerationUnit> maximumDeceleration;
+    private final Acceleration.Abs maximumDeceleration;
 
     /** The deceleration that corresponds to the last entry in the legend. */
-    private final DoubleScalar.Abs<AccelerationUnit> maximumAcceleration;
+    private final Acceleration.Abs maximumAcceleration;
 
     /** Negative scale part of the range of colors (excluding the zero value). */
     private static Color[] decelerationColors = {Color.RED, Color.ORANGE, Color.YELLOW};
@@ -45,26 +45,23 @@ public class AccelerationGTUColorer implements GTUColorer
      * @param maximumAcceleration DoubleScalar.Abs&lt;AccelerationUnit&gt;; the deceleration that corresponds to the last (blue)
      *            legend entry
      */
-    public AccelerationGTUColorer(final DoubleScalar.Abs<AccelerationUnit> maximumDeceleration,
-        final DoubleScalar.Abs<AccelerationUnit> maximumAcceleration)
+    public AccelerationGTUColorer(final Acceleration.Abs maximumDeceleration, final Acceleration.Abs maximumAcceleration)
     {
         this.maximumDeceleration = maximumDeceleration;
         this.maximumAcceleration = maximumAcceleration;
         this.legend = new ArrayList<LegendEntry>(5);
-        DoubleScalar.Abs<AccelerationUnit> zeroValue = new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.SI);
+        Acceleration.Abs zeroValue = new Acceleration.Abs(0, AccelerationUnit.SI);
         for (int index = 0; index < decelerationColors.length - 1; index++)
         {
             double ratio = index * 1.0 / (decelerationColors.length - 1);
-            DoubleScalar.Abs<AccelerationUnit> acceleration =
-                DoubleScalar.interpolate(this.maximumDeceleration, zeroValue, ratio);
+            Acceleration.Abs acceleration = Acceleration.Abs.interpolate(this.maximumDeceleration, zeroValue, ratio);
             this.legend.add(new LegendEntry(decelerationColors[index], acceleration.toString(), "deceleration"
                 + acceleration.toString()));
         }
         for (int index = 0; index < accelerationColors.length; index++)
         {
             double ratio = index * 1.0 / (accelerationColors.length - 1);
-            DoubleScalar.Abs<AccelerationUnit> acceleration =
-                DoubleScalar.interpolate(zeroValue, this.maximumAcceleration, ratio);
+            Acceleration.Abs acceleration = Acceleration.Abs.interpolate(zeroValue, this.maximumAcceleration, ratio);
             this.legend.add(new LegendEntry(accelerationColors[index], acceleration.toString(), "acceleration"
                 + acceleration.toString()));
         }
@@ -74,7 +71,7 @@ public class AccelerationGTUColorer implements GTUColorer
     @Override
     public final Color getColor(final GTU gtu) throws RemoteException
     {
-        DoubleScalar.Abs<AccelerationUnit> acceleration = gtu.getAcceleration();
+        Acceleration.Abs acceleration = gtu.getAcceleration();
         double ratio;
         if (acceleration.getSI() < 0)
         {

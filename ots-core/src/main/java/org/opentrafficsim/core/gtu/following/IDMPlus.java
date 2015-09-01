@@ -4,7 +4,6 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.units.calc.Calc;
 
 /**
@@ -23,16 +22,16 @@ import org.opentrafficsim.core.units.calc.Calc;
 public class IDMPlus extends AbstractGTUFollowingModel
 {
     /** Preferred net longitudinal distance when stopped [m]. */
-    private final DoubleScalar.Rel<LengthUnit> s0;
+    private final Length.Rel s0;
 
     /** Longitudinal acceleration [m/s^2]. */
-    private final DoubleScalar.Abs<AccelerationUnit> a;
+    private final Acceleration.Abs a;
 
     /** Longitudinal deceleration [m/s^2]. (Should be a positive value even though it is a <b>de</b>celeration.) */
-    private final DoubleScalar.Abs<AccelerationUnit> b;
+    private final Acceleration.Abs b;
 
     /** Safe time headway. */
-    private final DoubleScalar.Rel<TimeUnit> tSafe;
+    private final Time.Rel tSafe;
 
     /**
      * Mean speed limit adherence (1.0: mean free speed equals the speed limit; 1.1: mean free speed equals 110% of the speed
@@ -44,7 +43,7 @@ public class IDMPlus extends AbstractGTUFollowingModel
      * Time slot size used by IDMPlus by (not defined in the paper, but 0.5s is a reasonable trade-off between computational
      * speed and accuracy).
      */
-    private final DoubleScalar.Rel<TimeUnit> stepSize = new DoubleScalar.Rel<TimeUnit>(0.5, TimeUnit.SECOND);
+    private final Time.Rel stepSize = new Time.Rel(0.5, TimeUnit.SECOND);
 
     /**
      * Construct a new IDM+ car following model with reasonable values (reasonable for passenger cars). <br>
@@ -54,10 +53,10 @@ public class IDMPlus extends AbstractGTUFollowingModel
      */
     public IDMPlus()
     {
-        this.a = new DoubleScalar.Abs<AccelerationUnit>(1.56, AccelerationUnit.METER_PER_SECOND_2);
-        this.b = new DoubleScalar.Abs<AccelerationUnit>(2.09, AccelerationUnit.METER_PER_SECOND_2);
-        this.s0 = new DoubleScalar.Rel<LengthUnit>(3, LengthUnit.METER);
-        this.tSafe = new DoubleScalar.Rel<TimeUnit>(1.2, TimeUnit.SECOND);
+        this.a = new Acceleration.Abs(1.56, AccelerationUnit.METER_PER_SECOND_2);
+        this.b = new Acceleration.Abs(2.09, AccelerationUnit.METER_PER_SECOND_2);
+        this.s0 = new Length.Rel(3, LengthUnit.METER);
+        this.tSafe = new Time.Rel(1.2, TimeUnit.SECOND);
         this.delta = 1d;
     }
 
@@ -71,8 +70,8 @@ public class IDMPlus extends AbstractGTUFollowingModel
      * @param delta double; the speed limit adherence (1.0; mean free speed equals the speed limit; 1.1: mean free speed equals
      *            110% of the speed limit; etc.)
      */
-    public IDMPlus(final DoubleScalar.Abs<AccelerationUnit> a, final DoubleScalar.Abs<AccelerationUnit> b,
-        final DoubleScalar.Rel<LengthUnit> s0, final DoubleScalar.Rel<TimeUnit> tSafe, final double delta)
+    public IDMPlus(final Acceleration.Abs a, final Acceleration.Abs b, final Length.Rel s0, final Time.Rel tSafe,
+        final double delta)
     {
         this.a = a;
         this.b = b;
@@ -87,17 +86,15 @@ public class IDMPlus extends AbstractGTUFollowingModel
      * @param followerMaximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the maximum speed that the follower can drive
      * @return DoubleScalarRel&lt;SpeedUnit&gt;; the desired speed
      */
-    private DoubleScalar.Rel<SpeedUnit> vDes(final DoubleScalar.Abs<SpeedUnit> speedLimit,
-        final DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed)
+    private Speed.Rel vDes(final Speed.Abs speedLimit, final Speed.Abs followerMaximumSpeed)
     {
-        return new DoubleScalar.Rel<SpeedUnit>(Math.min(this.delta * speedLimit.getSI(), followerMaximumSpeed.getSI()),
+        return new Speed.Rel(Math.min(this.delta * speedLimit.getSI(), followerMaximumSpeed.getSI()),
             SpeedUnit.METER_PER_SECOND);
     }
 
     /** {@inheritDoc} */
-    public final DoubleScalar.Abs<AccelerationUnit> computeAcceleration(final DoubleScalar.Abs<SpeedUnit> followerSpeed,
-        final DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed, final DoubleScalar.Abs<SpeedUnit> leaderSpeed,
-        final DoubleScalar.Rel<LengthUnit> headway, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+    public final Acceleration.Abs computeAcceleration(final Speed.Abs followerSpeed, final Speed.Abs followerMaximumSpeed,
+        final Speed.Abs leaderSpeed, final Length.Rel headway, final Speed.Abs speedLimit)
     {
         double leftComponent = 1 - Math.pow(followerSpeed.getSI() / vDes(speedLimit, followerMaximumSpeed).getSI(), 4);
         if (Double.isNaN(leftComponent))
@@ -108,22 +105,22 @@ public class IDMPlus extends AbstractGTUFollowingModel
         // {
         // System.out.println("leftComponent is " + leftComponent);
         // }
-        DoubleScalar.Rel<AccelerationUnit> logWeightedAccelerationTimes2 =
-            new DoubleScalar.Rel<AccelerationUnit>(Math.sqrt(this.a.getSI() * this.b.getSI()),
-                AccelerationUnit.METER_PER_SECOND_2).multiplyBy(2); // don't forget the times 2
+        Acceleration.Rel logWeightedAccelerationTimes2 =
+            new Acceleration.Rel(Math.sqrt(this.a.getSI() * this.b.getSI()), AccelerationUnit.METER_PER_SECOND_2)
+                .multiplyBy(2); // don't forget the times 2
 
-        DoubleScalar.Rel<SpeedUnit> dV = DoubleScalar.minus(followerSpeed, leaderSpeed);
+        Speed.Rel dV = followerSpeed.minus(leaderSpeed);
         // System.out.println("dV is " + dV);
         // System.out.println(" v is " + gtu.speed(thisEvaluationTime));
         // System.out.println("s0 is " + this.s0);
-        DoubleScalar.Rel<LengthUnit> sStar =
-            DoubleScalar.plus(DoubleScalar.plus(this.s0, Calc.speedTimesTime(followerSpeed, this.tSafe)), Calc
-                .speedTimesTime(dV, Calc.speedDividedByAcceleration(followerSpeed, logWeightedAccelerationTimes2)));
+        Length.Rel sStar =
+            this.s0.plus(Calc.speedTimesTime(followerSpeed, this.tSafe)).plus(
+                Calc.speedTimesTime(dV, Calc.speedDividedByAcceleration(followerSpeed, logWeightedAccelerationTimes2)));
         if (sStar.getSI() < 0)
         {
             // Negative value should be treated as 0? This is NOT in the LMRS paper
             // Without this "fix" a higher speed of the leader may cause a lower acceleration (which is crazy)
-            sStar = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
+            sStar = new Length.Rel(0, LengthUnit.METER);
         }
         // System.out.println("s* is " + sStar);
 
@@ -132,15 +129,13 @@ public class IDMPlus extends AbstractGTUFollowingModel
         // {
         // System.out.println("rightComponent is " + rightComponent);
         // }
-        DoubleScalar.Abs<AccelerationUnit> newAcceleration =
-            new DoubleScalar.Abs<AccelerationUnit>(this.a).multiplyBy(Math.min(leftComponent, rightComponent));
+        Acceleration.Abs newAcceleration = new Acceleration.Abs(this.a).multiplyBy(Math.min(leftComponent, rightComponent));
         // System.out.println("newAcceleration is " + newAcceleration);
         if (newAcceleration.getSI() * this.stepSize.getSI() + followerSpeed.getSI() < 0)
         {
             // System.out.println("Preventing follower from driving backwards " + follower);
             newAcceleration =
-                new DoubleScalar.Abs<AccelerationUnit>(-followerSpeed.getSI() / this.stepSize.getSI(),
-                    AccelerationUnit.METER_PER_SECOND_2);
+                new Acceleration.Abs(-followerSpeed.getSI() / this.stepSize.getSI(), AccelerationUnit.METER_PER_SECOND_2);
         }
         // System.out.println("newAcceleration is " + newAcceleration);
         return newAcceleration;
@@ -148,14 +143,14 @@ public class IDMPlus extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<TimeUnit> getStepSize()
+    public final Time.Rel getStepSize()
     {
-        return new DoubleScalar.Rel<TimeUnit>(this.stepSize);
+        return new Time.Rel(this.stepSize);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<AccelerationUnit> maximumSafeDeceleration()
+    public final Acceleration.Abs maximumSafeDeceleration()
     {
         return this.b;
     }

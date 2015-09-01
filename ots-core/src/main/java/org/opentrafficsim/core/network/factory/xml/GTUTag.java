@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.network.factory.xml;
 
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
+import org.opentrafficsim.core.OTS_DIST;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
@@ -13,7 +13,6 @@ import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.XMLParser;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
-import org.opentrafficsim.core.units.distributions.DistContinuousDoubleScalar;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -28,7 +27,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class GTUTag
+class GTUTag implements OTS_SCALAR, OTS_DIST
 {
     /** name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -40,11 +39,11 @@ class GTUTag
 
     /** GTU length. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DistContinuousDoubleScalar.Rel<LengthUnit> lengthDist = null;
+    LengthContinuousDist.Rel lengthDist = null;
 
     /** GTU width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DistContinuousDoubleScalar.Rel<LengthUnit> widthDist = null;
+    LengthContinuousDist.Rel widthDist = null;
 
     /** GTU following model. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -56,7 +55,7 @@ class GTUTag
 
     /** max speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DistContinuousDoubleScalar.Abs<SpeedUnit> maxSpeedDist = null;
+    SpeedContinuousDist.Abs maxSpeedDist = null;
 
     /**
      * @param nodeList nodeList the top-level nodes of the XML-file

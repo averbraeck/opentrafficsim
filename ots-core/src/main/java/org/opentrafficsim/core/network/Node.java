@@ -5,9 +5,7 @@ import java.util.Set;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 
-import org.djunits.unit.AnglePlaneUnit;
-import org.djunits.unit.AngleSlopeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 
 /**
@@ -22,7 +20,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public interface Node extends LocatableInterface, Serializable
+public interface Node extends LocatableInterface, Serializable, OTS_SCALAR
 {
     /** @return node id. */
     String getId();
@@ -31,10 +29,10 @@ public interface Node extends LocatableInterface, Serializable
     OTSPoint3D getPoint();
 
     /** @return the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians). */
-    DoubleScalar.Abs<AnglePlaneUnit> getDirection();
+    AnglePlane.Abs getDirection();
 
     /** @return the slope as an angle. */
-    DoubleScalar.Abs<AngleSlopeUnit> getSlope();
+    AngleSlope.Abs getSlope();
 
     /**
      * Add an incoming link to this Node.

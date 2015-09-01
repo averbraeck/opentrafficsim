@@ -1,8 +1,5 @@
 package org.opentrafficsim.core.network.route;
 
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
@@ -31,6 +28,6 @@ public interface LaneBasedRouteNavigator extends RouteNavigator
      *         lane.
      * @throws NetworkException on network inconsistency, or when the continuation Link at a branch cannot be determined
      */
-    DoubleScalar.Rel<LengthUnit> suitability(final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
-        final GTUType gtuType, final DoubleScalar.Rel<TimeUnit> timeHorizon) throws NetworkException;
+    Length.Rel suitability(final Lane lane, final Length.Rel longitudinalPosition, final GTUType gtuType,
+        final Time.Rel timeHorizon) throws NetworkException;
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -17,7 +18,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public final class LengthUnits
+public final class LengthUnits implements OTS_SCALAR
 {
     /** the length units. */
     public static final Map<String, LengthUnit> LENGTH_UNITS = new HashMap<>();
@@ -86,7 +87,7 @@ public final class LengthUnits
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static DoubleScalar.Abs<LengthUnit> parseLengthAbs(final String s) throws NetworkException
+    public static Length.Abs parseLengthAbs(final String s) throws NetworkException
     {
         String us = parseLengthUnit(s);
         LengthUnit u = LENGTH_UNITS.get(us);
@@ -94,7 +95,7 @@ public final class LengthUnits
         try
         {
             double value = Double.parseDouble(sv);
-            return new DoubleScalar.Abs<LengthUnit>(value, u);
+            return new Length.Abs(value, u);
         }
         catch (NumberFormatException nfe)
         {
@@ -107,7 +108,7 @@ public final class LengthUnits
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static DoubleScalar.Rel<LengthUnit> parseLengthRel(final String s) throws NetworkException
+    public static Length.Rel parseLengthRel(final String s) throws NetworkException
     {
         String us = parseLengthUnit(s);
         LengthUnit u = LENGTH_UNITS.get(us);
@@ -115,7 +116,7 @@ public final class LengthUnits
         try
         {
             double value = Double.parseDouble(sv);
-            return new DoubleScalar.Rel<LengthUnit>(value, u);
+            return new Length.Rel(value, u);
         }
         catch (NumberFormatException nfe)
         {

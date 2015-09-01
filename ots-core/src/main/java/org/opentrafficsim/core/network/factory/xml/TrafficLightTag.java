@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.lane.AbstractTrafficLight;
 import org.opentrafficsim.core.network.NetworkException;
@@ -23,7 +24,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class TrafficLightTag
+class TrafficLightTag implements OTS_SCALAR
 {
     /** name, cannot be null in implementation of traffic light. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -91,14 +92,14 @@ class TrafficLightTag
 
             try
             {
-                ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class, DoubleScalar.Rel.class,
+                ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class, Length.Rel.class,
                     OTSDEVSSimulatorInterface.class});
             }
             catch (NoSuchMethodException nsme)
             {
                 throw new SAXException("TRAFFICLIGHT: CLASS NAME " + trafficLightTag.className + " for trafficLight "
                     + trafficLightTag.name + " on lane " + laneName
-                    + " -- no constructor with arguments (String, Lane, DoubleScalar.Rel, OTSDEVSSimulatorInterface)");
+                    + " -- no constructor with arguments (String, Lane, Length.Rel, OTSDEVSSimulatorInterface)");
             }
         }
         catch (ClassNotFoundException cnfe)

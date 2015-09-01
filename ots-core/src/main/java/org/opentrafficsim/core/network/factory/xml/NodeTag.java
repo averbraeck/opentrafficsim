@@ -8,7 +8,7 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.AnglePlaneUnit;
 import org.djunits.unit.AngleSlopeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
@@ -29,7 +29,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class NodeTag
+class NodeTag implements OTS_SCALAR
 {
     /** name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -41,11 +41,11 @@ class NodeTag
 
     /** absolute angle of the node. 0 is "East", pi/2 = "North". */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Abs<AnglePlaneUnit> angle = null;
+    AnglePlane.Abs angle = null;
 
     /** TODO slope as an angle. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Abs<AngleSlopeUnit> slope = null;
+    AngleSlope.Abs slope = null;
 
     /** the calculated Node, either through a coordinate or after calculation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -134,10 +134,8 @@ class NodeTag
         throws NetworkException, RemoteException, NamingException
     {
         String id = nodeTag.name;
-        DoubleScalar.Abs<AnglePlaneUnit> angle =
-            nodeTag.angle == null ? new DoubleScalar.Abs<AnglePlaneUnit>(0.0, AnglePlaneUnit.SI) : nodeTag.angle;
-        DoubleScalar.Abs<AngleSlopeUnit> slope =
-            nodeTag.slope == null ? new DoubleScalar.Abs<AngleSlopeUnit>(0.0, AngleSlopeUnit.SI) : nodeTag.slope;
+        AnglePlane.Abs angle = nodeTag.angle == null ? new AnglePlane.Abs(0.0, AnglePlaneUnit.SI) : nodeTag.angle;
+        AngleSlope.Abs slope = nodeTag.slope == null ? new AngleSlope.Abs(0.0, AngleSlopeUnit.SI) : nodeTag.slope;
         org.opentrafficsim.core.network.Node node = new OTSNode(id, nodeTag.coordinate, angle, slope);
         nodeTag.node = node;
         return node;

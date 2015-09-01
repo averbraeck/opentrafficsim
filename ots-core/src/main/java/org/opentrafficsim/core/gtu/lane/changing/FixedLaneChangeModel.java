@@ -40,10 +40,10 @@ public class FixedLaneChangeModel implements LaneChangeModel
     @Override
     public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
         final Collection<HeadwayGTU> sameLaneTraffic, final Collection<HeadwayGTU> rightLaneTraffic,
-        final Collection<HeadwayGTU> leftLaneTraffic, final DoubleScalar.Abs<SpeedUnit> speedLimit,
-        final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
-        final DoubleScalar.Rel<AccelerationUnit> laneChangeThreshold,
-        final DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException
+        final Collection<HeadwayGTU> leftLaneTraffic, final Speed.Abs speedLimit,
+        final Acceleration.Rel preferredLaneRouteIncentive,
+        final Acceleration.Rel laneChangeThreshold,
+        final Acceleration.Rel nonPreferredLaneRouteIncentive) throws RemoteException
     {
         try
         {

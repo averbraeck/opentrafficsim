@@ -3,7 +3,6 @@ package org.opentrafficsim.core.gtu.animation;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 
 /**
  * A simple way to construct a SwitchableGTUColorer set up with the "standard" set of GTUColorers. <br>
@@ -26,13 +25,12 @@ public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer
     {
         COLORERS = new GTUColorer[4];
         COLORERS[0] = new IDGTUColorer();
-        COLORERS[1] = new VelocityGTUColorer(new DoubleScalar.Abs<SpeedUnit>(150, SpeedUnit.KM_PER_HOUR));
+        COLORERS[1] = new VelocityGTUColorer(new Speed.Abs(150, SpeedUnit.KM_PER_HOUR));
         COLORERS[2] =
-            new AccelerationGTUColorer(new DoubleScalar.Abs<AccelerationUnit>(-4, AccelerationUnit.METER_PER_SECOND_2),
-                new DoubleScalar.Abs<AccelerationUnit>(2, AccelerationUnit.METER_PER_SECOND_2));
+            new AccelerationGTUColorer(new Acceleration.Abs(-4, AccelerationUnit.METER_PER_SECOND_2), new Acceleration.Abs(
+                2, AccelerationUnit.METER_PER_SECOND_2));
         COLORERS[3] =
-            new LaneChangeUrgeGTUColorer(new DoubleScalar.Rel<LengthUnit>(10, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER));
+            new LaneChangeUrgeGTUColorer(new Length.Rel(10, LengthUnit.METER), new Length.Rel(1000, LengthUnit.METER));
     }
 
     /**

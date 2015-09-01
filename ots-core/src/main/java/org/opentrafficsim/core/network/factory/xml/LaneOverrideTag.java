@@ -2,8 +2,7 @@ package org.opentrafficsim.core.network.factory.xml;
 
 import java.awt.Color;
 
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Colors;
@@ -22,11 +21,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 24, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class LaneOverrideTag
+class LaneOverrideTag implements OTS_SCALAR
 {
     /** speed limit. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Abs<SpeedUnit> speed = null;
+    Speed.Abs speed = null;
 
     /** direction. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

@@ -3,8 +3,7 @@ package org.opentrafficsim.simulationengine;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 
@@ -18,7 +17,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface SimpleSimulation extends OTSDEVSSimulatorInterface
+public interface SimpleSimulation extends OTSDEVSSimulatorInterface, OTS_SCALAR
 {
     /**
      * Construct and schedule a SimEvent using a DoubleScalar.Abs&lt;TimeUnit&gt; to specify the execution time.
@@ -34,7 +33,7 @@ public interface SimpleSimulation extends OTSDEVSSimulatorInterface
      *         the event may arise later)
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
      */
-    SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime, final short priority,
+    SimEvent<OTSSimTimeDouble> scheduleEvent(final Time.Abs executionTime, final short priority,
         final Object source, final Object target, final String method, final Object[] args) throws SimRuntimeException;
 
 }

@@ -20,7 +20,11 @@ import nl.tudelft.simulation.language.io.URLResource;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.junit.Assert;
+import org.opentrafficsim.core.OTS_DIST;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -52,7 +56,7 @@ import org.xml.sax.SAXException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class XMLNetworkGeneratorTest
+public class XMLNetworkGeneratorTest implements OTS_SCALAR
 {
     /** AssertionError thrown by the sensor trigger. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -68,8 +72,8 @@ public class XMLNetworkGeneratorTest
         {
             TestXMLModel model = new TestXMLModel();
             final SimpleAnimator simulator =
-                new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
-                    TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(120.0, TimeUnit.SECOND), model);
+                new SimpleAnimator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(0.0,
+                    TimeUnit.SECOND), new Time.Rel(120.0, TimeUnit.SECOND), model);
 
             // get nodes, links, and the lanes.
             Node n1 = model.getNetwork().getNodeMap().get("N1");
@@ -95,7 +99,7 @@ public class XMLNetworkGeneratorTest
             assertNotNull(lane23);
 
             // add a sensor to check the time the vehicles pass
-            lane23.addSensor(new ReportingSensor(lane23, new DoubleScalar.Rel<LengthUnit>(1E-4, LengthUnit.SI),
+            lane23.addSensor(new ReportingSensor(lane23, new Length.Rel(1E-4, LengthUnit.SI),
                 RelativePosition.REFERENCE, "LANE23.START", simulator), GTUType.ALL);
 
             simulator.setSpeedFactor(1000);
@@ -122,9 +126,9 @@ public class XMLNetworkGeneratorTest
                         {
                             // TODO repair headway in such a way that vehicle does not have to break (safe distance)
                             System.err.println("Velocity of GTU " + gtu + "<> 10 m/s: " + gtu.getVelocity() + ", headway = "
-                                + gtu.headway(new DoubleScalar.Rel<LengthUnit>(250.0, LengthUnit.METER)));
+                                + gtu.headway(new Length.Rel(250.0, LengthUnit.METER)));
                             // fail("Velocity of GTU " + gtu + "<> 10 m/s: " + gtu.getVelocity() + ", headway = "
-                            // + gtu.headway(new DoubleScalar.Rel<LengthUnit>(250.0, LengthUnit.METER)));
+                            // + gtu.headway(new Length.Rel(250.0, LengthUnit.METER)));
                         }
                     }
                 }
@@ -164,7 +168,7 @@ public class XMLNetworkGeneratorTest
          * @param id the sensor id
          * @param simulator the simulator
          */
-        public ReportingSensor(final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
+        public ReportingSensor(final Lane lane, final Length.Rel longitudinalPosition,
             final TYPE positionType, final String id, final OTSDEVSSimulatorInterface simulator)
         {
             super(lane, longitudinalPosition, positionType, "REPORT@" + lane.toString(), simulator);
@@ -180,7 +184,7 @@ public class XMLNetworkGeneratorTest
             {
                 int gtuNumber =
                     Integer.parseInt(gtu.getId().toString().substring(gtu.getId().toString().indexOf(':') + 1)) - 1;
-                double simTimeSec = this.simulator.getSimulatorTime().get().doubleValue();
+                double simTimeSec = this.simulator.getSimulatorTime().getTime().doubleValue();
                 if ("LANE23.START".equals(this.id))
                 {
                     // second lane, start, reference point of the GTU
@@ -279,6 +283,5 @@ public class XMLNetworkGeneratorTest
         {
             return this.network;
         }
-
     }
 }

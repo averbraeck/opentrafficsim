@@ -2,6 +2,7 @@ package org.opentrafficsim.core.network;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 
 /**
  * "1D" implementation. Mapping on the design line (often the center line) of a road.
@@ -14,7 +15,7 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LinkLocation
+public class LinkLocation implements OTS_SCALAR
 {
     /** The link of the location of a point relative to the GTU. */
     private final Link link;
@@ -37,7 +38,7 @@ public class LinkLocation
      * @param link The link of the location of a point relative to the GTU.
      * @param position The position as a length of the reference point on the link.
      */
-    public LinkLocation(final Link link, final DoubleScalar.Rel<LengthUnit> position)
+    public LinkLocation(final Link link, final Length.Rel position)
     {
         super();
         this.link = link;
@@ -63,10 +64,9 @@ public class LinkLocation
     /**
      * @return position as a length as a traveled length on this link.
      */
-    public final DoubleScalar.Rel<LengthUnit> getLongitudinalPosition()
+    public final Length.Rel getLongitudinalPosition()
     {
-        return new DoubleScalar.Rel<LengthUnit>(this.link.getLength().getSI() * getFractionalLongitudinalPosition(),
-            LengthUnit.METER);
+        return new Length.Rel(this.link.getLength().getSI() * getFractionalLongitudinalPosition(), LengthUnit.METER);
     }
 
     /**
@@ -75,11 +75,11 @@ public class LinkLocation
      * @param loc the link location to find the distance to.
      * @return the distance to another LinkLocation.
      */
-    public final DoubleScalar.Rel<LengthUnit> distance(final LinkLocation loc)
+    public final Length.Rel distance(final LinkLocation loc)
     {
         if (this.link.equals(loc.getLink()))
         {
-            return DoubleScalar.minus(loc.getLongitudinalPosition(), this.getLongitudinalPosition());
+            return loc.getLongitudinalPosition().minus(this.getLongitudinalPosition());
         }
 
         // TODO not on the same link. Find shortest path...
