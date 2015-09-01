@@ -6,10 +6,9 @@ import java.util.List;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_DIST;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
@@ -22,7 +21,6 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.FixedLaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
-import org.opentrafficsim.core.units.distributions.DistContinuousDoubleScalar;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -36,7 +34,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class GeneratorTag
+class GeneratorTag implements OTS_SCALAR, OTS_DIST
 {
     /** lane name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -56,11 +54,11 @@ class GeneratorTag
 
     /** interarrival time. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DistContinuousDoubleScalar.Rel<TimeUnit> iatDist = null;
+    TimeContinuousDist.Rel iatDist = null;
 
     /** initial speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist = null;
+    SpeedContinuousDist.Abs initialSpeedDist = null;
 
     /** max number of generated GTUs. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -68,11 +66,11 @@ class GeneratorTag
 
     /** start time of generation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Abs<TimeUnit> startTime = null;
+    Time.Abs startTime = null;
 
     /** end time of generation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Abs<TimeUnit> endTime = null;
+    Time.Abs endTime = null;
 
     /** Route tag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -272,13 +270,10 @@ class GeneratorTag
         {
             nodeList.add(parser.nodeTags.get(nodeTag.name).node);
         }
-        DoubleScalar.Abs<TimeUnit> startTime =
-            generatorTag.startTime != null ? generatorTag.startTime : new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SI);
-        DoubleScalar.Abs<TimeUnit> endTime =
-            generatorTag.endTime != null ? generatorTag.endTime : new DoubleScalar.Abs<TimeUnit>(Double.MAX_VALUE,
-                TimeUnit.SI);
+        Time.Abs startTime = generatorTag.startTime != null ? generatorTag.startTime : new Time.Abs(0.0, TimeUnit.SI);
+        Time.Abs endTime = generatorTag.endTime != null ? generatorTag.endTime : new Time.Abs(Double.MAX_VALUE, TimeUnit.SI);
         LaneBasedRouteGenerator rg = new FixedLaneBasedRouteGenerator(new CompleteRoute("fixed route", nodeList));
-        DoubleScalar.Rel<LengthUnit> position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);
+        Length.Rel position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);
         new GTUGeneratorIndividual(generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType, gtuClass,
             generatorTag.gtuTag.followingModel, generatorTag.gtuTag.laneChangeModel, generatorTag.initialSpeedDist,
             generatorTag.iatDist, generatorTag.gtuTag.lengthDist, generatorTag.gtuTag.widthDist,

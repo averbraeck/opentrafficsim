@@ -32,7 +32,7 @@ public class SinkSensor extends AbstractSensor
      * @param position the position of the sensor
      * @param simulator the simulator to enable animation.
      */
-    public SinkSensor(final Lane lane, final DoubleScalar.Rel<LengthUnit> position, final OTSSimulatorInterface simulator)
+    public SinkSensor(final Lane lane, final Length.Rel position, final OTSSimulatorInterface simulator)
     {
         super(lane, position, RelativePosition.FRONT, "SINK@" + lane.toString(), simulator);
         try

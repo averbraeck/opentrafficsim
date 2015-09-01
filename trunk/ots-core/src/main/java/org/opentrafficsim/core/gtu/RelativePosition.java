@@ -3,7 +3,7 @@ package org.opentrafficsim.core.gtu;
 import java.io.Serializable;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 
 /**
  * A RelativePosition is a position on a GTU; e.g. the front, rear, position of the driver, etc. <br>
@@ -17,19 +17,19 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class RelativePosition implements Serializable
+public class RelativePosition implements Serializable, OTS_SCALAR
 {
     /** */
     private static final long serialVersionUID = 20141231L;
 
     /** positive x is in the normal direction of movement. */
-    private final DoubleScalar.Rel<LengthUnit> dx;
+    private final Length.Rel dx;
 
     /** positive y is left compared to the normal direction of movement (seen from the top). */
-    private final DoubleScalar.Rel<LengthUnit> dy;
+    private final Length.Rel dy;
 
     /** positive z is up. */
-    private final DoubleScalar.Rel<LengthUnit> dz;
+    private final Length.Rel dz;
 
     /** type of relative position (FRONT, BACK, etc.). */
     private final TYPE type;
@@ -50,9 +50,8 @@ public class RelativePosition implements Serializable
     public static final TYPE DRIVER = new TYPE("DRIVER");
 
     /** the reference position (always 0, 0, 0). */
-    public static final RelativePosition REFERENCE_POSITION = new RelativePosition(new DoubleScalar.Rel<LengthUnit>(0.0d,
-        LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.0d, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(0.0d,
-        LengthUnit.METER), RelativePosition.REFERENCE);
+    public static final RelativePosition REFERENCE_POSITION = new RelativePosition(new Length.Rel(0.0d, LengthUnit.METER),
+        new Length.Rel(0.0d, LengthUnit.METER), new Length.Rel(0.0d, LengthUnit.METER), RelativePosition.REFERENCE);
 
     /**
      * @param dx positive x is in the normal direction of movement.
@@ -60,8 +59,7 @@ public class RelativePosition implements Serializable
      * @param dz positive z is up.
      * @param type type of relative position (FRONT, BACK, etc.).
      */
-    public RelativePosition(final DoubleScalar.Rel<LengthUnit> dx, final DoubleScalar.Rel<LengthUnit> dy,
-        final DoubleScalar.Rel<LengthUnit> dz, final TYPE type)
+    public RelativePosition(final Length.Rel dx, final Length.Rel dy, final Length.Rel dz, final TYPE type)
     {
         super();
         this.dx = dx;
@@ -76,16 +74,16 @@ public class RelativePosition implements Serializable
     public RelativePosition(final RelativePosition p)
     {
         super();
-        this.dx = p.getDx().copy();
-        this.dy = p.getDy().copy();
-        this.dz = p.getDz().copy();
+        this.dx = p.getDx();
+        this.dy = p.getDy();
+        this.dz = p.getDz();
         this.type = p.getType();
     }
 
     /**
      * @return dx.
      */
-    public final DoubleScalar.Rel<LengthUnit> getDx()
+    public final Length.Rel getDx()
     {
         return this.dx;
     }
@@ -93,7 +91,7 @@ public class RelativePosition implements Serializable
     /**
      * @return dy.
      */
-    public final DoubleScalar.Rel<LengthUnit> getDy()
+    public final Length.Rel getDy()
     {
         return this.dy;
     }
@@ -101,7 +99,7 @@ public class RelativePosition implements Serializable
     /**
      * @return dz.
      */
-    public final DoubleScalar.Rel<LengthUnit> getDz()
+    public final Length.Rel getDz()
     {
         return this.dz;
     }

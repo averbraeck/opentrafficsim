@@ -4,9 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.djunits.unit.AnglePlaneUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.XMLParser;
 import org.opentrafficsim.core.network.factory.xml.units.AngleUnits;
@@ -28,7 +27,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-final class LinkTag
+final class LinkTag implements OTS_SCALAR
 {
     /** name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -48,19 +47,19 @@ final class LinkTag
 
     /** offset for the link at the start node. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Rel<LengthUnit> offsetStart = null;
+    Length.Rel offsetStart = null;
 
     /** offset for the link at the end node. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Rel<LengthUnit> offsetEnd = null;
+    Length.Rel offsetEnd = null;
 
     /** extra rotation for the link at the start node. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Rel<AnglePlaneUnit> rotationStart = null;
+    AnglePlane.Rel rotationStart = null;
 
     /** extra rotation for the link at the end node. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Rel<AnglePlaneUnit> rotationEnd = null;
+    AnglePlane.Rel rotationEnd = null;
 
     /** straight. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -242,19 +241,18 @@ final class LinkTag
      * @return the corresponding position as a length on the center line
      * @throws NetworkException when parsing fails
      */
-    static DoubleScalar.Rel<LengthUnit> parseBeginEndPosition(final String posStr, final CrossSectionElement cse)
-        throws NetworkException
+    static Length.Rel parseBeginEndPosition(final String posStr, final CrossSectionElement cse) throws NetworkException
     {
         if (posStr.trim().equals("BEGIN"))
         {
-            return new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
+            return new Length.Rel(0.0, LengthUnit.METER);
         }
 
         double length = cse.getCenterLine().getLengthSI();
 
         if (posStr.trim().equals("END"))
         {
-            return new DoubleScalar.Rel<LengthUnit>(length, LengthUnit.METER);
+            return new Length.Rel(length, LengthUnit.METER);
         }
 
         if (posStr.endsWith("%"))
@@ -268,7 +266,7 @@ final class LinkTag
                     throw new NetworkException("parseBeginEndPosition: attribute POSITION with value " + posStr
                         + " invalid for lane " + cse.toString() + ", should be a percentage between 0 and 100%");
                 }
-                return new DoubleScalar.Rel<LengthUnit>(length * fraction, LengthUnit.METER);
+                return new Length.Rel(length * fraction, LengthUnit.METER);
             }
             catch (NumberFormatException nfe)
             {
@@ -286,10 +284,10 @@ final class LinkTag
                 throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr
                     + " invalid for lane " + cse.toString() + ": provided negative offset greater than than link length");
             }
-            return new DoubleScalar.Rel<LengthUnit>(length - offset, LengthUnit.METER);
+            return new Length.Rel(length - offset, LengthUnit.METER);
         }
 
-        DoubleScalar.Rel<LengthUnit> offset = LengthUnits.parseLengthRel(posStr);
+        Length.Rel offset = LengthUnits.parseLengthRel(posStr);
         if (offset.getSI() > length)
         {
             throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr

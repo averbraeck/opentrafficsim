@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.GTU;
 
 /**
@@ -27,22 +25,22 @@ public class VelocityGTUColorer implements GTUColorer
     private final ArrayList<LegendEntry> legend;
 
     /** The speed that corresponds to the last entry in the legend. */
-    private final DoubleScalar.Abs<SpeedUnit> maximumSpeed;
+    private final Speed.Abs maximumSpeed;
 
     /**
      * Construct a new VelocityGTUColorer.
      * @param maximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed at (and above) which the returned color will be green
      */
-    public VelocityGTUColorer(final DoubleScalar.Abs<SpeedUnit> maximumSpeed)
+    public VelocityGTUColorer(final Speed.Abs maximumSpeed)
     {
         this.maximumSpeed = maximumSpeed;
         this.legend = new ArrayList<LegendEntry>(4);
         Color[] colorTable = {Color.RED, Color.YELLOW, Color.GREEN};
-        DoubleScalar.Abs<SpeedUnit> zeroValue = new DoubleScalar.Abs<SpeedUnit>(0, maximumSpeed.getUnit());
+        Speed.Abs zeroValue = new Speed.Abs(0, maximumSpeed.getUnit());
         for (int index = 0; index < colorTable.length; index++)
         {
             double ratio = index * 1.0 / (colorTable.length - 1);
-            DoubleScalar.Abs<SpeedUnit> speed = DoubleScalar.interpolate(zeroValue, maximumSpeed, ratio);
+            Speed.Abs speed = Speed.Abs.interpolate(zeroValue, maximumSpeed, ratio);
             this.legend.add(new LegendEntry(colorTable[index], speed.toString(), index == 0 ? "stationary" : "driving "
                 + speed.toString()));
         }
@@ -52,7 +50,7 @@ public class VelocityGTUColorer implements GTUColorer
     @Override
     public final Color getColor(final GTU gtu) throws RemoteException
     {
-        DoubleScalar.Abs<SpeedUnit> speed = gtu.getVelocity();
+        Speed.Abs speed = gtu.getVelocity();
         double ratio = speed.getSI() / this.maximumSpeed.getSI() * (this.legend.size() - 1);
         if (ratio <= 0)
         {

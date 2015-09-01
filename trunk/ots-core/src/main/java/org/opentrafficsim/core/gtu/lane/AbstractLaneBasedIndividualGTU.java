@@ -35,13 +35,13 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
     private static final long serialVersionUID = 20140822L;
 
     /** the maximum length of the GTU (parallel with driving direction). */
-    private final DoubleScalar.Rel<LengthUnit> length;
+    private final Length.Rel length;
 
     /** the maximum width of the GTU (perpendicular to driving direction). */
-    private final DoubleScalar.Rel<LengthUnit> width;
+    private final Length.Rel width;
 
     /** the maximum speed of the GTU (in the driving direction). */
-    private final DoubleScalar.Abs<SpeedUnit> maximumVelocity;
+    private final Speed.Abs maximumVelocity;
 
     /** the simulator. */
     private final OTSDEVSSimulatorInterface simulator;
@@ -66,9 +66,9 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractLaneBasedIndividualGTU(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
-        final LaneChangeModel laneChangeModel, final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final DoubleScalar.Rel<LengthUnit> length,
-        final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> maximumVelocity,
+        final LaneChangeModel laneChangeModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
+        final Speed.Abs initialSpeed, final Length.Rel length,
+        final Length.Rel width, final Speed.Abs maximumVelocity,
         final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator) throws RemoteException,
         NetworkException, SimRuntimeException, GTUException
     {
@@ -86,21 +86,21 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> getLength()
+    public final Length.Rel getLength()
     {
         return this.length;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> getWidth()
+    public final Length.Rel getWidth()
     {
         return this.width;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<SpeedUnit> getMaximumVelocity()
+    public final Speed.Abs getMaximumVelocity()
     {
         return this.maximumVelocity;
     }

@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.network.factory.xml;
 
-import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.w3c.dom.NamedNodeMap;
@@ -17,11 +16,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 24, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class StraightTag
+class StraightTag implements OTS_SCALAR
 {
     /** length. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Rel<LengthUnit> length = null;
+    Length.Rel length = null;
 
     /**
      * Parse the LINK.STRAIGHT tag.

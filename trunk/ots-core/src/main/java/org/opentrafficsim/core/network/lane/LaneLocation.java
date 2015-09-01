@@ -2,6 +2,7 @@ package org.opentrafficsim.core.network.lane;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 
 /**
  * "1D" implementation.
@@ -14,7 +15,7 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneLocation
+public class LaneLocation implements OTS_SCALAR
 {
     /** The lane of the location of a point relative to the GTU. */
     private final Lane lane;
@@ -37,7 +38,7 @@ public class LaneLocation
      * @param lane The lane of the location of a point relative to the GTU.
      * @param position The position as a length of the reference point on the lane.
      */
-    public LaneLocation(final Lane lane, final DoubleScalar.Rel<LengthUnit> position)
+    public LaneLocation(final Lane lane, final Length.Rel position)
     {
         super();
         this.lane = lane;
@@ -63,9 +64,9 @@ public class LaneLocation
     /**
      * @return position as a traveled length on this lane.
      */
-    public final DoubleScalar.Abs<LengthUnit> getLongitudinalPosition()
+    public final Length.Abs getLongitudinalPosition()
     {
-        return new DoubleScalar.Abs<LengthUnit>(this.lane.getLength().getSI() * this.fractionalLongitudinalPosition,
+        return new Length.Abs(this.lane.getLength().getSI() * this.fractionalLongitudinalPosition,
             LengthUnit.METER);
     }
 

@@ -11,7 +11,6 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSDEVSRealTimeClock;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSReplication;
@@ -46,8 +45,8 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
      * @throws SimRuntimeException on ???
      * @throws NamingException when context for the animation cannot be created
      */
-    public SimpleAnimator(final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
-        final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
+    public SimpleAnimator(final Time.Abs startTime, final Time.Rel warmupPeriod,
+        final Time.Rel runLength, final OTSModelInterface model) throws RemoteException,
         SimRuntimeException, NamingException
     {
         setPauseOnError(true);
@@ -58,12 +57,12 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
     /**
      * {@inheritDoc}
      */
-    public final SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime,
+    public final SimEvent<OTSSimTimeDouble> scheduleEvent(final Time.Abs executionTime,
         final short priority, final Object source, final Object target, final String method, final Object[] args)
         throws SimRuntimeException
     {
         SimEvent<OTSSimTimeDouble> result =
-            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(executionTime.getSI(),
+            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time.Abs(executionTime.getSI(),
                 TimeUnit.SECOND)), priority, source, target, method, args);
         scheduleEvent(result);
         return result;
@@ -82,7 +81,7 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
         OTSSimTimeDouble simTime0 = this.simulatorTime; // _______ current zero for the sim clock
         double factor = getSpeedFactor(); // _____________________ local copy of speed factor to detect change
         double msec1 = relativeMillis(1.0).doubleValue(); // _____ translation factor for 1 msec for sim clock
-        DoubleScalar.Rel<TimeUnit> r1 = this.relativeMillis(factor); // sim clock change for 1 msec wall clock
+        Time.Rel r1 = this.relativeMillis(factor); // sim clock change for 1 msec wall clock
 
         while (this.isRunning() && !this.eventList.isEmpty()
             && this.simulatorTime.le(this.replication.getTreatment().getEndTime()))
@@ -198,7 +197,7 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
         OTSSimTimeDouble simTime0 = this.simulatorTime; // _______ current zero for the sim clock
         double factor = getSpeedFactor(); // _____________________ local copy of speed factor to detect change
         double msec1 = relativeMillis(1.0).doubleValue(); // _____ translation factor for 1 msec for sim clock
-        DoubleScalar.Rel<TimeUnit> r10 = this.relativeMillis(10.0 * factor); // sim clock change for 10 msec wall clock
+        Time.Rel r10 = this.relativeMillis(10.0 * factor); // sim clock change for 10 msec wall clock
 
         while (this.isRunning() && !this.eventList.isEmpty()
             && this.simulatorTime.le(this.replication.getTreatment().getEndTime()))

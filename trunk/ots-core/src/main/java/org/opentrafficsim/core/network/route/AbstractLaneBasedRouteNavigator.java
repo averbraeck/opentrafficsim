@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.lane.CrossSectionElement;
@@ -29,11 +28,10 @@ public abstract class AbstractLaneBasedRouteNavigator implements LaneBasedRouteN
     private static final long serialVersionUID = 20150722L;
 
     /** Return value of suitability when no lane change is required withing the time horizon. */
-    public static final DoubleScalar.Rel<LengthUnit> NOLANECHANGENEEDED = new DoubleScalar.Rel<LengthUnit>(Double.MAX_VALUE,
-        LengthUnit.SI);
+    public static final Length.Rel NOLANECHANGENEEDED = new Length.Rel(Double.MAX_VALUE, LengthUnit.SI);
 
     /** Return value of suitability when a lane change is required <i>right now</i>. */
-    public static final DoubleScalar.Rel<LengthUnit> GETOFFTHISLANENOW = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.SI);
+    public static final Length.Rel GETOFFTHISLANENOW = new Length.Rel(0, LengthUnit.SI);
 
     /**
      * Compute the suitability of a lane from which lane changes are required to get to the next point on the Route.<br>
@@ -47,9 +45,9 @@ public abstract class AbstractLaneBasedRouteNavigator implements LaneBasedRouteN
      * @param gtuType GTUType; the type of the GTU
      * @return double; the suitability of the <cite>startLane</cite> for following the Route
      */
-    protected final DoubleScalar.Rel<LengthUnit> computeSuitabilityWithLaneChanges(final Lane startLane,
-        final double remainingDistance, final Map<Lane, DoubleScalar.Rel<LengthUnit>> suitabilities, final int totalLanes,
-        final LateralDirectionality direction, final GTUType gtuType)
+    protected final Length.Rel computeSuitabilityWithLaneChanges(final Lane startLane, final double remainingDistance,
+        final Map<Lane, Length.Rel> suitabilities, final int totalLanes, final LateralDirectionality direction,
+        final GTUType gtuType)
     {
         /*-
          * The time per required lane change seems more relevant than distance per required lane change.
@@ -62,7 +60,7 @@ public abstract class AbstractLaneBasedRouteNavigator implements LaneBasedRouteN
          */
         int laneChangesUsed = 0;
         Lane currentLane = startLane;
-        DoubleScalar.Rel<LengthUnit> currentSuitability = null;
+        Length.Rel currentSuitability = null;
         while (null == currentSuitability)
         {
             laneChangesUsed++;
@@ -75,7 +73,7 @@ public abstract class AbstractLaneBasedRouteNavigator implements LaneBasedRouteN
         }
         double fraction = currentSuitability == NOLANECHANGENEEDED ? 0 : 0.5;
         int notSuitableLaneCount = totalLanes - suitabilities.size();
-        return new DoubleScalar.Rel<LengthUnit>(remainingDistance * (notSuitableLaneCount - laneChangesUsed + 1 + fraction)
+        return new Length.Rel(remainingDistance * (notSuitableLaneCount - laneChangesUsed + 1 + fraction)
             / (notSuitableLaneCount + fraction), LengthUnit.SI);
     }
 

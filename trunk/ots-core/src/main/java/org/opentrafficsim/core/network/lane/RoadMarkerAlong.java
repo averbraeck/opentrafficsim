@@ -41,8 +41,8 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public RoadMarkerAlong(final CrossSectionLink parentLink, final DoubleScalar.Rel<LengthUnit> lateralCenterPosition,
-        final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
+    public RoadMarkerAlong(final CrossSectionLink parentLink, final Length.Rel lateralCenterPosition,
+        final Length.Rel beginWidth, final Length.Rel endWidth)
         throws OTSGeometryException, NetworkException
     {
         super(parentLink, UUID.randomUUID().toString(), lateralCenterPosition, lateralCenterPosition, beginWidth, endWidth);

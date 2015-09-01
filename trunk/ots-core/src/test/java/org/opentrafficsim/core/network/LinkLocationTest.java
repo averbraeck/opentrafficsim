@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.junit.Test;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
@@ -19,7 +20,7 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
  * initial version 20 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LinkLocationTest
+public class LinkLocationTest implements OTS_SCALAR
 {
     /**
      * Test constructor and verify all getters.
@@ -32,9 +33,9 @@ public class LinkLocationTest
         OTSNode nodeTo = new OTSNode("To", new OTSPoint3D(1000, 0, 0));
         OTSLine3D line = new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0)});
         CrossSectionLink link = new CrossSectionLink("Link", nodeFrom, nodeTo, line);
-        DoubleScalar.Rel<LengthUnit> linkLength = line.getLength();
+        Length.Rel linkLength = line.getLength();
         // Now we can make a LinkLocation.
-        DoubleScalar.Rel<LengthUnit> referenceLocationDistance = new DoubleScalar.Rel<LengthUnit>(123, LengthUnit.METER);
+        Length.Rel referenceLocationDistance = new Length.Rel(123, LengthUnit.METER);
         LinkLocation referenceLocation = new LinkLocation(link, referenceLocationDistance);
         assertEquals("link should be the provided Link", link, referenceLocation.getLink());
         assertEquals("longitudinalPosition should be " + referenceLocationDistance, referenceLocationDistance.getSI(),
@@ -49,7 +50,7 @@ public class LinkLocationTest
             assertEquals("longitudinalPosition should be " + position, position, linkLocation.getLongitudinalPosition()
                 .getSI(), 0.0001);
             // Repeat with the other constructor
-            linkLocation = new LinkLocation(link, new DoubleScalar.Rel<LengthUnit>(position, LengthUnit.METER));
+            linkLocation = new LinkLocation(link, new Length.Rel(position, LengthUnit.METER));
             assertEquals("link should be the provided Link", link, linkLocation.getLink());
             assertEquals("fractionalLongitudinalPosition should be " + fraction, fraction, linkLocation
                 .getFractionalLongitudinalPosition(), 0.000001);

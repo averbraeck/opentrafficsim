@@ -18,7 +18,7 @@ public final class Egoistic extends AbstractLaneChangeModel
 {
     /** {@inheritDoc} */
     @Override
-    public DoubleScalar.Abs<AccelerationUnit> applyDriverPersonality(final DualAccelerationStep accelerations)
+    public Acceleration.Abs applyDriverPersonality(final DualAccelerationStep accelerations)
     {
         // The egoistic driver only looks at the effects on him-/herself.
         return accelerations.getLeaderAcceleration();

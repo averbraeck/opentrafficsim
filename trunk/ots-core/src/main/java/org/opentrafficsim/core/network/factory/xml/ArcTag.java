@@ -1,8 +1,6 @@
 package org.opentrafficsim.core.network.factory.xml;
 
-import org.djunits.unit.AnglePlaneUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.AngleUnits;
@@ -20,15 +18,15 @@ import org.xml.sax.SAXException;
  * initial version Jul 24, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ArcTag
+class ArcTag implements OTS_SCALAR
 {
     /** angle. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Abs<AnglePlaneUnit> angle = null;
+    AnglePlane.Abs angle = null;
 
     /** radius. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Rel<LengthUnit> radius = null;
+    Length.Rel radius = null;
 
     /** direction. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

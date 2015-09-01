@@ -66,7 +66,7 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
      * the speed limit of this lane. This can differ per GTU type. Cars might be allowed to drive 120 km/h and trucks 90 km/h.
      * If the speed limit is the same for all GTU types, GTUType.ALL will be used.
      */
-    private Map<GTUType, DoubleScalar.Abs<SpeedUnit>> speedLimitMap;
+    private Map<GTUType, Speed.Abs> speedLimitMap;
 
     /**
      * Sensors on the lane to trigger behavior of the GTU, sorted by longitudinal position. The triggering of sensors is done
@@ -120,11 +120,11 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public Lane(final CrossSectionLink parentLink, final String id, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart,
-        final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd, final DoubleScalar.Rel<LengthUnit> beginWidth,
-        final DoubleScalar.Rel<LengthUnit> endWidth, final LaneType laneType,
+    public Lane(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffsetAtStart,
+        final Length.Rel lateralOffsetAtEnd, final Length.Rel beginWidth,
+        final Length.Rel endWidth, final LaneType laneType,
         final Map<GTUType, LongitudinalDirectionality> directionalityMap,
-        final Map<GTUType, DoubleScalar.Abs<SpeedUnit>> speedLimitMap) throws OTSGeometryException, NetworkException
+        final Map<GTUType, Speed.Abs> speedLimitMap) throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
         this.laneType = laneType;
@@ -148,10 +148,10 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public Lane(final CrossSectionLink parentLink, final String id, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart,
-        final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd, final DoubleScalar.Rel<LengthUnit> beginWidth,
-        final DoubleScalar.Rel<LengthUnit> endWidth, final LaneType laneType,
-        final LongitudinalDirectionality directionality, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+    public Lane(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffsetAtStart,
+        final Length.Rel lateralOffsetAtEnd, final Length.Rel beginWidth,
+        final Length.Rel endWidth, final LaneType laneType,
+        final LongitudinalDirectionality directionality, final Speed.Abs speedLimit)
         throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
@@ -365,8 +365,8 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
      * @param gtuType the GTU type to provide the sensors for
      * @return List&lt;Sensor&gt;; list of the sensor in the specified range
      */
-    public final List<Sensor> getSensors(final DoubleScalar.Rel<LengthUnit> minimumPosition,
-        final DoubleScalar.Rel<LengthUnit> maximumPosition, final GTUType gtuType)
+    public final List<Sensor> getSensors(final Length.Rel minimumPosition,
+        final Length.Rel maximumPosition, final GTUType gtuType)
     {
         ArrayList<Sensor> result = new ArrayList<Sensor>();
         for (List<Sensor> sensorList : this.getSensors(gtuType).subMap(minimumPosition.getSI(), maximumPosition.getSI())
@@ -440,20 +440,20 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
                             throw new NetworkException("scheduleTriggers for gtu: " + gtu + ", d<0 d=" + d);
                         }
 
-                        DoubleScalar.Abs<TimeUnit> triggerTime =
-                            gtu.timeAtDistance(new DoubleScalar.Rel<LengthUnit>(d, LengthUnit.METER));
+                        Time.Abs triggerTime =
+                            gtu.timeAtDistance(new Length.Rel(d, LengthUnit.METER));
                         if (triggerTime.gt(gtu.getNextEvaluationTime()))
                         {
-                            System.err.println("Time=" + gtu.getSimulator().getSimulatorTime().get().getSI()
+                            System.err.println("Time=" + gtu.getSimulator().getSimulatorTime().getTime().getSI()
                                 + " - Scheduling trigger at " + triggerTime.getSI() + "s. > "
                                 + gtu.getNextEvaluationTime().getSI() + "s. (nextEvalTime) for sensor " + sensor + " , gtu "
                                 + gtu);
                             System.err.println("  v=" + gtu.getVelocity() + ", a=" + gtu.getAcceleration() + ", lane="
                                 + toString() + ", refStartSI=" + referenceStartSI + ", moveSI=" + referenceMoveSI);
                             triggerTime =
-                                new DoubleScalar.Abs<TimeUnit>(gtu.getNextEvaluationTime().getSI()
+                                new Time.Abs(gtu.getNextEvaluationTime().getSI()
                                     - Math.ulp(gtu.getNextEvaluationTime().getSI()), TimeUnit.SI);
-                            // gtu.timeAtDistance(new DoubleScalar.Rel<LengthUnit>(-d, LengthUnit.METER));
+                            // gtu.timeAtDistance(new Length.Rel(-d, LengthUnit.METER));
                             // System.exit(-1);
                         }
                         // System.out.println("Time=" + gtu.getSimulator().getSimulatorTime().toString()
@@ -470,9 +470,9 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
      * @param fraction fraction relative to the lane length.
      * @return relative length corresponding to the fraction.
      */
-    public final DoubleScalar.Rel<LengthUnit> position(final double fraction)
+    public final Length.Rel position(final double fraction)
     {
-        return new DoubleScalar.Rel<LengthUnit>(this.getLength().getInUnit() * fraction, this.getLength().getUnit());
+        return new Length.Rel(this.getLength().getInUnit() * fraction, this.getLength().getUnit());
     }
 
     /**
@@ -490,7 +490,7 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
      * @param position relative length on the lane (may be less than zero or larger than the lane length).
      * @return fraction fraction relative to the lane length.
      */
-    public final double fraction(final DoubleScalar.Rel<LengthUnit> position)
+    public final double fraction(final Length.Rel position)
     {
         return position.getSI() / this.getLength().getSI();
     }
@@ -527,7 +527,7 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
             {
                 throw new NetworkException("GTU " + gtu + " already registered on Lane " + this + " [registered lanes: "
                     + gtu.positions(gtu.getFront()).keySet() + "] locations: " + gtu.positions(gtu.getFront()).values()
-                    + " time: " + gtu.getSimulator().getSimulatorTime().get());
+                    + " time: " + gtu.getSimulator().getSimulatorTime().getTime());
             }
             if (otherGTU.fractionalPosition(this, otherGTU.getFront()) >= fractionalPosition)
             {
@@ -548,7 +548,7 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
      * @throws RemoteException on communication failure
      * @throws NetworkException when longitudinalPosition is negative or exceeds the length of this Lane
      */
-    public final int addGTU(final LaneBasedGTU gtu, final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
+    public final int addGTU(final LaneBasedGTU gtu, final Length.Rel longitudinalPosition)
         throws RemoteException, NetworkException
     {
         return addGTU(gtu, longitudinalPosition.getSI() / getLength().getSI());
@@ -571,8 +571,8 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
      * @throws NetworkException when there is a problem with the position of the GTUs on the lane.
      * @throws RemoteException on communications failure
      */
-    public final LaneBasedGTU getGtuAfter(final DoubleScalar.Rel<LengthUnit> position,
-        final RelativePosition.TYPE relativePosition, final DoubleScalar.Abs<TimeUnit> when) throws NetworkException,
+    public final LaneBasedGTU getGtuAfter(final Length.Rel position,
+        final RelativePosition.TYPE relativePosition, final Time.Abs when) throws NetworkException,
         RemoteException
     {
         for (LaneBasedGTU gtu : this.gtuList)
@@ -607,8 +607,8 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
      * @throws NetworkException when there is a problem with the position of the GTUs on the lane.
      * @throws RemoteException on communications failure
      */
-    public final LaneBasedGTU getGtuBefore(final DoubleScalar.Rel<LengthUnit> position,
-        final RelativePosition.TYPE relativePosition, final DoubleScalar.Abs<TimeUnit> when) throws NetworkException,
+    public final LaneBasedGTU getGtuBefore(final Length.Rel position,
+        final RelativePosition.TYPE relativePosition, final Time.Abs when) throws NetworkException,
         RemoteException
     {
         for (int i = this.gtuList.size() - 1; i >= 0; i--)
@@ -644,7 +644,7 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
      * @return boolean; true if the two cross section elements are well enough aligned to be connected
      */
     private boolean laterallyCloseEnough(final CrossSectionElement incomingCSE, final CrossSectionElement outgoingCSE,
-        final DoubleScalar.Rel<LengthUnit> margin)
+        final Length.Rel margin)
     {
         return Math.abs(incomingCSE.getDesignLineOffsetAtEnd().getSI() - outgoingCSE.getDesignLineOffsetAtBegin().getSI()) <= margin
             .getSI();
@@ -806,7 +806,7 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
      * @param gtuType the GTU type to provide the speed limit for
      * @return speedLimit.
      */
-    public final DoubleScalar.Abs<SpeedUnit> getSpeedLimit(final GTUType gtuType)
+    public final Speed.Abs getSpeedLimit(final GTUType gtuType)
     {
         if (this.speedLimitMap.containsKey(gtuType))
         {

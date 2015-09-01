@@ -5,14 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
-
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 
 /**
  * Extended version of FixedAccelerationModel. The addition is that this GTUFollowingModel stores a series of acceleration and
@@ -32,14 +27,14 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
     private final List<FixedAccelerationModel> steps = new ArrayList<FixedAccelerationModel>();
 
     /** The simulator engine. */
-    private final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator;
+    private final OTSDEVSSimulatorInterface simulator;
 
     /**
      * Construct a SequentialFixedAccelerationModel with empty list of FixedAccelerationModel steps.
      * @param simulator DEVSSimulator; the simulator (needed to obtain the current simulation time)
      */
     public SequentialFixedAccelerationModel(
-        final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+        final OTSDEVSSimulatorInterface simulator)
     {
         this.simulator = simulator;
     }
@@ -50,7 +45,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
      * @param steps Set&lt;FixedAccelerationModel&gt;; the list of FixedAccelerationModel steps.
      */
     public SequentialFixedAccelerationModel(
-        final DEVSSimulator<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator,
+        final OTSDEVSSimulatorInterface simulator,
         final Set<FixedAccelerationModel> steps)
     {
         this(simulator);
@@ -92,9 +87,9 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
      * @param index int; the step
      * @return DoubleScalar.Abs&lt;TimeUnit&gt;
      */
-    public final DoubleScalar.Abs<TimeUnit> timeAfterCompletionOfStep(final int index)
+    public final Time.Abs timeAfterCompletionOfStep(final int index)
     {
-        DoubleScalar.Abs<TimeUnit> sum = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
+        Time.Abs sum = new Time.Abs(0, TimeUnit.SECOND);
         for (int i = 0; i <= index; i++)
         {
             sum = sum.plus(this.steps.get(i).getDuration());
@@ -112,7 +107,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
      */
     private FixedAccelerationModel getAccelerationModel() throws RemoteException
     {
-        DoubleScalar.Abs<TimeUnit> when = this.simulator.getSimulatorTime().get();
+        Time.Abs when = this.simulator.getSimulatorTime().getTime();
         double remainingTime = when.getSI();
         for (FixedAccelerationModel step : this.steps)
         {
@@ -131,23 +126,23 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<AccelerationUnit> computeAcceleration(final DoubleScalar.Abs<SpeedUnit> followerSpeed,
-        final DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed, final DoubleScalar.Abs<SpeedUnit> leaderSpeed,
-        final DoubleScalar.Rel<LengthUnit> headway, final DoubleScalar.Abs<SpeedUnit> speedLimit) throws RemoteException
+    public final Acceleration.Abs computeAcceleration(final Speed.Abs followerSpeed,
+        final Speed.Abs followerMaximumSpeed, final Speed.Abs leaderSpeed,
+        final Length.Rel headway, final Speed.Abs speedLimit) throws RemoteException
     {
         return getAccelerationModel().getAcceleration();
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<AccelerationUnit> maximumSafeDeceleration()
+    public final Acceleration.Abs maximumSafeDeceleration()
     {
-        return new DoubleScalar.Abs<AccelerationUnit>(2, AccelerationUnit.METER_PER_SECOND_2);
+        return new Acceleration.Abs(2, AccelerationUnit.METER_PER_SECOND_2);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<TimeUnit> getStepSize() throws RemoteException
+    public final Time.Rel getStepSize() throws RemoteException
     {
         return getAccelerationModel().getStepSize();
     }

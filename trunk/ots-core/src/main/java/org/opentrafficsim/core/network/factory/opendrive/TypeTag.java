@@ -3,6 +3,7 @@ package org.opentrafficsim.core.network.factory.opendrive;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.XMLParser;
 import org.w3c.dom.NamedNodeMap;
@@ -19,11 +20,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class TypeTag
+class TypeTag implements OTS_SCALAR
 {
     /** start position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Rel<LengthUnit> s = null;
+    Length.Rel s = null;
 
     /** road type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -55,7 +56,7 @@ class TypeTag
             Node s = attributes.getNamedItem("s");
             if (s == null)
                 throw new SAXException("ROAD.TYPE: missing attribute s for ROAD.ID=" + roadTag.id);
-            typeTag.s = new DoubleScalar.Rel<LengthUnit>(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
+            typeTag.s = new Length.Rel(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
 
             roadTag.typeTags.put(typeTag.s.doubleValue(), typeTag);
         }

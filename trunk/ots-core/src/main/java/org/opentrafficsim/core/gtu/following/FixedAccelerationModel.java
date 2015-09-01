@@ -22,10 +22,10 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
 public class FixedAccelerationModel extends AbstractGTUFollowingModel
 {
     /** Acceleration that will be returned in GTUFollowingModelResult by computeAcceleration. */
-    private DoubleScalar.Abs<AccelerationUnit> acceleration;
+    private Acceleration.Abs acceleration;
 
     /** Valid until time that will be returned in GTUFollowingModelResult by computeAcceleration. */
-    private DoubleScalar.Rel<TimeUnit> duration;
+    private Time.Rel duration;
 
     /**
      * Create a new FixedAccelerationModel.
@@ -33,8 +33,8 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
      *            computeAcceleration methods
      * @param duration DoubleScalar.Abs&lt;TimeUnit&gt;; the duration that the acceleration will be maintained
      */
-    public FixedAccelerationModel(final DoubleScalar.Abs<AccelerationUnit> acceleration,
-        final DoubleScalar.Rel<TimeUnit> duration)
+    public FixedAccelerationModel(final Acceleration.Abs acceleration,
+        final Time.Rel duration)
     {
         this.acceleration = acceleration;
         this.duration = duration;
@@ -44,7 +44,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
      * Retrieve the duration of this FixedAccelerationModel.
      * @return DoubleScalar.Rel&lt;TimeUnit&gt;; the duration of this FixedAccelerationModel
      */
-    public final DoubleScalar.Rel<TimeUnit> getDuration()
+    public final Time.Rel getDuration()
     {
         return this.duration;
     }
@@ -53,30 +53,30 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
      * Retrieve the acceleration of this FixedAccelerationModel.
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration of this FixedAccelerationModel
      */
-    public final DoubleScalar.Abs<AccelerationUnit> getAcceleration()
+    public final Acceleration.Abs getAcceleration()
     {
         return this.acceleration;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<AccelerationUnit> computeAcceleration(final DoubleScalar.Abs<SpeedUnit> followerSpeed,
-        final DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed, final DoubleScalar.Abs<SpeedUnit> leaderSpeed,
-        final DoubleScalar.Rel<LengthUnit> headway, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+    public final Acceleration.Abs computeAcceleration(final Speed.Abs followerSpeed,
+        final Speed.Abs followerMaximumSpeed, final Speed.Abs leaderSpeed,
+        final Length.Rel headway, final Speed.Abs speedLimit)
     {
         return this.acceleration;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<AccelerationUnit> maximumSafeDeceleration()
+    public final Acceleration.Abs maximumSafeDeceleration()
     {
-        return new DoubleScalar.Abs<AccelerationUnit>(2, AccelerationUnit.METER_PER_SECOND_2);
+        return new Acceleration.Abs(2, AccelerationUnit.METER_PER_SECOND_2);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<TimeUnit> getStepSize()
+    public final Time.Rel getStepSize()
     {
         return this.duration;
     }

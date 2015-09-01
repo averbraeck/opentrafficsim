@@ -20,6 +20,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.junit.Test;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -53,7 +54,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedGTUTest
+public class LaneBasedGTUTest implements OTS_SCALAR
 {
 
     /**
@@ -78,8 +79,8 @@ public class LaneBasedGTUTest
         }
         OTSModelInterface model = new Model();
         SimpleSimulator simulator =
-            new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
-                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
+            new SimpleSimulator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(0.0,
+                TimeUnit.SECOND), new Time.Rel(3600.0, TimeUnit.SECOND), model);
         GTUType carType = GTUType.makeGTUType("car");
         GTUType truckType = GTUType.makeGTUType("truck");
         LaneType laneType = new LaneType("CarLane");
@@ -102,18 +103,18 @@ public class LaneBasedGTUTest
             String linkName = fromNode.getId() + "-" + toNode.getId();
             Lane[] lanes =
                 LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, laneCount, laneType,
-                    new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), simulator);
+                    new Speed.Abs(100, SpeedUnit.KM_PER_HOUR), simulator);
             links.add(lanes[0].getParentLink());
         }
         // Create a long truck with its front (reference) one meter in the last link on the 3rd lane
-        DoubleScalar.Rel<LengthUnit> truckPosition = new DoubleScalar.Rel<LengthUnit>(99.5, LengthUnit.METER);
-        DoubleScalar.Rel<LengthUnit> truckLength = new DoubleScalar.Rel<LengthUnit>(15, LengthUnit.METER);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> truckPositions =
+        Length.Rel truckPosition = new Length.Rel(99.5, LengthUnit.METER);
+        Length.Rel truckLength = new Length.Rel(15, LengthUnit.METER);
+        Map<Lane, Length.Rel> truckPositions =
             buildPositionsMap(truckPosition, truckLength, links, truckFromLane, truckUpToLane);
-        DoubleScalar.Abs<SpeedUnit> truckSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
-        DoubleScalar.Rel<LengthUnit> truckWidth = new DoubleScalar.Rel<LengthUnit>(2.5, LengthUnit.METER);
+        Speed.Abs truckSpeed = new Speed.Abs(0, SpeedUnit.KM_PER_HOUR);
+        Length.Rel truckWidth = new Length.Rel(2.5, LengthUnit.METER);
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
-        DoubleScalar.Abs<SpeedUnit> maximumVelocity = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
+        Speed.Abs maximumVelocity = new Speed.Abs(120, SpeedUnit.KM_PER_HOUR);
         try
         {
             new LaneBasedIndividualCar("Truck", truckType, null /* GTU following model */, laneChangeModel, truckPositions,
@@ -158,19 +159,19 @@ public class LaneBasedGTUTest
             * links.size(), lanesChecked);
         assertEquals("Truck should be registered in " + truckPositions.keySet().size() + " lanes", truckPositions.keySet()
             .size(), found);
-        DoubleScalar.Rel<LengthUnit> forwardMaxDistance = new DoubleScalar.Rel<LengthUnit>(9999, LengthUnit.METER);
+        Length.Rel forwardMaxDistance = new Length.Rel(9999, LengthUnit.METER);
         HeadwayGTU leader = truck.headway(forwardMaxDistance);
         assertTrue("With one vehicle in the network forward headway should return a value larger than maxDistance",
             forwardMaxDistance.getSI() < leader.getDistanceSI());
         assertEquals("With one vehicle in the network forward headwayGTU should return null", null, leader.getOtherGTU());
-        DoubleScalar.Rel<LengthUnit> reverseMaxDistance = new DoubleScalar.Rel<LengthUnit>(-9999, LengthUnit.METER);
+        Length.Rel reverseMaxDistance = new Length.Rel(-9999, LengthUnit.METER);
         HeadwayGTU follower = truck.headway(reverseMaxDistance);
         assertTrue("With one vehicle in the network reverse headway should return a value larger than maxDistance", Math
             .abs(reverseMaxDistance.getSI()) < follower.getDistanceSI());
         assertEquals("With one vehicle in the network reverse headwayGTU should return null", null, follower.getOtherGTU());
-        DoubleScalar.Rel<LengthUnit> carLength = new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER);
-        DoubleScalar.Rel<LengthUnit> carWidth = new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER);
-        DoubleScalar.Abs<SpeedUnit> carSpeed = new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR);
+        Length.Rel carLength = new Length.Rel(4, LengthUnit.METER);
+        Length.Rel carWidth = new Length.Rel(1.8, LengthUnit.METER);
+        Speed.Abs carSpeed = new Speed.Abs(0, SpeedUnit.KM_PER_HOUR);
         int maxStep = linkBoundaries[linkBoundaries.length - 1];
         for (int laneRank = 0; laneRank < laneCount + 1 - carLanesCovered; laneRank++)
         {
@@ -182,8 +183,8 @@ public class LaneBasedGTUTest
                 {
                     continue; // Truck and car would overlap; the result of that placement is not defined :-)
                 }
-                DoubleScalar.Rel<LengthUnit> carPosition = new DoubleScalar.Rel<LengthUnit>(step, LengthUnit.METER);
-                Map<Lane, DoubleScalar.Rel<LengthUnit>> carPositions =
+                Length.Rel carPosition = new Length.Rel(step, LengthUnit.METER);
+                Map<Lane, Length.Rel> carPositions =
                     buildPositionsMap(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
                 LaneBasedIndividualCar car =
                     new LaneBasedIndividualCar("Car", carType, gtuFollowingModel, laneChangeModel, carPositions, carSpeed,
@@ -277,7 +278,7 @@ public class LaneBasedGTUTest
                     }
                 }
                 Set<LaneBasedGTU> leftParallel =
-                    truck.parallel(LateralDirectionality.LEFT, simulator.getSimulatorTime().get());
+                    truck.parallel(LateralDirectionality.LEFT, simulator.getSimulatorTime().getTime());
                 int expectedLeftSize =
                     laneRank + carLanesCovered - 1 < truckFromLane - 1 || laneRank >= truckUpToLane
                         || step + carLength.getSI() <= truckPosition.getSI()
@@ -289,7 +290,7 @@ public class LaneBasedGTUTest
                     assertTrue("Parallel GTU should be the car", leftParallel.contains(car));
                 }
                 Set<LaneBasedGTU> rightParallel =
-                    truck.parallel(LateralDirectionality.RIGHT, simulator.getSimulatorTime().get());
+                    truck.parallel(LateralDirectionality.RIGHT, simulator.getSimulatorTime().getTime());
                 int expectedRightSize =
                     laneRank + carLanesCovered - 1 <= truckFromLane || laneRank > truckUpToLane + 1
                         || step + carLength.getSI() < truckPosition.getSI()
@@ -333,10 +334,10 @@ public class LaneBasedGTUTest
             // Create a car with constant acceleration
             OTSModelInterface model = new Model();
             SimpleSimulator simulator =
-                new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(
-                    0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
+                new SimpleSimulator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(
+                    0.0, TimeUnit.SECOND), new Time.Rel(3600.0, TimeUnit.SECOND), model);
             // Run the simulator clock to some non-zero value
-            simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(60, TimeUnit.SECOND));
+            simulator.runUpTo(new Time.Abs(60, TimeUnit.SECOND));
             while (simulator.isRunning())
             {
                 try
@@ -355,25 +356,25 @@ public class LaneBasedGTUTest
             OTSNode toNode = new OTSNode("Node B", new OTSPoint3D(1000, 0, 0));
             String linkName = "AB";
             Lane lane =
-                LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, new DoubleScalar.Abs<SpeedUnit>(
+                LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, new Speed.Abs(
                     200, SpeedUnit.KM_PER_HOUR), simulator)[0];
-            DoubleScalar.Rel<LengthUnit> carPosition = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);
-            Map<Lane, DoubleScalar.Rel<LengthUnit>> carPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+            Length.Rel carPosition = new Length.Rel(100, LengthUnit.METER);
+            Map<Lane, Length.Rel> carPositions = new LinkedHashMap<Lane, Length.Rel>();
             carPositions.put(lane, carPosition);
-            DoubleScalar.Abs<SpeedUnit> carSpeed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.METER_PER_SECOND);
-            DoubleScalar.Abs<AccelerationUnit> acceleration =
-                new DoubleScalar.Abs<AccelerationUnit>(a, AccelerationUnit.METER_PER_SECOND_2);
+            Speed.Abs carSpeed = new Speed.Abs(10, SpeedUnit.METER_PER_SECOND);
+            Acceleration.Abs acceleration =
+                new Acceleration.Abs(a, AccelerationUnit.METER_PER_SECOND_2);
             FixedAccelerationModel fam =
-                new FixedAccelerationModel(acceleration, new DoubleScalar.Rel<TimeUnit>(10, TimeUnit.SECOND));
+                new FixedAccelerationModel(acceleration, new Time.Rel(10, TimeUnit.SECOND));
             LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
-            DoubleScalar.Abs<SpeedUnit> maximumVelocity = new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR);
+            Speed.Abs maximumVelocity = new Speed.Abs(200, SpeedUnit.KM_PER_HOUR);
             LaneBasedIndividualCar car =
                 new LaneBasedIndividualCar("Car", carType, fam, laneChangeModel, carPositions, carSpeed,
-                    new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1.8,
+                    new Length.Rel(4, LengthUnit.METER), new Length.Rel(1.8,
                         LengthUnit.METER), maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")),
                     simulator);
             // Let the simulator execute the move method of the car
-            simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(61, TimeUnit.SECOND));
+            simulator.runUpTo(new Time.Abs(61, TimeUnit.SECOND));
             while (simulator.isRunning())
             {
                 try
@@ -396,10 +397,10 @@ public class LaneBasedGTUTest
                 // + distanceAtTime));
                 // System.out.println("Expected differential distance " + distanceAtTime);
                 assertEquals("It should take " + deltaTime + " seconds to cover distance " + distanceAtTime, deltaTime, car
-                    .deltaTimeForDistance(new DoubleScalar.Rel<LengthUnit>(distanceAtTime, LengthUnit.METER)).getSI(),
+                    .deltaTimeForDistance(new Length.Rel(distanceAtTime, LengthUnit.METER)).getSI(),
                     0.0001);
                 assertEquals("Car should reach distance " + distanceAtTime + " at " + (deltaTime + 60), deltaTime + 60, car
-                    .timeAtDistance(new DoubleScalar.Rel<LengthUnit>(distanceAtTime, LengthUnit.METER)).getSI(), 0.0001);
+                    .timeAtDistance(new Length.Rel(distanceAtTime, LengthUnit.METER)).getSI(), 0.0001);
             }
         }
     }
@@ -422,11 +423,11 @@ public class LaneBasedGTUTest
      * @param uptoLaneRank int; highest rank of lanes that the GTU must be registered on (0-based)
      * @return Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the Map of the Lanes that the GTU is registered on
      */
-    private Map<Lane, DoubleScalar.Rel<LengthUnit>> buildPositionsMap(
-        DoubleScalar.Rel<LengthUnit> totalLongitudinalPosition, DoubleScalar.Rel<LengthUnit> gtuLength,
+    private Map<Lane, Length.Rel> buildPositionsMap(
+        Length.Rel totalLongitudinalPosition, Length.Rel gtuLength,
         ArrayList<CrossSectionLink> links, int fromLaneRank, int uptoLaneRank)
     {
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> result = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, Length.Rel> result = new LinkedHashMap<Lane, Length.Rel>();
         double cumulativeLength = 0;
         for (CrossSectionLink link : links)
         {
@@ -446,7 +447,7 @@ public class LaneBasedGTUTest
                     {
                         fail("Error in test; canot find lane with rank " + laneRank);
                     }
-                    result.put(lane, new DoubleScalar.Rel<LengthUnit>(rearPositionInLink, LengthUnit.METER));
+                    result.put(lane, new Length.Rel(rearPositionInLink, LengthUnit.METER));
                 }
             }
             cumulativeLength += linkLength;

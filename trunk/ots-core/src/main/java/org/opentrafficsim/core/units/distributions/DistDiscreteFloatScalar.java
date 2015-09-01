@@ -7,6 +7,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.Absolute;
+import org.djunits.value.Relative;
 import org.djunits.value.vfloat.scalar.FloatScalar;
 
 /**
@@ -104,7 +105,7 @@ public abstract class DistDiscreteFloatScalar<U extends Unit<U>>
      * Relative value.
      * @param <U> Unit
      */
-    public static class Rel<U extends Unit<U>> extends DistDiscreteFloatScalar<U> implements Absolute
+    public static class Rel<U extends Unit<U>> extends DistDiscreteFloatScalar<U> implements Relative
     {
         /**
          * @param distribution the wrapped distribution function.

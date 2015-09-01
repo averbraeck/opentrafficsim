@@ -30,12 +30,12 @@ public class NoTrafficLane extends Lane
     private static final Map<GTUType, LongitudinalDirectionality> DIRECTIONALITY_NONE = new HashMap<>();
 
     /** Map that tells that speed is 0.0 for all GTU Types. */
-    private static final Map<GTUType, DoubleScalar.Abs<SpeedUnit>> SPEED_NULL = new HashMap<>();
+    private static final Map<GTUType, Speed.Abs> SPEED_NULL = new HashMap<>();
 
     static
     {
         DIRECTIONALITY_NONE.put(GTUType.ALL, LongitudinalDirectionality.NONE);
-        SPEED_NULL.put(GTUType.ALL, new DoubleScalar.Abs<SpeedUnit>(0.0, SpeedUnit.SI));
+        SPEED_NULL.put(GTUType.ALL, new Speed.Abs(0.0, SpeedUnit.SI));
     }
 
     /**
@@ -52,8 +52,8 @@ public class NoTrafficLane extends Lane
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public NoTrafficLane(final CrossSectionLink parentLink, final String id,
-        final DoubleScalar.Rel<LengthUnit> lateralOffsetAtStart, final DoubleScalar.Rel<LengthUnit> lateralOffsetAtEnd,
-        final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
+        final Length.Rel lateralOffsetAtStart, final Length.Rel lateralOffsetAtEnd,
+        final Length.Rel beginWidth, final Length.Rel endWidth)
         throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, LaneType.NONE,

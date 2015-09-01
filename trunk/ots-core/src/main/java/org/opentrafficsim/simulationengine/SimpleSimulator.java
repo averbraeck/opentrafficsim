@@ -9,7 +9,6 @@ import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSReplication;
@@ -44,8 +43,8 @@ public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulatio
      * @throws SimRuntimeException on ???
      * @throws NamingException when the context for the replication cannot be created
      */
-    public SimpleSimulator(final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
-        final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws RemoteException,
+    public SimpleSimulator(final Time.Abs startTime, final Time.Rel warmupPeriod,
+        final Time.Rel runLength, final OTSModelInterface model) throws RemoteException,
         SimRuntimeException, NamingException
     {
         setPauseOnError(true);
@@ -56,12 +55,12 @@ public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulatio
     /**
      * {@inheritDoc}
      */
-    public final SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime,
+    public final SimEvent<OTSSimTimeDouble> scheduleEvent(final Time.Abs executionTime,
         final short priority, final Object source, final Object target, final String method, final Object[] args)
         throws SimRuntimeException
     {
         SimEvent<OTSSimTimeDouble> result =
-            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(executionTime.getSI(),
+            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time.Abs(executionTime.getSI(),
                 TimeUnit.SECOND)), priority, source, target, method, args);
         scheduleEvent(result);
         return result;

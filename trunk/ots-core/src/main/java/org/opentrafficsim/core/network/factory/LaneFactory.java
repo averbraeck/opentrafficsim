@@ -8,8 +8,7 @@ import java.util.Map;
 import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -33,7 +32,7 @@ import org.opentrafficsim.core.network.lane.LaneType;
  * initial version 30 okt. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public final class LaneFactory
+public final class LaneFactory implements OTS_SCALAR
 {
     /** Do not instantiate this class. */
     private LaneFactory()
@@ -88,14 +87,13 @@ public final class LaneFactory
      */
     @SuppressWarnings("checkstyle:parameternumber")
     private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType,
-        final DoubleScalar.Rel<LengthUnit> latPosAtStart, final DoubleScalar.Rel<LengthUnit> latPosAtEnd,
-        final DoubleScalar.Rel<LengthUnit> width, final DoubleScalar.Abs<SpeedUnit> speedLimit,
+        final Length.Rel latPosAtStart, final Length.Rel latPosAtEnd, final Length.Rel width, final Speed.Abs speedLimit,
         final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException, NetworkException,
         OTSGeometryException
     {
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
         directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.FORWARD);
-        Map<GTUType, DoubleScalar.Abs<SpeedUnit>> speedMap = new LinkedHashMap<>();
+        Map<GTUType, Speed.Abs> speedMap = new LinkedHashMap<>();
         speedMap.put(GTUType.ALL, speedLimit);
         Lane result = new Lane(link, id, latPosAtStart, latPosAtEnd, width, width, laneType, directionalityMap, speedMap);
         if (simulator instanceof OTSAnimatorInterface)
@@ -121,13 +119,13 @@ public final class LaneFactory
      * @throws OTSGeometryException when creation of center line or contour fails
      */
     public static Lane makeLane(final String name, final OTSNode from, final OTSNode to,
-        final OTSPoint3D[] intermediatePoints, final LaneType laneType, final DoubleScalar.Abs<SpeedUnit> speedLimit,
+        final OTSPoint3D[] intermediatePoints, final LaneType laneType, final Speed.Abs speedLimit,
         final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException, NetworkException,
         OTSGeometryException
     {
-        DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
+        Length.Rel width = new Length.Rel(4.0, LengthUnit.METER);
         final CrossSectionLink link = makeLink(name, from, to, intermediatePoints);
-        DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
+        Length.Rel latPos = new Length.Rel(0.0, LengthUnit.METER);
         return makeLane(link, "lane", laneType, latPos, latPos, width, speedLimit, simulator);
     }
 
@@ -154,19 +152,18 @@ public final class LaneFactory
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLane(final String name, final OTSNode from, final OTSNode to,
         final OTSPoint3D[] intermediatePoints, final int laneCount, final int laneOffsetAtStart, final int laneOffsetAtEnd,
-        final LaneType laneType, final DoubleScalar.Abs<SpeedUnit> speedLimit, final OTSDEVSSimulatorInterface simulator)
+        final LaneType laneType, final Speed.Abs speedLimit, final OTSDEVSSimulatorInterface simulator)
         throws RemoteException, NamingException, NetworkException, OTSGeometryException
     {
         final CrossSectionLink link = makeLink(name, from, to, intermediatePoints);
         Lane[] result = new Lane[laneCount];
-        DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(4.0, LengthUnit.METER);
+        Length.Rel width = new Length.Rel(4.0, LengthUnit.METER);
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
         {
             // Be ware! LEFT is lateral positive, RIGHT is lateral negative.
-            DoubleScalar.Rel<LengthUnit> latPosAtStart =
-                new DoubleScalar.Rel<LengthUnit>((-0.5 - laneIndex - laneOffsetAtStart) * width.getSI(), LengthUnit.METER);
-            DoubleScalar.Rel<LengthUnit> latPosAtEnd =
-                new DoubleScalar.Rel<LengthUnit>((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.METER);
+            Length.Rel latPosAtStart =
+                new Length.Rel((-0.5 - laneIndex - laneOffsetAtStart) * width.getSI(), LengthUnit.METER);
+            Length.Rel latPosAtEnd = new Length.Rel((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.METER);
             result[laneIndex] =
                 makeLane(link, "lane." + laneIndex, laneType, latPosAtStart, latPosAtEnd, width, speedLimit, simulator);
         }
@@ -193,9 +190,9 @@ public final class LaneFactory
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLane(final String name, final OTSNode from, final OTSNode to,
-        final OTSPoint3D[] intermediatePoints, final int laneCount, final LaneType laneType,
-        final DoubleScalar.Abs<SpeedUnit> speedLimit, final OTSDEVSSimulatorInterface simulator) throws RemoteException,
-        NamingException, NetworkException, OTSGeometryException
+        final OTSPoint3D[] intermediatePoints, final int laneCount, final LaneType laneType, final Speed.Abs speedLimit,
+        final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException, NetworkException,
+        OTSGeometryException
     {
         return makeMultiLane(name, from, to, intermediatePoints, laneCount, 0, 0, laneType, speedLimit, simulator);
     }

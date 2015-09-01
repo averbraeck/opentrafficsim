@@ -3,9 +3,9 @@ package org.opentrafficsim.core.network.factory.xml;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.XMLParser;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ShortestRouteTag
+class ShortestRouteTag implements OTS_SCALAR
 {
     /** name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -44,7 +44,7 @@ class ShortestRouteTag
 
     /** time unit for the "cost" per time. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Abs<FrequencyUnit> costPerTime = null;
+    Frequency.Abs costPerTime = null;
 
     /** distance unit for the "cost" per time. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

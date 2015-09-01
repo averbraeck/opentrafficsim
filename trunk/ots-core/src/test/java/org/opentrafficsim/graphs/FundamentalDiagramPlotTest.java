@@ -25,6 +25,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.jfree.chart.ChartPanel;
 import org.junit.Test;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.car.CarTest;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -50,7 +51,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  * initial version Aug 25, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FundamentalDiagramPlotTest implements OTSModelInterface
+public class FundamentalDiagramPlotTest implements OTSModelInterface, OTS_SCALAR
 {
     /** */
     private static final long serialVersionUID = 20150226L;
@@ -63,9 +64,9 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
     @Test
     public final void fundamentalDiagramTest() throws Exception
     {
-        DoubleScalar.Rel<TimeUnit> aggregationTime = new DoubleScalar.Rel<TimeUnit>(30, TimeUnit.SECOND);
-        DoubleScalar.Rel<LengthUnit> position = new DoubleScalar.Rel<LengthUnit>(123, LengthUnit.METER);
-        DoubleScalar.Rel<LengthUnit> carPosition = new DoubleScalar.Rel<LengthUnit>(122.5, LengthUnit.METER);
+        Time.Rel aggregationTime = new Time.Rel(30, TimeUnit.SECOND);
+        Length.Rel position = new Length.Rel(123, LengthUnit.METER);
+        Length.Rel carPosition = new Length.Rel(122.5, LengthUnit.METER);
         LaneType laneType = new LaneType("CarLane");
         GTUType gtuType = GTUType.makeGTUType("Car");
         laneType.addCompatibility(gtuType);
@@ -101,19 +102,19 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
         assertTrue("No data should result in NaN", java.lang.Double.isNaN(value));
         ActionEvent setXToSpeed = new ActionEvent(fd, 0, "Speed/Speed");
         ActionEvent resetAxis = new ActionEvent(fd, 0, "Flow/Density");
-        DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
-        DoubleScalar.Abs<TimeUnit> time = new DoubleScalar.Abs<TimeUnit>(123, TimeUnit.SECOND);
-        DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
-        DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
-        DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
+        Speed.Abs speed = new Speed.Abs(100, SpeedUnit.KM_PER_HOUR);
+        Time.Abs time = new Time.Abs(123, TimeUnit.SECOND);
+        Length.Rel length = new Length.Rel(5.0, LengthUnit.METER);
+        Length.Rel width = new Length.Rel(2.0, LengthUnit.METER);
+        Speed.Abs maxSpeed = new Speed.Abs(120, SpeedUnit.KM_PER_HOUR);
+        Map<Lane, Length.Rel> initialLongitudinalPositions = new HashMap<>();
         initialLongitudinalPositions.put(lane, carPosition);
         SimpleSimulator simulator =
-            new SimpleSimulator(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0,
-                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(1800, TimeUnit.SECOND), this);
+            new SimpleSimulator(new Time.Abs(0, TimeUnit.SECOND), new Time.Rel(0,
+                TimeUnit.SECOND), new Time.Rel(1800, TimeUnit.SECOND), this);
 
         // add a sink 100 meter before the end of the lane.
-        lane.addSensor(new SinkSensor(lane, new DoubleScalar.Rel<LengthUnit>(lane.getLength().getSI() - 100,
+        lane.addSensor(new SinkSensor(lane, new Length.Rel(lane.getLength().getSI() - 100,
             LengthUnit.METER), simulator), GTUType.ALL);
 
         simulator.runUpTo(time);
@@ -131,12 +132,12 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
         int bucket = (int) Math.floor(time.getSI() / aggregationTime.getSI());
         LaneChangeModel laneChangeModel = new Egoistic();
         GTUFollowingModel gtuFollowingModel =
-            new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.METER_PER_SECOND_2),
-                new DoubleScalar.Rel<TimeUnit>(1000, TimeUnit.SECOND));
+            new FixedAccelerationModel(new Acceleration.Abs(0, AccelerationUnit.METER_PER_SECOND_2),
+                new Time.Rel(1000, TimeUnit.SECOND));
         // Construct a car
         new LaneBasedIndividualCar("1", gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, speed,
             length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
-        simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(124, TimeUnit.SECOND));
+        simulator.runUpTo(new Time.Abs(124, TimeUnit.SECOND));
         while (simulator.isRunning())
         {
             try
@@ -217,10 +218,10 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
             fd.actionPerformed(resetAxis);
         }
         // Check that harmonic mean speed is computed
-        speed = new DoubleScalar.Abs<SpeedUnit>(10, SpeedUnit.KM_PER_HOUR);
+        speed = new Speed.Abs(10, SpeedUnit.KM_PER_HOUR);
         new LaneBasedIndividualCar("1234", gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, speed,
             length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
-        simulator.runUpTo(new DoubleScalar.Abs<TimeUnit>(125, TimeUnit.SECOND));
+        simulator.runUpTo(new Time.Abs(125, TimeUnit.SECOND));
         while (simulator.isRunning())
         {
             try
@@ -311,8 +312,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface
     @Test
     public final void testHints() throws Exception
     {
-        DoubleScalar.Rel<TimeUnit> aggregationTime = new DoubleScalar.Rel<TimeUnit>(30, TimeUnit.SECOND);
-        DoubleScalar.Rel<LengthUnit> position = new DoubleScalar.Rel<LengthUnit>(123, LengthUnit.METER);
+        Time.Rel aggregationTime = new Time.Rel(30, TimeUnit.SECOND);
+        Length.Rel position = new Length.Rel(123, LengthUnit.METER);
         LaneType laneType = new LaneType("CarLane");
         FundamentalDiagram fd =
             new FundamentalDiagram("Fundamental Diagram", aggregationTime, CarTest.makeLane(laneType), position);

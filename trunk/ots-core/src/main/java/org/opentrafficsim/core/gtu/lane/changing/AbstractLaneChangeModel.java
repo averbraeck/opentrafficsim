@@ -4,9 +4,6 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Map;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.following.AbstractGTUFollowingModel;
@@ -36,16 +33,15 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
     @Override
     public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
         final Collection<HeadwayGTU> sameLaneGTUs, final Collection<HeadwayGTU> preferredLaneGTUs,
-        final Collection<HeadwayGTU> nonPreferredLaneGTUs, final DoubleScalar.Abs<SpeedUnit> speedLimit,
-        final DoubleScalar.Rel<AccelerationUnit> preferredLaneRouteIncentive,
-        final DoubleScalar.Rel<AccelerationUnit> laneChangeThreshold,
-        final DoubleScalar.Rel<AccelerationUnit> nonPreferredLaneRouteIncentive) throws RemoteException
+        final Collection<HeadwayGTU> nonPreferredLaneGTUs, final Speed.Abs speedLimit,
+        final Acceleration.Rel preferredLaneRouteIncentive, final Acceleration.Rel laneChangeThreshold,
+        final Acceleration.Rel nonPreferredLaneRouteIncentive) throws RemoteException
     {
         try
         {
-            Map<Lane, DoubleScalar.Rel<LengthUnit>> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
+            Map<Lane, Length.Rel> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
             Lane lane = positions.keySet().iterator().next();
-            DoubleScalar.Rel<LengthUnit> longitudinalPosition = positions.get(lane);
+            Length.Rel longitudinalPosition = positions.get(lane);
             // TODO make this driving side dependent; i.e. implement a general way to figure out on which side of the
             // road cars are supposed to drive
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;
@@ -64,8 +60,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 System.out.println("Problem");
                 gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneGTUs, speedLimit);
             }
-            DoubleScalar.Abs<AccelerationUnit> straightA =
-                DoubleScalar.plus(applyDriverPersonality(straightAccelerationSteps), laneChangeThreshold);
+            Acceleration.Abs straightA = applyDriverPersonality(straightAccelerationSteps).plus(laneChangeThreshold);
             DualAccelerationStep nonPreferrredAccelerationSteps =
                 null == nonPreferredLane ? null : gtu.getGTUFollowingModel().computeAcceleration(gtu, nonPreferredLaneGTUs,
                     speedLimit);
@@ -75,7 +70,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             {
                 nonPreferrredAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
             }
-            DoubleScalar.Abs<AccelerationUnit> nonPreferredA =
+            Acceleration.Abs nonPreferredA =
                 null == nonPreferredLane ? null : applyDriverPersonality(nonPreferrredAccelerationSteps);
             DualAccelerationStep preferredAccelerationSteps =
                 null == preferredLane ? null : gtu.getGTUFollowingModel().computeAcceleration(gtu, preferredLaneGTUs,
@@ -86,8 +81,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             {
                 preferredAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
             }
-            DoubleScalar.Abs<AccelerationUnit> preferredA =
-                null == preferredLane ? null : applyDriverPersonality(preferredAccelerationSteps);
+            Acceleration.Abs preferredA = null == preferredLane ? null : applyDriverPersonality(preferredAccelerationSteps);
             if (null == preferredA)
             {
                 // Lane change to the preferred lane is not possible
@@ -127,12 +121,9 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 }
             }
             // All merges are possible
-            DoubleScalar.Rel<AccelerationUnit> preferredAttractiveness =
-                DoubleScalar.minus(DoubleScalar.plus(preferredA, preferredLaneRouteIncentive), straightA)
-                    ;
-            DoubleScalar.Rel<AccelerationUnit> nonPreferredAttractiveness =
-                DoubleScalar.minus(DoubleScalar.plus(nonPreferredA, nonPreferredLaneRouteIncentive), straightA)
-                    ;
+            Acceleration.Rel preferredAttractiveness = preferredA.plus(preferredLaneRouteIncentive).minus(straightA);
+            Acceleration.Rel nonPreferredAttractiveness =
+                nonPreferredA.plus(nonPreferredLaneRouteIncentive).minus(straightA);
             if (preferredAttractiveness.getSI() <= 0 && nonPreferredAttractiveness.getSI() < 0)
             {
                 // Stay in current lane
@@ -163,5 +154,5 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
      *         comparison to a similarly computed acceleration in the non-, or different-lane-changed state) to decide if a lane
      *         change should be performed
      */
-    public abstract DoubleScalar.Abs<AccelerationUnit> applyDriverPersonality(DualAccelerationStep accelerationSteps);
+    public abstract Acceleration.Abs applyDriverPersonality(DualAccelerationStep accelerationSteps);
 }

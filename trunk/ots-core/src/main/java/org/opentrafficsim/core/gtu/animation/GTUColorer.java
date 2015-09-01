@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.gtu.GTU;
 
 /**
@@ -17,7 +18,7 @@ import org.opentrafficsim.core.gtu.GTU;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface GTUColorer
+public interface GTUColorer extends OTS_SCALAR
 {
     /**
      * Return the fill color for a GTU.

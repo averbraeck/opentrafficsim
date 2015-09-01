@@ -152,7 +152,7 @@ public class TestOpenDriveParser extends AbstractWrappableSimulation
         /** {@inheritDoc} */
         @Override
         public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-            throws RemoteException
+                throws RemoteException
         {
             return this.simulator;
         }

@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -85,9 +84,8 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> suitability(final Lane lane,
-        final DoubleScalar.Rel<LengthUnit> longitudinalPosition, final GTUType gtuType,
-        final DoubleScalar.Rel<TimeUnit> timeHorizon) throws NetworkException
+    public final Length.Rel suitability(final Lane lane, final Length.Rel longitudinalPosition, final GTUType gtuType,
+        final Time.Rel timeHorizon) throws NetworkException
     {
         double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();
         double spareTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit(gtuType).getSI();
@@ -191,8 +189,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
         }
         // We have now found the first upcoming branching Node
         // Which continuing link is the one we need?
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> suitabilityOfLanesBeforeBranch =
-            new HashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, Length.Rel> suitabilityOfLanesBeforeBranch = new HashMap<Lane, Length.Rel>();
         Link linkAfterBranch = null;
         for (Link link : nextSplitNode.getLinksOut())
         {
@@ -229,13 +226,13 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                         if (connectingLane.getParentLink() == linkAfterBranch
                             && connectingLane.getLaneType().isCompatible(gtuType))
                         {
-                            DoubleScalar.Rel<LengthUnit> currentValue = suitabilityOfLanesBeforeBranch.get(l);
+                            Length.Rel currentValue = suitabilityOfLanesBeforeBranch.get(l);
                             // Use recursion to find out HOW suitable this continuation lane is, but don't revert back
                             // to the maximum time horizon (or we could end up in infinite recursion when there are
                             // loops in the network).
-                            DoubleScalar.Rel<LengthUnit> value =
-                                suitability(connectingLane, new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.SI), gtuType,
-                                    new DoubleScalar.Rel<TimeUnit>(spareTime, TimeUnit.SI));
+                            Length.Rel value =
+                                suitability(connectingLane, new Length.Rel(0, LengthUnit.SI), gtuType, new Time.Rel(
+                                    spareTime, TimeUnit.SI));
                             // Use the minimum of the value computed for the first split junction (if there is one)
                             // and the value computed for the second split junction.
                             suitabilityOfLanesBeforeBranch.put(l, null == currentValue || value.le(currentValue) ? value
@@ -249,17 +246,17 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
         {
             throw new NetworkException("No lanes available on Link " + linkBeforeBranch);
         }
-        DoubleScalar.Rel<LengthUnit> currentLaneSuitability = suitabilityOfLanesBeforeBranch.get(currentLane);
+        Length.Rel currentLaneSuitability = suitabilityOfLanesBeforeBranch.get(currentLane);
         if (null != currentLaneSuitability)
         {
             return currentLaneSuitability; // Following the current lane will keep us on the Route
         }
         // Performing one or more lane changes (left or right) is required.
         int totalLanes = countCompatibleLanes(currentLane.getParentLink(), gtuType);
-        DoubleScalar.Rel<LengthUnit> leftSuitability =
+        Length.Rel leftSuitability =
             computeSuitabilityWithLaneChanges(currentLane, remainingDistance, suitabilityOfLanesBeforeBranch, totalLanes,
                 LateralDirectionality.LEFT, gtuType);
-        DoubleScalar.Rel<LengthUnit> rightSuitability =
+        Length.Rel rightSuitability =
             computeSuitabilityWithLaneChanges(currentLane, remainingDistance, suitabilityOfLanesBeforeBranch, totalLanes,
                 LateralDirectionality.RIGHT, gtuType);
         if (leftSuitability.ge(rightSuitability))

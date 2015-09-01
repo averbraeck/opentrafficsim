@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.gtu.following;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 
 /**
@@ -15,7 +15,7 @@ import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class HeadwayGTU
+public class HeadwayGTU implements OTS_SCALAR
 {
     /** the other GTU. */
     private final LaneBasedGTU otherGTU;
@@ -57,13 +57,13 @@ public class HeadwayGTU
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the distance to the GTU, return value null indicates that the other GTU is
      *         parallel to the reference GTU
      */
-    public final DoubleScalar.Rel<LengthUnit> getDistance()
+    public final Length.Rel getDistance()
     {
         if (Double.isNaN(this.distanceSI))
         {
             return null;
         }
-        return new DoubleScalar.Rel<LengthUnit>(this.distanceSI, LengthUnit.SI);
+        return new Length.Rel(this.distanceSI, LengthUnit.SI);
     }
 
     /** {@inheritDoc} */

@@ -13,8 +13,6 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -63,10 +61,9 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      * @throws GTUException when gtuFollowingModel is null
      */
     public LaneBasedTemplateCar(final String id, final TemplateGTUType templateGtuType,
-        final GTUFollowingModel gtuFollowingModel,
-        final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator)
-        throws NamingException, RemoteException, NetworkException, SimRuntimeException, GTUException
+        final GTUFollowingModel gtuFollowingModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
+        final Speed.Abs initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator) throws NamingException,
+        RemoteException, NetworkException, SimRuntimeException, GTUException
     {
         this(id, templateGtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, routeNavigator,
             DefaultCarAnimation.class);
@@ -88,9 +85,8 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      * @throws GTUException when gtuFollowingModel is null
      */
     public LaneBasedTemplateCar(final String id, final TemplateGTUType templateGtuType,
-        final GTUFollowingModel gtuFollowingModel,
-        final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions,
-        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator,
+        final GTUFollowingModel gtuFollowingModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
+        final Speed.Abs initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator,
         final Class<? extends Renderable2D> animationClass) throws NamingException, RemoteException, NetworkException,
         SimRuntimeException, GTUException
     {
@@ -99,8 +95,8 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
         // sensor positions.
         // We take the rear position of the Car to be the reference point. So the front is the length
         // of the Car away from the reference point in the positive (driving) X-direction.
-        DoubleScalar.Rel<LengthUnit> zero = new DoubleScalar.Rel<LengthUnit>(0.0d, LengthUnit.METER);
-        DoubleScalar.Rel<LengthUnit> dx = new DoubleScalar.Rel<LengthUnit>(getLength().getSI(), LengthUnit.METER);
+        Length.Rel zero = new Length.Rel(0.0d, LengthUnit.METER);
+        Length.Rel dx = new Length.Rel(getLength().getSI(), LengthUnit.METER);
         this.relativePositions.put(RelativePosition.FRONT, new RelativePosition(dx, zero, zero, RelativePosition.FRONT));
         this.relativePositions.put(RelativePosition.REAR, new RelativePosition(zero, zero, zero, RelativePosition.REAR));
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
@@ -170,7 +166,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
     {
         try
         {
-            Map<Lane, DoubleScalar.Rel<LengthUnit>> frontPositions = positions(getFront());
+            Map<Lane, Length.Rel> frontPositions = positions(getFront());
             Lane frontLane = frontPositions.keySet().iterator().next();
             return String.format("Car %s front:%s[%s]", getId(), frontLane, frontPositions.get(frontLane));
         }
@@ -216,10 +212,10 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
         private TemplateGTUType templateGtuType = null;
 
         /** the initial positions of the car on one or more lanes. */
-        private Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = null;;
+        private Map<Lane, Length.Rel> initialLongitudinalPositions = null;;
 
         /** the initial speed of the car on the lane. */
-        private DoubleScalar.Abs<SpeedUnit> initialSpeed = null;
+        private Speed.Abs initialSpeed = null;
 
         /** CarFollowingModel used by this Car. */
         private GTUFollowingModel gtuFollowingModel = null;
@@ -255,7 +251,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
          * @return the class itself for chaining the setters
          */
         public final LaneBasedTemplateCarBuilder setInitialLongitudinalPositions(
-            final Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions)
+            final Map<Lane, Length.Rel> initialLongitudinalPositions)
         {
             this.initialLongitudinalPositions = initialLongitudinalPositions;
             return this;
@@ -265,7 +261,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
          * @param initialSpeed set initialSpeed
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedTemplateCarBuilder setInitialSpeed(final DoubleScalar.Abs<SpeedUnit> initialSpeed)
+        public final LaneBasedTemplateCarBuilder setInitialSpeed(final Speed.Abs initialSpeed)
         {
             this.initialSpeed = initialSpeed;
             return this;

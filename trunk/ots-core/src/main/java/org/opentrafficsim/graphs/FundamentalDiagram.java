@@ -16,10 +16,8 @@ import javax.swing.SwingConstants;
 import javax.swing.event.EventListenerList;
 
 import org.djunits.unit.FrequencyUnit;
-import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -36,6 +34,7 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -55,7 +54,7 @@ import org.opentrafficsim.core.network.lane.Lane;
  * initial version Jul 31, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FundamentalDiagram extends JFrame implements XYDataset, ActionListener
+public class FundamentalDiagram extends JFrame implements XYDataset, ActionListener, OTS_SCALAR
 {
     /** */
     private static final long serialVersionUID = 20140701L;
@@ -67,18 +66,18 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     private final String caption;
 
     /** Position of this Fundamental Diagram sensor. */
-    private final DoubleScalar.Rel<LengthUnit> position;
+    private final Length.Rel position;
 
     /** Area to show status information. */
     private final JLabel statusLabel;
 
     /** Sample duration of the detector that generates this Fundamental Diagram. */
-    private final DoubleScalar.Rel<TimeUnit> aggregationTime;
+    private final Time.Rel aggregationTime;
 
     /**
      * @return aggregationTime
      */
-    public final DoubleScalar.Rel<TimeUnit> getAggregationTime()
+    public final Time.Rel getAggregationTime()
     {
         return this.aggregationTime;
     }
@@ -100,8 +99,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     }
 
     /** Definition of the speed axis. */
-    private Axis speedAxis = new Axis(new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-        new DoubleScalar.Abs<SpeedUnit>(180, SpeedUnit.KM_PER_HOUR), null, 0d, "Speed [km/h]", "Speed", "speed %.0f km/h");
+    private Axis speedAxis = new Axis(new Speed.Abs(0, SpeedUnit.KM_PER_HOUR),
+        new Speed.Abs(180, SpeedUnit.KM_PER_HOUR), null, 0d, "Speed [km/h]", "Speed", "speed %.0f km/h");
 
     /**
      * @return speedAxis
@@ -121,7 +120,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /** Definition of the flow axis. */
     private Axis flowAxis =
-        new Axis(new DoubleScalar.Abs<FrequencyUnit>(0, FrequencyUnit.PER_HOUR), new DoubleScalar.Abs<FrequencyUnit>(3000d,
+        new Axis(new Frequency.Abs(0, FrequencyUnit.PER_HOUR), new Frequency.Abs(3000d,
             FrequencyUnit.HERTZ), null, 0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
 
     /** The currently shown X-axis. */
@@ -163,8 +162,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * @param position DoubleScalarRel&lt;LengthUnit&gt;; longitudinal position of the detector on the Lane
      * @throws NetworkException on network inconsistency
      */
-    public FundamentalDiagram(final String caption, final DoubleScalar.Rel<TimeUnit> aggregationTime, final Lane lane,
-        final DoubleScalar.Rel<LengthUnit> position) throws NetworkException
+    public FundamentalDiagram(final String caption, final Time.Rel aggregationTime, final Lane lane,
+        final Length.Rel position) throws NetworkException
     {
         if (aggregationTime.getSI() <= 0)
         {
@@ -237,7 +236,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      * Retrieve the position of the detector.
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the position of the detector
      */
-    public final DoubleScalar.Rel<LengthUnit> getPosition()
+    public final Length.Rel getPosition()
     {
         return this.position;
     }
@@ -273,7 +272,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     {
         try
         {
-            DoubleScalar.Abs<TimeUnit> detectionTime = gtu.getSimulator().getSimulatorTime().get();
+            Time.Abs detectionTime = gtu.getSimulator().getSimulatorTime().getTime();
             // Figure out the time bin
             final int timeBin = (int) Math.floor(detectionTime.getSI() / this.aggregationTime.getSI());
             // Extend storage if needed
@@ -510,7 +509,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
          * Add one Car detection to this Sample.
          * @param speed DoubleScalar.Rel&lt;SpeedUnit&gt;; the detected speed
          */
-        public void addData(final DoubleScalar.Abs<SpeedUnit> speed)
+        public void addData(final Speed.Abs speed)
         {
             double sumReciprocalSpeeds = 0;
             if (this.flow > 0)
@@ -603,7 +602,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
          * @param simulator simulator to allow animation
          * @throws NetworkException on network inconsistency
          */
-        public FundamentalDiagramSensor(final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
+        public FundamentalDiagramSensor(final Lane lane, final Length.Rel longitudinalPosition,
             final OTSSimulatorInterface simulator) throws NetworkException
         {
             super(lane, longitudinalPosition, RelativePosition.REFERENCE, "FUNDAMENTAL_DIAGRAM_SENSOR@" + lane.toString(),

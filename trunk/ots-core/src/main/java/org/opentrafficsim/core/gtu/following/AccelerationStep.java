@@ -1,8 +1,6 @@
 package org.opentrafficsim.core.gtu.following;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 
 /**
  * Storage for the result of a GTU following model. <br>
@@ -16,21 +14,21 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class AccelerationStep
+public class AccelerationStep implements OTS_SCALAR
 {
     /** Acceleration that will be maintained during the current time slot. */
-    private final DoubleScalar.Abs<AccelerationUnit> acceleration;
+    private final Acceleration.Abs acceleration;
 
     /** Time when the current time slot ends. */
-    private final DoubleScalar.Abs<TimeUnit> validUntil;
+    private final Time.Abs validUntil;
 
     /**
      * Create a new GTUFollowingModelResult.
      * @param acceleration DoubleScalarAbs&lt;AccelerationUnit&gt;; computed acceleration
      * @param validUntil DoubleScalarAbs&lt;TimeUnit&gt;; time when this result expires
      */
-    public AccelerationStep(final DoubleScalar.Abs<AccelerationUnit> acceleration,
-        final DoubleScalar.Abs<TimeUnit> validUntil)
+    public AccelerationStep(final Acceleration.Abs acceleration,
+        final Time.Abs validUntil)
     {
         this.acceleration = acceleration;
         this.validUntil = validUntil;
@@ -39,7 +37,7 @@ public class AccelerationStep
     /**
      * @return acceleration.
      */
-    public final DoubleScalar.Abs<AccelerationUnit> getAcceleration()
+    public final Acceleration.Abs getAcceleration()
     {
         return this.acceleration;
     }
@@ -47,7 +45,7 @@ public class AccelerationStep
     /**
      * @return validUntil.
      */
-    public final DoubleScalar.Abs<TimeUnit> getValidUntil()
+    public final Time.Abs getValidUntil()
     {
         return this.validUntil;
     }

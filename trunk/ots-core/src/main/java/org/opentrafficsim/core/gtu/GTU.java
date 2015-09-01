@@ -6,10 +6,7 @@ import java.util.Map;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 
 /**
@@ -25,19 +22,19 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public interface GTU extends LocatableInterface, Serializable
+public interface GTU extends LocatableInterface, Serializable, OTS_SCALAR
 {
     /** @return the id of the GTU */
     String getId();
 
     /** @return the maximum length of the GTU (parallel with driving direction). */
-    DoubleScalar.Rel<LengthUnit> getLength();
+    Length.Rel getLength();
 
     /** @return the maximum width of the GTU (perpendicular to driving direction). */
-    DoubleScalar.Rel<LengthUnit> getWidth();
+    Length.Rel getWidth();
 
     /** @return the maximum velocity of the GTU, in the linear direction */
-    DoubleScalar.Abs<SpeedUnit> getMaximumVelocity();
+    Speed.Abs getMaximumVelocity();
 
     /** @return the type of GTU, e.g. TruckType, CarType, BusType */
     GTUType getGTUType();
@@ -58,7 +55,7 @@ public interface GTU extends LocatableInterface, Serializable
      * @return the current velocity of the GTU, combining longitudinal, lateral and vertical speed components.
      * @throws RemoteException on communications failure
      */
-    DoubleScalar.Abs<SpeedUnit> getVelocity() throws RemoteException;
+    Speed.Abs getVelocity() throws RemoteException;
 
     /** @return the positions for this GTU. */
     Map<RelativePosition.TYPE, RelativePosition> getRelativePositions();
@@ -70,13 +67,13 @@ public interface GTU extends LocatableInterface, Serializable
      * @return the current acceleration of the GTU, combining longitudinal, lateral and vertical acceleration components.
      * @throws RemoteException on communications failure
      */
-    DoubleScalar.Abs<AccelerationUnit> getAcceleration() throws RemoteException;
+    Acceleration.Abs getAcceleration() throws RemoteException;
 
     /**
      * Retrieve the odometer value.
      * @return DoubleScalar.Abs&lt;LengthUnit&gt;; the current odometer value
      * @throws RemoteException on communications failure
      */
-    DoubleScalar.Abs<LengthUnit> getOdometer() throws RemoteException;
+    Length.Abs getOdometer() throws RemoteException;
 
 }

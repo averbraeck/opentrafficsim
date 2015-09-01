@@ -27,6 +27,8 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.jfree.chart.ChartPanel;
 import org.jfree.data.DomainOrder;
 import org.junit.Test;
+import org.opentrafficsim.core.OTS_DIST;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.car.CarTest;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -53,7 +55,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  * initial version Aug 21, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ContourPlotTest
+public class ContourPlotTest implements OTS_SCALAR
 {
     /**
      * Create a dummy path for the tests.
@@ -66,7 +68,7 @@ public class ContourPlotTest
         ArrayList<Lane> result = new ArrayList<Lane>();
         Lane[] lanes =
             LaneFactory.makeMultiLane("AtoB", new OTSNode("A", new OTSPoint3D(1234, 0, 0)), new OTSNode("B", new OTSPoint3D(
-                12345, 0, 0)), null, 1, laneType, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR), null);
+                12345, 0, 0)), null, 1, laneType, new Speed.Abs(100, SpeedUnit.KM_PER_HOUR), null);
         result.add(lanes[0]);
         return result;
     }
@@ -315,24 +317,24 @@ public class ContourPlotTest
         cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularity " + useDistanceGranularity));
         cp.reGraph();
         bins = cp.getItemCount(0);
-        DoubleScalar.Abs<TimeUnit> initialTime = new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND);
-        DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(100, LengthUnit.METER);
-        DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
+        Time.Abs initialTime = new Time.Abs(0, TimeUnit.SECOND);
+        Length.Rel initialPosition = new Length.Rel(100, LengthUnit.METER);
+        Speed.Abs initialSpeed = new Speed.Abs(50, SpeedUnit.KM_PER_HOUR);
         ContourPlotModel model = new ContourPlotModel();
         SimpleSimulator simulator =
-            new SimpleSimulator(initialTime, new DoubleScalar.Rel<TimeUnit>(0, TimeUnit.SECOND),
-                new DoubleScalar.Rel<TimeUnit>(1800, TimeUnit.SECOND), model);
+            new SimpleSimulator(initialTime, new Time.Rel(0, TimeUnit.SECOND),
+                new Time.Rel(1800, TimeUnit.SECOND), model);
         // Create a car running 50 km.h
         SequentialFixedAccelerationModel gtuFollowingModel = new SequentialFixedAccelerationModel(simulator);
         // Make the car run at constant speed for one minute
-        gtuFollowingModel.addStep(new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
-            AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(60, TimeUnit.SECOND)));
+        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration.Abs(0,
+            AccelerationUnit.METER_PER_SECOND_2), new Time.Rel(60, TimeUnit.SECOND)));
         // Make the car run at constant speed for another minute
-        gtuFollowingModel.addStep(new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
-            AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(600, TimeUnit.SECOND)));
+        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration.Abs(0,
+            AccelerationUnit.METER_PER_SECOND_2), new Time.Rel(600, TimeUnit.SECOND)));
         // Make the car run at constant speed for five more minutes
-        gtuFollowingModel.addStep(new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0,
-            AccelerationUnit.METER_PER_SECOND_2), new DoubleScalar.Rel<TimeUnit>(300, TimeUnit.SECOND)));
+        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration.Abs(0,
+            AccelerationUnit.METER_PER_SECOND_2), new Time.Rel(300, TimeUnit.SECOND)));
         LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar car =
             CarTest.makeReferenceCar("0", gtuType, (Lane) lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
@@ -383,7 +385,7 @@ public class ContourPlotTest
             }
         } // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
           // + car.getPosition(car.getLastEvaluationTime()));
-          // System.out.println("At time " + simulator.getSimulator().getSimulatorTime().get() + " car is at " + car);
+          // System.out.println("At time " + simulator.getSimulator().getSimulatorTime().getTime() + " car is at " + car);
         for (int item = 0; item < bins; item++)
         {
             double x = cp.getXValue(0, item);
@@ -405,10 +407,10 @@ public class ContourPlotTest
             if (x + useTimeGranularity >= car.getLastEvaluationTime().getSI() && x <= car.getNextEvaluationTime().getSI())
             {
                 // the car MAY have contributed to this cell
-                DoubleScalar.Abs<TimeUnit> cellStartTime =
-                    new DoubleScalar.Abs<TimeUnit>(Math.max(car.getLastEvaluationTime().getSI(), x), TimeUnit.SECOND);
-                DoubleScalar.Abs<TimeUnit> cellEndTime =
-                    new DoubleScalar.Abs<TimeUnit>(Math.min(car.getNextEvaluationTime().getSI(), x + useTimeGranularity),
+                Time.Abs cellStartTime =
+                    new Time.Abs(Math.max(car.getLastEvaluationTime().getSI(), x), TimeUnit.SECOND);
+                Time.Abs cellEndTime =
+                    new Time.Abs(Math.min(car.getNextEvaluationTime().getSI(), x + useTimeGranularity),
                         TimeUnit.SECOND);
                 if (cellStartTime.lt(cellEndTime)
                     && car.position(lane, car.getReference(), cellStartTime).getSI() <= y + useDistanceGranularity
@@ -480,7 +482,7 @@ public class ContourPlotTest
                 observedHighestTime = xValue;
             }
         }
-        DoubleScalar.Abs<TimeUnit> carEndTime = car.getNextEvaluationTime();
+        Time.Abs carEndTime = car.getNextEvaluationTime();
         double expectedHighestTime = Math.floor((carEndTime.getSI() - 0.001) / useTimeGranularity) * useTimeGranularity;
         assertEquals("Time range should run up to " + expectedHighestTime, expectedHighestTime, observedHighestTime, 0.0001);
         // Check the updateHint method in the PointerHandler

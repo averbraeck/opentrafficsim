@@ -30,8 +30,8 @@ public class Shoulder extends CrossSectionElement
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Shoulder(final CrossSectionLink parentLink, final String id, final DoubleScalar.Rel<LengthUnit> lateralPosition,
-        final DoubleScalar.Rel<LengthUnit> beginWidth, final DoubleScalar.Rel<LengthUnit> endWidth)
+    public Shoulder(final CrossSectionLink parentLink, final String id, final Length.Rel lateralPosition,
+        final Length.Rel beginWidth, final Length.Rel endWidth)
         throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralPosition, lateralPosition, beginWidth, endWidth);

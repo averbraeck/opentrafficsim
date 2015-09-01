@@ -16,7 +16,8 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_DIST;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -40,7 +41,7 @@ import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class ListGTUGenerator
+public class ListGTUGenerator implements OTS_SCALAR, OTS_DIST
 {
     /** Name of this ListGTUGenerator. */
     private final String name;
@@ -61,7 +62,7 @@ public class ListGTUGenerator
     private final LaneBasedRouteGenerator routeGenerator;
 
     /** Initial speed of the generated GTUs. */
-    private final DoubleScalar.Abs<SpeedUnit> initialSpeed;
+    private final Speed.Abs initialSpeed;
 
     /** The GTU colorer that will be linked to each generated GTU. */
     private final GTUColorer gtuColorer;
@@ -97,7 +98,7 @@ public class ListGTUGenerator
      */
     public ListGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
         final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel,
-        final DoubleScalar.Abs<SpeedUnit> initialSpeed, final Lane lane, final DoubleScalar.Rel<LengthUnit> position,
+        final Speed.Abs initialSpeed, final Lane lane, final Length.Rel position,
         final LaneBasedRouteGenerator routeGenerator, final GTUColorer gtuColorer, final String fileName)
         throws RemoteException, SimRuntimeException, NetworkException
     {
@@ -143,7 +144,7 @@ public class ListGTUGenerator
             }
             while (line.equals("")); // ignore blank lines
             double when = Double.parseDouble(line);
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(when, TimeUnit.SECOND), this, this,
+            this.simulator.scheduleEventAbs(new Time.Abs(when, TimeUnit.SECOND), this, this,
                 "generateCar", null);
         }
         catch (NumberFormatException exception)
@@ -166,15 +167,15 @@ public class ListGTUGenerator
      */
     protected final void generateCar()
     {
-        DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Length.Rel initialPosition = new Length.Rel(0, LengthUnit.METER);
+        Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(this.lane, initialPosition);
         try
         {
-            DoubleScalar.Rel<LengthUnit> vehicleLength = new DoubleScalar.Rel<LengthUnit>(4, LengthUnit.METER);
+            Length.Rel vehicleLength = new Length.Rel(4, LengthUnit.METER);
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, this.gtuFollowingModel,
-                this.laneChangeModel, initialPositions, this.initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(
-                    1.8, LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), this.routeGenerator
+                this.laneChangeModel, initialPositions, this.initialSpeed, vehicleLength, new Length.Rel(
+                    1.8, LengthUnit.METER), new Speed.Abs(200, SpeedUnit.KM_PER_HOUR), this.routeGenerator
                     .generateRouteNavigator(), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
             scheduleNextVehicle();
         }

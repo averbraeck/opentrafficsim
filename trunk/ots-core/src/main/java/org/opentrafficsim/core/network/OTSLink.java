@@ -47,7 +47,7 @@ public class OTSLink implements Link, Serializable, LocatableInterface
     private final OTSLine3D designLine;
 
     /** Link capacity in vehicles per time unit. This is a mutable property (e.g., blockage). */
-    private DoubleScalar.Abs<FrequencyUnit> capacity;
+    private Frequency.Abs capacity;
 
     /**
      * Construct a new link.
@@ -58,7 +58,7 @@ public class OTSLink implements Link, Serializable, LocatableInterface
      * @param capacity link capacity in GTUs per hour
      */
     public OTSLink(final String id, final Node startNode, final Node endNode, final OTSLine3D designLine,
-        final DoubleScalar.Abs<FrequencyUnit> capacity)
+        final Frequency.Abs capacity)
     {
         this.id = id;
         this.startNode = startNode;
@@ -79,7 +79,7 @@ public class OTSLink implements Link, Serializable, LocatableInterface
      */
     public OTSLink(final String id, final Node startNode, final Node endNode, final OTSLine3D designLine)
     {
-        this(id, startNode, endNode, designLine, new DoubleScalar.Abs<FrequencyUnit>(Double.POSITIVE_INFINITY,
+        this(id, startNode, endNode, designLine, new Frequency.Abs(Double.POSITIVE_INFINITY,
             FrequencyUnit.PER_SECOND));
     }
 
@@ -106,14 +106,14 @@ public class OTSLink implements Link, Serializable, LocatableInterface
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<FrequencyUnit> getCapacity()
+    public final Frequency.Abs getCapacity()
     {
         return this.capacity;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void setCapacity(final DoubleScalar.Abs<FrequencyUnit> capacity)
+    public final void setCapacity(final Frequency.Abs capacity)
     {
         this.capacity = capacity;
     }
@@ -127,7 +127,7 @@ public class OTSLink implements Link, Serializable, LocatableInterface
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<LengthUnit> getLength()
+    public final Length.Rel getLength()
     {
         return this.designLine.getLength();
     }

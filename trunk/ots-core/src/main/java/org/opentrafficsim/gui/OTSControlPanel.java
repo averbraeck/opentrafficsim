@@ -52,6 +52,7 @@ import nl.tudelft.simulation.language.io.URLResource;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.simulationengine.WrappableSimulation;
@@ -67,7 +68,7 @@ import org.opentrafficsim.simulationengine.WrappableSimulation;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class OTSControlPanel extends JPanel implements ActionListener, PropertyChangeListener, WindowListener
+public class OTSControlPanel extends JPanel implements ActionListener, PropertyChangeListener, WindowListener, OTS_SCALAR
 {
     /** */
     private static final long serialVersionUID = 20150617L;
@@ -129,7 +130,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", null, false));
         this.clockPanel = new ClockPanel();
         buttonPanel.add(this.clockPanel);
-        this.timeEdit = new TimeEdit(new DoubleScalar.Abs<TimeUnit>(0, TimeUnit.SECOND));
+        this.timeEdit = new TimeEdit(new Time.Abs(0, TimeUnit.SECOND));
         this.timeEdit.addPropertyChangeListener("value", this);
         buttonPanel.add(this.timeEdit);
         this.add(buttonPanel);
@@ -175,12 +176,12 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
      * @throws RemoteException on communications failure
      */
-    private SimEvent<OTSSimTimeDouble> scheduleEvent(final DoubleScalar.Abs<TimeUnit> executionTime, final short priority,
+    private SimEvent<OTSSimTimeDouble> scheduleEvent(final Time.Abs executionTime, final short priority,
         final Object source, final Object eventTarget, final String method, final Object[] args) throws SimRuntimeException,
         RemoteException
     {
         SimEvent<OTSSimTimeDouble> simEvent =
-            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(executionTime.getSI(),
+            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time.Abs(executionTime.getSI(),
                 TimeUnit.SECOND)), priority, source, eventTarget, method, args);
         this.simulator.scheduleEvent(simEvent);
         return simEvent;
@@ -271,12 +272,12 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 {
                     getSimulator().stop();
                 }
-                double now = getSimulator().getSimulatorTime().get().getSI();
+                double now = getSimulator().getSimulatorTime().getTime().getSI();
                 // System.out.println("now is " + now);
                 try
                 {
                     this.stopAtEvent =
-                        scheduleEvent(new DoubleScalar.Abs<TimeUnit>(now, TimeUnit.SI), SimEventInterface.MIN_PRIORITY,
+                        scheduleEvent(new Time.Abs(now, TimeUnit.SI), SimEventInterface.MIN_PRIORITY,
                             this, this, "autoPauseSimulator", null);
                 }
                 catch (SimRuntimeException exception)
@@ -415,7 +416,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         if (getSimulator().isRunning())
         {
             getSimulator().stop();
-            double currentTick = getSimulator().getSimulatorTime().get().getSI();
+            double currentTick = getSimulator().getSimulatorTime().getTime().getSI();
             double nextTick = getSimulator().getEventList().first().getAbsoluteExecutionTime().get().getSI();
             // System.out.println("currentTick is " + currentTick);
             // System.out.println("nextTick is " + nextTick);
@@ -428,7 +429,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 try
                 {
                     this.stopAtEvent =
-                        scheduleEvent(new DoubleScalar.Abs<TimeUnit>(nextTick, TimeUnit.SI), SimEventInterface.MAX_PRIORITY,
+                        scheduleEvent(new Time.Abs(nextTick, TimeUnit.SI), SimEventInterface.MAX_PRIORITY,
                             this, this, "autoPauseSimulator", null);
                     getSimulator().start();
                 }
@@ -496,7 +497,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         int seconds = Integer.parseInt(fields[2]);
         int fraction = Integer.parseInt(fields[3]);
         double stopTime = hours * 3600 + minutes * 60 + seconds + fraction / 1000d;
-        if (stopTime < getSimulator().getSimulatorTime().get().getSI())
+        if (stopTime < getSimulator().getSimulatorTime().getTime().getSI())
         {
             return;
         }
@@ -505,7 +506,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             try
             {
                 this.stopAtEvent =
-                    scheduleEvent(new DoubleScalar.Abs<TimeUnit>(stopTime, TimeUnit.SECOND), SimEventInterface.MAX_PRIORITY,
+                    scheduleEvent(new Time.Abs(stopTime, TimeUnit.SECOND), SimEventInterface.MAX_PRIORITY,
                         this, this, "autoPauseSimulator", null);
             }
             catch (SimRuntimeException | RemoteException exception)
@@ -814,7 +815,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             @Override
             public void run()
             {
-                double now = Math.round(getSimulator().getSimulatorTime().get().getSI() * 1000) / 1000d;
+                double now = Math.round(getSimulator().getSimulatorTime().getTime().getSI() * 1000) / 1000d;
                 int seconds = (int) Math.floor(now);
                 int fractionalSeconds = (int) Math.floor(1000 * (now - seconds));
                 getClockLabel().setText(
@@ -844,7 +845,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
          * Construct a new TimeEdit.
          * @param initialValue DoubleScalar.Abs&lt;TimeUnit&gt;; the initial value for the TimeEdit
          */
-        TimeEdit(final DoubleScalar.Abs<TimeUnit> initialValue)
+        TimeEdit(final Time.Abs initialValue)
         {
             super(new RegexFormatter("\\d\\d\\d\\d:[0-5]\\d:[0-5]\\d\\.\\d\\d\\d"));
             MaskFormatter mf = null;
@@ -869,7 +870,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
          * Set or update the time shown in this TimeEdit.
          * @param newValue DoubleScalar.Abs&lt;TimeUnit&gt;; the (new) value to set/show in this TimeEdit
          */
-        public void setTime(final DoubleScalar.Abs<TimeUnit> newValue)
+        public void setTime(final Time.Abs newValue)
         {
             double v = newValue.getSI();
             int integerPart = (int) Math.floor(v);

@@ -41,10 +41,10 @@ public class OTSNode implements Node, LocatableInterface, Serializable
     private final OTSPoint3D point;
 
     /** the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians). */
-    private final DoubleScalar.Abs<AnglePlaneUnit> direction;
+    private final AnglePlane.Abs direction;
 
     /** the slope as an angle. */
-    private final DoubleScalar.Abs<AngleSlopeUnit> slope;
+    private final AngleSlope.Abs slope;
 
     /** the incoming links. */
     private final Set<Link> linksIn = new HashSet<Link>();
@@ -59,8 +59,8 @@ public class OTSNode implements Node, LocatableInterface, Serializable
      * @param direction the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
      * @param slope the slope as an angle.
      */
-    public OTSNode(final String id, final OTSPoint3D point, final DoubleScalar.Abs<AnglePlaneUnit> direction,
-        final DoubleScalar.Abs<AngleSlopeUnit> slope)
+    public OTSNode(final String id, final OTSPoint3D point, final AnglePlane.Abs direction,
+        final AngleSlope.Abs slope)
     {
         this.id = id;
         this.point = point;
@@ -75,7 +75,7 @@ public class OTSNode implements Node, LocatableInterface, Serializable
      */
     public OTSNode(final String id, final OTSPoint3D point)
     {
-        this(id, point, new DoubleScalar.Abs<AnglePlaneUnit>(0.0, AnglePlaneUnit.SI), new DoubleScalar.Abs<AngleSlopeUnit>(
+        this(id, point, new AnglePlane.Abs(0.0, AnglePlaneUnit.SI), new AngleSlope.Abs(
             0.0, AngleSlopeUnit.SI));
     }
 
@@ -127,14 +127,14 @@ public class OTSNode implements Node, LocatableInterface, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<AnglePlaneUnit> getDirection()
+    public final AnglePlane.Abs getDirection()
     {
         return this.direction;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<AngleSlopeUnit> getSlope()
+    public final AngleSlope.Abs getSlope()
     {
         return this.slope;
     }

@@ -3,11 +3,11 @@ package org.opentrafficsim.core.network.factory.xml;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.djunits.unit.SpeedUnit;
+import org.opentrafficsim.core.OTS_DIST;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.CrossSectionElementTag.ElementType;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
-import org.opentrafficsim.core.units.distributions.DistContinuousDoubleScalar;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -21,7 +21,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ListGeneratorTag
+class ListGeneratorTag implements OTS_SCALAR, OTS_DIST
 {
     /** URI of the list. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -41,7 +41,7 @@ class ListGeneratorTag
 
     /** initial speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist = null;
+    SpeedContinuousDist.Abs initialSpeedDist = null;
 
     /** GTU colorer. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

@@ -6,6 +6,7 @@ import nl.tudelft.simulation.dsol.simtime.SimTime;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 
 /**
  * <p>
@@ -17,7 +18,7 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
-    implements Serializable
+    implements Serializable, OTS_SCALAR
 {
     /** */
     private static final long serialVersionUID = 20140815L;
@@ -81,6 +82,14 @@ public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, Double
     public final DoubleScalar.Abs<TimeUnit> get()
     {
         return this.time;
+    }
+
+    /**
+     * @return the time as a strongly typed time.
+     */
+    public final Time.Abs getTime()
+    {
+        return new Time.Abs(this.time);
     }
 
     /** {@inheritDoc} */

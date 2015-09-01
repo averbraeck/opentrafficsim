@@ -15,9 +15,9 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -53,7 +53,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a>Moritz Bergmann</a>
  */
-public final class Convert
+public final class Convert implements OTS_SCALAR
 {
 
     /**
@@ -610,11 +610,11 @@ public final class Convert
             }
             Color color = Color.LIGHT_GRAY;
             LaneType laneType = laneAttributes.getLaneType();
-            DoubleScalar.Rel<LengthUnit> latPos = new DoubleScalar.Rel<LengthUnit>(offset, LengthUnit.METER);
+            Length.Rel latPos = new Length.Rel(offset, LengthUnit.METER);
             Map<GTUType, LongitudinalDirectionality> directionality = new HashMap<>();
             directionality.put(GTUType.ALL, laneAttributes.getDirectionality());
-            Map<GTUType, DoubleScalar.Abs<SpeedUnit>> speedLimit = new HashMap<>();
-            speedLimit.put(GTUType.ALL, new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR));
+            Map<GTUType, Speed.Abs> speedLimit = new HashMap<>();
+            speedLimit.put(GTUType.ALL, new Speed.Abs(100, SpeedUnit.KM_PER_HOUR));
             Lane newLane = null;
             // FIXME the following code assumes right-hand-side driving.
             if (osmlink.hasTag("hasPreceding") && offset >= 0 || osmlink.hasTag("hasFollowing") && offset < 0)
@@ -624,7 +624,7 @@ public final class Convert
                     new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(), laneAttributes
                         .getWidth(), laneType, directionality, speedLimit);
                 SinkSensor sensor =
-                    new SinkSensor(newLane, new DoubleScalar.Rel<LengthUnit>(0.25, LengthUnit.METER), simulator);
+                    new SinkSensor(newLane, new Length.Rel(0.25, LengthUnit.METER), simulator);
                 newLane.addSensor(sensor, GTUType.ALL);
             }
             else if (osmlink.hasTag("hasPreceding") && offset < 0 || osmlink.hasTag("hasFollowing") && offset >= 0)
@@ -782,7 +782,7 @@ public final class Convert
  * initial version ar 3, 2015 <br>
  * @author <a>Moritz Bergmann</a>
  */
-class LaneAttributes
+class LaneAttributes implements OTS_SCALAR
 {
     /** Type of the lane (immutable). */
     private final LaneType laneType;
@@ -794,7 +794,7 @@ class LaneAttributes
     private final LongitudinalDirectionality directionality;
 
     /** Width of the lane. */
-    private DoubleScalar.Rel<LengthUnit> width;
+    private Length.Rel width;
 
     /**
      * @param lt - LaneType
@@ -864,7 +864,7 @@ class LaneAttributes
     /**
      * @return width.
      */
-    public DoubleScalar.Rel<LengthUnit> getWidth()
+    public Length.Rel getWidth()
     {
         return this.width;
     }
@@ -874,7 +874,7 @@ class LaneAttributes
      */
     public void setWidth(final Double width)
     {
-        DoubleScalar.Rel<LengthUnit> w = new DoubleScalar.Rel<LengthUnit>(width, LengthUnit.METER);
+        Length.Rel w = new Length.Rel(width, LengthUnit.METER);
         this.width = w;
     }
 

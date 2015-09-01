@@ -4,8 +4,7 @@ import java.awt.Color;
 import java.util.UUID;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Colors;
@@ -26,7 +25,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class CrossSectionElementTag
+class CrossSectionElementTag implements OTS_SCALAR
 {
     /** element types. */
     @SuppressWarnings({"javadoc", "checkstyle:javadocvariable"})
@@ -64,15 +63,15 @@ class CrossSectionElementTag
 
     /** offset. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Rel<LengthUnit> offset = null;
+    Length.Rel offset = null;
 
     /** speed limit. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Abs<SpeedUnit> speed = null;
+    Speed.Abs speed = null;
 
     /** lane width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Rel<LengthUnit> width = null;
+    Length.Rel width = null;
 
     /** direction. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -292,7 +291,7 @@ class CrossSectionElementTag
         if (attributes.getNamedItem("WIDTH") != null)
             cseTag.width = LengthUnits.parseLengthRel(attributes.getNamedItem("WIDTH").getNodeValue());
         else
-            cseTag.width = new DoubleScalar.Rel<LengthUnit>(0.2, LengthUnit.METER);
+            cseTag.width = new Length.Rel(0.2, LengthUnit.METER);
 
         if (attributes.getNamedItem("COLOR") != null)
             cseTag.color = Colors.parseColor(attributes.getNamedItem("COLOR").getNodeValue());

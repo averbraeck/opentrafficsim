@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -19,7 +19,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class RoadTag
+class RoadTag implements OTS_SCALAR
 {
     /** unique ID within database (preferably an integer number, uint32_t). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -31,7 +31,7 @@ class RoadTag
 
     /** total length of the reference line in the xy-plane, as indicated in the XML document. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar.Rel<LengthUnit> length = null;
+    Length.Rel length = null;
 
     /** ID of the junction to which the road belongs as a connecting road (= -1 for none). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -74,8 +74,7 @@ class RoadTag
         Node length = attributes.getNamedItem("length");
         if (length == null)
             throw new SAXException("ROAD: missing attribute LENGTH");
-        roadTag.length =
-            new DoubleScalar.Rel<LengthUnit>(Double.parseDouble(length.getNodeValue().trim()), LengthUnit.METER);
+        roadTag.length = new Length.Rel(Double.parseDouble(length.getNodeValue().trim()), LengthUnit.METER);
 
         Node junctionId = attributes.getNamedItem("junction");
         if (junctionId == null)

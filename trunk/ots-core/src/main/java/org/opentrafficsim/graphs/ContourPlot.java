@@ -38,6 +38,7 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYZDataset;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
@@ -54,7 +55,7 @@ import org.opentrafficsim.core.network.lane.Lane;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public abstract class ContourPlot extends JFrame implements ActionListener, XYZDataset, MultipleViewerChart,
-    LaneBasedGTUSampler
+    LaneBasedGTUSampler, OTS_SCALAR
 {
     /** */
     private static final long serialVersionUID = 20140716L;
@@ -92,11 +93,11 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     protected static final int STANDARDINITIALDISTANCEGRANULARITYINDEX = 3;
 
     /** Initial lower bound for the time scale. */
-    protected static final DoubleScalar.Abs<TimeUnit> INITIALLOWERTIMEBOUND = new DoubleScalar.Abs<TimeUnit>(0,
+    protected static final Time.Abs INITIALLOWERTIMEBOUND = new Time.Abs(0,
         TimeUnit.SECOND);
 
     /** Initial upper bound for the time scale. */
-    protected static final DoubleScalar.Abs<TimeUnit> INITIALUPPERTIMEBOUND = new DoubleScalar.Abs<TimeUnit>(300,
+    protected static final Time.Abs INITIALUPPERTIMEBOUND = new Time.Abs(300,
         TimeUnit.SECOND);
 
     /** The series of Lanes that provide the data for this TrajectoryPlot. */
@@ -144,7 +145,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         this.cumulativeLengths = lengths;
         this.xAxis = xAxis;
         this.yAxis =
-            new Axis(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER), getCumulativeLength(-1),
+            new Axis(new Length.Rel(0, LengthUnit.METER), getCumulativeLength(-1),
                 STANDARDDISTANCEGRANULARITIES, STANDARDDISTANCEGRANULARITIES[STANDARDINITIALDISTANCEGRANULARITYINDEX], "",
                 "Distance", "%.0fm");
         this.legendStep = legendStep;
@@ -162,12 +163,12 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      * @param index int; the index of the path element; if -1, the total length of the path is returned
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the cumulative length at the end of the specified path element
      */
-    public final DoubleScalar.Rel<LengthUnit> getCumulativeLength(final int index)
+    public final Length.Rel getCumulativeLength(final int index)
     {
         int useIndex = -1 == index ? this.cumulativeLengths.size() - 1 : index;
         try
         {
-            return this.cumulativeLengths.get(useIndex);
+            return new Length.Rel(this.cumulativeLengths.get(useIndex));
         }
         catch (ValueException exception)
         {
@@ -582,12 +583,12 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         {
             throw new Error("Cannot happen: Lane is not in the path");
         }
-        final DoubleScalar.Abs<TimeUnit> fromTime = car.getLastEvaluationTime();
+        final Time.Abs fromTime = car.getLastEvaluationTime();
         if (car.position(lane, car.getReference(), fromTime).getSI() < 0 && lengthOffset > 0)
         {
             return;
         }
-        final DoubleScalar.Abs<TimeUnit> toTime = car.getNextEvaluationTime();
+        final Time.Abs toTime = car.getNextEvaluationTime();
         if (toTime.getSI() > this.getXAxis().getMaximumValue().getSI())
         {
             extendXRange(toTime);
@@ -638,13 +639,13 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
                 (car.position(
                     lane,
                     car.getReference(),
-                    new DoubleScalar.Abs<TimeUnit>(relativeFromTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND))
+                    new Time.Abs(relativeFromTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND))
                     .getSI()
                     - this.getYAxis().getMinimumValue().getSI() + lengthOffset)
                     / this.getYAxis().getGranularities()[0];
             double binDistanceEnd =
                 (car.position(lane, car.getReference(),
-                    new DoubleScalar.Abs<TimeUnit>(binEndTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND))
+                    new Time.Abs(binEndTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND))
                     .getSI()
                     - this.getYAxis().getMinimumValue().getSI() + lengthOffset)
                     / this.getYAxis().getGranularities()[0];

@@ -14,7 +14,7 @@ import javax.swing.WindowConstants;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
@@ -33,7 +33,7 @@ import org.opentrafficsim.simulationengine.properties.AbstractProperty;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractWrappableSimulation implements WrappableSimulation
+public abstract class AbstractWrappableSimulation implements WrappableSimulation, OTS_SCALAR
 {
     /** The properties exhibited by this simulation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -68,8 +68,8 @@ public abstract class AbstractWrappableSimulation implements WrappableSimulation
         }
 
         final SimpleAnimator simulator =
-            new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(0.0,
-                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(3600.0, TimeUnit.SECOND), model);
+            new SimpleAnimator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(0.0,
+                TimeUnit.SECOND), new Time.Rel(3600.0, TimeUnit.SECOND), model);
         this.panel = new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
         JPanel charts = makeCharts();
         if (null != charts)

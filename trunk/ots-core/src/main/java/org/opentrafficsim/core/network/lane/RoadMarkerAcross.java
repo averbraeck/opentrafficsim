@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.network.lane;
 
-import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 
 /**
  * <p>
@@ -13,20 +12,20 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class RoadMarkerAcross
+public abstract class RoadMarkerAcross implements OTS_SCALAR
 {
     /** Cross section element for which this is a road marker. Usually this will be a Lane. */
     private final CrossSectionElement crossSectionElement;
 
     /** Longitudinal position on the cross section element. */
-    private final DoubleScalar.Rel<LengthUnit> longitudinalPosition;
+    private final Length.Rel longitudinalPosition;
 
     /**
      * @param crossSectionElement Cross section element for which this is a road marker. Usually this will be a Lane.
      * @param longitudinalPosition Longitudinal position on the cross section element.
      */
     public RoadMarkerAcross(final CrossSectionElement crossSectionElement,
-        final DoubleScalar.Rel<LengthUnit> longitudinalPosition)
+        final Length.Rel longitudinalPosition)
     {
         super();
         this.crossSectionElement = crossSectionElement;
@@ -44,7 +43,7 @@ public abstract class RoadMarkerAcross
     /**
      * @return longitudinalPosition.
      */
-    public final DoubleScalar.Rel<LengthUnit> getLongitudinalPosition()
+    public final Length.Rel getLongitudinalPosition()
     {
         return this.longitudinalPosition;
     }

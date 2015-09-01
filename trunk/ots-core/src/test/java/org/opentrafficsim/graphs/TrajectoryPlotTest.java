@@ -6,8 +6,8 @@ import java.rmi.RemoteException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.junit.Test;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.lane.Lane;
@@ -21,10 +21,10 @@ import org.opentrafficsim.core.network.lane.Lane;
  * initial version Aug 22, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrajectoryPlotTest
+public class TrajectoryPlotTest implements OTS_SCALAR
 {
     /** Sample interval for the TrajectoryPlot. */
-    DoubleScalar.Rel<TimeUnit> sampleInterval = new DoubleScalar.Rel<TimeUnit>(0.25, TimeUnit.SECOND);
+    Time.Rel sampleInterval = new Time.Rel(0.25, TimeUnit.SECOND);
 
     /**
      * Test the TrajectoryPlot.
@@ -33,8 +33,8 @@ public class TrajectoryPlotTest
     @Test
     public final void trajectoryTest() throws Exception
     {
-        DoubleScalar.Rel<LengthUnit> minimumDistance = new DoubleScalar.Rel<LengthUnit>(1234, LengthUnit.METER);
-        DoubleScalar.Rel<LengthUnit> maximumDistance = new DoubleScalar.Rel<LengthUnit>(12345, LengthUnit.METER);
+        Length.Rel minimumDistance = new Length.Rel(1234, LengthUnit.METER);
+        Length.Rel maximumDistance = new Length.Rel(12345, LengthUnit.METER);
 
         // TODO adapt to new path (List<Lane>) concept
         /*-
@@ -47,36 +47,36 @@ public class TrajectoryPlotTest
         }
         assertEquals("Domain order should be ASCENDING", DomainOrder.ASCENDING, tp.getDomainOrder());
         // Create a car running 50 km.h
-        DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(2000, LengthUnit.METER);
-        DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
+        Length.Rel initialPosition = new Length.Rel(2000, LengthUnit.METER);
+        Speed.Abs initialSpeed = new Speed.Abs(50, SpeedUnit.KM_PER_HOUR);
         GTUType carType = new GTUType("Car");
-        DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(5.0, LengthUnit.METER);
-        DoubleScalar.Rel<LengthUnit> width = new DoubleScalar.Rel<LengthUnit>(2.0, LengthUnit.METER);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new HashMap<>();
+        Length.Rel length = new Length.Rel(5.0, LengthUnit.METER);
+        Length.Rel width = new Length.Rel(2.0, LengthUnit.METER);
+        Map<Lane, Length.Rel> initialLongitudinalPositions = new HashMap<>();
         Lane lane = CarTest.makeLane();
         initialLongitudinalPositions.put(lane, initialPosition);
         OTSDEVSSimulator simulator = CarTest.makeSimulator();
         // We want to start the car simulation at t=100s; therefore we have to advance the simulator up to that time.
-        simulateUntil(new DoubleScalar.Abs<TimeUnit>(100, TimeUnit.SECOND), simulator);
-        DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(120, SpeedUnit.KM_PER_HOUR);
+        simulateUntil(new Time.Abs(100, TimeUnit.SECOND), simulator);
+        Speed.Abs maxSpeed = new Speed.Abs(120, SpeedUnit.KM_PER_HOUR);
         Car car =
             new Car(12345, carType, null, initialLongitudinalPositions, initialSpeed, length, width, maxSpeed,
                 simulator);
         // Make the car accelerate with constant acceleration of 0.05 m/s/s for 400 seconds
-        DoubleScalar.Rel<TimeUnit> duration = new DoubleScalar.Rel<TimeUnit>(400, TimeUnit.SECOND);
-        DoubleScalar.Abs<TimeUnit> endTime = DoubleScalar.plus(simulator.getSimulatorTime().get(), duration);
-        car.setState(new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.05,
+        Time.Rel duration = new Time.Rel(400, TimeUnit.SECOND);
+        Time.Abs endTime = DoubleScalar.plus(simulator.getSimulatorTime().getTime(), duration);
+        car.setState(new GTUFollowingModelResult(new Acceleration.Abs(0.05,
             AccelerationUnit.METER_PER_SECOND_2), endTime));
         // System.out.println("Car end position " + car.getPosition(car.getNextEvaluationTime()));
         tp.addData(car);
         assertEquals("Number of trajectories should now be 1", 1, tp.getSeriesCount());
         verifyTrajectory(car, 0, tp);
-        simulateUntil(new DoubleScalar.Abs<TimeUnit>(150, TimeUnit.SECOND), simulator);
+        simulateUntil(new Time.Abs(150, TimeUnit.SECOND), simulator);
         Car secondCar =
             new Car(2, carType, null, initialLongitudinalPositions, initialSpeed, length, width, maxSpeed,
                 simulator);
         // Make the second car accelerate with constant acceleration of 0.03 m/s/s for 500 seconds
-        secondCar.setState(new GTUFollowingModelResult(new DoubleScalar.Abs<AccelerationUnit>(0.03,
+        secondCar.setState(new GTUFollowingModelResult(new Acceleration.Abs(0.03,
             AccelerationUnit.METER_PER_SECOND_2), endTime));
         // System.out.println("Second car end position " + car.getPosition(secondCar.getNextEvaluationTime()));
         tp.addData(secondCar);
@@ -178,22 +178,22 @@ public class TrajectoryPlotTest
     {
         // XXX we take the first (and only) lane on which the vehicle is registered.
         Lane lane = car.positions(car.getFront()).keySet().iterator().next();
-        DoubleScalar.Abs<TimeUnit> initialTime = car.getLastEvaluationTime();
-        DoubleScalar.Rel<TimeUnit> duration =
-            DoubleScalar.minus(car.getNextEvaluationTime(), car.getLastEvaluationTime());
+        Time.Abs initialTime = car.getLastEvaluationTime();
+        Time.Rel duration =
+            car.getNextEvaluationTime().minus(car.getLastEvaluationTime());
         int expectedNumberOfSamples = (int) (duration.getSI() / this.sampleInterval.getSI());
         assertEquals("Number of samples in trajectory should be ", expectedNumberOfSamples, tp.getItemCount(series));
         // Check that the stored trajectory accurately matches the trajectory of the car at all sampling times
         for (int sample = 0; sample < expectedNumberOfSamples; sample++)
         {
-            DoubleScalar.Rel<TimeUnit> deltaTime =
-                new DoubleScalar.Rel<TimeUnit>(this.sampleInterval.getSI() * sample, TimeUnit.SECOND);
-            DoubleScalar.Abs<TimeUnit> sampleTime = DoubleScalar.plus(initialTime, deltaTime);
+            Time.Rel deltaTime =
+                new Time.Rel(this.sampleInterval.getSI() * sample, TimeUnit.SECOND);
+            Time.Abs sampleTime = initialTime.plus(deltaTime);
             double sampledTime = tp.getXValue(series, sample);
             assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getSI(), sampledTime, 0.0001);
             sampledTime = tp.getX(series, sample).doubleValue();
             assertEquals("Sample should have been taken at " + sampleTime, sampleTime.getSI(), sampledTime, 0.0001);
-            DoubleScalar.Rel<LengthUnit> actualPosition = car.position(lane, car.getFront(), sampleTime);
+            Length.Rel actualPosition = car.position(lane, car.getFront(), sampleTime);
             double sampledPosition = tp.getYValue(series, sample);
             assertEquals("Sample position should have been " + actualPosition, actualPosition.getSI(), sampledPosition,
                 0.0001);

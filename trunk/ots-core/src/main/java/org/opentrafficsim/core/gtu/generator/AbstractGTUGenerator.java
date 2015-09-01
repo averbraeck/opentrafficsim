@@ -9,9 +9,9 @@ import java.util.Map;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_DIST;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar.LaneBasedIndividualCarBuilder;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -30,7 +30,6 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
 import org.opentrafficsim.core.network.route.LaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.RouteGenerator;
-import org.opentrafficsim.core.units.distributions.DistContinuousDoubleScalar;
 
 /**
  * Common code for LaneBasedGTU generators that may have to postpone putting a GTU on the road due to congestion growing into
@@ -47,7 +46,7 @@ import org.opentrafficsim.core.units.distributions.DistContinuousDoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractGTUGenerator
+public abstract class AbstractGTUGenerator implements OTS_SCALAR, OTS_DIST
 {
     /** The generator name. Will be used for generated GTUs as Name:# where # is the id of the GTU when ID is a String. */
     private final String name;
@@ -65,10 +64,10 @@ public abstract class AbstractGTUGenerator
     private final LaneChangeModel laneChangeModel;
 
     /** Distribution of the initial speed of the GTU. */
-    private final DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist;
+    private final SpeedContinuousDist.Abs initialSpeedDist;
 
     /** Distribution of the interarrival time. */
-    private final DistContinuousDoubleScalar.Rel<TimeUnit> interarrivelTimeDist;
+    private final TimeContinuousDist.Rel interarrivelTimeDist;
 
     /** Generated number of GTUs. */
     private long generatedGTUs = 0;
@@ -77,16 +76,16 @@ public abstract class AbstractGTUGenerator
     private final long maxGTUs;
 
     /** Start time of generation (delayed start). */
-    private final DoubleScalar.Abs<TimeUnit> startTime;
+    private final Time.Abs startTime;
 
     /** End time of generation. */
-    private final DoubleScalar.Abs<TimeUnit> endTime;
+    private final Time.Abs endTime;
 
     /** Lane to generate the GTU on -- at the end for now. */
     private final Lane lane;
 
     /** position on the lane, relative to the design line of the link. */
-    private final DoubleScalar.Rel<LengthUnit> position;
+    private final Length.Rel position;
 
     /** Route generator used to create a route for each generated GTU. */
     private LaneBasedRouteGenerator routeGenerator;
@@ -123,10 +122,10 @@ public abstract class AbstractGTUGenerator
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
         final Class<?> gtuClass, final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel,
-        final DistContinuousDoubleScalar.Abs<SpeedUnit> initialSpeedDist,
-        final DistContinuousDoubleScalar.Rel<TimeUnit> interarrivelTimeDist, final long maxGTUs,
-        final DoubleScalar.Abs<TimeUnit> startTime, final DoubleScalar.Abs<TimeUnit> endTime, final Lane lane,
-        final DoubleScalar.Rel<LengthUnit> position, final LaneBasedRouteGenerator routeGenerator,
+        final SpeedContinuousDist.Abs initialSpeedDist,
+        final TimeContinuousDist.Rel interarrivelTimeDist, final long maxGTUs,
+        final Time.Abs startTime, final Time.Abs endTime, final Lane lane,
+        final Length.Rel position, final LaneBasedRouteGenerator routeGenerator,
         final GTUColorer gtuColorer) throws RemoteException, SimRuntimeException
     {
         super();
@@ -155,7 +154,7 @@ public abstract class AbstractGTUGenerator
     protected final void generate() throws Exception
     {
         // check if we are after the end time
-        if (getSimulator().getSimulatorTime().get().gt(this.endTime))
+        if (getSimulator().getSimulatorTime().getTime().gt(this.endTime))
         {
             return;
         }
@@ -178,13 +177,13 @@ public abstract class AbstractGTUGenerator
             carBuilder.setGtuType(getGtuType());
             carBuilder.setGTUFollowingModel(this.gtuFollowingModel);
             carBuilder.setLaneChangeModel(this.laneChangeModel);
-            DoubleScalar.Rel<LengthUnit> carLength = getLengthDist().draw();
+            Length.Rel carLength = getLengthDist().draw();
             carBuilder.setLength(carLength);
             carBuilder.setWidth(getWidthDist().draw());
             carBuilder.setMaximumVelocity(getMaximumSpeedDist().draw());
             carBuilder.setInitialSpeed(getInitialSpeedDist().draw());
             carBuilder.setSimulator(getSimulator());
-            Map<Lane, DoubleScalar.Rel<LengthUnit>> initialLongitudinalPositions = new LinkedHashMap<>(1);
+            Map<Lane, Length.Rel> initialLongitudinalPositions = new LinkedHashMap<>(1);
             initialLongitudinalPositions.put(this.lane, this.position);
             carBuilder.setInitialLongitudinalPositions(initialLongitudinalPositions);
             carBuilder.setRouteGenerator(this.routeGenerator);
@@ -204,7 +203,7 @@ public abstract class AbstractGTUGenerator
                 if (this.carBuilderList.size() == 1)
                 {
                     // first entry in list - start the watch thread
-                    getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.1, TimeUnit.SECOND), this, this,
+                    getSimulator().scheduleEventRel(new Time.Rel(0.1, TimeUnit.SECOND), this, this,
                         "checkCarBuilderList", null);
                 }
             }
@@ -256,14 +255,14 @@ public abstract class AbstractGTUGenerator
         GTUFollowingModel followingModel = carBuilder.getGtuFollowingModel();
 
         HeadwayGTU headwayGTU =
-            headway(new DoubleScalar.Rel<LengthUnit>(250.0, LengthUnit.METER), carBuilder.getRouteGenerator()
+            headway(new Length.Rel(250.0, LengthUnit.METER), carBuilder.getRouteGenerator()
                 .generateRouteNavigator(), generatorLane);
-        DoubleScalar.Rel<LengthUnit> minimumHeadway = new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER);
+        Length.Rel minimumHeadway = new Length.Rel(0.0, LengthUnit.METER);
         if (headwayGTU.getOtherGTU() != null)
         {
             minimumHeadway =
                 followingModel.minimumHeadway(carBuilder.getInitialSpeed(), headwayGTU.getOtherGTU()
-                    .getLongitudinalVelocity(), new DoubleScalar.Rel<LengthUnit>(1.0, LengthUnit.CENTIMETER), generatorLane
+                    .getLongitudinalVelocity(), new Length.Rel(1.0, LengthUnit.CENTIMETER), generatorLane
                     .getSpeedLimit(carBuilder.getGtuType()), carBuilder.getMaximumVelocity());
             double acc =
                 followingModel.computeAcceleration(carBuilder.getInitialSpeed(), carBuilder.getMaximumVelocity(),
@@ -298,11 +297,11 @@ public abstract class AbstractGTUGenerator
      * @throws NetworkException when there is a problem with the geometry of the network
      */
     private HeadwayGTU headwayRecursiveForwardSI(final Lane theLane, final double lanePositionSI,
-        final double cumDistanceSI, final double maxDistanceSI, final DoubleScalar.Abs<TimeUnit> when,
+        final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when,
         final LaneBasedRouteNavigator routeNavigator) throws RemoteException, NetworkException
     {
         LaneBasedGTU otherGTU =
-            theLane.getGtuAfter(new DoubleScalar.Rel<LengthUnit>(lanePositionSI, LengthUnit.METER), RelativePosition.REAR,
+            theLane.getGtuAfter(new Length.Rel(lanePositionSI, LengthUnit.METER), RelativePosition.REAR,
                 when);
         if (otherGTU != null)
         {
@@ -359,7 +358,7 @@ public abstract class AbstractGTUGenerator
     private HeadwayGTU headwayGTUSIForward(final double maxDistanceSI, final LaneBasedRouteNavigator routeNavigator,
         final Lane generatorLane) throws RemoteException, NetworkException
     {
-        DoubleScalar.Abs<TimeUnit> when = getSimulator().getSimulatorTime().get();
+        Time.Abs when = getSimulator().getSimulatorTime().getTime();
         HeadwayGTU foundMaxGTUDistanceSI = new HeadwayGTU(null, Double.MAX_VALUE);
         // search for the closest GTU on all current lanes we are registered on.
         // look forward.
@@ -381,7 +380,7 @@ public abstract class AbstractGTUGenerator
      * @throws RemoteException on communications failure
      * @throws NetworkException on network inconsistency
      */
-    public final HeadwayGTU headway(final DoubleScalar.Rel<LengthUnit> maxDistance,
+    public final HeadwayGTU headway(final Length.Rel maxDistance,
         final LaneBasedRouteNavigator routeNavigator, final Lane generatorLane) throws RemoteException, NetworkException
     {
         return headwayGTUSIForward(maxDistance.getSI(), routeNavigator, generatorLane);
@@ -406,7 +405,7 @@ public abstract class AbstractGTUGenerator
         // only reschedule if list not empty
         if (!this.carBuilderList.isEmpty())
         {
-            getSimulator().scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.1, TimeUnit.SECOND), this, this,
+            getSimulator().scheduleEventRel(new Time.Rel(0.1, TimeUnit.SECOND), this, this,
                 "checkCarBuilderList", null);
         }
     }
@@ -415,13 +414,13 @@ public abstract class AbstractGTUGenerator
     public abstract OTSDEVSSimulatorInterface getSimulator();
 
     /** @return lengthDist. */
-    public abstract DistContinuousDoubleScalar.Rel<LengthUnit> getLengthDist();
+    public abstract LengthContinuousDist.Rel getLengthDist();
 
     /** @return widthDist. */
-    public abstract DistContinuousDoubleScalar.Rel<LengthUnit> getWidthDist();
+    public abstract LengthContinuousDist.Rel getWidthDist();
 
     /** @return maximumSpeedDist. */
-    public abstract DistContinuousDoubleScalar.Abs<SpeedUnit> getMaximumSpeedDist();
+    public abstract SpeedContinuousDist.Abs getMaximumSpeedDist();
 
     /**
      * @return name.
@@ -458,7 +457,7 @@ public abstract class AbstractGTUGenerator
     /**
      * @return initialSpeedDist.
      */
-    public final DistContinuousDoubleScalar.Abs<SpeedUnit> getInitialSpeedDist()
+    public final SpeedContinuousDist.Abs getInitialSpeedDist()
     {
         return this.initialSpeedDist;
     }
@@ -466,7 +465,7 @@ public abstract class AbstractGTUGenerator
     /**
      * @return interarrivelTimeDist.
      */
-    public final DistContinuousDoubleScalar.Rel<TimeUnit> getInterarrivelTimeDist()
+    public final TimeContinuousDist.Rel getInterarrivelTimeDist()
     {
         return this.interarrivelTimeDist;
     }
@@ -482,7 +481,7 @@ public abstract class AbstractGTUGenerator
     /**
      * @return startTime.
      */
-    public final DoubleScalar.Abs<TimeUnit> getStartTime()
+    public final Time.Abs getStartTime()
     {
         return this.startTime;
     }
@@ -490,7 +489,7 @@ public abstract class AbstractGTUGenerator
     /**
      * @return endTime.
      */
-    public final DoubleScalar.Abs<TimeUnit> getEndTime()
+    public final Time.Abs getEndTime()
     {
         return this.endTime;
     }
