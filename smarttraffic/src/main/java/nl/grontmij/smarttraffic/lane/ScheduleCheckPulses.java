@@ -111,7 +111,7 @@ public class ScheduleCheckPulses<ID> {
 				}
 				sensor.setCurrentStatus(entryPulse.getValue());
 				this.simulator.scheduleEventAbs(when, this, this,
-						"changeStatusDetector", new Object[] {sensor});
+						"changeAnimationStatusDetector", new Object[] {sensor});
 			}
 
 		}
@@ -213,7 +213,7 @@ public class ScheduleCheckPulses<ID> {
 		// }
 	}
 
-	private final void changeStatusDetector(final CheckSensor sensor)
+	private final void changeAnimationStatusDetector(final CheckSensor sensor)
 			throws RemoteException, NetworkException {
 		sensor.setCurrentStatus(sensor.getCurrentStatus());
 	}
