@@ -23,6 +23,7 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -55,7 +56,7 @@ import com.vividsolutions.jts.geom.Point;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public final class ShapeFileReader
+public final class ShapeFileReader implements OTS_SCALAR
 {
     /** Do not instantiate this class. */
     private ShapeFileReader()
@@ -218,7 +219,7 @@ public final class ShapeFileReader
                 // the reason to use String.valueOf(...) is that the .dbf files sometimes use double,
                 // but also represent LENGTH by a string ....
                 double lengthIn = Double.parseDouble(String.valueOf(feature.getAttribute("LENGTH")));
-                DoubleScalar.Rel<LengthUnit> length = new DoubleScalar.Rel<LengthUnit>(lengthIn, LengthUnit.KILOMETER);
+                Length.Rel length = new Length.Rel(lengthIn, LengthUnit.KILOMETER);
                 short direction = (short) Long.parseLong(String.valueOf(feature.getAttribute("DIRECTION")));
                 String lNodeA = String.valueOf(feature.getAttribute("ANODE"));
                 String lNodeB = String.valueOf(feature.getAttribute("BNODE"));
@@ -228,7 +229,7 @@ public final class ShapeFileReader
                 String typeWegVak = (String) feature.getAttribute("TYPEWEGVAB");
                 String typeWeg = (String) feature.getAttribute("TYPEWEG_AB");
                 Double speedIn = Double.parseDouble(String.valueOf(feature.getAttribute("SPEEDAB")));
-                DoubleScalar<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(speedIn, SpeedUnit.KM_PER_HOUR);
+                DoubleScalar<SpeedUnit> speed = new Speed.Abs(speedIn, SpeedUnit.KM_PER_HOUR);
                 double capacityIn = Double.parseDouble(String.valueOf(feature.getAttribute("CAPACITYAB")));
                 DoubleScalar<FrequencyUnit> capacity =
                     new DoubleScalar.Abs<FrequencyUnit>(capacityIn, FrequencyUnit.PER_HOUR);
@@ -417,15 +418,15 @@ public final class ShapeFileReader
     {
         // 2 x n lanes, grass underneath, lines between lanes, barrier in center
         // lane is 3.5 meters wide. gap in middle is one meter. outside 0.5 meters on both sides
-        DoubleScalar.Rel<LengthUnit> m05 = new DoubleScalar.Rel<LengthUnit>(0.5, LengthUnit.METER);
-        DoubleScalar.Rel<LengthUnit> m10 = new DoubleScalar.Rel<LengthUnit>(1.0, LengthUnit.METER);
-        DoubleScalar.Rel<LengthUnit> m35 = new DoubleScalar.Rel<LengthUnit>(3.5, LengthUnit.METER);
-        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        Length.Rel m05 = new Length.Rel(0.5, LengthUnit.METER);
+        Length.Rel m10 = new Length.Rel(1.0, LengthUnit.METER);
+        Length.Rel m35 = new Length.Rel(3.5, LengthUnit.METER);
+        Speed.Abs speedLimit = new Speed.Abs(100, SpeedUnit.KM_PER_HOUR);
 
         try
         {
             // middenberm
-            Shoulder sM = new Shoulder(link, "sM", new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
+            Shoulder sM = new Shoulder(link, "sM", new Length.Rel(0.0, LengthUnit.METER), m10, m10);
             new ShoulderAnimation(sM, simulator, Color.GREEN);
             for (int i = -1; i <= 1; i += 2)
             {
@@ -433,16 +434,16 @@ public final class ShapeFileReader
                     (i < 0) ? LongitudinalDirectionality.FORWARD : LongitudinalDirectionality.BACKWARD;
                 //
                 Lane laneEM =
-                    new NoTrafficLane(link, "EM", new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER),
-                        new DoubleScalar.Rel<LengthUnit>(i * 0.75, LengthUnit.METER), m05, m05);
+                    new NoTrafficLane(link, "EM", new Length.Rel(i * 0.75, LengthUnit.METER),
+                        new Length.Rel(i * 0.75, LengthUnit.METER), m05, m05);
                 new LaneAnimation(laneEM, simulator, Color.LIGHT_GRAY);
                 double lat = 1;
                 for (int j = 0; j < n; j++)
                 {
                     lat += i * 1.75;
                     Lane lane =
-                        new Lane(link, "lane." + j, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
-                            new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m35, m35, null, dir, speedLimit);
+                        new Lane(link, "lane." + j, new Length.Rel(lat, LengthUnit.METER),
+                            new Length.Rel(lat, LengthUnit.METER), m35, m35, null, dir, speedLimit);
                     new LaneAnimation(lane, simulator, Color.GRAY);
                     lat += i * 1.75;
                 }
@@ -451,17 +452,17 @@ public final class ShapeFileReader
                 {
                     lat += i * 1.75;
                     Lane lane =
-                        new NoTrafficLane(link, "extra." + j, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
-                            new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m35, m35);
+                        new NoTrafficLane(link, "extra." + j, new Length.Rel(lat, LengthUnit.METER),
+                            new Length.Rel(lat, LengthUnit.METER), m35, m35);
                     new LaneAnimation(lane, simulator, Color.LIGHT_GRAY);
                     lat += i * 1.75;
                 }
                 Lane laneEO =
-                    new NoTrafficLane(link, "EO", new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER),
-                        new DoubleScalar.Rel<LengthUnit>(lat + i * 0.25, LengthUnit.METER), m05, m05);
+                    new NoTrafficLane(link, "EO", new Length.Rel(lat + i * 0.25, LengthUnit.METER),
+                        new Length.Rel(lat + i * 0.25, LengthUnit.METER), m05, m05);
                 new LaneAnimation(laneEO, simulator, Color.LIGHT_GRAY);
                 lat += i * 0.5;
-                Shoulder sO = new Shoulder(link, "sO", new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m10, m10);
+                Shoulder sO = new Shoulder(link, "sO", new Length.Rel(lat, LengthUnit.METER), m10, m10);
                 new ShoulderAnimation(sO, simulator, Color.GREEN);
             }
         }
@@ -483,15 +484,15 @@ public final class ShapeFileReader
     {
         // 2 x n lanes, grass underneath, lines between lanes, barrier in center
         // lane is 3.0 meters wide. gap in middle is one meter. outside 0.5 meters on both sides
-        DoubleScalar.Rel<LengthUnit> m10 = new DoubleScalar.Rel<LengthUnit>(1.0, LengthUnit.METER);
-        DoubleScalar.Rel<LengthUnit> m30 = new DoubleScalar.Rel<LengthUnit>(3.0, LengthUnit.METER);
-        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        Length.Rel m10 = new Length.Rel(1.0, LengthUnit.METER);
+        Length.Rel m30 = new Length.Rel(3.0, LengthUnit.METER);
+        Speed.Abs speedLimit = new Speed.Abs(100, SpeedUnit.KM_PER_HOUR);
 
         try
         {
             if (middenberm)
             {
-                Shoulder sM = new Shoulder(link, "sM", new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
+                Shoulder sM = new Shoulder(link, "sM", new Length.Rel(0.0, LengthUnit.METER), m10, m10);
                 new ShoulderAnimation(sM, simulator, Color.GREEN);
             }
             for (int i = -1; i <= 1; i += 2)
@@ -503,8 +504,8 @@ public final class ShapeFileReader
                 {
                     lat += i * 1.5;
                     Lane lane =
-                        new Lane(link, "lane." + j, new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER),
-                            new DoubleScalar.Rel<LengthUnit>(lat, LengthUnit.METER), m30, m30, null, dir, speedLimit);
+                        new Lane(link, "lane." + j, new Length.Rel(lat, LengthUnit.METER),
+                            new Length.Rel(lat, LengthUnit.METER), m30, m30, null, dir, speedLimit);
                     new LaneAnimation(lane, simulator, Color.DARK_GRAY);
                     lat += i * 1.5;
                 }
@@ -524,14 +525,14 @@ public final class ShapeFileReader
     private static void addCityStreet(final CrossSectionLink link, final OTSSimulatorInterface simulator)
         throws NetworkException
     {
-        DoubleScalar.Rel<LengthUnit> m60 = new DoubleScalar.Rel<LengthUnit>(6.0, LengthUnit.METER);
-        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        Length.Rel m60 = new Length.Rel(6.0, LengthUnit.METER);
+        Speed.Abs speedLimit = new Speed.Abs(100, SpeedUnit.KM_PER_HOUR);
 
         try
         {
             Lane lane =
-                new Lane(link, "lane", new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER),
-                    new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m60, m60, null,
+                new Lane(link, "lane", new Length.Rel(0.0, LengthUnit.METER),
+                    new Length.Rel(0.0, LengthUnit.METER), m60, m60, null,
                     LongitudinalDirectionality.FORWARD, speedLimit);
             new LaneAnimation(lane, simulator, Color.DARK_GRAY);
         }

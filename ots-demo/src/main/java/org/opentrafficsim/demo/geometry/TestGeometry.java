@@ -16,6 +16,7 @@ import nl.tudelft.simulation.event.Event;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSDEVSAnimator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSReplication;
@@ -30,7 +31,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
  * initial version Oct 16, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class TestGeometry extends DSOLApplication
+public class TestGeometry extends DSOLApplication implements OTS_SCALAR
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -57,8 +58,8 @@ public class TestGeometry extends DSOLApplication
         OTSDEVSAnimator simulator = new OTSDEVSAnimator();
         OTSReplication replication =
             new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
-                new DoubleScalar.Rel<TimeUnit>(0.0, TimeUnit.SECOND),
-                new DoubleScalar.Rel<TimeUnit>(1800.0, TimeUnit.SECOND), model);
+                new Time.Rel(0.0, TimeUnit.SECOND),
+                new Time.Rel(1800.0, TimeUnit.SECOND), model);
         simulator.initialize(replication, ReplicationMode.TERMINATING);
         DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel =
             new DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>(model, simulator);

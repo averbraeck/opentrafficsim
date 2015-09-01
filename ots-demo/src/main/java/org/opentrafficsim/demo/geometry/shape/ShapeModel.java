@@ -9,6 +9,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -25,7 +26,7 @@ import org.opentrafficsim.core.network.OTSNode;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class ShapeModel implements OTSModelInterface
+public class ShapeModel implements OTSModelInterface, OTS_SCALAR
 {
     /** */
     private static final long serialVersionUID = 20140815L;
