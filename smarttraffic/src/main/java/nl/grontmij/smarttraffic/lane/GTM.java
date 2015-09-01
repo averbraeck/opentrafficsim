@@ -105,6 +105,10 @@ public class GTM extends AbstractWrappableSimulationST
     public static HashMap<LaneBasedIndividualCar, LinkedList<CheckSensor>> listGTUsInNetwork =
         new HashMap<LaneBasedIndividualCar, LinkedList<CheckSensor>>();
 
+    public static HashMap<LaneBasedIndividualCar, CheckSensor> gtuLastMovedAtSensor =
+            new HashMap<LaneBasedIndividualCar, CheckSensor>();
+
+
     /**
      * Main program. GTMModel has the model details.
      * @param args String[]; the command line arguments (not used)
