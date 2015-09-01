@@ -27,7 +27,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -134,8 +134,8 @@ public class XMLNetworks extends AbstractWrappableSimulation implements Wrappabl
         for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
         {
             TrajectoryPlot tp =
-                new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), new DoubleScalar.Rel<TimeUnit>(0.5,
-                    TimeUnit.SECOND), this.model.getPath(graphIndex));
+                new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), new Time.Rel(0.5, TimeUnit.SECOND),
+                    this.model.getPath(graphIndex));
             tp.setTitle("Trajectory Graph");
             tp.setExtendedState(Frame.MAXIMIZED_BOTH);
             LaneBasedGTUSampler graph = tp;
@@ -174,7 +174,7 @@ public class XMLNetworks extends AbstractWrappableSimulation implements Wrappabl
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class XMLNetworkModel implements OTSModelInterface
+class XMLNetworkModel implements OTSModelInterface, OTS_SCALAR
 {
     /** */
     private static final long serialVersionUID = 20150304L;
@@ -192,16 +192,16 @@ class XMLNetworkModel implements OTSModelInterface
     private ArrayList<List<Lane>> paths = new ArrayList<List<Lane>>();
 
     /** The average headway (inter-vehicle time). */
-    private DoubleScalar.Rel<TimeUnit> averageHeadway;
+    private Time.Rel averageHeadway;
 
     /** The minimum headway. */
-    private DoubleScalar.Rel<TimeUnit> minimumHeadway;
+    private Time.Rel minimumHeadway;
 
     /** The probability distribution for the variable part of the headway. */
     private DistContinuous headwayGenerator;
 
     /** The speed limit. */
-    private DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(60, SpeedUnit.KM_PER_HOUR);
+    private Speed.Abs speedLimit = new Speed.Abs(60, SpeedUnit.KM_PER_HOUR);
 
     /** number of cars created. */
     private int carsCreated = 0;
@@ -334,8 +334,8 @@ class XMLNetworkModel implements OTSModelInterface
                     ContinuousProperty contP = (ContinuousProperty) ap;
                     if (contP.getShortName().startsWith("Flow "))
                     {
-                        this.averageHeadway = new DoubleScalar.Rel<TimeUnit>(3600.0 / contP.getValue(), TimeUnit.SECOND);
-                        this.minimumHeadway = new DoubleScalar.Rel<TimeUnit>(3, TimeUnit.SECOND);
+                        this.averageHeadway = new Time.Rel(3600.0 / contP.getValue(), TimeUnit.SECOND);
+                        this.minimumHeadway = new Time.Rel(3, TimeUnit.SECOND);
                         this.headwayGenerator =
                             new DistErlang(new MersenneTwister(1234), 4, DoubleScalar.minus(this.averageHeadway,
                                 this.minimumHeadway).getSI());
@@ -350,10 +350,10 @@ class XMLNetworkModel implements OTSModelInterface
                     }
                     if (ap.getShortName().contains("IDM"))
                     {
-                        DoubleScalar.Abs<AccelerationUnit> a = IDMPropertySet.getA(compoundProperty);
-                        DoubleScalar.Abs<AccelerationUnit> b = IDMPropertySet.getB(compoundProperty);
-                        DoubleScalar.Rel<LengthUnit> s0 = IDMPropertySet.getS0(compoundProperty);
-                        DoubleScalar.Rel<TimeUnit> tSafe = IDMPropertySet.getTSafe(compoundProperty);
+                        Acceleration.Abs a = IDMPropertySet.getA(compoundProperty);
+                        Acceleration.Abs b = IDMPropertySet.getB(compoundProperty);
+                        Length.Rel s0 = IDMPropertySet.getS0(compoundProperty);
+                        Time.Rel tSafe = IDMPropertySet.getTSafe(compoundProperty);
                         GTUFollowingModel gtuFollowingModel = null;
                         if (carFollowingModelName.equals("IDM"))
                         {
@@ -497,10 +497,10 @@ class XMLNetworkModel implements OTSModelInterface
         for (Lane lane : lanes)
         {
             Lane sinkLane =
-                new Lane(endLink, "sinkLane", lane.getLateralCenterPosition(1.0), lane.getLateralCenterPosition(1.0), lane
-                    .getWidth(1.0), lane.getWidth(1.0), laneType, LongitudinalDirectionality.FORWARD, this.speedLimit);
-            Sensor sensor =
-                new SinkSensor(sinkLane, new DoubleScalar.Rel<LengthUnit>(10.0, LengthUnit.METER), this.simulator);
+                new Lane(endLink, lane.getId() + "." + "sinkLane", lane.getLateralCenterPosition(1.0), lane
+                    .getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType,
+                    LongitudinalDirectionality.FORWARD, this.speedLimit);
+            Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, LengthUnit.METER), this.simulator);
             sinkLane.addSensor(sensor, GTUType.ALL);
         }
         return lanes;
@@ -519,17 +519,16 @@ class XMLNetworkModel implements OTSModelInterface
     private Lane setupBlock(final Lane lane) throws RemoteException, NamingException, NetworkException, SimRuntimeException,
         GTUException
     {
-        DoubleScalar.Rel<LengthUnit> initialPosition = lane.getLength();
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Length.Rel initialPosition = lane.getLength();
+        Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(lane, initialPosition);
         GTUFollowingModel gfm =
-            new FixedAccelerationModel(new DoubleScalar.Abs<AccelerationUnit>(0, AccelerationUnit.SI),
-                new DoubleScalar.Rel<TimeUnit>(java.lang.Double.MAX_VALUE, TimeUnit.SI));
+            new FixedAccelerationModel(new Acceleration.Abs(0, AccelerationUnit.SI), new Time.Rel(
+                java.lang.Double.MAX_VALUE, TimeUnit.SI));
         LaneChangeModel lcm = new FixedLaneChangeModel(null);
-        new LaneBasedIndividualCar("999999", this.gtuType, gfm, lcm, initialPositions, new DoubleScalar.Abs<SpeedUnit>(0,
-            SpeedUnit.KM_PER_HOUR), new DoubleScalar.Rel<LengthUnit>(1, LengthUnit.METER), lane.getWidth(1),
-            new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
-                new CompleteRoute("")), this.simulator);
+        new LaneBasedIndividualCar("999999", this.gtuType, gfm, lcm, initialPositions, new Speed.Abs(0,
+            SpeedUnit.KM_PER_HOUR), new Length.Rel(1, LengthUnit.METER), lane.getWidth(1), new Speed.Abs(0,
+            SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator);
         return lane;
     }
 
@@ -562,23 +561,22 @@ class XMLNetworkModel implements OTSModelInterface
     protected final void generateCar(final Lane lane)
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
-        DoubleScalar.Rel<LengthUnit> initialPosition = new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER);
-        DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(50, SpeedUnit.KM_PER_HOUR);
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Length.Rel initialPosition = new Length.Rel(0, LengthUnit.METER);
+        Speed.Abs initialSpeed = new Speed.Abs(50, SpeedUnit.KM_PER_HOUR);
+        Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(lane, initialPosition);
         try
         {
-            DoubleScalar.Rel<LengthUnit> vehicleLength =
-                new DoubleScalar.Rel<LengthUnit>(generateTruck ? 15 : 4, LengthUnit.METER);
+            Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, LengthUnit.METER);
             GTUFollowingModel gtuFollowingModel = generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, gtuFollowingModel, this.laneChangeModel,
-                initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(1.8, LengthUnit.METER),
-                new DoubleScalar.Abs<SpeedUnit>(200, SpeedUnit.KM_PER_HOUR), this.routeGenerator.generateRouteNavigator(),
-                this.simulator, DefaultCarAnimation.class, this.gtuColorer);
+                initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, LengthUnit.METER), new Speed.Abs(200,
+                    SpeedUnit.KM_PER_HOUR), this.routeGenerator.generateRouteNavigator(), this.simulator,
+                DefaultCarAnimation.class, this.gtuColorer);
             Object[] arguments = new Object[1];
             arguments[0] = lane;
-            this.simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(this.headwayGenerator.draw(), TimeUnit.SECOND),
-                this, this, "generateCar", arguments);
+            this.simulator.scheduleEventRel(new Time.Rel(this.headwayGenerator.draw(), TimeUnit.SECOND), this, this,
+                "generateCar", arguments);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
@@ -588,7 +586,8 @@ class XMLNetworkModel implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public SimulatorInterface<Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+        throws RemoteException
     {
         return this.simulator;
     }

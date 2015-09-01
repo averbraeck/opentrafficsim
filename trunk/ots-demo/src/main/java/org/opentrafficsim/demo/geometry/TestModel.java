@@ -11,9 +11,9 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
@@ -40,7 +40,7 @@ import org.opentrafficsim.core.network.lane.Shoulder;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 /** */
-public class TestModel implements OTSModelInterface
+public class TestModel implements OTSModelInterface, OTS_SCALAR
 {
     /** */
     private static final long serialVersionUID = 1L;
@@ -148,44 +148,44 @@ public class TestModel implements OTSModelInterface
     {
         // four lanes, grass underneath, lines between lane1-2 and lane 2-3, barrier between lane 2-3
         // lane is 3.5 meters wide. gap between 3-4 is one meter. outside 0.5 meters on both sides
-        DoubleScalar.Rel<LengthUnit> m05 = new DoubleScalar.Rel<LengthUnit>(0.5, LengthUnit.METER);
-        DoubleScalar.Rel<LengthUnit> m10 = new DoubleScalar.Rel<LengthUnit>(1.0, LengthUnit.METER);
-        DoubleScalar.Rel<LengthUnit> m35 = new DoubleScalar.Rel<LengthUnit>(3.5, LengthUnit.METER);
-        DoubleScalar.Abs<SpeedUnit> speedLimit = new DoubleScalar.Abs<SpeedUnit>(100, SpeedUnit.KM_PER_HOUR);
+        Length.Rel m05 = new Length.Rel(0.5, LengthUnit.METER);
+        Length.Rel m10 = new Length.Rel(1.0, LengthUnit.METER);
+        Length.Rel m35 = new Length.Rel(3.5, LengthUnit.METER);
+        Speed.Abs speedLimit = new Speed.Abs(100, SpeedUnit.KM_PER_HOUR);
 
-        Shoulder sL = new Shoulder(link, "sL", new DoubleScalar.Rel<LengthUnit>(9.0, LengthUnit.METER), m10, m10);
+        Shoulder sL = new Shoulder(link, "sL", new Length.Rel(9.0, LengthUnit.METER), m10, m10);
 
         Lane laneELL =
-            new NoTrafficLane(link, "ELL", new DoubleScalar.Rel<LengthUnit>(8.25, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(8.25, LengthUnit.METER), m05, m05);
+            new NoTrafficLane(link, "ELL", new Length.Rel(8.25, LengthUnit.METER),
+                new Length.Rel(8.25, LengthUnit.METER), m05, m05);
         Lane laneL1 =
-            new Lane(link, "L1", new DoubleScalar.Rel<LengthUnit>(6.25, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
+            new Lane(link, "L1", new Length.Rel(6.25, LengthUnit.METER), new Length.Rel(
                 6.25, LengthUnit.METER), m35, m35, null, LongitudinalDirectionality.BACKWARD, speedLimit);
         Lane laneL2 =
-            new Lane(link, "L2", new DoubleScalar.Rel<LengthUnit>(2.75, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(
+            new Lane(link, "L2", new Length.Rel(2.75, LengthUnit.METER), new Length.Rel(
                 2.75, LengthUnit.METER), m35, m35, null, LongitudinalDirectionality.BACKWARD, speedLimit);
         Lane laneELM =
-            new NoTrafficLane(link, "ELM", new DoubleScalar.Rel<LengthUnit>(0.75, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(0.75, LengthUnit.METER), m05, m05);
+            new NoTrafficLane(link, "ELM", new Length.Rel(0.75, LengthUnit.METER),
+                new Length.Rel(0.75, LengthUnit.METER), m05, m05);
 
-        Shoulder sM = new Shoulder(link, "sM", new DoubleScalar.Rel<LengthUnit>(0.0, LengthUnit.METER), m10, m10);
+        Shoulder sM = new Shoulder(link, "sM", new Length.Rel(0.0, LengthUnit.METER), m10, m10);
 
         Lane laneERM =
-            new NoTrafficLane(link, "ERM", new DoubleScalar.Rel<LengthUnit>(-0.75, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(-0.75, LengthUnit.METER), m05, m05);
+            new NoTrafficLane(link, "ERM", new Length.Rel(-0.75, LengthUnit.METER),
+                new Length.Rel(-0.75, LengthUnit.METER), m05, m05);
         Lane laneR2 =
-            new Lane(link, "R2", new DoubleScalar.Rel<LengthUnit>(-2.75, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(-2.75, LengthUnit.METER), m35, m35, null,
+            new Lane(link, "R2", new Length.Rel(-2.75, LengthUnit.METER),
+                new Length.Rel(-2.75, LengthUnit.METER), m35, m35, null,
                 LongitudinalDirectionality.FORWARD, speedLimit);
         Lane laneR1 =
-            new Lane(link, "R1", new DoubleScalar.Rel<LengthUnit>(-6.25, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(-6.25, LengthUnit.METER), m35, m35, null,
+            new Lane(link, "R1", new Length.Rel(-6.25, LengthUnit.METER),
+                new Length.Rel(-6.25, LengthUnit.METER), m35, m35, null,
                 LongitudinalDirectionality.FORWARD, speedLimit);
         Lane laneERR =
-            new NoTrafficLane(link, "ERR", new DoubleScalar.Rel<LengthUnit>(-8.25, LengthUnit.METER),
-                new DoubleScalar.Rel<LengthUnit>(-8.25, LengthUnit.METER), m05, m05);
+            new NoTrafficLane(link, "ERR", new Length.Rel(-8.25, LengthUnit.METER),
+                new Length.Rel(-8.25, LengthUnit.METER), m05, m05);
 
-        Shoulder sR = new Shoulder(link, "sR", new DoubleScalar.Rel<LengthUnit>(-9.0, LengthUnit.METER), m10, m10);
+        Shoulder sR = new Shoulder(link, "sR", new Length.Rel(-9.0, LengthUnit.METER), m10, m10);
 
         try
         {
