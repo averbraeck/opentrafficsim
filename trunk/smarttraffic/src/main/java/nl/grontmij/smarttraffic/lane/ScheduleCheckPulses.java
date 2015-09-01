@@ -176,13 +176,13 @@ public class ScheduleCheckPulses<ID> {
 			GTM.listGTUsInNetwork.remove(gtu);
 			//
 			if (Settings.getBoolean(simulator, "ANIMATERAMPVEHICLES")) {
-				generateCar(sensor.getLane(),
-				// put the car one meter in front of the sensor (so
-				// the car is not triggered again!)
+				generateCar(
+						sensor.getLane(),
+						// put the car one meter in front of the sensor (so
+						// the car is not triggered again!)
 						new DoubleScalar.Rel<LengthUnit>(sensor
-								.getLongitudinalPositionSI(),
-								LengthUnit.METER), Integer.parseInt(gtu.getId()
-								.toString()), sensor);
+								.getLongitudinalPositionSI(), LengthUnit.METER),
+						Integer.parseInt(gtu.getId().toString()), sensor);
 			}
 			try {
 				outputFileLogVehicleSimulation.write("t="
@@ -199,7 +199,7 @@ public class ScheduleCheckPulses<ID> {
 			try {
 				generateCar(
 						sensor.getLane(),
-						// put the car in front of the sensor 
+						// put the car in front of the sensor
 						new DoubleScalar.Rel<LengthUnit>(sensor
 								.getLongitudinalPositionSI() + 1,
 								LengthUnit.METER),
@@ -248,6 +248,7 @@ public class ScheduleCheckPulses<ID> {
 
 		LaneBasedGTU nearestGTU = null;
 		double distanceSI = range;
+
 		for (Object cse : link.getCrossSectionElementList()) {
 			if (cse instanceof Lane) {
 				Lane lane = (Lane) cse;
@@ -258,9 +259,13 @@ public class ScheduleCheckPulses<ID> {
 								sensor.getLocation());
 						if (d < distanceSI) {
 							distanceSI = d;
-							double gtuAlreadyMatchedNearSensor = Math.abs(GTM.gtuLastMovedAtSensor.get(
-									gtu).getLongitudinalPositionSI()
-									- sensor.getLongitudinalPositionSI());
+							double gtuAlreadyMatchedNearSensor = Double.POSITIVE_INFINITY;
+							if (GTM.gtuLastMovedAtSensor.get(gtu) != null) {
+								gtuAlreadyMatchedNearSensor = Math
+										.abs(GTM.gtuLastMovedAtSensor.get(gtu)
+												.getLongitudinalPositionSI()
+												- sensor.getLongitudinalPositionSI());
+							}
 							// for the forward looking part
 							if (backwards == false) {
 								try {
@@ -335,9 +340,11 @@ public class ScheduleCheckPulses<ID> {
 		if (!ScheduleGenerateCars.enoughSpace(lane, initialPosition.getSI(),
 				this.lengthCar, genSpeedSI, this.gtuType)) {
 			try {
-				this.simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(
-						0.25, TimeUnit.SECOND), this, this, "generateCar",
-						new Object[] { lane, initialPosition, gtuNumber });
+				this.simulator
+						.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.25,
+								TimeUnit.SECOND), this, this, "generateCar",
+								new Object[] { lane, initialPosition,
+										gtuNumber, sensor });
 				return;
 			} catch (RemoteException | SimRuntimeException exception) {
 				exception.printStackTrace();
