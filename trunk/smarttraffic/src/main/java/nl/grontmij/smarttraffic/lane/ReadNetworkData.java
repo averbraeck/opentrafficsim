@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -48,7 +49,7 @@ public class ReadNetworkData
                     {
                         Lane lane = (Lane) cse;
                         List<Sensor> sensors =
-                            lane.getSensors(new DoubleScalar.Rel<LengthUnit>(0, LengthUnit.METER), lane.getLength(),
+                            lane.getSensors(new Length.Rel(0, Length.METER), lane.getLength(),
                                 GTM.GTUTYPE);
                         if (!sensors.isEmpty())
                         {

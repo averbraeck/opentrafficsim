@@ -20,6 +20,8 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -180,8 +182,8 @@ public class ScheduleCheckPulses<ID> {
 						sensor.getLane(),
 						// put the car one meter in front of the sensor (so
 						// the car is not triggered again!)
-						new DoubleScalar.Rel<LengthUnit>(sensor
-								.getLongitudinalPositionSI(), LengthUnit.METER),
+						new Length.Rel(sensor
+								.getLongitudinalPositionSI(), Length.METER),
 						Integer.parseInt(gtu.getId().toString()), sensor);
 			}
 			try {
@@ -200,9 +202,9 @@ public class ScheduleCheckPulses<ID> {
 				generateCar(
 						sensor.getLane(),
 						// put the car in front of the sensor
-						new DoubleScalar.Rel<LengthUnit>(sensor
+						new Length.Rel(sensor
 								.getLongitudinalPositionSI() + 1,
-								LengthUnit.METER),
+								Length.METER),
 						(++ScheduleGenerateCars.carsCreated), sensor);
 				outputFileLogVehicleSimulation.write("t="
 						+ simulator.getSimulatorTime().get().getSI()
@@ -331,7 +333,7 @@ public class ScheduleCheckPulses<ID> {
 	 * @throws NetworkException
 	 */
 	protected final void generateCar(Lane lane,
-			DoubleScalar.Rel<LengthUnit> initialPosition, final int gtuNumber,
+			Length.Rel initialPosition, final int gtuNumber,
 			CheckSensor sensor) throws NetworkException {
 		// is there enough space?
 		Lane nextLane = lane.nextLanes(this.gtuType).iterator().next();
@@ -351,11 +353,11 @@ public class ScheduleCheckPulses<ID> {
 			}
 		}
 
-		Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+		Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
 		initialPositions.put(lane, initialPosition);
-		DoubleScalar.Abs<SpeedUnit> initialSpeed = lane
+		Speed.Abs initialSpeed = lane
 				.getSpeedLimit(GTM.GTUTYPE);
-		DoubleScalar.Abs<SpeedUnit> maxSpeed = new DoubleScalar.Abs<SpeedUnit>(
+		Speed.Abs maxSpeed = new Speed.Abs(
 				Settings.getDouble(simulator, "MAXSPEED"),
 				SpeedUnit.KM_PER_HOUR);
 		if (initialPosition.getSI() + this.lengthCar > lane.getLength().getSI()) {
@@ -366,9 +368,9 @@ public class ScheduleCheckPulses<ID> {
 						.println("lane.nextLanes().size() == 0 || lane.nextLanes().size() > 1");
 				System.exit(-1);
 			}
-			DoubleScalar.Rel<LengthUnit> nextPos = new DoubleScalar.Rel<LengthUnit>(
+			Length.Rel nextPos = new Length.Rel(
 					initialPosition.getSI() - lane.getLength().getSI(),
-					LengthUnit.METER);
+					Length.METER);
 			initialPositions.put(nextLane, nextPos);
 		}
 		// this is for cars leaving the main route. A new route is created
@@ -399,16 +401,16 @@ public class ScheduleCheckPulses<ID> {
 		LaneBasedRouteNavigator routeNavigator = new CompleteLaneBasedRouteNavigator(
 				route);
 		try {
-			DoubleScalar.Rel<LengthUnit> vehicleLength = new DoubleScalar.Rel<LengthUnit>(
-					this.lengthCar, LengthUnit.METER);
+			Length.Rel vehicleLength = new Length.Rel(
+					this.lengthCar, Length.METER);
 			Class<? extends Renderable2D> animationClass = Settings.getBoolean(
 					simulator, "ANIMATECARS") ? DefaultCarAnimation.class
 					: null;
 			LaneBasedIndividualCar gtu = new LaneBasedIndividualCar(""
 					+ gtuNumber, this.gtuType, this.gtuFollowingModel,
 					this.laneChangeModel, initialPositions, initialSpeed,
-					vehicleLength, new DoubleScalar.Rel<LengthUnit>(2.0,
-							LengthUnit.METER), maxSpeed, routeNavigator,
+					vehicleLength, new Length.Rel(2.0,
+							Length.METER), maxSpeed, routeNavigator,
 					this.simulator, animationClass, this.gtuColorer);
 			// add this car to the list of gtu's in the network
 			LinkedList<CheckSensor> linkedList = new LinkedList<CheckSensor>();

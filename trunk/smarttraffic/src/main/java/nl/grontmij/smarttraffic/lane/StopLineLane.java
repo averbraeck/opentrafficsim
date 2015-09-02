@@ -73,13 +73,13 @@ public class StopLineLane extends AbstractSensor
      * @param lane The lane for which this is a sensor.
      * @param longitudinalPositionFromEnd longitudinal position from the end TODO change for position, not from the end.
      */
-    public StopLineLane(final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPositionFromEnd,
+    public StopLineLane(final Lane lane, final Length.Rel longitudinalPositionFromEnd,
         final OTSSimulatorInterface simulator)
     {
         super(lane, longitudinalPositionFromEnd, RelativePosition.FRONT, "STOPLINE@" + lane.toString(), simulator);
     }
 
-    public StopLineLane(String name, final Lane lane, final DoubleScalar.Rel<LengthUnit> longitudinalPosition,
+    public StopLineLane(String name, final Lane lane, final Length.Rel longitudinalPosition,
         OTSDEVSSimulatorInterface simulator)
     {
         super(lane, longitudinalPosition, RelativePosition.FRONT, name, simulator);
@@ -123,14 +123,14 @@ public class StopLineLane extends AbstractSensor
         /** Type of all GTUs. */
         try
         {
-            Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions =
-                new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+            Map<Lane, Length.Rel> initialPositions =
+                new LinkedHashMap<Lane, Length.Rel>();
             initialPositions.put(this.getLane(), this.getLongitudinalPosition());
             this.stopGTU =
                 new LaneBasedIndividualCar("999999", GTUType.makeGTUType("CAR"), new IDMPlus(), new Egoistic(),
-                    initialPositions, new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
-                    new DoubleScalar.Rel<LengthUnit>(1, LengthUnit.METER), new DoubleScalar.Rel<LengthUnit>(1.8,
-                        LengthUnit.METER), new DoubleScalar.Abs<SpeedUnit>(0, SpeedUnit.KM_PER_HOUR),
+                    initialPositions, new Speed.Abs(0, SpeedUnit.KM_PER_HOUR),
+                    new Length.Rel(1, LengthUnit.METER), new Length.Rel(1.8,
+                        LengthUnit.METER), new Speed.Abs(0, SpeedUnit.KM_PER_HOUR),
                     new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator, DefaultCarAnimation.class,
                     new IDGTUColorer());
         }

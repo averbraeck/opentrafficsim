@@ -75,8 +75,8 @@ public class GTMIDMPlusSI extends AbstractGTUFollowingModel
      * @param delta double; the speed limit adherence (1.0; mean free speed equals the speed limit; 1.1: mean free speed equals
      *            110% of the speed limit; etc.)
      */
-    public GTMIDMPlusSI(final DoubleScalar.Abs<AccelerationUnit> a, final DoubleScalar.Abs<AccelerationUnit> b,
-        final DoubleScalar.Rel<LengthUnit> s0, final DoubleScalar.Rel<TimeUnit> tSafe, final double delta)
+    public GTMIDMPlusSI(final Acceleration.Abs a, final Acceleration.Abs b,
+        final Length.Rel s0, final DoubleScalar.Rel<TimeUnit> tSafe, final double delta)
     {
         this.a = a.getSI();
         this.b = b.getSI();
@@ -98,9 +98,9 @@ public class GTMIDMPlusSI extends AbstractGTUFollowingModel
     }
 
     /** {@inheritDoc} */
-    public final DoubleScalar.Abs<AccelerationUnit> computeAcceleration(final DoubleScalar.Abs<SpeedUnit> followerSpeed,
-        final DoubleScalar.Abs<SpeedUnit> followerMaximumSpeed, final DoubleScalar.Abs<SpeedUnit> leaderSpeed,
-        final DoubleScalar.Rel<LengthUnit> headway, final DoubleScalar.Abs<SpeedUnit> speedLimit)
+    public final Acceleration.Abs computeAcceleration(final Speed.Abs followerSpeed,
+        final Speed.Abs followerMaximumSpeed, final Speed.Abs leaderSpeed,
+        final Length.Rel headway, final Speed.Abs speedLimit)
     {
         double followerSpeedSI = followerSpeed.getSI();
         double followerMaximumSpeedSI = followerMaximumSpeed.getSI();
@@ -129,21 +129,21 @@ public class GTMIDMPlusSI extends AbstractGTUFollowingModel
         {
             newAcceleration = -followerSpeedSI / this.stepSize;
         }
-        return new DoubleScalar.Abs<AccelerationUnit>(newAcceleration, AccelerationUnit.SI);
+        return new Acceleration.Abs(newAcceleration, AccelerationUnit.SI);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Rel<TimeUnit> getStepSize()
+    public final Time.Rel getStepSize()
     {
-        return new DoubleScalar.Rel<TimeUnit>(this.stepSize, TimeUnit.SI);
+        return new Time.Rel(this.stepSize, TimeUnit.SI);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DoubleScalar.Abs<AccelerationUnit> maximumSafeDeceleration()
+    public final Acceleration.Abs maximumSafeDeceleration()
     {
-        return new DoubleScalar.Abs<AccelerationUnit>(this.b, AccelerationUnit.SI);
+        return new Acceleration.Abs(this.b, AccelerationUnit.SI);
     }
 
     /** {@inheritDoc} */

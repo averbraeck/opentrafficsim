@@ -28,7 +28,7 @@ public class KillSensor extends SinkSensor
      * @param nameSensor
      * @param nameJunction
      */
-    public KillSensor(Lane lane, Rel<LengthUnit> longitudinalPositionFromEnd, String nameSensor,
+    public KillSensor(Lane lane, Length.Rel longitudinalPositionFromEnd, String nameSensor,
         final OTSSimulatorInterface simulator)
     {
         super(lane, longitudinalPositionFromEnd, simulator);

@@ -16,6 +16,8 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -87,7 +89,7 @@ public class ScheduleGenerateCars
             for (Entry<DoubleScalar.Abs<TimeUnit>, Integer> entryPulse : pulses.entrySet())
             {
                 Lane lane = sensor.getLane();
-                DoubleScalar.Rel<LengthUnit> initialPosition = sensor.getLongitudinalPosition();
+                Length.Rel initialPosition = sensor.getLongitudinalPosition();
                 if (entryPulse.getValue() == this.generateCar)
                 {
                     DoubleScalar.Abs<TimeUnit> when = entryPulse.getKey();
@@ -110,7 +112,7 @@ public class ScheduleGenerateCars
     /**
      * Generate one car and re-schedule this method if there is no space.
      */
-    protected final void generateCar(Lane lane, GenerateSensor sensor, DoubleScalar.Rel<LengthUnit> initialPosition)
+    protected final void generateCar(Lane lane, GenerateSensor sensor, Length.Rel initialPosition)
     {
         // is there enough space?
         Lane nextLane = lane.nextLanes(this.gtuType).iterator().next();
@@ -129,11 +131,11 @@ public class ScheduleGenerateCars
             }
         }
 
-        Map<Lane, DoubleScalar.Rel<LengthUnit>> initialPositions = new LinkedHashMap<Lane, DoubleScalar.Rel<LengthUnit>>();
+        Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(lane, initialPosition);
-        DoubleScalar.Abs<SpeedUnit> initialSpeed = new DoubleScalar.Abs<SpeedUnit>(genSpeedSI, SpeedUnit.SI);
-        DoubleScalar.Abs<SpeedUnit> maxSpeed =
-            new DoubleScalar.Abs<SpeedUnit>(Settings.getDouble(simulator, "MAXSPEED"), SpeedUnit.KM_PER_HOUR);
+        Speed.Abs initialSpeed = new Speed.Abs(genSpeedSI, SpeedUnit.SI);
+        Speed.Abs maxSpeed =
+            new Speed.Abs(Settings.getDouble(simulator, "MAXSPEED"), SpeedUnit.KM_PER_HOUR);
         if (initialPosition.getSI() + this.lengthCar > lane.getLength().getSI())
         {
             // also register on next lane.
@@ -142,8 +144,8 @@ public class ScheduleGenerateCars
                 System.err.println("lane.nextLanes().size() == 0 || lane.nextLanes().size() > 1");
                 System.exit(-1);
             }
-            DoubleScalar.Rel<LengthUnit> nextPos =
-                new DoubleScalar.Rel<LengthUnit>(initialPosition.getSI() - lane.getLength().getSI(), LengthUnit.METER);
+            Length.Rel nextPos =
+                new Length.Rel(initialPosition.getSI() - lane.getLength().getSI(), LengthUnit.METER);
             initialPositions.put(nextLane, nextPos);
         }
         CompleteRoute straightRouteAB;
@@ -164,12 +166,12 @@ public class ScheduleGenerateCars
         StraightRouteNavigator routeNavigatorAB = new StraightRouteNavigator(straightRouteAB, lane.getParentLink());
         try
         {
-            DoubleScalar.Rel<LengthUnit> vehicleLength = new DoubleScalar.Rel<LengthUnit>(this.lengthCar, LengthUnit.METER);
+            Length.Rel vehicleLength = new Length.Rel(this.lengthCar, LengthUnit.METER);
             Class<? extends Renderable2D> animationClass =
                 Settings.getBoolean(simulator, "ANIMATECARS") ? DefaultCarAnimation.class : null;
             LaneBasedIndividualCar gtu =
                 new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, this.gtuFollowingModel,
-                    this.laneChangeModel, initialPositions, initialSpeed, vehicleLength, new DoubleScalar.Rel<LengthUnit>(
+                    this.laneChangeModel, initialPositions, initialSpeed, vehicleLength, new Length.Rel(
                         2.0, LengthUnit.METER), maxSpeed, routeNavigatorAB, this.simulator, animationClass, this.gtuColorer);
             // add this car to the list of gtu's in the network
             LinkedList<CheckSensor> linkedList = new LinkedList<CheckSensor>();

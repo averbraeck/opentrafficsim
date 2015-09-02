@@ -9,6 +9,7 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -32,7 +33,7 @@ public class MeasureSensor extends AbstractSensor
      * @param position
      * @param nameSensor
      */
-    public MeasureSensor(Lane lane, Rel<LengthUnit> position, final RelativePosition.TYPE front, String nameSensor,
+    public MeasureSensor(Lane lane, Length.Rel position, final RelativePosition.TYPE front, String nameSensor,
         final OTSSimulatorInterface simulator)
     {
         super(lane, position, front, nameSensor, simulator);

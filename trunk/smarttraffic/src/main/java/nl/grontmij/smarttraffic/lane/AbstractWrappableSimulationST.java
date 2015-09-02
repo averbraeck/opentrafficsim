@@ -15,6 +15,8 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
@@ -72,8 +74,8 @@ public abstract class AbstractWrappableSimulationST implements WrappableSimulati
 
         // NOTE: simulator runs 1 day -- will be overwritten later with right number of days
         final SimpleAnimator simulator =
-            new SimpleAnimator(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.HOUR), new DoubleScalar.Rel<TimeUnit>(0.0,
-                TimeUnit.SECOND), new DoubleScalar.Rel<TimeUnit>(24, TimeUnit.HOUR), model);
+            new SimpleAnimator(new Time.Abs(0.0, Time.HOUR), new Time.Rel(0.0,
+            		Time.SECOND), new Time.Rel(24, Time.HOUR), model);
 
         this.panel = new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
         JPanel charts = makeCharts();
