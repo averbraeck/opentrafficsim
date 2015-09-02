@@ -56,7 +56,7 @@ public class CheckSensor extends AbstractSensor
      * @param nameSensor
      * @param nameJunction
      */
-    public CheckSensor(Lane lane, Rel<LengthUnit> longitudinalPositionFromEnd, final RelativePosition.TYPE front,
+    public CheckSensor(Lane lane, Length.Rel longitudinalPositionFromEnd, final RelativePosition.TYPE front,
         String nameSensor, final OTSSimulatorInterface simulator)
     {
         super(lane, longitudinalPositionFromEnd, front, nameSensor, simulator);

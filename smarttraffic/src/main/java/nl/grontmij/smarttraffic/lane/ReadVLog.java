@@ -42,6 +42,7 @@ public class ReadVLog {
 		// cannot be instantiated.
 	}
 
+	//
 	public static void readVlogZipFiles(
 			HashMap<String, AbstractSensor> mapSensor,
 			HashMap<String, ConfigVri> configVriList, Instant timeVLog,

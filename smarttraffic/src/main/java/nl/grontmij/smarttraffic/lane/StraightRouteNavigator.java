@@ -29,11 +29,11 @@ public class StraightRouteNavigator extends AbstractLaneBasedRouteNavigator
     protected int lastVisitedNodeIndex = -1;
 
     /** follow the route - no lane change. */
-    private static final DoubleScalar.Rel<LengthUnit> FOLLOW_ROUTE =
-        new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER);
+    private static final Length.Rel FOLLOW_ROUTE =
+        new Length.Rel(1000, LengthUnit.METER);
 
     /** leave the route - lane change. */
-    private static final DoubleScalar.Rel<LengthUnit> LEAVE_ROUTE = new DoubleScalar.Rel<LengthUnit>(1000, LengthUnit.METER);
+    private static final Length.Rel LEAVE_ROUTE = new Length.Rel(1000, LengthUnit.METER);
 
     /**
      * @param straightRoute
@@ -46,8 +46,8 @@ public class StraightRouteNavigator extends AbstractLaneBasedRouteNavigator
 
     /** {@inheritDoc} */
     @Override
-    public DoubleScalar.Rel<LengthUnit> suitability(Lane lane, DoubleScalar.Rel<LengthUnit> longitudinalPosition,
-        GTUType gtuType, DoubleScalar.Rel<TimeUnit> timeHorizon) throws NetworkException
+    public Length.Rel suitability(Lane lane, Length.Rel longitudinalPosition,
+        GTUType gtuType, Time.Rel timeHorizon) throws NetworkException
     {
         // if the lane connects to the main route: good, otherwise: bad
         if (this.straightRoute.contains(lane.getParentLink().getEndNode()))
