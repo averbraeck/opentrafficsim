@@ -14,10 +14,8 @@ import java.util.TreeMap;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -48,7 +46,7 @@ import org.opentrafficsim.graphs.LaneBasedGTUSampler;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SCALAR
+public class Lane extends CrossSectionElement implements Serializable, OTS_SCALAR
 {
     /** */
     private static final long serialVersionUID = 20150826L;
@@ -121,9 +119,8 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffsetAtStart,
-        final Length.Rel lateralOffsetAtEnd, final Length.Rel beginWidth,
-        final Length.Rel endWidth, final LaneType laneType,
-        final Map<GTUType, LongitudinalDirectionality> directionalityMap,
+        final Length.Rel lateralOffsetAtEnd, final Length.Rel beginWidth, final Length.Rel endWidth,
+        final LaneType laneType, final Map<GTUType, LongitudinalDirectionality> directionalityMap,
         final Map<GTUType, Speed.Abs> speedLimitMap) throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
@@ -149,9 +146,8 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffsetAtStart,
-        final Length.Rel lateralOffsetAtEnd, final Length.Rel beginWidth,
-        final Length.Rel endWidth, final LaneType laneType,
-        final LongitudinalDirectionality directionality, final Speed.Abs speedLimit)
+        final Length.Rel lateralOffsetAtEnd, final Length.Rel beginWidth, final Length.Rel endWidth,
+        final LaneType laneType, final LongitudinalDirectionality directionality, final Speed.Abs speedLimit)
         throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
@@ -349,11 +345,11 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
         }
         if (sensorList2.size() == 0)
         {
-            this.sensors.remove(sensor.getLongitudinalPosition().getSI());
+            this.sensors.remove(sensor.getLongitudinalPosition().doubleValue());
         }
         else
         {
-            this.sensors.put(sensor.getLongitudinalPosition().getSI(), sensorList2);
+            this.sensors.put(sensor.getLongitudinalPosition().doubleValue(), sensorList2);
         }
     }
 
@@ -365,17 +361,17 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
      * @param gtuType the GTU type to provide the sensors for
      * @return List&lt;Sensor&gt;; list of the sensor in the specified range
      */
-    public final List<Sensor> getSensors(final Length.Rel minimumPosition,
-        final Length.Rel maximumPosition, final GTUType gtuType)
+    public final List<Sensor> getSensors(final Length.Rel minimumPosition, final Length.Rel maximumPosition,
+        final GTUType gtuType)
     {
         ArrayList<Sensor> result = new ArrayList<Sensor>();
-        for (List<Sensor> sensorList : this.getSensors(gtuType).subMap(minimumPosition.getSI(), maximumPosition.getSI())
-            .values())
+        for (List<Sensor> sensorList : this.getSensors(gtuType).subMap(minimumPosition.doubleValue(),
+            maximumPosition.doubleValue()).values())
         {
             result.addAll(sensorList);
         }
-        for (List<Sensor> sensorList : this.getSensors(GTUType.ALL).subMap(minimumPosition.getSI(), maximumPosition.getSI())
-            .values())
+        for (List<Sensor> sensorList : this.getSensors(GTUType.ALL).subMap(minimumPosition.doubleValue(),
+            maximumPosition.doubleValue()).values())
         {
             result.addAll(sensorList);
         }
@@ -440,8 +436,7 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
                             throw new NetworkException("scheduleTriggers for gtu: " + gtu + ", d<0 d=" + d);
                         }
 
-                        Time.Abs triggerTime =
-                            gtu.timeAtDistance(new Length.Rel(d, LengthUnit.METER));
+                        Time.Abs triggerTime = gtu.timeAtDistance(new Length.Rel(d, LengthUnit.METER));
                         if (triggerTime.gt(gtu.getNextEvaluationTime()))
                         {
                             System.err.println("Time=" + gtu.getSimulator().getSimulatorTime().getTime().getSI()
@@ -548,8 +543,8 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
      * @throws RemoteException on communication failure
      * @throws NetworkException when longitudinalPosition is negative or exceeds the length of this Lane
      */
-    public final int addGTU(final LaneBasedGTU gtu, final Length.Rel longitudinalPosition)
-        throws RemoteException, NetworkException
+    public final int addGTU(final LaneBasedGTU gtu, final Length.Rel longitudinalPosition) throws RemoteException,
+        NetworkException
     {
         return addGTU(gtu, longitudinalPosition.getSI() / getLength().getSI());
     }
@@ -571,9 +566,8 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
      * @throws NetworkException when there is a problem with the position of the GTUs on the lane.
      * @throws RemoteException on communications failure
      */
-    public final LaneBasedGTU getGtuAfter(final Length.Rel position,
-        final RelativePosition.TYPE relativePosition, final Time.Abs when) throws NetworkException,
-        RemoteException
+    public final LaneBasedGTU getGtuAfter(final Length.Rel position, final RelativePosition.TYPE relativePosition,
+        final Time.Abs when) throws NetworkException, RemoteException
     {
         for (LaneBasedGTU gtu : this.gtuList)
         {
@@ -607,9 +601,8 @@ public class Lane extends CrossSectionElement implements Serializable, DOUBLE_SC
      * @throws NetworkException when there is a problem with the position of the GTUs on the lane.
      * @throws RemoteException on communications failure
      */
-    public final LaneBasedGTU getGtuBefore(final Length.Rel position,
-        final RelativePosition.TYPE relativePosition, final Time.Abs when) throws NetworkException,
-        RemoteException
+    public final LaneBasedGTU getGtuBefore(final Length.Rel position, final RelativePosition.TYPE relativePosition,
+        final Time.Abs when) throws NetworkException, RemoteException
     {
         for (int i = this.gtuList.size() - 1; i >= 0; i--)
         {

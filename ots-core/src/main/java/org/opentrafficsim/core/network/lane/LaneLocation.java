@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.network.lane;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.OTS_SCALAR;
 
 /**
@@ -42,7 +41,7 @@ public class LaneLocation implements OTS_SCALAR
     {
         super();
         this.lane = lane;
-        this.fractionalLongitudinalPosition = DoubleScalar.divide(position, this.lane.getLength()).doubleValue();
+        this.fractionalLongitudinalPosition = position.divideBy(this.lane.getLength()).doubleValue();
     }
 
     /**

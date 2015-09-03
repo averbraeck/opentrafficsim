@@ -5,8 +5,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 
@@ -77,8 +75,8 @@ public class LaneChangeUrgeGTUColorer implements GTUColorer
                 return this.legend.get(1).getColor();
             }
             double ratio =
-                DoubleScalar.minus(distance, this.minimumLaneChangeDistance).getSI()
-                    / DoubleScalar.minus(this.horizon, this.minimumLaneChangeDistance).getSI();
+                distance.minus(this.minimumLaneChangeDistance).getSI()
+                    / this.horizon.minus(this.minimumLaneChangeDistance).getSI();
             if (ratio < 0) // happens when the vehicle is within the minimumLaneChangeDistance
             {
                 ratio = 0;
