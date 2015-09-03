@@ -54,8 +54,8 @@ public class ShapeModel implements OTSModelInterface, OTS_SCALAR
             this.shpLinks = new HashMap<>();
             ShapeFileReader.readLinks("/gis/TESTcordonlinks_aangevuld.shp", this.shpLinks, this.nodes, this.simulator);
 
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this,
-                "ntmFlowTimestep", null);
+            this.simulator
+                .scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, SECOND), this, this, "ntmFlowTimestep", null);
         }
         catch (Throwable exception)
         {

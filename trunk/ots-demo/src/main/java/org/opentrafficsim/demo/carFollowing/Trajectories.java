@@ -17,9 +17,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.OTS_SCALAR;
@@ -147,7 +144,7 @@ public class Trajectories extends AbstractWrappableSimulation implements Wrappab
     protected final JPanel makeCharts()
     {
         TablePanel charts = new TablePanel(1, 1);
-        Time.Rel sampleInterval = new Time.Rel(0.5, TimeUnit.SECOND);
+        Time.Rel sampleInterval = new Time.Rel(0.5, SECOND);
         List<Lane> path = new ArrayList<Lane>();
         path.add(this.model.getLane());
         TrajectoryPlot tp = new TrajectoryPlot("Trajectory Plot", sampleInterval, path);
@@ -227,16 +224,16 @@ class TrajectoriesModel implements OTSModelInterface, OTS_SCALAR
     private LaneBasedIndividualCar block = null;
 
     /** minimum distance. */
-    private Length.Rel minimumDistance = new Length.Rel(0, LengthUnit.METER);
+    private Length.Rel minimumDistance = new Length.Rel(0, METER);
 
     /** maximum distance. */
-    private Length.Rel maximumDistance = new Length.Rel(5000, LengthUnit.METER);
+    private Length.Rel maximumDistance = new Length.Rel(5000, METER);
 
     /** The Lane containing the simulated Cars. */
     private Lane lane;
 
     /** the speed limit. */
-    private Speed.Abs speedLimit = new Speed.Abs(100, SpeedUnit.KM_PER_HOUR);
+    private Speed.Abs speedLimit = new Speed.Abs(100, KM_PER_HOUR);
 
     /** the trajectory plot. */
     private TrajectoryPlot trajectoryPlot;
@@ -280,8 +277,7 @@ class TrajectoriesModel implements OTSModelInterface, OTS_SCALAR
                 new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0), this.lane
                     .getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
                     LongitudinalDirectionality.FORWARD, this.speedLimit);
-            Sensor sensor =
-                new SinkSensor(sinkLane, new Length.Rel(10.0, LengthUnit.METER), this.simulator);
+            Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, METER), this.simulator);
             sinkLane.addSensor(sensor, GTUType.ALL);
         }
         catch (NamingException | NetworkException | OTSGeometryException exception1)
@@ -300,28 +296,20 @@ class TrajectoriesModel implements OTSModelInterface, OTS_SCALAR
                     if (modelName.equals("IDM"))
                     {
                         this.carFollowingModelCars =
-                            new IDM(new Acceleration.Abs(1, AccelerationUnit.METER_PER_SECOND_2),
-                                new Acceleration.Abs(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new Length.Rel(2, LengthUnit.METER), new Time.Rel(1,
-                                    TimeUnit.SECOND), 1d);
+                            new IDM(new Acceleration.Abs(1, METER_PER_SECOND_2), new Acceleration.Abs(1.5,
+                                METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
                         this.carFollowingModelTrucks =
-                            new IDM(new Acceleration.Abs(0.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new Acceleration.Abs(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new Length.Rel(2, LengthUnit.METER), new Time.Rel(1,
-                                    TimeUnit.SECOND), 1d);
+                            new IDM(new Acceleration.Abs(0.5, METER_PER_SECOND_2), new Acceleration.Abs(1.5,
+                                METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
                     }
                     else if (modelName.equals("IDM+"))
                     {
                         this.carFollowingModelCars =
-                            new IDMPlus(new Acceleration.Abs(1, AccelerationUnit.METER_PER_SECOND_2),
-                                new Acceleration.Abs(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new Length.Rel(2, LengthUnit.METER), new Time.Rel(1,
-                                    TimeUnit.SECOND), 1d);
+                            new IDMPlus(new Acceleration.Abs(1, METER_PER_SECOND_2), new Acceleration.Abs(1.5,
+                                METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
                         this.carFollowingModelTrucks =
-                            new IDMPlus(new Acceleration.Abs(0.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new Acceleration.Abs(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new Length.Rel(2, LengthUnit.METER), new Time.Rel(1,
-                                    TimeUnit.SECOND), 1d);
+                            new IDMPlus(new Acceleration.Abs(0.5, METER_PER_SECOND_2), new Acceleration.Abs(1.5,
+                                METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
                     }
                     else
                     {
@@ -353,24 +341,21 @@ class TrajectoriesModel implements OTSModelInterface, OTS_SCALAR
         }
 
         // 1500 [vehicles / hour] == 2.4s headway
-        this.headway = new Time.Rel(3600.0 / 1500.0, TimeUnit.SECOND);
+        this.headway = new Time.Rel(3600.0 / 1500.0, SECOND);
 
         try
         {
             // Schedule creation of the first car (this will re-schedule itself one headway later, etc.).
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this, "generateCar",
-                null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, SECOND), this, this, "generateCar", null);
             // Create a block at t = 5 minutes
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND), this, this, "createBlock",
-                null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, SECOND), this, this, "createBlock", null);
             // Remove the block at t = 7 minutes
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(420, TimeUnit.SECOND), this, this, "removeBlock",
-                null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(420, SECOND), this, this, "removeBlock", null);
             // Schedule regular updates of the graph
             for (int t = 1; t <= 1800; t++)
             {
-                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, TimeUnit.SECOND), this, this,
-                    "drawGraph", null);
+                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, SECOND), this, this, "drawGraph",
+                    null);
             }
         }
         catch (RemoteException | SimRuntimeException exception)
@@ -390,16 +375,14 @@ class TrajectoriesModel implements OTSModelInterface, OTS_SCALAR
     protected final void createBlock() throws RemoteException, NamingException, SimRuntimeException, NetworkException,
         GTUException
     {
-        Length.Rel initialPosition = new Length.Rel(4000, LengthUnit.METER);
+        Length.Rel initialPosition = new Length.Rel(4000, METER);
         Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(this.getLane(), initialPosition);
         this.block =
             new LaneBasedIndividualCar("999999", this.gtuType, this.carFollowingModelCars, this.laneChangeModel,
-                initialPositions, new Speed.Abs(0, SpeedUnit.KM_PER_HOUR),
-                new Length.Rel(4, LengthUnit.METER), new Length.Rel(1.8,
-                    LengthUnit.METER), new Speed.Abs(0, SpeedUnit.KM_PER_HOUR),
-                new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator, DefaultCarAnimation.class,
-                this.gtuColorer);
+                initialPositions, new Speed.Abs(0, KM_PER_HOUR), new Length.Rel(4, METER), new Length.Rel(1.8, METER),
+                new Speed.Abs(0, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator,
+                DefaultCarAnimation.class, this.gtuColorer);
     }
 
     /**
@@ -417,14 +400,13 @@ class TrajectoriesModel implements OTSModelInterface, OTS_SCALAR
     protected final void generateCar()
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
-        Length.Rel initialPosition = new Length.Rel(0, LengthUnit.METER);
+        Length.Rel initialPosition = new Length.Rel(0, METER);
         Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(this.getLane(), initialPosition);
-        Speed.Abs initialSpeed = new Speed.Abs(100, SpeedUnit.KM_PER_HOUR);
+        Speed.Abs initialSpeed = new Speed.Abs(100, KM_PER_HOUR);
         try
         {
-            Length.Rel vehicleLength =
-                new Length.Rel(generateTruck ? 15 : 4, LengthUnit.METER);
+            Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
             GTUFollowingModel gtuFollowingModel = generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
             if (null == gtuFollowingModel)
             {
@@ -432,9 +414,8 @@ class TrajectoriesModel implements OTSModelInterface, OTS_SCALAR
             }
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, generateTruck ? this.carFollowingModelTrucks
                 : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
-                new Length.Rel(1.8, LengthUnit.METER), new Speed.Abs(200,
-                    SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator,
-                DefaultCarAnimation.class, this.gtuColorer);
+                new Length.Rel(1.8, METER), new Speed.Abs(200, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
+                    new CompleteRoute("")), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
             // Re-schedule this method after headway seconds
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }

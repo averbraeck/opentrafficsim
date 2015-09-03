@@ -15,8 +15,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
@@ -76,10 +74,10 @@ public class SuitabilityGraph implements OTSModelInterface, OTS_SCALAR
     private static final int[] TARGETLANES = {1, 2, -2, -1};
 
     /** Time horizon for lane changes. */
-    private Time.Rel timeHorizon = new Time.Rel(100, TimeUnit.SECOND);
+    private Time.Rel timeHorizon = new Time.Rel(100, SECOND);
 
     /** Time range for graphs (also adjusts distance range). */
-    private Time.Rel timeRange = new Time.Rel(110, TimeUnit.SECOND);
+    private Time.Rel timeRange = new Time.Rel(110, SECOND);
 
     /** Colors that correspond to the lanes; taken from electrical resistor color codes. */
     private static final Color[] COLORTABLE = {new Color(160, 82, 45) /* brown */, Color.RED, Color.ORANGE, Color.YELLOW,
@@ -136,7 +134,7 @@ public class SuitabilityGraph implements OTSModelInterface, OTS_SCALAR
             int targetLaneConfiguration = TARGETLANES[row];
             for (int column = 0; column < columns; column++)
             {
-                Speed.Abs speedLimit = new Speed.Abs(SPEEDLIMITS[column], SpeedUnit.KM_PER_HOUR);
+                Speed.Abs speedLimit = new Speed.Abs(SPEEDLIMITS[column], KM_PER_HOUR);
                 double mainLength = speedLimit.getSI() * this.timeRange.getSI();
                 OTSNode from = new OTSNode("From", new OTSPoint3D(-mainLength, 0, 0));
                 OTSNode branchPoint = new OTSNode("From", new OTSPoint3D(0, 0, 0));
@@ -168,7 +166,7 @@ public class SuitabilityGraph implements OTSModelInterface, OTS_SCALAR
                     Lane lane = lanes[laneIndex];
                     for (int position = 0; position <= mainLength; position += 10)
                     {
-                        Length.Rel longitudinalPosition = new Length.Rel(position, LengthUnit.METER);
+                        Length.Rel longitudinalPosition = new Length.Rel(position, METER);
                         Length.Rel suitability =
                             navigator.suitability(lane, longitudinalPosition, gtuType, this.timeHorizon);
                         if (suitability.getSI() <= mainLength)
@@ -201,7 +199,7 @@ public class SuitabilityGraph implements OTSModelInterface, OTS_SCALAR
                     targetLaneConfiguration > 0 ? "left" : "right");
             for (int column = 0; column < columns; column++)
             {
-                Speed.Abs speedLimit = new Speed.Abs(SPEEDLIMITS[column], SpeedUnit.KM_PER_HOUR);
+                Speed.Abs speedLimit = new Speed.Abs(SPEEDLIMITS[column], KM_PER_HOUR);
                 JFreeChart chart =
                     createChart(String.format("Speed limit %.0f%s, %s", speedLimit.getInUnit(), speedLimit.getUnit(),
                         targetLaneDescription), speedLimit);

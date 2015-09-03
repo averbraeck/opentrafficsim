@@ -24,9 +24,6 @@ import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
@@ -146,13 +143,11 @@ public class SequentialLanes extends AbstractWrappableSimulation implements Wrap
                             + "curvature of the road) capabilities of the vehicle and personality "
                             + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
                     localProperties.add(IDMPropertySet.makeIDMPropertySet("Car", new Acceleration.Abs(1.0,
-                        AccelerationUnit.METER_PER_SECOND_2), new Acceleration.Abs(1.5,
-                        AccelerationUnit.METER_PER_SECOND_2), new Length.Rel(2.0, LengthUnit.METER),
-                        new Time.Rel(1.0, TimeUnit.SECOND), 2));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration.Abs(
-                        0.5, AccelerationUnit.METER_PER_SECOND_2), new Acceleration.Abs(1.25,
-                        AccelerationUnit.METER_PER_SECOND_2), new Length.Rel(2.0, LengthUnit.METER),
-                        new Time.Rel(1.0, TimeUnit.SECOND), 3));
+                        METER_PER_SECOND_2), new Acceleration.Abs(1.5, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
+                        new Time.Rel(1.0, SECOND), 2));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration.Abs(0.5,
+                        METER_PER_SECOND_2), new Acceleration.Abs(1.25, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
+                        new Time.Rel(1.0, SECOND), 3));
                     sequential.buildSimulator(localProperties, null, true);
                     sequential.panel.getTabbedPane().addTab("info", sequential.makeInfoPane());
                 }
@@ -245,9 +240,7 @@ public class SequentialLanes extends AbstractWrappableSimulation implements Wrap
             LaneBasedGTUSampler graph;
             if (graphName.contains("Trajectories"))
             {
-                TrajectoryPlot tp =
-                    new TrajectoryPlot("TrajectoryPlot", new Time.Rel(0.5, TimeUnit.SECOND), this.model
-                        .getPath());
+                TrajectoryPlot tp = new TrajectoryPlot("TrajectoryPlot", new Time.Rel(0.5, SECOND), this.model.getPath());
                 tp.setTitle("Trajectory Graph");
                 tp.setExtendedState(Frame.MAXIMIZED_BOTH);
                 graph = tp;
@@ -354,13 +347,13 @@ class SequentialModel implements OTSModelInterface, OTS_SCALAR
     private GTUType gtuType = GTUType.makeGTUType("Car");
 
     /** minimum distance. */
-    private Length.Rel minimumDistance = new Length.Rel(0, LengthUnit.METER);
+    private Length.Rel minimumDistance = new Length.Rel(0, METER);
 
     /** The Lane where newly created Cars initially placed on. */
     private Lane initialLane;
 
     /** maximum distance. */
-    private Length.Rel maximumDistance = new Length.Rel(2001, LengthUnit.METER);
+    private Length.Rel maximumDistance = new Length.Rel(2001, METER);
 
     /** the contour plots. */
     private ArrayList<LaneBasedGTUSampler> plots = new ArrayList<LaneBasedGTUSampler>();
@@ -404,7 +397,7 @@ class SequentialModel implements OTSModelInterface, OTS_SCALAR
         throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
-        this.speedLimit = new Speed.Abs(100, SpeedUnit.KM_PER_HOUR);
+        this.speedLimit = new Speed.Abs(100, KM_PER_HOUR);
         this.nodes = new ArrayList<OTSNode>();
         // TODO use: int[] linkBoundaries = {0, 1000, 1001, 2001, 2200};
         int[] linkBoundaries = {0, 1000, 2001, 2200};
@@ -428,8 +421,7 @@ class SequentialModel implements OTSModelInterface, OTS_SCALAR
                         .makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, this.speedLimit, this.simulator);
                 if (i == this.nodes.size() - 1)
                 {
-                    Sensor sensor =
-                        new SinkSensor(lanes[0], new Length.Rel(10.0, LengthUnit.METER), this.simulator);
+                    Sensor sensor = new SinkSensor(lanes[0], new Length.Rel(10.0, METER), this.simulator);
                     lanes[0].addSensor(sensor, GTUType.ALL);
                 }
                 this.path.add(lanes[0]);
@@ -446,15 +438,14 @@ class SequentialModel implements OTSModelInterface, OTS_SCALAR
         }
 
         // 1500 [veh / hour] == 2.4s headway
-        this.headway = new Time.Rel(3600.0 / 1500.0, TimeUnit.SECOND);
+        this.headway = new Time.Rel(3600.0 / 1500.0, SECOND);
         // Schedule creation of the first car (it will re-schedule itself one headway later, etc.).
-        this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this, "generateCar",
-            null);
+        this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, SECOND), this, this, "generateCar", null);
         // Schedule regular updates of the graphs
         for (int t = 1; t <= 1800; t++)
         {
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, TimeUnit.SECOND), this, this,
-                "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, SECOND), this, this, "drawGraphs",
+                null);
         }
         try
         {
@@ -591,14 +582,13 @@ class SequentialModel implements OTSModelInterface, OTS_SCALAR
     protected final void generateCar()
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
-        Length.Rel initialPosition = new Length.Rel(0, LengthUnit.METER);
-        Speed.Abs initialSpeed = new Speed.Abs(100, SpeedUnit.KM_PER_HOUR);
+        Length.Rel initialPosition = new Length.Rel(0, METER);
+        Speed.Abs initialSpeed = new Speed.Abs(100, KM_PER_HOUR);
         Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(this.initialLane, initialPosition);
         try
         {
-            Length.Rel vehicleLength =
-                new Length.Rel(generateTruck ? 15 : 4, LengthUnit.METER);
+            Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
             GTUFollowingModel gtuFollowingModel = generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
             if (null == gtuFollowingModel)
             {
@@ -606,9 +596,8 @@ class SequentialModel implements OTSModelInterface, OTS_SCALAR
             }
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, generateTruck ? this.carFollowingModelTrucks
                 : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
-                new Length.Rel(1.8, LengthUnit.METER), new Speed.Abs(200,
-                    SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator,
-                DefaultCarAnimation.class, this.gtuColorer);
+                new Length.Rel(1.8, METER), new Speed.Abs(200, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
+                    new CompleteRoute("")), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)

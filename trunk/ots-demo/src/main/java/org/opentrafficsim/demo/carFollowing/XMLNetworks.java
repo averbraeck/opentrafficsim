@@ -22,8 +22,6 @@ import nl.tudelft.simulation.jstats.distributions.DistErlang;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
@@ -134,8 +132,8 @@ public class XMLNetworks extends AbstractWrappableSimulation implements Wrappabl
         for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
         {
             TrajectoryPlot tp =
-                new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), new Time.Rel(0.5, TimeUnit.SECOND),
-                    this.model.getPath(graphIndex));
+                new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), new Time.Rel(0.5, SECOND), this.model
+                    .getPath(graphIndex));
             tp.setTitle("Trajectory Graph");
             tp.setExtendedState(Frame.MAXIMIZED_BOTH);
             LaneBasedGTUSampler graph = tp;
@@ -201,7 +199,7 @@ class XMLNetworkModel implements OTSModelInterface, OTS_SCALAR
     private DistContinuous headwayGenerator;
 
     /** The speed limit. */
-    private Speed.Abs speedLimit = new Speed.Abs(60, SpeedUnit.KM_PER_HOUR);
+    private Speed.Abs speedLimit = new Speed.Abs(60, KM_PER_HOUR);
 
     /** number of cars created. */
     private int carsCreated = 0;
@@ -334,8 +332,8 @@ class XMLNetworkModel implements OTSModelInterface, OTS_SCALAR
                     ContinuousProperty contP = (ContinuousProperty) ap;
                     if (contP.getShortName().startsWith("Flow "))
                     {
-                        this.averageHeadway = new Time.Rel(3600.0 / contP.getValue(), TimeUnit.SECOND);
-                        this.minimumHeadway = new Time.Rel(3, TimeUnit.SECOND);
+                        this.averageHeadway = new Time.Rel(3600.0 / contP.getValue(), SECOND);
+                        this.minimumHeadway = new Time.Rel(3, SECOND);
                         this.headwayGenerator =
                             new DistErlang(new MersenneTwister(1234), 4, DoubleScalar.minus(this.averageHeadway,
                                 this.minimumHeadway).getSI());
@@ -448,8 +446,7 @@ class XMLNetworkModel implements OTSModelInterface, OTS_SCALAR
                     lane = lane.nextLanes(this.gtuType).iterator().next();
                 }
             }
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.999, TimeUnit.SECOND), this, this,
-                "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.999, SECOND), this, this, "drawGraphs", null);
         }
         catch (NamingException | NetworkException | GTUException | OTSGeometryException exception1)
         {
@@ -470,7 +467,7 @@ class XMLNetworkModel implements OTSModelInterface, OTS_SCALAR
         {
             Object[] arguments = new Object[1];
             arguments[0] = lane;
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this, "generateCar",
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, SECOND), this, this, "generateCar",
                 arguments);
         }
         return lanes;
@@ -500,7 +497,7 @@ class XMLNetworkModel implements OTSModelInterface, OTS_SCALAR
                 new Lane(endLink, lane.getId() + "." + "sinkLane", lane.getLateralCenterPosition(1.0), lane
                     .getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType,
                     LongitudinalDirectionality.FORWARD, this.speedLimit);
-            Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, LengthUnit.METER), this.simulator);
+            Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, METER), this.simulator);
             sinkLane.addSensor(sensor, GTUType.ALL);
         }
         return lanes;
@@ -526,9 +523,9 @@ class XMLNetworkModel implements OTSModelInterface, OTS_SCALAR
             new FixedAccelerationModel(new Acceleration.Abs(0, AccelerationUnit.SI), new Time.Rel(
                 java.lang.Double.MAX_VALUE, TimeUnit.SI));
         LaneChangeModel lcm = new FixedLaneChangeModel(null);
-        new LaneBasedIndividualCar("999999", this.gtuType, gfm, lcm, initialPositions, new Speed.Abs(0,
-            SpeedUnit.KM_PER_HOUR), new Length.Rel(1, LengthUnit.METER), lane.getWidth(1), new Speed.Abs(0,
-            SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator);
+        new LaneBasedIndividualCar("999999", this.gtuType, gfm, lcm, initialPositions, new Speed.Abs(0, KM_PER_HOUR),
+            new Length.Rel(1, METER), lane.getWidth(1), new Speed.Abs(0, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
+                new CompleteRoute("")), this.simulator);
         return lane;
     }
 
@@ -545,7 +542,7 @@ class XMLNetworkModel implements OTSModelInterface, OTS_SCALAR
         try
         {
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(
-                this.simulator.getSimulatorTime().get().getSI() + 1, TimeUnit.SECOND), this, this, "drawGraphs", null);
+                this.simulator.getSimulatorTime().get().getSI() + 1, SECOND), this, this, "drawGraphs", null);
         }
         catch (RemoteException | SimRuntimeException exception)
         {
@@ -561,22 +558,21 @@ class XMLNetworkModel implements OTSModelInterface, OTS_SCALAR
     protected final void generateCar(final Lane lane)
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
-        Length.Rel initialPosition = new Length.Rel(0, LengthUnit.METER);
-        Speed.Abs initialSpeed = new Speed.Abs(50, SpeedUnit.KM_PER_HOUR);
+        Length.Rel initialPosition = new Length.Rel(0, METER);
+        Speed.Abs initialSpeed = new Speed.Abs(50, KM_PER_HOUR);
         Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(lane, initialPosition);
         try
         {
-            Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, LengthUnit.METER);
+            Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
             GTUFollowingModel gtuFollowingModel = generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, gtuFollowingModel, this.laneChangeModel,
-                initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, LengthUnit.METER), new Speed.Abs(200,
-                    SpeedUnit.KM_PER_HOUR), this.routeGenerator.generateRouteNavigator(), this.simulator,
-                DefaultCarAnimation.class, this.gtuColorer);
+                initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, METER), new Speed.Abs(200, KM_PER_HOUR),
+                this.routeGenerator.generateRouteNavigator(), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
             Object[] arguments = new Object[1];
             arguments[0] = lane;
-            this.simulator.scheduleEventRel(new Time.Rel(this.headwayGenerator.draw(), TimeUnit.SECOND), this, this,
-                "generateCar", arguments);
+            this.simulator.scheduleEventRel(new Time.Rel(this.headwayGenerator.draw(), SECOND), this, this, "generateCar",
+                arguments);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {

@@ -39,9 +39,6 @@ import javax.swing.event.ChangeListener;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.locale.DefaultLocale;
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.gui.LabeledPanel;
@@ -278,14 +275,13 @@ public class SuperDemo implements OTS_SCALAR
                     + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                     + "curvature of the road) capabilities of the vehicle and personality " + "of the driver.</html>",
                     new String[]{"IDM", "IDM+"}, 1, false, 1));
-                modelSelection.add(IDMPropertySet.makeIDMPropertySet("Car", new Acceleration.Abs(1.0,
-                    AccelerationUnit.METER_PER_SECOND_2), new Acceleration.Abs(1.5,
-                    AccelerationUnit.METER_PER_SECOND_2), new Length.Rel(2.0, LengthUnit.METER),
-                    new Time.Rel(1.0, TimeUnit.SECOND), 2));
-                modelSelection.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration.Abs(0.5,
-                    AccelerationUnit.METER_PER_SECOND_2), new Acceleration.Abs(1.25,
-                    AccelerationUnit.METER_PER_SECOND_2), new Length.Rel(2.0, LengthUnit.METER),
-                    new Time.Rel(1.0, TimeUnit.SECOND), 3));
+                modelSelection
+                    .add(IDMPropertySet.makeIDMPropertySet("Car", new Acceleration.Abs(1.0, METER_PER_SECOND_2),
+                        new Acceleration.Abs(1.5, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
+                        new Time.Rel(1.0, SECOND), 2));
+                modelSelection.add(IDMPropertySet
+                    .makeIDMPropertySet("Truck", new Acceleration.Abs(0.5, METER_PER_SECOND_2), new Acceleration.Abs(1.25,
+                        METER_PER_SECOND_2), new Length.Rel(2.0, METER), new Time.Rel(1.0, SECOND), 3));
                 properties.add(properties.size() > 0 ? 1 : 0, modelSelection);
             }
             properties.add(0, simulationSettings);

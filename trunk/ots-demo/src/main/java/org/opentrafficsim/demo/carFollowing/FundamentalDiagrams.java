@@ -16,9 +16,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.OTS_SCALAR;
@@ -145,14 +142,13 @@ public class FundamentalDiagrams extends AbstractWrappableSimulation implements 
         TablePanel charts = new TablePanel(4, panelsPerRow);
         for (int plotNumber = 0; plotNumber < 10; plotNumber++)
         {
-            Length.Rel detectorLocation =
-                new Length.Rel(400 + 500 * plotNumber, LengthUnit.METER);
+            Length.Rel detectorLocation = new Length.Rel(400 + 500 * plotNumber, METER);
             FundamentalDiagram fd;
             try
             {
                 fd =
-                    new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getSI() + "m",
-                        new Time.Rel(1, TimeUnit.MINUTE), this.model.getLane(), detectorLocation);
+                    new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getSI() + "m", new Time.Rel(1,
+                        MINUTE), this.model.getLane(), detectorLocation);
                 fd.setTitle("Density Contour Graph");
                 fd.setExtendedState(Frame.MAXIMIZED_BOTH);
                 this.model.getFundamentalDiagrams().add(fd);
@@ -234,16 +230,16 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface, OTS_SCALAR
     private LaneBasedIndividualCar block = null;
 
     /** minimum distance. */
-    private Length.Rel minimumDistance = new Length.Rel(0, LengthUnit.METER);
+    private Length.Rel minimumDistance = new Length.Rel(0, METER);
 
     /** maximum distance. */
-    private Length.Rel maximumDistance = new Length.Rel(5000, LengthUnit.METER);
+    private Length.Rel maximumDistance = new Length.Rel(5000, METER);
 
     /** The Lane containing the simulated Cars. */
     private Lane lane;
 
     /** the speed limit. */
-    private Speed.Abs speedLimit = new Speed.Abs(100, SpeedUnit.KM_PER_HOUR);
+    private Speed.Abs speedLimit = new Speed.Abs(100, KM_PER_HOUR);
 
     /** the fundamental diagram plots. */
     private ArrayList<FundamentalDiagram> fundamentalDiagrams = new ArrayList<FundamentalDiagram>();
@@ -298,28 +294,20 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface, OTS_SCALAR
                     if (modelName.equals("IDM"))
                     {
                         this.carFollowingModelCars =
-                            new IDM(new Acceleration.Abs(1, AccelerationUnit.METER_PER_SECOND_2),
-                                new Acceleration.Abs(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new Length.Rel(2, LengthUnit.METER), new Time.Rel(1,
-                                    TimeUnit.SECOND), 1d);
+                            new IDM(new Acceleration.Abs(1, METER_PER_SECOND_2), new Acceleration.Abs(1.5,
+                                METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
                         this.carFollowingModelTrucks =
-                            new IDM(new Acceleration.Abs(0.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new Acceleration.Abs(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new Length.Rel(2, LengthUnit.METER), new Time.Rel(1,
-                                    TimeUnit.SECOND), 1d);
+                            new IDM(new Acceleration.Abs(0.5, METER_PER_SECOND_2), new Acceleration.Abs(1.5,
+                                METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
                     }
                     else if (modelName.equals("IDM+"))
                     {
                         this.carFollowingModelCars =
-                            new IDMPlus(new Acceleration.Abs(1, AccelerationUnit.METER_PER_SECOND_2),
-                                new Acceleration.Abs(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new Length.Rel(2, LengthUnit.METER), new Time.Rel(1,
-                                    TimeUnit.SECOND), 1d);
+                            new IDMPlus(new Acceleration.Abs(1, METER_PER_SECOND_2), new Acceleration.Abs(1.5,
+                                METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
                         this.carFollowingModelTrucks =
-                            new IDMPlus(new Acceleration.Abs(0.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new Acceleration.Abs(1.5, AccelerationUnit.METER_PER_SECOND_2),
-                                new Length.Rel(2, LengthUnit.METER), new Time.Rel(1,
-                                    TimeUnit.SECOND), 1d);
+                            new IDMPlus(new Acceleration.Abs(0.5, METER_PER_SECOND_2), new Acceleration.Abs(1.5,
+                                METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
                     }
                     else
                     {
@@ -351,24 +339,21 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface, OTS_SCALAR
         }
 
         // 1500 [veh / hour] == 2.4s headway
-        this.headway = new Time.Rel(3600.0 / 1500.0, TimeUnit.SECOND);
+        this.headway = new Time.Rel(3600.0 / 1500.0, SECOND);
 
         try
         {
             // Schedule creation of the first car (this will re-schedule itself one headway later, etc.).
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this, "generateCar",
-                null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, SECOND), this, this, "generateCar", null);
             // Create a block at t = 5 minutes
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND), this, this, "createBlock",
-                null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, SECOND), this, this, "createBlock", null);
             // Remove the block at t = 7 minutes
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(420, TimeUnit.SECOND), this, this, "removeBlock",
-                null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(420, SECOND), this, this, "removeBlock", null);
             // Schedule regular updates of the graph
             for (int t = 1; t <= 1800; t++)
             {
-                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, TimeUnit.SECOND), this, this,
-                    "drawGraphs", null);
+                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, SECOND), this, this, "drawGraphs",
+                    null);
             }
         }
         catch (RemoteException | SimRuntimeException exception)
@@ -383,18 +368,16 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface, OTS_SCALAR
      */
     protected final void createBlock() throws RemoteException
     {
-        Length.Rel initialPosition = new Length.Rel(4000, LengthUnit.METER);
+        Length.Rel initialPosition = new Length.Rel(4000, METER);
         Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(this.getLane(), initialPosition);
         try
         {
             this.block =
                 new LaneBasedIndividualCar("999999", this.gtuType, this.carFollowingModelCars, this.laneChangeModel,
-                    initialPositions, new Speed.Abs(0, SpeedUnit.KM_PER_HOUR),
-                    new Length.Rel(4, LengthUnit.METER), new Length.Rel(1.8,
-                        LengthUnit.METER), new Speed.Abs(0, SpeedUnit.KM_PER_HOUR),
-                    new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator, DefaultCarAnimation.class,
-                    this.gtuColorer);
+                    initialPositions, new Speed.Abs(0, KM_PER_HOUR), new Length.Rel(4, METER), new Length.Rel(1.8, METER),
+                    new Speed.Abs(0, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")),
+                    this.simulator, DefaultCarAnimation.class, this.gtuColorer);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
@@ -417,14 +400,13 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface, OTS_SCALAR
     protected final void generateCar()
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
-        Length.Rel initialPosition = new Length.Rel(0, LengthUnit.METER);
-        Speed.Abs initialSpeed = new Speed.Abs(100, SpeedUnit.KM_PER_HOUR);
+        Length.Rel initialPosition = new Length.Rel(0, METER);
+        Speed.Abs initialSpeed = new Speed.Abs(100, KM_PER_HOUR);
         Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(this.getLane(), initialPosition);
         try
         {
-            Length.Rel vehicleLength =
-                new Length.Rel(generateTruck ? 15 : 4, LengthUnit.METER);
+            Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
             GTUFollowingModel gtuFollowingModel = generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
             if (null == gtuFollowingModel)
             {
@@ -432,9 +414,8 @@ class FundamentalDiagramPlotsModel implements OTSModelInterface, OTS_SCALAR
             }
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, generateTruck ? this.carFollowingModelTrucks
                 : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
-                new Length.Rel(1.8, LengthUnit.METER), new Speed.Abs(200,
-                    SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator,
-                DefaultCarAnimation.class, this.gtuColorer);
+                new Length.Rel(1.8, METER), new Speed.Abs(200, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
+                    new CompleteRoute("")), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)

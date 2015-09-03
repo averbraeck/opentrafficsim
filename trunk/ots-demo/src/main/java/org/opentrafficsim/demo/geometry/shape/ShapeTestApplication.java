@@ -56,9 +56,8 @@ public class ShapeTestApplication extends DSOLApplication implements OTS_SCALAR
         ShapeModel model = new ShapeModel();
         OTSDEVSAnimator simulator = new OTSDEVSAnimator();
         OTSReplication replication =
-            new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND)),
-                new Time.Rel(0.0, TimeUnit.SECOND),
-                new Time.Rel(7200.0, TimeUnit.SECOND), model);
+            new OTSReplication("rep1", new OTSSimTimeDouble(new DoubleScalar.Abs<TimeUnit>(0.0, SECOND)), new Time.Rel(0.0,
+                SECOND), new Time.Rel(7200.0, SECOND), model);
         simulator.initialize(replication, ReplicationMode.TERMINATING);
 
         DSOLPanel<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> panel =
