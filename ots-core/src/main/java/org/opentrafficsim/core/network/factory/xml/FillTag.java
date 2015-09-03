@@ -6,6 +6,8 @@ import java.util.List;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
 import org.opentrafficsim.core.OTS_DIST;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
@@ -46,11 +48,11 @@ class FillTag implements OTS_SCALAR, OTS_DIST
 
     /** inter-vehicle distance. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    LengthContinuousDist.Rel distanceDist = null;
+    ContinuousDistScalar.Rel<Length.Rel, LengthUnit> distanceDist = null;
 
     /** initial speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    SpeedContinuousDist.Abs initialSpeedDist = null;
+    ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> initialSpeedDist = null;
 
     /** max number of generated GTUs. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

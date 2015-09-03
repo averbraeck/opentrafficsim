@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.lane.AbstractTrafficLight;

@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.network.factory.xml;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
 import org.opentrafficsim.core.OTS_DIST;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -39,11 +41,11 @@ class GTUTag implements OTS_SCALAR, OTS_DIST
 
     /** GTU length. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    LengthContinuousDist.Rel lengthDist = null;
+    ContinuousDistScalar.Rel<Length.Rel, LengthUnit> lengthDist = null;
 
     /** GTU width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    LengthContinuousDist.Rel widthDist = null;
+    ContinuousDistScalar.Rel<Length.Rel, LengthUnit> widthDist = null;
 
     /** GTU following model. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -55,7 +57,7 @@ class GTUTag implements OTS_SCALAR, OTS_DIST
 
     /** max speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    SpeedContinuousDist.Abs maxSpeedDist = null;
+    ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> maxSpeedDist = null;
 
     /**
      * @param nodeList nodeList the top-level nodes of the XML-file

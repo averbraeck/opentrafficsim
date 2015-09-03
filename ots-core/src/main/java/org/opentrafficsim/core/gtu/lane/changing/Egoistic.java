@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.gtu.lane.changing;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.gtu.following.DualAccelerationStep;
 
 /**

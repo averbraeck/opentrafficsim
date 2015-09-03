@@ -14,7 +14,6 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.AnglePlaneUnit;
 import org.djunits.unit.AngleSlopeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 
 /**

@@ -9,6 +9,7 @@ import java.util.Map;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.opentrafficsim.core.OTS_DIST;
 import org.opentrafficsim.core.OTS_SCALAR;
@@ -64,10 +65,10 @@ public abstract class AbstractGTUGenerator implements OTS_SCALAR, OTS_DIST
     private final LaneChangeModel laneChangeModel;
 
     /** Distribution of the initial speed of the GTU. */
-    private final SpeedContinuousDist.Abs initialSpeedDist;
+    private final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> initialSpeedDist;
 
     /** Distribution of the interarrival time. */
-    private final TimeContinuousDist.Rel interarrivelTimeDist;
+    private final ContinuousDistScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDist;
 
     /** Generated number of GTUs. */
     private long generatedGTUs = 0;
@@ -122,8 +123,8 @@ public abstract class AbstractGTUGenerator implements OTS_SCALAR, OTS_DIST
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
         final Class<?> gtuClass, final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel,
-        final SpeedContinuousDist.Abs initialSpeedDist,
-        final TimeContinuousDist.Rel interarrivelTimeDist, final long maxGTUs,
+        final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> initialSpeedDist,
+        final ContinuousDistScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDist, final long maxGTUs,
         final Time.Abs startTime, final Time.Abs endTime, final Lane lane,
         final Length.Rel position, final LaneBasedRouteGenerator routeGenerator,
         final GTUColorer gtuColorer) throws RemoteException, SimRuntimeException
@@ -414,13 +415,13 @@ public abstract class AbstractGTUGenerator implements OTS_SCALAR, OTS_DIST
     public abstract OTSDEVSSimulatorInterface getSimulator();
 
     /** @return lengthDist. */
-    public abstract LengthContinuousDist.Rel getLengthDist();
+    public abstract ContinuousDistScalar.Rel<Length.Rel, LengthUnit> getLengthDist();
 
     /** @return widthDist. */
-    public abstract LengthContinuousDist.Rel getWidthDist();
+    public abstract ContinuousDistScalar.Rel<Length.Rel, LengthUnit> getWidthDist();
 
     /** @return maximumSpeedDist. */
-    public abstract SpeedContinuousDist.Abs getMaximumSpeedDist();
+    public abstract ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> getMaximumSpeedDist();
 
     /**
      * @return name.
@@ -457,7 +458,7 @@ public abstract class AbstractGTUGenerator implements OTS_SCALAR, OTS_DIST
     /**
      * @return initialSpeedDist.
      */
-    public final SpeedContinuousDist.Abs getInitialSpeedDist()
+    public final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> getInitialSpeedDist()
     {
         return this.initialSpeedDist;
     }
@@ -465,7 +466,7 @@ public abstract class AbstractGTUGenerator implements OTS_SCALAR, OTS_DIST
     /**
      * @return interarrivelTimeDist.
      */
-    public final TimeContinuousDist.Rel getInterarrivelTimeDist()
+    public final ContinuousDistScalar.Rel<Time.Rel, TimeUnit> getInterarrivelTimeDist()
     {
         return this.interarrivelTimeDist;
     }

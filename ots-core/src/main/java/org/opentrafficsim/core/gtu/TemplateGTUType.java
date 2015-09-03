@@ -2,6 +2,8 @@ package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
 import org.opentrafficsim.core.OTS_DIST;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -26,13 +28,13 @@ public class TemplateGTUType implements Serializable, OTS_SCALAR, OTS_DIST
     private final GTUType gtuType;
 
     /** distribution of the length of the GTU. */
-    private final LengthContinuousDist.Rel lengthDist;
+    private final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> lengthDist;
 
     /** distribution of the width of the GTU. */
-    private final LengthContinuousDist.Rel widthDist;
+    private final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> widthDist;
 
     /** distribution of the maximum speed of the GTU. */
-    private final SpeedContinuousDist.Abs maximumSpeedDist;
+    private final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> maximumSpeedDist;
 
     /** the simulator. */
     private final OTSDEVSSimulatorInterface simulator;
@@ -45,9 +47,9 @@ public class TemplateGTUType implements Serializable, OTS_SCALAR, OTS_DIST
      * @param simulator the simulator.
      * @throws GTUException when GTUType defined more than once
      */
-    public TemplateGTUType(final String id, final LengthContinuousDist.Rel lengthDist,
-        final LengthContinuousDist.Rel widthDist,
-        final SpeedContinuousDist.Abs maximumSpeedDist, final OTSDEVSSimulatorInterface simulator)
+    public TemplateGTUType(final String id, final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> lengthDist,
+        final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> widthDist,
+        final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> maximumSpeedDist, final OTSDEVSSimulatorInterface simulator)
         throws GTUException
     {
         this.gtuType = GTUType.makeGTUType(id);

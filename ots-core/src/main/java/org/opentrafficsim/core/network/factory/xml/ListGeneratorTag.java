@@ -3,6 +3,7 @@ package org.opentrafficsim.core.network.factory.xml;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.djunits.unit.SpeedUnit;
 import org.opentrafficsim.core.OTS_DIST;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
@@ -41,7 +42,7 @@ class ListGeneratorTag implements OTS_SCALAR, OTS_DIST
 
     /** initial speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    SpeedContinuousDist.Abs initialSpeedDist = null;
+    ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> initialSpeedDist = null;
 
     /** GTU colorer. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

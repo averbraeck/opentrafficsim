@@ -6,6 +6,7 @@ import java.util.List;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.opentrafficsim.core.OTS_DIST;
 import org.opentrafficsim.core.OTS_SCALAR;
@@ -54,11 +55,11 @@ class GeneratorTag implements OTS_SCALAR, OTS_DIST
 
     /** interarrival time. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    TimeContinuousDist.Rel iatDist = null;
+    ContinuousDistScalar.Rel<Time.Rel, TimeUnit> iatDist = null;
 
     /** initial speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    SpeedContinuousDist.Abs initialSpeedDist = null;
+    ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> initialSpeedDist = null;
 
     /** max number of generated GTUs. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

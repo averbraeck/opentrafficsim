@@ -16,6 +16,9 @@ import nl.tudelft.simulation.jstats.distributions.DistWeibull;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
 import org.opentrafficsim.core.OTS_DIST;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
@@ -128,7 +131,7 @@ public final class Distributions implements OTS_SCALAR, OTS_DIST
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static LengthContinuousDist.Rel parseLengthDistRel(final String s) throws NetworkException
+    public static ContinuousDistScalar.Rel<Length.Rel, LengthUnit> parseLengthDistRel(final String s) throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];
@@ -136,7 +139,7 @@ public final class Distributions implements OTS_SCALAR, OTS_DIST
         String unit = LengthUnits.parseLengthUnit(s2[1]);
         double[] args = parseDoubleArgs(s2[0]);
         DistContinuous dist = makeDistContinuous(ds, args);
-        return new LengthContinuousDist.Rel(dist, LengthUnits.LENGTH_UNITS.get(unit));
+        return new ContinuousDistScalar.Rel<Length.Rel, LengthUnit>(dist, LengthUnits.LENGTH_UNITS.get(unit));
     }
 
     /**
@@ -145,7 +148,7 @@ public final class Distributions implements OTS_SCALAR, OTS_DIST
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static LengthContinuousDist.Abs parseLengthDistAbs(final String s) throws NetworkException
+    public static ContinuousDistScalar.Abs<Length.Abs, LengthUnit> parseLengthDistAbs(final String s) throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];
@@ -153,7 +156,7 @@ public final class Distributions implements OTS_SCALAR, OTS_DIST
         String unit = LengthUnits.parseLengthUnit(s2[1]);
         double[] args = parseDoubleArgs(s2[0]);
         DistContinuous dist = makeDistContinuous(ds, args);
-        return new LengthContinuousDist.Abs(dist, LengthUnits.LENGTH_UNITS.get(unit));
+        return new ContinuousDistScalar.Abs<Length.Abs, LengthUnit>(dist, LengthUnits.LENGTH_UNITS.get(unit));
     }
 
     /**
@@ -162,7 +165,7 @@ public final class Distributions implements OTS_SCALAR, OTS_DIST
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static TimeContinuousDist.Rel parseTimeDistRel(final String s) throws NetworkException
+    public static ContinuousDistScalar.Rel<Time.Rel, TimeUnit> parseTimeDistRel(final String s) throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];
@@ -170,7 +173,7 @@ public final class Distributions implements OTS_SCALAR, OTS_DIST
         String unit = TimeUnits.parseTimeUnit(s2[1]);
         double[] args = parseDoubleArgs(s2[0]);
         DistContinuous dist = makeDistContinuous(ds, args);
-        return new TimeContinuousDist.Rel(dist, TimeUnits.TIME_UNITS.get(unit));
+        return new ContinuousDistScalar.Rel<Time.Rel, TimeUnit>(dist, TimeUnits.TIME_UNITS.get(unit));
     }
 
     /**
@@ -179,7 +182,7 @@ public final class Distributions implements OTS_SCALAR, OTS_DIST
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static TimeContinuousDist.Abs parseTimeDistAbs(final String s) throws NetworkException
+    public static ContinuousDistScalar.Abs<Time.Abs, TimeUnit> parseTimeDistAbs(final String s) throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];
@@ -187,7 +190,7 @@ public final class Distributions implements OTS_SCALAR, OTS_DIST
         String unit = TimeUnits.parseTimeUnit(s2[1]);
         double[] args = parseDoubleArgs(s2[0]);
         DistContinuous dist = makeDistContinuous(ds, args);
-        return new TimeContinuousDist.Abs(dist, TimeUnits.TIME_UNITS.get(unit));
+        return new ContinuousDistScalar.Abs<Time.Abs, TimeUnit>(dist, TimeUnits.TIME_UNITS.get(unit));
     }
 
     /**
@@ -196,7 +199,7 @@ public final class Distributions implements OTS_SCALAR, OTS_DIST
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static SpeedContinuousDist.Rel parseSpeedDistRel(final String s) throws NetworkException
+    public static ContinuousDistScalar.Rel<Speed.Rel, SpeedUnit> parseSpeedDistRel(final String s) throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];
@@ -204,7 +207,7 @@ public final class Distributions implements OTS_SCALAR, OTS_DIST
         String unit = SpeedUnits.parseSpeedUnit(s2[1]);
         double[] args = parseDoubleArgs(s2[0]);
         DistContinuous dist = makeDistContinuous(ds, args);
-        return new SpeedContinuousDist.Rel(dist, SpeedUnits.SPEED_UNITS.get(unit));
+        return new ContinuousDistScalar.Rel<Speed.Rel, SpeedUnit>(dist, SpeedUnits.SPEED_UNITS.get(unit));
     }
 
     /**
@@ -213,7 +216,7 @@ public final class Distributions implements OTS_SCALAR, OTS_DIST
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static SpeedContinuousDist.Abs parseSpeedDistAbs(final String s) throws NetworkException
+    public static ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> parseSpeedDistAbs(final String s) throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];
@@ -221,7 +224,7 @@ public final class Distributions implements OTS_SCALAR, OTS_DIST
         String unit = SpeedUnits.parseSpeedUnit(s2[1]);
         double[] args = parseDoubleArgs(s2[0]);
         DistContinuous dist = makeDistContinuous(ds, args);
-        return new SpeedContinuousDist.Abs(dist, SpeedUnits.SPEED_UNITS.get(unit));
+        return new ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit>(dist, SpeedUnits.SPEED_UNITS.get(unit));
     }
 
 }
