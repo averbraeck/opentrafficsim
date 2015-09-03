@@ -18,6 +18,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -85,14 +86,14 @@ public class ScheduleGenerateCars
         {
             entry.getKey();
             GenerateSensor sensor = entry.getValue();
-            HashMap<DoubleScalar.Abs<TimeUnit>, Integer> pulses = sensor.getStatusByTime();
-            for (Entry<DoubleScalar.Abs<TimeUnit>, Integer> entryPulse : pulses.entrySet())
+            HashMap<Time.Abs, Integer> pulses = sensor.getStatusByTime();
+            for (Entry<Time.Abs, Integer> entryPulse : pulses.entrySet())
             {
                 Lane lane = sensor.getLane();
                 Length.Rel initialPosition = sensor.getLongitudinalPosition();
                 if (entryPulse.getValue() == this.generateCar)
                 {
-                    DoubleScalar.Abs<TimeUnit> when = entryPulse.getKey();
+                    Time.Abs when = entryPulse.getKey();
                     try
                     {
                         this.simulator.scheduleEventAbs(when, this, this, "generateCar", new Object[]{lane, sensor,

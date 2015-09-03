@@ -8,10 +8,6 @@ import java.util.HashMap;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
@@ -26,7 +22,7 @@ public class GenerateSensor extends AbstractSensor
     /** */
     private static final long serialVersionUID = 20141231L;
 
-    private HashMap<DoubleScalar.Abs<TimeUnit>, Integer> statusByTime = new HashMap<DoubleScalar.Abs<TimeUnit>, Integer>();
+    private HashMap<Time.Abs, Integer> statusByTime = new HashMap<Time.Abs, Integer>();
 
     /**
      * @param lane
@@ -48,17 +44,17 @@ public class GenerateSensor extends AbstractSensor
         }
     }
 
-    public HashMap<DoubleScalar.Abs<TimeUnit>, Integer> getStatusByTime()
+    public HashMap<Time.Abs, Integer> getStatusByTime()
     {
         return statusByTime;
     }
 
-    public void setStatusByTime(HashMap<DoubleScalar.Abs<TimeUnit>, Integer> statusByTime)
+    public void setStatusByTime(HashMap<Time.Abs, Integer> statusByTime)
     {
         this.statusByTime = statusByTime;
     }
 
-    public void addStatusByTime(DoubleScalar.Abs<TimeUnit> timeNow, Integer status)
+    public void addStatusByTime(Time.Abs timeNow, Integer status)
     {
         this.statusByTime.put(timeNow, status);
     }

@@ -23,6 +23,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.lane.AbstractSensor;
 
@@ -42,14 +43,16 @@ public class ReadVLog {
 		// cannot be instantiated.
 	}
 
-	//
+	// inlezen van de vlog zip file
 	public static void readVlogZipFiles(
 			HashMap<String, AbstractSensor> mapSensor,
 			HashMap<String, ConfigVri> configVriList, Instant timeVLog,
 			String dirLoggings, String vLogFileName, String wegNummer,
 			String[] vriNummer, OTSDEVSSimulatorInterface simulator,
 			Integer startAtHour, Integer stopAtHour,
-			BufferedWriter outputFileLogReadSensor) {
+			BufferedWriter outputFileLogReadSensor,
+			BufferedWriter outputFileVlogCheckSensor,
+			BufferedWriter outputFileVlogCheckTrafficLight) {
 		try {
 			Map<String, ZipEntry> zipEntries = new HashMap<>();
 			ZipFile zipFile = new ZipFile(dirLoggings + vLogFileName);
@@ -58,7 +61,8 @@ public class ReadVLog {
 				ZipEntry entry = entries.nextElement();
 				zipEntries.put(entry.getName(), entry);
 			}
-
+			// for all vri (one by one): read the loggings per minute
+			// let op: afstemming vri's (synchronisatie) TODO
 			for (String vri : vriNummer) {
 				ZoneOffset offset = ZoneOffset.of("-00:00");
 				LocalDateTime ldt = LocalDateTime.ofInstant(timeVLog, offset);
@@ -120,7 +124,10 @@ public class ReadVLog {
 								readVLogFile(mapSensor, bufferedReader,
 										timeFromVLog, deltaTimeFromVLog,
 										configVriList, vri, simulator,
-										outputFileLogReadSensor, stopAtHour);
+										outputFileLogReadSensor,
+										outputFileVlogCheckSensor,
+										outputFileVlogCheckTrafficLight,
+										stopAtHour);
 							}
 							bufferedReader.close();
 							stream.close();
@@ -195,6 +202,7 @@ public class ReadVLog {
 				// volgende module, die alleen de wijzigingsberichten verwerkt
 				if (boolReadFirstTimeStamp && boolReadFirstDetectorStatus
 						&& boolReadFirstSignalGroupStatus) {
+					// TODO log the time that all initialization is finished
 					boolReadyToStartVLog[0] = true;
 					break;
 				}
@@ -209,7 +217,9 @@ public class ReadVLog {
 			BufferedReader bufferedReader, Instant[] timeFromVLog,
 			Long[] deltaTimeFromVLog, HashMap<String, ConfigVri> vriList,
 			String vriName, OTSDEVSSimulatorInterface simulator,
-			BufferedWriter outputFileLogReadSensor, int stopAtHour)
+			BufferedWriter outputFileLogReadSensor,
+			BufferedWriter outputFileVlogCheckSensor,
+			BufferedWriter outputFileVlogCheckTrafficLight, int stopAtHour)
 			throws IOException {
 		HashMap<Integer, Integer> mapStatus;
 		String line = "";
@@ -227,7 +237,10 @@ public class ReadVLog {
 				} else if (typeBericht == 5) {
 					// alleen om te checken of de status nog klopt
 					mapStatus = parseStatus(buffer, deltaTimeFromVLog);
-					CheckStatusDetector(mapSensor, mapStatus, vriList, vriName);
+
+					// TODO finished checks?????
+					CheckStatusDetector(mapSensor, mapStatus, vriList, vriName,
+							outputFileVlogCheckSensor);
 				} else if (typeBericht == 6 && ldt.getHour() < stopAtHour) {
 					// wijzigingsberichten inlezen van de detectoren
 					// uur eerder stoppen met inlezen: vri's blijven nog uur
@@ -239,8 +252,10 @@ public class ReadVLog {
 				} else if (typeBericht == 13) {
 					// alleen om te checken of de status nog klopt
 					mapStatus = parseStatus(buffer, deltaTimeFromVLog);
+
+					// TODO finished checks?????
 					CheckStatusSignalGroup(mapSensor, mapStatus, vriList,
-							vriName);
+							vriName, outputFileVlogCheckTrafficLight);
 				} else if (typeBericht == 14) {
 					// wijzigingsberichten inlezen van de signaalgroepen
 					mapStatus = parseWijziging(buffer, deltaTimeFromVLog);
@@ -298,13 +313,13 @@ public class ReadVLog {
 							e.printStackTrace();
 						}
 					}
-					((CheckSensor) sensor).addStatusByTime(
-							new DoubleScalar.Abs<TimeUnit>(milliSecondsPassed,
-									TimeUnit.MILLISECOND), entry.getValue());
+					((CheckSensor) sensor).addStatusByTime(new Time.Abs(
+							milliSecondsPassed, TimeUnit.MILLISECOND), entry
+							.getValue());
 				} else if (sensor instanceof GenerateSensor) {
-					((GenerateSensor) sensor).addStatusByTime(
-							new DoubleScalar.Abs<TimeUnit>(milliSecondsPassed,
-									TimeUnit.MILLISECOND), entry.getValue());
+					((GenerateSensor) sensor).addStatusByTime(new Time.Abs(
+							milliSecondsPassed, TimeUnit.MILLISECOND), entry
+							.getValue());
 				} else {
 					// System.out.println("Sensor " + searchFor
 					// + " triggered -- ignored for now");
@@ -354,14 +369,12 @@ public class ReadVLog {
 				for (TrafficLight trafficLight : GTM.signalGroupToTrafficLights
 						.get(vri.getName() + "_" + nameSignalGroup)) {
 					try {
-						simulator.scheduleEventAbs(
-								new DoubleScalar.Abs<TimeUnit>(
-										milliSecondsPassed,
-										TimeUnit.MILLISECOND), trafficLight,
-								trafficLight, "changeColor",
+						simulator.scheduleEventAbs(new Time.Abs(
+								milliSecondsPassed, TimeUnit.MILLISECOND),
+								trafficLight, trafficLight, "changeColor",
 								new Object[] { entry.getValue() });
 						/*-
-						System.out.println(new DoubleScalar.Abs<TimeUnit>(milliSecondsPassed, TimeUnit.MILLISECOND) + " - "
+						System.out.println(new Time.Abs(milliSecondsPassed, TimeUnit.MILLISECOND) + " - "
 						    + vri.getName() + ": " + timeVLogNow + ": " + vri.getName() + "_" + nameSignalGroup
 						    + ", status[.,.] = [" + entry.getKey() + "," + entry.getValue() + "]");
 						 */
@@ -382,27 +395,48 @@ public class ReadVLog {
 	public static void CheckStatusDetector(
 			HashMap<String, AbstractSensor> mapSensor,
 			HashMap<Integer, Integer> mapStatus,
-			HashMap<String, ConfigVri> vriList, String vriName) {
+			HashMap<String, ConfigVri> vriList, String vriName,
+			BufferedWriter outputFileVlogCheckSensor) {
 		for (Entry<Integer, Integer> entry : mapStatus.entrySet()) {
 			ConfigVri vri = vriList.get(vriName);
-			String nameDetector = vri.getDetectors().get(entry.getKey());
-			if (mapSensor.get(vriName + nameDetector) != null) {
-				/*- TODO
-				HashMap<DoubleScalar.Abs<TimeUnit>, Integer> map = mapSensor.get(vriName + nameDetector).getStatusByTime();
-				// compare value of latest change and this status
-				Entry<DoubleScalar.Abs<TimeUnit>, Integer> maxEntry = null;
-				for (Entry<DoubleScalar.Abs<TimeUnit>, Integer> entry1 : map.entrySet())
-				{
-				    if (maxEntry == null || entry1.getKey().getSI() > maxEntry.getValue())
-				    {
-				        maxEntry = entry1;
-				    }
+			String nameDetector = null;
+			String name = vri.getDetectors().get(entry.getKey());
+			if (name.startsWith("K")) {
+				name = name.substring(1);
+			}
+			if (name.matches("\\d\\.\\d") || name.matches("\\d\\.\\d\\d")) {
+				nameDetector = "0" + name;
+			} else {
+				nameDetector = name;
+			}
+			if (mapSensor.get(vriName + "_" + nameDetector) != null) {
+				// TODO
+				HashMap<Time.Abs, Integer> map = null;
+				if (mapSensor.get(vriName + "_" + nameDetector) instanceof GenerateSensor) {
+					GenerateSensor sensor = (GenerateSensor) mapSensor
+							.get(vriName + "_" + nameDetector);
+					map = sensor.getStatusByTime();
+				} else if (mapSensor.get(vriName + "_" + nameDetector) instanceof CheckSensor) {
+					CheckSensor sensor = (CheckSensor) mapSensor.get(vriName
+							+ "_" + nameDetector);
+					map = sensor.getStatusByTime();
 				}
-				if (entry.getValue() != maxEntry.getValue())
-				{
-				    System.out.println("Status detector verkeerd ingelezen!!!!!");
+				if (map != null) {
+					// compare value of latest change and this status
+					Entry<Time.Abs, Integer> maxEntry = null;
+					for (Entry<Time.Abs, Integer> entry1 : map.entrySet()) {
+						if (maxEntry == null
+								|| entry1.getKey().getSI() > maxEntry
+										.getValue()) {
+							maxEntry = entry1;
+						}
+					}
+					if (entry.getValue() != maxEntry.getValue()) {
+						
+						System.out
+								.println("Status detector verkeerd ingelezen!!!!!");
+					}
 				}
-				 */
 			}
 
 		}
@@ -411,17 +445,18 @@ public class ReadVLog {
 	public static void CheckStatusSignalGroup(
 			HashMap<String, AbstractSensor> mapSensor,
 			HashMap<Integer, Integer> mapStatus,
-			HashMap<String, ConfigVri> vriList, String vriName) {
+			HashMap<String, ConfigVri> vriList, String vriName,
+			BufferedWriter outputFileVlogCheckTrafficLight) {
 		for (Entry<Integer, Integer> entry : mapStatus.entrySet()) {
 			ConfigVri vri = vriList.get(vriName);
 			String nameSignalGroup = vri.getSignalGroups().get(entry.getKey());
 			if (mapSensor.get(vriName + nameSignalGroup) != null) {
 				/*- TODO
-				HashMap<DoubleScalar.Abs<TimeUnit>, Integer> map =
+				HashMap<Time.Abs, Integer> map =
 				    mapSensor.get(vriName + nameSignalGroup).getStatusByTime();
 				// compare value of latest change and this status
-				Entry<DoubleScalar.Abs<TimeUnit>, Integer> maxEntry = null;
-				for (Entry<DoubleScalar.Abs<TimeUnit>, Integer> entry1 : map.entrySet())
+				Entry<Time.Abs, Integer> maxEntry = null;
+				for (Entry<Time.Abs, Integer> entry1 : map.entrySet())
 				{
 				    if (maxEntry == null || entry1.getKey().getSI() > maxEntry.getValue())
 				    {
