@@ -7,7 +7,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
@@ -15,7 +14,6 @@ import org.opentrafficsim.core.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.core.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.route.LaneBasedRouteGenerator;
-import org.opentrafficsim.core.units.distributions.DistContinuousDoubleScalar;
 
 /**
  * Generate GTUs.
@@ -34,13 +32,13 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
     private final OTSDEVSSimulatorInterface simulator;
 
     /** distribution of the length of the GTU. */
-    private final LengthContinuousDist.Rel lengthDist;
+    private final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> lengthDist;
 
     /** distribution of the width of the GTU. */
-    private final LengthContinuousDist.Rel widthDist;
+    private final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> widthDist;
 
     /** distribution of the maximum speed of the GTU. */
-    private final SpeedContinuousDist.Abs maximumSpeedDist;
+    private final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> maximumSpeedDist;
 
     /**
      * @param name the name of the generator
@@ -67,11 +65,11 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
     @SuppressWarnings("checkstyle:parameternumber")
     public GTUGeneratorIndividual(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
         final Class<?> gtuClass, final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel,
-        final SpeedContinuousDist.Abs initialSpeedDist,
-        final TimeContinuousDist.Rel interarrivelTimeDist,
-        final LengthContinuousDist.Rel lengthDist,
-        final LengthContinuousDist.Rel widthDist,
-        final SpeedContinuousDist.Abs maximumSpeedDist, final long maxGTUs,
+        final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> initialSpeedDist,
+        final ContinuousDistScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDist,
+        final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> lengthDist,
+        final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> widthDist,
+        final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> maximumSpeedDist, final long maxGTUs,
         final Time.Abs startTime, final Time.Abs endTime, final Lane lane,
         final Length.Rel position, final LaneBasedRouteGenerator routeGenerator,
         final GTUColorer gtuColorer) throws RemoteException, SimRuntimeException
@@ -94,7 +92,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
     /**
      * @return lengthDist.
      */
-    public final LengthContinuousDist.Rel getLengthDist()
+    public final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> getLengthDist()
     {
         return this.lengthDist;
     }
@@ -102,7 +100,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
     /**
      * @return widthDist.
      */
-    public final LengthContinuousDist.Rel getWidthDist()
+    public final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> getWidthDist()
     {
         return this.widthDist;
     }
@@ -110,7 +108,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
     /**
      * @return maximumSpeedDist.
      */
-    public final SpeedContinuousDist.Abs getMaximumSpeedDist()
+    public final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> getMaximumSpeedDist()
     {
         return this.maximumSpeedDist;
     }

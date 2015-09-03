@@ -11,8 +11,6 @@ import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.FrequencyUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 
 import com.vividsolutions.jts.geom.Envelope;
