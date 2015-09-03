@@ -21,9 +21,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
@@ -90,13 +87,13 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, OTS_SC
     private ChartPanel[][] charts;
 
     /** Start of two lane road. */
-    private static final Length.Rel LOWERBOUND = new Length.Rel(-500, LengthUnit.METER);
+    private static final Length.Rel LOWERBOUND = new Length.Rel(-500, METER);
 
     /** Position of reference vehicle on the two lane road. */
-    private static final Length.Rel MIDPOINT = new Length.Rel(0, LengthUnit.METER);
+    private static final Length.Rel MIDPOINT = new Length.Rel(0, METER);
 
     /** End of two lane road. */
-    private static final Length.Rel UPPERBOUND = new Length.Rel(500, LengthUnit.METER);
+    private static final Length.Rel UPPERBOUND = new Length.Rel(500, METER);
 
     /** The JFrame with the lane change graphs. */
     private static LaneChangeGraph lcs;
@@ -156,7 +153,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, OTS_SC
             LaneChangeModel laneChangeModel = 0 == row ? new Egoistic() : new Altruistic();
             for (int index = 0; index < STANDARDSPEEDS.length; index++)
             {
-                Speed.Abs speed = new Speed.Abs(STANDARDSPEEDS[index], SpeedUnit.KM_PER_HOUR);
+                Speed.Abs speed = new Speed.Abs(STANDARDSPEEDS[index], KM_PER_HOUR);
                 // System.out.println("speed " + speed);
                 double startSpeedDifference = -30; // standardSpeeds[index];
                 double endSpeedDifference = startSpeedDifference + 60; // 150;
@@ -170,36 +167,36 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, OTS_SC
                 {
                     Length.Rel criticalHeadway =
                         lcs.findDecisionPoint(LaneChangeGraph.LOWERBOUND, MIDPOINT, speed, new Speed.Rel(speedDifference,
-                            SpeedUnit.KM_PER_HOUR), laneChangeModel, true);
+                            KM_PER_HOUR), laneChangeModel, true);
                     if (null != criticalHeadway)
                     {
-                        data.addXYPair(beginRightKey, speedDifference, criticalHeadway.getInUnit(LengthUnit.METER));
+                        data.addXYPair(beginRightKey, speedDifference, criticalHeadway.getInUnit(METER));
                     }
                     criticalHeadway =
                         lcs.findDecisionPoint(MIDPOINT, LaneChangeGraph.UPPERBOUND, speed, new Speed.Rel(speedDifference,
-                            SpeedUnit.KM_PER_HOUR), laneChangeModel, true);
+                            KM_PER_HOUR), laneChangeModel, true);
                     if (null != criticalHeadway)
                     {
-                        data.addXYPair(endRightKey, speedDifference, criticalHeadway.getInUnit(LengthUnit.METER));
+                        data.addXYPair(endRightKey, speedDifference, criticalHeadway.getInUnit(METER));
                     }
                     criticalHeadway =
                         lcs.findDecisionPoint(LaneChangeGraph.LOWERBOUND, MIDPOINT, speed, new Speed.Rel(speedDifference,
-                            SpeedUnit.KM_PER_HOUR), laneChangeModel, false);
+                            KM_PER_HOUR), laneChangeModel, false);
                     if (null != criticalHeadway)
                     {
-                        data.addXYPair(beginLeftKey, speedDifference, criticalHeadway.getInUnit(LengthUnit.METER));
+                        data.addXYPair(beginLeftKey, speedDifference, criticalHeadway.getInUnit(METER));
                     }
                     else
                     {
                         lcs.findDecisionPoint(LaneChangeGraph.LOWERBOUND, MIDPOINT, speed, new Speed.Rel(speedDifference,
-                            SpeedUnit.KM_PER_HOUR), laneChangeModel, false);
+                            KM_PER_HOUR), laneChangeModel, false);
                     }
                     criticalHeadway =
                         lcs.findDecisionPoint(MIDPOINT, LaneChangeGraph.UPPERBOUND, speed, new Speed.Rel(speedDifference,
-                            SpeedUnit.KM_PER_HOUR), laneChangeModel, false);
+                            KM_PER_HOUR), laneChangeModel, false);
                     if (null != criticalHeadway)
                     {
-                        data.addXYPair(endLeftKey, speedDifference, criticalHeadway.getInUnit(LengthUnit.METER));
+                        data.addXYPair(endLeftKey, speedDifference, criticalHeadway.getInUnit(METER));
                     }
                     Plot plot = lcs.charts[row][index].getChart().getPlot();
                     plot.notifyListeners(new PlotChangeEvent(plot));
@@ -268,33 +265,29 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, OTS_SC
         GTUType gtuType = GTUType.makeGTUType("car");
         LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(gtuType);
-        final Speed.Abs speedLimit = new Speed.Abs(120, SpeedUnit.KM_PER_HOUR);
+        final Speed.Abs speedLimit = new Speed.Abs(120, KM_PER_HOUR);
 
         Lane[] lanes =
             LaneFactory.makeMultiLane("Road with two lanes", new OTSNode("From", new OTSPoint3D(LOWERBOUND.getSI(), 0, 0)),
                 new OTSNode("To", new OTSPoint3D(UPPERBOUND.getSI(), 0, 0)), null, 2, laneType, speedLimit, null);
         // Create the reference vehicle
         Map<Lane, Length.Rel> initialLongitudinalPositions = new LinkedHashMap<Lane, Length.Rel>();
-        initialLongitudinalPositions.put(lanes[mergeRight ? 0 : 1], new Length.Rel(0, LengthUnit.METER));
+        initialLongitudinalPositions.put(lanes[mergeRight ? 0 : 1], new Length.Rel(0, METER));
         // The reference car only needs a simulator
         // But that needs a model (which this class implements)
         SimpleSimulator simpleSimulator =
-            new SimpleSimulator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(0.0, TimeUnit.SECOND), new Time.Rel(3600.0,
-                TimeUnit.SECOND), this);
+            new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND), this);
         this.carFollowingModel =
-            new IDMPlus(new Acceleration.Abs(1, AccelerationUnit.METER_PER_SECOND_2), new Acceleration.Abs(1.5,
-                AccelerationUnit.METER_PER_SECOND_2), new Length.Rel(2, LengthUnit.METER), new Time.Rel(1, TimeUnit.SECOND),
-                1d);
+            new IDMPlus(new Acceleration.Abs(1, METER_PER_SECOND_2), new Acceleration.Abs(1.5, METER_PER_SECOND_2),
+                new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
         this.carFollowingModel =
-            new IDM(new Acceleration.Abs(1, AccelerationUnit.METER_PER_SECOND_2), new Acceleration.Abs(1.5,
-                AccelerationUnit.METER_PER_SECOND_2), new Length.Rel(2, LengthUnit.METER), new Time.Rel(1, TimeUnit.SECOND),
-                1d);
+            new IDM(new Acceleration.Abs(1, METER_PER_SECOND_2), new Acceleration.Abs(1.5, METER_PER_SECOND_2),
+                new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
 
         LaneBasedIndividualCar referenceCar =
             new LaneBasedIndividualCar("ReferenceCar", gtuType, this.carFollowingModel, laneChangeModel,
-                initialLongitudinalPositions, referenceSpeed, new Length.Rel(4, LengthUnit.METER), new Length.Rel(2,
-                    LengthUnit.METER), new Speed.Abs(150, SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
-                    new CompleteRoute("")), simpleSimulator);
+                initialLongitudinalPositions, referenceSpeed, new Length.Rel(4, METER), new Length.Rel(2, METER),
+                new Speed.Abs(150, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simpleSimulator);
         Collection<HeadwayGTU> sameLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         sameLaneGTUs.add(new HeadwayGTU(referenceCar, 0));
         // TODO play with the speed limit
@@ -365,9 +358,9 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, OTS_SC
         initialLongitudinalPositions.put(otherCarLane, otherCarPosition);
         LaneBasedIndividualCar otherCar =
             new LaneBasedIndividualCar("otherCar", referenceCar.getGTUType(), this.carFollowingModel, laneChangeModel,
-                initialLongitudinalPositions, referenceCar.getLongitudinalVelocity().plus(deltaV), new Length.Rel(4,
-                    LengthUnit.METER), new Length.Rel(2, LengthUnit.METER), new Speed.Abs(150, SpeedUnit.KM_PER_HOUR),
-                new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), referenceCar.getSimulator());
+                initialLongitudinalPositions, referenceCar.getLongitudinalVelocity().plus(deltaV), new Length.Rel(4, METER),
+                new Length.Rel(2, METER), new Speed.Abs(150, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
+                    new CompleteRoute("")), referenceCar.getSimulator());
         Collection<HeadwayGTU> preferredLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         Collection<HeadwayGTU> nonPreferredLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         Length.Rel referenceCarPosition =
@@ -386,9 +379,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, OTS_SC
         // System.out.println(otherCar);
         LaneMovementStep result =
             laneChangeModel.computeLaneChangeAndAcceleration(referenceCar, sameLaneGTUs, mergeRight ? preferredLaneGTUs
-                : null, mergeRight ? null : nonPreferredLaneGTUs, speedLimit, new Acceleration.Rel(0.3,
-                AccelerationUnit.METER_PER_SECOND_2), new Acceleration.Rel(0.1, AccelerationUnit.METER_PER_SECOND_2),
-                new Acceleration.Rel(-0.3, AccelerationUnit.METER_PER_SECOND_2));
+                : null, mergeRight ? null : nonPreferredLaneGTUs, speedLimit, new Acceleration.Rel(0.3, METER_PER_SECOND_2),
+                new Acceleration.Rel(0.1, METER_PER_SECOND_2), new Acceleration.Rel(-0.3, METER_PER_SECOND_2));
         // System.out.println(result);
         sameLaneGTUs.remove(otherGTU);
         otherCar.destroy();

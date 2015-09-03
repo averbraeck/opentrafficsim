@@ -19,10 +19,7 @@ import javax.swing.SwingUtilities;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -119,13 +116,11 @@ public class OpenStreetMap extends AbstractWrappableSimulation
                             + "curvature of the road) capabilities of the vehicle and personality "
                             + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
                     localProperties.add(IDMPropertySet.makeIDMPropertySet("Car", new Acceleration.Abs(1.0,
-                        AccelerationUnit.METER_PER_SECOND_2), new Acceleration.Abs(1.5,
-                        AccelerationUnit.METER_PER_SECOND_2), new Length.Rel(2.0, LengthUnit.METER),
-                        new Time.Rel(1.0, TimeUnit.SECOND), 2));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration.Abs(
-                        0.5, AccelerationUnit.METER_PER_SECOND_2), new Acceleration.Abs(1.25,
-                        AccelerationUnit.METER_PER_SECOND_2), new Length.Rel(2.0, LengthUnit.METER),
-                        new Time.Rel(1.0, TimeUnit.SECOND), 3));
+                        METER_PER_SECOND_2), new Acceleration.Abs(1.5, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
+                        new Time.Rel(1.0, SECOND), 2));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration.Abs(0.5,
+                        METER_PER_SECOND_2), new Acceleration.Abs(1.25, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
+                        new Time.Rel(1.0, SECOND), 3));
                     osm.buildSimulator(localProperties, null, true);
                 }
                 catch (Exception e)

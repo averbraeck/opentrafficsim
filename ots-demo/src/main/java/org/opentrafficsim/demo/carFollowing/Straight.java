@@ -24,9 +24,6 @@ import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.OTS_SCALAR;
@@ -143,13 +140,11 @@ public class Straight extends AbstractWrappableSimulation implements WrappableSi
                             + "curvature of the road) capabilities of the vehicle and personality "
                             + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
                     localProperties.add(IDMPropertySet.makeIDMPropertySet("Car", new Acceleration.Abs(1.0,
-                        AccelerationUnit.METER_PER_SECOND_2), new Acceleration.Abs(1.5,
-                        AccelerationUnit.METER_PER_SECOND_2), new Length.Rel(2.0, LengthUnit.METER),
-                        new Time.Rel(1.0, TimeUnit.SECOND), 2));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration.Abs(
-                        0.5, AccelerationUnit.METER_PER_SECOND_2), new Acceleration.Abs(1.25,
-                        AccelerationUnit.METER_PER_SECOND_2), new Length.Rel(2.0, LengthUnit.METER),
-                        new Time.Rel(1.0, TimeUnit.SECOND), 3));
+                        METER_PER_SECOND_2), new Acceleration.Abs(1.5, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
+                        new Time.Rel(1.0, SECOND), 2));
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration.Abs(0.5,
+                        METER_PER_SECOND_2), new Acceleration.Abs(1.25, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
+                        new Time.Rel(1.0, SECOND), 3));
                     straight.buildSimulator(localProperties, null, true);
                     straight.panel.getTabbedPane().addTab("info", straight.makeInfoPane());
                 }
@@ -245,8 +240,7 @@ public class Straight extends AbstractWrappableSimulation implements WrappableSi
             {
                 List<Lane> path = new ArrayList<Lane>();
                 path.add(this.model.getLane());
-                TrajectoryPlot tp =
-                    new TrajectoryPlot("TrajectoryPlot", new Time.Rel(0.5, TimeUnit.SECOND), path);
+                TrajectoryPlot tp = new TrajectoryPlot("TrajectoryPlot", new Time.Rel(0.5, SECOND), path);
                 tp.setTitle("Trajectory Graph");
                 tp.setExtendedState(Frame.MAXIMIZED_BOTH);
                 graph = tp;
@@ -364,10 +358,10 @@ class StraightModel implements OTSModelInterface, OTS_SCALAR
     private LaneBasedIndividualCar block = null;
 
     /** minimum distance. */
-    private Length.Rel minimumDistance = new Length.Rel(0, LengthUnit.METER);
+    private Length.Rel minimumDistance = new Length.Rel(0, METER);
 
     /** maximum distance. */
-    private Length.Rel maximumDistance = new Length.Rel(5000, LengthUnit.METER);
+    private Length.Rel maximumDistance = new Length.Rel(5000, METER);
 
     /** The Lane that contains the simulated Cars. */
     private Lane lane;
@@ -398,7 +392,7 @@ class StraightModel implements OTSModelInterface, OTS_SCALAR
     private List<Lane> path = new ArrayList<Lane>();
 
     /** The speed limit on all Lanes. */
-    private Speed.Abs speedLimit = new Speed.Abs(100, SpeedUnit.KM_PER_HOUR);
+    private Speed.Abs speedLimit = new Speed.Abs(100, KM_PER_HOUR);
 
     /**
      * @return List&lt;Lane*gt;; the set of lanes for the specified index
@@ -429,8 +423,7 @@ class StraightModel implements OTSModelInterface, OTS_SCALAR
                 new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0), this.lane
                     .getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
                     LongitudinalDirectionality.FORWARD, this.speedLimit);
-            Sensor sensor =
-                new SinkSensor(sinkLane, new Length.Rel(10.0, LengthUnit.METER), this.simulator);
+            Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, METER), this.simulator);
             sinkLane.addSensor(sensor, GTUType.ALL);
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", this.properties, false, 0);
@@ -517,21 +510,18 @@ class StraightModel implements OTSModelInterface, OTS_SCALAR
             }
 
             // 1500 [veh / hour] == 2.4s headway
-            this.headway = new Time.Rel(3600.0 / 1500.0, TimeUnit.SECOND);
+            this.headway = new Time.Rel(3600.0 / 1500.0, SECOND);
             // Schedule creation of the first car (it will re-schedule itself one headway later, etc.).
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this, "generateCar",
-                null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, SECOND), this, this, "generateCar", null);
             // Create a block at t = 5 minutes
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, TimeUnit.SECOND), this, this, "createBlock",
-                null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, SECOND), this, this, "createBlock", null);
             // Remove the block at t = 7 minutes
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(420, TimeUnit.SECOND), this, this, "removeBlock",
-                null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(420, SECOND), this, this, "removeBlock", null);
             // Schedule regular updates of the graphs
             for (int t = 1; t <= 1800; t++)
             {
-                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, TimeUnit.SECOND), this, this,
-                    "drawGraphs", null);
+                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, SECOND), this, this, "drawGraphs",
+                    null);
             }
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | OTSGeometryException exception)
@@ -557,18 +547,16 @@ class StraightModel implements OTSModelInterface, OTS_SCALAR
      */
     protected final void createBlock() throws RemoteException
     {
-        Length.Rel initialPosition = new Length.Rel(4000, LengthUnit.METER);
+        Length.Rel initialPosition = new Length.Rel(4000, METER);
         Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(this.lane, initialPosition);
         try
         {
             this.block =
                 new LaneBasedIndividualCar("999999", this.gtuType, this.carFollowingModelCars, this.laneChangeModel,
-                    initialPositions, new Speed.Abs(0, SpeedUnit.KM_PER_HOUR),
-                    new Length.Rel(4, LengthUnit.METER), new Length.Rel(1.8,
-                        LengthUnit.METER), new Speed.Abs(0, SpeedUnit.KM_PER_HOUR),
-                    new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator, DefaultCarAnimation.class,
-                    this.gtuColorer);
+                    initialPositions, new Speed.Abs(0, KM_PER_HOUR), new Length.Rel(4, METER), new Length.Rel(1.8, METER),
+                    new Speed.Abs(0, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")),
+                    this.simulator, DefaultCarAnimation.class, this.gtuColorer);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
@@ -591,23 +579,22 @@ class StraightModel implements OTSModelInterface, OTS_SCALAR
     protected final void generateCar()
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
-        Length.Rel initialPosition = new Length.Rel(0, LengthUnit.METER);
-        Speed.Abs initialSpeed = new Speed.Abs(100, SpeedUnit.KM_PER_HOUR);
+        Length.Rel initialPosition = new Length.Rel(0, METER);
+        Speed.Abs initialSpeed = new Speed.Abs(100, KM_PER_HOUR);
         Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(this.lane, initialPosition);
         try
         {
-            Length.Rel vehicleLength =
-                new Length.Rel(generateTruck ? 15 : 4, LengthUnit.METER);
+            Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
             GTUFollowingModel gtuFollowingModel = generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
             if (null == gtuFollowingModel)
             {
                 throw new Error("gtuFollowingModel is null");
             }
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, gtuFollowingModel, this.laneChangeModel,
-                initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, LengthUnit.METER),
-                new Speed.Abs(200, SpeedUnit.KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
-                    new CompleteRoute("")), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
+                initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, METER), new Speed.Abs(200, KM_PER_HOUR),
+                new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator, DefaultCarAnimation.class,
+                this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
