@@ -22,6 +22,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -100,11 +101,11 @@ public class ScheduleCheckPulses<ID> {
 		for (Entry<String, CheckSensor> entry : this.mapSensor.entrySet()) {
 			entry.getKey();
 			CheckSensor sensor = entry.getValue();
-			HashMap<DoubleScalar.Abs<TimeUnit>, Integer> pulses = sensor
+			HashMap<Time.Abs, Integer> pulses = sensor
 					.getStatusByTime();
-			for (Entry<DoubleScalar.Abs<TimeUnit>, Integer> entryPulse : pulses
+			for (Entry<Time.Abs, Integer> entryPulse : pulses
 					.entrySet()) {
-				DoubleScalar.Abs<TimeUnit> when = entryPulse.getKey();
+				Time.Abs when = entryPulse.getKey();
 				// if a car is detected and leaves the sensor, look for the
 				// nearest simulation vehicle
 				// if that vehicle is found move it to the sensor
@@ -121,7 +122,7 @@ public class ScheduleCheckPulses<ID> {
 			}
 
 		}
-		this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0,
+		this.simulator.scheduleEventAbs(new Time.Abs(0,
 				TimeUnit.SECOND), this, this, "checkTriggeredVehiclesList",
 				new Object[] { GTM.listGTUsInNetwork, backRange,
 						outputFileLogVehicleSimulation });

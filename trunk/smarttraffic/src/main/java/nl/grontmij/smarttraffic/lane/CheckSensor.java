@@ -15,6 +15,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Time.Abs;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -39,7 +40,7 @@ public class CheckSensor extends AbstractSensor
 
     private List<CheckSensor> sensorsParallel = new ArrayList<CheckSensor>();
 
-    private HashMap<DoubleScalar.Abs<TimeUnit>, Integer> statusByTime = new HashMap<DoubleScalar.Abs<TimeUnit>, Integer>();
+    private HashMap<Time.Abs, Integer> statusByTime = new HashMap<Time.Abs, Integer>();
     
     private Integer currentStatus;
 
@@ -154,17 +155,17 @@ public class CheckSensor extends AbstractSensor
         return this.sensorsParallel;
     }
 
-    public HashMap<DoubleScalar.Abs<TimeUnit>, Integer> getStatusByTime()
+    public HashMap<Time.Abs, Integer> getStatusByTime()
     {
         return this.statusByTime;
     }
 
-    public void setStatusByTime(HashMap<DoubleScalar.Abs<TimeUnit>, Integer> statusByTime)
+    public void setStatusByTime(HashMap<Time.Abs, Integer> statusByTime)
     {
         this.statusByTime = statusByTime;
     }
 
-    public void addStatusByTime(DoubleScalar.Abs<TimeUnit> timeNow, Integer status)
+    public void addStatusByTime(Time.Abs timeNow, Integer status)
     {
         this.statusByTime.put(timeNow, status);
     }
