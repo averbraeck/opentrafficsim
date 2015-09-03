@@ -27,27 +27,27 @@ public final class TimeUnits implements OTS_SCALAR
 
     static
     {
-        TIME_UNITS.put("ms", TimeUnit.MILLISECOND);
-        TIME_UNITS.put("s", TimeUnit.SECOND);
-        TIME_UNITS.put("m", TimeUnit.MINUTE);
-        TIME_UNITS.put("min", TimeUnit.MINUTE);
-        TIME_UNITS.put("h", TimeUnit.HOUR);
-        TIME_UNITS.put("hr", TimeUnit.HOUR);
-        TIME_UNITS.put("d", TimeUnit.DAY);
-        TIME_UNITS.put("day", TimeUnit.DAY);
-        TIME_UNITS.put("wk", TimeUnit.WEEK);
-        TIME_UNITS.put("week", TimeUnit.WEEK);
+        TIME_UNITS.put("ms", MILLISECOND);
+        TIME_UNITS.put("s", SECOND);
+        TIME_UNITS.put("m", MINUTE);
+        TIME_UNITS.put("min", MINUTE);
+        TIME_UNITS.put("h", HOUR);
+        TIME_UNITS.put("hr", HOUR);
+        TIME_UNITS.put("d", DAY);
+        TIME_UNITS.put("day", DAY);
+        TIME_UNITS.put("wk", WEEK);
+        TIME_UNITS.put("week", WEEK);
 
-        PER_TIME_UNITS.put("/ms", FrequencyUnit.PER_MILLISECOND);
-        PER_TIME_UNITS.put("/s", FrequencyUnit.PER_SECOND);
-        PER_TIME_UNITS.put("/m", FrequencyUnit.PER_MINUTE);
-        PER_TIME_UNITS.put("/min", FrequencyUnit.PER_MINUTE);
-        PER_TIME_UNITS.put("/h", FrequencyUnit.PER_HOUR);
-        PER_TIME_UNITS.put("/hr", FrequencyUnit.PER_HOUR);
-        PER_TIME_UNITS.put("/d", FrequencyUnit.PER_DAY);
-        PER_TIME_UNITS.put("/day", FrequencyUnit.PER_DAY);
-        PER_TIME_UNITS.put("/wk", FrequencyUnit.PER_WEEK);
-        PER_TIME_UNITS.put("/week", FrequencyUnit.PER_WEEK);
+        PER_TIME_UNITS.put("/ms", PER_MILLISECOND);
+        PER_TIME_UNITS.put("/s", PER_SECOND);
+        PER_TIME_UNITS.put("/m", PER_MINUTE);
+        PER_TIME_UNITS.put("/min", PER_MINUTE);
+        PER_TIME_UNITS.put("/h", PER_HOUR);
+        PER_TIME_UNITS.put("/hr", PER_HOUR);
+        PER_TIME_UNITS.put("/d", PER_DAY);
+        PER_TIME_UNITS.put("/day", PER_DAY);
+        PER_TIME_UNITS.put("/wk", PER_WEEK);
+        PER_TIME_UNITS.put("/week", PER_WEEK);
     }
 
     /** Utility class. */

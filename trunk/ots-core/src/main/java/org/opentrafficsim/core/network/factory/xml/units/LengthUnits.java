@@ -28,27 +28,27 @@ public final class LengthUnits implements OTS_SCALAR
 
     static
     {
-        LENGTH_UNITS.put("mm", LengthUnit.MILLIMETER);
-        LENGTH_UNITS.put("cm", LengthUnit.CENTIMETER);
-        LENGTH_UNITS.put("dm", LengthUnit.DECIMETER);
-        LENGTH_UNITS.put("dam", LengthUnit.DEKAMETER);
-        LENGTH_UNITS.put("hm", LengthUnit.HECTOMETER);
-        LENGTH_UNITS.put("m", LengthUnit.METER);
-        LENGTH_UNITS.put("km", LengthUnit.KILOMETER);
-        LENGTH_UNITS.put("mi", LengthUnit.MILE);
-        LENGTH_UNITS.put("y", LengthUnit.YARD);
-        LENGTH_UNITS.put("ft", LengthUnit.FOOT);
+        LENGTH_UNITS.put("mm", MILLIMETER);
+        LENGTH_UNITS.put("cm", CENTIMETER);
+        LENGTH_UNITS.put("dm", DECIMETER);
+        LENGTH_UNITS.put("dam", DEKAMETER);
+        LENGTH_UNITS.put("hm", HECTOMETER);
+        LENGTH_UNITS.put("m", METER);
+        LENGTH_UNITS.put("km", KILOMETER);
+        LENGTH_UNITS.put("mi", MILE);
+        LENGTH_UNITS.put("y", YARD);
+        LENGTH_UNITS.put("ft", FOOT);
 
-        PER_LENGTH_UNITS.put("/mm", LinearDensityUnit.PER_MILLIMETER);
-        PER_LENGTH_UNITS.put("/cm", LinearDensityUnit.PER_CENTIMETER);
-        PER_LENGTH_UNITS.put("/dm", LinearDensityUnit.PER_DECIMETER);
-        PER_LENGTH_UNITS.put("/dam", LinearDensityUnit.PER_DEKAMETER);
-        PER_LENGTH_UNITS.put("/hm", LinearDensityUnit.PER_HECTOMETER);
-        PER_LENGTH_UNITS.put("/m", LinearDensityUnit.PER_METER);
-        PER_LENGTH_UNITS.put("/km", LinearDensityUnit.PER_KILOMETER);
-        PER_LENGTH_UNITS.put("/mi", LinearDensityUnit.PER_MILE);
-        PER_LENGTH_UNITS.put("/y", LinearDensityUnit.PER_YARD);
-        PER_LENGTH_UNITS.put("/ft", LinearDensityUnit.PER_FOOT);
+        PER_LENGTH_UNITS.put("/mm", PER_MILLIMETER);
+        PER_LENGTH_UNITS.put("/cm", PER_CENTIMETER);
+        PER_LENGTH_UNITS.put("/dm", PER_DECIMETER);
+        PER_LENGTH_UNITS.put("/dam", PER_DEKAMETER);
+        PER_LENGTH_UNITS.put("/hm", PER_HECTOMETER);
+        PER_LENGTH_UNITS.put("/m", PER_METER);
+        PER_LENGTH_UNITS.put("/km", PER_KILOMETER);
+        PER_LENGTH_UNITS.put("/mi", PER_MILE);
+        PER_LENGTH_UNITS.put("/y", PER_YARD);
+        PER_LENGTH_UNITS.put("/ft", PER_FOOT);
     }
 
     /** Utility class. */

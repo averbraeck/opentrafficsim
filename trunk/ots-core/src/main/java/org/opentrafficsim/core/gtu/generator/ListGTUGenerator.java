@@ -13,9 +13,6 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.opentrafficsim.core.OTS_DIST;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
@@ -97,10 +94,9 @@ public class ListGTUGenerator implements OTS_SCALAR, OTS_DIST
      * @throws NetworkException on
      */
     public ListGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
-        final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel,
-        final Speed.Abs initialSpeed, final Lane lane, final Length.Rel position,
-        final LaneBasedRouteGenerator routeGenerator, final GTUColorer gtuColorer, final String fileName)
-        throws RemoteException, SimRuntimeException, NetworkException
+        final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel, final Speed.Abs initialSpeed,
+        final Lane lane, final Length.Rel position, final LaneBasedRouteGenerator routeGenerator,
+        final GTUColorer gtuColorer, final String fileName) throws RemoteException, SimRuntimeException, NetworkException
     {
         if (null == lane)
         {
@@ -144,8 +140,7 @@ public class ListGTUGenerator implements OTS_SCALAR, OTS_DIST
             }
             while (line.equals("")); // ignore blank lines
             double when = Double.parseDouble(line);
-            this.simulator.scheduleEventAbs(new Time.Abs(when, TimeUnit.SECOND), this, this,
-                "generateCar", null);
+            this.simulator.scheduleEventAbs(new Time.Abs(when, SECOND), this, this, "generateCar", null);
         }
         catch (NumberFormatException exception)
         {
@@ -167,16 +162,16 @@ public class ListGTUGenerator implements OTS_SCALAR, OTS_DIST
      */
     protected final void generateCar()
     {
-        Length.Rel initialPosition = new Length.Rel(0, LengthUnit.METER);
+        Length.Rel initialPosition = new Length.Rel(0, METER);
         Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(this.lane, initialPosition);
         try
         {
-            Length.Rel vehicleLength = new Length.Rel(4, LengthUnit.METER);
+            Length.Rel vehicleLength = new Length.Rel(4, METER);
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, this.gtuFollowingModel,
-                this.laneChangeModel, initialPositions, this.initialSpeed, vehicleLength, new Length.Rel(
-                    1.8, LengthUnit.METER), new Speed.Abs(200, SpeedUnit.KM_PER_HOUR), this.routeGenerator
-                    .generateRouteNavigator(), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
+                this.laneChangeModel, initialPositions, this.initialSpeed, vehicleLength, new Length.Rel(1.8, METER),
+                new Speed.Abs(200, KM_PER_HOUR), this.routeGenerator.generateRouteNavigator(), this.simulator,
+                DefaultCarAnimation.class, this.gtuColorer);
             scheduleNextVehicle();
         }
         catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)

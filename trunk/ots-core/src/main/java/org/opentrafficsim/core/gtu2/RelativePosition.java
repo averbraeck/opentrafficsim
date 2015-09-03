@@ -2,7 +2,6 @@ package org.opentrafficsim.core.gtu2;
 
 import java.io.Serializable;
 
-import org.djunits.unit.LengthUnit;
 import org.opentrafficsim.core.OTS_SCALAR;
 
 /**
@@ -50,9 +49,8 @@ public class RelativePosition implements Serializable, OTS_SCALAR
     public static final TYPE DRIVER = new TYPE("DRIVER");
 
     /** the reference position (always 0, 0, 0). */
-    public static final RelativePosition REFERENCE_POSITION = new RelativePosition(new Length.Rel(0.0d,
-        LengthUnit.METER), new Length.Rel(0.0d, LengthUnit.METER), new Length.Rel(0.0d,
-        LengthUnit.METER), RelativePosition.REFERENCE);
+    public static final RelativePosition REFERENCE_POSITION = new RelativePosition(new Length.Rel(0.0d, METER),
+        new Length.Rel(0.0d, METER), new Length.Rel(0.0d, METER), RelativePosition.REFERENCE);
 
     /**
      * @param dx positive x is in the normal direction of movement.
@@ -60,8 +58,7 @@ public class RelativePosition implements Serializable, OTS_SCALAR
      * @param dz positive z is up.
      * @param type type of relative position (FRONT, BACK, etc.).
      */
-    public RelativePosition(final Length.Rel dx, final Length.Rel dy,
-        final Length.Rel dz, final TYPE type)
+    public RelativePosition(final Length.Rel dx, final Length.Rel dy, final Length.Rel dz, final TYPE type)
     {
         super();
         this.dx = dx;

@@ -1,9 +1,6 @@
 package org.opentrafficsim.core.units.calc;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.OTS_SCALAR;
 
@@ -33,10 +30,9 @@ public final class Calc implements OTS_SCALAR
      * @param time DoubleScalar.Rel&lt;TimeUnit&gt;; the time
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the resulting distance
      */
-    public static Length.Rel speedTimesTime(final Speed.Rel speed,
-        final Time.Rel time)
+    public static Length.Rel speedTimesTime(final Speed.Rel speed, final Time.Rel time)
     {
-        return new Length.Rel(speed.getSI() * time.getSI(), LengthUnit.METER);
+        return new Length.Rel(speed.getSI() * time.getSI(), METER);
     }
 
     /**
@@ -46,10 +42,9 @@ public final class Calc implements OTS_SCALAR
      * @param time DoubleScalar.Rel&lt;TimeUnit&gt;; the time
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the resulting distance
      */
-    public static Length.Rel speedTimesTime(final Speed.Abs speed,
-        final Time.Rel time)
+    public static Length.Rel speedTimesTime(final Speed.Abs speed, final Time.Rel time)
     {
-        return new Length.Rel(speed.getSI() * time.getSI(), LengthUnit.METER);
+        return new Length.Rel(speed.getSI() * time.getSI(), METER);
     }
 
     /**
@@ -59,11 +54,10 @@ public final class Calc implements OTS_SCALAR
      * @param time DoubleScalar.Abs&lt;TimeUnit&gt;; the time
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the resulting distance
      */
-    public static Length.Rel accelerationTimesTimeSquaredDiv2(
-        final Acceleration.Abs acceleration, final Time.Rel time)
+    public static Length.Rel accelerationTimesTimeSquaredDiv2(final Acceleration.Abs acceleration, final Time.Rel time)
     {
         double t = time.getSI();
-        return new Length.Rel(0.5 * acceleration.getSI() * t * t, LengthUnit.METER);
+        return new Length.Rel(0.5 * acceleration.getSI() * t * t, METER);
     }
 
     /**
@@ -73,10 +67,9 @@ public final class Calc implements OTS_SCALAR
      * @param time DoubleScalar.Rel&lt;TimeUnit&gt;; the time
      * @return DoubleScalar.Rel&lt;SpeedUnit&gt;; the resulting speed
      */
-    public static Speed.Rel accelerationTimesTime(final Acceleration.Abs acceleration,
-        final Time.Rel time)
+    public static Speed.Rel accelerationTimesTime(final Acceleration.Abs acceleration, final Time.Rel time)
     {
-        return new Speed.Rel(acceleration.getSI() * time.getSI(), SpeedUnit.METER_PER_SECOND);
+        return new Speed.Rel(acceleration.getSI() * time.getSI(), METER_PER_SECOND);
     }
 
     /**
@@ -90,7 +83,7 @@ public final class Calc implements OTS_SCALAR
     public static Time.Rel speedDividedByAcceleration(final DoubleScalar<SpeedUnit> speed,
         final Acceleration.Rel acceleration)
     {
-        return new Time.Rel(speed.getSI() / acceleration.getSI(), TimeUnit.SECOND);
+        return new Time.Rel(speed.getSI() / acceleration.getSI(), SECOND);
     }
 
     /**
@@ -104,8 +97,7 @@ public final class Calc implements OTS_SCALAR
     public static Length.Rel speedSquaredDividedByDoubleAcceleration(final DoubleScalar<SpeedUnit> speed,
         final Acceleration.Abs acceleration)
     {
-        return new Length.Rel(speed.getSI() * speed.getSI() / (2.0 * acceleration.getSI()),
-            LengthUnit.METER);
+        return new Length.Rel(speed.getSI() * speed.getSI() / (2.0 * acceleration.getSI()), METER);
     }
 
     /**
@@ -115,10 +107,8 @@ public final class Calc implements OTS_SCALAR
      * @param timeDifference DoubleScalar.Rel&lt;TimeUnit&gt;; the time difference
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the average acceleration needed to match the given inputs
      */
-    public static Acceleration.Abs deltaSpeedDividedByTime(
-        final Speed.Rel speedDifference, final Time.Rel timeDifference)
+    public static Acceleration.Abs deltaSpeedDividedByTime(final Speed.Rel speedDifference, final Time.Rel timeDifference)
     {
-        return new Acceleration.Abs(speedDifference.getSI() / timeDifference.getSI(),
-            AccelerationUnit.METER_PER_SECOND_2);
+        return new Acceleration.Abs(speedDifference.getSI() / timeDifference.getSI(), METER_PER_SECOND_2);
     }
 }

@@ -95,14 +95,13 @@ class SensorTag implements OTS_SCALAR
 
             try
             {
-                ClassUtil.resolveConstructor(clazz, new Class[]{Lane.class, Length.Rel.class,
-                    RelativePosition.TYPE.class, String.class, OTSSimulatorInterface.class});
+                ClassUtil.resolveConstructor(clazz, new Class[]{Lane.class, Length.Rel.class, RelativePosition.TYPE.class,
+                    String.class, OTSSimulatorInterface.class});
             }
             catch (NoSuchMethodException nsme)
             {
                 throw new SAXException("SENSOR: CLASS NAME " + sensorTag.className + " for sensor " + sensorTag.name
-                    + " on lane " + laneName
-                    + " -- no constructor with arguments (Lane, Length.Rel, RelativePosition.TYPE,"
+                    + " on lane " + laneName + " -- no constructor with arguments (Lane, Length.Rel, RelativePosition.TYPE,"
                     + " String, OTSSimulatorInterface)");
             }
         }

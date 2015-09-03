@@ -13,8 +13,6 @@ import java.util.TreeMap;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opentrafficsim.core.OTS_SCALAR;
@@ -610,11 +608,11 @@ public final class Convert implements OTS_SCALAR
             }
             Color color = Color.LIGHT_GRAY;
             LaneType laneType = laneAttributes.getLaneType();
-            Length.Rel latPos = new Length.Rel(offset, LengthUnit.METER);
+            Length.Rel latPos = new Length.Rel(offset, METER);
             Map<GTUType, LongitudinalDirectionality> directionality = new HashMap<>();
             directionality.put(GTUType.ALL, laneAttributes.getDirectionality());
             Map<GTUType, Speed.Abs> speedLimit = new HashMap<>();
-            speedLimit.put(GTUType.ALL, new Speed.Abs(100, SpeedUnit.KM_PER_HOUR));
+            speedLimit.put(GTUType.ALL, new Speed.Abs(100, KM_PER_HOUR));
             Lane newLane = null;
             // FIXME the following code assumes right-hand-side driving.
             if (osmlink.hasTag("hasPreceding") && offset >= 0 || osmlink.hasTag("hasFollowing") && offset < 0)
@@ -623,8 +621,7 @@ public final class Convert implements OTS_SCALAR
                 newLane =
                     new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(), laneAttributes
                         .getWidth(), laneType, directionality, speedLimit);
-                SinkSensor sensor =
-                    new SinkSensor(newLane, new Length.Rel(0.25, LengthUnit.METER), simulator);
+                SinkSensor sensor = new SinkSensor(newLane, new Length.Rel(0.25, METER), simulator);
                 newLane.addSensor(sensor, GTUType.ALL);
             }
             else if (osmlink.hasTag("hasPreceding") && offset < 0 || osmlink.hasTag("hasFollowing") && offset >= 0)
@@ -874,7 +871,7 @@ class LaneAttributes implements OTS_SCALAR
      */
     public void setWidth(final Double width)
     {
-        Length.Rel w = new Length.Rel(width, LengthUnit.METER);
+        Length.Rel w = new Length.Rel(width, METER);
         this.width = w;
     }
 

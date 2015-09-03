@@ -130,7 +130,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", null, false));
         this.clockPanel = new ClockPanel();
         buttonPanel.add(this.clockPanel);
-        this.timeEdit = new TimeEdit(new Time.Abs(0, TimeUnit.SECOND));
+        this.timeEdit = new TimeEdit(new Time.Abs(0, SECOND));
         this.timeEdit.addPropertyChangeListener("value", this);
         buttonPanel.add(this.timeEdit);
         this.add(buttonPanel);
@@ -181,8 +181,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         RemoteException
     {
         SimEvent<OTSSimTimeDouble> simEvent =
-            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time.Abs(executionTime.getSI(),
-                TimeUnit.SECOND)), priority, source, eventTarget, method, args);
+            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time.Abs(executionTime.getSI(), SECOND)), priority,
+                source, eventTarget, method, args);
         this.simulator.scheduleEvent(simEvent);
         return simEvent;
     }
@@ -277,8 +277,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 try
                 {
                     this.stopAtEvent =
-                        scheduleEvent(new Time.Abs(now, TimeUnit.SI), SimEventInterface.MIN_PRIORITY,
-                            this, this, "autoPauseSimulator", null);
+                        scheduleEvent(new Time.Abs(now, TimeUnit.SI), SimEventInterface.MIN_PRIORITY, this, this,
+                            "autoPauseSimulator", null);
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -429,8 +429,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 try
                 {
                     this.stopAtEvent =
-                        scheduleEvent(new Time.Abs(nextTick, TimeUnit.SI), SimEventInterface.MAX_PRIORITY,
-                            this, this, "autoPauseSimulator", null);
+                        scheduleEvent(new Time.Abs(nextTick, TimeUnit.SI), SimEventInterface.MAX_PRIORITY, this, this,
+                            "autoPauseSimulator", null);
                     getSimulator().start();
                 }
                 catch (SimRuntimeException | RemoteException exception)
@@ -506,8 +506,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             try
             {
                 this.stopAtEvent =
-                    scheduleEvent(new Time.Abs(stopTime, TimeUnit.SECOND), SimEventInterface.MAX_PRIORITY,
-                        this, this, "autoPauseSimulator", null);
+                    scheduleEvent(new Time.Abs(stopTime, SECOND), SimEventInterface.MAX_PRIORITY, this, this,
+                        "autoPauseSimulator", null);
             }
             catch (SimRuntimeException | RemoteException exception)
             {

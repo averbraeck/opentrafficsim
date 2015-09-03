@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.network;
 
-import org.djunits.unit.LengthUnit;
 import org.opentrafficsim.core.OTS_SCALAR;
 
 /**
@@ -65,7 +64,7 @@ public class LinkLocation implements OTS_SCALAR
      */
     public final Length.Rel getLongitudinalPosition()
     {
-        return new Length.Rel(this.link.getLength().getSI() * getFractionalLongitudinalPosition(), LengthUnit.METER);
+        return new Length.Rel(this.link.getLength().getSI() * getFractionalLongitudinalPosition(), METER);
     }
 
     /**

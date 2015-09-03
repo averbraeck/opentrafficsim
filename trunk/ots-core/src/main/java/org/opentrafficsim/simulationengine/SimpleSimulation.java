@@ -33,7 +33,7 @@ public interface SimpleSimulation extends OTSDEVSSimulatorInterface, OTS_SCALAR
      *         the event may arise later)
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
      */
-    SimEvent<OTSSimTimeDouble> scheduleEvent(final Time.Abs executionTime, final short priority,
-        final Object source, final Object target, final String method, final Object[] args) throws SimRuntimeException;
+    SimEvent<OTSSimTimeDouble> scheduleEvent(final Time.Abs executionTime, final short priority, final Object source,
+        final Object target, final String method, final Object[] args) throws SimRuntimeException;
 
 }

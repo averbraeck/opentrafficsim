@@ -69,9 +69,8 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
         final ContinuousDistScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDist,
         final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> lengthDist,
         final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> widthDist,
-        final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> maximumSpeedDist, final long maxGTUs,
-        final Time.Abs startTime, final Time.Abs endTime, final Lane lane,
-        final Length.Rel position, final LaneBasedRouteGenerator routeGenerator,
+        final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> maximumSpeedDist, final long maxGTUs, final Time.Abs startTime,
+        final Time.Abs endTime, final Lane lane, final Length.Rel position, final LaneBasedRouteGenerator routeGenerator,
         final GTUColorer gtuColorer) throws RemoteException, SimRuntimeException
     {
         super(name, simulator, gtuType, gtuClass, gtuFollowingModel, laneChangeModel, initialSpeedDist,

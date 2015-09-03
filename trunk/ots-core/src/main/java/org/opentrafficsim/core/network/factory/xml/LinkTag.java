@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.djunits.unit.LengthUnit;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.XMLParser;
@@ -245,14 +244,14 @@ final class LinkTag implements OTS_SCALAR
     {
         if (posStr.trim().equals("BEGIN"))
         {
-            return new Length.Rel(0.0, LengthUnit.METER);
+            return new Length.Rel(0.0, METER);
         }
 
         double length = cse.getCenterLine().getLengthSI();
 
         if (posStr.trim().equals("END"))
         {
-            return new Length.Rel(length, LengthUnit.METER);
+            return new Length.Rel(length, METER);
         }
 
         if (posStr.endsWith("%"))
@@ -266,7 +265,7 @@ final class LinkTag implements OTS_SCALAR
                     throw new NetworkException("parseBeginEndPosition: attribute POSITION with value " + posStr
                         + " invalid for lane " + cse.toString() + ", should be a percentage between 0 and 100%");
                 }
-                return new Length.Rel(length * fraction, LengthUnit.METER);
+                return new Length.Rel(length * fraction, METER);
             }
             catch (NumberFormatException nfe)
             {
@@ -284,7 +283,7 @@ final class LinkTag implements OTS_SCALAR
                 throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr
                     + " invalid for lane " + cse.toString() + ": provided negative offset greater than than link length");
             }
-            return new Length.Rel(length - offset, LengthUnit.METER);
+            return new Length.Rel(length - offset, METER);
         }
 
         Length.Rel offset = LengthUnits.parseLengthRel(posStr);

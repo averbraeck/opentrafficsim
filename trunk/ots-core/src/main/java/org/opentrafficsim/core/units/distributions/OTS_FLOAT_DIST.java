@@ -14,15 +14,15 @@ import org.djunits.value.vfloat.scalar.FLOAT_SCALAR;
  */
 public interface OTS_FLOAT_DIST extends FLOAT_SCALAR
 {
-    /** the easy access interface to the float scalar continuous distributions. */ 
-    public interface ContinuousDistScalar extends ContinuousDistFloatScalar 
-    { 
+    /** the easy access interface to the float scalar continuous distributions. */
+    public interface ContinuousDistScalar extends ContinuousDistFloatScalar
+    {
         // no additional features.
     }
 
-    /** the easy access interface to the float scalar discrete distributions. */ 
-    public interface DiscreteDistScalar extends DiscreteDistFloatScalar 
-    { 
+    /** the easy access interface to the float scalar discrete distributions. */
+    public interface DiscreteDistScalar extends DiscreteDistFloatScalar
+    {
         // no additional features.
     }
 }

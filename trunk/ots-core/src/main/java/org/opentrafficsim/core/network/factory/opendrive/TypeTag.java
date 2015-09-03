@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.network.factory.opendrive;
 
-import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.OTS_SCALAR;
@@ -56,7 +55,7 @@ class TypeTag implements OTS_SCALAR
             Node s = attributes.getNamedItem("s");
             if (s == null)
                 throw new SAXException("ROAD.TYPE: missing attribute s for ROAD.ID=" + roadTag.id);
-            typeTag.s = new Length.Rel(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
+            typeTag.s = new Length.Rel(Double.parseDouble(s.getNodeValue().trim()), METER);
 
             roadTag.typeTags.put(typeTag.s.doubleValue(), typeTag);
         }

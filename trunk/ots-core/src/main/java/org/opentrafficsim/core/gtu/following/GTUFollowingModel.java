@@ -32,9 +32,8 @@ public interface GTUFollowingModel extends OTS_SCALAR
      * @throws RemoteException in case of simulator reachability problems
      * @throws NetworkException on network inconsistency
      */
-    AccelerationStep computeAcceleration(final LaneBasedGTU follower, final Speed.Abs leaderSpeed,
-        final Length.Rel headway, final Speed.Abs speedLimit) throws RemoteException,
-        NetworkException;
+    AccelerationStep computeAcceleration(final LaneBasedGTU follower, final Speed.Abs leaderSpeed, final Length.Rel headway,
+        final Speed.Abs speedLimit) throws RemoteException, NetworkException;
 
     /**
      * Compute the acceleration that would be used to follow a leader.<br>
@@ -51,9 +50,8 @@ public interface GTUFollowingModel extends OTS_SCALAR
      *         application of the GTU following model
      * @throws RemoteException on communications failure
      */
-    Acceleration.Abs computeAcceleration(final Speed.Abs followerSpeed,
-        Speed.Abs followerMaximumSpeed, final Speed.Abs leaderSpeed,
-        final Length.Rel headway, final Speed.Abs speedLimit) throws RemoteException;
+    Acceleration.Abs computeAcceleration(final Speed.Abs followerSpeed, Speed.Abs followerMaximumSpeed,
+        final Speed.Abs leaderSpeed, final Length.Rel headway, final Speed.Abs speedLimit) throws RemoteException;
 
     /**
      * Compute the lowest accelerations (or most severe decelerations) that would be used if a referenceGTU is present
@@ -97,9 +95,8 @@ public interface GTUFollowingModel extends OTS_SCALAR
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;
      * @throws RemoteException on communications failure
      */
-    Length.Rel minimumHeadway(Speed.Abs followerSpeed,
-        Speed.Abs leaderSpeed, Length.Rel precision,
-        Speed.Abs speedLimit, Speed.Abs followerMaximumSpeed) throws RemoteException;
+    Length.Rel minimumHeadway(Speed.Abs followerSpeed, Speed.Abs leaderSpeed, Length.Rel precision, Speed.Abs speedLimit,
+        Speed.Abs followerMaximumSpeed) throws RemoteException;
 
     /**
      * Return the maximum safe deceleration for use in gap acceptance models. This is the deceleration that may be enforced upon

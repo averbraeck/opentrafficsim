@@ -3,7 +3,6 @@ package org.opentrafficsim.core.network.factory.opendrive;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.djunits.unit.LengthUnit;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 import org.w3c.dom.NamedNodeMap;
@@ -74,7 +73,7 @@ class RoadTag implements OTS_SCALAR
         Node length = attributes.getNamedItem("length");
         if (length == null)
             throw new SAXException("ROAD: missing attribute LENGTH");
-        roadTag.length = new Length.Rel(Double.parseDouble(length.getNodeValue().trim()), LengthUnit.METER);
+        roadTag.length = new Length.Rel(Double.parseDouble(length.getNodeValue().trim()), METER);
 
         Node junctionId = attributes.getNamedItem("junction");
         if (junctionId == null)

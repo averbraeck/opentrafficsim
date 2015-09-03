@@ -40,8 +40,7 @@ public class LaneChangeUrgeGTUColorer implements GTUColorer
      * @param horizon DoubleScalar.Rel&lt;LengthUnit&gt;; the distance horizon; if a GTU can stay in its current lane for at
      *            least this distance, this GTU will be painted in the neutral color.
      */
-    public LaneChangeUrgeGTUColorer(final Length.Rel minimumLaneChangeDistance,
-        final Length.Rel horizon)
+    public LaneChangeUrgeGTUColorer(final Length.Rel minimumLaneChangeDistance, final Length.Rel horizon)
     {
         this.minimumLaneChangeDistance = minimumLaneChangeDistance;
         this.horizon = horizon;

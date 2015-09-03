@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.network.lane;
 
-import org.djunits.unit.LengthUnit;
 import org.opentrafficsim.core.OTS_SCALAR;
 
 /**
@@ -65,8 +64,7 @@ public class LaneLocation implements OTS_SCALAR
      */
     public final Length.Abs getLongitudinalPosition()
     {
-        return new Length.Abs(this.lane.getLength().getSI() * this.fractionalLongitudinalPosition,
-            LengthUnit.METER);
+        return new Length.Abs(this.lane.getLength().getSI() * this.fractionalLongitudinalPosition, METER);
     }
 
 }

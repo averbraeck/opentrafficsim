@@ -40,8 +40,7 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
      * @throws NetworkException when id equal to null or not unique
      */
     public RoadMarkerAlong(final CrossSectionLink parentLink, final Length.Rel lateralCenterPosition,
-        final Length.Rel beginWidth, final Length.Rel endWidth)
-        throws OTSGeometryException, NetworkException
+        final Length.Rel beginWidth, final Length.Rel endWidth) throws OTSGeometryException, NetworkException
     {
         super(parentLink, UUID.randomUUID().toString(), lateralCenterPosition, lateralCenterPosition, beginWidth, endWidth);
     }

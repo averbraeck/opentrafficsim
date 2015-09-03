@@ -27,9 +27,8 @@ import org.opentrafficsim.core.units.calc.Calc;
 public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
 {
     /** Prohibitive deceleration used to construct the TOODANGEROUS result below. */
-    private static final AccelerationStep PROHIBITIVEACCELERATIONSTEP = new AccelerationStep(
-        new Acceleration.Abs(Double.NEGATIVE_INFINITY, AccelerationUnit.SI),
-        new Time.Abs(Double.NaN, TimeUnit.SI));
+    private static final AccelerationStep PROHIBITIVEACCELERATIONSTEP = new AccelerationStep(new Acceleration.Abs(
+        Double.NEGATIVE_INFINITY, AccelerationUnit.SI), new Time.Abs(Double.NaN, TimeUnit.SI));
 
     /** Return value if lane change causes immediate collision. */
     public static final DualAccelerationStep TOODANGEROUS = new DualAccelerationStep(PROHIBITIVEACCELERATIONSTEP,
@@ -38,8 +37,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
     /** {@inheritDoc} */
     @Override
     public final DualAccelerationStep computeAcceleration(final LaneBasedGTU referenceGTU,
-        final Collection<HeadwayGTU> otherGTUs, final Speed.Abs speedLimit) throws RemoteException,
-        NetworkException
+        final Collection<HeadwayGTU> otherGTUs, final Speed.Abs speedLimit) throws RemoteException, NetworkException
     {
         Time.Abs when = referenceGTU.getSimulator().getSimulatorTime().getTime();
         // Find out if there is an immediate collision
@@ -105,9 +103,8 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final AccelerationStep computeAcceleration(final LaneBasedGTU follower,
-        final Speed.Abs leaderSpeed, final Length.Rel headway,
-        final Speed.Abs speedLimit) throws RemoteException
+    public final AccelerationStep computeAcceleration(final LaneBasedGTU follower, final Speed.Abs leaderSpeed,
+        final Length.Rel headway, final Speed.Abs speedLimit) throws RemoteException
     {
         final Time.Abs currentTime = follower.getNextEvaluationTime();
         final Speed.Abs followerSpeed = follower.getLongitudinalVelocity(currentTime);
@@ -122,8 +119,8 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU gtu,
-        final Speed.Abs speedLimit) throws RemoteException, NetworkException
+    public final AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU gtu, final Speed.Abs speedLimit)
+        throws RemoteException, NetworkException
     {
         return computeAcceleration(gtu, gtu.getLongitudinalVelocity(), Calc.speedSquaredDividedByDoubleAcceleration(gtu
             .getMaximumVelocity(), maximumSafeDeceleration()), speedLimit);
@@ -131,10 +128,8 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final Length.Rel minimumHeadway(final Speed.Abs followerSpeed,
-        final Speed.Abs leaderSpeed, final Length.Rel precision,
-        final Speed.Abs speedLimit, final Speed.Abs followerMaximumSpeed)
-        throws RemoteException
+    public final Length.Rel minimumHeadway(final Speed.Abs followerSpeed, final Speed.Abs leaderSpeed,
+        final Length.Rel precision, final Speed.Abs speedLimit, final Speed.Abs followerMaximumSpeed) throws RemoteException
     {
         if (precision.getSI() <= 0)
         {
@@ -144,8 +139,8 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
         // Find a decent interval to bisect
         double minimumSI = 0;
         double minimumSIDeceleration =
-            computeAcceleration(followerSpeed, followerSpeed, leaderSpeed,
-                new Length.Rel(minimumSI, LengthUnit.SI), speedLimit).getSI();
+            computeAcceleration(followerSpeed, followerSpeed, leaderSpeed, new Length.Rel(minimumSI, LengthUnit.SI),
+                speedLimit).getSI();
         if (minimumSIDeceleration >= maximumDeceleration)
         {
             // Weird... The GTU following model allows zero headway
@@ -175,8 +170,8 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
         {
             double midSI = (minimumSI + maximumSI) / 2;
             double midSIAcceleration =
-                computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed,
-                    new Length.Rel(midSI, LengthUnit.SI), speedLimit).getSI();
+                computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, new Length.Rel(midSI, LengthUnit.SI),
+                    speedLimit).getSI();
             if (midSIAcceleration < maximumDeceleration)
             {
                 minimumSI = midSI;
@@ -187,8 +182,8 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
             }
         }
         Length.Rel result = new Length.Rel((minimumSI + maximumSI) / 2, LengthUnit.SI);
-        computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed,
-            new Length.Rel(result.getSI(), LengthUnit.SI), speedLimit).getSI();
+        computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, new Length.Rel(result.getSI(), LengthUnit.SI),
+            speedLimit).getSI();
         return result;
     }
 }

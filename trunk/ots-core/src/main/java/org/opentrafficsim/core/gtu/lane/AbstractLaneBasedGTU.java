@@ -117,7 +117,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     private Speed.Abs lateralVelocity;
 
     /** acceleration (negative values indicate deceleration) at the lastEvaluationTime. */
-    private Acceleration.Abs acceleration = new Acceleration.Abs(0, AccelerationUnit.METER_PER_SECOND_2);
+    private Acceleration.Abs acceleration = new Acceleration.Abs(0, METER_PER_SECOND_2);
 
     /** CarFollowingModel used by this GTU. */
     private final GTUFollowingModel gtuFollowingModel;
@@ -161,7 +161,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
         this.gtuFollowingModel = gtuFollowingModel;
         this.laneChangeModel = laneChangeModel;
-        this.lateralVelocity = new Speed.Abs(0.0, SpeedUnit.METER_PER_SECOND);
+        this.lateralVelocity = new Speed.Abs(0.0, METER_PER_SECOND);
 
         // register the GTU on the lanes
         for (Lane lane : initialLongitudinalPositions.keySet())
@@ -319,19 +319,16 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     }
 
     /** Standard incentive to stay in the current lane. */
-    private static final Acceleration.Rel STAYINCURRENTLANEINCENTIVE = new Acceleration.Rel(0.1,
-        AccelerationUnit.METER_PER_SECOND_2);
+    private static final Acceleration.Rel STAYINCURRENTLANEINCENTIVE = new Acceleration.Rel(0.1, METER_PER_SECOND_2);
 
     /** Standard incentive to stay in the current lane. */
-    private static final Acceleration.Rel PREFERREDLANEINCENTIVE = new Acceleration.Rel(0.3,
-        AccelerationUnit.METER_PER_SECOND_2);
+    private static final Acceleration.Rel PREFERREDLANEINCENTIVE = new Acceleration.Rel(0.3, METER_PER_SECOND_2);
 
     /** Standard incentive to stay in the current lane. */
-    private static final Acceleration.Rel NONPREFERREDLANEINCENTIVE = new Acceleration.Rel(-0.3,
-        AccelerationUnit.METER_PER_SECOND_2);
+    private static final Acceleration.Rel NONPREFERREDLANEINCENTIVE = new Acceleration.Rel(-0.3, METER_PER_SECOND_2);
 
     /** Standard time horizon for route choices. */
-    private static final Time.Rel TIMEHORIZON = new Time.Rel(90, TimeUnit.SECOND);
+    private static final Time.Rel TIMEHORIZON = new Time.Rel(90, SECOND);
 
     /**
      * Move this GTU to it's current location, then compute (and commit to) the next movement step.
@@ -361,9 +358,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             destroy();
             return; // Done; do not re-schedule execution of this move method.
         }
-        Length.Rel maximumForwardHeadway = new Length.Rel(500.0, LengthUnit.METER);
+        Length.Rel maximumForwardHeadway = new Length.Rel(500.0, METER);
         // TODO 500?
-        Length.Rel maximumReverseHeadway = new Length.Rel(200.0, LengthUnit.METER);
+        Length.Rel maximumReverseHeadway = new Length.Rel(200.0, METER);
         // TODO 200?
         Speed.Abs speedLimit = this.getMaximumVelocity();
         for (Lane lane : this.lanes)
@@ -1032,8 +1029,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     private HeadwayGTU headwayRecursiveForwardSI(final Lane lane, final double lanePositionSI, final double cumDistanceSI,
         final double maxDistanceSI, final Time.Abs when) throws RemoteException, NetworkException
     {
-        LaneBasedGTU otherGTU =
-            lane.getGtuAfter(new Length.Rel(lanePositionSI, LengthUnit.METER), RelativePosition.REAR, when);
+        LaneBasedGTU otherGTU = lane.getGtuAfter(new Length.Rel(lanePositionSI, METER), RelativePosition.REAR, when);
         if (otherGTU != null)
         {
             double distanceM = cumDistanceSI + otherGTU.position(lane, otherGTU.getRear(), when).getSI() - lanePositionSI;
@@ -1095,8 +1091,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     private HeadwayGTU headwayRecursiveBackwardSI(final Lane lane, final double lanePositionSI, final double cumDistanceSI,
         final double maxDistanceSI, final Time.Abs when) throws RemoteException, NetworkException
     {
-        LaneBasedGTU otherGTU =
-            lane.getGtuBefore(new Length.Rel(lanePositionSI, LengthUnit.METER), RelativePosition.FRONT, when);
+        LaneBasedGTU otherGTU = lane.getGtuBefore(new Length.Rel(lanePositionSI, METER), RelativePosition.FRONT, when);
         if (otherGTU != null)
         {
             double distanceM = cumDistanceSI + lanePositionSI - otherGTU.position(lane, otherGTU.getFront(), when).getSI();
@@ -1421,7 +1416,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             return null;
         }
-        return new Time.Abs(this.lastEvaluationTime.getSI() + result, TimeUnit.SECOND);
+        return new Time.Abs(this.lastEvaluationTime.getSI() + result, SECOND);
     }
 
     /** {@inheritDoc} */
@@ -1432,7 +1427,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             return null;
         }
-        return new Time.Rel(result, TimeUnit.SECOND);
+        return new Time.Rel(result, SECOND);
     }
 
     /** {@inheritDoc} */

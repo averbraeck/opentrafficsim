@@ -8,7 +8,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 
-import org.djunits.unit.TimeUnit;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSReplication;
@@ -36,16 +35,15 @@ public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulatio
      * Create a simulation engine without animation; the easy way. PauseOnError is set to true;
      * @param startTime OTSSimTimeDouble; the start time of the simulation
      * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warm up period of the simulation (use new
-     *            DoubleScalar.Rel&lt;TimeUnit&gt;(0, TimeUnit.SECOND) if you don't know what this is)
+     *            DoubleScalar.Rel&lt;TimeUnit&gt;(0, SECOND) if you don't know what this is)
      * @param runLength DoubleScalar.Rel&lt;TimeUnit&gt;; the duration of the simulation
      * @param model OTSModelInterface; the simulation to execute
      * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
      * @throws NamingException when the context for the replication cannot be created
      */
-    public SimpleSimulator(final Time.Abs startTime, final Time.Rel warmupPeriod,
-        final Time.Rel runLength, final OTSModelInterface model) throws RemoteException,
-        SimRuntimeException, NamingException
+    public SimpleSimulator(final Time.Abs startTime, final Time.Rel warmupPeriod, final Time.Rel runLength,
+        final OTSModelInterface model) throws RemoteException, SimRuntimeException, NamingException
     {
         setPauseOnError(true);
         initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime), warmupPeriod,
@@ -55,13 +53,12 @@ public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulatio
     /**
      * {@inheritDoc}
      */
-    public final SimEvent<OTSSimTimeDouble> scheduleEvent(final Time.Abs executionTime,
-        final short priority, final Object source, final Object target, final String method, final Object[] args)
-        throws SimRuntimeException
+    public final SimEvent<OTSSimTimeDouble> scheduleEvent(final Time.Abs executionTime, final short priority,
+        final Object source, final Object target, final String method, final Object[] args) throws SimRuntimeException
     {
         SimEvent<OTSSimTimeDouble> result =
-            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time.Abs(executionTime.getSI(),
-                TimeUnit.SECOND)), priority, source, target, method, args);
+            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time.Abs(executionTime.getSI(), SECOND)), priority,
+                source, target, method, args);
         scheduleEvent(result);
         return result;
     }

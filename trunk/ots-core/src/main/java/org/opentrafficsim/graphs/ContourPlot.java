@@ -21,7 +21,6 @@ import javax.swing.SwingConstants;
 import javax.swing.event.EventListenerList;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.vector.DoubleVector;
@@ -93,12 +92,10 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     protected static final int STANDARDINITIALDISTANCEGRANULARITYINDEX = 3;
 
     /** Initial lower bound for the time scale. */
-    protected static final Time.Abs INITIALLOWERTIMEBOUND = new Time.Abs(0,
-        TimeUnit.SECOND);
+    protected static final Time.Abs INITIALLOWERTIMEBOUND = new Time.Abs(0, SECOND);
 
     /** Initial upper bound for the time scale. */
-    protected static final Time.Abs INITIALUPPERTIMEBOUND = new Time.Abs(300,
-        TimeUnit.SECOND);
+    protected static final Time.Abs INITIALUPPERTIMEBOUND = new Time.Abs(300, SECOND);
 
     /** The series of Lanes that provide the data for this TrajectoryPlot. */
     private final ArrayList<Lane> path;
@@ -145,9 +142,8 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         this.cumulativeLengths = lengths;
         this.xAxis = xAxis;
         this.yAxis =
-            new Axis(new Length.Rel(0, LengthUnit.METER), getCumulativeLength(-1),
-                STANDARDDISTANCEGRANULARITIES, STANDARDDISTANCEGRANULARITIES[STANDARDINITIALDISTANCEGRANULARITYINDEX], "",
-                "Distance", "%.0fm");
+            new Axis(new Length.Rel(0, METER), getCumulativeLength(-1), STANDARDDISTANCEGRANULARITIES,
+                STANDARDDISTANCEGRANULARITIES[STANDARDINITIALDISTANCEGRANULARITYINDEX], "", "Distance", "%.0fm");
         this.legendStep = legendStep;
         this.legendFormat = legendFormat;
         extendXRange(xAxis.getMaximumValue());
@@ -636,17 +632,13 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
                 continue; // no time spent in this timeBin
             }
             double binDistanceStart =
-                (car.position(
-                    lane,
-                    car.getReference(),
-                    new Time.Abs(relativeFromTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND))
-                    .getSI()
+                (car.position(lane, car.getReference(),
+                    new Time.Abs(relativeFromTime * this.getXAxis().getGranularities()[0], SECOND)).getSI()
                     - this.getYAxis().getMinimumValue().getSI() + lengthOffset)
                     / this.getYAxis().getGranularities()[0];
             double binDistanceEnd =
                 (car.position(lane, car.getReference(),
-                    new Time.Abs(binEndTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND))
-                    .getSI()
+                    new Time.Abs(binEndTime * this.getXAxis().getGranularities()[0], SECOND)).getSI()
                     - this.getYAxis().getMinimumValue().getSI() + lengthOffset)
                     / this.getYAxis().getGranularities()[0];
 

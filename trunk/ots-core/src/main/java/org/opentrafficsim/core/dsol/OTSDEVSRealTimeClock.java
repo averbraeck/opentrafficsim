@@ -34,6 +34,6 @@ public class OTSDEVSRealTimeClock extends
     @Override
     protected final Time.Rel relativeMillis(final double factor)
     {
-        return new Time.Rel(factor, TimeUnit.MILLISECOND);
+        return new Time.Rel(factor, MILLISECOND);
     }
 }

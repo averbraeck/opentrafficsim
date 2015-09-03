@@ -22,10 +22,10 @@ public final class SpeedUnits implements OTS_SCALAR
     public static final Map<String, SpeedUnit> SPEED_UNITS = new HashMap<>();
     static
     {
-        SPEED_UNITS.put("km/h", SpeedUnit.KM_PER_HOUR);
-        SPEED_UNITS.put("mi/h", SpeedUnit.MILE_PER_HOUR);
-        SPEED_UNITS.put("m/s", SpeedUnit.METER_PER_SECOND);
-        SPEED_UNITS.put("ft/s", SpeedUnit.FOOT_PER_SECOND);
+        SPEED_UNITS.put("km/h", KM_PER_HOUR);
+        SPEED_UNITS.put("mi/h", MILE_PER_HOUR);
+        SPEED_UNITS.put("m/s", METER_PER_SECOND);
+        SPEED_UNITS.put("ft/s", FOOT_PER_SECOND);
     }
 
     /** Utility class. */

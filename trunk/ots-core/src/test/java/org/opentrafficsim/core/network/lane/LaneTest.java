@@ -15,11 +15,7 @@ import javax.vecmath.Point3d;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.junit.Test;
-import org.opentrafficsim.core.OTS_DIST;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -60,10 +56,10 @@ public class LaneTest implements OTS_SCALAR
         coordinates[0] = new OTSPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
         CrossSectionLink link = new CrossSectionLink("A to B", nodeFrom, nodeTo, new OTSLine3D(coordinates));
-        Length.Rel startLateralPos = new Length.Rel(2, LengthUnit.METER);
-        Length.Rel endLateralPos = new Length.Rel(5, LengthUnit.METER);
-        Length.Rel startWidth = new Length.Rel(3, LengthUnit.METER);
-        Length.Rel endWidth = new Length.Rel(4, LengthUnit.METER);
+        Length.Rel startLateralPos = new Length.Rel(2, METER);
+        Length.Rel endLateralPos = new Length.Rel(5, METER);
+        Length.Rel startWidth = new Length.Rel(3, METER);
+        Length.Rel endWidth = new Length.Rel(4, METER);
         GTUType gtuTypeCar = GTUType.makeGTUType("Car");
         GTUType gtuTypeTruck = GTUType.makeGTUType("Truck");
         LaneType laneType = new LaneType("Car");
@@ -72,7 +68,7 @@ public class LaneTest implements OTS_SCALAR
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
         directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.FORWARD);
         Map<GTUType, Speed.Abs> speedMap = new LinkedHashMap<>();
-        speedMap.put(GTUType.ALL, new Speed.Abs(100, SpeedUnit.KM_PER_HOUR));
+        speedMap.put(GTUType.ALL, new Speed.Abs(100, KM_PER_HOUR));
         // Now we can construct a Lane
         Lane lane =
             new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType, directionalityMap,
@@ -86,8 +82,8 @@ public class LaneTest implements OTS_SCALAR
             .getContour().getLengthSI(), 0.1);
         assertEquals("Directionality should be " + LongitudinalDirectionality.FORWARD, LongitudinalDirectionality.FORWARD,
             lane.getDirectionality(GTUType.ALL));
-        assertEquals("SpeedLimit should be " + (new Speed.Abs(100, SpeedUnit.KM_PER_HOUR)),
-            new Speed.Abs(100, SpeedUnit.KM_PER_HOUR), lane.getSpeedLimit(GTUType.ALL));
+        assertEquals("SpeedLimit should be " + (new Speed.Abs(100, KM_PER_HOUR)), new Speed.Abs(100, KM_PER_HOUR), lane
+            .getSpeedLimit(GTUType.ALL));
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane.getLaneType());
         for (int i = 0; i < 10; i++)
@@ -96,8 +92,7 @@ public class LaneTest implements OTS_SCALAR
                 startLateralPos.getSI() + (endLateralPos.getSI() - startLateralPos.getSI()) * i / 10;
             assertEquals(String.format("Lateral offset at %d%% should be %.3fm", 10 * i, expectedLateralCenterOffset),
                 expectedLateralCenterOffset, lane.getLateralCenterPosition(i / 10.0).getSI(), 0.01);
-            Length.Rel longitudinalPosition =
-                new Length.Rel(lane.getLength().getSI() * i / 10, LengthUnit.METER);
+            Length.Rel longitudinalPosition = new Length.Rel(lane.getLength().getSI() * i / 10, METER);
             assertEquals("Lateral offset at " + longitudinalPosition + " should be " + expectedLateralCenterOffset,
                 expectedLateralCenterOffset, lane.getLateralCenterPosition(longitudinalPosition).getSI(), 0.01);
             double expectedWidth = startWidth.getSI() + (endWidth.getSI() - startWidth.getSI()) * i / 10;
@@ -139,8 +134,8 @@ public class LaneTest implements OTS_SCALAR
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane.getLaneType());
         // System.out.println("Add another Lane at the inside of the corner in the design line");
-        Length.Rel startLateralPos2 = new Length.Rel(-8, LengthUnit.METER);
-        Length.Rel endLateralPos2 = new Length.Rel(-5, LengthUnit.METER);
+        Length.Rel startLateralPos2 = new Length.Rel(-8, METER);
+        Length.Rel endLateralPos2 = new Length.Rel(-5, METER);
         Lane lane2 =
             new Lane(link, "lane.2", startLateralPos2, endLateralPos2, startWidth, endWidth, laneType, directionalityMap,
                 speedMap);
@@ -172,7 +167,7 @@ public class LaneTest implements OTS_SCALAR
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
         directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.FORWARD);
         Map<GTUType, Speed.Abs> speedMap = new LinkedHashMap<>();
-        speedMap.put(GTUType.ALL, new Speed.Abs(50, SpeedUnit.KM_PER_HOUR));
+        speedMap.put(GTUType.ALL, new Speed.Abs(50, KM_PER_HOUR));
         int laneNum = 0;
         for (int xStart : startPositions)
         {
@@ -200,11 +195,9 @@ public class LaneTest implements OTS_SCALAR
                             {
                                 // Now we can construct a Lane
                                 Lane lane =
-                                    new Lane(link, "lane." + ++laneNum, new Length.Rel(startLateralOffset,
-                                        LengthUnit.METER), new Length.Rel(endLateralOffset,
-                                        LengthUnit.METER), new Length.Rel(startWidth, LengthUnit.METER),
-                                        new Length.Rel(endWidth, LengthUnit.METER), laneType,
-                                        directionalityMap, speedMap);
+                                    new Lane(link, "lane." + ++laneNum, new Length.Rel(startLateralOffset, METER),
+                                        new Length.Rel(endLateralOffset, METER), new Length.Rel(startWidth, METER),
+                                        new Length.Rel(endWidth, METER), laneType, directionalityMap, speedMap);
                                 final Geometry geometry = lane.getContour().getLineString();
                                 assertNotNull("geometry of the lane should not be null", geometry);
                                 // Verify a couple of points that should be inside the contour of the Lane

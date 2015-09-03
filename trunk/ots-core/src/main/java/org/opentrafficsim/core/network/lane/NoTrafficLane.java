@@ -49,9 +49,8 @@ public class NoTrafficLane extends Lane
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public NoTrafficLane(final CrossSectionLink parentLink, final String id,
-        final Length.Rel lateralOffsetAtStart, final Length.Rel lateralOffsetAtEnd,
-        final Length.Rel beginWidth, final Length.Rel endWidth)
+    public NoTrafficLane(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffsetAtStart,
+        final Length.Rel lateralOffsetAtEnd, final Length.Rel beginWidth, final Length.Rel endWidth)
         throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, LaneType.NONE,

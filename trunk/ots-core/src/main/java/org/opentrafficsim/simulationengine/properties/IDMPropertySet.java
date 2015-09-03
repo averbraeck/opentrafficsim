@@ -2,9 +2,6 @@ package org.opentrafficsim.simulationengine.properties;
 
 import java.util.ArrayList;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.opentrafficsim.core.OTS_SCALAR;
 
 /**
@@ -47,8 +44,8 @@ public final class IDMPropertySet implements OTS_SCALAR
             "maximum comfortable deceleration %.2fm/s\u00b2", false, 0));
         subProperties.add(new ContinuousProperty("s0", "stationary distance headway [m]", s0.doubleValue(), 1.0, 10.0,
             "distance headway %.2fm", false, 2));
-        subProperties.add(new ContinuousProperty("tSafe", "time headway", tSafe.doubleValue(), 0.5, 1.5, "time headway %.2fs",
-            false, 3));
+        subProperties.add(new ContinuousProperty("tSafe", "time headway", tSafe.doubleValue(), 0.5, 1.5,
+            "time headway %.2fs", false, 3));
         return new CompoundProperty("IDM/IDM+ " + carType + " params", "Parameters for the " + carType
             + " car following parameters", subProperties, true, displayPriority);
     }
@@ -60,7 +57,7 @@ public final class IDMPropertySet implements OTS_SCALAR
      */
     public static Acceleration.Abs getA(final CompoundProperty set)
     {
-        return new Acceleration.Abs(findSubProperty("a", set), AccelerationUnit.METER_PER_SECOND_2);
+        return new Acceleration.Abs(findSubProperty("a", set), METER_PER_SECOND_2);
     }
 
     /**
@@ -70,7 +67,7 @@ public final class IDMPropertySet implements OTS_SCALAR
      */
     public static Acceleration.Abs getB(final CompoundProperty set)
     {
-        return new Acceleration.Abs(findSubProperty("b", set), AccelerationUnit.METER_PER_SECOND_2);
+        return new Acceleration.Abs(findSubProperty("b", set), METER_PER_SECOND_2);
     }
 
     /**
@@ -80,7 +77,7 @@ public final class IDMPropertySet implements OTS_SCALAR
      */
     public static Length.Rel getS0(final CompoundProperty set)
     {
-        return new Length.Rel(findSubProperty("s0", set), LengthUnit.METER);
+        return new Length.Rel(findSubProperty("s0", set), METER);
     }
 
     /**
@@ -90,7 +87,7 @@ public final class IDMPropertySet implements OTS_SCALAR
      */
     public static Time.Rel getTSafe(final CompoundProperty set)
     {
-        return new Time.Rel(findSubProperty("tSafe", set), TimeUnit.SECOND);
+        return new Time.Rel(findSubProperty("tSafe", set), SECOND);
     }
 
     /**

@@ -8,7 +8,6 @@ import javax.vecmath.Point3d;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.djunits.unit.LengthUnit;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -58,8 +57,8 @@ public abstract class AbstractSensor implements Sensor
      * @param name the name of the sensor.
      * @param simulator the simulator for being able to generate the animation.
      */
-    public AbstractSensor(final Lane lane, final Length.Rel longitudinalPosition,
-        final RelativePosition.TYPE positionType, final String name, final OTSSimulatorInterface simulator)
+    public AbstractSensor(final Lane lane, final Length.Rel longitudinalPosition, final RelativePosition.TYPE positionType,
+        final String name, final OTSSimulatorInterface simulator)
     {
         this.lane = lane;
         this.longitudinalPositionSI = longitudinalPosition.getSI();
@@ -79,7 +78,7 @@ public abstract class AbstractSensor implements Sensor
     @Override
     public final Length.Rel getLongitudinalPosition()
     {
-        return new Length.Rel(this.longitudinalPositionSI, LengthUnit.METER);
+        return new Length.Rel(this.longitudinalPositionSI, METER);
     }
 
     /** {@inheritDoc} */

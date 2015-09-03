@@ -23,8 +23,8 @@ public final class AngleUnits implements OTS_SCALAR
 
     static
     {
-        ANGLE_UNITS.put("deg", AnglePlaneUnit.DEGREE);
-        ANGLE_UNITS.put("rad", AnglePlaneUnit.RADIAN);
+        ANGLE_UNITS.put("deg", DEGREE);
+        ANGLE_UNITS.put("rad", RADIAN);
     }
 
     /** Utility class. */
