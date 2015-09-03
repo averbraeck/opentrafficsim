@@ -15,8 +15,6 @@ import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.experiment.Treatment;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
@@ -76,8 +74,7 @@ public class CarTest implements DOUBLE_SCALAR
         Speed.Abs initialSpeed = new Speed.Abs(34, KM_PER_HOUR);
         OTSDEVSSimulator simulator = makeSimulator();
         GTUFollowingModel gtuFollowingModel =
-            new FixedAccelerationModel(new Acceleration.Abs(0, METER_PER_SECOND_2), new Time.Rel(10,
-                SECOND));
+            new FixedAccelerationModel(new Acceleration.Abs(0, METER_PER_SECOND_2), new Time.Rel(10, SECOND));
         LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar referenceCar =
             makeReferenceCar("12345", gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
@@ -136,9 +133,9 @@ public class CarTest implements DOUBLE_SCALAR
      * @throws GTUException when construction of the GTU fails (probably due to an invalid parameter)
      */
     public static LaneBasedIndividualCar makeReferenceCar(final String id, final GTUType gtuType, final Lane lane,
-        final Length.Rel initialPosition, final Speed.Abs initialSpeed,
-        final OTSDEVSSimulator simulator, final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel)
-        throws RemoteException, NamingException, NetworkException, SimRuntimeException, GTUException
+        final Length.Rel initialPosition, final Speed.Abs initialSpeed, final OTSDEVSSimulator simulator,
+        final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel) throws RemoteException,
+        NamingException, NetworkException, SimRuntimeException, GTUException
     {
         Length.Rel length = new Length.Rel(5.0, METER);
         Length.Rel width = new Length.Rel(2.0, METER);

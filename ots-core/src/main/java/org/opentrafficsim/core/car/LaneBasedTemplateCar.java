@@ -12,7 +12,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
-import org.djunits.unit.LengthUnit;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -95,8 +94,8 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
         // sensor positions.
         // We take the rear position of the Car to be the reference point. So the front is the length
         // of the Car away from the reference point in the positive (driving) X-direction.
-        Length.Rel zero = new Length.Rel(0.0d, LengthUnit.METER);
-        Length.Rel dx = new Length.Rel(getLength().getSI(), LengthUnit.METER);
+        Length.Rel zero = new Length.Rel(0.0d, METER);
+        Length.Rel dx = new Length.Rel(getLength().getSI(), METER);
         this.relativePositions.put(RelativePosition.FRONT, new RelativePosition(dx, zero, zero, RelativePosition.FRONT));
         this.relativePositions.put(RelativePosition.REAR, new RelativePosition(zero, zero, zero, RelativePosition.REAR));
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
@@ -182,14 +181,14 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      * 
      * <pre>
      * LaneBasedTemplateCar&lt;String&gt; car = new LaneBasedTemplateCarBuilder&lt;String&gt;().setId("Car:"+nr)
-     *    .setInitialSpeed(new DoubleScalar.Rel&lt;SpeedUnit&gt;(80.0, LengthUnit.KM_PER_HOUR))....build(); 
+     *    .setInitialSpeed(new DoubleScalar.Rel&lt;SpeedUnit&gt;(80.0, KM_PER_HOUR))....build(); 
      *    
      * or
      * 
      * LaneBasedTemplateCarBuilder&lt;String&gt; carBuilder = new LaneBasedTemplateCarBuilder&lt;String&gt;();
      * carBuilder.setId("Car:"+nr);
      * carBuilder.setTemplateGtuType(TruckTemplate);
-     * carBuilder.setInitialSpeed(new DoubleScalar.Rel&lt;SpeedUnit&gt;(80.0, LengthUnit.KM_PER_HOUR));
+     * carBuilder.setInitialSpeed(new DoubleScalar.Rel&lt;SpeedUnit&gt;(80.0, KM_PER_HOUR));
      * ...
      * LaneBasedTemplateCar&lt;String&gt; car = carBuilder.build();
      * </pre>

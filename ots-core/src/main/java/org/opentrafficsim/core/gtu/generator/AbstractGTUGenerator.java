@@ -125,9 +125,9 @@ public abstract class AbstractGTUGenerator implements OTS_SCALAR, OTS_DIST
         final Class<?> gtuClass, final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel,
         final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> initialSpeedDist,
         final ContinuousDistScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDist, final long maxGTUs,
-        final Time.Abs startTime, final Time.Abs endTime, final Lane lane,
-        final Length.Rel position, final LaneBasedRouteGenerator routeGenerator,
-        final GTUColorer gtuColorer) throws RemoteException, SimRuntimeException
+        final Time.Abs startTime, final Time.Abs endTime, final Lane lane, final Length.Rel position,
+        final LaneBasedRouteGenerator routeGenerator, final GTUColorer gtuColorer) throws RemoteException,
+        SimRuntimeException
     {
         super();
         this.name = name;
@@ -204,8 +204,7 @@ public abstract class AbstractGTUGenerator implements OTS_SCALAR, OTS_DIST
                 if (this.carBuilderList.size() == 1)
                 {
                     // first entry in list - start the watch thread
-                    getSimulator().scheduleEventRel(new Time.Rel(0.1, TimeUnit.SECOND), this, this,
-                        "checkCarBuilderList", null);
+                    getSimulator().scheduleEventRel(new Time.Rel(0.1, SECOND), this, this, "checkCarBuilderList", null);
                 }
             }
         }
@@ -256,15 +255,14 @@ public abstract class AbstractGTUGenerator implements OTS_SCALAR, OTS_DIST
         GTUFollowingModel followingModel = carBuilder.getGtuFollowingModel();
 
         HeadwayGTU headwayGTU =
-            headway(new Length.Rel(250.0, LengthUnit.METER), carBuilder.getRouteGenerator()
-                .generateRouteNavigator(), generatorLane);
-        Length.Rel minimumHeadway = new Length.Rel(0.0, LengthUnit.METER);
+            headway(new Length.Rel(250.0, METER), carBuilder.getRouteGenerator().generateRouteNavigator(), generatorLane);
+        Length.Rel minimumHeadway = new Length.Rel(0.0, METER);
         if (headwayGTU.getOtherGTU() != null)
         {
             minimumHeadway =
                 followingModel.minimumHeadway(carBuilder.getInitialSpeed(), headwayGTU.getOtherGTU()
-                    .getLongitudinalVelocity(), new Length.Rel(1.0, LengthUnit.CENTIMETER), generatorLane
-                    .getSpeedLimit(carBuilder.getGtuType()), carBuilder.getMaximumVelocity());
+                    .getLongitudinalVelocity(), new Length.Rel(1.0, CENTIMETER), generatorLane.getSpeedLimit(carBuilder
+                    .getGtuType()), carBuilder.getMaximumVelocity());
             double acc =
                 followingModel.computeAcceleration(carBuilder.getInitialSpeed(), carBuilder.getMaximumVelocity(),
                     headwayGTU.getOtherGTU().getLongitudinalVelocity(), minimumHeadway, carBuilder.getMaximumVelocity())
@@ -301,9 +299,7 @@ public abstract class AbstractGTUGenerator implements OTS_SCALAR, OTS_DIST
         final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when,
         final LaneBasedRouteNavigator routeNavigator) throws RemoteException, NetworkException
     {
-        LaneBasedGTU otherGTU =
-            theLane.getGtuAfter(new Length.Rel(lanePositionSI, LengthUnit.METER), RelativePosition.REAR,
-                when);
+        LaneBasedGTU otherGTU = theLane.getGtuAfter(new Length.Rel(lanePositionSI, METER), RelativePosition.REAR, when);
         if (otherGTU != null)
         {
             double distanceM = cumDistanceSI + otherGTU.position(theLane, otherGTU.getRear(), when).getSI() - lanePositionSI;
@@ -381,8 +377,8 @@ public abstract class AbstractGTUGenerator implements OTS_SCALAR, OTS_DIST
      * @throws RemoteException on communications failure
      * @throws NetworkException on network inconsistency
      */
-    public final HeadwayGTU headway(final Length.Rel maxDistance,
-        final LaneBasedRouteNavigator routeNavigator, final Lane generatorLane) throws RemoteException, NetworkException
+    public final HeadwayGTU headway(final Length.Rel maxDistance, final LaneBasedRouteNavigator routeNavigator,
+        final Lane generatorLane) throws RemoteException, NetworkException
     {
         return headwayGTUSIForward(maxDistance.getSI(), routeNavigator, generatorLane);
     }
@@ -406,8 +402,7 @@ public abstract class AbstractGTUGenerator implements OTS_SCALAR, OTS_DIST
         // only reschedule if list not empty
         if (!this.carBuilderList.isEmpty())
         {
-            getSimulator().scheduleEventRel(new Time.Rel(0.1, TimeUnit.SECOND), this, this,
-                "checkCarBuilderList", null);
+            getSimulator().scheduleEventRel(new Time.Rel(0.1, SECOND), this, this, "checkCarBuilderList", null);
         }
     }
 

@@ -16,4 +16,3 @@ public interface OTS_DIST extends OTS_DOUBLE_DIST
 {
     // Change this into OTS_FLOAT_DIST and the entire OTS will work with floats instead of doubles for scalars.
 }
-

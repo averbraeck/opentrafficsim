@@ -10,7 +10,6 @@ import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.djunits.unit.FrequencyUnit;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -77,8 +76,7 @@ public class OTSLink implements Link, Serializable, LocatableInterface
      */
     public OTSLink(final String id, final Node startNode, final Node endNode, final OTSLine3D designLine)
     {
-        this(id, startNode, endNode, designLine, new Frequency.Abs(Double.POSITIVE_INFINITY,
-            FrequencyUnit.PER_SECOND));
+        this(id, startNode, endNode, designLine, new Frequency.Abs(Double.POSITIVE_INFINITY, PER_SECOND));
     }
 
     /** {@inheritDoc} */

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.TimeUnit;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 
 /**
@@ -33,8 +31,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
      * Construct a SequentialFixedAccelerationModel with empty list of FixedAccelerationModel steps.
      * @param simulator DEVSSimulator; the simulator (needed to obtain the current simulation time)
      */
-    public SequentialFixedAccelerationModel(
-        final OTSDEVSSimulatorInterface simulator)
+    public SequentialFixedAccelerationModel(final OTSDEVSSimulatorInterface simulator)
     {
         this.simulator = simulator;
     }
@@ -44,8 +41,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
      * @param simulator DEVSSimulator; the simulator (needed to obtain the current simulation time)
      * @param steps Set&lt;FixedAccelerationModel&gt;; the list of FixedAccelerationModel steps.
      */
-    public SequentialFixedAccelerationModel(
-        final OTSDEVSSimulatorInterface simulator,
+    public SequentialFixedAccelerationModel(final OTSDEVSSimulatorInterface simulator,
         final Set<FixedAccelerationModel> steps)
     {
         this(simulator);
@@ -89,7 +85,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
      */
     public final Time.Abs timeAfterCompletionOfStep(final int index)
     {
-        Time.Abs sum = new Time.Abs(0, TimeUnit.SECOND);
+        Time.Abs sum = new Time.Abs(0, SECOND);
         for (int i = 0; i <= index; i++)
         {
             sum = sum.plus(this.steps.get(i).getDuration());
@@ -126,9 +122,8 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration.Abs computeAcceleration(final Speed.Abs followerSpeed,
-        final Speed.Abs followerMaximumSpeed, final Speed.Abs leaderSpeed,
-        final Length.Rel headway, final Speed.Abs speedLimit) throws RemoteException
+    public final Acceleration.Abs computeAcceleration(final Speed.Abs followerSpeed, final Speed.Abs followerMaximumSpeed,
+        final Speed.Abs leaderSpeed, final Length.Rel headway, final Speed.Abs speedLimit) throws RemoteException
     {
         return getAccelerationModel().getAcceleration();
     }
@@ -137,7 +132,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
     @Override
     public final Acceleration.Abs maximumSafeDeceleration()
     {
-        return new Acceleration.Abs(2, AccelerationUnit.METER_PER_SECOND_2);
+        return new Acceleration.Abs(2, METER_PER_SECOND_2);
     }
 
     /** {@inheritDoc} */

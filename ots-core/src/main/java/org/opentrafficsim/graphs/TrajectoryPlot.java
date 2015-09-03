@@ -17,7 +17,6 @@ import javax.swing.SwingConstants;
 import javax.swing.event.EventListenerList;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.vector.DoubleVector;
@@ -93,7 +92,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     }
 
     /** Maximum of the time axis. */
-    private Time.Abs maximumTime = new Time.Abs(300, TimeUnit.SECOND);
+    private Time.Abs maximumTime = new Time.Abs(300, SECOND);
 
     /**
      * @return maximumTime
@@ -471,7 +470,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             final int endSample = (int) (Math.ceil(car.getNextEvaluationTime().getSI() / getSampleInterval().getSI()));
             for (int sample = startSample; sample < endSample; sample++)
             {
-                Time.Abs sampleTime = new Time.Abs(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
+                Time.Abs sampleTime = new Time.Abs(sample * getSampleInterval().getSI(), SECOND);
                 Double position = car.position(lane, car.getReference(), sampleTime).getSI() + positionOffset;
                 if (this.positions.size() > 0 && position < this.currentEndPosition.getSI() - 0.001)
                 {
@@ -509,8 +508,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             }
             this.currentEndTime = car.getNextEvaluationTime();
             this.currentEndPosition =
-                new Length.Rel(car.position(lane, car.getReference(), this.currentEndTime).getSI() + positionOffset,
-                    LengthUnit.METER);
+                new Length.Rel(car.position(lane, car.getReference(), this.currentEndTime).getSI() + positionOffset, METER);
             if (car.getNextEvaluationTime().gt(getMaximumTime()))
             {
                 setMaximumTime(car.getNextEvaluationTime());

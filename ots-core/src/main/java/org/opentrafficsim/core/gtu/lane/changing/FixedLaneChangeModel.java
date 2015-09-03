@@ -38,8 +38,7 @@ public class FixedLaneChangeModel implements LaneChangeModel
     public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
         final Collection<HeadwayGTU> sameLaneTraffic, final Collection<HeadwayGTU> rightLaneTraffic,
         final Collection<HeadwayGTU> leftLaneTraffic, final Speed.Abs speedLimit,
-        final Acceleration.Rel preferredLaneRouteIncentive,
-        final Acceleration.Rel laneChangeThreshold,
+        final Acceleration.Rel preferredLaneRouteIncentive, final Acceleration.Rel laneChangeThreshold,
         final Acceleration.Rel nonPreferredLaneRouteIncentive) throws RemoteException
     {
         try

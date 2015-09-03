@@ -62,7 +62,7 @@ public abstract class ContinuousDistScalar
     {
         return this.unit;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")

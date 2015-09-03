@@ -32,8 +32,8 @@ public class Stripe extends RoadMarkerAlong
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Stripe(final CrossSectionLink parentLink, final Length.Rel lateralCenterPosition,
-        final Length.Rel width) throws OTSGeometryException, NetworkException
+    public Stripe(final CrossSectionLink parentLink, final Length.Rel lateralCenterPosition, final Length.Rel width)
+        throws OTSGeometryException, NetworkException
     {
         super(parentLink, lateralCenterPosition, width, width);
     }
@@ -50,9 +50,8 @@ public class Stripe extends RoadMarkerAlong
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Stripe(final CrossSectionLink parentLink, final Length.Rel lateralCenterPosition,
-        final Length.Rel width, final Set<GTUType> gtuTypes, final Permeable permeable)
-        throws OTSGeometryException, NetworkException
+    public Stripe(final CrossSectionLink parentLink, final Length.Rel lateralCenterPosition, final Length.Rel width,
+        final Set<GTUType> gtuTypes, final Permeable permeable) throws OTSGeometryException, NetworkException
     {
         super(parentLink, lateralCenterPosition, width, width);
         for (GTUType gtuType : gtuTypes)
@@ -72,8 +71,8 @@ public class Stripe extends RoadMarkerAlong
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Stripe(final CrossSectionLink parentLink, final Length.Rel lateralCenterPosition,
-        final Length.Rel width, final Permeable permeable) throws OTSGeometryException, NetworkException
+    public Stripe(final CrossSectionLink parentLink, final Length.Rel lateralCenterPosition, final Length.Rel width,
+        final Permeable permeable) throws OTSGeometryException, NetworkException
     {
         super(parentLink, lateralCenterPosition, width, width);
         addPermeability(GTUType.ALL, permeable);

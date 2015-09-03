@@ -15,9 +15,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingConstants;
 import javax.swing.event.EventListenerList;
 
-import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LinearDensityUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -86,9 +84,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     private ArrayList<Sample> samples = new ArrayList<Sample>();
 
     /** Definition of the density axis. */
-    private Axis densityAxis = new Axis(new DoubleScalar.Abs<LinearDensityUnit>(0, LinearDensityUnit.PER_KILOMETER),
-        new DoubleScalar.Abs<LinearDensityUnit>(200, LinearDensityUnit.PER_KILOMETER), null, 0d, "Density [veh/km]",
-        "Density", "density %.1f veh/km");
+    private Axis densityAxis = new Axis(new DoubleScalar.Abs<LinearDensityUnit>(0, PER_KILOMETER),
+        new DoubleScalar.Abs<LinearDensityUnit>(200, PER_KILOMETER), null, 0d, "Density [veh/km]", "Density",
+        "density %.1f veh/km");
 
     /**
      * @return densityAxis
@@ -99,8 +97,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     }
 
     /** Definition of the speed axis. */
-    private Axis speedAxis = new Axis(new Speed.Abs(0, SpeedUnit.KM_PER_HOUR),
-        new Speed.Abs(180, SpeedUnit.KM_PER_HOUR), null, 0d, "Speed [km/h]", "Speed", "speed %.0f km/h");
+    private Axis speedAxis = new Axis(new Speed.Abs(0, KM_PER_HOUR), new Speed.Abs(180, KM_PER_HOUR), null, 0d,
+        "Speed [km/h]", "Speed", "speed %.0f km/h");
 
     /**
      * @return speedAxis
@@ -119,9 +117,8 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     }
 
     /** Definition of the flow axis. */
-    private Axis flowAxis =
-        new Axis(new Frequency.Abs(0, FrequencyUnit.PER_HOUR), new Frequency.Abs(3000d,
-            FrequencyUnit.HERTZ), null, 0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
+    private Axis flowAxis = new Axis(new Frequency.Abs(0, PER_HOUR), new Frequency.Abs(3000d, HERTZ), null, 0d,
+        "Flow [veh/h]", "Flow", "flow %.0f veh/h");
 
     /** The currently shown X-axis. */
     private Axis xAxis;

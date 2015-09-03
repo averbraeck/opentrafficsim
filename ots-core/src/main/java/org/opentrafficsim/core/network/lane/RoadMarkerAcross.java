@@ -24,8 +24,7 @@ public abstract class RoadMarkerAcross implements OTS_SCALAR
      * @param crossSectionElement Cross section element for which this is a road marker. Usually this will be a Lane.
      * @param longitudinalPosition Longitudinal position on the cross section element.
      */
-    public RoadMarkerAcross(final CrossSectionElement crossSectionElement,
-        final Length.Rel longitudinalPosition)
+    public RoadMarkerAcross(final CrossSectionElement crossSectionElement, final Length.Rel longitudinalPosition)
     {
         super();
         this.crossSectionElement = crossSectionElement;

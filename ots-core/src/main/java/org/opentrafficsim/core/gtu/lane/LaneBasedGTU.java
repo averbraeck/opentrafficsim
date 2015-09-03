@@ -217,8 +217,8 @@ public interface LaneBasedGTU extends GTU
      * Determine by what distance the front of this GTU is behind the rear an other GTU, or the rear of this GTU is ahead of the
      * front of an other GTU. Only positive values are returned. This method only looks in the given lane, and not further than
      * the given maxDistance. When no vehicle is found within the given maxDistance,
-     * <code>new DoubleScalar.Rel&lt;LengthUnit&gt;(Double.MAX_VALUE, LengthUnit.METER)</code> is returned. The search will
-     * extend into successive lanes if the maxDistance is larger than the length of the lane.<br>
+     * <code>new DoubleScalar.Rel&lt;LengthUnit&gt;(Double.MAX_VALUE, METER)</code> is returned. The search will extend into
+     * successive lanes if the maxDistance is larger than the length of the lane.<br>
      * <b>Note:</b> Headway is the net headway and calculated on a front-to-back basis.
      * @param lane the lane to look for another GTU
      * @param maxDistance the maximum distance to look for; if positive, the search is forwards; if negative, the search is

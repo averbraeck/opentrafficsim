@@ -1,9 +1,5 @@
 package org.opentrafficsim.core.gtu.following;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.opentrafficsim.core.units.calc.Calc;
 
 /**
@@ -43,7 +39,7 @@ public class IDMPlus extends AbstractGTUFollowingModel
      * Time slot size used by IDMPlus by (not defined in the paper, but 0.5s is a reasonable trade-off between computational
      * speed and accuracy).
      */
-    private final Time.Rel stepSize = new Time.Rel(0.5, TimeUnit.SECOND);
+    private final Time.Rel stepSize = new Time.Rel(0.5, SECOND);
 
     /**
      * Construct a new IDM+ car following model with reasonable values (reasonable for passenger cars). <br>
@@ -53,10 +49,10 @@ public class IDMPlus extends AbstractGTUFollowingModel
      */
     public IDMPlus()
     {
-        this.a = new Acceleration.Abs(1.56, AccelerationUnit.METER_PER_SECOND_2);
-        this.b = new Acceleration.Abs(2.09, AccelerationUnit.METER_PER_SECOND_2);
-        this.s0 = new Length.Rel(3, LengthUnit.METER);
-        this.tSafe = new Time.Rel(1.2, TimeUnit.SECOND);
+        this.a = new Acceleration.Abs(1.56, METER_PER_SECOND_2);
+        this.b = new Acceleration.Abs(2.09, METER_PER_SECOND_2);
+        this.s0 = new Length.Rel(3, METER);
+        this.tSafe = new Time.Rel(1.2, SECOND);
         this.delta = 1d;
     }
 
@@ -88,8 +84,7 @@ public class IDMPlus extends AbstractGTUFollowingModel
      */
     private Speed.Rel vDes(final Speed.Abs speedLimit, final Speed.Abs followerMaximumSpeed)
     {
-        return new Speed.Rel(Math.min(this.delta * speedLimit.getSI(), followerMaximumSpeed.getSI()),
-            SpeedUnit.METER_PER_SECOND);
+        return new Speed.Rel(Math.min(this.delta * speedLimit.getSI(), followerMaximumSpeed.getSI()), METER_PER_SECOND);
     }
 
     /** {@inheritDoc} */
@@ -106,8 +101,8 @@ public class IDMPlus extends AbstractGTUFollowingModel
         // System.out.println("leftComponent is " + leftComponent);
         // }
         Acceleration.Rel logWeightedAccelerationTimes2 =
-            new Acceleration.Rel(Math.sqrt(this.a.getSI() * this.b.getSI()), AccelerationUnit.METER_PER_SECOND_2)
-                .multiplyBy(2); // don't forget the times 2
+            new Acceleration.Rel(Math.sqrt(this.a.getSI() * this.b.getSI()), METER_PER_SECOND_2).multiplyBy(2); // don't forget
+                                                                                                                // the times 2
 
         Speed.Rel dV = followerSpeed.minus(leaderSpeed);
         // System.out.println("dV is " + dV);
@@ -120,7 +115,7 @@ public class IDMPlus extends AbstractGTUFollowingModel
         {
             // Negative value should be treated as 0? This is NOT in the LMRS paper
             // Without this "fix" a higher speed of the leader may cause a lower acceleration (which is crazy)
-            sStar = new Length.Rel(0, LengthUnit.METER);
+            sStar = new Length.Rel(0, METER);
         }
         // System.out.println("s* is " + sStar);
 
@@ -134,8 +129,7 @@ public class IDMPlus extends AbstractGTUFollowingModel
         if (newAcceleration.getSI() * this.stepSize.getSI() + followerSpeed.getSI() < 0)
         {
             // System.out.println("Preventing follower from driving backwards " + follower);
-            newAcceleration =
-                new Acceleration.Abs(-followerSpeed.getSI() / this.stepSize.getSI(), AccelerationUnit.METER_PER_SECOND_2);
+            newAcceleration = new Acceleration.Abs(-followerSpeed.getSI() / this.stepSize.getSI(), METER_PER_SECOND_2);
         }
         // System.out.println("newAcceleration is " + newAcceleration);
         return newAcceleration;

@@ -1,8 +1,5 @@
 package org.opentrafficsim.core.network.factory.xml;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
@@ -71,7 +68,7 @@ final class GTUColorerTag implements OTS_SCALAR
         {
             return new VelocityGTUColorer(globalTag.velocityGTUColorerMaxSpeed);
         }
-        return new VelocityGTUColorer(new Speed.Abs(100.0, SpeedUnit.KM_PER_HOUR));
+        return new VelocityGTUColorer(new Speed.Abs(100.0, KM_PER_HOUR));
     }
 
     /**
@@ -81,8 +78,8 @@ final class GTUColorerTag implements OTS_SCALAR
     static GTUColorer makeAccelerationGTUColorer(final GlobalTag globalTag)
     {
         // TODO use parameters for AccelerationGTUColorer
-        return new AccelerationGTUColorer(new Acceleration.Abs(1.0, AccelerationUnit.METER_PER_SECOND_2),
-            new Acceleration.Abs(1.0, AccelerationUnit.METER_PER_SECOND_2));
+        return new AccelerationGTUColorer(new Acceleration.Abs(1.0, METER_PER_SECOND_2), new Acceleration.Abs(1.0,
+            METER_PER_SECOND_2));
     }
 
     /**
@@ -92,7 +89,7 @@ final class GTUColorerTag implements OTS_SCALAR
     static GTUColorer makeLaneChangeUrgeGTUColorer(final GlobalTag globalTag)
     {
         // TODO use parameters for LaneChangeUrgeGTUColorer
-        return new LaneChangeUrgeGTUColorer(new Length.Rel(100.0, LengthUnit.METER), new Length.Rel(100.0, LengthUnit.METER));
+        return new LaneChangeUrgeGTUColorer(new Length.Rel(100.0, METER), new Length.Rel(100.0, METER));
     }
 
     /**

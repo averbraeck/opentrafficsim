@@ -3,7 +3,6 @@ package org.opentrafficsim.core.network.factory.xml;
 import java.awt.Color;
 import java.util.UUID;
 
-import org.djunits.unit.LengthUnit;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -291,7 +290,7 @@ class CrossSectionElementTag implements OTS_SCALAR
         if (attributes.getNamedItem("WIDTH") != null)
             cseTag.width = LengthUnits.parseLengthRel(attributes.getNamedItem("WIDTH").getNodeValue());
         else
-            cseTag.width = new Length.Rel(0.2, LengthUnit.METER);
+            cseTag.width = new Length.Rel(0.2, METER);
 
         if (attributes.getNamedItem("COLOR") != null)
             cseTag.color = Colors.parseColor(attributes.getNamedItem("COLOR").getNodeValue());

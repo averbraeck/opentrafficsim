@@ -18,9 +18,6 @@ import javax.swing.JLabel;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.jfree.chart.ChartPanel;
@@ -64,9 +61,9 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, OTS_SCALAR
     @Test
     public final void fundamentalDiagramTest() throws Exception
     {
-        Time.Rel aggregationTime = new Time.Rel(30, TimeUnit.SECOND);
-        Length.Rel position = new Length.Rel(123, LengthUnit.METER);
-        Length.Rel carPosition = new Length.Rel(122.5, LengthUnit.METER);
+        Time.Rel aggregationTime = new Time.Rel(30, SECOND);
+        Length.Rel position = new Length.Rel(123, METER);
+        Length.Rel carPosition = new Length.Rel(122.5, METER);
         LaneType laneType = new LaneType("CarLane");
         GTUType gtuType = GTUType.makeGTUType("Car");
         laneType.addCompatibility(gtuType);
@@ -102,20 +99,18 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, OTS_SCALAR
         assertTrue("No data should result in NaN", java.lang.Double.isNaN(value));
         ActionEvent setXToSpeed = new ActionEvent(fd, 0, "Speed/Speed");
         ActionEvent resetAxis = new ActionEvent(fd, 0, "Flow/Density");
-        Speed.Abs speed = new Speed.Abs(100, SpeedUnit.KM_PER_HOUR);
-        Time.Abs time = new Time.Abs(123, TimeUnit.SECOND);
-        Length.Rel length = new Length.Rel(5.0, LengthUnit.METER);
-        Length.Rel width = new Length.Rel(2.0, LengthUnit.METER);
-        Speed.Abs maxSpeed = new Speed.Abs(120, SpeedUnit.KM_PER_HOUR);
+        Speed.Abs speed = new Speed.Abs(100, KM_PER_HOUR);
+        Time.Abs time = new Time.Abs(123, SECOND);
+        Length.Rel length = new Length.Rel(5.0, METER);
+        Length.Rel width = new Length.Rel(2.0, METER);
+        Speed.Abs maxSpeed = new Speed.Abs(120, KM_PER_HOUR);
         Map<Lane, Length.Rel> initialLongitudinalPositions = new HashMap<>();
         initialLongitudinalPositions.put(lane, carPosition);
         SimpleSimulator simulator =
-            new SimpleSimulator(new Time.Abs(0, TimeUnit.SECOND), new Time.Rel(0,
-                TimeUnit.SECOND), new Time.Rel(1800, TimeUnit.SECOND), this);
+            new SimpleSimulator(new Time.Abs(0, SECOND), new Time.Rel(0, SECOND), new Time.Rel(1800, SECOND), this);
 
         // add a sink 100 meter before the end of the lane.
-        lane.addSensor(new SinkSensor(lane, new Length.Rel(lane.getLength().getSI() - 100,
-            LengthUnit.METER), simulator), GTUType.ALL);
+        lane.addSensor(new SinkSensor(lane, new Length.Rel(lane.getLength().getSI() - 100, METER), simulator), GTUType.ALL);
 
         simulator.runUpTo(time);
         while (simulator.isRunning())
@@ -132,12 +127,11 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, OTS_SCALAR
         int bucket = (int) Math.floor(time.getSI() / aggregationTime.getSI());
         LaneChangeModel laneChangeModel = new Egoistic();
         GTUFollowingModel gtuFollowingModel =
-            new FixedAccelerationModel(new Acceleration.Abs(0, AccelerationUnit.METER_PER_SECOND_2),
-                new Time.Rel(1000, TimeUnit.SECOND));
+            new FixedAccelerationModel(new Acceleration.Abs(0, METER_PER_SECOND_2), new Time.Rel(1000, SECOND));
         // Construct a car
         new LaneBasedIndividualCar("1", gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, speed,
             length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
-        simulator.runUpTo(new Time.Abs(124, TimeUnit.SECOND));
+        simulator.runUpTo(new Time.Abs(124, SECOND));
         while (simulator.isRunning())
         {
             try
@@ -218,10 +212,10 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, OTS_SCALAR
             fd.actionPerformed(resetAxis);
         }
         // Check that harmonic mean speed is computed
-        speed = new Speed.Abs(10, SpeedUnit.KM_PER_HOUR);
+        speed = new Speed.Abs(10, KM_PER_HOUR);
         new LaneBasedIndividualCar("1234", gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, speed,
             length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
-        simulator.runUpTo(new Time.Abs(125, TimeUnit.SECOND));
+        simulator.runUpTo(new Time.Abs(125, SECOND));
         while (simulator.isRunning())
         {
             try
@@ -312,8 +306,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, OTS_SCALAR
     @Test
     public final void testHints() throws Exception
     {
-        Time.Rel aggregationTime = new Time.Rel(30, TimeUnit.SECOND);
-        Length.Rel position = new Length.Rel(123, LengthUnit.METER);
+        Time.Rel aggregationTime = new Time.Rel(30, SECOND);
+        Length.Rel position = new Length.Rel(123, METER);
         LaneType laneType = new LaneType("CarLane");
         FundamentalDiagram fd =
             new FundamentalDiagram("Fundamental Diagram", aggregationTime, CarTest.makeLane(laneType), position);

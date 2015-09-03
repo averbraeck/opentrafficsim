@@ -16,4 +16,3 @@ public interface OTS_SCALAR extends DOUBLE_SCALAR
 {
     // Change this into FLOAT_SCALAR and the entire OTS will work with floats instead of doubles for scalars.
 }
-

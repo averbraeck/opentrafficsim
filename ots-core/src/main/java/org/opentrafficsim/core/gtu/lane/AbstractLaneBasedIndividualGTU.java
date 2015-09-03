@@ -64,8 +64,7 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractLaneBasedIndividualGTU(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
         final LaneChangeModel laneChangeModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
-        final Speed.Abs initialSpeed, final Length.Rel length,
-        final Length.Rel width, final Speed.Abs maximumVelocity,
+        final Speed.Abs initialSpeed, final Length.Rel length, final Length.Rel width, final Speed.Abs maximumVelocity,
         final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator) throws RemoteException,
         NetworkException, SimRuntimeException, GTUException
     {

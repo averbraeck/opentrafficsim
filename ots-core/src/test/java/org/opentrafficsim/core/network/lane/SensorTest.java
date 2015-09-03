@@ -11,13 +11,9 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.junit.Test;
-import org.opentrafficsim.core.OTS_DIST;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -67,49 +63,45 @@ public class SensorTest implements OTS_SCALAR
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForSensorTest();
         final SimpleSimulator simulator =
-            new SimpleSimulator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(0.0,
-                TimeUnit.SECOND), new Time.Rel(3600.0, TimeUnit.SECOND), model);
+            new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND), model);
         Lane[] lanesA =
-            LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new Speed.Abs(100,
-                SpeedUnit.KM_PER_HOUR), simulator);
+            LaneFactory
+                .makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new Speed.Abs(100, KM_PER_HOUR), simulator);
         Lane[] lanesB =
-            LaneFactory.makeMultiLane("B", nodeATo, nodeBTo, null, 3, laneType, new Speed.Abs(100,
-                SpeedUnit.KM_PER_HOUR), simulator);
+            LaneFactory.makeMultiLane("B", nodeATo, nodeBTo, null, 3, laneType, new Speed.Abs(100, KM_PER_HOUR), simulator);
 
         // put a sensor on each of the lanes at the end of LaneA
         for (Lane lane : lanesA)
         {
-            Length.Rel longitudinalPosition = new Length.Rel(999.9999, LengthUnit.METER);
+            Length.Rel longitudinalPosition = new Length.Rel(999.9999, METER);
             TriggerSensor sensor =
                 new TriggerSensor(lane, longitudinalPosition, RelativePosition.REFERENCE, "Trigger@" + lane.toString(),
                     simulator);
             lane.addSensor(sensor, GTUType.ALL);
         }
 
-        Map<Lane, Length.Rel> initialLongitudinalPositions =
-            new HashMap<Lane, Length.Rel>();
-        Length.Rel positionA = new Length.Rel(100, LengthUnit.METER);
+        Map<Lane, Length.Rel> initialLongitudinalPositions = new HashMap<Lane, Length.Rel>();
+        Length.Rel positionA = new Length.Rel(100, METER);
         initialLongitudinalPositions.put(lanesA[1], positionA);
         // A Car needs an initial speed
-        Speed.Abs initialSpeed = new Speed.Abs(50, SpeedUnit.KM_PER_HOUR);
+        Speed.Abs initialSpeed = new Speed.Abs(50, KM_PER_HOUR);
         // Length of the Car
-        Length.Rel carLength = new Length.Rel(4, LengthUnit.METER);
+        Length.Rel carLength = new Length.Rel(4, METER);
         // Width of the Car
-        Length.Rel carWidth = new Length.Rel(1.8, LengthUnit.METER);
+        Length.Rel carWidth = new Length.Rel(1.8, METER);
         // Maximum velocity of the Car
-        Speed.Abs maximumVelocity = new Speed.Abs(100, SpeedUnit.KM_PER_HOUR);
+        Speed.Abs maximumVelocity = new Speed.Abs(100, KM_PER_HOUR);
         // ID of the Car
         String carID = "theCar";
         // Create an acceleration profile for the car
         FixedAccelerationModel fas =
-            new FixedAccelerationModel(new Acceleration.Abs(0.5, AccelerationUnit.METER_PER_SECOND_2),
-                new Time.Rel(100, TimeUnit.SECOND));
+            new FixedAccelerationModel(new Acceleration.Abs(0.5, METER_PER_SECOND_2), new Time.Rel(100, SECOND));
         // Create a lane change model for the car
         LaneChangeModel laneChangeModel = new Egoistic();
         // Now we can make a car (GTU) (and we don't even have to hold a pointer to it)
         new LaneBasedIndividualCar(carID, gtuType, fas, laneChangeModel, initialLongitudinalPositions, initialSpeed,
             carLength, carWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
-        simulator.runUpTo(new Time.Abs(1, TimeUnit.SECOND));
+        simulator.runUpTo(new Time.Abs(1, SECOND));
         while (simulator.isRunning())
         {
             try
@@ -153,8 +145,8 @@ class TriggerSensor extends AbstractSensor
      * @param name
      * @param simulator
      */
-    public TriggerSensor(final Lane lane, final Length.Rel longitudinalPosition,
-        final RelativePosition.TYPE positionType, final String name, OTSSimulatorInterface simulator)
+    public TriggerSensor(final Lane lane, final Length.Rel longitudinalPosition, final RelativePosition.TYPE positionType,
+        final String name, OTSSimulatorInterface simulator)
     {
         super(lane, longitudinalPosition, positionType, name, simulator);
     }

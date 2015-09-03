@@ -13,7 +13,6 @@ import java.util.TreeMap;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
-import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -436,7 +435,7 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
                             throw new NetworkException("scheduleTriggers for gtu: " + gtu + ", d<0 d=" + d);
                         }
 
-                        Time.Abs triggerTime = gtu.timeAtDistance(new Length.Rel(d, LengthUnit.METER));
+                        Time.Abs triggerTime = gtu.timeAtDistance(new Length.Rel(d, METER));
                         if (triggerTime.gt(gtu.getNextEvaluationTime()))
                         {
                             System.err.println("Time=" + gtu.getSimulator().getSimulatorTime().getTime().getSI()
@@ -448,7 +447,7 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
                             triggerTime =
                                 new Time.Abs(gtu.getNextEvaluationTime().getSI()
                                     - Math.ulp(gtu.getNextEvaluationTime().getSI()), TimeUnit.SI);
-                            // gtu.timeAtDistance(new Length.Rel(-d, LengthUnit.METER));
+                            // gtu.timeAtDistance(new Length.Rel(-d, METER));
                             // System.exit(-1);
                         }
                         // System.out.println("Time=" + gtu.getSimulator().getSimulatorTime().toString()

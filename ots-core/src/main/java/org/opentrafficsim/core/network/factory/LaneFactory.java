@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.LengthUnit;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -123,9 +122,9 @@ public final class LaneFactory implements OTS_SCALAR
         final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException, NetworkException,
         OTSGeometryException
     {
-        Length.Rel width = new Length.Rel(4.0, LengthUnit.METER);
+        Length.Rel width = new Length.Rel(4.0, METER);
         final CrossSectionLink link = makeLink(name, from, to, intermediatePoints);
-        Length.Rel latPos = new Length.Rel(0.0, LengthUnit.METER);
+        Length.Rel latPos = new Length.Rel(0.0, METER);
         return makeLane(link, "lane", laneType, latPos, latPos, width, speedLimit, simulator);
     }
 
@@ -157,13 +156,12 @@ public final class LaneFactory implements OTS_SCALAR
     {
         final CrossSectionLink link = makeLink(name, from, to, intermediatePoints);
         Lane[] result = new Lane[laneCount];
-        Length.Rel width = new Length.Rel(4.0, LengthUnit.METER);
+        Length.Rel width = new Length.Rel(4.0, METER);
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
         {
             // Be ware! LEFT is lateral positive, RIGHT is lateral negative.
-            Length.Rel latPosAtStart =
-                new Length.Rel((-0.5 - laneIndex - laneOffsetAtStart) * width.getSI(), LengthUnit.METER);
-            Length.Rel latPosAtEnd = new Length.Rel((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.METER);
+            Length.Rel latPosAtStart = new Length.Rel((-0.5 - laneIndex - laneOffsetAtStart) * width.getSI(), METER);
+            Length.Rel latPosAtEnd = new Length.Rel((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), METER);
             result[laneIndex] =
                 makeLane(link, "lane." + laneIndex, laneType, latPosAtStart, latPosAtEnd, width, speedLimit, simulator);
         }

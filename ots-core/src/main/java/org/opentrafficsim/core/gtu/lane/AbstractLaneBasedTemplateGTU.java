@@ -45,10 +45,9 @@ public abstract class AbstractLaneBasedTemplateGTU extends AbstractLaneBasedGTU
      * @throws GTUException when gtuFollowingModel is null
      */
     public AbstractLaneBasedTemplateGTU(final String id, final TemplateGTUType templateGTUType,
-        final GTUFollowingModel gtuFollowingModel,
-        final Map<Lane, Length.Rel> initialLongitudinalPositions,
-        final Speed.Abs initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator)
-        throws RemoteException, NetworkException, SimRuntimeException, GTUException
+        final GTUFollowingModel gtuFollowingModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
+        final Speed.Abs initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator) throws RemoteException,
+        NetworkException, SimRuntimeException, GTUException
     {
         super(id, templateGTUType.getGtuType(), gtuFollowingModel, null /* LaneChangeModel */, initialLongitudinalPositions,
             initialSpeed, routeNavigator, templateGTUType.getSimulator());

@@ -12,7 +12,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
-import org.djunits.unit.LengthUnit;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -118,12 +117,12 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         // sensor positions.
         // We take the rear position of the Car to be the reference point. So the front is the length
         // of the Car away from the reference point in the positive (driving) X-direction.
-        Length.Rel zero = new Length.Rel(0.0d, LengthUnit.METER);
-        Length.Rel dx = new Length.Rel(getLength().getSI(), LengthUnit.METER);
+        Length.Rel zero = new Length.Rel(0.0d, METER);
+        Length.Rel dx = new Length.Rel(getLength().getSI(), METER);
         this.relativePositions.put(RelativePosition.FRONT, new RelativePosition(dx, zero, zero, RelativePosition.FRONT));
         this.relativePositions.put(RelativePosition.REAR, new RelativePosition(zero, zero, zero, RelativePosition.REAR));
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
-        
+
         // animation
         if (simulator instanceof OTSAnimatorInterface && animationClass != null)
         {
@@ -154,10 +153,10 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
     /*
      * REMOVE START PrintWriter pwsimloc; PrintWriter pwthreadloc; OTSDEVSSimulatorInterface simulator; protected void simloc()
      * { try { Map<Lane, Length.Rel> posmap = positions(getFront()); Lane lane = posmap.keySet().iterator().next();
-     * pwsimloc.write(getSimulator().getSimulatorTime().getTime().getSI() + "\t" + lane.toString() + "\t" + posmap.get(lane).getSI()
-     * + "\n"); pwsimloc.flush(); simulator.scheduleEventRel(new Time.Rel(0.1, TimeUnit.SECOND), this, this, "simloc", null); }
-     * catch (RemoteException | NetworkException | SimRuntimeException e) { e.printStackTrace(); } } protected class
-     * ClockLocThread extends Thread {
+     * pwsimloc.write(getSimulator().getSimulatorTime().getTime().getSI() + "\t" + lane.toString() + "\t" +
+     * posmap.get(lane).getSI() + "\n"); pwsimloc.flush(); simulator.scheduleEventRel(new Time.Rel(0.1, SECOND), this, this,
+     * "simloc", null); } catch (RemoteException | NetworkException | SimRuntimeException e) { e.printStackTrace(); } }
+     * protected class ClockLocThread extends Thread {
      * @Override public void run() { while (true) { try { Thread.sleep(100); Map<Lane, Length.Rel> posmap =
      * positions(getFront()); Lane lane = posmap.keySet().iterator().next();
      * pwthreadloc.write(getSimulator().getSimulatorTime().getTime().getSI() + "\t" + lane.toString() + "\t" +
@@ -233,14 +232,14 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
      * 
      * <pre>
      * LaneBasedIndividualCar&lt;String&gt; car = new LaneBasedIndividualCarBuilder&lt;String&gt;().setId("Car:"+nr)
-     *    .setLength(new DoubleScalar.Rel&lt;LengthUnit&gt;(4.0, LengthUnit.METER))....build(); 
+     *    .setLength(new DoubleScalar.Rel&lt;LengthUnit&gt;(4.0, METER))....build(); 
      *    
      * or
      * 
      * LaneBasedIndividualCarBuilder&lt;String&gt; carBuilder = new LaneBasedIndividualCarBuilder&lt;String&gt;();
      * carBuilder.setId("Car:"+nr);
-     * carBuilder.setLength(new DoubleScalar.Rel&lt;LengthUnit&gt;(4.0, LengthUnit.METER));
-     * carBuilder.setWidth(new DoubleScalar.Rel&lt;LengthUnit&gt;(1.8, LengthUnit.METER));
+     * carBuilder.setLength(new DoubleScalar.Rel&lt;LengthUnit&gt;(4.0, METER));
+     * carBuilder.setWidth(new DoubleScalar.Rel&lt;LengthUnit&gt;(1.8, METER));
      * ...
      * LaneBasedIndividualCar&lt;String&gt; car = carBuilder.build();
      * </pre>

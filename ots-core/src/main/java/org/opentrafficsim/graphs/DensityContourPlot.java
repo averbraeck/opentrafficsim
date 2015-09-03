@@ -62,7 +62,7 @@ public class DensityContourPlot extends ContourPlot
             try
             {
                 this.cumulativeTimes.add(new MutableDoubleVector.Abs.Sparse<TimeUnit>(new double[this.getYAxis()
-                    .getBinCount()], TimeUnit.SECOND));
+                    .getBinCount()], SECOND));
             }
             catch (ValueException exception)
             {

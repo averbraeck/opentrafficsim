@@ -62,7 +62,7 @@ public class FlowContourPlot extends ContourPlot
             try
             {
                 this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.getYAxis()
-                    .getBinCount()], LengthUnit.METER));
+                    .getBinCount()], METER));
             }
             catch (ValueException exception)
             {
@@ -85,7 +85,7 @@ public class FlowContourPlot extends ContourPlot
             try
             {
                 this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.getYAxis()
-                    .getBinCount()], LengthUnit.METER));
+                    .getBinCount()], METER));
             }
             catch (ValueException exception)
             {

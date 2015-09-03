@@ -58,8 +58,7 @@ public class OTSNode implements Node, LocatableInterface, Serializable
      * @param direction the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
      * @param slope the slope as an angle.
      */
-    public OTSNode(final String id, final OTSPoint3D point, final AnglePlane.Abs direction,
-        final AngleSlope.Abs slope)
+    public OTSNode(final String id, final OTSPoint3D point, final AnglePlane.Abs direction, final AngleSlope.Abs slope)
     {
         this.id = id;
         this.point = point;
@@ -74,8 +73,7 @@ public class OTSNode implements Node, LocatableInterface, Serializable
      */
     public OTSNode(final String id, final OTSPoint3D point)
     {
-        this(id, point, new AnglePlane.Abs(0.0, AnglePlaneUnit.SI), new AngleSlope.Abs(
-            0.0, AngleSlopeUnit.SI));
+        this(id, point, new AnglePlane.Abs(0.0, AnglePlaneUnit.SI), new AngleSlope.Abs(0.0, AngleSlopeUnit.SI));
     }
 
     /**

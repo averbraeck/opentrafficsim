@@ -20,7 +20,6 @@ import nl.tudelft.simulation.language.io.URLResource;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.OTS_DIST;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -72,8 +71,8 @@ public class XMLNetworkSensorTest implements OTS_SCALAR
             {
                 TestXMLModel model = new TestXMLModel();
                 final SimpleAnimator simulator =
-                    new SimpleAnimator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(
-                        0.0, TimeUnit.SECOND), new Time.Rel(120.0, TimeUnit.SECOND), model);
+                    new SimpleAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(120.0, SECOND),
+                        model);
 
                 // get the nodes in the network.
                 Node n1 = model.getNetwork().getNodeMap().get("N1");
@@ -109,12 +108,12 @@ public class XMLNetworkSensorTest implements OTS_SCALAR
                 assertNotNull(lane23);
 
                 // add the sensors
-                lane12.addSensor(new ReportingSensor(lane12, new Length.Rel(
-                    lane12.getLength().getSI() - 1E-4, LengthUnit.SI), RelativePosition.FRONT, "12.E.F", simulator),
-                    GTUType.ALL);
-                lane12.addSensor(new ReportingSensor(lane12, new Length.Rel(
-                    lane12.getLength().getSI() - 1E-4, LengthUnit.SI), RelativePosition.REAR, "12.E.R", simulator),
-                    GTUType.ALL);
+                lane12.addSensor(new ReportingSensor(lane12,
+                    new Length.Rel(lane12.getLength().getSI() - 1E-4, LengthUnit.SI), RelativePosition.FRONT, "12.E.F",
+                    simulator), GTUType.ALL);
+                lane12.addSensor(new ReportingSensor(lane12,
+                    new Length.Rel(lane12.getLength().getSI() - 1E-4, LengthUnit.SI), RelativePosition.REAR, "12.E.R",
+                    simulator), GTUType.ALL);
                 lane23.addSensor(new ReportingSensor(lane23, new Length.Rel(Math.ulp(0.0), LengthUnit.SI),
                     RelativePosition.FRONT, "23.B.F", simulator), GTUType.ALL);
                 lane23.addSensor(new ReportingSensor(lane23, new Length.Rel(Math.ulp(0.0), LengthUnit.SI),
@@ -182,8 +181,8 @@ public class XMLNetworkSensorTest implements OTS_SCALAR
          * @param id the sensor id
          * @param simulator the simulator
          */
-        public ReportingSensor(final Lane lane, final Length.Rel longitudinalPosition,
-            final TYPE positionType, final String id, final OTSDEVSSimulatorInterface simulator)
+        public ReportingSensor(final Lane lane, final Length.Rel longitudinalPosition, final TYPE positionType,
+            final String id, final OTSDEVSSimulatorInterface simulator)
         {
             super(lane, longitudinalPosition, positionType, "REPORT@" + lane.toString(), simulator);
             this.id = id;

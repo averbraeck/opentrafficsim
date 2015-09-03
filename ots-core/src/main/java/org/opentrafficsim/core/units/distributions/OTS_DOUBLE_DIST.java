@@ -14,15 +14,15 @@ import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR;
  */
 public interface OTS_DOUBLE_DIST extends DOUBLE_SCALAR
 {
-    /** the easy access interface to the double scalar continuous distributions. */ 
-    public interface ContinuousDistScalar extends ContinuousDistDoubleScalar 
-    { 
+    /** the easy access interface to the double scalar continuous distributions. */
+    public interface ContinuousDistScalar extends ContinuousDistDoubleScalar
+    {
         // no additional features.
     }
 
-    /** the easy access interface to the double scalar discrete distributions. */ 
-    public interface DiscreteDistScalar extends DiscreteDistDoubleScalar 
-    { 
+    /** the easy access interface to the double scalar discrete distributions. */
+    public interface DiscreteDistScalar extends DiscreteDistDoubleScalar
+    {
         // no additional features.
     }
 }

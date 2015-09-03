@@ -131,7 +131,8 @@ public final class Distributions implements OTS_SCALAR, OTS_DIST
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static ContinuousDistScalar.Rel<Length.Rel, LengthUnit> parseLengthDistRel(final String s) throws NetworkException
+    public static ContinuousDistScalar.Rel<Length.Rel, LengthUnit> parseLengthDistRel(final String s)
+        throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];
@@ -148,7 +149,8 @@ public final class Distributions implements OTS_SCALAR, OTS_DIST
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static ContinuousDistScalar.Abs<Length.Abs, LengthUnit> parseLengthDistAbs(final String s) throws NetworkException
+    public static ContinuousDistScalar.Abs<Length.Abs, LengthUnit> parseLengthDistAbs(final String s)
+        throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];

@@ -27,8 +27,7 @@ public class AccelerationStep implements OTS_SCALAR
      * @param acceleration DoubleScalarAbs&lt;AccelerationUnit&gt;; computed acceleration
      * @param validUntil DoubleScalarAbs&lt;TimeUnit&gt;; time when this result expires
      */
-    public AccelerationStep(final Acceleration.Abs acceleration,
-        final Time.Abs validUntil)
+    public AccelerationStep(final Acceleration.Abs acceleration, final Time.Abs validUntil)
     {
         this.acceleration = acceleration;
         this.validUntil = validUntil;

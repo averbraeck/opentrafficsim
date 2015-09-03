@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu.following;
 
-import org.djunits.unit.AccelerationUnit;
 
 /**
  * Fixed GTU following model. This GTU following model does not react in any way to other GTUs. Instead it has a predetermined
@@ -29,8 +28,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
      *            computeAcceleration methods
      * @param duration DoubleScalar.Abs&lt;TimeUnit&gt;; the duration that the acceleration will be maintained
      */
-    public FixedAccelerationModel(final Acceleration.Abs acceleration,
-        final Time.Rel duration)
+    public FixedAccelerationModel(final Acceleration.Abs acceleration, final Time.Rel duration)
     {
         this.acceleration = acceleration;
         this.duration = duration;
@@ -56,9 +54,8 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration.Abs computeAcceleration(final Speed.Abs followerSpeed,
-        final Speed.Abs followerMaximumSpeed, final Speed.Abs leaderSpeed,
-        final Length.Rel headway, final Speed.Abs speedLimit)
+    public final Acceleration.Abs computeAcceleration(final Speed.Abs followerSpeed, final Speed.Abs followerMaximumSpeed,
+        final Speed.Abs leaderSpeed, final Length.Rel headway, final Speed.Abs speedLimit)
     {
         return this.acceleration;
     }
@@ -67,7 +64,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
     @Override
     public final Acceleration.Abs maximumSafeDeceleration()
     {
-        return new Acceleration.Abs(2, AccelerationUnit.METER_PER_SECOND_2);
+        return new Acceleration.Abs(2, METER_PER_SECOND_2);
     }
 
     /** {@inheritDoc} */

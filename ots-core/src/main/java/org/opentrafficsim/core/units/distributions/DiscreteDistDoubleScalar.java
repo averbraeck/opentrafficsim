@@ -23,8 +23,7 @@ public interface DiscreteDistDoubleScalar
      * @param <T> The absolute doublescalar type
      * @param <U> The unit type used
      */
-    public static class Abs<T extends DoubleScalar.Abs<U>, U extends Unit<U>> extends DiscreteDistScalar implements
-        Absolute
+    public static class Abs<T extends DoubleScalar.Abs<U>, U extends Unit<U>> extends DiscreteDistScalar implements Absolute
     {
         /**
          * @param distribution the wrapped distribution function.
@@ -59,8 +58,7 @@ public interface DiscreteDistDoubleScalar
      * @param <T> The absolute doublescalar type
      * @param <U> The unit type used
      */
-    public static class Rel<T extends DoubleScalar.Rel<U>, U extends Unit<U>> extends DiscreteDistScalar implements
-        Relative
+    public static class Rel<T extends DoubleScalar.Rel<U>, U extends Unit<U>> extends DiscreteDistScalar implements Relative
     {
         /**
          * @param distribution the wrapped distribution function.
