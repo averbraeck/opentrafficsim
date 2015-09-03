@@ -16,7 +16,7 @@ import org.djunits.unit.Unit;
  * initial version Feb 2, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public abstract class ContinuousDistScalar
+public abstract class AbstractContinuousDistScalar
 {
     /** The wrapped distribution function. */
     private final DistContinuous distribution;
@@ -31,7 +31,7 @@ public abstract class ContinuousDistScalar
      * @param distribution the wrapped distribution function.
      * @param unit the unit.
      */
-    protected ContinuousDistScalar(final DistContinuous distribution, final Unit<?> unit)
+    protected AbstractContinuousDistScalar(final DistContinuous distribution, final Unit<?> unit)
     {
         super();
         this.distribution = distribution;
@@ -42,7 +42,7 @@ public abstract class ContinuousDistScalar
      * @param constant the constant value.
      * @param unit the unit.
      */
-    protected ContinuousDistScalar(final double constant, final Unit<?> unit)
+    protected AbstractContinuousDistScalar(final double constant, final Unit<?> unit)
     {
         this(new DistConstant(DUMMY_STREAM, constant), unit);
     }
