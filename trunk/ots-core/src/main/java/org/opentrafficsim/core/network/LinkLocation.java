@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.network;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.OTS_SCALAR;
 
 /**
@@ -42,7 +41,7 @@ public class LinkLocation implements OTS_SCALAR
     {
         super();
         this.link = link;
-        this.fractionalLongitudinalPosition = DoubleScalar.divide(position, this.link.getLength()).doubleValue();
+        this.fractionalLongitudinalPosition = position.divideBy(this.link.getLength()).doubleValue();
     }
 
     /**

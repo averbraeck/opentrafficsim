@@ -188,7 +188,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     public final Speed.Abs getLongitudinalVelocity(final Time.Abs when)
     {
         Time.Rel dT = when.minus(this.lastEvaluationTime);
-        Speed.Abs velocity = this.speed.plus(Calc.accelerationTimesTime(this.getAcceleration(when), dT));
+        Speed.Abs velocity = this.speed.plus(this.getAcceleration(when).toRel().multiplyBy(dT));
         if (velocity.abs().lt(DRIFTINGSPEED))
         {
             velocity = new Speed.Abs(0.0, SpeedUnit.SI);

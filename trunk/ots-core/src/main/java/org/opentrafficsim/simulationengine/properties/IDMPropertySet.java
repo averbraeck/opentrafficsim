@@ -41,13 +41,13 @@ public final class IDMPropertySet implements OTS_SCALAR
         final Acceleration.Abs b, final Length.Rel s0, final Time.Rel tSafe, final int displayPriority)
     {
         ArrayList<AbstractProperty<?>> subProperties = new ArrayList<AbstractProperty<?>>();
-        subProperties.add(new ContinuousProperty("a", "maximum acceleration [m/s/s]", a.getSI(), 0.5, 5.0,
+        subProperties.add(new ContinuousProperty("a", "maximum acceleration [m/s/s]", a.doubleValue(), 0.5, 5.0,
             "maximum acceleration %.2fm/s\u00b2", false, 0));
-        subProperties.add(new ContinuousProperty("b", "safe deceleration [m/s/s]", b.getSI(), 1.0, 4.0,
+        subProperties.add(new ContinuousProperty("b", "safe deceleration [m/s/s]", b.doubleValue(), 1.0, 4.0,
             "maximum comfortable deceleration %.2fm/s\u00b2", false, 0));
-        subProperties.add(new ContinuousProperty("s0", "stationary distance headway [m]", s0.getSI(), 1.0, 10.0,
+        subProperties.add(new ContinuousProperty("s0", "stationary distance headway [m]", s0.doubleValue(), 1.0, 10.0,
             "distance headway %.2fm", false, 2));
-        subProperties.add(new ContinuousProperty("tSafe", "time headway", tSafe.getSI(), 0.5, 1.5, "time headway %.2fs",
+        subProperties.add(new ContinuousProperty("tSafe", "time headway", tSafe.doubleValue(), 0.5, 1.5, "time headway %.2fs",
             false, 3));
         return new CompoundProperty("IDM/IDM+ " + carType + " params", "Parameters for the " + carType
             + " car following parameters", subProperties, true, displayPriority);
