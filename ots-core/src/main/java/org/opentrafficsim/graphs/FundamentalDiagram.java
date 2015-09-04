@@ -33,7 +33,7 @@ import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.core.OTS_SCALAR;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
@@ -600,7 +600,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
          * @throws NetworkException on network inconsistency
          */
         public FundamentalDiagramSensor(final Lane lane, final Length.Rel longitudinalPosition,
-            final OTSSimulatorInterface simulator) throws NetworkException
+            final OTSDEVSSimulatorInterface simulator) throws NetworkException
         {
             super(lane, longitudinalPosition, RelativePosition.REFERENCE, "FUNDAMENTAL_DIAGRAM_SENSOR@" + lane.toString(),
                 simulator);
