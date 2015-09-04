@@ -19,7 +19,6 @@ import org.djunits.unit.AnglePlaneUnit;
 import org.djunits.unit.AngleSlopeUnit;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -535,7 +534,7 @@ final class Links implements OTS_SCALAR
                                 Class<?> clazz = Class.forName(sensorTag.className);
                                 Constructor<?> sensorConstructor =
                                     ClassUtil.resolveConstructor(clazz, new Class[]{Lane.class, Length.Rel.class,
-                                        RelativePosition.TYPE.class, String.class, OTSSimulatorInterface.class});
+                                        RelativePosition.TYPE.class, String.class, OTSDEVSSimulatorInterface.class});
                                 Length.Rel position = LinkTag.parseBeginEndPosition(sensorTag.positionStr, lane);
                                 AbstractSensor sensor =
                                     (AbstractSensor) sensorConstructor.newInstance(new Object[]{lane, position,

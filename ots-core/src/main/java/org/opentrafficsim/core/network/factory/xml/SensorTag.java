@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.opentrafficsim.core.OTS_SCALAR;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.CrossSectionElementTag.ElementType;
@@ -96,7 +96,7 @@ class SensorTag implements OTS_SCALAR
             try
             {
                 ClassUtil.resolveConstructor(clazz, new Class[]{Lane.class, Length.Rel.class, RelativePosition.TYPE.class,
-                    String.class, OTSSimulatorInterface.class});
+                    String.class, OTSDEVSSimulatorInterface.class});
             }
             catch (NoSuchMethodException nsme)
             {
