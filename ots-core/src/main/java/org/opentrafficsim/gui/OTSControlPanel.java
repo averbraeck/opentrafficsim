@@ -646,8 +646,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             }
             int minimumTick = (int) Math.floor(Math.log10(minimum / initialValue) * ticksPerDecade);
             int maximumTick = (int) Math.ceil(Math.log10(maximum / initialValue) * ticksPerDecade);
-            this.slider = new JSlider(SwingConstants.HORIZONTAL, minimumTick, maximumTick, 0);
-            this.slider.setPreferredSize(new Dimension(300, 45));
+            this.slider = new JSlider(SwingConstants.HORIZONTAL, minimumTick, maximumTick + 1, 0);
+            this.slider.setPreferredSize(new Dimension(350, 45));
             Hashtable<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
             for (int step = 0; step <= maximumTick; step++)
             {
@@ -683,6 +683,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 this.tickValues.put(step, Double.parseDouble(text.toString()));
                 // System.out.println("Label " + step + " is \"" + text.toString() + "\"");
             }
+            labels.put(maximumTick + 1, new JLabel("\u221E"));
+            this.tickValues.put(maximumTick + 1, 1E9);
             this.slider.setLabelTable(labels);
             this.slider.setPaintLabels(true);
             this.slider.setPaintTicks(true);
