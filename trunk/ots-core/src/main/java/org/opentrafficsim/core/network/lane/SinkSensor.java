@@ -4,7 +4,7 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 
@@ -30,7 +30,7 @@ public class SinkSensor extends AbstractSensor
      * @param position the position of the sensor
      * @param simulator the simulator to enable animation.
      */
-    public SinkSensor(final Lane lane, final Length.Rel position, final OTSSimulatorInterface simulator)
+    public SinkSensor(final Lane lane, final Length.Rel position, final OTSDEVSSimulatorInterface simulator)
     {
         super(lane, position, RelativePosition.FRONT, "SINK@" + lane.toString(), simulator);
         try

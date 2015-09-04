@@ -16,9 +16,9 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.junit.Test;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -146,7 +146,7 @@ class TriggerSensor extends AbstractSensor
      * @param simulator
      */
     public TriggerSensor(final Lane lane, final Length.Rel longitudinalPosition, final RelativePosition.TYPE positionType,
-        final String name, OTSSimulatorInterface simulator)
+        final String name, OTSDEVSSimulatorInterface simulator)
     {
         super(lane, longitudinalPosition, positionType, name, simulator);
     }
