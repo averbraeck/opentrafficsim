@@ -11,6 +11,7 @@ import javax.naming.NamingException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
@@ -34,7 +35,7 @@ public class MeasureSensor extends AbstractSensor
      * @param nameSensor
      */
     public MeasureSensor(Lane lane, Length.Rel position, final RelativePosition.TYPE front, String nameSensor,
-        final OTSSimulatorInterface simulator)
+        final OTSDEVSSimulatorInterface simulator)
     {
         super(lane, position, front, nameSensor, simulator);
         try

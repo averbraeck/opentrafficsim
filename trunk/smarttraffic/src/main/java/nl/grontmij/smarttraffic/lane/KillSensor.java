@@ -9,6 +9,7 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.lane.Lane;
@@ -29,7 +30,7 @@ public class KillSensor extends SinkSensor
      * @param nameJunction
      */
     public KillSensor(Lane lane, Length.Rel longitudinalPositionFromEnd, String nameSensor,
-        final OTSSimulatorInterface simulator)
+        final OTSDEVSSimulatorInterface simulator)
     {
         super(lane, longitudinalPositionFromEnd, simulator);
         try
