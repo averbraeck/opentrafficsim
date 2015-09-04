@@ -349,7 +349,18 @@ public class GTM extends AbstractWrappableSimulationST {
 					vLogFileName, wegNummer, vriNummer, this.simulator,
 					startAtHour, stopAtHour, outputFileLogReadSensor,
 					outputFileVlogCheckSensor, outputFileVlogCheckTrafficLight);
-
+			try {
+				outputFileVlogCheckSensor.close();
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+			try {
+				outputFileVlogCheckTrafficLight.close();
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
 			// connect the detector pulses to the simulator and generate Cars
 			// Module that provides actions if a pulse from a detector is
 			// activated: creeren van een voertuig als een detector "af" gaat
@@ -383,7 +394,7 @@ public class GTM extends AbstractWrappableSimulationST {
 				e1.printStackTrace();
 			}
 
-			if (Settings.getBoolean(this.simulator, "MOVERAMPS")) {
+			if (Settings.getBoolean(this.simulator, "MOVEVEHICLES")) {
 				// - Compare the (INTERMEDIATE) pulse to vehicles in the
 				// simulation
 				//

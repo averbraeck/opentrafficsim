@@ -74,7 +74,7 @@ public class StopLineLane extends AbstractSensor
      * @param longitudinalPositionFromEnd longitudinal position from the end TODO change for position, not from the end.
      */
     public StopLineLane(final Lane lane, final Length.Rel longitudinalPositionFromEnd,
-        final OTSSimulatorInterface simulator)
+        final OTSDEVSSimulatorInterface simulator)
     {
         super(lane, longitudinalPositionFromEnd, RelativePosition.FRONT, "STOPLINE@" + lane.toString(), simulator);
     }

@@ -29,6 +29,7 @@ public class TrafficLight extends AbstractTrafficLight
 {
     /** the color to display. */
     private Color color = Color.BLACK;
+    private int actualStatus;
 
     /**
      * @param lane The lane where the block has to be put
@@ -60,7 +61,15 @@ public class TrafficLight extends AbstractTrafficLight
         return this.color;
     }
 
-    public void changeColor(final int newColor)
+    public int getActualStatus() {
+		return actualStatus;
+	}
+
+	public void setActualStatus(int actualStatus) {
+		this.actualStatus = actualStatus;
+	}
+
+	public void changeColor(final int newColor)
     {
         switch (newColor)
         {

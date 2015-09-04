@@ -8,6 +8,8 @@ import java.util.HashMap;
 
 import javax.naming.NamingException;
 
+import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR.Time;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
@@ -23,7 +25,18 @@ public class GenerateSensor extends AbstractSensor
     private static final long serialVersionUID = 20141231L;
 
     private HashMap<Time.Abs, Integer> statusByTime = new HashMap<Time.Abs, Integer>();
+    
+    private int currentStatus;
 
+    public Time.Abs getTimeOfLastChange() {
+		return timeOfLastChange;
+	}
+
+	public void setTimeOfLastChange(Time.Abs timeOfLastChange) {
+		this.timeOfLastChange = timeOfLastChange;
+	}
+
+	private Time.Abs timeOfLastChange;
     /**
      * @param lane
      * @param longitudinalPositionFromEnd
@@ -31,7 +44,7 @@ public class GenerateSensor extends AbstractSensor
      * @param nameJunction
      */
     public GenerateSensor(Lane lane, Length.Rel longitudinalPositionFromEnd, final RelativePosition.TYPE front,
-        String nameSensor, final OTSSimulatorInterface simulator)
+        String nameSensor, final OTSDEVSSimulatorInterface simulator)
     {
         super(lane, longitudinalPositionFromEnd, front, nameSensor, simulator);
         try
@@ -54,7 +67,15 @@ public class GenerateSensor extends AbstractSensor
         this.statusByTime = statusByTime;
     }
 
-    public void addStatusByTime(Time.Abs timeNow, Integer status)
+    public int getCurrentStatus() {
+		return currentStatus;
+	}
+
+	public void setCurrentStatus(int currentStatus) {
+		this.currentStatus = currentStatus;
+	}
+
+	public void addStatusByTime(Time.Abs timeNow, Integer status)
     {
         this.statusByTime.put(timeNow, status);
     }

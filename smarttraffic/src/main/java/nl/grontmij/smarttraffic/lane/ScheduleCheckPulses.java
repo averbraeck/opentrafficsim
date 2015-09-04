@@ -61,6 +61,8 @@ public class ScheduleCheckPulses<ID> {
 
 	/** the routes. A and B. */
 	private Map<String, CompleteRoute> routes;
+	/** the routes. A and B. */
+	private List<CompleteRoute> routesList = new ArrayList<CompleteRoute>() ;
 
 	HashMap<String, CheckSensor> mapSensor;
 
@@ -79,6 +81,12 @@ public class ScheduleCheckPulses<ID> {
 		this.laneChangeModel = new GTMLaneChangeModel();
 		this.gtuColorer = new IDGTUColorer();
 		this.lengthCar = 4.5;
+		 
+		if (!this.routes.isEmpty()) {
+			for (CompleteRoute routeA : this.routes.values()) {
+				this.routesList.add(routeA);
+			}
+		}
 		scheduleCheckPulses(backRange, frontRange,
 				outputFileLogVehicleSimulation);
 	}
@@ -101,11 +109,10 @@ public class ScheduleCheckPulses<ID> {
 		for (Entry<String, CheckSensor> entry : this.mapSensor.entrySet()) {
 			entry.getKey();
 			CheckSensor sensor = entry.getValue();
-			HashMap<Time.Abs, Integer> pulses = sensor
-					.getStatusByTime();
-			for (Entry<Time.Abs, Integer> entryPulse : pulses
-					.entrySet()) {
+			HashMap<Time.Abs, Integer> pulses = sensor.getStatusByTime();
+			for (Entry<Time.Abs, Integer> entryPulse : pulses.entrySet()) {
 				Time.Abs when = entryPulse.getKey();
+				sensor.setCurrentStatus(entryPulse.getValue());
 				// if a car is detected and leaves the sensor, look for the
 				// nearest simulation vehicle
 				// if that vehicle is found move it to the sensor
@@ -115,16 +122,12 @@ public class ScheduleCheckPulses<ID> {
 									backRange, frontRange,
 									outputFileLogVehicleSimulation });
 				}
-				sensor.setCurrentStatus(entryPulse.getValue());
-				this.simulator.scheduleEventAbs(when, this, this,
-						"changeAnimationStatusDetector",
-						new Object[] { sensor });
 			}
 
 		}
-		this.simulator.scheduleEventAbs(new Time.Abs(0,
-				TimeUnit.SECOND), this, this, "checkTriggeredVehiclesList",
-				new Object[] { GTM.listGTUsInNetwork, backRange,
+		this.simulator.scheduleEventAbs(new Time.Abs(0, TimeUnit.SECOND), this,
+				this, "checkTriggeredVehiclesList", new Object[] {
+						GTM.listGTUsInNetwork, backRange,
 						outputFileLogVehicleSimulation });
 	}
 
@@ -151,7 +154,7 @@ public class ScheduleCheckPulses<ID> {
 			listGTUsInNetwork.remove(gtu);
 			gtu.destroy();
 		}
-		this.simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.1,
+		this.simulator.scheduleEventRel(new DoubleScalar.Rel<TimeUnit>(0.5,
 				TimeUnit.SECOND), this, this, "checkTriggeredVehiclesList",
 				new Object[] { GTM.listGTUsInNetwork, backRange,
 						outputFileLogVehicleSimulation });
@@ -166,11 +169,13 @@ public class ScheduleCheckPulses<ID> {
 		// {
 		// find near vehicle
 		// first look in front (vehicles already passed??)
+
 		LaneBasedGTU gtu = nearGTUfront2(sensor, frontRange);
 		if (gtu == null) {
 			gtu = nearGTUback2(sensor, backRange);
 		}
 		// move vehicle to assumed right position
+		double DISTANCEAFTERSENSOR = 0.1;
 		if (gtu != null) {
 			// move GTU
 			for (Object o : gtu.positions(gtu.getReference()).keySet()) {
@@ -178,14 +183,22 @@ public class ScheduleCheckPulses<ID> {
 			}
 			GTM.listGTUsInNetwork.remove(gtu);
 			//
-			if (Settings.getBoolean(simulator, "ANIMATERAMPVEHICLES")) {
-				generateCar(
-						sensor.getLane(),
-						// put the car one meter in front of the sensor (so
-						// the car is not triggered again!)
-						new Length.Rel(sensor
-								.getLongitudinalPositionSI(), Length.METER),
-						Integer.parseInt(gtu.getId().toString()), sensor);
+			if (Settings.getBoolean(simulator, "MOVERAMPVEHICLES")
+					&& sensor.isExitLaneSensor(this.routesList)) {
+				// put the car one meter in front of the sensor (so
+				// the car is not triggered again!)
+				generateCar(sensor.getLane(),
+						new Length.Rel(sensor.getLongitudinalPositionSI() + DISTANCEAFTERSENSOR,
+								Length.METER), Integer.parseInt(gtu.getId()
+								.toString()), sensor);
+			} else if (Settings.getBoolean(simulator, "MOVEVEHICLES")
+					&& !sensor.isExitLaneSensor(this.routesList)) {
+				generateCar(sensor.getLane(),
+				// put the car one meter in front of the sensor (so
+				// the car is not triggered again!)
+						new Length.Rel(sensor.getLongitudinalPositionSI() + DISTANCEAFTERSENSOR,
+								Length.METER), Integer.parseInt(gtu.getId()
+								.toString()), sensor);
 			}
 			try {
 				outputFileLogVehicleSimulation.write("t="
@@ -200,11 +213,9 @@ public class ScheduleCheckPulses<ID> {
 		} else {
 			// if no vehicle is triggered, create a new one
 			try {
-				generateCar(
-						sensor.getLane(),
+				generateCar(sensor.getLane(),
 						// put the car in front of the sensor
-						new Length.Rel(sensor
-								.getLongitudinalPositionSI() + 1,
+						new Length.Rel(sensor.getLongitudinalPositionSI() + DISTANCEAFTERSENSOR,
 								Length.METER),
 						(++ScheduleGenerateCars.carsCreated), sensor);
 				outputFileLogVehicleSimulation.write("t="
@@ -220,26 +231,21 @@ public class ScheduleCheckPulses<ID> {
 		// }
 	}
 
-	private final void changeAnimationStatusDetector(final CheckSensor sensor)
-			throws RemoteException, NetworkException {
-		sensor.setCurrentStatus(sensor.getCurrentStatus());
-	}
-
-	private final LaneBasedGTU nearGTUfront2(CheckSensor sensor, double range)
+	public final static LaneBasedGTU nearGTUfront2(CheckSensor sensor, double range)
 			throws RemoteException {
 		boolean backwards = false;
 		return nearGTU2(sensor, sensor.getLane().getParentLink(), range,
 				backwards);
 	}
 
-	private final LaneBasedGTU nearGTUback2(CheckSensor sensor, double range)
+	public final LaneBasedGTU nearGTUback2(CheckSensor sensor, double range)
 			throws RemoteException {
 		boolean backwards = true;
 		return nearGTU2(sensor, sensor.getLane().getParentLink(), range,
 				backwards);
 	}
 
-	private final LaneBasedGTU nearGTU2(CheckSensor sensor,
+	public final static LaneBasedGTU nearGTU2(CheckSensor sensor,
 			CrossSectionLink link, double range, boolean backwards)
 			throws RemoteException {
 		if (link.getStartNode().getLocation().distance(sensor.getLocation()) > range
@@ -333,9 +339,8 @@ public class ScheduleCheckPulses<ID> {
 	 * 
 	 * @throws NetworkException
 	 */
-	protected final void generateCar(Lane lane,
-			Length.Rel initialPosition, final int gtuNumber,
-			CheckSensor sensor) throws NetworkException {
+	protected final void generateCar(Lane lane, Length.Rel initialPosition,
+			final int gtuNumber, CheckSensor sensor) throws NetworkException {
 		// is there enough space?
 		Lane nextLane = lane.nextLanes(this.gtuType).iterator().next();
 		double genSpeedSI = Math.min(lane.getSpeedLimit(GTM.GTUTYPE).getSI(),
@@ -356,11 +361,9 @@ public class ScheduleCheckPulses<ID> {
 
 		Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
 		initialPositions.put(lane, initialPosition);
-		Speed.Abs initialSpeed = lane
-				.getSpeedLimit(GTM.GTUTYPE);
-		Speed.Abs maxSpeed = new Speed.Abs(
-				Settings.getDouble(simulator, "MAXSPEED"),
-				SpeedUnit.KM_PER_HOUR);
+		Speed.Abs initialSpeed = lane.getSpeedLimit(GTM.GTUTYPE);
+		Speed.Abs maxSpeed = new Speed.Abs(Settings.getDouble(simulator,
+				"MAXSPEED"), SpeedUnit.KM_PER_HOUR);
 		if (initialPosition.getSI() + this.lengthCar > lane.getLength().getSI()) {
 			// also register on next lane.
 			if (lane.nextLanes(this.gtuType).size() == 0
@@ -369,17 +372,12 @@ public class ScheduleCheckPulses<ID> {
 						.println("lane.nextLanes().size() == 0 || lane.nextLanes().size() > 1");
 				System.exit(-1);
 			}
-			Length.Rel nextPos = new Length.Rel(
-					initialPosition.getSI() - lane.getLength().getSI(),
-					Length.METER);
+			Length.Rel nextPos = new Length.Rel(initialPosition.getSI()
+					- lane.getLength().getSI(), Length.METER);
 			initialPositions.put(nextLane, nextPos);
 		}
 		// this is for cars leaving the main route. A new route is created
 		CompleteRoute route = new CompleteRoute("");
-		List<CompleteRoute> routesList = new ArrayList<CompleteRoute>();
-		for (CompleteRoute routeA : this.routes.values()) {
-			routesList.add(routeA);
-		}
 		if (sensor.isExitLaneSensor(routesList)) {
 			route.addNode(nextLane.getParentLink().getStartNode());
 			Node node = nextLane.getParentLink().getEndNode();
@@ -402,17 +400,17 @@ public class ScheduleCheckPulses<ID> {
 		LaneBasedRouteNavigator routeNavigator = new CompleteLaneBasedRouteNavigator(
 				route);
 		try {
-			Length.Rel vehicleLength = new Length.Rel(
-					this.lengthCar, Length.METER);
+			Length.Rel vehicleLength = new Length.Rel(this.lengthCar,
+					Length.METER);
 			Class<? extends Renderable2D> animationClass = Settings.getBoolean(
 					simulator, "ANIMATECARS") ? DefaultCarAnimation.class
 					: null;
 			LaneBasedIndividualCar gtu = new LaneBasedIndividualCar(""
 					+ gtuNumber, this.gtuType, this.gtuFollowingModel,
 					this.laneChangeModel, initialPositions, initialSpeed,
-					vehicleLength, new Length.Rel(2.0,
-							Length.METER), maxSpeed, routeNavigator,
-					this.simulator, animationClass, this.gtuColorer);
+					vehicleLength, new Length.Rel(2.0, Length.METER), maxSpeed,
+					routeNavigator, this.simulator, animationClass,
+					this.gtuColorer);
 			// add this car to the list of gtu's in the network
 			LinkedList<CheckSensor> linkedList = new LinkedList<CheckSensor>();
 			linkedList.add(sensor);

@@ -189,7 +189,7 @@ public class ReadVLog {
 					mapStatus = parseStatus(buffer, deltaTimeFromVLog);
 					ReadStatusDetector(mapSensor, mapStatus, vriList, vriName,
 							timeFromVLog, deltaTimeFromVLog,
-							outputFileLogReadSensor);
+							outputFileLogReadSensor, simulator);
 					boolReadFirstDetectorStatus = true;
 				} else if (typeBericht == 13) {
 					// status signaalgroepen (alle SG's)
@@ -237,8 +237,6 @@ public class ReadVLog {
 				} else if (typeBericht == 5) {
 					// alleen om te checken of de status nog klopt
 					mapStatus = parseStatus(buffer, deltaTimeFromVLog);
-
-					// TODO finished checks?????
 					CheckStatusDetector(mapSensor, mapStatus, vriList, vriName,
 							outputFileVlogCheckSensor);
 				} else if (typeBericht == 6 && ldt.getHour() < stopAtHour) {
@@ -248,7 +246,7 @@ public class ReadVLog {
 					mapStatus = parseWijziging(buffer, deltaTimeFromVLog);
 					ReadStatusDetector(mapSensor, mapStatus, vriList, vriName,
 							timeFromVLog, deltaTimeFromVLog,
-							outputFileLogReadSensor);
+							outputFileLogReadSensor, simulator);
 				} else if (typeBericht == 13) {
 					// alleen om te checken of de status nog klopt
 					mapStatus = parseStatus(buffer, deltaTimeFromVLog);
@@ -274,7 +272,8 @@ public class ReadVLog {
 			HashMap<Integer, Integer> mapStatus,
 			HashMap<String, ConfigVri> vriList, String vriName,
 			Instant[] timeFromVLog, Long[] deltaTimeFromVLog,
-			BufferedWriter outputFileLogReadSensor) {
+			BufferedWriter outputFileLogReadSensor,
+			OTSDEVSSimulatorInterface simulator) {
 		// in de mapStatus staan de detector indices met de detectorwaarden
 		for (Entry<Integer, Integer> entry : mapStatus.entrySet()) {
 			ConfigVri vri = vriList.get(vriName);
@@ -292,12 +291,13 @@ public class ReadVLog {
 			Instant timeVLogNow = timeFromVLog[0]
 					.plusMillis(100 * deltaTimeFromVLog[0]);
 			// tijd (in miliseconden) sinds de start van de simulatie
-			Long milliSecondsPassed = ChronoUnit.MILLIS.between(
-					GTM.startTimeSimulation, timeVLogNow);
+			Time.Abs newTime = new Time.Abs(ChronoUnit.MILLIS.between(
+					GTM.startTimeSimulation, timeVLogNow), TimeUnit.MILLISECOND);
 			// zoek de bijbehorende detector
 			String searchFor = vriName + "_" + nameDetector;
 			AbstractSensor sensor = mapSensor.get(searchFor);
 			if (sensor != null) {
+				Time.Abs oldTime = null;
 				if (sensor instanceof CheckSensor) {
 					if (!sensorFound.contains(searchFor)) {
 						sensorFound.add(searchFor);
@@ -313,16 +313,44 @@ public class ReadVLog {
 							e.printStackTrace();
 						}
 					}
-					((CheckSensor) sensor).addStatusByTime(new Time.Abs(
-							milliSecondsPassed, TimeUnit.MILLISECOND), entry
-							.getValue());
+					oldTime = ((CheckSensor) sensor).getTimeOfLastChange();
+					((CheckSensor) sensor).addStatusByTime(newTime,
+							entry.getValue());
+					((CheckSensor) sensor).setCurrentStatus(entry.getValue());
+					((CheckSensor) sensor).setTimeOfLastChange(newTime);
+					Time.Rel addTime = new Time.Rel(0, Time.SECOND);
+					if (entry.getValue() == 0) {
+						addTime = new Time.Rel(0.5, Time.SECOND);
+					}
+					try {
+						simulator.scheduleEventAbs(newTime.plus(addTime),
+								((CheckSensor) sensor), ((CheckSensor) sensor),
+								"changeColor",
+								new Object[] { entry.getValue() });
+
+					} catch (RemoteException | SimRuntimeException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
 				} else if (sensor instanceof GenerateSensor) {
-					((GenerateSensor) sensor).addStatusByTime(new Time.Abs(
-							milliSecondsPassed, TimeUnit.MILLISECOND), entry
-							.getValue());
+					oldTime = ((GenerateSensor) sensor).getTimeOfLastChange();
+					((GenerateSensor) sensor).addStatusByTime(newTime,
+							entry.getValue());
+					((GenerateSensor) sensor)
+							.setCurrentStatus(entry.getValue());
+					((GenerateSensor) sensor).setTimeOfLastChange(newTime);
+					/*
+					 * try { simulator.scheduleEventAbs(new Time.Abs(
+					 * milliSecondsPassed, TimeUnit.MILLISECOND),
+					 * ((GenerateSensor) sensor), ((GenerateSensor) sensor),
+					 * "changeColor", new Object[] { entry.getValue() });
+					 * 
+					 * } catch (RemoteException | SimRuntimeException e) { //
+					 * TODO Auto-generated catch block e.printStackTrace(); }
+					 */
+
 				} else {
-					// System.out.println("Sensor " + searchFor
-					// + " triggered -- ignored for now");
 					try {
 						outputFileLogReadSensor.write("Sensor " + searchFor
 								+ " triggered -- ignored for now \n");
@@ -332,6 +360,24 @@ public class ReadVLog {
 					}
 
 				}
+				if (oldTime != null) {
+					Time.Rel timePassed = newTime.minus(oldTime);
+					if (entry.getValue() > 0
+							&& timePassed.gt(new Time.Rel(1500, Time.SECOND))) {
+						try {
+							outputFileLogReadSensor
+									.write("Sensor value ON (1) at time" + "\t"
+											+ newTime.getSI()
+											+ "\t Name Sensor " + "\t"
+											+ searchFor + "\t"
+											+ timePassed.getSI() + "\n");
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+
 			} else {
 				if (!sensorNotFound.contains(searchFor)) {
 					sensorNotFound.add(searchFor);
@@ -345,47 +391,6 @@ public class ReadVLog {
 						e.printStackTrace();
 					}
 				}
-			}
-		}
-	}
-
-	// lees de status van de signaalgroepen
-	public static void ReadStatusSignalGroup(
-			HashMap<String, AbstractSensor> mapSensor,
-			HashMap<Integer, Integer> mapStatus,
-			HashMap<String, ConfigVri> vriList, String vriName,
-			Instant[] timeFromVLog, Long[] deltaTimeFromVLog,
-			OTSDEVSSimulatorInterface simulator) {
-		// zie ook vorige methode (zelfde aanpak)
-		for (Entry<Integer, Integer> entry : mapStatus.entrySet()) {
-			ConfigVri vri = vriList.get(vriName);
-			String nameSignalGroup = vri.getSignalGroups().get(entry.getKey());
-			Instant timeVLogNow = timeFromVLog[0]
-					.plusMillis(100 * deltaTimeFromVLog[0]);
-			Long milliSecondsPassed = ChronoUnit.MILLIS.between(
-					GTM.startTimeSimulation, timeVLogNow);
-			if (GTM.signalGroupToTrafficLights.containsKey(vri.getName() + "_"
-					+ nameSignalGroup)) {
-				for (TrafficLight trafficLight : GTM.signalGroupToTrafficLights
-						.get(vri.getName() + "_" + nameSignalGroup)) {
-					try {
-						simulator.scheduleEventAbs(new Time.Abs(
-								milliSecondsPassed, TimeUnit.MILLISECOND),
-								trafficLight, trafficLight, "changeColor",
-								new Object[] { entry.getValue() });
-						/*-
-						System.out.println(new Time.Abs(milliSecondsPassed, TimeUnit.MILLISECOND) + " - "
-						    + vri.getName() + ": " + timeVLogNow + ": " + vri.getName() + "_" + nameSignalGroup
-						    + ", status[.,.] = [" + entry.getKey() + "," + entry.getValue() + "]");
-						 */
-					} catch (RemoteException | SimRuntimeException exception) {
-						exception.printStackTrace();
-						System.exit(-1);
-					}
-				}
-			} else {
-				// System.out.println("TL nameSignalGroup not found: " +
-				// vri.getName() + "_" + nameSignalGroup);
 			}
 		}
 	}
@@ -410,35 +415,74 @@ public class ReadVLog {
 				nameDetector = name;
 			}
 			if (mapSensor.get(vriName + "_" + nameDetector) != null) {
-				// TODO
-				HashMap<Time.Abs, Integer> map = null;
-				if (mapSensor.get(vriName + "_" + nameDetector) instanceof GenerateSensor) {
+				int status = -1;
+				nameDetector = vriName + "_" + nameDetector;
+				if (mapSensor.get(nameDetector) instanceof CheckSensor) {
+					CheckSensor sensor = (CheckSensor) mapSensor
+							.get(nameDetector);
+					status = sensor.getCurrentStatus();
+				} else if (mapSensor.get(nameDetector) instanceof GenerateSensor) {
 					GenerateSensor sensor = (GenerateSensor) mapSensor
-							.get(vriName + "_" + nameDetector);
-					map = sensor.getStatusByTime();
-				} else if (mapSensor.get(vriName + "_" + nameDetector) instanceof CheckSensor) {
-					CheckSensor sensor = (CheckSensor) mapSensor.get(vriName
-							+ "_" + nameDetector);
-					map = sensor.getStatusByTime();
+							.get(nameDetector);
+					status = sensor.getCurrentStatus();
 				}
-				if (map != null) {
-					// compare value of latest change and this status
-					Entry<Time.Abs, Integer> maxEntry = null;
-					for (Entry<Time.Abs, Integer> entry1 : map.entrySet()) {
-						if (maxEntry == null
-								|| entry1.getKey().getSI() > maxEntry
-										.getValue()) {
-							maxEntry = entry1;
-						}
+				if (entry.getValue() != status) {
+					try {
+						outputFileVlogCheckSensor.write(nameDetector + "\t"
+								+ "\t" + status + "\t" + entry.getValue()
+								+ "\n");
+						outputFileVlogCheckSensor.flush();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-					if (entry.getValue() != maxEntry.getValue()) {
-						
-						System.out
-								.println("Status detector verkeerd ingelezen!!!!!");
-					}
+					// System.out.println("Status detector verkeerd ingelezen!!!!!");
 				}
+
 			}
 
+		}
+	}
+
+	// lees de status van de signaalgroepen
+	public static void ReadStatusSignalGroup(
+			HashMap<String, AbstractSensor> mapSensor,
+			HashMap<Integer, Integer> mapStatus,
+			HashMap<String, ConfigVri> vriList, String vriName,
+			Instant[] timeFromVLog, Long[] deltaTimeFromVLog,
+			OTSDEVSSimulatorInterface simulator) {
+		// zie ook vorige methode (zelfde aanpak)
+		for (Entry<Integer, Integer> entry : mapStatus.entrySet()) {
+			ConfigVri vri = vriList.get(vriName);
+			String nameSignalGroup = vri.getSignalGroups().get(entry.getKey());
+			Instant timeVLogNow = timeFromVLog[0]
+					.plusMillis(100 * deltaTimeFromVLog[0]);
+			Long milliSecondsPassed = ChronoUnit.MILLIS.between(
+					GTM.startTimeSimulation, timeVLogNow);
+			if (GTM.signalGroupToTrafficLights.containsKey(vri.getName() + "_"
+					+ nameSignalGroup)) {
+				for (TrafficLight trafficLight : GTM.signalGroupToTrafficLights
+						.get(vri.getName() + "_" + nameSignalGroup)) {
+					try {
+						trafficLight.setActualStatus(entry.getValue());
+						simulator.scheduleEventAbs(new Time.Abs(
+								milliSecondsPassed, TimeUnit.MILLISECOND),
+								trafficLight, trafficLight, "changeColor",
+								new Object[] { entry.getValue() });
+						/*-
+						System.out.println(new Time.Abs(milliSecondsPassed, TimeUnit.MILLISECOND) + " - "
+						    + vri.getName() + ": " + timeVLogNow + ": " + vri.getName() + "_" + nameSignalGroup
+						    + ", status[.,.] = [" + entry.getKey() + "," + entry.getValue() + "]");
+						 */
+					} catch (RemoteException | SimRuntimeException exception) {
+						exception.printStackTrace();
+						System.exit(-1);
+					}
+				}
+			} else {
+				// System.out.println("TL nameSignalGroup not found: " +
+				// vri.getName() + "_" + nameSignalGroup);
+			}
 		}
 	}
 
@@ -450,24 +494,26 @@ public class ReadVLog {
 		for (Entry<Integer, Integer> entry : mapStatus.entrySet()) {
 			ConfigVri vri = vriList.get(vriName);
 			String nameSignalGroup = vri.getSignalGroups().get(entry.getKey());
-			if (mapSensor.get(vriName + nameSignalGroup) != null) {
-				/*- TODO
-				HashMap<Time.Abs, Integer> map =
-				    mapSensor.get(vriName + nameSignalGroup).getStatusByTime();
-				// compare value of latest change and this status
-				Entry<Time.Abs, Integer> maxEntry = null;
-				for (Entry<Time.Abs, Integer> entry1 : map.entrySet())
-				{
-				    if (maxEntry == null || entry1.getKey().getSI() > maxEntry.getValue())
-				    {
-				        maxEntry = entry1;
-				    }
+			nameSignalGroup = vriName + "_" + nameSignalGroup;
+
+			if (GTM.signalGroupToTrafficLights.containsKey(nameSignalGroup)) {
+				for (TrafficLight trafficLight : GTM.signalGroupToTrafficLights
+						.get(nameSignalGroup)) {
+					if (entry.getValue() != trafficLight.getActualStatus()) {
+						try {
+							outputFileVlogCheckTrafficLight
+									.write(nameSignalGroup + "\t"
+											+ entry.getValue() + "\t"
+											+ trafficLight.getActualStatus()
+											+ "\n");
+							outputFileVlogCheckTrafficLight.flush();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						// System.out.println("Status detector verkeerd ingelezen!!!!!");
+					}
 				}
-				if (entry.getValue() != maxEntry.getValue())
-				{
-				    System.out.println("Status signaalgroep verkeerd ingelezen!!!!!");
-				}
-				 */
 			}
 		}
 	}
