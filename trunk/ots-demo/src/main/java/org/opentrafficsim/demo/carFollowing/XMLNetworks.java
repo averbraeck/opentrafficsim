@@ -62,8 +62,7 @@ import org.opentrafficsim.core.network.route.ProbabilisticLaneBasedRouteGenerato
 import org.opentrafficsim.core.network.route.ProbabilisticLaneBasedRouteGenerator.LaneBasedRouteProbability;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.TrajectoryPlot;
-import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
-import org.opentrafficsim.simulationengine.WrappableSimulation;
+import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
 import org.opentrafficsim.simulationengine.properties.ContinuousProperty;
@@ -81,7 +80,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class XMLNetworks extends AbstractWrappableSimulation implements WrappableSimulation
+public class XMLNetworks extends AbstractWrappableAnimation
 {
     /** the model. */
     private XMLNetworkModel model;

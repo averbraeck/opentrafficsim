@@ -43,7 +43,7 @@ import org.opentrafficsim.importexport.osm.events.WarningListener;
 import org.opentrafficsim.importexport.osm.events.WarningListenerImpl;
 import org.opentrafficsim.importexport.osm.input.ReadOSMFile;
 import org.opentrafficsim.importexport.osm.output.Convert;
-import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
+import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.IDMPropertySet;
 import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionProperty;
@@ -60,7 +60,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author Moritz Bergmann
  */
-public class OpenStreetMap extends AbstractWrappableSimulation
+public class OpenStreetMap extends AbstractWrappableAnimation
 {
     /** the model. */
     private OSMModel model;
@@ -121,7 +121,7 @@ public class OpenStreetMap extends AbstractWrappableSimulation
                     localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration.Abs(0.5,
                         METER_PER_SECOND_2), new Acceleration.Abs(1.25, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
                         new Time.Rel(1.0, SECOND), 3));
-                    osm.buildSimulator(localProperties, null, true);
+                    osm.buildAnimator(localProperties, null, true);
                 }
                 catch (Exception e)
                 {
