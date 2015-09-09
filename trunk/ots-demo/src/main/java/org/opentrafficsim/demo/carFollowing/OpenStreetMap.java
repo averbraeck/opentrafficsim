@@ -121,7 +121,8 @@ public class OpenStreetMap extends AbstractWrappableAnimation
                     localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration.Abs(0.5,
                         METER_PER_SECOND_2), new Acceleration.Abs(1.25, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
                         new Time.Rel(1.0, SECOND), 3));
-                    osm.buildAnimator(localProperties, null, true);
+                    osm.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND),
+                        localProperties, null, true);
                 }
                 catch (Exception e)
                 {

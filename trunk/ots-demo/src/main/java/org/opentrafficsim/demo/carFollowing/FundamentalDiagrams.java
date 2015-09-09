@@ -108,7 +108,8 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation
                 try
                 {
                     FundamentalDiagrams fundamentalDiagrams = new FundamentalDiagrams();
-                    fundamentalDiagrams.buildAnimator(fundamentalDiagrams.getProperties(), null, true);
+                    fundamentalDiagrams.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(
+                        3600.0, SECOND), fundamentalDiagrams.getProperties(), null, true);
                 }
                 catch (RemoteException | SimRuntimeException | NamingException exception)
                 {

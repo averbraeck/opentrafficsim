@@ -57,7 +57,9 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                 try
                 {
                     TestOpenDriveParser xmlModel = new TestOpenDriveParser();
-                    xmlModel.buildAnimator(new ArrayList<AbstractProperty<?>>(), null, true);
+                    // 1 hour simulation run for testing
+                    xmlModel.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND),
+                        new Time.Rel(60.0, MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
                 }
                 catch (RemoteException | SimRuntimeException | NamingException exception)
                 {

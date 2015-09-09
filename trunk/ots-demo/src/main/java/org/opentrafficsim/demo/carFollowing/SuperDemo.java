@@ -71,10 +71,12 @@ public class SuperDemo implements OTS_SCALAR
     private JPanel propertyPanel;
 
     /** The JPanel that holds the simulation selection radio buttons. */
-    private JPanel simulationSelection;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected JPanel simulationSelection;
 
     /** Properties of the currently selected demonstration. */
-    private ArrayList<AbstractProperty<?>> activeProperties = null;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected ArrayList<AbstractProperty<?>> activeProperties = null;
 
     /**
      * Start the application.
@@ -197,7 +199,8 @@ public class SuperDemo implements OTS_SCALAR
                 try
                 {
                     System.out.println("Active properties: " + SuperDemo.this.activeProperties);
-                    simulation.buildAnimator(SuperDemo.this.activeProperties, null, false);
+                    simulation.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0,
+                        SECOND), SuperDemo.this.activeProperties, null, false);
                 }
                 catch (RemoteException | SimRuntimeException | NetworkException | NamingException exception)
                 {
