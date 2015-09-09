@@ -25,7 +25,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimulation
+public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimulatorInterface
 {
     /** */
     private static final long serialVersionUID = 20150511L;

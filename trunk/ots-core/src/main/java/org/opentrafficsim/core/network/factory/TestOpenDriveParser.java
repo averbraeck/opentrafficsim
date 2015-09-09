@@ -26,7 +26,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.opendrive.OpenDriveNetworkLaneParser;
-import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
+import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.xml.sax.SAXException;
 
@@ -39,7 +39,7 @@ import org.xml.sax.SAXException;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class TestOpenDriveParser extends AbstractWrappableSimulation
+public class TestOpenDriveParser extends AbstractWrappableAnimation
 {
     /**
      * Main program.
@@ -57,7 +57,7 @@ public class TestOpenDriveParser extends AbstractWrappableSimulation
                 try
                 {
                     TestOpenDriveParser xmlModel = new TestOpenDriveParser();
-                    xmlModel.buildSimulator(new ArrayList<AbstractProperty<?>>(), null, true);
+                    xmlModel.buildAnimator(new ArrayList<AbstractProperty<?>>(), null, true);
                 }
                 catch (RemoteException | SimRuntimeException | NamingException exception)
                 {

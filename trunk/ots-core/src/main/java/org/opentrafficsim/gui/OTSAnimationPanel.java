@@ -13,7 +13,7 @@ import nl.tudelft.simulation.event.Event;
 
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
-import org.opentrafficsim.simulationengine.WrappableSimulation;
+import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 /**
  * <p>
@@ -47,14 +47,14 @@ public class OTSAnimationPanel extends OTSSimulationPanel
      * @param extent Rectangle2D; bottom left corner, length and width of the area (world) to animate.
      * @param size the size to be used for the animation.
      * @param simulator the simulator or animator of the model.
-     * @param wrappableSimulation the builder and rebuilder of the simulation, based on properties.
+     * @param wrappableAnimation the builder and rebuilder of the simulation, based on properties.
      * @param gtuColorer the colorer to use for the GTUs.
      * @throws RemoteException when notification to the animation panel fails.
      */
     public OTSAnimationPanel(final Rectangle2D extent, final Dimension size, final SimpleAnimator simulator,
-        final WrappableSimulation wrappableSimulation, final GTUColorer gtuColorer) throws RemoteException
+        final WrappableAnimation wrappableAnimation, final GTUColorer gtuColorer) throws RemoteException
     {
-        super(simulator, wrappableSimulation);
+        super(simulator, wrappableAnimation);
 
         // Add the animation panel as a tab.
         this.animationPanel = new AnimationPanel(extent, size, simulator);

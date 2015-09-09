@@ -1,25 +1,15 @@
 package org.opentrafficsim.simulationengine;
 
-import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.naming.NamingException;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
-import org.opentrafficsim.core.gtu.animation.DefaultSwitchableGTUColorer;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.gui.OTSAnimationPanel;
-import org.opentrafficsim.gui.SimulatorFrame;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 
 /**
@@ -38,73 +28,21 @@ public abstract class AbstractWrappableSimulation implements WrappableSimulation
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();
 
-    /** The properties after (possible) editing by the user. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected ArrayList<AbstractProperty<?>> savedUserModifiedProperties;
-
-    /** Use EXIT_ON_CLOSE when true, DISPOSE_ON_CLOSE when false on closing of the window. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected boolean exitOnClose;
-
-    /** the tabbed panel so other tabs can be added by the classes that extend this class. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected OTSAnimationPanel panel;
-
     /** {@inheritDoc} */
     @Override
-    public final SimpleAnimator buildSimulator(final ArrayList<AbstractProperty<?>> userModifiedProperties,
+    public final SimpleSimulator buildAnimator(final ArrayList<AbstractProperty<?>> userModifiedProperties,
         final Rectangle rect, final boolean eoc) throws RemoteException, SimRuntimeException, NamingException
     {
-        this.savedUserModifiedProperties = userModifiedProperties;
-        this.exitOnClose = eoc;
-
-        GTUColorer colorer = new DefaultSwitchableGTUColorer();
-        OTSModelInterface model = makeModel(colorer);
-
-        if (null == model)
-        {
-            return null; // Happens when the user cancels the file open dialog in the OpenStreetMap demo.
-        }
-
-        final SimpleAnimator simulator =
-            new SimpleAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND), model);
-        this.panel = new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
-        JPanel charts = makeCharts();
-        if (null != charts)
-        {
-            this.panel.getTabbedPane().addTab("statistics", charts);
-        }
-
-        SimulatorFrame frame = new SimulatorFrame(shortName(), this.panel);
-        if (rect != null)
-        {
-            frame.setBounds(rect);
-        }
-        else
-        {
-            frame.setExtendedState(Frame.MAXIMIZED_BOTH);
-        }
-
-        frame.setDefaultCloseOperation(this.exitOnClose ? WindowConstants.EXIT_ON_CLOSE : WindowConstants.DISPOSE_ON_CLOSE);
+        OTSModelInterface model = makeModel();
+        final SimpleSimulator simulator =
+            new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND), model);
         return simulator;
     }
 
     /**
-     * @return the JPanel with the charts; the result will be put in the statistics tab. May return null; this causes no
-     *         statistics tab to be created.
+     * @return the model.
      */
-    protected abstract JPanel makeCharts();
-
-    /**
-     * @param colorer the GTU colorer to use.
-     * @return the demo model. Don't forget to keep a local copy.
-     */
-    protected abstract OTSModelInterface makeModel(GTUColorer colorer);
-
-    /**
-     * @return the initial rectangle for the animation.
-     */
-    protected abstract Rectangle2D.Double makeAnimationRectangle();
+    protected abstract OTSModelInterface makeModel();
 
     /** {@inheritDoc} */
     @Override
@@ -113,30 +51,4 @@ public abstract class AbstractWrappableSimulation implements WrappableSimulation
         return new ArrayList<AbstractProperty<?>>(this.properties);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final SimpleSimulation rebuildSimulator(final Rectangle rect) throws SimRuntimeException, RemoteException,
-        NetworkException, NamingException
-    {
-        return buildSimulator(this.savedUserModifiedProperties, rect, this.exitOnClose);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final ArrayList<AbstractProperty<?>> getUserModifiedProperties()
-    {
-        return this.savedUserModifiedProperties;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public void stopTimersThreads()
-    {
-        if (this.panel != null && this.panel.getStatusBar() != null)
-        {
-            this.panel.getStatusBar().cancelTimer();
-        }
-        this.panel = null;
-    }
 }

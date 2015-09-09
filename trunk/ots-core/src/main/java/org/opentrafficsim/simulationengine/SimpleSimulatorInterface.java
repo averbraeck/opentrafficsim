@@ -17,7 +17,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface SimpleSimulation extends OTSDEVSSimulatorInterface, OTS_SCALAR
+public interface SimpleSimulatorInterface extends OTSDEVSSimulatorInterface, OTS_SCALAR
 {
     /**
      * Construct and schedule a SimEvent using a DoubleScalar.Abs&lt;TimeUnit&gt; to specify the execution time.

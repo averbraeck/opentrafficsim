@@ -13,7 +13,7 @@ import nl.tudelft.simulation.dsol.gui.swing.StatusBar;
 import nl.tudelft.simulation.dsol.gui.swing.TabbedContentPane;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.simulationengine.WrappableSimulation;
+import org.opentrafficsim.simulationengine.WrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
 
@@ -50,16 +50,16 @@ public class OTSSimulationPanel extends JPanel
     /**
      * Construct a panel that looks like the DSOLPanel for quick building of OTS applications.
      * @param simulator the simulator or animator of the model.
-     * @param wrappableSimulation the builder and rebuilder of the simulation, based on properties.
+     * @param wrappableAnimation the builder and rebuilder of the simulation, based on properties.
      */
-    public OTSSimulationPanel(final OTSDEVSSimulatorInterface simulator, final WrappableSimulation wrappableSimulation)
+    public OTSSimulationPanel(final OTSDEVSSimulatorInterface simulator, final WrappableAnimation wrappableAnimation)
     {
         this.simulator = simulator;
 
         this.setLayout(new BorderLayout());
 
         // Let's add our simulationControl
-        this.otsControlPanel = new OTSControlPanel(simulator, wrappableSimulation);
+        this.otsControlPanel = new OTSControlPanel(simulator, wrappableAnimation);
         this.add(this.otsControlPanel, BorderLayout.NORTH);
 
         // Let's add our console to our tabbed pane
@@ -67,7 +67,7 @@ public class OTSSimulationPanel extends JPanel
 
         // Let's add the properties of the simulation model as a tab
         ArrayList<AbstractProperty<?>> propertyList =
-            new CompoundProperty("", "", wrappableSimulation.getUserModifiedProperties(), true, 0).displayOrderedValue();
+            new CompoundProperty("", "", wrappableAnimation.getUserModifiedProperties(), true, 0).displayOrderedValue();
         StringBuilder html = new StringBuilder();
         html.append("<html><table border=\"1\"><tr><th colspan=\"" + propertyList.size() + "\">Settings</th></tr><tr>");
 
