@@ -44,7 +44,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.gui.LabeledPanel;
 import org.opentrafficsim.gui.ProbabilityDistributionEditor;
 import org.opentrafficsim.gui.SimulatorFrame;
-import org.opentrafficsim.simulationengine.WrappableSimulation;
+import org.opentrafficsim.simulationengine.WrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.BooleanProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
@@ -110,7 +110,7 @@ public class SuperDemo implements OTS_SCALAR
         final JPanel mainPanel = new JPanel(new BorderLayout());
         // Ensure that the window does not shrink into (almost) nothingness when un-maximized
         mainPanel.setPreferredSize(new Dimension(800, 800));
-        final ArrayList<WrappableSimulation> demonstrations = new ArrayList<WrappableSimulation>();
+        final ArrayList<WrappableAnimation> demonstrations = new ArrayList<WrappableAnimation>();
         demonstrations.add(new Straight());
         demonstrations.add(new SequentialLanes());
         demonstrations.add(new CircularLane());
@@ -142,7 +142,7 @@ public class SuperDemo implements OTS_SCALAR
         mainPanel.add(descriptionPanel, BorderLayout.CENTER);
         final JButton startButton = new JButton("Start simulation");
         ButtonGroup buttonGroup = new ButtonGroup();
-        for (final WrappableSimulation demo : demonstrations)
+        for (final WrappableAnimation demo : demonstrations)
         {
             CleverRadioButton button = new CleverRadioButton(demo);
             // button.setPreferredSize(new Dimension(Integer.MAX_VALUE, button.getPreferredSize().height));
@@ -176,7 +176,7 @@ public class SuperDemo implements OTS_SCALAR
             @Override
             public void actionPerformed(final ActionEvent e)
             {
-                WrappableSimulation simulation = null;
+                WrappableAnimation simulation = null;
                 for (Component c : SuperDemo.this.simulationSelection.getComponents())
                 {
                     if (c instanceof CleverRadioButton)
@@ -184,7 +184,7 @@ public class SuperDemo implements OTS_SCALAR
                         CleverRadioButton crb = (CleverRadioButton) c;
                         if (crb.isSelected())
                         {
-                            simulation = crb.getSimulation();
+                            simulation = crb.getAnimation();
                         }
                     }
                 }
@@ -197,7 +197,7 @@ public class SuperDemo implements OTS_SCALAR
                 try
                 {
                     System.out.println("Active properties: " + SuperDemo.this.activeProperties);
-                    simulation.buildSimulator(SuperDemo.this.activeProperties, null, false);
+                    simulation.buildAnimator(SuperDemo.this.activeProperties, null, false);
                 }
                 catch (RemoteException | SimRuntimeException | NetworkException | NamingException exception)
                 {
@@ -516,31 +516,31 @@ public class SuperDemo implements OTS_SCALAR
     }
 }
 
-/** JRadioButton that also stores a WrappableSimulation. */
+/** JRadioButton that also stores a WrappableAnimation. */
 class CleverRadioButton extends JRadioButton
 {
     /** */
     private static final long serialVersionUID = 20141217L;
 
-    /** The WrappableSimulation. */
-    private final WrappableSimulation simulation;
+    /** The WrappableAnimation. */
+    private final WrappableAnimation simulation;
 
     /**
-     * Construct a JRadioButton that also stores a WrappableSimulation.
-     * @param simulation WrappableSimulation; the simulation to run if this radio button is selected and the start simulation
+     * Construct a JRadioButton that also stores a WrappableAnimation.
+     * @param animation WrappableAnimation; the simulation to run if this radio button is selected and the start simulation
      *            button is clicked
      */
-    CleverRadioButton(final WrappableSimulation simulation)
+    CleverRadioButton(final WrappableAnimation animation)
     {
-        super(simulation.shortName());
-        this.simulation = simulation;
+        super(animation.shortName());
+        this.simulation = animation;
     }
 
     /**
      * Retrieve the simulation.
-     * @return WrappableSimulation
+     * @return WrappableAnimation
      */
-    public final WrappableSimulation getSimulation()
+    public final WrappableAnimation getAnimation()
     {
         return this.simulation;
     }

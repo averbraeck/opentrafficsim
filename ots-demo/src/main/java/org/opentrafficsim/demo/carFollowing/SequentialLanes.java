@@ -61,8 +61,7 @@ import org.opentrafficsim.graphs.FlowContourPlot;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
-import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
-import org.opentrafficsim.simulationengine.WrappableSimulation;
+import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.BooleanProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
@@ -83,7 +82,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SequentialLanes extends AbstractWrappableSimulation implements WrappableSimulation
+public class SequentialLanes extends AbstractWrappableAnimation
 {
     /** the model. */
     private SequentialModel model;
@@ -148,7 +147,7 @@ public class SequentialLanes extends AbstractWrappableSimulation implements Wrap
                     localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration.Abs(0.5,
                         METER_PER_SECOND_2), new Acceleration.Abs(1.25, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
                         new Time.Rel(1.0, SECOND), 3));
-                    sequential.buildSimulator(localProperties, null, true);
+                    sequential.buildAnimator(localProperties, null, true);
                     sequential.panel.getTabbedPane().addTab("info", sequential.makeInfoPane());
                 }
                 catch (RemoteException | SimRuntimeException | NamingException exception)

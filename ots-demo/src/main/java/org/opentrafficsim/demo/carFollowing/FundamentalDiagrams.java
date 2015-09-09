@@ -42,8 +42,7 @@ import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.graphs.FundamentalDiagram;
-import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
-import org.opentrafficsim.simulationengine.WrappableSimulation;
+import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
@@ -59,7 +58,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * initial version 17 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FundamentalDiagrams extends AbstractWrappableSimulation implements WrappableSimulation
+public class FundamentalDiagrams extends AbstractWrappableAnimation
 {
     /** the model. */
     private FundamentalDiagramPlotsModel model;
@@ -109,7 +108,7 @@ public class FundamentalDiagrams extends AbstractWrappableSimulation implements 
                 try
                 {
                     FundamentalDiagrams fundamentalDiagrams = new FundamentalDiagrams();
-                    fundamentalDiagrams.buildSimulator(fundamentalDiagrams.getProperties(), null, true);
+                    fundamentalDiagrams.buildAnimator(fundamentalDiagrams.getProperties(), null, true);
                 }
                 catch (RemoteException | SimRuntimeException | NamingException exception)
                 {

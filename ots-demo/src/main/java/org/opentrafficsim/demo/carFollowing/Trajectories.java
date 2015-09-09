@@ -47,8 +47,7 @@ import org.opentrafficsim.core.network.lane.SinkSensor;
 import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.graphs.TrajectoryPlot;
-import org.opentrafficsim.simulationengine.AbstractWrappableSimulation;
-import org.opentrafficsim.simulationengine.WrappableSimulation;
+import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
@@ -64,7 +63,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * initial version 17 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class Trajectories extends AbstractWrappableSimulation implements WrappableSimulation
+public class Trajectories extends AbstractWrappableAnimation
 {
     /** the model. */
     private TrajectoriesModel model;
@@ -114,7 +113,7 @@ public class Trajectories extends AbstractWrappableSimulation implements Wrappab
                 try
                 {
                     Trajectories trajectories = new Trajectories();
-                    trajectories.buildSimulator(trajectories.getProperties(), null, true);
+                    trajectories.buildAnimator(trajectories.getProperties(), null, true);
                 }
                 catch (RemoteException | SimRuntimeException | NamingException exception)
                 {
