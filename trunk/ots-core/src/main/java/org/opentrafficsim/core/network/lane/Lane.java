@@ -638,8 +638,8 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
     private boolean laterallyCloseEnough(final CrossSectionElement incomingCSE, final CrossSectionElement outgoingCSE,
         final Length.Rel margin)
     {
-        return Math.abs(incomingCSE.getDesignLineOffsetAtEnd().getSI() - outgoingCSE.getDesignLineOffsetAtBegin().getSI()) <= margin
-            .getSI();
+        return Math.abs(incomingCSE.getDesignLineOffsetAtEnd().getSI() //
+            - outgoingCSE.getDesignLineOffsetAtBegin().getSI()) <= margin.getSI();
     }
 
     /*
@@ -809,6 +809,15 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
             return this.speedLimitMap.get(GTUType.ALL);
         }
         return new Speed.Abs(0.0, METER_PER_SECOND); // XXX is this what we want, or should we throw exception?
+    }
+
+    /**
+     * @param gtuType the GTU type to provide the speed limit for
+     * @param speedLimit the speed limit for this gtu type
+     */
+    public final void setSpeedLimit(final GTUType gtuType, final Speed.Abs speedLimit)
+    {
+        this.speedLimitMap.put(gtuType, speedLimit);
     }
 
     /**
