@@ -100,7 +100,7 @@ public class DefaultCarAnimation extends Renderable2D
     @Override
     public final String toString()
     {
-        return "DefaultCarAnimation [getSource()=" + this.getSource() + "]";
+        return "DefaultCarAnimation [id=" + ((LaneBasedIndividualCar) this.getSource()).getId() + "]";
     }
 
 }
