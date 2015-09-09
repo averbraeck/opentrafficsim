@@ -17,11 +17,11 @@ import org.opentrafficsim.simulationengine.properties.AbstractProperty;
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$,
+ * $LastChangedDate: 2015-08-23 12:51:29 +0200 (Sun, 23 Aug 2015) $, @version $Revision: 1293 $, by $Author: averbraeck $,
  * initial version 17 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface WrappableSimulation
+public interface WrappableAnimation extends WrappableSimulation
 {
     /**
      * Build the simulation.
@@ -39,22 +39,25 @@ public interface WrappableSimulation
         throws SimRuntimeException, RemoteException, NetworkException, NamingException;
 
     /**
-     * Return a very short description of the simulation.
-     * @return String; short description of the simulation
+     * Restart (rebuild) the simulation.
+     * @param rect the x, y, width and height for the window to rebuild. Use null for maximized screen.
+     * @return SimpleSimulation; the new simulation
+     * @throws RemoteException on communications failure
+     * @throws SimRuntimeException on ???
+     * @throws NetworkException on Network inconsistency
+     * @throws NamingException when context for the animation cannot be created
      */
-    String shortName();
+    SimpleSimulatorInterface rebuildSimulator(Rectangle rect) throws SimRuntimeException, RemoteException, NetworkException,
+        NamingException;
 
     /**
-     * Return a description of the simulation (HTML formatted).
-     * @return String; HTML text describing the simulation
-     */
-    String description();
-
-    /**
-     * Retrieve a list of visible properties of the simulation. <br>
-     * The caller can modify the returned result. If the internal format is also an ArrayList it is highly recommended to make a
-     * protective copy and return that.
+     * Retrieve a list of properties as the user has modified them.
      * @return ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the list of visible properties
      */
-    ArrayList<AbstractProperty<?>> getProperties();
+    ArrayList<AbstractProperty<?>> getUserModifiedProperties();
+
+    /**
+     * Stop the timers and threads that are connected when disposing of this wrappable simulation.
+     */
+    void stopTimersThreads();
 }

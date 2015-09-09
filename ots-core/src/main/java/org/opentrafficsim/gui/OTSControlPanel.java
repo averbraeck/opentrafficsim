@@ -55,7 +55,7 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.simulationengine.WrappableSimulation;
+import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 /**
  * Peter's improved simulation control panel.
@@ -76,8 +76,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
     /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
-    /** The WrappableSimulation (needed for restart operation). */
-    private final WrappableSimulation wrappableSimulation;
+    /** The WrappableAnimation (needed for restart operation). */
+    private final WrappableAnimation wrappableAnimation;
 
     /** Logger. */
     private final Logger logger;
@@ -109,12 +109,12 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
     /**
      * Decorate a SimpleSimulator with a different set of control buttons.
      * @param simulator SimpleSimulator; the simulator
-     * @param wrappableSimulation WrappableSimulation; if non-null, the restart button should work
+     * @param wrappableAnimation WrappableAnimation; if non-null, the restart button should work
      */
-    public OTSControlPanel(final OTSDEVSSimulatorInterface simulator, final WrappableSimulation wrappableSimulation)
+    public OTSControlPanel(final OTSDEVSSimulatorInterface simulator, final WrappableAnimation wrappableAnimation)
     {
         this.simulator = simulator;
-        this.wrappableSimulation = wrappableSimulation;
+        this.wrappableAnimation = wrappableAnimation;
         this.logger = Logger.getLogger("nl.tudelft.opentrafficsim");
 
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -298,7 +298,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                     getSimulator().stop();
                 }
 
-                if (null == OTSControlPanel.this.wrappableSimulation)
+                if (null == OTSControlPanel.this.wrappableAnimation)
                 {
                     throw new Error("Do not know how to restart this simulation");
                 }
@@ -316,7 +316,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 OTSControlPanel.this.cleanup();
                 try
                 {
-                    OTSControlPanel.this.wrappableSimulation.rebuildSimulator(rect);
+                    OTSControlPanel.this.wrappableAnimation.rebuildSimulator(rect);
                 }
                 catch (Exception exception)
                 {
@@ -358,9 +358,9 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                     this.clockPanel.cancelTimer(); // cancel the timer on the clock panel.
                 }
 
-                if (this.wrappableSimulation != null)
+                if (this.wrappableAnimation != null)
                 {
-                    this.wrappableSimulation.stopTimersThreads(); // stop the linked timers and other threads
+                    this.wrappableAnimation.stopTimersThreads(); // stop the linked timers and other threads
                 }
             }
             catch (Throwable exception)

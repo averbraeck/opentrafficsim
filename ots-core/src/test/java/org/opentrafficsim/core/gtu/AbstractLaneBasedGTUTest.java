@@ -34,7 +34,7 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.simulationengine.SimpleSimulation;
+import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 /**
@@ -69,7 +69,7 @@ public class AbstractLaneBasedGTUTest implements OTS_SCALAR
         laneType.addCompatibility(gtuType);
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForTemplateGTUTest();
-        final SimpleSimulation simulator =
+        final SimpleSimulatorInterface simulator =
             new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND), model);
 
         Lane[] lanesGroupA =
