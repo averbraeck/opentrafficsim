@@ -8,6 +8,7 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR.Time;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 
@@ -21,10 +22,14 @@ import org.opentrafficsim.simulationengine.properties.AbstractProperty;
  * initial version 17 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface WrappableAnimation extends WrappableSimulation
+public interface WrappableAnimation
 {
     /**
-     * Build the simulation.
+     * Build the animation.
+     * @param startTime DoubleScalar.Abs&lt;TimeUnit&gt;; the start time of the simulation
+     * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warm up period of the simulation (use new
+     *            DoubleScalar.Rel&lt;TimeUnit&gt;(0, SECOND) if you don't know what this is)
+     * @param runLength DoubleScalar.Rel&lt;TimeUnit&gt;; the duration of the simulation
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user-modified) properties. This list must
      *            contain all the properties returned by getProperties(); any additional properties may be ignored
      * @param rect the x, y, width and height for the window to rebuild. Use null for maximized screen.
@@ -35,8 +40,9 @@ public interface WrappableAnimation extends WrappableSimulation
      * @throws NetworkException on Network inconsistency
      * @throws NamingException when context for the animation cannot be created
      */
-    SimpleSimulatorInterface buildAnimator(ArrayList<AbstractProperty<?>> properties, Rectangle rect, boolean exitOnClose)
-        throws SimRuntimeException, RemoteException, NetworkException, NamingException;
+    SimpleSimulatorInterface buildAnimator(final Time.Abs startTime, final Time.Rel warmupPeriod, final Time.Rel runLength,
+        ArrayList<AbstractProperty<?>> properties, Rectangle rect, boolean exitOnClose) throws SimRuntimeException,
+        RemoteException, NetworkException, NamingException;
 
     /**
      * Restart (rebuild) the simulation.
@@ -49,6 +55,26 @@ public interface WrappableAnimation extends WrappableSimulation
      */
     SimpleSimulatorInterface rebuildSimulator(Rectangle rect) throws SimRuntimeException, RemoteException, NetworkException,
         NamingException;
+
+    /**
+     * Return a very short description of the simulation.
+     * @return String; short description of the simulation
+     */
+    String shortName();
+
+    /**
+     * Return a description of the simulation (HTML formatted).
+     * @return String; HTML text describing the simulation
+     */
+    String description();
+
+    /**
+     * Retrieve a list of visible properties of the simulation. <br>
+     * The caller can modify the returned result. If the internal format is also an ArrayList it is highly recommended to make a
+     * protective copy and return that.
+     * @return ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the list of visible properties
+     */
+    ArrayList<AbstractProperty<?>> getProperties();
 
     /**
      * Retrieve a list of properties as the user has modified them.

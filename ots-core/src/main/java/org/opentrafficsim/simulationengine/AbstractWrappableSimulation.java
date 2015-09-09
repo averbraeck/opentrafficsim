@@ -1,6 +1,5 @@
 package org.opentrafficsim.simulationengine;
 
-import java.awt.Rectangle;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -30,12 +29,12 @@ public abstract class AbstractWrappableSimulation implements WrappableSimulation
 
     /** {@inheritDoc} */
     @Override
-    public final SimpleSimulator buildAnimator(final ArrayList<AbstractProperty<?>> userModifiedProperties,
-        final Rectangle rect, final boolean eoc) throws RemoteException, SimRuntimeException, NamingException
+    public final SimpleSimulator buildSimulator(final Time.Abs startTime, final Time.Rel warmupPeriod,
+        final Time.Rel runLength, final ArrayList<AbstractProperty<?>> userModifiedProperties) throws RemoteException,
+        SimRuntimeException, NamingException
     {
         OTSModelInterface model = makeModel();
-        final SimpleSimulator simulator =
-            new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND), model);
+        final SimpleSimulator simulator = new SimpleSimulator(startTime, warmupPeriod, runLength, model);
         return simulator;
     }
 

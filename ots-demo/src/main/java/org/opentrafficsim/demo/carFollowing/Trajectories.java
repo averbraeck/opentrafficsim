@@ -113,7 +113,8 @@ public class Trajectories extends AbstractWrappableAnimation
                 try
                 {
                     Trajectories trajectories = new Trajectories();
-                    trajectories.buildAnimator(trajectories.getProperties(), null, true);
+                    trajectories.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0,
+                        SECOND), trajectories.getProperties(), null, true);
                 }
                 catch (RemoteException | SimRuntimeException | NamingException exception)
                 {

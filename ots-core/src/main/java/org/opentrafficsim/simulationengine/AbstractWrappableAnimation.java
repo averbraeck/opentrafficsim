@@ -50,13 +50,27 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected OTSAnimationPanel panel;
 
+    /** save the startTime for restarting the simulation. */
+    private Time.Abs savedStartTime;
+
+    /** save the startTime for restarting the simulation. */
+    private Time.Rel savedWarmupPeriod;
+
+    /** save the runLength for restarting the simulation. */
+    private Time.Rel savedRunLength;
+
     /** {@inheritDoc} */
     @Override
-    public final SimpleAnimator buildAnimator(final ArrayList<AbstractProperty<?>> userModifiedProperties,
-        final Rectangle rect, final boolean eoc) throws RemoteException, SimRuntimeException, NamingException
+    public final SimpleAnimator buildAnimator(final Time.Abs startTime, final Time.Rel warmupPeriod,
+        final Time.Rel runLength, final ArrayList<AbstractProperty<?>> userModifiedProperties, final Rectangle rect,
+        final boolean eoc) throws RemoteException, SimRuntimeException, NamingException
     {
         this.savedUserModifiedProperties = userModifiedProperties;
         this.exitOnClose = eoc;
+
+        this.savedStartTime = startTime;
+        this.savedWarmupPeriod = warmupPeriod;
+        this.savedRunLength = runLength;
 
         GTUColorer colorer = new DefaultSwitchableGTUColorer();
         OTSModelInterface model = makeModel(colorer);
@@ -66,8 +80,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
             return null; // Happens when the user cancels the file open dialog in the OpenStreetMap demo.
         }
 
-        final SimpleAnimator simulator =
-            new SimpleAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND), model);
+        final SimpleAnimator simulator = new SimpleAnimator(startTime, warmupPeriod, runLength, model);
         this.panel = new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
         JPanel charts = makeCharts();
         if (null != charts)
@@ -115,10 +128,11 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
 
     /** {@inheritDoc} */
     @Override
-    public final SimpleSimulatorInterface rebuildSimulator(final Rectangle rect) throws SimRuntimeException, RemoteException,
-        NetworkException, NamingException
+    public final SimpleSimulatorInterface rebuildSimulator(final Rectangle rect) throws SimRuntimeException,
+        RemoteException, NetworkException, NamingException
     {
-        return buildAnimator(this.savedUserModifiedProperties, rect, this.exitOnClose);
+        return buildAnimator(this.savedStartTime, this.savedWarmupPeriod, this.savedRunLength,
+            this.savedUserModifiedProperties, rect, this.exitOnClose);
     }
 
     /** {@inheritDoc} */

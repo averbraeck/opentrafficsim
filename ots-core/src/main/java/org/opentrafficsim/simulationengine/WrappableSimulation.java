@@ -1,6 +1,5 @@
 package org.opentrafficsim.simulationengine;
 
-import java.awt.Rectangle;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -8,6 +7,7 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR.Time;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 
@@ -25,18 +25,21 @@ public interface WrappableSimulation
 {
     /**
      * Build the simulation.
+     * @param startTime DoubleScalar.Abs&lt;TimeUnit&gt;; the start time of the simulation
+     * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warm up period of the simulation (use new
+     *            DoubleScalar.Rel&lt;TimeUnit&gt;(0, SECOND) if you don't know what this is)
+     * @param runLength DoubleScalar.Rel&lt;TimeUnit&gt;; the duration of the simulation
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user-modified) properties. This list must
      *            contain all the properties returned by getProperties(); any additional properties may be ignored
-     * @param rect the x, y, width and height for the window to rebuild. Use null for maximized screen.
-     * @param exitOnClose Use EXIT_ON_CLOSE when true, DISPOSE_ON_CLOSE when false on closing of the window.
      * @return SimpleSimulation; the new simulation
      * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
      * @throws NetworkException on Network inconsistency
      * @throws NamingException when context for the animation cannot be created
      */
-    SimpleSimulatorInterface buildAnimator(ArrayList<AbstractProperty<?>> properties, Rectangle rect, boolean exitOnClose)
-        throws SimRuntimeException, RemoteException, NetworkException, NamingException;
+    SimpleSimulatorInterface buildSimulator(final Time.Abs startTime, final Time.Rel warmupPeriod, final Time.Rel runLength,
+        ArrayList<AbstractProperty<?>> properties) throws SimRuntimeException, RemoteException, NetworkException,
+        NamingException;
 
     /**
      * Return a very short description of the simulation.
