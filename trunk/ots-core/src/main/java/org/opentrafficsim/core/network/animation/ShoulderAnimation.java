@@ -31,7 +31,7 @@ public class ShoulderAnimation extends Renderable2D
      * @param simulator s
      * @param color the color to draw the shoulder with
      * @throws NamingException ne
-     * @throws RemoteException re
+     * @throws RemoteException on communication failure
      */
     public ShoulderAnimation(final Shoulder source, final OTSSimulatorInterface simulator, final Color color)
         throws NamingException, RemoteException
@@ -42,7 +42,7 @@ public class ShoulderAnimation extends Renderable2D
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+    public final void paint(final Graphics2D graphics, final ImageObserver observer) 
     {
         Shoulder shoulder = (Shoulder) getSource();
         PaintPolygons.paintMultiPolygon(graphics, this.color, shoulder.getLocation(), shoulder.getContour());

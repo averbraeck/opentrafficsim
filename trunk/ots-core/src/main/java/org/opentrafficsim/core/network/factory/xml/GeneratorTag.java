@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.network.factory.xml;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -239,11 +238,10 @@ class GeneratorTag implements OTS_SCALAR, OTS_DIST
      * @param parser the parser with the lists of information
      * @param simulator the simulator to schedule GTU generation
      * @throws SimRuntimeException in case of simulation problems building the car generator
-     * @throws RemoteException in case of network problems building the car generator
      * @throws NetworkException when route generator cannot be instantiated
      */
     static void makeGenerators(final LinkTag linkTag, final XmlNetworkLaneParser parser,
-        final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, RemoteException, NetworkException
+        final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException
     {
         for (GeneratorTag generatorTag : linkTag.generatorTags.values())
         {
@@ -258,11 +256,10 @@ class GeneratorTag implements OTS_SCALAR, OTS_DIST
      * @param linkTag the parent LINK tag
      * @param simulator the simulator to schedule GTU generation
      * @throws SimRuntimeException in case of simulation problems building the car generator
-     * @throws RemoteException in case of network problems building the car generator
      * @throws NetworkException when route generator cannot be instantiated
      */
     static void makeGenerator(final GeneratorTag generatorTag, final XmlNetworkLaneParser parser, final LinkTag linkTag,
-        final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, RemoteException, NetworkException
+        final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException
     {
         Lane lane = linkTag.lanes.get(generatorTag.laneName);
         Class<?> gtuClass = LaneBasedIndividualCar.class;

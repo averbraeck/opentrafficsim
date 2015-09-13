@@ -31,7 +31,6 @@ import org.djunits.unit.Unit;
 import org.djunits.unit.VolumeUnit;
 import org.djunits.value.Absolute;
 import org.djunits.value.Relative;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR.Acceleration;
 import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR.AnglePlane;
 import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR.AngleSlope;
@@ -58,6 +57,7 @@ import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR.Temperature;
 import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR.Time;
 import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR.Torque;
 import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR.Volume;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 
 /**
  * <p>

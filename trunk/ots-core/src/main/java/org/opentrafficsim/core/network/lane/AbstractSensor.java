@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.network.lane;
 
-import java.rmi.RemoteException;
-
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
@@ -97,7 +95,7 @@ public abstract class AbstractSensor implements Sensor
 
     /** {@inheritDoc} */
     @Override
-    public final DirectedPoint getLocation() throws RemoteException
+    public final DirectedPoint getLocation() 
     {
         if (this.location == null)
         {
@@ -117,7 +115,7 @@ public abstract class AbstractSensor implements Sensor
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds getBounds() throws RemoteException
+    public final Bounds getBounds() 
     {
         if (this.bounds == null)
         {

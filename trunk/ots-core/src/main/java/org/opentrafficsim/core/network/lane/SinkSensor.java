@@ -45,7 +45,7 @@ public class SinkSensor extends AbstractSensor
 
     /** {@inheritDoc} */
     @Override
-    public void trigger(final LaneBasedGTU gtu) throws RemoteException
+    public void trigger(final LaneBasedGTU gtu) 
     {
         gtu.destroy();
     }

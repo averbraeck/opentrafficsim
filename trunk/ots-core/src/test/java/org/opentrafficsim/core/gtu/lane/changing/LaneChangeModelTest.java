@@ -2,7 +2,6 @@ package org.opentrafficsim.core.gtu.lane.changing;
 
 import static org.junit.Assert.assertEquals;
 
-import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -83,13 +82,12 @@ public class LaneChangeModelTest implements OTSModelInterface, OTS_SCALAR
      *            the link
      * @param width DoubleScalar.Rel&lt;LengthUnit&gt;; the width of the new Lane
      * @return Lane
-     * @throws RemoteException on communications failure
      * @throws NamingException on ???
      * @throws NetworkException on ??
      * @throws OTSGeometryException when center line or contour of a link or lane cannot be generated
      */
     private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType,
-        final Length.Rel latPos, final Length.Rel width) throws RemoteException, NamingException, NetworkException,
+        final Length.Rel latPos, final Length.Rel width) throws NamingException, NetworkException,
         OTSGeometryException
     {
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
@@ -245,7 +243,7 @@ public class LaneChangeModelTest implements OTSModelInterface, OTS_SCALAR
     @Override
     public void constructModel(
         SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
-        throws SimRuntimeException, RemoteException
+        throws SimRuntimeException
     {
         // DO NOTHING
     }
@@ -253,7 +251,7 @@ public class LaneChangeModelTest implements OTSModelInterface, OTS_SCALAR
     /** {@inheritDoc} */
     @Override
     public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        throws RemoteException
+        
     {
         return null;
     }

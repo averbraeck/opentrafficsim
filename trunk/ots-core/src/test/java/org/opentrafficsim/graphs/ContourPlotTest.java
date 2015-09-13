@@ -9,7 +9,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -595,7 +594,7 @@ class ContourPlotModel implements OTSModelInterface
     @Override
     public void constructModel(
         SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
-        throws SimRuntimeException, RemoteException
+        throws SimRuntimeException
     {
         // NOT USED
     }
@@ -603,7 +602,7 @@ class ContourPlotModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        throws RemoteException
+        
     {
         return null;
     }

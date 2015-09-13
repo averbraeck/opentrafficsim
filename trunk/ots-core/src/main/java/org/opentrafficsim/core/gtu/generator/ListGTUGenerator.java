@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -89,14 +88,13 @@ public class ListGTUGenerator implements OTS_SCALAR, OTS_DIST
      * @param routeGenerator RouteGenerator; the route generator that generates the routes of the generated GTUs
      * @param gtuColorer GTUColorere; the GTUColorer of the generated GTUs
      * @param fileName String; name of file with the times when another GTU is to be generated (XXXX STUB)
-     * @throws RemoteException on
      * @throws SimRuntimeException on
      * @throws NetworkException on
      */
     public ListGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
         final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel, final Speed.Abs initialSpeed,
         final Lane lane, final Length.Rel position, final LaneBasedRouteGenerator routeGenerator,
-        final GTUColorer gtuColorer, final String fileName) throws RemoteException, SimRuntimeException, NetworkException
+        final GTUColorer gtuColorer, final String fileName) throws SimRuntimeException, NetworkException
     {
         if (null == lane)
         {
@@ -174,7 +172,7 @@ public class ListGTUGenerator implements OTS_SCALAR, OTS_DIST
                 DefaultCarAnimation.class, this.gtuColorer);
             scheduleNextVehicle();
         }
-        catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
+        catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
             exception.printStackTrace();
         }

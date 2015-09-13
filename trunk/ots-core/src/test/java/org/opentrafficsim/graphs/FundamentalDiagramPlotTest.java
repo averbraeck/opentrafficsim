@@ -9,7 +9,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -395,7 +394,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, OTS_SCALAR
     @Override
     public void constructModel(
         SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> arg0)
-        throws SimRuntimeException, RemoteException
+        throws SimRuntimeException
     {
         // Do nothing
     }
@@ -403,7 +402,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, OTS_SCALAR
     /** {@inheritDoc} */
     @Override
     public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        throws RemoteException
+        
     {
         return null;
     }

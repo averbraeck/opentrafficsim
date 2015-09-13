@@ -118,10 +118,9 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, OTS_SC
      * @throws SimRuntimeException on ???
      * @throws NetworkException on network inconsistency
      * @throws NamingException on ???
-     * @throws RemoteException on communications failure
      * @throws OTSGeometryException
      */
-    public static void main(final String[] args) throws RemoteException, NamingException, NetworkException,
+    public static void main(final String[] args) throws NamingException, NetworkException,
         SimRuntimeException, GTUException, OTSGeometryException
     {
         try
@@ -136,7 +135,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, OTS_SC
                     {
                         buildGUI(args);
                     }
-                    catch (RemoteException | NamingException | NetworkException | SimRuntimeException | GTUException exception)
+                    catch (NamingException | NetworkException | SimRuntimeException | GTUException exception)
                     {
                         exception.printStackTrace();
                     }
@@ -210,12 +209,11 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, OTS_SC
      * Then execution start point.
      * @param args String[]; the command line arguments (not used)
      * @throws NamingException on ???
-     * @throws RemoteException on communications failure
      * @throws NetworkException on network inconsistency
      * @throws SimRuntimeException on ???
      * @throws GTUException on error during GTU construction
      */
-    public static void buildGUI(final String[] args) throws RemoteException, NamingException, NetworkException,
+    public static void buildGUI(final String[] args) throws NamingException, NetworkException,
         SimRuntimeException, GTUException
     {
         JPanel mainPanel = new JPanel(new BorderLayout());
@@ -250,7 +248,6 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, OTS_SC
      * @param laneChangeModel LaneChangeModel; the lane change model to apply
      * @param mergeRight boolean; if true; merge right is tested; if false; merge left is tested
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;
-     * @throws RemoteException on communications failure
      * @throws NamingException on ???
      * @throws NetworkException on network inconsistency
      * @throws SimRuntimeException on ???
@@ -259,7 +256,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, OTS_SC
      */
     private Length.Rel findDecisionPoint(Length.Rel low, Length.Rel high, final Speed.Abs referenceSpeed,
         final Speed.Rel speedDifference, final LaneChangeModel laneChangeModel, final boolean mergeRight)
-        throws RemoteException, NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
+        throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
         // Set up the network
         GTUType gtuType = GTUType.makeGTUType("car");
@@ -343,7 +340,6 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, OTS_SC
      * @param deltaV DoubleScalar.Rel&lt;SpeedUnit&gt;; the speed difference
      * @param mergeRight boolean; if true; merging direction is to the right; if false; merging direction is to the left
      * @return LaneMovementStep
-     * @throws RemoteException on communications failure
      * @throws NamingException on ???
      * @throws SimRuntimeException on ???
      * @throws NetworkException on network inconsistency
@@ -352,7 +348,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, OTS_SC
     private LaneMovementStep computeLaneChange(final LaneBasedIndividualCar referenceCar,
         final Collection<HeadwayGTU> sameLaneGTUs, final Speed.Abs speedLimit, final LaneChangeModel laneChangeModel,
         final Length.Rel otherCarPosition, final Lane otherCarLane, final Speed.Rel deltaV, final boolean mergeRight)
-        throws RemoteException, NamingException, NetworkException, SimRuntimeException, GTUException
+        throws NamingException, NetworkException, SimRuntimeException, GTUException
     {
         Map<Lane, Length.Rel> initialLongitudinalPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialLongitudinalPositions.put(otherCarLane, otherCarPosition);

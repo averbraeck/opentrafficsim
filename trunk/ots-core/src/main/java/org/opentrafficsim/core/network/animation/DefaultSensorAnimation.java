@@ -38,7 +38,7 @@ public class DefaultSensorAnimation extends Renderable2D
      * @param simulator the simulator to schedule on
      * @param color the color on the animation
      * @throws NamingException in case of registration failure of the animation
-     * @throws RemoteException in case of remote registration failure of the animation
+     * @throws RemoteException on communication failure
      */
     public DefaultSensorAnimation(final Sensor source, final OTSSimulatorInterface simulator, final Color color)
         throws NamingException, RemoteException
@@ -50,7 +50,7 @@ public class DefaultSensorAnimation extends Renderable2D
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+    public final void paint(final Graphics2D graphics, final ImageObserver observer) 
     {
         graphics.setColor(this.color);
         Rectangle2D rectangle = new Rectangle2D.Double(-0.4, -this.halfWidth, 0.8, 2 * this.halfWidth);

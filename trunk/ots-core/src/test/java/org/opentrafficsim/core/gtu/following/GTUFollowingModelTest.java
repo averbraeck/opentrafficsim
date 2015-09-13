@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -291,7 +290,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, OTS_SCALAR
     @Override
     public void constructModel(
         SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
-        throws SimRuntimeException, RemoteException
+        throws SimRuntimeException
     {
         // Do nothing.
     }
@@ -299,7 +298,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, OTS_SCALAR
     /** {@inheritDoc} */
     @Override
     public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        throws RemoteException
+        
     {
         return null;
     }

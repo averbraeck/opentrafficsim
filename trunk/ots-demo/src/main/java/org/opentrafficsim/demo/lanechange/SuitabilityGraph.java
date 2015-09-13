@@ -80,8 +80,8 @@ public class SuitabilityGraph implements OTSModelInterface, OTS_SCALAR
     private Time.Rel timeRange = new Time.Rel(110, SECOND);
 
     /** Colors that correspond to the lanes; taken from electrical resistor color codes. */
-    private static final Color[] COLORTABLE = {new Color(160, 82, 45) /* brown */, Color.RED, Color.ORANGE, Color.YELLOW,
-        Color.GREEN, Color.BLUE, new Color(199, 21, 133) /* violet */, Color.GRAY, Color.WHITE};
+    private static final Color[] COLORTABLE = {new Color(160, 82, 45) /* brown */, Color.RED, Color.ORANGE,
+        Color.YELLOW, Color.GREEN, Color.BLUE, new Color(199, 21, 133) /* violet */, Color.GRAY, Color.WHITE};
 
     /** The graphs. */
     private JFreeChart[][] charts;
@@ -89,10 +89,9 @@ public class SuitabilityGraph implements OTSModelInterface, OTS_SCALAR
     /**
      * Start the program.
      * @param args String[]; command line arguments (not used)
-     * @throws RemoteException on communications failure
      * @throws SimRuntimeException should never happen
      */
-    public static void main(final String[] args) throws RemoteException, SimRuntimeException
+    public static void main(final String[] args) throws SimRuntimeException
     {
         SwingUtilities.invokeLater(new Runnable()
         {
@@ -105,7 +104,7 @@ public class SuitabilityGraph implements OTSModelInterface, OTS_SCALAR
                 {
                     suitabilityGraph.drawPlots();
                 }
-                catch (RemoteException | NamingException | NetworkException | SimRuntimeException | OTSGeometryException exception)
+                catch (NamingException | NetworkException | SimRuntimeException | OTSGeometryException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -117,16 +116,15 @@ public class SuitabilityGraph implements OTSModelInterface, OTS_SCALAR
      * Draw the plots.
      * @throws NetworkException on network inconsistency
      * @throws NamingException on ???
-     * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
      * @throws OTSGeometryException
      */
-    protected final void drawPlots() throws RemoteException, NamingException, NetworkException, SimRuntimeException,
+    protected final void drawPlots() throws NamingException, NetworkException, SimRuntimeException,
         OTSGeometryException
     {
         SimpleSimulator simulator =
-            new SimpleSimulator(new Time.Abs(0, TimeUnit.SI), new Time.Rel(0, TimeUnit.SI),
-                new Time.Rel(99999, TimeUnit.SI), this);
+            new SimpleSimulator(new Time.Abs(0, TimeUnit.SI), new Time.Rel(0, TimeUnit.SI), new Time.Rel(99999,
+                TimeUnit.SI), this);
         final int rows = SPEEDLIMITS.length;
         final int columns = TARGETLANES.length;
         for (int row = 0; row < rows; row++)
@@ -147,19 +145,20 @@ public class SuitabilityGraph implements OTSModelInterface, OTS_SCALAR
                 OTSNode destination =
                     new OTSNode("Destination", new OTSPoint3D(1000, targetLaneConfiguration > 0 ? 100 : -100, 0));
                 LaneFactory.makeMultiLane("DestinationLink", branchPoint, destination, null, Math
-                    .abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? 0 : LANECOUNT + targetLaneConfiguration, 0,
-                    laneType, speedLimit, simulator);
+                    .abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? 0 : LANECOUNT
+                    + targetLaneConfiguration, 0, laneType, speedLimit, simulator);
                 OTSNode nonDestination =
                     new OTSNode("Non-Destination", new OTSPoint3D(1000, targetLaneConfiguration > 0 ? -100 : 100, 0));
                 LaneFactory.makeMultiLane("Non-DestinationLink", branchPoint, nonDestination, null, LANECOUNT
-                    - Math.abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? LANECOUNT - targetLaneConfiguration
-                    : 0, 0, laneType, speedLimit, simulator);
+                    - Math.abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? LANECOUNT
+                    - targetLaneConfiguration : 0, 0, laneType, speedLimit, simulator);
                 CompleteRoute route = new CompleteRoute("route");
                 route.addNode(from);
                 route.addNode(branchPoint);
                 route.addNode(destination);
                 CompleteLaneBasedRouteNavigator navigator = new CompleteLaneBasedRouteNavigator(route);
-                SuitabilityData dataset = (SuitabilityData) ((XYPlot) (this.charts[row][column].getPlot())).getDataset();
+                SuitabilityData dataset =
+                    (SuitabilityData) ((XYPlot) (this.charts[row][column].getPlot())).getDataset();
                 for (int laneIndex = 0; laneIndex < LANECOUNT; laneIndex++)
                 {
                     int key = dataset.addSeries("Lane " + (laneIndex + 1));
@@ -263,15 +262,17 @@ public class SuitabilityGraph implements OTSModelInterface, OTS_SCALAR
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> simulator)
-        throws SimRuntimeException, RemoteException
+    public final void
+        constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+            throws SimRuntimeException, RemoteException
     {
         // Do nothing
     }
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+        throws RemoteException
     {
         return null;
     }

@@ -202,7 +202,7 @@ public class SuperDemo implements OTS_SCALAR
                     simulation.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0,
                         SECOND), SuperDemo.this.activeProperties, null, false);
                 }
-                catch (RemoteException | SimRuntimeException | NetworkException | NamingException exception)
+                catch (SimRuntimeException | NetworkException | NamingException exception)
                 {
                     exception.printStackTrace();
                 }

@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.gtu.animation;
 
 import java.awt.Color;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +61,7 @@ public class LaneChangeUrgeGTUColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public Color getColor(GTU gtu) throws RemoteException
+    public Color getColor(GTU gtu) 
     {
         if (gtu instanceof LaneBasedGTU)
         {

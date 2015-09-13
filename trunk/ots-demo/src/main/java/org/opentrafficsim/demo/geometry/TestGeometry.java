@@ -52,7 +52,7 @@ public class TestGeometry extends DSOLApplication implements OTS_SCALAR
      * @throws SimRuntimeException if error
      * @throws NamingException if error
      */
-    public static void main(final String[] args) throws RemoteException, SimRuntimeException, NamingException
+    public static void main(final String[] args) throws SimRuntimeException, NamingException, RemoteException
     {
         OTSModelInterface model = new TestModel();
         OTSDEVSAnimator simulator = new OTSDEVSAnimator();

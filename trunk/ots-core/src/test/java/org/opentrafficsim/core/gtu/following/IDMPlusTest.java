@@ -3,7 +3,6 @@ package org.opentrafficsim.core.gtu.following;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -267,7 +266,7 @@ class IDMPlusTestModel implements OTSModelInterface
     @Override
     public void constructModel(
         final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
-        throws SimRuntimeException, RemoteException
+        throws SimRuntimeException
     {
         // do nothing.
     }
@@ -275,7 +274,7 @@ class IDMPlusTestModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        throws RemoteException
+        
     {
         return null;
     }

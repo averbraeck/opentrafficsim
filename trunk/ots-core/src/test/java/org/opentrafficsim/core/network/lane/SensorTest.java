@@ -2,7 +2,6 @@ package org.opentrafficsim.core.network.lane;
 
 import static org.junit.Assert.assertEquals;
 
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -153,7 +152,7 @@ class TriggerSensor extends AbstractSensor
 
     /** {@inheritDoc} */
     @Override
-    public void trigger(final LaneBasedGTU gtu) throws RemoteException
+    public void trigger(final LaneBasedGTU gtu) 
     {
         // TODO check that the sensor is triggered at the right time.
     }
@@ -193,7 +192,7 @@ class DummyModelForSensorTest implements OTSModelInterface
     @Override
     public final void constructModel(
         SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> arg0)
-        throws SimRuntimeException, RemoteException
+        throws SimRuntimeException
     {
         // Nothing happens here
     }
@@ -201,7 +200,7 @@ class DummyModelForSensorTest implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        throws RemoteException
+        
     {
         if (null == this.simulator)
         {

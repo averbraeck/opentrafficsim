@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.geometry;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -383,7 +382,7 @@ public class OTSLine3D implements LocatableInterface, Serializable, OTS_SCALAR
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public DirectedPoint getLocation() throws RemoteException
+    public DirectedPoint getLocation() 
     {
         if (this.centroid == null)
         {
@@ -395,7 +394,7 @@ public class OTSLine3D implements LocatableInterface, Serializable, OTS_SCALAR
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Bounds getBounds() throws RemoteException
+    public Bounds getBounds() 
     {
         if (this.bounds == null)
         {

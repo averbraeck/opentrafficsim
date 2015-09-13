@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.network.lane;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -409,12 +408,11 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
      * @param gtu the LaneBasedGTU for which to trigger the sensors.
      * @param referenceStartSI the SI distance of the GTU reference point on the lane at the current time
      * @param referenceMoveSI the SI distance traveled in the next time step.
-     * @throws RemoteException when simulation time cannot be retrieved.
      * @throws NetworkException when GTU not on this lane.
      * @throws SimRuntimeException when method cannot be scheduled.
      */
     public final void scheduleTriggers(final LaneBasedGTU gtu, final double referenceStartSI, final double referenceMoveSI)
-        throws RemoteException, NetworkException, SimRuntimeException
+        throws NetworkException, SimRuntimeException
     {
         for (List<Sensor> sensorList : getSensors(gtu.getGTUType()).values())
         {
@@ -505,11 +503,10 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
      * @param fractionalPosition double; the fractional position that the newly added GTU will have on this Lane
      * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to
      *         a lane change operation)
-     * @throws RemoteException on communication failure
      * @throws NetworkException when the fractionalPosition is outside the range 0..1, or the GTU is already registered on this
      *             Lane
      */
-    public final int addGTU(final LaneBasedGTU gtu, final double fractionalPosition) throws RemoteException,
+    public final int addGTU(final LaneBasedGTU gtu, final double fractionalPosition) throws
         NetworkException
     {
         // figure out the rank for the new GTU
@@ -539,10 +536,9 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
      *            have on this Lane
      * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to
      *         a lane change operation)
-     * @throws RemoteException on communication failure
      * @throws NetworkException when longitudinalPosition is negative or exceeds the length of this Lane
      */
-    public final int addGTU(final LaneBasedGTU gtu, final Length.Rel longitudinalPosition) throws RemoteException,
+    public final int addGTU(final LaneBasedGTU gtu, final Length.Rel longitudinalPosition) throws
         NetworkException
     {
         return addGTU(gtu, longitudinalPosition.getSI() / getLength().getSI());
@@ -563,10 +559,9 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
      * @param when the time for which to evaluate the positions.
      * @return the first GTU after a position on this lane, or null if no GTU could be found.
      * @throws NetworkException when there is a problem with the position of the GTUs on the lane.
-     * @throws RemoteException on communications failure
      */
     public final LaneBasedGTU getGtuAfter(final Length.Rel position, final RelativePosition.TYPE relativePosition,
-        final Time.Abs when) throws NetworkException, RemoteException
+        final Time.Abs when) throws NetworkException
     {
         for (LaneBasedGTU gtu : this.gtuList)
         {
@@ -598,10 +593,9 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
      * @param when the time for which to evaluate the positions.
      * @return the first GTU before a position on this lane, or null if no GTU could be found.
      * @throws NetworkException when there is a problem with the position of the GTUs on the lane.
-     * @throws RemoteException on communications failure
      */
     public final LaneBasedGTU getGtuBefore(final Length.Rel position, final RelativePosition.TYPE relativePosition,
-        final Time.Abs when) throws NetworkException, RemoteException
+        final Time.Abs when) throws NetworkException
     {
         for (int i = this.gtuList.size() - 1; i >= 0; i--)
         {
@@ -779,9 +773,8 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
      * Add the movement of a GTU to all graphs that sample this Lane.
      * @param gtu AbstractLaneBasedGTU; the GTU to sample
      * @throws NetworkException on network inconsistency
-     * @throws RemoteException on communications failure
      */
-    public final void sample(final AbstractLaneBasedGTU gtu) throws RemoteException, NetworkException
+    public final void sample(final AbstractLaneBasedGTU gtu) throws NetworkException
     {
         // FIXME: Hack; do not sample dummy vehicle at lane drop
         if (gtu.getNextEvaluationTime().getSI() == Double.MAX_VALUE)

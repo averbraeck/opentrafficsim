@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.gtu.animation;
 
 import java.awt.Color;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -69,7 +68,7 @@ public class AccelerationGTUColorer implements GTUColorer, OTS_SCALAR
 
     /** {@inheritDoc} */
     @Override
-    public final Color getColor(final GTU gtu) throws RemoteException
+    public final Color getColor(final GTU gtu) 
     {
         Acceleration.Abs acceleration = gtu.getAcceleration();
         double ratio;

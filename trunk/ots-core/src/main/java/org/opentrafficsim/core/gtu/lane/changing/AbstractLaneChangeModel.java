@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu.lane.changing;
 
-import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -35,7 +34,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
         final Collection<HeadwayGTU> sameLaneGTUs, final Collection<HeadwayGTU> preferredLaneGTUs,
         final Collection<HeadwayGTU> nonPreferredLaneGTUs, final Speed.Abs speedLimit,
         final Acceleration.Rel preferredLaneRouteIncentive, final Acceleration.Rel laneChangeThreshold,
-        final Acceleration.Rel nonPreferredLaneRouteIncentive) throws RemoteException
+        final Acceleration.Rel nonPreferredLaneRouteIncentive) 
     {
         try
         {

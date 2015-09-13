@@ -56,7 +56,7 @@ public class DataViewerApplication extends DSOLApplication
      * @throws NamingException
      * @throws IOException
      */
-    public static void main(final String[] args) throws SimRuntimeException, RemoteException, NamingException, IOException
+    public static void main(final String[] args) throws SimRuntimeException, NamingException, IOException
     {
         DataViewer model = new DataViewer();
         OTSDEVSAnimator simulator = new OTSDEVSAnimator();

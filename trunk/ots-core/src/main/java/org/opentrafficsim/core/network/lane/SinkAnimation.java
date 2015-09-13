@@ -45,7 +45,7 @@ public class SinkAnimation extends Renderable2D
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+    public final void paint(final Graphics2D graphics, final ImageObserver observer) 
     {
         graphics.setColor(Color.YELLOW);
         Rectangle2D rectangle = new Rectangle2D.Double(-0.25, -this.halfWidth, 0.5, 2 * this.halfWidth);

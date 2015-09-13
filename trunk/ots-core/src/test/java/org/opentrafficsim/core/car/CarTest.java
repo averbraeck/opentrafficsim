@@ -2,7 +2,6 @@ package org.opentrafficsim.core.car;
 
 import static org.junit.Assert.assertEquals;
 
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,7 +52,6 @@ public class CarTest implements DOUBLE_SCALAR
 {
     /**
      * Test some basics of the Car class.
-     * @throws RemoteException on network error
      * @throws NetworkException on ???
      * @throws SimRuntimeException on ???
      * @throws NamingException on ???
@@ -62,7 +60,7 @@ public class CarTest implements DOUBLE_SCALAR
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void carTest() throws RemoteException, NetworkException, SimRuntimeException, NamingException,
+    public final void carTest() throws NetworkException, SimRuntimeException, NamingException,
         GTUException, OTSGeometryException
     {
         Time.Abs initialTime = new Time.Abs(0, SECOND);
@@ -94,11 +92,10 @@ public class CarTest implements DOUBLE_SCALAR
     /**
      * Create the simplest possible simulator.
      * @return OTSDEVSSimulator
-     * @throws RemoteException on network error
      * @throws SimRuntimeException on ???
      * @throws NamingException on ???
      */
-    public static OTSDEVSSimulator makeSimulator() throws RemoteException, SimRuntimeException, NamingException
+    public static OTSDEVSSimulator makeSimulator() throws SimRuntimeException, NamingException
     {
         OTSDEVSSimulator simulator = new OTSDEVSSimulator();
         Model model = new Model();
@@ -127,14 +124,13 @@ public class CarTest implements DOUBLE_SCALAR
      * @param laneChangeModel LaneChangeModel; the lane change model
      * @return Car; the new Car
      * @throws NamingException on network error when making the animation
-     * @throws RemoteException when the simulator cannot be reached.
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
      * @throws GTUException when construction of the GTU fails (probably due to an invalid parameter)
      */
     public static LaneBasedIndividualCar makeReferenceCar(final String id, final GTUType gtuType, final Lane lane,
         final Length.Rel initialPosition, final Speed.Abs initialSpeed, final OTSDEVSSimulator simulator,
-        final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel) throws RemoteException,
+        final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel) throws
         NamingException, NetworkException, SimRuntimeException, GTUException
     {
         Length.Rel length = new Length.Rel(5.0, METER);
@@ -177,14 +173,14 @@ public class CarTest implements DOUBLE_SCALAR
         @Override
         public final void constructModel(
             final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException, RemoteException
+            throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulator) theSimulator;
         }
 
         /** {@inheritDoc} */
         @Override
-        public final OTSDEVSSimulator getSimulator() throws RemoteException
+        public final OTSDEVSSimulator getSimulator() 
         {
             return this.simulator;
         }

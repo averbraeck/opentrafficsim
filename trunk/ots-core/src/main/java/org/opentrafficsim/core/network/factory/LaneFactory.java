@@ -80,14 +80,13 @@ public final class LaneFactory implements OTS_SCALAR
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @return Lane
      * @throws NamingException when names cannot be registered for animation
-     * @throws RemoteException on communications failure
      * @throws NetworkException on network inconsistency
      * @throws OTSGeometryException when creation of center line or contour fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
     private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType,
         final Length.Rel latPosAtStart, final Length.Rel latPosAtEnd, final Length.Rel width, final Speed.Abs speedLimit,
-        final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException, NetworkException,
+        final OTSDEVSSimulatorInterface simulator) throws NamingException, NetworkException,
         OTSGeometryException
     {
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
@@ -97,7 +96,14 @@ public final class LaneFactory implements OTS_SCALAR
         Lane result = new Lane(link, id, latPosAtStart, latPosAtEnd, width, width, laneType, directionalityMap, speedMap);
         if (simulator instanceof OTSAnimatorInterface)
         {
-            new LaneAnimation(result, simulator, Color.LIGHT_GRAY);
+            try
+            {
+                new LaneAnimation(result, simulator, Color.LIGHT_GRAY);
+            }
+            catch (RemoteException exception)
+            {
+                exception.printStackTrace();
+            }
         }
         return result;
     }
@@ -113,13 +119,12 @@ public final class LaneFactory implements OTS_SCALAR
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @return Lane; the new Lane
      * @throws NamingException when names cannot be registered for animation
-     * @throws RemoteException on communications failure
      * @throws NetworkException on network inconsistency
      * @throws OTSGeometryException when creation of center line or contour fails
      */
     public static Lane makeLane(final String name, final OTSNode from, final OTSNode to,
         final OTSPoint3D[] intermediatePoints, final LaneType laneType, final Speed.Abs speedLimit,
-        final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException, NetworkException,
+        final OTSDEVSSimulatorInterface simulator) throws NamingException, NetworkException,
         OTSGeometryException
     {
         Length.Rel width = new Length.Rel(4.0, METER);
@@ -144,7 +149,6 @@ public final class LaneFactory implements OTS_SCALAR
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
-     * @throws RemoteException on communications failure
      * @throws NetworkException on topological problems
      * @throws OTSGeometryException when creation of center line or contour fails
      */
@@ -152,7 +156,7 @@ public final class LaneFactory implements OTS_SCALAR
     public static Lane[] makeMultiLane(final String name, final OTSNode from, final OTSNode to,
         final OTSPoint3D[] intermediatePoints, final int laneCount, final int laneOffsetAtStart, final int laneOffsetAtEnd,
         final LaneType laneType, final Speed.Abs speedLimit, final OTSDEVSSimulatorInterface simulator)
-        throws RemoteException, NamingException, NetworkException, OTSGeometryException
+        throws NamingException, NetworkException, OTSGeometryException
     {
         final CrossSectionLink link = makeLink(name, from, to, intermediatePoints);
         Lane[] result = new Lane[laneCount];
@@ -182,14 +186,13 @@ public final class LaneFactory implements OTS_SCALAR
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
-     * @throws RemoteException on communications failure
      * @throws NetworkException on topological problems
      * @throws OTSGeometryException when creation of center line or contour fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLane(final String name, final OTSNode from, final OTSNode to,
         final OTSPoint3D[] intermediatePoints, final int laneCount, final LaneType laneType, final Speed.Abs speedLimit,
-        final OTSDEVSSimulatorInterface simulator) throws RemoteException, NamingException, NetworkException,
+        final OTSDEVSSimulatorInterface simulator) throws NamingException, NetworkException,
         OTSGeometryException
     {
         return makeMultiLane(name, from, to, intermediatePoints, laneCount, 0, 0, laneType, speedLimit, simulator);

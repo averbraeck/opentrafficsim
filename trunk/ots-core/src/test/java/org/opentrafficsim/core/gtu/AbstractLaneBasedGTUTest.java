@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,8 +33,8 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
+import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 
 /**
  * Test the various methods of an AbstractLaneBasedGTU.<br>
@@ -411,7 +410,7 @@ class DummyModel implements OTSModelInterface
     @Override
     public void constructModel(
         SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> arg0)
-        throws SimRuntimeException, RemoteException
+        throws SimRuntimeException
     {
         // Nothing happens here
     }
@@ -419,7 +418,7 @@ class DummyModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        throws RemoteException
+        
     {
         if (null == this.simulator)
         {

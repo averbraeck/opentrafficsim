@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.network.lane;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 
 import javax.media.j3d.Bounds;
 
@@ -271,7 +270,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public DirectedPoint getLocation() throws RemoteException
+    public DirectedPoint getLocation() 
     {
         DirectedPoint centroid = this.contour.getLocation();
         return new DirectedPoint(centroid.x, centroid.y, getZ());
@@ -280,7 +279,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Bounds getBounds() throws RemoteException
+    public Bounds getBounds() 
     {
         return this.contour.getBounds();
     }

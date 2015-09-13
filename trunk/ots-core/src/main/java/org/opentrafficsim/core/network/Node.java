@@ -3,7 +3,10 @@ package org.opentrafficsim.core.network;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.media.j3d.Bounds;
+
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -51,4 +54,12 @@ public interface Node extends LocatableInterface, Serializable, OTS_SCALAR
 
     /** @return linksOut. */
     Set<Link> getLinksOut();
+    
+    /** {@inheritDoc} */
+    @Override
+    DirectedPoint getLocation();
+    
+    /** {@inheritDoc} */
+    @Override
+    Bounds getBounds();
 }

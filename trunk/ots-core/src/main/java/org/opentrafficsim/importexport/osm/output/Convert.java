@@ -586,11 +586,10 @@ public final class Convert implements OTS_SCALAR
      * @return List&lt;Lane&gt;
      * @throws NetworkException on network inconsistency
      * @throws NamingException on naming problems (in the animator)
-     * @throws RemoteException on communications failure
      * @throws OTSGeometryException when lane contour or center line cannot be instantiated
      */
     public List<Lane> makeLanes(final OSMLink osmlink, final OTSDEVSSimulatorInterface simulator,
-        final WarningListener warningListener) throws NetworkException, RemoteException, NamingException,
+        final WarningListener warningListener) throws NetworkException, NamingException,
         OTSGeometryException
     {
         CrossSectionLink otslink = convertLink(osmlink);
@@ -640,7 +639,14 @@ public final class Convert implements OTS_SCALAR
             }
             if (simulator instanceof OTSAnimatorInterface)
             {
-                new LaneAnimation(newLane, simulator, color);
+                try
+                {
+                    new LaneAnimation(newLane, simulator, color);
+                }
+                catch (RemoteException exception)
+                {
+                    exception.printStackTrace();
+                }
             }
             lanes.add(newLane);
         }

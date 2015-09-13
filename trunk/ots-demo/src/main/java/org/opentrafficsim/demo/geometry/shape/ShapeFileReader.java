@@ -350,7 +350,7 @@ public final class ShapeFileReader implements OTS_SCALAR
      * @throws NetworkException on network inconsistency
      */
     private static void animate(final CrossSectionLink link, final String wegType, final OTSSimulatorInterface simulator)
-        throws RemoteException, NamingException, NetworkException
+        throws NamingException, NetworkException, RemoteException
     {
         // leave out if center line not needed.
         new LinkAnimation(link, simulator, 0.1f);

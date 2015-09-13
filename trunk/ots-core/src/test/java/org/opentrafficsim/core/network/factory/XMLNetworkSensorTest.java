@@ -6,7 +6,6 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,8 +70,8 @@ public class XMLNetworkSensorTest implements OTS_SCALAR
             {
                 TestXMLModel model = new TestXMLModel();
                 final SimpleAnimator simulator =
-                    new SimpleAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(120.0, SECOND),
-                        model);
+                    new SimpleAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND),
+                        new Time.Rel(120.0, SECOND), model);
 
                 // get the nodes in the network.
                 Node n1 = model.getNetwork().getNodeMap().get("N1");
@@ -108,12 +107,10 @@ public class XMLNetworkSensorTest implements OTS_SCALAR
                 assertNotNull(lane23);
 
                 // add the sensors
-                lane12.addSensor(new ReportingSensor(lane12,
-                    new Length.Rel(lane12.getLength().getSI() - 1E-4, LengthUnit.SI), RelativePosition.FRONT, "12.E.F",
-                    simulator), GTUType.ALL);
-                lane12.addSensor(new ReportingSensor(lane12,
-                    new Length.Rel(lane12.getLength().getSI() - 1E-4, LengthUnit.SI), RelativePosition.REAR, "12.E.R",
-                    simulator), GTUType.ALL);
+                lane12.addSensor(new ReportingSensor(lane12, new Length.Rel(lane12.getLength().getSI() - 1E-4,
+                    LengthUnit.SI), RelativePosition.FRONT, "12.E.F", simulator), GTUType.ALL);
+                lane12.addSensor(new ReportingSensor(lane12, new Length.Rel(lane12.getLength().getSI() - 1E-4,
+                    LengthUnit.SI), RelativePosition.REAR, "12.E.R", simulator), GTUType.ALL);
                 lane23.addSensor(new ReportingSensor(lane23, new Length.Rel(Math.ulp(0.0), LengthUnit.SI),
                     RelativePosition.FRONT, "23.B.F", simulator), GTUType.ALL);
                 lane23.addSensor(new ReportingSensor(lane23, new Length.Rel(Math.ulp(0.0), LengthUnit.SI),
@@ -153,7 +150,7 @@ public class XMLNetworkSensorTest implements OTS_SCALAR
                     }
                 }
             }
-            catch (RemoteException | SimRuntimeException | NamingException | NetworkException exception)
+            catch (SimRuntimeException | NamingException | NetworkException exception)
             {
                 fail(exception.toString());
             }
@@ -191,7 +188,7 @@ public class XMLNetworkSensorTest implements OTS_SCALAR
 
         /** {@inheritDoc} */
         @Override
-        public void trigger(final LaneBasedGTU gtu) throws RemoteException
+        public void trigger(final LaneBasedGTU gtu)
         {
             try
             {
@@ -273,9 +270,11 @@ public class XMLNetworkSensorTest implements OTS_SCALAR
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         @Override
-        public final void constructModel(
-            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
-            throws SimRuntimeException, RemoteException
+        public final
+            void
+            constructModel(
+                final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
+                throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
             URL url = URLResource.getResource("/org/opentrafficsim/core/network/factory/sensor-test.xml");
@@ -294,8 +293,9 @@ public class XMLNetworkSensorTest implements OTS_SCALAR
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-            throws RemoteException
+        public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
+            getSimulator()
+
         {
             return this.simulator;
         }

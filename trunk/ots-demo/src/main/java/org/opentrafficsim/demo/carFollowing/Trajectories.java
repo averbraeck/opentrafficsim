@@ -100,9 +100,8 @@ public class Trajectories extends AbstractWrappableAnimation
      * Main program.
      * @param args String[]; the command line arguments (not used)
      * @throws SimRuntimeException on ???
-     * @throws RemoteException on communications failure
      */
-    public static void main(final String[] args) throws RemoteException, SimRuntimeException
+    public static void main(final String[] args) throws SimRuntimeException
     {
         // Create the simulation and wrap its panel in a JFrame. It does not get much easier/shorter than this...
         SwingUtilities.invokeLater(new Runnable()
@@ -116,7 +115,7 @@ public class Trajectories extends AbstractWrappableAnimation
                     trajectories.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0,
                         SECOND), trajectories.getProperties(), null, true);
                 }
-                catch (RemoteException | SimRuntimeException | NamingException exception)
+                catch (SimRuntimeException | NamingException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -358,7 +357,7 @@ class TrajectoriesModel implements OTSModelInterface, OTS_SCALAR
                     null);
             }
         }
-        catch (RemoteException | SimRuntimeException exception)
+        catch (SimRuntimeException exception)
         {
             exception.printStackTrace();
         }
@@ -366,13 +365,12 @@ class TrajectoriesModel implements OTSModelInterface, OTS_SCALAR
 
     /**
      * Set up the block.
-     * @throws RemoteException on communications failure
      * @throws NamingException on error during adding of animation handler
      * @throws SimRuntimeException on ???
      * @throws NetworkException on network inconsistency
      * @throws GTUException if creation of the GTU fails
      */
-    protected final void createBlock() throws RemoteException, NamingException, SimRuntimeException, NetworkException,
+    protected final void createBlock() throws NamingException, SimRuntimeException, NetworkException,
         GTUException
     {
         Length.Rel initialPosition = new Length.Rel(4000, METER);
@@ -419,7 +417,7 @@ class TrajectoriesModel implements OTSModelInterface, OTS_SCALAR
             // Re-schedule this method after headway seconds
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
-        catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
+        catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
             exception.printStackTrace();
         }

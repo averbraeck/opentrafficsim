@@ -92,22 +92,23 @@ public class CircularRoad extends AbstractWrappableAnimation
             "Track length %dm", false, 10));
         this.properties.add(new ContinuousProperty("Mean density", "Number of vehicles per km", 40.0, 5.0, 45.0,
             "Density %.1f veh/km", false, 11));
-        this.properties.add(new ContinuousProperty("Density variability", "Variability of the number of vehicles per km",
-            0.0, 0.0, 1.0, "%.1f", false, 12));
+        this.properties.add(new ContinuousProperty("Density variability",
+            "Variability of the number of vehicles per km", 0.0, 0.0, 1.0, "%.1f", false, 12));
         ArrayList<AbstractProperty<?>> outputProperties = new ArrayList<AbstractProperty<?>>();
         for (int lane = 1; lane <= 2; lane++)
         {
             String laneId = String.format("Lane %d ", lane);
-            outputProperties.add(new BooleanProperty(laneId + "Density", laneId + "Density contour plot", true, false, 0));
+            outputProperties.add(new BooleanProperty(laneId + "Density", laneId + "Density contour plot", true, false,
+                0));
             outputProperties.add(new BooleanProperty(laneId + "Flow", laneId + "Flow contour plot", true, false, 1));
             outputProperties.add(new BooleanProperty(laneId + "Speed", laneId + "Speed contour plot", true, false, 2));
-            outputProperties.add(new BooleanProperty(laneId + "Acceleration", laneId + "Acceleration contour plot", true,
-                false, 3));
-            outputProperties.add(new BooleanProperty(laneId + "Trajectories", laneId + "Trajectory (time/distance) diagram",
-                true, false, 4));
+            outputProperties.add(new BooleanProperty(laneId + "Acceleration", laneId + "Acceleration contour plot",
+                true, false, 3));
+            outputProperties.add(new BooleanProperty(laneId + "Trajectories", laneId
+                + "Trajectory (time/distance) diagram", true, false, 4));
         }
-        this.properties.add(new CompoundProperty("Output graphs", "Select the graphical output", outputProperties, true,
-            1000));
+        this.properties.add(new CompoundProperty("Output graphs", "Select the graphical output", outputProperties,
+            true, 1000));
     }
 
     /** {@inheritDoc} */
@@ -122,9 +123,8 @@ public class CircularRoad extends AbstractWrappableAnimation
      * Main program.
      * @param args String[]; the command line arguments (not used)
      * @throws SimRuntimeException should never happen
-     * @throws RemoteException on communications failure
      */
-    public static void main(final String[] args) throws RemoteException, SimRuntimeException
+    public static void main(final String[] args) throws SimRuntimeException
     {
         SwingUtilities.invokeLater(new Runnable()
         {
@@ -151,17 +151,17 @@ public class CircularRoad extends AbstractWrappableAnimation
                             + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                             + "curvature of the road) capabilities of the vehicle and personality "
                             + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
-                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Car", new Acceleration.Abs(1.0, METER_PER_SECOND_2),
-                        new Acceleration.Abs(1.5, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
+                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Car", new Acceleration.Abs(1.0,
+                        METER_PER_SECOND_2), new Acceleration.Abs(1.5, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
                         new Time.Rel(1.0, SECOND), 2));
-                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Truck",
-                        new Acceleration.Abs(0.5, METER_PER_SECOND_2), new Acceleration.Abs(1.25, METER_PER_SECOND_2),
+                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration.Abs(0.5,
+                        METER_PER_SECOND_2), new Acceleration.Abs(1.25, METER_PER_SECOND_2),
                         new Length.Rel(2.0, METER), new Time.Rel(1.0, SECOND), 3));
 
-                    circularRoad.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0,
-                        SECOND), propertyList, null, true);
+                    circularRoad.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(
+                        3600.0, SECOND), propertyList, null, true);
                 }
-                catch (RemoteException | SimRuntimeException | NamingException exception)
+                catch (SimRuntimeException | NamingException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -520,8 +520,8 @@ class RoadSimulationModel implements OTSModelInterface, OTS_SCALAR
                 coordsHalf1[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             Lane[] lanes1 =
-                LaneFactory.makeMultiLane("FirstHalf", start, halfway, coordsHalf1, laneCount, laneType, this.speedLimit,
-                    this.simulator);
+                LaneFactory.makeMultiLane("FirstHalf", start, halfway, coordsHalf1, laneCount, laneType,
+                    this.speedLimit, this.simulator);
             OTSPoint3D[] coordsHalf2 = new OTSPoint3D[127];
             for (int i = 0; i < coordsHalf2.length; i++)
             {
@@ -529,8 +529,8 @@ class RoadSimulationModel implements OTSModelInterface, OTS_SCALAR
                 coordsHalf2[i] = new OTSPoint3D(radius * Math.cos(angle), radius * Math.sin(angle), 0);
             }
             Lane[] lanes2 =
-                LaneFactory.makeMultiLane("SecondHalf", halfway, start, coordsHalf2, laneCount, laneType, this.speedLimit,
-                    this.simulator);
+                LaneFactory.makeMultiLane("SecondHalf", halfway, start, coordsHalf2, laneCount, laneType,
+                    this.speedLimit, this.simulator);
             for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
             {
                 this.paths.get(laneIndex).add(lanes1[laneIndex]);
@@ -559,10 +559,10 @@ class RoadSimulationModel implements OTSModelInterface, OTS_SCALAR
                 }
             }
             // Schedule regular updates of the graph
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(9.999, SECOND), this, this, "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(9.999, SECOND), this, this, "drawGraphs",
+                null);
         }
-        catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException
-            | OTSGeometryException exception)
+        catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
         {
             exception.printStackTrace();
         }
@@ -580,10 +580,10 @@ class RoadSimulationModel implements OTSModelInterface, OTS_SCALAR
         // Re schedule this method
         try
         {
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(
-                this.simulator.getSimulatorTime().get().getSI() + 10, SECOND), this, this, "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new Time.Abs(this.simulator.getSimulatorTime().get().getSI() + 10, SECOND),
+                this, this, "drawGraphs", null);
         }
-        catch (RemoteException | SimRuntimeException exception)
+        catch (SimRuntimeException exception)
         {
             exception.printStackTrace();
         }
@@ -598,11 +598,10 @@ class RoadSimulationModel implements OTSModelInterface, OTS_SCALAR
      * @throws NamingException on ???
      * @throws SimRuntimeException cannot happen
      * @throws NetworkException on network inconsistency
-     * @throws RemoteException on communications failure
      * @throws GTUException when something goes wrong during construction of the car
      */
     protected final void generateCar(final Length.Rel initialPosition, final Lane lane, final GTUType gtuType)
-        throws NamingException, NetworkException, SimRuntimeException, RemoteException, GTUException
+        throws NamingException, NetworkException, SimRuntimeException, GTUException
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         Speed.Abs initialSpeed = new Speed.Abs(0, KM_PER_HOUR);
@@ -653,7 +652,7 @@ class RoadSimulationModel implements OTSModelInterface, OTS_SCALAR
                 theSimulator.stop();
             }
         }
-        catch (RemoteException | SimRuntimeException exception)
+        catch (SimRuntimeException exception)
         {
             exception.printStackTrace();
         }

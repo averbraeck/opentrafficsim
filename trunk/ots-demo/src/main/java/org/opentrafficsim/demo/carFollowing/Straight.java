@@ -108,10 +108,9 @@ public class Straight extends AbstractWrappableAnimation
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
-     * @throws RemoteException on communications failure
      * @throws SimRuntimeException when simulation cannot be created with given parameters
      */
-    public static void main(final String[] args) throws RemoteException, SimRuntimeException
+    public static void main(final String[] args) throws SimRuntimeException
     {
         SwingUtilities.invokeLater(new Runnable()
         {
@@ -148,7 +147,7 @@ public class Straight extends AbstractWrappableAnimation
                         new Time.Rel(3600.0, SECOND), localProperties, null, true);
                     straight.panel.getTabbedPane().addTab("info", straight.makeInfoPane());
                 }
-                catch (RemoteException | SimRuntimeException | NamingException exception)
+                catch (SimRuntimeException | NamingException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -524,7 +523,7 @@ class StraightModel implements OTSModelInterface, OTS_SCALAR
                     null);
             }
         }
-        catch (RemoteException | SimRuntimeException | NamingException | NetworkException | OTSGeometryException exception)
+        catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException exception)
         {
             exception.printStackTrace();
         }
@@ -558,7 +557,7 @@ class StraightModel implements OTSModelInterface, OTS_SCALAR
                     new Speed.Abs(0, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")),
                     this.simulator, DefaultCarAnimation.class, this.gtuColorer);
         }
-        catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
+        catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
             exception.printStackTrace();
         }
@@ -597,7 +596,7 @@ class StraightModel implements OTSModelInterface, OTS_SCALAR
                 this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
-        catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
+        catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
             exception.printStackTrace();
         }
