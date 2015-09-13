@@ -1,0 +1,110 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>opentrafficsim</groupId>
+    <artifactId>ots-base</artifactId>
+    <version>0.03.02</version>
+    <relativePath>../ots-base/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>ots-core</artifactId>
+  <name>Open Traffic Sim core classes</name>
+  <description>Open Traffic Sim core classes</description>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>wagon-maven-plugin</artifactId>
+        <version>${wagon.maven.version}</version>
+        <executions>
+          <execution>
+            <id>upload-schema</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>upload</goal>
+            </goals>
+            <configuration>
+              <fromDir>${basedir}/src/main/resources</fromDir>
+              <includes>ots-types.xsd, ots-definitions.xsd, ots-network.xsd</includes>
+              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org</url>
+              <toDir>docs</toDir>
+              <serverId>ots-deployment</serverId>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.djunits</groupId>
+      <artifactId>djunits</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>dsol</groupId>
+      <artifactId>dsol-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jgrapht</groupId>
+      <artifactId>jgrapht-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-main</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>dsol</groupId>
+      <artifactId>dsol-swing</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openstreetmap.osmosis</groupId>
+      <artifactId>osmosis-core</artifactId>
+      <version>0.43.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openstreetmap.osmosis</groupId>
+      <artifactId>osmosis-xml</artifactId>
+      <version>0.43.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openstreetmap.osmosis</groupId>
+      <artifactId>osmosis-pbf</artifactId>
+      <version>0.43.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openstreetmap.osmosis</groupId>
+      <artifactId>osmosis-osm-binary</artifactId>
+      <version>0.43.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.bric</groupId>
+      <artifactId>multislider</artifactId>
+    </dependency>
+
+  </dependencies>
+</project>
