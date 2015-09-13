@@ -63,7 +63,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     @Override
     public final SimpleAnimator buildAnimator(final Time.Abs startTime, final Time.Rel warmupPeriod,
         final Time.Rel runLength, final ArrayList<AbstractProperty<?>> userModifiedProperties, final Rectangle rect,
-        final boolean eoc) throws RemoteException, SimRuntimeException, NamingException
+        final boolean eoc) throws SimRuntimeException, NamingException
     {
         this.savedUserModifiedProperties = userModifiedProperties;
         this.exitOnClose = eoc;
@@ -81,7 +81,14 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
         }
 
         final SimpleAnimator simulator = new SimpleAnimator(startTime, warmupPeriod, runLength, model);
-        this.panel = new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
+        try
+        {
+            this.panel = new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
+        }
+        catch (RemoteException exception)
+        {
+            throw new SimRuntimeException(exception);
+        }
         JPanel charts = makeCharts();
         if (null != charts)
         {
@@ -129,7 +136,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation, 
     /** {@inheritDoc} */
     @Override
     public final SimpleSimulatorInterface rebuildSimulator(final Rectangle rect) throws SimRuntimeException,
-        RemoteException, NetworkException, NamingException
+        NetworkException, NamingException
     {
         return buildAnimator(this.savedStartTime, this.savedWarmupPeriod, this.savedRunLength,
             this.savedUserModifiedProperties, rect, this.exitOnClose);

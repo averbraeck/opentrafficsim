@@ -6,7 +6,6 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -134,7 +133,7 @@ public class XMLNetworkGeneratorTest implements OTS_SCALAR
                 }
             }
         }
-        catch (RemoteException | SimRuntimeException | NamingException | NetworkException exception)
+        catch (SimRuntimeException | NamingException | NetworkException exception)
         {
             fail(exception.toString());
         }
@@ -174,7 +173,7 @@ public class XMLNetworkGeneratorTest implements OTS_SCALAR
 
         /** {@inheritDoc} */
         @Override
-        public void trigger(final LaneBasedGTU gtu) throws RemoteException
+        public void trigger(final LaneBasedGTU gtu) 
         {
             try
             {
@@ -248,7 +247,7 @@ public class XMLNetworkGeneratorTest implements OTS_SCALAR
         @Override
         public final void constructModel(
             final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
-            throws SimRuntimeException, RemoteException
+            throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
             URL url = URLResource.getResource("/org/opentrafficsim/core/network/factory/gen-overlap-test.xml");
@@ -267,7 +266,7 @@ public class XMLNetworkGeneratorTest implements OTS_SCALAR
         /** {@inheritDoc} */
         @Override
         public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-            throws RemoteException
+            
         {
             return this.simulator;
         }

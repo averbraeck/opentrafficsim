@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu.following;
 
-import java.rmi.RemoteException;
 import java.util.Collection;
 
 import org.djunits.unit.AccelerationUnit;
@@ -37,7 +36,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
     /** {@inheritDoc} */
     @Override
     public final DualAccelerationStep computeAcceleration(final LaneBasedGTU referenceGTU,
-        final Collection<HeadwayGTU> otherGTUs, final Speed.Abs speedLimit) throws RemoteException, NetworkException
+        final Collection<HeadwayGTU> otherGTUs, final Speed.Abs speedLimit) throws NetworkException
     {
         Time.Abs when = referenceGTU.getSimulator().getSimulatorTime().getTime();
         // Find out if there is an immediate collision
@@ -104,7 +103,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
     /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAcceleration(final LaneBasedGTU follower, final Speed.Abs leaderSpeed,
-        final Length.Rel headway, final Speed.Abs speedLimit) throws RemoteException
+        final Length.Rel headway, final Speed.Abs speedLimit) 
     {
         final Time.Abs currentTime = follower.getNextEvaluationTime();
         final Speed.Abs followerSpeed = follower.getLongitudinalVelocity(currentTime);
@@ -120,7 +119,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
     /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU gtu, final Speed.Abs speedLimit)
-        throws RemoteException, NetworkException
+        throws NetworkException
     {
         return computeAcceleration(gtu, gtu.getLongitudinalVelocity(), Calc.speedSquaredDividedByDoubleAcceleration(gtu
             .getMaximumVelocity(), maximumSafeDeceleration()), speedLimit);
@@ -129,7 +128,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
     /** {@inheritDoc} */
     @Override
     public final Length.Rel minimumHeadway(final Speed.Abs followerSpeed, final Speed.Abs leaderSpeed,
-        final Length.Rel precision, final Speed.Abs speedLimit, final Speed.Abs followerMaximumSpeed) throws RemoteException
+        final Length.Rel precision, final Speed.Abs speedLimit, final Speed.Abs followerMaximumSpeed) 
     {
         if (precision.getSI() <= 0)
         {

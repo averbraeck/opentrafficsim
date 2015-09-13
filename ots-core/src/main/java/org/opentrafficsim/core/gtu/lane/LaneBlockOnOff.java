@@ -36,25 +36,24 @@ public class LaneBlockOnOff extends AbstractTrafficLight
      * @param simulator the simulator to avoid NullPointerExceptions
      * @throws GTUException when GTU cannot be created.
      * @throws NamingException if an error occurs when adding the animation handler
-     * @throws RemoteException when the simulator cannot be reached
      * @throws NetworkException when the GTU cannot be placed on the given lane
      */
     public LaneBlockOnOff(final String name, final Lane lane, final Length.Rel position,
-        final OTSDEVSSimulatorInterface simulator) throws GTUException, RemoteException, NetworkException, NamingException
+        final OTSDEVSSimulatorInterface simulator) throws GTUException, NetworkException, NamingException
     {
         super(name, lane, position, simulator);
 
-        new DefaultBlockOnOffAnimation(this, getSimulator());
-        // animation
-        if (simulator instanceof OTSAnimatorInterface)
-        {
-            // TODO
-        }
         try
         {
+            new DefaultBlockOnOffAnimation(this, getSimulator());
+            // animation
+            if (simulator instanceof OTSAnimatorInterface)
+            {
+                // TODO
+            }
             getSimulator().scheduleEventRel(new Time.Rel(60.0, SECOND), this, this, "changeColorTime", null);
         }
-        catch (SimRuntimeException exception)
+        catch (RemoteException | SimRuntimeException exception)
         {
             exception.printStackTrace();
         }
@@ -68,7 +67,7 @@ public class LaneBlockOnOff extends AbstractTrafficLight
         {
             getSimulator().scheduleEventRel(new Time.Rel(60.0, SECOND), this, this, "changeColorTime", null);
         }
-        catch (SimRuntimeException | RemoteException exception)
+        catch (SimRuntimeException exception)
         {
             exception.printStackTrace();
         }

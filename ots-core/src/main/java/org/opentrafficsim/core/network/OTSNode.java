@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -138,14 +137,14 @@ public class OTSNode implements Node, LocatableInterface, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final DirectedPoint getLocation() throws RemoteException
+    public final DirectedPoint getLocation() 
     {
         return this.point.getDirectedPoint();
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds getBounds() throws RemoteException
+    public final Bounds getBounds() 
     {
         return new BoundingSphere(new Point3d(0.0d, 0.0d, 0.0d), 10.0d);
     }

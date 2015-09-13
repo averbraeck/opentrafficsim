@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu.lane;
 
-import java.rmi.RemoteException;
 import java.util.Map;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -56,7 +55,6 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
      * @param maximumVelocity the maximum speed of the GTU (in the driving direction)
      * @param routeNavigator RouteNavigator; the individual route that the GTU will take
      * @param simulator the simulator
-     * @throws RemoteException when the simulator cannot be reached
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GTUException when a parameter is invalid
@@ -65,7 +63,7 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
     public AbstractLaneBasedIndividualGTU(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
         final LaneChangeModel laneChangeModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
         final Speed.Abs initialSpeed, final Length.Rel length, final Length.Rel width, final Speed.Abs maximumVelocity,
-        final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator) throws RemoteException,
+        final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator) throws
         NetworkException, SimRuntimeException, GTUException
     {
         super(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, routeNavigator,

@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.network.factory.xml;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -202,11 +201,10 @@ class FillTag implements OTS_SCALAR, OTS_DIST
      * @param linkTag the parent LINK tag
      * @param simulator the simulator to schedule GTU generation
      * @throws SimRuntimeException in case of simulation problems building the car generator
-     * @throws RemoteException in case of network problems building the car generator
      * @throws NetworkException when route generator cannot be instantiated
      */
     static void makeFill(final FillTag fillTag, final XmlNetworkLaneParser parser, final LinkTag linkTag,
-        final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, RemoteException, NetworkException
+        final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException
     {
         Lane lane = linkTag.lanes.get(fillTag.laneName);
         Class<?> gtuClass = LaneBasedIndividualCar.class;

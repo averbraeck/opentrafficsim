@@ -3,9 +3,6 @@ package org.opentrafficsim.core.gtu;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import java.rmi.RemoteException;
-
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistConstant;
@@ -178,7 +175,7 @@ class DummyModelForTemplateGTUTest implements OTSModelInterface
     @Override
     public void constructModel(
         SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> arg0)
-        throws SimRuntimeException, RemoteException
+        throws SimRuntimeException
     {
         // Nothing happens here
     }
@@ -186,7 +183,7 @@ class DummyModelForTemplateGTUTest implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        throws RemoteException
+        
     {
         if (null == this.simulator)
         {

@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu.lane.changing;
 
-import java.rmi.RemoteException;
 import java.util.Collection;
 
 import org.opentrafficsim.core.OTS_SCALAR;
@@ -40,14 +39,13 @@ public interface LaneChangeModel extends OTS_SCALAR
      * @param nonPreferredLaneRouteIncentive DoubleScalar.Rel&lt;AccelerationUnit&gt;; route incentive to merge to the adjacent
      *            lane into which GTUs should merge to overtake other traffic
      * @return LaneMovementStep; the result of the lane change and GTU following model
-     * @throws RemoteException in case the simulation time cannot be retrieved.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu, final Collection<HeadwayGTU> sameLaneTraffic,
-        final Collection<HeadwayGTU> rightLaneTraffic, final Collection<HeadwayGTU> leftLaneTraffic,
-        final Speed.Abs speedLimit, final Acceleration.Rel preferredLaneRouteIncentive,
-        final Acceleration.Rel laneChangeThreshold, final Acceleration.Rel nonPreferredLaneRouteIncentive)
-        throws RemoteException;
+    LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
+        final Collection<HeadwayGTU> sameLaneTraffic, final Collection<HeadwayGTU> rightLaneTraffic,
+        final Collection<HeadwayGTU> leftLaneTraffic, final Speed.Abs speedLimit,
+        final Acceleration.Rel preferredLaneRouteIncentive, final Acceleration.Rel laneChangeThreshold,
+        final Acceleration.Rel nonPreferredLaneRouteIncentive);
 
     /**
      * Return the name of this GTU following model.

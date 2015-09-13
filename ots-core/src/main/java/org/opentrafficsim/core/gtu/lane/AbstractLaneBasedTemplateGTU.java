@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu.lane;
 
-import java.rmi.RemoteException;
 import java.util.Map;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -39,14 +38,13 @@ public abstract class AbstractLaneBasedTemplateGTU extends AbstractLaneBasedGTU
      * @param initialLongitudinalPositions the initial positions of the car on one or more lanes
      * @param initialSpeed the initial speed of the car on the lane
      * @param routeNavigator RouteNavigator; the navigator that the GTU will use
-     * @throws RemoteException when the simulator cannot be reached
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GTUException when gtuFollowingModel is null
      */
     public AbstractLaneBasedTemplateGTU(final String id, final TemplateGTUType templateGTUType,
         final GTUFollowingModel gtuFollowingModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
-        final Speed.Abs initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator) throws RemoteException,
+        final Speed.Abs initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator) throws
         NetworkException, SimRuntimeException, GTUException
     {
         super(id, templateGTUType.getGtuType(), gtuFollowingModel, null /* LaneChangeModel */, initialLongitudinalPositions,

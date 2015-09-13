@@ -34,7 +34,7 @@ public class DefaultBlockOnOffAnimation extends Renderable2D
      * @param source the Car to draw
      * @param simulator the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
-     * @throws RemoteException in case of remote registration failure of the animation
+     * @throws RemoteException on communication failure
      */
     public DefaultBlockOnOffAnimation(final LaneBlockOnOff source, final OTSSimulatorInterface simulator)
         throws NamingException, RemoteException
@@ -45,7 +45,7 @@ public class DefaultBlockOnOffAnimation extends Renderable2D
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+    public final void paint(final Graphics2D graphics, final ImageObserver observer) 
     {
         if (((LaneBlockOnOff) this.source).isBlocked())
         {

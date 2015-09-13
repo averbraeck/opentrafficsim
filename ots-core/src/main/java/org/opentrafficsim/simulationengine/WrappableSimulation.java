@@ -1,6 +1,5 @@
 package org.opentrafficsim.simulationengine;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.naming.NamingException;
@@ -32,13 +31,12 @@ public interface WrappableSimulation
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user-modified) properties. This list must
      *            contain all the properties returned by getProperties(); any additional properties may be ignored
      * @return SimpleSimulation; the new simulation
-     * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
      * @throws NetworkException on Network inconsistency
      * @throws NamingException when context for the animation cannot be created
      */
     SimpleSimulatorInterface buildSimulator(final Time.Abs startTime, final Time.Rel warmupPeriod, final Time.Rel runLength,
-        ArrayList<AbstractProperty<?>> properties) throws SimRuntimeException, RemoteException, NetworkException,
+        ArrayList<AbstractProperty<?>> properties) throws SimRuntimeException, NetworkException,
         NamingException;
 
     /**

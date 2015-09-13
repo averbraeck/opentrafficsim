@@ -33,7 +33,7 @@ public class LinkAnimation extends Renderable2D
      * @param simulator simulator
      * @param width width
      * @throws NamingException for problems with registering in context
-     * @throws RemoteException on communications failure
+     * @throws RemoteException on communication failure
      */
     public LinkAnimation(final Link source, final OTSSimulatorInterface simulator, final float width)
         throws NamingException, RemoteException

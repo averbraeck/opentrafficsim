@@ -207,7 +207,7 @@ public class StripeAnimation extends Renderable2D
      * @param simulator s
      * @param type t
      * @throws NamingException ne
-     * @throws RemoteException re
+     * @throws RemoteException on communication failure
      */
     public StripeAnimation(final Stripe source, final OTSSimulatorInterface simulator, final TYPE type)
         throws NamingException, RemoteException
@@ -219,7 +219,7 @@ public class StripeAnimation extends Renderable2D
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+    public final void paint(final Graphics2D graphics, final ImageObserver observer) 
     {
         PaintPolygons.paintMultiPolygon(graphics, Color.WHITE, ((Stripe) getSource()).getLocation(), this.line);
     }

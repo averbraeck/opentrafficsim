@@ -1,7 +1,5 @@
 package org.opentrafficsim.simulationengine;
 
-import java.rmi.RemoteException;
-
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -38,12 +36,11 @@ public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulator
      *            DoubleScalar.Rel&lt;TimeUnit&gt;(0, SECOND) if you don't know what this is)
      * @param runLength DoubleScalar.Rel&lt;TimeUnit&gt;; the duration of the simulation
      * @param model OTSModelInterface; the simulation to execute
-     * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
      * @throws NamingException when the context for the replication cannot be created
      */
     public SimpleSimulator(final Time.Abs startTime, final Time.Rel warmupPeriod, final Time.Rel runLength,
-        final OTSModelInterface model) throws RemoteException, SimRuntimeException, NamingException
+        final OTSModelInterface model) throws SimRuntimeException, NamingException
     {
         setPauseOnError(true);
         initialize(new OTSReplication("rep" + ++this.lastReplication, new OTSSimTimeDouble(startTime), warmupPeriod,

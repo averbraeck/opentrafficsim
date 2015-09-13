@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.gtu.animation;
 
 import java.awt.Color;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,7 +47,7 @@ public class VelocityGTUColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public final Color getColor(final GTU gtu) throws RemoteException
+    public final Color getColor(final GTU gtu) 
     {
         Speed.Abs speed = gtu.getVelocity();
         double ratio = speed.getSI() / this.maximumSpeed.getSI() * (this.legend.size() - 1);

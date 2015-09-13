@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.gtu.animation;
 
 import java.awt.Color;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -53,7 +52,7 @@ public class SwitchableGTUColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public final Color getColor(final GTU gtu) throws RemoteException
+    public final Color getColor(final GTU gtu) 
     {
         return this.activeColorer.getColor(gtu);
     }

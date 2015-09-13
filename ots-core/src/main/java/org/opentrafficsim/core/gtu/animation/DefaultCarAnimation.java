@@ -36,7 +36,7 @@ public class DefaultCarAnimation extends Renderable2D
      * @param source the Car to draw
      * @param simulator the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
-     * @throws RemoteException in case of remote registration failure of the animation
+     * @throws RemoteException on communication failure
      */
     public DefaultCarAnimation(final LaneBasedIndividualCar source, final OTSSimulatorInterface simulator)
         throws NamingException, RemoteException
@@ -50,7 +50,7 @@ public class DefaultCarAnimation extends Renderable2D
      * @param simulator the simulator to schedule on
      * @param gtuColorer GTUColorer; the GTUColorer that determines what fill color to use
      * @throws NamingException in case of registration failure of the animation
-     * @throws RemoteException in case of remote registration failure of the animation
+     * @throws RemoteException on communication failure
      */
     public DefaultCarAnimation(final LaneBasedIndividualCar source, final OTSSimulatorInterface simulator,
         final GTUColorer gtuColorer) throws NamingException, RemoteException
@@ -77,7 +77,7 @@ public class DefaultCarAnimation extends Renderable2D
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
+    public final void paint(final Graphics2D graphics, final ImageObserver observer) 
     {
         final LaneBasedIndividualCar car = (LaneBasedIndividualCar) getSource();
         final double length = car.getLength().getSI();

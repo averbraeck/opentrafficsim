@@ -174,11 +174,9 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
      * @return SimEvent&lt;OTSSimTimeDouble&gt;; the event that was scheduled (the caller should save this if a need to cancel
      *         the event may arise later)
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
-     * @throws RemoteException on communications failure
      */
     private SimEvent<OTSSimTimeDouble> scheduleEvent(final Time.Abs executionTime, final short priority,
-        final Object source, final Object eventTarget, final String method, final Object[] args) throws SimRuntimeException,
-        RemoteException
+        final Object source, final Object eventTarget, final String method, final Object[] args) throws SimRuntimeException
     {
         SimEvent<OTSSimTimeDouble> simEvent =
             new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time.Abs(executionTime.getSI(), SECOND)), priority,
@@ -433,7 +431,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                             "autoPauseSimulator", null);
                     getSimulator().start();
                 }
-                catch (SimRuntimeException | RemoteException exception)
+                catch (SimRuntimeException exception)
                 {
                     this.logger.logp(Level.SEVERE, "ControlPanel", "autoPauseSimulator",
                         "Caught an exception while trying to re-schedule an autoPauseEvent at the next real event");
@@ -509,7 +507,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                     scheduleEvent(new Time.Abs(stopTime, SECOND), SimEventInterface.MAX_PRIORITY, this, this,
                         "autoPauseSimulator", null);
             }
-            catch (SimRuntimeException | RemoteException exception)
+            catch (SimRuntimeException exception)
             {
                 this.logger.logp(Level.SEVERE, "ControlPanel", "propertyChange",
                     "Caught an exception while trying to schedule an autoPauseSimulator event");
@@ -547,7 +545,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                     this.simulator.stop();
                 }
             }
-            catch (RemoteException | SimRuntimeException exception)
+            catch (SimRuntimeException exception)
             {
                 exception.printStackTrace();
             }

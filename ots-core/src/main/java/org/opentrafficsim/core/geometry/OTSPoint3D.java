@@ -2,7 +2,6 @@ package org.opentrafficsim.core.geometry;
 
 import java.awt.geom.Point2D;
 import java.io.Serializable;
-import java.rmi.RemoteException;
 
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
@@ -181,17 +180,17 @@ public class OTSPoint3D implements LocatableInterface, Serializable, OTS_SCALAR
 
     /** {@inheritDoc} */
     @Override
-    public final DirectedPoint getLocation() throws RemoteException
+    public final DirectedPoint getLocation() 
     {
         return getDirectedPoint();
     }
 
     /**
-     * @return a sphere with a diameter of half a meter as the default bounds for a point.
-     * @throws RemoteException in case the location cannot be retrieved
+     * This method returns a sphere with a diameter of half a meter as the default bounds for a point.
+     * {@inheritDoc}
      */
     @Override
-    public final Bounds getBounds() throws RemoteException
+    public final Bounds getBounds() 
     {
         return new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 0.5);
     }

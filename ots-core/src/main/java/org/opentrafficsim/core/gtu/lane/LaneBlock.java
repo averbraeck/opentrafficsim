@@ -105,12 +105,10 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
      * @param animationClass Class&lt;? extends Renderable2D&gt;; the class for animation or null if no animation
      * @throws GTUException when GTU cannot be created.
      * @throws NamingException if an error occurs when adding the animation handler
-     * @throws RemoteException when the simulator cannot be reached
      * @throws NetworkException when the GTU cannot be placed on the given lane
      */
     public LaneBlock(final Lane lane, final Length.Rel position, final OTSDEVSSimulatorInterface simulator,
-        final Class<? extends Renderable2D> animationClass) throws GTUException, RemoteException, NetworkException,
-        NamingException
+        final Class<? extends Renderable2D> animationClass) throws GTUException, NetworkException, NamingException
     {
         super(UUID.randomUUID().toString(), BLOCK_GTU, new CompleteRouteNavigator(new CompleteRoute("")));
         this.simulator = simulator;
@@ -121,12 +119,18 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
         lane.addGTU(this, position);
 
         // animation
-        new DefaultBlockAnimation(this, this.simulator);
-        if (simulator instanceof OTSAnimatorInterface && animationClass != null)
+        try
         {
-            // TODO use animationClass
+            new DefaultBlockAnimation(this, this.simulator);
+            if (simulator instanceof OTSAnimatorInterface && animationClass != null)
+            {
+                // TODO use animationClass
+            }
         }
-
+        catch (RemoteException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     /**
@@ -181,7 +185,7 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public final Speed.Abs getVelocity() throws RemoteException
+    public final Speed.Abs getVelocity()
     {
         return SPEED_ABS_0;
     }
@@ -202,14 +206,14 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration.Abs getAcceleration() throws RemoteException
+    public final Acceleration.Abs getAcceleration()
     {
         return ACCELERATION_ABS_0;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DirectedPoint getLocation() throws RemoteException
+    public final DirectedPoint getLocation()
     {
         if (this.location == null)
         {
@@ -229,27 +233,27 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds getBounds() throws RemoteException
+    public final Bounds getBounds()
     {
         if (this.bounds == null)
         {
             this.bounds =
-                new BoundingBox(new Point3d(-0.4, -this.lane.getWidth(0.0).getSI() * 0.4, 0.0), new Point3d(0.4, this.lane
-                    .getWidth(0.0).getSI() * 0.4, this.lane.getLocation().z + 0.01));
+                new BoundingBox(new Point3d(-0.4, -this.lane.getWidth(0.0).getSI() * 0.4, 0.0), new Point3d(0.4,
+                    this.lane.getWidth(0.0).getSI() * 0.4, this.lane.getLocation().z + 0.01));
         }
         return this.bounds;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Length.Abs getOdometer() throws RemoteException
+    public final Length.Abs getOdometer()
     {
         return LENGTH_ABS_0;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Speed.Abs getLongitudinalVelocity() throws RemoteException
+    public final Speed.Abs getLongitudinalVelocity()
     {
         return SPEED_ABS_0;
     }
@@ -305,8 +309,7 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public final Map<Lane, Length.Rel> positions(final RelativePosition relativePosition) throws NetworkException,
-        RemoteException
+    public final Map<Lane, Length.Rel> positions(final RelativePosition relativePosition) throws NetworkException
     {
         Map<Lane, Length.Rel> map = new HashMap<Lane, Length.Rel>();
         map.put(this.lane, this.position);
@@ -316,15 +319,14 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
     /** {@inheritDoc} */
     @Override
     public final Map<Lane, Length.Rel> positions(final RelativePosition relativePosition, final Time.Abs when)
-        throws NetworkException, RemoteException
+        throws NetworkException
     {
         return positions(relativePosition);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Length.Rel position(final Lane lane, final RelativePosition relativePosition) throws NetworkException,
-        RemoteException
+    public final Length.Rel position(final Lane lane, final RelativePosition relativePosition) throws NetworkException
     {
         if (this.lane.equals(lane))
         {
@@ -336,15 +338,14 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
     /** {@inheritDoc} */
     @Override
     public final Length.Rel position(final Lane lane, final RelativePosition relativePosition, final Time.Abs when)
-        throws NetworkException, RemoteException
+        throws NetworkException
     {
         return position(lane, relativePosition);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition) throws NetworkException,
-        RemoteException
+    public final Map<Lane, Double> fractionalPositions(final RelativePosition relativePosition) throws NetworkException
     {
         Map<Lane, Double> map = new HashMap<Lane, Double>();
         map.put(this.lane, this.position.getSI() / this.lane.getLength().getSI());
@@ -353,8 +354,8 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public Map<Lane, Double> fractionalPositions(RelativePosition relativePosition, Time.Abs when) throws NetworkException,
-        RemoteException
+    public Map<Lane, Double> fractionalPositions(RelativePosition relativePosition, Time.Abs when)
+        throws NetworkException
     {
         Map<Lane, Double> result = new HashMap<Lane, Double>();
         result.put(this.lane, this.position.getSI() / this.lane.getLength().getSI());
@@ -363,15 +364,15 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public double fractionalPosition(Lane lane, RelativePosition relativePosition, Time.Abs when) throws NetworkException,
-        RemoteException
+    public double fractionalPosition(Lane lane, RelativePosition relativePosition, Time.Abs when)
+        throws NetworkException
     {
         return this.position.getSI() / lane.getLength().getSI();
     }
 
     /** {@inheritDoc} */
     @Override
-    public double fractionalPosition(Lane lane, RelativePosition relativePosition) throws NetworkException, RemoteException
+    public double fractionalPosition(Lane lane, RelativePosition relativePosition) throws NetworkException
     {
         return this.position.getSI() / lane.getLength().getSI();
     }
@@ -379,36 +380,35 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
     /** {@inheritDoc} */
     @Override
     public Length.Rel projectedPosition(Lane projectionLane, RelativePosition relativePosition, Time.Abs when)
-        throws NetworkException, RemoteException
+        throws NetworkException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public HeadwayGTU headway(Length.Rel maxDistance) throws RemoteException, NetworkException
+    public HeadwayGTU headway(Length.Rel maxDistance) throws NetworkException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public HeadwayGTU headway(Lane lane, Length.Rel maxDistance) throws RemoteException, NetworkException
+    public HeadwayGTU headway(Lane lane, Length.Rel maxDistance) throws NetworkException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Set<LaneBasedGTU> parallel(Lane lane, Time.Abs when) throws RemoteException, NetworkException
+    public Set<LaneBasedGTU> parallel(Lane lane, Time.Abs when) throws NetworkException
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Set<LaneBasedGTU> parallel(LateralDirectionality lateralDirection, Time.Abs when) throws RemoteException,
-        NetworkException
+    public Set<LaneBasedGTU> parallel(LateralDirectionality lateralDirection, Time.Abs when) throws NetworkException
     {
         return null;
     }

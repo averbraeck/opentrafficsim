@@ -2,7 +2,6 @@ package org.opentrafficsim.core.car;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.rmi.RemoteException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -54,7 +53,6 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the car on the lane
      * @param routeNavigator Route of the GTU
      * @throws NamingException if an error occurs when adding the animation handler.
-     * @throws RemoteException when the simulator cannot be reached.
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
      * @throws GTUException when gtuFollowingModel is null
@@ -62,7 +60,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
     public LaneBasedTemplateCar(final String id, final TemplateGTUType templateGtuType,
         final GTUFollowingModel gtuFollowingModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
         final Speed.Abs initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator) throws NamingException,
-        RemoteException, NetworkException, SimRuntimeException, GTUException
+        NetworkException, SimRuntimeException, GTUException
     {
         this(id, templateGtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, routeNavigator,
             DefaultCarAnimation.class);
@@ -78,7 +76,6 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      * @param routeNavigator Route; the route of the new car
      * @param animationClass Class&lt;? extends Renderable2D&gt;; the class for animation or null if no animation.
      * @throws NamingException if an error occurs when adding the animation handler.
-     * @throws RemoteException when the simulator cannot be reached.
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
      * @throws GTUException when gtuFollowingModel is null
@@ -86,7 +83,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
     public LaneBasedTemplateCar(final String id, final TemplateGTUType templateGtuType,
         final GTUFollowingModel gtuFollowingModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
         final Speed.Abs initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator,
-        final Class<? extends Renderable2D> animationClass) throws NamingException, RemoteException, NetworkException,
+        final Class<? extends Renderable2D> animationClass) throws NamingException, NetworkException,
         SimRuntimeException, GTUException
     {
         super(id, templateGtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, routeNavigator);
@@ -96,8 +93,10 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
         // of the Car away from the reference point in the positive (driving) X-direction.
         Length.Rel zero = new Length.Rel(0.0d, METER);
         Length.Rel dx = new Length.Rel(getLength().getSI(), METER);
-        this.relativePositions.put(RelativePosition.FRONT, new RelativePosition(dx, zero, zero, RelativePosition.FRONT));
-        this.relativePositions.put(RelativePosition.REAR, new RelativePosition(zero, zero, zero, RelativePosition.REAR));
+        this.relativePositions
+            .put(RelativePosition.FRONT, new RelativePosition(dx, zero, zero, RelativePosition.FRONT));
+        this.relativePositions
+            .put(RelativePosition.REAR, new RelativePosition(zero, zero, zero, RelativePosition.REAR));
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
 
         // animation
@@ -169,7 +168,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
             Lane frontLane = frontPositions.keySet().iterator().next();
             return String.format("Car %s front:%s[%s]", getId(), frontLane, frontPositions.get(frontLane));
         }
-        catch (RemoteException | NetworkException exception)
+        catch (NetworkException exception)
         {
             exception.printStackTrace();
         }
@@ -270,7 +269,8 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
          * @param routeNavigator RouteNavigator; the route
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedTemplateCarBuilder setRouteNavigator(final CompleteLaneBasedRouteNavigator routeNavigator)
+        public final LaneBasedTemplateCarBuilder
+            setRouteNavigator(final CompleteLaneBasedRouteNavigator routeNavigator)
         {
             this.routeNavigator = routeNavigator;
             return this;
@@ -289,13 +289,12 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
         /**
          * @return the built Car with the set properties
          * @throws NamingException if an error occurs when adding the animation handler
-         * @throws RemoteException when the simulator cannot be reached
          * @throws NetworkException when the GTU cannot be placed on the given lane
          * @throws SimRuntimeException when the move method cannot be scheduled
          * @throws GTUException when gtuFollowingModel is null
          */
-        public final LaneBasedTemplateCar build() throws RemoteException, NamingException, NetworkException,
-            SimRuntimeException, GTUException
+        public final LaneBasedTemplateCar build() throws NamingException, NetworkException, SimRuntimeException,
+            GTUException
         {
             // TODO check that none of the variables (except animationClass) is null, and throw an exception if it is.
 

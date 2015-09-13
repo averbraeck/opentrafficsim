@@ -1,10 +1,12 @@
 package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.Map;
 
+import javax.media.j3d.Bounds;
+
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -51,11 +53,8 @@ public interface GTU extends LocatableInterface, Serializable, OTS_SCALAR
     /** @return the rear position of the GTU, relative to its reference point. */
     RelativePosition getRear();
 
-    /**
-     * @return the current velocity of the GTU, combining longitudinal, lateral and vertical speed components.
-     * @throws RemoteException on communications failure
-     */
-    Speed.Abs getVelocity() throws RemoteException;
+    /** @return the current velocity of the GTU, combining longitudinal, lateral and vertical speed components. */
+    Speed.Abs getVelocity();
 
     /** @return the positions for this GTU. */
     Map<RelativePosition.TYPE, RelativePosition> getRelativePositions();
@@ -63,17 +62,18 @@ public interface GTU extends LocatableInterface, Serializable, OTS_SCALAR
     /** destroy the vehicle from the simulation and animation. */
     void destroy();
 
-    /**
-     * @return the current acceleration of the GTU, combining longitudinal, lateral and vertical acceleration components.
-     * @throws RemoteException on communications failure
-     */
-    Acceleration.Abs getAcceleration() throws RemoteException;
+    /** @return the current acceleration of the GTU, combining longitudinal, lateral and vertical acceleration components. */
+    Acceleration.Abs getAcceleration();
 
-    /**
-     * Retrieve the odometer value.
-     * @return DoubleScalar.Abs&lt;LengthUnit&gt;; the current odometer value
-     * @throws RemoteException on communications failure
-     */
-    Length.Abs getOdometer() throws RemoteException;
+    /** @return Length.Abs; the current odometer value. */
+    Length.Abs getOdometer();
+    
+    /** {@inheritDoc} */
+    @Override
+    DirectedPoint getLocation();
+    
+    /** {@inheritDoc} */
+    @Override
+    Bounds getBounds();
 
 }

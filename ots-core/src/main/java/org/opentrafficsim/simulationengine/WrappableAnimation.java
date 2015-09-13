@@ -1,7 +1,6 @@
 package org.opentrafficsim.simulationengine;
 
 import java.awt.Rectangle;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.naming.NamingException;
@@ -35,25 +34,23 @@ public interface WrappableAnimation
      * @param rect the x, y, width and height for the window to rebuild. Use null for maximized screen.
      * @param exitOnClose Use EXIT_ON_CLOSE when true, DISPOSE_ON_CLOSE when false on closing of the window.
      * @return SimpleSimulation; the new simulation
-     * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
      * @throws NetworkException on Network inconsistency
      * @throws NamingException when context for the animation cannot be created
      */
     SimpleSimulatorInterface buildAnimator(final Time.Abs startTime, final Time.Rel warmupPeriod, final Time.Rel runLength,
         ArrayList<AbstractProperty<?>> properties, Rectangle rect, boolean exitOnClose) throws SimRuntimeException,
-        RemoteException, NetworkException, NamingException;
+        NetworkException, NamingException;
 
     /**
      * Restart (rebuild) the simulation.
      * @param rect the x, y, width and height for the window to rebuild. Use null for maximized screen.
      * @return SimpleSimulation; the new simulation
-     * @throws RemoteException on communications failure
      * @throws SimRuntimeException on ???
      * @throws NetworkException on Network inconsistency
      * @throws NamingException when context for the animation cannot be created
      */
-    SimpleSimulatorInterface rebuildSimulator(Rectangle rect) throws SimRuntimeException, RemoteException, NetworkException,
+    SimpleSimulatorInterface rebuildSimulator(Rectangle rect) throws SimRuntimeException, NetworkException,
         NamingException;
 
     /**

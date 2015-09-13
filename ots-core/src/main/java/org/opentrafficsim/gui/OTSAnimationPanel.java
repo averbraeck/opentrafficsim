@@ -49,7 +49,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel
      * @param simulator the simulator or animator of the model.
      * @param wrappableAnimation the builder and rebuilder of the simulation, based on properties.
      * @param gtuColorer the colorer to use for the GTUs.
-     * @throws RemoteException when notification to the animation panel fails.
+     * @throws RemoteException when notification of the animation panel fails
      */
     public OTSAnimationPanel(final Rectangle2D extent, final Dimension size, final SimpleAnimator simulator,
         final WrappableAnimation wrappableAnimation, final GTUColorer gtuColorer) throws RemoteException

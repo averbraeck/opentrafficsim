@@ -4,7 +4,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.naming.NamingException;
@@ -45,9 +44,8 @@ public class TestXMLParser extends AbstractWrappableAnimation
      * Main program.
      * @param args String[]; the command line arguments (not used)
      * @throws SimRuntimeException should never happen
-     * @throws RemoteException on communications failure
      */
-    public static void main(final String[] args) throws RemoteException, SimRuntimeException
+    public static void main(final String[] args) throws SimRuntimeException
     {
         SwingUtilities.invokeLater(new Runnable()
         {
@@ -61,7 +59,7 @@ public class TestXMLParser extends AbstractWrappableAnimation
                     xmlModel.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND),
                         new Time.Rel(60.0, MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
                 }
-                catch (RemoteException | SimRuntimeException | NamingException exception)
+                catch (SimRuntimeException | NamingException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -135,7 +133,7 @@ public class TestXMLParser extends AbstractWrappableAnimation
         @Override
         public final void constructModel(
             final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
-            throws SimRuntimeException, RemoteException
+            throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
             // URL url = URLResource.getResource("/PNH1.xml");
@@ -157,7 +155,7 @@ public class TestXMLParser extends AbstractWrappableAnimation
         /** {@inheritDoc} */
         @Override
         public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-            throws RemoteException
+            
         {
             return this.simulator;
         }

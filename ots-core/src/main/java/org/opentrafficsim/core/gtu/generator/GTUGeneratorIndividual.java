@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.gtu.generator;
 
-import java.rmi.RemoteException;
-
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.unit.LengthUnit;
@@ -60,7 +58,6 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
      * @param routeGenerator RouteGenerator; the route generator that will create a route for each newly constructed GTU
      * @param gtuColorer the GTUColorer to use
      * @throws SimRuntimeException when simulation scheduling fails
-     * @throws RemoteException when remote simulator cannot be reached
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public GTUGeneratorIndividual(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
@@ -71,7 +68,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
         final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> widthDist,
         final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> maximumSpeedDist, final long maxGTUs, final Time.Abs startTime,
         final Time.Abs endTime, final Lane lane, final Length.Rel position, final LaneBasedRouteGenerator routeGenerator,
-        final GTUColorer gtuColorer) throws RemoteException, SimRuntimeException
+        final GTUColorer gtuColorer) throws SimRuntimeException
     {
         super(name, simulator, gtuType, gtuClass, gtuFollowingModel, laneChangeModel, initialSpeedDist,
             interarrivelTimeDist, maxGTUs, startTime, endTime, lane, position, routeGenerator, gtuColorer);

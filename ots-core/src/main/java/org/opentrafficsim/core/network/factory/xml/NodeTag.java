@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.network.factory.xml;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,7 +88,7 @@ class NodeTag implements OTS_SCALAR
                 {
                     makeOTSNode(nodeTag, parser);
                 }
-                catch (RemoteException | NamingException exception)
+                catch (NamingException exception)
                 {
                     throw new NetworkException(exception);
                 }
@@ -128,10 +127,9 @@ class NodeTag implements OTS_SCALAR
      * @return a constructed node
      * @throws NetworkException when point cannot be instantiated
      * @throws NamingException when animation context cannot be found.
-     * @throws RemoteException when communication error occurs when trying to find animation context.
      */
     static org.opentrafficsim.core.network.Node makeOTSNode(final NodeTag nodeTag, final XmlNetworkLaneParser parser)
-        throws NetworkException, RemoteException, NamingException
+        throws NetworkException, NamingException
     {
         String id = nodeTag.name;
         AnglePlane.Abs angle = nodeTag.angle == null ? new AnglePlane.Abs(0.0, AnglePlaneUnit.SI) : nodeTag.angle;

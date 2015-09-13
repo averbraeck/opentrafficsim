@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Line2D;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -330,7 +329,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     private ArrayList<Trajectory> trajectoryIndices = new ArrayList<Trajectory>();
 
     /** {@inheritDoc} */
-    public final void addData(final AbstractLaneBasedGTU car, final Lane lane) throws NetworkException, RemoteException
+    public final void addData(final AbstractLaneBasedGTU car, final Lane lane) throws NetworkException
     {
         // final Time.Abs startTime = car.getLastEvaluationTime();
         // System.out.println("addData car: " + car + ", lastEval: " + startTime);
@@ -461,10 +460,9 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
          * @param positionOffset double; offset needed to convert the position in the current Lane to a position on the
          *            trajectory
          * @throws NetworkException when car is not on lane anymore
-         * @throws RemoteException when communication fails
          */
         public final void addSegment(final AbstractLaneBasedGTU car, final Lane lane, final double positionOffset)
-            throws NetworkException, RemoteException
+            throws NetworkException
         {
             final int startSample = (int) Math.ceil(car.getLastEvaluationTime().getSI() / getSampleInterval().getSI());
             final int endSample = (int) (Math.ceil(car.getNextEvaluationTime().getSI() / getSampleInterval().getSI()));

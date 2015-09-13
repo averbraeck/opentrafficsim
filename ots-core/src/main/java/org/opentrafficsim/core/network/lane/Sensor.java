@@ -1,9 +1,11 @@
 package org.opentrafficsim.core.network.lane;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
+
+import javax.media.j3d.Bounds;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -37,11 +39,18 @@ public interface Sensor extends Serializable, Comparable<Sensor>, LocatableInter
      * Trigger an action on the GTU. Normally this is the GTU that triggered the sensor. The typical call therefore is
      * <code>sensor.trigger(this);</code>.
      * @param gtu the GTU for which to carry out the trigger action.
-     * @throws RemoteException on communications failure
-     */
-    void trigger(LaneBasedGTU gtu) throws RemoteException;
+    */
+    void trigger(LaneBasedGTU gtu);
 
     /** @return The name of the sensor. */
     String getName();
+    
+    /** {@inheritDoc} */
+    @Override
+    DirectedPoint getLocation();
+    
+    /** {@inheritDoc} */
+    @Override
+    Bounds getBounds();
 
 }

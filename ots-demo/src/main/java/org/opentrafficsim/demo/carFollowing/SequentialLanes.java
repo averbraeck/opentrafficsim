@@ -111,10 +111,9 @@ public class SequentialLanes extends AbstractWrappableAnimation
     /**
      * Main program.
      * @param args String[]; the command line arguments (not used)
-     * @throws RemoteException on communications failure
      * @throws SimRuntimeException when simulation cannot be created with given parameters
      */
-    public static void main(final String[] args) throws RemoteException, SimRuntimeException
+    public static void main(final String[] args) throws SimRuntimeException
     {
         SwingUtilities.invokeLater(new Runnable()
         {
@@ -151,7 +150,7 @@ public class SequentialLanes extends AbstractWrappableAnimation
                         SECOND), localProperties, null, true);
                     sequential.panel.getTabbedPane().addTab("info", sequential.makeInfoPane());
                 }
-                catch (RemoteException | SimRuntimeException | NamingException exception)
+                catch (SimRuntimeException | NamingException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -600,7 +599,7 @@ class SequentialModel implements OTSModelInterface, OTS_SCALAR
                     new CompleteRoute("")), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
-        catch (RemoteException | SimRuntimeException | NamingException | NetworkException | GTUException exception)
+        catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
             exception.printStackTrace();
         }

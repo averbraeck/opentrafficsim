@@ -3,7 +3,6 @@ package org.opentrafficsim.graphs;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
@@ -267,23 +266,16 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
      */
     public final void addData(final LaneBasedGTU gtu)
     {
-        try
+        Time.Abs detectionTime = gtu.getSimulator().getSimulatorTime().getTime();
+        // Figure out the time bin
+        final int timeBin = (int) Math.floor(detectionTime.getSI() / this.aggregationTime.getSI());
+        // Extend storage if needed
+        while (timeBin >= this.samples.size())
         {
-            Time.Abs detectionTime = gtu.getSimulator().getSimulatorTime().getTime();
-            // Figure out the time bin
-            final int timeBin = (int) Math.floor(detectionTime.getSI() / this.aggregationTime.getSI());
-            // Extend storage if needed
-            while (timeBin >= this.samples.size())
-            {
-                this.samples.add(new Sample());
-            }
-            Sample sample = this.samples.get(timeBin);
-            sample.addData(gtu.getLongitudinalVelocity(detectionTime));
+            this.samples.add(new Sample());
         }
-        catch (RemoteException exception)
-        {
-            exception.printStackTrace();
-        }
+        Sample sample = this.samples.get(timeBin);
+        sample.addData(gtu.getLongitudinalVelocity(detectionTime));
     }
 
     /**
@@ -602,14 +594,14 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         public FundamentalDiagramSensor(final Lane lane, final Length.Rel longitudinalPosition,
             final OTSDEVSSimulatorInterface simulator) throws NetworkException
         {
-            super(lane, longitudinalPosition, RelativePosition.REFERENCE, "FUNDAMENTAL_DIAGRAM_SENSOR@" + lane.toString(),
-                simulator);
+            super(lane, longitudinalPosition, RelativePosition.REFERENCE, "FUNDAMENTAL_DIAGRAM_SENSOR@"
+                + lane.toString(), simulator);
             lane.addSensor(this, GTUType.ALL);
         }
 
         /** {@inheritDoc} */
         @Override
-        public void trigger(final LaneBasedGTU gtu) throws RemoteException
+        public void trigger(final LaneBasedGTU gtu)
         {
             addData(gtu);
         }

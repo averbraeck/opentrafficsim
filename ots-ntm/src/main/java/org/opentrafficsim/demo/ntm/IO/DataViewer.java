@@ -90,7 +90,7 @@ public class DataViewer implements OTSModelInterface
     @Override
     public final void constructModel(
         final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> _simulator)
-        throws RemoteException, SimRuntimeException
+        throws SimRuntimeException
     {
         this.simulator = (OTSDEVSSimulatorInterface) _simulator;
         String startMap = "D:/gtamminga/My Documents/03 Case The Hague NTM/TNO data";
@@ -123,8 +123,15 @@ public class DataViewer implements OTSModelInterface
          * { exception.printStackTrace(); }
          */
 
-        this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this, "ntmFlowTimestep",
-            null);
+        try
+        {
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, TimeUnit.SECOND), this, this, "ntmFlowTimestep",
+                null);
+        }
+        catch (RemoteException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     /**

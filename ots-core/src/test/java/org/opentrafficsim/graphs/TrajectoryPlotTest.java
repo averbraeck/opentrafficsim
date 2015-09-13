@@ -2,8 +2,6 @@ package org.opentrafficsim.graphs;
 
 import static org.junit.Assert.assertEquals;
 
-import java.rmi.RemoteException;
-
 import org.junit.Test;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.car.LaneBasedIndividualCar;
@@ -169,10 +167,9 @@ public class TrajectoryPlotTest implements OTS_SCALAR
      * @param series Integer; the series in the TrajectoryPlot that should correspond to the car
      * @param tp TrajectoryPlot; the TrajectoryPlot that contains the samples
      * @throws NetworkException when car is not on lane anymore
-     * @throws RemoteException on communication failure
      */
     private void verifyTrajectory(final LaneBasedIndividualCar car, final int series, final TrajectoryPlot tp)
-        throws NetworkException, RemoteException
+        throws NetworkException
     {
         // XXX we take the first (and only) lane on which the vehicle is registered.
         Lane lane = car.positions(car.getFront()).keySet().iterator().next();

@@ -13,6 +13,7 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.djunits.unit.AnglePlaneUnit;
@@ -95,11 +96,10 @@ final class Links implements OTS_SCALAR
      * Find the nodes one by one that have one coordinate defined, and one not defined, and try to build the network from there.
      * @param parser the parser with the lists of information
      * @throws NetworkException when both nodes are null.
-     * @throws RemoteException when coordinate cannot be reached.
      * @throws NamingException when node animation cannot link to the animation context.
      */
     @SuppressWarnings("methodlength")
-    static void calculateNodeCoordinates(final XmlNetworkLaneParser parser) throws RemoteException, NetworkException,
+    static void calculateNodeCoordinates(final XmlNetworkLaneParser parser) throws NetworkException,
         NamingException
     {
         Set<LinkTag> links = new HashSet<>(parser.linkTags.values());
@@ -144,11 +144,10 @@ final class Links implements OTS_SCALAR
      * @param linkTag the parsed information from the XML file.
      * @param parser the parser with the lists of information
      * @throws NetworkException when both nodes are null.
-     * @throws RemoteException when coordinate cannot be reached.
      * @throws NamingException when node animation cannot link to the animation context.
      */
     @SuppressWarnings("checkstyle:methodlength")
-    static void calculateNodeCoordinates(final LinkTag linkTag, final XmlNetworkLaneParser parser) throws RemoteException,
+    static void calculateNodeCoordinates(final LinkTag linkTag, final XmlNetworkLaneParser parser) throws
         NetworkException, NamingException
     {
         // calculate dx, dy and dz for the straight or the arc.
@@ -323,12 +322,11 @@ final class Links implements OTS_SCALAR
      * @param parser the parser with the lists of information
      * @param simulator to be able to make the animation
      * @throws NetworkException when both nodes are null.
-     * @throws RemoteException when coordinate cannot be reached.
      * @throws NamingException when node animation cannot link to the animation context.
      */
     static void
         buildLink(final LinkTag linkTag, final XmlNetworkLaneParser parser, final OTSDEVSSimulatorInterface simulator)
-            throws RemoteException, NetworkException, NamingException
+            throws NetworkException, NamingException
     {
         int points = 2;
         if (linkTag.arcTag != null)
@@ -377,7 +375,6 @@ final class Links implements OTS_SCALAR
      * @param parser the parser with the lists of information
      * @param simulator to be able to make the animation
      * @throws NetworkException when the stripe cannot be instantiated
-     * @throws RemoteException when the (remote) animator cannot be reached to create the animation
      * @throws NamingException when the /animation/2D tree cannot be found in the context
      * @throws SAXException when the stripe type cannot be parsed correctly
      * @throws GTUException when lane block cannot be created
@@ -386,7 +383,7 @@ final class Links implements OTS_SCALAR
      */
     @SuppressWarnings({"checkstyle:needbraces", "checkstyle:methodlength"})
     static void applyRoadTypeToLink(final LinkTag linkTag, final XmlNetworkLaneParser parser,
-        final OTSDEVSSimulatorInterface simulator) throws NetworkException, RemoteException, NamingException, SAXException,
+        final OTSDEVSSimulatorInterface simulator) throws NetworkException, NamingException, SAXException,
         GTUException, OTSGeometryException, SimRuntimeException
     {
         CrossSectionLink csl = linkTag.link;
@@ -403,18 +400,32 @@ final class Links implements OTS_SCALAR
                         case DASHED:
                             Stripe dashedLine = new Stripe(csl, cseTag.offset, cseTag.width);
                             dashedLine.addPermeability(GTUType.ALL, Permeable.BOTH);
-                            if (simulator != null)
+                            if (simulator != null && simulator instanceof AnimatorInterface)
                             {
-                                new StripeAnimation(dashedLine, simulator, StripeAnimation.TYPE.DASHED);
+                                try
+                                {
+                                    new StripeAnimation(dashedLine, simulator, StripeAnimation.TYPE.DASHED);
+                                }
+                                catch (RemoteException exception)
+                                {
+                                    exception.printStackTrace();
+                                }
                             }
                             cseList.add(dashedLine);
                             break;
 
                         case DOUBLE:
                             Stripe doubleLine = new Stripe(csl, cseTag.offset, cseTag.width);
-                            if (simulator != null)
+                            if (simulator != null && simulator instanceof AnimatorInterface)
                             {
-                                new StripeAnimation(doubleLine, simulator, StripeAnimation.TYPE.DOUBLE);
+                                try
+                                {
+                                    new StripeAnimation(doubleLine, simulator, StripeAnimation.TYPE.DOUBLE);
+                                }
+                                catch (RemoteException exception)
+                                {
+                                    exception.printStackTrace();
+                                }
                             }
                             cseList.add(doubleLine);
                             break;
@@ -422,9 +433,16 @@ final class Links implements OTS_SCALAR
                         case LEFTONLY:
                             Stripe leftOnlyLine = new Stripe(csl, cseTag.offset, cseTag.width);
                             leftOnlyLine.addPermeability(GTUType.ALL, Permeable.LEFT); // TODO correct?
-                            if (simulator != null)
+                            if (simulator != null && simulator instanceof AnimatorInterface)
                             {
-                                new StripeAnimation(leftOnlyLine, simulator, StripeAnimation.TYPE.LEFTONLY);
+                                try
+                                {
+                                    new StripeAnimation(leftOnlyLine, simulator, StripeAnimation.TYPE.LEFTONLY);
+                                }
+                                catch (RemoteException exception)
+                                {
+                                    exception.printStackTrace();
+                                }
                             }
                             cseList.add(leftOnlyLine);
                             break;
@@ -432,18 +450,32 @@ final class Links implements OTS_SCALAR
                         case RIGHTONLY:
                             Stripe rightOnlyLine = new Stripe(csl, cseTag.offset, cseTag.width);
                             rightOnlyLine.addPermeability(GTUType.ALL, Permeable.RIGHT); // TODO correct?
-                            if (simulator != null)
+                            if (simulator != null && simulator instanceof AnimatorInterface)
                             {
-                                new StripeAnimation(rightOnlyLine, simulator, StripeAnimation.TYPE.RIGHTONLY);
+                                try
+                                {
+                                    new StripeAnimation(rightOnlyLine, simulator, StripeAnimation.TYPE.RIGHTONLY);
+                                }
+                                catch (RemoteException exception)
+                                {
+                                    exception.printStackTrace();
+                                }
                             }
                             cseList.add(rightOnlyLine);
                             break;
 
                         case SOLID:
                             Stripe solidLine = new Stripe(csl, cseTag.offset, cseTag.width);
-                            if (simulator != null)
+                            if (simulator != null && simulator instanceof AnimatorInterface)
                             {
-                                new StripeAnimation(solidLine, simulator, StripeAnimation.TYPE.SOLID);
+                                try
+                                {
+                                    new StripeAnimation(solidLine, simulator, StripeAnimation.TYPE.SOLID);
+                                }
+                                catch (RemoteException exception)
+                                {
+                                    exception.printStackTrace();
+                                }
                             }
                             cseList.add(solidLine);
                             break;
@@ -466,9 +498,16 @@ final class Links implements OTS_SCALAR
                     cseList.add(lane);
                     lanes.add(lane);
                     linkTag.lanes.put(cseTag.name, lane);
-                    if (simulator != null)
+                    if (simulator != null && simulator instanceof AnimatorInterface)
                     {
-                        new LaneAnimation(lane, simulator, cseTag.color);
+                        try
+                        {
+                            new LaneAnimation(lane, simulator, cseTag.color);
+                        }
+                        catch (RemoteException exception)
+                        {
+                            exception.printStackTrace();
+                        }
                     }
 
                     // SINK
@@ -567,9 +606,16 @@ final class Links implements OTS_SCALAR
                     Lane lane =
                         new NoTrafficLane(csl, cseTag.name, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width);
                     cseList.add(lane);
-                    if (simulator != null)
+                    if (simulator != null && simulator instanceof AnimatorInterface)
                     {
-                        new LaneAnimation(lane, simulator, cseTag.color);
+                        try
+                        {
+                            new LaneAnimation(lane, simulator, cseTag.color);
+                        }
+                        catch (RemoteException exception)
+                        {
+                            exception.printStackTrace();
+                        }
                     }
                     break;
                 }
@@ -579,9 +625,16 @@ final class Links implements OTS_SCALAR
                     // TODO Override
                     Shoulder shoulder = new Shoulder(csl, cseTag.name, cseTag.offset, cseTag.width, cseTag.width);
                     cseList.add(shoulder);
-                    if (simulator != null)
+                    if (simulator != null && simulator instanceof AnimatorInterface)
                     {
-                        new ShoulderAnimation(shoulder, simulator, cseTag.color);
+                        try
+                        {
+                            new ShoulderAnimation(shoulder, simulator, cseTag.color);
+                        }
+                        catch (RemoteException exception)
+                        {
+                            exception.printStackTrace();
+                        }
                     }
                     break;
                 }

@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu.following;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -99,9 +98,8 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
     /**
      * Find the FixedAccelerationModel that starts at the current simulator time.
      * @return FixedAccelerationModel; the FixedAccelerationModel that starts at the current simulator time
-     * @throws RemoteException on communications failure
      */
-    private FixedAccelerationModel getAccelerationModel() throws RemoteException
+    private FixedAccelerationModel getAccelerationModel()
     {
         Time.Abs when = this.simulator.getSimulatorTime().getTime();
         double remainingTime = when.getSI();
@@ -122,8 +120,9 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration.Abs computeAcceleration(final Speed.Abs followerSpeed, final Speed.Abs followerMaximumSpeed,
-        final Speed.Abs leaderSpeed, final Length.Rel headway, final Speed.Abs speedLimit) throws RemoteException
+    public final Acceleration.Abs computeAcceleration(final Speed.Abs followerSpeed,
+        final Speed.Abs followerMaximumSpeed, final Speed.Abs leaderSpeed, final Length.Rel headway,
+        final Speed.Abs speedLimit)
     {
         return getAccelerationModel().getAcceleration();
     }
@@ -137,7 +136,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final Time.Rel getStepSize() throws RemoteException
+    public final Time.Rel getStepSize()
     {
         return getAccelerationModel().getStepSize();
     }

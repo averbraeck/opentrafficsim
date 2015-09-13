@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 
 import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
@@ -138,7 +137,7 @@ public class OTSLink implements Link, Serializable, LocatableInterface
 
     /** {@inheritDoc} */
     @Override
-    public final DirectedPoint getLocation() throws RemoteException
+    public final DirectedPoint getLocation() 
     {
         // TODO maybe do without transformation to a LineString and cache the centroid?
         Point c = this.designLine.getLineString().getCentroid();
@@ -147,7 +146,7 @@ public class OTSLink implements Link, Serializable, LocatableInterface
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds getBounds() throws RemoteException
+    public final Bounds getBounds() 
     {
         // TODO maybe do without transformation to a LineString and cache the envelope / bounds?
         DirectedPoint c = getLocation();
