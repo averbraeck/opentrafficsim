@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" 
-  elementFormDefault="qualified">
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" elementFormDefault="qualified">
 
   <!-- ================================================================================================== -->
   <!-- ================================================= TYPES ========================================== -->
@@ -88,6 +87,27 @@
   <xsd:simpleType name="TIMECOSTTYPE">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\d+[\.]{0,1}\d*\s*\/\s*(ms|s|m|min|h|hr|d|day|wk|week)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="LANEKEEPINGTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="KEEPLEFT|KEEPRIGHT|KEEPLANE"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="OVERTAKINGTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern
+        value="LEFTONLY|RIGHTONLY|NONE|BOTH|(\
+{0})LEFTALWAYS\s+RIGHTSPEED\(\d+[\.]{0,1}\d*\s*(km/h|m/s|mi/h|y/s|ft/s)\)|(\
+{0})RIGHTALWAYS\s+LEFTSPEED\(\d+[\.]{0,1}\d*\s*(km/h|m/s|mi/h|y/s|ft/s)\)|(\
+{0})LEFTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)|(\
+{0})LEFTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)(\
+{0})\s*RIGHTSPEED\(\d+[\.]{0,1}\d*\s*(km/h|m/s|mi/h|y/s|ft/s)\)|(\
+{0})RIGHTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)|(\
+{0})RIGHTSET\(\s*\[\s*[A-Za-z_0-9$]+(\s*,\s*[A-Za-z_0-9$]+)*\s*\]\s*OVERTAKE\s*\[\s*[A-Za-z_0-9$]+(\s+[A-Za-z_0-9$]+)*\s*\]\s*\)(\
+{0})\s*LEFTSPEED\(\d+[\.]{0,1}\d*\s*(km/h|m/s|mi/h|y/s|ft/s)\)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
