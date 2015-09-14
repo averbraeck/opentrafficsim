@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots"
-  xmlns:xi="http://www.w3.org/2001/XInclude" elementFormDefault="qualified">
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
+  elementFormDefault="qualified">
 
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2009/01/xml.xsd" />
   <xsd:import namespace="http://www.w3.org/2001/XInclude" schemaLocation="http://www.w3.org/2001/xinclude.xsd" />
@@ -35,6 +35,8 @@
       </xsd:sequence>
       <xsd:attribute name="DEFAULTMAXSPEED" type="SPEEDTYPE" use="required"></xsd:attribute>
       <xsd:attribute name="DEFAULTLANEWIDTH" type="LENGTHTYPE" use="required"></xsd:attribute>
+      <xsd:attribute name="DEFAULTLANEKEEPING" type="LANEKEEPINGTYPE" use="required"></xsd:attribute>
+      <xsd:attribute name="DEFAULTOVERTAKING" type="OVERTAKINGTYPE" use="required"></xsd:attribute>
       <xsd:attribute ref="xml:base"></xsd:attribute>
     </xsd:complexType>
   </xsd:element>
@@ -103,6 +105,7 @@
               <xsd:attribute name="SPEED" type="SPEEDTYPE" use="optional"></xsd:attribute>
               <xsd:attribute name="DIRECTION" type="DIRECTIONTYPE" use="required"></xsd:attribute>
               <xsd:attribute name="COLOR" type="COLORTYPE" use="optional"></xsd:attribute>
+              <xsd:attribute name="OVERTAKING" type="OVERTAKINGTYPE" use="optional"></xsd:attribute>
             </xsd:complexType>
           </xsd:element>
 
@@ -139,6 +142,8 @@
       <xsd:attribute name="NAME" type="xsd:ID" use="required"></xsd:attribute>
       <xsd:attribute name="WIDTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
       <xsd:attribute name="SPEED" type="SPEEDTYPE" use="optional"></xsd:attribute>
+      <xsd:attribute name="LANEKEEPING" type="LANEKEEPINGTYPE" use="optional"></xsd:attribute>
+      <xsd:attribute name="OVERTAKING" type="OVERTAKINGTYPE" use="optional"></xsd:attribute>
       <xsd:attribute ref="xml:base"></xsd:attribute>
     </xsd:complexType>
   </xsd:element>

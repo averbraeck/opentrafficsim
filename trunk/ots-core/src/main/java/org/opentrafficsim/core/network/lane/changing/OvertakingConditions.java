@@ -233,7 +233,7 @@ public interface OvertakingConditions
          * SCOOTER}, or {CAR, TRUCK, BUS} can overtake {TRACTOR}.
          * @param overtakingGTUs the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK. If overtakingGTUs contains
          *            GTUType.ALL, all GTUs can overtake.
-         * @param overtakenGTUs the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER. If overtakwnGTUs contains GTUType.ALL,
+         * @param overtakenGTUs the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER. If overtakenGTUs contains GTUType.ALL,
          *            all GTUs can be overtaken.
          */
         public LeftSet(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs)
@@ -286,7 +286,7 @@ public interface OvertakingConditions
          * SCOOTER}, or {CAR, TRUCK, BUS} can overtake {TRACTOR}.
          * @param overtakingGTUs the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK. If overtakingGTUs contains
          *            GTUType.ALL, all GTUs can overtake.
-         * @param overtakenGTUs the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER. If overtakwnGTUs contains GTUType.ALL,
+         * @param overtakenGTUs the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER. If overtakenGTUs contains GTUType.ALL,
          *            all GTUs can be overtaken.
          */
         public RightSet(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs)
@@ -343,7 +343,7 @@ public interface OvertakingConditions
          * given driving speed.
          * @param overtakingGTUs the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK. If overtakingGTUs contains
          *            GTUType.ALL, all GTUs can overtake.
-         * @param overtakenGTUs the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER. If overtakwnGTUs contains GTUType.ALL,
+         * @param overtakenGTUs the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER. If overtakenGTUs contains GTUType.ALL,
          *            all GTUs can be overtaken.
          * @param rightOvertakingSpeedMax the speed under which overtaking on the "wrong" side is allowed
          */
@@ -406,7 +406,7 @@ public interface OvertakingConditions
          * given driving speed.
          * @param overtakingGTUs the GTUs that can overtake a set of other GTUs, e.g., CAR, TRUCK. If overtakingGTUs contains
          *            GTUType.ALL, all GTUs can overtake.
-         * @param overtakenGTUs the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER. If overtakwnGTUs contains GTUType.ALL,
+         * @param overtakenGTUs the GTUs that can be overtaken, e.g., BICYCLE, SCOOTER. If overtakenGTUs contains GTUType.ALL,
          *            all GTUs can be overtaken.
          * @param leftOvertakingSpeedMax the speed under which overtaking on the "wrong" side is allowed
          */
