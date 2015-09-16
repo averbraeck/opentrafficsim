@@ -5,6 +5,7 @@ import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -46,7 +47,7 @@ import org.opentrafficsim.core.network.lane.SinkSensor;
 import org.opentrafficsim.core.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.graphs.FundamentalDiagram;
+import org.opentrafficsim.graphs.FundamentalDiagramLane;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionProperty;
@@ -59,17 +60,17 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, by $Author$,
+ * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
  * initial version 17 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FundamentalDiagrams extends AbstractWrappableAnimation
+public class FundamentalDiagramsLane extends AbstractWrappableAnimation
 {
     /** the model. */
-    private FundamentalDiagramPlotsModel model;
+    private FundamentalDiagramLanePlotsModel model;
 
     /** Create a FundamentalDiagrams simulation. */
-    public FundamentalDiagrams()
+    public FundamentalDiagramsLane()
     {
         try
         {
@@ -112,9 +113,9 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation
             {
                 try
                 {
-                    FundamentalDiagrams fundamentalDiagrams = new FundamentalDiagrams();
-                    fundamentalDiagrams.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND),
-                        new Time.Rel(3600.0, SECOND), fundamentalDiagrams.getProperties(), null, true);
+                    FundamentalDiagramsLane fundamentalDiagramsLane = new FundamentalDiagramsLane();
+                    fundamentalDiagramsLane.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND),
+                        new Time.Rel(3600.0, SECOND), fundamentalDiagramsLane.getProperties(), null, true);
                 }
                 catch (SimRuntimeException | NamingException exception)
                 {
@@ -128,7 +129,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation
     @Override
     protected final OTSModelInterface makeModel(final GTUColorer colorer)
     {
-        this.model = new FundamentalDiagramPlotsModel(this.savedUserModifiedProperties, colorer);
+        this.model = new FundamentalDiagramLanePlotsModel(this.savedUserModifiedProperties, colorer);
         return this.model;
     }
 
@@ -144,22 +145,24 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation
     protected final JPanel makeCharts()
     {
         final int panelsPerRow = 3;
-        TablePanel charts = new TablePanel(4, panelsPerRow);
-        for (int plotNumber = 0; plotNumber < 10; plotNumber++)
+        TablePanel charts = new TablePanel(3, panelsPerRow);
+        for (int plotNumber = 0; plotNumber < 9; plotNumber++)
         {
-            Length.Rel detectorLocation = new Length.Rel(400 + 500 * plotNumber, METER);
-            FundamentalDiagram fd;
+            FundamentalDiagramLane fd;
             try
             {
+                Lane lane = this.model.getLane(plotNumber);
+                int xs = (int) lane.getParentLink().getStartNode().getPoint().x;
+                int xe = (int) lane.getParentLink().getEndNode().getPoint().x;
                 fd =
-                    new FundamentalDiagram("Fundamental Diagram at " + detectorLocation.getSI() + "m", new Time.Rel(1,
-                        MINUTE), this.model.getLane(), detectorLocation);
-                fd.setTitle("Density Contour Graph");
+                    new FundamentalDiagramLane("Fundamental Diagram for [" + xs + ", " + xe + "] m", new Time.Rel(1.0,
+                        SECOND), lane, (OTSDEVSSimulatorInterface) this.model.getSimulator());
+                fd.setTitle("Fundamental Diagram Graph");
                 fd.setExtendedState(Frame.MAXIMIZED_BOTH);
                 this.model.getFundamentalDiagrams().add(fd);
                 charts.setCell(fd.getContentPane(), plotNumber / panelsPerRow, plotNumber % panelsPerRow);
             }
-            catch (NetworkException exception)
+            catch (NetworkException | RemoteException | SimRuntimeException exception)
             {
                 exception.printStackTrace();
             }
@@ -196,11 +199,11 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation
      * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
-     * $LastChangedDate$, @version $Revision$, by $Author$,
+     * $LastChangedDate: 2015-09-14 01:33:02 +0200 (Mon, 14 Sep 2015) $, @version $Revision: 1401 $, by $Author: averbraeck $,
      * initial version ug 1, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class FundamentalDiagramPlotsModel implements OTSModelInterface, OTS_SCALAR
+    class FundamentalDiagramLanePlotsModel implements OTSModelInterface, OTS_SCALAR
     {
         /** */
         private static final long serialVersionUID = 20140820L;
@@ -232,20 +235,20 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation
         /** The blocking car. */
         private LaneBasedIndividualCar block = null;
 
-        /** minimum distance. */
-        private Length.Rel minimumDistance = new Length.Rel(0, METER);
+        /** starting x-position. */
+        private Length.Rel startX = new Length.Rel(0, METER);
 
-        /** maximum distance. */
-        private Length.Rel maximumDistance = new Length.Rel(5000, METER);
+        /** length per lane. */
+        private Length.Rel laneLength = new Length.Rel(500, METER);
 
-        /** The Lane containing the simulated Cars. */
-        private Lane lane;
+        /** The Lanes containing the simulated Cars. */
+        private List<Lane> lanes = new ArrayList<>();
 
         /** the speed limit. */
         private Speed.Abs speedLimit = new Speed.Abs(100, KM_PER_HOUR);
 
         /** the fundamental diagram plots. */
-        private ArrayList<FundamentalDiagram> fundamentalDiagrams = new ArrayList<FundamentalDiagram>();
+        private ArrayList<FundamentalDiagramLane> fundamentalDiagramsLane = new ArrayList<>();
 
         /** User settable properties. */
         private ArrayList<AbstractProperty<?>> properties = null;
@@ -260,7 +263,8 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation
          * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the properties
          * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
          */
-        public FundamentalDiagramPlotsModel(final ArrayList<AbstractProperty<?>> properties, final GTUColorer gtuColorer)
+        public FundamentalDiagramLanePlotsModel(final ArrayList<AbstractProperty<?>> properties,
+            final GTUColorer gtuColorer)
         {
             this.properties = properties;
             this.gtuColorer = gtuColorer;
@@ -275,20 +279,30 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation
                 throws SimRuntimeException, RemoteException
         {
             this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
-            OTSNode from = new OTSNode("From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0));
-            OTSNode to = new OTSNode("To", new OTSPoint3D(getMaximumDistance().getSI(), 0, 0));
-            OTSNode end = new OTSNode("End", new OTSPoint3D(getMaximumDistance().getSI() + 50.0, 0, 0));
-            LaneType laneType = new LaneType("CarLane");
-            laneType.addCompatibility(this.gtuType);
             try
             {
-                this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.speedLimit, this.simulator);
-                CrossSectionLink endLink = LaneFactory.makeLink("endLink", to, end, null);
-                // No overtaking, single lane
+                LaneType laneType = new LaneType("CarLane");
+                laneType.addCompatibility(this.gtuType);
+                OTSNode node = new OTSNode("Node 0", new OTSPoint3D(this.startX.getSI(), 0, 0));
+                for (int laneNr = 0; laneNr < 10; laneNr++)
+                {
+                    OTSNode next =
+                        new OTSNode("Node " + (laneNr + 1),
+                            new OTSPoint3D(node.getPoint().x + this.laneLength.si, 0, 0));
+                    Lane lane =
+                        LaneFactory.makeLane("Lane", node, next, null, laneType, this.speedLimit, this.simulator);
+                    this.lanes.add(lane);
+                    node = next;
+                }
+                // create SinkLane
+                OTSNode end = new OTSNode("End", new OTSPoint3D(node.getPoint().x + 50.0, 0, 0));
+                CrossSectionLink endLink = LaneFactory.makeLink("endLink", node, end, null);
+                int last = this.lanes.size() - 1;
                 Lane sinkLane =
-                    new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0), this.lane
-                        .getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
-                        LongitudinalDirectionality.FORWARD, this.speedLimit, new OvertakingConditions.None());
+                    new Lane(endLink, "sinkLane", this.lanes.get(last).getLateralCenterPosition(1.0), this.lanes.get(
+                        last).getLateralCenterPosition(1.0), this.lanes.get(last).getWidth(1.0), this.lanes.get(last)
+                        .getWidth(1.0), laneType, LongitudinalDirectionality.FORWARD, this.speedLimit,
+                        new OvertakingConditions.None());
                 Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, METER), this.simulator);
                 sinkLane.addSensor(sensor, GTUType.ALL);
             }
@@ -296,8 +310,6 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation
             {
                 exception.printStackTrace();
             }
-
-            // create SinkLane
 
             for (AbstractProperty<?> p : this.properties)
             {
@@ -363,15 +375,15 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation
                 this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, SECOND), this, this, "generateCar",
                     null);
                 // Create a block at t = 5 minutes
-                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, SECOND), this, this, "createBlock",
+                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(1000, SECOND), this, this, "createBlock",
                     null);
                 // Remove the block at t = 7 minutes
-                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(420, SECOND), this, this, "removeBlock",
+                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(1200, SECOND), this, this, "removeBlock",
                     null);
                 // Schedule regular updates of the graph
-                for (int t = 1; t <= 1800; t++)
+                for (int t = 1; t <= this.simulator.getReplication().getTreatment().getRunLength().si / 25; t++)
                 {
-                    this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, SECOND), this, this,
+                    this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(25 * t - 0.001, SECOND), this, this,
                         "drawGraphs", null);
                 }
             }
@@ -382,20 +394,20 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation
         }
 
         /**
-         * Set up the block.
+         * Set up the block in the last lane of the list.
          * @throws RemoteException on communications failure
          */
         protected final void createBlock() throws RemoteException
         {
-            Length.Rel initialPosition = new Length.Rel(4000, METER);
+            Length.Rel initialPosition = new Length.Rel(200, METER);
             Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
-            initialPositions.put(this.getLane(), initialPosition);
+            initialPositions.put(this.lanes.get(this.lanes.size() - 1), initialPosition);
             try
             {
                 this.block =
-                    new LaneBasedIndividualCar("999999", this.gtuType, this.carFollowingModelCars,
+                    new LaneBasedIndividualCar("BLOCK", this.gtuType, this.carFollowingModelCars,
                         this.laneChangeModel, initialPositions, new Speed.Abs(0, KM_PER_HOUR),
-                        new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed.Abs(0, KM_PER_HOUR),
+                        new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed.Abs(0.0001, KM_PER_HOUR),
                         new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator,
                         DefaultCarAnimation.class, this.gtuColorer);
             }
@@ -423,7 +435,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation
             Length.Rel initialPosition = new Length.Rel(0, METER);
             Speed.Abs initialSpeed = new Speed.Abs(100, KM_PER_HOUR);
             Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
-            initialPositions.put(this.getLane(), initialPosition);
+            initialPositions.put(this.lanes.get(0), initialPosition);
             try
             {
                 Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
@@ -452,7 +464,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation
         protected final void drawGraphs()
         {
             // Notify the Fundamental Diagram plots that the underlying data has changed
-            for (FundamentalDiagram fd : this.fundamentalDiagrams)
+            for (FundamentalDiagramLane fd : this.fundamentalDiagramsLane)
             {
                 fd.reGraph();
             }
@@ -463,39 +475,24 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation
         public final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
             getSimulator() throws RemoteException
         {
-            return null;
+            return this.simulator;
         }
 
         /**
          * @return fundamentalDiagramPlots
          */
-        public final ArrayList<FundamentalDiagram> getFundamentalDiagrams()
+        public final ArrayList<FundamentalDiagramLane> getFundamentalDiagrams()
         {
-            return this.fundamentalDiagrams;
+            return this.fundamentalDiagramsLane;
         }
 
         /**
-         * @return minimumDistance
-         */
-        public final Length.Rel getMinimumDistance()
-        {
-            return this.minimumDistance;
-        }
-
-        /**
-         * @return maximumDistance
-         */
-        public final Length.Rel getMaximumDistance()
-        {
-            return this.maximumDistance;
-        }
-
-        /**
+         * @param laneNr the lane in the list.
          * @return lane.
          */
-        public Lane getLane()
+        public Lane getLane(final int laneNr)
         {
-            return this.lane;
+            return this.lanes.get(laneNr);
         }
     }
 }

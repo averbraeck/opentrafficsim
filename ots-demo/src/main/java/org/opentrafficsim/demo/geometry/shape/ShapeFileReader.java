@@ -38,6 +38,8 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.NoTrafficLane;
 import org.opentrafficsim.core.network.lane.Shoulder;
+import org.opentrafficsim.core.network.lane.changing.LaneKeepingPolicy;
+import org.opentrafficsim.core.network.lane.changing.OvertakingConditions;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -242,11 +244,11 @@ public final class ShapeFileReader implements OTS_SCALAR
                     CrossSectionLink linkBA = null;
                     linkAB =
                         new CrossSectionLink(nr, nodeA, nodeB, new OTSLine3D(new OTSPoint3D[]{nodeA.getPoint(),
-                            nodeB.getPoint()}));
+                            nodeB.getPoint()}), LaneKeepingPolicy.KEEP_RIGHT);
                     animate(linkAB, typeWegVak, simulator);
                     linkBA =
                         new CrossSectionLink(nrBA, nodeB, nodeA, new OTSLine3D(new OTSPoint3D[]{nodeB.getPoint(),
-                            nodeA.getPoint()}));
+                            nodeA.getPoint()}), LaneKeepingPolicy.KEEP_RIGHT);
                     animate(linkBA, typeWegVak, simulator);
                     if (direction == 1)
                     {
@@ -440,7 +442,7 @@ public final class ShapeFileReader implements OTS_SCALAR
                     lat += i * 1.75;
                     Lane lane =
                         new Lane(link, "lane." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER), m35, m35, null,
-                            dir, speedLimit);
+                            dir, speedLimit, new OvertakingConditions.LeftAndRight());
                     new LaneAnimation(lane, simulator, Color.GRAY);
                     lat += i * 1.75;
                 }
@@ -502,7 +504,7 @@ public final class ShapeFileReader implements OTS_SCALAR
                     lat += i * 1.5;
                     Lane lane =
                         new Lane(link, "lane." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER), m30, m30, null,
-                            dir, speedLimit);
+                            dir, speedLimit, new OvertakingConditions.LeftAndRight());
                     new LaneAnimation(lane, simulator, Color.DARK_GRAY);
                     lat += i * 1.5;
                 }
@@ -529,7 +531,7 @@ public final class ShapeFileReader implements OTS_SCALAR
         {
             Lane lane =
                 new Lane(link, "lane", new Length.Rel(0.0, METER), new Length.Rel(0.0, METER), m60, m60, null,
-                    LongitudinalDirectionality.FORWARD, speedLimit);
+                    LongitudinalDirectionality.FORWARD, speedLimit, new OvertakingConditions.LeftAndRight());
             new LaneAnimation(lane, simulator, Color.DARK_GRAY);
         }
         catch (NamingException | RemoteException | OTSGeometryException ne)
