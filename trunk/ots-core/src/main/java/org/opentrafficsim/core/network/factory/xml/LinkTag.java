@@ -8,10 +8,12 @@ import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.XMLParser;
 import org.opentrafficsim.core.network.factory.xml.units.AngleUnits;
+import org.opentrafficsim.core.network.factory.xml.units.LaneAttributes;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.core.network.lane.CrossSectionElement;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
+import org.opentrafficsim.core.network.lane.changing.LaneKeepingPolicy;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -108,6 +110,10 @@ final class LinkTag implements OTS_SCALAR
     @SuppressWarnings("checkstyle:visibilitymodifier")
     CrossSectionLink link = null;
 
+    /** the lane keeping policy, i.e., keep left, keep right or keep lane. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    LaneKeepingPolicy laneKeepingPolicy = null;
+
     /**
      * Parse the LINK tags.
      * @param nodeList nodeList the top-level nodes of the XML-file
@@ -116,7 +122,8 @@ final class LinkTag implements OTS_SCALAR
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseLinks(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException, NetworkException
+    static void parseLinks(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException,
+        NetworkException
     {
         for (Node node : XMLParser.getNodes(nodeList, "LINK"))
         {
@@ -141,7 +148,8 @@ final class LinkTag implements OTS_SCALAR
             String fromNodeStr = attributes.getNamedItem("NODESTART").getNodeValue().trim();
             linkTag.nodeStartTag = parser.nodeTags.get(fromNodeStr);
             if (linkTag.nodeStartTag == null)
-                throw new SAXException("LINK: NODESTART node " + fromNodeStr + " for link " + linkTag.name + " not defined");
+                throw new SAXException("LINK: NODESTART node " + fromNodeStr + " for link " + linkTag.name
+                    + " not defined");
 
             if (attributes.getNamedItem("NODEEND") == null)
                 throw new SAXException("LINK: missing attribute NODEEND for link " + linkTag.name);
@@ -157,10 +165,21 @@ final class LinkTag implements OTS_SCALAR
                 linkTag.offsetEnd = LengthUnits.parseLengthRel(attributes.getNamedItem("OFFSETEND").getNodeValue());
 
             if (attributes.getNamedItem("ROTATIONSTART") != null)
-                linkTag.rotationStart = AngleUnits.parseAngleRel(attributes.getNamedItem("ROTATIONSTART").getNodeValue());
+                linkTag.rotationStart =
+                    AngleUnits.parseAngleRel(attributes.getNamedItem("ROTATIONSTART").getNodeValue());
 
             if (attributes.getNamedItem("ROTATIONEND") != null)
                 linkTag.rotationEnd = AngleUnits.parseAngleRel(attributes.getNamedItem("ROTATIONEND").getNodeValue());
+
+            Node lkp = attributes.getNamedItem("LANEKEEPING");
+            if (lkp != null)
+                linkTag.laneKeepingPolicy = LaneAttributes.parseLaneKeepingPolicy(lkp.getNodeValue().trim());
+            else if (linkTag.roadTypeTag.laneKeepingPolicy != null)
+                linkTag.laneKeepingPolicy = linkTag.roadTypeTag.laneKeepingPolicy;
+            else if (parser.globalTag.defaultLaneKeepingPolicy != null)
+                linkTag.laneKeepingPolicy = parser.globalTag.defaultLaneKeepingPolicy;
+            else
+                throw new SAXException("LINK: cannot determine LANEKEEPING for lane: " + linkTag.name);
 
             List<Node> straightNodes = XMLParser.getNodes(node.getChildNodes(), "STRAIGHT");
             List<Node> arcNodes = XMLParser.getNodes(node.getChildNodes(), "ARC");
@@ -281,7 +300,8 @@ final class LinkTag implements OTS_SCALAR
             if (offset > length)
             {
                 throw new NetworkException("parseBeginEndPosition - attribute POSITION with value " + posStr
-                    + " invalid for lane " + cse.toString() + ": provided negative offset greater than than link length");
+                    + " invalid for lane " + cse.toString()
+                    + ": provided negative offset greater than than link length");
             }
             return new Length.Rel(length - offset, METER);
         }

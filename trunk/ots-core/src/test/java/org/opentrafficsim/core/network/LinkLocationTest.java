@@ -7,6 +7,7 @@ import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
+import org.opentrafficsim.core.network.lane.changing.LaneKeepingPolicy;
 
 /**
  * Test the LinkLocation class.
@@ -30,7 +31,7 @@ public class LinkLocationTest implements OTS_SCALAR
         OTSNode nodeFrom = new OTSNode("From", new OTSPoint3D(0, 0, 0));
         OTSNode nodeTo = new OTSNode("To", new OTSPoint3D(1000, 0, 0));
         OTSLine3D line = new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0)});
-        CrossSectionLink link = new CrossSectionLink("Link", nodeFrom, nodeTo, line);
+        CrossSectionLink link = new CrossSectionLink("Link", nodeFrom, nodeTo, line, LaneKeepingPolicy.KEEP_RIGHT);
         Length.Rel linkLength = line.getLength();
         // Now we can make a LinkLocation.
         Length.Rel referenceLocationDistance = new Length.Rel(123, METER);

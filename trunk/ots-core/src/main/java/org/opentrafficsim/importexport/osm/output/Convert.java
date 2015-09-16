@@ -30,6 +30,8 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.lane.SinkSensor;
+import org.opentrafficsim.core.network.lane.changing.LaneKeepingPolicy;
+import org.opentrafficsim.core.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.importexport.osm.OSMLink;
 import org.opentrafficsim.importexport.osm.OSMNetwork;
 import org.opentrafficsim.importexport.osm.OSMNode;
@@ -126,7 +128,8 @@ public final class Convert implements OTS_SCALAR
         OTSNode end = link.getEnd().getOtsNode();
         coordinates[coordinates.length - 1] = new Coordinate(end.getPoint().x, end.getPoint().y, 0);
         OTSLine3D designLine = new OTSLine3D(coordinates);
-        result = new CrossSectionLink(link.getId(), start, end, designLine);
+        // XXX How to figure out whether to keep left, right or keep lane?
+        result = new CrossSectionLink(link.getId(), start, end, designLine, LaneKeepingPolicy.KEEP_RIGHT);
         return result;
     }
 
@@ -617,25 +620,28 @@ public final class Convert implements OTS_SCALAR
             if (osmlink.hasTag("hasPreceding") && offset >= 0 || osmlink.hasTag("hasFollowing") && offset < 0)
             {
                 color = Color.RED;
+                // FIXME overtaking conditions per country and/or type of road?
                 newLane =
                     new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(), laneAttributes
-                        .getWidth(), laneType, directionality, speedLimit);
+                        .getWidth(), laneType, directionality, speedLimit, new OvertakingConditions.LeftAndRight());
                 SinkSensor sensor = new SinkSensor(newLane, new Length.Rel(0.25, METER), simulator);
                 newLane.addSensor(sensor, GTUType.ALL);
             }
             else if (osmlink.hasTag("hasPreceding") && offset < 0 || osmlink.hasTag("hasFollowing") && offset >= 0)
             {
                 color = Color.BLUE;
+                // FIXME overtaking conditions per country and/or type of road?
                 newLane =
                     new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(), laneAttributes
-                        .getWidth(), laneType, directionality, speedLimit);
+                        .getWidth(), laneType, directionality, speedLimit, new OvertakingConditions.LeftAndRight());
             }
             else
             {
                 color = laneAttributes.getColor();
+                // FIXME overtaking conditions per country and/or type of road?
                 newLane =
                     new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(), laneAttributes
-                        .getWidth(), laneType, directionality, speedLimit);
+                        .getWidth(), laneType, directionality, speedLimit, new OvertakingConditions.LeftAndRight());
             }
             if (simulator instanceof OTSAnimatorInterface)
             {

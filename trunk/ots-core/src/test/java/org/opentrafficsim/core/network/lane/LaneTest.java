@@ -24,6 +24,8 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.network.lane.changing.LaneKeepingPolicy;
+import org.opentrafficsim.core.network.lane.changing.OvertakingConditions;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -55,7 +57,8 @@ public class LaneTest implements OTS_SCALAR
         OTSPoint3D[] coordinates = new OTSPoint3D[2];
         coordinates[0] = new OTSPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
-        CrossSectionLink link = new CrossSectionLink("A to B", nodeFrom, nodeTo, new OTSLine3D(coordinates));
+        CrossSectionLink link =
+            new CrossSectionLink("A to B", nodeFrom, nodeTo, new OTSLine3D(coordinates), LaneKeepingPolicy.KEEP_RIGHT);
         Length.Rel startLateralPos = new Length.Rel(2, METER);
         Length.Rel endLateralPos = new Length.Rel(5, METER);
         Length.Rel startWidth = new Length.Rel(3, METER);
@@ -70,18 +73,19 @@ public class LaneTest implements OTS_SCALAR
         Map<GTUType, Speed.Abs> speedMap = new LinkedHashMap<>();
         speedMap.put(GTUType.ALL, new Speed.Abs(100, KM_PER_HOUR));
         // Now we can construct a Lane
+        // FIXME what overtaking conditions do we ant to test in this unit test?
         Lane lane =
             new Lane(link, "lane", startLateralPos, endLateralPos, startWidth, endWidth, laneType, directionalityMap,
-                speedMap);
+                speedMap, new OvertakingConditions.LeftAndRight());
         // Verify the easy bits
         assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size()); // this one caught a bug!
         assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
         double approximateLengthOfContour =
             2 * nodeFrom.getPoint().distanceSI(nodeTo.getPoint()) + startWidth.getSI() + endWidth.getSI();
-        assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour, lane
-            .getContour().getLengthSI(), 0.1);
-        assertEquals("Directionality should be " + LongitudinalDirectionality.FORWARD, LongitudinalDirectionality.FORWARD,
-            lane.getDirectionality(GTUType.ALL));
+        assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour,
+            lane.getContour().getLengthSI(), 0.1);
+        assertEquals("Directionality should be " + LongitudinalDirectionality.FORWARD,
+            LongitudinalDirectionality.FORWARD, lane.getDirectionality(GTUType.ALL));
         assertEquals("SpeedLimit should be " + (new Speed.Abs(100, KM_PER_HOUR)), new Speed.Abs(100, KM_PER_HOUR), lane
             .getSpeedLimit(GTUType.ALL));
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
@@ -98,19 +102,23 @@ public class LaneTest implements OTS_SCALAR
             double expectedWidth = startWidth.getSI() + (endWidth.getSI() - startWidth.getSI()) * i / 10;
             assertEquals(String.format("Width at %d%% should be %.3fm", 10 * i, expectedWidth), expectedWidth, lane
                 .getWidth(i / 10.0).getSI(), 0.0001);
-            assertEquals("Width at " + longitudinalPosition + " should be " + expectedWidth, expectedWidth, lane.getWidth(
-                longitudinalPosition).getSI(), 0.0001);
+            assertEquals("Width at " + longitudinalPosition + " should be " + expectedWidth, expectedWidth, lane
+                .getWidth(longitudinalPosition).getSI(), 0.0001);
             double expectedLeftOffset = expectedLateralCenterOffset - expectedWidth / 2;
             // The next test caught a bug
-            assertEquals(String.format("Left edge at %d%% should be %.3fm", 10 * i, expectedLeftOffset), expectedLeftOffset,
-                lane.getLateralBoundaryPosition(LateralDirectionality.LEFT, i / 10.0).getSI(), 0.001);
-            assertEquals("Left edge at " + longitudinalPosition + " should be " + expectedLeftOffset, expectedLeftOffset,
-                lane.getLateralBoundaryPosition(LateralDirectionality.LEFT, longitudinalPosition).getSI(), 0.001);
+            assertEquals(String.format("Left edge at %d%% should be %.3fm", 10 * i, expectedLeftOffset),
+                expectedLeftOffset, lane.getLateralBoundaryPosition(LateralDirectionality.LEFT, i / 10.0).getSI(),
+                0.001);
+            assertEquals("Left edge at " + longitudinalPosition + " should be " + expectedLeftOffset,
+                expectedLeftOffset, lane.getLateralBoundaryPosition(LateralDirectionality.LEFT, longitudinalPosition)
+                    .getSI(), 0.001);
             double expectedRightOffset = expectedLateralCenterOffset + expectedWidth / 2;
             assertEquals(String.format("Right edge at %d%% should be %.3fm", 10 * i, expectedRightOffset),
-                expectedRightOffset, lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, i / 10.0).getSI(), 0.001);
-            assertEquals("Right edge at " + longitudinalPosition + " should be " + expectedRightOffset, expectedRightOffset,
-                lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, longitudinalPosition).getSI(), 0.001);
+                expectedRightOffset, lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, i / 10.0).getSI(),
+                0.001);
+            assertEquals("Right edge at " + longitudinalPosition + " should be " + expectedRightOffset,
+                expectedRightOffset, lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, longitudinalPosition)
+                    .getSI(), 0.001);
         }
 
         // Harder case; create a Link with form points along the way
@@ -119,34 +127,38 @@ public class LaneTest implements OTS_SCALAR
         coordinates[0] = new OTSPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new OTSPoint3D(200, 100);
         coordinates[2] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
-        link = new CrossSectionLink("A to B with Kink", nodeFrom, nodeTo, new OTSLine3D(coordinates));
+        link =
+            new CrossSectionLink("A to B with Kink", nodeFrom, nodeTo, new OTSLine3D(coordinates),
+                LaneKeepingPolicy.KEEP_RIGHT);
+        // FIXME what overtaking conditions do we ant to test in this unit test?
         lane =
             new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, directionalityMap,
-                speedMap);
+                speedMap, new OvertakingConditions.LeftAndRight());
         // Verify the easy bits
         assertEquals("PrevLanes should be empty", 0, lane.prevLanes(gtuTypeCar).size());
         assertEquals("NextLanes should be empty", 0, lane.nextLanes(gtuTypeCar).size());
         approximateLengthOfContour =
-            2 * (coordinates[0].distanceSI(coordinates[1]) + coordinates[1].distanceSI(coordinates[2])) + startWidth.getSI()
-                + endWidth.getSI();
-        assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour, lane
-            .getContour().getLengthSI(), 4); // This lane takes a path that is about 3m longer
+            2 * (coordinates[0].distanceSI(coordinates[1]) + coordinates[1].distanceSI(coordinates[2]))
+                + startWidth.getSI() + endWidth.getSI();
+        assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour,
+            lane.getContour().getLengthSI(), 4); // This lane takes a path that is about 3m longer
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane.getLaneType());
         // System.out.println("Add another Lane at the inside of the corner in the design line");
         Length.Rel startLateralPos2 = new Length.Rel(-8, METER);
         Length.Rel endLateralPos2 = new Length.Rel(-5, METER);
+        // FIXME what overtaking conditions do we ant to test in this unit test?
         Lane lane2 =
-            new Lane(link, "lane.2", startLateralPos2, endLateralPos2, startWidth, endWidth, laneType, directionalityMap,
-                speedMap);
+            new Lane(link, "lane.2", startLateralPos2, endLateralPos2, startWidth, endWidth, laneType,
+                directionalityMap, speedMap, new OvertakingConditions.LeftAndRight());
         // Verify the easy bits
         assertEquals("PrevLanes should be empty", 0, lane2.prevLanes(gtuTypeCar).size());
         assertEquals("NextLanes should be empty", 0, lane2.nextLanes(gtuTypeCar).size());
         approximateLengthOfContour =
-            2 * (coordinates[0].distanceSI(coordinates[1]) + coordinates[1].distanceSI(coordinates[2])) + startWidth.getSI()
-                + endWidth.getSI();
-        assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour, lane2
-            .getContour().getLengthSI(), 12); // This lane takes a path that is about 11 meters shorter
+            2 * (coordinates[0].distanceSI(coordinates[1]) + coordinates[1].distanceSI(coordinates[2]))
+                + startWidth.getSI() + endWidth.getSI();
+        assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour,
+            lane2.getContour().getLengthSI(), 12); // This lane takes a path that is about 11 meters shorter
         assertEquals("There should be no GTUs on the lane", 0, lane2.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane2.getLaneType());
     }
@@ -184,7 +196,8 @@ public class LaneTest implements OTS_SCALAR
                     coordinates[0] = start.getPoint();
                     coordinates[1] = end.getPoint();
                     OTSLine3D line = new OTSLine3D(coordinates);
-                    CrossSectionLink link = new CrossSectionLink("A to B", start, end, line);
+                    CrossSectionLink link =
+                        new CrossSectionLink("A to B", start, end, line, LaneKeepingPolicy.KEEP_RIGHT);
                     final int[] lateralOffsets = {-10, -3, -1, 0, 1, 3, 10};
                     for (int startLateralOffset : lateralOffsets)
                     {
@@ -194,10 +207,12 @@ public class LaneTest implements OTS_SCALAR
                             for (int endWidth : new int[]{2, 4, 6})
                             {
                                 // Now we can construct a Lane
+                                // FIXME what overtaking conditions do we ant to test in this unit test?
                                 Lane lane =
                                     new Lane(link, "lane." + ++laneNum, new Length.Rel(startLateralOffset, METER),
                                         new Length.Rel(endLateralOffset, METER), new Length.Rel(startWidth, METER),
-                                        new Length.Rel(endWidth, METER), laneType, directionalityMap, speedMap);
+                                        new Length.Rel(endWidth, METER), laneType, directionalityMap, speedMap,
+                                        new OvertakingConditions.LeftAndRight());
                                 final Geometry geometry = lane.getContour().getLineString();
                                 assertNotNull("geometry of the lane should not be null", geometry);
                                 // Verify a couple of points that should be inside the contour of the Lane
@@ -214,9 +229,11 @@ public class LaneTest implements OTS_SCALAR
                                 // One meter along the lane design line, right outside the lane
                                 checkInside(lane, 1, startLateralOffset + startWidth / 2 + 1, false);
                                 // One meter before the end, left outside the lane
-                                checkInside(lane, link.getLength().getSI() - 1, endLateralOffset - endWidth / 2 - 1, false);
+                                checkInside(lane, link.getLength().getSI() - 1, endLateralOffset - endWidth / 2 - 1,
+                                    false);
                                 // One meter before the end, right outside the lane
-                                checkInside(lane, link.getLength().getSI() - 1, endLateralOffset + endWidth / 2 + 1, false);
+                                checkInside(lane, link.getLength().getSI() - 1, endLateralOffset + endWidth / 2 + 1,
+                                    false);
                                 // Check the result of getBounds.
                                 DirectedPoint l = lane.getLocation();
                                 Bounds bb = lane.getBounds();
@@ -226,11 +243,13 @@ public class LaneTest implements OTS_SCALAR
                                 // System.out.println("  end is at " + end.getX() + ", " + end.getY());
                                 Point2D.Double[] cornerPoints = new Point2D.Double[4];
                                 cornerPoints[0] =
-                                    new Point2D.Double(xStart - (startLateralOffset + startWidth / 2) * Math.sin(angle),
-                                        yStart + (startLateralOffset + startWidth / 2) * Math.cos(angle));
+                                    new Point2D.Double(
+                                        xStart - (startLateralOffset + startWidth / 2) * Math.sin(angle), yStart
+                                            + (startLateralOffset + startWidth / 2) * Math.cos(angle));
                                 cornerPoints[1] =
-                                    new Point2D.Double(xStart - (startLateralOffset - startWidth / 2) * Math.sin(angle),
-                                        yStart + (startLateralOffset - startWidth / 2) * Math.cos(angle));
+                                    new Point2D.Double(
+                                        xStart - (startLateralOffset - startWidth / 2) * Math.sin(angle), yStart
+                                            + (startLateralOffset - startWidth / 2) * Math.cos(angle));
                                 cornerPoints[2] =
                                     new Point2D.Double(xEnd - (endLateralOffset + endWidth / 2) * Math.sin(angle), yEnd
                                         + (endLateralOffset + endWidth / 2) * Math.cos(angle));
@@ -288,7 +307,8 @@ public class LaneTest implements OTS_SCALAR
      * @param expectedResult boolean; true if the calling method expects the point to be within the contour of the Lane, false
      *            if the calling method expects the point to be outside the contour of the Lane
      */
-    private void checkInside(final Lane lane, final double longitudinal, final double lateral, final boolean expectedResult)
+    private void checkInside(final Lane lane, final double longitudinal, final double lateral,
+        final boolean expectedResult)
     {
         CrossSectionLink parentLink = lane.getParentLink();
         Node start = parentLink.getStartNode();

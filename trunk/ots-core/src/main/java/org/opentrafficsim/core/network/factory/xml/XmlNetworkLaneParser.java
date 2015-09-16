@@ -78,9 +78,9 @@ public class XmlNetworkLaneParser
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, RoadTypeTag> roadTypeTags = new HashMap<>();
 
-    /** the GTUTypes that have been created. */
+    /** the GTUTypes that have been created. public to make it accessible from LaneAttributes. */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, GTUType> gtuTypes = new HashMap<>();
+    public Map<String, GTUType> gtuTypes = new HashMap<>();
 
     /** the LaneTypes that have been created. */
     @SuppressWarnings("visibilitymodifier")
@@ -139,6 +139,10 @@ public class XmlNetworkLaneParser
         if (definitionNodes.size() == 0)
             throw new SAXException("XmlNetworkLaneParser.build: XML document does not have a DEFINITIONS tag");
 
+        // make the GTUTypes ALL and NONE to get started
+        this.gtuTypes.put("ALL", GTUType.ALL);
+        this.gtuTypes.put("NONE", GTUType.NONE);
+        
         // parse the DEFINITIONS tags
         for (Node definitionNode : definitionNodes)
             GlobalTag.parseGlobal(definitionNode.getChildNodes(), this);

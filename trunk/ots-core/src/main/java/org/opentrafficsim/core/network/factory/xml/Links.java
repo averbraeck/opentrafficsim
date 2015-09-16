@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.network.factory.xml;
 
+import java.awt.Color;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
@@ -44,6 +45,7 @@ import org.opentrafficsim.core.network.lane.Shoulder;
 import org.opentrafficsim.core.network.lane.SinkSensor;
 import org.opentrafficsim.core.network.lane.Stripe;
 import org.opentrafficsim.core.network.lane.Stripe.Permeable;
+import org.opentrafficsim.core.network.lane.changing.OvertakingConditions;
 import org.xml.sax.SAXException;
 
 /**
@@ -99,8 +101,7 @@ final class Links implements OTS_SCALAR
      * @throws NamingException when node animation cannot link to the animation context.
      */
     @SuppressWarnings("methodlength")
-    static void calculateNodeCoordinates(final XmlNetworkLaneParser parser) throws NetworkException,
-        NamingException
+    static void calculateNodeCoordinates(final XmlNetworkLaneParser parser) throws NetworkException, NamingException
     {
         Set<LinkTag> links = new HashSet<>(parser.linkTags.values());
         while (!links.isEmpty())
@@ -147,8 +148,8 @@ final class Links implements OTS_SCALAR
      * @throws NamingException when node animation cannot link to the animation context.
      */
     @SuppressWarnings("checkstyle:methodlength")
-    static void calculateNodeCoordinates(final LinkTag linkTag, final XmlNetworkLaneParser parser) throws
-        NetworkException, NamingException
+    static void calculateNodeCoordinates(final LinkTag linkTag, final XmlNetworkLaneParser parser)
+        throws NetworkException, NamingException
     {
         // calculate dx, dy and dz for the straight or the arc.
         if (linkTag.nodeStartTag.node != null && linkTag.nodeEndTag.node != null)
@@ -159,8 +160,8 @@ final class Links implements OTS_SCALAR
                 double radiusSI = linkTag.arcTag.radius.getSI();
                 ArcDirection direction = linkTag.arcTag.direction;
                 OTSPoint3D coordinate =
-                    new OTSPoint3D(linkTag.nodeStartTag.node.getLocation().getX(), linkTag.nodeStartTag.node.getLocation()
-                        .getY(), linkTag.nodeStartTag.node.getLocation().getZ());
+                    new OTSPoint3D(linkTag.nodeStartTag.node.getLocation().getX(), linkTag.nodeStartTag.node
+                        .getLocation().getY(), linkTag.nodeStartTag.node.getLocation().getZ());
                 double startAngle = linkTag.nodeStartTag.node.getDirection().getSI();
 
                 if (direction.equals(ArcDirection.LEFT))
@@ -195,7 +196,8 @@ final class Links implements OTS_SCALAR
 
         if (linkTag.nodeStartTag.node == null && linkTag.nodeEndTag.node == null)
         {
-            throw new NetworkException("Parsing network. Link: " + linkTag.name + ", both From-node and To-node are null");
+            throw new NetworkException("Parsing network. Link: " + linkTag.name
+                + ", both From-node and To-node are null");
         }
 
         if (linkTag.straightTag != null)
@@ -204,8 +206,8 @@ final class Links implements OTS_SCALAR
             if (linkTag.nodeEndTag.node == null)
             {
                 XYZ coordinate =
-                    new XYZ(linkTag.nodeStartTag.node.getLocation().getX(), linkTag.nodeStartTag.node.getLocation().getY(),
-                        linkTag.nodeStartTag.node.getLocation().getZ());
+                    new XYZ(linkTag.nodeStartTag.node.getLocation().getX(), linkTag.nodeStartTag.node.getLocation()
+                        .getY(), linkTag.nodeStartTag.node.getLocation().getZ());
                 double angle = linkTag.nodeStartTag.node.getDirection().getSI();
                 double slope = linkTag.nodeStartTag.node.getSlope().getSI();
                 coordinate.x += lengthSI * Math.cos(angle);
@@ -287,8 +289,8 @@ final class Links implements OTS_SCALAR
                 if (direction.equals(ArcDirection.LEFT))
                 {
                     linkTag.arcTag.center =
-                        new OTSPoint3D(coordinate.x + radiusSI * Math.cos(endAngle + Math.PI / 2.0), coordinate.y + radiusSI
-                            * Math.sin(endAngle + Math.PI / 2.0), 0.0);
+                        new OTSPoint3D(coordinate.x + radiusSI * Math.cos(endAngle + Math.PI / 2.0), coordinate.y
+                            + radiusSI * Math.sin(endAngle + Math.PI / 2.0), 0.0);
                     linkTag.arcTag.startAngle = endAngle - Math.PI / 2.0 - angle;
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle);
@@ -299,8 +301,8 @@ final class Links implements OTS_SCALAR
                 else
                 {
                     linkTag.arcTag.center =
-                        new OTSPoint3D(coordinate.x + radiusSI * Math.cos(endAngle - Math.PI / 2.0), coordinate.y + radiusSI
-                            * Math.sin(endAngle - Math.PI / 2.0), 0.0);
+                        new OTSPoint3D(coordinate.x + radiusSI * Math.cos(endAngle - Math.PI / 2.0), coordinate.y
+                            + radiusSI * Math.sin(endAngle - Math.PI / 2.0), 0.0);
                     linkTag.arcTag.startAngle = endAngle + Math.PI / 2.0 + angle;
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle);
@@ -324,9 +326,8 @@ final class Links implements OTS_SCALAR
      * @throws NetworkException when both nodes are null.
      * @throws NamingException when node animation cannot link to the animation context.
      */
-    static void
-        buildLink(final LinkTag linkTag, final XmlNetworkLaneParser parser, final OTSDEVSSimulatorInterface simulator)
-            throws NetworkException, NamingException
+    static void buildLink(final LinkTag linkTag, final XmlNetworkLaneParser parser,
+        final OTSDEVSSimulatorInterface simulator) throws NetworkException, NamingException
     {
         int points = 2;
         if (linkTag.arcTag != null)
@@ -366,7 +367,8 @@ final class Links implements OTS_SCALAR
         }
         OTSLine3D designLine = new OTSLine3D(coordinates);
         CrossSectionLink link =
-            new CrossSectionLink(linkTag.name, linkTag.nodeStartTag.node, linkTag.nodeEndTag.node, designLine);
+            new CrossSectionLink(linkTag.name, linkTag.nodeStartTag.node, linkTag.nodeEndTag.node, designLine,
+                linkTag.laneKeepingPolicy);
         linkTag.link = link;
     }
 
@@ -391,6 +393,10 @@ final class Links implements OTS_SCALAR
         List<Lane> lanes = new ArrayList<>();
         for (CrossSectionElementTag cseTag : linkTag.roadTypeTag.cseTags.values())
         {
+            LaneOverrideTag laneOverrideTag = null;
+            if (linkTag.laneOverrideTags.containsKey(cseTag.name))
+                laneOverrideTag = linkTag.laneOverrideTags.get(cseTag.name);
+                
             switch (cseTag.elementType)
             {
                 case STRIPE:
@@ -487,14 +493,28 @@ final class Links implements OTS_SCALAR
 
                 case LANE:
                 {
-                    // TODO LANEOVERRIDE
+                    LongitudinalDirectionality direction = cseTag.direction;
+                    Color color = cseTag.color;
+                    OvertakingConditions overtakingConditions = cseTag.overtakingConditions;
+                    Speed.Abs speed = cseTag.speed;
+                    if (laneOverrideTag != null)
+                    {
+                        if (laneOverrideTag.overtakingConditions != null)
+                            overtakingConditions = laneOverrideTag.overtakingConditions;
+                        if (laneOverrideTag.color != null)
+                            color = laneOverrideTag.color;
+                        if (laneOverrideTag.direction != null)
+                            direction = laneOverrideTag.direction;
+                        if (laneOverrideTag.speed!= null)
+                            speed = laneOverrideTag.speed;
+                    }
                     Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
-                    directionality.put(GTUType.ALL, cseTag.direction);
+                    directionality.put(GTUType.ALL, direction);
                     Map<GTUType, Speed.Abs> speedLimit = new LinkedHashMap<>();
-                    speedLimit.put(GTUType.ALL, cseTag.speed);
+                    speedLimit.put(GTUType.ALL, speed);
                     Lane lane =
                         new Lane(csl, cseTag.name, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width,
-                            cseTag.laneType, directionality, speedLimit);
+                            cseTag.laneType, directionality, speedLimit, overtakingConditions);
                     cseList.add(lane);
                     lanes.add(lane);
                     linkTag.lanes.put(cseTag.name, lane);
@@ -502,7 +522,7 @@ final class Links implements OTS_SCALAR
                     {
                         try
                         {
-                            new LaneAnimation(lane, simulator, cseTag.color);
+                            new LaneAnimation(lane, simulator, color);
                         }
                         catch (RemoteException exception)
                         {
@@ -602,7 +622,6 @@ final class Links implements OTS_SCALAR
 
                 case NOTRAFFICLANE:
                 {
-                    // TODO LANEOVERRIDE
                     Lane lane =
                         new NoTrafficLane(csl, cseTag.name, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width);
                     cseList.add(lane);
@@ -610,7 +629,13 @@ final class Links implements OTS_SCALAR
                     {
                         try
                         {
-                            new LaneAnimation(lane, simulator, cseTag.color);
+                            Color color = cseTag.color;
+                            if (laneOverrideTag != null)
+                            {
+                                if (laneOverrideTag.color != null)
+                                    color = laneOverrideTag.color;
+                            }
+                            new LaneAnimation(lane, simulator, color);
                         }
                         catch (RemoteException exception)
                         {
@@ -622,14 +647,19 @@ final class Links implements OTS_SCALAR
 
                 case SHOULDER:
                 {
-                    // TODO Override
                     Shoulder shoulder = new Shoulder(csl, cseTag.name, cseTag.offset, cseTag.width, cseTag.width);
                     cseList.add(shoulder);
                     if (simulator != null && simulator instanceof AnimatorInterface)
                     {
                         try
                         {
-                            new ShoulderAnimation(shoulder, simulator, cseTag.color);
+                            Color color = cseTag.color;
+                            if (laneOverrideTag != null)
+                            {
+                                if (laneOverrideTag.color != null)
+                                    color = laneOverrideTag.color;
+                            }
+                            new ShoulderAnimation(shoulder, simulator, color);
                         }
                         catch (RemoteException exception)
                         {

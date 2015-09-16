@@ -36,6 +36,8 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
+import org.opentrafficsim.core.network.lane.changing.LaneKeepingPolicy;
+import org.opentrafficsim.core.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 
@@ -60,8 +62,8 @@ public class CarTest implements DOUBLE_SCALAR
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void carTest() throws NetworkException, SimRuntimeException, NamingException,
-        GTUException, OTSGeometryException
+    public final void carTest() throws NetworkException, SimRuntimeException, NamingException, GTUException,
+        OTSGeometryException
     {
         Time.Abs initialTime = new Time.Abs(0, SECOND);
         GTUType gtuType = GTUType.makeGTUType("Car");
@@ -78,12 +80,12 @@ public class CarTest implements DOUBLE_SCALAR
             makeReferenceCar("12345", gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
                 laneChangeModel);
         assertEquals("The car should store it's ID", "12345", referenceCar.getId());
-        assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(), referenceCar
-            .position(lane, referenceCar.getReference(), initialTime).getSI(), 0.0001);
-        assertEquals("The car should store it's initial speed", initialSpeed.getSI(), referenceCar.getLongitudinalVelocity(
-            initialTime).getSI(), 0.00001);
-        assertEquals("The car should have an initial acceleration equal to 0", 0, referenceCar.getAcceleration(initialTime)
-            .getSI(), 0.0001);
+        assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(),
+            referenceCar.position(lane, referenceCar.getReference(), initialTime).getSI(), 0.0001);
+        assertEquals("The car should store it's initial speed", initialSpeed.getSI(), referenceCar
+            .getLongitudinalVelocity(initialTime).getSI(), 0.00001);
+        assertEquals("The car should have an initial acceleration equal to 0", 0, referenceCar.getAcceleration(
+            initialTime).getSI(), 0.0001);
         assertEquals("The gtu following model should be " + gtuFollowingModel, gtuFollowingModel, referenceCar
             .getGTUFollowingModel());
         // There is (currently) no way to retrieve the lane change model of a GTU.
@@ -106,7 +108,8 @@ public class CarTest implements DOUBLE_SCALAR
                 new Time.Rel(3600.0, SECOND));
         exp.setTreatment(tr);
         exp.setModel(model);
-        Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> rep = new Replication<>(exp);
+        Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> rep =
+            new Replication<>(exp);
         simulator.initialize(rep, ReplicationMode.TERMINATING);
         return simulator;
     }
@@ -130,16 +133,17 @@ public class CarTest implements DOUBLE_SCALAR
      */
     public static LaneBasedIndividualCar makeReferenceCar(final String id, final GTUType gtuType, final Lane lane,
         final Length.Rel initialPosition, final Speed.Abs initialSpeed, final OTSDEVSSimulator simulator,
-        final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel) throws
-        NamingException, NetworkException, SimRuntimeException, GTUException
+        final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel) throws NamingException,
+        NetworkException, SimRuntimeException, GTUException
     {
         Length.Rel length = new Length.Rel(5.0, METER);
         Length.Rel width = new Length.Rel(2.0, METER);
         Map<Lane, Length.Rel> initialLongitudinalPositions = new HashMap<>();
         initialLongitudinalPositions.put(lane, initialPosition);
         Speed.Abs maxSpeed = new Speed.Abs(120, KM_PER_HOUR);
-        return new LaneBasedIndividualCar(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions,
-            initialSpeed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
+        return new LaneBasedIndividualCar(id, gtuType, gtuFollowingModel, laneChangeModel,
+            initialLongitudinalPositions, initialSpeed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(
+                new CompleteRoute("")), simulator);
     }
 
     /**
@@ -153,11 +157,12 @@ public class CarTest implements DOUBLE_SCALAR
         OTSNode n1 = new OTSNode("n1", new OTSPoint3D(0, 0));
         OTSNode n2 = new OTSNode("n2", new OTSPoint3D(100000.0, 0.0));
         OTSPoint3D[] coordinates = new OTSPoint3D[]{new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100000.0, 0.0)};
-        CrossSectionLink link12 = new CrossSectionLink("link12", n1, n2, new OTSLine3D(coordinates));
+        CrossSectionLink link12 =
+            new CrossSectionLink("link12", n1, n2, new OTSLine3D(coordinates), LaneKeepingPolicy.KEEP_RIGHT);
         Length.Rel latPos = new Length.Rel(0.0, METER);
         Length.Rel width = new Length.Rel(4.0, METER);
         return new Lane(link12, "lane.1", latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD,
-            new Speed.Abs(100, KM_PER_HOUR));
+            new Speed.Abs(100, KM_PER_HOUR), new OvertakingConditions.LeftAndRight());
     }
 
     /** the helper model. */
@@ -171,16 +176,18 @@ public class CarTest implements DOUBLE_SCALAR
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(
-            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException
+        public final
+            void
+            constructModel(
+                final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+                throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulator) theSimulator;
         }
 
         /** {@inheritDoc} */
         @Override
-        public final OTSDEVSSimulator getSimulator() 
+        public final OTSDEVSSimulator getSimulator()
         {
             return this.simulator;
         }
