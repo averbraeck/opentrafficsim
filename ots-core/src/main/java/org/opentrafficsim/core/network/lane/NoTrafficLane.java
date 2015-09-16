@@ -8,6 +8,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.lane.changing.OvertakingConditions;
 
 /**
  * Lane without traffic, e.g. emergency lane next to highway.
@@ -29,6 +30,9 @@ public class NoTrafficLane extends Lane
 
     /** Map that tells that speed is 0.0 for all GTU Types. */
     private static final Map<GTUType, Speed.Abs> SPEED_NULL = new HashMap<>();
+    
+    /** the overtaking rules for a no-traffic lane. */
+    private static final OvertakingConditions NO_OVERTAKING = new OvertakingConditions.None();
 
     static
     {
@@ -54,7 +58,7 @@ public class NoTrafficLane extends Lane
         throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, LaneType.NONE,
-            DIRECTIONALITY_NONE, SPEED_NULL);
+            DIRECTIONALITY_NONE, SPEED_NULL, NO_OVERTAKING);
     }
 
     /** {@inheritDoc} */

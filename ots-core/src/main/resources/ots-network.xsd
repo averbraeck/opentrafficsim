@@ -153,7 +153,6 @@
       <xsd:attribute name="ROTATIONSTART" type="ANGLETYPE" use="optional"></xsd:attribute>
       <xsd:attribute name="ROTATIONEND" type="ANGLETYPE" use="optional"></xsd:attribute>
       <xsd:attribute name="LANEKEEPING" type="LANEKEEPINGTYPE" use="optional"></xsd:attribute>
-      <xsd:attribute name="OVERTAKING" type="OVERTAKINGTYPE" use="optional"></xsd:attribute>
       <xsd:attribute ref="xml:base"></xsd:attribute>
     </xsd:complexType>
   </xsd:element>

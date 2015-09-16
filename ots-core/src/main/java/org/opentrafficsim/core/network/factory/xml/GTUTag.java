@@ -79,7 +79,7 @@ class GTUTag implements OTS_SCALAR, OTS_DIST
             if (name == null)
                 throw new SAXException("GTU: missing attribute NAME");
             gtuTag.name = name.getNodeValue().trim();
-            if (parser.gtuTypes.keySet().contains(gtuTag.name))
+            if (parser.gtuTags.keySet().contains(gtuTag.name))
                 throw new SAXException("GTU: NAME " + gtuTag.name + " defined twice");
 
             Node gtuType = attributes.getNamedItem("GTUTYPE");
@@ -120,9 +120,8 @@ class GTUTag implements OTS_SCALAR, OTS_DIST
      * @param typeName the name of the GTU type.
      * @param parser the parser with the lists of information
      * @return the GTUType that was retrieved or created.
-     * @throws GTUException if GTUType defined twice
      */
-    static GTUType parseGTUType(final String typeName, final XmlNetworkLaneParser parser) throws GTUException
+    static GTUType parseGTUType(final String typeName, final XmlNetworkLaneParser parser)
     {
         if (!parser.gtuTypes.containsKey(typeName))
         {

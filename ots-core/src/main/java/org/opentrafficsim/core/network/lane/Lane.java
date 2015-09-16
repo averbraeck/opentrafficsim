@@ -23,6 +23,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 
 /**
@@ -100,6 +101,9 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
     /** List of graphs that want to sample GTUs on this Lane. */
     private ArrayList<LaneBasedGTUSampler> samplers = new ArrayList<LaneBasedGTUSampler>();
 
+    /** the conditions for overtaking another GTU, viewed from this lane. */
+    private final OvertakingConditions overtakingConditions;
+
     /**
      * @param parentLink Cross Section Link to which the element belongs.
      * @param id the id of this lane within the link; should be unique within the link.
@@ -112,6 +116,7 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
      * @param laneType type of lane to deduce compatibility with GTU types
      * @param directionalityMap in direction of geometry, reverse, or both, specified per GTU Type
      * @param speedLimitMap speed limit on this lane, specified per GTU Type
+     * @param overtakingConditions the conditions for overtaking another GTU, viewed from this lane
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
@@ -119,12 +124,14 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
     public Lane(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffsetAtStart,
         final Length.Rel lateralOffsetAtEnd, final Length.Rel beginWidth, final Length.Rel endWidth,
         final LaneType laneType, final Map<GTUType, LongitudinalDirectionality> directionalityMap,
-        final Map<GTUType, Speed.Abs> speedLimitMap) throws OTSGeometryException, NetworkException
+        final Map<GTUType, Speed.Abs> speedLimitMap, final OvertakingConditions overtakingConditions)
+        throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
         this.laneType = laneType;
         this.directionalityMap = directionalityMap;
         this.speedLimitMap = speedLimitMap;
+        this.overtakingConditions = overtakingConditions;
     }
 
     /**
@@ -139,14 +146,15 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
      * @param laneType type of lane to deduce compatibility with GTU types
      * @param directionality in direction of geometry, reverse, or both
      * @param speedLimit speed limit on this lane
+     * @param overtakingConditions the conditions for overtaking another GTU, viewed from this lane
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffsetAtStart,
         final Length.Rel lateralOffsetAtEnd, final Length.Rel beginWidth, final Length.Rel endWidth,
-        final LaneType laneType, final LongitudinalDirectionality directionality, final Speed.Abs speedLimit)
-        throws OTSGeometryException, NetworkException
+        final LaneType laneType, final LongitudinalDirectionality directionality, final Speed.Abs speedLimit,
+        final OvertakingConditions overtakingConditions) throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
         this.laneType = laneType;
@@ -154,6 +162,7 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
         this.directionalityMap.put(GTUType.ALL, directionality);
         this.speedLimitMap = new LinkedHashMap<>();
         this.speedLimitMap.put(GTUType.ALL, speedLimit);
+        this.overtakingConditions = overtakingConditions;
     }
 
     /**
@@ -411,8 +420,8 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
      * @throws NetworkException when GTU not on this lane.
      * @throws SimRuntimeException when method cannot be scheduled.
      */
-    public final void scheduleTriggers(final LaneBasedGTU gtu, final double referenceStartSI, final double referenceMoveSI)
-        throws NetworkException, SimRuntimeException
+    public final void scheduleTriggers(final LaneBasedGTU gtu, final double referenceStartSI,
+        final double referenceMoveSI) throws NetworkException, SimRuntimeException
     {
         for (List<Sensor> sensorList : getSensors(gtu.getGTUType()).values())
         {
@@ -427,7 +436,8 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
                     {
                         // the exact time of triggering is based on the distance between the current position of the
                         // relative position on the GTU and the location of the sensor.
-                        double d = sensor.getLongitudinalPositionSI() - referenceStartSI - relativePosition.getDx().getSI();
+                        double d =
+                            sensor.getLongitudinalPositionSI() - referenceStartSI - relativePosition.getDx().getSI();
                         if (d < 0)
                         {
                             throw new NetworkException("scheduleTriggers for gtu: " + gtu + ", d<0 d=" + d);
@@ -438,8 +448,8 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
                         {
                             System.err.println("Time=" + gtu.getSimulator().getSimulatorTime().getTime().getSI()
                                 + " - Scheduling trigger at " + triggerTime.getSI() + "s. > "
-                                + gtu.getNextEvaluationTime().getSI() + "s. (nextEvalTime) for sensor " + sensor + " , gtu "
-                                + gtu);
+                                + gtu.getNextEvaluationTime().getSI() + "s. (nextEvalTime) for sensor " + sensor
+                                + " , gtu " + gtu);
                             System.err.println("  v=" + gtu.getVelocity() + ", a=" + gtu.getAcceleration() + ", lane="
                                 + toString() + ", refStartSI=" + referenceStartSI + ", moveSI=" + referenceMoveSI);
                             triggerTime =
@@ -506,8 +516,7 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
      * @throws NetworkException when the fractionalPosition is outside the range 0..1, or the GTU is already registered on this
      *             Lane
      */
-    public final int addGTU(final LaneBasedGTU gtu, final double fractionalPosition) throws
-        NetworkException
+    public final int addGTU(final LaneBasedGTU gtu, final double fractionalPosition) throws NetworkException
     {
         // figure out the rank for the new GTU
         int index;
@@ -516,9 +525,10 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
             LaneBasedGTU otherGTU = this.gtuList.get(index);
             if (gtu == otherGTU)
             {
-                throw new NetworkException("GTU " + gtu + " already registered on Lane " + this + " [registered lanes: "
-                    + gtu.positions(gtu.getFront()).keySet() + "] locations: " + gtu.positions(gtu.getFront()).values()
-                    + " time: " + gtu.getSimulator().getSimulatorTime().getTime());
+                throw new NetworkException("GTU " + gtu + " already registered on Lane " + this
+                    + " [registered lanes: " + gtu.positions(gtu.getFront()).keySet() + "] locations: "
+                    + gtu.positions(gtu.getFront()).values() + " time: "
+                    + gtu.getSimulator().getSimulatorTime().getTime());
             }
             if (otherGTU.fractionalPosition(this, otherGTU.getFront()) >= fractionalPosition)
             {
@@ -538,8 +548,7 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
      *         a lane change operation)
      * @throws NetworkException when longitudinalPosition is negative or exceeds the length of this Lane
      */
-    public final int addGTU(final LaneBasedGTU gtu, final Length.Rel longitudinalPosition) throws
-        NetworkException
+    public final int addGTU(final LaneBasedGTU gtu, final Length.Rel longitudinalPosition) throws NetworkException
     {
         return addGTU(gtu, longitudinalPosition.getSI() / getLength().getSI());
     }
@@ -852,6 +861,14 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
     protected double getZ()
     {
         return 0.0;
+    }
+
+    /**
+     * @return overtakingConditions
+     */
+    public final OvertakingConditions getOvertakingConditions()
+    {
+        return this.overtakingConditions;
     }
 
     /** {@inheritDoc} */

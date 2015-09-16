@@ -8,9 +8,11 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Colors;
 import org.opentrafficsim.core.network.factory.xml.units.Directions;
+import org.opentrafficsim.core.network.factory.xml.units.LaneAttributes;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
 import org.opentrafficsim.core.network.lane.LaneType;
+import org.opentrafficsim.core.network.lane.changing.OvertakingConditions;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -80,6 +82,10 @@ class CrossSectionElementTag implements OTS_SCALAR
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Color color;
 
+    /** overtaking conditions. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    OvertakingConditions overtakingConditions = new OvertakingConditions.LeftAndRight();
+
     /**
      * Parse the ROADTYPE.LANE tag.
      * @param node the node of the XML-file
@@ -90,9 +96,8 @@ class CrossSectionElementTag implements OTS_SCALAR
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static CrossSectionElementTag
-        parseLane(final Node node, final XmlNetworkLaneParser parser, final RoadTypeTag roadTypeTag) throws SAXException,
-            NetworkException
+    static CrossSectionElementTag parseLane(final Node node, final XmlNetworkLaneParser parser,
+        final RoadTypeTag roadTypeTag) throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         CrossSectionElementTag cseTag = new CrossSectionElementTag();
@@ -110,8 +115,8 @@ class CrossSectionElementTag implements OTS_SCALAR
             throw new SAXException("ROADTYPE.LANE: missing attribute TYPE for lane " + roadTypeTag.name + "." + name);
         cseTag.laneTypeString = attributes.getNamedItem("TYPE").getNodeValue().trim();
         if (!parser.laneTypes.containsKey(cseTag.laneTypeString))
-            throw new SAXException("ROADTYPE.LANE: TYPE " + cseTag.laneTypeString + " for lane " + roadTypeTag.name + "."
-                + name + " does not have compatible GTUs defined in a COMPATIBILITY element");
+            throw new SAXException("ROADTYPE.LANE: TYPE " + cseTag.laneTypeString + " for lane " + roadTypeTag.name
+                + "." + name + " does not have compatible GTUs defined in a COMPATIBILITY element");
         cseTag.laneType = parser.laneTypes.get(cseTag.laneTypeString);
 
         if (attributes.getNamedItem("OFFSET") != null)
@@ -138,13 +143,25 @@ class CrossSectionElementTag implements OTS_SCALAR
             throw new SAXException("ROADTYPE.LANE: cannot determine SPEED for lane: " + roadTypeTag.name + "." + name);
 
         if (attributes.getNamedItem("DIRECTION") == null)
-            throw new SAXException("ROADTYPE.LANE: missing attribute DIRECTION for lane " + roadTypeTag.name + "." + name);
+            throw new SAXException("ROADTYPE.LANE: missing attribute DIRECTION for lane " + roadTypeTag.name + "."
+                + name);
         cseTag.direction = Directions.parseDirection(attributes.getNamedItem("DIRECTION").getNodeValue());
 
         if (attributes.getNamedItem("COLOR") != null)
             cseTag.color = Colors.parseColor(attributes.getNamedItem("COLOR").getNodeValue());
         else
             cseTag.color = Color.LIGHT_GRAY;
+
+        Node oc = attributes.getNamedItem("OVERTAKING");
+        if (oc != null)
+            cseTag.overtakingConditions = LaneAttributes.parseOvertakingConditions(oc.getNodeValue().trim(), parser);
+        else if (roadTypeTag.overtakingConditions != null)
+            cseTag.overtakingConditions = roadTypeTag.overtakingConditions;
+        else if (parser.globalTag.defaultOvertakingConditions != null)
+            cseTag.overtakingConditions = parser.globalTag.defaultOvertakingConditions;
+        else
+            throw new SAXException("ROADTYPE.LANE: cannot determine OVERTAKING for lane: " + roadTypeTag.name + "."
+                + name);
 
         roadTypeTag.cseTags.put(cseTag.name, cseTag);
         return cseTag;
@@ -189,8 +206,8 @@ class CrossSectionElementTag implements OTS_SCALAR
         else if (parser.globalTag.defaultLaneWidth != null)
             cseTag.width = parser.globalTag.defaultLaneWidth;
         else
-            throw new SAXException("ROADTYPE.NOTRAFFICLANE: cannot determine WIDTH for NOTRAFFICLANE: " + roadTypeTag.name
-                + "." + name);
+            throw new SAXException("ROADTYPE.NOTRAFFICLANE: cannot determine WIDTH for NOTRAFFICLANE: "
+                + roadTypeTag.name + "." + name);
 
         if (attributes.getNamedItem("COLOR") != null)
             cseTag.color = Colors.parseColor(attributes.getNamedItem("COLOR").getNodeValue());
@@ -240,8 +257,8 @@ class CrossSectionElementTag implements OTS_SCALAR
         else if (parser.globalTag.defaultLaneWidth != null)
             cseTag.width = parser.globalTag.defaultLaneWidth;
         else
-            throw new SAXException("ROADTYPE.SHOULDER: cannot determine WIDTH for NOTRAFFICLANE: " + roadTypeTag.name + "."
-                + name);
+            throw new SAXException("ROADTYPE.SHOULDER: cannot determine WIDTH for NOTRAFFICLANE: " + roadTypeTag.name
+                + "." + name);
 
         if (attributes.getNamedItem("COLOR") != null)
             cseTag.color = Colors.parseColor(attributes.getNamedItem("COLOR").getNodeValue());

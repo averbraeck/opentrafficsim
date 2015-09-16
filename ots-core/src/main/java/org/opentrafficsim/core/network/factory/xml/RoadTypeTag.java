@@ -6,8 +6,11 @@ import java.util.Map;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.XMLParser;
+import org.opentrafficsim.core.network.factory.xml.units.LaneAttributes;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
+import org.opentrafficsim.core.network.lane.changing.LaneKeepingPolicy;
+import org.opentrafficsim.core.network.lane.changing.OvertakingConditions;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -39,6 +42,14 @@ class RoadTypeTag implements OTS_SCALAR
     /** CrossSectionElementTags, order is important, so a LinkedHashMap. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, CrossSectionElementTag> cseTags = new LinkedHashMap<>();
+
+    /** the lane keeping policy, i.e., keep left, keep right or keep lane. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    LaneKeepingPolicy laneKeepingPolicy = null;
+
+    /** the overtaking conditions for the lanes of this road type. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    OvertakingConditions overtakingConditions = null;
 
     /**
      * Parse the ROADTYPE tags. Delegates to a separate method because the RoadTypeTag can also occur inside a LINK tag. In the
@@ -89,6 +100,15 @@ class RoadTypeTag implements OTS_SCALAR
         Node speed = attributes.getNamedItem("SPEED");
         if (speed != null)
             roadTypeTag.speed = SpeedUnits.parseSpeedAbs(speed.getNodeValue());
+
+        Node lkp = attributes.getNamedItem("LANEKEEPING");
+        if (lkp != null)
+            roadTypeTag.laneKeepingPolicy = LaneAttributes.parseLaneKeepingPolicy(lkp.getNodeValue().trim());
+
+        Node oc = attributes.getNamedItem("OVERTAKING");
+        if (oc != null)
+            roadTypeTag.overtakingConditions =
+                LaneAttributes.parseOvertakingConditions(oc.getNodeValue().trim(), parser);
 
         int cseCount = 0;
 

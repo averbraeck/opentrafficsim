@@ -7,7 +7,9 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Colors;
 import org.opentrafficsim.core.network.factory.xml.units.Directions;
+import org.opentrafficsim.core.network.factory.xml.units.LaneAttributes;
 import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
+import org.opentrafficsim.core.network.lane.changing.OvertakingConditions;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -34,6 +36,10 @@ class LaneOverrideTag implements OTS_SCALAR
     /** animation color. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Color color;
+
+    /** the overtaking conditions for this lane, i.e., overtake on the left, and on the right under 25 km/h. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    OvertakingConditions overtakingConditions = null;
 
     /**
      * Parse the LINK.LANEOVERRIDE tag.
@@ -71,6 +77,11 @@ class LaneOverrideTag implements OTS_SCALAR
 
         if (attributes.getNamedItem("COLOR") != null)
             laneOverrideTag.color = Colors.parseColor(attributes.getNamedItem("COLOR").getNodeValue().trim());
+
+        Node oc = attributes.getNamedItem("OVERTAKING");
+        if (oc != null)
+            laneOverrideTag.overtakingConditions =
+                LaneAttributes.parseOvertakingConditions(oc.getNodeValue().trim(), parser);
 
         linkTag.laneOverrideTags.put(name.trim(), laneOverrideTag);
 

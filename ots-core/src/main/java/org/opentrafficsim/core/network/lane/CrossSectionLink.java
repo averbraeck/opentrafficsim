@@ -7,8 +7,10 @@ import java.util.List;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSLink;
+import org.opentrafficsim.core.network.lane.changing.LaneKeepingPolicy;
 
 /**
+ * A CrossSectionLink is a link with lanes where GTUs can possibly switch between lanes.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -26,6 +28,9 @@ public class CrossSectionLink extends OTSLink implements Serializable
 
     /** list of cross-section elements. */
     private final List<CrossSectionElement> crossSectionElementList = new ArrayList<>();
+    
+    /** the policy to generally keep left, keep right, or keep lane. */
+    private final LaneKeepingPolicy laneKeepingPolicy;
 
     /**
      * Construction of a link.
@@ -33,24 +38,13 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * @param startNode start node (directional).
      * @param endNode end node (directional).
      * @param designLine the OTSLine3D design line of the Link
-     * @param capacity link capacity in vehicles per hour.
+     * @param laneKeepingPolicy the policy to generally keep left, keep right, or keep lane 
      */
     public CrossSectionLink(final String id, final Node startNode, final Node endNode, final OTSLine3D designLine,
-        final Frequency.Abs capacity)
-    {
-        super(id, startNode, endNode, designLine, capacity);
-    }
-
-    /**
-     * Construction of a link.
-     * @param id the link id.
-     * @param startNode start node (directional).
-     * @param endNode end node (directional).
-     * @param designLine the OTSLine3D design line of the Link
-     */
-    public CrossSectionLink(final String id, final Node startNode, final Node endNode, final OTSLine3D designLine)
+        final LaneKeepingPolicy laneKeepingPolicy)
     {
         super(id, startNode, endNode, designLine);
+        this.laneKeepingPolicy = laneKeepingPolicy;
     }
 
     /**
@@ -80,5 +74,13 @@ public class CrossSectionLink extends OTSLink implements Serializable
     public final List<CrossSectionElement> getCrossSectionElementList()
     {
         return this.crossSectionElementList;
+    }
+
+    /**
+     * @return laneKeepingPolicy
+     */
+    public final LaneKeepingPolicy getLaneKeepingPolicy()
+    {
+        return this.laneKeepingPolicy;
     }
 }

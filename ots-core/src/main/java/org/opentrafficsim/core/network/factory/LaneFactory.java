@@ -21,6 +21,8 @@ import org.opentrafficsim.core.network.animation.LaneAnimation;
 import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
+import org.opentrafficsim.core.network.lane.changing.LaneKeepingPolicy;
+import org.opentrafficsim.core.network.lane.changing.OvertakingConditions;
 
 /**
  * <p>
@@ -62,7 +64,7 @@ public final class LaneFactory implements OTS_SCALAR
             }
         }
         OTSLine3D designLine = new OTSLine3D(points);
-        CrossSectionLink link = new CrossSectionLink(name, from, to, designLine);
+        CrossSectionLink link = new CrossSectionLink(name, from, to, designLine, LaneKeepingPolicy.KEEP_RIGHT);
         return link;
     }
 
@@ -93,7 +95,8 @@ public final class LaneFactory implements OTS_SCALAR
         directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.FORWARD);
         Map<GTUType, Speed.Abs> speedMap = new LinkedHashMap<>();
         speedMap.put(GTUType.ALL, speedLimit);
-        Lane result = new Lane(link, id, latPosAtStart, latPosAtEnd, width, width, laneType, directionalityMap, speedMap);
+        Lane result = new Lane(link, id, latPosAtStart, latPosAtEnd, width, width, laneType, directionalityMap, speedMap,
+            new OvertakingConditions.LeftAndRight());
         if (simulator instanceof OTSAnimatorInterface)
         {
             try

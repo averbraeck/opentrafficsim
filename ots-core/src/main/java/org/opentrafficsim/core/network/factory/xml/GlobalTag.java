@@ -5,8 +5,11 @@ import java.util.List;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.XMLParser;
+import org.opentrafficsim.core.network.factory.xml.units.LaneAttributes;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
+import org.opentrafficsim.core.network.lane.changing.LaneKeepingPolicy;
+import org.opentrafficsim.core.network.lane.changing.OvertakingConditions;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -34,6 +37,14 @@ class GlobalTag implements OTS_SCALAR
     /** default VelocityGTUColorer.maxSpeed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Speed.Abs velocityGTUColorerMaxSpeed = null;
+
+    /** default lane keeping policy. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    LaneKeepingPolicy defaultLaneKeepingPolicy = null;
+
+    /** default overtaking conditions. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    OvertakingConditions defaultOvertakingConditions = null;
 
     // TODO add other GTUColorer tags
 
@@ -78,6 +89,16 @@ class GlobalTag implements OTS_SCALAR
                 parser.globalTag.velocityGTUColorerMaxSpeed =
                     SpeedUnits.parseSpeedAbs(velocityGTUColorerAttributes.getNamedItem("MAXSPEED").getNodeValue());
             }
+
+            Node lkp = attributes.getNamedItem("DEFAULTLANEKEEPING");
+            if (lkp != null)
+                parser.globalTag.defaultLaneKeepingPolicy =
+                    LaneAttributes.parseLaneKeepingPolicy(lkp.getNodeValue().trim());
+            
+            Node oc = attributes.getNamedItem("DEFAULTOVERTAKING");
+            if (oc != null)
+                parser.globalTag.defaultOvertakingConditions =
+                    LaneAttributes.parseOvertakingConditions(oc.getNodeValue().trim(), parser);
 
             // TODO parse other GTUColorer tags
         }
