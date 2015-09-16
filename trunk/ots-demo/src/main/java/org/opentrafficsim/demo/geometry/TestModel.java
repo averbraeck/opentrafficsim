@@ -27,14 +27,16 @@ import org.opentrafficsim.core.network.lane.CrossSectionLink;
 import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.NoTrafficLane;
 import org.opentrafficsim.core.network.lane.Shoulder;
+import org.opentrafficsim.core.network.lane.changing.LaneKeepingPolicy;
+import org.opentrafficsim.core.network.lane.changing.OvertakingConditions;
 
 /**
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate$, @version $Revision$, 
- * by $Author$, initial version ct 17, 2014 <br>
+ * $LastChangedDate$, @version $Revision$, by $Author$,
+ * initial version ct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 /** */
@@ -48,8 +50,9 @@ public class TestModel implements OTSModelInterface, OTS_SCALAR
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
-        throws SimRuntimeException, RemoteException
+    public final void
+        constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
+            throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSSimulatorInterface) pSimulator;
 
@@ -59,38 +62,39 @@ public class TestModel implements OTSModelInterface, OTS_SCALAR
         OTSNode n1 = new OTSNode("N1", new OTSPoint3D(0.0, 0.0));
         CrossSectionLink l01 =
             new CrossSectionLink("L01", n0, n1, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(-25.0, 0.0),
-                new OTSPoint3D(0.0, 0.0)}));
+                new OTSPoint3D(0.0, 0.0)}), LaneKeepingPolicy.KEEP_RIGHT);
 
         OTSNode n2 = new OTSNode("N2", new OTSPoint3D(25.0, 20.0));
         CrossSectionLink l12 =
             new CrossSectionLink("L12", n1, n2, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(0.0, 0.0),
-                new OTSPoint3D(25.0, 20.0)}));
+                new OTSPoint3D(25.0, 20.0)}), LaneKeepingPolicy.KEEP_RIGHT);
 
         OTSNode n3 = new OTSNode("N3", new OTSPoint3D(50.0, 0.0));
         CrossSectionLink l23 =
             new CrossSectionLink("L23", n2, n3, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(25.0, 20.0),
-                new OTSPoint3D(50.0, 0.0)}));
+                new OTSPoint3D(50.0, 0.0)}), LaneKeepingPolicy.KEEP_RIGHT);
 
         OTSNode n4 = new OTSNode("N4", new OTSPoint3D(75.0, -20.0));
         CrossSectionLink l34 =
             new CrossSectionLink("L34", n3, n4, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(50.0, 0.0),
-                new OTSPoint3D(75.0, -20.0)}));
+                new OTSPoint3D(75.0, -20.0)}), LaneKeepingPolicy.KEEP_RIGHT);
 
         OTSNode n5 = new OTSNode("N5", new OTSPoint3D(100.0, 0.0));
         CrossSectionLink l45 =
             new CrossSectionLink("L45", n4, n5, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(75.0, -20.0),
-                new OTSPoint3D(100.0, 0.0)}));
+                new OTSPoint3D(100.0, 0.0)}), LaneKeepingPolicy.KEEP_RIGHT);
 
         OTSNode n6 = new OTSNode("N6", new OTSPoint3D(125.0, 0.0));
         CrossSectionLink l56 =
             new CrossSectionLink("L56", n5, n6, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(100.0, 0.0),
-                new OTSPoint3D(125.0, 0.0)}));
+                new OTSPoint3D(125.0, 0.0)}), LaneKeepingPolicy.KEEP_RIGHT);
 
         OTSNode n7 = new OTSNode("N7", new OTSPoint3D(300.0, 0.0));
         CrossSectionLink l67 =
             new CrossSectionLink("L67", n6, n7, new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(125.0, 0.0),
                 new OTSPoint3D(150.0, 0.0), new OTSPoint3D(175.0, 20.0), new OTSPoint3D(200.0, 0.0),
-                new OTSPoint3D(225.0, -20.0), new OTSPoint3D(250.0, 0.0), new OTSPoint3D(300.0, 0.0)}));
+                new OTSPoint3D(225.0, -20.0), new OTSPoint3D(250.0, 0.0), new OTSPoint3D(300.0, 0.0)}),
+                LaneKeepingPolicy.KEEP_RIGHT);
 
         try
         {
@@ -153,25 +157,29 @@ public class TestModel implements OTSModelInterface, OTS_SCALAR
 
         Shoulder sL = new Shoulder(link, "sL", new Length.Rel(9.0, METER), m10, m10);
 
-        Lane laneELL = new NoTrafficLane(link, "ELL", new Length.Rel(8.25, METER), new Length.Rel(8.25, METER), m05, m05);
+        Lane laneELL =
+            new NoTrafficLane(link, "ELL", new Length.Rel(8.25, METER), new Length.Rel(8.25, METER), m05, m05);
         Lane laneL1 =
             new Lane(link, "L1", new Length.Rel(6.25, METER), new Length.Rel(6.25, METER), m35, m35, null,
-                LongitudinalDirectionality.BACKWARD, speedLimit);
+                LongitudinalDirectionality.BACKWARD, speedLimit, new OvertakingConditions.LeftAndRight());
         Lane laneL2 =
             new Lane(link, "L2", new Length.Rel(2.75, METER), new Length.Rel(2.75, METER), m35, m35, null,
-                LongitudinalDirectionality.BACKWARD, speedLimit);
-        Lane laneELM = new NoTrafficLane(link, "ELM", new Length.Rel(0.75, METER), new Length.Rel(0.75, METER), m05, m05);
+                LongitudinalDirectionality.BACKWARD, speedLimit, new OvertakingConditions.LeftAndRight());
+        Lane laneELM =
+            new NoTrafficLane(link, "ELM", new Length.Rel(0.75, METER), new Length.Rel(0.75, METER), m05, m05);
 
         Shoulder sM = new Shoulder(link, "sM", new Length.Rel(0.0, METER), m10, m10);
 
-        Lane laneERM = new NoTrafficLane(link, "ERM", new Length.Rel(-0.75, METER), new Length.Rel(-0.75, METER), m05, m05);
+        Lane laneERM =
+            new NoTrafficLane(link, "ERM", new Length.Rel(-0.75, METER), new Length.Rel(-0.75, METER), m05, m05);
         Lane laneR2 =
             new Lane(link, "R2", new Length.Rel(-2.75, METER), new Length.Rel(-2.75, METER), m35, m35, null,
-                LongitudinalDirectionality.FORWARD, speedLimit);
+                LongitudinalDirectionality.FORWARD, speedLimit, new OvertakingConditions.LeftAndRight());
         Lane laneR1 =
             new Lane(link, "R1", new Length.Rel(-6.25, METER), new Length.Rel(-6.25, METER), m35, m35, null,
-                LongitudinalDirectionality.FORWARD, speedLimit);
-        Lane laneERR = new NoTrafficLane(link, "ERR", new Length.Rel(-8.25, METER), new Length.Rel(-8.25, METER), m05, m05);
+                LongitudinalDirectionality.FORWARD, speedLimit, new OvertakingConditions.LeftAndRight());
+        Lane laneERR =
+            new NoTrafficLane(link, "ERR", new Length.Rel(-8.25, METER), new Length.Rel(-8.25, METER), m05, m05);
 
         Shoulder sR = new Shoulder(link, "sR", new Length.Rel(-9.0, METER), m10, m10);
 
@@ -198,7 +206,8 @@ public class TestModel implements OTSModelInterface, OTS_SCALAR
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator() throws RemoteException
+    public final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+        throws RemoteException
     {
         return this.simulator;
     }

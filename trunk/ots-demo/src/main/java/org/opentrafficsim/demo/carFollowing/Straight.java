@@ -51,6 +51,7 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.lane.Sensor;
 import org.opentrafficsim.core.network.lane.SinkSensor;
+import org.opentrafficsim.core.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.graphs.AccelerationContourPlot;
@@ -418,10 +419,11 @@ class StraightModel implements OTSModelInterface, OTS_SCALAR
             this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.speedLimit, this.simulator);
             this.path.add(this.lane);
             CrossSectionLink endLink = LaneFactory.makeLink("endLink", to, end, null);
+            // No overtaking, single lane
             Lane sinkLane =
                 new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0), this.lane
                     .getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
-                    LongitudinalDirectionality.FORWARD, this.speedLimit);
+                    LongitudinalDirectionality.FORWARD, this.speedLimit, new OvertakingConditions.None());
             Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, METER), this.simulator);
             sinkLane.addSensor(sensor, GTUType.ALL);
             String carFollowingModelName = null;

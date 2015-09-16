@@ -54,6 +54,7 @@ import org.opentrafficsim.core.network.lane.Lane;
 import org.opentrafficsim.core.network.lane.LaneType;
 import org.opentrafficsim.core.network.lane.Sensor;
 import org.opentrafficsim.core.network.lane.SinkSensor;
+import org.opentrafficsim.core.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.FixedLaneBasedRouteGenerator;
@@ -495,10 +496,11 @@ class XMLNetworkModel implements OTSModelInterface, OTS_SCALAR
         CrossSectionLink endLink = LaneFactory.makeLink("endLink", to, end, null);
         for (Lane lane : lanes)
         {
+            // Overtaking left and right allowed on the sinkLane
             Lane sinkLane =
                 new Lane(endLink, lane.getId() + "." + "sinkLane", lane.getLateralCenterPosition(1.0), lane
                     .getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType,
-                    LongitudinalDirectionality.FORWARD, this.speedLimit);
+                    LongitudinalDirectionality.FORWARD, this.speedLimit, new OvertakingConditions.LeftAndRight());
             Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, METER), this.simulator);
             sinkLane.addSensor(sensor, GTUType.ALL);
         }
