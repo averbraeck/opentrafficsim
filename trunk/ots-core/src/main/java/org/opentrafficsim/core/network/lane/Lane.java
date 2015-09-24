@@ -363,35 +363,76 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
     /**
      * Retrieve the list of Sensors of this Lane in the specified distance range for the given GTUType. The sensors that are
      * triggered by GTUTypes.ALL are added as well. The resulting list is a defensive copy.
-     * @param minimumPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the minimum distance on the Lane
-     * @param maximumPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum distance on the Lane
+     * @param minimumPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the minimum distance on the Lane (exclusive)
+     * @param maximumPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum distance on the Lane (inclusive)
      * @param gtuType the GTU type to provide the sensors for
      * @return List&lt;Sensor&gt;; list of the sensor in the specified range
      */
     public final List<Sensor> getSensors(final Length.Rel minimumPosition, final Length.Rel maximumPosition,
         final GTUType gtuType)
     {
-        ArrayList<Sensor> result = new ArrayList<Sensor>();
-        for (List<Sensor> sensorList : this.getSensors(gtuType).subMap(minimumPosition.doubleValue(),
-            maximumPosition.doubleValue()).values())
+        List<Sensor> sensorList = new ArrayList<>(1);
+        for (List<GTUTypeSensor> gtsl : this.sensors.values())
         {
-            result.addAll(sensorList);
+            for (GTUTypeSensor gs : gtsl)
+            {
+                if ((gs.getGtuType().equals(gtuType) || gs.getGtuType().equals(GTUType.ALL))
+                    && gs.getSensor().getLongitudinalPosition().gt(minimumPosition)
+                    && gs.getSensor().getLongitudinalPosition().le(maximumPosition))
+                {
+                    sensorList.add(gs.getSensor());
+                }
+            }
         }
-        for (List<Sensor> sensorList : this.getSensors(GTUType.ALL).subMap(minimumPosition.doubleValue(),
-            maximumPosition.doubleValue()).values())
+        return sensorList;
+    }
+
+    /**
+     * Retrieve the list of Sensors of this Lane that are triggered by the given GTUType. The sensors that are triggered by
+     * GTUTypes.ALL are added as well. The resulting list is a defensive copy.
+     * @param gtuType the GTU type to provide the sensors for
+     * @return List&lt;Sensor&gt;; list of the sensors, in ascending order for the location on the Lane
+     */
+    public final List<Sensor> getSensors(final GTUType gtuType)
+    {
+        List<Sensor> sensorList = new ArrayList<>(1);
+        for (List<GTUTypeSensor> gtsl : this.sensors.values())
         {
-            result.addAll(sensorList);
+            for (GTUTypeSensor gs : gtsl)
+            {
+                if ((gs.getGtuType().equals(gtuType) || gs.getGtuType().equals(GTUType.ALL)))
+                {
+                    sensorList.add(gs.getSensor());
+                }
+            }
         }
-        return result;
+        return sensorList;
+    }
+
+    /**
+     * Retrieve the list of all Sensors of this Lane. The resulting list is a defensive copy.
+     * @return List&lt;Sensor&gt;; list of the sensors, in ascending order for the location on the Lane
+     */
+    public final List<Sensor> getSensors()
+    {
+        List<Sensor> sensorList = new ArrayList<>(1);
+        for (List<GTUTypeSensor> gtsl : this.sensors.values())
+        {
+            for (GTUTypeSensor gs : gtsl)
+            {
+                sensorList.add(gs.getSensor());
+            }
+        }
+        return sensorList;
     }
 
     /**
      * Retrieve the list of Sensors of this Lane for the given GTUType. The sensors that are triggered by GTUTypes.ALL are added
      * as well. The resulting Map is a defensive copy.
      * @param gtuType the GTU type to provide the sensors for
-     * @return all sensors on this lane for the given GTUType.
+     * @return all sensors on this lane for the given GTUType as a map per distance
      */
-    public final SortedMap<Double, List<Sensor>> getSensors(final GTUType gtuType)
+    public final SortedMap<Double, List<Sensor>> getSensorMap(final GTUType gtuType)
     {
         SortedMap<Double, List<Sensor>> sensorMap = new TreeMap<>();
         for (double d : this.sensors.keySet())
@@ -423,7 +464,7 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
     public final void scheduleTriggers(final LaneBasedGTU gtu, final double referenceStartSI,
         final double referenceMoveSI) throws NetworkException, SimRuntimeException
     {
-        for (List<Sensor> sensorList : getSensors(gtu.getGTUType()).values())
+        for (List<Sensor> sensorList : getSensorMap(gtu.getGTUType()).values())
         {
             for (Sensor sensor : sensorList)
             {
