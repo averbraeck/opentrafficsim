@@ -4,7 +4,7 @@
 
   <groupId>opentrafficsim</groupId>
   <artifactId>ots-base</artifactId>
-  <version>0.03.03</version>
+  <version>0.03.04</version>
   <packaging>pom</packaging>
 
   <name>OpenTrafficSim base project</name>
@@ -56,6 +56,7 @@
     <jgrapht.version>0.9.0</jgrapht.version>
     <multislider.version>1.0</multislider.version>
     <ojalgo.version>37.1</ojalgo.version>
+    <osm.version>0.43.1</osm.version>
 
     <maven.compiler.version>3.1</maven.compiler.version>
     <maven.site.version>3.4</maven.site.version>
@@ -169,7 +170,7 @@
         <artifactId>wagon-maven-plugin</artifactId>
         <version>${wagon.maven.version}</version>
         <executions>
-        
+
           <execution>
             <id>upload-jacoco-dot-files</id>
             <phase>site-deploy</phase>
@@ -184,7 +185,7 @@
               <serverId>ots-deployment</serverId>
             </configuration>
           </execution>
-          
+
           <execution>
             <id>upload-license</id>
             <phase>deploy</phase>
@@ -199,7 +200,7 @@
               <serverId>ots-deployment</serverId>
             </configuration>
           </execution>
-          
+
           <execution>
             <id>upload-current-site</id>
             <phase>site-deploy</phase>
@@ -214,7 +215,7 @@
               <serverId>ots-deployment</serverId>
             </configuration>
           </execution>
-          
+
         </executions>
       </plugin>
 
@@ -639,6 +640,24 @@
       </dependency>
 
       <dependency>
+        <groupId>opentrafficsim</groupId>
+        <artifactId>ots-road</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>opentrafficsim</groupId>
+        <artifactId>ots-rail</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>opentrafficsim</groupId>
+        <artifactId>ots-water</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.jfree</groupId>
         <artifactId>jfreechart</artifactId>
         <version>${jfreechart.version}</version>
@@ -738,6 +757,30 @@
         <groupId>org.ojalgo</groupId>
         <artifactId>ojalgo</artifactId>
         <version>${ojalgo.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.openstreetmap.osmosis</groupId>
+        <artifactId>osmosis-core</artifactId>
+        <version>${osm.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.openstreetmap.osmosis</groupId>
+        <artifactId>osmosis-xml</artifactId>
+        <version>${osm.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.openstreetmap.osmosis</groupId>
+        <artifactId>osmosis-pbf</artifactId>
+        <version>${osm.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.openstreetmap.osmosis</groupId>
+        <artifactId>osmosis-osm-binary</artifactId>
+        <version>0.43.1</version>
       </dependency>
 
     </dependencies>
