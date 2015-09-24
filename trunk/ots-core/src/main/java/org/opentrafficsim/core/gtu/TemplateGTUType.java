@@ -7,7 +7,6 @@ import org.djunits.unit.SpeedUnit;
 import org.opentrafficsim.core.OTS_DIST;
 import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.network.lane.LaneType;
 
 /**
  * TemplateGTUType stores most of the information that is needed to generate a GTU.
@@ -57,15 +56,6 @@ public class TemplateGTUType implements Serializable, OTS_SCALAR, OTS_DIST
         this.widthDist = widthDist;
         this.maximumSpeedDist = maximumSpeedDist;
         this.simulator = simulator;
-    }
-
-    /**
-     * @param laneType lane type to look for compatibility.
-     * @return whether the GTUType is compatible with the lane type.
-     */
-    public final boolean isCompatible(final LaneType laneType)
-    {
-        return laneType.isCompatible(this.getGtuType());
     }
 
     /**
