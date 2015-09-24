@@ -13,12 +13,12 @@ import org.opentrafficsim.core.OTS_SCALAR;
  * initial version Jul 4, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public final class Calc implements OTS_SCALAR
+public final class CalcXXX implements OTS_SCALAR
 {
     /**
      * This class should never be instantiated.
      */
-    private Calc()
+    private CalcXXX()
     {
         // Prevent instantiation of this class
     }
