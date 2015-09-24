@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.opentrafficsim.core.network.lane.CrossSectionElement;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
@@ -274,35 +272,5 @@ public final class OTSBuffering
             resultCoordinates[index] = out.get(index);
         }
         return new OTSLine3D(resultCoordinates);
-    }
-
-    /**
-     * Construct a buffer geometry by offsetting the linear geometry line with a distance and constructing a so-called "buffer"
-     * around it.
-     * @param cse the CrossSectionElement to construct the contour for
-     * @return the geometry belonging to this CrossSectionElement.
-     * @throws OTSGeometryException when construction of the geometry fails
-     */
-    public static OTSLine3D constructContour(final CrossSectionElement cse) throws OTSGeometryException
-    {
-        OTSLine3D crossSectionDesignLine =
-            offsetLine(cse.getParentLink().getDesignLine(), cse.getDesignLineOffsetAtBegin().getSI(), cse
-                .getDesignLineOffsetAtEnd().getSI());
-        OTSLine3D rightBoundary =
-            offsetLine(crossSectionDesignLine, -cse.getBeginWidth().getSI() / 2, -cse.getEndWidth().getSI() / 2);
-        OTSLine3D leftBoundary =
-            offsetLine(crossSectionDesignLine, cse.getBeginWidth().getSI() / 2, cse.getEndWidth().getSI() / 2);
-        OTSPoint3D[] result = new OTSPoint3D[rightBoundary.size() + leftBoundary.size() + 1];
-        int resultIndex = 0;
-        for (int index = 0; index < rightBoundary.size(); index++)
-        {
-            result[resultIndex++] = rightBoundary.get(index);
-        }
-        for (int index = leftBoundary.size(); --index >= 0;)
-        {
-            result[resultIndex++] = leftBoundary.get(index);
-        }
-        result[resultIndex] = rightBoundary.get(0); // close the contour
-        return new OTSLine3D(result);
     }
 }

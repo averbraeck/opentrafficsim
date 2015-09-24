@@ -29,37 +29,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="org.opentrafficsim.core.network.lane.SensorLaneStart" project="ots-core" 
-    file="/ots-core/src/main/java/org/opentrafficsim/core/network/lane/SensorLaneStart.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="757" y="162"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
-      <operations public="false" package="false" protected="false" private="false" static="false"/>    
-    </display>  
-  </class>  
-  <class id="5" language="java" name="org.opentrafficsim.core.network.lane.SensorLaneEnd" project="ots-core" 
-    file="/ots-core/src/main/java/org/opentrafficsim/core/network/lane/SensorLaneEnd.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="759" y="82"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
-      <operations public="false" package="false" protected="false" private="false" static="false"/>    
-    </display>  
-  </class>  
-  <class id="6" language="java" name="org.opentrafficsim.core.network.lane.SinkLane" project="ots-core" 
-    file="/ots-core/src/main/java/org/opentrafficsim/core/network/lane/SinkLane.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="430" y="157"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
-      <operations public="false" package="false" protected="false" private="false" static="false"/>    
-    </display>  
-  </class>  
-  <class id="7" language="java" name="org.opentrafficsim.core.network.lane.RoadMarkerAcross" project="ots-core" 
+  <class id="4" language="java" name="org.opentrafficsim.core.network.lane.RoadMarkerAcross" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/network/lane/RoadMarkerAcross.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="703" y="313"/>    
@@ -69,7 +39,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="org.opentrafficsim.core.network.lane.CrossSectionLink" project="ots-core" 
+  <class id="5" language="java" name="org.opentrafficsim.core.network.lane.CrossSectionLink" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/network/lane/CrossSectionLink.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="927" y="231"/>    
@@ -79,7 +49,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="org.opentrafficsim.core.network.lane.AbstractSensor" project="ots-core" 
+  <class id="6" language="java" name="org.opentrafficsim.core.network.lane.AbstractSensor" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/network/lane/AbstractSensor.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="603" y="164"/>    
@@ -89,7 +59,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="10" language="java" name="org.opentrafficsim.core.network.lane.LaneType" project="ots-core" 
+  <class id="7" language="java" name="org.opentrafficsim.core.network.lane.LaneType" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/network/lane/LaneType.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="297" y="229"/>    
@@ -99,7 +69,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="11" language="java" name="org.opentrafficsim.core.network.lane.CrossSectionElement" project="ots-core" 
+  <class id="8" language="java" name="org.opentrafficsim.core.network.lane.CrossSectionElement" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/network/lane/CrossSectionElement.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="703" y="231"/>    
@@ -109,7 +79,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="12" language="java" name="org.opentrafficsim.core.network.lane.Stripe" project="ots-core" 
+  <class id="9" language="java" name="org.opentrafficsim.core.network.lane.Stripe" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/network/lane/Stripe.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="825" y="379"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
@@ -118,7 +88,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="13" language="java" name="org.opentrafficsim.core.network.lane.Shoulder" project="ots-core" 
+  <class id="10" language="java" name="org.opentrafficsim.core.network.lane.Shoulder" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/network/lane/Shoulder.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="562" y="309"/>    
@@ -128,17 +98,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="14" language="java" name="org.opentrafficsim.core.network.lane.SinkLane.SinkSensor" project="ots-core" 
-    file="/ots-core/src/main/java/org/opentrafficsim/core/network/lane/SinkLane.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="504" y="82"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
-      <operations public="false" package="false" protected="false" private="false" static="false"/>    
-    </display>  
-  </class>  
-  <enumeration id="15" language="java" name="org.opentrafficsim.core.network.lane.Stripe.Permeable" project="ots-core" 
+  <enumeration id="11" language="java" name="org.opentrafficsim.core.network.lane.Stripe.Permeable" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/network/lane/Stripe.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="712" y="380"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
@@ -147,7 +107,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </enumeration>  
-  <class id="16" language="java" name="org.opentrafficsim.core.network.lane.NoTrafficLane" project="ots-core" 
+  <class id="12" language="java" name="org.opentrafficsim.core.network.lane.NoTrafficLane" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/network/lane/NoTrafficLane.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="432" y="312"/>    
@@ -157,17 +117,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="17" language="java" name="org.opentrafficsim.core.network.lane.SourceLane" project="ots-core" 
-    file="/ots-core/src/main/java/org/opentrafficsim/core/network/lane/SourceLane.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="293" y="309"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
-      <operations public="false" package="false" protected="false" private="false" static="false"/>    
-    </display>  
-  </class>  
-  <class id="18" language="java" name="org.opentrafficsim.core.network.lane.Barrier" project="ots-core" 
+  <class id="13" language="java" name="org.opentrafficsim.core.network.lane.Barrier" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/network/lane/Barrier.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="973" y="380"/>    
@@ -177,7 +127,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="19" language="java" name="org.opentrafficsim.core.network.lane.RoadMarkerAlong" project="ots-core" 
+  <class id="14" language="java" name="org.opentrafficsim.core.network.lane.RoadMarkerAlong" project="ots-core" 
     file="/ots-core/src/main/java/org/opentrafficsim/core/network/lane/RoadMarkerAlong.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="907" y="324"/>    
@@ -187,28 +137,34 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="20" language="java" name="org.opentrafficsim.core.network.geotools.LinkGeotools" project="ots-core" 
-    file="/ots-core/src/main/java/org/opentrafficsim/core/network/geotools/LinkGeotools.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="928" y="161"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
-      <operations public="false" package="false" protected="false" private="false" static="false"/>    
-    </display>  
-  </class>  
-  <realization id="21">    
-    <end type="SOURCE" refId="9"/>    
+  <realization id="15">    
+    <end type="SOURCE" refId="6"/>    
     <end type="TARGET" refId="2"/>  
   </realization>  
-  <generalization id="22">    
-    <end type="SOURCE" refId="17"/>    
+  <association id="16">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="17" name="lane"/>      
+      <multiplicity id="18" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
+  <generalization id="19">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="8"/>  
+  </generalization>  
+  <generalization id="20">    
+    <end type="SOURCE" refId="12"/>    
     <end type="TARGET" refId="3"/>  
   </generalization>  
-  <generalization id="23">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="11"/>  
-  </generalization>  
+  <association id="21">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="22" name="crossSectionElementList"/>      
+      <multiplicity id="23" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="8" navigable="true"/>    
+    <display labels="false" multiplicity="true"/>  
+  </association>  
   <association id="24">    
     <end type="SOURCE" refId="1" navigable="false">      
       <attribute id="25" name="lane"/>      
@@ -218,88 +174,48 @@
     <display labels="false" multiplicity="true"/>  
   </association>  
   <association id="27">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="28" name="crossSectionElement"/>      
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="28" name="laneType"/>      
       <multiplicity id="29" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
+    <end type="TARGET" refId="7" navigable="true"/>    
     <display labels="false" multiplicity="true"/>  
   </association>  
-  <nesting id="30">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="14"/>  
-  </nesting>  
+  <generalization id="30">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="8"/>  
+  </generalization>  
   <generalization id="31">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="9"/>  
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="14"/>  
   </generalization>  
-  <nesting id="32">    
-    <end type="SOURCE" refId="12"/>    
-    <end type="TARGET" refId="15"/>  
-  </nesting>  
-  <association id="33">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="34" name="lane"/>      
-      <multiplicity id="35" minimum="0" maximum="1"/>    
+  <association id="32">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="33" name="parentLink"/>      
+      <multiplicity id="34" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
+    <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="false" multiplicity="true"/>  
   </association>  
-  <generalization id="36">    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="11"/>  
-  </generalization>  
-  <association id="37">    
-    <end type="SOURCE" refId="11" navigable="false">      
-      <attribute id="38" name="parentLink"/>      
-      <multiplicity id="39" minimum="0" maximum="1"/>    
+  <association id="35">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="36" name="crossSectionElement"/>      
+      <multiplicity id="37" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="8" navigable="true"/>    
     <display labels="false" multiplicity="true"/>  
   </association>  
-  <generalization id="40">    
-    <end type="SOURCE" refId="12"/>    
-    <end type="TARGET" refId="19"/>  
-  </generalization>  
-  <association id="41">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="42" name="laneType"/>      
-      <multiplicity id="43" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="false" multiplicity="true"/>  
-  </association>  
-  <generalization id="44">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="9"/>  
-  </generalization>  
-  <generalization id="45">    
-    <end type="SOURCE" refId="18"/>    
-    <end type="TARGET" refId="19"/>  
-  </generalization>  
-  <generalization id="46">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <association id="47">    
-    <end type="SOURCE" refId="8" navigable="false">      
-      <attribute id="48" name="crossSectionElementList"/>      
-      <multiplicity id="49" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
-    <display labels="false" multiplicity="true"/>  
-  </association>  
-  <generalization id="50">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <generalization id="51">    
-    <end type="SOURCE" refId="3"/>    
+  <nesting id="38">    
+    <end type="SOURCE" refId="9"/>    
     <end type="TARGET" refId="11"/>  
+  </nesting>  
+  <generalization id="39">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="8"/>  
   </generalization>  
-  <generalization id="52">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="9"/>  
+  <generalization id="40">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="14"/>  
   </generalization>  
   <classifier-display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
     accessors="true" visibility="true">    

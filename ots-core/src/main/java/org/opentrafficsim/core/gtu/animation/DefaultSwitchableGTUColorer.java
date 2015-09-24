@@ -20,13 +20,12 @@ public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer
 
     static
     {
-        COLORERS = new GTUColorer[4];
+        COLORERS = new GTUColorer[3];
         COLORERS[0] = new IDGTUColorer();
         COLORERS[1] = new VelocityGTUColorer(new Speed.Abs(150, KM_PER_HOUR));
         COLORERS[2] =
             new AccelerationGTUColorer(new Acceleration.Abs(-4, METER_PER_SECOND_2), new Acceleration.Abs(2,
                 METER_PER_SECOND_2));
-        COLORERS[3] = new LaneChangeUrgeGTUColorer(new Length.Rel(10, METER), new Length.Rel(1000, METER));
     }
 
     /**
