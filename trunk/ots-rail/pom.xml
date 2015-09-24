@@ -9,7 +9,7 @@
     <relativePath>../ots-base/pom.xml</relativePath>
   </parent>
 
-  <artifactId>ots-road</artifactId>
+  <artifactId>ots-rail</artifactId>
   <name>Open Traffic Sim rail classes</name>
   <description>Open Traffic Sim rail classes</description>
 
