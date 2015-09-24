@@ -28,10 +28,10 @@
         </property>
       </activation>
       <modules>
-        <!-- ots core package -->
         <module>../ots-core</module>
-
-        <!-- examples and tutorial -->
+        <module>../ots-road</module>
+        <module>../ots-rail</module>
+        <module>../ots-water</module>
         <module>../ots-demo</module>
       </modules>
     </profile>
