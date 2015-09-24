@@ -21,14 +21,14 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.animation.LaneAnimation;
-import org.opentrafficsim.core.network.animation.ShoulderAnimation;
-import org.opentrafficsim.core.network.lane.CrossSectionLink;
-import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.network.lane.NoTrafficLane;
-import org.opentrafficsim.core.network.lane.Shoulder;
-import org.opentrafficsim.core.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.core.network.lane.changing.OvertakingConditions;
+import org.opentrafficsim.road.network.animation.LaneAnimation;
+import org.opentrafficsim.road.network.animation.ShoulderAnimation;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.NoTrafficLane;
+import org.opentrafficsim.road.network.lane.Shoulder;
+import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
+import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
 /**
  * <p>

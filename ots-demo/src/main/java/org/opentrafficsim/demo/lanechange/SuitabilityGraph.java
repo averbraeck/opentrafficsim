@@ -39,12 +39,12 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.factory.LaneFactory;
-import org.opentrafficsim.core.network.lane.Lane;
-import org.opentrafficsim.core.network.lane.LaneType;
-import org.opentrafficsim.core.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.gui.SimulatorFrame;
+import org.opentrafficsim.road.network.factory.LaneFactory;
+import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 /**
