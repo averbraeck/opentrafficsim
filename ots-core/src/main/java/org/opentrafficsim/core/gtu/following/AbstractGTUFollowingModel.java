@@ -7,7 +7,6 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.opentrafficsim.core.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.units.calc.Calc;
 
 /**
  * Code shared between various car following models.
@@ -121,8 +120,13 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
     public final AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU gtu, final Speed.Abs speedLimit)
         throws NetworkException
     {
+        Length.Rel stopDistance = new Length.Rel(gtu.getMaximumVelocity().si * gtu.getMaximumVelocity().si 
+                / (2.0 * maximumSafeDeceleration().si), LengthUnit.SI);
+        return computeAcceleration(gtu, gtu.getLongitudinalVelocity(), stopDistance, speedLimit);
+        /*-
         return computeAcceleration(gtu, gtu.getLongitudinalVelocity(), Calc.speedSquaredDividedByDoubleAcceleration(gtu
             .getMaximumVelocity(), maximumSafeDeceleration()), speedLimit);
+            */
     }
 
     /** {@inheritDoc} */

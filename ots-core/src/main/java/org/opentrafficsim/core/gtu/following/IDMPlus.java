@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.gtu.following;
 
-import org.opentrafficsim.core.units.calc.Calc;
-
 /**
  * IDMPlus implements the <i>Integrated Lane Change Model with Relaxation and Synchronization</i> as published by Wouter J.
  * Schakel, Bart van Arem, Member, IEEE, and Bart D. Netten. 2012. <br>
@@ -67,7 +65,7 @@ public class IDMPlus extends AbstractGTUFollowingModel
      *            110% of the speed limit; etc.)
      */
     public IDMPlus(final Acceleration.Abs a, final Acceleration.Abs b, final Length.Rel s0, final Time.Rel tSafe,
-        final double delta)
+            final double delta)
     {
         this.a = a;
         this.b = b;
@@ -89,7 +87,7 @@ public class IDMPlus extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     public final Acceleration.Abs computeAcceleration(final Speed.Abs followerSpeed, final Speed.Abs followerMaximumSpeed,
-        final Speed.Abs leaderSpeed, final Length.Rel headway, final Speed.Abs speedLimit)
+            final Speed.Abs leaderSpeed, final Length.Rel headway, final Speed.Abs speedLimit)
     {
         double leftComponent = 1 - Math.pow(followerSpeed.getSI() / vDes(speedLimit, followerMaximumSpeed).getSI(), 4);
         if (Double.isNaN(leftComponent))
@@ -101,16 +99,21 @@ public class IDMPlus extends AbstractGTUFollowingModel
         // System.out.println("leftComponent is " + leftComponent);
         // }
         Acceleration.Rel logWeightedAccelerationTimes2 =
-            new Acceleration.Rel(Math.sqrt(this.a.getSI() * this.b.getSI()), METER_PER_SECOND_2).multiplyBy(2); // don't forget
-                                                                                                                // the times 2
+                new Acceleration.Rel(Math.sqrt(this.a.getSI() * this.b.getSI()), METER_PER_SECOND_2).multiplyBy(2);
+        // don't forget the times 2
 
         Speed.Rel dV = followerSpeed.minus(leaderSpeed);
         // System.out.println("dV is " + dV);
         // System.out.println(" v is " + gtu.speed(thisEvaluationTime));
         // System.out.println("s0 is " + this.s0);
         Length.Rel sStar =
-            this.s0.plus(Calc.speedTimesTime(followerSpeed, this.tSafe)).plus(
-                Calc.speedTimesTime(dV, Calc.speedDividedByAcceleration(followerSpeed, logWeightedAccelerationTimes2)));
+                this.s0.plus(followerSpeed.toRel().multiplyBy(this.tSafe)).plus(
+                        dV.multiplyBy(followerSpeed.toRel().divideBy(logWeightedAccelerationTimes2)));
+
+        /*-
+        this.s0.plus(Calc.speedTimesTime(followerSpeed, this.tSafe)).plus(
+        Calc.speedTimesTime(dV, Calc.speedDividedByAcceleration(followerSpeed, logWeightedAccelerationTimes2)));
+         */
         if (sStar.getSI() < 0)
         {
             // Negative value should be treated as 0? This is NOT in the LMRS paper
@@ -160,8 +163,8 @@ public class IDMPlus extends AbstractGTUFollowingModel
     @Override
     public final String getLongName()
     {
-        return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(), this.a
-            .getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
+        return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(),
+                this.a.getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
     }
 
 }

@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.gtu.following;
 
 import org.djunits.unit.AccelerationUnit;
-import org.opentrafficsim.core.units.calc.Calc;
 
 /**
  * The Intelligent Driver Model by Treiber, Hennecke and Helbing.
@@ -62,8 +61,7 @@ public class IDM extends AbstractGTUFollowingModel
      * @param delta double; the speed limit adherence (1.0; mean free speed equals the speed limit; 1.1: mean free speed equals
      *            110% of the speed limit; etc.)
      */
-    public IDM(final Acceleration.Abs a, final Acceleration.Abs b, final Length.Rel s0, final Time.Rel tSafe,
-        final double delta)
+    public IDM(final Acceleration.Abs a, final Acceleration.Abs b, final Length.Rel s0, final Time.Rel tSafe, final double delta)
     {
         this.a = a;
         this.b = b;
@@ -85,31 +83,31 @@ public class IDM extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     public final Acceleration.Abs computeAcceleration(final Speed.Abs followerSpeed, final Speed.Abs followerMaximumSpeed,
-        final Speed.Abs leaderSpeed, final Length.Rel headway, final Speed.Abs speedLimit)
+            final Speed.Abs leaderSpeed, final Length.Rel headway, final Speed.Abs speedLimit)
     {
         // System.out.println("Applying IDM for " + follower + " headway is " + headway);
         // dV is the approach speed
         Speed.Rel dV = followerSpeed.minus(leaderSpeed);
         Acceleration.Abs aFree =
-            new Acceleration.Abs(this.a.getSI()
-                * (1 - Math.pow(followerSpeed.getSI() / vDes(speedLimit, followerMaximumSpeed).getSI(), 4)),
-                METER_PER_SECOND_2);
+                new Acceleration.Abs(this.a.getSI()
+                        * (1 - Math.pow(followerSpeed.getSI() / vDes(speedLimit, followerMaximumSpeed).getSI(), 4)),
+                        METER_PER_SECOND_2);
         if (Double.isNaN(aFree.getSI()))
         {
             aFree = new Acceleration.Abs(0, AccelerationUnit.SI);
         }
         Acceleration.Rel logWeightedAccelerationTimes2 =
-            new Acceleration.Rel(Math.sqrt(this.a.getSI() * this.b.getSI()), METER_PER_SECOND_2).multiplyBy(2); // don't forget
-                                                                                                                // the times 2
+                new Acceleration.Rel(Math.sqrt(this.a.getSI() * this.b.getSI()), METER_PER_SECOND_2).multiplyBy(2); 
+        // don't forget the times 2
+        
         // TODO compute logWeightedAccelerationTimes2 only once per run
-        /*
-         * Length.Rel sStar = DoubleScalar.plus( DoubleScalar.plus(this.s0,
-         * Calc.speedTimesTime(follower.getLongitudinalVelocity(thisEvaluationTime), this.tSafe)) , Calc.speedTimesTime( dV,
-         * Calc.speedDividedByAcceleration(followerCurrentSpeed, logWeightedAccelerationTimes2)));
-         */
         Length.Rel right =
+                followerSpeed.toRel().multiplyBy(this.tSafe)
+                        .plus(dV.multiplyBy(followerSpeed.toRel().divideBy(logWeightedAccelerationTimes2)));
+        /*-
             Calc.speedTimesTime(followerSpeed, this.tSafe).plus(
                 Calc.speedTimesTime(dV, Calc.speedDividedByAcceleration(followerSpeed, logWeightedAccelerationTimes2)));
+         */
         if (right.getSI() < 0)
         {
             // System.out.println("Fixing negative right");
@@ -123,7 +121,7 @@ public class IDM extends AbstractGTUFollowingModel
         }
         // System.out.println("s* is " + sStar);
         Acceleration.Rel aInteraction =
-            new Acceleration.Rel(-Math.pow(this.a.getSI() * sStar.getSI() / headway.getSI(), 2), METER_PER_SECOND_2);
+                new Acceleration.Rel(-Math.pow(this.a.getSI() * sStar.getSI() / headway.getSI(), 2), METER_PER_SECOND_2);
         Acceleration.Abs newAcceleration = aFree.plus(aInteraction);
         if (newAcceleration.getSI() * this.stepSize.getSI() + followerSpeed.getSI() < 0)
         {
@@ -159,8 +157,8 @@ public class IDM extends AbstractGTUFollowingModel
     @Override
     public final String getLongName()
     {
-        return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(), this.a
-            .getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
+        return String.format("%s (a=%.1fm/s\u00b2, b=%.1fm/s\u00b2, s0=%.1fm, tSafe=%.1fs, delta=%.2f)", getName(),
+                this.a.getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
     }
 
 }
