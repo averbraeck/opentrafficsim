@@ -1,0 +1,67 @@
+Welke types maken we in eerste instantie aan?
+
+5 vrijheidsgraden:
+
+1. dimensie
+Scalar
+Vector
+Matrix
+Cube
+
+2. abs/rel
+Abs
+Rel
+
+3. Type inhoud
+byte
+char
+int
+long
+short
+float
+double
+Complex<Double>
+Complex<Float>
+Object
+
+4. Opslagmethode
+Sparse
+Dense
+Linear
+Value
+
+5. Eenheid
+Alle Unit types + automatisch gegenereerde types
+
+
+Ontwerpbeslissing 1
+Units via <U extends Unit<U>> toevoegen. Check op units in de berekeningen die we inbouwen.
+
+Wat hebben we in eerste instantie verder nodig?
+- Scalar Abs Float Value
+- Scalar Rel Float Value
+- Scalar Abs Double Value
+- Scalar Rel Double Value
+- Vector Abs Float Dense
+- Vector Rel Float Dense
+- Vector Abs Double Dense
+- Vector Rel Double Dense
+- Matrix Abs Float Dense
+- Matrix Rel Float Dense
+- Matrix Abs Double Dense
+- Matrix Rel Double Dense
+
+
+Wat mag:
+abs-abs => rel
+abs+rel => abs
+abs-rel => abs
+rel+rel => rel
+rel-rel => rel
+rel+abs => abs
+rel*c => rel
+
+Wat mag niet:
+abs+abs
+rel-abs
+abs*c
