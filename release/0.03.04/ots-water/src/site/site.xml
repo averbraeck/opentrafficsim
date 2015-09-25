@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="${artifactId} ${version}">
+
+  <publishDate position="left" format="dd-MM-yyyy hh:mm" />
+
+  <bannerLeft>
+    <name>${artifactId} ${version}</name>
+  </bannerLeft>
+
+  <body>
+
+    <menu name="OpenTrafficSim">
+      <item name="OTS Home" href="http://opentrafficsim.org" target="_blank" />
+      <item name="DITTLab" href="http://dittlab.tudelft.nl" target="_blank" />
+      <item name="Simulation@TU Delft" href="http://simulation.tudelft.nl" target="_blank" />
+
+      <item name="About OTS" href="about.html" />
+    </menu>
+
+    <menu name="Modules">
+      <item name="ots-base" href="http://opentrafficsim.org/docs/${version}/index.html" />
+      <item name="ots-core" href="http://opentrafficsim.org/docs/${version}/ots-core/index.html" />
+      <item name="ots-road" href="http://opentrafficsim.org/docs/${version}/ots-road/index.html" />
+      <item name="ots-rail" href="http://opentrafficsim.org/docs/${version}/ots-rail/index.html" />
+      <item name="ots-water" href="http://opentrafficsim.org/docs/${version}/ots-water/index.html" />
+      <item name="ots-demo" href="http://opentrafficsim.org/docs/${version}/ots-demo/index.html" />
+    </menu>
+
+    ${reports}
+
+  </body>
+</project>
