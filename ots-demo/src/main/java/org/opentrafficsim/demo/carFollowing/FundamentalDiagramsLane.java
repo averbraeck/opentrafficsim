@@ -18,8 +18,12 @@ import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.TimeUnit;
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -64,7 +68,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * initial version 17 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FundamentalDiagramsLane extends AbstractWrappableAnimation
+public class FundamentalDiagramsLane extends AbstractWrappableAnimation implements UNITS
 {
     /** the model. */
     private FundamentalDiagramLanePlotsModel model;
@@ -203,7 +207,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation
      * initial version ug 1, 2014 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class FundamentalDiagramLanePlotsModel implements OTSModelInterface, OTS_SCALAR
+    class FundamentalDiagramLanePlotsModel implements OTSModelInterface, UNITS
     {
         /** */
         private static final long serialVersionUID = 20140820L;
@@ -245,7 +249,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation
         private List<Lane> lanes = new ArrayList<>();
 
         /** the speed limit. */
-        private Speed.Abs speedLimit = new Speed.Abs(100, KM_PER_HOUR);
+        private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
         /** the fundamental diagram plots. */
         private ArrayList<FundamentalDiagramLane> fundamentalDiagramsLane = new ArrayList<>();
@@ -322,19 +326,19 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation
                         if (modelName.equals("IDM"))
                         {
                             this.carFollowingModelCars =
-                                new IDM(new Acceleration.Abs(1, METER_PER_SECOND_2), new Acceleration.Abs(1.5,
+                                new IDM(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5,
                                     METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
                             this.carFollowingModelTrucks =
-                                new IDM(new Acceleration.Abs(0.5, METER_PER_SECOND_2), new Acceleration.Abs(1.5,
+                                new IDM(new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.5,
                                     METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
                         }
                         else if (modelName.equals("IDM+"))
                         {
                             this.carFollowingModelCars =
-                                new IDMPlus(new Acceleration.Abs(1, METER_PER_SECOND_2), new Acceleration.Abs(1.5,
+                                new IDMPlus(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5,
                                     METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
                             this.carFollowingModelTrucks =
-                                new IDMPlus(new Acceleration.Abs(0.5, METER_PER_SECOND_2), new Acceleration.Abs(1.5,
+                                new IDMPlus(new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.5,
                                     METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
                         }
                         else
@@ -375,11 +379,11 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation
                 this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, SECOND), this, this, "generateCar",
                     null);
                 // Create a block at t = 5 minutes
-                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(1000, SECOND), this, this, "createBlock",
-                    null);
+                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(1000, SECOND), this, this,
+                    "createBlock", null);
                 // Remove the block at t = 7 minutes
-                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(1200, SECOND), this, this, "removeBlock",
-                    null);
+                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(1200, SECOND), this, this,
+                    "removeBlock", null);
                 // Schedule regular updates of the graph
                 for (int t = 1; t <= this.simulator.getReplication().getTreatment().getRunLength().si / 25; t++)
                 {
@@ -405,11 +409,10 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation
             try
             {
                 this.block =
-                    new LaneBasedIndividualCar("BLOCK", this.gtuType, this.carFollowingModelCars,
-                        this.laneChangeModel, initialPositions, new Speed.Abs(0, KM_PER_HOUR),
-                        new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed.Abs(0.0001, KM_PER_HOUR),
-                        new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator,
-                        DefaultCarAnimation.class, this.gtuColorer);
+                    new LaneBasedIndividualCar("BLOCK", this.gtuType, this.carFollowingModelCars, this.laneChangeModel,
+                        initialPositions, new Speed(0, KM_PER_HOUR), new Length.Rel(4, METER), new Length.Rel(1.8,
+                            METER), new Speed(0.0001, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
+                            new CompleteRoute("")), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
             {
@@ -433,7 +436,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation
         {
             boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
             Length.Rel initialPosition = new Length.Rel(0, METER);
-            Speed.Abs initialSpeed = new Speed.Abs(100, KM_PER_HOUR);
+            Speed initialSpeed = new Speed(100, KM_PER_HOUR);
             Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
             initialPositions.put(this.lanes.get(0), initialPosition);
             try
@@ -447,7 +450,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation
                 }
                 new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, generateTruck
                     ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel,
-                    initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, METER), new Speed.Abs(200,
+                    initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, METER), new Speed(200,
                         KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator,
                     DefaultCarAnimation.class, this.gtuColorer);
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);

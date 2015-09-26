@@ -16,8 +16,12 @@ import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.TimeUnit;
+import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -31,7 +35,6 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
-import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -56,7 +59,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  * initial version 15 apr. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SuitabilityGraph implements OTSModelInterface, OTS_SCALAR
+public class SuitabilityGraph implements OTSModelInterface, UNITS
 {
     /** */
     private static final long serialVersionUID = 20150415L;
@@ -132,7 +135,7 @@ public class SuitabilityGraph implements OTSModelInterface, OTS_SCALAR
             int targetLaneConfiguration = TARGETLANES[row];
             for (int column = 0; column < columns; column++)
             {
-                Speed.Abs speedLimit = new Speed.Abs(SPEEDLIMITS[column], KM_PER_HOUR);
+                Speed speedLimit = new Speed(SPEEDLIMITS[column], KM_PER_HOUR);
                 double mainLength = speedLimit.getSI() * this.timeRange.getSI();
                 OTSNode from = new OTSNode("From", new OTSPoint3D(-mainLength, 0, 0));
                 OTSNode branchPoint = new OTSNode("From", new OTSPoint3D(0, 0, 0));
@@ -198,7 +201,7 @@ public class SuitabilityGraph implements OTSModelInterface, OTS_SCALAR
                     targetLaneConfiguration > 0 ? "left" : "right");
             for (int column = 0; column < columns; column++)
             {
-                Speed.Abs speedLimit = new Speed.Abs(SPEEDLIMITS[column], KM_PER_HOUR);
+                Speed speedLimit = new Speed(SPEEDLIMITS[column], KM_PER_HOUR);
                 JFreeChart chart =
                     createChart(String.format("Speed limit %.0f%s, %s", speedLimit.getInUnit(), speedLimit.getUnit(),
                         targetLaneDescription), speedLimit);
@@ -213,7 +216,7 @@ public class SuitabilityGraph implements OTSModelInterface, OTS_SCALAR
      * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit
      * @return JFreeChart; the newly created graph
      */
-    private JFreeChart createChart(final String caption, final Speed.Abs speedLimit)
+    private JFreeChart createChart(final String caption, final Speed speedLimit)
     {
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
         XYDataset chartData = new SuitabilityData();

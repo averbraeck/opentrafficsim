@@ -20,10 +20,14 @@ import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.TimeUnit;
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -75,7 +79,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * initial version 21 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CircularRoad extends AbstractWrappableAnimation
+public class CircularRoad extends AbstractWrappableAnimation implements UNITS
 {
     /** the model. */
     private RoadSimulationModel model;
@@ -151,12 +155,12 @@ public class CircularRoad extends AbstractWrappableAnimation
                             + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                             + "curvature of the road) capabilities of the vehicle and personality "
                             + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
-                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Car", new Acceleration.Abs(1.0,
-                        METER_PER_SECOND_2), new Acceleration.Abs(1.5, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
-                        new Time.Rel(1.0, SECOND), 2));
-                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration.Abs(0.5,
-                        METER_PER_SECOND_2), new Acceleration.Abs(1.25, METER_PER_SECOND_2),
-                        new Length.Rel(2.0, METER), new Time.Rel(1.0, SECOND), 3));
+                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Car",
+                        new Acceleration(1.0, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
+                        new Length.Rel(2.0, METER), new Time.Rel(1.0, SECOND), 2));
+                    propertyList.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration(0.5,
+                        METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
+                        new Time.Rel(1.0, SECOND), 3));
 
                     circularRoad.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(
                         3600.0, SECOND), propertyList, null, true);
@@ -314,7 +318,7 @@ public class CircularRoad extends AbstractWrappableAnimation
  * initial version 1 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class RoadSimulationModel implements OTSModelInterface, OTS_SCALAR
+class RoadSimulationModel implements OTSModelInterface, UNITS
 {
     /** */
     private static final long serialVersionUID = 20141121L;
@@ -341,7 +345,7 @@ class RoadSimulationModel implements OTSModelInterface, OTS_SCALAR
     private Length.Rel minimumDistance = new Length.Rel(0, METER);
 
     /** The speed limit. */
-    private Speed.Abs speedLimit = new Speed.Abs(100, KM_PER_HOUR);
+    private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
     /** The plots. */
     private ArrayList<LaneBasedGTUSampler> plots = new ArrayList<LaneBasedGTUSampler>();
@@ -475,8 +479,8 @@ class RoadSimulationModel implements OTSModelInterface, OTS_SCALAR
                     if (ap.getShortName().contains("IDM"))
                     {
                         // System.out.println("Car following model name appears to be " + ap.getShortName());
-                        Acceleration.Abs a = IDMPropertySet.getA(cp);
-                        Acceleration.Abs b = IDMPropertySet.getB(cp);
+                        Acceleration a = IDMPropertySet.getA(cp);
+                        Acceleration b = IDMPropertySet.getB(cp);
                         Length.Rel s0 = IDMPropertySet.getS0(cp);
                         Time.Rel tSafe = IDMPropertySet.getTSafe(cp);
                         GTUFollowingModel gtuFollowingModel = null;
@@ -604,13 +608,13 @@ class RoadSimulationModel implements OTSModelInterface, OTS_SCALAR
         throws NamingException, NetworkException, SimRuntimeException, GTUException
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
-        Speed.Abs initialSpeed = new Speed.Abs(0, KM_PER_HOUR);
+        Speed initialSpeed = new Speed(0, KM_PER_HOUR);
         Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(lane, initialPosition);
         Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
         new LaneBasedIndividualCar("" + (++this.carsCreated), gtuType, generateTruck ? this.carFollowingModelTrucks
             : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
-            new Length.Rel(1.8, METER), new Speed.Abs(200, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
+            new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
                 new CompleteRoute("")), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
     }
 

@@ -14,7 +14,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.naming.NamingException;
@@ -39,7 +38,10 @@ import javax.swing.event.ChangeListener;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.locale.DefaultLocale;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.gui.LabeledPanel;
 import org.opentrafficsim.gui.ProbabilityDistributionEditor;
@@ -65,7 +67,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * initial version 17 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SuperDemo implements OTS_SCALAR
+public class SuperDemo implements UNITS
 {
     /** The JPanel that holds the user settable properties. */
     private JPanel propertyPanel;
@@ -279,11 +281,11 @@ public class SuperDemo implements OTS_SCALAR
                     + "curvature of the road) capabilities of the vehicle and personality " + "of the driver.</html>",
                     new String[]{"IDM", "IDM+"}, 1, false, 1));
                 modelSelection
-                    .add(IDMPropertySet.makeIDMPropertySet("Car", new Acceleration.Abs(1.0, METER_PER_SECOND_2),
-                        new Acceleration.Abs(1.5, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
+                    .add(IDMPropertySet.makeIDMPropertySet("Car", new Acceleration(1.0, METER_PER_SECOND_2),
+                        new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
                         new Time.Rel(1.0, SECOND), 2));
                 modelSelection.add(IDMPropertySet
-                    .makeIDMPropertySet("Truck", new Acceleration.Abs(0.5, METER_PER_SECOND_2), new Acceleration.Abs(1.25,
+                    .makeIDMPropertySet("Truck", new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25,
                         METER_PER_SECOND_2), new Length.Rel(2.0, METER), new Time.Rel(1.0, SECOND), 3));
                 properties.add(properties.size() > 0 ? 1 : 0, modelSelection);
             }

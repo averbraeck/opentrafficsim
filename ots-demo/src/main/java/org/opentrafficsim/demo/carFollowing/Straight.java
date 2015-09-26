@@ -25,8 +25,12 @@ import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.TimeUnit;
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -80,7 +84,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * initial version 12 nov. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class Straight extends AbstractWrappableAnimation
+public class Straight extends AbstractWrappableAnimation implements UNITS
 {
     /** the model. */
     private StraightModel model;
@@ -138,11 +142,11 @@ public class Straight extends AbstractWrappableAnimation
                             + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                             + "curvature of the road) capabilities of the vehicle and personality "
                             + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Car", new Acceleration.Abs(1.0,
-                        METER_PER_SECOND_2), new Acceleration.Abs(1.5, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Car", new Acceleration(1.0,
+                        METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
                         new Time.Rel(1.0, SECOND), 2));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration.Abs(0.5,
-                        METER_PER_SECOND_2), new Acceleration.Abs(1.25, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration(0.5,
+                        METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
                         new Time.Rel(1.0, SECOND), 3));
                     straight.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND),
                         new Time.Rel(3600.0, SECOND), localProperties, null, true);
@@ -325,7 +329,7 @@ public class Straight extends AbstractWrappableAnimation
  * initial version ug 1, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class StraightModel implements OTSModelInterface, OTS_SCALAR
+class StraightModel implements OTSModelInterface, UNITS
 {
     /** */
     private static final long serialVersionUID = 20140815L;
@@ -392,7 +396,7 @@ class StraightModel implements OTSModelInterface, OTS_SCALAR
     private List<Lane> path = new ArrayList<Lane>();
 
     /** The speed limit on all Lanes. */
-    private Speed.Abs speedLimit = new Speed.Abs(100, KM_PER_HOUR);
+    private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
     /**
      * @return List&lt;Lane*gt;; the set of lanes for the specified index
@@ -472,8 +476,8 @@ class StraightModel implements OTSModelInterface, OTS_SCALAR
                     }
                     if (ap.getShortName().contains("IDM"))
                     {
-                        Acceleration.Abs a = IDMPropertySet.getA(cp);
-                        Acceleration.Abs b = IDMPropertySet.getB(cp);
+                        Acceleration a = IDMPropertySet.getA(cp);
+                        Acceleration b = IDMPropertySet.getB(cp);
                         Length.Rel s0 = IDMPropertySet.getS0(cp);
                         Time.Rel tSafe = IDMPropertySet.getTSafe(cp);
                         GTUFollowingModel gtuFollowingModel = null;
@@ -555,8 +559,8 @@ class StraightModel implements OTSModelInterface, OTS_SCALAR
         {
             this.block =
                 new LaneBasedIndividualCar("999999", this.gtuType, this.carFollowingModelCars, this.laneChangeModel,
-                    initialPositions, new Speed.Abs(0, KM_PER_HOUR), new Length.Rel(4, METER), new Length.Rel(1.8, METER),
-                    new Speed.Abs(0, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")),
+                    initialPositions, new Speed(0, KM_PER_HOUR), new Length.Rel(4, METER), new Length.Rel(1.8, METER),
+                    new Speed(0, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")),
                     this.simulator, DefaultCarAnimation.class, this.gtuColorer);
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
@@ -581,7 +585,7 @@ class StraightModel implements OTSModelInterface, OTS_SCALAR
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         Length.Rel initialPosition = new Length.Rel(0, METER);
-        Speed.Abs initialSpeed = new Speed.Abs(100, KM_PER_HOUR);
+        Speed initialSpeed = new Speed(100, KM_PER_HOUR);
         Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(this.lane, initialPosition);
         try
@@ -593,7 +597,7 @@ class StraightModel implements OTSModelInterface, OTS_SCALAR
                 throw new Error("gtuFollowingModel is null");
             }
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, gtuFollowingModel, this.laneChangeModel,
-                initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, METER), new Speed.Abs(200, KM_PER_HOUR),
+                initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR),
                 new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator, DefaultCarAnimation.class,
                 this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
