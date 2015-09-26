@@ -4,7 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.djunits.unit.AnglePlaneUnit;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.AnglePlane;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -16,7 +17,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public final class AngleUnits implements OTS_SCALAR
+public final class AngleUnits implements UNITS
 {
     /** the angle units. */
     public static final Map<String, AnglePlaneUnit> ANGLE_UNITS = new HashMap<>();

@@ -2,7 +2,8 @@ package org.opentrafficsim.road.gtu.lane.changing;
 
 import java.util.Collection;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.road.gtu.following.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
@@ -20,7 +21,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public interface LaneChangeModel extends OTS_SCALAR
+public interface LaneChangeModel 
 {
     /**
      * Compute the acceleration and lane change.
@@ -43,9 +44,9 @@ public interface LaneChangeModel extends OTS_SCALAR
     @SuppressWarnings("checkstyle:parameternumber")
     LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
         final Collection<HeadwayGTU> sameLaneTraffic, final Collection<HeadwayGTU> rightLaneTraffic,
-        final Collection<HeadwayGTU> leftLaneTraffic, final Speed.Abs speedLimit,
-        final Acceleration.Rel preferredLaneRouteIncentive, final Acceleration.Rel laneChangeThreshold,
-        final Acceleration.Rel nonPreferredLaneRouteIncentive);
+        final Collection<HeadwayGTU> leftLaneTraffic, final Speed speedLimit,
+        final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
+        final Acceleration nonPreferredLaneRouteIncentive);
 
     /**
      * Return the name of this GTU following model.

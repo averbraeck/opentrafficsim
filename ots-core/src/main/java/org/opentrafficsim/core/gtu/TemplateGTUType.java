@@ -4,9 +4,10 @@ import java.io.Serializable;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.opentrafficsim.core.OTS_DIST;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 
 /**
  * TemplateGTUType stores most of the information that is needed to generate a GTU.
@@ -18,7 +19,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
  * initial version Jul 8, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class TemplateGTUType implements Serializable, OTS_SCALAR, OTS_DIST
+public class TemplateGTUType implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141230L;
@@ -27,13 +28,13 @@ public class TemplateGTUType implements Serializable, OTS_SCALAR, OTS_DIST
     private final GTUType gtuType;
 
     /** distribution of the length of the GTU. */
-    private final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> lengthDist;
+    private final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist;
 
     /** distribution of the width of the GTU. */
-    private final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> widthDist;
+    private final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist;
 
     /** distribution of the maximum speed of the GTU. */
-    private final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> maximumSpeedDist;
+    private final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist;
 
     /** the simulator. */
     private final OTSDEVSSimulatorInterface simulator;
@@ -46,10 +47,10 @@ public class TemplateGTUType implements Serializable, OTS_SCALAR, OTS_DIST
      * @param simulator the simulator.
      * @throws GTUException when GTUType defined more than once
      */
-    public TemplateGTUType(final String id, final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> lengthDist,
-        final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> widthDist,
-        final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> maximumSpeedDist, final OTSDEVSSimulatorInterface simulator)
-        throws GTUException
+    public TemplateGTUType(final String id, final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist,
+        final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist,
+        final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist,
+        final OTSDEVSSimulatorInterface simulator) throws GTUException
     {
         this.gtuType = GTUType.makeGTUType(id);
         this.lengthDist = lengthDist;
@@ -77,7 +78,7 @@ public class TemplateGTUType implements Serializable, OTS_SCALAR, OTS_DIST
     /**
      * @return maximumVelocity.
      */
-    public final Speed.Abs getMaximumVelocity()
+    public final Speed getMaximumVelocity()
     {
         return this.maximumSpeedDist.draw();
     }

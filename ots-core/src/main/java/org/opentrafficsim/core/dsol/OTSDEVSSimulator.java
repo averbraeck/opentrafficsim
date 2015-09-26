@@ -9,6 +9,7 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Time;
 
 /**
  * Typed extension of the DEVSSimulator without remote exceptions.

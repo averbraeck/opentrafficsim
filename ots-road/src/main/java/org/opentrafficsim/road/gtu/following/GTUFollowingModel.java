@@ -2,7 +2,10 @@ package org.opentrafficsim.road.gtu.following;
 
 import java.util.Collection;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
@@ -17,7 +20,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  *          initial version Jul 2, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface GTUFollowingModel extends OTS_SCALAR
+public interface GTUFollowingModel
 {
     /**
      * Compute the acceleration that would be used to follow a leader.<br>
@@ -30,8 +33,8 @@ public interface GTUFollowingModel extends OTS_SCALAR
      * @return AccelerationStep; the result of application of the GTU following model
      * @throws NetworkException on network inconsistency
      */
-    AccelerationStep computeAcceleration(final LaneBasedGTU follower, final Speed.Abs leaderSpeed,
-        final Length.Rel headway, final Speed.Abs speedLimit) throws NetworkException;
+    AccelerationStep computeAcceleration(final LaneBasedGTU follower, final Speed leaderSpeed,
+        final Length.Rel headway, final Speed speedLimit) throws NetworkException;
 
     /**
      * Compute the acceleration that would be used to follow a leader.<br>
@@ -47,8 +50,8 @@ public interface GTUFollowingModel extends OTS_SCALAR
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration (or, if negative, deceleration) resulting from
      *         application of the GTU following model
      */
-    Acceleration.Abs computeAcceleration(final Speed.Abs followerSpeed, Speed.Abs followerMaximumSpeed,
-        final Speed.Abs leaderSpeed, final Length.Rel headway, final Speed.Abs speedLimit);
+    Acceleration computeAcceleration(final Speed followerSpeed, Speed followerMaximumSpeed, final Speed leaderSpeed,
+        final Length.Rel headway, final Speed speedLimit);
 
     /**
      * Compute the lowest accelerations (or most severe decelerations) that would be used if a referenceGTU is present
@@ -67,7 +70,7 @@ public interface GTUFollowingModel extends OTS_SCALAR
      * @throws NetworkException on network inconsistency
      */
     DualAccelerationStep computeAcceleration(final LaneBasedGTU referenceGTU, final Collection<HeadwayGTU> otherGTUs,
-        final Speed.Abs speedLimit) throws NetworkException;
+        final Speed speedLimit) throws NetworkException;
 
     /**
      * Compute the acceleration that would be used if the is not leader in sight.
@@ -76,7 +79,7 @@ public interface GTUFollowingModel extends OTS_SCALAR
      * @return AccelerationStep; the result of application of the GTU following model
      * @throws NetworkException on network inconsistency
      */
-    AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU gtu, final Speed.Abs speedLimit)
+    AccelerationStep computeAccelerationWithNoLeader(final LaneBasedGTU gtu, final Speed speedLimit)
         throws NetworkException;
 
     /**
@@ -89,8 +92,8 @@ public interface GTUFollowingModel extends OTS_SCALAR
      * @param followerMaximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the maximum speed that the follower can drive at
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;
      */
-    Length.Rel minimumHeadway(Speed.Abs followerSpeed, Speed.Abs leaderSpeed, Length.Rel precision,
-        Speed.Abs speedLimit, Speed.Abs followerMaximumSpeed);
+    Length.Rel minimumHeadway(Speed followerSpeed, Speed leaderSpeed, Length.Rel precision, Speed speedLimit,
+        Speed followerMaximumSpeed);
 
     /**
      * Return the maximum safe deceleration for use in gap acceptance models. This is the deceleration that may be enforced upon
@@ -98,7 +101,7 @@ public interface GTUFollowingModel extends OTS_SCALAR
      * most car following models this value is named <cite>b</cite>.
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; must be a positive value!
      */
-    Acceleration.Abs maximumSafeDeceleration();
+    Acceleration maximumSafeDeceleration();
 
     /**
      * Return the step size of this GTU following model.

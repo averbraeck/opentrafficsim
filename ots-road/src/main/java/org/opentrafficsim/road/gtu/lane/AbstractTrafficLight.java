@@ -13,6 +13,14 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -64,19 +72,19 @@ public abstract class AbstractTrafficLight extends AbstractGTU implements LaneBa
     public static final GTUType BLOCK_GTU;
 
     /** null length. */
-    private static final Length.Rel LENGTH_REL_0 = new Length.Rel(0.0, METER);
+    private static final Length.Rel LENGTH_REL_0 = new Length.Rel(0.0, LengthUnit.METER);
 
     /** null length. */
-    private static final Length.Abs LENGTH_ABS_0 = new Length.Abs(0.0, METER);
+    private static final Length.Abs LENGTH_ABS_0 = new Length.Abs(0.0, LengthUnit.METER);
 
     /** null speed. */
-    private static final Speed.Abs SPEED_ABS_0 = new Speed.Abs(0.0, METER_PER_SECOND);
+    private static final Speed SPEED_ABS_0 = new Speed(0.0, SpeedUnit.METER_PER_SECOND);
 
     /** null time. */
-    private static Time.Abs TIME_ABS_0 = new Time.Abs(0.0, SECOND);
+    private static Time.Abs TIME_ABS_0 = new Time.Abs(0.0, TimeUnit.SECOND);
 
     /** null acceleration. */
-    private static final Acceleration.Abs ACCELERATION_ABS_0 = new Acceleration.Abs(0.0, METER_PER_SECOND_2);
+    private static final Acceleration ACCELERATION_ABS_0 = new Acceleration(0.0, AccelerationUnit.METER_PER_SECOND_2);
 
     /** the front, back, and reference positions; all at the same place. */
     private static final Map<RelativePosition.TYPE, RelativePosition> RELATIVE_POSITIONS = new LinkedHashMap<>();
@@ -172,7 +180,7 @@ public abstract class AbstractTrafficLight extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final Speed.Abs getMaximumVelocity()
+    public final Speed getMaximumVelocity()
     {
         return SPEED_ABS_0;
     }
@@ -200,7 +208,7 @@ public abstract class AbstractTrafficLight extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final Speed.Abs getVelocity()
+    public final Speed getVelocity()
     {
         return SPEED_ABS_0;
     }
@@ -221,7 +229,7 @@ public abstract class AbstractTrafficLight extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration.Abs getAcceleration()
+    public final Acceleration getAcceleration()
     {
         return ACCELERATION_ABS_0;
     }
@@ -297,28 +305,28 @@ public abstract class AbstractTrafficLight extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final Speed.Abs getLongitudinalVelocity()
+    public final Speed getLongitudinalVelocity()
     {
         return SPEED_ABS_0;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Speed.Abs getLongitudinalVelocity(final Time.Abs when)
+    public final Speed getLongitudinalVelocity(final Time.Abs when)
     {
         return SPEED_ABS_0;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration.Abs getAcceleration(final Time.Abs when)
+    public final Acceleration getAcceleration(final Time.Abs when)
     {
         return ACCELERATION_ABS_0;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Speed.Abs getLateralVelocity()
+    public final Speed getLateralVelocity()
     {
         return SPEED_ABS_0;
     }

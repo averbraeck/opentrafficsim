@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.route;
 
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.RouteNavigator;

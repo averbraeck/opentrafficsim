@@ -1,5 +1,10 @@
 package org.opentrafficsim.core.gtu.animation;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Speed;
+
 
 /**
  * A simple way to construct a SwitchableGTUColorer set up with the "standard" set of GTUColorers. <br>
@@ -22,10 +27,10 @@ public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer
     {
         COLORERS = new GTUColorer[3];
         COLORERS[0] = new IDGTUColorer();
-        COLORERS[1] = new VelocityGTUColorer(new Speed.Abs(150, KM_PER_HOUR));
+        COLORERS[1] = new VelocityGTUColorer(new Speed(150, SpeedUnit.KM_PER_HOUR));
         COLORERS[2] =
-            new AccelerationGTUColorer(new Acceleration.Abs(-4, METER_PER_SECOND_2), new Acceleration.Abs(2,
-                METER_PER_SECOND_2));
+            new AccelerationGTUColorer(new Acceleration(-4, AccelerationUnit.METER_PER_SECOND_2), new Acceleration(2,
+                AccelerationUnit.METER_PER_SECOND_2));
     }
 
     /**

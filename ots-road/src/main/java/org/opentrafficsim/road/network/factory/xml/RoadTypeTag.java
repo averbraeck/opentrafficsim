@@ -3,7 +3,8 @@ package org.opentrafficsim.road.network.factory.xml;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
@@ -25,7 +26,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class RoadTypeTag implements OTS_SCALAR
+class RoadTypeTag 
 {
     /** name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -33,7 +34,7 @@ class RoadTypeTag implements OTS_SCALAR
 
     /** default speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Speed.Abs speed = null;
+    Speed speed = null;
 
     /** default lane width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

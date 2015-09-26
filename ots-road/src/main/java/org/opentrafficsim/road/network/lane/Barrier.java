@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.lane;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.network.NetworkException;
 

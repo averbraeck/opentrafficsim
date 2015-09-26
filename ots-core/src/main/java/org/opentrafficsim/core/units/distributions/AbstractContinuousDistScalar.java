@@ -68,6 +68,6 @@ public abstract class AbstractContinuousDistScalar
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "ContinuousDistScalar [distribution=" + this.distribution + ", unit=" + this.unit + "]";
+        return "ContinuousDistDoubleScalar [distribution=" + this.distribution + ", unit=" + this.unit + "]";
     }
 }

@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.following;
 
 import org.djunits.unit.LengthUnit;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 /**
@@ -15,7 +15,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class HeadwayGTU implements OTS_SCALAR
+public class HeadwayGTU 
 {
     /** the other GTU. */
     private final LaneBasedGTU otherGTU;

@@ -6,6 +6,8 @@ import javax.vecmath.Point3d;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -76,7 +78,7 @@ public abstract class AbstractSensor implements Sensor
     @Override
     public final Length.Rel getLongitudinalPosition()
     {
-        return new Length.Rel(this.longitudinalPositionSI, METER);
+        return new Length.Rel(this.longitudinalPositionSI, LengthUnit.METER);
     }
 
     /** {@inheritDoc} */

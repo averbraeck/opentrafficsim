@@ -3,6 +3,10 @@ package org.opentrafficsim.road.gtu.lane;
 import java.util.Map;
 import java.util.Set;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -29,7 +33,7 @@ public interface LaneBasedGTU extends GTU
      * v(t) = v0 + (t - t0) * a.
      * @return the velocity of the GTU, in the direction of the lane
      */
-    Speed.Abs getLongitudinalVelocity();
+    Speed getLongitudinalVelocity();
 
     /**
      * Return the speed of this GTU at the specified time. <br>
@@ -37,24 +41,24 @@ public interface LaneBasedGTU extends GTU
      * @param when time for which the speed must be returned
      * @return DoubleScalarAbs&lt;SpeedUnit&gt;; the speed at the specified time
      */
-    Speed.Abs getLongitudinalVelocity(Time.Abs when);
+    Speed getLongitudinalVelocity(Time.Abs when);
 
     /**
      * @return the acceleration (or deceleration) of the GTU, in the direction of the lane
      */
-    Acceleration.Abs getAcceleration();
+    Acceleration getAcceleration();
 
     /**
      * @param when time for which the speed must be returned
      * @return the acceleration (or deceleration) of the GTU, in the direction of the lane.
      */
-    Acceleration.Abs getAcceleration(Time.Abs when);
+    Acceleration getAcceleration(Time.Abs when);
 
     /**
      * @return the velocity of the GTU, perpendicular to the direction of the lane. Positive lateral velocity is "left" compared
      *         to the driving direction.
      */
-    Speed.Abs getLateralVelocity();
+    Speed getLateralVelocity();
 
     /** @return DoubleScalarAbs&lt;TimeUnit&gt;; the time of last evaluation. */
     Time.Abs getLastEvaluationTime();

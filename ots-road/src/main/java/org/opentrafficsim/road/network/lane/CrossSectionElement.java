@@ -7,7 +7,7 @@ import javax.media.j3d.Bounds;
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSBuffering;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -26,7 +26,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public abstract class CrossSectionElement implements LocatableInterface, Serializable, OTS_SCALAR
+public abstract class CrossSectionElement implements LocatableInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150826L;

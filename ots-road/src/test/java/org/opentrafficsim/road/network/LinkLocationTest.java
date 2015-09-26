@@ -2,11 +2,13 @@ package org.opentrafficsim.road.network;
 
 import static org.junit.Assert.assertEquals;
 
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Length;
 import org.junit.Test;
-import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.LinkLocation;
+import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -21,7 +23,7 @@ import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
  * initial version 20 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LinkLocationTest implements OTS_SCALAR
+public class LinkLocationTest implements UNITS
 {
     /**
      * Test constructor and verify all getters.
@@ -33,7 +35,8 @@ public class LinkLocationTest implements OTS_SCALAR
         OTSNode nodeFrom = new OTSNode("From", new OTSPoint3D(0, 0, 0));
         OTSNode nodeTo = new OTSNode("To", new OTSPoint3D(1000, 0, 0));
         OTSLine3D line = new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0)});
-        CrossSectionLink link = new CrossSectionLink("Link", nodeFrom, nodeTo, line, LaneKeepingPolicy.KEEP_RIGHT);
+        CrossSectionLink link =
+            new CrossSectionLink("Link", nodeFrom, nodeTo, LinkType.ALL, line, LaneKeepingPolicy.KEEP_RIGHT);
         Length.Rel linkLength = line.getLength();
         // Now we can make a LinkLocation.
         Length.Rel referenceLocationDistance = new Length.Rel(123, METER);

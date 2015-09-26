@@ -8,6 +8,8 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSRealTimeClock;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSReplication;
@@ -56,8 +58,8 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
         final Object source, final Object target, final String method, final Object[] args) throws SimRuntimeException
     {
         SimEvent<OTSSimTimeDouble> result =
-            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time.Abs(executionTime.getSI(), SECOND)), priority,
-                source, target, method, args);
+            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time.Abs(executionTime.getSI(), TimeUnit.SECOND)),
+                priority, source, target, method, args);
         scheduleEvent(result);
         return result;
     }
@@ -91,7 +93,8 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
 
             // peek at the first event and determine the time difference relative to RT speed.
             SimEventInterface<OTSSimTimeDouble> event = this.eventList.first();
-            double simTimeDiffMillis = (event.getAbsoluteExecutionTime().minus(simTime0)).doubleValue() / (msec1 * factor);
+            double simTimeDiffMillis =
+                (event.getAbsoluteExecutionTime().minus(simTime0)).doubleValue() / (msec1 * factor);
 
             /*
              * simTimeDiff gives the number of milliseconds between the last event and this event. if speed == 1, this is the
@@ -207,7 +210,8 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
 
             // peek at the first event and determine the time difference relative to RT speed.
             SimEventInterface<OTSSimTimeDouble> event = this.eventList.first();
-            double simTimeDiffMillis = (event.getAbsoluteExecutionTime().minus(simTime0)).doubleValue() / (msec1 * factor);
+            double simTimeDiffMillis =
+                (event.getAbsoluteExecutionTime().minus(simTime0)).doubleValue() / (msec1 * factor);
 
             /*
              * simTimeDiff gives the number of milliseconds between the last event and this event. if speed == 1, this is the
@@ -256,7 +260,8 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
                     if (this.simulatorTime.plus(r10).lt(event.getAbsoluteExecutionTime()))
                     {
                         this.simulatorTime.add(r10);
-                        this.fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, this.simulatorTime, this.simulatorTime);
+                        this.fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, this.simulatorTime,
+                            this.simulatorTime);
                         updateAnimation();
                     }
                 }

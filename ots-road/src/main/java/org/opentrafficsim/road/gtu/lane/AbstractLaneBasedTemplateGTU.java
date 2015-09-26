@@ -4,6 +4,8 @@ import java.util.Map;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -44,7 +46,7 @@ public abstract class AbstractLaneBasedTemplateGTU extends AbstractLaneBasedGTU
      */
     public AbstractLaneBasedTemplateGTU(final String id, final TemplateGTUType templateGTUType,
         final GTUFollowingModel gtuFollowingModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
-        final Speed.Abs initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator) throws
+        final Speed initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator) throws
         NetworkException, SimRuntimeException, GTUException
     {
         super(id, templateGTUType.getGtuType(), gtuFollowingModel, null /* LaneChangeModel */, initialLongitudinalPositions,
@@ -76,7 +78,7 @@ public abstract class AbstractLaneBasedTemplateGTU extends AbstractLaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public final Speed.Abs getMaximumVelocity()
+    public final Speed getMaximumVelocity()
     {
         return this.templateGTUType.getMaximumVelocity();
     }

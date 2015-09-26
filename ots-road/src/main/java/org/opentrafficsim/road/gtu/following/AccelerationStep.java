@@ -1,6 +1,9 @@
 package org.opentrafficsim.road.gtu.following;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Time;
+
+
 
 /**
  * Storage for the result of a GTU following model. <br>
@@ -14,10 +17,10 @@ import org.opentrafficsim.core.OTS_SCALAR;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class AccelerationStep implements OTS_SCALAR
+public class AccelerationStep 
 {
     /** Acceleration that will be maintained during the current time slot. */
-    private final Acceleration.Abs acceleration;
+    private final Acceleration acceleration;
 
     /** Time when the current time slot ends. */
     private final Time.Abs validUntil;
@@ -27,7 +30,7 @@ public class AccelerationStep implements OTS_SCALAR
      * @param acceleration DoubleScalarAbs&lt;AccelerationUnit&gt;; computed acceleration
      * @param validUntil DoubleScalarAbs&lt;TimeUnit&gt;; time when this result expires
      */
-    public AccelerationStep(final Acceleration.Abs acceleration, final Time.Abs validUntil)
+    public AccelerationStep(final Acceleration acceleration, final Time.Abs validUntil)
     {
         this.acceleration = acceleration;
         this.validUntil = validUntil;
@@ -36,7 +39,7 @@ public class AccelerationStep implements OTS_SCALAR
     /**
      * @return acceleration.
      */
-    public final Acceleration.Abs getAcceleration()
+    public final Acceleration getAcceleration()
     {
         return this.acceleration;
     }

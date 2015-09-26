@@ -13,6 +13,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.AnglePlaneUnit;
 import org.djunits.unit.AngleSlopeUnit;
+import org.djunits.value.vdouble.scalar.AnglePlane;
+import org.djunits.value.vdouble.scalar.AngleSlope;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 
 /**
@@ -42,7 +44,7 @@ public class OTSNode implements Node, LocatableInterface, Serializable
     private final AnglePlane.Abs direction;
 
     /** the slope as an angle. */
-    private final AngleSlope.Abs slope;
+    private final AngleSlope slope;
 
     /** the incoming links. */
     private final Set<Link> linksIn = new HashSet<Link>();
@@ -57,7 +59,7 @@ public class OTSNode implements Node, LocatableInterface, Serializable
      * @param direction the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
      * @param slope the slope as an angle.
      */
-    public OTSNode(final String id, final OTSPoint3D point, final AnglePlane.Abs direction, final AngleSlope.Abs slope)
+    public OTSNode(final String id, final OTSPoint3D point, final AnglePlane.Abs direction, final AngleSlope slope)
     {
         this.id = id;
         this.point = point;
@@ -72,7 +74,7 @@ public class OTSNode implements Node, LocatableInterface, Serializable
      */
     public OTSNode(final String id, final OTSPoint3D point)
     {
-        this(id, point, new AnglePlane.Abs(0.0, AnglePlaneUnit.SI), new AngleSlope.Abs(0.0, AngleSlopeUnit.SI));
+        this(id, point, new AnglePlane.Abs(0.0, AnglePlaneUnit.SI), new AngleSlope(0.0, AngleSlopeUnit.SI));
     }
 
     /**
@@ -130,7 +132,7 @@ public class OTSNode implements Node, LocatableInterface, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final AngleSlope.Abs getSlope()
+    public final AngleSlope getSlope()
     {
         return this.slope;
     }
@@ -179,7 +181,6 @@ public class OTSNode implements Node, LocatableInterface, Serializable
             return false;
         if (getClass() != obj.getClass())
             return false;
-        @SuppressWarnings("unchecked")
         OTSNode other = (OTSNode) obj;
         if (this.id == null)
         {

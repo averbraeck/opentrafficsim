@@ -1,5 +1,11 @@
 package org.opentrafficsim.road.gtu.following;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
+
 
 /**
  * Fixed GTU following model. This GTU following model does not react in any way to other GTUs. Instead it has a predetermined
@@ -17,7 +23,7 @@ package org.opentrafficsim.road.gtu.following;
 public class FixedAccelerationModel extends AbstractGTUFollowingModel
 {
     /** Acceleration that will be returned in GTUFollowingModelResult by computeAcceleration. */
-    private Acceleration.Abs acceleration;
+    private Acceleration acceleration;
 
     /** Valid until time that will be returned in GTUFollowingModelResult by computeAcceleration. */
     private Time.Rel duration;
@@ -28,7 +34,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
      *            computeAcceleration methods
      * @param duration DoubleScalar.Abs&lt;TimeUnit&gt;; the duration that the acceleration will be maintained
      */
-    public FixedAccelerationModel(final Acceleration.Abs acceleration, final Time.Rel duration)
+    public FixedAccelerationModel(final Acceleration acceleration, final Time.Rel duration)
     {
         this.acceleration = acceleration;
         this.duration = duration;
@@ -47,24 +53,25 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
      * Retrieve the acceleration of this FixedAccelerationModel.
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration of this FixedAccelerationModel
      */
-    public final Acceleration.Abs getAcceleration()
+    public final Acceleration getAcceleration()
     {
         return this.acceleration;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration.Abs computeAcceleration(final Speed.Abs followerSpeed, final Speed.Abs followerMaximumSpeed,
-        final Speed.Abs leaderSpeed, final Length.Rel headway, final Speed.Abs speedLimit)
+    public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
+        final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit)
     {
         return this.acceleration;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration.Abs maximumSafeDeceleration()
+    public final Acceleration maximumSafeDeceleration()
     {
-        return new Acceleration.Abs(2, METER_PER_SECOND_2);
+        // TODO should be specified in constructor
+        return new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2);
     }
 
     /** {@inheritDoc} */

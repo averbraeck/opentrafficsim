@@ -4,6 +4,8 @@ import java.util.Map;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -37,7 +39,7 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
     private final Length.Rel width;
 
     /** the maximum speed of the GTU (in the driving direction). */
-    private final Speed.Abs maximumVelocity;
+    private final Speed maximumVelocity;
 
     /** the simulator. */
     private final OTSDEVSSimulatorInterface simulator;
@@ -62,7 +64,7 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractLaneBasedIndividualGTU(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
         final LaneChangeModel laneChangeModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
-        final Speed.Abs initialSpeed, final Length.Rel length, final Length.Rel width, final Speed.Abs maximumVelocity,
+        final Speed initialSpeed, final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
         final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator) throws
         NetworkException, SimRuntimeException, GTUException
     {
@@ -94,7 +96,7 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
 
     /** {@inheritDoc} */
     @Override
-    public final Speed.Abs getMaximumVelocity()
+    public final Speed getMaximumVelocity()
     {
         return this.maximumVelocity;
     }

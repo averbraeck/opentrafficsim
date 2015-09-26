@@ -32,8 +32,8 @@ public class FlowContourPlot extends ContourPlot
     public FlowContourPlot(final String caption, final List<Lane> path)
     {
         super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
-            STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), path, 2500d, 1500d, 0d,
-            "flow %.0f veh/h", "%.0f veh/h", 500d);
+            STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), path, 2500d, 1500d,
+            0d, "flow %.0f veh/h", "%.0f veh/h", 500d);
     }
 
     /** Storage for the total length traveled in each cell. */
@@ -62,7 +62,7 @@ public class FlowContourPlot extends ContourPlot
             try
             {
                 this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.getYAxis()
-                    .getBinCount()], METER));
+                    .getBinCount()], LengthUnit.METER));
             }
             catch (ValueException exception)
             {
@@ -85,7 +85,7 @@ public class FlowContourPlot extends ContourPlot
             try
             {
                 this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.getYAxis()
-                    .getBinCount()], METER));
+                    .getBinCount()], LengthUnit.METER));
             }
             catch (ValueException exception)
             {

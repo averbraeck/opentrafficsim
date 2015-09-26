@@ -7,7 +7,8 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.AnglePlaneUnit;
 import org.djunits.unit.AngleSlopeUnit;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.AnglePlane;
+import org.djunits.value.vdouble.scalar.AngleSlope;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
@@ -28,7 +29,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class NodeTag implements OTS_SCALAR
+class NodeTag 
 {
     /** name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -44,11 +45,11 @@ class NodeTag implements OTS_SCALAR
 
     /** TODO slope as an angle. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    AngleSlope.Abs slope = null;
+    AngleSlope slope = null;
 
     /** the calculated Node, either through a coordinate or after calculation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    org.opentrafficsim.core.network.Node node = null;
+    OTSNode node = null;
 
     /**
      * @param nodeList nodeList the top-level nodes of the XML-file
@@ -128,13 +129,13 @@ class NodeTag implements OTS_SCALAR
      * @throws NetworkException when point cannot be instantiated
      * @throws NamingException when animation context cannot be found.
      */
-    static org.opentrafficsim.core.network.Node makeOTSNode(final NodeTag nodeTag, final XmlNetworkLaneParser parser)
+    static OTSNode makeOTSNode(final NodeTag nodeTag, final XmlNetworkLaneParser parser)
         throws NetworkException, NamingException
     {
         String id = nodeTag.name;
         AnglePlane.Abs angle = nodeTag.angle == null ? new AnglePlane.Abs(0.0, AnglePlaneUnit.SI) : nodeTag.angle;
-        AngleSlope.Abs slope = nodeTag.slope == null ? new AngleSlope.Abs(0.0, AngleSlopeUnit.SI) : nodeTag.slope;
-        org.opentrafficsim.core.network.Node node = new OTSNode(id, nodeTag.coordinate, angle, slope);
+        AngleSlope slope = nodeTag.slope == null ? new AngleSlope(0.0, AngleSlopeUnit.SI) : nodeTag.slope;
+        OTSNode node = new OTSNode(id, nodeTag.coordinate, angle, slope);
         nodeTag.node = node;
         return node;
     }

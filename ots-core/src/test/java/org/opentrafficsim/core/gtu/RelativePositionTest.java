@@ -4,8 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Length;
 import org.junit.Test;
-import org.opentrafficsim.core.OTS_SCALAR;
 
 /**
  * <p>
@@ -16,7 +17,7 @@ import org.opentrafficsim.core.OTS_SCALAR;
  * initial version 13 jul. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class RelativePositionTest implements OTS_SCALAR
+public class RelativePositionTest
 {
 
     /**
@@ -25,9 +26,9 @@ public class RelativePositionTest implements OTS_SCALAR
     @Test
     public void relativePositionTest()
     {
-        Length.Rel deltaX = new Length.Rel(12, METER);
-        Length.Rel deltaY = new Length.Rel(23, METER);
-        Length.Rel deltaZ = new Length.Rel(34, METER);
+        Length.Rel deltaX = new Length.Rel(12, LengthUnit.METER);
+        Length.Rel deltaY = new Length.Rel(23, LengthUnit.METER);
+        Length.Rel deltaZ = new Length.Rel(34, LengthUnit.METER);
         RelativePosition.TYPE type = new RelativePosition.TYPE("TestType");
         assertEquals("type name", type.getName(), "TestType");
         assertTrue("type is equal to itself", type.equals(type));
@@ -46,7 +47,7 @@ public class RelativePositionTest implements OTS_SCALAR
         assertTrue("equals", rp.equals(rpCopy));
         RelativePosition rp2 = new RelativePosition(deltaX, deltaY, deltaZ, type);
         assertTrue("equals", rp.equals(rp2));
-        Length.Rel deltaX2 = new Length.Rel(45, METER);
+        Length.Rel deltaX2 = new Length.Rel(45, LengthUnit.METER);
         RelativePosition rp3 = new RelativePosition(deltaX2, deltaY, deltaZ, type);
         assertFalse("different", rp3.equals(rp));
         assertTrue("hascode should differ with extreme likelihood", rp.hashCode() != rp3.hashCode());

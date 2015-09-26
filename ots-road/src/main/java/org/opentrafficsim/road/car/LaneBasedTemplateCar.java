@@ -11,6 +11,9 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -59,7 +62,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      */
     public LaneBasedTemplateCar(final String id, final TemplateGTUType templateGtuType,
         final GTUFollowingModel gtuFollowingModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
-        final Speed.Abs initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator) throws NamingException,
+        final Speed initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator) throws NamingException,
         NetworkException, SimRuntimeException, GTUException
     {
         this(id, templateGtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, routeNavigator,
@@ -82,7 +85,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      */
     public LaneBasedTemplateCar(final String id, final TemplateGTUType templateGtuType,
         final GTUFollowingModel gtuFollowingModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
-        final Speed.Abs initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator,
+        final Speed initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator,
         final Class<? extends Renderable2D> animationClass) throws NamingException, NetworkException,
         SimRuntimeException, GTUException
     {
@@ -91,8 +94,8 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
         // sensor positions.
         // We take the rear position of the Car to be the reference point. So the front is the length
         // of the Car away from the reference point in the positive (driving) X-direction.
-        Length.Rel zero = new Length.Rel(0.0d, METER);
-        Length.Rel dx = new Length.Rel(getLength().getSI(), METER);
+        Length.Rel zero = new Length.Rel(0.0d, LengthUnit.METER);
+        Length.Rel dx = new Length.Rel(getLength().getSI(), LengthUnit.METER);
         this.relativePositions
             .put(RelativePosition.FRONT, new RelativePosition(dx, zero, zero, RelativePosition.FRONT));
         this.relativePositions
@@ -213,7 +216,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
         private Map<Lane, Length.Rel> initialLongitudinalPositions = null;;
 
         /** the initial speed of the car on the lane. */
-        private Speed.Abs initialSpeed = null;
+        private Speed initialSpeed = null;
 
         /** CarFollowingModel used by this Car. */
         private GTUFollowingModel gtuFollowingModel = null;
@@ -259,7 +262,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
          * @param initialSpeed set initialSpeed
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedTemplateCarBuilder setInitialSpeed(final Speed.Abs initialSpeed)
+        public final LaneBasedTemplateCarBuilder setInitialSpeed(final Speed initialSpeed)
         {
             this.initialSpeed = initialSpeed;
             return this;

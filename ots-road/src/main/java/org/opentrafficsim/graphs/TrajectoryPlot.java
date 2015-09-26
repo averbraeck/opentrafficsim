@@ -16,8 +16,11 @@ import javax.swing.SwingConstants;
 import javax.swing.event.EventListenerList;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.DoubleVector;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -33,7 +36,6 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
-import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -48,8 +50,8 @@ import org.opentrafficsim.road.network.lane.Lane;
  * initial version Jul 24, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart, LaneBasedGTUSampler,
-    OTS_SCALAR
+public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart, LaneBasedGTUSampler
+    
 {
     /** */
     private static final long serialVersionUID = 20140724L;
@@ -91,7 +93,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     }
 
     /** Maximum of the time axis. */
-    private Time.Abs maximumTime = new Time.Abs(300, SECOND);
+    private Time.Abs maximumTime = new Time.Abs(300, TimeUnit.SECOND);
 
     /**
      * @return maximumTime
@@ -468,7 +470,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             final int endSample = (int) (Math.ceil(car.getNextEvaluationTime().getSI() / getSampleInterval().getSI()));
             for (int sample = startSample; sample < endSample; sample++)
             {
-                Time.Abs sampleTime = new Time.Abs(sample * getSampleInterval().getSI(), SECOND);
+                Time.Abs sampleTime = new Time.Abs(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
                 Double position = car.position(lane, car.getReference(), sampleTime).getSI() + positionOffset;
                 if (this.positions.size() > 0 && position < this.currentEndPosition.getSI() - 0.001)
                 {
@@ -506,7 +508,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             }
             this.currentEndTime = car.getNextEvaluationTime();
             this.currentEndPosition =
-                new Length.Rel(car.position(lane, car.getReference(), this.currentEndTime).getSI() + positionOffset, METER);
+                new Length.Rel(car.position(lane, car.getReference(), this.currentEndTime).getSI() + positionOffset, LengthUnit.METER);
             if (car.getNextEvaluationTime().gt(getMaximumTime()))
             {
                 setMaximumTime(car.getNextEvaluationTime());

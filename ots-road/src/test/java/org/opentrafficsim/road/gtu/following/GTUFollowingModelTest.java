@@ -16,22 +16,19 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
-import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
-import org.opentrafficsim.road.gtu.following.AbstractGTUFollowingModel;
-import org.opentrafficsim.road.gtu.following.AccelerationStep;
-import org.opentrafficsim.road.gtu.following.DualAccelerationStep;
-import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.road.gtu.following.HeadwayGTU;
-import org.opentrafficsim.road.gtu.following.IDM;
-import org.opentrafficsim.road.gtu.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -49,7 +46,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  * initial version 27 feb. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class GTUFollowingModelTest implements OTSModelInterface, OTS_SCALAR
+public class GTUFollowingModelTest implements OTSModelInterface, UNITS
 {
     /** */
     private static final long serialVersionUID = 20150227L;
@@ -61,7 +58,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, OTS_SCALAR
      */
     private void gtuFollowingModelTests(GTUFollowingModel gtuFollowingModel) throws Exception
     {
-        Acceleration.Abs maxSafeDeceleration = gtuFollowingModel.maximumSafeDeceleration();
+        Acceleration maxSafeDeceleration = gtuFollowingModel.maximumSafeDeceleration();
         assertNotNull("maximumSafeDeceleration must return non-null value", maxSafeDeceleration);
         assertTrue("value of maximuSafeDeceleration must be positive", 0 < maxSafeDeceleration.getSI());
         assertTrue("value of maximumSafeDeceleration must be less than g", maxSafeDeceleration.getSI() < 10);
@@ -75,15 +72,15 @@ public class GTUFollowingModelTest implements OTSModelInterface, OTS_SCALAR
         String longName = gtuFollowingModel.getLongName();
         assertNotNull("getLongName must return non-null value", longName);
         assertTrue("getLongName result must not be the empty string", longName.length() > 0);
-        Speed.Abs speed = new Speed.Abs(0, SpeedUnit.SI);
+        Speed speed = new Speed(0, SpeedUnit.SI);
         Length.Rel precision = new Length.Rel(0.5, METER);
-        Speed.Abs maxSpeed = new Speed.Abs(200, KM_PER_HOUR);
-        Speed.Abs speedLimit = new Speed.Abs(100, KM_PER_HOUR);
+        Speed maxSpeed = new Speed(200, KM_PER_HOUR);
+        Speed speedLimit = new Speed(100, KM_PER_HOUR);
         Length.Rel minimumHeadway = gtuFollowingModel.minimumHeadway(speed, speed, precision, speedLimit, maxSpeed);
         assertNotNull("minimum headway at speed 0 should be non null", minimumHeadway);
         assertTrue("minimum headway at speed 0 hould have value >= 0", 0 <= minimumHeadway.getSI());
         // System.out.println("minimum headway at speed " + speed + " is " + minimumHeadway);
-        speed = new Speed.Abs(50, KM_PER_HOUR);
+        speed = new Speed(50, KM_PER_HOUR);
         minimumHeadway = gtuFollowingModel.minimumHeadway(speed, speed, precision, speedLimit, maxSpeed);
         assertNotNull("minimum headway at speed 0 should be non null", minimumHeadway);
         assertTrue("minimum headway at speed 0 hould have value >= 0", 0 <= minimumHeadway.getSI());
@@ -104,13 +101,13 @@ public class GTUFollowingModelTest implements OTSModelInterface, OTS_SCALAR
             new LaneBasedIndividualCar("12345", carType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions,
                 speed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
         Length.Rel longerHeadway = minimumHeadway.plus(precision);
-        Acceleration.Abs longerHeadwayAcceleration =
+        Acceleration longerHeadwayAcceleration =
             gtuFollowingModel.computeAcceleration(speed, maxSpeed, speed, longerHeadway, speedLimit);
         // System.out.println("acceleration at headway " + longerHeadway + " is " + longerHeadwayAcceleration);
         assertTrue("deceleration with longer headway than minimum should be >= -maximumSafeDeceleration",
             -maxSafeDeceleration.getSI() <= longerHeadwayAcceleration.getSI());
         Length.Rel shorterHeadway = minimumHeadway.minus(precision);
-        Acceleration.Abs shorterHeadwayAcceleration =
+        Acceleration shorterHeadwayAcceleration =
             gtuFollowingModel.computeAcceleration(speed, maxSpeed, speed, shorterHeadway, speedLimit);
         // System.out.println("acceleration at headway " + shorterHeadway + " is " + shorterHeadwayAcceleration);
         gtuFollowingModel.computeAcceleration(speed, maxSpeed, speed, shorterHeadway, speedLimit);
@@ -254,8 +251,8 @@ public class GTUFollowingModelTest implements OTSModelInterface, OTS_SCALAR
      * @param a1 DoubleScalar.Abs&lt;AccelerationUnit&gt;; the expected acceleration in as[1]
      * @param validUntil DoubleScalar.Abs&lt;TimeUnit&gt;; the expected validUntil value in both entries of as
      */
-    private void checkAccelerationStep(final String description, final DualAccelerationStep as, final Acceleration.Abs a0,
-        final Acceleration.Abs a1, final Time.Abs validUntil)
+    private void checkAccelerationStep(final String description, final DualAccelerationStep as, final Acceleration a0,
+        final Acceleration a1, final Time.Abs validUntil)
     {
         assertEquals(description + ": a leader should be " + a0, a0.getSI(), as.getLeaderAcceleration().getSI(), 0.001);
         assertEquals(description + ": a leader should be " + a0, a0.getSI(), as.getLeaderAccelerationStep()

@@ -16,8 +16,13 @@ import javax.swing.event.EventListenerList;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LinearDensityUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.LinearDensity;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -32,7 +37,6 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
-import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -51,7 +55,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * initial version Jul 31, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionListener, OTS_SCALAR
+public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionListener
 {
     /** */
     private static final long serialVersionUID = 20140701L;
@@ -72,9 +76,8 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
     private ArrayList<Sample> samples = new ArrayList<Sample>();
 
     /** Definition of the density axis. */
-    private Axis densityAxis = new Axis(new DoubleScalar.Abs<LinearDensityUnit>(0, PER_KILOMETER),
-        new DoubleScalar.Abs<LinearDensityUnit>(200, PER_KILOMETER), null, 0d, "Density [veh/km]", "Density",
-        "density %.1f veh/km");
+    private Axis densityAxis = new Axis(new LinearDensity(0, LinearDensityUnit.PER_KILOMETER), new LinearDensity(200,
+        LinearDensityUnit.PER_KILOMETER), null, 0d, "Density [veh/km]", "Density", "density %.1f veh/km");
 
     /**
      * @return densityAxis
@@ -85,8 +88,8 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
     }
 
     /** Definition of the speed axis. */
-    private Axis speedAxis = new Axis(new Speed.Abs(0, KM_PER_HOUR), new Speed.Abs(120, KM_PER_HOUR), null, 0d,
-        "Speed [km/h]", "Speed", "speed %.0f km/h");
+    private Axis speedAxis = new Axis(new Speed(0, SpeedUnit.KM_PER_HOUR), new Speed(120, SpeedUnit.KM_PER_HOUR), null,
+        0d, "Speed [km/h]", "Speed", "speed %.0f km/h");
 
     /**
      * @return speedAxis
@@ -105,8 +108,8 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
     }
 
     /** Definition of the flow axis. */
-    private Axis flowAxis = new Axis(new Frequency.Abs(0, PER_HOUR), new Frequency.Abs(3000d, HERTZ), null, 0d,
-        "Flow [veh/h]", "Flow", "flow %.0f veh/h");
+    private Axis flowAxis = new Axis(new Frequency(0, FrequencyUnit.PER_HOUR),
+        new Frequency(3000d, FrequencyUnit.HERTZ), null, 0d, "Flow [veh/h]", "Flow", "flow %.0f veh/h");
 
     /** The currently shown X-axis. */
     private Axis xAxis;
@@ -125,9 +128,9 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
 
     /** the simulator to schedule sampling. */
     private final OTSDEVSSimulatorInterface simulator;
-    
+
     /** flow counter. */
-    
+
     int flow = 0;
 
     /**
@@ -484,8 +487,8 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
     }
 
     /**
-     * Storage for one sample of data collected with mean speed [m/s] and number of vehicles per km. Flow per second can be calculated
-     * from these two numbers as  
+     * Storage for one sample of data collected with mean speed [m/s] and number of vehicles per km. Flow per second can be
+     * calculated from these two numbers as
      * <p>
      * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * </p>
@@ -500,7 +503,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
 
         /** density [veh/m]. */
         private final double density;
-        
+
         /** flow [veh/s]. */
         private final double flow;
 
@@ -563,6 +566,6 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
         {
             FundamentalDiagramLane.this.flow += 1;
         }
-        
+
     }
 }

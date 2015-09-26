@@ -67,9 +67,9 @@ public class SpeedContourPlot extends ContourPlot
             try
             {
                 this.cumulativeTimes.add(new MutableDoubleVector.Abs.Sparse<TimeUnit>(new double[this.getYAxis()
-                    .getBinCount()], SECOND));
+                    .getBinCount()], TimeUnit.SECOND));
                 this.cumulativeLengths.add(new MutableDoubleVector.Abs.Sparse<LengthUnit>(new double[this.getYAxis()
-                    .getBinCount()], METER));
+                    .getBinCount()], LengthUnit.METER));
             }
             catch (ValueException exception)
             {

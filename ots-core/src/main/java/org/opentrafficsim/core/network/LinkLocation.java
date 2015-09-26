@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.network;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Length;
 
 /**
  * "1D" implementation. Mapping on the design line (often the center line) of a road.
@@ -13,7 +14,7 @@ import org.opentrafficsim.core.OTS_SCALAR;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LinkLocation implements OTS_SCALAR
+public class LinkLocation
 {
     /** The link of the location of a point relative to the GTU. */
     private final Link link;
@@ -64,7 +65,7 @@ public class LinkLocation implements OTS_SCALAR
      */
     public final Length.Rel getLongitudinalPosition()
     {
-        return new Length.Rel(this.link.getLength().getSI() * getFractionalLongitudinalPosition(), METER);
+        return new Length.Rel(this.link.getLength().getSI() * getFractionalLongitudinalPosition(), LengthUnit.METER);
     }
 
     /**

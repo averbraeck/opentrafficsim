@@ -4,10 +4,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.djunits.unit.SpeedUnit;
-import org.opentrafficsim.core.OTS_DIST;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
+import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.network.factory.xml.CrossSectionElementTag.ElementType;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -22,7 +22,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ListGeneratorTag implements OTS_SCALAR, OTS_DIST
+class ListGeneratorTag
 {
     /** URI of the list. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -42,7 +42,7 @@ class ListGeneratorTag implements OTS_SCALAR, OTS_DIST
 
     /** initial speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> initialSpeedDist = null;
+    ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist = null;
 
     /** GTU colorer. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -82,11 +82,11 @@ class ListGeneratorTag implements OTS_SCALAR, OTS_DIST
             throw new NetworkException("LISTGENERATOR: LANE " + laneName + " no ROADTYPE for link " + linkTag.name);
         CrossSectionElementTag cseTag = linkTag.roadTypeTag.cseTags.get(laneName);
         if (cseTag == null)
-            throw new NetworkException("LISTGENERATOR: LANE " + laneName + " not found in elements of link " + linkTag.name
-                + " - roadtype " + linkTag.roadTypeTag.name);
+            throw new NetworkException("LISTGENERATOR: LANE " + laneName + " not found in elements of link "
+                + linkTag.name + " - roadtype " + linkTag.roadTypeTag.name);
         if (cseTag.elementType != ElementType.LANE)
-            throw new NetworkException("LISTGENERATOR: LANE " + laneName + " not a real GTU lane for link " + linkTag.name
-                + " - roadtype " + linkTag.roadTypeTag.name);
+            throw new NetworkException("LISTGENERATOR: LANE " + laneName + " not a real GTU lane for link "
+                + linkTag.name + " - roadtype " + linkTag.roadTypeTag.name);
         if (linkTag.generatorTags.containsKey(laneName))
             throw new SAXException("LISTGENERATOR for LANE with NAME " + laneName + " defined twice");
 
@@ -119,13 +119,13 @@ class ListGeneratorTag implements OTS_SCALAR, OTS_DIST
                 + " of link " + linkTag.name);
 
         if (listGeneratorTag.gtuTag != null && listGeneratorTag.gtuMixTag != null)
-            throw new SAXException("LISTGENERATOR: both attribute GTU and GTUMIX defined for Lane with NAME " + laneName
-                + " of link " + linkTag.name);
+            throw new SAXException("LISTGENERATOR: both attribute GTU and GTUMIX defined for Lane with NAME "
+                + laneName + " of link " + linkTag.name);
 
         Node initialSpeed = attributes.getNamedItem("INITIALSPEED");
         if (initialSpeed == null)
             throw new SAXException("LISTGENERATOR: missing attribute INITIALSPEED");
-        listGeneratorTag.initialSpeedDist = Distributions.parseSpeedDistAbs(initialSpeed.getNodeValue());
+        listGeneratorTag.initialSpeedDist = Distributions.parseSpeedDistRel(initialSpeed.getNodeValue());
 
         // TODO GTUColorer
 

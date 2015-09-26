@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.changing;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.road.gtu.following.DualAccelerationStep;
 
 /**
@@ -16,7 +17,7 @@ public final class Egoistic extends AbstractLaneChangeModel
 {
     /** {@inheritDoc} */
     @Override
-    public Acceleration.Abs applyDriverPersonality(final DualAccelerationStep accelerations)
+    public Acceleration applyDriverPersonality(final DualAccelerationStep accelerations)
     {
         // The egoistic driver only looks at the effects on him-/herself.
         return accelerations.getLeaderAcceleration();

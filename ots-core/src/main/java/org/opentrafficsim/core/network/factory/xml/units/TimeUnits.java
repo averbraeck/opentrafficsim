@@ -5,7 +5,9 @@ import java.util.Map;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -17,7 +19,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public final class TimeUnits implements OTS_SCALAR
+public final class TimeUnits implements UNITS
 {
     /** the time units. */
     public static final Map<String, TimeUnit> TIME_UNITS = new HashMap<>();
@@ -153,7 +155,7 @@ public final class TimeUnits implements OTS_SCALAR
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Frequency.Abs parsePerTimeAbs(final String s) throws NetworkException
+    public static Frequency parsePerTimeAbs(final String s) throws NetworkException
     {
         String us = parsePerTimeUnit(s);
         FrequencyUnit u = PER_TIME_UNITS.get(us);
@@ -161,7 +163,7 @@ public final class TimeUnits implements OTS_SCALAR
         try
         {
             double value = Double.parseDouble(sv);
-            return new Frequency.Abs(value, u);
+            return new Frequency(value, u);
         }
         catch (NumberFormatException nfe)
         {

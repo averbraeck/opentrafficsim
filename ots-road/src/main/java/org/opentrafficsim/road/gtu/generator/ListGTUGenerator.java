@@ -12,8 +12,12 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
-import org.opentrafficsim.core.OTS_DIST;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -37,7 +41,7 @@ import org.opentrafficsim.road.network.route.LaneBasedRouteGenerator;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class ListGTUGenerator implements OTS_SCALAR, OTS_DIST
+public class ListGTUGenerator
 {
     /** Name of this ListGTUGenerator. */
     private final String name;
@@ -58,7 +62,7 @@ public class ListGTUGenerator implements OTS_SCALAR, OTS_DIST
     private final LaneBasedRouteGenerator routeGenerator;
 
     /** Initial speed of the generated GTUs. */
-    private final Speed.Abs initialSpeed;
+    private final Speed initialSpeed;
 
     /** The GTU colorer that will be linked to each generated GTU. */
     private final GTUColorer gtuColorer;
@@ -92,7 +96,7 @@ public class ListGTUGenerator implements OTS_SCALAR, OTS_DIST
      * @throws NetworkException on
      */
     public ListGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
-        final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel, final Speed.Abs initialSpeed,
+        final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel, final Speed initialSpeed,
         final Lane lane, final Length.Rel position, final LaneBasedRouteGenerator routeGenerator,
         final GTUColorer gtuColorer, final String fileName) throws SimRuntimeException, NetworkException
     {
@@ -138,7 +142,7 @@ public class ListGTUGenerator implements OTS_SCALAR, OTS_DIST
             }
             while (line.equals("")); // ignore blank lines
             double when = Double.parseDouble(line);
-            this.simulator.scheduleEventAbs(new Time.Abs(when, SECOND), this, this, "generateCar", null);
+            this.simulator.scheduleEventAbs(new Time.Abs(when, TimeUnit.SI), this, this, "generateCar", null);
         }
         catch (NumberFormatException exception)
         {
@@ -160,15 +164,15 @@ public class ListGTUGenerator implements OTS_SCALAR, OTS_DIST
      */
     protected final void generateCar()
     {
-        Length.Rel initialPosition = new Length.Rel(0, METER);
+        Length.Rel initialPosition = new Length.Rel(0, LengthUnit.METER);
         Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(this.lane, initialPosition);
         try
         {
-            Length.Rel vehicleLength = new Length.Rel(4, METER);
+            Length.Rel vehicleLength = new Length.Rel(4, LengthUnit.METER);
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, this.gtuFollowingModel,
-                this.laneChangeModel, initialPositions, this.initialSpeed, vehicleLength, new Length.Rel(1.8, METER),
-                new Speed.Abs(200, KM_PER_HOUR), this.routeGenerator.generateRouteNavigator(), this.simulator,
+                this.laneChangeModel, initialPositions, this.initialSpeed, vehicleLength, new Length.Rel(1.8, LengthUnit.METER),
+                new Speed(200, SpeedUnit.KM_PER_HOUR), this.routeGenerator.generateRouteNavigator(), this.simulator,
                 DefaultCarAnimation.class, this.gtuColorer);
             scheduleNextVehicle();
         }

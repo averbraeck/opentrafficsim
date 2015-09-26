@@ -17,6 +17,7 @@ import nl.tudelft.simulation.language.io.URLResource;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -56,8 +57,8 @@ public class TestXMLParser extends AbstractWrappableAnimation
                 {
                     TestXMLParser xmlModel = new TestXMLParser();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND),
-                        new Time.Rel(60.0, MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
+                    xmlModel.buildAnimator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(0.0, TimeUnit.SECOND),
+                        new Time.Rel(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException exception)
                 {
@@ -131,9 +132,11 @@ public class TestXMLParser extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public final void constructModel(
-            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
-            throws SimRuntimeException
+        public final
+            void
+            constructModel(
+                final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
+                throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
             // URL url = URLResource.getResource("/PNH1.xml");
@@ -154,8 +157,9 @@ public class TestXMLParser extends AbstractWrappableAnimation
 
         /** {@inheritDoc} */
         @Override
-        public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-            
+        public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
+            getSimulator()
+
         {
             return this.simulator;
         }

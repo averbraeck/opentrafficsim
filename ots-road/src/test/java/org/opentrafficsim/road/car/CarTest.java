@@ -15,8 +15,12 @@ import nl.tudelft.simulation.dsol.experiment.Treatment;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DOUBLE_SCALAR;
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -26,11 +30,11 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.changing.Egoistic;
@@ -51,7 +55,7 @@ import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
  * initial version Jul 11, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CarTest implements DOUBLE_SCALAR
+public class CarTest implements UNITS
 {
     /**
      * Test some basics of the Car class.
@@ -72,10 +76,10 @@ public class CarTest implements DOUBLE_SCALAR
         laneType.addCompatibility(gtuType);
         Lane lane = makeLane(laneType);
         Length.Rel initialPosition = new Length.Rel(12, METER);
-        Speed.Abs initialSpeed = new Speed.Abs(34, KM_PER_HOUR);
+        Speed initialSpeed = new Speed(34, KM_PER_HOUR);
         OTSDEVSSimulator simulator = makeSimulator();
         GTUFollowingModel gtuFollowingModel =
-            new FixedAccelerationModel(new Acceleration.Abs(0, METER_PER_SECOND_2), new Time.Rel(10, SECOND));
+            new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(10, SECOND));
         LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar referenceCar =
             makeReferenceCar("12345", gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
@@ -133,7 +137,7 @@ public class CarTest implements DOUBLE_SCALAR
      * @throws GTUException when construction of the GTU fails (probably due to an invalid parameter)
      */
     public static LaneBasedIndividualCar makeReferenceCar(final String id, final GTUType gtuType, final Lane lane,
-        final Length.Rel initialPosition, final Speed.Abs initialSpeed, final OTSDEVSSimulator simulator,
+        final Length.Rel initialPosition, final Speed initialSpeed, final OTSDEVSSimulator simulator,
         final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel) throws NamingException,
         NetworkException, SimRuntimeException, GTUException
     {
@@ -141,7 +145,7 @@ public class CarTest implements DOUBLE_SCALAR
         Length.Rel width = new Length.Rel(2.0, METER);
         Map<Lane, Length.Rel> initialLongitudinalPositions = new HashMap<>();
         initialLongitudinalPositions.put(lane, initialPosition);
-        Speed.Abs maxSpeed = new Speed.Abs(120, KM_PER_HOUR);
+        Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         return new LaneBasedIndividualCar(id, gtuType, gtuFollowingModel, laneChangeModel,
             initialLongitudinalPositions, initialSpeed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(
                 new CompleteRoute("")), simulator);
@@ -159,11 +163,11 @@ public class CarTest implements DOUBLE_SCALAR
         OTSNode n2 = new OTSNode("n2", new OTSPoint3D(100000.0, 0.0));
         OTSPoint3D[] coordinates = new OTSPoint3D[]{new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100000.0, 0.0)};
         CrossSectionLink link12 =
-            new CrossSectionLink("link12", n1, n2, new OTSLine3D(coordinates), LaneKeepingPolicy.KEEP_RIGHT);
+            new CrossSectionLink("link12", n1, n2, LinkType.ALL, new OTSLine3D(coordinates), LaneKeepingPolicy.KEEP_RIGHT);
         Length.Rel latPos = new Length.Rel(0.0, METER);
         Length.Rel width = new Length.Rel(4.0, METER);
         return new Lane(link12, "lane.1", latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD,
-            new Speed.Abs(100, KM_PER_HOUR), new OvertakingConditions.LeftAndRight());
+            new Speed(100, KM_PER_HOUR), new OvertakingConditions.LeftAndRight());
     }
 
     /** the helper model. */

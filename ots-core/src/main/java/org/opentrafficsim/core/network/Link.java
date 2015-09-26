@@ -7,10 +7,12 @@ import javax.media.j3d.Bounds;
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 
 /**
+ * Link as a connection between two Nodes. 
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -19,9 +21,8 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
  * initial version Aug 19, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public interface Link extends LocatableInterface, Serializable, OTS_SCALAR
+public interface Link extends LocatableInterface, Serializable
 {
     /** @return id. */
     String getId();
@@ -33,13 +34,16 @@ public interface Link extends LocatableInterface, Serializable, OTS_SCALAR
     Node getEndNode();
 
     /** @return link capacity. */
-    Frequency.Abs getCapacity();
+    Frequency getCapacity();
 
     /**
      * Set the link capacity.
      * @param capacity the new capacity of the link as a frequency in GTUs per time unit.
      */
-    void setCapacity(final Frequency.Abs capacity);
+    void setCapacity(final Frequency capacity);
+    
+    /** @return the link type. */
+    LinkType getLinkType();
 
     /** @return the design line. */
     OTSLine3D getDesignLine();

@@ -13,15 +13,19 @@ import java.util.TreeMap;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
-import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
@@ -53,7 +57,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a>Moritz Bergmann</a>
  */
-public final class Convert implements OTS_SCALAR
+public final class Convert
 {
 
     /**
@@ -129,7 +133,7 @@ public final class Convert implements OTS_SCALAR
         coordinates[coordinates.length - 1] = new Coordinate(end.getPoint().x, end.getPoint().y, 0);
         OTSLine3D designLine = new OTSLine3D(coordinates);
         // XXX How to figure out whether to keep left, right or keep lane?
-        result = new CrossSectionLink(link.getId(), start, end, designLine, LaneKeepingPolicy.KEEP_RIGHT);
+        result = new CrossSectionLink(link.getId(), start, end, LinkType.ALL, designLine, LaneKeepingPolicy.KEEP_RIGHT);
         return result;
     }
 
@@ -203,7 +207,8 @@ public final class Convert implements OTS_SCALAR
      * @param warningListener WarningListener; the warning listener that receives warning events
      * @return Map&lt;Double, LaneAttributes&gt;; the lane structure
      */
-    private static Map<Double, LaneAttributes> makeStructure(final OSMLink osmLink, final WarningListener warningListener)
+    private static Map<Double, LaneAttributes> makeStructure(final OSMLink osmLink,
+        final WarningListener warningListener)
     {
         SortedMap<Integer, LaneAttributes> structure = new TreeMap<Integer, LaneAttributes>();
         int forwards = osmLink.getForwardLanes();
@@ -267,7 +272,8 @@ public final class Convert implements OTS_SCALAR
                     }
                 }
             }
-            else if (tag.getKey().equals("highway") && (tag.getValue().equals("path") || tag.getValue().equals("steps")))
+            else if (tag.getKey().equals("highway")
+                && (tag.getValue().equals("path") || tag.getValue().equals("steps")))
             {
                 List<GTUType> types = new ArrayList<GTUType>();
                 for (OSMTag t2 : osmLink.getTags())
@@ -322,7 +328,8 @@ public final class Convert implements OTS_SCALAR
                     case "lane": // cycleway:lane is directly adjacent to the highway.
                         forwards++;
                         backwards++;
-                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.BACKWARD);
+                        laneAttributes =
+                            new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.BACKWARD);
                         structure.put(0 - backwards, laneAttributes);
                         laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.FORWARD);
                         structure.put(forwards - 1, laneAttributes);
@@ -330,7 +337,8 @@ public final class Convert implements OTS_SCALAR
                     case "track": // cycleway:track is separated by a gap from the highway.
                         forwards++;
                         backwards++;
-                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.BACKWARD);
+                        laneAttributes =
+                            new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.BACKWARD);
                         structure.put(0 - backwards, laneAttributes);
                         laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.FORWARD);
                         structure.put(forwards - 1, laneAttributes);
@@ -340,7 +348,8 @@ public final class Convert implements OTS_SCALAR
                         types.add(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.BIKE);
                         types.add(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.CAR);
                         laneType = makeLaneType(types);
-                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.BACKWARD);
+                        laneAttributes =
+                            new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.BACKWARD);
                         structure.put(0 - backwards, laneAttributes);
                         laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.FORWARD);
                         structure.put(forwards - 1, laneAttributes);
@@ -360,7 +369,8 @@ public final class Convert implements OTS_SCALAR
                     case "both":
                         forwards++;
                         backwards++;
-                        laneAttributes = new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.BACKWARD);
+                        laneAttributes =
+                            new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.BACKWARD);
                         structure.put(0 - backwards, laneAttributes);
                         laneAttributes = new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.FORWARD);
                         structure.put(forwards - 1, laneAttributes);
@@ -426,12 +436,14 @@ public final class Convert implements OTS_SCALAR
                     {
                         if (i < 0)
                         {
-                            laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.BACKWARD);
+                            laneAttributes =
+                                new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.BACKWARD);
                             structure.put(i, laneAttributes);
                         }
                         if (i >= 0)
                         {
-                            laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.FORWARD);
+                            laneAttributes =
+                                new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.FORWARD);
                             structure.put(i, laneAttributes);
                         }
                     }
@@ -514,7 +526,8 @@ public final class Convert implements OTS_SCALAR
      * @param warningListener WarningListener; the warning listener that receives warning events
      * @return double; the width (in meters) of the lane
      */
-    static double laneWidth(final LaneAttributes laneAttributes, final OSMLink link, final WarningListener warningListener)
+    static double laneWidth(final LaneAttributes laneAttributes, final OSMLink link,
+        final WarningListener warningListener)
     {
         Double defaultLaneWidth = 3.05d; // TODO This is the German standard car lane width
         boolean widthOverride = false;
@@ -592,8 +605,7 @@ public final class Convert implements OTS_SCALAR
      * @throws OTSGeometryException when lane contour or center line cannot be instantiated
      */
     public List<Lane> makeLanes(final OSMLink osmlink, final OTSDEVSSimulatorInterface simulator,
-        final WarningListener warningListener) throws NetworkException, NamingException,
-        OTSGeometryException
+        final WarningListener warningListener) throws NetworkException, NamingException, OTSGeometryException
     {
         CrossSectionLink otslink = convertLink(osmlink);
         List<Lane> lanes = new ArrayList<Lane>();
@@ -610,11 +622,11 @@ public final class Convert implements OTS_SCALAR
             }
             Color color = Color.LIGHT_GRAY;
             LaneType laneType = laneAttributes.getLaneType();
-            Length.Rel latPos = new Length.Rel(offset, METER);
+            Length.Rel latPos = new Length.Rel(offset, LengthUnit.METER);
             Map<GTUType, LongitudinalDirectionality> directionality = new HashMap<>();
             directionality.put(GTUType.ALL, laneAttributes.getDirectionality());
-            Map<GTUType, Speed.Abs> speedLimit = new HashMap<>();
-            speedLimit.put(GTUType.ALL, new Speed.Abs(100, KM_PER_HOUR));
+            Map<GTUType, Speed> speedLimit = new HashMap<>();
+            speedLimit.put(GTUType.ALL, new Speed(100, SpeedUnit.KM_PER_HOUR));
             Lane newLane = null;
             // FIXME the following code assumes right-hand-side driving.
             if (osmlink.hasTag("hasPreceding") && offset >= 0 || osmlink.hasTag("hasFollowing") && offset < 0)
@@ -624,7 +636,7 @@ public final class Convert implements OTS_SCALAR
                 newLane =
                     new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(), laneAttributes
                         .getWidth(), laneType, directionality, speedLimit, new OvertakingConditions.LeftAndRight());
-                SinkSensor sensor = new SinkSensor(newLane, new Length.Rel(0.25, METER), simulator);
+                SinkSensor sensor = new SinkSensor(newLane, new Length.Rel(0.25, LengthUnit.METER), simulator);
                 newLane.addSensor(sensor, GTUType.ALL);
             }
             else if (osmlink.hasTag("hasPreceding") && offset < 0 || osmlink.hasTag("hasFollowing") && offset >= 0)
@@ -791,7 +803,7 @@ public final class Convert implements OTS_SCALAR
  * initial version ar 3, 2015 <br>
  * @author <a>Moritz Bergmann</a>
  */
-class LaneAttributes implements OTS_SCALAR
+class LaneAttributes
 {
     /** Type of the lane (immutable). */
     private final LaneType laneType;
@@ -883,7 +895,7 @@ class LaneAttributes implements OTS_SCALAR
      */
     public void setWidth(final Double width)
     {
-        Length.Rel w = new Length.Rel(width, METER);
+        Length.Rel w = new Length.Rel(width, LengthUnit.METER);
         this.width = w;
     }
 

@@ -1,6 +1,9 @@
 package org.opentrafficsim.road.gtu.following;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Time;
+
+
 
 /**
  * Container for two instances of an AccelerationStep. One for the GTU that is deciding its move (the leader); one for the GTU
@@ -13,7 +16,7 @@ import org.opentrafficsim.core.OTS_SCALAR;
  *          initial version 11 mrt. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class DualAccelerationStep implements OTS_SCALAR
+public class DualAccelerationStep 
 {
     /** AccelerationStep for the leader. */
     private final AccelerationStep leaderAccelerationStep;
@@ -55,7 +58,7 @@ public class DualAccelerationStep implements OTS_SCALAR
      * Return the acceleration of the leader.
      * @return DoubleScalar&lt;AccelerationUnit&gt;; the acceleration of the leader
      */
-    public final Acceleration.Abs getLeaderAcceleration()
+    public final Acceleration getLeaderAcceleration()
     {
         return getLeaderAccelerationStep().getAcceleration();
     }
@@ -64,7 +67,7 @@ public class DualAccelerationStep implements OTS_SCALAR
      * Return the acceleration of the follower.
      * @return DoubleScalar&lt;AccelerationUnit&gt;; the acceleration of the follower
      */
-    public final Acceleration.Abs getFollowerAcceleration()
+    public final Acceleration getFollowerAcceleration()
     {
         return getFollowerAccelerationStep().getAcceleration();
     }

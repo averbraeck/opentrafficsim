@@ -2,12 +2,13 @@ package org.opentrafficsim.road.network.factory.xml;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.opentrafficsim.core.OTS_DIST;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
+import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.following.IDM;
 import org.opentrafficsim.road.gtu.following.IDMPlus;
@@ -29,7 +30,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class GTUTag implements OTS_SCALAR, OTS_DIST
+class GTUTag
 {
     /** name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -41,11 +42,11 @@ class GTUTag implements OTS_SCALAR, OTS_DIST
 
     /** GTU length. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    ContinuousDistScalar.Rel<Length.Rel, LengthUnit> lengthDist = null;
+    ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist = null;
 
     /** GTU width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    ContinuousDistScalar.Rel<Length.Rel, LengthUnit> widthDist = null;
+    ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist = null;
 
     /** GTU following model. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -57,7 +58,7 @@ class GTUTag implements OTS_SCALAR, OTS_DIST
 
     /** max speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> maxSpeedDist = null;
+    ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maxSpeedDist = null;
 
     /**
      * @param nodeList nodeList the top-level nodes of the XML-file
@@ -67,8 +68,8 @@ class GTUTag implements OTS_SCALAR, OTS_DIST
      * @throws GTUException if GTUType defined twice
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseGTUs(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException, NetworkException,
-        GTUException
+    static void parseGTUs(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException,
+        NetworkException, GTUException
     {
         for (Node node : XMLParser.getNodes(nodeList, "GTU"))
         {
@@ -110,7 +111,7 @@ class GTUTag implements OTS_SCALAR, OTS_DIST
             Node maxSpeed = attributes.getNamedItem("MAXSPEED");
             if (maxSpeed == null)
                 throw new SAXException("GTU: missing attribute LENGTH");
-            gtuTag.maxSpeedDist = Distributions.parseSpeedDistAbs(maxSpeed.getNodeValue());
+            gtuTag.maxSpeedDist = Distributions.parseSpeedDistRel(maxSpeed.getNodeValue());
 
             parser.gtuTags.put(gtuTag.name, gtuTag);
         }

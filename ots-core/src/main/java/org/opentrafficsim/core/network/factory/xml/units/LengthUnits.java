@@ -5,8 +5,9 @@ import java.util.Map;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
+import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -18,7 +19,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public final class LengthUnits implements OTS_SCALAR
+public final class LengthUnits implements UNITS
 {
     /** the length units. */
     public static final Map<String, LengthUnit> LENGTH_UNITS = new HashMap<>();
