@@ -35,8 +35,8 @@ public interface Node extends LocatableInterface, Serializable
     /** @return the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians). */
     AnglePlane.Abs getDirection();
 
-    /** @return the slope as an angle. */
-    AngleSlope getSlope();
+    /** @return the slope as an angle. Horizontal is 0 degrees. */
+    AngleSlope.Abs getSlope();
 
     /**
      * Add an incoming link to this Node.

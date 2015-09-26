@@ -220,7 +220,7 @@ final class Links
                 NodeTag nodeTag = linkTag.nodeEndTag;
                 nodeTag.angle = new AnglePlane.Abs(angle, AnglePlaneUnit.SI);
                 nodeTag.coordinate = new OTSPoint3D(coordinate.x, coordinate.y, coordinate.z);
-                nodeTag.slope = new AngleSlope(slope, AngleSlopeUnit.SI);
+                nodeTag.slope = new AngleSlope.Abs(slope, AngleSlopeUnit.SI);
                 linkTag.nodeEndTag.node = NodeTag.makeOTSNode(nodeTag, parser);
             }
             else if (linkTag.nodeStartTag.node == null)
@@ -236,7 +236,7 @@ final class Links
                 NodeTag nodeTag = linkTag.nodeStartTag;
                 nodeTag.angle = new AnglePlane.Abs(angle, AnglePlaneUnit.SI);
                 nodeTag.coordinate = new OTSPoint3D(coordinate.x, coordinate.y, coordinate.z);
-                nodeTag.slope = new AngleSlope(slope, AngleSlopeUnit.SI);
+                nodeTag.slope = new AngleSlope.Abs(slope, AngleSlopeUnit.SI);
                 linkTag.nodeStartTag.node = NodeTag.makeOTSNode(nodeTag, parser);
             }
         }
@@ -276,7 +276,7 @@ final class Links
                     nodeTag.angle = new AnglePlane.Abs(AnglePlaneUnit.normalize(startAngle - angle), AnglePlaneUnit.SI);
                 }
                 coordinate.z = linkTag.nodeStartTag.node.getLocation().getZ() + lengthSI * Math.sin(slope);
-                nodeTag.slope = new AngleSlope(slope, AngleSlopeUnit.SI);
+                nodeTag.slope = new AngleSlope.Abs(slope, AngleSlopeUnit.SI);
                 nodeTag.coordinate = new OTSPoint3D(coordinate.x, coordinate.y, coordinate.z);
                 linkTag.nodeEndTag.node = NodeTag.makeOTSNode(nodeTag, parser);
             }
@@ -316,7 +316,7 @@ final class Links
                 }
                 coordinate.z -= lengthSI * Math.sin(slope);
                 nodeTag.coordinate = new OTSPoint3D(coordinate.x, coordinate.y, coordinate.z);
-                nodeTag.slope = new AngleSlope(slope, AngleSlopeUnit.SI);
+                nodeTag.slope = new AngleSlope.Abs(slope, AngleSlopeUnit.SI);
                 linkTag.nodeStartTag.node = NodeTag.makeOTSNode(nodeTag, parser);
             }
         }
