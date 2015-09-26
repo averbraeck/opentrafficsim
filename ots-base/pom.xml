@@ -4,7 +4,7 @@
 
   <groupId>opentrafficsim</groupId>
   <artifactId>ots-base</artifactId>
-  <version>0.03.04</version>
+  <version>0.04.01</version>
   <packaging>pom</packaging>
 
   <name>OpenTrafficSim base project</name>
@@ -44,7 +44,7 @@
     <sonar.scm.disabled>true</sonar.scm.disabled>
 
     <ots.version>${project.version}</ots.version>
-    <djunits.version>1.00.04</djunits.version>
+    <djunits.version>1.01.01</djunits.version>
     <dsol.version>3.00.15</dsol.version>
     <junit.version>4.11</junit.version>
     <java3d.version>1.5.1</java3d.version>
