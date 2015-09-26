@@ -6,6 +6,8 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulator;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSReplication;
@@ -54,8 +56,8 @@ public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulator
         final Object source, final Object target, final String method, final Object[] args) throws SimRuntimeException
     {
         SimEvent<OTSSimTimeDouble> result =
-            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time.Abs(executionTime.getSI(), SECOND)), priority,
-                source, target, method, args);
+            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time.Abs(executionTime.getSI(), TimeUnit.SECOND)),
+                priority, source, target, method, args);
         scheduleEvent(result);
         return result;
     }

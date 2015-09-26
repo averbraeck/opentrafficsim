@@ -8,7 +8,9 @@ import javax.media.j3d.Bounds;
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 
 /**
@@ -24,7 +26,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public interface GTU extends LocatableInterface, Serializable, OTS_SCALAR
+public interface GTU extends LocatableInterface, Serializable
 {
     /** @return the id of the GTU */
     String getId();
@@ -36,7 +38,7 @@ public interface GTU extends LocatableInterface, Serializable, OTS_SCALAR
     Length.Rel getWidth();
 
     /** @return the maximum velocity of the GTU, in the linear direction */
-    Speed.Abs getMaximumVelocity();
+    Speed getMaximumVelocity();
 
     /** @return the type of GTU, e.g. TruckType, CarType, BusType */
     GTUType getGTUType();
@@ -54,7 +56,7 @@ public interface GTU extends LocatableInterface, Serializable, OTS_SCALAR
     RelativePosition getRear();
 
     /** @return the current velocity of the GTU, combining longitudinal, lateral and vertical speed components. */
-    Speed.Abs getVelocity();
+    Speed getVelocity();
 
     /** @return the positions for this GTU. */
     Map<RelativePosition.TYPE, RelativePosition> getRelativePositions();
@@ -63,7 +65,7 @@ public interface GTU extends LocatableInterface, Serializable, OTS_SCALAR
     void destroy();
 
     /** @return the current acceleration of the GTU, combining longitudinal, lateral and vertical acceleration components. */
-    Acceleration.Abs getAcceleration();
+    Acceleration getAcceleration();
 
     /** @return Length.Abs; the current odometer value. */
     Length.Abs getOdometer();

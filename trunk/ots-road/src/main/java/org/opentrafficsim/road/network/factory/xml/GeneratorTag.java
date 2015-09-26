@@ -7,14 +7,16 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.opentrafficsim.core.OTS_DIST;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
 import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
 import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.network.factory.xml.CrossSectionElementTag.ElementType;
@@ -34,7 +36,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class GeneratorTag implements OTS_SCALAR, OTS_DIST
+class GeneratorTag
 {
     /** lane name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -54,11 +56,11 @@ class GeneratorTag implements OTS_SCALAR, OTS_DIST
 
     /** interarrival time. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    ContinuousDistScalar.Rel<Time.Rel, TimeUnit> iatDist = null;
+    ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> iatDist = null;
 
     /** initial speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> initialSpeedDist = null;
+    ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist = null;
 
     /** max number of generated GTUs. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -163,7 +165,7 @@ class GeneratorTag implements OTS_SCALAR, OTS_DIST
         Node initialSpeed = attributes.getNamedItem("INITIALSPEED");
         if (initialSpeed == null)
             throw new SAXException("GENERATOR: missing attribute INITIALSPEED");
-        generatorTag.initialSpeedDist = Distributions.parseSpeedDistAbs(initialSpeed.getNodeValue());
+        generatorTag.initialSpeedDist = Distributions.parseSpeedDistRel(initialSpeed.getNodeValue());
 
         Node maxGTU = attributes.getNamedItem("MAXGTU");
         generatorTag.maxGTUs = maxGTU == null ? Integer.MAX_VALUE : Integer.parseInt(maxGTU.getNodeValue().trim());

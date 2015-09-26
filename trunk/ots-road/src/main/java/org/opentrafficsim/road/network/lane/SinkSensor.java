@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;

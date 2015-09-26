@@ -2,6 +2,8 @@ package org.opentrafficsim.road.gtu.lane.changing;
 
 import java.util.Collection;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.following.HeadwayGTU;
@@ -36,9 +38,9 @@ public class FixedLaneChangeModel implements LaneChangeModel
     @Override
     public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
         final Collection<HeadwayGTU> sameLaneTraffic, final Collection<HeadwayGTU> rightLaneTraffic,
-        final Collection<HeadwayGTU> leftLaneTraffic, final Speed.Abs speedLimit,
-        final Acceleration.Rel preferredLaneRouteIncentive, final Acceleration.Rel laneChangeThreshold,
-        final Acceleration.Rel nonPreferredLaneRouteIncentive) 
+        final Collection<HeadwayGTU> leftLaneTraffic, final Speed speedLimit,
+        final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
+        final Acceleration nonPreferredLaneRouteIncentive) 
     {
         try
         {

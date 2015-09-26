@@ -8,7 +8,8 @@ import javax.media.j3d.Bounds;
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.AnglePlane;
+import org.djunits.value.vdouble.scalar.AngleSlope;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 
 /**
@@ -23,7 +24,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public interface Node extends LocatableInterface, Serializable, OTS_SCALAR
+public interface Node extends LocatableInterface, Serializable
 {
     /** @return node id. */
     String getId();
@@ -35,7 +36,7 @@ public interface Node extends LocatableInterface, Serializable, OTS_SCALAR
     AnglePlane.Abs getDirection();
 
     /** @return the slope as an angle. */
-    AngleSlope.Abs getSlope();
+    AngleSlope getSlope();
 
     /**
      * Add an incoming link to this Node.
@@ -54,11 +55,11 @@ public interface Node extends LocatableInterface, Serializable, OTS_SCALAR
 
     /** @return linksOut. */
     Set<Link> getLinksOut();
-    
+
     /** {@inheritDoc} */
     @Override
     DirectedPoint getLocation();
-    
+
     /** {@inheritDoc} */
     @Override
     Bounds getBounds();

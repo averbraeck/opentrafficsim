@@ -9,7 +9,7 @@ import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Time;
 
 /**
  * <p>
@@ -22,7 +22,7 @@ import org.opentrafficsim.core.OTS_SCALAR;
  */
 public class OTSDEVSRealTimeClock extends
     DEVSRealTimeClock<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> implements
-    OTSDEVSSimulatorInterface, OTSAnimatorInterface, OTS_SCALAR
+    OTSDEVSSimulatorInterface, OTSAnimatorInterface
 {
     /** */
     private static final long serialVersionUID = 20140909L;
@@ -94,6 +94,6 @@ public class OTSDEVSRealTimeClock extends
     @Override
     protected final Time.Rel relativeMillis(final double factor)
     {
-        return new Time.Rel(factor, MILLISECOND);
+        return new Time.Rel(factor, TimeUnit.MILLISECOND);
     }
 }

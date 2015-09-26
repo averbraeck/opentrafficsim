@@ -7,12 +7,13 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.opentrafficsim.core.OTS_DIST;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
 import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.network.factory.xml.CrossSectionElementTag.ElementType;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -31,7 +32,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class FillTag implements OTS_SCALAR, OTS_DIST
+class FillTag
 {
     /** lane name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -47,11 +48,11 @@ class FillTag implements OTS_SCALAR, OTS_DIST
 
     /** inter-vehicle distance. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    ContinuousDistScalar.Rel<Length.Rel, LengthUnit> distanceDist = null;
+    ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> distanceDist = null;
 
     /** initial speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> initialSpeedDist = null;
+    ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist = null;
 
     /** max number of generated GTUs. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -82,8 +83,8 @@ class FillTag implements OTS_SCALAR, OTS_DIST
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseFill(final Node node, final XmlNetworkLaneParser parser, final LinkTag linkTag) throws SAXException,
-        NetworkException
+    static void parseFill(final Node node, final XmlNetworkLaneParser parser, final LinkTag linkTag)
+        throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         FillTag fillTag = new FillTag();
@@ -117,8 +118,8 @@ class FillTag implements OTS_SCALAR, OTS_DIST
         {
             String gtuMixName = attributes.getNamedItem("GTUMIX").getNodeValue().trim();
             if (!parser.gtuMixTags.containsKey(gtuMixName))
-                throw new NetworkException("FILL: LANE " + laneName + " GTUMIX " + gtuMixName + " in link " + linkTag.name
-                    + " not defined");
+                throw new NetworkException("FILL: LANE " + laneName + " GTUMIX " + gtuMixName + " in link "
+                    + linkTag.name + " not defined");
             fillTag.gtuMixTag = parser.gtuMixTags.get(gtuMixName);
         }
 
@@ -138,7 +139,7 @@ class FillTag implements OTS_SCALAR, OTS_DIST
         Node initialSpeed = attributes.getNamedItem("INITIALSPEED");
         if (initialSpeed == null)
             throw new SAXException("FILL: missing attribute INITIALSPEED");
-        fillTag.initialSpeedDist = Distributions.parseSpeedDistAbs(initialSpeed.getNodeValue());
+        fillTag.initialSpeedDist = Distributions.parseSpeedDistRel(initialSpeed.getNodeValue());
 
         Node maxGTU = attributes.getNamedItem("MAXGTU");
         fillTag.maxGTUs = maxGTU == null ? Integer.MAX_VALUE : Integer.parseInt(maxGTU.getNodeValue().trim());
@@ -149,8 +150,8 @@ class FillTag implements OTS_SCALAR, OTS_DIST
         {
             String routeName = attributes.getNamedItem("ROUTE").getNodeValue().trim();
             if (!parser.routeTags.containsKey(routeName))
-                throw new NetworkException("FILL: LANE " + laneName + " ROUTE " + routeName + " in link " + linkTag.name
-                    + " not defined");
+                throw new NetworkException("FILL: LANE " + laneName + " ROUTE " + routeName + " in link "
+                    + linkTag.name + " not defined");
             fillTag.routeTag = parser.routeTags.get(routeName);
             numberRouteTags++;
         }
@@ -169,8 +170,8 @@ class FillTag implements OTS_SCALAR, OTS_DIST
         {
             String shortestRouteName = attributes.getNamedItem("SHORTESTROUTE").getNodeValue().trim();
             if (!parser.shortestRouteTags.containsKey(shortestRouteName))
-                throw new NetworkException("FILL: LANE " + laneName + " SHORTESTROUTE " + shortestRouteName + " in link "
-                    + linkTag.name + " not defined");
+                throw new NetworkException("FILL: LANE " + laneName + " SHORTESTROUTE " + shortestRouteName
+                    + " in link " + linkTag.name + " not defined");
             fillTag.shortestRouteTag = parser.shortestRouteTags.get(shortestRouteName);
             numberRouteTags++;
         }

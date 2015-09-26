@@ -11,7 +11,7 @@ import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.LengthUnit;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -31,7 +31,7 @@ import com.vividsolutions.jts.geom.LineString;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class OTSLine3D implements LocatableInterface, Serializable, OTS_SCALAR
+public class OTSLine3D implements LocatableInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150722L;

@@ -19,7 +19,10 @@ import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.djunits.unit.AnglePlaneUnit;
 import org.djunits.unit.AngleSlopeUnit;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.AnglePlane;
+import org.djunits.value.vdouble.scalar.AngleSlope;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -27,6 +30,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.AbstractTrafficLight;
@@ -57,7 +61,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 25, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-final class Links implements OTS_SCALAR
+final class Links
 {
     /** Utility class. */
     private Links()
@@ -216,7 +220,7 @@ final class Links implements OTS_SCALAR
                 NodeTag nodeTag = linkTag.nodeEndTag;
                 nodeTag.angle = new AnglePlane.Abs(angle, AnglePlaneUnit.SI);
                 nodeTag.coordinate = new OTSPoint3D(coordinate.x, coordinate.y, coordinate.z);
-                nodeTag.slope = new AngleSlope.Abs(slope, AngleSlopeUnit.SI);
+                nodeTag.slope = new AngleSlope(slope, AngleSlopeUnit.SI);
                 linkTag.nodeEndTag.node = NodeTag.makeOTSNode(nodeTag, parser);
             }
             else if (linkTag.nodeStartTag.node == null)
@@ -232,7 +236,7 @@ final class Links implements OTS_SCALAR
                 NodeTag nodeTag = linkTag.nodeStartTag;
                 nodeTag.angle = new AnglePlane.Abs(angle, AnglePlaneUnit.SI);
                 nodeTag.coordinate = new OTSPoint3D(coordinate.x, coordinate.y, coordinate.z);
-                nodeTag.slope = new AngleSlope.Abs(slope, AngleSlopeUnit.SI);
+                nodeTag.slope = new AngleSlope(slope, AngleSlopeUnit.SI);
                 linkTag.nodeStartTag.node = NodeTag.makeOTSNode(nodeTag, parser);
             }
         }
@@ -272,7 +276,7 @@ final class Links implements OTS_SCALAR
                     nodeTag.angle = new AnglePlane.Abs(AnglePlaneUnit.normalize(startAngle - angle), AnglePlaneUnit.SI);
                 }
                 coordinate.z = linkTag.nodeStartTag.node.getLocation().getZ() + lengthSI * Math.sin(slope);
-                nodeTag.slope = new AngleSlope.Abs(slope, AngleSlopeUnit.SI);
+                nodeTag.slope = new AngleSlope(slope, AngleSlopeUnit.SI);
                 nodeTag.coordinate = new OTSPoint3D(coordinate.x, coordinate.y, coordinate.z);
                 linkTag.nodeEndTag.node = NodeTag.makeOTSNode(nodeTag, parser);
             }
@@ -312,7 +316,7 @@ final class Links implements OTS_SCALAR
                 }
                 coordinate.z -= lengthSI * Math.sin(slope);
                 nodeTag.coordinate = new OTSPoint3D(coordinate.x, coordinate.y, coordinate.z);
-                nodeTag.slope = new AngleSlope.Abs(slope, AngleSlopeUnit.SI);
+                nodeTag.slope = new AngleSlope(slope, AngleSlopeUnit.SI);
                 linkTag.nodeStartTag.node = NodeTag.makeOTSNode(nodeTag, parser);
             }
         }
@@ -367,8 +371,8 @@ final class Links implements OTS_SCALAR
         }
         OTSLine3D designLine = new OTSLine3D(coordinates);
         CrossSectionLink link =
-            new CrossSectionLink(linkTag.name, linkTag.nodeStartTag.node, linkTag.nodeEndTag.node, designLine,
-                linkTag.laneKeepingPolicy);
+            new CrossSectionLink(linkTag.name, linkTag.nodeStartTag.node, linkTag.nodeEndTag.node, LinkType.ALL,
+                designLine, linkTag.laneKeepingPolicy);
         linkTag.link = link;
     }
 
@@ -396,7 +400,7 @@ final class Links implements OTS_SCALAR
             LaneOverrideTag laneOverrideTag = null;
             if (linkTag.laneOverrideTags.containsKey(cseTag.name))
                 laneOverrideTag = linkTag.laneOverrideTags.get(cseTag.name);
-                
+
             switch (cseTag.elementType)
             {
                 case STRIPE:
@@ -496,7 +500,7 @@ final class Links implements OTS_SCALAR
                     LongitudinalDirectionality direction = cseTag.direction;
                     Color color = cseTag.color;
                     OvertakingConditions overtakingConditions = cseTag.overtakingConditions;
-                    Speed.Abs speed = cseTag.speed;
+                    Speed speed = cseTag.speed;
                     if (laneOverrideTag != null)
                     {
                         if (laneOverrideTag.overtakingConditions != null)
@@ -505,12 +509,12 @@ final class Links implements OTS_SCALAR
                             color = laneOverrideTag.color;
                         if (laneOverrideTag.direction != null)
                             direction = laneOverrideTag.direction;
-                        if (laneOverrideTag.speed!= null)
+                        if (laneOverrideTag.speed != null)
                             speed = laneOverrideTag.speed;
                     }
                     Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
                     directionality.put(GTUType.ALL, direction);
-                    Map<GTUType, Speed.Abs> speedLimit = new LinkedHashMap<>();
+                    Map<GTUType, Speed> speedLimit = new LinkedHashMap<>();
                     speedLimit.put(GTUType.ALL, speed);
                     Lane lane =
                         new Lane(csl, cseTag.name, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width,

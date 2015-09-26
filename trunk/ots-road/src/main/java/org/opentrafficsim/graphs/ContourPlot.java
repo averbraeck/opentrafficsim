@@ -20,8 +20,11 @@ import javax.swing.SwingConstants;
 import javax.swing.event.EventListenerList;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.DoubleVector;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -36,7 +39,6 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYZDataset;
-import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -53,7 +55,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public abstract class ContourPlot extends JFrame implements ActionListener, XYZDataset, MultipleViewerChart,
-    LaneBasedGTUSampler, OTS_SCALAR
+    LaneBasedGTUSampler
 {
     /** */
     private static final long serialVersionUID = 20140716L;
@@ -91,10 +93,10 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     protected static final int STANDARDINITIALDISTANCEGRANULARITYINDEX = 3;
 
     /** Initial lower bound for the time scale. */
-    protected static final Time.Abs INITIALLOWERTIMEBOUND = new Time.Abs(0, SECOND);
+    protected static final Time.Abs INITIALLOWERTIMEBOUND = new Time.Abs(0, TimeUnit.SECOND);
 
     /** Initial upper bound for the time scale. */
-    protected static final Time.Abs INITIALUPPERTIMEBOUND = new Time.Abs(300, SECOND);
+    protected static final Time.Abs INITIALUPPERTIMEBOUND = new Time.Abs(300, TimeUnit.SECOND);
 
     /** The series of Lanes that provide the data for this TrajectoryPlot. */
     private final ArrayList<Lane> path;
@@ -141,7 +143,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         this.cumulativeLengths = lengths;
         this.xAxis = xAxis;
         this.yAxis =
-            new Axis(new Length.Rel(0, METER), getCumulativeLength(-1), STANDARDDISTANCEGRANULARITIES,
+            new Axis(new Length.Rel(0, LengthUnit.METER), getCumulativeLength(-1), STANDARDDISTANCEGRANULARITIES,
                 STANDARDDISTANCEGRANULARITIES[STANDARDINITIALDISTANCEGRANULARITYINDEX], "", "Distance", "%.0fm");
         this.legendStep = legendStep;
         this.legendFormat = legendFormat;
@@ -632,12 +634,12 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
             }
             double binDistanceStart =
                 (car.position(lane, car.getReference(),
-                    new Time.Abs(relativeFromTime * this.getXAxis().getGranularities()[0], SECOND)).getSI()
+                    new Time.Abs(relativeFromTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND)).getSI()
                     - this.getYAxis().getMinimumValue().getSI() + lengthOffset)
                     / this.getYAxis().getGranularities()[0];
             double binDistanceEnd =
                 (car.position(lane, car.getReference(),
-                    new Time.Abs(binEndTime * this.getXAxis().getGranularities()[0], SECOND)).getSI()
+                    new Time.Abs(binEndTime * this.getXAxis().getGranularities()[0], TimeUnit.SECOND)).getSI()
                     - this.getYAxis().getMinimumValue().getSI() + lengthOffset)
                     / this.getYAxis().getGranularities()[0];
 

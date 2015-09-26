@@ -19,11 +19,15 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.TimeUnit;
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.jfree.chart.ChartPanel;
 import org.jfree.data.DomainOrder;
 import org.junit.Test;
-import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -50,7 +54,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  * initial version Aug 21, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ContourPlotTest implements OTS_SCALAR
+public class ContourPlotTest implements UNITS 
 {
     /**
      * Create a dummy path for the tests.
@@ -63,7 +67,7 @@ public class ContourPlotTest implements OTS_SCALAR
         ArrayList<Lane> result = new ArrayList<Lane>();
         Lane[] lanes =
             LaneFactory.makeMultiLane("AtoB", new OTSNode("A", new OTSPoint3D(1234, 0, 0)), new OTSNode("B", new OTSPoint3D(
-                12345, 0, 0)), null, 1, laneType, new Speed.Abs(100, KM_PER_HOUR), null);
+                12345, 0, 0)), null, 1, laneType, new Speed(100, KM_PER_HOUR), null);
         result.add(lanes[0]);
         return result;
     }
@@ -314,20 +318,20 @@ public class ContourPlotTest implements OTS_SCALAR
         bins = cp.getItemCount(0);
         Time.Abs initialTime = new Time.Abs(0, SECOND);
         Length.Rel initialPosition = new Length.Rel(100, METER);
-        Speed.Abs initialSpeed = new Speed.Abs(50, KM_PER_HOUR);
+        Speed initialSpeed = new Speed(50, KM_PER_HOUR);
         ContourPlotModel model = new ContourPlotModel();
         SimpleSimulator simulator =
             new SimpleSimulator(initialTime, new Time.Rel(0, SECOND), new Time.Rel(1800, SECOND), model);
         // Create a car running 50 km.h
         SequentialFixedAccelerationModel gtuFollowingModel = new SequentialFixedAccelerationModel(simulator);
         // Make the car run at constant speed for one minute
-        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration.Abs(0, METER_PER_SECOND_2), new Time.Rel(60,
+        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(60,
             SECOND)));
         // Make the car run at constant speed for another minute
-        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration.Abs(0, METER_PER_SECOND_2), new Time.Rel(600,
+        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(600,
             SECOND)));
         // Make the car run at constant speed for five more minutes
-        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration.Abs(0, METER_PER_SECOND_2), new Time.Rel(300,
+        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(300,
             SECOND)));
         LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar car =

@@ -11,7 +11,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -52,7 +51,7 @@ import nl.tudelft.simulation.language.io.URLResource;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
@@ -68,7 +67,7 @@ import org.opentrafficsim.simulationengine.WrappableAnimation;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class OTSControlPanel extends JPanel implements ActionListener, PropertyChangeListener, WindowListener, OTS_SCALAR
+public class OTSControlPanel extends JPanel implements ActionListener, PropertyChangeListener, WindowListener
 {
     /** */
     private static final long serialVersionUID = 20150617L;
@@ -130,7 +129,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", null, false));
         this.clockPanel = new ClockPanel();
         buttonPanel.add(this.clockPanel);
-        this.timeEdit = new TimeEdit(new Time.Abs(0, SECOND));
+        this.timeEdit = new TimeEdit(new Time.Abs(0, TimeUnit.SECOND));
         this.timeEdit.addPropertyChangeListener("value", this);
         buttonPanel.add(this.timeEdit);
         this.add(buttonPanel);
@@ -176,11 +175,12 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
      */
     private SimEvent<OTSSimTimeDouble> scheduleEvent(final Time.Abs executionTime, final short priority,
-        final Object source, final Object eventTarget, final String method, final Object[] args) throws SimRuntimeException
+        final Object source, final Object eventTarget, final String method, final Object[] args)
+        throws SimRuntimeException
     {
         SimEvent<OTSSimTimeDouble> simEvent =
-            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time.Abs(executionTime.getSI(), SECOND)), priority,
-                source, eventTarget, method, args);
+            new SimEvent<OTSSimTimeDouble>(new OTSSimTimeDouble(new Time.Abs(executionTime.getSI(), TimeUnit.SECOND)),
+                priority, source, eventTarget, method, args);
         this.simulator.scheduleEvent(simEvent);
         return simEvent;
     }
@@ -504,7 +504,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             try
             {
                 this.stopAtEvent =
-                    scheduleEvent(new Time.Abs(stopTime, SECOND), SimEventInterface.MAX_PRIORITY, this, this,
+                    scheduleEvent(new Time.Abs(stopTime, TimeUnit.SECOND), SimEventInterface.MAX_PRIORITY, this, this,
                         "autoPauseSimulator", null);
             }
             catch (SimRuntimeException exception)
@@ -711,7 +711,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                     if (!source.getValueIsAdjusting() && simulator instanceof DEVSRealTimeClock)
                     {
                         DEVSRealTimeClock<?, ?, ?> clock = (DEVSRealTimeClock<?, ?, ?>) simulator;
-                        clock.setSpeedFactor(((TimeWarpPanel) source.getParent()).getTickValues().get(source.getValue()));
+                        clock.setSpeedFactor(((TimeWarpPanel) source.getParent()).getTickValues()
+                            .get(source.getValue()));
                     }
                 }
             });
@@ -876,7 +877,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             int integerPart = (int) Math.floor(v);
             int fraction = (int) Math.floor((v - integerPart) * 1000);
             String text =
-                String.format("%04d:%02d:%02d.%03d", integerPart / 3600, integerPart / 60 % 60, integerPart % 60, fraction);
+                String.format("%04d:%02d:%02d.%03d", integerPart / 3600, integerPart / 60 % 60, integerPart % 60,
+                    fraction);
             this.setText(text);
         }
     }

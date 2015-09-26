@@ -2,7 +2,8 @@ package org.opentrafficsim.road.network.factory.xml;
 
 import java.util.List;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
 import org.opentrafficsim.core.network.factory.xml.units.SpeedUnits;
@@ -24,11 +25,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class GlobalTag implements OTS_SCALAR
+class GlobalTag 
 {
     /** default speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Speed.Abs defaultMaxSpeed = null;
+    Speed defaultMaxSpeed = null;
 
     /** default lane width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -36,7 +37,7 @@ class GlobalTag implements OTS_SCALAR
 
     /** default VelocityGTUColorer.maxSpeed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Speed.Abs velocityGTUColorerMaxSpeed = null;
+    Speed velocityGTUColorerMaxSpeed = null;
 
     /** default lane keeping policy. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

@@ -6,6 +6,9 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -51,7 +54,7 @@ public class LaneBlockOnOff extends AbstractTrafficLight
             {
                 // TODO
             }
-            getSimulator().scheduleEventRel(new Time.Rel(60.0, SECOND), this, this, "changeColorTime", null);
+            getSimulator().scheduleEventRel(new Time.Rel(60.0, TimeUnit.SECOND), this, this, "changeColorTime", null);
         }
         catch (RemoteException | SimRuntimeException exception)
         {
@@ -65,7 +68,7 @@ public class LaneBlockOnOff extends AbstractTrafficLight
 
         try
         {
-            getSimulator().scheduleEventRel(new Time.Rel(60.0, SECOND), this, this, "changeColorTime", null);
+            getSimulator().scheduleEventRel(new Time.Rel(60.0, TimeUnit.SECOND), this, this, "changeColorTime", null);
         }
         catch (SimRuntimeException exception)
         {

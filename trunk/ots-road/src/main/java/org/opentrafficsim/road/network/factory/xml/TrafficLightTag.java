@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.AbstractTrafficLight;
@@ -23,7 +23,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class TrafficLightTag implements OTS_SCALAR
+class TrafficLightTag 
 {
     /** name, cannot be null in implementation of traffic light. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

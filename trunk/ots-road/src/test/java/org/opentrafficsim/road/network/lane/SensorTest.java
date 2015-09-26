@@ -11,9 +11,13 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.TimeUnit;
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
-import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -28,9 +32,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.road.network.factory.LaneFactory;
-import org.opentrafficsim.road.network.lane.AbstractSensor;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
@@ -44,7 +45,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  * initial version 16 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SensorTest implements OTS_SCALAR
+public class SensorTest implements UNITS
 {
     /**
      * Test the constructors of SensorLaneEnd and SensorLaneStart.
@@ -68,9 +69,9 @@ public class SensorTest implements OTS_SCALAR
             new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND), model);
         Lane[] lanesA =
             LaneFactory
-                .makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new Speed.Abs(100, KM_PER_HOUR), simulator);
+                .makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new Speed(100, KM_PER_HOUR), simulator);
         Lane[] lanesB =
-            LaneFactory.makeMultiLane("B", nodeATo, nodeBTo, null, 3, laneType, new Speed.Abs(100, KM_PER_HOUR), simulator);
+            LaneFactory.makeMultiLane("B", nodeATo, nodeBTo, null, 3, laneType, new Speed(100, KM_PER_HOUR), simulator);
 
         // put a sensor on each of the lanes at the end of LaneA
         for (Lane lane : lanesA)
@@ -86,18 +87,18 @@ public class SensorTest implements OTS_SCALAR
         Length.Rel positionA = new Length.Rel(100, METER);
         initialLongitudinalPositions.put(lanesA[1], positionA);
         // A Car needs an initial speed
-        Speed.Abs initialSpeed = new Speed.Abs(50, KM_PER_HOUR);
+        Speed initialSpeed = new Speed(50, KM_PER_HOUR);
         // Length of the Car
         Length.Rel carLength = new Length.Rel(4, METER);
         // Width of the Car
         Length.Rel carWidth = new Length.Rel(1.8, METER);
         // Maximum velocity of the Car
-        Speed.Abs maximumVelocity = new Speed.Abs(100, KM_PER_HOUR);
+        Speed maximumVelocity = new Speed(100, KM_PER_HOUR);
         // ID of the Car
         String carID = "theCar";
         // Create an acceleration profile for the car
         FixedAccelerationModel fas =
-            new FixedAccelerationModel(new Acceleration.Abs(0.5, METER_PER_SECOND_2), new Time.Rel(100, SECOND));
+            new FixedAccelerationModel(new Acceleration(0.5, METER_PER_SECOND_2), new Time.Rel(100, SECOND));
         // Create a lane change model for the car
         LaneChangeModel laneChangeModel = new Egoistic();
         // Now we can make a car (GTU) (and we don't even have to hold a pointer to it)

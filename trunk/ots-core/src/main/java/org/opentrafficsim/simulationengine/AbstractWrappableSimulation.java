@@ -6,7 +6,7 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 
@@ -20,7 +20,7 @@ import org.opentrafficsim.simulationengine.properties.AbstractProperty;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractWrappableSimulation implements WrappableSimulation, OTS_SCALAR
+public abstract class AbstractWrappableSimulation implements WrappableSimulation
 {
     /** The properties exhibited by this simulation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

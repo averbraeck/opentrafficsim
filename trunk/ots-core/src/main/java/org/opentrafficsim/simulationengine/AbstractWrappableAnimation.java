@@ -13,7 +13,7 @@ import javax.swing.WindowConstants;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.gtu.animation.DefaultSwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
@@ -32,7 +32,7 @@ import org.opentrafficsim.simulationengine.properties.AbstractProperty;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractWrappableAnimation implements WrappableAnimation, OTS_SCALAR
+public abstract class AbstractWrappableAnimation implements WrappableAnimation
 {
     /** The properties exhibited by this simulation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

@@ -25,6 +25,7 @@ public class GTUException extends Exception
      */
     public GTUException()
     {
+        super();
     }
 
     /**

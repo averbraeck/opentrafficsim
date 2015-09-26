@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -29,7 +31,7 @@ public class NoTrafficLane extends Lane
     private static final Map<GTUType, LongitudinalDirectionality> DIRECTIONALITY_NONE = new HashMap<>();
 
     /** Map that tells that speed is 0.0 for all GTU Types. */
-    private static final Map<GTUType, Speed.Abs> SPEED_NULL = new HashMap<>();
+    private static final Map<GTUType, Speed> SPEED_NULL = new HashMap<>();
     
     /** the overtaking rules for a no-traffic lane. */
     private static final OvertakingConditions NO_OVERTAKING = new OvertakingConditions.None();
@@ -37,7 +39,7 @@ public class NoTrafficLane extends Lane
     static
     {
         DIRECTIONALITY_NONE.put(GTUType.ALL, LongitudinalDirectionality.NONE);
-        SPEED_NULL.put(GTUType.ALL, new Speed.Abs(0.0, SpeedUnit.SI));
+        SPEED_NULL.put(GTUType.ALL, new Speed(0.0, SpeedUnit.SI));
     }
 
     /**

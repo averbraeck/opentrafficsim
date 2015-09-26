@@ -17,6 +17,7 @@ import nl.tudelft.simulation.language.io.URLResource;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -56,8 +57,8 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                 {
                     TestOpenDriveParser xmlModel = new TestOpenDriveParser();
                     // 1 hour simulation run for testing
-                    xmlModel.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND),
-                        new Time.Rel(60.0, MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
+                    xmlModel.buildAnimator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(0.0, TimeUnit.SECOND),
+                        new Time.Rel(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
                 }
                 catch (SimRuntimeException | NamingException exception)
                 {

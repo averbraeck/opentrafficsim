@@ -31,7 +31,33 @@ import org.djunits.unit.Unit;
 import org.djunits.unit.VolumeUnit;
 import org.djunits.value.Absolute;
 import org.djunits.value.Relative;
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.AnglePlane;
+import org.djunits.value.vdouble.scalar.AngleSlope;
+import org.djunits.value.vdouble.scalar.AngleSolid;
+import org.djunits.value.vdouble.scalar.Area;
+import org.djunits.value.vdouble.scalar.Density;
+import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.ElectricalCharge;
+import org.djunits.value.vdouble.scalar.ElectricalCurrent;
+import org.djunits.value.vdouble.scalar.ElectricalPotential;
+import org.djunits.value.vdouble.scalar.ElectricalResistance;
+import org.djunits.value.vdouble.scalar.Energy;
+import org.djunits.value.vdouble.scalar.FlowMass;
+import org.djunits.value.vdouble.scalar.FlowVolume;
+import org.djunits.value.vdouble.scalar.Force;
+import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.LinearDensity;
+import org.djunits.value.vdouble.scalar.Mass;
+import org.djunits.value.vdouble.scalar.Power;
+import org.djunits.value.vdouble.scalar.Pressure;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Temperature;
+import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Torque;
+import org.djunits.value.vdouble.scalar.Volume;
 
 /**
  * <p>
@@ -42,15 +68,15 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * initial version Feb 2, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public interface ContinuousDistDoubleScalar extends OTS_DOUBLE_DIST
+public interface ContinuousDistDoubleScalar
 {
     /**
      * Absolute value.
      * @param <T> The absolute DoubleScalar type
      * @param <U> The unit type used
      */
-    public static class Abs<T extends DoubleScalar.Abs<U>, U extends Unit<U>> extends AbstractContinuousDistScalar implements
-        Absolute
+    public static class Abs<T extends DoubleScalar.Abs<U>, U extends Unit<U>> extends
+        AbstractContinuousDistScalar implements Absolute
     {
         /**
          * @param distribution the wrapped distribution function.
@@ -78,83 +104,20 @@ public interface ContinuousDistDoubleScalar extends OTS_DOUBLE_DIST
         {
             switch (getUnit().getClass().getSimpleName())
             {
-                case "AccelerationUnit":
-                    return (T) new Acceleration.Abs(getDistribution().draw(), (AccelerationUnit) getUnit());
-
                 case "AnglePlaneUnit":
                     return (T) new AnglePlane.Abs(getDistribution().draw(), (AnglePlaneUnit) getUnit());
-
-                case "AngleSlopeUnit":
-                    return (T) new AngleSlope.Abs(getDistribution().draw(), (AngleSlopeUnit) getUnit());
-
-                case "AngleSolidUnit":
-                    return (T) new AngleSolid.Abs(getDistribution().draw(), (AngleSolidUnit) getUnit());
-
-                case "AreaUnit":
-                    return (T) new Area.Abs(getDistribution().draw(), (AreaUnit) getUnit());
-
-                case "DensityUnit":
-                    return (T) new Density.Abs(getDistribution().draw(), (DensityUnit) getUnit());
 
                 case "DimensionlessUnit":
                     return (T) new Dimensionless.Abs(getDistribution().draw(), (DimensionlessUnit) getUnit());
 
-                case "ElectricalChargeUnit":
-                    return (T) new ElectricalCharge.Abs(getDistribution().draw(), (ElectricalChargeUnit) getUnit());
-
-                case "ElectricalCurrentUnit":
-                    return (T) new ElectricalCurrent.Abs(getDistribution().draw(), (ElectricalCurrentUnit) getUnit());
-
-                case "ElectricalPotentialUnit":
-                    return (T) new ElectricalPotential.Abs(getDistribution().draw(), (ElectricalPotentialUnit) getUnit());
-
-                case "ElectricalResistanceUnit":
-                    return (T) new ElectricalResistance.Abs(getDistribution().draw(), (ElectricalResistanceUnit) getUnit());
-
-                case "EnergyUnit":
-                    return (T) new Energy.Abs(getDistribution().draw(), (EnergyUnit) getUnit());
-
-                case "FlowMassUnit":
-                    return (T) new FlowMass.Abs(getDistribution().draw(), (FlowMassUnit) getUnit());
-
-                case "FlowVolumeUnit":
-                    return (T) new FlowVolume.Abs(getDistribution().draw(), (FlowVolumeUnit) getUnit());
-
-                case "ForceUnit":
-                    return (T) new Force.Abs(getDistribution().draw(), (ForceUnit) getUnit());
-
-                case "FrequencyUnit":
-                    return (T) new Frequency.Abs(getDistribution().draw(), (FrequencyUnit) getUnit());
-
                 case "LengthUnit":
                     return (T) new Length.Abs(getDistribution().draw(), (LengthUnit) getUnit());
-
-                case "LinearDensityUnit":
-                    return (T) new LinearDensity.Abs(getDistribution().draw(), (LinearDensityUnit) getUnit());
-
-                case "MassUnit":
-                    return (T) new Mass.Abs(getDistribution().draw(), (MassUnit) getUnit());
-
-                case "PowerUnit":
-                    return (T) new Power.Abs(getDistribution().draw(), (PowerUnit) getUnit());
-
-                case "PressureUnit":
-                    return (T) new Pressure.Abs(getDistribution().draw(), (PressureUnit) getUnit());
-
-                case "SpeedUnit":
-                    return (T) new Speed.Abs(getDistribution().draw(), (SpeedUnit) getUnit());
 
                 case "TemperatureUnit":
                     return (T) new Temperature.Abs(getDistribution().draw(), (TemperatureUnit) getUnit());
 
                 case "TimeUnit":
                     return (T) new Time.Abs(getDistribution().draw(), (TimeUnit) getUnit());
-
-                case "TorqueUnit":
-                    return (T) new Torque.Abs(getDistribution().draw(), (TorqueUnit) getUnit());
-
-                case "VolumeUnit":
-                    return (T) new Volume.Abs(getDistribution().draw(), (VolumeUnit) getUnit());
 
                 default:
                     return (T) new DoubleScalar.Abs(getDistribution().draw(), getUnit());
@@ -167,8 +130,8 @@ public interface ContinuousDistDoubleScalar extends OTS_DOUBLE_DIST
      * @param <T> The absolute DoubleScalar type
      * @param <U> The unit type used
      */
-    public static class Rel<T extends DoubleScalar.Rel<U>, U extends Unit<U>> extends AbstractContinuousDistScalar implements
-        Relative
+    public static class Rel<T extends DoubleScalar.Rel<U>, U extends Unit<U>> extends
+        AbstractContinuousDistScalar implements Relative
     {
         /**
          * @param distribution the wrapped distribution function.
@@ -197,70 +160,70 @@ public interface ContinuousDistDoubleScalar extends OTS_DOUBLE_DIST
             switch (getUnit().getClass().getSimpleName())
             {
                 case "AccelerationUnit":
-                    return (T) new Acceleration.Rel(getDistribution().draw(), (AccelerationUnit) getUnit());
+                    return (T) new Acceleration(getDistribution().draw(), (AccelerationUnit) getUnit());
 
                 case "AnglePlaneUnit":
                     return (T) new AnglePlane.Rel(getDistribution().draw(), (AnglePlaneUnit) getUnit());
 
                 case "AngleSlopeUnit":
-                    return (T) new AngleSlope.Rel(getDistribution().draw(), (AngleSlopeUnit) getUnit());
+                    return (T) new AngleSlope(getDistribution().draw(), (AngleSlopeUnit) getUnit());
 
                 case "AngleSolidUnit":
-                    return (T) new AngleSolid.Rel(getDistribution().draw(), (AngleSolidUnit) getUnit());
+                    return (T) new AngleSolid(getDistribution().draw(), (AngleSolidUnit) getUnit());
 
                 case "AreaUnit":
-                    return (T) new Area.Rel(getDistribution().draw(), (AreaUnit) getUnit());
+                    return (T) new Area(getDistribution().draw(), (AreaUnit) getUnit());
 
                 case "DensityUnit":
-                    return (T) new Density.Rel(getDistribution().draw(), (DensityUnit) getUnit());
+                    return (T) new Density(getDistribution().draw(), (DensityUnit) getUnit());
 
                 case "DimensionlessUnit":
                     return (T) new Dimensionless.Rel(getDistribution().draw(), (DimensionlessUnit) getUnit());
 
                 case "ElectricalChargeUnit":
-                    return (T) new ElectricalCharge.Rel(getDistribution().draw(), (ElectricalChargeUnit) getUnit());
+                    return (T) new ElectricalCharge(getDistribution().draw(), (ElectricalChargeUnit) getUnit());
 
                 case "ElectricalCurrentUnit":
-                    return (T) new ElectricalCurrent.Rel(getDistribution().draw(), (ElectricalCurrentUnit) getUnit());
+                    return (T) new ElectricalCurrent(getDistribution().draw(), (ElectricalCurrentUnit) getUnit());
 
                 case "ElectricalPotentialUnit":
-                    return (T) new ElectricalPotential.Rel(getDistribution().draw(), (ElectricalPotentialUnit) getUnit());
+                    return (T) new ElectricalPotential(getDistribution().draw(), (ElectricalPotentialUnit) getUnit());
 
                 case "ElectricalResistanceUnit":
-                    return (T) new ElectricalResistance.Rel(getDistribution().draw(), (ElectricalResistanceUnit) getUnit());
+                    return (T) new ElectricalResistance(getDistribution().draw(), (ElectricalResistanceUnit) getUnit());
 
                 case "EnergyUnit":
-                    return (T) new Energy.Rel(getDistribution().draw(), (EnergyUnit) getUnit());
+                    return (T) new Energy(getDistribution().draw(), (EnergyUnit) getUnit());
 
                 case "FlowMassUnit":
-                    return (T) new FlowMass.Rel(getDistribution().draw(), (FlowMassUnit) getUnit());
+                    return (T) new FlowMass(getDistribution().draw(), (FlowMassUnit) getUnit());
 
                 case "FlowVolumeUnit":
-                    return (T) new FlowVolume.Rel(getDistribution().draw(), (FlowVolumeUnit) getUnit());
+                    return (T) new FlowVolume(getDistribution().draw(), (FlowVolumeUnit) getUnit());
 
                 case "ForceUnit":
-                    return (T) new Force.Rel(getDistribution().draw(), (ForceUnit) getUnit());
+                    return (T) new Force(getDistribution().draw(), (ForceUnit) getUnit());
 
                 case "FrequencyUnit":
-                    return (T) new Frequency.Rel(getDistribution().draw(), (FrequencyUnit) getUnit());
+                    return (T) new Frequency(getDistribution().draw(), (FrequencyUnit) getUnit());
 
                 case "LengthUnit":
                     return (T) new Length.Rel(getDistribution().draw(), (LengthUnit) getUnit());
 
                 case "LinearDensityUnit":
-                    return (T) new LinearDensity.Rel(getDistribution().draw(), (LinearDensityUnit) getUnit());
+                    return (T) new LinearDensity(getDistribution().draw(), (LinearDensityUnit) getUnit());
 
                 case "MassUnit":
-                    return (T) new Mass.Rel(getDistribution().draw(), (MassUnit) getUnit());
+                    return (T) new Mass(getDistribution().draw(), (MassUnit) getUnit());
 
                 case "PowerUnit":
-                    return (T) new Power.Rel(getDistribution().draw(), (PowerUnit) getUnit());
+                    return (T) new Power(getDistribution().draw(), (PowerUnit) getUnit());
 
                 case "PressureUnit":
-                    return (T) new Pressure.Rel(getDistribution().draw(), (PressureUnit) getUnit());
+                    return (T) new Pressure(getDistribution().draw(), (PressureUnit) getUnit());
 
                 case "SpeedUnit":
-                    return (T) new Speed.Rel(getDistribution().draw(), (SpeedUnit) getUnit());
+                    return (T) new Speed(getDistribution().draw(), (SpeedUnit) getUnit());
 
                 case "TemperatureUnit":
                     return (T) new Temperature.Rel(getDistribution().draw(), (TemperatureUnit) getUnit());
@@ -269,10 +232,10 @@ public interface ContinuousDistDoubleScalar extends OTS_DOUBLE_DIST
                     return (T) new Time.Rel(getDistribution().draw(), (TimeUnit) getUnit());
 
                 case "TorqueUnit":
-                    return (T) new Torque.Rel(getDistribution().draw(), (TorqueUnit) getUnit());
+                    return (T) new Torque(getDistribution().draw(), (TorqueUnit) getUnit());
 
                 case "VolumeUnit":
-                    return (T) new Volume.Rel(getDistribution().draw(), (VolumeUnit) getUnit());
+                    return (T) new Volume(getDistribution().draw(), (VolumeUnit) getUnit());
 
                 default:
                     return (T) new DoubleScalar.Rel(getDistribution().draw(), getUnit());

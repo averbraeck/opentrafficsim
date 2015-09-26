@@ -3,7 +3,7 @@ package org.opentrafficsim.simulationengine;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 
@@ -17,7 +17,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface SimpleSimulatorInterface extends OTSDEVSSimulatorInterface, OTS_SCALAR
+public interface SimpleSimulatorInterface extends OTSDEVSSimulatorInterface
 {
     /**
      * Construct and schedule a SimEvent using a DoubleScalar.Abs&lt;TimeUnit&gt; to specify the execution time.

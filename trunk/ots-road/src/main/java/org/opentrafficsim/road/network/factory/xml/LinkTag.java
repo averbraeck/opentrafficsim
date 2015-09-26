@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.AnglePlane;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.AngleUnits;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
@@ -28,7 +30,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-final class LinkTag implements OTS_SCALAR
+final class LinkTag
 {
     /** name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -263,14 +265,14 @@ final class LinkTag implements OTS_SCALAR
     {
         if (posStr.trim().equals("BEGIN"))
         {
-            return new Length.Rel(0.0, METER);
+            return new Length.Rel(0.0, LengthUnit.METER);
         }
 
         double length = cse.getCenterLine().getLengthSI();
 
         if (posStr.trim().equals("END"))
         {
-            return new Length.Rel(length, METER);
+            return new Length.Rel(length, LengthUnit.METER);
         }
 
         if (posStr.endsWith("%"))
@@ -284,7 +286,7 @@ final class LinkTag implements OTS_SCALAR
                     throw new NetworkException("parseBeginEndPosition: attribute POSITION with value " + posStr
                         + " invalid for lane " + cse.toString() + ", should be a percentage between 0 and 100%");
                 }
-                return new Length.Rel(length * fraction, METER);
+                return new Length.Rel(length * fraction, LengthUnit.METER);
             }
             catch (NumberFormatException nfe)
             {
@@ -303,7 +305,7 @@ final class LinkTag implements OTS_SCALAR
                     + " invalid for lane " + cse.toString()
                     + ": provided negative offset greater than than link length");
             }
-            return new Length.Rel(length - offset, METER);
+            return new Length.Rel(length - offset, LengthUnit.METER);
         }
 
         Length.Rel offset = LengthUnits.parseLengthRel(posStr);

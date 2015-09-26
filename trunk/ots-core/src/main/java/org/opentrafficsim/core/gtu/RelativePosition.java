@@ -2,7 +2,10 @@ package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Length;
+
+
 
 /**
  * A RelativePosition is a position on a GTU; e.g. the front, rear, position of the driver, etc. <br>
@@ -16,7 +19,7 @@ import org.opentrafficsim.core.OTS_SCALAR;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class RelativePosition implements Serializable, OTS_SCALAR
+public class RelativePosition implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20141231L;
@@ -49,8 +52,8 @@ public class RelativePosition implements Serializable, OTS_SCALAR
     public static final TYPE DRIVER = new TYPE("DRIVER");
 
     /** the reference position (always 0, 0, 0). */
-    public static final RelativePosition REFERENCE_POSITION = new RelativePosition(new Length.Rel(0.0d, METER),
-        new Length.Rel(0.0d, METER), new Length.Rel(0.0d, METER), RelativePosition.REFERENCE);
+    public static final RelativePosition REFERENCE_POSITION = new RelativePosition(new Length.Rel(0.0d, LengthUnit.SI),
+        new Length.Rel(0.0d, LengthUnit.SI), new Length.Rel(0.0d, LengthUnit.SI), RelativePosition.REFERENCE);
 
     /**
      * @param dx positive x is in the normal direction of movement.

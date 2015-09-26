@@ -151,12 +151,12 @@ public interface OvertakingConditions
     public static class LeftAlwaysRightSpeed implements OvertakingConditions
     {
         /** the speed under which overtaking on the "wrong" side is allowed. */
-        private final Speed.Abs rightOvertakingSpeedMax;
+        private final Speed rightOvertakingSpeedMax;
 
         /**
          * @param rightOvertakingSpeedMax the speed under which overtaking on the "wrong" side is allowed
          */
-        public LeftAlwaysRightSpeed(final Speed.Abs rightOvertakingSpeedMax)
+        public LeftAlwaysRightSpeed(final Speed rightOvertakingSpeedMax)
         {
             this.rightOvertakingSpeedMax = rightOvertakingSpeedMax;
         }
@@ -184,12 +184,12 @@ public interface OvertakingConditions
     public static class RightAlwaysLeftSpeed implements OvertakingConditions
     {
         /** the speed under which overtaking on the "wrong" side is allowed. */
-        private final Speed.Abs leftOvertakingSpeedMax;
+        private final Speed leftOvertakingSpeedMax;
 
         /**
          * @param leftOvertakingSpeedMax the speed under which overtaking on the "wrong" side is allowed
          */
-        public RightAlwaysLeftSpeed(final Speed.Abs leftOvertakingSpeedMax)
+        public RightAlwaysLeftSpeed(final Speed leftOvertakingSpeedMax)
         {
             this.leftOvertakingSpeedMax = leftOvertakingSpeedMax;
         }
@@ -334,7 +334,7 @@ public interface OvertakingConditions
         private final Collection<GTUType> overtakenGTUs;
 
         /** the speed under which overtaking on the "wrong" side is allowed. */
-        private final Speed.Abs rightOvertakingSpeedMax;
+        private final Speed rightOvertakingSpeedMax;
 
         /**
          * Provide a collection of GTUs that can overtake another collection of GTUs on the left, but not vice versa. Example:
@@ -348,7 +348,7 @@ public interface OvertakingConditions
          * @param rightOvertakingSpeedMax the speed under which overtaking on the "wrong" side is allowed
          */
         public LeftSetRightSpeed(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs,
-            final Speed.Abs rightOvertakingSpeedMax)
+            final Speed rightOvertakingSpeedMax)
         {
             this.overtakingGTUs = overtakingGTUs;
             this.overtakenGTUs = overtakenGTUs;
@@ -397,7 +397,7 @@ public interface OvertakingConditions
         private final Collection<GTUType> overtakenGTUs;
 
         /** the speed under which overtaking on the "wrong" side is allowed. */
-        private final Speed.Abs leftOvertakingSpeedMax;
+        private final Speed leftOvertakingSpeedMax;
 
         /**
          * Provide a collection of GTUs that can overtake another collection of GTUs on the left, but not vice versa. Example:
@@ -411,7 +411,7 @@ public interface OvertakingConditions
          * @param leftOvertakingSpeedMax the speed under which overtaking on the "wrong" side is allowed
          */
         public RightSetLeftSpeed(final Collection<GTUType> overtakingGTUs, final Collection<GTUType> overtakenGTUs,
-            final Speed.Abs leftOvertakingSpeedMax)
+            final Speed leftOvertakingSpeedMax)
         {
             this.overtakingGTUs = overtakingGTUs;
             this.overtakenGTUs = overtakenGTUs;

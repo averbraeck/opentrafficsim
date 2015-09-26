@@ -9,6 +9,7 @@ import nl.tudelft.simulation.dsol.simulators.DEVSAnimator;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Time;
 
 /**
  * <p>

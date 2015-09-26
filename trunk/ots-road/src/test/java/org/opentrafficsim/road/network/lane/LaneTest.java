@@ -15,18 +15,18 @@ import javax.vecmath.Point3d;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
-import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
@@ -44,7 +44,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
  * initial version 21 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneTest implements OTS_SCALAR
+public class LaneTest implements UNITS
 {
     /**
      * Test the constructor.
@@ -61,7 +61,8 @@ public class LaneTest implements OTS_SCALAR
         coordinates[0] = new OTSPoint3D(nodeFrom.getPoint().x, nodeFrom.getPoint().y, 0);
         coordinates[1] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
         CrossSectionLink link =
-            new CrossSectionLink("A to B", nodeFrom, nodeTo, new OTSLine3D(coordinates), LaneKeepingPolicy.KEEP_RIGHT);
+            new CrossSectionLink("A to B", nodeFrom, nodeTo, LinkType.ALL, new OTSLine3D(coordinates),
+                LaneKeepingPolicy.KEEP_RIGHT);
         Length.Rel startLateralPos = new Length.Rel(2, METER);
         Length.Rel endLateralPos = new Length.Rel(5, METER);
         Length.Rel startWidth = new Length.Rel(3, METER);
@@ -73,8 +74,8 @@ public class LaneTest implements OTS_SCALAR
         laneType.addCompatibility(gtuTypeTruck);
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
         directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.FORWARD);
-        Map<GTUType, Speed.Abs> speedMap = new LinkedHashMap<>();
-        speedMap.put(GTUType.ALL, new Speed.Abs(100, KM_PER_HOUR));
+        Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
+        speedMap.put(GTUType.ALL, new Speed(100, KM_PER_HOUR));
         // Now we can construct a Lane
         // FIXME what overtaking conditions do we ant to test in this unit test?
         Lane lane =
@@ -89,7 +90,7 @@ public class LaneTest implements OTS_SCALAR
             lane.getContour().getLengthSI(), 0.1);
         assertEquals("Directionality should be " + LongitudinalDirectionality.FORWARD,
             LongitudinalDirectionality.FORWARD, lane.getDirectionality(GTUType.ALL));
-        assertEquals("SpeedLimit should be " + (new Speed.Abs(100, KM_PER_HOUR)), new Speed.Abs(100, KM_PER_HOUR), lane
+        assertEquals("SpeedLimit should be " + (new Speed(100, KM_PER_HOUR)), new Speed(100, KM_PER_HOUR), lane
             .getSpeedLimit(GTUType.ALL));
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
         assertEquals("LaneType should be " + laneType, laneType, lane.getLaneType());
@@ -131,7 +132,7 @@ public class LaneTest implements OTS_SCALAR
         coordinates[1] = new OTSPoint3D(200, 100);
         coordinates[2] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
         link =
-            new CrossSectionLink("A to B with Kink", nodeFrom, nodeTo, new OTSLine3D(coordinates),
+            new CrossSectionLink("A to B with Kink", nodeFrom, nodeTo, LinkType.ALL, new OTSLine3D(coordinates),
                 LaneKeepingPolicy.KEEP_RIGHT);
         // FIXME what overtaking conditions do we ant to test in this unit test?
         lane =
@@ -181,8 +182,8 @@ public class LaneTest implements OTS_SCALAR
         LaneType laneType = new LaneType("Car");
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
         directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.FORWARD);
-        Map<GTUType, Speed.Abs> speedMap = new LinkedHashMap<>();
-        speedMap.put(GTUType.ALL, new Speed.Abs(50, KM_PER_HOUR));
+        Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
+        speedMap.put(GTUType.ALL, new Speed(50, KM_PER_HOUR));
         int laneNum = 0;
         for (int xStart : startPositions)
         {
@@ -200,7 +201,7 @@ public class LaneTest implements OTS_SCALAR
                     coordinates[1] = end.getPoint();
                     OTSLine3D line = new OTSLine3D(coordinates);
                     CrossSectionLink link =
-                        new CrossSectionLink("A to B", start, end, line, LaneKeepingPolicy.KEEP_RIGHT);
+                        new CrossSectionLink("A to B", start, end, LinkType.ALL, line, LaneKeepingPolicy.KEEP_RIGHT);
                     final int[] lateralOffsets = {-10, -3, -1, 0, 1, 3, 10};
                     for (int startLateralOffset : lateralOffsets)
                     {

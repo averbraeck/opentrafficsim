@@ -2,7 +2,12 @@ package org.opentrafficsim.simulationengine.properties;
 
 import java.util.ArrayList;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
 
 /**
  * Compound property for IDM or IDMPlus parameters
@@ -14,7 +19,7 @@ import org.opentrafficsim.core.OTS_SCALAR;
  * initial version 5 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public final class IDMPropertySet implements OTS_SCALAR
+public final class IDMPropertySet
 {
     /**
      * This class shall never be instantiated.
@@ -34,8 +39,8 @@ public final class IDMPropertySet implements OTS_SCALAR
      * @param displayPriority int; the display priority of the returned CompoundProperty
      * @return CompoundProperty
      */
-    public static CompoundProperty makeIDMPropertySet(final String carType, final Acceleration.Abs a,
-        final Acceleration.Abs b, final Length.Rel s0, final Time.Rel tSafe, final int displayPriority)
+    public static CompoundProperty makeIDMPropertySet(final String carType, final Acceleration a, final Acceleration b,
+        final Length.Rel s0, final Time.Rel tSafe, final int displayPriority)
     {
         ArrayList<AbstractProperty<?>> subProperties = new ArrayList<AbstractProperty<?>>();
         subProperties.add(new ContinuousProperty("a", "maximum acceleration [m/s/s]", a.doubleValue(), 0.5, 5.0,
@@ -55,9 +60,9 @@ public final class IDMPropertySet implements OTS_SCALAR
      * @param set CompoundProperty (should have been created with makeIDMPropertySet)
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;
      */
-    public static Acceleration.Abs getA(final CompoundProperty set)
+    public static Acceleration getA(final CompoundProperty set)
     {
-        return new Acceleration.Abs(findSubProperty("a", set), METER_PER_SECOND_2);
+        return new Acceleration(findSubProperty("a", set), AccelerationUnit.METER_PER_SECOND_2);
     }
 
     /**
@@ -65,9 +70,9 @@ public final class IDMPropertySet implements OTS_SCALAR
      * @param set CompoundProperty (should have been created with makeIDMPropertySet)
      * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;
      */
-    public static Acceleration.Abs getB(final CompoundProperty set)
+    public static Acceleration getB(final CompoundProperty set)
     {
-        return new Acceleration.Abs(findSubProperty("b", set), METER_PER_SECOND_2);
+        return new Acceleration(findSubProperty("b", set), AccelerationUnit.METER_PER_SECOND_2);
     }
 
     /**
@@ -77,7 +82,7 @@ public final class IDMPropertySet implements OTS_SCALAR
      */
     public static Length.Rel getS0(final CompoundProperty set)
     {
-        return new Length.Rel(findSubProperty("s0", set), METER);
+        return new Length.Rel(findSubProperty("s0", set), LengthUnit.METER);
     }
 
     /**
@@ -87,7 +92,7 @@ public final class IDMPropertySet implements OTS_SCALAR
      */
     public static Time.Rel getTSafe(final CompoundProperty set)
     {
-        return new Time.Rel(findSubProperty("tSafe", set), SECOND);
+        return new Time.Rel(findSubProperty("tSafe", set), TimeUnit.SECOND);
     }
 
     /**

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;

@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.OTSLink;
+import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 /**
@@ -28,7 +29,7 @@ public class CrossSectionLink extends OTSLink implements Serializable
 
     /** list of cross-section elements. */
     private final List<CrossSectionElement> crossSectionElementList = new ArrayList<>();
-    
+
     /** the policy to generally keep left, keep right, or keep lane. */
     private final LaneKeepingPolicy laneKeepingPolicy;
 
@@ -37,13 +38,14 @@ public class CrossSectionLink extends OTSLink implements Serializable
      * @param id the link id.
      * @param startNode start node (directional).
      * @param endNode end node (directional).
+     * @param linkType the linktype
      * @param designLine the OTSLine3D design line of the Link
-     * @param laneKeepingPolicy the policy to generally keep left, keep right, or keep lane 
+     * @param laneKeepingPolicy the policy to generally keep left, keep right, or keep lane
      */
-    public CrossSectionLink(final String id, final Node startNode, final Node endNode, final OTSLine3D designLine,
-        final LaneKeepingPolicy laneKeepingPolicy)
+    public CrossSectionLink(final String id, final OTSNode startNode, final OTSNode endNode, final LinkType linkType,
+        final OTSLine3D designLine, final LaneKeepingPolicy laneKeepingPolicy)
     {
-        super(id, startNode, endNode, designLine);
+        super(id, startNode, endNode, linkType, designLine);
         this.laneKeepingPolicy = laneKeepingPolicy;
     }
 

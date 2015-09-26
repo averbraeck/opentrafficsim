@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.animation.ColorInterpolator;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;

@@ -5,9 +5,13 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -30,13 +34,13 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
     private final OTSDEVSSimulatorInterface simulator;
 
     /** distribution of the length of the GTU. */
-    private final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> lengthDist;
+    private final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist;
 
     /** distribution of the width of the GTU. */
-    private final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> widthDist;
+    private final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist;
 
     /** distribution of the maximum speed of the GTU. */
-    private final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> maximumSpeedDist;
+    private final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist;
 
     /**
      * @param name the name of the generator
@@ -62,11 +66,11 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
     @SuppressWarnings("checkstyle:parameternumber")
     public GTUGeneratorIndividual(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
         final Class<?> gtuClass, final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel,
-        final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> initialSpeedDist,
-        final ContinuousDistScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDist,
-        final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> lengthDist,
-        final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> widthDist,
-        final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> maximumSpeedDist, final long maxGTUs, final Time.Abs startTime,
+        final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
+        final ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDist,
+        final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist,
+        final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist,
+        final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist, final long maxGTUs, final Time.Abs startTime,
         final Time.Abs endTime, final Lane lane, final Length.Rel position, final LaneBasedRouteGenerator routeGenerator,
         final GTUColorer gtuColorer) throws SimRuntimeException
     {
@@ -88,7 +92,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
     /**
      * @return lengthDist.
      */
-    public final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> getLengthDist()
+    public final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> getLengthDist()
     {
         return this.lengthDist;
     }
@@ -96,7 +100,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
     /**
      * @return widthDist.
      */
-    public final ContinuousDistScalar.Rel<Length.Rel, LengthUnit> getWidthDist()
+    public final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> getWidthDist()
     {
         return this.widthDist;
     }
@@ -104,7 +108,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
     /**
      * @return maximumSpeedDist.
      */
-    public final ContinuousDistScalar.Abs<Speed.Abs, SpeedUnit> getMaximumSpeedDist()
+    public final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> getMaximumSpeedDist()
     {
         return this.maximumSpeedDist;
     }

@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.lane;
 
 import java.util.Set;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;

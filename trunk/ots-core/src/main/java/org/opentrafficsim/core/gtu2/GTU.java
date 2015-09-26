@@ -5,7 +5,9 @@ import java.util.Map;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 
 /**
@@ -19,21 +21,20 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
  *          initial version May 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public interface GTU extends LocatableInterface, Serializable, OTS_SCALAR
+public interface GTU extends LocatableInterface, Serializable
 {
     /** @return the id of the GTU */
     String getId();
 
-    /** @return the maximum length of the GTU (parallel with driving direction). */
+    /** @return the maximum length of the GTU (parallel with driving / moving direction). */
     Length.Rel getLength();
 
-    /** @return the maximum width of the GTU (perpendicular to driving direction). */
+    /** @return the maximum width of the GTU (perpendicular to driving / moving direction). */
     Length.Rel getWidth();
 
-    /** @return the maximum velocity of the GTU, in the linear direction */
-    Speed.Abs getMaximumVelocity();
+    /** @return the maximum velocity of the GTU, in the driving / moving direction */
+    Speed getMaximumVelocity();
 
     /** @return the type of GTU, e.g. TruckType, CarType, BusType */
     GTUType getGTUType();
@@ -50,8 +51,11 @@ public interface GTU extends LocatableInterface, Serializable, OTS_SCALAR
     /** @return the rear position of the GTU, relative to its reference point. */
     RelativePosition getRear();
 
-    /** @return the current velocity of the GTU, combining longitudinal, lateral and vertical speed components. */
-    Speed.Abs getVelocity();
+    /**
+     * @return the current velocity of the GTU in its moving direction, combining longitudinal, lateral and vertical speed
+     *         components.
+     */
+    Speed getVelocity();
 
     /** @return the positions for this GTU. */
     Map<RelativePosition.TYPE, RelativePosition> getRelativePositions();
@@ -59,10 +63,13 @@ public interface GTU extends LocatableInterface, Serializable, OTS_SCALAR
     /** destroy the vehicle from the simulation and animation. */
     void destroy();
 
-    /** @return the current acceleration of the GTU, combining longitudinal, lateral and vertical acceleration components. */
-    Acceleration.Abs getAcceleration();
+    /**
+     * @return the current acceleration of the GTU in its moving direction, combining longitudinal, lateral and vertical
+     *         acceleration components.
+     */
+    Acceleration getAcceleration();
 
-    /** @return Speed.Abs; the current odometer value */
+    /** @return Length.Abs; the current odometer value */
     Length.Abs getOdometer();
 
 }

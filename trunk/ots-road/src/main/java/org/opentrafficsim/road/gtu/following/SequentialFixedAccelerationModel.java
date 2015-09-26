@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 
 /**
@@ -84,7 +90,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
      */
     public final Time.Abs timeAfterCompletionOfStep(final int index)
     {
-        Time.Abs sum = new Time.Abs(0, SECOND);
+        Time.Abs sum = new Time.Abs(0, TimeUnit.SI);
         for (int i = 0; i <= index; i++)
         {
             sum = sum.plus(this.steps.get(i).getDuration());
@@ -120,18 +126,18 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration.Abs computeAcceleration(final Speed.Abs followerSpeed,
-        final Speed.Abs followerMaximumSpeed, final Speed.Abs leaderSpeed, final Length.Rel headway,
-        final Speed.Abs speedLimit)
+    public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
+        final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit)
     {
         return getAccelerationModel().getAcceleration();
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration.Abs maximumSafeDeceleration()
+    public final Acceleration maximumSafeDeceleration()
     {
-        return new Acceleration.Abs(2, METER_PER_SECOND_2);
+        // TODO specify in constructor
+        return new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2);
     }
 
     /** {@inheritDoc} */

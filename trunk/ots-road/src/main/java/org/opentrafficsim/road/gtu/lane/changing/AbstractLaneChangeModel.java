@@ -3,7 +3,10 @@ package org.opentrafficsim.road.gtu.lane.changing;
 import java.util.Collection;
 import java.util.Map;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -32,9 +35,9 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
     @Override
     public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
         final Collection<HeadwayGTU> sameLaneGTUs, final Collection<HeadwayGTU> preferredLaneGTUs,
-        final Collection<HeadwayGTU> nonPreferredLaneGTUs, final Speed.Abs speedLimit,
-        final Acceleration.Rel preferredLaneRouteIncentive, final Acceleration.Rel laneChangeThreshold,
-        final Acceleration.Rel nonPreferredLaneRouteIncentive) 
+        final Collection<HeadwayGTU> nonPreferredLaneGTUs, final Speed speedLimit,
+        final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
+        final Acceleration nonPreferredLaneRouteIncentive) 
     {
         try
         {
@@ -59,7 +62,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 System.out.println("Problem");
                 gtu.getGTUFollowingModel().computeAcceleration(gtu, sameLaneGTUs, speedLimit);
             }
-            Acceleration.Abs straightA = applyDriverPersonality(straightAccelerationSteps).plus(laneChangeThreshold);
+            Acceleration straightA = applyDriverPersonality(straightAccelerationSteps).plus(laneChangeThreshold);
             DualAccelerationStep nonPreferrredAccelerationSteps =
                 null == nonPreferredLane ? null : gtu.getGTUFollowingModel().computeAcceleration(gtu, nonPreferredLaneGTUs,
                     speedLimit);
@@ -69,7 +72,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             {
                 nonPreferrredAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
             }
-            Acceleration.Abs nonPreferredA =
+            Acceleration nonPreferredA =
                 null == nonPreferredLane ? null : applyDriverPersonality(nonPreferrredAccelerationSteps);
             DualAccelerationStep preferredAccelerationSteps =
                 null == preferredLane ? null : gtu.getGTUFollowingModel().computeAcceleration(gtu, preferredLaneGTUs,
@@ -80,7 +83,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             {
                 preferredAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
             }
-            Acceleration.Abs preferredA = null == preferredLane ? null : applyDriverPersonality(preferredAccelerationSteps);
+            Acceleration preferredA = null == preferredLane ? null : applyDriverPersonality(preferredAccelerationSteps);
             if (null == preferredA)
             {
                 // Lane change to the preferred lane is not possible
@@ -120,8 +123,8 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 }
             }
             // All merges are possible
-            Acceleration.Rel preferredAttractiveness = preferredA.plus(preferredLaneRouteIncentive).minus(straightA);
-            Acceleration.Rel nonPreferredAttractiveness =
+            Acceleration preferredAttractiveness = preferredA.plus(preferredLaneRouteIncentive).minus(straightA);
+            Acceleration nonPreferredAttractiveness =
                 nonPreferredA.plus(nonPreferredLaneRouteIncentive).minus(straightA);
             if (preferredAttractiveness.getSI() <= 0 && nonPreferredAttractiveness.getSI() < 0)
             {
@@ -153,5 +156,5 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
      *         comparison to a similarly computed acceleration in the non-, or different-lane-changed state) to decide if a lane
      *         change should be performed
      */
-    public abstract Acceleration.Abs applyDriverPersonality(DualAccelerationStep accelerationSteps);
+    public abstract Acceleration applyDriverPersonality(DualAccelerationStep accelerationSteps);
 }

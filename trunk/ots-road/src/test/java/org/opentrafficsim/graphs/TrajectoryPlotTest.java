@@ -2,8 +2,10 @@ package org.opentrafficsim.graphs;
 
 import static org.junit.Assert.assertEquals;
 
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
-import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -17,7 +19,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * initial version Aug 22, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrajectoryPlotTest implements OTS_SCALAR
+public class TrajectoryPlotTest implements UNITS 
 {
     /** Sample interval for the TrajectoryPlot. */
     Time.Rel sampleInterval = new Time.Rel(0.25, SECOND);
@@ -44,7 +46,7 @@ public class TrajectoryPlotTest implements OTS_SCALAR
         assertEquals("Domain order should be ASCENDING", DomainOrder.ASCENDING, tp.getDomainOrder());
         // Create a car running 50 km.h
         Length.Rel initialPosition = new Length.Rel(2000, METER);
-        Speed.Abs initialSpeed = new Speed.Abs(50, KM_PER_HOUR);
+        Speed initialSpeed = new Speed(50, KM_PER_HOUR);
         GTUType carType = new GTUType("Car");
         Length.Rel length = new Length.Rel(5.0, METER);
         Length.Rel width = new Length.Rel(2.0, METER);
@@ -54,14 +56,14 @@ public class TrajectoryPlotTest implements OTS_SCALAR
         OTSDEVSSimulator simulator = CarTest.makeSimulator();
         // We want to start the car simulation at t=100s; therefore we have to advance the simulator up to that time.
         simulateUntil(new Time.Abs(100, SECOND), simulator);
-        Speed.Abs maxSpeed = new Speed.Abs(120, KM_PER_HOUR);
+        Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         Car car =
             new Car(12345, carType, null, initialLongitudinalPositions, initialSpeed, length, width, maxSpeed,
                 simulator);
         // Make the car accelerate with constant acceleration of 0.05 m/s/s for 400 seconds
         Time.Rel duration = new Time.Rel(400, SECOND);
         Time.Abs endTime = DoubleScalar.plus(simulator.getSimulatorTime().getTime(), duration);
-        car.setState(new GTUFollowingModelResult(new Acceleration.Abs(0.05,
+        car.setState(new GTUFollowingModelResult(new Acceleration(0.05,
             METER_PER_SECOND_2), endTime));
         // System.out.println("Car end position " + car.getPosition(car.getNextEvaluationTime()));
         tp.addData(car);
@@ -72,7 +74,7 @@ public class TrajectoryPlotTest implements OTS_SCALAR
             new Car(2, carType, null, initialLongitudinalPositions, initialSpeed, length, width, maxSpeed,
                 simulator);
         // Make the second car accelerate with constant acceleration of 0.03 m/s/s for 500 seconds
-        secondCar.setState(new GTUFollowingModelResult(new Acceleration.Abs(0.03,
+        secondCar.setState(new GTUFollowingModelResult(new Acceleration(0.03,
             METER_PER_SECOND_2), endTime));
         // System.out.println("Second car end position " + car.getPosition(secondCar.getNextEvaluationTime()));
         tp.addData(secondCar);

@@ -7,7 +7,7 @@ import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Time;
 
 /**
  * Typed extension of the DEVSSimulatorInterface without remote exceptions and using the Time.Abs and Time.Rel arguments.
@@ -21,7 +21,7 @@ import org.opentrafficsim.core.OTS_SCALAR;
  */
 public interface OTSDEVSSimulatorInterface extends
     DEVSSimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>,
-    OTSSimulatorInterface, OTS_SCALAR
+    OTSSimulatorInterface
 {
     /** {@inheritDoc} */
     @Override

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class SensorTag implements OTS_SCALAR
+class SensorTag 
 {
     /** name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

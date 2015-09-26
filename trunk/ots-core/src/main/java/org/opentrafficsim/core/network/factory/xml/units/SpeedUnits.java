@@ -4,7 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.djunits.unit.SpeedUnit;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -16,7 +17,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public final class SpeedUnits implements OTS_SCALAR
+public final class SpeedUnits implements UNITS
 {
     /** the speed units. */
     public static final Map<String, SpeedUnit> SPEED_UNITS = new HashMap<>();
@@ -64,7 +65,7 @@ public final class SpeedUnits implements OTS_SCALAR
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Speed.Abs parseSpeedAbs(final String s) throws NetworkException
+    public static Speed parseSpeedAbs(final String s) throws NetworkException
     {
         String us = parseSpeedUnit(s);
         SpeedUnit u = SPEED_UNITS.get(us);
@@ -72,7 +73,7 @@ public final class SpeedUnits implements OTS_SCALAR
         try
         {
             double value = Double.parseDouble(sv);
-            return new Speed.Abs(value, u);
+            return new Speed(value, u);
         }
         catch (NumberFormatException nfe)
         {
@@ -85,7 +86,7 @@ public final class SpeedUnits implements OTS_SCALAR
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static Speed.Rel parseSpeedRel(final String s) throws NetworkException
+    public static Speed parseSpeedRel(final String s) throws NetworkException
     {
         String us = parseSpeedUnit(s);
         SpeedUnit u = SPEED_UNITS.get(us);
@@ -93,7 +94,7 @@ public final class SpeedUnits implements OTS_SCALAR
         try
         {
             double value = Double.parseDouble(sv);
-            return new Speed.Rel(value, u);
+            return new Speed(value, u);
         }
         catch (NumberFormatException nfe)
         {

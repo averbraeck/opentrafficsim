@@ -11,6 +11,9 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -70,7 +73,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualCar(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
         final LaneChangeModel laneChangeModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
-        final Speed.Abs initialSpeed, final Length.Rel length, final Length.Rel width, final Speed.Abs maximumVelocity,
+        final Speed initialSpeed, final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
         final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator)
         throws NamingException, NetworkException, SimRuntimeException, GTUException
     {
@@ -103,7 +106,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualCar(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
         final LaneChangeModel laneChangeModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
-        final Speed.Abs initialSpeed, final Length.Rel length, final Length.Rel width, final Speed.Abs maximumVelocity,
+        final Speed initialSpeed, final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
         final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator,
         final Class<? extends Renderable2D> animationClass, final GTUColorer gtuColorer) throws NamingException,
         NetworkException, SimRuntimeException, GTUException
@@ -114,8 +117,8 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         // sensor positions.
         // We take the rear position of the Car to be the reference point. So the front is the length
         // of the Car away from the reference point in the positive (driving) X-direction.
-        Length.Rel zero = new Length.Rel(0.0d, METER);
-        Length.Rel dx = new Length.Rel(getLength().getSI(), METER);
+        Length.Rel zero = new Length.Rel(0.0d, LengthUnit.METER);
+        Length.Rel dx = new Length.Rel(getLength().getSI(), LengthUnit.METER);
         this.relativePositions
             .put(RelativePosition.FRONT, new RelativePosition(dx, zero, zero, RelativePosition.FRONT));
         this.relativePositions
@@ -265,7 +268,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         private Map<Lane, Length.Rel> initialLongitudinalPositions = null;;
 
         /** The initial speed of the car on the lane. */
-        private Speed.Abs initialSpeed = null;
+        private Speed initialSpeed = null;
 
         /** CarFollowingModel used by this Car. */
         private GTUFollowingModel gtuFollowingModel = null;
@@ -280,7 +283,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         private Length.Rel width = null;
 
         /** The maximum speed of the GTU (in the driving direction). */
-        private Speed.Abs maximumVelocity = null;
+        private Speed maximumVelocity = null;
 
         /** The simulator. */
         private OTSDEVSSimulatorInterface simulator = null;
@@ -349,7 +352,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
          * @param initialSpeed set initialSpeed
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder setInitialSpeed(final Speed.Abs initialSpeed)
+        public final LaneBasedIndividualCarBuilder setInitialSpeed(final Speed initialSpeed)
         {
             this.initialSpeed = initialSpeed;
             return this;
@@ -379,7 +382,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
          * @param maximumVelocity set maximumVelocity
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder setMaximumVelocity(final Speed.Abs maximumVelocity)
+        public final LaneBasedIndividualCarBuilder setMaximumVelocity(final Speed maximumVelocity)
         {
             this.maximumVelocity = maximumVelocity;
             return this;
@@ -451,7 +454,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         /**
          * @return initialSpeed.
          */
-        public final Speed.Abs getInitialSpeed()
+        public final Speed getInitialSpeed()
         {
             return this.initialSpeed;
         }
@@ -491,7 +494,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         /**
          * @return maximumVelocity.
          */
-        public final Speed.Abs getMaximumVelocity()
+        public final Speed getMaximumVelocity()
         {
             return this.maximumVelocity;
         }

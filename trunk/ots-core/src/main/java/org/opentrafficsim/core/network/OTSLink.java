@@ -9,12 +9,16 @@ import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.djunits.unit.FrequencyUnit;
+import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
 
 /**
+ * A standard implementation of a link between two OTSNodes.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -23,7 +27,6 @@ import com.vividsolutions.jts.geom.Point;
  * initial version Aug 19, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
 public class OTSLink implements Link, Serializable, LocatableInterface
 {
@@ -34,31 +37,36 @@ public class OTSLink implements Link, Serializable, LocatableInterface
     private final String id;
 
     /** Start node (directional). */
-    private final Node startNode;
+    private final OTSNode startNode;
 
     /** End node (directional). */
-    private final Node endNode;
+    private final OTSNode endNode;
+
+    /** Link type to indicate compatibility with GTU types. */
+    private final LinkType linkType;
 
     /** Design line of the link. */
     private final OTSLine3D designLine;
 
     /** Link capacity in vehicles per time unit. This is a mutable property (e.g., blockage). */
-    private Frequency.Abs capacity;
+    private Frequency capacity;
 
     /**
      * Construct a new link.
      * @param id the link id
      * @param startNode start node (directional)
      * @param endNode end node (directional)
+     * @param linkType Link type to indicate compatibility with GTU types
      * @param designLine the OTSLine3D design line of the Link
      * @param capacity link capacity in GTUs per hour
      */
-    public OTSLink(final String id, final Node startNode, final Node endNode, final OTSLine3D designLine,
-        final Frequency.Abs capacity)
+    public OTSLink(final String id, final OTSNode startNode, final OTSNode endNode, final LinkType linkType,
+        final OTSLine3D designLine, final Frequency capacity)
     {
         this.id = id;
         this.startNode = startNode;
         this.endNode = endNode;
+        this.linkType = linkType;
         // TODO Add directionality to a link?
         this.startNode.addLinkOut(this);
         this.endNode.addLinkIn(this);
@@ -71,11 +79,14 @@ public class OTSLink implements Link, Serializable, LocatableInterface
      * @param id the link id
      * @param startNode start node (directional)
      * @param endNode end node (directional)
+     * @param linkType Link type to indicate compatibility with GTU types
      * @param designLine the OTSLine3D design line of the Link
      */
-    public OTSLink(final String id, final Node startNode, final Node endNode, final OTSLine3D designLine)
+    public OTSLink(final String id, final OTSNode startNode, final OTSNode endNode, final LinkType linkType,
+        final OTSLine3D designLine)
     {
-        this(id, startNode, endNode, designLine, new Frequency.Abs(Double.POSITIVE_INFINITY, PER_SECOND));
+        this(id, startNode, endNode, linkType, designLine, new Frequency(Double.POSITIVE_INFINITY,
+            FrequencyUnit.PER_SECOND));
     }
 
     /** {@inheritDoc} */
@@ -87,28 +98,35 @@ public class OTSLink implements Link, Serializable, LocatableInterface
 
     /** {@inheritDoc} */
     @Override
-    public final Node getStartNode()
+    public final OTSNode getStartNode()
     {
         return this.startNode;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Node getEndNode()
+    public final OTSNode getEndNode()
     {
         return this.endNode;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Frequency.Abs getCapacity()
+    public final LinkType getLinkType()
+    {
+        return this.linkType;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Frequency getCapacity()
     {
         return this.capacity;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void setCapacity(final Frequency.Abs capacity)
+    public final void setCapacity(final Frequency capacity)
     {
         this.capacity = capacity;
     }
@@ -129,15 +147,7 @@ public class OTSLink implements Link, Serializable, LocatableInterface
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public String toString()
-    {
-        return this.id.toString();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final DirectedPoint getLocation() 
+    public final DirectedPoint getLocation()
     {
         // TODO maybe do without transformation to a LineString and cache the centroid?
         Point c = this.designLine.getLineString().getCentroid();
@@ -146,32 +156,40 @@ public class OTSLink implements Link, Serializable, LocatableInterface
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds getBounds() 
+    public final Bounds getBounds()
     {
         // TODO maybe do without transformation to a LineString and cache the envelope / bounds?
         DirectedPoint c = getLocation();
         Envelope envelope = this.designLine.getLineString().getEnvelopeInternal();
-        return new BoundingBox(new Point3d(envelope.getMinX() - c.x, envelope.getMinY() - c.y, 0.0d), new Point3d(envelope
-            .getMaxX()
-            - c.x, envelope.getMaxY() - c.y, 0.0d));
+        return new BoundingBox(new Point3d(envelope.getMinX() - c.x, envelope.getMinY() - c.y, 0.0d), new Point3d(
+            envelope.getMaxX() - c.x, envelope.getMaxY() - c.y, 0.0d));
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("checkstyle:designforextension")
     @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public String toString()
+    {
+        return this.id.toString();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
     public int hashCode()
     {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.endNode == null) ? 0 : this.endNode.hashCode());
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        result = prime * result + ((this.linkType == null) ? 0 : this.linkType.hashCode());
         result = prime * result + ((this.startNode == null) ? 0 : this.startNode.hashCode());
         return result;
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     @Override
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     public boolean equals(final Object obj)
     {
         if (this == obj)
@@ -194,6 +212,13 @@ public class OTSLink implements Link, Serializable, LocatableInterface
                 return false;
         }
         else if (!this.id.equals(other.id))
+            return false;
+        if (this.linkType == null)
+        {
+            if (other.linkType != null)
+                return false;
+        }
+        else if (!this.linkType.equals(other.linkType))
             return false;
         if (this.startNode == null)
         {

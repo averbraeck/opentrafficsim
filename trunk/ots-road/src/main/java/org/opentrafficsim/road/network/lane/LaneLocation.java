@@ -1,6 +1,9 @@
 package org.opentrafficsim.road.network.lane;
 
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Length;
+
+
 
 /**
  * "1D" implementation.
@@ -13,7 +16,7 @@ import org.opentrafficsim.core.OTS_SCALAR;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneLocation implements OTS_SCALAR
+public class LaneLocation 
 {
     /** The lane of the location of a point relative to the GTU. */
     private final Lane lane;
@@ -64,7 +67,7 @@ public class LaneLocation implements OTS_SCALAR
      */
     public final Length.Abs getLongitudinalPosition()
     {
-        return new Length.Abs(this.lane.getLength().getSI() * this.fractionalLongitudinalPosition, METER);
+        return new Length.Abs(this.lane.getLength().getSI() * this.fractionalLongitudinalPosition, LengthUnit.METER);
     }
 
 }

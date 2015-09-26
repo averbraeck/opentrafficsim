@@ -14,9 +14,13 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
-import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -50,7 +54,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class AbstractLaneBasedGTUTest implements OTS_SCALAR
+public class AbstractLaneBasedGTUTest implements UNITS
 {
 
     /**
@@ -75,13 +79,13 @@ public class AbstractLaneBasedGTUTest implements OTS_SCALAR
 
         Lane[] lanesGroupA =
             LaneFactory
-                .makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new Speed.Abs(100, KM_PER_HOUR), simulator);
+                .makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new Speed(100, KM_PER_HOUR), simulator);
         // A GTU can exist on several lanes at once; create another lane group to test that
         OTSNode nodeBFrom = new OTSNode("BFrom", new OTSPoint3D(10, 0, 0));
         OTSNode nodeBTo = new OTSNode("BTo", new OTSPoint3D(1000, 100, 0));
         Lane[] lanesGroupB =
             LaneFactory
-                .makeMultiLane("B", nodeBFrom, nodeBTo, null, 3, laneType, new Speed.Abs(100, KM_PER_HOUR), simulator);
+                .makeMultiLane("B", nodeBFrom, nodeBTo, null, 3, laneType, new Speed(100, KM_PER_HOUR), simulator);
         Map<Lane, Length.Rel> initialLongitudinalPositions = new LinkedHashMap<Lane, Length.Rel>();
 
         Length.Rel positionA = new Length.Rel(100, METER);
@@ -89,20 +93,20 @@ public class AbstractLaneBasedGTUTest implements OTS_SCALAR
         Length.Rel positionB = new Length.Rel(90, METER);
         initialLongitudinalPositions.put(lanesGroupB[1], positionB);
         // A Car needs a CarFollowingModel
-        Acceleration.Abs acceleration = new Acceleration.Abs(2, METER_PER_SECOND_2);
+        Acceleration acceleration = new Acceleration(2, METER_PER_SECOND_2);
         Time.Rel validFor = new Time.Rel(10, SECOND);
         GTUFollowingModel gfm = new FixedAccelerationModel(acceleration, validFor);
         // A Car needs a lane change model
         // AbstractLaneChangeModel laneChangeModel = new Egoistic();
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
         // A Car needs an initial speed
-        Speed.Abs initialSpeed = new Speed.Abs(50, KM_PER_HOUR);
+        Speed initialSpeed = new Speed(50, KM_PER_HOUR);
         // Length of the Car
         Length.Rel carLength = new Length.Rel(4, METER);
         // Width of the Car
         Length.Rel carWidth = new Length.Rel(1.8, METER);
         // Maximum velocity of the Car
-        Speed.Abs maximumVelocity = new Speed.Abs(200, KM_PER_HOUR);
+        Speed maximumVelocity = new Speed(200, KM_PER_HOUR);
         // ID of the Car
         String carID = "theCar";
         // List of Nodes visited by the Car
@@ -220,7 +224,7 @@ public class AbstractLaneBasedGTUTest implements OTS_SCALAR
                     0.0001);
                 assertEquals("acceleration is " + acceleration, acceleration.getSI(), car.getAcceleration().getSI(), 0.00001);
             }
-            Speed.Abs longitudinalVelocity = car.getLongitudinalVelocity();
+            Speed longitudinalVelocity = car.getLongitudinalVelocity();
             double expectedLongitudinalVelocity = initialSpeed.getSI() + stepTime.getSI() * acceleration.getSI();
             assertEquals("longitudinal velocity is " + expectedLongitudinalVelocity, expectedLongitudinalVelocity,
                 longitudinalVelocity.getSI(), 0.00001);
@@ -333,7 +337,7 @@ public class AbstractLaneBasedGTUTest implements OTS_SCALAR
         OTSNode nodeCTo = new OTSNode("CTo", new OTSPoint3D(1000, 0, 0));
         Lane[] lanesGroupC =
             LaneFactory
-                .makeMultiLane("C", nodeCFrom, nodeCTo, null, 3, laneType, new Speed.Abs(100, KM_PER_HOUR), simulator);
+                .makeMultiLane("C", nodeCFrom, nodeCTo, null, 3, laneType, new Speed(100, KM_PER_HOUR), simulator);
         car.enterLane(lanesGroupC[0], new Length.Rel(0.0, LengthUnit.SI));
         for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
         {

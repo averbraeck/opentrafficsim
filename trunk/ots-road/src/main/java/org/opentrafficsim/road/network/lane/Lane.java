@@ -12,8 +12,12 @@ import java.util.TreeMap;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -45,7 +49,7 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Lane extends CrossSectionElement implements Serializable, OTS_SCALAR
+public class Lane extends CrossSectionElement implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20150826L;
@@ -63,7 +67,7 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
      * the speed limit of this lane. This can differ per GTU type. Cars might be allowed to drive 120 km/h and trucks 90 km/h.
      * If the speed limit is the same for all GTU types, GTUType.ALL will be used.
      */
-    private Map<GTUType, Speed.Abs> speedLimitMap;
+    private Map<GTUType, Speed> speedLimitMap;
 
     /**
      * Sensors on the lane to trigger behavior of the GTU, sorted by longitudinal position. The triggering of sensors is done
@@ -124,7 +128,7 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
     public Lane(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffsetAtStart,
         final Length.Rel lateralOffsetAtEnd, final Length.Rel beginWidth, final Length.Rel endWidth,
         final LaneType laneType, final Map<GTUType, LongitudinalDirectionality> directionalityMap,
-        final Map<GTUType, Speed.Abs> speedLimitMap, final OvertakingConditions overtakingConditions)
+        final Map<GTUType, Speed> speedLimitMap, final OvertakingConditions overtakingConditions)
         throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
@@ -153,7 +157,7 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
     @SuppressWarnings("checkstyle:parameternumber")
     public Lane(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffsetAtStart,
         final Length.Rel lateralOffsetAtEnd, final Length.Rel beginWidth, final Length.Rel endWidth,
-        final LaneType laneType, final LongitudinalDirectionality directionality, final Speed.Abs speedLimit,
+        final LaneType laneType, final LongitudinalDirectionality directionality, final Speed speedLimit,
         final OvertakingConditions overtakingConditions) throws OTSGeometryException, NetworkException
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
@@ -216,7 +220,7 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
     }
 
     /** Lateral alignment margin for longitudinally connected Lanes. */
-    static final Length.Rel ADJACENT_MARGIN = new Length.Rel(0.2, METER);
+    static final Length.Rel ADJACENT_MARGIN = new Length.Rel(0.2, LengthUnit.METER);
 
     /**
      * Determine whether another lane is adjacent to this lane (dependent on distance) and accessible (dependent on stripes) for
@@ -484,7 +488,7 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
                             throw new NetworkException("scheduleTriggers for gtu: " + gtu + ", d<0 d=" + d);
                         }
 
-                        Time.Abs triggerTime = gtu.timeAtDistance(new Length.Rel(d, METER));
+                        Time.Abs triggerTime = gtu.timeAtDistance(new Length.Rel(d, LengthUnit.METER));
                         if (triggerTime.gt(gtu.getNextEvaluationTime()))
                         {
                             System.err.println("Time=" + gtu.getSimulator().getSimulatorTime().getTime().getSI()
@@ -692,7 +696,7 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
      * acceptable.
      */
     /** Lateral alignment margin for longitudinally connected Lanes. */
-    static final Length.Rel LATERAL_MARGIN = new Length.Rel(0.5, METER);
+    static final Length.Rel LATERAL_MARGIN = new Length.Rel(0.5, LengthUnit.METER);
 
     /**
      * The next lane(s) are cached, as it is too expensive to make the calculation every time. There are several possibilities:
@@ -841,7 +845,7 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
      * @param gtuType the GTU type to provide the speed limit for
      * @return speedLimit.
      */
-    public final Speed.Abs getSpeedLimit(final GTUType gtuType)
+    public final Speed getSpeedLimit(final GTUType gtuType)
     {
         if (this.speedLimitMap.containsKey(gtuType))
         {
@@ -851,14 +855,14 @@ public class Lane extends CrossSectionElement implements Serializable, OTS_SCALA
         {
             return this.speedLimitMap.get(GTUType.ALL);
         }
-        return new Speed.Abs(0.0, METER_PER_SECOND); // XXX is this what we want, or should we throw exception?
+        return new Speed(0.0, SpeedUnit.METER_PER_SECOND); // XXX is this what we want, or should we throw exception?
     }
 
     /**
      * @param gtuType the GTU type to provide the speed limit for
      * @param speedLimit the speed limit for this gtu type
      */
-    public final void setSpeedLimit(final GTUType gtuType, final Speed.Abs speedLimit)
+    public final void setSpeedLimit(final GTUType gtuType, final Speed speedLimit)
     {
         this.speedLimitMap.put(gtuType, speedLimit);
     }

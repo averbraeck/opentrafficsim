@@ -18,10 +18,14 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.TimeUnit;
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.jfree.chart.ChartPanel;
 import org.junit.Test;
-import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -47,7 +51,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  * initial version Aug 25, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FundamentalDiagramPlotTest implements OTSModelInterface, OTS_SCALAR
+public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
 {
     /** */
     private static final long serialVersionUID = 20150226L;
@@ -98,11 +102,11 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, OTS_SCALAR
         assertTrue("No data should result in NaN", java.lang.Double.isNaN(value));
         ActionEvent setXToSpeed = new ActionEvent(fd, 0, "Speed/Speed");
         ActionEvent resetAxis = new ActionEvent(fd, 0, "Flow/Density");
-        Speed.Abs speed = new Speed.Abs(100, KM_PER_HOUR);
+        Speed speed = new Speed(100, KM_PER_HOUR);
         Time.Abs time = new Time.Abs(123, SECOND);
         Length.Rel length = new Length.Rel(5.0, METER);
         Length.Rel width = new Length.Rel(2.0, METER);
-        Speed.Abs maxSpeed = new Speed.Abs(120, KM_PER_HOUR);
+        Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         Map<Lane, Length.Rel> initialLongitudinalPositions = new HashMap<>();
         initialLongitudinalPositions.put(lane, carPosition);
         SimpleSimulator simulator =
@@ -126,7 +130,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, OTS_SCALAR
         int bucket = (int) Math.floor(time.getSI() / aggregationTime.getSI());
         LaneChangeModel laneChangeModel = new Egoistic();
         GTUFollowingModel gtuFollowingModel =
-            new FixedAccelerationModel(new Acceleration.Abs(0, METER_PER_SECOND_2), new Time.Rel(1000, SECOND));
+            new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(1000, SECOND));
         // Construct a car
         new LaneBasedIndividualCar("1", gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, speed,
             length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
@@ -211,7 +215,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, OTS_SCALAR
             fd.actionPerformed(resetAxis);
         }
         // Check that harmonic mean speed is computed
-        speed = new Speed.Abs(10, KM_PER_HOUR);
+        speed = new Speed(10, KM_PER_HOUR);
         new LaneBasedIndividualCar("1234", gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, speed,
             length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
         simulator.runUpTo(new Time.Abs(125, SECOND));

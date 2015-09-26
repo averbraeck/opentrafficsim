@@ -18,9 +18,11 @@ import nl.tudelft.simulation.language.io.URLResource;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Assert;
-import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -52,7 +54,7 @@ import org.xml.sax.SAXException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class XMLNetworkGeneratorTest implements OTS_SCALAR
+public class XMLNetworkGeneratorTest implements UNITS
 {
     /** AssertionError thrown by the sensor trigger. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
