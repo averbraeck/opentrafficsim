@@ -20,8 +20,12 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.TimeUnit;
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -60,7 +64,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author Moritz Bergmann
  */
-public class OpenStreetMap extends AbstractWrappableAnimation
+public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
 {
     /** the model. */
     private OSMModel model;
@@ -115,11 +119,11 @@ public class OpenStreetMap extends AbstractWrappableAnimation
                             + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
                             + "curvature of the road) capabilities of the vehicle and personality "
                             + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Car", new Acceleration.Abs(1.0,
-                        METER_PER_SECOND_2), new Acceleration.Abs(1.5, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Car", new Acceleration(1.0,
+                        METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
                         new Time.Rel(1.0, SECOND), 2));
-                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration.Abs(0.5,
-                        METER_PER_SECOND_2), new Acceleration.Abs(1.25, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
+                    localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration(0.5,
+                        METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
                         new Time.Rel(1.0, SECOND), 3));
                     osm.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND),
                         localProperties, null, true);

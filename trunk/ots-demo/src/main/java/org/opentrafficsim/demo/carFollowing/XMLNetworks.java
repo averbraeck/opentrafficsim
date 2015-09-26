@@ -23,9 +23,13 @@ import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.unit.UNITS;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -81,7 +85,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class XMLNetworks extends AbstractWrappableAnimation
+public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
 {
     /** the model. */
     private XMLNetworkModel model;
@@ -172,7 +176,7 @@ public class XMLNetworks extends AbstractWrappableAnimation
  * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-class XMLNetworkModel implements OTSModelInterface, OTS_SCALAR
+class XMLNetworkModel implements OTSModelInterface, UNITS
 {
     /** */
     private static final long serialVersionUID = 20150304L;
@@ -199,7 +203,7 @@ class XMLNetworkModel implements OTSModelInterface, OTS_SCALAR
     private DistContinuous headwayGenerator;
 
     /** The speed limit. */
-    private Speed.Abs speedLimit = new Speed.Abs(60, KM_PER_HOUR);
+    private Speed speedLimit = new Speed(60, KM_PER_HOUR);
 
     /** number of cars created. */
     private int carsCreated = 0;
@@ -350,8 +354,8 @@ class XMLNetworkModel implements OTSModelInterface, OTS_SCALAR
                     }
                     if (ap.getShortName().contains("IDM"))
                     {
-                        Acceleration.Abs a = IDMPropertySet.getA(compoundProperty);
-                        Acceleration.Abs b = IDMPropertySet.getB(compoundProperty);
+                        Acceleration a = IDMPropertySet.getA(compoundProperty);
+                        Acceleration b = IDMPropertySet.getB(compoundProperty);
                         Length.Rel s0 = IDMPropertySet.getS0(compoundProperty);
                         Time.Rel tSafe = IDMPropertySet.getTSafe(compoundProperty);
                         GTUFollowingModel gtuFollowingModel = null;
@@ -523,11 +527,11 @@ class XMLNetworkModel implements OTSModelInterface, OTS_SCALAR
         Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(lane, initialPosition);
         GTUFollowingModel gfm =
-            new FixedAccelerationModel(new Acceleration.Abs(0, AccelerationUnit.SI), new Time.Rel(
+            new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Time.Rel(
                 java.lang.Double.MAX_VALUE, TimeUnit.SI));
         LaneChangeModel lcm = new FixedLaneChangeModel(null);
-        new LaneBasedIndividualCar("999999", this.gtuType, gfm, lcm, initialPositions, new Speed.Abs(0, KM_PER_HOUR),
-            new Length.Rel(1, METER), lane.getWidth(1), new Speed.Abs(0, KM_PER_HOUR),
+        new LaneBasedIndividualCar("999999", this.gtuType, gfm, lcm, initialPositions, new Speed(0, KM_PER_HOUR),
+            new Length.Rel(1, METER), lane.getWidth(1), new Speed(0, KM_PER_HOUR),
             new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator);
         return lane;
     }
@@ -562,7 +566,7 @@ class XMLNetworkModel implements OTSModelInterface, OTS_SCALAR
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         Length.Rel initialPosition = new Length.Rel(0, METER);
-        Speed.Abs initialSpeed = new Speed.Abs(50, KM_PER_HOUR);
+        Speed initialSpeed = new Speed(50, KM_PER_HOUR);
         Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(lane, initialPosition);
         try
@@ -572,7 +576,7 @@ class XMLNetworkModel implements OTSModelInterface, OTS_SCALAR
                 generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, gtuFollowingModel,
                 this.laneChangeModel, initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, METER),
-                new Speed.Abs(200, KM_PER_HOUR), this.routeGenerator.generateRouteNavigator(), this.simulator,
+                new Speed(200, KM_PER_HOUR), this.routeGenerator.generateRouteNavigator(), this.simulator,
                 DefaultCarAnimation.class, this.gtuColorer);
             Object[] arguments = new Object[1];
             arguments[0] = lane;

@@ -15,8 +15,9 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
 
 import org.djunits.unit.TimeUnit;
+import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.opentrafficsim.core.OTS_SCALAR;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSAnimator;
 import org.opentrafficsim.core.dsol.OTSReplication;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -30,7 +31,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
  * initial version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class ShapeTestApplication extends DSOLApplication implements OTS_SCALAR
+public class ShapeTestApplication extends DSOLApplication implements UNITS
 {
     /**
      * @param title String title of the application window

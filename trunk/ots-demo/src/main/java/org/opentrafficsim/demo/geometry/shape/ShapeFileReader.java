@@ -13,7 +13,10 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -22,12 +25,12 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opentrafficsim.core.OTS_SCALAR;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
@@ -57,7 +60,7 @@ import com.vividsolutions.jts.geom.Point;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public final class ShapeFileReader implements OTS_SCALAR
+public final class ShapeFileReader implements UNITS
 {
     /** Do not instantiate this class. */
     private ShapeFileReader()
@@ -230,7 +233,7 @@ public final class ShapeFileReader implements OTS_SCALAR
                 String typeWegVak = (String) feature.getAttribute("TYPEWEGVAB");
                 String typeWeg = (String) feature.getAttribute("TYPEWEG_AB");
                 Double speedIn = Double.parseDouble(String.valueOf(feature.getAttribute("SPEEDAB")));
-                DoubleScalar<SpeedUnit> speed = new Speed.Abs(speedIn, KM_PER_HOUR);
+                DoubleScalar<SpeedUnit> speed = new Speed(speedIn, KM_PER_HOUR);
                 double capacityIn = Double.parseDouble(String.valueOf(feature.getAttribute("CAPACITYAB")));
                 DoubleScalar<FrequencyUnit> capacity = new DoubleScalar.Abs<FrequencyUnit>(capacityIn, PER_HOUR);
                 // new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), KILOMETER);
@@ -243,12 +246,12 @@ public final class ShapeFileReader implements OTS_SCALAR
                     CrossSectionLink linkAB = null;
                     CrossSectionLink linkBA = null;
                     linkAB =
-                        new CrossSectionLink(nr, nodeA, nodeB, new OTSLine3D(new OTSPoint3D[]{nodeA.getPoint(),
-                            nodeB.getPoint()}), LaneKeepingPolicy.KEEP_RIGHT);
+                        new CrossSectionLink(nr, nodeA, nodeB, LinkType.ALL, new OTSLine3D(new OTSPoint3D[]{
+                            nodeA.getPoint(), nodeB.getPoint()}), LaneKeepingPolicy.KEEP_RIGHT);
                     animate(linkAB, typeWegVak, simulator);
                     linkBA =
-                        new CrossSectionLink(nrBA, nodeB, nodeA, new OTSLine3D(new OTSPoint3D[]{nodeB.getPoint(),
-                            nodeA.getPoint()}), LaneKeepingPolicy.KEEP_RIGHT);
+                        new CrossSectionLink(nrBA, nodeB, nodeA, LinkType.ALL, new OTSLine3D(new OTSPoint3D[]{
+                            nodeB.getPoint(), nodeA.getPoint()}), LaneKeepingPolicy.KEEP_RIGHT);
                     animate(linkBA, typeWegVak, simulator);
                     if (direction == 1)
                     {
@@ -351,8 +354,9 @@ public final class ShapeFileReader implements OTS_SCALAR
      * @throws RemoteException in case of context error
      * @throws NetworkException on network inconsistency
      */
-    private static void animate(final CrossSectionLink link, final String wegType, final OTSSimulatorInterface simulator)
-        throws NamingException, NetworkException, RemoteException
+    private static void
+        animate(final CrossSectionLink link, final String wegType, final OTSSimulatorInterface simulator)
+            throws NamingException, NetworkException, RemoteException
     {
         // leave out if center line not needed.
         new LinkAnimation(link, simulator, 0.1f);
@@ -421,7 +425,7 @@ public final class ShapeFileReader implements OTS_SCALAR
         Length.Rel m05 = new Length.Rel(0.5, METER);
         Length.Rel m10 = new Length.Rel(1.0, METER);
         Length.Rel m35 = new Length.Rel(3.5, METER);
-        Speed.Abs speedLimit = new Speed.Abs(100, KM_PER_HOUR);
+        Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
         try
         {
@@ -434,15 +438,16 @@ public final class ShapeFileReader implements OTS_SCALAR
                     (i < 0) ? LongitudinalDirectionality.FORWARD : LongitudinalDirectionality.BACKWARD;
                 //
                 Lane laneEM =
-                    new NoTrafficLane(link, "EM", new Length.Rel(i * 0.75, METER), new Length.Rel(i * 0.75, METER), m05, m05);
+                    new NoTrafficLane(link, "EM", new Length.Rel(i * 0.75, METER), new Length.Rel(i * 0.75, METER),
+                        m05, m05);
                 new LaneAnimation(laneEM, simulator, Color.LIGHT_GRAY);
                 double lat = 1;
                 for (int j = 0; j < n; j++)
                 {
                     lat += i * 1.75;
                     Lane lane =
-                        new Lane(link, "lane." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER), m35, m35, null,
-                            dir, speedLimit, new OvertakingConditions.LeftAndRight());
+                        new Lane(link, "lane." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER), m35, m35,
+                            null, dir, speedLimit, new OvertakingConditions.LeftAndRight());
                     new LaneAnimation(lane, simulator, Color.GRAY);
                     lat += i * 1.75;
                 }
@@ -451,8 +456,8 @@ public final class ShapeFileReader implements OTS_SCALAR
                 {
                     lat += i * 1.75;
                     Lane lane =
-                        new NoTrafficLane(link, "extra." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER), m35,
-                            m35);
+                        new NoTrafficLane(link, "extra." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER),
+                            m35, m35);
                     new LaneAnimation(lane, simulator, Color.LIGHT_GRAY);
                     lat += i * 1.75;
                 }
@@ -485,7 +490,7 @@ public final class ShapeFileReader implements OTS_SCALAR
         // lane is 3.0 meters wide. gap in middle is one meter. outside 0.5 meters on both sides
         Length.Rel m10 = new Length.Rel(1.0, METER);
         Length.Rel m30 = new Length.Rel(3.0, METER);
-        Speed.Abs speedLimit = new Speed.Abs(100, KM_PER_HOUR);
+        Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
         try
         {
@@ -503,8 +508,8 @@ public final class ShapeFileReader implements OTS_SCALAR
                 {
                     lat += i * 1.5;
                     Lane lane =
-                        new Lane(link, "lane." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER), m30, m30, null,
-                            dir, speedLimit, new OvertakingConditions.LeftAndRight());
+                        new Lane(link, "lane." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER), m30, m30,
+                            null, dir, speedLimit, new OvertakingConditions.LeftAndRight());
                     new LaneAnimation(lane, simulator, Color.DARK_GRAY);
                     lat += i * 1.5;
                 }
@@ -525,7 +530,7 @@ public final class ShapeFileReader implements OTS_SCALAR
         throws NetworkException
     {
         Length.Rel m60 = new Length.Rel(6.0, METER);
-        Speed.Abs speedLimit = new Speed.Abs(100, KM_PER_HOUR);
+        Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
         try
         {
