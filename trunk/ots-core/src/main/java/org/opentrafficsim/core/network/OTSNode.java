@@ -43,8 +43,8 @@ public class OTSNode implements Node, LocatableInterface, Serializable
     /** the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians). */
     private final AnglePlane.Abs direction;
 
-    /** the slope as an angle. */
-    private final AngleSlope slope;
+    /** the slope as an angle. Horizontal is 0 degrees. */
+    private final AngleSlope.Abs slope;
 
     /** the incoming links. */
     private final Set<Link> linksIn = new HashSet<Link>();
@@ -57,9 +57,9 @@ public class OTSNode implements Node, LocatableInterface, Serializable
      * @param id the id of the Node.
      * @param point the point with usually an x and y setting.
      * @param direction the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
-     * @param slope the slope as an angle.
+     * @param slope the slope as an angle. Horizontal is 0 degrees.
      */
-    public OTSNode(final String id, final OTSPoint3D point, final AnglePlane.Abs direction, final AngleSlope slope)
+    public OTSNode(final String id, final OTSPoint3D point, final AnglePlane.Abs direction, final AngleSlope.Abs slope)
     {
         this.id = id;
         this.point = point;
@@ -74,7 +74,7 @@ public class OTSNode implements Node, LocatableInterface, Serializable
      */
     public OTSNode(final String id, final OTSPoint3D point)
     {
-        this(id, point, new AnglePlane.Abs(0.0, AnglePlaneUnit.SI), new AngleSlope(0.0, AngleSlopeUnit.SI));
+        this(id, point, new AnglePlane.Abs(0.0, AnglePlaneUnit.SI), new AngleSlope.Abs(0.0, AngleSlopeUnit.SI));
     }
 
     /**
@@ -132,7 +132,7 @@ public class OTSNode implements Node, LocatableInterface, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final AngleSlope getSlope()
+    public final AngleSlope.Abs getSlope()
     {
         return this.slope;
     }

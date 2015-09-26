@@ -45,7 +45,7 @@ class NodeTag
 
     /** TODO slope as an angle. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    AngleSlope slope = null;
+    AngleSlope.Abs slope = null;
 
     /** the calculated Node, either through a coordinate or after calculation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -134,7 +134,7 @@ class NodeTag
     {
         String id = nodeTag.name;
         AnglePlane.Abs angle = nodeTag.angle == null ? new AnglePlane.Abs(0.0, AnglePlaneUnit.SI) : nodeTag.angle;
-        AngleSlope slope = nodeTag.slope == null ? new AngleSlope(0.0, AngleSlopeUnit.SI) : nodeTag.slope;
+        AngleSlope.Abs slope = nodeTag.slope == null ? new AngleSlope.Abs(0.0, AngleSlopeUnit.SI) : nodeTag.slope;
         OTSNode node = new OTSNode(id, nodeTag.coordinate, angle, slope);
         nodeTag.node = node;
         return node;

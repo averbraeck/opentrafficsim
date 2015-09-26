@@ -107,6 +107,9 @@ public interface DiscreteDistDoubleScalar
                 case "AnglePlaneUnit":
                     return (T) new AnglePlane.Abs(getDistribution().draw(), (AnglePlaneUnit) getUnit());
 
+                case "AngleSlopeUnit":
+                    return (T) new AngleSlope.Abs(getDistribution().draw(), (AngleSlopeUnit) getUnit());
+
                 case "DimensionlessUnit":
                     return (T) new Dimensionless.Abs(getDistribution().draw(), (DimensionlessUnit) getUnit());
 
@@ -166,7 +169,7 @@ public interface DiscreteDistDoubleScalar
                     return (T) new AnglePlane.Rel(getDistribution().draw(), (AnglePlaneUnit) getUnit());
 
                 case "AngleSlopeUnit":
-                    return (T) new AngleSlope(getDistribution().draw(), (AngleSlopeUnit) getUnit());
+                    return (T) new AngleSlope.Rel(getDistribution().draw(), (AngleSlopeUnit) getUnit());
 
                 case "AngleSolidUnit":
                     return (T) new AngleSolid(getDistribution().draw(), (AngleSolidUnit) getUnit());
