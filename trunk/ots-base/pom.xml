@@ -143,6 +143,8 @@
           <chmod>true</chmod>
           <inputEncoding>UTF-8</inputEncoding>
           <outputEncoding>UTF-8</outputEncoding>
+          <templateDirectory>src/site</templateDirectory>
+          <template>site.vm</template>
         </configuration>
         <executions>
           <execution>
@@ -452,6 +454,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
         <version>${maven.jxr.version}</version>
+        <configuration>
+          <skipEmptyReport>false</skipEmptyReport>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -495,6 +500,9 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>${maven.jacoco.version}</version>
+        <configuration>
+          <skipEmptyReport>false</skipEmptyReport>
+        </configuration>
         <reportSets>
           <reportSet>
             <inherited>true</inherited>
@@ -562,6 +570,7 @@
         <version>${maven.pmd.version}</version>
         <configuration>
           <targetJdk>${jdk.version}</targetJdk>
+          <skipEmptyReport>false</skipEmptyReport>
         </configuration>
       </plugin>
 
