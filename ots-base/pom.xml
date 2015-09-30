@@ -55,7 +55,7 @@
     <apache.poi.version>3.8</apache.poi.version>
     <jgrapht.version>0.9.0</jgrapht.version>
     <multislider.version>1.0</multislider.version>
-    <ojalgo.version>37.1</ojalgo.version>
+    <ojalgo.version>38.2</ojalgo.version>
     <osm.version>0.43.1</osm.version>
 
     <maven.compiler.version>3.1</maven.compiler.version>
