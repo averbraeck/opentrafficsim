@@ -53,45 +53,72 @@ public class OTSLine3D implements LocatableInterface, Serializable
 
     /**
      * @param points the array of points to construct this OTSLine3D from.
+     * @throws NetworkException when the provided points do not constitute a valid line (too few points or identical adjacent
+     *             points)
      */
-    public OTSLine3D(final OTSPoint3D[] points)
+    public OTSLine3D(final OTSPoint3D[] points) throws NetworkException
     {
+        if (points.length < 2)
+        {
+            throw new NetworkException("Degenerate OTSLine3D; has " + points.length + " point"
+                    + (points.length != 1 ? "s" : ""));
+        }
+        for (int i = 1; i < points.length; i++)
+        {
+            if (points[i - 1].x == points[i].x && points[i - 1].y == points[i].y && points[i - 1].z == points[i].z)
+            {
+                throw new NetworkException("Degenerate OTSLine3D; point " + (i - 1) + " has the same x, y and z as point " + i);
+            }
+        }
         this.points = points;
     }
 
     /**
-     * @param coordinates the array of coordinates to construct this OTSLine3D from.
+     * Build an array of OTSPoint3D from an array of Coordinate.
+     * @param coordinates Coordinate[]; the coordinates
+     * @return OTSPoint3D[]
      */
-    public OTSLine3D(final Coordinate[] coordinates)
+    private static OTSPoint3D[] coordinatesToOTSPoint3D(final Coordinate[] coordinates)
     {
-        this.points = new OTSPoint3D[coordinates.length];
-        int i = 0;
-        for (Coordinate c : coordinates)
+        OTSPoint3D[] result = new OTSPoint3D[coordinates.length];
+        for (int i = 0; i < coordinates.length; i++)
         {
-            this.points[i++] = new OTSPoint3D(c);
+            result[i] = new OTSPoint3D(coordinates[i].x, coordinates[i].y, coordinates[i].z);
         }
+        return result;
+    }
+    /**
+     * @param coordinates the array of coordinates to construct this OTSLine3D from.
+     * @throws NetworkException 
+     */
+    public OTSLine3D(final Coordinate[] coordinates) throws NetworkException
+    {
+        this(coordinatesToOTSPoint3D(coordinates));
     }
 
     /**
      * @param lineString the lineString to construct this OTSLine3D from.
+     * @throws NetworkException 
      */
-    public OTSLine3D(final LineString lineString)
+    public OTSLine3D(final LineString lineString) throws NetworkException
     {
         this(lineString.getCoordinates());
     }
 
     /**
      * @param geometry the geometry to construct this OTSLine3D from.
+     * @throws NetworkException 
      */
-    public OTSLine3D(final Geometry geometry)
+    public OTSLine3D(final Geometry geometry) throws NetworkException
     {
         this(geometry.getCoordinates());
     }
 
     /**
      * @param pointList the list of points to construct this OTSLine3D from.
+     * @throws NetworkException 
      */
-    public OTSLine3D(final List<OTSPoint3D> pointList)
+    public OTSLine3D(final List<OTSPoint3D> pointList) throws NetworkException
     {
         this(pointList.toArray(new OTSPoint3D[pointList.size()]));
     }
@@ -225,7 +252,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
             OTSPoint3D p1 = this.points[0];
             OTSPoint3D p2 = this.points[1];
             return new DirectedPoint(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y), p1.z + fraction
-                * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+                    * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
         }
 
         // position beyond end point -- extrapolate
@@ -236,7 +263,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         OTSPoint3D p1 = this.points[n2];
         OTSPoint3D p2 = this.points[n1];
         return new DirectedPoint(p2.x + fraction * (p2.x - p1.x), p2.y + fraction * (p2.y - p1.y), p2.z + fraction
-            * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+                * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
     }
 
     /**
@@ -324,7 +351,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         if (positionSI < 0.0 || positionSI > getLengthSI())
         {
             throw new NetworkException("getLocationSI for line: position < 0.0 or > line length. Position = " + positionSI
-                + " m. Length = " + getLengthSI() + " m.");
+                    + " m. Length = " + getLengthSI() + " m.");
         }
 
         // handle special cases: position == 0.0, or position == length
@@ -348,7 +375,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         OTSPoint3D p1 = this.points[index];
         OTSPoint3D p2 = this.points[index + 1];
         return new DirectedPoint(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y), p1.z + fraction
-            * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+                * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
     }
 
     /**
@@ -382,7 +409,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public DirectedPoint getLocation() 
+    public DirectedPoint getLocation()
     {
         if (this.centroid == null)
         {
@@ -394,7 +421,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Bounds getBounds() 
+    public Bounds getBounds()
     {
         if (this.bounds == null)
         {
@@ -429,7 +456,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     public boolean equals(final Object obj)
     {
         if (this == obj)

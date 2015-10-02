@@ -66,9 +66,10 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
      * @param to Node; end node of the new Link
      * @param width DoubleScalar.Rel&lt;LengthUnit&gt;; the width of the new Link
      * @return Link
+     * @throws NetworkException 
      */
     private static CrossSectionLink makeLink(final String name, final OTSNode from, final OTSNode to,
-        final Length.Rel width)
+        final Length.Rel width) throws NetworkException
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
         // FIXME The current LinkAnimation is too bad to use...

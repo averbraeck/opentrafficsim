@@ -107,8 +107,9 @@ public final class Convert
      * This method converts an OSM link to an OTS link.
      * @param link OSM Link to be converted
      * @return OTS Link
+     * @throws NetworkException 
      */
-    public CrossSectionLink convertLink(final OSMLink link)
+    public CrossSectionLink convertLink(final OSMLink link) throws NetworkException
     {
         if (null == link.getStart().getOtsNode())
         {

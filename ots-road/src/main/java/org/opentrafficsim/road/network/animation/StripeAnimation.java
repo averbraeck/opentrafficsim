@@ -16,6 +16,7 @@ import org.opentrafficsim.core.geometry.OTSBuffering;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.animation.PaintPolygons;
 import org.opentrafficsim.road.network.lane.Stripe;
 
@@ -209,9 +210,10 @@ public class StripeAnimation extends Renderable2D
      * @param type t
      * @throws NamingException ne
      * @throws RemoteException on communication failure
+     * @throws NetworkException when something is very wrong with the geomerty of the line
      */
     public StripeAnimation(final Stripe source, final OTSSimulatorInterface simulator, final TYPE type)
-        throws NamingException, RemoteException
+        throws NamingException, RemoteException, NetworkException
     {
         super(source, simulator);
         this.type = type;

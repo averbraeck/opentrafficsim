@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.opentrafficsim.core.network.NetworkException;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -30,13 +31,22 @@ public class OTSLine3DTest
     /**
      * Test the constructors of OTSLine3D.
      * @throws OTSGeometryException
+     * @throws NetworkException
      */
     @Test
-    public void constructorsTest() throws OTSGeometryException
+    public void constructorsTest() throws OTSGeometryException, NetworkException
     {
         double[] values = { -999, 0, 99, 9999 }; // Keep this list short; execution time grows with 9th power of length
         OTSPoint3D[] points = new OTSPoint3D[0]; // Empty array
-        runConstructors(points);
+        try
+        {
+            runConstructors(points);
+            fail("Should have thrown a NetworkException");
+        }
+        catch (NetworkException exception)
+        {
+            // Ignore expected exception
+        }
         for (double x0 : values)
         {
             for (double y0 : values)
@@ -45,7 +55,15 @@ public class OTSLine3DTest
                 {
                     points = new OTSPoint3D[1]; // Degenerate array holding one point
                     points[0] = new OTSPoint3D(x0, y0, z0);
-                    runConstructors(points);
+                    try
+                    {
+                        runConstructors(points);
+                        fail("Should have thrown a NetworkException");
+                    }
+                    catch (NetworkException exception)
+                    {
+                        // Ignore expected exception
+                    }
                     for (double x1 : values)
                     {
                         for (double y1 : values)
@@ -55,18 +73,48 @@ public class OTSLine3DTest
                                 points = new OTSPoint3D[2]; // Straight line; two points
                                 points[0] = new OTSPoint3D(x0, y0, z0);
                                 points[1] = new OTSPoint3D(x1, y1, z1);
-                                runConstructors(points);
-                                for (double x2 : values)
+                                if (0 == points[0].distance(points[1]).si)
                                 {
-                                    for (double y2 : values)
+                                    try
                                     {
-                                        for (double z2 : values)
+                                        runConstructors(points);
+                                        fail("Should have thrown a NetworkException");
+                                    }
+                                    catch (NetworkException exception)
+                                    {
+                                        // Ignore expected exception
+                                    }
+                                }
+                                else
+                                {
+                                    runConstructors(points);
+                                    for (double x2 : values)
+                                    {
+                                        for (double y2 : values)
                                         {
-                                            points = new OTSPoint3D[3]; // Line with intermediate point
-                                            points[0] = new OTSPoint3D(x0, y0, z0);
-                                            points[1] = new OTSPoint3D(x1, y1, z1);
-                                            points[2] = new OTSPoint3D(x2, y2, z2);
-                                            runConstructors(points);
+                                            for (double z2 : values)
+                                            {
+                                                points = new OTSPoint3D[3]; // Line with intermediate point
+                                                points[0] = new OTSPoint3D(x0, y0, z0);
+                                                points[1] = new OTSPoint3D(x1, y1, z1);
+                                                points[2] = new OTSPoint3D(x2, y2, z2);
+                                                if (0 == points[1].distance(points[2]).si)
+                                                {
+                                                    try
+                                                    {
+                                                        runConstructors(points);
+                                                        fail("Should have thrown a NetworkException");
+                                                    }
+                                                    catch (NetworkException exception)
+                                                    {
+                                                        // Ignore expected exception
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    runConstructors(points);
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -82,8 +130,9 @@ public class OTSLine3DTest
      * Test all the constructors of OTSPoint3D.
      * @param points OTSPoint3D[]; array of OTSPoint3D to test with
      * @throws OTSGeometryException
+     * @throws NetworkException
      */
-    private void runConstructors(final OTSPoint3D[] points) throws OTSGeometryException
+    private void runConstructors(final OTSPoint3D[] points) throws OTSGeometryException, NetworkException
     {
         verifyPoints(new OTSLine3D(points), points);
         Coordinate[] coordinates = new Coordinate[points.length];
@@ -92,13 +141,10 @@ public class OTSLine3DTest
             coordinates[i] = new Coordinate(points[i].x, points[i].y, points[i].z);
         }
         verifyPoints(new OTSLine3D(coordinates), points);
-        if (points.length > 1)
-        {
-            GeometryFactory gm = new GeometryFactory();
-            LineString lineString = gm.createLineString(coordinates);
-            verifyPoints(new OTSLine3D(lineString), points);
-            verifyPoints(new OTSLine3D((Geometry) lineString), points);
-        }
+        GeometryFactory gm = new GeometryFactory();
+        LineString lineString = gm.createLineString(coordinates);
+        verifyPoints(new OTSLine3D(lineString), points);
+        verifyPoints(new OTSLine3D((Geometry) lineString), points);
         List<OTSPoint3D> list = new ArrayList<>();
         for (int i = 0; i < points.length; i++)
         {
@@ -108,11 +154,8 @@ public class OTSLine3DTest
         verifyPoints(line, points);
         // Convert it to Coordinate[], create another OTSLine3D from that and check that
         verifyPoints(new OTSLine3D(line.getCoordinates()), points);
-        if (points.length > 1)
-        {
-            // Convert it to a LineString, create another OTSLine3D from that and check that
-            verifyPoints(new OTSLine3D(line.getLineString()), points);
-        }
+        // Convert it to a LineString, create another OTSLine3D from that and check that
+        verifyPoints(new OTSLine3D(line.getLineString()), points);
         // Convert it to OTSPoint3D[], create another OTSLine3D from that and check that
         verifyPoints(new OTSLine3D(line.getPoints()), points);
         double length = 0;
@@ -147,39 +190,12 @@ public class OTSLine3DTest
 
     /**
      * Test that exception is thrown when it should be.
+     * @throws NetworkException
      */
     @Test
-    public void exceptionTest()
+    public void exceptionTest() throws NetworkException
     {
-        OTSLine3D line = new OTSLine3D(new OTSPoint3D[0]);
-        try
-        {
-            line.get(-1);
-            fail("Should have thrown an exception");
-        }
-        catch (OTSGeometryException oe)
-        {
-            // Ignore expected exception
-        }
-        try
-        {
-            line.get(0);
-            fail("Should have thrown an exception");
-        }
-        catch (OTSGeometryException oe)
-        {
-            // Ignore expected exception
-        }
-        try
-        {
-            line.get(1);
-            fail("Should have thrown an exception");
-        }
-        catch (OTSGeometryException oe)
-        {
-            // Ignore expected exception
-        }
-        line = new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(1, 2, 3), new OTSPoint3D(4, 5, 6) });
+        OTSLine3D line = new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(1, 2, 3), new OTSPoint3D(4, 5, 6) });
         try
         {
             line.get(-1);
@@ -198,7 +214,6 @@ public class OTSLine3DTest
         {
             // Ignore expected exception
         }
-
     }
 
 }

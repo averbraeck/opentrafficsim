@@ -51,9 +51,10 @@ public final class LaneFactory
      * @param to Node; end Node of the new Link
      * @param intermediatePoints OTSPoint3D[]; array of intermediate coordinates (may be null)
      * @return Link; the newly constructed Link
+     * @throws NetworkException when the design line is degenerate (only one point or duplicate point)
      */
     public static CrossSectionLink makeLink(final String name, final OTSNode from, final OTSNode to,
-        final OTSPoint3D[] intermediatePoints)
+        final OTSPoint3D[] intermediatePoints) throws NetworkException
     {
         int coordinateCount = 2 + (null == intermediatePoints ? 0 : intermediatePoints.length);
         OTSPoint3D[] points = new OTSPoint3D[coordinateCount];
