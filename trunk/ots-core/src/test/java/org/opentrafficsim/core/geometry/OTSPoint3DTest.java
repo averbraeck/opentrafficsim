@@ -6,9 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.geom.Point2D;
-import java.util.HashSet;
-import java.util.Set;
 
+import javax.media.j3d.Bounds;
 import javax.vecmath.Point3d;
 
 import nl.tudelft.simulation.language.d3.CartesianPoint;
@@ -17,6 +16,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 import org.junit.Test;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 
 /**
  * Test the methods in OTSPoint.
@@ -58,8 +59,8 @@ public class OTSPoint3DTest
                     checkXYZ(new OTSPoint3D(new Coordinate(x, y)), x, y, 0d);
                     checkXYZ(new OTSPoint3D(new Coordinate(x, y, Double.NaN)), x, y, 0d);
                     checkXYZ(new OTSPoint3D(new Coordinate(x, y, z)), x, y, Double.isNaN(z) ? 0d : z);
-                    // Point pp = new com.vividsolutions.jts.geom.Point(new Coordinate(x, y), precisionModel, SRID)
-                    // checkXYZ(new OTSPoint3D(new Point(x, y)), x, y, 0d);
+                    GeometryFactory gm = new GeometryFactory();
+                    checkXYZ(new OTSPoint3D(gm.createPoint(new Coordinate(x, y, z))), x, y, 0d);
                     checkXYZ(new OTSPoint3D(x, y), x, y, 0d);
                     // Also check the getCoordinate method
                     Coordinate c = p.getCoordinate();
@@ -70,7 +71,32 @@ public class OTSPoint3DTest
                     assertEquals("x value", x, dp.x, Math.ulp(x));
                     assertEquals("y value", y, dp.y, Math.ulp(y));
                     assertEquals("z value", z, dp.z, Math.ulp(z));
-
+                    double qX = 100;
+                    double qY = 200;
+                    double qZ = 300;
+                    OTSPoint3D q = new OTSPoint3D(qX, qY, qZ);
+                    double expectedDistance = Math.sqrt(Math.pow(x - qX, 2) + Math.pow(y - qY, 2) + Math.pow(z - qZ, 2));
+                    assertEquals("Distance to q should be " + expectedDistance, expectedDistance, p.distance(q).si,
+                            expectedDistance / 99999);
+                    Bounds bounds = p.getBounds();
+                    // System.out.println("Bounds of " + p + " is " + bounds);
+                    assertTrue("Point (0,0,0) is within its bounds", bounds.intersect(new Point3d(0, 0, 0)));
+                    assertFalse("Point at distance 1 in any direction is outside its bounds",
+                            bounds.intersect(new Point3d(-1, 0, 0)));
+                    assertFalse("Point at distance 1 in any direction is outside its bounds",
+                            bounds.intersect(new Point3d(1, 0, 0)));
+                    assertFalse("Point at distance 1 in any direction is outside its bounds",
+                            bounds.intersect(new Point3d(0, -1, 0)));
+                    assertFalse("Point at distance 1 in any direction is outside its bounds",
+                            bounds.intersect(new Point3d(0, 1, 0)));
+                    assertFalse("Point at distance 1 in any direction is outside its bounds",
+                            bounds.intersect(new Point3d(0, 0, -1)));
+                    assertFalse("Point at distance 1 in any direction is outside its bounds",
+                            bounds.intersect(new Point3d(0, 0, 1)));
+                    DirectedPoint directedPoint = p.getLocation();
+                    assertEquals("Location returns a DirectedPoint at the location of p", x, directedPoint.x, Math.ulp(x));
+                    assertEquals("Location returns a DirectedPoint at the location of p", y, directedPoint.y, Math.ulp(y));
+                    assertEquals("Location returns a DirectedPoint at the location of p", z, directedPoint.z, Math.ulp(z));
                     String s = p.toString();
                     assertNotNull("toString returns something", s);
                     assertTrue("toString returns string of reasonable length", s.length() > 10);
