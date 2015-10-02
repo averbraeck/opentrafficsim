@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.opentrafficsim.core.network.NetworkException;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
@@ -75,7 +77,15 @@ public final class OTSBuffering
         if (bufferOffset < precision) // if this is not added, and offset = 1E-16: CRASH
         {
             // return a copy of the reference line
-            return new OTSLine3D(referenceCoordinates);
+            try
+            {
+                return new OTSLine3D(referenceCoordinates);
+            }
+            catch (NetworkException exception)
+            {
+                // Cannot happen
+                throw new Error("Caught impossible exception while creating OTSLine3D: " + exception.getMessage());
+            }
         }
         Geometry geometryLine = referenceLine.getLineString();
         Coordinate[] bufferCoordinates =
@@ -202,7 +212,15 @@ public final class OTSBuffering
             coordinates = new Coordinate[coordinateList2.size()];
             coordinateList2.toArray(coordinates);
         }
-        return new OTSLine3D(coordinates);
+        try
+        {
+            return new OTSLine3D(coordinates);
+        }
+        catch (NetworkException exception)
+        {
+            // Cannot happen
+            throw new Error("Caught impossible exception in OTSLine3D: " + exception.getMessage());
+        }
     }
 
     /**
@@ -271,6 +289,14 @@ public final class OTSBuffering
         {
             resultCoordinates[index] = out.get(index);
         }
-        return new OTSLine3D(resultCoordinates);
+        try
+        {
+            return new OTSLine3D(resultCoordinates);
+        }
+        catch (NetworkException exception)
+        {
+            // Cannot happen
+            throw new Error("Caught impossible exception in OTSLine3D " + exception.getMessage());
+        }
     }
 }

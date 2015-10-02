@@ -275,8 +275,9 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      * @param cse the CrossSectionElement to construct the contour for
      * @return the geometry belonging to this CrossSectionElement.
      * @throws OTSGeometryException when construction of the geometry fails
+     * @throws NetworkException when the resulting contour is degenerate (cannot happen; we hope)
      */
-    public static OTSLine3D constructContour(final CrossSectionElement cse) throws OTSGeometryException
+    public static OTSLine3D constructContour(final CrossSectionElement cse) throws OTSGeometryException, NetworkException
     {
         OTSLine3D crossSectionDesignLine =
             OTSBuffering.offsetLine(cse.getParentLink().getDesignLine(), cse.getDesignLineOffsetAtBegin().getSI(), cse
