@@ -83,13 +83,15 @@ public final class OTSBuffering
             }
             catch (NetworkException exception)
             {
-                // Cannot happen
+                // System.err.println("CANNOT HAPPEN");
                 throw new Error("Caught impossible exception while creating OTSLine3D: " + exception.getMessage());
             }
         }
         Geometry geometryLine = referenceLine.getLineString();
         Coordinate[] bufferCoordinates =
             geometryLine.buffer(bufferOffset, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
+        // Z coordinates may be NaN at this point 
+        
         // find the coordinate indices closest to the start point and end point, at a distance of approximately the
         // offset
         Coordinate sC0 = referenceCoordinates[0];
@@ -218,7 +220,7 @@ public final class OTSBuffering
         }
         catch (NetworkException exception)
         {
-            // Cannot happen
+            // System.err.println("CANNOT HAPPEN");
             throw new Error("Caught impossible exception in OTSLine3D: " + exception.getMessage());
         }
     }
@@ -295,7 +297,7 @@ public final class OTSBuffering
         }
         catch (NetworkException exception)
         {
-            // Cannot happen
+            // System.err.println("CANNOT HAPPEN");
             throw new Error("Caught impossible exception in OTSLine3D " + exception.getMessage());
         }
     }
