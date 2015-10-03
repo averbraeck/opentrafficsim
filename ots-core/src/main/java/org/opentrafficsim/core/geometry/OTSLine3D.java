@@ -83,7 +83,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         OTSPoint3D[] result = new OTSPoint3D[coordinates.length];
         for (int i = 0; i < coordinates.length; i++)
         {
-            result[i] = new OTSPoint3D(coordinates[i].x, coordinates[i].y, coordinates[i].z);
+            result[i] = new OTSPoint3D(coordinates[i]);
         }
         return result;
     }

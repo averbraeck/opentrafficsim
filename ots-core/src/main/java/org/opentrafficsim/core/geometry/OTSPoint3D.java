@@ -118,7 +118,7 @@ public class OTSPoint3D implements LocatableInterface, Serializable
      */
     public OTSPoint3D(final Coordinate coordinate)
     {
-        this(coordinate.x, coordinate.y, (Double.isNaN(coordinate.z)) ? 0.0 : coordinate.z);
+        this(coordinate.x, coordinate.y, Double.isNaN(coordinate.z) ? 0.0 : coordinate.z);
     }
 
     /**
