@@ -1,11 +1,18 @@
 package org.opentrafficsim.core.geometry;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.media.j3d.Bounds;
+
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Length;
 import org.junit.Test;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -214,6 +221,125 @@ public class OTSLine3DTest
         {
             // Ignore expected exception
         }
+    }
+
+    /**
+     * Test the getLocationExtended method & friends.
+     * @throws NetworkException
+     */
+    @Test
+    public void locationExtendedTest() throws NetworkException
+    {
+        OTSPoint3D p0 = new OTSPoint3D(10, 20, 30);
+        OTSPoint3D p1 = new OTSPoint3D(40, 50, 60);
+        OTSPoint3D p2 = new OTSPoint3D(90, 80, 70);
+        OTSLine3D l = new OTSLine3D(new OTSPoint3D[] { p0, p1, p2 });
+        checkGetLocation(l, -10, null, Math.atan2(p1.y - p0.y, p1.x - p0.x));
+        checkGetLocation(l, -0.0001, p0, Math.atan2(p1.y - p0.y, p1.x - p0.x));
+        checkGetLocation(l, 0, p0, Math.atan2(p1.y - p0.y, p1.x - p0.x));
+        checkGetLocation(l, 0.0001, p0, Math.atan2(p1.y - p0.y, p1.x - p0.x));
+        checkGetLocation(l, 0.9999, p2, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+        checkGetLocation(l, 1, p2, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+        checkGetLocation(l, 1.0001, p2, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+        checkGetLocation(l, 10, null, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+    }
+
+    /**
+     * Check the location returned by the various location methods.
+     * @param line OTSLine3D; the line
+     * @param fraction double; relative position to check
+     * @param expectedPoint OTSPoint3D; expected location of the result
+     * @param expectedZRotation double; expected Z rotation of the result
+     * @throws NetworkException
+     */
+    private void checkGetLocation(OTSLine3D line, double fraction, OTSPoint3D expectedPoint, double expectedZRotation)
+            throws NetworkException
+    {
+        double length = line.getLengthSI();
+        checkDirectedPoint(line.getLocationExtendedSI(fraction * length), expectedPoint, expectedZRotation);
+        Length.Rel typedLength = new Length.Rel(fraction * length, LengthUnit.METER);
+        checkDirectedPoint(line.getLocationExtended(typedLength), expectedPoint, expectedZRotation);
+        if (fraction < 0 || fraction > 1)
+        {
+            try
+            {
+                line.getLocationSI(fraction * length);
+                fail("getLocation should have thrown a NetworkException");
+            }
+            catch (NetworkException ne)
+            {
+                // Ignore expected exception
+            }
+            try
+            {
+                line.getLocation(typedLength);
+                fail("getLocation should have thrown a NetworkException");
+            }
+            catch (NetworkException ne)
+            {
+                // Ignore expected exception
+            }
+            try
+            {
+                line.getLocationFraction(fraction);
+                fail("getLocation should have thrown a NetworkException");
+            }
+            catch (NetworkException ne)
+            {
+                // Ignore expected exception
+            }
+        }
+        else
+        {
+            checkDirectedPoint(line.getLocationSI(fraction * length), expectedPoint, expectedZRotation);
+            checkDirectedPoint(line.getLocation(typedLength), expectedPoint, expectedZRotation);
+            checkDirectedPoint(line.getLocationFraction(fraction), expectedPoint, expectedZRotation);
+        }
+        
+    }
+
+    /**
+     * Verify the location and direction of a DirectedPoint.
+     * @param dp DirectedPoint; the DirectedPoint that should be verified
+     * @param expectedPoint OTSPoint3D; the expected location (or null if location should not be checked)
+     * @param expectedZRotation double; the expected Z rotation
+     */
+    private void checkDirectedPoint(DirectedPoint dp, OTSPoint3D expectedPoint, double expectedZRotation)
+    {
+        // TODO verify rotations around x and y
+        if (null != expectedPoint)
+        {
+            OTSPoint3D p = new OTSPoint3D(dp);
+            assertEquals("locationExtendedSI(0) returns approximately expected point", 0, expectedPoint.distanceSI(p), 0.1);
+        }
+        assertEquals("z-rotation at 0", expectedZRotation, dp.getRotZ(), 0.001);
+    }
+
+    /**
+     * Test getLocation method.
+     * @throws NetworkException
+     */
+    @Test
+    public void locationTest() throws NetworkException
+    {
+        OTSPoint3D p0 = new OTSPoint3D(10, 20, 60);
+        OTSPoint3D p1 = new OTSPoint3D(40, 50, 60);
+        OTSPoint3D p2 = new OTSPoint3D(90, 70, 90);
+        OTSLine3D l = new OTSLine3D(new OTSPoint3D[] { p0, p1, p2 });
+        DirectedPoint dp = l.getLocation();
+        assertEquals("centroid x", 50, dp.x, 0.001);
+        assertEquals("centroid y", 45, dp.y, 0.001);
+        assertEquals("centroid z", 75, dp.z, 0.001);
+        l = new OTSLine3D(new OTSPoint3D[] { p1, p0, p2 }); // some argument swapped
+        dp = l.getLocation();
+        assertEquals("centroid x", 50, dp.x, 0.001);
+        assertEquals("centroid y", 45, dp.y, 0.001);
+        assertEquals("centroid z", 75, dp.z, 0.001);
+        l = new OTSLine3D(new OTSPoint3D[] { p0, p1 }); // all in same Z-plane
+        dp = l.getLocation();
+        assertEquals("centroid x", 25, dp.x, 0.001);
+        assertEquals("centroid y", 35, dp.y, 0.001);
+        assertEquals("centroid z", 60, dp.z, 0.001);
     }
 
 }
