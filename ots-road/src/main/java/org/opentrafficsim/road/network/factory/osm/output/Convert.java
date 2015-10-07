@@ -107,7 +107,7 @@ public final class Convert
      * This method converts an OSM link to an OTS link.
      * @param link OSM Link to be converted
      * @return OTS Link
-     * @throws NetworkException 
+     * @throws NetworkException
      */
     public CrossSectionLink convertLink(final OSMLink link) throws NetworkException
     {
@@ -207,9 +207,10 @@ public final class Convert
      * @param osmLink - The OSM Link on which the conversion is based.
      * @param warningListener WarningListener; the warning listener that receives warning events
      * @return Map&lt;Double, LaneAttributes&gt;; the lane structure
+     * @throws NetworkException on failure
      */
     private static Map<Double, LaneAttributes> makeStructure(final OSMLink osmLink,
-        final WarningListener warningListener)
+        final WarningListener warningListener) throws NetworkException
     {
         SortedMap<Integer, LaneAttributes> structure = new TreeMap<Integer, LaneAttributes>();
         int forwards = osmLink.getForwardLanes();
@@ -462,9 +463,11 @@ public final class Convert
      * @param backwards - Number of backwards oriented lanes.
      * @param warningListener WarningListener; the warning listener that receives warning events
      * @return Map containing the lane structure with offsets.
+     * @throws NetworkException on failure
      */
     private static Map<Double, LaneAttributes> calculateOffsets(final SortedMap<Integer, LaneAttributes> structure,
         final OSMLink osmLink, final Integer forwards, final Integer backwards, final WarningListener warningListener)
+        throws NetworkException
     {
         HashMap<Double, LaneAttributes> structurewithOffset = new HashMap<Double, LaneAttributes>();
         LaneAttributes laneAttributes;
@@ -509,7 +512,7 @@ public final class Convert
                 }
                 if (null == previousLaneAttributes)
                 {
-                    throw new Error("reverse lane without main lane?");
+                    throw new NetworkException("reverse lane without main lane?");
                 }
                 double useWidth = laneWidth(laneAttributes, osmLink, warningListener);
                 laneAttributes.setWidth(useWidth);
