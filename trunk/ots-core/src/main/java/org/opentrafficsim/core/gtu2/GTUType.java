@@ -115,5 +115,4 @@ public final class GTUType implements Serializable
             return false;
         return true;
     }
-
 }
