@@ -327,12 +327,12 @@ public class OTSLine3DTest
         assertEquals("centroid x", 50, dp.x, 0.001);
         assertEquals("centroid y", 45, dp.y, 0.001);
         assertEquals("centroid z", 75, dp.z, 0.001);
-        l = new OTSLine3D(new OTSPoint3D[] { p1, p0, p2 }); // some argument swapped
+        l = new OTSLine3D(new OTSPoint3D[] { p1, p0, p2 }); // Some arguments swapped
         dp = l.getLocation();
         assertEquals("centroid x", 50, dp.x, 0.001);
         assertEquals("centroid y", 45, dp.y, 0.001);
         assertEquals("centroid z", 75, dp.z, 0.001);
-        l = new OTSLine3D(new OTSPoint3D[] { p0, p1 }); // all in same Z-plane
+        l = new OTSLine3D(new OTSPoint3D[] { p0, p1 }); // Two points; all in same Z-plane
         dp = l.getLocation();
         assertEquals("centroid x", 25, dp.x, 0.001);
         assertEquals("centroid y", 35, dp.y, 0.001);
