@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.naming.NamingException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -29,7 +28,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -125,8 +123,8 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
                     localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration(0.5,
                         METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
                         new Time.Rel(1.0, SECOND), 3));
-                    osm.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND),
-                        localProperties, null, true);
+                    osm.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND),
+                        new Time.Rel(3600.0, SECOND), localProperties, null, true);
                 }
                 catch (Exception e)
                 {
@@ -282,7 +280,7 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$,
- * initial version eb 10, 2015 <br>
+ * initial version Feb 10, 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author Moritz Bergmann
  */
@@ -316,8 +314,8 @@ class OSMModel implements OTSModelInterface
      * @param pL ProgressListener; the receiver of progress events
      * @param converter Convert; the output converter
      */
-    public OSMModel(final ArrayList<AbstractProperty<?>> properties, final OSMNetwork osmNetwork, final WarningListener wL,
-        final ProgressListener pL, final Convert converter)
+    public OSMModel(final ArrayList<AbstractProperty<?>> properties, final OSMNetwork osmNetwork,
+        final WarningListener wL, final ProgressListener pL, final Convert converter)
     {
         this.osmNetwork = osmNetwork;
         this.warningListener = wL;
@@ -330,39 +328,53 @@ class OSMModel implements OTSModelInterface
     public void constructModel(final SimulatorInterface<Abs<TimeUnit>, Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
         throws SimRuntimeException, RemoteException
     {
-        try
+        OTSNetwork otsNetwork = new OTSNetwork(this.osmNetwork.getName());
+        for (OSMNode osmNode : this.osmNetwork.getNodes().values())
         {
-            OTSNetwork otsNetwork = new OTSNetwork(this.osmNetwork.getName());
-            for (OSMNode osmNode : this.osmNetwork.getNodes().values())
+            try
             {
                 otsNetwork.addNode(this.converter.convertNode(osmNode));
             }
-            for (OSMLink osmLink : this.osmNetwork.getLinks())
+            catch (Exception e)
+            {
+                System.err.println(e.getMessage());
+            }
+        }
+        for (OSMLink osmLink : this.osmNetwork.getLinks())
+        {
+            try
             {
                 otsNetwork.addLink(this.converter.convertLink(osmLink));
             }
-            Convert.findSinksandSources(this.osmNetwork, this.progressListener);
-            this.progressListener.progress(new ProgressEvent(this.osmNetwork, "Creation the lanes on "
-                + this.osmNetwork.getLinks().size() + " links"));
-            double total = this.osmNetwork.getLinks().size();
-            double counter = 0;
-            double nextPercentage = 5.0;
-            for (OSMLink link : this.osmNetwork.getLinks())
+            catch (Exception e)
+            {
+                System.err.println(e.getMessage());
+            }
+        }
+        Convert.findSinksandSources(this.osmNetwork, this.progressListener);
+        this.progressListener.progress(new ProgressEvent(this.osmNetwork, "Creation the lanes on "
+            + this.osmNetwork.getLinks().size() + " links"));
+        double total = this.osmNetwork.getLinks().size();
+        double counter = 0;
+        double nextPercentage = 5.0;
+        for (OSMLink link : this.osmNetwork.getLinks())
+        {
+            try
             {
                 this.lanes.addAll(this.converter.makeLanes(link, (OTSDEVSSimulatorInterface) theSimulator,
                     this.warningListener));
-                counter++;
-                double currentPercentage = counter / total * 100;
-                if (currentPercentage >= nextPercentage)
-                {
-                    this.progressListener.progress(new ProgressEvent(this, nextPercentage + "% Progress"));
-                    nextPercentage += 5.0D;
-                }
             }
-        }
-        catch (NetworkException | NamingException | OTSGeometryException ne)
-        {
-            System.out.println(ne.getMessage());
+            catch (Exception e)
+            {
+                System.err.println(e.getMessage());
+            }
+            counter++;
+            double currentPercentage = counter / total * 100;
+            if (currentPercentage >= nextPercentage)
+            {
+                this.progressListener.progress(new ProgressEvent(this, nextPercentage + "% Progress"));
+                nextPercentage += 5.0D;
+            }
         }
         /*
          * System.out.println("Number of Links: " + this.network.getLinks().size()); System.out.println("Number of Nodes: " +
