@@ -66,9 +66,9 @@ public class AccelerationContourPlot extends ContourPlot
         {
             try
             {
-                this.cumulativeTimes.add(new MutableDoubleVector.Abs.Sparse<TimeUnit>(new double[this.getYAxis()
+                this.cumulativeTimes.add(new MutableDoubleVector.Abs.Dense<TimeUnit>(new double[this.getYAxis()
                     .getBinCount()], TimeUnit.SECOND));
-                this.cumulativeAccelerations.add(new MutableDoubleVector.Abs.Sparse<AccelerationUnit>(new double[this
+                this.cumulativeAccelerations.add(new MutableDoubleVector.Abs.Dense<AccelerationUnit>(new double[this
                     .getYAxis().getBinCount()], AccelerationUnit.METER_PER_SECOND_2));
             }
             catch (ValueException exception)
