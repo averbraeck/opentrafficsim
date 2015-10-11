@@ -34,8 +34,8 @@ public class OTSLine3DTest
 {
     /**
      * Test the constructors of OTSLine3D.
-     * @throws OTSGeometryException
-     * @throws NetworkException
+     * @throws OTSGeometryException on failure
+     * @throws NetworkException on failure
      */
     @Test
     public void constructorsTest() throws OTSGeometryException, NetworkException
@@ -133,8 +133,8 @@ public class OTSLine3DTest
     /**
      * Test all the constructors of OTSPoint3D.
      * @param points OTSPoint3D[]; array of OTSPoint3D to test with
-     * @throws OTSGeometryException
-     * @throws NetworkException
+     * @throws OTSGeometryException on failure
+     * @throws NetworkException on failure
      */
     private void runConstructors(final OTSPoint3D[] points) throws OTSGeometryException, NetworkException
     {
@@ -194,7 +194,7 @@ public class OTSLine3DTest
 
     /**
      * Test that exception is thrown when it should be.
-     * @throws NetworkException
+     * @throws NetworkException on failure
      */
     @Test
     public void exceptionTest() throws NetworkException
@@ -221,8 +221,8 @@ public class OTSLine3DTest
     }
 
     /**
-     * Test the getLocationExtended method & friends.
-     * @throws NetworkException
+     * Test the getLocationExtended method and friends.
+     * @throws NetworkException on failure
      */
     @Test
     public void locationExtendedTest() throws NetworkException
@@ -247,7 +247,7 @@ public class OTSLine3DTest
      * @param fraction double; relative position to check
      * @param expectedPoint OTSPoint3D; expected location of the result
      * @param expectedZRotation double; expected Z rotation of the result
-     * @throws NetworkException
+     * @throws NetworkException on failure
      */
     private void checkGetLocation(OTSLine3D line, double fraction, OTSPoint3D expectedPoint, double expectedZRotation)
             throws NetworkException
@@ -314,7 +314,7 @@ public class OTSLine3DTest
 
     /**
      * Test getLocation method.
-     * @throws NetworkException
+     * @throws NetworkException on failure
      */
     @Test
     public void locationTest() throws NetworkException

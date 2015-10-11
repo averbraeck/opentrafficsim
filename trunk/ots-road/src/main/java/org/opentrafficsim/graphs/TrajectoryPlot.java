@@ -457,7 +457,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
 
         /**
          * Add a trajectory segment and update the currentEndTime and currentEndPosition.
-         * @param car AbstractLaneBasedGTU&lt;>&gt;; the GTU whose currently committed trajectory segment must be added
+         * @param car AbstractLaneBasedGTU; the GTU whose currently committed trajectory segment must be added
          * @param lane Lane; the Lane that the positionOffset is valid for
          * @param positionOffset double; offset needed to convert the position in the current Lane to a position on the
          *            trajectory
