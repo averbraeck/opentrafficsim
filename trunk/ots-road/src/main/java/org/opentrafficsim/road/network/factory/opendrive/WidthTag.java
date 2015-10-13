@@ -20,19 +20,27 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class TypeTag 
+class WidthTag 
 {
-    /** start position (s-coordinate). */
+    /** sOffst. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel s = null;
+    Length.Rel sOffst = null;
 
-    /** road type. */
+    /** a. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    String type = null;
-
-    /** maximum allowed speed. */
+    Length.Rel a = null;
+    
+    /** b. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar<SpeedUnit> maxSpeed = null;
+    Length.Rel b = null;
+    
+    /** c. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    Length.Rel c = null;
+    
+    /** d. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    Length.Rel d = null;
 
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.
@@ -43,30 +51,40 @@ class TypeTag
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseType(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
+    static void parseWidth(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final LaneTag laneTag)
         throws SAXException, NetworkException
     {
-        int typeCount = 0;
-        for (Node node : XMLParser.getNodes(nodeList, "type"))
+        int widthCount = 0;
+        for (Node node : XMLParser.getNodes(nodeList, "width"))
         {
-            typeCount++;
-            TypeTag typeTag = new TypeTag();
+            widthCount++;
+            WidthTag widthTag = new WidthTag();
             NamedNodeMap attributes = node.getAttributes();
 
-            Node s = attributes.getNamedItem("s");
-            if (s == null)
-                throw new SAXException("ROAD.TYPE: missing attribute s for ROAD.ID=" + roadTag.id);
-            typeTag.s = new Length.Rel(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
+            Node sOffst = attributes.getNamedItem("sOffst");
+            if (sOffst != null)
+                widthTag.sOffst = new Length.Rel(Double.parseDouble(sOffst.getNodeValue().trim()), LengthUnit.METER);
             
-            Node type = attributes.getNamedItem("type");
-            if (type == null)
-                throw new SAXException("ROAD.TYPE: missing attribute type for ROAD.ID=" + roadTag.id);
-            typeTag.type = type.getNodeValue().trim();
+            Node a = attributes.getNamedItem("a");
+            if (a != null)
+                widthTag.a = new Length.Rel(Double.parseDouble(a.getNodeValue().trim()), LengthUnit.METER);
+            
+            Node b = attributes.getNamedItem("b");
+            if (b != null)
+                widthTag.b = new Length.Rel(Double.parseDouble(b.getNodeValue().trim()), LengthUnit.METER);
+            
+            Node c = attributes.getNamedItem("c");
+            if (c != null)
+                widthTag.c = new Length.Rel(Double.parseDouble(c.getNodeValue().trim()), LengthUnit.METER);
+            
+            Node d = attributes.getNamedItem("d");
+            if (d != null)
+                widthTag.d = new Length.Rel(Double.parseDouble(d.getNodeValue().trim()), LengthUnit.METER);
 
-            roadTag.typeTag = typeTag;
+            laneTag.widthTag = widthTag;
         }
 
-        if (typeCount > 1)
-            throw new SAXException("ROAD: more than one TYPE tag for road id=" + roadTag.id);
+        if (widthCount > 1)
+            throw new SAXException("ROAD: more than one width tag for road");
     }
 }

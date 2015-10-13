@@ -4,6 +4,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.w3c.dom.NamedNodeMap;
@@ -20,19 +21,16 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class TypeTag 
+class SpeedTag 
 {
-    /** start position (s-coordinate). */
+    /** sOffst. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel s = null;
+    Length.Rel sOffst = null;
 
-    /** road type. */
+    /** max speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    String type = null;
-
-    /** maximum allowed speed. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar<SpeedUnit> maxSpeed = null;
+    Speed max = null;
+    
 
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.
@@ -43,30 +41,26 @@ class TypeTag
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseType(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
+    static void parseSpeed(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final LaneTag laneTag)
         throws SAXException, NetworkException
     {
-        int typeCount = 0;
-        for (Node node : XMLParser.getNodes(nodeList, "type"))
-        {
-            typeCount++;
-            TypeTag typeTag = new TypeTag();
+        int speedCount = 0;
+        for (Node node : XMLParser.getNodes(nodeList, "speed"))
+        {            
+            SpeedTag speedTag = new SpeedTag();
             NamedNodeMap attributes = node.getAttributes();
 
-            Node s = attributes.getNamedItem("s");
-            if (s == null)
-                throw new SAXException("ROAD.TYPE: missing attribute s for ROAD.ID=" + roadTag.id);
-            typeTag.s = new Length.Rel(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
+            Node sOffst = attributes.getNamedItem("sOffst");
+            if (sOffst != null)
+                speedTag.sOffst = new Length.Rel(Double.parseDouble(sOffst.getNodeValue().trim()), LengthUnit.METER);
             
-            Node type = attributes.getNamedItem("type");
-            if (type == null)
-                throw new SAXException("ROAD.TYPE: missing attribute type for ROAD.ID=" + roadTag.id);
-            typeTag.type = type.getNodeValue().trim();
+            Node max = attributes.getNamedItem("max");
+            if (max != null)
+                speedTag.max = new Speed(Double.parseDouble(max.getNodeValue().trim()), SpeedUnit.METER_PER_SECOND);
 
-            roadTag.typeTag = typeTag;
+            laneTag.speedTags.add(speedCount, speedTag);
+            speedCount++;
         }
 
-        if (typeCount > 1)
-            throw new SAXException("ROAD: more than one TYPE tag for road id=" + roadTag.id);
     }
 }
