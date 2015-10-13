@@ -1,7 +1,9 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import org.djunits.unit.AnglePlaneUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.AnglePlane;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
@@ -20,19 +22,12 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class TypeTag 
+class ArcTag 
 {
-    /** start position (s-coordinate). */
+    /** degree of the curve at the start(s-coordinate?). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel s = null;
+    AnglePlane.Rel curvature = null;
 
-    /** road type. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    String type = null;
-
-    /** maximum allowed speed. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    DoubleScalar<SpeedUnit> maxSpeed = null;
 
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.
@@ -43,30 +38,24 @@ class TypeTag
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseType(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
+    static void parseArc(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final GeometryTag geometryTag)
         throws SAXException, NetworkException
     {
         int typeCount = 0;
-        for (Node node : XMLParser.getNodes(nodeList, "type"))
+        for (Node node : XMLParser.getNodes(nodeList, "arc"))
         {
             typeCount++;
-            TypeTag typeTag = new TypeTag();
+            ArcTag arcTag = new ArcTag();
             NamedNodeMap attributes = node.getAttributes();
 
-            Node s = attributes.getNamedItem("s");
-            if (s == null)
-                throw new SAXException("ROAD.TYPE: missing attribute s for ROAD.ID=" + roadTag.id);
-            typeTag.s = new Length.Rel(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
-            
-            Node type = attributes.getNamedItem("type");
-            if (type == null)
-                throw new SAXException("ROAD.TYPE: missing attribute type for ROAD.ID=" + roadTag.id);
-            typeTag.type = type.getNodeValue().trim();
+            Node curvature = attributes.getNamedItem("curvature");
+            if (curvature != null)
+                arcTag.curvature = new AnglePlane.Rel(Double.parseDouble(curvature.getNodeValue().trim()), AnglePlaneUnit.DEGREE);
 
-            roadTag.typeTag = typeTag;
+            geometryTag.arcTag = arcTag;
         }
 
         if (typeCount > 1)
-            throw new SAXException("ROAD: more than one TYPE tag for road id=" + roadTag.id);
+            throw new SAXException("ROAD: more than one arc tag!");
     }
 }

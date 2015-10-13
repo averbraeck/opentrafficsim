@@ -1,6 +1,10 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.network.factory.XMLParser;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -23,6 +27,14 @@ class JunctionTag
     /** unique ID within database. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String id = null;
+    
+    /** a map of connections in the junction */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    Map<String, ConnectionTag> connectionTags = new HashMap<String, ConnectionTag>();
+    
+    /** a map of controller in the junction */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    Map<String, ControllerTag> controllerTags = new HashMap<String, ControllerTag>();
 
     /**
      * Parse the attributes of the junction tag. The sub-elements are parsed in separate classes.
@@ -49,10 +61,19 @@ class JunctionTag
         if (name == null)
             throw new SAXException("JUNCTION: missing attribute NAME for ID=" + junctionTag.id);
         junctionTag.name = name.getNodeValue().trim();
-
-        // TODO parse junction.connection
-        // TODO parse junction.laneLink
-        // TODO parse junction.priority
-        // TODO parse junction.controller
+        
+        for (Node connectionNode : XMLParser.getNodes(node.getChildNodes(), "connection"))
+        {
+            ConnectionTag connectionTag = ConnectionTag.parseConnection(connectionNode, parser);
+            junctionTag.connectionTags.put(connectionTag.id, connectionTag);
+        }
+        
+        for (Node connectionNode : XMLParser.getNodes(node.getChildNodes(), "controller"))
+        {
+            ControllerTag controllerTag = ControllerTag.parseController(connectionNode, parser);
+            junctionTag.controllerTags.put(controllerTag.id, controllerTag);
+        }
+        
+        parser.junctionTags.put(junctionTag.id, junctionTag);
     }
 }

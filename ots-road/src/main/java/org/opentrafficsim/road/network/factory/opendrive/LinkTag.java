@@ -106,14 +106,17 @@ class LinkTag
 
                 Node contactPoint = attributes.getNamedItem("contactPoint");
                 if (contactPoint == null)
-                    throw new SAXException("ROAD.LINK.PREDECESSOR: missing attribute contactPoint for ROAD.ID=" + roadTag.id);
-                if ("start".equals(contactPoint.getNodeValue().trim()))
-                    linkTag.predecessorContactPoint = ContactPointEnum.START;
-                else if ("end".equals(contactPoint.getNodeValue().trim()))
-                    linkTag.predecessorContactPoint = ContactPointEnum.END;
+                    System.out.println("ROAD " + roadTag.id + " has no contactPoint for PREDECESSOR " + elementType.getNodeValue().trim() + elementId.getNodeValue().trim());
                 else
-                    throw new SAXException("ROAD.LINK.PREDECESSOR: contactPoint for ROAD.ID=" + roadTag.id
-                        + " is neither 'start' nor 'end' but: " + contactPoint.getNodeValue().trim());
+                {
+                    if ("start".equals(contactPoint.getNodeValue().trim()))
+                        linkTag.predecessorContactPoint = ContactPointEnum.START;
+                    else if ("end".equals(contactPoint.getNodeValue().trim()))
+                        linkTag.predecessorContactPoint = ContactPointEnum.END;
+                    else
+                        throw new SAXException("ROAD.LINK.PREDECESSOR: contactPoint for ROAD.ID=" + roadTag.id
+                            + " is neither 'start' nor 'end' but: " + contactPoint.getNodeValue().trim());
+                }
             }
 
             /* SUCCESSOR */
@@ -143,14 +146,17 @@ class LinkTag
 
                 Node contactPoint = attributes.getNamedItem("contactPoint");
                 if (contactPoint == null)
-                    throw new SAXException("ROAD.LINK.SUCCESSOR: missing attribute contactPoint for ROAD.ID=" + roadTag.id);
-                if ("start".equals(contactPoint.getNodeValue().trim()))
-                    linkTag.successorContactPoint = ContactPointEnum.START;
-                else if ("end".equals(contactPoint.getNodeValue().trim()))
-                    linkTag.successorContactPoint = ContactPointEnum.END;
+                    System.out.println("ROAD " + roadTag.id + " has no contactPoint for SUCCESSOR " + elementType.getNodeValue().trim() + elementId.getNodeValue().trim());
                 else
-                    throw new SAXException("ROAD.LINK.SUCCESSOR: contactPoint for ROAD.ID=" + roadTag.id
-                        + " is neither 'start' nor 'end' but: " + contactPoint.getNodeValue().trim());
+                {
+                    if ("start".equals(contactPoint.getNodeValue().trim()))
+                        linkTag.successorContactPoint = ContactPointEnum.START;
+                    else if ("end".equals(contactPoint.getNodeValue().trim()))
+                        linkTag.successorContactPoint = ContactPointEnum.END;
+                    else
+                        throw new SAXException("ROAD.LINK.SUCCESSOR: contactPoint for ROAD.ID=" + roadTag.id
+                            + " is neither 'start' nor 'end' but: " + contactPoint.getNodeValue().trim());
+                }
             }
 
             /* NEIGHBOR */

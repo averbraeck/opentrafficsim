@@ -38,7 +38,15 @@ import org.xml.sax.SAXException;
  */
 public class OpenDriveNetworkLaneParser
 {
+    /** Header tag. */
+    @SuppressWarnings("visibilitymodifier")
+    protected HeaderTag headerTag = null;
+    
     /** Junction tags. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, ControllerTag> controllerTags = new HashMap<>();
+    
+    /** Controller tags. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, JunctionTag> junctionTags = new HashMap<>();
 
@@ -106,12 +114,21 @@ public class OpenDriveNetworkLaneParser
         List<Node> headerNodes = XMLParser.getNodes(networkNodeList, "header");
         if (headerNodes.size() != 1)
             throw new SAXException("OpenDriveNetworkLaneParser.build: XML document does not have a header tag");
-        // TODO parse header, geoReference and check version number of OpenDrive
+        else
+            HeaderTag.parseHeader(headerNodes.get(0), this);
 
         // parse the junction tags
         List<Node> junctionNodes = XMLParser.getNodes(networkNodeList, "junction");
         for (Node junctionNode : junctionNodes)
             JunctionTag.parseJunction(junctionNode, this);
+        
+        // parse the junction tags
+        List<Node> controllerNodes = XMLParser.getNodes(networkNodeList, "controller");
+        for (Node controllerNode : controllerNodes)
+        {
+            ControllerTag controllerTag = ControllerTag.parseController(controllerNode, this);
+            this.controllerTags.put(controllerTag.id, controllerTag);
+        }
 
         // parse the road tags
         List<Node> roadNodes = XMLParser.getNodes(networkNodeList, "road");
@@ -122,16 +139,19 @@ public class OpenDriveNetworkLaneParser
             RoadTag roadTag = RoadTag.parseRoad(roadNode, this);
             LinkTag.parseLink(roadNode.getChildNodes(), this, roadTag);
             TypeTag.parseType(roadNode.getChildNodes(), this, roadTag);
-            /*-
+            
             PlanViewTag.parsePlanView(roadNode.getChildNodes(), this, roadTag);
+                        
             ElevationProfileTag.parseElevationProfile(roadNode.getChildNodes(), this, roadTag);
-            LateralProfileTag.parseLateralProfile(roadNode.getChildNodes(), this, roadTag);
+            LateralProfileTag.parseElevationProfile(roadNode.getChildNodes(), this, roadTag);
             LanesTag.parseLanes(roadNode.getChildNodes(), this, roadTag);
-            ObjectsTag.parseObjects(roadNode.getChildNodes(), this, roadTag);
+            //ObjectsTag.parseObjects(roadNode.getChildNodes(), this, roadTag);
             SignalsTag.parseSignals(roadNode.getChildNodes(), this, roadTag);
-            SurfaceTag.parseSurface(roadNode.getChildNodes(), this, roadTag);
+            /*-SurfaceTag.parseSurface(roadNode.getChildNodes(), this, roadTag);
             RailroadTag.parseRailroad(roadNode.getChildNodes(), this, roadTag);
              */
+            
+            RoadTag.showLanes(roadTag, this.simulator);
         }
 
         // store the structure information in the network
