@@ -1,11 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
 import org.djunits.unit.AnglePlaneUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.AnglePlane;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.w3c.dom.NamedNodeMap;
@@ -33,7 +29,7 @@ class ArcTag
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.
      * @param nodeList the list of subnodes of the road node
      * @param parser the parser with the lists of information
-     * @param roadTag the RoadTag to which this element belongs
+     * @param geometryTag the GeometryTag to which this element belongs
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */

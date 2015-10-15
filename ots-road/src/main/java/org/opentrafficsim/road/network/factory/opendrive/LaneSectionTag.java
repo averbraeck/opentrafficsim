@@ -2,7 +2,6 @@ package org.opentrafficsim.road.network.factory.opendrive;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;

@@ -110,7 +110,7 @@ class GeometryTag
     }
     
     /**
-     * @param nodeTag the tag with the info for the node.
+     * @param geometryTag the tag with the info for the node.
      * @return a constructed node
      */
     static OTSNode makeOTSNode(final GeometryTag geometryTag)
