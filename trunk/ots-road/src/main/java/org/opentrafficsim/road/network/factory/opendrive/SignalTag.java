@@ -1,14 +1,10 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.factory.XMLParser;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -68,9 +64,9 @@ class SignalTag
 
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.
-     * @param nodeList the list of subnodes of the road node
+     * @param node the node with signal information
      * @param parser the parser with the lists of information
-     * @param roadTag the RoadTag to which this element belongs
+     * @return the constructed SignalTag
      * @throws SAXException when parsing of the tag fails
      * @throws NetworkException when parsing of the tag fails
      */

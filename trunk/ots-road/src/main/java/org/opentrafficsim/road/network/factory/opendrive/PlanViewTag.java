@@ -61,10 +61,12 @@ class PlanViewTag
     
     /**
      * Find the nodes one by one that have one coordinate defined, and one not defined, and try to build the network from there.
-     * @param roadTag 
-     * @param linkTag the link to process
+     * @param roadTag the road tag
+     * @param planViewTag the link to process
+     * @return a CrossSectionLink
+     * @throws NetworkException when OTSLine3D cannot be constructed
      */
-    static CrossSectionLink buildLink(final PlanViewTag planViewTag, final RoadTag roadTag)
+    static CrossSectionLink buildLink(final PlanViewTag planViewTag, final RoadTag roadTag) throws NetworkException
     {
         int points = planViewTag.geometryTags.size();
 
