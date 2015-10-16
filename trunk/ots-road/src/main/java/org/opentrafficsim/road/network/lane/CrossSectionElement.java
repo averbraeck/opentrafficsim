@@ -297,7 +297,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
             result[resultIndex++] = leftBoundary.get(index);
         }
         result[resultIndex] = rightBoundary.get(0); // close the contour
-        return new OTSLine3D(result);
+        return OTSLine3D.createAndCleanOTSLine3D(result);
     }
 
     /** {@inheritDoc} */
