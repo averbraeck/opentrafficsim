@@ -69,6 +69,10 @@ public class OpenDriveNetworkLaneParser
     /** the simulator for creating the animation. Null if no animation needed. */
     @SuppressWarnings("visibilitymodifier")
     protected OTSDEVSSimulatorInterface simulator;
+    
+    /** OTS network*/
+    @SuppressWarnings("visibilitymodifier")
+    protected OTSNetwork network = null;
 
     /**
      * @param simulator the simulator for creating the animation. Null if no animation needed.
@@ -109,6 +113,8 @@ public class OpenDriveNetworkLaneParser
             throw new SAXException(
                 "OpenDriveNetworkLaneParser.build: XML document does not start with an OpenDRIVE tag, found "
                     + document.getDocumentElement().getNodeName() + " instead");
+        
+        this.network = new OTSNetwork(url.toString());
 
         // there should be a header tag
         List<Node> headerNodes = XMLParser.getNodes(networkNodeList, "header");
@@ -151,11 +157,14 @@ public class OpenDriveNetworkLaneParser
             RailroadTag.parseRailroad(roadNode.getChildNodes(), this, roadTag);
              */
             
-            RoadTag.showLanes(roadTag, this.simulator);
+            RoadTag.showLanes(roadTag, this.simulator, this);
         }
+        
+        for(JunctionTag juncTag: this.junctionTags.values())
+            JunctionTag.showJunctions(juncTag, this.simulator, this);
 
         // store the structure information in the network
-        return makeNetwork(url.toString());
+        return this.network;
     }
 
     /**
@@ -166,7 +175,7 @@ public class OpenDriveNetworkLaneParser
     @SuppressWarnings({"unchecked", "rawtypes"})
     private OTSNetwork makeNetwork(final String name) throws NetworkException
     {
-        OTSNetwork network = new OTSNetwork(name);
+        this.network = new OTSNetwork(name);
         /*-
         for (NodeTag nodeTag : this.nodeTags.values())
         {
@@ -181,7 +190,7 @@ public class OpenDriveNetworkLaneParser
             network.addRoute(routeTag.route);
         }
          */
-        return network;
+        return this.network;
     }
 
 }

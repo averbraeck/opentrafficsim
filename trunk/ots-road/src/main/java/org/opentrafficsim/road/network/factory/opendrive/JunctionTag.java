@@ -1,10 +1,29 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.awt.Color;
+import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.naming.NamingException;
+
+import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.factory.XMLParser;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
+import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -75,5 +94,101 @@ class JunctionTag
         }
         
         parser.junctionTags.put(junctionTag.id, junctionTag);
+    }
+
+    /**
+     * @param juncTag
+     * @param simulator
+     * @param openDriveNetworkLaneParser
+     * @throws NetworkException 
+     * @throws OTSGeometryException 
+     * @throws NamingException 
+     */
+    public static void showJunctions(JunctionTag juncTag, OTSDEVSSimulatorInterface simulator,
+            OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException, OTSGeometryException, NamingException
+    {
+        for(ConnectionTag connectionTag: juncTag.connectionTags.values())
+        {
+            RoadTag inComing = openDriveNetworkLaneParser.roadTags.get(connectionTag.incomingRoad);
+            RoadTag connecting = openDriveNetworkLaneParser.roadTags.get(connectionTag.connectingRoad);
+            
+            Lane inComingLane = null;
+            Lane connectingLane = null;
+            String sublinkId = juncTag.id + "." + connectionTag.id;
+            CrossSectionLink sublink = null;
+            
+            if(inComing.linkTag.successorType !=null && inComing.linkTag.successorType.equals("junction")&&inComing.linkTag.successorId.equals(juncTag.id))
+            {
+                OTSPoint3D[] coordinates = new OTSPoint3D[2];
+                coordinates[0] = inComing.link.getEndNode().getPoint();
+                coordinates[1] = connecting.link.getStartNode().getPoint();
+                
+                OTSLine3D designLine = new OTSLine3D(coordinates);                           
+                
+                sublink =
+                    new CrossSectionLink(sublinkId, inComing.link.getEndNode(), connecting.link.getStartNode(), LinkType.ALL, designLine,
+                        LaneKeepingPolicy.KEEP_LANE);
+
+                openDriveNetworkLaneParser.network.addLink(sublink);                
+                
+                inComingLane = inComing.lanesTag.laneSectionTags.get(inComing.lanesTag.laneSectionTags.size()-1).lanes.get(connectionTag.laneLinkFrom);
+                connectingLane = connecting.lanesTag.laneSectionTags.get(0).lanes.get(connectionTag.laneLinkTo);
+            }
+            else if(inComing.linkTag.predecessorType.equals("junction")&&inComing.linkTag.predecessorId.equals(juncTag.id))
+            {
+                OTSPoint3D[] coordinates = new OTSPoint3D[2];
+                coordinates[0] = connecting.link.getEndNode().getPoint();
+                coordinates[1] = inComing.link.getStartNode().getPoint();
+                
+                OTSLine3D designLine = new OTSLine3D(coordinates);                           
+                
+                sublink =
+                    new CrossSectionLink(sublinkId, connecting.link.getEndNode(), inComing.link.getStartNode(), LinkType.ALL, designLine,
+                        LaneKeepingPolicy.KEEP_LANE);
+
+                openDriveNetworkLaneParser.network.addLink(sublink);                
+                
+                inComingLane = connecting.lanesTag.laneSectionTags.get(connecting.lanesTag.laneSectionTags.size()-1).lanes.get(connectionTag.laneLinkFrom);
+                connectingLane = inComing.lanesTag.laneSectionTags.get(0).lanes.get(connectionTag.laneLinkTo);
+            }
+            else
+            {
+                System.err.println("err in junctions!");
+            }
+            
+
+            
+            OvertakingConditions overtakingConditions = null;
+
+            Speed speed = null;            
+
+/*            if (connectingLane.getSpeedLimit(GTUType.ALL) != null)
+                speed = connectingLane.getSpeedLimit(GTUType.ALL);
+            if (inComingLane.getSpeedLimit(GTUType.ALL) != null)
+                speed = inComingLane.getSpeedLimit(GTUType.ALL);*/
+
+            Map<GTUType, Speed> speedLimit = new LinkedHashMap<>();
+            speedLimit.put(GTUType.ALL, speed);
+            
+            LongitudinalDirectionality direction = LongitudinalDirectionality.FORWARD;
+            Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
+            directionality.put(GTUType.ALL, direction);
+            Color color = Color.gray;
+
+            if(inComingLane != null && connectingLane != null)
+                try
+                {
+                    Lane lane =
+                            new Lane(sublink, sublinkId, inComingLane.getDesignLineOffsetAtEnd(),
+                                    connectingLane.getDesignLineOffsetAtBegin(), inComingLane.getEndWidth(),
+                                    connectingLane.getBeginWidth(), LaneType.NONE, directionality, speedLimit,
+                                    overtakingConditions);
+                    new LaneAnimation(lane, simulator, color);
+                } catch (RemoteException exception)
+                {
+                    exception.printStackTrace();
+                }
+            
+        }
     }
 }

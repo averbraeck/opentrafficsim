@@ -20,25 +20,26 @@ import org.xml.sax.SAXException;
  */
 class LinkTag
 {
-    /** predecessor road id. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    String predecessorRoadId = null;
 
-    /** predecessor junction id. */
+    /** predecessor id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    String predecessorJunctionId = null;
+    String predecessorId = null;
+    
+    /** predecessor Type. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    String predecessorType = null;
 
     /** predecessor contact point. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ContactPointEnum predecessorContactPoint = null;
 
-    /** successor road id. */
+    /** successor id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    String successorRoadId = null;
-
-    /** successor junction id. */
+    String successorId = null;
+    
+    /** successor Type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    String successorJunctionId = null;
+    String successorType = null;
 
     /** successor contact point. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -96,10 +97,11 @@ class LinkTag
                 Node elementType = attributes.getNamedItem("elementType");
                 if (elementType == null)
                     throw new SAXException("ROAD.LINK.PREDECESSOR: missing attribute elementType for ROAD.ID=" + roadTag.id);
-                if ("road".equals(elementType.getNodeValue().trim()))
-                    linkTag.predecessorRoadId = elementId.getNodeValue().trim();
-                else if ("junction".equals(elementType.getNodeValue().trim()))
-                    linkTag.predecessorJunctionId = elementId.getNodeValue().trim();
+                if ("road".equals(elementType.getNodeValue().trim()) || "junction".equals(elementType.getNodeValue().trim()))
+                {
+                    linkTag.predecessorType = elementType.getNodeValue().trim();
+                    linkTag.predecessorId = elementId.getNodeValue().trim();
+                }
                 else
                     throw new SAXException("ROAD.LINK.PREDECESSOR: elementType for ROAD.ID=" + roadTag.id
                         + " is neither 'road' nor 'junction' but: " + elementType.getNodeValue().trim());
@@ -136,10 +138,11 @@ class LinkTag
                 Node elementType = attributes.getNamedItem("elementType");
                 if (elementType == null)
                     throw new SAXException("ROAD.LINK.SUCCESSOR: missing attribute elementType for ROAD.ID=" + roadTag.id);
-                if ("road".equals(elementType.getNodeValue().trim()))
-                    linkTag.successorRoadId = elementId.getNodeValue().trim();
-                else if ("junction".equals(elementType.getNodeValue().trim()))
-                    linkTag.successorJunctionId = elementId.getNodeValue().trim();
+                if ("road".equals(elementType.getNodeValue().trim()) || "junction".equals(elementType.getNodeValue().trim()))
+                {
+                    linkTag.successorType = elementType.getNodeValue().trim();
+                    linkTag.successorId = elementId.getNodeValue().trim();
+                }
                 else
                     throw new SAXException("ROAD.LINK.SUCCESSOR: elementType for ROAD.ID=" + roadTag.id
                         + " is neither 'road' nor 'junction' but: " + elementType.getNodeValue().trim());

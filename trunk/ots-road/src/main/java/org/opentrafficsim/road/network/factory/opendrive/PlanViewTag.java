@@ -50,7 +50,7 @@ class PlanViewTag
             for (Node node : XMLParser.getNodes(node0.getChildNodes(), "geometry"))
             {
                 GeometryTag geometryTag = GeometryTag.parseGeometry(node, parser);
-                geometryTag.id = geometryCount;
+                geometryTag.id = roadTag.id + "." + String.valueOf(geometryCount);
                 geometryCount++;
 
                 planViewTag.geometryTags.add(geometryTag);
@@ -80,7 +80,9 @@ class PlanViewTag
         
         for(GeometryTag geometryTag: planViewTag.geometryTags)
         {
-            coordinates[geometryTag.id] = new OTSPoint3D(geometryTag.x.doubleValue(), geometryTag.y.doubleValue(), geometryTag.hdg.doubleValue());
+            String a[] = geometryTag.id.split("\\.");
+          
+            coordinates[Integer.valueOf(a[1])] = new OTSPoint3D(geometryTag.x.doubleValue(), geometryTag.y.doubleValue(), geometryTag.hdg.doubleValue());
         }
 
         OTSLine3D designLine = new OTSLine3D(coordinates);
