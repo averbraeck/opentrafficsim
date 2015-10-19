@@ -27,7 +27,7 @@ class GeometryTag
 
     /** sequence of the geometry. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Integer id = 0;
+    String id = null;
     
     /** start position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -115,12 +115,11 @@ class GeometryTag
      */
     static OTSNode makeOTSNode(final GeometryTag geometryTag)
     {
-        String id = geometryTag.id.toString();
         AnglePlane.Abs angle = new AnglePlane.Abs(0.0, AnglePlaneUnit.SI);
         AngleSlope.Abs slope = new AngleSlope.Abs(0.0, AngleSlopeUnit.SI);
         OTSPoint3D coordinate = new OTSPoint3D(geometryTag.x.doubleValue(),geometryTag.y.doubleValue(),geometryTag.hdg.doubleValue());
         
-        OTSNode node = new OTSNode(id, coordinate, angle, slope);
+        OTSNode node = new OTSNode(geometryTag.id, coordinate, angle, slope);
         geometryTag.node = node;
         return node;
     }

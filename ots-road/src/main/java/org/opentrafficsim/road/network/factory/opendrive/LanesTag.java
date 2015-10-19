@@ -36,7 +36,7 @@ class LanesTag
     @SuppressWarnings("checkstyle:needbraces")
     static void parseLanes(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
         throws SAXException, NetworkException
-    {
+    {        
         int laneSectionCount = 0;
         for (Node node0 : XMLParser.getNodes(nodeList, "lanes"))
             for (Node node : XMLParser.getNodes(node0.getChildNodes(), "laneSection"))

@@ -7,6 +7,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
+import org.opentrafficsim.road.network.lane.Lane;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -42,6 +43,10 @@ class LaneSectionTag
     /** right lanes */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<Integer, LaneTag> rightLaneTags = new HashMap<Integer, LaneTag>();
+    
+    /** all lanes */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    Map<Integer, Lane> lanes = new HashMap<Integer, Lane>();
 
     /**
      * Parse the attributes of the road tag. The sub-elements are parsed in separate classes.
