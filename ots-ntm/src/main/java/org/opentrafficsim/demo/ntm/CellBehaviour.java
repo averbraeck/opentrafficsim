@@ -4,8 +4,8 @@ import java.util.HashMap;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Frequency;
 
 /**
  * <p>
@@ -53,10 +53,10 @@ public class CellBehaviour
     private double departures;
 
     /** */
-    private HashMap<BoundedNode, Abs<FrequencyUnit>> borderCapacity;
+    private HashMap<BoundedNode, Frequency> borderCapacity;
 
     /** */
-    private HashMap<BoundedNode, Abs<FrequencyUnit>> borderDemand;
+    private HashMap<BoundedNode, Frequency> borderDemand;
 
     /**
      * @return supply.
@@ -210,7 +210,7 @@ public class CellBehaviour
     /**
      * @return borderCapacity.
      */
-    public HashMap<BoundedNode, Abs<FrequencyUnit>> getBorderCapacity()
+    public HashMap<BoundedNode, Frequency> getBorderCapacity()
     {
         return borderCapacity;
     }
@@ -218,7 +218,7 @@ public class CellBehaviour
     /**
      * @param borderCapacity set borderCapacity.
      */
-    public void setBorderCapacity(HashMap<BoundedNode, Abs<FrequencyUnit>> borderCapacity)
+    public void setBorderCapacity(HashMap<BoundedNode, Frequency> borderCapacity)
     {
         this.borderCapacity = borderCapacity;
     }
@@ -227,24 +227,24 @@ public class CellBehaviour
      * @param demand
      * @param linkData set linkData.
      */
-    public void addBorderDemand(BoundedNode node, Abs<FrequencyUnit> demand)
+    public void addBorderDemand(BoundedNode node, Frequency demand)
     {
         double cap = demand.getInUnit(FrequencyUnit.PER_HOUR);
-        Rel<FrequencyUnit> addCap = new Rel<FrequencyUnit>(cap, FrequencyUnit.PER_HOUR);
+        Frequency addCap = new Frequency(cap, FrequencyUnit.PER_HOUR);
 
         if (this.getBorderDemand().get(node) == null)
         {
-            Abs<FrequencyUnit> zeroCap = new Abs<FrequencyUnit>(0.0, FrequencyUnit.PER_HOUR);
+            Frequency zeroCap = new Frequency(0.0, FrequencyUnit.PER_HOUR);
             this.getBorderDemand().put(node, zeroCap);
         }
-        Abs<FrequencyUnit> total = DoubleScalar.plus(this.getBorderDemand().get(node), addCap);
+        Frequency total = this.getBorderDemand().get(node).plus(addCap);
         this.getBorderDemand().put(node, total);
     }
 
     /**
      * @return borderDemand.
      */
-    public HashMap<BoundedNode, Abs<FrequencyUnit>> getBorderDemand()
+    public HashMap<BoundedNode, Frequency> getBorderDemand()
     {
         return borderDemand;
     }
@@ -252,7 +252,7 @@ public class CellBehaviour
     /**
      * @param borderDemand set borderDemand.
      */
-    public void setBorderDemand(HashMap<BoundedNode, Abs<FrequencyUnit>> borderDemand)
+    public void setBorderDemand(HashMap<BoundedNode, Frequency> borderDemand)
     {
         this.borderDemand = borderDemand;
     }

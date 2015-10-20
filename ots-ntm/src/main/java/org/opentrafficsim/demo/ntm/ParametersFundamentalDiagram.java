@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Frequency;
 
 /**
  * <p>
@@ -33,7 +34,7 @@ public class ParametersFundamentalDiagram
     private DoubleScalar.Abs<SpeedUnit> freeSpeed;
 
     /** */
-    private DoubleScalar.Abs<FrequencyUnit> capacity;
+    private Frequency capacity;
 
     /**
      * @param accCritical
@@ -49,7 +50,7 @@ public class ParametersFundamentalDiagram
      * @param numberOfLanes
      */
     public ParametersFundamentalDiagram(final DoubleScalar.Abs<SpeedUnit> freeSpeed,
-        final DoubleScalar.Abs<FrequencyUnit> capacity, final int numberOfLanes)
+        final Frequency capacity, final int numberOfLanes)
     {
         super();
         this.accCritical = new ArrayList<Double>();
@@ -96,7 +97,7 @@ public class ParametersFundamentalDiagram
     /**
      * @return capacity.
      */
-    public DoubleScalar.Abs<FrequencyUnit> getCapacity()
+    public Frequency getCapacity()
     {
         return this.capacity;
     }
@@ -104,7 +105,7 @@ public class ParametersFundamentalDiagram
     /**
      * @param capacity set capacity.
      */
-    public void setCapacityPerUnit(DoubleScalar.Abs<FrequencyUnit> capacity)
+    public void setCapacityPerUnit(Frequency capacity)
     {
         this.capacity = capacity;
     }

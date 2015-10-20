@@ -13,6 +13,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.opentrafficsim.demo.ntm.CsvFileReader;
 import org.opentrafficsim.demo.ntm.NTMModel;
 import org.opentrafficsim.demo.ntm.ShapeFileReader;
@@ -301,7 +302,7 @@ public class ProjectConfigurations
                 String value = config[1].trim();
                 Double valueDouble = Double.parseDouble(value);
                 DoubleScalar<FrequencyUnit> maxCapacity =
-                    new DoubleScalar.Abs<FrequencyUnit>(valueDouble, FrequencyUnit.PER_HOUR);
+                    new Frequency(valueDouble, FrequencyUnit.PER_HOUR);
                 model.getInputNTM().setMaxCapacity(maxCapacity);
             }
             else if (name.equals("variantNumber"))

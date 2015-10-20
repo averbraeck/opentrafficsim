@@ -23,7 +23,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.trafficdemand.DepartureTimeProfile;
 import org.opentrafficsim.demo.ntm.trafficdemand.FractionOfTripDemandByTimeSegment;
@@ -640,7 +640,7 @@ public class CsvFileReader
         return parametersNTM;
     }
 
-    public static HashMap<String, HashMap<String, Abs<FrequencyUnit>>> readCapResNTM(final String csvFileName,
+    public static HashMap<String, HashMap<String, Frequency>> readCapResNTM(final String csvFileName,
         final String csvSplitBy, final String csvSplitInternalBy) throws IOException, ParseException
     {
         BufferedReader bufferedReader = null;
@@ -654,8 +654,8 @@ public class CsvFileReader
         {
             url = ShapeFileReader.class.getResource(csvFileName);
         }
-        HashMap<String, HashMap<String, Abs<FrequencyUnit>>> capResMap =
-            new HashMap<String, HashMap<String, Abs<FrequencyUnit>>>();
+        HashMap<String, HashMap<String, Frequency>> capResMap =
+            new HashMap<String, HashMap<String, Frequency>>();
         // double OD = capResMap.get("O").get("D");
         if (url != null)
         {
@@ -670,7 +670,7 @@ public class CsvFileReader
                 while ((line = bufferedReader.readLine()) != null)
                 {
                     String centroidName = null;
-                    HashMap<String, Abs<FrequencyUnit>> capRes = new HashMap<String, Abs<FrequencyUnit>>();
+                    HashMap<String, Frequency> capRes = new HashMap<String, Frequency>();
                     String[] completeLine = line.split(csvSplitBy);
                     for (String lineSegment : completeLine)
                     {
@@ -690,8 +690,8 @@ public class CsvFileReader
                                 centroidName = dataItem[0];
                                 for (int i = 1; i < dataItem.length; i++)
                                 {
-                                    Abs<FrequencyUnit> capacity =
-                                        new Abs<FrequencyUnit>(Double.parseDouble(dataItem[i]), FrequencyUnit.PER_HOUR);
+                                    Frequency capacity =
+                                        new Frequency(Double.parseDouble(dataItem[i]), FrequencyUnit.PER_HOUR);
                                     capRes.put(name.get(i), capacity);
                                 }
                             }

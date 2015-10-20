@@ -2,12 +2,12 @@ package org.opentrafficsim.demo.ntm;
 
 import java.util.ArrayList;
 
-import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
@@ -52,7 +52,7 @@ public class LinkCellTransmission extends Link
 
     public LinkCellTransmission(OTSLine3D geometry, String nr, DoubleScalar.Rel<LengthUnit> length, Node startNode,
         Node endNode, DoubleScalar.Abs<SpeedUnit> speed, DoubleScalar.Rel<TimeUnit> time,
-        DoubleScalar.Abs<FrequencyUnit> capacity, TrafficBehaviourType behaviourType, LinkData linkData,
+        Frequency capacity, TrafficBehaviourType behaviourType, LinkData linkData,
         ArrayList<FlowCell> cells, int hierarchy)
     {
         super(geometry, nr, length, startNode, endNode, speed, time, capacity, behaviourType, linkData);
@@ -114,8 +114,8 @@ public class LinkCellTransmission extends Link
                 * timeStepDurationCellTransmission.getInUnit(TimeUnit.HOUR), LengthUnit.KILOMETER);
         // find out how many Cells fit into this Link
         double numberOfCells = Math.max(Math.rint(link.getLength().getSI() / cellLength.getSI()), 1);
-        // DoubleScalar.Abs<FrequencyUnit> capPerLane =
-        // new DoubleScalar.Abs<FrequencyUnit>(link.getCapacity().getSI() * 3600 / link.getNumberOfLanes(),
+        // Frequency capPerLane =
+        // new Frequency(link.getCapacity().getSI() * 3600 / link.getNumberOfLanes(),
         // FrequencyUnit.PER_HOUR);
         // compute the amount of cells
         for (int i = 0; i < numberOfCells; i++)

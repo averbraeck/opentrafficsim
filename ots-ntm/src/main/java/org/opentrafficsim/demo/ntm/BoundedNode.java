@@ -80,7 +80,7 @@ public class BoundedNode extends Node
         {
             DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(80, SpeedUnit.KM_PER_HOUR);
             // TODO parameters should depend on area characteristics
-            // DoubleScalar.Abs<FrequencyUnit> maxCapacityPerLane = new DoubleScalar.Abs<FrequencyUnit>(2000,
+            // Frequency maxCapacityPerLane = new Frequency(2000,
             // FrequencyUnit.PER_HOUR);
             // ParametersFundamentalDiagram parametersCTM = new ParametersFundamentalDiagram(speed, maxCapacityPerLane);
             ParametersFundamentalDiagram parametersCTM = new ParametersFundamentalDiagram();

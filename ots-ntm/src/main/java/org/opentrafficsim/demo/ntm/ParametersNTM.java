@@ -8,6 +8,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Frequency;
 
 /**
  * <p>
@@ -41,7 +42,7 @@ public class ParametersNTM extends ParametersFundamentalDiagram
         this.setFreeSpeed(freeSpeed);
         this.roadLength = roadLength;
         double capacity = this.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR) * this.getAccCritical().get(0);
-        this.setCapacityPerUnit(new DoubleScalar.Abs<FrequencyUnit>(capacity, FrequencyUnit.PER_HOUR));
+        this.setCapacityPerUnit(new Frequency(capacity, FrequencyUnit.PER_HOUR));
     }
 
     /**
@@ -54,7 +55,7 @@ public class ParametersNTM extends ParametersFundamentalDiagram
         super();
         // TODO parameters should depend on area characteristics
         this.setAccCritical(accCritical);
-        this.setCapacityPerUnit(new DoubleScalar.Abs<FrequencyUnit>(capacityPerLaneLength, FrequencyUnit.PER_HOUR));
+        this.setCapacityPerUnit(new Frequency(capacityPerLaneLength, FrequencyUnit.PER_HOUR));
         double freeSpeed = this.getCapacity().getInUnit(FrequencyUnit.PER_HOUR) / this.getAccCritical().get(0);
         this.setFreeSpeed(new DoubleScalar.Abs<SpeedUnit>(freeSpeed, SpeedUnit.KM_PER_HOUR));
         this.roadLength = roadLength;
@@ -90,7 +91,7 @@ public class ParametersNTM extends ParametersFundamentalDiagram
         this.setFreeSpeed(freeSpeed);
         this.roadLength = roadLength;
         double capacity = this.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR) * this.getAccCritical().get(0);
-        this.setCapacityPerUnit(new DoubleScalar.Abs<FrequencyUnit>(capacity, FrequencyUnit.PER_HOUR));
+        this.setCapacityPerUnit(new Frequency(capacity, FrequencyUnit.PER_HOUR));
     }
 
     /**
@@ -111,7 +112,7 @@ public class ParametersNTM extends ParametersFundamentalDiagram
         this.setFreeSpeed(freeSpeed);
         this.roadLength = new Rel<LengthUnit>(0, LengthUnit.KILOMETER);
         double capacity = this.getFreeSpeed().getInUnit(SpeedUnit.KM_PER_HOUR) * this.getAccCritical().get(0);
-        this.setCapacityPerUnit(new DoubleScalar.Abs<FrequencyUnit>(capacity, FrequencyUnit.PER_HOUR));
+        this.setCapacityPerUnit(new Frequency(capacity, FrequencyUnit.PER_HOUR));
     }
 
     /**

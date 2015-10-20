@@ -11,6 +11,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
 
 /**
@@ -41,7 +42,7 @@ public class CellBehaviourNTM extends CellBehaviour
     private Rel<TimeUnit> currentTravelTime;
 
     /** */
-    private Abs<FrequencyUnit> maxCapacityNTMArea;
+    private Frequency maxCapacityNTMArea;
 
     /**
      * parametersNTM are: - id ID - accCritical1 low param - accCritical2 high param - accJam jam param - freeSpeed -
@@ -65,7 +66,7 @@ public class CellBehaviourNTM extends CellBehaviour
         double maxCap =
             parametersNTM.getCapacity().getInUnit(FrequencyUnit.PER_HOUR)
                 * parametersNTM.getRoadLength().getInUnit(LengthUnit.KILOMETER);
-        this.maxCapacityNTMArea = new Abs<FrequencyUnit>(maxCap, FrequencyUnit.PER_HOUR);
+        this.maxCapacityNTMArea = new Frequency(maxCap, FrequencyUnit.PER_HOUR);
         this.area = area;
     }
 
@@ -81,7 +82,7 @@ public class CellBehaviourNTM extends CellBehaviour
         {
             Abs<LinearDensityUnit> densityPerUnit =
                 new DoubleScalar.Abs<LinearDensityUnit>(densityPerUnitDouble, LinearDensityUnit.PER_KILOMETER);
-            Abs<FrequencyUnit> capacityPerUnit =
+            Frequency capacityPerUnit =
                 retrieveSupplyPerLengthUnit(accumulatedCars, roadLength, this.getParametersNTM());
             speedDouble =
                 capacityPerUnit.getInUnit(FrequencyUnit.PER_HOUR)
@@ -102,10 +103,10 @@ public class CellBehaviourNTM extends CellBehaviour
      * @return
      */
     // @Override
-    public Abs<FrequencyUnit> retrieveSupplyPerLengthUnit(final Double accumulatedCars, final Rel<LengthUnit> roadLength,
+    public Frequency retrieveSupplyPerLengthUnit(final Double accumulatedCars, final Rel<LengthUnit> roadLength,
         final ParametersNTM parametersNTM)
     {
-        Abs<FrequencyUnit> supply = parametersNTM.getCapacity();
+        Frequency supply = parametersNTM.getCapacity();
         double densityPerUnitDouble = this.getAccumulatedCars() / roadLength.getInUnit(LengthUnit.KILOMETER);
         if (densityPerUnitDouble > this.getParametersNTM().getAccCritical().get(1))
         {
@@ -121,7 +122,7 @@ public class CellBehaviourNTM extends CellBehaviour
      * @param parametersNTM
      * @return carProduction
      */
-    public final Abs<FrequencyUnit> retrieveDemandPerLengthUnit(final double accumulatedCars,
+    public final Frequency retrieveDemandPerLengthUnit(final double accumulatedCars,
         final Rel<LengthUnit> roadLength, final ParametersNTM parametersNTM)
     {
         double densityPerUnitDouble = this.getAccumulatedCars() / roadLength.getInUnit(LengthUnit.KILOMETER);
@@ -145,7 +146,7 @@ public class CellBehaviourNTM extends CellBehaviour
             Double MINCAP = 0.1;
             carProduction = Math.max(MINCAP * parametersNTM.getCapacity().getInUnit(FrequencyUnit.PER_HOUR), carProduction);
         }
-        return new DoubleScalar.Abs<FrequencyUnit>(carProduction, FrequencyUnit.PER_HOUR);
+        return new Frequency(carProduction, FrequencyUnit.PER_HOUR);
     }
 
     /**
@@ -183,7 +184,7 @@ public class CellBehaviourNTM extends CellBehaviour
     /**
      * @return maxCapacity
      */
-    public final Abs<FrequencyUnit> getMaxCapacityNTMArea()
+    public final Frequency getMaxCapacityNTMArea()
     {
         return this.maxCapacityNTMArea;
     }
@@ -191,7 +192,7 @@ public class CellBehaviourNTM extends CellBehaviour
     /**
      * @param maxCapacity set maxCapacity.
      */
-    public final void setMaxCapacityNTMArea(final Abs<FrequencyUnit> maxCapacityNTMArea)
+    public final void setMaxCapacityNTMArea(final Frequency maxCapacityNTMArea)
     {
         this.maxCapacityNTMArea = maxCapacityNTMArea;
     }

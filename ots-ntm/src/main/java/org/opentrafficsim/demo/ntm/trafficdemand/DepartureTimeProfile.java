@@ -6,7 +6,6 @@ import java.util.TreeMap;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
 
 /**
  * Describes the division the departure of trips within a period over the separate segments
