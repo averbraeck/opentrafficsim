@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.vector.MutableDoubleVector;
+import org.djunits.value.vdouble.vector.MutableLengthVector;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -37,7 +38,7 @@ public class FlowContourPlot extends ContourPlot
     }
 
     /** Storage for the total length traveled in each cell. */
-    private ArrayList<MutableDoubleVector.Abs<LengthUnit>> cumulativeLengths;
+    private ArrayList<MutableLengthVector.Abs> cumulativeLengths;
 
     /** {@inheritDoc} */
     @Override
@@ -52,7 +53,7 @@ public class FlowContourPlot extends ContourPlot
     {
         if (null == this.cumulativeLengths)
         {
-            this.cumulativeLengths = new ArrayList<MutableDoubleVector.Abs<LengthUnit>>();
+            this.cumulativeLengths = new ArrayList<MutableLengthVector.Abs>();
         }
         final int highestBinNeeded =
             (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
@@ -61,8 +62,8 @@ public class FlowContourPlot extends ContourPlot
         {
             try
             {
-                this.cumulativeLengths.add(new MutableDoubleVector.Abs.Dense<LengthUnit>(new double[this.getYAxis()
-                    .getBinCount()], LengthUnit.METER));
+                this.cumulativeLengths.add(new MutableLengthVector.Abs(new double[this.getYAxis().getBinCount()],
+                    LengthUnit.METER, StorageType.DENSE));
             }
             catch (ValueException exception)
             {
@@ -84,15 +85,15 @@ public class FlowContourPlot extends ContourPlot
         {
             try
             {
-                this.cumulativeLengths.add(new MutableDoubleVector.Abs.Dense<LengthUnit>(new double[this.getYAxis()
-                    .getBinCount()], LengthUnit.METER));
+                this.cumulativeLengths.add(new MutableLengthVector.Abs(new double[this.getYAxis().getBinCount()],
+                    LengthUnit.METER, StorageType.DENSE));
             }
             catch (ValueException exception)
             {
                 exception.printStackTrace();
             }
         }
-        MutableDoubleVector.Abs<LengthUnit> values = this.cumulativeLengths.get(timeBin);
+        MutableLengthVector.Abs values = this.cumulativeLengths.get(timeBin);
         try
         {
             values.setSI(distanceBin, values.getSI(distanceBin) + distanceCovered);
@@ -122,7 +123,7 @@ public class FlowContourPlot extends ContourPlot
                 {
                     break;
                 }
-                MutableDoubleVector.Abs<LengthUnit> values = this.cumulativeLengths.get(timeBinIndex);
+                MutableLengthVector.Abs values = this.cumulativeLengths.get(timeBinIndex);
                 for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
                 {
                     cumulativeLengthInSI += values.getSI(distanceBinIndex);

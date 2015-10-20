@@ -5,9 +5,11 @@ import java.util.List;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.vector.MutableDoubleVector;
+import org.djunits.value.vdouble.vector.MutableAccelerationVector;
+import org.djunits.value.vdouble.vector.MutableTimeVector;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -38,10 +40,10 @@ public class AccelerationContourPlot extends ContourPlot
     }
 
     /** Storage for the total time spent in each cell. */
-    private ArrayList<MutableDoubleVector.Abs<TimeUnit>> cumulativeTimes;
+    private ArrayList<MutableTimeVector.Abs> cumulativeTimes;
 
     /** Storage for the total acceleration executed in each cell. */
-    private ArrayList<MutableDoubleVector.Abs<AccelerationUnit>> cumulativeAccelerations;
+    private ArrayList<MutableAccelerationVector> cumulativeAccelerations;
 
     /** {@inheritDoc} */
     @Override
@@ -56,8 +58,8 @@ public class AccelerationContourPlot extends ContourPlot
     {
         if (null == this.cumulativeTimes)
         {
-            this.cumulativeTimes = new ArrayList<MutableDoubleVector.Abs<TimeUnit>>();
-            this.cumulativeAccelerations = new ArrayList<MutableDoubleVector.Abs<AccelerationUnit>>();
+            this.cumulativeTimes = new ArrayList<MutableTimeVector.Abs>();
+            this.cumulativeAccelerations = new ArrayList<MutableAccelerationVector>();
         }
         int highestBinNeeded =
             (int) Math.floor(this.getXAxis().getRelativeBin(newUpperLimit) * this.getXAxis().getCurrentGranularity()
@@ -66,10 +68,10 @@ public class AccelerationContourPlot extends ContourPlot
         {
             try
             {
-                this.cumulativeTimes.add(new MutableDoubleVector.Abs.Dense<TimeUnit>(new double[this.getYAxis()
-                    .getBinCount()], TimeUnit.SECOND));
-                this.cumulativeAccelerations.add(new MutableDoubleVector.Abs.Dense<AccelerationUnit>(new double[this
-                    .getYAxis().getBinCount()], AccelerationUnit.METER_PER_SECOND_2));
+                this.cumulativeTimes.add(new MutableTimeVector.Abs(new double[this.getYAxis().getBinCount()],
+                    TimeUnit.SECOND, StorageType.DENSE));
+                this.cumulativeAccelerations.add(new MutableAccelerationVector(
+                    new double[this.getYAxis().getBinCount()], AccelerationUnit.METER_PER_SECOND_2, StorageType.DENSE));
             }
             catch (ValueException exception)
             {
@@ -87,8 +89,8 @@ public class AccelerationContourPlot extends ContourPlot
         {
             return;
         }
-        MutableDoubleVector.Abs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBin);
-        MutableDoubleVector.Abs<AccelerationUnit> accelerationValues = this.cumulativeAccelerations.get(timeBin);
+        MutableTimeVector.Abs timeValues = this.cumulativeTimes.get(timeBin);
+        MutableAccelerationVector accelerationValues = this.cumulativeAccelerations.get(timeBin);
         try
         {
             timeValues.setSI(distanceBin, timeValues.getSI(distanceBin) + duration);
@@ -120,9 +122,8 @@ public class AccelerationContourPlot extends ContourPlot
                 {
                     break;
                 }
-                MutableDoubleVector.Abs<TimeUnit> timeValues = this.cumulativeTimes.get(timeBinIndex);
-                MutableDoubleVector.Abs<AccelerationUnit> accelerationValues =
-                    this.cumulativeAccelerations.get(timeBinIndex);
+                MutableTimeVector.Abs timeValues = this.cumulativeTimes.get(timeBinIndex);
+                MutableAccelerationVector accelerationValues = this.cumulativeAccelerations.get(timeBinIndex);
                 for (int distanceBinIndex = firstDistanceBin; distanceBinIndex < endDistanceBin; distanceBinIndex++)
                 {
                     cumulativeTimeInSI += timeValues.getSI(distanceBinIndex);

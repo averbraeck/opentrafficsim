@@ -22,12 +22,13 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djunits.value.vdouble.vector.DoubleVector;
+import org.djunits.value.vdouble.vector.AccelerationVector;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -403,10 +404,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             LateralDirectionality.LEFT == preferred ? PREFERREDLANEINCENTIVE : NONPREFERREDLANEINCENTIVE;
         final Acceleration defaultRightLaneIncentive =
             LateralDirectionality.RIGHT == preferred ? PREFERREDLANEINCENTIVE : NONPREFERREDLANEINCENTIVE;
-        DoubleVector.Rel.Dense<AccelerationUnit> defaultLaneIncentives =
-            new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{defaultLeftLaneIncentive.getSI(),
-                STAYINCURRENTLANEINCENTIVE.getSI(), defaultRightLaneIncentive.getSI()}, AccelerationUnit.SI);
-        DoubleVector.Rel.Dense<AccelerationUnit> laneIncentives = laneIncentives(defaultLaneIncentives);
+        AccelerationVector defaultLaneIncentives =
+            new AccelerationVector(new double[]{defaultLeftLaneIncentive.getSI(),
+                STAYINCURRENTLANEINCENTIVE.getSI(), defaultRightLaneIncentive.getSI()}, AccelerationUnit.SI, StorageType.DENSE);
+        AccelerationVector laneIncentives = laneIncentives(defaultLaneIncentives);
         LaneMovementStep lcmr =
             this.laneChangeModel.computeLaneChangeAndAcceleration(this, sameLaneTraffic, rightLaneTraffic,
                 leftLaneTraffic, speedLimit, new Acceleration(laneIncentives
@@ -510,8 +511,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @throws NetworkException on network inconsistency
      * @throws ValueException cannot happen
      */
-    private DoubleVector.Rel.Dense<AccelerationUnit> laneIncentives(
-        final DoubleVector.Rel.Dense<AccelerationUnit> defaultLaneIncentives) throws NetworkException, ValueException
+    private AccelerationVector laneIncentives(
+        final AccelerationVector defaultLaneIncentives) throws NetworkException, ValueException
     {
         Length.Rel leftSuitability = suitability(LateralDirectionality.LEFT);
         Length.Rel currentSuitability = suitability(null);
@@ -535,11 +536,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         }
         if (currentSuitability == AbstractLaneBasedRouteNavigator.NOLANECHANGENEEDED)
         {
-            return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{acceleration(leftSuitability),
-                defaultLaneIncentives.get(1).getSI(), acceleration(rightSuitability)}, AccelerationUnit.SI);
+            return new AccelerationVector(new double[]{acceleration(leftSuitability),
+                defaultLaneIncentives.get(1).getSI(), acceleration(rightSuitability)}, AccelerationUnit.SI, StorageType.DENSE);
         }
-        return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{acceleration(leftSuitability),
-            acceleration(currentSuitability), acceleration(rightSuitability)}, AccelerationUnit.SI);
+        return new AccelerationVector(new double[]{acceleration(leftSuitability),
+            acceleration(currentSuitability), acceleration(rightSuitability)}, AccelerationUnit.SI, StorageType.DENSE);
     }
 
     /**
@@ -551,8 +552,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @throws NetworkException on network inconsistency
      * @throws ValueException cannot happen
      */
-    private DoubleVector.Rel.Dense<AccelerationUnit> checkLaneDrops(
-        final DoubleVector.Rel.Dense<AccelerationUnit> defaultLaneIncentives) throws NetworkException, ValueException
+    private AccelerationVector checkLaneDrops(
+        final AccelerationVector defaultLaneIncentives) throws NetworkException, ValueException
     {
         Length.Rel leftSuitability = laneDrop(LateralDirectionality.LEFT);
         Length.Rel currentSuitability = laneDrop(null);
@@ -569,23 +570,23 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         //@formatter:on
         if (currentSuitability == AbstractLaneBasedRouteNavigator.NOLANECHANGENEEDED)
         {
-            return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{acceleration(leftSuitability),
-                defaultLaneIncentives.get(1).getSI(), acceleration(rightSuitability)}, AccelerationUnit.SI);
+            return new AccelerationVector(new double[]{acceleration(leftSuitability),
+                defaultLaneIncentives.get(1).getSI(), acceleration(rightSuitability)}, AccelerationUnit.SI, StorageType.DENSE);
         }
         if (currentSuitability.le(leftSuitability))
         {
-            return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{PREFERREDLANEINCENTIVE.getSI(),
+            return new AccelerationVector(new double[]{PREFERREDLANEINCENTIVE.getSI(),
                 NONPREFERREDLANEINCENTIVE.getSI(), AbstractLaneBasedRouteNavigator.GETOFFTHISLANENOW.getSI()},
-                AccelerationUnit.SI);
+                AccelerationUnit.SI, StorageType.DENSE);
         }
         if (currentSuitability.le(rightSuitability))
         {
-            return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{
+            return new AccelerationVector(new double[]{
                 AbstractLaneBasedRouteNavigator.GETOFFTHISLANENOW.getSI(), NONPREFERREDLANEINCENTIVE.getSI(),
-                PREFERREDLANEINCENTIVE.getSI()}, AccelerationUnit.SI);
+                PREFERREDLANEINCENTIVE.getSI()}, AccelerationUnit.SI, StorageType.DENSE);
         }
-        return new DoubleVector.Rel.Dense<AccelerationUnit>(new double[]{acceleration(leftSuitability),
-            acceleration(currentSuitability), acceleration(rightSuitability)}, AccelerationUnit.SI);
+        return new AccelerationVector(new double[]{acceleration(leftSuitability),
+            acceleration(currentSuitability), acceleration(rightSuitability)}, AccelerationUnit.SI, StorageType.DENSE);
     }
 
     /**

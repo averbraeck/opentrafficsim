@@ -21,11 +21,12 @@ import javax.swing.event.EventListenerList;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djunits.value.vdouble.vector.DoubleVector;
+import org.djunits.value.vdouble.vector.LengthVector;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItem;
@@ -102,7 +103,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     private final ArrayList<Lane> path;
 
     /** The cumulative lengths of the elements of path. */
-    private final DoubleVector.Rel.Dense<LengthUnit> cumulativeLengths;
+    private final LengthVector.Rel cumulativeLengths;
 
     /**
      * Create a new ContourPlot.
@@ -124,7 +125,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         this.path = new ArrayList<Lane>(path); // make a copy
         double[] endLengths = new double[path.size()];
         double cumulativeLength = 0;
-        DoubleVector.Rel.Dense<LengthUnit> lengths = null;
+        LengthVector.Rel lengths = null;
         for (int i = 0; i < path.size(); i++)
         {
             Lane lane = path.get(i);
@@ -134,7 +135,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         }
         try
         {
-            lengths = new DoubleVector.Rel.Dense<LengthUnit>(endLengths, LengthUnit.SI);
+            lengths = new LengthVector.Rel(endLengths, LengthUnit.SI, StorageType.DENSE);
         }
         catch (ValueException exception)
         {

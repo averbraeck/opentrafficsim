@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.vector.MutableDoubleVector;
+import org.djunits.value.vdouble.vector.MutableTimeVector;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -61,8 +63,8 @@ public class DensityContourPlot extends ContourPlot
         {
             try
             {
-                this.cumulativeTimes.add(new MutableDoubleVector.Abs.Dense<TimeUnit>(new double[this.getYAxis()
-                    .getBinCount()], TimeUnit.SECOND));
+                this.cumulativeTimes.add(new MutableTimeVector.Abs(new double[this.getYAxis()
+                    .getBinCount()], TimeUnit.SECOND, StorageType.DENSE));
             }
             catch (ValueException exception)
             {
