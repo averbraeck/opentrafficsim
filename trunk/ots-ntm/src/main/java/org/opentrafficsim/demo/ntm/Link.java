@@ -16,8 +16,11 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 
@@ -58,7 +61,7 @@ public class Link extends OTSLink
     private LinkData linkData;
 
     /** */
-    private Abs<FrequencyUnit> corridorCapacity;
+    private Frequency corridorCapacity;
 
     /** */
     private int numberOfLanes;
@@ -83,15 +86,15 @@ public class Link extends OTSLink
 
     public Link(final OTSLine3D geometry, final String nr, final DoubleScalar.Rel<LengthUnit> length, final Node startNode,
         final Node endNode, DoubleScalar.Abs<SpeedUnit> freeSpeed, DoubleScalar.Rel<TimeUnit> time,
-        final DoubleScalar.Abs<FrequencyUnit> capacity, final TrafficBehaviourType behaviourType, LinkData linkData)
+        final Frequency capacity, final TrafficBehaviourType behaviourType, LinkData linkData)
     {
-        super(nr, startNode, endNode, geometry, capacity);
+        super(nr, startNode, endNode, LinkType.ALL, geometry, capacity);
         if (null == behaviourType)
         {
             System.out.println("behaviourType is null!");
         }
         // OTSLink(final IDL id, final OTSNode<IDN> startNode, final OTSNode<IDN> endNode,
-        // final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Abs<FrequencyUnit> capacity)
+        // final DoubleScalar.Rel<LengthUnit> length, final DoubleScalar.Frequency capacity)
         this.freeSpeed = freeSpeed;
         this.time = time;
         this.behaviourType = behaviourType;
@@ -124,7 +127,7 @@ public class Link extends OTSLink
      * @param speed2
      * @return
      */
-    private int estimateLanes(Abs<FrequencyUnit> capacity, Abs<SpeedUnit> speed)
+    private int estimateLanes(Frequency capacity, Abs<SpeedUnit> speed)
     {
         int lanes = 0;
         if (capacity != null)
@@ -219,7 +222,7 @@ public class Link extends OTSLink
      */
     public Link(final Link link)
     {
-        super(link.getId(), link.getStartNode(), link.getEndNode(), link.getDesignLine(), link.getCapacity());
+        super(link.getId(), link.getStartNode(), link.getEndNode(), LinkType.ALL, link.getDesignLine(), link.getCapacity());
         this.freeSpeed = link.freeSpeed;
         this.numberOfLanes = link.getNumberOfLanes();
         this.behaviourType = link.behaviourType;
@@ -249,7 +252,7 @@ public class Link extends OTSLink
      * @param trafficBehaviourType
      * @return
      */
-    public static Link createLink(Node startNode, Node endNode, Abs<FrequencyUnit> capacity,
+    public static Link createLink(Node startNode, Node endNode, Frequency capacity,
         DoubleScalar.Abs<SpeedUnit> speed, DoubleScalar.Rel<TimeUnit> time, TrafficBehaviourType trafficBehaviourType)
 
     {
@@ -258,7 +261,15 @@ public class Link extends OTSLink
         Coordinate coordEnd = new Coordinate(endNode.getPoint().x, endNode.getPoint().y);
         Coordinate[] coords = new Coordinate[]{coordStart, coordEnd};
         LineString line = geometryFactory.createLineString(coords);
-        OTSLine3D geometry = new OTSLine3D(line);
+        OTSLine3D geometry = null;
+        try
+        {
+            geometry = new OTSLine3D(line);
+        }
+        catch (NetworkException exception)
+        {
+            exception.printStackTrace();
+        }
         DoubleScalar.Rel<LengthUnit> length =
             new DoubleScalar.Rel<LengthUnit>(startNode.getPoint().getCoordinate().distance(
                 endNode.getPoint().getCoordinate()), LengthUnit.METER);
@@ -501,7 +512,15 @@ public class Link extends OTSLink
         GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         Coordinate[] coords = mergedGeometry.getCoordinates();
         LineString line = geometryFactory.createLineString(coords);
-        OTSLine3D geometry = new OTSLine3D(line);
+        OTSLine3D geometry = null;
+        try
+        {
+            geometry = new OTSLine3D(line);
+        }
+        catch (NetworkException exception)
+        {
+            exception.printStackTrace();
+        }
         mergedLink =
             new Link(geometry, nr, length, (Node) up.getStartNode(), (Node) down.getEndNode(), up.getFreeSpeed(), up
                 .getTime(), up.getCapacity(), up.getBehaviourType(), up.getLinkData());
@@ -557,7 +576,7 @@ public class Link extends OTSLink
     /**
      * @return corridorCapacity.
      */
-    public Abs<FrequencyUnit> getCorridorCapacity()
+    public Frequency getCorridorCapacity()
     {
         return this.corridorCapacity;
     }
@@ -565,7 +584,7 @@ public class Link extends OTSLink
     /**
      * @param corridorCapacity set corridorCapacity.
      */
-    public void setCorridorCapacity(Abs<FrequencyUnit> corridorCapacity)
+    public void setCorridorCapacity(Frequency corridorCapacity)
     {
         this.corridorCapacity = corridorCapacity;
     }
@@ -574,11 +593,11 @@ public class Link extends OTSLink
      * @param roadCapacity
      * @param linkData set linkData.
      */
-    public void addCorridorCapacity(Abs<FrequencyUnit> roadCapacity)
+    public void addCorridorCapacity(Frequency roadCapacity)
     {
         double cap = roadCapacity.getInUnit(FrequencyUnit.PER_HOUR);
-        Rel<FrequencyUnit> addCap = new Rel<FrequencyUnit>(cap, FrequencyUnit.PER_HOUR);
-        this.corridorCapacity = DoubleScalar.plus(this.getCorridorCapacity(), addCap);
+        Frequency addCap = new Frequency(cap, FrequencyUnit.PER_HOUR);
+        this.corridorCapacity = this.getCorridorCapacity().plus(addCap);
     }
 
     /**

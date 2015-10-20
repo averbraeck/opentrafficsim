@@ -11,6 +11,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.opentrafficsim.core.network.LinkEdge;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
@@ -267,8 +268,8 @@ public class NTMsimulation
                     if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
                     {
                         CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) origin.getCellBehaviour();
-                        HashMap<BoundedNode, Abs<FrequencyUnit>> borderDemand =
-                            new HashMap<BoundedNode, Abs<FrequencyUnit>>();
+                        HashMap<BoundedNode, Frequency> borderDemand =
+                            new HashMap<BoundedNode, Frequency>();
                         cellBehaviour.setBorderDemand(borderDemand);
                         for (TripInfoByDestination tripInfoByDestination : cellBehaviour.getTripInfoByDestinationMap()
                             .values())
@@ -290,8 +291,8 @@ public class NTMsimulation
                                         double demandToNeighbourPerHour =
                                             demandToNeighbour * 3600
                                                 / model.getSettingsNTM().getTimeStepDurationNTM().getInUnit(TimeUnit.SECOND);
-                                        Abs<FrequencyUnit> demand =
-                                            new Abs<FrequencyUnit>(demandToNeighbourPerHour, FrequencyUnit.PER_HOUR);
+                                        Frequency demand =
+                                            new Frequency(demandToNeighbourPerHour, FrequencyUnit.PER_HOUR);
                                         cellBehaviour.addBorderDemand(neighbour, demand);
                                     }
                                 }
@@ -447,7 +448,7 @@ public class NTMsimulation
 
                         // **** RELEVANT
                         // SUPPLY
-                        DoubleScalar.Abs<FrequencyUnit> tripByHour =
+                        Frequency tripByHour =
                             cell.getCellBehaviourFlow().retrieveSupply(accumulationCell,
                                 cell.getCellBehaviourFlow().getParametersFundamentalDiagram());
                         double tripByStep =

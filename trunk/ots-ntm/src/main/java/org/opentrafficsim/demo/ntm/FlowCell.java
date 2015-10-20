@@ -16,6 +16,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.opentrafficsim.demo.ntm.Node.TrafficBehaviourType;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
 
@@ -38,7 +39,7 @@ public class FlowCell implements LocatableInterface
     private DoubleScalar.Rel<LengthUnit> cellLength;
 
     /** link capacity in vehicles per hour. This is a mutable property (e.g., blockage). */
-    private DoubleScalar.Abs<FrequencyUnit> maxCapacity;
+    private Frequency maxCapacity;
 
     /** lanes in a link */
     private int numberOfLanes;
@@ -59,7 +60,7 @@ public class FlowCell implements LocatableInterface
      * @param numberOfLanes
      * @param behaviourType
      */
-    public FlowCell(final DoubleScalar.Rel<LengthUnit> cellLength, final DoubleScalar.Abs<FrequencyUnit> maxCapacity,
+    public FlowCell(final DoubleScalar.Rel<LengthUnit> cellLength, final Frequency maxCapacity,
         DoubleScalar.Abs<SpeedUnit> speed, final int numberOfLanes, final TrafficBehaviourType behaviourType)
     {
         this.cellLength = cellLength;
@@ -79,10 +80,10 @@ public class FlowCell implements LocatableInterface
      * @param param parameters FD
      * @return carProduction
      */
-    public final Abs<FrequencyUnit> retrieveCurrentInflowCapacity(final double accumulatedCarsPerLengthUnit,
-        final Abs<FrequencyUnit> maximumCapacity, final ParametersFundamentalDiagram param)
+    public final Frequency retrieveCurrentInflowCapacity(final double accumulatedCarsPerLengthUnit,
+        final Frequency maximumCapacity, final ParametersFundamentalDiagram param)
     {
-        Abs<FrequencyUnit> currentInflowCapacity;
+        Frequency currentInflowCapacity;
         if (accumulatedCarsPerLengthUnit > param.getAccCritical().get(0))
         {
             ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
@@ -111,7 +112,7 @@ public class FlowCell implements LocatableInterface
     public DoubleScalar.Abs<SpeedUnit> retrieveCurrentSpeed(final double accumulatedCarsPerLengthUnit)
     {
         double speedDouble;
-        Abs<FrequencyUnit> currentInflowCapacity =
+        Frequency currentInflowCapacity =
             retrieveCurrentInflowCapacity(accumulatedCarsPerLengthUnit, this.maxCapacity, this.cellBehaviour
                 .getParametersFundamentalDiagram());
         Abs<LinearDensityUnit> density =
@@ -183,7 +184,7 @@ public class FlowCell implements LocatableInterface
     /**
      * @return capacity.
      */
-    public DoubleScalar.Abs<FrequencyUnit> getMaxCapacity()
+    public Frequency getMaxCapacity()
     {
         return this.maxCapacity;
     }
@@ -191,7 +192,7 @@ public class FlowCell implements LocatableInterface
     /**
      * @param maxCapacity set capacity.
      */
-    public void setMaxCapacity(DoubleScalar.Abs<FrequencyUnit> maxCapacity)
+    public void setMaxCapacity(Frequency maxCapacity)
     {
         this.maxCapacity = maxCapacity;
     }

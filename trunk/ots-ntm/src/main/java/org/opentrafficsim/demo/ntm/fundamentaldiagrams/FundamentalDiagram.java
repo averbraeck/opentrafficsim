@@ -4,7 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import org.djunits.unit.FrequencyUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.opentrafficsim.demo.ntm.LinearFunctionLibrary;
 
 /**
@@ -44,10 +44,10 @@ public class FundamentalDiagram
      * @param accumulatedCars
      * @return piecewise linear
      */
-    public static DoubleScalar.Abs<FrequencyUnit> PieceWiseLinear(ArrayList<Point2D> xyPairs, double accumulatedCars)
+    public static Frequency PieceWiseLinear(ArrayList<Point2D> xyPairs, double accumulatedCars)
     {
         double production = LinearFunctionLibrary.createPieceWiseLinear(xyPairs, accumulatedCars);
-        return new DoubleScalar.Abs<FrequencyUnit>(production, FrequencyUnit.PER_HOUR);
+        return new Frequency(production, FrequencyUnit.PER_HOUR);
     }
 
 }

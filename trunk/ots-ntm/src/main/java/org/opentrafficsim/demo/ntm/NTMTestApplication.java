@@ -63,7 +63,8 @@ public class NTMTestApplication extends DSOLApplication
         NTMModel model = new NTMModel();
         InputNTM inputNTM = new InputNTM();
         model.setInputNTM(inputNTM);
-        String startMap = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/TheHague/";
+        // String startMap = "D:/gtamminga/workspace/ots-ntm/src/main/resources/gis/TheHague/";
+        String startMap = "D:/java/opentrafficsim/workspace/ots-ntm/src/main/resources/gis/";
         // String startMap = System.getProperty("user.dir");
         ProjectConfigurations.readConfigurations(startMap, model);
         if (!new File(model.getInputNTM().getInputMap()).canRead())

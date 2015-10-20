@@ -14,6 +14,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -407,8 +408,8 @@ public class ShapeFileReader
                 DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(speedIn, SpeedUnit.KM_PER_HOUR);
                 double capacityIn =
                     Double.parseDouble(String.valueOf(feature.getAttribute("CAPACITYAB"))) / linkCapacityNumberOfHours;
-                DoubleScalar.Abs<FrequencyUnit> capacity =
-                    new DoubleScalar.Abs<FrequencyUnit>(capacityIn, FrequencyUnit.PER_HOUR);
+                Frequency capacity =
+                    new Frequency(capacityIn, FrequencyUnit.PER_HOUR);
                 int hierarchy = 0;
                 // new DoubleScalar.Abs<LengthUnit>(shpLink.getLength(), LengthUnit.KILOMETER);
                 // create the link or connector to a centroid....

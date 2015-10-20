@@ -13,6 +13,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.opentrafficsim.core.network.LinkEdge;
@@ -827,9 +828,9 @@ public class BuildGraph
                             System.out.println("No connection of flow Link to Area for this one...");
                         }
                         DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
-                        DoubleScalar.Abs<FrequencyUnit> capacity =
+                        Frequency capacity =
 
-                        new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
+                        new Frequency(4000.0, FrequencyUnit.PER_HOUR);
                         Link newLink = Link.createLink(cA, flowNodeStart, capacity, speed, null, TrafficBehaviourType.NTM);
                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
                         addLinkEdge(cA, flowNodeStart, newLinkEdge, TrafficBehaviourType.NTM, model.getAreaGraph());
@@ -855,8 +856,8 @@ public class BuildGraph
                         }
 
                         DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
-                        DoubleScalar.Abs<FrequencyUnit> capacity =
-                            new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
+                        Frequency capacity =
+                            new Frequency(4000.0, FrequencyUnit.PER_HOUR);
                         Link newLink = Link.createLink(flowNodeEnd, cB, capacity, speed, null, TrafficBehaviourType.NTM);
                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
                         addLinkEdge(flowNodeEnd, cB, newLinkEdge, TrafficBehaviourType.NTM, model.getAreaGraph());
@@ -887,8 +888,8 @@ public class BuildGraph
                             cA.setArea(areaStart);
                         }
                         DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
-                        DoubleScalar.Abs<FrequencyUnit> capacity =
-                            new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
+                        Frequency capacity =
+                            new Frequency(4000.0, FrequencyUnit.PER_HOUR);
                         Link newLink =
                             Link.createLink(cA, flowNodeStart, capacity, speed, null, TrafficBehaviourType.CORDON);
                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
@@ -911,8 +912,8 @@ public class BuildGraph
                             cB.setArea(areaStart);
                         }
                         DoubleScalar.Abs<SpeedUnit> speed = new DoubleScalar.Abs<SpeedUnit>(70, SpeedUnit.KM_PER_HOUR);
-                        DoubleScalar.Abs<FrequencyUnit> capacity =
-                            new DoubleScalar.Abs<FrequencyUnit>(4000.0, FrequencyUnit.PER_HOUR);
+                        Frequency capacity =
+                            new Frequency(4000.0, FrequencyUnit.PER_HOUR);
                         Link newLink = Link.createLink(flowNodeEnd, cB, capacity, speed, null, TrafficBehaviourType.CORDON);
                         LinkEdge<Link> newLinkEdge = new LinkEdge<>(newLink);
                         addLinkEdge(flowNodeEnd, cB, newLinkEdge, TrafficBehaviourType.CORDON, model.getAreaGraph());

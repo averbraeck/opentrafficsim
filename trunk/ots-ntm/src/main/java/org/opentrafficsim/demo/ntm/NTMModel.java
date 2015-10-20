@@ -29,6 +29,7 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Rel;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -495,7 +496,7 @@ public class NTMModel implements OTSModelInterface
     public void readOrSetCapacityRestraints(NTMModel model, Map<String, Area> areasToUse, String file, String fileFactor)
         throws IOException, ParseException
     {
-        HashMap<String, HashMap<String, Abs<FrequencyUnit>>> borderCapacityAreasMap =
+        HashMap<String, HashMap<String, Frequency>> borderCapacityAreasMap =
             CsvFileReader.readCapResNTM(file, ";", ",");
         HashMap<String, HashMap<String, java.lang.Double>> borderCapacityFactorAreasMap =
             CsvFileReader.readCapResFactorNTM(fileFactor, ";", ",");
@@ -517,7 +518,7 @@ public class NTMModel implements OTSModelInterface
         {
             if (origin.getBehaviourType() == TrafficBehaviourType.NTM)
             {
-                HashMap<BoundedNode, Abs<FrequencyUnit>> borderCapacity = new HashMap<BoundedNode, Abs<FrequencyUnit>>();
+                HashMap<BoundedNode, Frequency> borderCapacity = new HashMap<BoundedNode, Frequency>();
                 BoundedNode node = (BoundedNode) origin;
                 CellBehaviourNTM cellBehaviour = (CellBehaviourNTM) node.getCellBehaviour();
                 Set<LinkEdge<Link>> outGoing = this.getAreaGraph().outgoingEdgesOf(node);
@@ -548,12 +549,12 @@ public class NTMModel implements OTSModelInterface
                             borderCapacityAreasMap.get(origin.getId()).get(graphEndNode.getId()).getInUnit(
                                 FrequencyUnit.PER_HOUR);
                         capacity *= factor;
-                        Abs<FrequencyUnit> cap = new Abs<FrequencyUnit>(capacity, FrequencyUnit.PER_HOUR);
+                        Frequency cap = new Frequency(capacity, FrequencyUnit.PER_HOUR);
                         borderCapacity.put(graphEndNode, cap);
                     }
                     else
                     {
-                        Abs<FrequencyUnit> cap = new Abs<FrequencyUnit>(99999.0, FrequencyUnit.PER_HOUR);
+                        Frequency cap = new Frequency(99999.0, FrequencyUnit.PER_HOUR);
                         borderCapacity.put(graphEndNode, cap);
                     }
                 }

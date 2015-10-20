@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
 
 /**
@@ -60,10 +61,10 @@ public class CellBehaviourFlow extends CellBehaviour
      * @return car
      */
     // @Override
-    public DoubleScalar.Abs<FrequencyUnit> retrieveSupply(final Double accumulatedCars,
+    public Frequency retrieveSupply(final Double accumulatedCars,
         final ParametersFundamentalDiagram param)
     {
-        DoubleScalar.Abs<FrequencyUnit> supply;
+        Frequency supply;
         if (accumulatedCars > param.getAccCritical().get(0))
         {
             supply = retrieveFD(accumulatedCars, param);
@@ -83,10 +84,10 @@ public class CellBehaviourFlow extends CellBehaviour
      * @param numberOfLanes
      * @return carProduction
      */
-    public final DoubleScalar.Abs<FrequencyUnit> retrieveDemand(final double accumulatedCars,
+    public final Frequency retrieveDemand(final double accumulatedCars,
         final ParametersFundamentalDiagram param)
     {
-        DoubleScalar.Abs<FrequencyUnit> demand;
+        Frequency demand;
         if (accumulatedCars <= param.getAccCritical().get(0))
         {
             demand = retrieveFD(accumulatedCars, param);
@@ -106,7 +107,7 @@ public class CellBehaviourFlow extends CellBehaviour
      * @param numberOfLanes
      * @return carProduction
      */
-    public final DoubleScalar.Abs<FrequencyUnit> retrieveFD(final double accumulatedCars,
+    public final Frequency retrieveFD(final double accumulatedCars,
         final ParametersFundamentalDiagram param)
     {
         ArrayList<Point2D> xyPairs = new ArrayList<Point2D>();
