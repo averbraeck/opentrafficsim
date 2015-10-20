@@ -5,9 +5,12 @@ import java.util.List;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.vector.MutableDoubleVector;
+import org.djunits.value.vdouble.vector.MutableLengthVector;
+import org.djunits.value.vdouble.vector.MutableTimeVector;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -66,10 +69,10 @@ public class SpeedContourPlot extends ContourPlot
         {
             try
             {
-                this.cumulativeTimes.add(new MutableDoubleVector.Abs.Dense<TimeUnit>(new double[this.getYAxis()
-                    .getBinCount()], TimeUnit.SECOND));
-                this.cumulativeLengths.add(new MutableDoubleVector.Abs.Dense<LengthUnit>(new double[this.getYAxis()
-                    .getBinCount()], LengthUnit.METER));
+                this.cumulativeTimes.add(new MutableTimeVector.Abs(new double[this.getYAxis().getBinCount()],
+                    TimeUnit.SECOND, StorageType.DENSE));
+                this.cumulativeLengths.add(new MutableLengthVector.Abs(new double[this.getYAxis().getBinCount()],
+                    LengthUnit.METER, StorageType.DENSE));
             }
             catch (ValueException exception)
             {

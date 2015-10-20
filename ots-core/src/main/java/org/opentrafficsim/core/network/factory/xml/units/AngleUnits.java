@@ -73,7 +73,7 @@ public final class AngleUnits implements UNITS
         {
             double value = Double.parseDouble(sv);
             AnglePlane.Abs angle = new AnglePlane.Abs(value, u);
-            return new AnglePlane.Abs(AnglePlaneUnit.normalize(angle));
+            return new AnglePlane.Abs(AnglePlaneUnit.normalize(angle).si, AnglePlaneUnit.SI);
         }
         catch (NumberFormatException nfe)
         {
@@ -95,7 +95,7 @@ public final class AngleUnits implements UNITS
         {
             double value = Double.parseDouble(sv);
             AnglePlane.Rel angle = new AnglePlane.Rel(value, u);
-            return new AnglePlane.Rel(AnglePlaneUnit.normalize(angle));
+            return new AnglePlane.Rel(AnglePlaneUnit.normalize(angle).si, AnglePlaneUnit.SI);
         }
         catch (NumberFormatException nfe)
         {
