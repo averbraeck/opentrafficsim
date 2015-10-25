@@ -1,0 +1,80 @@
+.xtoolbar-48 {
+	height: 52px;
+}
+
+.button-48 {
+	width: 48px;
+	height: 48px;
+	border: 0px;
+	padding: 2px;
+	margin: 2px;
+	background-repeat: no-repeat;
+	float:left;
+}
+
+#global-48 {
+	width: 48px;
+	height: 48px;
+	border: 0px;
+	padding: 0px;
+	margin: 2px;
+	background-image: url('icons/48x48/global.png');
+	background-repeat: no-repeat;
+	float:left;
+}
+
+#lanetype-48 {
+	width: 48px;
+	height: 48px;
+	border: 0px;
+	padding: 0px;
+	margin: 2px;
+	background-image: url('icons/48x48/lanetype.png');
+	background-repeat: no-repeat;
+	float:left;
+}
+
+#gtutype-48 {
+	width: 48px;
+	height: 48px;
+	border: 0px;
+	padding: 0px;
+	margin: 2px;
+	background-image: url('icons/48x48/gtutype.png');
+	background-repeat: no-repeat;
+	float:left;
+}
+
+#compatibility-48 {
+	width: 48px;
+	height: 48px;
+	border: 0px;
+	padding: 0px;
+	margin: 2px;
+	background-image: url('icons/48x48/compatibility.png');
+	background-repeat: no-repeat;
+	float:left;
+}
+
+#gtu-48 {
+	width: 48px;
+	height: 48px;
+	border: 0px;
+	padding: 0px;
+	margin: 2px;
+	background-image: url('icons/48x48/gtu.png');
+	background-repeat: no-repeat;
+	float:left;
+}
+
+#vbar-48 {
+	width: 6px;
+	height: 48px;
+	border: 0px;
+	padding: 0px;
+	margin: 2px;
+	background-repeat: no-repeat;
+	background-image: url('icons/48x48/vbar.png');
+	float:left;
+}
+
