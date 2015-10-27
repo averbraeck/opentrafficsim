@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
-import org.djunits.unit.AnglePlaneUnit;
-import org.djunits.value.vdouble.scalar.AnglePlane;
+import org.djunits.unit.AngleUnit;
+import org.djunits.value.vdouble.scalar.Angle;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.w3c.dom.NamedNodeMap;
@@ -22,7 +22,7 @@ class ArcTag
 {
     /** degree of the curve at the start(s-coordinate?). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    AnglePlane.Rel curvature = null;
+    Angle.Rel curvature = null;
 
 
     /**
@@ -46,7 +46,7 @@ class ArcTag
 
             Node curvature = attributes.getNamedItem("curvature");
             if (curvature != null)
-                arcTag.curvature = new AnglePlane.Rel(Double.parseDouble(curvature.getNodeValue().trim()), AnglePlaneUnit.DEGREE);
+                arcTag.curvature = new Angle.Rel(Double.parseDouble(curvature.getNodeValue().trim()), AngleUnit.DEGREE);
 
             geometryTag.arcTag = arcTag;
         }

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.AnglePlane;
+import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.AngleUnits;
@@ -58,11 +58,11 @@ final class LinkTag
 
     /** extra rotation for the link at the start node. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    AnglePlane.Rel rotationStart = null;
+    Angle.Rel rotationStart = null;
 
     /** extra rotation for the link at the end node. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    AnglePlane.Rel rotationEnd = null;
+    Angle.Rel rotationEnd = null;
 
     /** straight. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

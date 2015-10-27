@@ -3,12 +3,10 @@ package org.opentrafficsim.core.units.distributions;
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.AnglePlaneUnit;
-import org.djunits.unit.AngleSlopeUnit;
 import org.djunits.unit.AngleSolidUnit;
+import org.djunits.unit.AngleUnit;
 import org.djunits.unit.AreaUnit;
 import org.djunits.unit.DensityUnit;
-import org.djunits.unit.DimensionlessUnit;
 import org.djunits.unit.ElectricalChargeUnit;
 import org.djunits.unit.ElectricalCurrentUnit;
 import org.djunits.unit.ElectricalPotentialUnit;
@@ -32,8 +30,7 @@ import org.djunits.unit.VolumeUnit;
 import org.djunits.value.Absolute;
 import org.djunits.value.Relative;
 import org.djunits.value.vfloat.scalar.FloatAcceleration;
-import org.djunits.value.vfloat.scalar.FloatAnglePlane;
-import org.djunits.value.vfloat.scalar.FloatAngleSlope;
+import org.djunits.value.vfloat.scalar.FloatAngle;
 import org.djunits.value.vfloat.scalar.FloatAngleSolid;
 import org.djunits.value.vfloat.scalar.FloatArea;
 import org.djunits.value.vfloat.scalar.FloatDensity;
@@ -43,7 +40,6 @@ import org.djunits.value.vfloat.scalar.FloatElectricalCurrent;
 import org.djunits.value.vfloat.scalar.FloatElectricalPotential;
 import org.djunits.value.vfloat.scalar.FloatElectricalResistance;
 import org.djunits.value.vfloat.scalar.FloatEnergy;
-import org.djunits.value.vfloat.scalar.FloatScalar;
 import org.djunits.value.vfloat.scalar.FloatFlowMass;
 import org.djunits.value.vfloat.scalar.FloatFlowVolume;
 import org.djunits.value.vfloat.scalar.FloatForce;
@@ -53,6 +49,7 @@ import org.djunits.value.vfloat.scalar.FloatLinearDensity;
 import org.djunits.value.vfloat.scalar.FloatMass;
 import org.djunits.value.vfloat.scalar.FloatPower;
 import org.djunits.value.vfloat.scalar.FloatPressure;
+import org.djunits.value.vfloat.scalar.FloatScalar;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.djunits.value.vfloat.scalar.FloatTemperature;
 import org.djunits.value.vfloat.scalar.FloatTime;
@@ -104,14 +101,8 @@ public interface ContinuousDistFloatScalar
         {
             switch (getUnit().getClass().getSimpleName())
             {
-                case "AnglePlaneUnit":
-                    return (T) new FloatAnglePlane.Abs((float) getDistribution().draw(), (AnglePlaneUnit) getUnit());
-
-                case "AngleSlopeUnit":
-                    return (T) new FloatAngleSlope.Abs((float) getDistribution().draw(), (AngleSlopeUnit) getUnit());
-
-                case "DimensionlessUnit":
-                    return (T) new FloatDimensionless.Abs((float) getDistribution().draw(), (DimensionlessUnit) getUnit());
+                case "AngleUnit":
+                    return (T) new FloatAngle.Abs((float) getDistribution().draw(), (AngleUnit) getUnit());
 
                 case "LengthUnit":
                     return (T) new FloatLength.Abs((float) getDistribution().draw(), (LengthUnit) getUnit());
@@ -165,11 +156,8 @@ public interface ContinuousDistFloatScalar
                 case "AccelerationUnit":
                     return (T) new FloatAcceleration((float) getDistribution().draw(), (AccelerationUnit) getUnit());
 
-                case "AnglePlaneUnit":
-                    return (T) new FloatAnglePlane.Rel((float) getDistribution().draw(), (AnglePlaneUnit) getUnit());
-
-                case "AngleSlopeUnit":
-                    return (T) new FloatAngleSlope.Rel((float) getDistribution().draw(), (AngleSlopeUnit) getUnit());
+                case "AngleUnit":
+                    return (T) new FloatAngle.Rel((float) getDistribution().draw(), (AngleUnit) getUnit());
 
                 case "AngleSolidUnit":
                     return (T) new FloatAngleSolid((float) getDistribution().draw(), (AngleSolidUnit) getUnit());
@@ -181,7 +169,7 @@ public interface ContinuousDistFloatScalar
                     return (T) new FloatDensity((float) getDistribution().draw(), (DensityUnit) getUnit());
 
                 case "DimensionlessUnit":
-                    return (T) new FloatDimensionless.Rel((float) getDistribution().draw(), (DimensionlessUnit) getUnit());
+                    return (T) new FloatDimensionless.Rel((float) getDistribution().draw(), getUnit());
 
                 case "ElectricalChargeUnit":
                     return (T) new FloatElectricalCharge((float) getDistribution().draw(), (ElectricalChargeUnit) getUnit());

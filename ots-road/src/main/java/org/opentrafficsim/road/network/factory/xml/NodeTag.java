@@ -5,10 +5,10 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.AnglePlaneUnit;
-import org.djunits.unit.AngleSlopeUnit;
-import org.djunits.value.vdouble.scalar.AnglePlane;
-import org.djunits.value.vdouble.scalar.AngleSlope;
+import org.djunits.unit.AngleUnit;
+import org.djunits.unit.AngleUnit;
+import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Angle;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
@@ -41,11 +41,11 @@ class NodeTag
 
     /** absolute angle of the node. 0 is "East", pi/2 = "North". */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    AnglePlane.Abs angle = null;
+    Angle.Abs angle = null;
 
     /** TODO slope as an angle. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    AngleSlope.Abs slope = null;
+    Angle.Abs slope = null;
 
     /** the calculated Node, either through a coordinate or after calculation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -133,8 +133,8 @@ class NodeTag
         throws NetworkException, NamingException
     {
         String id = nodeTag.name;
-        AnglePlane.Abs angle = nodeTag.angle == null ? new AnglePlane.Abs(0.0, AnglePlaneUnit.SI) : nodeTag.angle;
-        AngleSlope.Abs slope = nodeTag.slope == null ? new AngleSlope.Abs(0.0, AngleSlopeUnit.SI) : nodeTag.slope;
+        Angle.Abs angle = nodeTag.angle == null ? new Angle.Abs(0.0, AngleUnit.SI) : nodeTag.angle;
+        Angle.Abs slope = nodeTag.slope == null ? new Angle.Abs(0.0, AngleUnit.SI) : nodeTag.slope;
         OTSNode node = new OTSNode(id, nodeTag.coordinate, angle, slope);
         nodeTag.node = node;
         return node;

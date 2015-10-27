@@ -11,10 +11,8 @@ import javax.vecmath.Point3d;
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.djunits.unit.AnglePlaneUnit;
-import org.djunits.unit.AngleSlopeUnit;
-import org.djunits.value.vdouble.scalar.AnglePlane;
-import org.djunits.value.vdouble.scalar.AngleSlope;
+import org.djunits.unit.AngleUnit;
+import org.djunits.value.vdouble.scalar.Angle;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 
 /**
@@ -41,10 +39,10 @@ public class OTSNode implements Node, LocatableInterface, Serializable
     private final OTSPoint3D point;
 
     /** the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians). */
-    private final AnglePlane.Abs direction;
+    private final Angle.Abs direction;
 
     /** the slope as an angle. Horizontal is 0 degrees. */
-    private final AngleSlope.Abs slope;
+    private final Angle.Abs slope;
 
     /** the incoming links. */
     private final Set<Link> linksIn = new HashSet<Link>();
@@ -59,7 +57,7 @@ public class OTSNode implements Node, LocatableInterface, Serializable
      * @param direction the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians).
      * @param slope the slope as an angle. Horizontal is 0 degrees.
      */
-    public OTSNode(final String id, final OTSPoint3D point, final AnglePlane.Abs direction, final AngleSlope.Abs slope)
+    public OTSNode(final String id, final OTSPoint3D point, final Angle.Abs direction, final Angle.Abs slope)
     {
         this.id = id;
         this.point = point;
@@ -74,7 +72,7 @@ public class OTSNode implements Node, LocatableInterface, Serializable
      */
     public OTSNode(final String id, final OTSPoint3D point)
     {
-        this(id, point, new AnglePlane.Abs(0.0, AnglePlaneUnit.SI), new AngleSlope.Abs(0.0, AngleSlopeUnit.SI));
+        this(id, point, new Angle.Abs(0.0, AngleUnit.SI), new Angle.Abs(0.0, AngleUnit.SI));
     }
 
     /**
@@ -125,28 +123,28 @@ public class OTSNode implements Node, LocatableInterface, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final AnglePlane.Abs getDirection()
+    public final Angle.Abs getDirection()
     {
         return this.direction;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final AngleSlope.Abs getSlope()
+    public final Angle.Abs getSlope()
     {
         return this.slope;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final DirectedPoint getLocation() 
+    public final DirectedPoint getLocation()
     {
         return this.point.getDirectedPoint();
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds getBounds() 
+    public final Bounds getBounds()
     {
         return new BoundingSphere(new Point3d(0.0d, 0.0d, 0.0d), 10.0d);
     }

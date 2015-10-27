@@ -3,9 +3,9 @@ package org.opentrafficsim.core.network.factory.xml.units;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.djunits.unit.AnglePlaneUnit;
+import org.djunits.unit.AngleUnit;
 import org.djunits.unit.UNITS;
-import org.djunits.value.vdouble.scalar.AnglePlane;
+import org.djunits.value.vdouble.scalar.Angle;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -20,7 +20,7 @@ import org.opentrafficsim.core.network.NetworkException;
 public final class AngleUnits implements UNITS
 {
     /** the angle units. */
-    public static final Map<String, AnglePlaneUnit> ANGLE_UNITS = new HashMap<>();
+    public static final Map<String, AngleUnit> ANGLE_UNITS = new HashMap<>();
 
     static
     {
@@ -64,16 +64,16 @@ public final class AngleUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static AnglePlane.Abs parseAngleAbs(final String s) throws NetworkException
+    public static Angle.Abs parseAngleAbs(final String s) throws NetworkException
     {
         String us = parseAngleUnit(s);
-        AnglePlaneUnit u = ANGLE_UNITS.get(us);
+        AngleUnit u = ANGLE_UNITS.get(us);
         String sv = s.substring(0, s.indexOf(us));
         try
         {
             double value = Double.parseDouble(sv);
-            AnglePlane.Abs angle = new AnglePlane.Abs(value, u);
-            return new AnglePlane.Abs(AnglePlaneUnit.normalize(angle).si, AnglePlaneUnit.SI);
+            Angle.Abs angle = new Angle.Abs(value, u);
+            return new Angle.Abs(AngleUnit.normalize(angle).si, AngleUnit.SI);
         }
         catch (NumberFormatException nfe)
         {
@@ -86,16 +86,16 @@ public final class AngleUnits implements UNITS
      * @return the next value.
      * @throws NetworkException when parsing fails
      */
-    public static AnglePlane.Rel parseAngleRel(final String s) throws NetworkException
+    public static Angle.Rel parseAngleRel(final String s) throws NetworkException
     {
         String us = parseAngleUnit(s);
-        AnglePlaneUnit u = ANGLE_UNITS.get(us);
+        AngleUnit u = ANGLE_UNITS.get(us);
         String sv = s.substring(0, s.indexOf(us));
         try
         {
             double value = Double.parseDouble(sv);
-            AnglePlane.Rel angle = new AnglePlane.Rel(value, u);
-            return new AnglePlane.Rel(AnglePlaneUnit.normalize(angle).si, AnglePlaneUnit.SI);
+            Angle.Rel angle = new Angle.Rel(value, u);
+            return new Angle.Rel(AngleUnit.normalize(angle).si, AngleUnit.SI);
         }
         catch (NumberFormatException nfe)
         {

@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml;
 
 
-import org.djunits.value.vdouble.scalar.AnglePlane;
+import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
@@ -24,7 +24,7 @@ class ArcTag
 {
     /** angle. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    AnglePlane.Abs angle = null;
+    Angle.Abs angle = null;
 
     /** radius. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
