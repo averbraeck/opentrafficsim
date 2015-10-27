@@ -96,7 +96,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * Create an OTSLine3D, while cleaning repeating successive points.
      * @param points the coordinates of the line as OTSPoint3D
      * @return the line
-     * @throws NetworkException when number of points < 2
+     * @throws NetworkException when number of points &lt; 2
      */
     public static OTSLine3D createAndCleanOTSLine3D(final OTSPoint3D[] points) throws NetworkException
     {
