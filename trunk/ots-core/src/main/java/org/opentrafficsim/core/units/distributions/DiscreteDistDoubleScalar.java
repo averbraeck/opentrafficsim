@@ -3,12 +3,10 @@ package org.opentrafficsim.core.units.distributions;
 import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
 
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.AnglePlaneUnit;
-import org.djunits.unit.AngleSlopeUnit;
 import org.djunits.unit.AngleSolidUnit;
+import org.djunits.unit.AngleUnit;
 import org.djunits.unit.AreaUnit;
 import org.djunits.unit.DensityUnit;
-import org.djunits.unit.DimensionlessUnit;
 import org.djunits.unit.ElectricalChargeUnit;
 import org.djunits.unit.ElectricalCurrentUnit;
 import org.djunits.unit.ElectricalPotentialUnit;
@@ -32,8 +30,7 @@ import org.djunits.unit.VolumeUnit;
 import org.djunits.value.Absolute;
 import org.djunits.value.Relative;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.AnglePlane;
-import org.djunits.value.vdouble.scalar.AngleSlope;
+import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.AngleSolid;
 import org.djunits.value.vdouble.scalar.Area;
 import org.djunits.value.vdouble.scalar.Density;
@@ -104,14 +101,8 @@ public interface DiscreteDistDoubleScalar
         {
             switch (getUnit().getClass().getSimpleName())
             {
-                case "AnglePlaneUnit":
-                    return (T) new AnglePlane.Abs(getDistribution().draw(), (AnglePlaneUnit) getUnit());
-
-                case "AngleSlopeUnit":
-                    return (T) new AngleSlope.Abs(getDistribution().draw(), (AngleSlopeUnit) getUnit());
-
-                case "DimensionlessUnit":
-                    return (T) new Dimensionless.Abs(getDistribution().draw(), (DimensionlessUnit) getUnit());
+                case "AngleUnit":
+                    return (T) new Angle.Abs(getDistribution().draw(), (AngleUnit) getUnit());
 
                 case "LengthUnit":
                     return (T) new Length.Abs(getDistribution().draw(), (LengthUnit) getUnit());
@@ -165,11 +156,8 @@ public interface DiscreteDistDoubleScalar
                 case "AccelerationUnit":
                     return (T) new Acceleration(getDistribution().draw(), (AccelerationUnit) getUnit());
 
-                case "AnglePlaneUnit":
-                    return (T) new AnglePlane.Rel(getDistribution().draw(), (AnglePlaneUnit) getUnit());
-
-                case "AngleSlopeUnit":
-                    return (T) new AngleSlope.Rel(getDistribution().draw(), (AngleSlopeUnit) getUnit());
+                case "AngleUnit":
+                    return (T) new Angle.Rel(getDistribution().draw(), (AngleUnit) getUnit());
 
                 case "AngleSolidUnit":
                     return (T) new AngleSolid(getDistribution().draw(), (AngleSolidUnit) getUnit());
@@ -181,7 +169,7 @@ public interface DiscreteDistDoubleScalar
                     return (T) new Density(getDistribution().draw(), (DensityUnit) getUnit());
 
                 case "DimensionlessUnit":
-                    return (T) new Dimensionless.Rel(getDistribution().draw(), (DimensionlessUnit) getUnit());
+                    return (T) new Dimensionless.Rel(getDistribution().draw(), getUnit());
 
                 case "ElectricalChargeUnit":
                     return (T) new ElectricalCharge(getDistribution().draw(), (ElectricalChargeUnit) getUnit());

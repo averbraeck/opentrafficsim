@@ -1,10 +1,10 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
-import org.djunits.unit.AnglePlaneUnit;
-import org.djunits.unit.AngleSlopeUnit;
+import org.djunits.unit.AngleUnit;
+import org.djunits.unit.AngleUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.AnglePlane;
-import org.djunits.value.vdouble.scalar.AngleSlope;
+import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
@@ -115,8 +115,8 @@ class GeometryTag
      */
     static OTSNode makeOTSNode(final GeometryTag geometryTag)
     {
-        AnglePlane.Abs angle = new AnglePlane.Abs(0.0, AnglePlaneUnit.SI);
-        AngleSlope.Abs slope = new AngleSlope.Abs(0.0, AngleSlopeUnit.SI);
+        Angle.Abs angle = new Angle.Abs(0.0, AngleUnit.SI);
+        Angle.Abs slope = new Angle.Abs(0.0, AngleUnit.SI);
         OTSPoint3D coordinate = new OTSPoint3D(geometryTag.x.doubleValue(),geometryTag.y.doubleValue(),geometryTag.hdg.doubleValue());
         
         OTSNode node = new OTSNode(geometryTag.id, coordinate, angle, slope);

@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
-import org.djunits.unit.AnglePlaneUnit;
+import org.djunits.unit.AngleUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.AnglePlane;
+import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
 import org.w3c.dom.NamedNodeMap;
@@ -62,15 +62,15 @@ class HeaderTag
     
     /** origin latitude of the map */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    AnglePlane.Rel originLat = null;
+    Angle.Rel originLat = null;
     
     /** origin longitude of the map */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    AnglePlane.Rel originLong = null;
+    Angle.Rel originLong = null;
     
     /** origin Hdg of the map */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    AnglePlane.Rel originHdg = null;
+    Angle.Rel originHdg = null;
 
     /**
      * Parse the attributes of the junction tag. The sub-elements are parsed in separate classes.
@@ -139,17 +139,17 @@ class HeaderTag
         Node originLat = attributes.getNamedItem("originLat");
         if (originLat == null)
             throw new SAXException("Header: missing attribute originLat");
-        headerTag.originLat = new AnglePlane.Rel(Double.parseDouble(originLat.getNodeValue().trim()), AnglePlaneUnit.DEGREE);
+        headerTag.originLat = new Angle.Rel(Double.parseDouble(originLat.getNodeValue().trim()), AngleUnit.DEGREE);
 
         Node originLong = attributes.getNamedItem("originLong");
         if (originLong == null)
             throw new SAXException("Header: missing attribute originLong");
-        headerTag.originLong = new AnglePlane.Rel(Double.parseDouble(originLong.getNodeValue().trim()), AnglePlaneUnit.DEGREE);
+        headerTag.originLong = new Angle.Rel(Double.parseDouble(originLong.getNodeValue().trim()), AngleUnit.DEGREE);
 
         Node originHdg = attributes.getNamedItem("originHdg");
         if (originHdg == null)
             throw new SAXException("Header: missing attribute originHdg");
-        headerTag.originHdg = new AnglePlane.Rel(Double.parseDouble(originHdg.getNodeValue().trim()), AnglePlaneUnit.DEGREE);
+        headerTag.originHdg = new Angle.Rel(Double.parseDouble(originHdg.getNodeValue().trim()), AngleUnit.DEGREE);
         
         parser.headerTag = headerTag;
     }
