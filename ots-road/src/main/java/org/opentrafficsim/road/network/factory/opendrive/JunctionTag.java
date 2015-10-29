@@ -17,6 +17,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -173,7 +174,7 @@ class JunctionTag
             LongitudinalDirectionality direction = LongitudinalDirectionality.FORWARD;
             Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
             directionality.put(GTUType.ALL, direction);
-            Color color = Color.gray;
+            Color color = Color.red;
 
             if(inComingLane != null && connectingLane != null)
                 try
@@ -184,6 +185,8 @@ class JunctionTag
                                     connectingLane.getBeginWidth(), LaneType.NONE, directionality, speedLimit,
                                     overtakingConditions);
                     new LaneAnimation(lane, simulator, color);
+                    
+                    //new LinkAnimation(sublink, simulator, 1000.0f);
                 } catch (RemoteException exception)
                 {
                     exception.printStackTrace();

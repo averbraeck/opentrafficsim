@@ -269,7 +269,7 @@ class RoadTag
                 LaneTag leftLane = laneSec.leftLaneTags.get(leftLaneIndex);
                 Length.Rel laneWidth = leftLane.widthTag.a;
 
-                leftOffset = leftOffset.minus(laneWidth.multiplyBy(0.5));
+                leftOffset = leftOffset.plus(laneWidth.multiplyBy(0.5));
 
                 OvertakingConditions overtakingConditions = null;
 
@@ -354,7 +354,7 @@ class RoadTag
                         exception.printStackTrace();
                     }*/
                     
-                    Color color = Color.LIGHT_GRAY;
+                    Color color = Color.green;
                     Lane lane =
                         new NoTrafficLane(currentLink, leftLane.id.toString(), leftOffset, leftOffset, laneWidth,
                             laneWidth);
@@ -369,7 +369,7 @@ class RoadTag
                     }
                 }
 
-                leftOffset = leftOffset.minus(laneWidth.multiplyBy(0.5));
+                leftOffset = leftOffset.plus(laneWidth.multiplyBy(0.5));
             }
 
             // show right lanes
@@ -380,7 +380,7 @@ class RoadTag
                 LaneTag rightLane = laneSec.rightLaneTags.get(-rightLaneIndex);
                 Length.Rel laneWidth = rightLane.widthTag.a;
 
-                rightOffset = rightOffset.plus(laneWidth.multiplyBy(0.5));
+                rightOffset = rightOffset.minus(laneWidth.multiplyBy(0.5));
 
                 OvertakingConditions overtakingConditions = null;
 
@@ -456,7 +456,7 @@ class RoadTag
                 }
                 else
                 {
-                    Color color = Color.LIGHT_GRAY;
+                    Color color = Color.green;
                     Lane lane =
                         new NoTrafficLane(currentLink, rightLane.id.toString(), rightOffset, rightOffset, laneWidth,
                             laneWidth);
@@ -471,7 +471,7 @@ class RoadTag
                     }
                 }
 
-                rightOffset = rightOffset.plus(laneWidth.multiplyBy(0.5));
+                rightOffset = rightOffset.minus(laneWidth.multiplyBy(0.5));
             }
 
             // show center lanes
