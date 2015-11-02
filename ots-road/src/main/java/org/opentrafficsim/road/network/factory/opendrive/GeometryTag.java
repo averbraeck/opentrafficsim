@@ -6,6 +6,11 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
+import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.opengis.geometry.coordinate.BSplineCurve;
+import org.opengis.geometry.coordinate.Clothoid;
+import org.opengis.geometry.coordinate.GeometryFactory;
+import org.opengis.geometry.coordinate.SplineCurve;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
@@ -60,7 +65,7 @@ class GeometryTag
     /** the calculated Node, either through a coordinate or after calculation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OTSNode node = null;
-
+    
     /**
      * Parse the attributes of the road tag. The sub-elements are parsed in separate classes.
      * @param node the top-level road node
