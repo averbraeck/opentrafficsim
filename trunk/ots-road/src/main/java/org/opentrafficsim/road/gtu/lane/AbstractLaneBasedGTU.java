@@ -38,6 +38,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.route.RouteNavigator;
 import org.opentrafficsim.road.gtu.animation.LaneChangeUrgeGTUColorer;
 import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.following.HeadwayGTU;
@@ -129,9 +130,6 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     /** LaneChangeModel used by this GTU. */
     private final LaneChangeModel laneChangeModel;
 
-    /** the route navigator with an indexed (complete) route. */
-    private final LaneBasedRouteNavigator routeNavigator;
-
     /** the object to lock to make the GTU thread safe. */
     private Object lock = new Object();
 
@@ -156,7 +154,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         final OTSDEVSSimulatorInterface simulator) throws NetworkException, SimRuntimeException, GTUException
     {
         super(id, gtuType, routeNavigator);
-        this.routeNavigator = routeNavigator;
+        setRouteNavigator(routeNavigator);
         if (null == gtuFollowingModel)
         {
             throw new GTUException("gtuFollowingModel may not be null");
@@ -701,7 +699,14 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             return AbstractLaneBasedRouteNavigator.GETOFFTHISLANENOW;
         }
-        return this.routeNavigator.suitability(lane, longitudinalPosition, getGTUType(), TIMEHORIZON);
+        try
+        {
+            return getRouteNavigator().suitability(lane, longitudinalPosition, getGTUType(), TIMEHORIZON);
+        } catch (NetworkException ne)
+        {
+            System.err.println("GTU " + this.getId() + " has a route problem in suitability: " + ne.getMessage());
+            return AbstractLaneBasedRouteNavigator.NOLANECHANGENEEDED;
+        }
     }
 
     /**
@@ -781,6 +786,17 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     enterLane(nextLane, refPosAtLastTimestep);
                     // schedule any sensor triggers on this lane for the remainder time
                     nextLane.scheduleTriggers(this, refPosAtLastTimestep.getSI(), moveSI);
+                    
+                    
+                    // XXX DO THE ROUTING -- ADDED 28-10-2015
+                    try
+                    {
+                        getRouteNavigator().visitNextNode();
+                    } catch (NetworkException ne)
+                    {
+                        System.err.println("GTU " + this.getId() + " has a route problem: " + ne.getMessage());
+                    }
+
                 }
             }
         }
@@ -824,7 +840,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             {
                 throw new GTUException(this + " reaches branch but has no route navigator");
             }
-            Node nextNode = this.routeNavigator.nextNodeToVisit();
+            Node nextNode = getRouteNavigator().nextNodeToVisit();
             if (null == nextNode)
             {
                 throw new GTUException(this + " reaches branch and the route returns null as nextNodeToVisit");
@@ -1532,6 +1548,14 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     public final GTUFollowingModel getGTUFollowingModel()
     {
         return this.gtuFollowingModel;
+    }
+
+    
+    /** {@inheritDoc} */
+    @Override
+    public LaneBasedRouteNavigator getRouteNavigator()
+    {
+        return (LaneBasedRouteNavigator) super.getRouteNavigator();
     }
 
     /** {@inheritDoc} */
