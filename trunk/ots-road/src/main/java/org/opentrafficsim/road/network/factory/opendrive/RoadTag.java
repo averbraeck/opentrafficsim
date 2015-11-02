@@ -206,7 +206,8 @@ class RoadTag
                         String sublinkId = roadTag.id + "." + laneSecIndex.toString();
                         CrossSectionLink sublink =
                             new CrossSectionLink(sublinkId, from.node, to.node, LinkType.ALL, designLine,
-                                LaneKeepingPolicy.KEEP_LANE);
+                                LaneKeepingPolicy.KEEP_LANE);                                                
+                        
                         roadTag.subLinks.add(sublink);
                         
                         if(!otsNetwork.containsNode(from.node))
@@ -244,6 +245,7 @@ class RoadTag
             CrossSectionLink sublink =
                 new CrossSectionLink(sublinkId, from.node, to.node,
                     LinkType.ALL, designLine, LaneKeepingPolicy.KEEP_LANE);
+            
             roadTag.subLinks.add(sublink);
             
             if(!otsNetwork.containsNode(from.node))
@@ -257,19 +259,42 @@ class RoadTag
 
         for (int laneSecIndex = 0; laneSecIndex < roadTag.lanesTag.laneSectionTags.size(); laneSecIndex++)
         {
-            LaneSectionTag laneSec = roadTag.lanesTag.laneSectionTags.get(laneSecIndex);
+            LaneSectionTag currentLaneSec = roadTag.lanesTag.laneSectionTags.get(laneSecIndex);
 
             CrossSectionLink currentLink = roadTag.subLinks.get(laneSecIndex);
+            
+            
+            Length.Rel ds = new Length.Rel(0.0, LengthUnit.METER);
+            LaneSectionTag nextLaneSec;
+            if(laneSecIndex != roadTag.lanesTag.laneSectionTags.size()-1)
+            {
+                nextLaneSec = roadTag.lanesTag.laneSectionTags.get(laneSecIndex+1);
+                ds = nextLaneSec.s.minus(currentLaneSec.s);              
+            }
+            else
+            {
+                ds = roadTag.length.minus(currentLaneSec.s);           
+            }
 
             // show left lanes
-            int leftLaneSize = laneSec.leftLaneTags.size();
-            Length.Rel leftOffset = new Length.Rel(0.0, LengthUnit.METER);
+            int leftLaneSize = currentLaneSec.leftLaneTags.size();
+            Length.Rel leftOffset_start = new Length.Rel(0.0, LengthUnit.METER);
+            Length.Rel leftOffset_end = new Length.Rel(0.0, LengthUnit.METER);
+
             for (int leftLaneIndex = 1; leftLaneIndex <= leftLaneSize; leftLaneIndex++)
             {
-                LaneTag leftLane = laneSec.leftLaneTags.get(leftLaneIndex);
-                Length.Rel laneWidth = leftLane.widthTag.a;
+                LaneTag leftLane = currentLaneSec.leftLaneTags.get(leftLaneIndex);
+                
+                leftLane.widthTag.sOffst = leftLane.widthTag.a.plus(leftLane.widthTag.b.multiplyBy(ds.doubleValue())).plus(leftLane.widthTag.c.multiplyBy(Math.pow(ds.doubleValue(),2))).plus(leftLane.widthTag.d.multiplyBy(Math.pow(ds.doubleValue(),3)));
+                                
+                Length.Rel laneWidth_start = leftLane.widthTag.a;
+                Length.Rel laneWidth_end = leftLane.widthTag.sOffst;                
 
-                leftOffset = leftOffset.plus(laneWidth.multiplyBy(0.5));
+                leftOffset_start = leftOffset_start.plus(laneWidth_start.multiplyBy(0.5));
+                leftOffset_end = leftOffset_end.plus(laneWidth_end.multiplyBy(0.5));
+                
+                if(leftOffset_start.doubleValue() > leftOffset_end.doubleValue() || leftOffset_start.doubleValue() < leftOffset_end.doubleValue())
+                    System.out.println();
 
                 OvertakingConditions overtakingConditions = null;
 
@@ -288,9 +313,9 @@ class RoadTag
                     Color color = Color.gray;
 
                     Lane lane =
-                        new Lane(currentLink, leftLane.id.toString(), leftOffset, leftOffset, laneWidth, laneWidth,
+                        new Lane(currentLink, leftLane.id.toString(), leftOffset_start, leftOffset_end, laneWidth_start, laneWidth_end,
                             LaneType.NONE, directionality, speedLimit, overtakingConditions);
-                    laneSec.lanes.put(leftLane.id, lane);
+                    currentLaneSec.lanes.put(leftLane.id, lane);
                     try
                     {
                         new LaneAnimation(lane, simulator, color);
@@ -304,9 +329,9 @@ class RoadTag
                 {
                     Color color = Color.darkGray;
                     Lane lane =
-                        new NoTrafficLane(currentLink, leftLane.id.toString(), leftOffset, leftOffset, laneWidth,
-                            laneWidth);
-                    laneSec.lanes.put(leftLane.id, lane);
+                        new NoTrafficLane(currentLink, leftLane.id.toString(), leftOffset_start, leftOffset_end, laneWidth_start,
+                                laneWidth_end);
+                    currentLaneSec.lanes.put(leftLane.id, lane);
                     try
                     {
                         new LaneAnimation(lane, simulator, color);
@@ -318,7 +343,7 @@ class RoadTag
                 }
                 else if (leftLane.type.equals("border"))
                 {
-                    Stripe solidLine = new Stripe(currentLink, leftOffset, laneWidth);
+                    Stripe solidLine = new Stripe(currentLink, leftOffset_start, laneWidth_start);
                     try
                     {
                         new StripeAnimation(solidLine, simulator, StripeAnimation.TYPE.SOLID);
@@ -332,7 +357,7 @@ class RoadTag
                 {
                     Color color = Color.green;
                     Shoulder shoulder =
-                        new Shoulder(currentLink, leftLane.id.toString(), leftOffset, laneWidth, laneWidth);
+                        new Shoulder(currentLink, leftLane.id.toString(), leftOffset_start, laneWidth_start, laneWidth_end);
                     try
                     {
                         new ShoulderAnimation(shoulder, simulator, color);
@@ -356,9 +381,9 @@ class RoadTag
                     
                     Color color = Color.green;
                     Lane lane =
-                        new NoTrafficLane(currentLink, leftLane.id.toString(), leftOffset, leftOffset, laneWidth,
-                            laneWidth);
-                    laneSec.lanes.put(leftLane.id, lane);
+                        new NoTrafficLane(currentLink, leftLane.id.toString(), leftOffset_start, leftOffset_end, laneWidth_start,
+                            laneWidth_end);
+                    currentLaneSec.lanes.put(leftLane.id, lane);
                     try
                     {
                         new LaneAnimation(lane, simulator, color);
@@ -369,18 +394,27 @@ class RoadTag
                     }
                 }
 
-                leftOffset = leftOffset.plus(laneWidth.multiplyBy(0.5));
+                leftOffset_start = leftOffset_start.plus(laneWidth_start.multiplyBy(0.5));
+                leftOffset_end = leftOffset_end.plus(laneWidth_end.multiplyBy(0.5));
             }
 
             // show right lanes
-            int rightLaneSize = laneSec.rightLaneTags.size();
-            Length.Rel rightOffset = new Length.Rel(0.0, LengthUnit.METER);
+            int rightLaneSize = currentLaneSec.rightLaneTags.size();
+            Length.Rel rightOffset_start = new Length.Rel(0.0, LengthUnit.METER);
+            Length.Rel rightOffset_end = new Length.Rel(0.0, LengthUnit.METER);
+
             for (int rightLaneIndex = 1; rightLaneIndex <= rightLaneSize; rightLaneIndex++)
             {
-                LaneTag rightLane = laneSec.rightLaneTags.get(-rightLaneIndex);
-                Length.Rel laneWidth = rightLane.widthTag.a;
+                LaneTag rightLane = currentLaneSec.rightLaneTags.get(-rightLaneIndex);
+                
+                rightLane.widthTag.sOffst = rightLane.widthTag.a.plus(rightLane.widthTag.b.multiplyBy(ds.doubleValue())).plus(rightLane.widthTag.c.multiplyBy(Math.pow(ds.doubleValue(),2))).plus(rightLane.widthTag.d.multiplyBy(Math.pow(ds.doubleValue(),3)));
 
-                rightOffset = rightOffset.minus(laneWidth.multiplyBy(0.5));
+                Length.Rel laneWidth_start = rightLane.widthTag.a;
+                Length.Rel laneWidth_end = rightLane.widthTag.sOffst;
+
+                rightOffset_start = rightOffset_start.minus(laneWidth_start.multiplyBy(0.5));
+                rightOffset_end = rightOffset_end.minus(laneWidth_end.multiplyBy(0.5));
+
 
                 OvertakingConditions overtakingConditions = null;
 
@@ -401,9 +435,9 @@ class RoadTag
                     try
                     {                       
                         Lane lane =
-                            new Lane(currentLink, rightLane.id.toString(), rightOffset, rightOffset, laneWidth,
-                                laneWidth, LaneType.NONE, directionality, speedLimit, overtakingConditions);
-                        laneSec.lanes.put(rightLane.id, lane);
+                            new Lane(currentLink, rightLane.id.toString(), rightOffset_start, rightOffset_end, laneWidth_start,
+                                laneWidth_end, LaneType.NONE, directionality, speedLimit, overtakingConditions);
+                        currentLaneSec.lanes.put(rightLane.id, lane);
                         
                         new LaneAnimation(lane, simulator, color);
                     }
@@ -416,9 +450,9 @@ class RoadTag
                 {
                     Color color = Color.darkGray;
                     Lane lane =
-                        new NoTrafficLane(currentLink, rightLane.id.toString(), rightOffset, rightOffset, laneWidth,
-                            laneWidth);
-                    laneSec.lanes.put(rightLane.id, lane);
+                        new NoTrafficLane(currentLink, rightLane.id.toString(), rightOffset_start, rightOffset_end, laneWidth_start,
+                            laneWidth_end);
+                    currentLaneSec.lanes.put(rightLane.id, lane);
                     try
                     {
                         new LaneAnimation(lane, simulator, color);
@@ -430,7 +464,7 @@ class RoadTag
                 }
                 else if (rightLane.type.equals("border"))
                 {
-                    Stripe solidLine = new Stripe(currentLink, rightOffset, laneWidth);
+                    Stripe solidLine = new Stripe(currentLink, rightOffset_start, laneWidth_start);
                     try
                     {
                         new StripeAnimation(solidLine, simulator, StripeAnimation.TYPE.SOLID);
@@ -444,7 +478,7 @@ class RoadTag
                 {
                     Color color = Color.green;
                     Shoulder shoulder =
-                        new Shoulder(currentLink, rightLane.id.toString(), rightOffset, laneWidth, laneWidth);
+                        new Shoulder(currentLink, rightLane.id.toString(), rightOffset_start, laneWidth_start, laneWidth_end);
                     try
                     {
                         new ShoulderAnimation(shoulder, simulator, color);
@@ -458,9 +492,9 @@ class RoadTag
                 {
                     Color color = Color.green;
                     Lane lane =
-                        new NoTrafficLane(currentLink, rightLane.id.toString(), rightOffset, rightOffset, laneWidth,
-                            laneWidth);
-                    laneSec.lanes.put(rightLane.id, lane);
+                        new NoTrafficLane(currentLink, rightLane.id.toString(), rightOffset_start, rightOffset_end, laneWidth_start,
+                            laneWidth_end);
+                    currentLaneSec.lanes.put(rightLane.id, lane);
                     try
                     {
                         new LaneAnimation(lane, simulator, color);
@@ -471,16 +505,18 @@ class RoadTag
                     }
                 }
 
-                rightOffset = rightOffset.minus(laneWidth.multiplyBy(0.5));
+                rightOffset_start = rightOffset_start.minus(laneWidth_start.multiplyBy(0.5));
+                rightOffset_end = rightOffset_end.minus(laneWidth_end.multiplyBy(0.5));
+
             }
 
             // show center lanes
-            int centerLaneSize = laneSec.centerLaneTags.size();
+            int centerLaneSize = currentLaneSec.centerLaneTags.size();
             if (centerLaneSize != 1)
                 System.err.println("Sth is wrong in center lane");
             Length.Rel centerOffset = new Length.Rel(0.0, LengthUnit.METER);
 
-            LaneTag centerLane = laneSec.centerLaneTags.get(0);
+            LaneTag centerLane = currentLaneSec.centerLaneTags.get(0);
             Length.Rel laneWidth = new Length.Rel(0.0, LengthUnit.METER);
             if (centerLane.widthTag != null)
                 laneWidth = centerLane.widthTag.a;
