@@ -38,17 +38,18 @@ class LanesTag
         throws SAXException, NetworkException
     {        
         int laneSectionCount = 0;
+        LanesTag lanesTag = new LanesTag();
+
         for (Node node0 : XMLParser.getNodes(nodeList, "lanes"))
             for (Node node : XMLParser.getNodes(node0.getChildNodes(), "laneSection"))
-        {
-            LanesTag lanesTag = new LanesTag();
-            roadTag.lanesTag = lanesTag;
-            
-            LaneSectionTag laneSectionTag = LaneSectionTag.parseLaneSection(node, parser);
-            laneSectionTag.id = laneSectionCount;
-            laneSectionCount++;
+            {
+                LaneSectionTag laneSectionTag = LaneSectionTag.parseLaneSection(node, parser);
+                laneSectionTag.id = laneSectionCount;
+                laneSectionCount++;
 
-            lanesTag.laneSectionTags.add(laneSectionTag);
-        }
+                lanesTag.laneSectionTags.add(laneSectionTag);
+            }
+        roadTag.lanesTag = lanesTag;
+
     }
 }

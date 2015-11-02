@@ -2,8 +2,10 @@ package org.opentrafficsim.road.network.factory.opendrive;
 
 import java.awt.Color;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.naming.NamingException;
@@ -17,7 +19,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -120,9 +121,9 @@ class JunctionTag
             
             if(inComing.linkTag.successorType !=null && inComing.linkTag.successorType.equals("junction")&&inComing.linkTag.successorId.equals(juncTag.id))
             {
-                OTSPoint3D[] coordinates = new OTSPoint3D[2];
-                coordinates[0] = inComing.link.getEndNode().getPoint();
-                coordinates[1] = connecting.link.getStartNode().getPoint();
+                List<OTSPoint3D> coordinates = new ArrayList<OTSPoint3D>();
+                coordinates.add(inComing.link.getEndNode().getPoint());
+                coordinates.add(connecting.link.getStartNode().getPoint());
                 
                 OTSLine3D designLine = new OTSLine3D(coordinates);                           
                 
@@ -137,9 +138,9 @@ class JunctionTag
             }
             else if(inComing.linkTag.predecessorType.equals("junction")&&inComing.linkTag.predecessorId.equals(juncTag.id))
             {
-                OTSPoint3D[] coordinates = new OTSPoint3D[2];
-                coordinates[0] = connecting.link.getEndNode().getPoint();
-                coordinates[1] = inComing.link.getStartNode().getPoint();
+                List<OTSPoint3D> coordinates = new ArrayList<OTSPoint3D>();
+                coordinates.add( connecting.link.getEndNode().getPoint());
+                coordinates.add(inComing.link.getStartNode().getPoint());
                 
                 OTSLine3D designLine = new OTSLine3D(coordinates);                           
                 
