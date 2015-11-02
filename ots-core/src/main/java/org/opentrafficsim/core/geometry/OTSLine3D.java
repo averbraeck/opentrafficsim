@@ -479,6 +479,22 @@ public class OTSLine3D implements LocatableInterface, Serializable
     {
         return Arrays.toString(this.points);
     }
+    
+    /**
+     * Peter's plotter format.
+     * @return String
+     * @throws OTSGeometryException cannot happen
+     */
+    public String toPlotterFormat() throws OTSGeometryException
+    {
+        StringBuilder result = new StringBuilder();
+        result.append("M" + get(0).x + "," + get(0).y + "\n");
+        for (int i = 1; i < size(); i++)
+        {
+            result.append("L" + get(i).x + "," + get(i).y + "\n");
+        }
+        return result.toString();
+    }
 
     /** {@inheritDoc} */
     @Override
