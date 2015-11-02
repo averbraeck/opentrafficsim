@@ -18,8 +18,7 @@ import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.djunits.unit.AngleUnit;
-import org.djunits.unit.AngleUnit;
-import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.AngleUtil;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -262,7 +261,7 @@ final class Links
                     linkTag.arcTag.startAngle = startAngle - Math.PI / 2.0;
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle + angle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle + angle);
-                    nodeTag.angle = new Angle.Abs(AngleUnit.normalize(startAngle + angle), AngleUnit.SI);
+                    nodeTag.angle = new Angle.Abs(AngleUtil.normalize(startAngle + angle), AngleUnit.SI);
                 }
                 else
                 {
@@ -273,7 +272,7 @@ final class Links
                     linkTag.arcTag.startAngle = startAngle + Math.PI / 2.0;
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle - angle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle - angle);
-                    nodeTag.angle = new Angle.Abs(AngleUnit.normalize(startAngle - angle), AngleUnit.SI);
+                    nodeTag.angle = new Angle.Abs(AngleUtil.normalize(startAngle - angle), AngleUnit.SI);
                 }
                 coordinate.z = linkTag.nodeStartTag.node.getLocation().getZ() + lengthSI * Math.sin(slope);
                 nodeTag.slope = new Angle.Abs(slope, AngleUnit.SI);
@@ -299,7 +298,7 @@ final class Links
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle);
                     nodeTag.angle =
-                        new Angle.Abs(AngleUnit.normalize(linkTag.arcTag.startAngle + Math.PI / 2.0),
+                        new Angle.Abs(AngleUtil.normalize(linkTag.arcTag.startAngle + Math.PI / 2.0),
                             AngleUnit.SI);
                 }
                 else
@@ -311,7 +310,7 @@ final class Links
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle);
                     nodeTag.angle =
-                        new Angle.Abs(AngleUnit.normalize(linkTag.arcTag.startAngle - Math.PI / 2.0),
+                        new Angle.Abs(AngleUtil.normalize(linkTag.arcTag.startAngle - Math.PI / 2.0),
                             AngleUnit.SI);
                 }
                 coordinate.z -= lengthSI * Math.sin(slope);

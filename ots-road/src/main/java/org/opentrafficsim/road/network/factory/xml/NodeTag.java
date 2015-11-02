@@ -6,8 +6,6 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.djunits.unit.AngleUnit;
-import org.djunits.unit.AngleUnit;
-import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
