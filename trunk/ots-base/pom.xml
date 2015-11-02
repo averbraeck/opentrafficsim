@@ -44,7 +44,7 @@
     <sonar.scm.disabled>true</sonar.scm.disabled>
 
     <ots.version>${project.version}</ots.version>
-    <djunits.version>1.02.03</djunits.version>
+    <djunits.version>1.02.04</djunits.version>
     <dsol.version>3.00.15</dsol.version>
     <junit.version>4.11</junit.version>
     <java3d.version>1.5.1</java3d.version>
@@ -400,6 +400,30 @@
           <failOnError>false</failOnError>
         </configuration>
       </plugin>
+
+      <plugin> <!-- to avoid BCEL compatibility issue with Java 1.8... -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>${maven.project-info-reports.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-shared-jar</artifactId>
+            <version>1.1</version>
+            <exclusions>
+              <exclusion>
+                <groupId>org.apache.bcel</groupId>
+                <artifactId>bcel</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+          <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>bcel-findbugs</artifactId>
+            <version>6.0</version>
+          </dependency>
+        </dependencies>
+      </plugin> <!-- end avoid BCEL compatibility issue with Java 1.8... -->
 
     </plugins>
 

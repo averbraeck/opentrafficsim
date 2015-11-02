@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.UNITS;
+import org.djunits.value.AngleUtil;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -73,7 +74,7 @@ public final class AngleUnits implements UNITS
         {
             double value = Double.parseDouble(sv);
             Angle.Abs angle = new Angle.Abs(value, u);
-            return new Angle.Abs(AngleUnit.normalize(angle).si, AngleUnit.SI);
+            return new Angle.Abs(AngleUtil.normalize(angle).si, AngleUnit.SI);
         }
         catch (NumberFormatException nfe)
         {
@@ -95,7 +96,7 @@ public final class AngleUnits implements UNITS
         {
             double value = Double.parseDouble(sv);
             Angle.Rel angle = new Angle.Rel(value, u);
-            return new Angle.Rel(AngleUnit.normalize(angle).si, AngleUnit.SI);
+            return new Angle.Rel(AngleUtil.normalize(angle).si, AngleUnit.SI);
         }
         catch (NumberFormatException nfe)
         {
