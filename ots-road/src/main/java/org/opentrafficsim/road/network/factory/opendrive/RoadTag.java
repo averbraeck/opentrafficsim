@@ -318,7 +318,7 @@ class RoadTag
                     currentLaneSec.lanes.put(leftLane.id, lane);
                     try
                     {
-                        new LaneAnimation(lane, simulator, color);
+                        new LaneAnimationOD(lane, simulator, color);
                     }
                     catch (RemoteException exception)
                     {
@@ -439,7 +439,7 @@ class RoadTag
                                 laneWidth_end, LaneType.NONE, directionality, speedLimit, overtakingConditions);
                         currentLaneSec.lanes.put(rightLane.id, lane);
                         
-                        new LaneAnimation(lane, simulator, color);
+                        new LaneAnimationOD(lane, simulator, color);
                     }
                     catch (Exception exception)
                     {
