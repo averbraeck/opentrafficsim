@@ -38,10 +38,6 @@ public abstract class AbstractGTU implements GTU
         super();
         this.id = id;
         this.gtuType = gtuType;
-        if (null == routeNavigator)
-        {
-            throw new GTUException("routeNavigator may not be null");
-        }
         this.routeNavigator = routeNavigator;
     }
 
@@ -70,7 +66,7 @@ public abstract class AbstractGTU implements GTU
     /**
      * @return routeNavigator
      */
-    public final RouteNavigator getRouteNavigator()
+    public RouteNavigator getRouteNavigator()
     {
         return this.routeNavigator;
     }
