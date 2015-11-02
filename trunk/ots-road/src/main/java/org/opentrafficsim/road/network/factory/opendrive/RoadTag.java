@@ -179,7 +179,7 @@ class RoadTag
             for (Integer laneSecIndex = 1; laneSecIndex < roadTag.lanesTag.laneSectionTags.size(); laneSecIndex++)
             {
                 LaneSectionTag laneSec = roadTag.lanesTag.laneSectionTags.get(laneSecIndex);
-                Length.Rel endNode = laneSec.s;
+                Length.Rel laneSecLength = laneSec.s;
 
                 List<OTSPoint3D> points = new ArrayList<OTSPoint3D>();
 
@@ -189,20 +189,27 @@ class RoadTag
                 for (int indexGeometryTag = currentIndex; indexGeometryTag < tempGeometryTags.size(); indexGeometryTag++)
                 {
                     GeometryTag currentGeometryTag = tempGeometryTags.get(indexGeometryTag);
-                    if (currentGeometryTag.s.doubleValue() < endNode.doubleValue())
+                    if (currentGeometryTag.s.doubleValue() < laneSecLength.doubleValue())
                     {
                         OTSPoint3D point =
                             new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(),
                                 currentGeometryTag.hdg.doubleValue());
                         points.add(point);
-                        currentIndex++;
                         to = tempGeometryTags.get(currentIndex);
+                        currentIndex++;
+                        continue;
                     }
                     else
                     {
-                        OTSPoint3D[] coordinates = new OTSPoint3D[points.size()];
-                        coordinates = (OTSPoint3D[]) points.toArray();
-                        OTSLine3D designLine = new OTSLine3D(coordinates);
+                        OTSPoint3D point =
+                                new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(),
+                                    currentGeometryTag.hdg.doubleValue());
+                            points.add(point);
+                           // currentIndex++;
+                            to = tempGeometryTags.get(currentIndex);
+                        //OTSPoint3D[] coordinates = new OTSPoint3D[points.size()];
+                        //coordinates = (OTSPoint3D[]) points.toArray();
+                        OTSLine3D designLine = new OTSLine3D(points);
                         String sublinkId = roadTag.id + "." + laneSecIndex.toString();
                         CrossSectionLink sublink =
                             new CrossSectionLink(sublinkId, from.node, to.node, LinkType.ALL, designLine,
@@ -238,9 +245,9 @@ class RoadTag
                 points.add(point);
             }
 
-            OTSPoint3D[] coordinates = new OTSPoint3D[points.size()];
-            coordinates = (OTSPoint3D[]) points.toArray();
-            OTSLine3D designLine = new OTSLine3D(coordinates);
+            //OTSPoint3D[] coordinates = new OTSPoint3D[points.size()];
+            //coordinates = (OTSPoint3D[]) points.toArray();
+            OTSLine3D designLine = new OTSLine3D(points);
             String sublinkId = roadTag.id + "." + Integer.toString(roadTag.lanesTag.laneSectionTags.size());
             CrossSectionLink sublink =
                 new CrossSectionLink(sublinkId, from.node, to.node,
@@ -292,9 +299,6 @@ class RoadTag
 
                 leftOffset_start = leftOffset_start.plus(laneWidth_start.multiplyBy(0.5));
                 leftOffset_end = leftOffset_end.plus(laneWidth_end.multiplyBy(0.5));
-                
-                if(leftOffset_start.doubleValue() > leftOffset_end.doubleValue() || leftOffset_start.doubleValue() < leftOffset_end.doubleValue())
-                    System.out.println();
 
                 OvertakingConditions overtakingConditions = null;
 
@@ -357,7 +361,7 @@ class RoadTag
                 {
                     Color color = Color.green;
                     Shoulder shoulder =
-                        new Shoulder(currentLink, leftLane.id.toString(), leftOffset_start, laneWidth_start, laneWidth_end);
+                        new Shoulder(currentLink, leftLane.id.toString(), leftOffset_start, leftOffset_end, laneWidth_start, laneWidth_end);
                     try
                     {
                         new ShoulderAnimation(shoulder, simulator, color);

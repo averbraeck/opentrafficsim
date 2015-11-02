@@ -72,7 +72,7 @@ public class OpenDriveNetworkLaneParser
     
     /** OTS network*/
     @SuppressWarnings("visibilitymodifier")
-    protected OTSNetwork network = null;
+    protected OTSNetwork network = null;   
 
     /**
      * @param simulator the simulator for creating the animation. Null if no animation needed.
@@ -161,7 +161,7 @@ public class OpenDriveNetworkLaneParser
         }
         
         for(JunctionTag juncTag: this.junctionTags.values())
-            JunctionTag.showJunctions(juncTag, this.simulator, this);
+            JunctionTag.showJunctions(juncTag, this.simulator, this);        
 
         // store the structure information in the network
         return this.network;

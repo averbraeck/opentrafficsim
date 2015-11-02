@@ -34,6 +34,22 @@ public class Shoulder extends CrossSectionElement
     {
         super(parentLink, id, lateralPosition, lateralPosition, beginWidth, endWidth);
     }
+    
+    /**
+     * @param parentLink Cross Section Link to which the element belongs.
+     * @param id String; the id of the lane. Should be unique within the parentLink.
+     * @param lateralPositionStart the lateral start position compared to the linear geometry of the Cross Section Link.
+     * @param lateralPositionEnd the lateral end position compared to the linear geometry of the Cross Section Link
+     * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
+     * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
+     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws NetworkException when id equal to null or not unique
+     */
+    public Shoulder(final CrossSectionLink parentLink, final String id, final Length.Rel lateralPositionStart, final Length.Rel lateralPositionEnd,
+        final Length.Rel beginWidth, final Length.Rel endWidth) throws OTSGeometryException, NetworkException
+    {
+        super(parentLink, id, lateralPositionStart, lateralPositionEnd, beginWidth, endWidth);
+    }
 
     /** {@inheritDoc} */
     @Override

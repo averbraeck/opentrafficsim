@@ -3,6 +3,11 @@ package org.opentrafficsim.road.network.factory.opendrive;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djunits.unit.AngleUnit;
+import org.djunits.value.AngleUtil;
+import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.geometry.Clothoid;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.LinkType;
@@ -54,11 +59,52 @@ class PlanViewTag
                 geometryCount++;
 
                 planViewTag.geometryTags.add(geometryTag);
+                
+                if(geometryTag.spiralTag!=null && geometryCount!=1)
+                    interpolateSpiral(parser, planViewTag, geometryTag);
+                if(geometryTag.arcTag!=null)
+                    interpolateArc(planViewTag, geometryTag);
             }
         roadTag.link = buildLink(planViewTag, roadTag);
 
     }
+
+    /**
+     * @param parser 
+     * @param planViewTag
+     * @param geometryTag
+     * @throws NetworkException 
+     */
+    private static void interpolateSpiral(OpenDriveNetworkLaneParser parser, PlanViewTag planViewTag, GeometryTag geometryTag) throws NetworkException
+    {
+        double startCurvature = geometryTag.spiralTag.curvStart.doubleValue();
+        double endCurvature = geometryTag.spiralTag.curvEnd.doubleValue();
+        OTSPoint3D start = geometryTag.node.getPoint();
+        Length.Rel length  = geometryTag.length;
+
+        int numSegments = 128;//(int) (length.doubleValue()/1); 
+
+        
+        double dy = geometryTag.y.doubleValue() - planViewTag.geometryTags.get(planViewTag.geometryTags.size()-2).y.doubleValue();
+        double dx = geometryTag.x.doubleValue() - planViewTag.geometryTags.get(planViewTag.geometryTags.size()-2).x.doubleValue();
+        
+        Angle.Abs startDirection = AngleUtil.normalize(new Angle.Abs(Math.PI-Math.atan2(dy, dx), AngleUnit.SI));
+        
+        OTSLine3D line = Clothoid.clothoid(start, startDirection, startCurvature, endCurvature, length, numSegments);
+        
+        //parser.spiras.put(line.hashCode(), line);
+        //geometryTag.interLine = line;
+        
+    }
     
+    /**
+     * @param planViewTag
+     * @param geometryTag
+     */
+    private static void interpolateArc(PlanViewTag planViewTag, GeometryTag geometryTag)
+    {
+    }
+
     /**
      * Find the nodes one by one that have one coordinate defined, and one not defined, and try to build the network from there.
      * @param roadTag the road tag
@@ -76,13 +122,22 @@ class PlanViewTag
         GeometryTag from = planViewTag.geometryTags.get(0);
         GeometryTag to = planViewTag.geometryTags.get(points-1);
         
-        OTSPoint3D[] coordinates = new OTSPoint3D[points];
+        //OTSPoint3D[] coordinates = new OTSPoint3D[points];
+        List<OTSPoint3D> coordinates = new ArrayList<OTSPoint3D>();
         
         for(GeometryTag geometryTag: planViewTag.geometryTags)
         {
-            String a[] = geometryTag.id.split("\\.");
+            //String a[] = geometryTag.id.split("\\.");
+            
+            coordinates.add(geometryTag.node.getPoint());
+            
+            if(geometryTag.interLine!=null)
+                for(OTSPoint3D point: geometryTag.interLine.getPoints())
+                {
+                    coordinates.add(point);
+                }
           
-            coordinates[Integer.valueOf(a[1])] = new OTSPoint3D(geometryTag.x.doubleValue(), geometryTag.y.doubleValue(), geometryTag.hdg.doubleValue());
+            //coordinates[Integer.valueOf(a[1])] = new OTSPoint3D(geometryTag.x.doubleValue(), geometryTag.y.doubleValue(), geometryTag.hdg.doubleValue());
         }
 
         OTSLine3D designLine = new OTSLine3D(coordinates);
