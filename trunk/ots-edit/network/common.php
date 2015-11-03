@@ -17,8 +17,9 @@
 		indent (6); echo "</div>\n";
 		indent (6); echo "<fieldset class=\"col-sm-2 form-group\">\n";
 		indent (7); echo "<select class=\"form-control form-control-sm\" id=\"" . $id . "Unit\">\n";
-		if ("Length" == $unit)
+		switch ($unit)
 		{
+			case "Length":
 			indent (8); echo "<option>m</option>\n";
 			indent (8); echo "<option>cm</option>\n";
 			indent (8); echo "<option>dm</option>\n";
@@ -28,26 +29,27 @@
 			indent (8); echo "<option>mi</option>\n";
 			indent (8); echo "<option>y</option>\n";
 			indent (8); echo "<option>ft</option>\n";
-		}
-		else if ("Speed" == $unit)
-		{
+			break;
+			
+			case "Speed":
 			indent (8); echo "<option>m/s</option>\n";
 			indent (8); echo "<option>km/h</option>\n";
 			indent (8); echo "<option>mi/h</option>\n";
 			indent (8); echo "<option>ft/s</option>\n";
 			indent (8); echo "<option>knot</option>\n";
-		}
-		else if ("Acceleration" == $unit)
-		{
+			break;
+			
+			case "Acceleration":
 			indent (8); echo "<option>m/s2</option>\n";
 			indent (8); echo "<option>km/h^2</option>\n";
 			indent (8); echo "<option>mi/h^2</option>\n";
 			indent (8); echo "<option>y/s^2</option>\n";
 			indent (8); echo "<option>ft/s^2</option>\n";
-		}
-		else
-		{
+			break;
+			
+			default:
 			indent (8); echo "<option>ERROR unknown unit \"$unit\"</option>\n";
+			break;
 		}
 		indent (7); echo "</select>\n";
 		indent (6); echo "</fieldset>\n";
