@@ -1,7 +1,11 @@
 package org.opentrafficsim.core.geometry;
 
+import org.djunits.unit.AngleUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -26,6 +30,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Nov 2, 2015 <br>
+ * @author M. Dupuis @ VIRES GmbH
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
@@ -67,10 +72,9 @@ public class Clothoid
         the interpretation of OpenDRIVE spiral data.
      */
 
-    /* ====== LOCAL VARIABLES ====== */
     //@formatter:off
-    /** S(x) for small x. */
-    static double[] sn = {
+    /** S(x) for small x numerator. */
+    static final double[] sn = {
         -2.99181919401019853726E3,
         7.08840045257738576863E5,
         -6.29741486205862506537E7,
@@ -79,8 +83,8 @@ public class Clothoid
         3.18016297876567817986E11 
     };
 
-    /** */
-    static double[] sd = {
+    /** S(x) for small x denominator. */
+    static final double[] sd = {
         2.81376268889994315696E2, 
         4.55847810806532581675E4, 
         5.17343888770096400730E6, 
@@ -89,8 +93,8 @@ public class Clothoid
         6.07366389490084639049E11
     };
 
-    /** C(x) for small x */
-    static double[] cn = { 
+    /** C(x) for small x numerator. */
+    static final double[] cn = { 
         -4.98843114573573548651E-8, 
         9.50428062829859605134E-6, 
         -6.45191435683965050962E-4,
@@ -99,8 +103,8 @@ public class Clothoid
         9.99999999999999998822E-1
     };
 
-    /** */
-    static double[] cd = { 
+    /** C(x) for small x denominator. */
+    static final double[] cd = { 
         3.99982968972495980367E-12, 
         9.15439215774657478799E-10, 
         1.25001862479598821474E-7,
@@ -110,8 +114,8 @@ public class Clothoid
         1.00000000000000000118E0 
     };
 
-    /** Auxiliary function f(x). */
-    static double[] fn = { 
+    /** Auxiliary function f(x) numerator. */
+    static final double[] fn = { 
         4.21543555043677546506E-1, 
         1.43407919780758885261E-1, 
         1.15220955073585758835E-2,
@@ -124,8 +128,8 @@ public class Clothoid
         3.76329711269987889006E-20
     };
 
-    /** */
-    static double[] fd = {
+    /** Auxiliary function f(x) denominator. */
+    static final double[] fd = {
         7.51586398353378947175E-1, 
         1.16888925859191382142E-1, 
         6.44051526508858611005E-3, 
@@ -138,8 +142,8 @@ public class Clothoid
         1.25443237090011264384E-20 
     };
 
-    /** Auxiliary function g(x). */
-    static double[] gn = { 
+    /** Auxiliary function g(x) numerator. */
+    static final double[] gn = { 
         5.04442073643383265887E-1, 
         1.97102833525523411709E-1, 
         1.87648584092575249293E-2,
@@ -153,8 +157,8 @@ public class Clothoid
         1.86958710162783235106E-22
     };
 
-    /** */
-    static double[] gd = {
+    /** Auxiliary function g(x) denominator. */
+    static final double[] gd = {
         1.47495759925128324529E0, 
         3.37748989120019970451E-1, 
         2.53603741420338795122E-2, 
@@ -170,29 +174,28 @@ public class Clothoid
     //@formatter:on
 
     /**
-     * Compute polynomial in x.
+     * Compute a polynomial in x.
      * @param x double; x
      * @param coef double[]; coefficients
      * @return
      */
-    private static double polevl(double x, double[] coef)
+    private static double polevl(final double x, final double[] coef)
     {
         double result = coef[0];
         for (int i = 0; i < coef.length; i++)
         {
-            result *= x;
-            result += coef[i];
+            result = result * x + coef[i];
         }
         return result;
     }
 
     /**
-     * Compute polynomial in x.
+     * Compute a polynomial in x.
      * @param x double; x
      * @param coef double[]; coefficients
      * @return
      */
-    private static double p1evl(double x, double[] coef)
+    private static double p1evl(final double x, final double[] coef)
     {
         double result = x + coef[0];
         for (int i = 0; i < coef.length; i++)
@@ -203,22 +206,19 @@ public class Clothoid
     }
 
     /**
-     * Approximate the fresnel function.
+     * Approximate the Fresnel function.
      * @param xxa
-     * @return
+     * @return double[]; array with two double values c and s
      */
-    private static double[] fresnel(double xxa)
+    private static double[] fresnel(final double xxa)
     {
+        final double x = Math.abs(xxa);
+        final double x2 = x * x;
         double cc, ss;
-        double x, x2;
-
-        x = Math.abs(xxa);
-        x2 = x * x;
 
         if (x2 < 2.5625)
         {
-            double t;
-            t = x2 * x2;
+            final double t = x2 * x2;
             ss = x * x2 * polevl(t, sn) / p1evl(t, sd);
             cc = x * polevl(t, cn) / polevl(t, cd);
         }
@@ -229,17 +229,15 @@ public class Clothoid
         }
         else
         {
-            double f, g, c, s, t, u;
-            x2 = x * x;
-            t = Math.PI * x2;
-            u = 1.0 / (t * t);
+            double t = Math.PI * x2;
+            final double u = 1.0 / (t * t);
             t = 1.0 / t;
-            f = 1.0 - u * polevl(u, fn) / p1evl(u, fd);
-            g = t * polevl(u, gn) / p1evl(u, gd);
+            final double f = 1.0 - u * polevl(u, fn) / p1evl(u, fd);
+            final double g = t * polevl(u, gn) / p1evl(u, gd);
 
             t = Math.PI * 0.5 * x2;
-            c = Math.cos(t);
-            s = Math.sin(t);
+            final double c = Math.cos(t);
+            final double s = Math.sin(t);
             t = Math.PI * x;
             cc = 0.5 + (f * s - g * c) / t;
             ss = 0.5 - (f * c + g * s) / t;
@@ -254,110 +252,106 @@ public class Clothoid
     }
 
     /**
-     * compute the actual "standard" spiral, starting with curvature 0
+     * Approximate one point of the "standard" spiral (curvature at start is 0).
      * @param s run-length along spiral
      * @param cDot first derivative of curvature [1/m2]
      * @param initialCurvature double; curvature at start
-     * @param x resulting x-coordinate in spirals local co-ordinate system [m]
-     * @param y resulting y-coordinate in spirals local co-ordinate system [m]
-     * @param t tangent direction at s [rad]
+     * @return double[]; array of three double values containing x, y, and tangent direction
      */
-    private static double[] odrSpiral(double s, double cDot, double initialCurvature)
+    private static double[] odrSpiral(final double s, final double cDot, final double initialCurvature)
     {
-        double a;
-        double[] result = new double[3];
-
-        a = 1.0 / Math.sqrt(Math.abs(cDot));
-        a *= Math.sqrt(Math.PI);
+        double a = Math.sqrt(Math.PI / Math.abs(cDot));
 
         double[] xy = fresnel(initialCurvature + s / a);
-        result[0] = xy[0] * a;
-        result[1] = xy[1] * a;
-
-        if (cDot < 0.0)
-            result[1] *= -1.0;
-
-        result[2] = s * s * cDot * 0.5;
-        return result;
+        return new double[] { xy[0] * a, xy[1] * a * Math.signum(cDot), s * s * cDot * 0.5 };
     }
 
     /**
      * Approximate a clothoid that starts in the x-direction.
-     * @param count int; number of line segments to generate
      * @param initialCurvature double; curvature at start
      * @param curvatureDerivative double; rate of curvature change along the clothoid
      * @param length double; total length of the clothoid
-     * @return OTSLine3D
+     * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)
+     * @return OTSLine3D; the line; the z-component of each point is set to 0
      * @throws NetworkException if the number of segments is too low
      */
-    private static OTSLine3D clothoid(int count, double initialCurvature, double curvatureDerivative, double length)
-            throws NetworkException
+    private static OTSLine3D clothoid(final double initialCurvature, final double curvatureDerivative, final double length,
+            final int numSegments) throws NetworkException
     {
-        OTSPoint3D[] points = new OTSPoint3D[count + 1];
+        OTSPoint3D[] points = new OTSPoint3D[numSegments + 1];
         double[] offset = odrSpiral(initialCurvature / curvatureDerivative, curvatureDerivative, initialCurvature);
         double sinRot = Math.sin(offset[2]);
         double cosRot = Math.cos(offset[2]);
-        for (int i = 0; i <= count; i++)
+        for (int i = 0; i <= numSegments; i++)
         {
             double[] xyd =
-                    odrSpiral(i * length / count + initialCurvature / curvatureDerivative, curvatureDerivative,
+                    odrSpiral(i * length / numSegments + initialCurvature / curvatureDerivative, curvatureDerivative,
                             initialCurvature);
             double dx = xyd[0] - offset[0];
             double dy = xyd[1] - offset[1];
-            points[i] = new OTSPoint3D(dx * cosRot + dy * sinRot, dy * cosRot - dx * sinRot, xyd[2]);
+            points[i] = new OTSPoint3D(dx * cosRot + dy * sinRot, dy * cosRot - dx * sinRot, 0);
         }
         return new OTSLine3D(points);
     }
 
     /**
-     * Approximate a clothoid that starts in the x-direction at a given point.
+     * Approximate a clothoid that starts at a given point in the given direction and curvature. Elevation is linearly
+     * interpolated over the length of the clothoid.
      * @param x1 double; x-coordinate of the start point
      * @param y1 double; y-coordinate of the start point
+     * @param startElevation double; z-component at start of the curve
      * @param startDirection double; rotation in radians at the start of the curve
      * @param startCurvature double; curvature at the start of the clothoid
      * @param endCurvature double; curvature at the end of the clothoid
      * @param length double; length of the clothoid
-     * @param numSegments int; number of segments to generate (the number of points is one higher than this)
+     * @param endElevation double; z-component at end of the curve
+     * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)
      * @return OTSLine3D; the clothoid
      * @throws NetworkException if the number of segments is too low
      * @throws OTSGeometryException never
      */
-    private static OTSLine3D clothoid(double x1, double y1, double startDirection, double startCurvature, double endCurvature,
-            double length, int numSegments) throws NetworkException
+    private static OTSLine3D clothoid(final double x1, final double y1, final double startElevation,
+            final double startDirection, final double startCurvature, final double endCurvature, final double length,
+            final double endElevation, final int numSegments) throws NetworkException
     {
-        OTSLine3D result = clothoid(numSegments, startCurvature, (endCurvature - startCurvature) / length, length);
+        OTSLine3D result = clothoid(startCurvature, (endCurvature - startCurvature) / length, length, numSegments);
         double sinRot = Math.sin(startDirection);
         double cosRot = Math.cos(startDirection);
         OTSPoint3D[] list = new OTSPoint3D[result.size()];
+        double elevationPerStep = (endElevation - startElevation) / (result.size() - 1);
         for (int i = 0; i < result.size(); i++)
         {
             try
             {
                 OTSPoint3D p = result.get(i);
-                list[i] = new OTSPoint3D(x1 + cosRot * p.x + sinRot * p.y, y1 + cosRot * p.y - sinRot * p.x, 0);
+                list[i] =
+                        new OTSPoint3D(x1 + cosRot * p.x + sinRot * p.y, y1 + cosRot * p.y - sinRot * p.x, startElevation + i
+                                * elevationPerStep);
             }
             catch (OTSGeometryException ge)
             {
                 // cannot happen
+                System.err.println("CANNOT HAPPEN; if you see this; let us know what you did.");
             }
         }
         return new OTSLine3D(list);
     }
 
     /**
-     * Approximate a clothoid.
+     * Approximate a clothoid with curvature 0 at start.
      * @param start OTSPoint3D; starting point of the clothoid
      * @param startDirection Angle.Abs; start direction of the clothoid
      * @param endCurvature double; curvature at the end of the clothoid [1/m]
      * @param length Length.Rel; length of the clothoid
-     * @param numSegments int; number of segments of the clothoid
+     * @param endElevation Length.Rel; elevation at end of the clothoid
+     * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)
      * @return OTSLine3D; the clothoid
      * @throws NetworkException if the number of segments is too low
      */
-    public static OTSLine3D clothoid(OTSPoint3D start, Angle.Abs startDirection, double endCurvature, Length.Rel length,
-            int numSegments) throws NetworkException
+    public static OTSLine3D clothoid(final OTSPoint3D start, final Angle.Abs startDirection, final double endCurvature,
+            final Length.Rel length, final Length.Rel endElevation, final int numSegments) throws NetworkException
     {
-        return clothoid(start.x, start.y, startDirection.si, 0, endCurvature, length.si, numSegments);
+        return clothoid(start.x, start.y, start.z, startDirection.si, 0, endCurvature, length.si, endElevation.si, numSegments);
     }
 
     /**
@@ -367,26 +361,71 @@ public class Clothoid
      * @param startCurvature double; curvature at the start of the clothoid [1/m]
      * @param endCurvature double; curvature at the end of the clothoid [1/m]
      * @param length Length.Rel; length of the clothoid
-     * @param numSegments int; number of segments of the clothoid
+     * @param endElevation Length.Rel; elevation at end of the clothoid
+     * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)
      * @return OTSLine3D; the clothoid
      * @throws NetworkException if the number of segments is too low
      */
-    public static OTSLine3D clothoid(OTSPoint3D start, Angle.Abs startDirection, double startCurvature, double endCurvature,
-            Length.Rel length, int numSegments) throws NetworkException
+    public static OTSLine3D clothoid(final OTSPoint3D start, final Angle.Abs startDirection, final double startCurvature,
+            final double endCurvature, final Length.Rel length, final Length.Rel endElevation, final int numSegments)
+            throws NetworkException
     {
-        return clothoid(start.x, start.y, startDirection.si, startCurvature, endCurvature, length.si, numSegments);
+        return clothoid(start.x, start.y, start.x, startDirection.si, startCurvature, endCurvature, length.si, endElevation.si,
+                numSegments);
     }
 
     /**
-     * @param args
+     * Approximate a clothoid with curvature 0 at start.
+     * @param start OTSPoint3D; starting point of the clothoid
+     * @param startDirection Angle.Abs; start direction of the clothoid
+     * @param endCurvature LinearDensity; curvature at the end of the clothoid
+     * @param length Length.Rel; length of the clothoid
+     * @param endElevation Length.Rel; elevation at end of the clothoid
+     * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)
+     * @return OTSLine3D; the clothoid
+     * @throws NetworkException if the number of segments is too low
+     */
+    public static OTSLine3D clothoid(final OTSPoint3D start, final Angle.Abs startDirection, final LinearDensity endCurvature,
+            final Length.Rel length, final Length.Rel endElevation, final int numSegments) throws NetworkException
+    {
+        return clothoid(start, startDirection, 0, endCurvature.si, length, endElevation, numSegments);
+    }
+
+    /**
+     * Approximate a clothoid.
+     * @param start OTSPoint3D; starting point of the clothoid
+     * @param startDirection Angle.Abs; start direction of the clothoid
+     * @param startCurvature double; curvature at the start of the clothoid [1/m]
+     * @param endCurvature double; curvature at the end of the clothoid [1/m]
+     * @param length Length.Rel; length of the clothoid
+     * @param endElevation Length.Rel; elevation at end of the clothoid
+     * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)
+     * @return OTSLine3D; the clothoid
+     * @throws NetworkException if the number of segments is too low
+     */
+    public static OTSLine3D clothoid(final OTSPoint3D start, final Angle.Abs startDirection,
+            final LinearDensity startCurvature, final LinearDensity endCurvature, final Length.Rel length,
+            final Length.Rel endElevation, final int numSegments) throws NetworkException
+    {
+        return clothoid(start, startDirection, startCurvature.si, endCurvature.si, length, endElevation, numSegments);
+    }
+
+    /**
+     * Demonstrate / test the clothoid methods.
+     * @param args String[]; the command line arguments (not used)
      * @throws NetworkException
      * @throws OTSGeometryException
      */
     public static void main(final String[] args) throws NetworkException, OTSGeometryException
     {
-        // OTSLine3D line = clothoid(104.1485, 89.037488, 0, 0, -0.04841457, 3.2, 100);
+        OTSLine3D line;
+        // line = clothoid(104.1485, 89.037488, 0, 0, 0, -0.04841457, 0, 3.2, 100);
         // System.out.println(line.toPlotterFormat());
-        OTSLine3D line = clothoid(10, 10, Math.PI / 8, 0*-0.03, 0.04, 100, 100);
+        // line = clothoid(10, 10, 5, Math.PI / 8, 0 * -0.03, 0.04, 100, 15, 100);
+        line =
+                clothoid(new OTSPoint3D(10, 10, 5), new Angle.Abs(Math.PI / 8, AngleUnit.RADIAN), new LinearDensity(0 * -0.03,
+                        LinearDensityUnit.PER_METER), new LinearDensity(0.04, LinearDensityUnit.PER_METER), new Length.Rel(100,
+                        LengthUnit.METER), new Length.Rel(15, LengthUnit.METER), 100);
         System.out.println(line.toPlotterFormat());
     }
 
