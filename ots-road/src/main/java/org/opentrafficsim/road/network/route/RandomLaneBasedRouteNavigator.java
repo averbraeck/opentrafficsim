@@ -8,6 +8,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.scalar.Length.Rel;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -33,7 +34,7 @@ public class RandomLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavigat
     private static final long serialVersionUID = 20150722L;
 
     /** the gtu. */
-    private LaneBasedGTU gtu;
+    // private LaneBasedGTU gtu;
 
     /** last visited node on the route (given -- I have been there). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -56,12 +57,10 @@ public class RandomLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavigat
 
     /**
      * Create a navigator.
-     * @param gtu the link to the gtu for this navigator
      * @param generationLink the link on which the GTU is generated
      */
-    public RandomLaneBasedRouteNavigator(final LaneBasedGTU gtu, final Link generationLink)
+    public RandomLaneBasedRouteNavigator(final Link generationLink)
     {
-        this.gtu = gtu;
         this.lastVisitedNode = generationLink.getStartNode();
         this.nextNodeToVisit = generationLink.getEndNode();
         determineNextNextNode();
@@ -127,18 +126,18 @@ public class RandomLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavigat
 
     /** {@inheritDoc} */
     @Override
-    public final Length.Rel suitability(final Lane lane, final Length.Rel longitudinalPosition, final GTUType gtuType,
+    public final Length.Rel suitability(final Lane lane, final Length.Rel longitudinalPosition, final LaneBasedGTU gtu,
         final Time.Rel timeHorizon) throws NetworkException
     {
         double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();
         boolean laneConnectedToDestination = false;
-        boolean laneIsMyLane = this.gtu.positions(this.gtu.getFront()).containsKey(lane);
-        for (Lane nextLane : lane.nextLanes(gtuType))
+        boolean laneIsMyLane = gtu.positions(gtu.getFront()).containsKey(lane);
+        for (Lane nextLane : lane.nextLanes(gtu.getGTUType()))
         {
             if (nextLane.getParentLink().equals(this.nextNextLinkToVisit))
                 laneConnectedToDestination = true;
         }
-        if ((lane.nextLanes(gtuType) == null || lane.nextLanes(gtuType).size() == 0))
+        if ((lane.nextLanes(gtu.getGTUType()) == null || lane.nextLanes(gtu.getGTUType()).size() == 0))
         {
             if (laneIsMyLane)
                 return new Length.Rel(500.0, LengthUnit.METER);

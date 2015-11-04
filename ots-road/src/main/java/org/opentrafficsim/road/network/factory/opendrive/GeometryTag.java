@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.util.UUID;
+
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Angle;
@@ -120,6 +122,11 @@ class GeometryTag
         Angle.Abs slope = new Angle.Abs(0.0, AngleUnit.SI);
         OTSPoint3D coordinate = new OTSPoint3D(geometryTag.x.doubleValue(),geometryTag.y.doubleValue(),geometryTag.hdg.doubleValue());
         
+        if (geometryTag.id == null)
+        {
+            geometryTag.id = UUID.randomUUID().toString();
+        }
+            
         OTSNode node = new OTSNode(geometryTag.id, coordinate, angle, slope);
         geometryTag.node = node;
         return node;

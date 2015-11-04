@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -99,6 +100,9 @@ class RoadTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<CrossSectionLink> subLinks = new ArrayList<>();
 
+    /** the lanetype that allows all traffic. */
+    static LaneType LANETYPE_ALL = null;
+
     /**
      * Parse the attributes of the road tag. The sub-elements are parsed in separate classes.
      * @param node the top-level road node
@@ -111,6 +115,11 @@ class RoadTag
     static RoadTag parseRoad(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException,
         NetworkException
     {
+        if (LANETYPE_ALL == null)
+        {
+            LANETYPE_ALL = new LaneType("ALL");
+            LANETYPE_ALL.addCompatibility(GTUType.ALL);
+        }
         NamedNodeMap attributes = node.getAttributes();
         RoadTag roadTag = new RoadTag();
 
@@ -141,7 +150,7 @@ class RoadTag
                 throw new SAXException("ROAD: junction id=" + roadTag.junctionId + " for road id=" + roadTag.id
                     + " not defined as a junction in the XML-file");
         }
-        
+
         parser.roadTags.put(roadTag.id, roadTag);
 
         return roadTag;
@@ -150,24 +159,25 @@ class RoadTag
     /**
      * @param roadTag
      * @param simulator
-     * @param openDriveNetworkLaneParser 
+     * @param openDriveNetworkLaneParser
      * @throws NetworkException
      * @throws OTSGeometryException
      * @throws NamingException
      */
-    static void showLanes(RoadTag roadTag, OTSDEVSSimulatorInterface simulator, OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws OTSGeometryException,
-        NetworkException, NamingException
+    static void showLanes(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
+        OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws OTSGeometryException, NetworkException,
+        NamingException
     {
         OTSNetwork otsNetwork = openDriveNetworkLaneParser.network;
         if (roadTag.lanesTag.laneSectionTags.size() == 1)// no sub links
         {
             roadTag.subLinks.add(roadTag.link);
-            if(!otsNetwork.containsNode(roadTag.link.getStartNode()))
+            if (!otsNetwork.containsNode(roadTag.link.getStartNode()))
                 otsNetwork.addNode(roadTag.link.getStartNode());
-            if(!otsNetwork.containsNode(roadTag.link.getEndNode()))
+            if (!otsNetwork.containsNode(roadTag.link.getEndNode()))
                 otsNetwork.addNode(roadTag.link.getEndNode());
-            if(!otsNetwork.containsLink(roadTag.link))
-                otsNetwork.addLink(roadTag.link); 
+            if (!otsNetwork.containsLink(roadTag.link))
+                otsNetwork.addLink(roadTag.link);
         }
         else
         {
@@ -202,28 +212,28 @@ class RoadTag
                     else
                     {
                         OTSPoint3D point =
-                                new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(),
-                                    currentGeometryTag.hdg.doubleValue());
-                            points.add(point);
-                           // currentIndex++;
-                            to = tempGeometryTags.get(currentIndex);
-                        //OTSPoint3D[] coordinates = new OTSPoint3D[points.size()];
-                        //coordinates = (OTSPoint3D[]) points.toArray();
+                            new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(),
+                                currentGeometryTag.hdg.doubleValue());
+                        points.add(point);
+                        // currentIndex++;
+                        to = tempGeometryTags.get(currentIndex);
+                        // OTSPoint3D[] coordinates = new OTSPoint3D[points.size()];
+                        // coordinates = (OTSPoint3D[]) points.toArray();
                         OTSLine3D designLine = new OTSLine3D(points);
                         String sublinkId = roadTag.id + "." + laneSecIndex.toString();
                         CrossSectionLink sublink =
                             new CrossSectionLink(sublinkId, from.node, to.node, LinkType.ALL, designLine,
-                                LaneKeepingPolicy.KEEP_LANE);                                                
-                        
+                                LaneKeepingPolicy.KEEP_LANE);
+
                         roadTag.subLinks.add(sublink);
-                        
-                        if(!otsNetwork.containsNode(from.node))
+
+                        if (!otsNetwork.containsNode(from.node))
                             otsNetwork.addNode(from.node);
-                        if(!otsNetwork.containsNode(to.node))
+                        if (!otsNetwork.containsNode(to.node))
                             otsNetwork.addNode(to.node);
 
-                        otsNetwork.addLink(sublink); 
-                        
+                        otsNetwork.addLink(sublink);
+
                         break;
                     }
                 }
@@ -245,19 +255,19 @@ class RoadTag
                 points.add(point);
             }
 
-            //OTSPoint3D[] coordinates = new OTSPoint3D[points.size()];
-            //coordinates = (OTSPoint3D[]) points.toArray();
+            // OTSPoint3D[] coordinates = new OTSPoint3D[points.size()];
+            // coordinates = (OTSPoint3D[]) points.toArray();
             OTSLine3D designLine = new OTSLine3D(points);
             String sublinkId = roadTag.id + "." + Integer.toString(roadTag.lanesTag.laneSectionTags.size());
             CrossSectionLink sublink =
-                new CrossSectionLink(sublinkId, from.node, to.node,
-                    LinkType.ALL, designLine, LaneKeepingPolicy.KEEP_LANE);
-            
+                new CrossSectionLink(sublinkId, from.node, to.node, LinkType.ALL, designLine,
+                    LaneKeepingPolicy.KEEP_LANE);
+
             roadTag.subLinks.add(sublink);
-            
-            if(!otsNetwork.containsNode(from.node))
+
+            if (!otsNetwork.containsNode(from.node))
                 otsNetwork.addNode(from.node);
-            if(!otsNetwork.containsNode(to.node))
+            if (!otsNetwork.containsNode(to.node))
                 otsNetwork.addNode(to.node);
 
             otsNetwork.addLink(sublink);
@@ -269,18 +279,17 @@ class RoadTag
             LaneSectionTag currentLaneSec = roadTag.lanesTag.laneSectionTags.get(laneSecIndex);
 
             CrossSectionLink currentLink = roadTag.subLinks.get(laneSecIndex);
-            
-            
+
             Length.Rel ds = new Length.Rel(0.0, LengthUnit.METER);
             LaneSectionTag nextLaneSec;
-            if(laneSecIndex != roadTag.lanesTag.laneSectionTags.size()-1)
+            if (laneSecIndex != roadTag.lanesTag.laneSectionTags.size() - 1)
             {
-                nextLaneSec = roadTag.lanesTag.laneSectionTags.get(laneSecIndex+1);
-                ds = nextLaneSec.s.minus(currentLaneSec.s);              
+                nextLaneSec = roadTag.lanesTag.laneSectionTags.get(laneSecIndex + 1);
+                ds = nextLaneSec.s.minus(currentLaneSec.s);
             }
             else
             {
-                ds = roadTag.length.minus(currentLaneSec.s);           
+                ds = roadTag.length.minus(currentLaneSec.s);
             }
 
             // show left lanes
@@ -291,11 +300,14 @@ class RoadTag
             for (int leftLaneIndex = 1; leftLaneIndex <= leftLaneSize; leftLaneIndex++)
             {
                 LaneTag leftLane = currentLaneSec.leftLaneTags.get(leftLaneIndex);
-                
-                leftLane.widthTag.sOffst = leftLane.widthTag.a.plus(leftLane.widthTag.b.multiplyBy(ds.doubleValue())).plus(leftLane.widthTag.c.multiplyBy(Math.pow(ds.doubleValue(),2))).plus(leftLane.widthTag.d.multiplyBy(Math.pow(ds.doubleValue(),3)));
-                                
+
+                leftLane.widthTag.sOffst =
+                    leftLane.widthTag.a.plus(leftLane.widthTag.b.multiplyBy(ds.doubleValue())).plus(
+                        leftLane.widthTag.c.multiplyBy(Math.pow(ds.doubleValue(), 2))).plus(
+                        leftLane.widthTag.d.multiplyBy(Math.pow(ds.doubleValue(), 3)));
+
                 Length.Rel laneWidth_start = leftLane.widthTag.a;
-                Length.Rel laneWidth_end = leftLane.widthTag.sOffst;                
+                Length.Rel laneWidth_end = leftLane.widthTag.sOffst;
 
                 leftOffset_start = leftOffset_start.plus(laneWidth_start.multiplyBy(0.5));
                 leftOffset_end = leftOffset_end.plus(laneWidth_end.multiplyBy(0.5));
@@ -305,6 +317,11 @@ class RoadTag
                 Speed speed = null;
                 if (leftLane.speedTags.size() > 0)
                     speed = leftLane.speedTags.get(0).max;
+                if (speed == null)
+                {
+                    System.err.println("speed.max == null for " + leftLane.id.toString());
+                    speed = new Speed(30.0, SpeedUnit.MILE_PER_HOUR);
+                }
 
                 Map<GTUType, Speed> speedLimit = new LinkedHashMap<>();
                 speedLimit.put(GTUType.ALL, speed);
@@ -317,8 +334,9 @@ class RoadTag
                     Color color = Color.gray;
 
                     Lane lane =
-                        new Lane(currentLink, leftLane.id.toString(), leftOffset_start, leftOffset_end, laneWidth_start, laneWidth_end,
-                            LaneType.NONE, directionality, speedLimit, overtakingConditions);
+                        new Lane(currentLink, leftLane.id.toString(), leftOffset_start, leftOffset_end,
+                            laneWidth_start, laneWidth_end, LANETYPE_ALL, directionality, speedLimit,
+                            overtakingConditions);
                     currentLaneSec.lanes.put(leftLane.id, lane);
                     try
                     {
@@ -333,8 +351,8 @@ class RoadTag
                 {
                     Color color = Color.darkGray;
                     Lane lane =
-                        new NoTrafficLane(currentLink, leftLane.id.toString(), leftOffset_start, leftOffset_end, laneWidth_start,
-                                laneWidth_end);
+                        new NoTrafficLane(currentLink, leftLane.id.toString(), leftOffset_start, leftOffset_end,
+                            laneWidth_start, laneWidth_end);
                     currentLaneSec.lanes.put(leftLane.id, lane);
                     try
                     {
@@ -361,7 +379,8 @@ class RoadTag
                 {
                     Color color = Color.green;
                     Shoulder shoulder =
-                        new Shoulder(currentLink, leftLane.id.toString(), leftOffset_start, leftOffset_end, laneWidth_start, laneWidth_end);
+                        new Shoulder(currentLink, leftLane.id.toString(), leftOffset_start, leftOffset_end,
+                            laneWidth_start, laneWidth_end);
                     try
                     {
                         new ShoulderAnimation(shoulder, simulator, color);
@@ -373,20 +392,16 @@ class RoadTag
                 }
                 else
                 {
-/*                    Stripe solidLine = new Stripe(currentLink, leftOffset, laneWidth);
-                    try
-                    {
-                        new StripeAnimation(solidLine, simulator, StripeAnimation.TYPE.SOLID);
-                    }
-                    catch (RemoteException exception)
-                    {
-                        exception.printStackTrace();
-                    }*/
-                    
+                    /*
+                     * Stripe solidLine = new Stripe(currentLink, leftOffset, laneWidth); try { new StripeAnimation(solidLine,
+                     * simulator, StripeAnimation.TYPE.SOLID); } catch (RemoteException exception) {
+                     * exception.printStackTrace(); }
+                     */
+
                     Color color = Color.green;
                     Lane lane =
-                        new NoTrafficLane(currentLink, leftLane.id.toString(), leftOffset_start, leftOffset_end, laneWidth_start,
-                            laneWidth_end);
+                        new NoTrafficLane(currentLink, leftLane.id.toString(), leftOffset_start, leftOffset_end,
+                            laneWidth_start, laneWidth_end);
                     currentLaneSec.lanes.put(leftLane.id, lane);
                     try
                     {
@@ -410,8 +425,11 @@ class RoadTag
             for (int rightLaneIndex = 1; rightLaneIndex <= rightLaneSize; rightLaneIndex++)
             {
                 LaneTag rightLane = currentLaneSec.rightLaneTags.get(-rightLaneIndex);
-                
-                rightLane.widthTag.sOffst = rightLane.widthTag.a.plus(rightLane.widthTag.b.multiplyBy(ds.doubleValue())).plus(rightLane.widthTag.c.multiplyBy(Math.pow(ds.doubleValue(),2))).plus(rightLane.widthTag.d.multiplyBy(Math.pow(ds.doubleValue(),3)));
+
+                rightLane.widthTag.sOffst =
+                    rightLane.widthTag.a.plus(rightLane.widthTag.b.multiplyBy(ds.doubleValue())).plus(
+                        rightLane.widthTag.c.multiplyBy(Math.pow(ds.doubleValue(), 2))).plus(
+                        rightLane.widthTag.d.multiplyBy(Math.pow(ds.doubleValue(), 3)));
 
                 Length.Rel laneWidth_start = rightLane.widthTag.a;
                 Length.Rel laneWidth_end = rightLane.widthTag.sOffst;
@@ -419,12 +437,16 @@ class RoadTag
                 rightOffset_start = rightOffset_start.minus(laneWidth_start.multiplyBy(0.5));
                 rightOffset_end = rightOffset_end.minus(laneWidth_end.multiplyBy(0.5));
 
-
                 OvertakingConditions overtakingConditions = null;
 
                 Speed speed = null;
                 if (rightLane.speedTags.size() > 0)
                     speed = rightLane.speedTags.get(0).max;
+                if (speed == null)
+                {
+                    System.err.println("speed.max == null for " + rightLane.id.toString());
+                    speed = new Speed(30.0, SpeedUnit.MILE_PER_HOUR);
+                }
 
                 Map<GTUType, Speed> speedLimit = new LinkedHashMap<>();
                 speedLimit.put(GTUType.ALL, speed);
@@ -437,12 +459,13 @@ class RoadTag
                     Color color = Color.gray;
 
                     try
-                    {                       
+                    {
                         Lane lane =
-                            new Lane(currentLink, rightLane.id.toString(), rightOffset_start, rightOffset_end, laneWidth_start,
-                                laneWidth_end, LaneType.NONE, directionality, speedLimit, overtakingConditions);
+                            new Lane(currentLink, rightLane.id.toString(), rightOffset_start, rightOffset_end,
+                                laneWidth_start, laneWidth_end, LANETYPE_ALL, directionality, speedLimit,
+                                overtakingConditions);
                         currentLaneSec.lanes.put(rightLane.id, lane);
-                        
+
                         new LaneAnimationOD(lane, simulator, color);
                     }
                     catch (Exception exception)
@@ -454,8 +477,8 @@ class RoadTag
                 {
                     Color color = Color.darkGray;
                     Lane lane =
-                        new NoTrafficLane(currentLink, rightLane.id.toString(), rightOffset_start, rightOffset_end, laneWidth_start,
-                            laneWidth_end);
+                        new NoTrafficLane(currentLink, rightLane.id.toString(), rightOffset_start, rightOffset_end,
+                            laneWidth_start, laneWidth_end);
                     currentLaneSec.lanes.put(rightLane.id, lane);
                     try
                     {
@@ -482,7 +505,8 @@ class RoadTag
                 {
                     Color color = Color.green;
                     Shoulder shoulder =
-                        new Shoulder(currentLink, rightLane.id.toString(), rightOffset_start, laneWidth_start, laneWidth_end);
+                        new Shoulder(currentLink, rightLane.id.toString(), rightOffset_start, laneWidth_start,
+                            laneWidth_end);
                     try
                     {
                         new ShoulderAnimation(shoulder, simulator, color);
@@ -496,8 +520,8 @@ class RoadTag
                 {
                     Color color = Color.green;
                     Lane lane =
-                        new NoTrafficLane(currentLink, rightLane.id.toString(), rightOffset_start, rightOffset_end, laneWidth_start,
-                            laneWidth_end);
+                        new NoTrafficLane(currentLink, rightLane.id.toString(), rightOffset_start, rightOffset_end,
+                            laneWidth_start, laneWidth_end);
                     currentLaneSec.lanes.put(rightLane.id, lane);
                     try
                     {

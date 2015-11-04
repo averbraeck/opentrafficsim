@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -159,10 +160,16 @@ class JunctionTag
             }
             
 
-            
-            OvertakingConditions overtakingConditions = null;
+            // TODO overtaking conditions
+            OvertakingConditions overtakingConditions = new OvertakingConditions.LeftAndRight();
 
-            Speed speed = null;            
+            Speed speed = null;         
+            if (speed == null)
+            {
+                System.err.println("speed.max == null for " + sublinkId.toString());
+                speed = new Speed(30.0, SpeedUnit.MILE_PER_HOUR);
+            }
+
 
 /*            if (connectingLane.getSpeedLimit(GTUType.ALL) != null)
                 speed = connectingLane.getSpeedLimit(GTUType.ALL);
@@ -183,7 +190,7 @@ class JunctionTag
                     Lane lane =
                             new Lane(sublink, sublinkId, inComingLane.getDesignLineOffsetAtEnd(),
                                     connectingLane.getDesignLineOffsetAtBegin(), inComingLane.getEndWidth(),
-                                    connectingLane.getBeginWidth(), LaneType.NONE, directionality, speedLimit,
+                                    connectingLane.getBeginWidth(), RoadTag.LANETYPE_ALL, directionality, speedLimit,
                                     overtakingConditions);
                     new LaneAnimation(lane, simulator, color);
                     

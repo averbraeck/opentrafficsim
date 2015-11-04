@@ -95,7 +95,7 @@ public class OpenDriveNetworkLaneParser
      * @throws OTSGeometryException when construction of a lane contour or offset design line fails
      * @throws SimRuntimeException when simulator cannot be used to schedule GTU generation
      */
-    @SuppressWarnings({"rawtypes", "checkstyle:needbraces"})
+    @SuppressWarnings("checkstyle:needbraces")
     public final OTSNetwork build(final URL url) throws NetworkException, ParserConfigurationException, SAXException,
         IOException, NamingException, GTUException, OTSGeometryException, SimRuntimeException
     {
