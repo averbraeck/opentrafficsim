@@ -177,7 +177,7 @@ public class Clothoid
      * Compute a polynomial in x.
      * @param x double; x
      * @param coef double[]; coefficients
-     * @return
+     * @return polynomial in x
      */
     private static double polevl(final double x, final double[] coef)
     {
@@ -193,7 +193,7 @@ public class Clothoid
      * Compute a polynomial in x.
      * @param x double; x
      * @param coef double[]; coefficients
-     * @return
+     * @return polynomial in x
      */
     private static double p1evl(final double x, final double[] coef)
     {
@@ -308,7 +308,6 @@ public class Clothoid
      * @param numSegments int; number of segments used to approximate (the number of points is one higher than this)
      * @return OTSLine3D; the clothoid
      * @throws NetworkException if the number of segments is too low
-     * @throws OTSGeometryException never
      */
     private static OTSLine3D clothoid(final double x1, final double y1, final double startElevation,
             final double startDirection, final double startCurvature, final double endCurvature, final double length,
