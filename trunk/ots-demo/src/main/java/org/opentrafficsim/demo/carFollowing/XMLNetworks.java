@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo.carFollowing;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
@@ -19,6 +20,7 @@ import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 import nl.tudelft.simulation.jstats.distributions.DistErlang;
+import nl.tudelft.simulation.jstats.distributions.DistTriangular;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 
 import org.djunits.unit.AccelerationUnit;
@@ -35,9 +37,12 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.AbstractGTU;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.animation.GTUColorer.LegendEntry;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -51,6 +56,7 @@ import org.opentrafficsim.road.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.following.IDM;
 import org.opentrafficsim.road.gtu.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.road.gtu.lane.changing.FixedLaneChangeModel;
@@ -67,6 +73,7 @@ import org.opentrafficsim.road.network.route.FixedLaneBasedRouteGenerator;
 import org.opentrafficsim.road.network.route.LaneBasedRouteGenerator;
 import org.opentrafficsim.road.network.route.ProbabilisticLaneBasedRouteGenerator;
 import org.opentrafficsim.road.network.route.ProbabilisticLaneBasedRouteGenerator.LaneBasedRouteProbability;
+import org.opentrafficsim.road.network.route.RandomLaneBasedRouteNavigator;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
@@ -226,8 +233,11 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     /** The random number generator used to decide what kind of GTU to generate. */
     private Random randomGenerator = new Random(12346);
 
+    /** disttria(70,80,100). */
+    private DistContinuous disttria = new DistTriangular(new MersenneTwister(), 70, 80, 100);
+
     /** The route generator. */
-    private LaneBasedRouteGenerator routeGenerator;
+    // private LaneBasedRouteGenerator routeGenerator;
 
     /** The GTUColorer for the generated vehicles. */
     private final GTUColorer gtuColorer;
@@ -239,7 +249,8 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     public XMLNetworkModel(final ArrayList<AbstractProperty<?>> userModifiedProperties, final GTUColorer gtuColorer)
     {
         this.properties = userModifiedProperties;
-        this.gtuColorer = gtuColorer;
+        // this.gtuColorer = gtuColorer;
+        this.gtuColorer = new DirectionGTUColorer();
     }
 
     /**
@@ -281,7 +292,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         OTSNode from = new OTSNode("From", new OTSPoint3D(0, 0, 0));
         OTSNode end = new OTSNode("End", new OTSPoint3D(1200, 0, 0));
         OTSNode from2 = new OTSNode("From2", new OTSPoint3D(0, -50, 0));
-        OTSNode firstVia = new OTSNode("Via1", new OTSPoint3D(800, 0, 0));
+        OTSNode firstVia = new OTSNode("Via1", new OTSPoint3D(500, 0, 0));
         OTSNode end2 = new OTSNode("End2", new OTSPoint3D(1200, -50, 0));
         OTSNode secondVia = new OTSNode("Via2", new OTSPoint3D(1000, 0, 0));
         CompoundProperty cp = new CompoundProperty("", "", this.properties, false, 0);
@@ -405,23 +416,23 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             {
                 setupGenerator(LaneFactory.makeMultiLane("From2 to FirstVia", from2, firstVia, null, lanesOnBranch, 0,
                     lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator));
-                this.routeGenerator = new FixedLaneBasedRouteGenerator(new CompleteRoute(""));
+                // this.routeGenerator = new FixedLaneBasedRouteGenerator(new CompleteRoute(""));
             }
             else
             {
                 setupSink(LaneFactory.makeMultiLane("SecondVia to end2", secondVia, end2, null, lanesOnBranch,
                     lanesOnCommon - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator), laneType);
                 List<LaneBasedRouteProbability> routeProbabilities = new ArrayList<>();
-                ArrayList<Node> mainRoute = new ArrayList<Node>();
-                mainRoute.add(end);
-                routeProbabilities.add(new LaneBasedRouteProbability(new CompleteLaneBasedRouteNavigator(
-                    new CompleteRoute("main", mainRoute)), new java.lang.Double(lanesOnMain)));
-                ArrayList<Node> sideRoute = new ArrayList<Node>();
-                sideRoute.add(end2);
-                routeProbabilities.add(new LaneBasedRouteProbability(new CompleteLaneBasedRouteNavigator(
-                    new CompleteRoute("side", sideRoute)), new java.lang.Double(lanesOnBranch)));
-                this.routeGenerator =
-                    new ProbabilisticLaneBasedRouteGenerator(routeProbabilities, new MersenneTwister(1234));
+                // ArrayList<Node> mainRoute = new ArrayList<Node>();
+                // mainRoute.add(firstVia); mainRoute.add(secondVia); mainRoute.add(end);
+                // routeProbabilities.add(new LaneBasedRouteProbability(new CompleteLaneBasedRouteNavigator(
+                // new CompleteRoute("main", mainRoute)), new java.lang.Double(lanesOnMain)));
+                // ArrayList<Node> sideRoute = new ArrayList<Node>();
+                // sideRoute.add(firstVia); sideRoute.add(secondVia); sideRoute.add(end2);
+                // routeProbabilities.add(new LaneBasedRouteProbability(new CompleteLaneBasedRouteNavigator(
+                // new CompleteRoute("side", sideRoute)), new java.lang.Double(lanesOnBranch)));
+                // this.routeGenerator =
+                // new ProbabilisticLaneBasedRouteGenerator(routeProbabilities, new MersenneTwister(1234));
             }
             for (int index = 0; index < lanesOnCommon; index++)
             {
@@ -531,8 +542,8 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                 java.lang.Double.MAX_VALUE, TimeUnit.SI));
         LaneChangeModel lcm = new FixedLaneChangeModel(null);
         new LaneBasedIndividualCar("999999", this.gtuType, gfm, lcm, initialPositions, new Speed(0, KM_PER_HOUR),
-            new Length.Rel(1, METER), lane.getWidth(1), new Speed(0, KM_PER_HOUR),
-            new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator);
+            new Length.Rel(1, METER), lane.getWidth(1), new Speed(0, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
+                new CompleteRoute("")), this.simulator);
         return lane;
     }
 
@@ -565,7 +576,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     protected final void generateCar(final Lane lane)
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
-        Length.Rel initialPosition = new Length.Rel(0, METER);
+        Length.Rel initialPosition = new Length.Rel(16, METER);
         Speed initialSpeed = new Speed(50, KM_PER_HOUR);
         Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
         initialPositions.put(lane, initialPosition);
@@ -574,10 +585,17 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
             GTUFollowingModel gtuFollowingModel =
                 generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
-            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, gtuFollowingModel,
-                this.laneChangeModel, initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, METER),
-                new Speed(200, KM_PER_HOUR), this.routeGenerator.generateRouteNavigator(), this.simulator,
-                DefaultCarAnimation.class, this.gtuColorer);
+            // new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, gtuFollowingModel,
+            // this.laneChangeModel, initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, METER),
+            // new Speed(200, KM_PER_HOUR), this.routeGenerator.generateRouteNavigator(), this.simulator,
+            // DefaultCarAnimation.class, this.gtuColorer);
+            double speed = this.disttria.draw();
+            LaneBasedIndividualCar car =
+                new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, gtuFollowingModel,
+                    this.laneChangeModel, initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, METER),
+                    new Speed(speed, KM_PER_HOUR), null, this.simulator, DefaultCarAnimation.class, this.gtuColorer);
+            car.setRouteNavigator(new RandomLaneBasedRouteNavigator(lane.getParentLink()));
+
             Object[] arguments = new Object[1];
             arguments[0] = lane;
             this.simulator.scheduleEventRel(new Time.Rel(this.headwayGenerator.draw(), SECOND), this, this,
@@ -597,4 +615,37 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         return this.simulator;
     }
 
+    private class DirectionGTUColorer implements GTUColorer
+    {
+        List<LegendEntry> legend = new ArrayList<>();
+
+        /** */
+        public DirectionGTUColorer()
+        {
+            super();
+            this.legend.add(new LegendEntry(Color.RED, "Right", "Go right"));
+            this.legend.add(new LegendEntry(Color.BLUE, "Left", "Go left"));
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Color getColor(GTU gtu)
+        {
+            AbstractGTU agtu = (AbstractGTU) gtu;
+            RandomLaneBasedRouteNavigator rn = (RandomLaneBasedRouteNavigator) agtu.getRouteNavigator();
+            if (rn.nextNextNodeToVisit().toString().toUpperCase().contains("END2"))
+                return Color.red;
+            else if (rn.nextNextNodeToVisit().toString().toUpperCase().contains("END"))
+                return Color.blue;
+            else
+                return Color.black;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public List<LegendEntry> getLegend()
+        {
+            return this.legend;
+        }
+    }
 }

@@ -170,7 +170,7 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
                     {
                         Length.Rel longitudinalPosition = new Length.Rel(position, METER);
                         Length.Rel suitability =
-                            navigator.suitability(lane, longitudinalPosition, gtuType, this.timeHorizon);
+                            navigator.suitability(lane, longitudinalPosition, null, this.timeHorizon); // TODO null
                         if (suitability.getSI() <= mainLength)
                         {
                             dataset.addXYPair(key, mainLength - position, suitability.getSI());
