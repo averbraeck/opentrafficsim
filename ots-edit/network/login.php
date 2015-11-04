@@ -12,7 +12,7 @@ if (isset ( $_POST ['submitLoginCredentials'] )) {
 		$userName = $_POST ['userName'];
 		$cleaneduserName = preg_replace ( '/[^a-zA-Z0-9_-]/', '//', $userName );
 		if ($cleaneduserName != $userName) {
-			$error = "Illegal characters in user name";
+			$error = "Illegal characters in user name; use only letters, digits, underscores and hypens.";
 		} else {
 			$password = $_POST ['password'];
 			// $hash = password_hash($password, PASSWORD_DEFAULT);
