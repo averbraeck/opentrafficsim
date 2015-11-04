@@ -701,7 +701,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         }
         try
         {
-            return getRouteNavigator().suitability(lane, longitudinalPosition, getGTUType(), TIMEHORIZON);
+            return getRouteNavigator().suitability(lane, longitudinalPosition, this, TIMEHORIZON);
         } catch (NetworkException ne)
         {
             System.err.println("GTU " + this.getId() + " has a route problem in suitability: " + ne.getMessage());

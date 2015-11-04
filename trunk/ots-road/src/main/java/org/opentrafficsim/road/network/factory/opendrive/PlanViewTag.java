@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.factory.opendrive;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.LengthUnit;
@@ -147,6 +148,10 @@ class PlanViewTag
         }
 
         OTSLine3D designLine = new OTSLine3D(coordinates);
+        if (roadTag.id == null)
+        {
+            roadTag.id = UUID.randomUUID().toString();
+        }
         CrossSectionLink link =
                 new CrossSectionLink(roadTag.id, from.node, to.node, LinkType.ALL, designLine, LaneKeepingPolicy.KEEP_LANE);
         return link;

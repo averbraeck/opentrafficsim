@@ -7,12 +7,12 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -87,11 +87,11 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
 
     /** {@inheritDoc} */
     @Override
-    public final Length.Rel suitability(final Lane lane, final Length.Rel longitudinalPosition, final GTUType gtuType,
+    public final Length.Rel suitability(final Lane lane, final Length.Rel longitudinalPosition, final LaneBasedGTU gtu,
         final Time.Rel timeHorizon) throws NetworkException
     {
         double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();
-        double spareTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit(gtuType).getSI();
+        double spareTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit(gtu.getGTUType()).getSI();
         // Find the first upcoming Node where there is a branch
         Node nextNode = lane.getParentLink().getEndNode();
         Node nextSplitNode = null;
@@ -103,7 +103,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
             {
                 return NOLANECHANGENEEDED; // It is not yet time to worry; this lane will do as well as any other
             }
-            int laneCount = countCompatibleLanes(linkBeforeBranch, gtuType);
+            int laneCount = countCompatibleLanes(linkBeforeBranch, gtu.getGTUType());
             if (0 == laneCount)
             {
                 throw new NetworkException("No compatible Lanes on Link " + linkBeforeBranch);
@@ -133,16 +133,16 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                     remainingDistance += nextLink.getLength().getSI();
                     linkBeforeBranch = (CrossSectionLink) nextLink;
                     // Figure out the new currentLane
-                    if (currentLane.nextLanes(gtuType).size() == 0)
+                    if (currentLane.nextLanes(gtu.getGTUType()).size() == 0)
                     {
                         // Lane drop; our lane disappears. This is a compulsory lane change; which is not controlled
                         // by the Route. Perform the forced lane change.
-                        if (currentLane.accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType).size() > 0)
+                        if (currentLane.accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtu.getGTUType()).size() > 0)
                         {
                             for (Lane adjacentLane : currentLane.accessibleAdjacentLanes(LateralDirectionality.RIGHT,
-                                gtuType))
+                                gtu.getGTUType()))
                             {
-                                if (adjacentLane.nextLanes(gtuType).size() > 0)
+                                if (adjacentLane.nextLanes(gtu.getGTUType()).size() > 0)
                                 {
                                     currentLane = adjacentLane;
                                     break;
@@ -151,9 +151,10 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                                 // first in the set
                             }
                         }
-                        for (Lane adjacentLane : currentLane.accessibleAdjacentLanes(LateralDirectionality.LEFT, gtuType))
+                        for (Lane adjacentLane : currentLane.accessibleAdjacentLanes(LateralDirectionality.LEFT, gtu
+                            .getGTUType()))
                         {
-                            if (adjacentLane.nextLanes(gtuType).size() > 0)
+                            if (adjacentLane.nextLanes(gtu.getGTUType()).size() > 0)
                             {
                                 currentLane = adjacentLane;
                                 break;
@@ -161,22 +162,22 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                             // If there are several adjacent lanes that have non empty nextLanes, we simple take the
                             // first in the set
                         }
-                        if (currentLane.nextLanes(gtuType).size() == 0)
+                        if (currentLane.nextLanes(gtu.getGTUType()).size() == 0)
                         {
-                            throw new NetworkException("Lane ends and there is not a compatible adjacent lane that does "
-                                + "not end");
+                            throw new NetworkException(
+                                "Lane ends and there is not a compatible adjacent lane that does " + "not end");
                         }
                     }
                     // Any compulsory lane change(s) have been performed and there is guaranteed a compatible next lane.
-                    for (Lane nextLane : currentLane.nextLanes(gtuType))
+                    for (Lane nextLane : currentLane.nextLanes(gtu.getGTUType()))
                     {
-                        if (nextLane.getLaneType().isCompatible(gtuType))
+                        if (nextLane.getLaneType().isCompatible(gtu.getGTUType()))
                         {
-                            currentLane = currentLane.nextLanes(gtuType).iterator().next();
+                            currentLane = currentLane.nextLanes(gtu.getGTUType()).iterator().next();
                             break;
                         }
                     }
-                    spareTime -= currentLane.getLength().getSI() / currentLane.getSpeedLimit(gtuType).getSI();
+                    spareTime -= currentLane.getLength().getSI() / currentLane.getSpeedLimit(gtu.getGTUType()).getSI();
                 }
                 else
                 {
@@ -205,7 +206,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                     if (null != linkAfterBranch)
                     {
                         throw new NetworkException("Parallel Links at " + nextSplitNode + " go to " + nextNodeOnLink);
-                        // FIXME If all but one of these have no Lane compatible with gtuType, dying here is a bit
+                        // FIXME If all but one of these have no Lane compatible with gtu.getGTUType(), dying here is a bit
                         // premature
                     }
                     linkAfterBranch = link;
@@ -222,24 +223,24 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
             if (cse instanceof Lane)
             {
                 Lane l = (Lane) cse;
-                if (l.getLaneType().isCompatible(gtuType))
+                if (l.getLaneType().isCompatible(gtu.getGTUType()))
                 {
-                    for (Lane connectingLane : l.nextLanes(gtuType))
+                    for (Lane connectingLane : l.nextLanes(gtu.getGTUType()))
                     {
                         if (connectingLane.getParentLink() == linkAfterBranch
-                            && connectingLane.getLaneType().isCompatible(gtuType))
+                            && connectingLane.getLaneType().isCompatible(gtu.getGTUType()))
                         {
                             Length.Rel currentValue = suitabilityOfLanesBeforeBranch.get(l);
                             // Use recursion to find out HOW suitable this continuation lane is, but don't revert back
                             // to the maximum time horizon (or we could end up in infinite recursion when there are
                             // loops in the network).
                             Length.Rel value =
-                                suitability(connectingLane, new Length.Rel(0, LengthUnit.SI), gtuType, new Time.Rel(
+                                suitability(connectingLane, new Length.Rel(0, LengthUnit.SI), gtu, new Time.Rel(
                                     spareTime, TimeUnit.SI));
                             // Use the minimum of the value computed for the first split junction (if there is one)
                             // and the value computed for the second split junction.
-                            suitabilityOfLanesBeforeBranch.put(l, null == currentValue || value.le(currentValue) ? value
-                                : currentValue);
+                            suitabilityOfLanesBeforeBranch.put(l, null == currentValue || value.le(currentValue)
+                                ? value : currentValue);
                         }
                     }
                 }
@@ -255,13 +256,13 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
             return currentLaneSuitability; // Following the current lane will keep us on the Route
         }
         // Performing one or more lane changes (left or right) is required.
-        int totalLanes = countCompatibleLanes(currentLane.getParentLink(), gtuType);
+        int totalLanes = countCompatibleLanes(currentLane.getParentLink(), gtu.getGTUType());
         Length.Rel leftSuitability =
-            computeSuitabilityWithLaneChanges(currentLane, remainingDistance, suitabilityOfLanesBeforeBranch, totalLanes,
-                LateralDirectionality.LEFT, gtuType);
+            computeSuitabilityWithLaneChanges(currentLane, remainingDistance, suitabilityOfLanesBeforeBranch,
+                totalLanes, LateralDirectionality.LEFT, gtu.getGTUType());
         Length.Rel rightSuitability =
-            computeSuitabilityWithLaneChanges(currentLane, remainingDistance, suitabilityOfLanesBeforeBranch, totalLanes,
-                LateralDirectionality.RIGHT, gtuType);
+            computeSuitabilityWithLaneChanges(currentLane, remainingDistance, suitabilityOfLanesBeforeBranch,
+                totalLanes, LateralDirectionality.RIGHT, gtu.getGTUType());
         if (leftSuitability.ge(rightSuitability))
         {
             return leftSuitability;
