@@ -23,10 +23,8 @@
 				</div>
 			</div>
 			<div class="col-sm-3">
-				<b>Car</b><br>- Create new Car<br>- Station car<br>-
-				Electrical car<br>
-				<br> <b>Truck</b><br>- Create new Truck<br>- Standard
-				truck<br>
+				<b>Car</b><br>- Create new Car<br>- Station car<br>- Electrical car<br>
+				<br> <b>Truck</b><br>- Create new Truck<br>- Standard truck<br>
 			</div>
 			<div class="col-sm-9">
 				<form>
@@ -34,13 +32,14 @@
 
 					<?php
 					include ("common.php");
-					makeSelector("Maximum speed", "maxSpeed", "Speed");
-					makeSelector("Maximum acceleration", "maxAcceleration", "Acceleration");
-					makeSelector("Length", "length", "Length");
-					makeSelector("Height", "height", "Length");
+					makeSelector ( "Maximum speed", "maxSpeed", "Speed" );
+					makeSelector ( "Maximum acceleration", "maxAcceleration", "Acceleration" );
+					makeSelector ( "Length", "length", "Length" );
+					makeSelector ( "Height", "height", "Length" );
 					?>
 				</form>
 			</div>
 		</div>
 	</div>
-</body></html>
+</body>
+</html>
