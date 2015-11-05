@@ -34,8 +34,14 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class Clothoid
+public final class Clothoid
 {
+    /** Utility class. */
+    private Clothoid()
+    {
+        // do not instantiate
+    }
+
     /*- ===================================================
      *  file:       odrSpiral.c
      * ---------------------------------------------------
