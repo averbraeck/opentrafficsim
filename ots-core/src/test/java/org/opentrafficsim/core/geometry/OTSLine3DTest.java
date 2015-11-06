@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.geometry;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -292,7 +293,7 @@ public class OTSLine3DTest
             checkDirectedPoint(line.getLocation(typedLength), expectedPoint, expectedZRotation);
             checkDirectedPoint(line.getLocationFraction(fraction), expectedPoint, expectedZRotation);
         }
-        
+
     }
 
     /**
@@ -337,6 +338,49 @@ public class OTSLine3DTest
         assertEquals("centroid x", 25, dp.x, 0.001);
         assertEquals("centroid y", 35, dp.y, 0.001);
         assertEquals("centroid z", 60, dp.z, 0.001);
+    }
+
+    /**
+     * Test the createAndCleanOTSLine3D method
+     * @throws NetworkException should never happen
+     * @throws OTSGeometryException should never happen
+     */
+    @Test
+    public void cleanTest() throws NetworkException, OTSGeometryException
+    {
+        OTSPoint3D[] tooShort = new OTSPoint3D[] {};
+        try
+        {
+            OTSLine3D.createAndCleanOTSLine3D(tooShort);
+            fail("Array with no points should have thrown an exception");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        tooShort = new OTSPoint3D[] { new OTSPoint3D(1, 2, 3) };
+        try
+        {
+            OTSLine3D.createAndCleanOTSLine3D(tooShort);
+            fail("Array with no points should have thrown an exception");
+        }
+        catch (NetworkException ne)
+        {
+            // Ignore expected exception
+        }
+        OTSPoint3D p0 = new OTSPoint3D(1, 2, 3);
+        OTSPoint3D p1 = new OTSPoint3D(4, 5, 6);
+        OTSPoint3D[] points = new OTSPoint3D[] { p0, p1 };
+        OTSLine3D result = OTSLine3D.createAndCleanOTSLine3D(points);
+        assertTrue("first point is p0", p0.equals(result.get(0)));
+        assertTrue("second point is p1", p1.equals(result.get(1)));
+        OTSPoint3D p1Same = new OTSPoint3D(4, 5, 6);
+        result = OTSLine3D.createAndCleanOTSLine3D(new OTSPoint3D[] {p0, p0, p0, p0, p1Same, p0, p1, p1, p1Same, p1, p1});
+        assertEquals("result should contain 4 points", 4, result.size());
+        assertTrue("first point is p0", p0.equals(result.get(0)));
+        assertTrue("second point is p1", p1.equals(result.get(1)));
+        assertTrue("third point is p0", p0.equals(result.get(0)));
+        assertTrue("last point is p1", p1.equals(result.get(1)));
     }
 
 }

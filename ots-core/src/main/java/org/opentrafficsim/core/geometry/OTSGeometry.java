@@ -26,30 +26,35 @@ public final class OTSGeometry
      * Print one OTSPoint3D on the console.
      * @param prefix String; text to put before the output
      * @param point OTSPoint3D; the coordinate to print
+     * @return String
      */
-    public static void printCoordinate(final String prefix, final OTSPoint3D point)
+    public static String printCoordinate(final String prefix, final OTSPoint3D point)
     {
-        System.out.print(String.format(Locale.US, "%s %8.3f,%8.3f   ", prefix, point.x, point.y));
+        return String.format(Locale.US, "%s %8.3f,%8.3f   ", prefix, point.x, point.y);
     }
 
     /**
      * Print an array of coordinates on the console.
      * @param prefix String; text to put before the coordinates
      * @param coordinates OTSPoint3D[]; the points to print
+     * @param separator String; prepended to each coordinate
+     * @return String
      */
-    public static void printCoordinates(final String prefix, final OTSPoint3D[] coordinates)
+    public static String printCoordinates(final String prefix, final OTSPoint3D[] coordinates, final String separator)
     {
-        printCoordinates(prefix + "(" + coordinates.length + " pts)", coordinates, 0, coordinates.length);
+        return printCoordinates(prefix + "(" + coordinates.length + " pts)", coordinates, 0, coordinates.length, separator);
     }
 
     /**
      * Print an array of coordinates on the console.
      * @param prefix String; text to put before the coordinates
      * @param line OTSLine3D; the line for which to print the points
+     * @param separator String; prepended to each coordinate
+     * @return String
      */
-    public static void printCoordinates(final String prefix, final OTSLine3D line)
+    public static String printCoordinates(final String prefix, final OTSLine3D line, final String separator)
     {
-        printCoordinates(prefix + "(" + line.size() + " pts)", line.getPoints(), 0, line.size());
+        return printCoordinates(prefix + "(" + line.size() + " pts)", line.getPoints(), 0, line.size(), separator);
     }
 
     /**
@@ -58,17 +63,21 @@ public final class OTSGeometry
      * @param points OTSPoint3D[]; the coordinates to print
      * @param fromIndex int; index of the first coordinate to print
      * @param toIndex int; one higher than the index of the last coordinate to print
+     * @param separator String; prepended to each coordinate
+     * @return String
      */
-    public static void printCoordinates(final String prefix, final OTSPoint3D[] points, final int fromIndex,
-        final int toIndex)
+    public static String printCoordinates(final String prefix, final OTSPoint3D[] points, final int fromIndex,
+            final int toIndex, final String separator)
     {
-        System.out.print(prefix);
+        StringBuilder result = new StringBuilder();
+        result.append(prefix);
         String operator = "M"; // Move absolute
         for (int i = fromIndex; i < toIndex; i++)
         {
-            printCoordinate(operator, points[i]);
+            result.append(separator);
+            result.append(printCoordinate(operator, points[i]));
             operator = "L"; // LineTo Absolute
         }
-        System.out.println("");
+        return result.toString();
     }
 }

@@ -431,7 +431,7 @@ public final class Clothoid
                 clothoid(new OTSPoint3D(10, 10, 5), new Angle.Abs(Math.PI / 8, AngleUnit.RADIAN), new LinearDensity(0 * -0.03,
                         LinearDensityUnit.PER_METER), new LinearDensity(0.04, LinearDensityUnit.PER_METER), new Length.Rel(100,
                         LengthUnit.METER), new Length.Rel(15, LengthUnit.METER), 100);
-        System.out.println(line.toPlotterFormat());
+        System.out.println(OTSGeometry.printCoordinates("#", line, "\n"));
     }
 
 }
