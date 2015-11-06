@@ -9,6 +9,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.AngleUtil;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.opentrafficsim.core.geometry.Clothoid;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -23,11 +24,12 @@ import org.xml.sax.SAXException;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+ * reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
- * initial version Jul 23, 2015 <br>
+ * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck
+ * $, initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 class PlanViewTag
@@ -67,7 +69,7 @@ class PlanViewTag
                 if (geometryTag.arcTag != null)
                     interpolateArc(planViewTag, geometryTag);
             }
-        roadTag.link = buildLink(planViewTag, roadTag);
+        roadTag.designLine = buildDesignLine(planViewTag, roadTag);
 
     }
 
@@ -77,29 +79,35 @@ class PlanViewTag
      * @param geometryTag
      * @throws NetworkException
      */
-    private static void interpolateSpiral(OpenDriveNetworkLaneParser parser, PlanViewTag planViewTag, GeometryTag geometryTag)
-            throws NetworkException
+    private static void interpolateSpiral(OpenDriveNetworkLaneParser parser, PlanViewTag planViewTag,
+            GeometryTag geometryTag) throws NetworkException
     {
         double startCurvature = geometryTag.spiralTag.curvStart.doubleValue();
         double endCurvature = geometryTag.spiralTag.curvEnd.doubleValue();
         OTSPoint3D start = geometryTag.node.getPoint();
         Length.Rel length = geometryTag.length;
 
-        int numSegments = 128;// (int) (length.doubleValue()/1);
+        int numSegments = 64;// (int) (length.doubleValue()/1);
+        
+        if(startCurvature == 0.0d && length.doubleValue() > 0.5d)
+        {
+            double dy =
+                    geometryTag.y.doubleValue()
+                            - planViewTag.geometryTags.get(planViewTag.geometryTags.size() - 2).y.doubleValue();
+            double dx =
+                    geometryTag.x.doubleValue()
+                            - planViewTag.geometryTags.get(planViewTag.geometryTags.size() - 2).x.doubleValue();
 
-        double dy =
-                geometryTag.y.doubleValue() - planViewTag.geometryTags.get(planViewTag.geometryTags.size() - 2).y.doubleValue();
-        double dx =
-                geometryTag.x.doubleValue() - planViewTag.geometryTags.get(planViewTag.geometryTags.size() - 2).x.doubleValue();
+            Angle.Abs startDirection = AngleUtil.normalize(new Angle.Abs(Math.PI - Math.atan2(dy, dx), AngleUnit.SI));
 
-        Angle.Abs startDirection = AngleUtil.normalize(new Angle.Abs(Math.PI - Math.atan2(dy, dx), AngleUnit.SI));
+            OTSLine3D line =
+                    Clothoid.clothoid(start, startDirection, startCurvature, endCurvature, length, new Length.Rel(0,
+                            LengthUnit.SI) /* FIXME: elevation at end */, numSegments);
 
-        OTSLine3D line =
-                Clothoid.clothoid(start, startDirection, startCurvature, endCurvature, length,
-                        new Length.Rel(0, LengthUnit.SI) /* FIXME: elevation at end */, numSegments);
+            // parser.spiras.put(line.hashCode(), line);
+            //geometryTag.interLine = line;
+        }
 
-        // parser.spiras.put(line.hashCode(), line);
-        // geometryTag.interLine = line;
 
     }
 
@@ -112,13 +120,14 @@ class PlanViewTag
     }
 
     /**
-     * Find the nodes one by one that have one coordinate defined, and one not defined, and try to build the network from there.
+     * Find the nodes one by one that have one coordinate defined, and one not defined, and try to build the network
+     * from there.
      * @param roadTag the road tag
      * @param planViewTag the link to process
      * @return a CrossSectionLink
      * @throws NetworkException when OTSLine3D cannot be constructed
      */
-    static CrossSectionLink buildLink(final PlanViewTag planViewTag, final RoadTag roadTag) throws NetworkException
+    static OTSLine3D buildDesignLine(final PlanViewTag planViewTag, final RoadTag roadTag) throws NetworkException
     {
         int points = planViewTag.geometryTags.size();
 
@@ -138,12 +147,19 @@ class PlanViewTag
             coordinates.add(geometryTag.node.getPoint());
 
             if (geometryTag.interLine != null)
+            {
+                int i = 0;
+                int j = geometryTag.length.divideBy(1.0).intValue();
                 for (OTSPoint3D point : geometryTag.interLine.getPoints())
                 {
-                    coordinates.add(point);
+                    if (i % j == 0)
+                        coordinates.add(point);
+                    i++;
                 }
+            }
 
-            // coordinates[Integer.valueOf(a[1])] = new OTSPoint3D(geometryTag.x.doubleValue(), geometryTag.y.doubleValue(),
+            // coordinates[Integer.valueOf(a[1])] = new OTSPoint3D(geometryTag.x.doubleValue(),
+            // geometryTag.y.doubleValue(),
             // geometryTag.hdg.doubleValue());
         }
 
@@ -152,8 +168,10 @@ class PlanViewTag
         {
             roadTag.id = UUID.randomUUID().toString();
         }
-        CrossSectionLink link =
-                new CrossSectionLink(roadTag.id, from.node, to.node, LinkType.ALL, designLine, LaneKeepingPolicy.KEEP_LANE);
-        return link;
+        roadTag.startNode = from.node;
+        roadTag.endNode = to.node;
+        // CrossSectionLink link = new CrossSectionLink(roadTag.id, from.node, to.node, LinkType.ALL, designLine,
+        // LaneKeepingPolicy.KEEP_LANE);
+        return designLine;
     }
 }

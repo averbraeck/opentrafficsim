@@ -54,6 +54,7 @@ import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkLanePar
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.Sensor;
 import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.road.network.route.RandomLaneBasedRouteGenerator;
@@ -170,6 +171,7 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
+            //URL url = URLResource.getResource("/OpenDrive.xodr");
             URL url = URLResource.getResource("/testod.xodr");
             this.simulator.setPauseOnError(false);
             OpenDriveNetworkLaneParser nlp = new OpenDriveNetworkLaneParser(this.simulator);
@@ -217,7 +219,7 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                     // put generators and sinks 25 m from the edge of the link
                     for (CrossSectionElement cse : csLink.getCrossSectionElementList())
                     {
-                        if (cse instanceof Lane)
+                        if (cse instanceof Lane && !(cse instanceof NoTrafficLane))
                         {
                             Lane lane = (Lane) cse;
                             boolean generate =
@@ -259,7 +261,7 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                     // put generators and sinks 25 m from the edge of the link
                     for (CrossSectionElement cse : csLink.getCrossSectionElementList())
                     {
-                        if (cse instanceof Lane)
+                        if (cse instanceof Lane && !(cse instanceof NoTrafficLane))
                         {
                             Lane lane = (Lane) cse;
                             boolean generate =
@@ -298,7 +300,6 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                         }
                     }
                 }
-
             }
         }
 

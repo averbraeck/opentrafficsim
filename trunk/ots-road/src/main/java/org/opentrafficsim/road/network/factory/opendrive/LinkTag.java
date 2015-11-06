@@ -107,9 +107,9 @@ class LinkTag
                         + " is neither 'road' nor 'junction' but: " + elementType.getNodeValue().trim());
 
                 Node contactPoint = attributes.getNamedItem("contactPoint");
-                if (contactPoint == null)
-                    System.out.println("ROAD " + roadTag.id + " has no contactPoint for PREDECESSOR " + elementType.getNodeValue().trim() + elementId.getNodeValue().trim());
-                else
+                if (contactPoint != null)
+                    //System.out.println("ROAD " + roadTag.id + " has no contactPoint for PREDECESSOR " + elementType.getNodeValue().trim() + elementId.getNodeValue().trim());
+                //else
                 {
                     if ("start".equals(contactPoint.getNodeValue().trim()))
                         linkTag.predecessorContactPoint = ContactPointEnum.START;
@@ -148,9 +148,9 @@ class LinkTag
                         + " is neither 'road' nor 'junction' but: " + elementType.getNodeValue().trim());
 
                 Node contactPoint = attributes.getNamedItem("contactPoint");
-                if (contactPoint == null)
-                    System.out.println("ROAD " + roadTag.id + " has no contactPoint for SUCCESSOR " + elementType.getNodeValue().trim() + elementId.getNodeValue().trim());
-                else
+                if (contactPoint != null)
+                    //System.out.println("ROAD " + roadTag.id + " has no contactPoint for SUCCESSOR " + elementType.getNodeValue().trim() + elementId.getNodeValue().trim());
+                //else
                 {
                     if ("start".equals(contactPoint.getNodeValue().trim()))
                         linkTag.successorContactPoint = ContactPointEnum.START;

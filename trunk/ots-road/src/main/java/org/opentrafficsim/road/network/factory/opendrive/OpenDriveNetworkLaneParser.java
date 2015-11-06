@@ -128,7 +128,7 @@ public class OpenDriveNetworkLaneParser
         for (Node junctionNode : junctionNodes)
             JunctionTag.parseJunction(junctionNode, this);
         
-        // parse the junction tags
+        // parse the controller tags
         List<Node> controllerNodes = XMLParser.getNodes(networkNodeList, "controller");
         for (Node controllerNode : controllerNodes)
         {
@@ -155,8 +155,16 @@ public class OpenDriveNetworkLaneParser
             SignalsTag.parseSignals(roadNode.getChildNodes(), this, roadTag);
             /*-SurfaceTag.parseSurface(roadNode.getChildNodes(), this, roadTag);
             RailroadTag.parseRailroad(roadNode.getChildNodes(), this, roadTag);
-             */
-            
+             */            
+        }
+        
+        for (RoadTag roadTag : this.roadTags.values())
+        {
+            RoadTag.buildLink(roadTag, this);
+        }
+        
+        for (RoadTag roadTag : this.roadTags.values())
+        {
             RoadTag.showLanes(roadTag, this.simulator, this);
         }
         

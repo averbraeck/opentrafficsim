@@ -20,8 +20,10 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.factory.XMLParser;
+import org.opentrafficsim.road.network.factory.opendrive.LinkTag.ContactPointEnum;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -120,37 +122,17 @@ class JunctionTag
             String sublinkId = juncTag.id + "." + connectionTag.id;
             CrossSectionLink sublink = null;
             
+            List<OTSPoint3D> coordinates = new ArrayList<OTSPoint3D>();
+            
+            OTSLine3D designLine = null;
+            
             if(inComing.linkTag.successorType !=null && inComing.linkTag.successorType.equals("junction")&&inComing.linkTag.successorId.equals(juncTag.id))
-            {
-                List<OTSPoint3D> coordinates = new ArrayList<OTSPoint3D>();
-                coordinates.add(inComing.link.getEndNode().getPoint());
-                coordinates.add(connecting.link.getStartNode().getPoint());
-                
-                OTSLine3D designLine = new OTSLine3D(coordinates);                           
-                
-                sublink =
-                    new CrossSectionLink(sublinkId, inComing.link.getEndNode(), connecting.link.getStartNode(), LinkType.ALL, designLine,
-                        LaneKeepingPolicy.KEEP_LANE);
-
-                openDriveNetworkLaneParser.network.addLink(sublink);                
-                
+            {                
                 inComingLane = inComing.lanesTag.laneSectionTags.get(inComing.lanesTag.laneSectionTags.size()-1).lanes.get(connectionTag.laneLinkFrom);
                 connectingLane = connecting.lanesTag.laneSectionTags.get(0).lanes.get(connectionTag.laneLinkTo);
             }
             else if(inComing.linkTag.predecessorType.equals("junction")&&inComing.linkTag.predecessorId.equals(juncTag.id))
-            {
-                List<OTSPoint3D> coordinates = new ArrayList<OTSPoint3D>();
-                coordinates.add( connecting.link.getEndNode().getPoint());
-                coordinates.add(inComing.link.getStartNode().getPoint());
-                
-                OTSLine3D designLine = new OTSLine3D(coordinates);                           
-                
-                sublink =
-                    new CrossSectionLink(sublinkId, connecting.link.getEndNode(), inComing.link.getStartNode(), LinkType.ALL, designLine,
-                        LaneKeepingPolicy.KEEP_LANE);
-
-                openDriveNetworkLaneParser.network.addLink(sublink);                
-                
+            {               
                 inComingLane = connecting.lanesTag.laneSectionTags.get(connecting.lanesTag.laneSectionTags.size()-1).lanes.get(connectionTag.laneLinkFrom);
                 connectingLane = inComing.lanesTag.laneSectionTags.get(0).lanes.get(connectionTag.laneLinkTo);
             }
@@ -158,7 +140,82 @@ class JunctionTag
             {
                 System.err.println("err in junctions!");
             }
+                
+
+            OTSNode from1 = inComing.link.getStartNode();
+            OTSNode from2 = inComing.link.getEndNode();
+            OTSNode from = null;
+
+            OTSNode to1 = connecting.link.getStartNode();
+            OTSNode to2 = connecting.link.getEndNode();
+            OTSNode to = null;
+
+            double dis1 = from1.getPoint().getCoordinate().distance(to1.getPoint().getCoordinate());
+            double dis2 = from1.getPoint().getCoordinate().distance(to2.getPoint().getCoordinate());
+
+            double dis3 = from2.getPoint().getCoordinate().distance(to1.getPoint().getCoordinate());
+            double dis4 = from2.getPoint().getCoordinate().distance(to2.getPoint().getCoordinate());
+
+            if (dis1 < dis2 && dis3 < dis4)
+            {
+                if (dis1 < dis3)
+                {
+                    from = from1;
+                    to = to1;
+                } else
+                {
+                    from = from2;
+                    to = to1;
+                }
+
+            } else if (dis1 > dis2 && dis3 < dis4)
+            {
+                if (dis2 < dis3)
+                {
+                    from = from1;
+                    to = to2;
+                } else
+                {
+                    from = from2;
+                    to = to1;
+                }
+            } else if (dis1 < dis2 && dis3 > dis4)
+            {
+                if (dis1 < dis4)
+                {
+                    from = from1;
+                    to = to1;
+                } else
+                {
+                    from = from2;
+                    to = to2;
+                }
+            } else if (dis1 > dis2 && dis3 > dis4)
+            {
+                if (dis2 < dis4)
+                {
+                    from = from1;
+                    to = to2;
+                } else
+                {
+                    from = from2;
+                    to = to2;
+                }
+            }
+
+            coordinates.add(from.getPoint());
+
+            coordinates.add(to.getPoint());
             
+            if(from.equals(to))
+                return;
+
+            designLine = new OTSLine3D(coordinates);
+
+            sublink = new CrossSectionLink(sublinkId, from, to, LinkType.ALL, designLine, LaneKeepingPolicy.KEEP_LANE);
+
+            //openDriveNetworkLaneParser.network.addLink(sublink);             
+                           
 
             // TODO overtaking conditions
             OvertakingConditions overtakingConditions = new OvertakingConditions.LeftAndRight();
