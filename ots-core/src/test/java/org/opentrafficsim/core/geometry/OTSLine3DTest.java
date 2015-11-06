@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.geometry;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -375,12 +376,45 @@ public class OTSLine3DTest
         assertTrue("first point is p0", p0.equals(result.get(0)));
         assertTrue("second point is p1", p1.equals(result.get(1)));
         OTSPoint3D p1Same = new OTSPoint3D(4, 5, 6);
-        result = OTSLine3D.createAndCleanOTSLine3D(new OTSPoint3D[] {p0, p0, p0, p0, p1Same, p0, p1, p1, p1Same, p1, p1});
+        result = OTSLine3D.createAndCleanOTSLine3D(new OTSPoint3D[] { p0, p0, p0, p0, p1Same, p0, p1, p1, p1Same, p1, p1 });
         assertEquals("result should contain 4 points", 4, result.size());
         assertTrue("first point is p0", p0.equals(result.get(0)));
         assertTrue("second point is p1", p1.equals(result.get(1)));
         assertTrue("third point is p0", p0.equals(result.get(0)));
         assertTrue("last point is p1", p1.equals(result.get(1)));
+    }
+
+    /**
+     * Test the equals method.
+     * @throws NetworkException should never happen
+     */
+    @Test
+    public void equalsTest() throws NetworkException
+    {
+        OTSPoint3D p0 = new OTSPoint3D(1.1, 2.2, 3.3);
+        OTSPoint3D p1 = new OTSPoint3D(2.1, 2.2, 3.3);
+        OTSPoint3D p2 = new OTSPoint3D(3.1, 2.2, 3.3);
+
+        OTSLine3D line = new OTSLine3D(new OTSPoint3D[] { p0, p1, p2 });
+        assertTrue("OTSLine3D is equal to itself", line.equals(line));
+        assertFalse("OTSLine3D is not equal to null", line.equals(null));
+        assertFalse("OTSLine3D is not equals to some other kind of Object", line.equals(new String("hello")));
+        OTSLine3D line2 = new OTSLine3D(new OTSPoint3D[] { p0, p1, p2 });
+        assertTrue("OTSLine3D is equal ot other OTSLine3D that has the exact same list of OTSPoint3D", line.equals(line2));
+        OTSPoint3D p2Same = new OTSPoint3D(3.1, 2.2, 3.3);
+        line2 = new OTSLine3D(new OTSPoint3D[] { p0, p1, p2Same });
+        assertTrue("OTSLine3D is equal ot other OTSLine3D that has the exact same list of OTSPoint3D; even if some of "
+                + "those point are different instances with the same coordinates", line.equals(line2));
+        OTSPoint3D p2NotSame = new OTSPoint3D(3.1, 2.2, 3.35);
+        line2 = new OTSLine3D(new OTSPoint3D[] { p0, p1, p2NotSame });
+        assertFalse("OTSLine3D is not equal ot other OTSLine3D that differs in one coordinate", line.equals(line2));
+        line2 = new OTSLine3D(new OTSPoint3D[] { p0, p1, p2, p2NotSame });
+        assertFalse(
+                "OTSLine3D is not equal ot other OTSLine3D that has more points (but is identical up to the common length)",
+                line.equals(line2));
+        assertFalse(
+                "OTSLine3D is not equal ot other OTSLine3D that has fewer points  (but is identical up to the common length)",
+                line2.equals(line));
     }
 
 }

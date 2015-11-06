@@ -485,6 +485,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     @SuppressWarnings("checkstyle:designforextension")
     public int hashCode()
     {
+        // FIXME PK thinks that bounds, centroid and length should NOT be used to compute hashCode
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.bounds == null) ? 0 : this.bounds.hashCode());
@@ -501,6 +502,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     public boolean equals(final Object obj)
     {
+        // FIXME PK thinks that bounds, centroid and length should NOT be considered in the equals method
         if (this == obj)
             return true;
         if (obj == null)
