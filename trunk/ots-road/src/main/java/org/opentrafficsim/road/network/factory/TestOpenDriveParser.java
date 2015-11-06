@@ -214,7 +214,7 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
             {
                 CrossSectionLink csLink = (CrossSectionLink) link;
                 // look if start node is isolated
-                if (link.getStartNode().getLinksIn().size() == 0 || link.getStartNode().getLinksOut().size() == 0)
+                if (link.getStartNode().getLinksIn().size() == 0)
                 {
                     // put generators and sinks 25 m from the edge of the link
                     for (CrossSectionElement cse : csLink.getCrossSectionElementList())
@@ -223,11 +223,10 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                         {
                             Lane lane = (Lane) cse;
                             boolean generate =
-                                (link.getStartNode().getLinksIn().size() == 0 && (lane.getDirectionality(GTUType.ALL)
-                                    .equals(LongitudinalDirectionality.FORWARD)))
-                                    || (link.getStartNode().getLinksOut().size() == 0 && (lane
-                                        .getDirectionality(GTUType.ALL).equals(LongitudinalDirectionality.BACKWARD)));
-                            if (generate)
+                                (link.getStartNode().getLinksIn().size() == 0 && (lane.getDirectionality(GTUType.ALL).equals(LongitudinalDirectionality.FORWARD)))
+                                    || (link.getStartNode().getLinksOut().size() == 0 && (lane.getDirectionality(GTUType.ALL).equals(LongitudinalDirectionality.BACKWARD)));
+                            //if (generate)
+                            if(Integer.parseInt(lane.getId()) < 0)
                             {
                                 // make a generator
                                 Time.Abs startTime = new Time.Abs(0.0, TimeUnit.SI);
@@ -256,7 +255,7 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                         }
                     }
                 }
-                else if (link.getEndNode().getLinksIn().size() == 0 || link.getEndNode().getLinksOut().size() == 0)
+                else if ( link.getEndNode().getLinksOut().size() == 0)
                 {
                     // put generators and sinks 25 m from the edge of the link
                     for (CrossSectionElement cse : csLink.getCrossSectionElementList())
@@ -269,7 +268,8 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                                     .equals(LongitudinalDirectionality.BACKWARD)))
                                     || (link.getEndNode().getLinksOut().size() == 0 && (lane
                                         .getDirectionality(GTUType.ALL).equals(LongitudinalDirectionality.FORWARD)));
-                            if (generate)
+                            //if (generate)
+                            if(Integer.parseInt(lane.getId()) > 0)
                             {
                                 // make a generator
                                 Time.Abs startTime = new Time.Abs(0.0, TimeUnit.SI);
