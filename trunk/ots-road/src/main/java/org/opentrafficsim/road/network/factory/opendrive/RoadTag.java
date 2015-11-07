@@ -476,8 +476,8 @@ class RoadTag
                 if (rightLane.type.equals("driving"))
                 {
                     LongitudinalDirectionality direction = LongitudinalDirectionality.FORWARD;
-                    if(roadTag.link.getEndNode().getLinksOut().size() == 0)
-                        direction = LongitudinalDirectionality.BACKWARD;
+                    //if(roadTag.link.getEndNode().getLinksOut().size() == 0)
+                        //direction = LongitudinalDirectionality.BACKWARD;
                     Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
                     directionality.put(GTUType.ALL, direction);
                     Color color = Color.gray;
