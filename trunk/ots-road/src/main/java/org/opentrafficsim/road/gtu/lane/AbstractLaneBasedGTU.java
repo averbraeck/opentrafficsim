@@ -38,7 +38,6 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.route.RouteNavigator;
 import org.opentrafficsim.road.gtu.animation.LaneChangeUrgeGTUColorer;
 import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.following.HeadwayGTU;
