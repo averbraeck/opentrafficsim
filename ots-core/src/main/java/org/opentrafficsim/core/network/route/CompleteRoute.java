@@ -2,6 +2,7 @@ package org.opentrafficsim.core.network.route;
 
 import java.util.List;
 
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -22,34 +23,41 @@ public class CompleteRoute extends Route
     /** */
     private static final long serialVersionUID = 20150722L;
 
+    /** the GTUType for which this is a route. */
+    private final GTUType gtuType;
+
     /**
-     * Create an empty route.
-     * @param id the name of the route.
+     * Create an empty route for the given GTUType.
+     * @param id the name of the route
+     * @param gtuType the GTUType for which this is a route
      */
-    public CompleteRoute(final String id)
+    public CompleteRoute(final String id, final GTUType gtuType)
     {
         super(id);
+        this.gtuType = gtuType;
     }
 
     /**
      * Create a route based on an initial list of nodes. <br>
      * This constructor makes a defensive copy of the provided List.
      * @param id the name of the route.
+     * @param gtuType the GTUType for which this is a route
      * @param nodes the initial list of nodes.
      * @throws NetworkException if intermediate nodes are missing in the route.
      */
-    public CompleteRoute(final String id, final List<Node> nodes) throws NetworkException
+    public CompleteRoute(final String id, final GTUType gtuType, final List<Node> nodes) throws NetworkException
     {
         super(id, nodes);
+        this.gtuType = gtuType;
         Node fromNode = null;
         for (Node toNode : getNodes())
         {
             if (null != fromNode)
             {
-                if (!isDirectlyConnected(fromNode, toNode))
+                if (!fromNode.isDirectionallyConnectedTo(this.gtuType, toNode))
                 {
-                    throw new NetworkException("CompleteRoute: node " + fromNode + " not directly connected to node "
-                        + toNode);
+                    throw new NetworkException("CompleteRoute: node " + fromNode
+                        + " not directly or not directionally connected to node " + toNode);
                 }
             }
             fromNode = toNode;
@@ -63,31 +71,13 @@ public class CompleteRoute extends Route
         if (getNodes().size() > 0)
         {
             Node lastNode = getNodes().get(getNodes().size() - 1);
-            if (!isDirectlyConnected(lastNode, node))
+            if (!lastNode.isDirectionallyConnectedTo(this.gtuType, node))
             {
-                throw new NetworkException("CompleteRoute: last node " + lastNode + " not directly connected to node "
-                    + node);
+                throw new NetworkException("CompleteRoute: last node " + lastNode
+                    + " not directly or not directionally connected to node " + node);
             }
         }
         super.addNode(node);
-    }
-
-    /**
-     * Check if two nodes are directly linked in the specified direction.
-     * @param fromNode the from node
-     * @param toNode the to node
-     * @return whether two nodes are directly linked in the specified direction.
-     */
-    private boolean isDirectlyConnected(final Node fromNode, final Node toNode)
-    {
-        for (Link link : fromNode.getLinksOut())
-        {
-            if (toNode.equals(link.getEndNode()))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

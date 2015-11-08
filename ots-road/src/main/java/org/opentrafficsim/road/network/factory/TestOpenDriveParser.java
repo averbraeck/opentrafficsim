@@ -44,7 +44,9 @@ import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.LaneChangeUrgeGTUColorer;
@@ -320,6 +322,20 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                         }
                     }
                 }
+            }
+            
+            // test the shortest path method
+            Node nodeFrom = network.getLink("3766052").getEndNode();
+            Node nodeTo = network.getLink("3766035.1").getEndNode();
+            CompleteRoute cr;
+            try
+            {
+                cr = network.getShortestRouteBetween(GTUType.ALL, nodeFrom, nodeTo);
+                System.out.println(cr);
+            }
+            catch (NetworkException exception)
+            {
+                exception.printStackTrace();
             }
         }
 

@@ -369,9 +369,11 @@ final class Links
             }
         }
         OTSLine3D designLine = new OTSLine3D(coordinates);
+        // TODO the directionality has to be read from the XML-file. To keep the examples working, 
+        // TODO LongitudinalDirectionality.BOTH is inserted for the time being.
         CrossSectionLink link =
             new CrossSectionLink(linkTag.name, linkTag.nodeStartTag.node, linkTag.nodeEndTag.node, LinkType.ALL,
-                designLine, linkTag.laneKeepingPolicy);
+                designLine, LongitudinalDirectionality.BOTH, linkTag.laneKeepingPolicy);
         linkTag.link = link;
     }
 

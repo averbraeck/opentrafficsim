@@ -75,7 +75,7 @@ public class IDMPlusTest implements UNITS
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar referenceCar =
             new LaneBasedIndividualCar("12345", gtuType, carFollowingModel, laneChangeModel, initialLongitudinalPositions,
-                initialSpeed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
+                initialSpeed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
         Speed speedLimit = new Speed(100, KM_PER_HOUR);
         AccelerationStep cfmr = carFollowingModel.computeAccelerationWithNoLeader(referenceCar, speedLimit);
         assertEquals("Standard time slice in IDM+ is 0.5s", 0.5, cfmr.getValidUntil().getSI(), 0.0001);
@@ -92,7 +92,7 @@ public class IDMPlusTest implements UNITS
             new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(9999, SECOND));
         LaneBasedIndividualCar leaderCar =
             new LaneBasedIndividualCar("23456", gtuType, fam, laneChangeModel, leaderPositions, initialSpeed, length, width,
-                maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
+                maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
         HeadwayGTU leader =
             new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI() - initialPosition.getSI());
         cfmr =
@@ -107,7 +107,7 @@ public class IDMPlusTest implements UNITS
         // Exercise the if statement that ignores leaders that are further ahead
         LaneBasedIndividualCar leaderCar2 =
             new LaneBasedIndividualCar("34567", gtuType, fam, laneChangeModel, leaderPositions, initialSpeed, length, width,
-                maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
+                maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
         // Verify that the result is independent of the order of adding in the Collection
         Collection<HeadwayGTU> leaders = new ArrayList<HeadwayGTU>();
         HeadwayGTU leader2 =
@@ -131,7 +131,7 @@ public class IDMPlusTest implements UNITS
         leaderCar2.destroy();
         leaderCar =
             new LaneBasedIndividualCar("223344", gtuType, fam, laneChangeModel, leaderPositions, initialSpeed, length,
-                width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
+                width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
         leader =
             new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI() - initialPosition.getSI());
         leaders.add(leader);
@@ -150,7 +150,7 @@ public class IDMPlusTest implements UNITS
             leaderPositions.put(lane, leaderPosition);
             leaderCar =
                 new LaneBasedIndividualCar("0", gtuType, fam, laneChangeModel, leaderPositions, initialSpeed, length, width,
-                    maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
+                    maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
             leader =
                 new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
                     - initialPosition.getSI());
@@ -181,13 +181,13 @@ public class IDMPlusTest implements UNITS
             referenceCar.destroy();
             referenceCar =
                 new LaneBasedIndividualCar("12345", gtuType, carFollowingModel, laneChangeModel, initialPositions,
-                    initialSpeed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")),
+                    initialSpeed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)),
                     simulator);
             leaders.clear();
             Speed leaderSpeed = new Speed(integerLeaderSpeed, METER_PER_SECOND);
             leaderCar =
                 new LaneBasedIndividualCar("0", gtuType, fam, laneChangeModel, leaderPositions, leaderSpeed, length, width,
-                    maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
+                    maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
             leader =
                 new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
                     - initialPosition.getSI());
@@ -212,13 +212,13 @@ public class IDMPlusTest implements UNITS
         referenceCar.destroy();
         referenceCar =
             new LaneBasedIndividualCar("12345", gtuType, carFollowingModel, laneChangeModel, initialPositions, initialSpeed,
-                length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
+                length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
         leaderPosition =
             new Length.Rel(100 + 3 + referenceCar.getLength().getSI()
                 + referenceCar.position(lane, referenceCar.getFront(), initialTime).getSI(), METER);
         leaderCar =
             new LaneBasedIndividualCar("0", gtuType, fam, laneChangeModel, leaderPositions, initialSpeed, length, width,
-                maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
+                maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
         for (int timeStep = 0; timeStep < 200; timeStep++)
         {
             Time.Abs simulateUntil = new Time.Abs(0.1 * timeStep, TimeUnit.SI);

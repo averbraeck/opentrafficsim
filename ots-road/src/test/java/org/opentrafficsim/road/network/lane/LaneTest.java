@@ -62,7 +62,7 @@ public class LaneTest implements UNITS
         coordinates[1] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
         CrossSectionLink link =
             new CrossSectionLink("A to B", nodeFrom, nodeTo, LinkType.ALL, new OTSLine3D(coordinates),
-                LaneKeepingPolicy.KEEP_RIGHT);
+                LongitudinalDirectionality.FORWARD, LaneKeepingPolicy.KEEP_RIGHT);
         Length.Rel startLateralPos = new Length.Rel(2, METER);
         Length.Rel endLateralPos = new Length.Rel(5, METER);
         Length.Rel startWidth = new Length.Rel(3, METER);
@@ -133,7 +133,7 @@ public class LaneTest implements UNITS
         coordinates[2] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
         link =
             new CrossSectionLink("A to B with Kink", nodeFrom, nodeTo, LinkType.ALL, new OTSLine3D(coordinates),
-                LaneKeepingPolicy.KEEP_RIGHT);
+                LongitudinalDirectionality.FORWARD, LaneKeepingPolicy.KEEP_RIGHT);
         // FIXME what overtaking conditions do we ant to test in this unit test?
         lane =
             new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, directionalityMap,
@@ -201,7 +201,8 @@ public class LaneTest implements UNITS
                     coordinates[1] = end.getPoint();
                     OTSLine3D line = new OTSLine3D(coordinates);
                     CrossSectionLink link =
-                        new CrossSectionLink("A to B", start, end, LinkType.ALL, line, LaneKeepingPolicy.KEEP_RIGHT);
+                        new CrossSectionLink("A to B", start, end, LinkType.ALL, line,
+                            LongitudinalDirectionality.FORWARD, LaneKeepingPolicy.KEEP_RIGHT);
                     final int[] lateralOffsets = {-10, -3, -1, 0, 1, 3, 10};
                     for (int startLateralOffset : lateralOffsets)
                     {

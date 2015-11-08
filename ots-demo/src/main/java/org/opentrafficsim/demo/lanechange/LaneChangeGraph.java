@@ -288,7 +288,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         LaneBasedIndividualCar referenceCar =
             new LaneBasedIndividualCar("ReferenceCar", gtuType, this.carFollowingModel, laneChangeModel,
                 initialLongitudinalPositions, referenceSpeed, new Length.Rel(4, METER), new Length.Rel(2, METER),
-                new Speed(150, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simpleSimulator);
+                new Speed(150, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simpleSimulator);
         Collection<HeadwayGTU> sameLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         sameLaneGTUs.add(new HeadwayGTU(referenceCar, 0));
         // TODO play with the speed limit
@@ -360,7 +360,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
             new LaneBasedIndividualCar("otherCar", referenceCar.getGTUType(), this.carFollowingModel, laneChangeModel,
                 initialLongitudinalPositions, referenceCar.getLongitudinalVelocity().plus(deltaV), new Length.Rel(4, METER),
                 new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
-                    new CompleteRoute("")), referenceCar.getSimulator());
+                    new CompleteRoute("", GTUType.ALL)), referenceCar.getSimulator());
         Collection<HeadwayGTU> preferredLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         Collection<HeadwayGTU> nonPreferredLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         Length.Rel referenceCarPosition =

@@ -103,7 +103,7 @@ public class SensorTest implements UNITS
         LaneChangeModel laneChangeModel = new Egoistic();
         // Now we can make a car (GTU) (and we don't even have to hold a pointer to it)
         new LaneBasedIndividualCar(carID, gtuType, fas, laneChangeModel, initialLongitudinalPositions, initialSpeed,
-            carLength, carWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
+            carLength, carWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
         simulator.runUpTo(new Time.Abs(1, SECOND));
         while (simulator.isRunning())
         {

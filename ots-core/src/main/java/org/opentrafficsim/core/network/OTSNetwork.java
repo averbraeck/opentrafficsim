@@ -1,10 +1,17 @@
 package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.graph.SimpleWeightedGraph;
+import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 
 /**
@@ -34,7 +41,10 @@ public class OTSNetwork implements Network, Serializable
     private Map<String, Link> linkMap = new HashMap<>();
 
     /** Map of Routes. */
-    private Map<String, Route> routeMap = new HashMap<>();
+    private Map<GTUType, Map<String, Route>> routeMap = new HashMap<>();
+
+    /** Graphs to calculate shortest paths per GTUType. */
+    private Map<GTUType, SimpleWeightedGraph<Node, LinkEdge<Link>>> linkGraphs = new HashMap<>();
 
     /**
      * Construction of an empty network.
@@ -43,6 +53,25 @@ public class OTSNetwork implements Network, Serializable
     public OTSNetwork(final String id)
     {
         this.id = id;
+    }
+
+    /**
+     * @return id
+     */
+    public final String getId()
+    {
+        return this.id;
+    }
+
+    /***************************************************************************************/
+    /**************************************** NODES ****************************************/
+    /***************************************************************************************/
+
+    /** {@inheritDoc} */
+    @Override
+    public final Map<String, Node> getNodeMap()
+    {
+        return new HashMap<String, Node>(this.nodeMap);
     }
 
     /** {@inheritDoc} */
@@ -90,6 +119,17 @@ public class OTSNetwork implements Network, Serializable
     public final Node getNode(final String nodeId)
     {
         return this.nodeMap.get(nodeId);
+    }
+
+    /***************************************************************************************/
+    /**************************************** LINKS ****************************************/
+    /***************************************************************************************/
+
+    /** {@inheritDoc} */
+    @Override
+    public final Map<String, Link> getLinkMap()
+    {
+        return new HashMap<String, Link>(this.linkMap);
     }
 
     /** {@inheritDoc} */
@@ -173,104 +213,236 @@ public class OTSNetwork implements Network, Serializable
         return this.linkMap.get(linkId);
     }
 
+    /***************************************************************************************/
+    /*************************************** ROUTES ****************************************/
+    /***************************************************************************************/
+
     /** {@inheritDoc} */
     @Override
-    public final void addRoute(final Route route) throws NetworkException
+    public final Map<String, Route> getDefinedRouteMap(final GTUType gtuType)
     {
-        if (containsRoute(route))
+        Map<String, Route> routes = new HashMap<>();
+        if (this.routeMap.containsKey(gtuType))
         {
-            throw new NetworkException("Route " + route + " already registered in network " + this.id);
+            routes.putAll(this.routeMap.get(gtuType));
         }
-        if (this.routeMap.keySet().contains(route.getId()))
+        return routes;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void addRoute(final GTUType gtuType, final Route route) throws NetworkException
+    {
+        if (containsRoute(gtuType, route))
         {
-            throw new NetworkException("Route with name " + route.getId() + " already registered in network " + this.id);
+            throw new NetworkException("Route " + route + " for GTUType " + gtuType + " already registered in network "
+                + this.id);
+        }
+        if (this.routeMap.containsKey(gtuType) && this.routeMap.get(gtuType).keySet().contains(route.getId()))
+        {
+            throw new NetworkException("Route with name " + route.getId() + " for GTUType " + gtuType
+                + " already registered in network " + this.id);
         }
         for (Node node : route.getNodes())
         {
             if (!containsNode(node))
             {
-                throw new NetworkException("Node " + node.getId() + " of route " + route.getId()
-                    + " not registered in network " + this.id);
+                throw new NetworkException("Node " + node.getId() + " of route " + route.getId() + " for GTUType "
+                    + gtuType + " not registered in network " + this.id);
             }
         }
-        this.routeMap.put(route.getId(), route);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void removeRoute(final Route route) throws NetworkException
-    {
-        if (!containsRoute(route))
+        if (!this.routeMap.containsKey(gtuType))
         {
-            throw new NetworkException("Route " + route + " not registered in network " + this.id);
+            this.routeMap.put(gtuType, new HashMap<String, Route>());
         }
-        this.routeMap.remove(route.getId());
+        this.routeMap.get(gtuType).put(route.getId(), route);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final boolean containsRoute(final Route route)
+    public final void removeRoute(final GTUType gtuType, final Route route) throws NetworkException
     {
-        return this.routeMap.keySet().contains(route.getId());
+        if (!containsRoute(gtuType, route))
+        {
+            throw new NetworkException("Route " + route + " for GTUType " + gtuType + " not registered in network "
+                + this.id);
+        }
+        this.routeMap.get(gtuType).remove(route.getId());
     }
 
     /** {@inheritDoc} */
     @Override
-    public final boolean containsRoute(final String routeId)
+    public final boolean containsRoute(final GTUType gtuType, final Route route)
     {
-        return this.routeMap.keySet().contains(routeId);
+        if (this.routeMap.containsKey(gtuType))
+        {
+            return this.routeMap.get(gtuType).values().contains(route);
+        }
+        return false;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Route getRoute(final String routeId)
+    public final boolean containsRoute(final GTUType gtuType, final String routeId)
     {
-        return this.routeMap.get(routeId);
+        if (this.routeMap.containsKey(gtuType))
+        {
+            return this.routeMap.get(gtuType).keySet().contains(routeId);
+        }
+        return false;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Set<Route> getRoutesBetween(final Node nodeFrom, final Node nodeTo)
+    public final Route getRoute(final GTUType gtuType, final String routeId)
     {
+        if (this.routeMap.containsKey(gtuType))
+        {
+            return this.routeMap.get(gtuType).get(routeId);
+        }
         return null;
-        // FIXME getRoutesBetween(Node nodeFrom, Node nodeTo)
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Route getShortestRouteBetween(final Node nodeFrom, final Node nodeTo)
+    public final Set<Route> getRoutesBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo)
     {
-        return null;
-        // FIXME getShortestRouteBetween(Node nodeFrom, Node nodeTo)
-    }
-
-    /**
-     * @return id
-     */
-    public final String getId()
-    {
-        return this.id;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final Map<String, Node> getNodeMap()
-    {
-        return this.nodeMap;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final Map<String, Link> getLinkMap()
-    {
-        return this.linkMap;
+        Set<Route> routes = new HashSet<>();
+        if (this.routeMap.containsKey(gtuType))
+        {
+            for (Route route : this.routeMap.get(gtuType).values())
+            {
+                try
+                {
+                    if (route.originNode().equals(nodeFrom) && route.destinationNode().equals(nodeTo))
+                    {
+                        routes.add(route);
+                    }
+                }
+                catch (NetworkException ne)
+                {
+                    // thrown if no nodes exist in the route. Do not add the route in that case.
+                }
+            }
+        }
+        return routes;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final Map<String, Route> getRouteMap()
+    public final void buildGraph(final GTUType gtuType)
     {
-        return this.routeMap;
+        @SuppressWarnings("rawtypes")
+        Class linkEdgeClass = LinkEdge.class;
+        @SuppressWarnings("unchecked")
+        SimpleWeightedGraph<Node, LinkEdge<Link>> graph = new SimpleWeightedGraph<Node, LinkEdge<Link>>(linkEdgeClass);
+        for (Node node : this.nodeMap.values())
+        {
+            graph.addVertex(node);
+        }
+        for (Link link : this.linkMap.values())
+        {
+            LinkEdge<Link> linkEdge = new LinkEdge<>(link);
+            // determine if the link is accessible for the GTUType , and in which direction(s)
+            LongitudinalDirectionality directionality = link.getDirectionality(gtuType);
+            if (directionality.equals(LongitudinalDirectionality.FORWARD)
+                || directionality.equals(LongitudinalDirectionality.BOTH))
+            {
+                graph.addEdge(link.getStartNode(), link.getEndNode(), linkEdge);
+                graph.setEdgeWeight(linkEdge, link.getLength().doubleValue());
+            }
+            if (directionality.equals(LongitudinalDirectionality.BACKWARD)
+                || directionality.equals(LongitudinalDirectionality.BOTH))
+            {
+                graph.addEdge(link.getEndNode(), link.getStartNode(), linkEdge);
+                graph.setEdgeWeight(linkEdge, link.getLength().doubleValue());
+            }
+        }
+        this.linkGraphs.put(gtuType, graph);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final CompleteRoute getShortestRouteBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo)
+        throws NetworkException
+    {
+        CompleteRoute route = new CompleteRoute("Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo, gtuType);
+        SimpleWeightedGraph<Node, LinkEdge<Link>> graph = this.linkGraphs.get(gtuType);
+        if (graph == null)
+        {
+            buildGraph(gtuType);
+            graph = this.linkGraphs.get(gtuType);
+        }
+        DijkstraShortestPath<Node, LinkEdge<Link>> path = new DijkstraShortestPath<>(graph, nodeFrom, nodeTo);
+        if (path.getPath() == null)
+        {
+            return null;
+        }
+        route.addNode(nodeFrom);
+        for (LinkEdge<Link> link : path.getPathEdgeList())
+        {
+            if (route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getEndNode()))
+            {
+                route.addNode(link.getLink().getEndNode());
+            }
+            else if (route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getStartNode()))
+            {
+                route.addNode(link.getLink().getStartNode());
+            }
+            else
+            {
+                throw new NetworkException("Cannot connect two links when calculating shortest route");
+            }
+        }
+        return route;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final CompleteRoute getShortestRouteBetween(final GTUType gtuType, final Node nodeFrom, final Node nodeTo,
+        final List<Node> nodesVia) throws NetworkException
+    {
+        CompleteRoute route =
+            new CompleteRoute("Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo + " via "
+                + nodesVia.toString(), gtuType);
+        SimpleWeightedGraph<Node, LinkEdge<Link>> graph = this.linkGraphs.get(gtuType);
+        if (graph == null)
+        {
+            buildGraph(gtuType);
+            graph = this.linkGraphs.get(gtuType);
+        }
+        List<Node> nodes = new ArrayList<>();
+        nodes.add(nodeFrom);
+        nodes.addAll(nodesVia);
+        nodes.add(nodeTo);
+        Node from = nodeFrom;
+        route.addNode(nodeFrom);
+        for (int i = 1; i < nodes.size(); i++)
+        {
+            Node to = nodes.get(i);
+            DijkstraShortestPath<Node, LinkEdge<Link>> path = new DijkstraShortestPath<>(graph, from, to);
+            if (path.getPath() == null)
+            {
+                return null;
+            }
+            for (LinkEdge<Link> link : path.getPathEdgeList())
+            {
+                if (route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getEndNode()))
+                {
+                    route.addNode(link.getLink().getEndNode());
+                }
+                else if (route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getStartNode()))
+                {
+                    route.addNode(link.getLink().getStartNode());
+                }
+                else
+                {
+                    throw new NetworkException(
+                        "Cannot connect two links when calculating shortest route with intermediate nodes");
+                }
+            }
+            from = to;
+        }
+        return route;
+    }
 }

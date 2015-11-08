@@ -134,7 +134,10 @@ public final class Convert
         coordinates[coordinates.length - 1] = new Coordinate(end.getPoint().x, end.getPoint().y, 0);
         OTSLine3D designLine = new OTSLine3D(coordinates);
         // XXX How to figure out whether to keep left, right or keep lane?
-        result = new CrossSectionLink(link.getId(), start, end, LinkType.ALL, designLine, LaneKeepingPolicy.KEEP_RIGHT);
+        // XXX How to figure out if this is a lane in one or two directions? For now, two is assumed...
+        result =
+            new CrossSectionLink(link.getId(), start, end, LinkType.ALL, designLine, LongitudinalDirectionality.BOTH,
+                LaneKeepingPolicy.KEEP_RIGHT);
         return result;
     }
 

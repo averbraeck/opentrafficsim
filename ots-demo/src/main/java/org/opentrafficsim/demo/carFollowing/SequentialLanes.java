@@ -603,7 +603,7 @@ class SequentialModel implements OTSModelInterface, UNITS
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, generateTruck
                 ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel, initialPositions,
                 initialSpeed, vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR),
-                new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator, DefaultCarAnimation.class,
+                new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), this.simulator, DefaultCarAnimation.class,
                 this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }

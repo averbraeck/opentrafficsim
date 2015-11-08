@@ -13,7 +13,6 @@ import java.util.TreeMap;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -59,13 +58,31 @@ public class Lane extends CrossSectionElement implements Serializable
 
     /**
      * The direction in which vehicles can drive, i.e., in direction of geometry, reverse, or both. This can differ per GTU
-     * type. In an overtake lane, cars might overtake and trucks not
+     * type. In an overtake lane, cars might overtake and trucks not. It might be that the lane (e.g., a street in a city) is
+     * FORWARD (from start node of the link to end node of the link) for the GTU type CAR, but BOTH for the GTU type BICYCLE
+     * (i.e., bicycles can also go in the other direction, opposite to the drawing direction of the Link). If the directionality
+     * for a GTUType is set to NONE, this means that the given GTUType cannot use the Lane. If a Directionality is set for
+     * GTUType.ALL, the getDirectionality will default to these settings when there is no specific entry for a given
+     * directionality. This means that the settings can be used additive, or restrictive. <br>
+     * In <b>additive use</b>, set the directionality for GTUType.ALL to NONE, or do not set the directionality for GTUType.ALL.
+     * Now, one by one, the allowed directionalities can be added. An example is a lane on a highway, which we only open for
+     * CAR, TRUCK and BUS. <br>
+     * In <b>restrictive use</b>, set the directionality for GTUType.ALL to BOTH, FORWARD, or BACKWARD. Override the
+     * directionality for certain GTUTypes to a more restrictive access, e.g. to NONE. An example is a lane that is open for all
+     * road users, except TRUCK.
      */
     private final Map<GTUType, LongitudinalDirectionality> directionalityMap;
 
     /**
-     * the speed limit of this lane. This can differ per GTU type. Cars might be allowed to drive 120 km/h and trucks 90 km/h.
-     * If the speed limit is the same for all GTU types, GTUType.ALL will be used.
+     * The speed limit of this lane, which can differ per GTU type. Cars might be allowed to drive 120 km/h and trucks 90 km/h.
+     * If the speed limit is the same for all GTU types, GTUType.ALL will be used. This means that the settings can be used
+     * additive, or subtractive. <br>
+     * In <b>additive use</b>, do not set the speed limit for GTUType.ALL. Now, one by one, the allowed maximum speeds for each
+     * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different. <br>
+     * In <b>subtractive use</b>, set the speed limit for GTUType.ALL to the most common one. Override the speed limit for
+     * certain GTUTypes to a different value. An example is a lane on a highway where all vehicles, except truck (CAR, BUS,
+     * MOTORCYCLE, etc.), can drive 120 km/h, but trucks are allowed only 90 km/h. In that case, set the speed limit for
+     * GTUType.ALL to 120 km/h, and for TRUCK to 90 km/h.
      */
     private Map<GTUType, Speed> speedLimitMap;
 
@@ -134,6 +151,7 @@ public class Lane extends CrossSectionElement implements Serializable
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth);
         this.laneType = laneType;
         this.directionalityMap = directionalityMap;
+        checkDirectionality();
         this.speedLimitMap = speedLimitMap;
         this.overtakingConditions = overtakingConditions;
     }
@@ -164,6 +182,7 @@ public class Lane extends CrossSectionElement implements Serializable
         this.laneType = laneType;
         this.directionalityMap = new LinkedHashMap<>(1);
         this.directionalityMap.put(GTUType.ALL, directionality);
+        checkDirectionality();
         this.speedLimitMap = new LinkedHashMap<>();
         this.speedLimitMap.put(GTUType.ALL, speedLimit);
         this.overtakingConditions = overtakingConditions;
@@ -842,10 +861,13 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
+     * Get the speed limit of this lane, which can differ per GTU type. E.g., cars might be allowed to drive 120 km/h and trucks
+     * 90 km/h.
      * @param gtuType the GTU type to provide the speed limit for
-     * @return speedLimit.
+     * @return the speedLimit.
+     * @throws NetworkException 
      */
-    public final Speed getSpeedLimit(final GTUType gtuType)
+    public final Speed getSpeedLimit(final GTUType gtuType) throws NetworkException
     {
         if (this.speedLimitMap.containsKey(gtuType))
         {
@@ -855,16 +877,38 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             return this.speedLimitMap.get(GTUType.ALL);
         }
-        return new Speed(0.0, SpeedUnit.METER_PER_SECOND); // XXX is this what we want, or should we throw exception?
+        throw new NetworkException("No speed limit set for GTUType " + gtuType + " on lane " + toString());
     }
 
     /**
+     * Set the speed limit of this lane, which can differ per GTU type. Cars might be allowed to drive 120 km/h and trucks 90
+     * km/h. If the speed limit is the same for all GTU types, GTUType.ALL will be used. This means that the settings can be
+     * used additive, or subtractive. <br>
+     * In <b>additive use</b>, do not set the speed limit for GTUType.ALL. Now, one by one, the allowed maximum speeds for each
+     * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different. <br>
+     * In <b>subtractive use</b>, set the speed limit for GTUType.ALL to the most common one. Override the speed limit for
+     * certain GTUTypes to a different value. An example is a lane on a highway where all vehicles, except truck (CAR, BUS,
+     * MOTORCYCLE, etc.), can drive 120 km/h, but trucks are allowed only 90 km/h. In that case, set the speed limit for
+     * GTUType.ALL to 120 km/h, and for TRUCK to 90 km/h.
      * @param gtuType the GTU type to provide the speed limit for
      * @param speedLimit the speed limit for this gtu type
      */
     public final void setSpeedLimit(final GTUType gtuType, final Speed speedLimit)
     {
         this.speedLimitMap.put(gtuType, speedLimit);
+    }
+
+    /**
+     * Remove the set speed limit for a GTUType. If the speed limit for GTUType.ALL will be removed, there will not be a
+     * 'default' speed limit anymore. If the speed limit for a certain GTUType is removed, its speed limit will default to the
+     * speed limit of GTUType.ALL. <br>
+     * <b>Note</b>: if no speed limit is known for a GTUType, getSpeedLimit will throw a NetworkException when the speed limit
+     * is retrieved for that GTUType.
+     * @param gtuType the GTU type to provide the speed limit for
+     */
+    public final void removeSpeedLimit(final GTUType gtuType)
+    {
+        this.speedLimitMap.remove(gtuType);
     }
 
     /**
@@ -876,8 +920,21 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
+     * The direction in which vehicles can drive, i.e., in direction of geometry, reverse, or both. This can differ per GTU
+     * type. In an overtake lane, cars might overtake and trucks not. It might be that the lane (e.g., a street in a city) is
+     * FORWARD (from start node of the link to end node of the link) for the GTU type CAR, but BOTH for the GTU type BICYCLE
+     * (i.e., bicycles can also go in the other direction, opposite to the drawing direction of the Link). If the directionality
+     * for a GTUType is set to NONE, this means that the given GTUType cannot use the Lane. If a Directionality is set for
+     * GTUType.ALL, the getDirectionality will default to these settings when there is no specific entry for a given
+     * directionality. This means that the settings can be used additive, or restrictive. <br>
+     * In <b>additive use</b>, set the directionality for GTUType.ALL to NONE, or do not set the directionality for GTUType.ALL.
+     * Now, one by one, the allowed directionalities can be added. An example is a lane on a highway, which we only open for
+     * CAR, TRUCK and BUS. <br>
+     * In <b>restrictive use</b>, set the directionality for GTUType.ALL to BOTH, FORWARD, or BACKWARD. Override the
+     * directionality for certain GTUTypes to a more restrictive access, e.g. to NONE. An example is a lane that is open for all
+     * road users, except TRUCK.
      * @param gtuType the GTU type to provide the directionality for
-     * @return directionality.
+     * @return the directionality.
      */
     public final LongitudinalDirectionality getDirectionality(final GTUType gtuType)
     {
@@ -890,6 +947,62 @@ public class Lane extends CrossSectionElement implements Serializable
             return this.directionalityMap.get(GTUType.ALL);
         }
         return LongitudinalDirectionality.NONE;
+    }
+
+    /**
+     * This method sets the directionality of the lane for a GTU type. It might be that the driving direction in the lane is
+     * FORWARD (from start node of the link to end node of the link) for the GTU type CAR, but BOTH for the GTU type BICYCLE
+     * (i.e., bicycles can also go in the other direction; we see this on some city streets). If the directionality for a
+     * GTUType is set to NONE, this means that the given GTUType cannot use the Lane. If a Directionality is set for
+     * GTUType.ALL, the getDirectionality will default to these settings when there is no specific entry for a given
+     * directionality. This means that the settings can be used additive, or restrictive. <br>
+     * In <b>additive use</b>, set the directionality for GTUType.ALL to NONE, or do not set the directionality for GTUType.ALL.
+     * Now, one by one, the allowed directionalities can be added. An example is a lane on a highway, which we only open for
+     * CAR, TRUCK and BUS. <br>
+     * In <b>restrictive use</b>, set the directionality for GTUType.ALL to BOTH, FORWARD, or BACKWARD. Override the
+     * directionality for certain GTUTypes to a more restrictive access, e.g. to NONE. An example is a lane that is open for all
+     * road users, except TRUCK.
+     * @param gtuType the GTU type to set the directionality for.
+     * @param directionality the longitudinal directionality of the link (FORWARD, BACKWARD, BOTH or NONE) for the given GTU
+     *            type.
+     * @throws NetworkException when the lane directionality for the given GTUType is inconsistent with the Link directionality
+     *             to which the lane belongs.
+     */
+    public void addDirectionality(final GTUType gtuType, final LongitudinalDirectionality directionality)
+        throws NetworkException
+    {
+        this.directionalityMap.put(gtuType, directionality);
+        checkDirectionality();
+    }
+
+    /**
+     * This method removes an earlier provided directionality of the lane for a given GTU type, e.g. for maintenance of the
+     * lane. After removing, the directionality for the GTU will fall back to the provided directionality for GTUType.ALL (if
+     * present). Thereby removing a directionality is different from setting the directionality to NONE.
+     * @param gtuType the GTU type to remove the directionality for on this lane.
+     */
+    public void removeDirectionality(final GTUType gtuType)
+    {
+        this.directionalityMap.remove(gtuType);
+    }
+
+    /**
+     * Check whether the directionalities for the GTU types for this lane are consistent with the directionalities of the
+     * overarching Link.
+     * @throws NetworkException when the lane directionality for a given GTUType is inconsistent with the Link directionality to
+     *             which the lane belongs.
+     */
+    private void checkDirectionality() throws NetworkException
+    {
+        for (GTUType gtuType : this.directionalityMap.keySet())
+        {
+            LongitudinalDirectionality directionality = this.directionalityMap.get(gtuType);
+            if (!getParentLink().getDirectionality(gtuType).contains(directionality))
+            {
+                throw new NetworkException("Lane " + toString() + " allows " + gtuType + " a directionality of "
+                    + directionality + " which is not present in the overarching link " + getParentLink().toString());
+            }
+        }
     }
 
     /**

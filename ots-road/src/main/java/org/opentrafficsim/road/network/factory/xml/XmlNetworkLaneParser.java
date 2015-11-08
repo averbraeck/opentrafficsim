@@ -199,7 +199,8 @@ public class XmlNetworkLaneParser
         }
         for (RouteTag routeTag : this.routeTags.values())
         {
-            network.addRoute(routeTag.route);
+            // TODO Make routes GTU specific. See what to do with GTUType.ALL for routes
+            network.addRoute(GTUType.ALL, routeTag.route);
         }
         return network;
     }

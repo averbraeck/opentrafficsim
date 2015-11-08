@@ -1,21 +1,17 @@
 package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.media.j3d.Bounds;
-import javax.vecmath.Point3d;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
-import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.djunits.unit.FrequencyUnit;
-import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Point;
+import org.opentrafficsim.core.gtu.GTUType;
 
 /**
  * A standard implementation of a link between two OTSNodes.
@@ -48,8 +44,21 @@ public class OTSLink implements Link, Serializable, LocatableInterface
     /** Design line of the link. */
     private final OTSLine3D designLine;
 
-    /** Link capacity in vehicles per time unit. This is a mutable property (e.g., blockage). */
-    private Frequency capacity;
+    /**
+     * The direction in which vehicles can drive, i.e., in direction of geometry, reverse, or both. It might be that the link is
+     * FORWARD (from start node to end node) for the GTU type CAR, but BOTH for the GTU type BICYCLE (i.e., bicycles can also go
+     * from end node to start node). If the directionality for a GTUType is set to NONE, this means that the given GTUTYpe
+     * cannot use the Link. If a Directionality is set for GTUType.ALL, the getDirectionality will default to these settings
+     * when there is no specific entry for a given directionality. This means that the settings can be used additive, or
+     * restrictive. <br>
+     * In <b>additive use</b>, set the directionality for GTUType.ALL to NONE, or do not set the directionality for GTUType.ALL.
+     * Now, one by one, the allowed directionalities can be added. An example is a highway, which we only open for CAR, TRUCK
+     * and BUS. <br>
+     * In <b>restrictive use</b>, set the directionality for GTUType.ALL to BOTH, FORWARD, or BACKWARD. Override the
+     * directionality for certain GTUTypes to a more restrictive access, e.g. to NONE. An example is a road that is open for all
+     * road users, except PEDESTRIAN.
+     */
+    private final Map<GTUType, LongitudinalDirectionality> directionalityMap;
 
     /**
      * Construct a new link.
@@ -58,35 +67,64 @@ public class OTSLink implements Link, Serializable, LocatableInterface
      * @param endNode end node (directional)
      * @param linkType Link type to indicate compatibility with GTU types
      * @param designLine the OTSLine3D design line of the Link
-     * @param capacity link capacity in GTUs per hour
+     * @param directionalityMap the directions (FORWARD, BACKWARD, BOTH, NONE) that GTUtypes can traverse this link
      */
     public OTSLink(final String id, final OTSNode startNode, final OTSNode endNode, final LinkType linkType,
-        final OTSLine3D designLine, final Frequency capacity)
+        final OTSLine3D designLine, final Map<GTUType, LongitudinalDirectionality> directionalityMap)
     {
         this.id = id;
         this.startNode = startNode;
         this.endNode = endNode;
         this.linkType = linkType;
-        // TODO Add directionality to a link?
         this.startNode.addLinkOut(this);
         this.endNode.addLinkIn(this);
         this.designLine = designLine;
-        setCapacity(capacity);
+        this.directionalityMap = directionalityMap;
     }
 
     /**
-     * Construct a new link with infinite capacity.
+     * Construct a new link, with a directionality for all GTUs as provided.
      * @param id the link id
      * @param startNode start node (directional)
      * @param endNode end node (directional)
      * @param linkType Link type to indicate compatibility with GTU types
      * @param designLine the OTSLine3D design line of the Link
+     * @param directionality the directionality for all GTUs
      */
     public OTSLink(final String id, final OTSNode startNode, final OTSNode endNode, final LinkType linkType,
-        final OTSLine3D designLine)
+        final OTSLine3D designLine, final LongitudinalDirectionality directionality)
     {
-        this(id, startNode, endNode, linkType, designLine, new Frequency(Double.POSITIVE_INFINITY,
-            FrequencyUnit.PER_SECOND));
+        this(id, startNode, endNode, linkType, designLine, new HashMap<GTUType, LongitudinalDirectionality>());
+        addDirectionality(GTUType.ALL, directionality);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final LongitudinalDirectionality getDirectionality(final GTUType gtuType)
+    {
+        if (this.directionalityMap.containsKey(gtuType))
+        {
+            return this.directionalityMap.get(gtuType);
+        }
+        if (this.directionalityMap.containsKey(GTUType.ALL))
+        {
+            return this.directionalityMap.get(GTUType.ALL);
+        }
+        return LongitudinalDirectionality.NONE;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void addDirectionality(final GTUType gtuType, final LongitudinalDirectionality directionality)
+    {
+        this.directionalityMap.put(gtuType, directionality);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void removeDirectionality(final GTUType gtuType)
+    {
+        this.directionalityMap.remove(gtuType);
     }
 
     /** {@inheritDoc} */
@@ -119,20 +157,6 @@ public class OTSLink implements Link, Serializable, LocatableInterface
 
     /** {@inheritDoc} */
     @Override
-    public final Frequency getCapacity()
-    {
-        return this.capacity;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void setCapacity(final Frequency capacity)
-    {
-        this.capacity = capacity;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final OTSLine3D getDesignLine()
     {
         return this.designLine;
@@ -149,20 +173,14 @@ public class OTSLink implements Link, Serializable, LocatableInterface
     @Override
     public final DirectedPoint getLocation()
     {
-        // TODO maybe do without transformation to a LineString and cache the centroid?
-        Point c = this.designLine.getLineString().getCentroid();
-        return new DirectedPoint(new double[]{c.getX(), c.getY(), 0.0d});
+        return this.designLine.getLocation();
     }
 
     /** {@inheritDoc} */
     @Override
     public final Bounds getBounds()
     {
-        // TODO maybe do without transformation to a LineString and cache the envelope / bounds?
-        DirectedPoint c = getLocation();
-        Envelope envelope = this.designLine.getLineString().getEnvelopeInternal();
-        return new BoundingBox(new Point3d(envelope.getMinX() - c.x, envelope.getMinY() - c.y, 0.0d), new Point3d(
-            envelope.getMaxX() - c.x, envelope.getMaxY() - c.y, 0.0d));
+        return this.designLine.getBounds();
     }
 
     /** {@inheritDoc} */

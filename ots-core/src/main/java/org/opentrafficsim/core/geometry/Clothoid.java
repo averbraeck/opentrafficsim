@@ -418,10 +418,9 @@ public final class Clothoid
     /**
      * Demonstrate / test the clothoid methods.
      * @param args String[]; the command line arguments (not used)
-     * @throws NetworkException
-     * @throws OTSGeometryException
+     * @throws NetworkException if the number of segments is too low
      */
-    public static void main(final String[] args) throws NetworkException, OTSGeometryException
+    public static void main(final String[] args) throws NetworkException
     {
         OTSLine3D line;
         // line = clothoid(104.1485, 89.037488, 0, 0, 0, -0.04841457, 0, 3.2, 100);

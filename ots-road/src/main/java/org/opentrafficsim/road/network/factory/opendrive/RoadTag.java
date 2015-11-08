@@ -21,7 +21,6 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
@@ -98,15 +97,15 @@ class RoadTag
     /** the calculated Link. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     CrossSectionLink link = null;
-    
+
     /** the calculated designLine. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OTSLine3D designLine = null;
-    
+
     /** the calculated startNode. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OTSNode startNode = null;
-    
+
     /** the calculated endNode. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OTSNode endNode = null;
@@ -158,20 +157,16 @@ class RoadTag
         Node junctionId = attributes.getNamedItem("junction");
         if (junctionId == null)
             throw new SAXException("ROAD: missing attribute junction for road id=" + roadTag.id);
-        
+
         roadTag.junctionId = junctionId.getNodeValue().trim();
-        
-/*        if (!junctionId.getNodeValue().trim().equals("-1"))
-        {
-            roadTag.junctionId = junctionId.getNodeValue().trim();
-            
-            if(roadTag.junctionId == null)
-                throw new SAXException("ROAD: junction id=" + roadTag.junctionId + " for road id=" + roadTag.id
-                        + " not defined as a junction in the XML-file");
-            if (!parser.junctionTags.keySet().contains(roadTag.junctionId))
-                throw new SAXException("ROAD: junction id=" + roadTag.junctionId + " for road id=" + roadTag.id
-                    + " not defined as a junction in the XML-file");
-        }*/
+
+        /*
+         * if (!junctionId.getNodeValue().trim().equals("-1")) { roadTag.junctionId = junctionId.getNodeValue().trim();
+         * if(roadTag.junctionId == null) throw new SAXException("ROAD: junction id=" + roadTag.junctionId + " for road id=" +
+         * roadTag.id + " not defined as a junction in the XML-file"); if
+         * (!parser.junctionTags.keySet().contains(roadTag.junctionId)) throw new SAXException("ROAD: junction id=" +
+         * roadTag.junctionId + " for road id=" + roadTag.id + " not defined as a junction in the XML-file"); }
+         */
 
         parser.roadTags.put(roadTag.id, roadTag);
 
@@ -245,7 +240,7 @@ class RoadTag
                         String sublinkId = roadTag.id + "." + laneSecIndex.toString();
                         CrossSectionLink sublink =
                             new CrossSectionLink(sublinkId, from.node, to.node, LinkType.ALL, designLine,
-                                LaneKeepingPolicy.KEEP_LANE);
+                                LongitudinalDirectionality.BOTH, LaneKeepingPolicy.KEEP_LANE);
 
                         roadTag.subLinks.add(sublink);
 
@@ -283,7 +278,7 @@ class RoadTag
             String sublinkId = roadTag.id + "." + Integer.toString(roadTag.lanesTag.laneSectionTags.size());
             CrossSectionLink sublink =
                 new CrossSectionLink(sublinkId, from.node, to.node, LinkType.ALL, designLine,
-                    LaneKeepingPolicy.KEEP_LANE);
+                    LongitudinalDirectionality.BOTH, LaneKeepingPolicy.KEEP_LANE);
 
             roadTag.subLinks.add(sublink);
 
@@ -341,7 +336,7 @@ class RoadTag
                     speed = leftLane.speedTags.get(0).max;
                 if (speed == null)
                 {
-                    //System.err.println("speed.max == null for " + leftLane.id.toString());
+                    // System.err.println("speed.max == null for " + leftLane.id.toString());
                     speed = new Speed(30.0, SpeedUnit.MILE_PER_HOUR);
                 }
 
@@ -349,7 +344,7 @@ class RoadTag
                 speedLimit.put(GTUType.ALL, speed);
 
                 if (leftLane.type.equals("driving"))
-                {                    
+                {
                     LongitudinalDirectionality direction = LongitudinalDirectionality.BACKWARD;
                     Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
                     directionality.put(GTUType.ALL, direction);
@@ -466,7 +461,7 @@ class RoadTag
                     speed = rightLane.speedTags.get(0).max;
                 if (speed == null)
                 {
-                    //System.err.println("speed.max == null for " + rightLane.id.toString());
+                    // System.err.println("speed.max == null for " + rightLane.id.toString());
                     speed = new Speed(30.0, SpeedUnit.MILE_PER_HOUR);
                 }
 
@@ -476,8 +471,8 @@ class RoadTag
                 if (rightLane.type.equals("driving"))
                 {
                     LongitudinalDirectionality direction = LongitudinalDirectionality.FORWARD;
-                    //if(roadTag.link.getEndNode().getLinksOut().size() == 0)
-                        //direction = LongitudinalDirectionality.BACKWARD;
+                    // if(roadTag.link.getEndNode().getLinksOut().size() == 0)
+                    // direction = LongitudinalDirectionality.BACKWARD;
                     Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
                     directionality.put(GTUType.ALL, direction);
                     Color color = Color.gray;
@@ -588,39 +583,40 @@ class RoadTag
 
     /**
      * @param roadTag
-     * @param openDriveNetworkLaneParser 
+     * @param openDriveNetworkLaneParser
      */
     public static void buildLink(RoadTag roadTag, OpenDriveNetworkLaneParser openDriveNetworkLaneParser)
     {
-        if(roadTag.junctionId==null)
+        if (roadTag.junctionId == null)
             System.out.println("sth is wrong in building links");
-        
-        if(!roadTag.junctionId.equals("-1"))
-        {            
+
+        if (!roadTag.junctionId.equals("-1"))
+        {
             RoadTag predecessorRoadTag = openDriveNetworkLaneParser.roadTags.get(roadTag.linkTag.predecessorId);
             RoadTag successorRoadTag = openDriveNetworkLaneParser.roadTags.get(roadTag.linkTag.successorId);
-            
+
             OTSNode from = null;
-            
+
             if (roadTag.linkTag.predecessorContactPoint.equals(ContactPointEnum.START))
                 from = predecessorRoadTag.startNode;
-            else if(roadTag.linkTag.predecessorContactPoint.equals(ContactPointEnum.END))
+            else if (roadTag.linkTag.predecessorContactPoint.equals(ContactPointEnum.END))
                 from = predecessorRoadTag.endNode;
             else
                 System.out.println("sth is wrong in building links");
-            
+
             OTSNode to = null;
-            
+
             if (roadTag.linkTag.successorContactPoint.equals(ContactPointEnum.START))
                 to = successorRoadTag.startNode;
-            else if(roadTag.linkTag.successorContactPoint.equals(ContactPointEnum.END))
+            else if (roadTag.linkTag.successorContactPoint.equals(ContactPointEnum.END))
                 to = successorRoadTag.endNode;
             else
                 System.out.println("sth is wrong in building links");
-            
+
             CrossSectionLink newlink =
-                    new CrossSectionLink(roadTag.id, from, to, LinkType.ALL, roadTag.designLine, LaneKeepingPolicy.KEEP_LANE);
-            
+                new CrossSectionLink(roadTag.id, from, to, LinkType.ALL, roadTag.designLine,
+                    LongitudinalDirectionality.BOTH, LaneKeepingPolicy.KEEP_LANE);
+
             roadTag.link = newlink;
         }
         else
@@ -628,8 +624,9 @@ class RoadTag
             OTSNode from = roadTag.startNode;
             OTSNode to = roadTag.endNode;
             CrossSectionLink newlink =
-                    new CrossSectionLink(roadTag.id, from, to, LinkType.ALL, roadTag.designLine, LaneKeepingPolicy.KEEP_LANE);
-            
+                new CrossSectionLink(roadTag.id, from, to, LinkType.ALL, roadTag.designLine,
+                    LongitudinalDirectionality.BOTH, LaneKeepingPolicy.KEEP_LANE);
+
             roadTag.link = newlink;
         }
     }

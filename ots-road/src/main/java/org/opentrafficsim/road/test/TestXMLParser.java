@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.network.factory;
+package org.opentrafficsim.road.test;
 
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
