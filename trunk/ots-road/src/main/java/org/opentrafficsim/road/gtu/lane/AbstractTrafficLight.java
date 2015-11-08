@@ -112,7 +112,7 @@ public abstract class AbstractTrafficLight extends AbstractGTU implements LaneBa
     public AbstractTrafficLight(final String name, final Lane lane, final Length.Rel position,
         final OTSDEVSSimulatorInterface simulator) throws GTUException, NetworkException, NamingException
     {
-        super(name, BLOCK_GTU, new CompleteRouteNavigator(new CompleteRoute("")));
+        super(name, BLOCK_GTU, new CompleteRouteNavigator(new CompleteRoute("", GTUType.ALL)));
         this.simulator = simulator;
         this.position = position;
         this.lane = lane;

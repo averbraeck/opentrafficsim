@@ -118,7 +118,7 @@ public class LaneBlock extends AbstractGTU implements LaneBasedGTU
     public LaneBlock(final Lane lane, final Length.Rel position, final OTSDEVSSimulatorInterface simulator,
         final Class<? extends Renderable2D> animationClass) throws GTUException, NetworkException, NamingException
     {
-        super(UUID.randomUUID().toString(), BLOCK_GTU, new CompleteRouteNavigator(new CompleteRoute("")));
+        super(UUID.randomUUID().toString(), BLOCK_GTU, new CompleteRouteNavigator(new CompleteRoute("", GTUType.ALL)));
         this.simulator = simulator;
         this.position = position;
         this.lane = lane;

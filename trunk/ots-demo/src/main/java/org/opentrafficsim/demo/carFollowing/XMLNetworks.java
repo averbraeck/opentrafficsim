@@ -416,7 +416,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             {
                 setupGenerator(LaneFactory.makeMultiLane("From2 to FirstVia", from2, firstVia, null, lanesOnBranch, 0,
                     lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator));
-                // this.routeGenerator = new FixedLaneBasedRouteGenerator(new CompleteRoute(""));
+                // this.routeGenerator = new FixedLaneBasedRouteGenerator(new CompleteRoute("", GTUType.ALL));
             }
             else
             {
@@ -543,7 +543,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         LaneChangeModel lcm = new FixedLaneChangeModel(null);
         new LaneBasedIndividualCar("999999", this.gtuType, gfm, lcm, initialPositions, new Speed(0, KM_PER_HOUR),
             new Length.Rel(1, METER), lane.getWidth(1), new Speed(0, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
-                new CompleteRoute("")), this.simulator);
+                new CompleteRoute("", GTUType.ALL)), this.simulator);
         return lane;
     }
 

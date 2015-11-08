@@ -115,7 +115,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         nodeList.add(nodeATo);
         // Route of the Car
         @SuppressWarnings({"unchecked", "rawtypes"})
-        CompleteRoute route = new CompleteRoute("Route", nodeList);
+        CompleteRoute route = new CompleteRoute("Route", gtuType, nodeList);
         // Now we can make a GTU
         LaneBasedIndividualCar car =
             new LaneBasedIndividualCar(carID, gtuType, gfm, laneChangeModel, initialLongitudinalPositions, initialSpeed,

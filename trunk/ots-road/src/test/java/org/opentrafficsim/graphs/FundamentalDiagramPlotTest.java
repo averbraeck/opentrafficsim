@@ -133,7 +133,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
             new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(1000, SECOND));
         // Construct a car
         new LaneBasedIndividualCar("1", gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, speed,
-            length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
+            length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
         simulator.runUpTo(new Time.Abs(124, SECOND));
         while (simulator.isRunning())
         {
@@ -217,7 +217,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         // Check that harmonic mean speed is computed
         speed = new Speed(10, KM_PER_HOUR);
         new LaneBasedIndividualCar("1234", gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, speed,
-            length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
+            length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
         simulator.runUpTo(new Time.Abs(125, SECOND));
         while (simulator.isRunning())
         {

@@ -36,7 +36,7 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
  * initial version 30 okt. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public final class LaneFactory 
+public final class LaneFactory
 {
     /** Do not instantiate this class. */
     private LaneFactory()
@@ -68,7 +68,11 @@ public final class LaneFactory
             }
         }
         OTSLine3D designLine = new OTSLine3D(points);
-        CrossSectionLink link = new CrossSectionLink(name, from, to, LinkType.ALL, designLine, LaneKeepingPolicy.KEEP_RIGHT);
+        // XXX for now, the overarchingg link allows traffic in both directions. If that is not the intention, 
+        // change to LongitudinalDirectionality.FORWARD
+        CrossSectionLink link =
+            new CrossSectionLink(name, from, to, LinkType.ALL, designLine, LongitudinalDirectionality.BOTH,
+                LaneKeepingPolicy.KEEP_RIGHT);
         return link;
     }
 
@@ -92,15 +96,15 @@ public final class LaneFactory
     @SuppressWarnings("checkstyle:parameternumber")
     private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType,
         final Length.Rel latPosAtStart, final Length.Rel latPosAtEnd, final Length.Rel width, final Speed speedLimit,
-        final OTSDEVSSimulatorInterface simulator) throws NamingException, NetworkException,
-        OTSGeometryException
+        final OTSDEVSSimulatorInterface simulator) throws NamingException, NetworkException, OTSGeometryException
     {
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
         directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.FORWARD);
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(GTUType.ALL, speedLimit);
-        Lane result = new Lane(link, id, latPosAtStart, latPosAtEnd, width, width, laneType, directionalityMap, speedMap,
-            new OvertakingConditions.LeftAndRight());
+        Lane result =
+            new Lane(link, id, latPosAtStart, latPosAtEnd, width, width, laneType, directionalityMap, speedMap,
+                new OvertakingConditions.LeftAndRight());
         if (simulator instanceof OTSAnimatorInterface)
         {
             try
@@ -131,8 +135,7 @@ public final class LaneFactory
      */
     public static Lane makeLane(final String name, final OTSNode from, final OTSNode to,
         final OTSPoint3D[] intermediatePoints, final LaneType laneType, final Speed speedLimit,
-        final OTSDEVSSimulatorInterface simulator) throws NamingException, NetworkException,
-        OTSGeometryException
+        final OTSDEVSSimulatorInterface simulator) throws NamingException, NetworkException, OTSGeometryException
     {
         Length.Rel width = new Length.Rel(4.0, LengthUnit.METER);
         final CrossSectionLink link = makeLink(name, from, to, intermediatePoints);
@@ -161,9 +164,9 @@ public final class LaneFactory
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLane(final String name, final OTSNode from, final OTSNode to,
-        final OTSPoint3D[] intermediatePoints, final int laneCount, final int laneOffsetAtStart, final int laneOffsetAtEnd,
-        final LaneType laneType, final Speed speedLimit, final OTSDEVSSimulatorInterface simulator)
-        throws NamingException, NetworkException, OTSGeometryException
+        final OTSPoint3D[] intermediatePoints, final int laneCount, final int laneOffsetAtStart,
+        final int laneOffsetAtEnd, final LaneType laneType, final Speed speedLimit,
+        final OTSDEVSSimulatorInterface simulator) throws NamingException, NetworkException, OTSGeometryException
     {
         final CrossSectionLink link = makeLink(name, from, to, intermediatePoints);
         Lane[] result = new Lane[laneCount];
@@ -171,8 +174,10 @@ public final class LaneFactory
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
         {
             // Be ware! LEFT is lateral positive, RIGHT is lateral negative.
-            Length.Rel latPosAtStart = new Length.Rel((-0.5 - laneIndex - laneOffsetAtStart) * width.getSI(), LengthUnit.SI);
-            Length.Rel latPosAtEnd = new Length.Rel((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.SI);
+            Length.Rel latPosAtStart =
+                new Length.Rel((-0.5 - laneIndex - laneOffsetAtStart) * width.getSI(), LengthUnit.SI);
+            Length.Rel latPosAtEnd =
+                new Length.Rel((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.SI);
             result[laneIndex] =
                 makeLane(link, "lane." + laneIndex, laneType, latPosAtStart, latPosAtEnd, width, speedLimit, simulator);
         }
@@ -199,8 +204,7 @@ public final class LaneFactory
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLane(final String name, final OTSNode from, final OTSNode to,
         final OTSPoint3D[] intermediatePoints, final int laneCount, final LaneType laneType, final Speed speedLimit,
-        final OTSDEVSSimulatorInterface simulator) throws NamingException, NetworkException,
-        OTSGeometryException
+        final OTSDEVSSimulatorInterface simulator) throws NamingException, NetworkException, OTSGeometryException
     {
         return makeMultiLane(name, from, to, intermediatePoints, laneCount, 0, 0, laneType, speedLimit, simulator);
     }

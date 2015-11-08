@@ -14,6 +14,7 @@ import org.opentrafficsim.core.geometry.Clothoid;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -171,7 +172,7 @@ class PlanViewTag
         roadTag.startNode = from.node;
         roadTag.endNode = to.node;
         // CrossSectionLink link = new CrossSectionLink(roadTag.id, from.node, to.node, LinkType.ALL, designLine,
-        // LaneKeepingPolicy.KEEP_LANE);
+        // LongitudinalDirectionality.BOTH, LaneKeepingPolicy.KEEP_LANE);
         return designLine;
     }
 }

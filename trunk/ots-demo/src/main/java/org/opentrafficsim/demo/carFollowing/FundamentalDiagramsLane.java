@@ -412,7 +412,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                     new LaneBasedIndividualCar("BLOCK", this.gtuType, this.carFollowingModelCars, this.laneChangeModel,
                         initialPositions, new Speed(0, KM_PER_HOUR), new Length.Rel(4, METER), new Length.Rel(1.8,
                             METER), new Speed(0.0001, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
-                            new CompleteRoute("")), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
+                            new CompleteRoute("", GTUType.ALL)), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
             {
@@ -451,7 +451,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, generateTruck
                     ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel,
                     initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, METER), new Speed(200,
-                        KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator,
+                        KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), this.simulator,
                     DefaultCarAnimation.class, this.gtuColorer);
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             }

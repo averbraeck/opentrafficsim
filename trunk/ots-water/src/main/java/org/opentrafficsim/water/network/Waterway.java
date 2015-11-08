@@ -1,7 +1,11 @@
 package org.opentrafficsim.water.network;
 
+import java.util.Map;
+
 import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSLink;
 import org.opentrafficsim.core.network.OTSNode;
 
@@ -27,11 +31,32 @@ public class Waterway extends OTSLink
      * @param endNode end node (directional)
      * @param linkType Link type to indicate compatibility with GTU types
      * @param designLine the OTSLine3D design line of the Link
+     * @param directionality to indicate the general direction of the waterway (FORWARD = in the direction of the design line;
+     *            BACKWARD is in the opposite direction; BOTH is a waterway that can be used in both directions; NONE is a
+     *            waterway that cannot be used for sailing.
      */
-    public Waterway(final String id, final OTSNode startNode, final OTSNode endNode, final LinkType linkType,
-        final OTSLine3D designLine)
+    public Waterway(String id, OTSNode startNode, OTSNode endNode, LinkType linkType, OTSLine3D designLine,
+        LongitudinalDirectionality directionality)
     {
-        super(id, startNode, endNode, linkType, designLine);
+        super(id, startNode, endNode, linkType, designLine, directionality);
+    }
+
+    /**
+     * Construct a new waterway.
+     * @param id the link id
+     * @param startNode start node (directional)
+     * @param endNode end node (directional)
+     * @param linkType Link type to indicate compatibility with GTU types
+     * @param designLine the OTSLine3D design line of the Link
+     * @param directionalityMap the directions for different type of ships; it might be that all or certain types of ships are
+     *            only allowed to use a canal in one direction. Furthermore, the directions can limit waterways for certain
+     *            classes of ships. Set the LongitudinalDirectionality to NONE for ships that are not allowed to sail this
+     *            waterway.
+     */
+    public Waterway(String id, OTSNode startNode, OTSNode endNode, LinkType linkType, OTSLine3D designLine,
+        Map<GTUType, LongitudinalDirectionality> directionalityMap)
+    {
+        super(id, startNode, endNode, linkType, designLine, directionalityMap);
     }
 
 }

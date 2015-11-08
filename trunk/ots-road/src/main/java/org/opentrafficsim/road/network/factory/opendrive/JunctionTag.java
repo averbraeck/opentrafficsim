@@ -51,11 +51,11 @@ class JunctionTag
     /** unique ID within database. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String id = null;
-    
+
     /** a map of connections in the junction */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, ConnectionTag> connectionTags = new HashMap<String, ConnectionTag>();
-    
+
     /** a map of controller in the junction */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, ControllerTag> controllerTags = new HashMap<String, ControllerTag>();
@@ -85,19 +85,19 @@ class JunctionTag
         if (name == null)
             throw new SAXException("JUNCTION: missing attribute NAME for ID=" + junctionTag.id);
         junctionTag.name = name.getNodeValue().trim();
-        
+
         for (Node connectionNode : XMLParser.getNodes(node.getChildNodes(), "connection"))
         {
             ConnectionTag connectionTag = ConnectionTag.parseConnection(connectionNode, parser);
             junctionTag.connectionTags.put(connectionTag.id, connectionTag);
         }
-        
+
         for (Node connectionNode : XMLParser.getNodes(node.getChildNodes(), "controller"))
         {
             ControllerTag controllerTag = ControllerTag.parseController(connectionNode, parser);
             junctionTag.controllerTags.put(controllerTag.id, controllerTag);
         }
-        
+
         parser.junctionTags.put(junctionTag.id, junctionTag);
     }
 
@@ -105,42 +105,48 @@ class JunctionTag
      * @param juncTag
      * @param simulator
      * @param openDriveNetworkLaneParser
-     * @throws NetworkException 
-     * @throws OTSGeometryException 
-     * @throws NamingException 
+     * @throws NetworkException
+     * @throws OTSGeometryException
+     * @throws NamingException
      */
     public static void showJunctions(JunctionTag juncTag, OTSDEVSSimulatorInterface simulator,
-            OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException, OTSGeometryException, NamingException
+        OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException, OTSGeometryException,
+        NamingException
     {
-        for(ConnectionTag connectionTag: juncTag.connectionTags.values())
+        for (ConnectionTag connectionTag : juncTag.connectionTags.values())
         {
             RoadTag inComing = openDriveNetworkLaneParser.roadTags.get(connectionTag.incomingRoad);
             RoadTag connecting = openDriveNetworkLaneParser.roadTags.get(connectionTag.connectingRoad);
-            
+
             Lane inComingLane = null;
             Lane connectingLane = null;
             String sublinkId = juncTag.id + "." + connectionTag.id;
             CrossSectionLink sublink = null;
-            
+
             List<OTSPoint3D> coordinates = new ArrayList<OTSPoint3D>();
-            
+
             OTSLine3D designLine = null;
-            
-            if(inComing.linkTag.successorType !=null && inComing.linkTag.successorType.equals("junction")&&inComing.linkTag.successorId.equals(juncTag.id))
-            {                
-                inComingLane = inComing.lanesTag.laneSectionTags.get(inComing.lanesTag.laneSectionTags.size()-1).lanes.get(connectionTag.laneLinkFrom);
+
+            if (inComing.linkTag.successorType != null && inComing.linkTag.successorType.equals("junction")
+                && inComing.linkTag.successorId.equals(juncTag.id))
+            {
+                inComingLane =
+                    inComing.lanesTag.laneSectionTags.get(inComing.lanesTag.laneSectionTags.size() - 1).lanes
+                        .get(connectionTag.laneLinkFrom);
                 connectingLane = connecting.lanesTag.laneSectionTags.get(0).lanes.get(connectionTag.laneLinkTo);
             }
-            else if(inComing.linkTag.predecessorType.equals("junction")&&inComing.linkTag.predecessorId.equals(juncTag.id))
-            {               
-                inComingLane = connecting.lanesTag.laneSectionTags.get(connecting.lanesTag.laneSectionTags.size()-1).lanes.get(connectionTag.laneLinkFrom);
+            else if (inComing.linkTag.predecessorType.equals("junction")
+                && inComing.linkTag.predecessorId.equals(juncTag.id))
+            {
+                inComingLane =
+                    connecting.lanesTag.laneSectionTags.get(connecting.lanesTag.laneSectionTags.size() - 1).lanes
+                        .get(connectionTag.laneLinkFrom);
                 connectingLane = inComing.lanesTag.laneSectionTags.get(0).lanes.get(connectionTag.laneLinkTo);
             }
             else
             {
                 System.err.println("err in junctions!");
             }
-                
 
             OTSNode from1 = inComing.link.getStartNode();
             OTSNode from2 = inComing.link.getEndNode();
@@ -162,41 +168,48 @@ class JunctionTag
                 {
                     from = from1;
                     to = to1;
-                } else
+                }
+                else
                 {
                     from = from2;
                     to = to1;
                 }
 
-            } else if (dis1 > dis2 && dis3 < dis4)
+            }
+            else if (dis1 > dis2 && dis3 < dis4)
             {
                 if (dis2 < dis3)
                 {
                     from = from1;
                     to = to2;
-                } else
+                }
+                else
                 {
                     from = from2;
                     to = to1;
                 }
-            } else if (dis1 < dis2 && dis3 > dis4)
+            }
+            else if (dis1 < dis2 && dis3 > dis4)
             {
                 if (dis1 < dis4)
                 {
                     from = from1;
                     to = to1;
-                } else
+                }
+                else
                 {
                     from = from2;
                     to = to2;
                 }
-            } else if (dis1 > dis2 && dis3 > dis4)
+            }
+            else if (dis1 > dis2 && dis3 > dis4)
             {
                 if (dis2 < dis4)
                 {
                     from = from1;
                     to = to2;
-                } else
+                }
+                else
                 {
                     from = from2;
                     to = to2;
@@ -206,57 +219,58 @@ class JunctionTag
             coordinates.add(from.getPoint());
 
             coordinates.add(to.getPoint());
-            
-            if(from.equals(to))
+
+            if (from.equals(to))
                 return;
 
             designLine = new OTSLine3D(coordinates);
 
-            sublink = new CrossSectionLink(sublinkId, from, to, LinkType.ALL, designLine, LaneKeepingPolicy.KEEP_LANE);
+            // XXX correct to assume assume that junctions are always drawn in the direction of the design line?
+            sublink =
+                new CrossSectionLink(sublinkId, from, to, LinkType.ALL, designLine, LongitudinalDirectionality.FORWARD,
+                    LaneKeepingPolicy.KEEP_LANE);
 
-            //openDriveNetworkLaneParser.network.addLink(sublink);             
-                           
+            // openDriveNetworkLaneParser.network.addLink(sublink);
 
             // TODO overtaking conditions
             OvertakingConditions overtakingConditions = new OvertakingConditions.LeftAndRight();
 
-            Speed speed = null;         
+            Speed speed = null;
             if (speed == null)
             {
                 System.err.println("speed.max == null for " + sublinkId.toString());
                 speed = new Speed(30.0, SpeedUnit.MILE_PER_HOUR);
             }
 
-
-/*            if (connectingLane.getSpeedLimit(GTUType.ALL) != null)
-                speed = connectingLane.getSpeedLimit(GTUType.ALL);
-            if (inComingLane.getSpeedLimit(GTUType.ALL) != null)
-                speed = inComingLane.getSpeedLimit(GTUType.ALL);*/
+            /*
+             * if (connectingLane.getSpeedLimit(GTUType.ALL) != null) speed = connectingLane.getSpeedLimit(GTUType.ALL); if
+             * (inComingLane.getSpeedLimit(GTUType.ALL) != null) speed = inComingLane.getSpeedLimit(GTUType.ALL);
+             */
 
             Map<GTUType, Speed> speedLimit = new LinkedHashMap<>();
             speedLimit.put(GTUType.ALL, speed);
-            
+
             LongitudinalDirectionality direction = LongitudinalDirectionality.FORWARD;
             Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
             directionality.put(GTUType.ALL, direction);
             Color color = Color.red;
 
-            if(inComingLane != null && connectingLane != null)
+            if (inComingLane != null && connectingLane != null)
                 try
                 {
                     Lane lane =
-                            new Lane(sublink, sublinkId, inComingLane.getDesignLineOffsetAtEnd(),
-                                    connectingLane.getDesignLineOffsetAtBegin(), inComingLane.getEndWidth(),
-                                    connectingLane.getBeginWidth(), RoadTag.LANETYPE_ALL, directionality, speedLimit,
-                                    overtakingConditions);
+                        new Lane(sublink, sublinkId, inComingLane.getDesignLineOffsetAtEnd(), connectingLane
+                            .getDesignLineOffsetAtBegin(), inComingLane.getEndWidth(), connectingLane.getBeginWidth(),
+                            RoadTag.LANETYPE_ALL, directionality, speedLimit, overtakingConditions);
                     new LaneAnimation(lane, simulator, color);
-                    
-                    //new LinkAnimation(sublink, simulator, 1000.0f);
-                } catch (RemoteException exception)
+
+                    // new LinkAnimation(sublink, simulator, 1000.0f);
+                }
+                catch (RemoteException exception)
                 {
                     exception.printStackTrace();
                 }
-            
+
         }
     }
 }

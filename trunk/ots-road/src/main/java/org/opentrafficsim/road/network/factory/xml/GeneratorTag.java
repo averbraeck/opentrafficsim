@@ -135,8 +135,8 @@ class GeneratorTag
         {
             String gtuName = attributes.getNamedItem("GTU").getNodeValue().trim();
             if (!parser.gtuTags.containsKey(gtuName))
-                throw new NetworkException("GENERATOR: LANE " + laneName + " GTU " + gtuName + " in link " + linkTag.name
-                    + " not defined");
+                throw new NetworkException("GENERATOR: LANE " + laneName + " GTU " + gtuName + " in link "
+                    + linkTag.name + " not defined");
             generatorTag.gtuTag = parser.gtuTags.get(gtuName);
         }
 
@@ -150,8 +150,8 @@ class GeneratorTag
         }
 
         if (generatorTag.gtuTag == null && generatorTag.gtuMixTag == null)
-            throw new SAXException("GENERATOR: missing attribute GTU or GTUMIX for Lane with NAME " + laneName + " of link "
-                + linkTag.name);
+            throw new SAXException("GENERATOR: missing attribute GTU or GTUMIX for Lane with NAME " + laneName
+                + " of link " + linkTag.name);
 
         if (generatorTag.gtuTag != null && generatorTag.gtuMixTag != null)
             throw new SAXException("GENERATOR: both attribute GTU and GTUMIX defined for Lane with NAME " + laneName
@@ -219,8 +219,8 @@ class GeneratorTag
         }
 
         if (numberRouteTags > 1)
-            throw new SAXException("GENERATOR: multiple ROUTE tags defined for Lane with NAME " + laneName + " of link "
-                + linkTag.name);
+            throw new SAXException("GENERATOR: multiple ROUTE tags defined for Lane with NAME " + laneName
+                + " of link " + linkTag.name);
 
         if (numberRouteTags == 0)
             throw new SAXException("GENERATOR: no ROUTE tags defined for Lane with NAME " + laneName + " of link "
@@ -260,8 +260,8 @@ class GeneratorTag
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws NetworkException when route generator cannot be instantiated
      */
-    static void makeGenerator(final GeneratorTag generatorTag, final XmlNetworkLaneParser parser, final LinkTag linkTag,
-        final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException
+    static void makeGenerator(final GeneratorTag generatorTag, final XmlNetworkLaneParser parser,
+        final LinkTag linkTag, final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException
     {
         Lane lane = linkTag.lanes.get(generatorTag.laneName);
         Class<?> gtuClass = LaneBasedIndividualCar.class;
@@ -271,8 +271,10 @@ class GeneratorTag
             nodeList.add(parser.nodeTags.get(nodeTag.name).node);
         }
         Time.Abs startTime = generatorTag.startTime != null ? generatorTag.startTime : new Time.Abs(0.0, TimeUnit.SI);
-        Time.Abs endTime = generatorTag.endTime != null ? generatorTag.endTime : new Time.Abs(Double.MAX_VALUE, TimeUnit.SI);
-        LaneBasedRouteGenerator rg = new FixedLaneBasedRouteGenerator(new CompleteRoute("fixed route", nodeList));
+        Time.Abs endTime =
+            generatorTag.endTime != null ? generatorTag.endTime : new Time.Abs(Double.MAX_VALUE, TimeUnit.SI);
+        LaneBasedRouteGenerator rg =
+            new FixedLaneBasedRouteGenerator(new CompleteRoute("fixed route", generatorTag.gtuTag.gtuType, nodeList));
         Length.Rel position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);
         new GTUGeneratorIndividual(generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType, gtuClass,
             generatorTag.gtuTag.followingModel, generatorTag.gtuTag.laneChangeModel, generatorTag.initialSpeedDist,

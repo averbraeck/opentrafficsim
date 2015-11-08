@@ -155,7 +155,7 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
                 LaneFactory.makeMultiLane("Non-DestinationLink", branchPoint, nonDestination, null, LANECOUNT
                     - Math.abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? LANECOUNT
                     - targetLaneConfiguration : 0, 0, laneType, speedLimit, simulator);
-                CompleteRoute route = new CompleteRoute("route");
+                CompleteRoute route = new CompleteRoute("route", gtuType);
                 route.addNode(from);
                 route.addNode(branchPoint);
                 route.addNode(destination);

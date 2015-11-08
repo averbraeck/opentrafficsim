@@ -560,7 +560,7 @@ class StraightModel implements OTSModelInterface, UNITS
             this.block =
                 new LaneBasedIndividualCar("999999", this.gtuType, this.carFollowingModelCars, this.laneChangeModel,
                     initialPositions, new Speed(0, KM_PER_HOUR), new Length.Rel(4, METER), new Length.Rel(1.8, METER),
-                    new Speed(0, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")),
+                    new Speed(0, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)),
                     this.simulator, DefaultCarAnimation.class, this.gtuColorer);
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
@@ -598,7 +598,7 @@ class StraightModel implements OTSModelInterface, UNITS
             }
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, gtuFollowingModel, this.laneChangeModel,
                 initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR),
-                new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), this.simulator, DefaultCarAnimation.class,
+                new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), this.simulator, DefaultCarAnimation.class,
                 this.gtuColorer);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }

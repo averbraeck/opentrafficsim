@@ -66,7 +66,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
      * @param to Node; end node of the new Link
      * @param width DoubleScalar.Rel&lt;LengthUnit&gt;; the width of the new Link
      * @return Link
-     * @throws NetworkException 
+     * @throws NetworkException
      */
     private static CrossSectionLink makeLink(final String name, final OTSNode from, final OTSNode to,
         final Length.Rel width) throws NetworkException
@@ -77,7 +77,9 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             new OTSPoint3D[]{new OTSPoint3D(from.getPoint().x, from.getPoint().y, 0),
                 new OTSPoint3D(to.getPoint().x, to.getPoint().y, 0)};
         OTSLine3D line = new OTSLine3D(coordinates);
-        CrossSectionLink link = new CrossSectionLink(name, from, to, LinkType.ALL, line, LaneKeepingPolicy.KEEP_RIGHT);
+        CrossSectionLink link =
+            new CrossSectionLink(name, from, to, LinkType.ALL, line, LongitudinalDirectionality.FORWARD,
+                LaneKeepingPolicy.KEEP_RIGHT);
         return link;
     }
 
@@ -170,11 +172,11 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
              */);
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar car =
-            new LaneBasedIndividualCar("ReferenceCar", gtuType, new IDMPlus(
-                new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
-                new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d), laneChangeModel, initialLongitudinalPositions,
-                new Speed(100, KM_PER_HOUR), new Length.Rel(4, METER), new Length.Rel(2, METER), new Speed(150,
-                    KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simpleSimulator);
+            new LaneBasedIndividualCar("ReferenceCar", gtuType, new IDMPlus(new Acceleration(1, METER_PER_SECOND_2),
+                new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d),
+                laneChangeModel, initialLongitudinalPositions, new Speed(100, KM_PER_HOUR), new Length.Rel(4, METER),
+                new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
+                    new CompleteRoute("", GTUType.ALL)), simpleSimulator);
         Collection<HeadwayGTU> sameLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         sameLaneGTUs.add(new HeadwayGTU(car, 0));
         Collection<HeadwayGTU> preferredLaneGTUs = new LinkedHashSet<HeadwayGTU>();
@@ -204,15 +206,14 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
                     METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER),
                     new Time.Rel(1, SECOND), 1d), laneChangeModel, otherLongitudinalPositions, new Speed(100,
                     KM_PER_HOUR), vehicleLength, new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR),
-                    new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simpleSimulator);
+                    new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simpleSimulator);
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU = new HeadwayGTU(collisionCar, pos - reference.getSI());
             preferredLaneGTUs.add(collisionHWGTU);
             laneChangeModelResult =
                 new Egoistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs,
-                    nonPreferredLaneGTUs, new Speed(100, KM_PER_HOUR),
-                    new Acceleration(0.3, METER_PER_SECOND_2), new Acceleration(0.1, METER_PER_SECOND_2),
-                    new Acceleration(-0.3, METER_PER_SECOND_2));
+                    nonPreferredLaneGTUs, new Speed(100, KM_PER_HOUR), new Acceleration(0.3, METER_PER_SECOND_2),
+                    new Acceleration(0.1, METER_PER_SECOND_2), new Acceleration(-0.3, METER_PER_SECOND_2));
             // System.out.println(laneChangeModelResult.toString());
             assertEquals(
                 "Vehicle cannot to change to the right lane because that would result in an immediate collision", null,
@@ -223,27 +224,24 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             Map<Lane, Length.Rel> otherLongitudinalPositions = new LinkedHashMap<Lane, Length.Rel>();
             otherLongitudinalPositions.put(lanes[1], new Length.Rel(pos, METER));
             LaneBasedIndividualCar otherCar =
-                new LaneBasedIndividualCar("OtherCar", gtuType, new IDMPlus(
-                    new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
-                    new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d), laneChangeModel,
-                    otherLongitudinalPositions, new Speed(100, KM_PER_HOUR), vehicleLength,
+                new LaneBasedIndividualCar("OtherCar", gtuType, new IDMPlus(new Acceleration(1, METER_PER_SECOND_2),
+                    new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d),
+                    laneChangeModel, otherLongitudinalPositions, new Speed(100, KM_PER_HOUR), vehicleLength,
                     new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
-                        new CompleteRoute("")), simpleSimulator);
+                        new CompleteRoute("", GTUType.ALL)), simpleSimulator);
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU =
                 new HeadwayGTU(otherCar, pos - car.position(lanes[0], car.getReference()).getSI());
             preferredLaneGTUs.add(collisionHWGTU);
             laneChangeModelResult =
                 new Egoistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs,
-                    nonPreferredLaneGTUs, new Speed(100, KM_PER_HOUR),
-                    new Acceleration(0.3, METER_PER_SECOND_2), new Acceleration(0.1, METER_PER_SECOND_2),
-                    new Acceleration(-0.3, METER_PER_SECOND_2));
+                    nonPreferredLaneGTUs, new Speed(100, KM_PER_HOUR), new Acceleration(0.3, METER_PER_SECOND_2),
+                    new Acceleration(0.1, METER_PER_SECOND_2), new Acceleration(-0.3, METER_PER_SECOND_2));
             // System.out.println(String.format("pos=%5fm Egoistic:   %s", pos, laneChangeModelResult.toString()));
             laneChangeModelResult =
                 new Altruistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs,
-                    nonPreferredLaneGTUs, new Speed(100, KM_PER_HOUR),
-                    new Acceleration(0.3, METER_PER_SECOND_2), new Acceleration(0.1, METER_PER_SECOND_2),
-                    new Acceleration(-0.3, METER_PER_SECOND_2));
+                    nonPreferredLaneGTUs, new Speed(100, KM_PER_HOUR), new Acceleration(0.3, METER_PER_SECOND_2),
+                    new Acceleration(0.1, METER_PER_SECOND_2), new Acceleration(-0.3, METER_PER_SECOND_2));
             // System.out.println(String.format("pos=%5fm Altruistic: %s", pos, laneChangeModelResult.toString()));
             // assertEquals(
             // "Vehicle cannot to change to the right lane because that would result in an immediate collision",

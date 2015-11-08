@@ -121,7 +121,7 @@ public class LaneBasedGTUTest implements UNITS
         {
             new LaneBasedIndividualCar("Truck", truckType, null /* GTU following model */, laneChangeModel,
                 truckPositions, truckSpeed, truckLength, truckWidth, maximumVelocity,
-                new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
+                new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
             fail("null GTUFollowingModel should have thrown a GTUException");
         }
         catch (GTUException e)
@@ -132,7 +132,7 @@ public class LaneBasedGTUTest implements UNITS
         LaneBasedIndividualCar truck =
             new LaneBasedIndividualCar("Truck", truckType, gtuFollowingModel, laneChangeModel, truckPositions,
                 truckSpeed, truckLength, truckWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(
-                    new CompleteRoute("")), simulator);
+                    new CompleteRoute("", GTUType.ALL)), simulator);
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
         int found = 0;
@@ -193,7 +193,7 @@ public class LaneBasedGTUTest implements UNITS
                 LaneBasedIndividualCar car =
                     new LaneBasedIndividualCar("Car", carType, gtuFollowingModel, laneChangeModel, carPositions,
                         carSpeed, carLength, carWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(
-                            new CompleteRoute("")), simulator);
+                            new CompleteRoute("", GTUType.ALL)), simulator);
                 leader = truck.headway(forwardMaxDistance);
                 double actualHeadway = leader.getDistanceSI();
                 double expectedHeadway =
@@ -375,7 +375,7 @@ public class LaneBasedGTUTest implements UNITS
             LaneBasedIndividualCar car =
                 new LaneBasedIndividualCar("Car", carType, fam, laneChangeModel, carPositions, carSpeed,
                     new Length.Rel(4, METER), new Length.Rel(1.8, METER), maximumVelocity,
-                    new CompleteLaneBasedRouteNavigator(new CompleteRoute("")), simulator);
+                    new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new Time.Abs(61, SECOND));
             while (simulator.isRunning())

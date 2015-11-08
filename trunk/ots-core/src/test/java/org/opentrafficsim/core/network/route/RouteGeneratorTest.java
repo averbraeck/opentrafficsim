@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNode;
@@ -148,6 +149,6 @@ public class RouteGeneratorTest
         nodes.add(new OTSNode("n2", new OTSPoint3D(1000, 0, 0)));
         nodes.add(new OTSNode("n3", new OTSPoint3D(1000, 1000, 0)));
         nodes.add(new OTSNode(endNodeName, new OTSPoint3D(2000, 1000, 0)));
-        return new FixedRouteGenerator(new CompleteRoute("fixed route", nodes));
+        return new FixedRouteGenerator(new CompleteRoute("fixed route", GTUType.ALL, nodes));
     }
 }

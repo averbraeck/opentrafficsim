@@ -14,6 +14,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 import org.djunits.unit.AngleUnit;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUType;
 
 /**
  * The Node is a point with an id. It is used in the network to connect Links.
@@ -109,16 +110,37 @@ public class OTSNode implements Node, LocatableInterface, Serializable
     @Override
     public final Set<Link> getLinksIn()
     {
-        // XXX: should return a copy?
-        return this.linksIn;
+        // returns a safe copy
+        return new HashSet<Link>(this.linksIn);
     }
 
     /** {@inheritDoc} */
     @Override
     public final Set<Link> getLinksOut()
     {
-        // XXX: should return a copy?
-        return this.linksOut;
+        // returns a safe copy
+        return new HashSet<Link>(this.linksOut);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean isDirectionallyConnectedTo(final GTUType gtuType, final Node toNode)
+    {
+        for (Link link : getLinksOut())
+        {
+            if (toNode.equals(link.getEndNode()) && link.getDirectionality(gtuType).isForwardOrBoth())
+            {
+                return true;
+            }
+        }
+        for (Link link : getLinksIn())
+        {
+            if (toNode.equals(link.getStartNode()) && link.getDirectionality(gtuType).isBackwardOrBoth())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** {@inheritDoc} */
