@@ -326,12 +326,12 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
             
             // test the shortest path method
             Node nodeFrom = network.getLink("3766052").getEndNode();
-            Node nodeTo = network.getLink("3766035.1").getEndNode();
+            Node nodeTo = network.getLink("3766035.1").getStartNode();
             CompleteRoute cr;
             try
             {
                 cr = network.getShortestRouteBetween(GTUType.ALL, nodeFrom, nodeTo);
-                System.out.println(cr);
+                System.out.println(cr.toString().replaceAll("to OTSNode", "\ntoOTSNode").replaceAll(", OTSNode", ", \nOTSNode"));
             }
             catch (NetworkException exception)
             {
