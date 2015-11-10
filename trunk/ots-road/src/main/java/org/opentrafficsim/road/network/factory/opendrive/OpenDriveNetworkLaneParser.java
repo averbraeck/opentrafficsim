@@ -165,7 +165,17 @@ public class OpenDriveNetworkLaneParser
         
         for (RoadTag roadTag : this.roadTags.values())
         {
-            RoadTag.showLanes(roadTag, this.simulator, this);
+            RoadTag.buildSubLinks(roadTag, this.simulator, this);
+        }
+        
+        for (RoadTag roadTag : this.roadTags.values())
+        {
+            RoadTag.generateRegularRoads(roadTag, this.simulator, this);
+        }
+        
+        for (RoadTag roadTag : this.roadTags.values())
+        {
+            RoadTag.generateJunctionRoads(roadTag, this.simulator, this);
         }
         
         for(JunctionTag juncTag: this.junctionTags.values())
