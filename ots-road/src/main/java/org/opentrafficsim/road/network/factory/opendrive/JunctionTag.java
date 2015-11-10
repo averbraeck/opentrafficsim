@@ -89,7 +89,7 @@ class JunctionTag
         for (Node connectionNode : XMLParser.getNodes(node.getChildNodes(), "connection"))
         {
             ConnectionTag connectionTag = ConnectionTag.parseConnection(connectionNode, parser);
-            junctionTag.connectionTags.put(connectionTag.id, connectionTag);
+            junctionTag.connectionTags.put(connectionTag.connectingRoad, connectionTag);
         }
 
         for (Node connectionNode : XMLParser.getNodes(node.getChildNodes(), "controller"))
@@ -222,54 +222,6 @@ class JunctionTag
 
             if (from.equals(to))
                 return;
-
-            designLine = new OTSLine3D(coordinates);
-
-            // XXX correct to assume assume that junctions are always drawn in the direction of the design line?
-            sublink =
-                new CrossSectionLink(sublinkId, from, to, LinkType.ALL, designLine, LongitudinalDirectionality.FORWARD,
-                    LaneKeepingPolicy.KEEP_LANE);
-
-            // openDriveNetworkLaneParser.network.addLink(sublink);
-
-            // TODO overtaking conditions
-            OvertakingConditions overtakingConditions = new OvertakingConditions.LeftAndRight();
-
-            Speed speed = null;
-            if (speed == null)
-            {
-                System.err.println("speed.max == null for " + sublinkId.toString());
-                speed = new Speed(30.0, SpeedUnit.MILE_PER_HOUR);
-            }
-
-            /*
-             * if (connectingLane.getSpeedLimit(GTUType.ALL) != null) speed = connectingLane.getSpeedLimit(GTUType.ALL); if
-             * (inComingLane.getSpeedLimit(GTUType.ALL) != null) speed = inComingLane.getSpeedLimit(GTUType.ALL);
-             */
-
-            Map<GTUType, Speed> speedLimit = new LinkedHashMap<>();
-            speedLimit.put(GTUType.ALL, speed);
-
-            LongitudinalDirectionality direction = LongitudinalDirectionality.FORWARD;
-            Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
-            directionality.put(GTUType.ALL, direction);
-            Color color = Color.red;
-
-            if (inComingLane != null && connectingLane != null)
-                try
-                {
-                    Lane lane =
-                        new Lane(sublink, sublinkId, inComingLane.getDesignLineOffsetAtEnd(), connectingLane
-                            .getDesignLineOffsetAtBegin(), inComingLane.getEndWidth(), connectingLane.getBeginWidth(),
-                            RoadTag.LANETYPE_ALL, directionality, speedLimit, overtakingConditions);
-                    new LaneAnimation(lane, simulator, color);
-
-                    // new LinkAnimation(sublink, simulator, 1000.0f);
-                }
-                catch (RemoteException exception)
-                {
-                    exception.printStackTrace();
-                }
 
         }
     }
