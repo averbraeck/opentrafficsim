@@ -178,8 +178,8 @@ public class OpenDriveNetworkLaneParser
             RoadTag.generateJunctionRoads(roadTag, this.simulator, this);
         }
         
-        for(JunctionTag juncTag: this.junctionTags.values())
-            JunctionTag.showJunctions(juncTag, this.simulator, this);        
+/*        for(JunctionTag juncTag: this.junctionTags.values())
+            JunctionTag.showJunctions(juncTag, this.simulator, this); */       
 
         // store the structure information in the network
         return this.network;

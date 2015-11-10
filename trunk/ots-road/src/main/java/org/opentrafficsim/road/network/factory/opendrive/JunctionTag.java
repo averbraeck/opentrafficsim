@@ -101,14 +101,14 @@ class JunctionTag
         parser.junctionTags.put(junctionTag.id, junctionTag);
     }
 
-    /**
+/*    *//**
      * @param juncTag
      * @param simulator
      * @param openDriveNetworkLaneParser
      * @throws NetworkException
      * @throws OTSGeometryException
      * @throws NamingException
-     */
+     *//*
     public static void showJunctions(JunctionTag juncTag, OTSDEVSSimulatorInterface simulator,
         OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException, OTSGeometryException,
         NamingException
@@ -224,5 +224,5 @@ class JunctionTag
                 return;
 
         }
-    }
+    }*/
 }
