@@ -106,7 +106,7 @@ class PlanViewTag
                             LengthUnit.SI) /* FIXME: elevation at end */, numSegments);
 
             // parser.spiras.put(line.hashCode(), line);
-            //geometryTag.interLine = line;
+            geometryTag.interLine = line;
         }
 
 
