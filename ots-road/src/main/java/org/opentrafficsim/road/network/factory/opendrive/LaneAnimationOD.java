@@ -89,7 +89,7 @@ public class LaneAnimationOD extends Renderable2D
             path.lineTo(end.x - ref.x, -end.y + ref.y);
             graphics.draw(path);
 
-            if (dir.equals(LongitudinalDirectionality.FORWARD) || dir.equals(LongitudinalDirectionality.BOTH))
+            if (dir.equals(LongitudinalDirectionality.DIR_PLUS) || dir.equals(LongitudinalDirectionality.DIR_BOTH))
             {
                 path = new Path2D.Double();
                 path.moveTo(end.x - ref.x, -end.y + ref.y);
@@ -105,7 +105,7 @@ public class LaneAnimationOD extends Renderable2D
                 graphics.draw(path);
             }
             
-            if (dir.equals(LongitudinalDirectionality.BACKWARD) || dir.equals(LongitudinalDirectionality.BOTH))
+            if (dir.equals(LongitudinalDirectionality.DIR_MINUS) || dir.equals(LongitudinalDirectionality.DIR_BOTH))
             {
                 path = new Path2D.Double();
                 path.moveTo(start.x - ref.x, -start.y + ref.y);

@@ -345,14 +345,14 @@ public class OTSNetwork implements Network, Serializable
             LinkEdge<Link> linkEdge = new LinkEdge<>(link);
             // determine if the link is accessible for the GTUType , and in which direction(s)
             LongitudinalDirectionality directionality = link.getDirectionality(gtuType);
-            if (directionality.equals(LongitudinalDirectionality.FORWARD)
-                || directionality.equals(LongitudinalDirectionality.BOTH))
+            if (directionality.equals(LongitudinalDirectionality.DIR_PLUS)
+                || directionality.equals(LongitudinalDirectionality.DIR_BOTH))
             {
                 graph.addEdge(link.getStartNode(), link.getEndNode(), linkEdge);
                 graph.setEdgeWeight(linkEdge, link.getLength().doubleValue());
             }
-            if (directionality.equals(LongitudinalDirectionality.BACKWARD)
-                || directionality.equals(LongitudinalDirectionality.BOTH))
+            if (directionality.equals(LongitudinalDirectionality.DIR_MINUS)
+                || directionality.equals(LongitudinalDirectionality.DIR_BOTH))
             {
                 graph.addEdge(link.getEndNode(), link.getStartNode(), linkEdge);
                 graph.setEdgeWeight(linkEdge, link.getLength().doubleValue());

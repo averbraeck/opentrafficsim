@@ -38,7 +38,7 @@ public class NoTrafficLane extends Lane
 
     static
     {
-        DIRECTIONALITY_NONE.put(GTUType.ALL, LongitudinalDirectionality.NONE);
+        DIRECTIONALITY_NONE.put(GTUType.ALL, LongitudinalDirectionality.DIR_NONE);
         SPEED_NULL.put(GTUType.ALL, new Speed(0.0, SpeedUnit.SI));
     }
 

@@ -39,7 +39,7 @@ public class LinkLocationTest implements UNITS
         OTSNode nodeTo = new OTSNode("To", new OTSPoint3D(1000, 0, 0));
         OTSLine3D line = new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(0, 0, 0), new OTSPoint3D(1000, 0, 0)});
         CrossSectionLink link =
-            new CrossSectionLink("Link", nodeFrom, nodeTo, LinkType.ALL, line, LongitudinalDirectionality.FORWARD,
+            new CrossSectionLink("Link", nodeFrom, nodeTo, LinkType.ALL, line, LongitudinalDirectionality.DIR_PLUS,
                 LaneKeepingPolicy.KEEP_RIGHT);
         Length.Rel linkLength = line.getLength();
         // Now we can make a LinkLocation.

@@ -10,6 +10,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.animation.LaneChangeUrgeGTUColorer;
 import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
@@ -71,10 +72,12 @@ public interface LaneBasedGTU extends GTU
      * The relative position that will be registered is the referencePosition (dx, dy, dz) = (0, 0, 0). Front and rear positions
      * are relative towards this position.
      * @param lane the lane to add to the list of lanes on which the GTU is registered.
+     * @param gtuDirection the direction of the GTU on the lane (which can be bidirectional). If the GTU has a positive
+     *            velocity, it is moving in this direction.
      * @param position the position on the lane.
      * @throws NetworkException on network inconsistency
      */
-    void enterLane(Lane lane, Length.Rel position) throws NetworkException;
+    void enterLane(Lane lane, Length.Rel position, LongitudinalDirectionality gtuDirection) throws NetworkException;
 
     /**
      * Unregister the GTU from a lane.

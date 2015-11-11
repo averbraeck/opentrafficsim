@@ -12,50 +12,50 @@ package org.opentrafficsim.core.network;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public enum LongitudinalDirectionality
+public enum LongitudinalDirectionality 
 {
-    /** Direction the same as the direction of the graph. */
-    FORWARD,
-    /** Direction opposite to the direction of the graph. */
-    BACKWARD,
+    /** Direction the same as the direction of the graph, increasing fractional position when driving in this direction. */
+    DIR_PLUS,
+    /** Direction opposite to the direction of the graph, decreasing fractional position when driving in this direction. */
+    DIR_MINUS,
     /** Bidirectional. */
-    BOTH,
+    DIR_BOTH,
     /** No traffic possible. */
-    NONE;
+    DIR_NONE;
 
     /**
      * This method looks if this directionality "contains" the provided other directionality. The logic table looks as follows:
      * <table border="1" summary="">
      * <tr>
      * <td><b>THIS &darr; &nbsp; OTHER &rarr;</b></td>
-     * <td><b>BOTH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></td>
-     * <td><b>FORWARD</b></td>
-     * <td><b>BACKWARD</b></td>
-     * <td><b>NONE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></td>
+     * <td><b>DIR_BOTH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></td>
+     * <td><b>DIR_PLUS&nbsp;&nbsp;&nbsp;</b></td>
+     * <td><b>DIR_MINUS</b></td>
+     * <td><b>DIR_NONE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></td>
      * </tr>
      * <tr>
-     * <td><b>BOTH</b></td>
+     * <td><b>DIR_BOTH</b></td>
      * <td>true</td>
      * <td>true</td>
      * <td>true</td>
      * <td>true</td>
      * </tr>
      * <tr>
-     * <td><b>FORWARD</b></td>
+     * <td><b>DIR_PLUS</b></td>
      * <td>false</td>
      * <td>true</td>
      * <td>false</td>
      * <td>true</td>
      * </tr>
      * <tr>
-     * <td><b>BACKWARD</b></td>
+     * <td><b>DIR_MINUS</b></td>
      * <td>false</td>
      * <td>false</td>
      * <td>true</td>
      * <td>true</td>
      * </tr>
      * <tr>
-     * <td><b>NONE</b></td>
+     * <td><b>DIR_NONE</b></td>
      * <td>false</td>
      * <td>false</td>
      * <td>false</td>
@@ -67,16 +67,16 @@ public enum LongitudinalDirectionality
      */
     public final boolean contains(final LongitudinalDirectionality directionality)
     {
-        return (this.equals(directionality) || this.equals(BOTH) || directionality.equals(NONE)) ? true : false;
+        return (this.equals(directionality) || this.equals(DIR_BOTH) || directionality.equals(DIR_NONE)) ? true : false;
     }
-    
+
     /**
      * Easy access method to test if the directionality is FORWARD or BOTH.
      * @return whether the directionality is FORWARD or BOTH
      */
     public final boolean isForwardOrBoth()
     {
-        return this.equals(FORWARD) || this.equals(BOTH);
+        return this.equals(DIR_PLUS) || this.equals(DIR_BOTH);
     }
 
     /**
@@ -85,6 +85,6 @@ public enum LongitudinalDirectionality
      */
     public final boolean isBackwardOrBoth()
     {
-        return this.equals(BACKWARD) || this.equals(BOTH);
+        return this.equals(DIR_MINUS) || this.equals(DIR_BOTH);
     }
 }

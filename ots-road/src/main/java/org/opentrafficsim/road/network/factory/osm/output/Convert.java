@@ -136,7 +136,7 @@ public final class Convert
         // XXX How to figure out whether to keep left, right or keep lane?
         // XXX How to figure out if this is a lane in one or two directions? For now, two is assumed...
         result =
-            new CrossSectionLink(link.getId(), start, end, LinkType.ALL, designLine, LongitudinalDirectionality.BOTH,
+            new CrossSectionLink(link.getId(), start, end, LinkType.ALL, designLine, LongitudinalDirectionality.DIR_BOTH,
                 LaneKeepingPolicy.KEEP_RIGHT);
         return result;
     }
@@ -236,7 +236,7 @@ public final class Convert
                         laneType = makeLaneType(GTUType.NONE);
                         break;
                 }
-                laneAttributes = new LaneAttributes(laneType, Color.CYAN, LongitudinalDirectionality.BOTH);
+                laneAttributes = new LaneAttributes(laneType, Color.CYAN, LongitudinalDirectionality.DIR_BOTH);
                 structure.put(0, laneAttributes);
             }
         }
@@ -255,7 +255,7 @@ public final class Convert
                 laneType = makeLaneType(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.CAR);
                 if (osmLink.getLanes() == 1 && !osmLink.isOneway())
                 {
-                    laneAttributes = new LaneAttributes(laneType, Color.LIGHT_GRAY, LongitudinalDirectionality.BOTH);
+                    laneAttributes = new LaneAttributes(laneType, Color.LIGHT_GRAY, LongitudinalDirectionality.DIR_BOTH);
                     structure.put(0, laneAttributes);
                 }
                 else
@@ -265,13 +265,13 @@ public final class Convert
                         if (i < 0)
                         {
                             laneAttributes =
-                                new LaneAttributes(laneType, Color.LIGHT_GRAY, LongitudinalDirectionality.BACKWARD);
+                                new LaneAttributes(laneType, Color.LIGHT_GRAY, LongitudinalDirectionality.DIR_MINUS);
                             structure.put(i, laneAttributes);
                         }
                         if (i >= 0)
                         {
                             laneAttributes =
-                                new LaneAttributes(laneType, Color.LIGHT_GRAY, LongitudinalDirectionality.FORWARD);
+                                new LaneAttributes(laneType, Color.LIGHT_GRAY, LongitudinalDirectionality.DIR_PLUS);
                             structure.put(i, laneAttributes);
                         }
                     }
@@ -298,7 +298,7 @@ public final class Convert
                 {
                     if (osmLink.getLanes() == 1 && !osmLink.isOneway())
                     {
-                        laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.BOTH);
+                        laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_BOTH);
                         structure.put(0, laneAttributes);
                     }
                     else
@@ -308,13 +308,13 @@ public final class Convert
                             if (i < 0)
                             {
                                 laneAttributes =
-                                    new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.BACKWARD);
+                                    new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_MINUS);
                                 structure.put(i, laneAttributes);
                             }
                             if (i >= 0)
                             {
                                 laneAttributes =
-                                    new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.FORWARD);
+                                    new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_PLUS);
                                 structure.put(i, laneAttributes);
                             }
                         }
@@ -334,18 +334,18 @@ public final class Convert
                         forwards++;
                         backwards++;
                         laneAttributes =
-                            new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.BACKWARD);
+                            new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_MINUS);
                         structure.put(0 - backwards, laneAttributes);
-                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.FORWARD);
+                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_PLUS);
                         structure.put(forwards - 1, laneAttributes);
                         break;
                     case "track": // cycleway:track is separated by a gap from the highway.
                         forwards++;
                         backwards++;
                         laneAttributes =
-                            new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.BACKWARD);
+                            new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_MINUS);
                         structure.put(0 - backwards, laneAttributes);
-                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.FORWARD);
+                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_PLUS);
                         structure.put(forwards - 1, laneAttributes);
                         break;
                     case "shared_lane": // cycleway:shared_lane is embedded into the highway.
@@ -354,9 +354,9 @@ public final class Convert
                         types.add(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.CAR);
                         laneType = makeLaneType(types);
                         laneAttributes =
-                            new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.BACKWARD);
+                            new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_MINUS);
                         structure.put(0 - backwards, laneAttributes);
-                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.FORWARD);
+                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_PLUS);
                         structure.put(forwards - 1, laneAttributes);
                         break;
                     default:
@@ -375,19 +375,19 @@ public final class Convert
                         forwards++;
                         backwards++;
                         laneAttributes =
-                            new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.BACKWARD);
+                            new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.DIR_MINUS);
                         structure.put(0 - backwards, laneAttributes);
-                        laneAttributes = new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.FORWARD);
+                        laneAttributes = new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.DIR_PLUS);
                         structure.put(forwards - 1, laneAttributes);
                         break;
                     case "left":
                         backwards++;
-                        laneAttributes = new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.BOTH);
+                        laneAttributes = new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.DIR_BOTH);
                         structure.put(0 - backwards, laneAttributes);
                         break;
                     case "right":
                         forwards++;
-                        laneAttributes = new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.BOTH);
+                        laneAttributes = new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.DIR_BOTH);
                         structure.put(forwards - 1, laneAttributes);
                         break;
                     default:
@@ -407,7 +407,7 @@ public final class Convert
                     laneType = makeLaneType(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.PEDESTRIAN);
                     if (osmLink.getLanes() == 1 && !osmLink.isOneway())
                     {
-                        laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.BOTH);
+                        laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_BOTH);
                         structure.put(0, laneAttributes);
                     }
                     else
@@ -417,13 +417,13 @@ public final class Convert
                             if (i < 0)
                             {
                                 laneAttributes =
-                                    new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.BACKWARD);
+                                    new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_MINUS);
                                 structure.put(i, laneAttributes);
                             }
                             if (i >= 0)
                             {
                                 laneAttributes =
-                                    new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.FORWARD);
+                                    new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_PLUS);
                                 structure.put(i, laneAttributes);
                             }
                         }
@@ -434,7 +434,7 @@ public final class Convert
                     laneType = makeLaneType(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.BIKE);
                     if (osmLink.getLanes() == 1 && !osmLink.isOneway())
                     {
-                        laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.BOTH);
+                        laneAttributes = new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_BOTH);
                         structure.put(0, laneAttributes);
                     }
                     for (int i = 0 - backwards; i < forwards; i++)
@@ -442,13 +442,13 @@ public final class Convert
                         if (i < 0)
                         {
                             laneAttributes =
-                                new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.BACKWARD);
+                                new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_MINUS);
                             structure.put(i, laneAttributes);
                         }
                         if (i >= 0)
                         {
                             laneAttributes =
-                                new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.FORWARD);
+                                new LaneAttributes(laneType, Color.GREEN, LongitudinalDirectionality.DIR_PLUS);
                             structure.put(i, laneAttributes);
                         }
                     }

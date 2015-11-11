@@ -373,7 +373,7 @@ final class Links
         // TODO LongitudinalDirectionality.BOTH is inserted for the time being.
         CrossSectionLink link =
             new CrossSectionLink(linkTag.name, linkTag.nodeStartTag.node, linkTag.nodeEndTag.node, LinkType.ALL,
-                designLine, LongitudinalDirectionality.BOTH, linkTag.laneKeepingPolicy);
+                designLine, LongitudinalDirectionality.DIR_BOTH, linkTag.laneKeepingPolicy);
         linkTag.link = link;
     }
 

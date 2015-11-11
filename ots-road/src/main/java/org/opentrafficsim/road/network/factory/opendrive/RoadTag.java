@@ -245,7 +245,7 @@ class RoadTag
                         String sublinkId = roadTag.id + "." + laneSecIndex.toString();
                         CrossSectionLink sublink =
                                 new CrossSectionLink(sublinkId, from.node, to.node, LinkType.ALL, designLine,
-                                        LongitudinalDirectionality.BOTH, LaneKeepingPolicy.KEEP_LANE);
+                                        LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_LANE);
 
                         roadTag.subLinks.add(sublink);
 
@@ -283,7 +283,7 @@ class RoadTag
             String sublinkId = roadTag.id + "." + Integer.toString(roadTag.lanesTag.laneSectionTags.size());
             CrossSectionLink sublink =
                     new CrossSectionLink(sublinkId, from.node, to.node, LinkType.ALL, designLine,
-                            LongitudinalDirectionality.BOTH, LaneKeepingPolicy.KEEP_LANE);
+                            LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_LANE);
 
             roadTag.subLinks.add(sublink);
 
@@ -364,7 +364,7 @@ class RoadTag
 
                     if (leftLane.type.equals("driving"))
                     {
-                        LongitudinalDirectionality direction = LongitudinalDirectionality.BACKWARD;
+                        LongitudinalDirectionality direction = LongitudinalDirectionality.DIR_MINUS;
                         Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
                         directionality.put(GTUType.ALL, direction);
                         Color color = Color.gray;
@@ -480,7 +480,7 @@ class RoadTag
 
                     if (rightLane.type.equals("driving"))
                     {
-                        LongitudinalDirectionality direction = LongitudinalDirectionality.FORWARD;
+                        LongitudinalDirectionality direction = LongitudinalDirectionality.DIR_PLUS;
                         // if(roadTag.link.getEndNode().getLinksOut().size() == 0)
                         // direction = LongitudinalDirectionality.BACKWARD;
                         Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
@@ -754,7 +754,7 @@ class RoadTag
 
                     if (rightLane.type.equals("driving"))
                     {
-                        LongitudinalDirectionality direction = LongitudinalDirectionality.FORWARD;
+                        LongitudinalDirectionality direction = LongitudinalDirectionality.DIR_PLUS;
                         Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
                         directionality.put(GTUType.ALL, direction);
                         Color color = Color.gray;
@@ -777,7 +777,7 @@ class RoadTag
                                 OTSLine3D designLine = new OTSLine3D(coordinates);
                                 CrossSectionLink newlink =
                                         new CrossSectionLink(roadTag.id, roadTag.startNode, roadTag.endNode, LinkType.ALL, designLine,
-                                                LongitudinalDirectionality.BOTH, LaneKeepingPolicy.KEEP_LANE);
+                                                LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_LANE);
                                 
                                 
                                 
@@ -885,7 +885,7 @@ class RoadTag
             OTSNode to = roadTag.endNode;
             CrossSectionLink newlink =
                     new CrossSectionLink(roadTag.id, from, to, LinkType.ALL, roadTag.designLine,
-                            LongitudinalDirectionality.BOTH, LaneKeepingPolicy.KEEP_LANE);
+                            LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_LANE);
 
             roadTag.link = newlink;
         }

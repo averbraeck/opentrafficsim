@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,6 +35,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.animation.LaneChangeUrgeGTUColorer;
@@ -45,6 +45,7 @@ import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.changing.LaneMovementStep;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.route.AbstractLaneBasedRouteNavigator;
 import org.opentrafficsim.road.network.route.LaneBasedRouteNavigator;
@@ -106,7 +107,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * registered. This is a list to improve reproducibility: The 'oldest' lanes on which the vehicle is registered are at the
      * front of the list, the later ones more to the back.
      */
-    private final List<Lane> lanes = new ArrayList<>();
+    private final Map<Lane, LongitudinalDirectionality> lanes = new HashMap<>();
 
     /**
      * The adjacent lanes that are accessible for this GTU per lane where the GTU drives. This information is cached, because it
@@ -138,7 +139,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
      * @param gtuFollowingModel the following model, including a reference to the simulator.
      * @param laneChangeModel LaneChangeModel; the lane change model
-     * @param initialLongitudinalPositions the initial positions of the car on one or more lanes
+     * @param initialLongitudinalPositions the initial positions of the car on one or more lanes with their directions
      * @param initialSpeed the initial speed of the car on the lane
      * @param routeNavigator Route; the route that the GTU will take
      * @param simulator to initialize the move method and to get the current time
@@ -148,7 +149,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractLaneBasedGTU(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
-        final LaneChangeModel laneChangeModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
+        final LaneChangeModel laneChangeModel, final Set<DirectedLanePosition> initialLongitudinalPositions,
         final Speed initialSpeed, final LaneBasedRouteNavigator routeNavigator,
         final OTSDEVSSimulatorInterface simulator) throws NetworkException, SimRuntimeException, GTUException
     {
@@ -164,13 +165,13 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         this.lateralVelocity = new Speed(0.0, SpeedUnit.SI);
 
         // register the GTU on the lanes
-        for (Lane lane : initialLongitudinalPositions.keySet())
+        for (DirectedLanePosition directedLanePosition : initialLongitudinalPositions)
         {
-            this.lanes.add(lane);
+            Lane lane = directedLanePosition.getLane();
+            this.lanes.put(lane, directedLanePosition.getGtuDirection());
             addAccessibleAdjacentLanes(lane);
-            this.fractionalLinkPositions.put(lane.getParentLink(), lane
-                .fraction(initialLongitudinalPositions.get(lane)));
-            lane.addGTU(this, initialLongitudinalPositions.get(lane));
+            this.fractionalLinkPositions.put(lane.getParentLink(), lane.fraction(directedLanePosition.getPosition()));
+            lane.addGTU(this, directedLanePosition.getPosition());
         }
 
         this.lastEvaluationTime = simulator.getSimulatorTime().getTime();
@@ -256,9 +257,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final void enterLane(final Lane lane, final Length.Rel position) throws NetworkException
+    public final void enterLane(final Lane lane, final Length.Rel position,
+        final LongitudinalDirectionality gtuDirection) throws NetworkException
     {
-        if (this.lanes.contains(lane))
+        if (this.lanes.containsKey(lane))
         {
             System.err.println("GTU " + toString() + " is already registered on this lane: " + lane);
             return;
@@ -269,7 +271,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             this.fractionalLinkPositions.put(lane.getParentLink(), lane.fraction(position));
         }
-        this.lanes.add(lane);
+        this.lanes.put(lane, gtuDirection);
         addAccessibleAdjacentLanes(lane);
         lane.addGTU(this, position);
     }
@@ -293,7 +295,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         removeAccessibleAdjacentLanes(lane);
         // check of there are any lanes for this link left. If not, remove the link.
         boolean found = false;
-        for (Lane l : this.lanes)
+        for (Lane l : this.lanes.keySet())
         {
             if (l.getParentLink().equals(lane.getParentLink()))
             {
@@ -314,7 +316,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     /**
      * @return lanes.
      */
-    public final List<Lane> getLanes()
+    public final Map<Lane, LongitudinalDirectionality> getLanes()
     {
         return this.lanes;
     }
@@ -441,7 +443,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             // Set the acceleration (this totally defines the longitudinal motion until the next evaluation time)
             this.acceleration = lcmr.getGfmr().getAcceleration();
             // Execute all samplers
-            for (Lane lane : this.lanes)
+            for (Lane lane : this.lanes.keySet())
             {
                 lane.sample(this);
             }

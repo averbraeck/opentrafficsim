@@ -62,7 +62,7 @@ public class LaneTest implements UNITS
         coordinates[1] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
         CrossSectionLink link =
             new CrossSectionLink("A to B", nodeFrom, nodeTo, LinkType.ALL, new OTSLine3D(coordinates),
-                LongitudinalDirectionality.FORWARD, LaneKeepingPolicy.KEEP_RIGHT);
+                LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
         Length.Rel startLateralPos = new Length.Rel(2, METER);
         Length.Rel endLateralPos = new Length.Rel(5, METER);
         Length.Rel startWidth = new Length.Rel(3, METER);
@@ -73,7 +73,7 @@ public class LaneTest implements UNITS
         laneType.addCompatibility(gtuTypeCar);
         laneType.addCompatibility(gtuTypeTruck);
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
-        directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.FORWARD);
+        directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(GTUType.ALL, new Speed(100, KM_PER_HOUR));
         // Now we can construct a Lane
@@ -88,8 +88,8 @@ public class LaneTest implements UNITS
             2 * nodeFrom.getPoint().distanceSI(nodeTo.getPoint()) + startWidth.getSI() + endWidth.getSI();
         assertEquals("Length of contour is approximately " + approximateLengthOfContour, approximateLengthOfContour,
             lane.getContour().getLengthSI(), 0.1);
-        assertEquals("Directionality should be " + LongitudinalDirectionality.FORWARD,
-            LongitudinalDirectionality.FORWARD, lane.getDirectionality(GTUType.ALL));
+        assertEquals("Directionality should be " + LongitudinalDirectionality.DIR_PLUS,
+            LongitudinalDirectionality.DIR_PLUS, lane.getDirectionality(GTUType.ALL));
         assertEquals("SpeedLimit should be " + (new Speed(100, KM_PER_HOUR)), new Speed(100, KM_PER_HOUR), lane
             .getSpeedLimit(GTUType.ALL));
         assertEquals("There should be no GTUs on the lane", 0, lane.getGtuList().size());
@@ -133,7 +133,7 @@ public class LaneTest implements UNITS
         coordinates[2] = new OTSPoint3D(nodeTo.getPoint().x, nodeTo.getPoint().y, 0);
         link =
             new CrossSectionLink("A to B with Kink", nodeFrom, nodeTo, LinkType.ALL, new OTSLine3D(coordinates),
-                LongitudinalDirectionality.FORWARD, LaneKeepingPolicy.KEEP_RIGHT);
+                LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
         // FIXME what overtaking conditions do we ant to test in this unit test?
         lane =
             new Lane(link, "lane.1", startLateralPos, endLateralPos, startWidth, endWidth, laneType, directionalityMap,
@@ -181,7 +181,7 @@ public class LaneTest implements UNITS
                 Math.PI * 4 / 3, Math.PI * 3 / 2, Math.PI * 1.99, Math.PI * 2, Math.PI * (-0.2)};
         LaneType laneType = new LaneType("Car");
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
-        directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.FORWARD);
+        directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(GTUType.ALL, new Speed(50, KM_PER_HOUR));
         int laneNum = 0;
@@ -202,7 +202,7 @@ public class LaneTest implements UNITS
                     OTSLine3D line = new OTSLine3D(coordinates);
                     CrossSectionLink link =
                         new CrossSectionLink("A to B", start, end, LinkType.ALL, line,
-                            LongitudinalDirectionality.FORWARD, LaneKeepingPolicy.KEEP_RIGHT);
+                            LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
                     final int[] lateralOffsets = {-10, -3, -1, 0, 1, 3, 10};
                     for (int startLateralOffset : lateralOffsets)
                     {
