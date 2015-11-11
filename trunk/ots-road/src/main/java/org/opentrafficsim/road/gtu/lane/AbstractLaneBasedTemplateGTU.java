@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane;
 
 import java.util.Map;
+import java.util.Set;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -12,6 +13,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 
@@ -45,7 +47,7 @@ public abstract class AbstractLaneBasedTemplateGTU extends AbstractLaneBasedGTU
      * @throws GTUException when gtuFollowingModel is null
      */
     public AbstractLaneBasedTemplateGTU(final String id, final TemplateGTUType templateGTUType,
-        final GTUFollowingModel gtuFollowingModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
+        final GTUFollowingModel gtuFollowingModel, final Set<DirectedLanePosition> initialLongitudinalPositions,
         final Speed initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator) throws
         NetworkException, SimRuntimeException, GTUException
     {
