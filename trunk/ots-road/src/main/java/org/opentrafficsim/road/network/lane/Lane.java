@@ -827,7 +827,7 @@ public class Lane extends CrossSectionElement implements Serializable
         Set<Lane> candidates = new LinkedHashSet<>(1);
         for (Lane lane : neighbors(lateralDirection, gtuType))
         {
-            if (lane.getDirectionality(gtuType).equals(LongitudinalDirectionality.BOTH)
+            if (lane.getDirectionality(gtuType).equals(LongitudinalDirectionality.DIR_BOTH)
                 || lane.getDirectionality(gtuType).equals(this.getDirectionality(gtuType)))
             {
                 candidates.add(lane);
@@ -958,7 +958,7 @@ public class Lane extends CrossSectionElement implements Serializable
         {
             return this.directionalityMap.get(GTUType.ALL);
         }
-        return LongitudinalDirectionality.NONE;
+        return LongitudinalDirectionality.DIR_NONE;
     }
 
     /**

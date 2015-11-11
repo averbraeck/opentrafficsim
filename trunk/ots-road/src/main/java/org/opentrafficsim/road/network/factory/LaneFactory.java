@@ -71,7 +71,7 @@ public final class LaneFactory
         // XXX for now, the overarchingg link allows traffic in both directions. If that is not the intention, 
         // change to LongitudinalDirectionality.FORWARD
         CrossSectionLink link =
-            new CrossSectionLink(name, from, to, LinkType.ALL, designLine, LongitudinalDirectionality.BOTH,
+            new CrossSectionLink(name, from, to, LinkType.ALL, designLine, LongitudinalDirectionality.DIR_BOTH,
                 LaneKeepingPolicy.KEEP_RIGHT);
         return link;
     }
@@ -99,7 +99,7 @@ public final class LaneFactory
         final OTSDEVSSimulatorInterface simulator) throws NamingException, NetworkException, OTSGeometryException
     {
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
-        directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.FORWARD);
+        directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(GTUType.ALL, speedLimit);
         Lane result =

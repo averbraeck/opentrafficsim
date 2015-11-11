@@ -110,7 +110,7 @@ public class OTSLink implements Link, Serializable, LocatableInterface
         {
             return this.directionalityMap.get(GTUType.ALL);
         }
-        return LongitudinalDirectionality.NONE;
+        return LongitudinalDirectionality.DIR_NONE;
     }
 
     /** {@inheritDoc} */

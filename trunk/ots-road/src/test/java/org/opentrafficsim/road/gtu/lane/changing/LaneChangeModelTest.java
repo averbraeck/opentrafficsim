@@ -78,7 +78,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
                 new OTSPoint3D(to.getPoint().x, to.getPoint().y, 0)};
         OTSLine3D line = new OTSLine3D(coordinates);
         CrossSectionLink link =
-            new CrossSectionLink(name, from, to, LinkType.ALL, line, LongitudinalDirectionality.FORWARD,
+            new CrossSectionLink(name, from, to, LinkType.ALL, line, LongitudinalDirectionality.DIR_PLUS,
                 LaneKeepingPolicy.KEEP_RIGHT);
         return link;
     }
@@ -100,7 +100,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         final Length.Rel latPos, final Length.Rel width) throws NamingException, NetworkException, OTSGeometryException
     {
         Map<GTUType, LongitudinalDirectionality> directionalityMap = new LinkedHashMap<>();
-        directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.FORWARD);
+        directionalityMap.put(GTUType.ALL, LongitudinalDirectionality.DIR_PLUS);
         Map<GTUType, Speed> speedMap = new LinkedHashMap<>();
         speedMap.put(GTUType.ALL, new Speed(100, KM_PER_HOUR));
         // XXX Decide what type of overtaking conditions we want in this test

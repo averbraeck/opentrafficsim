@@ -29,15 +29,15 @@ public final class Directions
     {
         if (dirStr.equals("FORWARD"))
         {
-            return LongitudinalDirectionality.FORWARD;
+            return LongitudinalDirectionality.DIR_PLUS;
         }
         else if (dirStr.equals("BACKWARD"))
         {
-            return LongitudinalDirectionality.BACKWARD;
+            return LongitudinalDirectionality.DIR_MINUS;
         }
         else if (dirStr.equals("BOTH"))
         {
-            return LongitudinalDirectionality.BOTH;
+            return LongitudinalDirectionality.DIR_BOTH;
         }
         throw new NetworkException("Unknown directionality: " + dirStr);
     }

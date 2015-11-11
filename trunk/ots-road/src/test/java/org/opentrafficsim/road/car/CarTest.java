@@ -164,10 +164,10 @@ public class CarTest implements UNITS
         OTSPoint3D[] coordinates = new OTSPoint3D[]{new OTSPoint3D(0.0, 0.0), new OTSPoint3D(100000.0, 0.0)};
         CrossSectionLink link12 =
             new CrossSectionLink("link12", n1, n2, LinkType.ALL, new OTSLine3D(coordinates),
-                LongitudinalDirectionality.FORWARD, LaneKeepingPolicy.KEEP_RIGHT);
+                LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_RIGHT);
         Length.Rel latPos = new Length.Rel(0.0, METER);
         Length.Rel width = new Length.Rel(4.0, METER);
-        return new Lane(link12, "lane.1", latPos, latPos, width, width, laneType, LongitudinalDirectionality.FORWARD,
+        return new Lane(link12, "lane.1", latPos, latPos, width, width, laneType, LongitudinalDirectionality.DIR_PLUS,
             new Speed(100, KM_PER_HOUR), new OvertakingConditions.LeftAndRight());
     }
 
