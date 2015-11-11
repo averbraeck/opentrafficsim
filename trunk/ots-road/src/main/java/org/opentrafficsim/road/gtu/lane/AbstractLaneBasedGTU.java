@@ -402,8 +402,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         final Acceleration defaultRightLaneIncentive =
             LateralDirectionality.RIGHT == preferred ? PREFERREDLANEINCENTIVE : NONPREFERREDLANEINCENTIVE;
         AccelerationVector defaultLaneIncentives =
-            new AccelerationVector(new double[]{defaultLeftLaneIncentive.getSI(),
-                STAYINCURRENTLANEINCENTIVE.getSI(), defaultRightLaneIncentive.getSI()}, AccelerationUnit.SI, StorageType.DENSE);
+            new AccelerationVector(new double[]{defaultLeftLaneIncentive.getSI(), STAYINCURRENTLANEINCENTIVE.getSI(),
+                defaultRightLaneIncentive.getSI()}, AccelerationUnit.SI, StorageType.DENSE);
         AccelerationVector laneIncentives = laneIncentives(defaultLaneIncentives);
         LaneMovementStep lcmr =
             this.laneChangeModel.computeLaneChangeAndAcceleration(this, sameLaneTraffic, rightLaneTraffic,
@@ -421,6 +421,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         // So we work from back to front.
         // TODO Put the "update state to current time" code in a separate method and call that method at the start of
         // this (move) method.
+        boolean schedule = true;
         synchronized (this.lock)
         {
             for (int i = this.lanes.size() - 1; i >= 0; i--)
@@ -493,10 +494,25 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             // The GTU is now committed to executed the entire movement stored in the LaneChangeModelResult
             // Schedule all sensor triggers that are going to happen until the next evaluation time.
             // Also schedule the registration and unregistration of lanes when the vehicle enters them.
-            scheduleTriggers();
+            try
+            {
+                scheduleTriggers();
+            }
+            catch (NetworkException | GTUException ne)
+            {
+                System.err.println(ne.getMessage());
+                schedule = false;
+            }
         }
         // Re-schedule this move method at the end of the committed time step.
-        getSimulator().scheduleEventAbs(this.getNextEvaluationTime(), this, this, "move", null);
+        if (schedule)
+        {
+            getSimulator().scheduleEventAbs(this.getNextEvaluationTime(), this, this, "move", null);
+        }
+        else
+        {
+            this.destroy();
+        }
     }
 
     /**
@@ -508,8 +524,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @throws NetworkException on network inconsistency
      * @throws ValueException cannot happen
      */
-    private AccelerationVector laneIncentives(
-        final AccelerationVector defaultLaneIncentives) throws NetworkException, ValueException
+    private AccelerationVector laneIncentives(final AccelerationVector defaultLaneIncentives) throws NetworkException,
+        ValueException
     {
         Length.Rel leftSuitability = suitability(LateralDirectionality.LEFT);
         Length.Rel currentSuitability = suitability(null);
@@ -534,10 +550,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         if (currentSuitability == AbstractLaneBasedRouteNavigator.NOLANECHANGENEEDED)
         {
             return new AccelerationVector(new double[]{acceleration(leftSuitability),
-                defaultLaneIncentives.get(1).getSI(), acceleration(rightSuitability)}, AccelerationUnit.SI, StorageType.DENSE);
+                defaultLaneIncentives.get(1).getSI(), acceleration(rightSuitability)}, AccelerationUnit.SI,
+                StorageType.DENSE);
         }
-        return new AccelerationVector(new double[]{acceleration(leftSuitability),
-            acceleration(currentSuitability), acceleration(rightSuitability)}, AccelerationUnit.SI, StorageType.DENSE);
+        return new AccelerationVector(new double[]{acceleration(leftSuitability), acceleration(currentSuitability),
+            acceleration(rightSuitability)}, AccelerationUnit.SI, StorageType.DENSE);
     }
 
     /**
@@ -549,8 +566,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @throws NetworkException on network inconsistency
      * @throws ValueException cannot happen
      */
-    private AccelerationVector checkLaneDrops(
-        final AccelerationVector defaultLaneIncentives) throws NetworkException, ValueException
+    private AccelerationVector checkLaneDrops(final AccelerationVector defaultLaneIncentives) throws NetworkException,
+        ValueException
     {
         Length.Rel leftSuitability = laneDrop(LateralDirectionality.LEFT);
         Length.Rel currentSuitability = laneDrop(null);
@@ -568,7 +585,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         if (currentSuitability == AbstractLaneBasedRouteNavigator.NOLANECHANGENEEDED)
         {
             return new AccelerationVector(new double[]{acceleration(leftSuitability),
-                defaultLaneIncentives.get(1).getSI(), acceleration(rightSuitability)}, AccelerationUnit.SI, StorageType.DENSE);
+                defaultLaneIncentives.get(1).getSI(), acceleration(rightSuitability)}, AccelerationUnit.SI,
+                StorageType.DENSE);
         }
         if (currentSuitability.le(leftSuitability))
         {
@@ -578,12 +596,12 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         }
         if (currentSuitability.le(rightSuitability))
         {
-            return new AccelerationVector(new double[]{
-                AbstractLaneBasedRouteNavigator.GETOFFTHISLANENOW.getSI(), NONPREFERREDLANEINCENTIVE.getSI(),
-                PREFERREDLANEINCENTIVE.getSI()}, AccelerationUnit.SI, StorageType.DENSE);
+            return new AccelerationVector(new double[]{AbstractLaneBasedRouteNavigator.GETOFFTHISLANENOW.getSI(),
+                NONPREFERREDLANEINCENTIVE.getSI(), PREFERREDLANEINCENTIVE.getSI()}, AccelerationUnit.SI,
+                StorageType.DENSE);
         }
-        return new AccelerationVector(new double[]{acceleration(leftSuitability),
-            acceleration(currentSuitability), acceleration(rightSuitability)}, AccelerationUnit.SI, StorageType.DENSE);
+        return new AccelerationVector(new double[]{acceleration(leftSuitability), acceleration(currentSuitability),
+            acceleration(rightSuitability)}, AccelerationUnit.SI, StorageType.DENSE);
     }
 
     /**
@@ -701,7 +719,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         try
         {
             return getRouteNavigator().suitability(lane, longitudinalPosition, this, TIMEHORIZON);
-        } catch (NetworkException ne)
+        }
+        catch (NetworkException ne)
         {
             System.err.println("GTU " + this.getId() + " has a route problem in suitability: " + ne.getMessage());
             return AbstractLaneBasedRouteNavigator.NOLANECHANGENEEDED;
@@ -785,13 +804,13 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     enterLane(nextLane, refPosAtLastTimestep);
                     // schedule any sensor triggers on this lane for the remainder time
                     nextLane.scheduleTriggers(this, refPosAtLastTimestep.getSI(), moveSI);
-                    
-                    
+
                     // XXX DO THE ROUTING -- ADDED 28-10-2015
                     try
                     {
                         getRouteNavigator().visitNextNode();
-                    } catch (NetworkException ne)
+                    }
+                    catch (NetworkException ne)
                     {
                         System.err.println("GTU " + this.getId() + " has a route problem: " + ne.getMessage());
                     }
@@ -1046,7 +1065,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     private HeadwayGTU headwayRecursiveForwardSI(final Lane lane, final double lanePositionSI,
         final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when) throws NetworkException
     {
-        LaneBasedGTU otherGTU = lane.getGtuAfter(new Length.Rel(lanePositionSI, LengthUnit.SI), RelativePosition.REAR, when);
+        LaneBasedGTU otherGTU =
+            lane.getGtuAfter(new Length.Rel(lanePositionSI, LengthUnit.SI), RelativePosition.REAR, when);
         if (otherGTU != null)
         {
             double distanceM =
@@ -1549,7 +1569,6 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         return this.gtuFollowingModel;
     }
 
-    
     /** {@inheritDoc} */
     @Override
     public LaneBasedRouteNavigator getRouteNavigator()

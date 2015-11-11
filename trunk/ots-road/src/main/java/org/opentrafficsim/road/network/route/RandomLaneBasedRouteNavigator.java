@@ -103,16 +103,17 @@ public class RandomLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavigat
      */
     protected void determineNextNextNode()
     {
-        int branches = this.nextNodeToVisit.getLinksOut().size();
+        int branches = this.nextNodeToVisit.getLinks().size();
+        // XXX WRONG -- we are a link ourselves!!
         if (branches == 1)
         {
-            this.nextNextLinkToVisit = this.nextNodeToVisit.getLinksOut().iterator().next();
+            this.nextNextLinkToVisit = this.nextNodeToVisit.getLinks().iterator().next();
             this.nextNextNodeToVisit = this.nextNextLinkToVisit.getEndNode();
             return;
         }
         double probability = this.dist.draw();
         int i = 1;
-        for (Link link : this.nextNodeToVisit.getLinksOut())
+        for (Link link : this.nextNodeToVisit.getLinks())
         {
             if (probability < (1.0 * i) / branches)
             {

@@ -76,9 +76,9 @@ public class XMLNetworkGeneratorTest implements UNITS
             Node n1 = model.getNetwork().getNodeMap().get("N1");
             Node n2 = model.getNetwork().getNodeMap().get("N2");
             assertNotNull(n1);
-            Assert.assertTrue(n1.getLinksOut() != null);
-            Assert.assertTrue(n1.getLinksOut().size() > 0);
-            Link l12 = n1.getLinksOut().iterator().next();
+            Assert.assertTrue(n1.getLinks() != null);
+            Assert.assertTrue(n1.getLinks().size() > 0);
+            Link l12 = n1.getLinks().iterator().next();
             assertNotNull(l12);
             CrossSectionLink csl12 = (CrossSectionLink) l12;
             Assert.assertTrue(csl12.getCrossSectionElementList().size() > 0);
@@ -86,9 +86,9 @@ public class XMLNetworkGeneratorTest implements UNITS
             assertNotNull(lane12);
 
             assertNotNull(n2);
-            Assert.assertTrue(n2.getLinksOut() != null);
-            Assert.assertTrue(n2.getLinksOut().size() > 0);
-            Link l23 = n2.getLinksOut().iterator().next();
+            Assert.assertTrue(n2.getLinks() != null);
+            Assert.assertTrue(n2.getLinks().size() > 0);
+            Link l23 = n2.getLinks().iterator().next();
             assertNotNull(l23);
             CrossSectionLink csl23 = (CrossSectionLink) l23;
             Assert.assertTrue(csl23.getCrossSectionElementList().size() > 0);
