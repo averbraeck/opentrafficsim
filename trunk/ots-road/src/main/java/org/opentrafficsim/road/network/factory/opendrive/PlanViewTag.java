@@ -90,7 +90,7 @@ class PlanViewTag
 
         int numSegments = 64;// (int) (length.doubleValue()/1);
         
-        if(startCurvature == 0.0d && length.doubleValue() > 0.5d)
+        //if(startCurvature == 0.0d && length.doubleValue() > 0.5d)
         {
             double dy =
                     geometryTag.y.doubleValue()
@@ -106,7 +106,7 @@ class PlanViewTag
                             LengthUnit.SI) /* FIXME: elevation at end */, numSegments);
 
             // parser.spiras.put(line.hashCode(), line);
-            geometryTag.interLine = line;
+            //geometryTag.interLine = line;
         }
 
 
@@ -153,7 +153,7 @@ class PlanViewTag
                 int j = geometryTag.length.divideBy(1.0).intValue();
                 for (OTSPoint3D point : geometryTag.interLine.getPoints())
                 {
-                    if (i % j == 0)
+                    //if (i % j == 0)
                         coordinates.add(point);
                     i++;
                 }
