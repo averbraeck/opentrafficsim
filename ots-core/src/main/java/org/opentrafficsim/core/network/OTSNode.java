@@ -45,11 +45,8 @@ public class OTSNode implements Node, LocatableInterface, Serializable
     /** the slope as an angle. Horizontal is 0 degrees. */
     private final Angle.Abs slope;
 
-    /** the incoming links. */
-    private final Set<Link> linksIn = new HashSet<Link>();
-
-    /** the outgoing links. */
-    private final Set<Link> linksOut = new HashSet<Link>();
+    /** the links connected to the Node. */
+    private final Set<Link> links = new HashSet<Link>();
 
     /**
      * Construction of a Node.
@@ -94,47 +91,29 @@ public class OTSNode implements Node, LocatableInterface, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final void addLinkIn(final Link linkIn)
+    public final void addLink(final Link link)
     {
-        this.linksIn.add(linkIn);
+        this.links.add(link);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void addLinkOut(final Link linkOut)
-    {
-        this.linksOut.add(linkOut);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final Set<Link> getLinksIn()
+    public final Set<Link> getLinks()
     {
         // returns a safe copy
-        return new HashSet<Link>(this.linksIn);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final Set<Link> getLinksOut()
-    {
-        // returns a safe copy
-        return new HashSet<Link>(this.linksOut);
+        return new HashSet<Link>(this.links);
     }
 
     /** {@inheritDoc} */
     @Override
     public final boolean isDirectionallyConnectedTo(final GTUType gtuType, final Node toNode)
     {
-        for (Link link : getLinksOut())
+        for (Link link : getLinks())
         {
             if (toNode.equals(link.getEndNode()) && link.getDirectionality(gtuType).isForwardOrBoth())
             {
                 return true;
             }
-        }
-        for (Link link : getLinksIn())
-        {
             if (toNode.equals(link.getStartNode()) && link.getDirectionality(gtuType).isBackwardOrBoth())
             {
                 return true;

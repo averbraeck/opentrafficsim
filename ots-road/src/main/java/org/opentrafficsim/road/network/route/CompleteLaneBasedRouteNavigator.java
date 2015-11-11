@@ -113,7 +113,8 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                 return NOLANECHANGENEEDED; // Only one compatible lane available; we'll get there "automatically";
                 // i.e. without influence from the Route
             }
-            int branching = nextNode.getLinksOut().size();
+            // XXX WRONG
+            int branching = nextNode.getLinks().size();
             if (branching > 1)
             { // Found a split
                 nextSplitNode = nextNode;
@@ -125,7 +126,8 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
             }
             else
             { // Look beyond this nextNode
-                Link nextLink = nextNode.getLinksOut().iterator().next(); // cannot be null
+                // XXX WRONG
+                Link nextLink = nextNode.getLinks().iterator().next(); // cannot be null
                 if (nextLink instanceof CrossSectionLink)
                 {
                     nextNode = nextLink.getEndNode();
@@ -195,7 +197,8 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
         // Which continuing link is the one we need?
         Map<Lane, Length.Rel> suitabilityOfLanesBeforeBranch = new HashMap<Lane, Length.Rel>();
         Link linkAfterBranch = null;
-        for (Link link : nextSplitNode.getLinksOut())
+        // XXX WRONG
+        for (Link link : nextSplitNode.getLinks())
         {
             Node nextNodeOnLink = link.getEndNode();
             for (int i = this.lastVisitedNodeIndex + 1; i < this.completeRoute.size(); i++)

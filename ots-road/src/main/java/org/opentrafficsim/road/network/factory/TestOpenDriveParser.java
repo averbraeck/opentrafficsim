@@ -42,7 +42,6 @@ import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -61,7 +60,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.Sensor;
 import org.opentrafficsim.road.network.lane.SinkSensor;
-import org.opentrafficsim.road.network.route.RandomLaneBasedRouteGenerator;
+import org.opentrafficsim.road.network.route.JustDriveRouteGenerator;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.xml.sax.SAXException;
@@ -218,7 +217,7 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
             {
                 CrossSectionLink csLink = (CrossSectionLink) link;
                 // look if start node is isolated
-                if (link.getStartNode().getLinksIn().size() == 0)
+                if (link.getStartNode().getLinks().size() == 1) // only ourselves...
                 {
                     // put generators and sinks 25 m from the edge of the link
                     for (CrossSectionElement cse : csLink.getCrossSectionElementList())
@@ -226,12 +225,6 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                         if (cse instanceof Lane && !(cse instanceof NoTrafficLane))
                         {
                             Lane lane = (Lane) cse;
-                            boolean generate =
-                                (link.getStartNode().getLinksIn().size() == 0 && (lane.getDirectionality(GTUType.ALL)
-                                    .equals(LongitudinalDirectionality.FORWARD)))
-                                    || (link.getStartNode().getLinksOut().size() == 0 && (lane
-                                        .getDirectionality(GTUType.ALL).equals(LongitudinalDirectionality.BACKWARD)));
-                            // if (generate)
                             if (Integer.parseInt(lane.getId()) < 0)
                             {
                                 // make a generator
@@ -241,7 +234,8 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                                 new GTUGeneratorIndividual(lane.getId(), this.simulator, carType,
                                     LaneBasedIndividualCar.class, new IDMPlus(), new Altruistic(), initialSpeedDist,
                                     iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE, startTime,
-                                    endTime, lane, position, new RandomLaneBasedRouteGenerator(csLink),
+                                    endTime, lane, position, /* new RandomLaneBasedRouteGenerator(csLink), */
+                                    new JustDriveRouteGenerator(),
                                     makeSwitchableGTUColorer());
                                 try
                                 {
@@ -269,7 +263,7 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                         }
                     }
                 }
-                else if (link.getEndNode().getLinksOut().size() == 0)
+                else if (link.getEndNode().getLinks().size() == 1) // only ourselves...
                 {
                     // put generators and sinks 25 m from the edge of the link
                     for (CrossSectionElement cse : csLink.getCrossSectionElementList())
@@ -277,12 +271,6 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                         if (cse instanceof Lane && !(cse instanceof NoTrafficLane))
                         {
                             Lane lane = (Lane) cse;
-                            boolean generate =
-                                (link.getEndNode().getLinksIn().size() == 0 && (lane.getDirectionality(GTUType.ALL)
-                                    .equals(LongitudinalDirectionality.BACKWARD)))
-                                    || (link.getEndNode().getLinksOut().size() == 0 && (lane
-                                        .getDirectionality(GTUType.ALL).equals(LongitudinalDirectionality.FORWARD)));
-                            // if (generate)
                             if (Integer.parseInt(lane.getId()) > 0)
                             {
                                 // make a generator
@@ -293,7 +281,8 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                                 new GTUGeneratorIndividual(lane.getId(), this.simulator, carType,
                                     LaneBasedIndividualCar.class, new IDMPlus(), new Altruistic(), initialSpeedDist,
                                     iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE, startTime,
-                                    endTime, lane, position, new RandomLaneBasedRouteGenerator(csLink),
+                                    endTime, lane, position, /*new RandomLaneBasedRouteGenerator(csLink),*/
+                                    new JustDriveRouteGenerator(),
                                     makeSwitchableGTUColorer());
                                 try
                                 {
@@ -323,7 +312,19 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                     }
                 }
             }
-            
+
+            CrossSectionLink link = (CrossSectionLink) network.getLink("3766053");
+            for (CrossSectionElement cse : link.getCrossSectionElementList())
+            {
+                if (cse instanceof Lane)
+                {
+                    Lane lane = (Lane) cse;
+                    System.out.println("Lane " + lane + " - offset=" + lane.getDesignLineOffsetAtEnd()
+                        + " - nextlanes(ALL) = " + lane.nextLanes(GTUType.ALL) + " - nextlanes(CarType) = "
+                        + lane.nextLanes(carType));
+                }
+            }
+
             // test the shortest path method
             Node nodeFrom = network.getLink("3766052").getEndNode();
             Node nodeTo = network.getLink("3766035.1").getStartNode();
@@ -331,7 +332,8 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
             try
             {
                 cr = network.getShortestRouteBetween(GTUType.ALL, nodeFrom, nodeTo);
-                System.out.println(cr.toString().replaceAll("to OTSNode", "\ntoOTSNode").replaceAll(", OTSNode", ", \nOTSNode"));
+                System.out.println(cr.toString().replaceAll("to OTSNode", "\ntoOTSNode").replaceAll(", OTSNode",
+                    ", \nOTSNode"));
             }
             catch (NetworkException exception)
             {

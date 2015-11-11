@@ -39,22 +39,13 @@ public interface Node extends LocatableInterface, Serializable
     Angle.Abs getSlope();
 
     /**
-     * Add an incoming link to this Node.
-     * @param linkIn the link to add.
+     * Add a link to this Node.
+     * @param link the link to add.
      */
-    void addLinkIn(Link linkIn);
+    void addLink(Link link);
 
-    /**
-     * Add an outgoing link to this Node.
-     * @param linkOut the link to add.
-     */
-    void addLinkOut(final Link linkOut);
-
-    /** @return linksIn. */
-    Set<Link> getLinksIn();
-
-    /** @return linksOut. */
-    Set<Link> getLinksOut();
+    /** @return the links connected to this Node */
+    Set<Link> getLinks();
 
     /**
      * Check if the current node is linked to the given Node in the specified direction for the given GTUType. This can mean

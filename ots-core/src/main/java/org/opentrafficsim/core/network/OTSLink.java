@@ -76,8 +76,8 @@ public class OTSLink implements Link, Serializable, LocatableInterface
         this.startNode = startNode;
         this.endNode = endNode;
         this.linkType = linkType;
-        this.startNode.addLinkOut(this);
-        this.endNode.addLinkIn(this);
+        this.startNode.addLink(this);
+        this.endNode.addLink(this);
         this.designLine = designLine;
         this.directionalityMap = directionalityMap;
     }

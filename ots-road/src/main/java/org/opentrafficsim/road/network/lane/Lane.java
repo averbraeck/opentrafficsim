@@ -705,8 +705,20 @@ public class Lane extends CrossSectionElement implements Serializable
     private boolean laterallyCloseEnough(final CrossSectionElement incomingCSE, final CrossSectionElement outgoingCSE,
         final Length.Rel margin)
     {
-        return Math.abs(incomingCSE.getDesignLineOffsetAtEnd().getSI() //
-            - outgoingCSE.getDesignLineOffsetAtBegin().getSI()) <= margin.getSI();
+        try
+        {
+            // XXX: this is not just about lateral... it is also about distance in general!
+            // TODO should direction play a role? What is incoming, outgoing?
+            return incomingCSE.getCenterLine().get(incomingCSE.getCenterLine().size() - 1).distance(
+                outgoingCSE.getCenterLine().get(0)).si <= margin.getSI();
+        }
+        catch (OTSGeometryException exception)
+        {
+            exception.printStackTrace();
+            return false;
+        }
+        // return Math.abs(incomingCSE.getDesignLineOffsetAtEnd().getSI() //
+        // - outgoingCSE.getDesignLineOffsetAtBegin().getSI()) <= margin.getSI();
     }
 
     /*
@@ -740,7 +752,7 @@ public class Lane extends CrossSectionElement implements Serializable
             Set<Lane> laneSet = new LinkedHashSet<>(1);
             this.nextLanes.put(gtuType, laneSet);
             // Construct (and cache) the result.
-            for (Link link : getParentLink().getEndNode().getLinksOut())
+            for (Link link : getParentLink().getEndNode().getLinks())
             {
                 if (link instanceof CrossSectionLink)
                 {
@@ -780,7 +792,7 @@ public class Lane extends CrossSectionElement implements Serializable
             Set<Lane> laneSet = new LinkedHashSet<>(1);
             this.prevLanes.put(gtuType, laneSet);
             // Construct (and cache) the result.
-            for (Link link : getParentLink().getStartNode().getLinksIn())
+            for (Link link : getParentLink().getStartNode().getLinks())
             {
                 if (link instanceof CrossSectionLink)
                 {
@@ -865,7 +877,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * 90 km/h.
      * @param gtuType the GTU type to provide the speed limit for
      * @return the speedLimit.
-     * @throws NetworkException 
+     * @throws NetworkException
      */
     public final Speed getSpeedLimit(final GTUType gtuType) throws NetworkException
     {
