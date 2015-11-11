@@ -368,7 +368,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         Length.Rel maximumReverseHeadway = new Length.Rel(200.0, LengthUnit.METER);
         // TODO 200?
         Speed speedLimit = this.getMaximumVelocity();
-        for (Lane lane : this.lanes)
+        for (Lane lane : this.lanes.keySet())
         {
             if (lane.getSpeedLimit(getGTUType()).lt(speedLimit))
             {
@@ -426,12 +426,17 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         boolean schedule = true;
         synchronized (this.lock)
         {
-            for (int i = this.lanes.size() - 1; i >= 0; i--)
+            for (Lane lane : this.lanes.keySet())
             {
-                Lane lane = this.lanes.get(i);
                 this.fractionalLinkPositions.put(lane.getParentLink(), lane.fraction(position(lane, getReference(),
-                    this.nextEvaluationTime)));
+                        this.nextEvaluationTime)));
             }
+            // for (int i = this.lanes.size() - 1; i >= 0; i--)
+            // {
+            // Lane lane = this.lanes.get(i);
+            // this.fractionalLinkPositions.put(lane.getParentLink(), lane.fraction(position(lane, getReference(),
+            // this.nextEvaluationTime)));
+            // }
             // Update the odometer value
             this.odometer = this.odometer.plus(deltaX(this.nextEvaluationTime));
             // Compute and set the current speed using the "old" nextEvaluationTime and acceleration
@@ -451,12 +456,12 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             if (lcmr.getLaneChange() != null)
             {
                 // TODO make lane changes gradual (not instantaneous; like now)
-                Collection<Lane> oldLaneSet = new HashSet<Lane>(this.lanes);
+                Collection<Lane> oldLaneSet = new HashSet<Lane>(this.lanes.keySet());
                 Collection<Lane> newLaneSet = new HashSet<Lane>(2);
                 // Prepare the remove of this GTU from all of the Lanes that it is on and remember the fractional
                 // position on each one
                 Map<Lane, Double> oldFractionalPositions = new LinkedHashMap<Lane, Double>();
-                for (Lane l : this.lanes)
+                for (Lane l : this.lanes.keySet())
                 {
                     oldFractionalPositions.put(l, fractionalPosition(l, getReference(), getLastEvaluationTime()));
                     this.fractionalLinkPositions.remove(l.getParentLink());
@@ -623,7 +628,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         Map<Lane, Length.Rel> positions = positions(RelativePosition.REFERENCE_POSITION);
         if (null == direction)
         {
-            for (Lane l : getLanes())
+            for (Lane l : getLanes().keySet())
             {
                 if (l.getLaneType().isCompatible(getGTUType()))
                 {
@@ -695,7 +700,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         Map<Lane, Length.Rel> positions = positions(RelativePosition.REFERENCE_POSITION);
         if (null == direction)
         {
-            for (Lane l : getLanes())
+            for (Lane l : getLanes().keySet())
             {
                 if (l.getLaneType().isCompatible(getGTUType()))
                 {
@@ -734,7 +739,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      */
     private void checkConsistency()
     {
-        for (Lane l : this.lanes)
+        for (Lane l : this.lanes.keySet())
         {
             if (!this.fractionalLinkPositions.containsKey(l.getParentLink()))
             {
@@ -745,7 +750,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         for (Link csl : this.fractionalLinkPositions.keySet())
         {
             boolean found = false;
-            for (Lane l : this.lanes)
+            for (Lane l : this.lanes.keySet())
             {
                 if (l.getParentLink().equals(csl))
                 {
@@ -777,7 +782,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         // CALCULATES THE POSITION BASED ON THE NEWLY CALCULATED ACCELERATION AND VELOCITY AND CAN THEREFORE MAKE AN ERROR.
         double timestep = this.nextEvaluationTime.getSI() - this.lastEvaluationTime.getSI();
         double moveSI = getVelocity().getSI() * timestep + 0.5 * getAcceleration().getSI() * timestep * timestep;
-        for (Lane lane : new ArrayList<Lane>(this.lanes)) // use a copy because this.lanes can change
+        for (Lane lane : new ArrayList<Lane>(this.lanes.keySet())) // use a copy because this.lanes can change
         {
             // schedule triggers on this lane
             double referenceStartSI = this.fractionalLinkPositions.get(lane.getParentLink()) * lane.getLength().getSI();
@@ -791,7 +796,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             if (frontPosSI < lane.getLength().getSI() && moveFrontOnNextLane > 0)
             {
                 Lane nextLane = determineNextLane(lane);
-                if (!this.lanes.contains(nextLane)) // XXX: this happens -- how can that be?
+                if (!this.lanes.keySet().contains(nextLane)) // XXX: this happens -- how can that be?
                 {
                     // we have to register the position at the previous timestep to keep calculations consistent.
                     // And we have to correct for the position of the reference point.
@@ -822,7 +827,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         }
 
         // move the vehicle out of any lanes with the back, and schedule exit during this time step
-        for (Lane lane : this.lanes)
+        for (Lane lane : this.lanes.keySet())
         {
             // determine when our REAR will pass the end of this registered lane.
             // if the time is earlier than the end of the timestep: schedule the exitLane method at the END of this timestep
@@ -868,7 +873,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             int continuingLaneCount = 0;
             for (Lane candidateLane : lane.nextLanes(getGTUType()))
             {
-                if (this.lanes.contains(candidateLane))
+                if (null != this.lanes.get(candidateLane))
                 {
                     continue; // Already on this lane
                 }
@@ -913,7 +918,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             result.add(new HeadwayGTU(p, Double.NaN));
         }
-        for (Lane lane : this.lanes)
+        for (Lane lane : this.lanes.keySet())
         {
             for (Lane adjacentLane : this.accessibleAdjacentLanes.get(lane).get(directionality))
             {
@@ -945,7 +950,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         throws NetworkException
     {
         Map<Lane, Length.Rel> positions = new LinkedHashMap<>();
-        for (Lane lane : this.lanes)
+        for (Lane lane : this.lanes.keySet())
         {
             positions.put(lane, position(lane, relativePosition, when));
         }
@@ -969,7 +974,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             if (cse instanceof Lane)
             {
                 Lane cseLane = (Lane) cse;
-                if (this.lanes.contains(cseLane))
+                if (null != this.lanes.get(cseLane))
                 {
                     double fractionalPosition = fractionalPosition(cseLane, relativePosition, when);
                     return new Length.Rel(projectionLane.getLength().getSI() * fractionalPosition, LengthUnit.SI);
@@ -990,7 +995,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         }
         synchronized (this.lock)
         {
-            if (!this.lanes.contains(lane))
+            if (null != this.lanes.get(lane))
             {
                 throw new NetworkException("position() : GTU " + toString() + " is not on lane " + lane);
             }
@@ -1028,7 +1033,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         throws NetworkException
     {
         Map<Lane, Double> positions = new LinkedHashMap<>();
-        for (Lane lane : this.lanes)
+        for (Lane lane : this.lanes.keySet())
         {
             positions.put(lane, fractionalPosition(lane, relativePosition, when));
         }
@@ -1404,7 +1409,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     public final Set<LaneBasedGTU> parallel(final Lane lane, final Time.Abs when) throws NetworkException
     {
         Set<LaneBasedGTU> gtuSet = new LinkedHashSet<LaneBasedGTU>();
-        for (Lane l : this.lanes)
+        for (Lane l : this.lanes.keySet())
         {
             // only take lanes that we can compare based on a shared design line
             if (l.getParentLink().equals(lane.getParentLink()))
@@ -1437,7 +1442,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         throws NetworkException
     {
         Set<LaneBasedGTU> gtuSet = new LinkedHashSet<LaneBasedGTU>();
-        for (Lane lane : this.lanes)
+        for (Lane lane : this.lanes.keySet())
         {
             for (Lane adjacentLane : this.accessibleAdjacentLanes.get(lane).get(lateralDirection))
             {
@@ -1476,9 +1481,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     {
         synchronized (this.lock)
         {
-            while (!this.lanes.isEmpty())
+            Set<Lane> laneSet = new HashSet<>(this.lanes.keySet()); // Operate on a copy of the key set
+            for (Lane lane : laneSet)
             {
-                Lane lane = this.lanes.get(0);
                 leaveLane(lane, true);
             }
         }
@@ -1586,12 +1591,13 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         {
             try
             {
-                if (this.lanes.size() == 0)
+                Set<Lane> laneSet = new HashSet<>(this.lanes.keySet());
+                if (laneSet.size() == 0)
                 {
                     // This happens temporarily when a GTU is moved to another Lane
                     return new DirectedPoint(0, 0, 0);
                 }
-                Lane lane = this.lanes.get(0);
+                Lane lane = laneSet.iterator().next();
                 DirectedPoint location = lane.getCenterLine().getLocationExtended(position(lane, getReference()));
                 location.z += 0.01; // raise the location a bit above the lane
                 return location;

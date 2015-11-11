@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane;
 
-import java.util.Map;
+import java.util.Set;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -12,7 +12,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
-import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.route.LaneBasedRouteNavigator;
 
 /**
@@ -63,7 +63,7 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractLaneBasedIndividualGTU(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
-        final LaneChangeModel laneChangeModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
+        final LaneChangeModel laneChangeModel, final Set<DirectedLanePosition> initialLongitudinalPositions,
         final Speed initialSpeed, final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
         final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator) throws
         NetworkException, SimRuntimeException, GTUException

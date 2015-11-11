@@ -73,7 +73,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(gtuType);
         // And a simulator, but for that we first need something that implements OTSModelInterface
-        OTSModelInterface model = new DummyModelForTemplateGTUTest();
+        OTSModelInterface model = new DummyModel();
         final SimpleSimulatorInterface simulator =
             new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND), model);
 
