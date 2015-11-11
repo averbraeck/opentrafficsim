@@ -797,11 +797,13 @@ class RoadTag
                                         new Lane(newlink, rightLane.id.toString(), rightOffset_start, rightOffset_end,
                                                 laneWidth_start, laneWidth_end, LANETYPE_ALL, directionality, speedLimit,
                                                 overtakingConditions);
+                                currentLaneSec.lanes.put(rightLane.id, lane);
+
+                                new LaneAnimationOD(lane, simulator, color);
+                                
                             }
 
-                            currentLaneSec.lanes.put(rightLane.id, lane);
-
-                            new LaneAnimationOD(lane, simulator, color);
+ 
                         } catch (Exception exception)
                         {
                             exception.printStackTrace();
