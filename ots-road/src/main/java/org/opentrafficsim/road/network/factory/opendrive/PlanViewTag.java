@@ -6,9 +6,11 @@ import java.util.UUID;
 
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.AngleUtil;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.opentrafficsim.core.geometry.Clothoid;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -57,6 +59,7 @@ class PlanViewTag
         roadTag.planViewTag = planViewTag;
 
         for (Node node0 : XMLParser.getNodes(nodeList, "planView"))
+        {
             for (Node node : XMLParser.getNodes(node0.getChildNodes(), "geometry"))
             {
                 GeometryTag geometryTag = GeometryTag.parseGeometry(node, parser);
@@ -64,12 +67,17 @@ class PlanViewTag
                 geometryCount++;
 
                 planViewTag.geometryTags.add(geometryTag);
-
-                if (geometryTag.spiralTag != null && geometryCount != 1)
-                    interpolateSpiral(parser, planViewTag, geometryTag);
-                if (geometryTag.arcTag != null)
-                    interpolateArc(planViewTag, geometryTag);
             }
+            geometryCount = 0;
+            for(GeometryTag geometryTag: planViewTag.geometryTags)
+            {
+                if (geometryTag.spiralTag != null && geometryCount > 1)
+                    interpolateSpiral(parser, planViewTag, geometryTag, geometryCount);
+                if (geometryTag.arcTag != null)
+                    interpolateArc(planViewTag, geometryTag, geometryCount);
+                geometryCount++;
+            }
+        }
         roadTag.designLine = buildDesignLine(planViewTag, roadTag);
 
     }
@@ -78,32 +86,37 @@ class PlanViewTag
      * @param parser
      * @param planViewTag
      * @param geometryTag
+     * @param geometryCount 
      * @throws NetworkException
      */
     private static void interpolateSpiral(OpenDriveNetworkLaneParser parser, PlanViewTag planViewTag,
-            GeometryTag geometryTag) throws NetworkException
+            GeometryTag geometryTag, int geometryCount) throws NetworkException
     {
         double startCurvature = geometryTag.spiralTag.curvStart.doubleValue();
         double endCurvature = geometryTag.spiralTag.curvEnd.doubleValue();
         OTSPoint3D start = geometryTag.node.getPoint();
         Length.Rel length = geometryTag.length;
 
-        int numSegments = 64;// (int) (length.doubleValue()/1);
+        int numSegments = 100;// (int) (length.doubleValue()/1);
         
         //if(startCurvature == 0.0d && length.doubleValue() > 0.5d)
         {
             double dy =
                     geometryTag.y.doubleValue()
-                            - planViewTag.geometryTags.get(planViewTag.geometryTags.size() - 2).y.doubleValue();
+                            - planViewTag.geometryTags.get(geometryCount - 1).y.doubleValue();
             double dx =
                     geometryTag.x.doubleValue()
-                            - planViewTag.geometryTags.get(planViewTag.geometryTags.size() - 2).x.doubleValue();
+                            - planViewTag.geometryTags.get(geometryCount - 1).x.doubleValue();
 
-            Angle.Abs startDirection = AngleUtil.normalize(new Angle.Abs(Math.PI - Math.atan2(dy, dx), AngleUnit.SI));
+            Angle.Abs startDirection = new Angle.Abs(Math.PI *2 - Math.atan2(dy, dx), AngleUnit.RADIAN);
 
             OTSLine3D line =
                     Clothoid.clothoid(start, startDirection, startCurvature, endCurvature, length, new Length.Rel(0,
                             LengthUnit.SI) /* FIXME: elevation at end */, numSegments);
+            
+/*            line = clothoid(new OTSPoint3D(10, 10, 5), new Angle.Abs(Math.PI / 8, AngleUnit.RADIAN), new LinearDensity(0 * -0.03,
+                            LinearDensityUnit.PER_METER), new LinearDensity(0.04, LinearDensityUnit.PER_METER), new Length.Rel(100,
+                            LengthUnit.METER), new Length.Rel(15, LengthUnit.METER), 100);*/
 
             // parser.spiras.put(line.hashCode(), line);
             //geometryTag.interLine = line;
@@ -115,11 +128,116 @@ class PlanViewTag
     /**
      * @param planViewTag
      * @param geometryTag
+     * @param geometryCount 
+     * @throws NetworkException 
      */
-    private static void interpolateArc(PlanViewTag planViewTag, GeometryTag geometryTag)
+    private static void interpolateArc(PlanViewTag planViewTag, GeometryTag geometryTag, int geometryCount) throws NetworkException
     {
+        double curvature = geometryTag.arcTag.curvature.doubleValue();
+        OTSPoint3D start = geometryTag.node.getPoint();
+        OTSPoint3D end = planViewTag.geometryTags.get(geometryCount + 1).node.getPoint();
+        
+        Length.Rel length = geometryTag.length;
+                
+        double radius = 1/curvature;
+        boolean side = false;
+        
+        if(curvature < 0)
+            side = true;
+
+        List<OTSPoint3D> line = generateCurve(start, end, (float)Math.abs(radius), (float) 0.05, true, side);
+        
+        OTSLine3D otsLine = new OTSLine3D(line);
+
+        //geometryTag.interLine = otsLine;
+
     }
 
+    
+    /**
+     * @param pFrom
+     * @param pTo
+     * @param pRadius
+     * @param pMinDistance
+     * @param shortest
+     * @param side
+     * @return
+     */
+    private static List<OTSPoint3D> generateCurve(OTSPoint3D pFrom, OTSPoint3D pTo, float pRadius, float pMinDistance, boolean shortest, boolean side)
+    {
+
+        List<OTSPoint3D> pOutPut = new ArrayList<OTSPoint3D>();
+
+        // Calculate the middle of the two given points.
+        OTSPoint3D mPoint = new OTSPoint3D((pFrom.x + pTo.x)/2, (pFrom.y + pTo.y)/2);
+
+        //System.out.println("Middle Between From and To = " + mPoint);
+
+
+        // Calculate the distance between the two points
+        double xDiff = pTo.x - pFrom.x;
+        double yDiff = pTo.y - pFrom.y;
+        double distance = (float) Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+        //System.out.println("Distance between From and To = " + distance);
+
+        if (pRadius * 2.0f < distance) {
+            throw new IllegalArgumentException("The radius is too small! The given points wont fall on the circle.");
+        }
+
+        // Calculate the middle of the expected curve.
+        float factor = (float) Math.sqrt((pRadius * pRadius) / ((pTo.x - pFrom.x) * (pTo.x - pFrom.x) + (pTo.y - pFrom.y) * (pTo.y - pFrom.y)) - 0.25f);
+        double x = 0;
+        double y = 0;
+        if (side) {
+            x = 0.5f * (pFrom.x + pTo.x) + factor * (pTo.y - pFrom.y);
+            y = 0.5f * (pFrom.y + pTo.y) + factor * (pFrom.x - pTo.x);
+        } else {
+            x = 0.5f * (pFrom.x + pTo.x) - factor * (pTo.y - pFrom.y);
+            y = 0.5f * (pFrom.y + pTo.y) - factor * (pFrom.x - pTo.x);
+        }
+        OTSPoint3D circleMiddlePoint = new OTSPoint3D(x, y);
+
+        //System.out.println("Middle = " + circleMiddlePoint);
+
+        // Calculate the two reference angles
+        float angle1 = (float) Math.atan2(pFrom.y - circleMiddlePoint.y, pFrom.x - circleMiddlePoint.x);
+        float angle2 = (float) Math.atan2(pTo.y - circleMiddlePoint.y, pTo.x - circleMiddlePoint.x);
+
+        // Calculate the step.
+        float step = pMinDistance / pRadius;
+        //System.out.println("Step = " + step);
+
+        // Swap them if needed
+        if (angle1 > angle2) {
+            float temp = angle1;
+            angle1 = angle2;
+            angle2 = temp;
+
+        }
+        boolean flipped = false;
+        if (!shortest) {
+            if (angle2 - angle1 < Math.PI) {
+                float temp = angle1;
+                angle1 = angle2;
+                angle2 = temp;
+                angle2 += Math.PI * 2.0f;
+                flipped = true;
+            }
+        }
+        for (float f = angle1; f < angle2; f += step) {
+            OTSPoint3D p = new OTSPoint3D((float) Math.cos(f) * pRadius + circleMiddlePoint.x, (float) Math.sin(f) * pRadius + circleMiddlePoint.y);
+            pOutPut.add(p);
+        }
+/*        if (flipped ^ side) {
+            pOutPut.add(pFrom);
+        } else {
+            pOutPut.add(pTo);
+        }*/
+
+        return pOutPut;
+    }
+
+    
     /**
      * Find the nodes one by one that have one coordinate defined, and one not defined, and try to build the network
      * from there.
@@ -149,13 +267,14 @@ class PlanViewTag
 
             if (geometryTag.interLine != null)
             {
-                int i = 0;
-                int j = geometryTag.length.divideBy(1.0).intValue();
                 for (OTSPoint3D point : geometryTag.interLine.getPoints())
                 {
-                    //if (i % j == 0)
+                    OTSPoint3D lastPoint = coordinates.get(coordinates.size()-1);
+                    double xDiff = lastPoint.x - point.x;
+                    double yDiff = lastPoint.y - point.y;
+                    double distance = (float) Math.sqrt(xDiff * xDiff + yDiff * yDiff); 
+                    if(distance > 0.1)
                         coordinates.add(point);
-                    i++;
                 }
             }
 
