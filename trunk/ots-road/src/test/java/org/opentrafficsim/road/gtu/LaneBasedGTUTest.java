@@ -6,8 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -24,6 +23,7 @@ import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -40,6 +40,7 @@ import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
@@ -111,8 +112,9 @@ public class LaneBasedGTUTest implements UNITS
         // Create a long truck with its front (reference) one meter in the last link on the 3rd lane
         Length.Rel truckPosition = new Length.Rel(99.5, METER);
         Length.Rel truckLength = new Length.Rel(15, METER);
-        Map<Lane, Length.Rel> truckPositions =
-            buildPositionsMap(truckPosition, truckLength, links, truckFromLane, truckUpToLane);
+
+        Set<DirectedLanePosition> truckPositions =
+            buildPositionsSet(truckPosition, truckLength, links, truckFromLane, truckUpToLane);
         Speed truckSpeed = new Speed(0, KM_PER_HOUR);
         Length.Rel truckWidth = new Length.Rel(2.5, METER);
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
@@ -143,7 +145,15 @@ public class LaneBasedGTUTest implements UNITS
                 if (cse instanceof Lane)
                 {
                     Lane lane = (Lane) cse;
-                    if (truckPositions.containsKey(lane))
+                    boolean truckPositionsOnLane = false;
+                    for (DirectedLanePosition pos : truckPositions)
+                    {
+                        if (pos.getLane().equals(lane))
+                        {
+                            truckPositionsOnLane = true;
+                        }
+                    }
+                    if (truckPositionsOnLane)
                     {
                         assertTrue("Truck should be registered on Lane " + lane, lane.getGtuList().contains(truck));
                         found++;
@@ -159,8 +169,7 @@ public class LaneBasedGTUTest implements UNITS
         // Make sure we tested them all
         assertEquals("lanesChecked should equals the number of Links times the number of lanes on each Link", laneCount
             * links.size(), lanesChecked);
-        assertEquals("Truck should be registered in " + truckPositions.keySet().size() + " lanes", truckPositions
-            .keySet().size(), found);
+        assertEquals("Truck should be registered in " + truckPositions.size() + " lanes", truckPositions.size(), found);
         Length.Rel forwardMaxDistance = new Length.Rel(9999, METER);
         HeadwayGTU leader = truck.headway(forwardMaxDistance);
         assertTrue("With one vehicle in the network forward headway should return a value larger than maxDistance",
@@ -188,8 +197,8 @@ public class LaneBasedGTUTest implements UNITS
                     continue; // Truck and car would overlap; the result of that placement is not defined :-)
                 }
                 Length.Rel carPosition = new Length.Rel(step, METER);
-                Map<Lane, Length.Rel> carPositions =
-                    buildPositionsMap(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
+                Set<DirectedLanePosition> carPositions =
+                    buildPositionsSet(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
                 LaneBasedIndividualCar car =
                     new LaneBasedIndividualCar("Car", carType, gtuFollowingModel, laneChangeModel, carPositions,
                         carSpeed, carLength, carWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(
@@ -307,9 +316,9 @@ public class LaneBasedGTUTest implements UNITS
                 {
                     assertTrue("Parallel GTU should be the car", rightParallel.contains(car));
                 }
-                for (Lane lane : carPositions.keySet())
+                for (DirectedLanePosition pos : carPositions)
                 {
-                    lane.removeGTU(car);
+                    pos.getLane().removeGTU(car);
                 }
             }
         }
@@ -365,8 +374,8 @@ public class LaneBasedGTUTest implements UNITS
                 LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, new Speed(200, KM_PER_HOUR),
                     simulator)[0];
             Length.Rel carPosition = new Length.Rel(100, METER);
-            Map<Lane, Length.Rel> carPositions = new LinkedHashMap<Lane, Length.Rel>();
-            carPositions.put(lane, carPosition);
+            Set<DirectedLanePosition> carPositions = new LinkedHashSet<>(1);
+            carPositions.add(new DirectedLanePosition(lane, carPosition, GTUDirectionality.DIR_PLUS));
             Speed carSpeed = new Speed(10, METER_PER_SECOND);
             Acceleration acceleration = new Acceleration(a, METER_PER_SECOND_2);
             FixedAccelerationModel fam = new FixedAccelerationModel(acceleration, new Time.Rel(10, SECOND));
@@ -424,12 +433,12 @@ public class LaneBasedGTUTest implements UNITS
      * @param links ArrayList&lt;CrossSectionLink&lt;?,?&gt;&gt;; the list of Links
      * @param fromLaneRank int; lowest rank of lanes that the GTU must be registered on (0-based)
      * @param uptoLaneRank int; highest rank of lanes that the GTU must be registered on (0-based)
-     * @return Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the Map of the Lanes that the GTU is registered on
+     * @return the Set of the LanePositions that the GTU is registered on
      */
-    private Map<Lane, Length.Rel> buildPositionsMap(Length.Rel totalLongitudinalPosition, Length.Rel gtuLength,
+    private Set<DirectedLanePosition> buildPositionsSet(Length.Rel totalLongitudinalPosition, Length.Rel gtuLength,
         ArrayList<CrossSectionLink> links, int fromLaneRank, int uptoLaneRank)
     {
-        Map<Lane, Length.Rel> result = new LinkedHashMap<Lane, Length.Rel>();
+        Set<DirectedLanePosition> result = new LinkedHashSet<>(1);
         double cumulativeLength = 0;
         for (CrossSectionLink link : links)
         {
@@ -449,7 +458,8 @@ public class LaneBasedGTUTest implements UNITS
                     {
                         fail("Error in test; canot find lane with rank " + laneRank);
                     }
-                    result.put(lane, new Length.Rel(rearPositionInLink, METER));
+                    result.add(new DirectedLanePosition(lane, new Length.Rel(rearPositionInLink, METER),
+                        GTUDirectionality.DIR_PLUS));
                 }
             }
             cumulativeLength += linkLength;

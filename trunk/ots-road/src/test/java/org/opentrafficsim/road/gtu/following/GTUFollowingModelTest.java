@@ -8,7 +8,9 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -25,12 +27,14 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.changing.Egoistic;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
@@ -94,12 +98,13 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         Length.Rel initialPosition = new Length.Rel(1234.567, METER);
         Length.Rel length = new Length.Rel(5.0, METER);
         Length.Rel width = new Length.Rel(2.0, METER);
-        Map<Lane, Length.Rel> initialLongitudinalPositions = new HashMap<>();
-        initialLongitudinalPositions.put(lane, initialPosition);
+        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+        initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar gtu =
-            new LaneBasedIndividualCar("12345", carType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions,
-                speed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
+            new LaneBasedIndividualCar("12345", carType, gtuFollowingModel, laneChangeModel,
+                initialLongitudinalPositions, speed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(
+                    new CompleteRoute("", GTUType.ALL)), simulator);
         Length.Rel longerHeadway = minimumHeadway.plus(precision);
         Acceleration longerHeadwayAcceleration =
             gtuFollowingModel.computeAcceleration(speed, maxSpeed, speed, longerHeadway, speedLimit);
@@ -118,7 +123,8 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         assertNotNull("result of computeAccelerationWithNoLeader is not null", noLeader);
         assertEquals("result of computeAccelerationWithNoLeader is valid for " + stepSize, stepSize.getSI(), noLeader
             .getValidUntil().getSI(), 0.001);
-        assertTrue("acceleration of stationary gtu with no leader should be > 0", 0 < noLeader.getAcceleration().getSI());
+        assertTrue("acceleration of stationary gtu with no leader should be > 0", 0 < noLeader.getAcceleration()
+            .getSI());
         precision = new Length.Rel(0, LengthUnit.SI);
         try
         {
@@ -139,9 +145,11 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         {
             // Ignore
         }
-        Map<Lane, Length.Rel> initialLongitudinalPositions50 = new HashMap<>();
         Length.Rel headway50m = new Length.Rel(50, METER);
-        initialLongitudinalPositions50.put(lane, initialPosition.plus(headway50m));
+        Set<DirectedLanePosition> initialLongitudinalPositions50 = new LinkedHashSet<>(1);
+        initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition.plus(headway50m),
+            GTUDirectionality.DIR_PLUS));
+
         LaneBasedIndividualCar gtu50m =
             new LaneBasedIndividualCar("100050", carType, gtuFollowingModel, laneChangeModel,
                 initialLongitudinalPositions50, speed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(
@@ -208,39 +216,45 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         AccelerationStep a1 = AbstractGTUFollowingModel.TOODANGEROUS.getLeaderAccelerationStep();
         // System.out.println("a1: " + a1);
         // System.out.println("as1m: [" + as1m[0] + ", " + as1m[1] + "]");
-        checkAccelerationStep("leader overlapping ", as1m, a1.getAcceleration(), a1.getAcceleration(), a1.getValidUntil());
+        checkAccelerationStep("leader overlapping ", as1m, a1.getAcceleration(), a1.getAcceleration(), a1
+            .getValidUntil());
         otherGTUs.clear();
         otherGTUs.add(hwgtu100m);
         // Follower at 75m
-        Map<Lane, Length.Rel> initialLongitudinalPositionsMinus75 = new HashMap<>();
         Length.Rel headwayMinus75m = new Length.Rel(-75, METER);
-        initialLongitudinalPositionsMinus75.put(lane, initialPosition.plus(headwayMinus75m));
+        Set<DirectedLanePosition> initialLongitudinalPositionsMinus75 = new LinkedHashSet<>(1);
+        initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition.plus(headwayMinus75m),
+            GTUDirectionality.DIR_PLUS));
+
         LaneBasedIndividualCar gtuMinus75m =
             new LaneBasedIndividualCar("100075", carType, gtuFollowingModel, laneChangeModel,
-                initialLongitudinalPositionsMinus75, speed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(
-                    new CompleteRoute("", GTUType.ALL)), simulator);
+                initialLongitudinalPositionsMinus75, speed, length, width, maxSpeed,
+                new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
         HeadwayGTU hwgtuMinus75m = new HeadwayGTU(gtuMinus75m, headwayMinus75m.getSI());
         otherGTUs.add(hwgtuMinus75m);
         DualAccelerationStep asMinus75And100m = gtuFollowingModel.computeAcceleration(gtu, otherGTUs, speedLimit);
         AccelerationStep a75 =
             gtuFollowingModel.computeAcceleration(gtuMinus75m, gtu.getLongitudinalVelocity(), new Length.Rel(Math
                 .abs(headwayMinus75m.getSI()), LengthUnit.SI), speedLimit);
-        checkAccelerationStep("leader at " + headway100m + " and follower at " + headwayMinus75m, asMinus75And100m, a100
-            .getAcceleration(), a75.getAcceleration(), expectedValidUntil);
+        checkAccelerationStep("leader at " + headway100m + " and follower at " + headwayMinus75m, asMinus75And100m,
+            a100.getAcceleration(), a75.getAcceleration(), expectedValidUntil);
         // Another follower at 200m
-        Map<Lane, Length.Rel> initialLongitudinalPositionsMinus200 = new HashMap<>();
         Length.Rel headwayMinus200m = new Length.Rel(-200, METER);
-        initialLongitudinalPositionsMinus200.put(lane, initialPosition.plus(headwayMinus200m));
+        Set<DirectedLanePosition> initialLongitudinalPositionsMinus200 = new LinkedHashSet<>(1);
+        initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition.plus(headwayMinus200m),
+            GTUDirectionality.DIR_PLUS));
+
         LaneBasedIndividualCar gtuMinus200m =
             new LaneBasedIndividualCar("100200", carType, gtuFollowingModel, laneChangeModel,
-                initialLongitudinalPositionsMinus200, speed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(
-                    new CompleteRoute("", GTUType.ALL)), simulator);
+                initialLongitudinalPositionsMinus200, speed, length, width, maxSpeed,
+                new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
         HeadwayGTU hwgtuMinus200m = new HeadwayGTU(gtuMinus200m, headwayMinus200m.getSI());
         otherGTUs.add(hwgtuMinus200m);
-        DualAccelerationStep asMinus200Minus75And100m = gtuFollowingModel.computeAcceleration(gtu, otherGTUs, speedLimit);
+        DualAccelerationStep asMinus200Minus75And100m =
+            gtuFollowingModel.computeAcceleration(gtu, otherGTUs, speedLimit);
         // The extra follower at -200 should not make a difference
-        checkAccelerationStep("leader at " + headway100m + " and follower at " + headwayMinus75m, asMinus200Minus75And100m,
-            a100.getAcceleration(), a75.getAcceleration(), expectedValidUntil);
+        checkAccelerationStep("leader at " + headway100m + " and follower at " + headwayMinus75m,
+            asMinus200Minus75And100m, a100.getAcceleration(), a75.getAcceleration(), expectedValidUntil);
     }
 
     /**
@@ -261,7 +275,8 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
             .getLeaderValidUntil().getSI(), 0.001);
         assertEquals(description + ": a leader should be valid until " + validUntil, validUntil.getSI(), as
             .getLeaderAccelerationStep().getValidUntil().getSI(), 0.001);
-        assertEquals(description + ": a follower should be " + a1, a1.getSI(), as.getFollowerAcceleration().getSI(), 0.001);
+        assertEquals(description + ": a follower should be " + a1, a1.getSI(), as.getFollowerAcceleration().getSI(),
+            0.001);
         assertEquals(description + ": a follower should be " + a1, a1.getSI(), as.getFollowerAccelerationStep()
             .getAcceleration().getSI(), 0.001);
         assertEquals(description + ": a follower should be valid until " + validUntil, validUntil.getSI(), as
@@ -302,7 +317,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
     /** {@inheritDoc} */
     @Override
     public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        
+
     {
         return null;
     }

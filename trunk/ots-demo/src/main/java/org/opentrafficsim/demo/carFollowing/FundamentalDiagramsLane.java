@@ -4,10 +4,10 @@ import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.swing.JPanel;
@@ -29,6 +29,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
@@ -46,6 +47,7 @@ import org.opentrafficsim.road.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Sensor;
@@ -305,7 +307,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 Lane sinkLane =
                     new Lane(endLink, "sinkLane", this.lanes.get(last).getLateralCenterPosition(1.0), this.lanes.get(
                         last).getLateralCenterPosition(1.0), this.lanes.get(last).getWidth(1.0), this.lanes.get(last)
-                        .getWidth(1.0), laneType, LongitudinalDirectionality.FORWARD, this.speedLimit,
+                        .getWidth(1.0), laneType, LongitudinalDirectionality.DIR_PLUS, this.speedLimit,
                         new OvertakingConditions.None());
                 Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, METER), this.simulator);
                 sinkLane.addSensor(sensor, GTUType.ALL);
@@ -404,15 +406,17 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         protected final void createBlock() throws RemoteException
         {
             Length.Rel initialPosition = new Length.Rel(200, METER);
-            Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
-            initialPositions.put(this.lanes.get(this.lanes.size() - 1), initialPosition);
+            Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
+            initialPositions.add(new DirectedLanePosition(this.lanes.get(this.lanes.size() - 1), initialPosition,
+                GTUDirectionality.DIR_PLUS));
             try
             {
                 this.block =
                     new LaneBasedIndividualCar("BLOCK", this.gtuType, this.carFollowingModelCars, this.laneChangeModel,
                         initialPositions, new Speed(0, KM_PER_HOUR), new Length.Rel(4, METER), new Length.Rel(1.8,
                             METER), new Speed(0.0001, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
-                            new CompleteRoute("", GTUType.ALL)), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
+                            new CompleteRoute("", GTUType.ALL)), this.simulator, DefaultCarAnimation.class,
+                        this.gtuColorer);
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
             {
@@ -437,8 +441,9 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
             boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
             Length.Rel initialPosition = new Length.Rel(0, METER);
             Speed initialSpeed = new Speed(100, KM_PER_HOUR);
-            Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
-            initialPositions.put(this.lanes.get(0), initialPosition);
+            Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
+            initialPositions.add(new DirectedLanePosition(this.lanes.get(0), initialPosition,
+                GTUDirectionality.DIR_PLUS));
             try
             {
                 Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
@@ -451,8 +456,8 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, generateTruck
                     ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel,
                     initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, METER), new Speed(200,
-                        KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), this.simulator,
-                    DefaultCarAnimation.class, this.gtuColorer);
+                        KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)),
+                    this.simulator, DefaultCarAnimation.class, this.gtuColorer);
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)

@@ -5,8 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -19,6 +19,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
@@ -27,6 +28,7 @@ import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.route.LaneBasedRouteGenerator;
 
@@ -89,6 +91,7 @@ public class ListGTUGenerator
      * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the generated GTUs
      * @param lane Lane; the lane on which the generated GTUs are placed
      * @param position DoubleScalar.Rel&lt;LengthUnit&gt;; the position on the lane where the generated GTUs are placed
+     * @param direction the direction on the lane in which the GTU has to be generated (DIR_PLUS, or DIR_MINUS)
      * @param routeGenerator RouteGenerator; the route generator that generates the routes of the generated GTUs
      * @param gtuColorer GTUColorere; the GTUColorer of the generated GTUs
      * @param fileName String; name of file with the times when another GTU is to be generated (XXXX STUB)
@@ -97,7 +100,7 @@ public class ListGTUGenerator
      */
     public ListGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
         final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel, final Speed initialSpeed,
-        final Lane lane, final Length.Rel position, final LaneBasedRouteGenerator routeGenerator,
+        final Lane lane, final Length.Rel position, final GTUDirectionality direction, final LaneBasedRouteGenerator routeGenerator,
         final GTUColorer gtuColorer, final String fileName) throws SimRuntimeException, NetworkException
     {
         if (null == lane)
@@ -164,9 +167,11 @@ public class ListGTUGenerator
      */
     protected final void generateCar()
     {
+        // TODO use given position in the constructor?
         Length.Rel initialPosition = new Length.Rel(0, LengthUnit.METER);
-        Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
-        initialPositions.put(this.lane, initialPosition);
+        Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>();
+        // TODO use given directionality in the constructor?
+        initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
         try
         {
             Length.Rel vehicleLength = new Length.Rel(4, LengthUnit.METER);

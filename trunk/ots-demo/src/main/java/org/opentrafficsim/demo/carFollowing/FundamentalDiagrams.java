@@ -4,9 +4,9 @@ import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.LinkedHashSet;
 import java.util.Random;
+import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.swing.JPanel;
@@ -28,6 +28,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
@@ -45,6 +46,7 @@ import org.opentrafficsim.road.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Sensor;
@@ -292,7 +294,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                 Lane sinkLane =
                     new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0), this.lane
                         .getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
-                        LongitudinalDirectionality.FORWARD, this.speedLimit, new OvertakingConditions.None());
+                        LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.None());
                 Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, METER), this.simulator);
                 sinkLane.addSensor(sensor, GTUType.ALL);
             }
@@ -392,8 +394,8 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
         protected final void createBlock() throws RemoteException
         {
             Length.Rel initialPosition = new Length.Rel(4000, METER);
-            Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
-            initialPositions.put(this.getLane(), initialPosition);
+            Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
+            initialPositions.add(new DirectedLanePosition(this.getLane(), initialPosition, GTUDirectionality.DIR_PLUS));
             try
             {
                 this.block =
@@ -425,8 +427,8 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
             boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
             Length.Rel initialPosition = new Length.Rel(0, METER);
             Speed initialSpeed = new Speed(100, KM_PER_HOUR);
-            Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
-            initialPositions.put(this.getLane(), initialPosition);
+            Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
+            initialPositions.add(new DirectedLanePosition(this.getLane(), initialPosition, GTUDirectionality.DIR_PLUS));
             try
             {
                 Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);

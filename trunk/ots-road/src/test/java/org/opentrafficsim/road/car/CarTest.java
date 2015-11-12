@@ -2,8 +2,8 @@ package org.opentrafficsim.road.car;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -28,6 +28,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
@@ -40,6 +41,7 @@ import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -143,8 +145,8 @@ public class CarTest implements UNITS
     {
         Length.Rel length = new Length.Rel(5.0, METER);
         Length.Rel width = new Length.Rel(2.0, METER);
-        Map<Lane, Length.Rel> initialLongitudinalPositions = new HashMap<>();
-        initialLongitudinalPositions.put(lane, initialPosition);
+        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+        initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         return new LaneBasedIndividualCar(id, gtuType, gtuFollowingModel, laneChangeModel,
             initialLongitudinalPositions, initialSpeed, length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(

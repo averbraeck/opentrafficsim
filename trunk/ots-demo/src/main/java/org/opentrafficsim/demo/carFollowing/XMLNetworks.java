@@ -7,10 +7,10 @@ import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.swing.JPanel;
@@ -39,13 +39,12 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.animation.GTUColorer.LegendEntry;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
@@ -56,22 +55,19 @@ import org.opentrafficsim.road.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.following.IDM;
 import org.opentrafficsim.road.gtu.following.IDMPlus;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.road.gtu.lane.changing.FixedLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Sensor;
 import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
-import org.opentrafficsim.road.network.route.FixedLaneBasedRouteGenerator;
-import org.opentrafficsim.road.network.route.LaneBasedRouteGenerator;
-import org.opentrafficsim.road.network.route.ProbabilisticLaneBasedRouteGenerator;
 import org.opentrafficsim.road.network.route.ProbabilisticLaneBasedRouteGenerator.LaneBasedRouteProbability;
 import org.opentrafficsim.road.network.route.RandomLaneBasedRouteNavigator;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
@@ -445,7 +441,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                     {
                         throw new NetworkException("This network should not have lane merge points");
                     }
-                    lane = lane.prevLanes(this.gtuType).iterator().next();
+                    lane = lane.prevLanes(this.gtuType).keySet().iterator().next();
                 }
                 // Follow forward
                 while (true)
@@ -460,7 +456,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                     {
                         throw new NetworkException("Thisnetwork should not have lane split points");
                     }
-                    lane = lane.nextLanes(this.gtuType).iterator().next();
+                    lane = lane.nextLanes(this.gtuType).keySet().iterator().next();
                 }
             }
             this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.999, SECOND), this, this, "drawGraphs",
@@ -515,7 +511,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             Lane sinkLane =
                 new Lane(endLink, lane.getId() + "." + "sinkLane", lane.getLateralCenterPosition(1.0), lane
                     .getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType,
-                    LongitudinalDirectionality.FORWARD, this.speedLimit, new OvertakingConditions.LeftAndRight());
+                    LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.LeftAndRight());
             Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, METER), this.simulator);
             sinkLane.addSensor(sensor, GTUType.ALL);
         }
@@ -535,8 +531,8 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         GTUException
     {
         Length.Rel initialPosition = lane.getLength();
-        Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
-        initialPositions.put(lane, initialPosition);
+        Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
+        initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         GTUFollowingModel gfm =
             new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Time.Rel(
                 java.lang.Double.MAX_VALUE, TimeUnit.SI));
@@ -578,8 +574,8 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         Length.Rel initialPosition = new Length.Rel(16, METER);
         Speed initialSpeed = new Speed(50, KM_PER_HOUR);
-        Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
-        initialPositions.put(lane, initialPosition);
+        Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
+        initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         try
         {
             Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);

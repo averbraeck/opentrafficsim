@@ -8,10 +8,10 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.swing.JComponent;
@@ -38,6 +38,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
@@ -60,6 +61,7 @@ import org.opentrafficsim.road.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Sensor;
@@ -589,8 +591,8 @@ class SequentialModel implements OTSModelInterface, UNITS
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         Length.Rel initialPosition = new Length.Rel(0, METER);
         Speed initialSpeed = new Speed(100, KM_PER_HOUR);
-        Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<Lane, Length.Rel>();
-        initialPositions.put(this.initialLane, initialPosition);
+        Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
+        initialPositions.add(new DirectedLanePosition(this.initialLane, initialPosition, GTUDirectionality.DIR_PLUS));
         try
         {
             Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);

@@ -34,6 +34,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
@@ -234,8 +235,7 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                                 new GTUGeneratorIndividual(lane.getId(), this.simulator, carType,
                                     LaneBasedIndividualCar.class, new IDMPlus(), new Altruistic(), initialSpeedDist,
                                     iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE, startTime,
-                                    endTime, lane, position, /* new RandomLaneBasedRouteGenerator(csLink), */
-                                    new JustDriveRouteGenerator(),
+                                    endTime, lane, position, GTUDirectionality.DIR_PLUS, new JustDriveRouteGenerator(),
                                     makeSwitchableGTUColorer());
                                 try
                                 {
@@ -281,9 +281,8 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                                 new GTUGeneratorIndividual(lane.getId(), this.simulator, carType,
                                     LaneBasedIndividualCar.class, new IDMPlus(), new Altruistic(), initialSpeedDist,
                                     iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE, startTime,
-                                    endTime, lane, position, /*new RandomLaneBasedRouteGenerator(csLink),*/
-                                    new JustDriveRouteGenerator(),
-                                    makeSwitchableGTUColorer());
+                                    endTime, lane, position, GTUDirectionality.DIR_MINUS,
+                                    new JustDriveRouteGenerator(), makeSwitchableGTUColorer());
                                 try
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);

@@ -28,11 +28,11 @@ public class LaneMovementStep
      * </tr>
      * <tr>
      * <td>LateralDirectionality.LEFT:</td>
-     * <td>Move to the Left adjacent lane</td>
+     * <td>Move to the Left adjacent lane, as seen from the GTU in forward driving direction</td>
      * </tr>
      * <tr>
      * <td>LateralDirectionality.RIGHT:</td>
-     * <td>Move to the Right adjacent lane</td>
+     * <td>Move to the Right adjacent lane, as seen from the GTU in forward driving direction</td>
      * </tr>
      * </table>
      */
@@ -49,11 +49,11 @@ public class LaneMovementStep
      *            </tr>
      *            <tr>
      *            <td>LateralDirectionality.LEFT:</td>
-     *            <td>Move to the Left adjacent lane</td>
+     *            <td>Move to the Left adjacent lane, as seen from the GTU in forward driving direction</td>
      *            </tr>
      *            <tr>
      *            <td>LateralDirectionality.RIGHT:</td>
-     *            <td>Move to the Right adjacent lane</td>
+     *            <td>Move to the Right adjacent lane, as seen from the GTU in forward driving direction</td>
      *            </tr>
      *            </table>
      */
@@ -80,11 +80,11 @@ public class LaneMovementStep
      *         </tr>
      *         <tr>
      *         <td>LateralDirectionality.LEFT:</td>
-     *         <td>Move to the Left adjacent lane</td>
+     *         <td>Move to the Left adjacent lane, as seen from the GTU in forward driving direction</td>
      *         </tr>
      *         <tr>
      *         <td>LateralDirectionality.RIGHT:</td>
-     *         <td>Move to the Right adjacent lane</td>
+     *         <td>Move to the Right adjacent lane, as seen from the GTU in forward driving direction</td>
      *         </tr>
      *         </table>
      */

@@ -11,6 +11,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
@@ -46,6 +47,10 @@ class GeneratorTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String positionStr = null;
 
+    /** direction in which to generate the GTU, relative to the design line of the Link. */
+    // TOO parse direction, and add to XML formal
+    GTUDirectionality gtuDirection = GTUDirectionality.DIR_PLUS;
+    
     /** GTU tag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     GTUTag gtuTag = null;
@@ -130,6 +135,15 @@ class GeneratorTag
             throw new NetworkException("GENERATOR: POSITION element not found in elements of link " + linkTag.name
                 + " - roadtype " + linkTag.roadTypeTag.name);
         generatorTag.positionStr = position.getNodeValue().trim();
+
+        /*-
+        // TODO parse direction
+        Node directionStr = attributes.getNamedItem("DIRECTION");
+        if (directionStr == null)
+            throw new NetworkException("GENERATOR: DIRECTION element not found in elements of link " + linkTag.name
+                + " - roadtype " + linkTag.roadTypeTag.name);
+        generatorTag.gtuDirection = parseDirection(directionStr.getNodeValue().trim());
+        */
 
         if (attributes.getNamedItem("GTU") != null)
         {
@@ -279,8 +293,8 @@ class GeneratorTag
         new GTUGeneratorIndividual(generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType, gtuClass,
             generatorTag.gtuTag.followingModel, generatorTag.gtuTag.laneChangeModel, generatorTag.initialSpeedDist,
             generatorTag.iatDist, generatorTag.gtuTag.lengthDist, generatorTag.gtuTag.widthDist,
-            generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime, lane, position, rg,
-            generatorTag.gtuColorer);
+            generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime, lane, position,
+            generatorTag.gtuDirection, rg, generatorTag.gtuColorer);
 
         // TODO GTUMix
         // TODO RouteMix

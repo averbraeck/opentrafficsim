@@ -8,9 +8,9 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.animation.LaneChangeUrgeGTUColorer;
 import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
@@ -77,7 +77,7 @@ public interface LaneBasedGTU extends GTU
      * @param position the position on the lane.
      * @throws NetworkException on network inconsistency
      */
-    void enterLane(Lane lane, Length.Rel position, LongitudinalDirectionality gtuDirection) throws NetworkException;
+    void enterLane(Lane lane, Length.Rel position, GTUDirectionality gtuDirection) throws NetworkException;
 
     /**
      * Unregister the GTU from a lane.

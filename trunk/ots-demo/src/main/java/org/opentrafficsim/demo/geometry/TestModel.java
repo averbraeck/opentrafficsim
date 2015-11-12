@@ -162,10 +162,10 @@ public class TestModel implements OTSModelInterface, UNITS
         Lane laneELL = new NoTrafficLane(link, "ELL", new Length.Rel(8.25, METER), new Length.Rel(8.25, METER), m05, m05);
         Lane laneL1 =
                 new Lane(link, "L1", new Length.Rel(6.25, METER), new Length.Rel(6.25, METER), m35, m35, null,
-                        LongitudinalDirectionality.BACKWARD, speedLimit, new OvertakingConditions.LeftAndRight());
+                        LongitudinalDirectionality.DIR_MINUS, speedLimit, new OvertakingConditions.LeftAndRight());
         Lane laneL2 =
                 new Lane(link, "L2", new Length.Rel(2.75, METER), new Length.Rel(2.75, METER), m35, m35, null,
-                        LongitudinalDirectionality.BACKWARD, speedLimit, new OvertakingConditions.LeftAndRight());
+                        LongitudinalDirectionality.DIR_MINUS, speedLimit, new OvertakingConditions.LeftAndRight());
         Lane laneELM = new NoTrafficLane(link, "ELM", new Length.Rel(0.75, METER), new Length.Rel(0.75, METER), m05, m05);
 
         Shoulder sM = new Shoulder(link, "sM", new Length.Rel(0.0, METER), m10, m10);
@@ -173,10 +173,10 @@ public class TestModel implements OTSModelInterface, UNITS
         Lane laneERM = new NoTrafficLane(link, "ERM", new Length.Rel(-0.75, METER), new Length.Rel(-0.75, METER), m05, m05);
         Lane laneR2 =
                 new Lane(link, "R2", new Length.Rel(-2.75, METER), new Length.Rel(-2.75, METER), m35, m35, null,
-                        LongitudinalDirectionality.FORWARD, speedLimit, new OvertakingConditions.LeftAndRight());
+                        LongitudinalDirectionality.DIR_PLUS, speedLimit, new OvertakingConditions.LeftAndRight());
         Lane laneR1 =
                 new Lane(link, "R1", new Length.Rel(-6.25, METER), new Length.Rel(-6.25, METER), m35, m35, null,
-                        LongitudinalDirectionality.FORWARD, speedLimit, new OvertakingConditions.LeftAndRight());
+                        LongitudinalDirectionality.DIR_PLUS, speedLimit, new OvertakingConditions.LeftAndRight());
         Lane laneERR = new NoTrafficLane(link, "ERR", new Length.Rel(-8.25, METER), new Length.Rel(-8.25, METER), m05, m05);
 
         Shoulder sR = new Shoulder(link, "sR", new Length.Rel(-9.0, METER), m10, m10);

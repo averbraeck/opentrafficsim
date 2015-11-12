@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -25,6 +26,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -37,6 +39,7 @@ import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.following.HeadwayGTU;
 import org.opentrafficsim.road.gtu.following.IDMPlus;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -163,8 +166,9 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         assertEquals("Rightmost lane should not have accessible adjacent lanes on the RIGHT side", 0, lanes[1]
             .accessibleAdjacentLanes(LateralDirectionality.RIGHT, gtuType).size());
 
-        Map<Lane, Length.Rel> initialLongitudinalPositions = new LinkedHashMap<Lane, Length.Rel>();
-        initialLongitudinalPositions.put(lanes[0], new Length.Rel(100, METER));
+        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+        initialLongitudinalPositions.add(new DirectedLanePosition(lanes[0], new Length.Rel(100, METER),
+            GTUDirectionality.DIR_PLUS));
         SimpleSimulator simpleSimulator =
             new SimpleSimulator(new Time.Abs(0, SECOND), new Time.Rel(0, SECOND), new Time.Rel(3600, SECOND), this
             /*
@@ -199,8 +203,10 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         Length.Rel collisionEnd = reference.plus(vehicleLength);
         for (double pos = collisionStart.getSI() + 0.01; pos < collisionEnd.getSI() - 0.01; pos += 0.1)
         {
-            Map<Lane, Length.Rel> otherLongitudinalPositions = new LinkedHashMap<Lane, Length.Rel>();
-            otherLongitudinalPositions.put(lanes[1], new Length.Rel(pos, METER));
+            Set<DirectedLanePosition> otherLongitudinalPositions = new LinkedHashSet<>(1);
+            initialLongitudinalPositions.add(new DirectedLanePosition(lanes[1], new Length.Rel(pos, METER),
+                GTUDirectionality.DIR_PLUS));
+
             LaneBasedIndividualCar collisionCar =
                 new LaneBasedIndividualCar("LaneChangeBlockingCar", gtuType, new IDMPlus(new Acceleration(1,
                     METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER),
@@ -221,8 +227,10 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         }
         for (double pos = 0; pos < 200; pos += 5)
         {
-            Map<Lane, Length.Rel> otherLongitudinalPositions = new LinkedHashMap<Lane, Length.Rel>();
-            otherLongitudinalPositions.put(lanes[1], new Length.Rel(pos, METER));
+            Set<DirectedLanePosition> otherLongitudinalPositions = new LinkedHashSet<>(1);
+            initialLongitudinalPositions.add(new DirectedLanePosition(lanes[1], new Length.Rel(pos, METER),
+                GTUDirectionality.DIR_PLUS));
+
             LaneBasedIndividualCar otherCar =
                 new LaneBasedIndividualCar("OtherCar", gtuType, new IDMPlus(new Acceleration(1, METER_PER_SECOND_2),
                     new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d),
