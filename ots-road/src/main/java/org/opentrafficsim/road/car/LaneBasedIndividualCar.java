@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -26,7 +27,7 @@ import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
-import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.route.LaneBasedRouteGenerator;
 import org.opentrafficsim.road.network.route.LaneBasedRouteNavigator;
 
@@ -72,7 +73,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualCar(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
-        final LaneChangeModel laneChangeModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
+        final LaneChangeModel laneChangeModel, final Set<DirectedLanePosition> initialLongitudinalPositions,
         final Speed initialSpeed, final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
         final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator)
         throws NamingException, NetworkException, SimRuntimeException, GTUException
@@ -105,7 +106,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualCar(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
-        final LaneChangeModel laneChangeModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
+        final LaneChangeModel laneChangeModel, final Set<DirectedLanePosition> initialLongitudinalPositions,
         final Speed initialSpeed, final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
         final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator,
         final Class<? extends Renderable2D> animationClass, final GTUColorer gtuColorer) throws NamingException,
@@ -210,26 +211,6 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         super.destroy();
     }
 
-    /** {@inheritDoc} */
-    public final String toString()
-    {
-        Map<Lane, Length.Rel> frontPositions;
-        try
-        {
-            frontPositions = positions(getFront());
-        }
-        catch (NetworkException exception)
-        {
-            return String.format("Car %s [FRONTPOSITIONS EXCEPTION]", getId());
-        }
-        if (frontPositions.size() == 0)
-        {
-            return String.format("Car %s [NOT ON A LANE]", getId());
-        }
-        Lane frontLane = frontPositions.keySet().iterator().next();
-        return String.format("Car %s front: %s[%s]", getId(), frontLane, frontPositions.get(frontLane));
-    }
-
     /**
      * Build an individual car and use easy setter methods to instantiate the car. Typical use looks like:
      * 
@@ -265,7 +246,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         private GTUType gtuType = null;
 
         /** The initial positions of the car on one or more lanes. */
-        private Map<Lane, Length.Rel> initialLongitudinalPositions = null;;
+        private Set<DirectedLanePosition> initialLongitudinalPositions = null;
 
         /** The initial speed of the car on the lane. */
         private Speed initialSpeed = null;
@@ -342,7 +323,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
          * @return the class itself for chaining the setters
          */
         public final LaneBasedIndividualCarBuilder setInitialLongitudinalPositions(
-            final Map<Lane, Length.Rel> initialLongitudinalPositions)
+            final Set<DirectedLanePosition> initialLongitudinalPositions)
         {
             this.initialLongitudinalPositions = initialLongitudinalPositions;
             return this;
@@ -446,7 +427,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         /**
          * @return initialLongitudinalPositions.
          */
-        public final Map<Lane, Length.Rel> getInitialLongitudinalPositions()
+        public final Set<DirectedLanePosition> getInitialLongitudinalPositions()
         {
             return this.initialLongitudinalPositions;
         }

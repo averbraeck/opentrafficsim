@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -23,6 +24,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedTemplateGTU;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 
@@ -61,7 +63,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      * @throws GTUException when gtuFollowingModel is null
      */
     public LaneBasedTemplateCar(final String id, final TemplateGTUType templateGtuType,
-        final GTUFollowingModel gtuFollowingModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
+        final GTUFollowingModel gtuFollowingModel, final Set<DirectedLanePosition> initialLongitudinalPositions,
         final Speed initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator) throws NamingException,
         NetworkException, SimRuntimeException, GTUException
     {
@@ -84,7 +86,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      * @throws GTUException when gtuFollowingModel is null
      */
     public LaneBasedTemplateCar(final String id, final TemplateGTUType templateGtuType,
-        final GTUFollowingModel gtuFollowingModel, final Map<Lane, Length.Rel> initialLongitudinalPositions,
+        final GTUFollowingModel gtuFollowingModel, final Set<DirectedLanePosition> initialLongitudinalPositions,
         final Speed initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator,
         final Class<? extends Renderable2D> animationClass) throws NamingException, NetworkException,
         SimRuntimeException, GTUException
@@ -213,7 +215,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
         private TemplateGTUType templateGtuType = null;
 
         /** the initial positions of the car on one or more lanes. */
-        private Map<Lane, Length.Rel> initialLongitudinalPositions = null;;
+        private Set<DirectedLanePosition> initialLongitudinalPositions = null;
 
         /** the initial speed of the car on the lane. */
         private Speed initialSpeed = null;
@@ -252,7 +254,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
          * @return the class itself for chaining the setters
          */
         public final LaneBasedTemplateCarBuilder setInitialLongitudinalPositions(
-            final Map<Lane, Length.Rel> initialLongitudinalPositions)
+            final Set<DirectedLanePosition> initialLongitudinalPositions)
         {
             this.initialLongitudinalPositions = initialLongitudinalPositions;
             return this;

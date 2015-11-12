@@ -171,11 +171,11 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                         }
                     }
                     // Any compulsory lane change(s) have been performed and there is guaranteed a compatible next lane.
-                    for (Lane nextLane : currentLane.nextLanes(gtu.getGTUType()))
+                    for (Lane nextLane : currentLane.nextLanes(gtu.getGTUType()).keySet())
                     {
                         if (nextLane.getLaneType().isCompatible(gtu.getGTUType()))
                         {
-                            currentLane = currentLane.nextLanes(gtu.getGTUType()).iterator().next();
+                            currentLane = currentLane.nextLanes(gtu.getGTUType()).keySet().iterator().next();
                             break;
                         }
                     }
@@ -228,7 +228,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                 Lane l = (Lane) cse;
                 if (l.getLaneType().isCompatible(gtu.getGTUType()))
                 {
-                    for (Lane connectingLane : l.nextLanes(gtu.getGTUType()))
+                    for (Lane connectingLane : l.nextLanes(gtu.getGTUType()).keySet())
                     {
                         if (connectingLane.getParentLink() == linkAfterBranch
                             && connectingLane.getLaneType().isCompatible(gtu.getGTUType()))

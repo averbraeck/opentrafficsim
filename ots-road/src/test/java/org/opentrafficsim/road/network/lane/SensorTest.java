@@ -2,8 +2,7 @@ package org.opentrafficsim.road.network.lane;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -22,6 +21,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.OTSNode;
@@ -83,9 +83,10 @@ public class SensorTest implements UNITS
             lane.addSensor(sensor, GTUType.ALL);
         }
 
-        Map<Lane, Length.Rel> initialLongitudinalPositions = new HashMap<Lane, Length.Rel>();
         Length.Rel positionA = new Length.Rel(100, METER);
-        initialLongitudinalPositions.put(lanesA[1], positionA);
+        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+        initialLongitudinalPositions.add(new DirectedLanePosition(lanesA[1], positionA, GTUDirectionality.DIR_PLUS));
+
         // A Car needs an initial speed
         Speed initialSpeed = new Speed(50, KM_PER_HOUR);
         // Length of the Car

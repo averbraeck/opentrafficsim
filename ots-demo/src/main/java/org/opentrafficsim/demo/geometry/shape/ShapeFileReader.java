@@ -435,7 +435,7 @@ public final class ShapeFileReader implements UNITS
             for (int i = -1; i <= 1; i += 2)
             {
                 LongitudinalDirectionality dir =
-                    (i < 0) ? LongitudinalDirectionality.FORWARD : LongitudinalDirectionality.BACKWARD;
+                    (i < 0) ? LongitudinalDirectionality.DIR_PLUS : LongitudinalDirectionality.DIR_MINUS;
                 //
                 Lane laneEM =
                     new NoTrafficLane(link, "EM", new Length.Rel(i * 0.75, METER), new Length.Rel(i * 0.75, METER),
@@ -502,7 +502,7 @@ public final class ShapeFileReader implements UNITS
             for (int i = -1; i <= 1; i += 2)
             {
                 LongitudinalDirectionality dir =
-                    (i < 0) ? LongitudinalDirectionality.FORWARD : LongitudinalDirectionality.BACKWARD;
+                    (i < 0) ? LongitudinalDirectionality.DIR_PLUS : LongitudinalDirectionality.DIR_MINUS;
                 double lat = middenberm ? 0.5 : 0.0;
                 for (int j = 0; j < n; j++)
                 {
@@ -536,7 +536,7 @@ public final class ShapeFileReader implements UNITS
         {
             Lane lane =
                 new Lane(link, "lane", new Length.Rel(0.0, METER), new Length.Rel(0.0, METER), m60, m60, null,
-                    LongitudinalDirectionality.FORWARD, speedLimit, new OvertakingConditions.LeftAndRight());
+                    LongitudinalDirectionality.DIR_PLUS, speedLimit, new OvertakingConditions.LeftAndRight());
             new LaneAnimation(lane, simulator, Color.DARK_GRAY);
         }
         catch (NamingException | RemoteException | OTSGeometryException ne)

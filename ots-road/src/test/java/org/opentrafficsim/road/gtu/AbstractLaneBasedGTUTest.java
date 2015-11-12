@@ -5,9 +5,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -24,6 +25,7 @@ import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -36,6 +38,7 @@ import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.changing.FixedLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.road.network.factory.LaneFactory;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
@@ -75,23 +78,26 @@ public class AbstractLaneBasedGTUTest implements UNITS
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModel();
         final SimpleSimulatorInterface simulator =
-            new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND), model);
+            new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND),
+                model);
 
         Lane[] lanesGroupA =
-            LaneFactory
-                .makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new Speed(100, KM_PER_HOUR), simulator);
+            LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new Speed(100, KM_PER_HOUR),
+                simulator);
         // A GTU can exist on several lanes at once; create another lane group to test that
         OTSNode nodeBFrom = new OTSNode("BFrom", new OTSPoint3D(10, 0, 0));
         OTSNode nodeBTo = new OTSNode("BTo", new OTSPoint3D(1000, 100, 0));
         Lane[] lanesGroupB =
-            LaneFactory
-                .makeMultiLane("B", nodeBFrom, nodeBTo, null, 3, laneType, new Speed(100, KM_PER_HOUR), simulator);
-        Map<Lane, Length.Rel> initialLongitudinalPositions = new LinkedHashMap<Lane, Length.Rel>();
+            LaneFactory.makeMultiLane("B", nodeBFrom, nodeBTo, null, 3, laneType, new Speed(100, KM_PER_HOUR),
+                simulator);
+        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
 
         Length.Rel positionA = new Length.Rel(100, METER);
-        initialLongitudinalPositions.put(lanesGroupA[1], positionA);
+        initialLongitudinalPositions
+            .add(new DirectedLanePosition(lanesGroupA[1], positionA, GTUDirectionality.DIR_PLUS));
         Length.Rel positionB = new Length.Rel(90, METER);
-        initialLongitudinalPositions.put(lanesGroupB[1], positionB);
+        initialLongitudinalPositions
+            .add(new DirectedLanePosition(lanesGroupB[1], positionB, GTUDirectionality.DIR_PLUS));
         // A Car needs a CarFollowingModel
         Acceleration acceleration = new Acceleration(2, METER_PER_SECOND_2);
         Time.Rel validFor = new Time.Rel(10, SECOND);
@@ -118,8 +124,9 @@ public class AbstractLaneBasedGTUTest implements UNITS
         CompleteRoute route = new CompleteRoute("Route", gtuType, nodeList);
         // Now we can make a GTU
         LaneBasedIndividualCar car =
-            new LaneBasedIndividualCar(carID, gtuType, gfm, laneChangeModel, initialLongitudinalPositions, initialSpeed,
-                carLength, carWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(route), simulator);
+            new LaneBasedIndividualCar(carID, gtuType, gfm, laneChangeModel, initialLongitudinalPositions,
+                initialSpeed, carLength, carWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(route),
+                simulator);
         // Now we can verify the various fields in the newly created Car
         assertEquals("ID of the car should be identical to the provided one", carID, car.getId());
         assertEquals("GTU following model should be identical to the provided one", gfm, car.getGTUFollowingModel());
@@ -131,8 +138,8 @@ public class AbstractLaneBasedGTUTest implements UNITS
         assertEquals("front in lanesGroupB[1] is positionB", positionB.getSI(), car.position(lanesGroupB[1],
             car.getReference()).getSI(), 0.0001);
         assertEquals("acceleration is 0", 0, car.getAcceleration().getSI(), 0.00001);
-        assertEquals("longitudinal velocity is " + initialSpeed, initialSpeed.getSI(),
-            car.getLongitudinalVelocity().getSI(), 0.00001);
+        assertEquals("longitudinal velocity is " + initialSpeed, initialSpeed.getSI(), car.getLongitudinalVelocity()
+            .getSI(), 0.00001);
         assertEquals("lastEvaluation time is 0", 0, car.getLastEvaluationTime().getSI(), 0.00001);
         // Test the position(Lane, RelativePosition) method
         try
@@ -220,9 +227,10 @@ public class AbstractLaneBasedGTUTest implements UNITS
 
             if (stepTime.getSI() > 0)
             {
-                assertEquals("nextEvaluation time is " + validFor, validFor.getSI(), car.getNextEvaluationTime().getSI(),
-                    0.0001);
-                assertEquals("acceleration is " + acceleration, acceleration.getSI(), car.getAcceleration().getSI(), 0.00001);
+                assertEquals("nextEvaluation time is " + validFor, validFor.getSI(), car.getNextEvaluationTime()
+                    .getSI(), 0.0001);
+                assertEquals("acceleration is " + acceleration, acceleration.getSI(), car.getAcceleration().getSI(),
+                    0.00001);
             }
             Speed longitudinalVelocity = car.getLongitudinalVelocity();
             double expectedLongitudinalVelocity = initialSpeed.getSI() + stepTime.getSI() * acceleration.getSI();
@@ -278,8 +286,8 @@ public class AbstractLaneBasedGTUTest implements UNITS
                                 }
                                 // System.out.println("reported position: " + position);
                                 // System.out.println("expected position: " + expectedPosition);
-                                assertEquals("Position should match initial position", expectedPosition.getSI(), position
-                                    .getSI(), 0.0001);
+                                assertEquals("Position should match initial position", expectedPosition.getSI(),
+                                    position.getSI(), 0.0001);
                             }
                         }
                         catch (NetworkException ne)
@@ -336,9 +344,9 @@ public class AbstractLaneBasedGTUTest implements UNITS
         OTSNode nodeCFrom = new OTSNode("CFrom", new OTSPoint3D(10, 100, 0));
         OTSNode nodeCTo = new OTSNode("CTo", new OTSPoint3D(1000, 0, 0));
         Lane[] lanesGroupC =
-            LaneFactory
-                .makeMultiLane("C", nodeCFrom, nodeCTo, null, 3, laneType, new Speed(100, KM_PER_HOUR), simulator);
-        car.enterLane(lanesGroupC[0], new Length.Rel(0.0, LengthUnit.SI));
+            LaneFactory.makeMultiLane("C", nodeCFrom, nodeCTo, null, 3, laneType, new Speed(100, KM_PER_HOUR),
+                simulator);
+        car.enterLane(lanesGroupC[0], new Length.Rel(0.0, LengthUnit.SI), GTUDirectionality.DIR_PLUS);
         for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
         {
             Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
@@ -424,7 +432,7 @@ class DummyModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        
+
     {
         if (null == this.simulator)
         {

@@ -18,6 +18,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -46,7 +47,6 @@ import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
  * initial version Aug 19, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
 public class Lane extends CrossSectionElement implements Serializable
 {
@@ -84,45 +84,50 @@ public class Lane extends CrossSectionElement implements Serializable
      * MOTORCYCLE, etc.), can drive 120 km/h, but trucks are allowed only 90 km/h. In that case, set the speed limit for
      * GTUType.ALL to 120 km/h, and for TRUCK to 90 km/h.
      */
+    // TODO allow for direction-dependent speed limit
     private Map<GTUType, Speed> speedLimitMap;
 
     /**
      * Sensors on the lane to trigger behavior of the GTU, sorted by longitudinal position. The triggering of sensors is done
      * per GTU type, so different GTUs can trigger different sensors.
      */
+    // TODO allow for direction-dependent sensors
     private final SortedMap<Double, List<GTUTypeSensor>> sensors = new TreeMap<>();
 
     /** GTUs ordered by increasing longitudinal position. */
     private final List<LaneBasedGTU> gtuList = new ArrayList<LaneBasedGTU>();
 
     /**
-     * Adjacent left lanes that some GTU types can change onto. Initially null so we can calculate and cache the first time the
-     * method is called.
+     * Adjacent left lanes that some GTU types can change onto. Left is defined relative to the direction of the design line of
+     * the link (and the direction of the center line of the lane). In terms of offsets, 'left' lanes always have a more
+     * positive offset than the current lane. Initially null so we can calculate and cache the first time the method is called.
      */
     private Map<GTUType, Set<Lane>> leftNeighbors = null;
 
     /**
-     * Adjacent right lanes that some GTU types can change onto. Initially null so we can calculate and cache the first time the
-     * method is called.
+     * Adjacent right lanes that some GTU types can change onto. Right is defined relative to the direction of the design line
+     * of the link (and the direction of the center line of the lane). In terms of offsets, 'right' lanes always have a more
+     * negative offset than the current lane. Initially null so we can calculate and cache the first time the method is called.
      */
     private Map<GTUType, Set<Lane>> rightNeighbors = null;
 
     /**
-     * Next lane(s) following this lane that some GTU types can drive onto. Initially null so we can calculate and cache the
-     * first time the method is called.
+     * Next lane(s) following this lane that some GTU types can drive from or onto. Next is defined in the direction of the
+     * design line. Initially null so we can calculate and cache the first time the method is called.
      */
-    private Map<GTUType, Set<Lane>> nextLanes = null;
+    private Map<GTUType, Map<Lane, GTUDirectionality>> nextLanes = null;
 
     /**
-     * Previous lane(s) preceding this lane that some GTU types can drive onto. Initially null so we can calculate and cache the
-     * first time the method is called.
+     * Previous lane(s) preceding this lane that some GTU types can drive from or onto. Previous is defined relative to the
+     * direction of the design line. Initially null so we can calculate and cache the first time the method is called.
      */
-    private Map<GTUType, Set<Lane>> prevLanes = null;
+    private Map<GTUType, Map<Lane, GTUDirectionality>> prevLanes = null;
 
     /** List of graphs that want to sample GTUs on this Lane. */
     private ArrayList<LaneBasedGTUSampler> samplers = new ArrayList<LaneBasedGTUSampler>();
 
     /** the conditions for overtaking another GTU, viewed from this lane. */
+    // TODO allow for direction-dependent overtaking conditions
     private final OvertakingConditions overtakingConditions;
 
     /**
@@ -191,7 +196,9 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * Retrieve one of the sets of neighboring Lanes that is accessible for the given type of GTU. A defensive copy of the
      * internal data structure is returned.
-     * @param direction LateralDirectionality; either LEFT or RIGHT, relative to the DESIGN LINE of the link
+     * @param direction LateralDirectionality; either LEFT or RIGHT, relative to the DESIGN LINE of the link (and the direction
+     *            of the center line of the lane). In terms of offsets, 'left' lanes always have a more positive offset than the
+     *            current lane, and 'right' lanes a more negative offset.
      * @param gtuType the GTU type to check the accessibility for
      * @return Set&lt;Lane&gt;; the indicated set of neighboring Lanes
      */
@@ -627,6 +634,7 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
+     * TODO WHAT DOES AFTER MEAN? In the driving direction of a GTU? In the 'absolute' direction of the design line?
      * @param position the front position after which the relative position of a GTU will be searched.
      * @param relativePosition the relative position of the GTU we are looking for.
      * @param when the time for which to evaluate the positions.
@@ -661,6 +669,7 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
+     * TODO WHAT DOES BEFORE MEAN? In the driving direction of a GTU? In the 'absolute' direction of the design line?
      * @param position the front position before which the relative position of a GTU will be searched.
      * @param relativePosition the relative position of the GTU we are looking for.
      * @param when the time for which to evaluate the positions.
@@ -695,53 +704,28 @@ public class Lane extends CrossSectionElement implements Serializable
         return null;
     }
 
-    /**
-     * Are two cross section elements laterally well enough aligned to be longitudinally connected?
-     * @param incomingCSE CrossSectionElement; the cross section element where the end position is considered
-     * @param outgoingCSE CrossSectionElement; the cross section element where the begin position is considered
-     * @param margin DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum accepted alignment error
-     * @return boolean; true if the two cross section elements are well enough aligned to be connected
-     */
-    private boolean laterallyCloseEnough(final CrossSectionElement incomingCSE, final CrossSectionElement outgoingCSE,
-        final Length.Rel margin)
-    {
-        try
-        {
-            // XXX: this is not just about lateral... it is also about distance in general!
-            // TODO should direction play a role? What is incoming, outgoing?
-            return incomingCSE.getCenterLine().get(incomingCSE.getCenterLine().size() - 1).distance(
-                outgoingCSE.getCenterLine().get(0)).si <= margin.getSI();
-        }
-        catch (OTSGeometryException exception)
-        {
-            exception.printStackTrace();
-            return false;
-        }
-        // return Math.abs(incomingCSE.getDesignLineOffsetAtEnd().getSI() //
-        // - outgoingCSE.getDesignLineOffsetAtBegin().getSI()) <= margin.getSI();
-    }
-
     /*
      * TODO only center position? Or also width? What is a good cutoff? Base on average width of the GTU type that can drive on
      * this Lane? E.g., for a Tram or Train, a 5 cm deviation is a problem; for a Car or a Bicycle, more deviation is
      * acceptable.
      */
     /** Lateral alignment margin for longitudinally connected Lanes. */
-    static final Length.Rel LATERAL_MARGIN = new Length.Rel(0.5, LengthUnit.METER);
+    static final Length.Rel MARGIN = new Length.Rel(0.5, LengthUnit.METER);
 
     /**
+     * NextLanes returns the successor lane(s) in the design line direction, if any exist.<br>
      * The next lane(s) are cached, as it is too expensive to make the calculation every time. There are several possibilities:
-     * returning an empty set when the lane stops and there is no longitudinal transfer method to a next lane. Returning a set
-     * with just one lane if the lateral position of the next lane matches the lateral position of this lane (based on an
-     * overlap of the lateral positions of the two joining lanes of more than a certain percentage). Multiple lanes in case the
-     * Node where the underlying Link for this Lane has multiple outgoing Links, and there are multiple lanes that match the
-     * lateral position of this lane.<br>
+     * (1) Returning an empty set when there is no successor lane in the design direction or there is no longitudinal transfer
+     * possible to a successor lane in the design direction. (2) Returning a set with just one lane if the lateral position of
+     * the successor lane matches the lateral position of this lane (based on an overlap of the lateral positions of the two
+     * joining lanes of more than a certain percentage). (3) Multiple lanes in case the Node where the underlying Link for this
+     * Lane has multiple "outgoing" Links, and there are multiple lanes that match the lateral position of this lane.<br>
      * The next lanes can differ per GTU type. For instance, a lane where cars and buses are allowed can have a next lane where
      * only buses are allowed, forcing the cars to leave that lane.
      * @param gtuType the GTU type for which we return the next lanes.
      * @return set of Lanes following this lane for the given GTU type.
      */
-    public final Set<Lane> nextLanes(final GTUType gtuType)
+    public final Map<Lane, GTUDirectionality> nextLanes(final GTUType gtuType)
     {
         if (this.nextLanes == null)
         {
@@ -749,18 +733,27 @@ public class Lane extends CrossSectionElement implements Serializable
         }
         if (!this.nextLanes.containsKey(gtuType))
         {
-            Set<Lane> laneSet = new LinkedHashSet<>(1);
-            this.nextLanes.put(gtuType, laneSet);
+            Map<Lane, GTUDirectionality> laneMap = new LinkedHashMap<>(1);
+            this.nextLanes.put(gtuType, laneMap);
             // Construct (and cache) the result.
             for (Link link : getParentLink().getEndNode().getLinks())
             {
-                if (link instanceof CrossSectionLink)
+                if (!(link.equals(this.getParentLink())) && link instanceof CrossSectionLink)
                 {
                     for (CrossSectionElement cse : ((CrossSectionLink) link).getCrossSectionElementList())
                     {
-                        if (cse instanceof Lane && laterallyCloseEnough(this, cse, LATERAL_MARGIN))
+                        if (cse instanceof Lane)
                         {
-                            laneSet.add((Lane) cse);
+                            Length.Rel df = this.getCenterLine().getLast().distance(cse.getCenterLine().getFirst());
+                            Length.Rel dl = this.getCenterLine().getLast().distance(cse.getCenterLine().getLast());
+                            if (df.lt(MARGIN) && df.lt(dl))
+                            {
+                                laneMap.put((Lane) cse, GTUDirectionality.DIR_PLUS);
+                            }
+                            else if (dl.lt(MARGIN) && dl.lt(df))
+                            {
+                                laneMap.put((Lane) cse, GTUDirectionality.DIR_MINUS);
+                            }
                         }
                     }
                 }
@@ -770,18 +763,20 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
+     * PrevLanes returns the predecessor lane(s) relative to the design line direction, if any exist.<br>
      * The previous lane(s) are cached, as it is too expensive to make the calculation every time. There are several
-     * possibilities: returning an empty set when the lane starts and there is no longitudinal transfer method from a previous
-     * lane. Returning a set with just one lane if the lateral position of the previous lane matches the lateral position of
-     * this lane (based on an overlap of the lateral positions of the two joining lanes of more than a certain percentage).
-     * Multiple lanes in case the Node where the underlying Link for this Lane has multiple incoming Links, and there are
-     * multiple lanes that match the lateral position of this lane. <br>
+     * possibilities: (1) Returning an empty set when there is no predecessor lane relative to the design direction or there is
+     * no longitudinal transfer possible to a predecessor lane relative to the design direction. (2) Returning a set with just
+     * one lane if the lateral position of the predecessor lane matches the lateral position of this lane (based on an overlap
+     * of the lateral positions of the two joining lanes of more than a certain percentage). (3) Multiple lanes in case the Node
+     * where the underlying Link for this Lane has multiple "incoming" Links, and there are multiple lanes that match the
+     * lateral position of this lane.<br>
      * The previous lanes can differ per GTU type. For instance, a lane where cars and buses are allowed can be preceded by a
      * lane where only buses are allowed.
      * @param gtuType the GTU type for which we return the next lanes.
      * @return set of Lanes following this lane for the given GTU type.
      */
-    public final Set<Lane> prevLanes(final GTUType gtuType)
+    public final Map<Lane, GTUDirectionality> prevLanes(final GTUType gtuType)
     {
         if (this.prevLanes == null)
         {
@@ -789,18 +784,27 @@ public class Lane extends CrossSectionElement implements Serializable
         }
         if (!this.prevLanes.containsKey(gtuType))
         {
-            Set<Lane> laneSet = new LinkedHashSet<>(1);
-            this.prevLanes.put(gtuType, laneSet);
+            Map<Lane, GTUDirectionality> laneMap = new LinkedHashMap<>(1);
+            this.prevLanes.put(gtuType, laneMap);
             // Construct (and cache) the result.
             for (Link link : getParentLink().getStartNode().getLinks())
             {
-                if (link instanceof CrossSectionLink)
+                if (!(link.equals(this.getParentLink())) && link instanceof CrossSectionLink)
                 {
                     for (CrossSectionElement cse : ((CrossSectionLink) link).getCrossSectionElementList())
                     {
-                        if (cse instanceof Lane && laterallyCloseEnough(cse, this, LATERAL_MARGIN))
+                        if (cse instanceof Lane)
                         {
-                            laneSet.add((Lane) cse);
+                            Length.Rel df = this.getCenterLine().getFirst().distance(cse.getCenterLine().getFirst());
+                            Length.Rel dl = this.getCenterLine().getFirst().distance(cse.getCenterLine().getLast());
+                            if (df.lt(MARGIN) && df.lt(dl))
+                            {
+                                laneMap.put((Lane) cse, GTUDirectionality.DIR_MINUS);
+                            }
+                            else if (dl.lt(MARGIN) && dl.lt(df))
+                            {
+                                laneMap.put((Lane) cse, GTUDirectionality.DIR_PLUS);
+                            }
                         }
                     }
                 }
@@ -812,11 +816,11 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * Determine the set of lanes to the left or to the right of this lane, which are accessible from this lane, or an empty set
      * if no lane could be found. The method takes the LongitidinalDirectionality of the lane into account. In other words, if
-     * we drive FORWARD and look for a lane on the LEFT, and there is a lane but the Directionality of that lane is not FORWARD
-     * or BOTH, it will not be included.<br>
+     * we drive in the DIR_PLUS direction and look for a lane on the LEFT, and there is a lane but the Directionality of that
+     * lane is not DIR_PLUS or DIR_BOTH, it will not be included.<br>
      * A lane is called adjacent to another lane if the lateral edges are not more than a delta distance apart. This means that
      * a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
-     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction. <br>
+     * <b>Note:</b> LEFT and RIGHT are seen from the direction of the GTU, in its forward driving direction. <br>
      * @param lateralDirection LEFT or RIGHT.
      * @param gtuType the type of GTU for which to return the adjacent lanes.
      * @return the set of lanes that are accessible, or null if there is no lane that is accessible with a matching driving

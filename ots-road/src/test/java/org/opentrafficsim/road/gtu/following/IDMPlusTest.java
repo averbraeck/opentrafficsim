@@ -5,8 +5,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -21,12 +21,14 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.changing.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.changing.Egoistic;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
@@ -69,8 +71,8 @@ public class IDMPlusTest implements UNITS
         Speed initialSpeed = new Speed(0, KM_PER_HOUR);
         Length.Rel length = new Length.Rel(5.0, METER);
         Length.Rel width = new Length.Rel(2.0, METER);
-        Map<Lane, Length.Rel> initialLongitudinalPositions = new LinkedHashMap<>();
-        initialLongitudinalPositions.put(lane, initialPosition);
+        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+        initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar referenceCar =
@@ -85,8 +87,9 @@ public class IDMPlusTest implements UNITS
         Length.Rel leaderPosition =
             new Length.Rel(2 + referenceCar.getLength().getSI()
                 + referenceCar.position(lane, referenceCar.getReference(), initialTime).getSI(), METER);
-        Map<Lane, Length.Rel> leaderPositions = new LinkedHashMap<>();
-        leaderPositions.put(lane, leaderPosition);
+        Set<DirectedLanePosition> leaderPositions = new LinkedHashSet<>(1);
+        leaderPositions.add(new DirectedLanePosition(lane, leaderPosition, GTUDirectionality.DIR_PLUS));
+
         // The leader gets a car following model that makes it stay in place for a loooong time
         FixedAccelerationModel fam =
             new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(9999, SECOND));
@@ -102,8 +105,8 @@ public class IDMPlusTest implements UNITS
         leaderPosition =
             new Length.Rel(1000 + (3 + referenceCar.getLength().getSI() + referenceCar.position(lane,
                 referenceCar.getFront(), initialTime).getSI()), METER);
-        leaderPositions = new LinkedHashMap<>();
-        leaderPositions.put(lane, leaderPosition);
+        leaderPositions = new LinkedHashSet<>(1);
+        leaderPositions.add(new DirectedLanePosition(lane, leaderPosition, GTUDirectionality.DIR_PLUS));
         // Exercise the if statement that ignores leaders that are further ahead
         LaneBasedIndividualCar leaderCar2 =
             new LaneBasedIndividualCar("34567", gtuType, fam, laneChangeModel, leaderPositions, initialSpeed, length, width,
@@ -125,8 +128,8 @@ public class IDMPlusTest implements UNITS
         leaderPosition =
             new Length.Rel(-(3 + referenceCar.getLength().getSI() + referenceCar.position(lane, referenceCar.getFront(),
                 initialTime).getSI()), METER);
-        leaderPositions = new LinkedHashMap<>();
-        leaderPositions.put(lane, leaderPosition);
+        leaderPositions = new LinkedHashSet<>(1);
+        leaderPositions.add(new DirectedLanePosition(lane, leaderPosition, GTUDirectionality.DIR_PLUS));
         leaderCar.destroy();
         leaderCar2.destroy();
         leaderCar =
@@ -146,8 +149,8 @@ public class IDMPlusTest implements UNITS
                 new Length.Rel(spareDistance
                     + (3 + referenceCar.getLength().getSI() + referenceCar.position(lane, referenceCar.getFront(),
                         initialTime).getSI()), METER);
-            leaderPositions = new LinkedHashMap<>();
-            leaderPositions.put(lane, leaderPosition);
+            leaderPositions = new LinkedHashSet<>(1);
+            leaderPositions.add(new DirectedLanePosition(lane, leaderPosition, GTUDirectionality.DIR_PLUS));
             leaderCar =
                 new LaneBasedIndividualCar("0", gtuType, fam, laneChangeModel, leaderPositions, initialSpeed, length, width,
                     maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
@@ -170,14 +173,14 @@ public class IDMPlusTest implements UNITS
         leaderPosition =
             new Length.Rel(2 + 3 + referenceCar.getLength().getSI()
                 + referenceCar.position(lane, referenceCar.getFront(), initialTime).getSI(), METER);
-        leaderPositions = new LinkedHashMap<>();
-        leaderPositions.put(lane, leaderPosition);
+        leaderPositions = new LinkedHashSet<>(1);
+        leaderPositions.add(new DirectedLanePosition(lane, leaderPosition, GTUDirectionality.DIR_PLUS));
         // In IDM+ the reference car must have non-zero speed for the leader speed to have any effect
         initialSpeed = new Speed(2, METER_PER_SECOND);
         for (int integerLeaderSpeed = 0; integerLeaderSpeed <= 40; integerLeaderSpeed++)
         {
-            Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<>();
-            initialPositions.put(lane, initialPosition);
+            Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
+            initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
             referenceCar.destroy();
             referenceCar =
                 new LaneBasedIndividualCar("12345", gtuType, carFollowingModel, laneChangeModel, initialPositions,
@@ -206,8 +209,8 @@ public class IDMPlusTest implements UNITS
         // Check that a car that is 100m behind a stationary car accelerates, then decelerates and stops at the right
         // point. (In IDM+ the car oscillates a while around the final position with pretty good damping.)
         initialPosition = new Length.Rel(100, METER);
-        Map<Lane, Length.Rel> initialPositions = new LinkedHashMap<>();
-        initialPositions.put(lane, initialPosition);
+        Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
+        initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         initialSpeed = new Speed(0, METER_PER_SECOND);
         referenceCar.destroy();
         referenceCar =

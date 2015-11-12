@@ -9,6 +9,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
@@ -59,6 +60,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
      * @param maximumSpeedDist distribution of the maximum speed of the GTU
      * @param lane Lane on which newly GTUs are placed
      * @param position position on the lane, relative to the design line of the link
+     * @param direction the direction on the lane in which the GTU has to be generated (DIR_PLUS, or DIR_MINUS)
      * @param routeGenerator RouteGenerator; the route generator that will create a route for each newly constructed GTU
      * @param gtuColorer the GTUColorer to use
      * @throws SimRuntimeException when simulation scheduling fails
@@ -70,12 +72,13 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
         final ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDist,
         final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist,
         final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist,
-        final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist, final long maxGTUs, final Time.Abs startTime,
-        final Time.Abs endTime, final Lane lane, final Length.Rel position, final LaneBasedRouteGenerator routeGenerator,
-        final GTUColorer gtuColorer) throws SimRuntimeException
+        final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist, final long maxGTUs,
+        final Time.Abs startTime, final Time.Abs endTime, final Lane lane, final Length.Rel position,
+        final GTUDirectionality direction, final LaneBasedRouteGenerator routeGenerator, final GTUColorer gtuColorer)
+        throws SimRuntimeException
     {
         super(name, simulator, gtuType, gtuClass, gtuFollowingModel, laneChangeModel, initialSpeedDist,
-            interarrivelTimeDist, maxGTUs, startTime, endTime, lane, position, routeGenerator, gtuColorer);
+            interarrivelTimeDist, maxGTUs, startTime, endTime, lane, position, direction, routeGenerator, gtuColorer);
         this.simulator = simulator;
         this.lengthDist = lengthDist;
         this.widthDist = widthDist;

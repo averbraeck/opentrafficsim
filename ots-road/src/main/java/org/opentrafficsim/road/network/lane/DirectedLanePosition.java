@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.lane;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Length.Rel;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 
 /**
  * <p>
@@ -17,17 +17,17 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 public class DirectedLanePosition
 {
     private final Lane lane;
-    
+
     private final Length.Rel position;
-    
-    private final LongitudinalDirectionality gtuDirection;
+
+    private final GTUDirectionality gtuDirection;
 
     /**
      * @param lane
      * @param position
      * @param gtuDirection
      */
-    public DirectedLanePosition(Lane lane, Rel position, LongitudinalDirectionality gtuDirection)
+    public DirectedLanePosition(Lane lane, Rel position, GTUDirectionality gtuDirection)
     {
         super();
         this.lane = lane;
@@ -54,7 +54,7 @@ public class DirectedLanePosition
     /**
      * @return gtuDirection
      */
-    public final LongitudinalDirectionality getGtuDirection()
+    public final GTUDirectionality getGtuDirection()
     {
         return this.gtuDirection;
     }
@@ -110,4 +110,3 @@ public class DirectedLanePosition
     }
 
 }
-

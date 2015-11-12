@@ -9,8 +9,8 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.swing.JLabel;
 
@@ -28,6 +28,7 @@ import org.jfree.chart.ChartPanel;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.car.CarTest;
@@ -36,6 +37,7 @@ import org.opentrafficsim.road.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.SinkSensor;
@@ -107,8 +109,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         Length.Rel length = new Length.Rel(5.0, METER);
         Length.Rel width = new Length.Rel(2.0, METER);
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
-        Map<Lane, Length.Rel> initialLongitudinalPositions = new HashMap<>();
-        initialLongitudinalPositions.put(lane, carPosition);
+        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+        initialLongitudinalPositions.add(new DirectedLanePosition(lane, carPosition, GTUDirectionality.DIR_PLUS));
         SimpleSimulator simulator =
             new SimpleSimulator(new Time.Abs(0, SECOND), new Time.Rel(0, SECOND), new Time.Rel(1800, SECOND), this);
 

@@ -197,6 +197,22 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
+     * @return the first point on the line
+     */
+    public final OTSPoint3D getFirst()
+    {
+        return this.points[0];
+    }
+
+    /**
+     * @return the last point on the line
+     */
+    public final OTSPoint3D getLast()
+    {
+        return this.points[size() - 1];
+    }
+
+    /**
      * @param i the index of the point to retrieve
      * @return the i-th point of the line.
      * @throws OTSGeometryException when i &lt; 0 or i &gt; the number of points

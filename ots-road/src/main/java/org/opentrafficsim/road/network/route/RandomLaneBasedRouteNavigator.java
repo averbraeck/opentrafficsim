@@ -133,7 +133,7 @@ public class RandomLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavigat
         double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();
         boolean laneConnectedToDestination = false;
         boolean laneIsMyLane = gtu.positions(gtu.getFront()).containsKey(lane);
-        for (Lane nextLane : lane.nextLanes(gtu.getGTUType()))
+        for (Lane nextLane : lane.nextLanes(gtu.getGTUType()).keySet())
         {
             if (nextLane.getParentLink().equals(this.nextNextLinkToVisit))
                 laneConnectedToDestination = true;

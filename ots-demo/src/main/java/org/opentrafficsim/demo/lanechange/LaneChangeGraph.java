@@ -7,9 +7,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.swing.JFrame;
@@ -46,6 +45,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -61,6 +61,7 @@ import org.opentrafficsim.road.gtu.lane.changing.Egoistic;
 import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.changing.LaneMovementStep;
 import org.opentrafficsim.road.network.factory.LaneFactory;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
@@ -124,8 +125,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      * @throws NamingException on ???
      * @throws OTSGeometryException
      */
-    public static void main(final String[] args) throws NamingException, NetworkException,
-        SimRuntimeException, GTUException, OTSGeometryException
+    public static void main(final String[] args) throws NamingException, NetworkException, SimRuntimeException,
+        GTUException, OTSGeometryException
     {
         try
         {
@@ -217,8 +218,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      * @throws SimRuntimeException on ???
      * @throws GTUException on error during GTU construction
      */
-    public static void buildGUI(final String[] args) throws NamingException, NetworkException,
-        SimRuntimeException, GTUException
+    public static void buildGUI(final String[] args) throws NamingException, NetworkException, SimRuntimeException,
+        GTUException
     {
         JPanel mainPanel = new JPanel(new BorderLayout());
         lcs = new LaneChangeGraph("Lane change graphs", mainPanel);
@@ -227,15 +228,15 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         for (int index = 0; index < STANDARDSPEEDS.length; index++)
         {
             lcs.charts[0][index] =
-                new ChartPanel(lcs.createChart(String.format("Egoistic reference car at %.0fkm/h", STANDARDSPEEDS[index]),
-                    STANDARDSPEEDS[index]));
+                new ChartPanel(lcs.createChart(String.format("Egoistic reference car at %.0fkm/h",
+                    STANDARDSPEEDS[index]), STANDARDSPEEDS[index]));
             chartsPanel.setCell(lcs.charts[0][index], index, 0);
         }
         for (int index = 0; index < STANDARDSPEEDS.length; index++)
         {
             lcs.charts[1][index] =
-                new ChartPanel(lcs.createChart(String.format("Altruistic reference car at %.0fkm/h", STANDARDSPEEDS[index]),
-                    STANDARDSPEEDS[index]));
+                new ChartPanel(lcs.createChart(String.format("Altruistic reference car at %.0fkm/h",
+                    STANDARDSPEEDS[index]), STANDARDSPEEDS[index]));
             chartsPanel.setCell(lcs.charts[1][index], index, 1);
         }
         lcs.pack();
@@ -269,26 +270,30 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         final Speed speedLimit = new Speed(120, KM_PER_HOUR);
 
         Lane[] lanes =
-            LaneFactory.makeMultiLane("Road with two lanes", new OTSNode("From", new OTSPoint3D(LOWERBOUND.getSI(), 0, 0)),
-                new OTSNode("To", new OTSPoint3D(UPPERBOUND.getSI(), 0, 0)), null, 2, laneType, speedLimit, null);
+            LaneFactory.makeMultiLane("Road with two lanes", new OTSNode("From", new OTSPoint3D(LOWERBOUND.getSI(), 0,
+                0)), new OTSNode("To", new OTSPoint3D(UPPERBOUND.getSI(), 0, 0)), null, 2, laneType, speedLimit, null);
         // Create the reference vehicle
-        Map<Lane, Length.Rel> initialLongitudinalPositions = new LinkedHashMap<Lane, Length.Rel>();
-        initialLongitudinalPositions.put(lanes[mergeRight ? 0 : 1], new Length.Rel(0, METER));
+        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+        initialLongitudinalPositions.add(new DirectedLanePosition(lanes[mergeRight ? 0 : 1], new Length.Rel(0, METER),
+            GTUDirectionality.DIR_PLUS));
+
         // The reference car only needs a simulator
         // But that needs a model (which this class implements)
         SimpleSimulator simpleSimulator =
-            new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND), this);
+            new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND),
+                this);
         this.carFollowingModel =
             new IDMPlus(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
                 new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
         this.carFollowingModel =
-            new IDM(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
-                new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
+            new IDM(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(
+                2, METER), new Time.Rel(1, SECOND), 1d);
 
         LaneBasedIndividualCar referenceCar =
             new LaneBasedIndividualCar("ReferenceCar", gtuType, this.carFollowingModel, laneChangeModel,
                 initialLongitudinalPositions, referenceSpeed, new Length.Rel(4, METER), new Length.Rel(2, METER),
-                new Speed(150, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simpleSimulator);
+                new Speed(150, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)),
+                simpleSimulator);
         Collection<HeadwayGTU> sameLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         sameLaneGTUs.add(new HeadwayGTU(referenceCar, 0));
         // TODO play with the speed limit
@@ -304,7 +309,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         {
             // Use bisection to home in onto the decision point
             final double delta = 0.1; // [m]
-            final int stepsNeeded = (int) Math.ceil(Math.log(DoubleScalar.minus(high, low).getSI() / delta) / Math.log(2));
+            final int stepsNeeded =
+                (int) Math.ceil(Math.log(DoubleScalar.minus(high, low).getSI() / delta) / Math.log(2));
             for (int step = 0; step < stepsNeeded; step++)
             {
                 Length.Rel mutableMid = low.plus(high).divideBy(2);
@@ -354,19 +360,21 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         final Length.Rel otherCarPosition, final Lane otherCarLane, final Speed deltaV, final boolean mergeRight)
         throws NamingException, NetworkException, SimRuntimeException, GTUException
     {
-        Map<Lane, Length.Rel> initialLongitudinalPositions = new LinkedHashMap<Lane, Length.Rel>();
-        initialLongitudinalPositions.put(otherCarLane, otherCarPosition);
+        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+        initialLongitudinalPositions.add(new DirectedLanePosition(otherCarLane, otherCarPosition,
+            GTUDirectionality.DIR_PLUS));
         LaneBasedIndividualCar otherCar =
             new LaneBasedIndividualCar("otherCar", referenceCar.getGTUType(), this.carFollowingModel, laneChangeModel,
-                initialLongitudinalPositions, referenceCar.getLongitudinalVelocity().plus(deltaV), new Length.Rel(4, METER),
-                new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
+                initialLongitudinalPositions, referenceCar.getLongitudinalVelocity().plus(deltaV), new Length.Rel(4,
+                    METER), new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
                     new CompleteRoute("", GTUType.ALL)), referenceCar.getSimulator());
         Collection<HeadwayGTU> preferredLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         Collection<HeadwayGTU> nonPreferredLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         Length.Rel referenceCarPosition =
             referenceCar.position(referenceCar.positions(referenceCar.getReference()).keySet().iterator().next(),
                 referenceCar.getReference());
-        HeadwayGTU otherGTU = new HeadwayGTU(otherCar, DoubleScalar.minus(otherCarPosition, referenceCarPosition).getSI());
+        HeadwayGTU otherGTU =
+            new HeadwayGTU(otherCar, DoubleScalar.minus(otherCarPosition, referenceCarPosition).getSI());
         if (mergeRight)
         {
             preferredLaneGTUs.add(otherGTU);
@@ -379,8 +387,9 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
         // System.out.println(otherCar);
         LaneMovementStep result =
             laneChangeModel.computeLaneChangeAndAcceleration(referenceCar, sameLaneGTUs, mergeRight ? preferredLaneGTUs
-                : null, mergeRight ? null : nonPreferredLaneGTUs, speedLimit, new Acceleration(0.3, METER_PER_SECOND_2),
-                new Acceleration(0.1, METER_PER_SECOND_2), new Acceleration(-0.3, METER_PER_SECOND_2));
+                : null, mergeRight ? null : nonPreferredLaneGTUs, speedLimit,
+                new Acceleration(0.3, METER_PER_SECOND_2), new Acceleration(0.1, METER_PER_SECOND_2), new Acceleration(
+                    -0.3, METER_PER_SECOND_2));
         // System.out.println(result);
         sameLaneGTUs.remove(otherGTU);
         otherCar.destroy();
