@@ -75,7 +75,7 @@ class PlanViewTag
                 if (geometryTag.spiralTag != null && geometryCount > 1)
                     interpolateSpiral(parser, planViewTag, geometryTag, geometryCount);
                 if (geometryTag.arcTag != null)
-                    interpolateArc(planViewTag, geometryTag, geometryCount);
+                    interpolateArc(planViewTag, geometryTag, geometryCount, roadTag);
                 geometryCount++;
             }
         }
@@ -130,9 +130,10 @@ class PlanViewTag
      * @param planViewTag
      * @param geometryTag
      * @param geometryCount 
+     * @param roadTag 
      * @throws NetworkException 
      */
-    private static void interpolateArc(PlanViewTag planViewTag, GeometryTag geometryTag, int geometryCount) throws NetworkException
+    private static void interpolateArc(PlanViewTag planViewTag, GeometryTag geometryTag, int geometryCount, RoadTag roadTag) throws NetworkException
     {
         double curvature = geometryTag.arcTag.curvature.doubleValue();
         OTSPoint3D start = geometryTag.node.getPoint();
@@ -205,12 +206,12 @@ class PlanViewTag
             y = 0.5f * (pFrom.y + pTo.y) - factor * (pFrom.x - pTo.x);
         }
         OTSPoint3D circleMiddlePoint = new OTSPoint3D(x, y);
-
+        
         //System.out.println("Middle = " + circleMiddlePoint);
 
         // Calculate the two reference angles
         float angle1 = (float) Math.atan2(pFrom.y - circleMiddlePoint.y, pFrom.x - circleMiddlePoint.x);
-        float angle2 = (float) Math.atan2(pTo.y - circleMiddlePoint.y, pTo.x - circleMiddlePoint.x);
+        float angle2 = (float) Math.atan2(pTo.y - circleMiddlePoint.y, pTo.x - circleMiddlePoint.x);        
 
         // Calculate the step.
         double step = pMinDistance / pRadius;
@@ -223,6 +224,17 @@ class PlanViewTag
             angle2 = temp;
 
         }
+        
+        if((pTo.x - circleMiddlePoint.x < 0) && (pTo.y - circleMiddlePoint.y < 0) && (pFrom.y - circleMiddlePoint.y > 0) && (pFrom.x - circleMiddlePoint.x < 0))
+        {
+            float temp = angle1;
+            angle1 = angle2;
+            angle2 = temp;
+            
+            angle1 = (float) (angle1 -Math.PI*2);
+            //angle2 = (float) (angle2 - Math.PI);
+        }
+        
         boolean flipped = false;
         if (!shortest) {
             if (angle2 - angle1 < Math.PI) {
