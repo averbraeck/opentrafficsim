@@ -25,6 +25,7 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.ShoulderAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation;
@@ -305,10 +306,11 @@ class RoadTag
      * @throws NetworkException
      * @throws OTSGeometryException
      * @throws NamingException
+     * @throws RemoteException 
      */
     static void generateRegularRoads(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
             OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws OTSGeometryException, NetworkException,
-            NamingException
+            NamingException, RemoteException
     {
         if (roadTag.junctionId.equals("-1"))
             for (int laneSecIndex = 0; laneSecIndex < roadTag.lanesTag.laneSectionTags.size(); laneSecIndex++)
@@ -379,6 +381,7 @@ class RoadTag
                             new LaneAnimationOD(lane, simulator, color);
                         } catch (RemoteException exception)
                         {
+                            new LinkAnimation(currentLink, simulator, 0.01f);
                             exception.printStackTrace();
                         }
                     } else if (leftLane.type.equals("sidewalk"))
@@ -498,6 +501,7 @@ class RoadTag
                             new LaneAnimationOD(lane, simulator, color);
                         } catch (Exception exception)
                         {
+                            new LinkAnimation(currentLink, simulator, 0.01f);
                             exception.printStackTrace();
                         }
                     } else if (rightLane.type.equals("sidewalk"))
@@ -588,10 +592,11 @@ class RoadTag
      * @throws NetworkException
      * @throws OTSGeometryException
      * @throws NamingException
+     * @throws RemoteException 
      */
     static void generateJunctionRoads(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
             OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws OTSGeometryException, NetworkException,
-            NamingException
+            NamingException, RemoteException
     {
         if (!roadTag.junctionId.equals("-1"))
         {
@@ -732,8 +737,11 @@ class RoadTag
                                     .plus(rightLane.widthTag.c.multiplyBy(Math.pow(ds.doubleValue(), 2)))
                                     .plus(rightLane.widthTag.d.multiplyBy(Math.pow(ds.doubleValue(), 3)));
 
-                    Length.Rel laneWidth_start = rightLane.widthTag.a;
-                    Length.Rel laneWidth_end = rightLane.widthTag.sOffst;
+                    //Length.Rel laneWidth_start = rightLane.widthTag.a;
+                    //Length.Rel laneWidth_end = rightLane.widthTag.sOffst;
+                    
+                    Length.Rel laneWidth_start = halfWidth_Start.multiplyBy(2.0);
+                    Length.Rel laneWidth_end = halfWidth_End.multiplyBy(2.0);
 
                     rightOffset_start = rightOffset_start.minus(laneWidth_start.multiplyBy(0.5));
                     rightOffset_end = rightOffset_end.minus(laneWidth_end.multiplyBy(0.5));
@@ -760,14 +768,22 @@ class RoadTag
                         Color color = Color.gray;
                         
                         Lane lane = null;
+                        
+                        CrossSectionLink newlink = null;
 
                         try
                         {
-                            if(-rightLaneIndex == -1 && newPoint_Start.distance(roadTag.designLine.get(0)).doubleValue()>0.5)
+                            if(-rightLaneIndex == -1)
                             {
                                 OTSPoint3D[] currentLine = roadTag.designLine.getPoints();
                                 List<OTSPoint3D> coordinates = new ArrayList<OTSPoint3D>();
-                                coordinates.add(newPoint_Start);
+                                
+                                double distance = Math.sqrt((newPoint_Start.x - currentLine[0].x) * (newPoint_Start.x - currentLine[0].x) + (newPoint_Start.y - currentLine[0].y) * (newPoint_Start.y - currentLine[0].y) );
+                                
+                                if(distance > 0.1)
+                                    coordinates.add(newPoint_Start);
+                                
+                                //coordinates.add(newPoint_Start);
                                 for (OTSPoint3D point : currentLine)
                                 {
                                     coordinates.add(point);
@@ -775,7 +791,7 @@ class RoadTag
                                 coordinates.add(newPoint_End);
                                 
                                 OTSLine3D designLine = new OTSLine3D(coordinates);
-                                CrossSectionLink newlink =
+                                newlink =
                                         new CrossSectionLink(roadTag.id, roadTag.startNode, roadTag.endNode, LinkType.ALL, designLine,
                                                 LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_LANE);
                                 
@@ -806,6 +822,7 @@ class RoadTag
  
                         } catch (Exception exception)
                         {
+                            new LinkAnimation(newlink, simulator, 0.01f);
                             exception.printStackTrace();
                         }
                     } 

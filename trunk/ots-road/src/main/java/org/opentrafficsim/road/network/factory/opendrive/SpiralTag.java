@@ -1,7 +1,9 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
 import org.djunits.unit.AngleUnit;
+import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Angle;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.w3c.dom.NamedNodeMap;
@@ -23,11 +25,11 @@ class SpiralTag
 {
     /** degree of the curve at the start(s-coordinate?). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Angle.Rel curvStart = null;
+    Length.Rel curvStart = null;
 
     /** degree of the curve at the end(s-coordinate?). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Angle.Rel curvEnd = null;
+    Length.Rel curvEnd = null;
 
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.
@@ -51,11 +53,11 @@ class SpiralTag
 
             Node curvStart = attributes.getNamedItem("curvStart");
             if (curvStart != null)
-                spiralTag.curvStart = new Angle.Rel(Double.parseDouble(curvStart.getNodeValue().trim()), AngleUnit.DEGREE);
+                spiralTag.curvStart = new Length.Rel(Double.parseDouble(curvStart.getNodeValue().trim()), LengthUnit.SI);
 
             Node curvEnd = attributes.getNamedItem("curvEnd");
             if (curvEnd != null)
-                spiralTag.curvEnd = new Angle.Rel(Double.parseDouble(curvEnd.getNodeValue().trim()), AngleUnit.DEGREE);
+                spiralTag.curvEnd = new Length.Rel(Double.parseDouble(curvEnd.getNodeValue().trim()), LengthUnit.SI);
 
             geometryTag.spiralTag = spiralTag;
         }
