@@ -161,7 +161,7 @@ class PlanViewTag
      * @param pMinDistance
      * @param shortest
      * @param side
-     * @return
+     * @return list
      */
     private static List<OTSPoint3D> generateCurve(OTSPoint3D pFrom, OTSPoint3D pTo, float pRadius, float pMinDistance, boolean shortest, boolean side)
     {
