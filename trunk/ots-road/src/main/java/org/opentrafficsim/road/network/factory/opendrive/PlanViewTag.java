@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -142,14 +143,22 @@ class PlanViewTag
         double radius = 1/curvature;
         boolean side = false;
         
-        if(curvature < 0)
-            side = true;
-
-        List<OTSPoint3D> line = generateCurve(start, end, (float)Math.abs(radius), (float) 0.05, true, side);
+        List<OTSPoint3D> line = null;
         
+        if(curvature < 0)
+        {
+            //side = true;            
+            line = generateCurve(end, start, Math.abs(radius), 0.05, true, side);            
+            Collections.reverse(line);                           
+        }
+        else
+        {
+            line = generateCurve(start, end, Math.abs(radius), 0.05, true, side);                       
+        }
+
         OTSLine3D otsLine = new OTSLine3D(line);
 
-        //geometryTag.interLine = otsLine;
+        geometryTag.interLine = otsLine;
 
     }
 
@@ -163,7 +172,7 @@ class PlanViewTag
      * @param side
      * @return list
      */
-    private static List<OTSPoint3D> generateCurve(OTSPoint3D pFrom, OTSPoint3D pTo, float pRadius, float pMinDistance, boolean shortest, boolean side)
+    private static List<OTSPoint3D> generateCurve(OTSPoint3D pFrom, OTSPoint3D pTo, double pRadius, double pMinDistance, boolean shortest, boolean side)
     {
 
         List<OTSPoint3D> pOutPut = new ArrayList<OTSPoint3D>();
@@ -204,7 +213,7 @@ class PlanViewTag
         float angle2 = (float) Math.atan2(pTo.y - circleMiddlePoint.y, pTo.x - circleMiddlePoint.x);
 
         // Calculate the step.
-        float step = pMinDistance / pRadius;
+        double step = pMinDistance / pRadius;
         //System.out.println("Step = " + step);
 
         // Swap them if needed
