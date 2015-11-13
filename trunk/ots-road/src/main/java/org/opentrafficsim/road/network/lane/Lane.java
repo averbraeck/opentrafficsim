@@ -800,11 +800,11 @@ public class Lane extends CrossSectionElement implements Serializable
                             Length.Rel dl = this.getCenterLine().getFirst().distance(cse.getCenterLine().getLast());
                             if (df.lt(MARGIN) && df.lt(dl))
                             {
-                                laneMap.put((Lane) cse, GTUDirectionality.DIR_MINUS);
+                                laneMap.put((Lane) cse, GTUDirectionality.DIR_PLUS);
                             }
                             else if (dl.lt(MARGIN) && dl.lt(df))
                             {
-                                laneMap.put((Lane) cse, GTUDirectionality.DIR_PLUS);
+                                laneMap.put((Lane) cse, GTUDirectionality.DIR_MINUS);
                             }
                         }
                     }

@@ -378,13 +378,13 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             double vl = this.getLength().si;
             double ll = l.getLength().si;
             double d = this.fractionalLinkPositions.get(l) * ll;
-            if (d < -2.0 * vl || d > ll + 2.0 * vl)
-            {
-                System.err.println("GTU " + toString() + " out-of-bounds for a link position with d=" + d + ", vl="
-                    + vl);
-                destroy();
-                return; // Done; do not re-schedule execution of this move method.
-            }
+            // if (d < -2.0 * vl || d > ll + 2.0 * vl)
+            // {
+            // System.err.println("GTU " + toString() + " out-of-bounds for a link position with d=" + d + ", vl="
+            // + vl);
+            // destroy();
+            // return; // Done; do not re-schedule execution of this move method.
+            // }
         }
         Length.Rel maximumForwardHeadway = new Length.Rel(500.0, LengthUnit.METER);
         // TODO 500?
@@ -867,16 +867,15 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     }
                     else
                     {
-                        throw new NetworkException("scheduleTriggers DIR_PLUS for GTU " + toString() + ", lane " + lane
-                            + ", direction not DIR_PLUS or DIR_MINUS");
+                        throw new NetworkException("scheduleTriggers DIR_PLUS for GTU " + toString() + ", nextLane "
+                            + nextLane + ", direction not DIR_PLUS or DIR_MINUS");
                     }
                     getRouteNavigator().visitNextNode();
                 }
             }
 
-            else
-
             // LANE WE COME FROM IS IN MINUS DIRECTION
+            else if (lanesCopy.get(lane).equals(GTUDirectionality.DIR_MINUS))
             {
                 if (frontPosSI >= 0.0 && nextFrontPosSI < 0.0)
                 {
@@ -907,12 +906,18 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                     }
                     else
                     {
-                        throw new NetworkException("scheduleTriggers DIR_MINUS for GTU " + toString() + ", lane "
-                            + lane + ", direction not DIR_PLUS or DIR_MINUS");
+                        throw new NetworkException("scheduleTriggers DIR_MINUS for GTU " + toString() + ", prevLane "
+                            + prevLane + ", direction not DIR_PLUS or DIR_MINUS");
                     }
 
                     getRouteNavigator().visitNextNode();
                 }
+            }
+
+            else
+            {
+                throw new NetworkException("scheduleTriggers for GTU " + toString() + ", lane " + lane
+                    + ", direction not DIR_PLUS or DIR_MINUS");
             }
         }
 
