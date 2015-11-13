@@ -507,6 +507,7 @@ public class Lane extends CrossSectionElement implements Serializable
                     {
                         // the exact time of triggering is based on the distance between the current position of the
                         // relative position on the GTU and the location of the sensor.
+                        // TODO make sure triggering is done right when driving in DIR_MINUS direction
                         double d =
                             sensor.getLongitudinalPositionSI() - referenceStartSI - relativePosition.getDx().getSI();
                         if (d < 0)
