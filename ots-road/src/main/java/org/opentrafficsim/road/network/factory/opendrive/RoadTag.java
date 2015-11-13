@@ -229,6 +229,20 @@ class RoadTag
                                 new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(),
                                         currentGeometryTag.hdg.doubleValue());
                         points.add(point);
+                        
+                        if (currentGeometryTag.interLine != null)
+                        {
+                            for (OTSPoint3D point1 : currentGeometryTag.interLine.getPoints())
+                            {
+/*                                OTSPoint3D lastPoint = coordinates.get(coordinates.size()-1);
+                                double xDiff = lastPoint.x - point.x;
+                                double yDiff = lastPoint.y - point.y;
+                                double distance = (float) Math.sqrt(xDiff * xDiff + yDiff * yDiff); */
+                                //if(distance > 0.01)
+                                points.add(point1);
+                            }
+                        }
+                        
                         to = tempGeometryTags.get(currentIndex);
                         currentIndex++;
                         continue;
@@ -238,6 +252,20 @@ class RoadTag
                                 new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(),
                                         currentGeometryTag.hdg.doubleValue());
                         points.add(point);
+                        
+                        if (currentGeometryTag.interLine != null)
+                        {
+                            for (OTSPoint3D point1 : currentGeometryTag.interLine.getPoints())
+                            {
+/*                                OTSPoint3D lastPoint = coordinates.get(coordinates.size()-1);
+                                double xDiff = lastPoint.x - point.x;
+                                double yDiff = lastPoint.y - point.y;
+                                double distance = (float) Math.sqrt(xDiff * xDiff + yDiff * yDiff); */
+                                //if(distance > 0.01)
+                                points.add(point1);
+                            }
+                        }
+                        
                         // currentIndex++;
                         to = tempGeometryTags.get(currentIndex);
                         // OTSPoint3D[] coordinates = new OTSPoint3D[points.size()];
@@ -276,6 +304,19 @@ class RoadTag
                         new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(),
                                 currentGeometryTag.hdg.doubleValue());
                 points.add(point);
+                
+                if (currentGeometryTag.interLine != null)
+                {
+                    for (OTSPoint3D point1 : currentGeometryTag.interLine.getPoints())
+                    {
+/*                                OTSPoint3D lastPoint = coordinates.get(coordinates.size()-1);
+                        double xDiff = lastPoint.x - point.x;
+                        double yDiff = lastPoint.y - point.y;
+                        double distance = (float) Math.sqrt(xDiff * xDiff + yDiff * yDiff); */
+                        //if(distance > 0.01)
+                        points.add(point1);
+                    }
+                }
             }
 
             // OTSPoint3D[] coordinates = new OTSPoint3D[points.size()];
@@ -348,7 +389,7 @@ class RoadTag
                     Length.Rel laneWidth_end = leftLane.widthTag.sOffst;
 
                     leftOffset_start = leftOffset_start.plus(laneWidth_start.multiplyBy(0.5));
-                    leftOffset_end = leftOffset_end.plus(laneWidth_end.multiplyBy(0.5));
+                    leftOffset_end = leftOffset_end.plus(laneWidth_end.multiplyBy(0.5));                    
 
                     OvertakingConditions overtakingConditions = null;
 
@@ -375,7 +416,8 @@ class RoadTag
                                 new Lane(currentLink, leftLane.id.toString(), leftOffset_start, leftOffset_end,
                                         laneWidth_start, laneWidth_end, LANETYPE_ALL, directionality, speedLimit,
                                         overtakingConditions);
-                        currentLaneSec.lanes.put(leftLane.id, lane);
+                        currentLaneSec.lanes.put(leftLane.id, lane);                        
+                        
                         try
                         {
                             new LaneAnimationOD(lane, simulator, color);
