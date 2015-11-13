@@ -3,10 +3,7 @@ package org.opentrafficsim.core.gtu;
 import java.io.Serializable;
 import java.util.Map;
 
-import javax.media.j3d.Bounds;
-
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -15,7 +12,8 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 
 /**
  * Generalized Travel Unit. <br>
- * A GTU is an object (person, car, ship) that can travel over the infrastructure.
+ * A GTU is an object (person, car, ship) that can travel over the infrastructure. It has a (directed) location, dimensions, and
+ * some properties that all GTUs share. The GTU is not bound to any infrastructure and can travel freely in the world.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -69,13 +67,4 @@ public interface GTU extends LocatableInterface, Serializable
 
     /** @return Length.Abs; the current odometer value. */
     Length.Abs getOdometer();
-    
-    /** {@inheritDoc} */
-    @Override
-    DirectedPoint getLocation();
-    
-    /** {@inheritDoc} */
-    @Override
-    Bounds getBounds();
-
 }
