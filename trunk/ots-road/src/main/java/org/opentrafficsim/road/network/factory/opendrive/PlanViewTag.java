@@ -134,7 +134,7 @@ class PlanViewTag
      * @throws NetworkException 
      */
     private static void interpolateArc(PlanViewTag planViewTag, GeometryTag geometryTag, int geometryCount, RoadTag roadTag) throws NetworkException
-    {
+    {        
         double curvature = geometryTag.arcTag.curvature.doubleValue();
         OTSPoint3D start = geometryTag.node.getPoint();
         OTSPoint3D end = planViewTag.geometryTags.get(geometryCount + 1).node.getPoint();
@@ -294,7 +294,7 @@ class PlanViewTag
                     double xDiff = lastPoint.x - point.x;
                     double yDiff = lastPoint.y - point.y;
                     double distance = (float) Math.sqrt(xDiff * xDiff + yDiff * yDiff); 
-                    if(distance > 0.1)
+                    //if(distance > 0.01)
                         coordinates.add(point);
                 }
             }
