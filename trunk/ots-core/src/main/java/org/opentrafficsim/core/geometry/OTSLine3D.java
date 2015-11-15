@@ -105,7 +105,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
             throw new NetworkException("Degenerate OTSLine3D; has " + points.length + " point"
                 + (points.length != 1 ? "s" : ""));
         }
-        
+
         // clean successive equal points
         ArrayList<OTSPoint3D> pointList = new ArrayList<>(Arrays.asList(points));
         int i = 1;
@@ -120,7 +120,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
                 i++;
             }
         }
-        
+
         return new OTSLine3D(pointList);
     }
 
@@ -437,6 +437,45 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
+     * Truncate a line at the given length (less than the length of the line, and larger than zero) and return a new line.
+     * @param lengthSI the location where to truncate the line
+     * @return a new OTSLine3D truncated at the exact position where line.getLength() == lengthSI
+     * @throws NetworkException when position less than 0.0 or more than line length.
+     */
+    public final OTSLine3D truncate(final double lengthSI) throws NetworkException
+    {
+        makeLengthIndexedLine();
+        if (lengthSI <= 0.0 || lengthSI > getLengthSI())
+        {
+            throw new NetworkException("truncate for line: position <= 0.0 or > line length. Position = " + lengthSI
+                + " m. Length = " + getLengthSI() + " m.");
+        }
+
+        // handle special case: position == length
+        if (lengthSI == getLengthSI())
+        {
+            return new OTSLine3D(getPoints());
+        }
+
+        // find the index of the line segment
+        int index = find(lengthSI);
+        double remainder = lengthSI - this.lengthIndexedLine[index];
+        double fraction = remainder / (this.lengthIndexedLine[index + 1] - this.lengthIndexedLine[index]);
+        OTSPoint3D p1 = this.points[index];
+        OTSPoint3D p2 = this.points[index + 1];
+        OTSPoint3D newLastPoint =
+            new OTSPoint3D(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y), p1.z + fraction
+                * (p2.z - p1.z));
+        OTSPoint3D[] coords = new OTSPoint3D[index + 2];
+        for (int i = 0; i <= index; i++)
+        {
+            coords[i] = this.points[i];
+        }
+        coords[index + 1] = newLastPoint;
+        return new OTSLine3D(coords);
+    }
+
+    /**
      * Calculate the centroid of this line, and the bounds, and cache for later use. Make sure the dx, dy and dz are at least
      * 0.5 m wide.
      */
@@ -495,7 +534,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     {
         return Arrays.toString(this.points);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
@@ -524,5 +563,4 @@ public class OTSLine3D implements LocatableInterface, Serializable
         return true;
     }
 
-    
 }
