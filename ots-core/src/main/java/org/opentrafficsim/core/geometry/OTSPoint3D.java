@@ -141,6 +141,20 @@ public class OTSPoint3D implements LocatableInterface, Serializable
     }
 
     /**
+     * Interpolate (or extrapolate) between (outside) two given points.
+     * @param ratio double; 0 selects the zeroValue point, 1 selects the oneValue point, 0.5 selects a point halfway, etc.
+     * @param zeroValue OTSPoint3D; the point that is returned when ratio equals 0
+     * @param oneValue OTSPoint3D; the point that is returned when ratio equals 1
+     * @return OTSPoint3D
+     */
+    public static OTSPoint3D interpolate(final double ratio, final OTSPoint3D zeroValue, final OTSPoint3D oneValue)
+    {
+        double complement = 1 - ratio;
+        return new OTSPoint3D(ratio * zeroValue.x + complement * oneValue.x, ratio * zeroValue.y + complement * oneValue.y,
+                ratio * zeroValue.z + complement * oneValue.z);
+    }
+
+    /**
      * @param point the point to which the distance has to be calculated.
      * @return the distance in 3D according to Pythagoras, expressed in SI units
      */
@@ -180,17 +194,16 @@ public class OTSPoint3D implements LocatableInterface, Serializable
 
     /** {@inheritDoc} */
     @Override
-    public final DirectedPoint getLocation() 
+    public final DirectedPoint getLocation()
     {
         return getDirectedPoint();
     }
 
     /**
-     * This method returns a sphere with a diameter of half a meter as the default bounds for a point.
-     * {@inheritDoc}
+     * This method returns a sphere with a diameter of half a meter as the default bounds for a point. {@inheritDoc}
      */
     @Override
-    public final Bounds getBounds() 
+    public final Bounds getBounds()
     {
         return new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 0.5);
     }
@@ -222,7 +235,7 @@ public class OTSPoint3D implements LocatableInterface, Serializable
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     public boolean equals(final Object obj)
     {
         if (this == obj)
