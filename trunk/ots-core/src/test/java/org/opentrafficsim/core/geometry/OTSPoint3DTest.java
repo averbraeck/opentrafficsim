@@ -128,4 +128,22 @@ public class OTSPoint3DTest
         assertEquals("z value", expectedZ, otsPoint3D.z, Math.ulp(expectedZ));
     }
 
+    /**
+     * Test the interpolate method.
+     */
+    @Test
+    public void interpolateTest()
+    {
+        OTSPoint3D p0 = new OTSPoint3D(123, 234, 345);
+        OTSPoint3D p1 = new OTSPoint3D(567, 678, 789);
+        for (double ratio : new double[] {0, 1, 0.5, 0.1, -10, 10})
+        {
+            OTSPoint3D pi = OTSPoint3D.interpolate(ratio, p0, p1);
+            assertTrue ("result of interpolate is not null", null != pi);
+            assertEquals("x of interpolate", (1 - ratio) * p0.x + ratio * p1.x, pi.x, 0.00001);
+            assertEquals("y of interpolate", (1 - ratio) * p0.y + ratio * p1.y, pi.y, 0.00001);
+            assertEquals("z of interpolate", (1 - ratio) * p0.z + ratio * p1.z, pi.z, 0.00001);
+        }
+    }
+    
 }
