@@ -183,13 +183,14 @@ public class OTSLine3D implements LocatableInterface, Serializable
         double segmentLength = 0;
         int index = 0;
         List<OTSPoint3D> pointList = new ArrayList<>();
-        System.err.println("interval " + start + ".." + end);
+        //System.err.println("interval " + start + ".." + end);
         while (start > cumulativeLength)
         {
             OTSPoint3D fromPoint = this.points[index];
             index++;
             OTSPoint3D toPoint = this.points[index];
             segmentLength = fromPoint.distanceSI(toPoint);
+            cumulativeLength = nextCumulativeLength;
             nextCumulativeLength = cumulativeLength + segmentLength;
             if (nextCumulativeLength >= start)
             {
@@ -203,6 +204,10 @@ public class OTSLine3D implements LocatableInterface, Serializable
         else
         {
             pointList.add(OTSPoint3D.interpolate((start - cumulativeLength) / segmentLength, this.points[index - 1], this.points[index]));
+            if (end > nextCumulativeLength)
+            {
+                pointList.add(this.points[index]);
+            }
         }
         while (end > nextCumulativeLength)
         {
@@ -214,6 +219,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
             }
             OTSPoint3D toPoint = this.points[index];
             segmentLength = fromPoint.distanceSI(toPoint);
+            cumulativeLength = nextCumulativeLength;
             nextCumulativeLength = cumulativeLength + segmentLength;
             if (nextCumulativeLength >= end)
             {
@@ -227,15 +233,15 @@ public class OTSLine3D implements LocatableInterface, Serializable
         }
         else
         {
-            System.err.println("interpolating between points " + (index - 1) + " and " + index);
+            //System.err.println("interpolating between points " + (index - 1) + " and " + index);
             pointList.add(OTSPoint3D.interpolate((end - cumulativeLength) / segmentLength, this.points[index - 1],
                     this.points[index]));
         }
-        System.err.println("point list is");
-        for (OTSPoint3D p : pointList)
-        {
-            System.err.println("\t" + p);
-        }
+        // System.err.println("point list is");
+        // for (OTSPoint3D p : pointList)
+        // {
+        // System.err.println("\t" + p);
+        // }
         try
         {
             return new OTSLine3D(pointList);

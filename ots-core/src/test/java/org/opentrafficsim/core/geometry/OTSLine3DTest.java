@@ -26,11 +26,7 @@ import com.vividsolutions.jts.geom.LineString;
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version 2 okt. 2015 <br>
- * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
- * @author <a href="http://Hansvanlint.weblog.tudelft.nl">Hans van Lint</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
- * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
 public class OTSLine3DTest
 {
@@ -415,6 +411,264 @@ public class OTSLine3DTest
         assertFalse(
                 "OTSLine3D is not equal ot other OTSLine3D that has fewer points  (but is identical up to the common length)",
                 line2.equals(line));
+    }
+
+    /**
+     * Test the concatenate method.
+     * @throws NetworkException
+     * @throws OTSGeometryException
+     */
+    @Test
+    public void concatenateTest() throws NetworkException, OTSGeometryException
+    {
+        OTSPoint3D p0 = new OTSPoint3D(1.1, 2.2, 3.3);
+        OTSPoint3D p1 = new OTSPoint3D(2.1, 2.2, 3.3);
+        OTSPoint3D p2 = new OTSPoint3D(3.1, 2.2, 3.3);
+        OTSPoint3D p3 = new OTSPoint3D(4.1, 2.2, 3.3);
+        OTSPoint3D p4 = new OTSPoint3D(5.1, 2.2, 3.3);
+        OTSPoint3D p5 = new OTSPoint3D(6.1, 2.2, 3.3);
+
+        OTSLine3D l0 = new OTSLine3D(p0, p1, p2);
+        OTSLine3D l1 = new OTSLine3D(p2, p3);
+        OTSLine3D l2 = new OTSLine3D(p3, p4, p5);
+        OTSLine3D ll = OTSLine3D.concatenate(l0, l1, l2);
+        assertEquals("size is 6", 6, ll.size());
+        assertEquals("point 0 is p0", p0, ll.get(0));
+        assertEquals("point 1 is p1", p1, ll.get(1));
+        assertEquals("point 2 is p2", p2, ll.get(2));
+        assertEquals("point 3 is p3", p3, ll.get(3));
+        assertEquals("point 4 is p4", p4, ll.get(4));
+        assertEquals("point 5 is p5", p5, ll.get(5));
+
+        ll = OTSLine3D.concatenate(l1);
+        assertEquals("size is 2", 2, ll.size());
+        assertEquals("point 0 is p2", p2, ll.get(0));
+        assertEquals("point 1 is p3", p3, ll.get(1));
+
+        try
+        {
+            OTSLine3D.concatenate(l0, l2);
+            fail("Gap should have throw an exception");
+        }
+        catch (OTSGeometryException e)
+        {
+            // Ignore expected exception
+        }
+    }
+
+    /**
+     * Test the reverse method.
+     * @throws NetworkException
+     * @throws OTSGeometryException
+     */
+    @Test
+    public void reverseTest() throws NetworkException, OTSGeometryException
+    {
+        OTSPoint3D p0 = new OTSPoint3D(1.1, 2.2, 3.3);
+        OTSPoint3D p1 = new OTSPoint3D(2.1, 2.2, 3.3);
+        OTSPoint3D p2 = new OTSPoint3D(3.1, 2.2, 3.3);
+        OTSPoint3D p3 = new OTSPoint3D(4.1, 2.2, 3.3);
+        OTSPoint3D p4 = new OTSPoint3D(5.1, 2.2, 3.3);
+        OTSPoint3D p5 = new OTSPoint3D(6.1, 2.2, 3.3);
+
+        OTSLine3D l01 = new OTSLine3D(p0, p1);
+        OTSLine3D r = l01.reverse();
+        assertEquals("result has size 2", 2, r.size());
+        assertEquals("point 0 is p1", p1, r.get(0));
+        assertEquals("point 1 is p0", p0, r.get(1));
+
+        OTSLine3D l05 = new OTSLine3D(p0, p1, p2, p3, p4, p5);
+        r = l05.reverse();
+        assertEquals("result has size 6", 6, r.size());
+        assertEquals("point 0 is p5", p5, r.get(0));
+        assertEquals("point 1 is p4", p4, r.get(1));
+        assertEquals("point 2 is p3", p3, r.get(2));
+        assertEquals("point 3 is p2", p2, r.get(3));
+        assertEquals("point 4 is p1", p1, r.get(4));
+        assertEquals("point 5 is p0", p0, r.get(5));
+
+    }
+
+    /**
+     * Test the extract and extractFraction methods.
+     * @throws NetworkException
+     * @throws OTSGeometryException
+     */
+    @Test
+    public void extractTest() throws NetworkException, OTSGeometryException
+    {
+        OTSPoint3D p0 = new OTSPoint3D(1, 2, 3);
+        OTSPoint3D p1 = new OTSPoint3D(2, 3, 4);
+        OTSPoint3D p2 = new OTSPoint3D(12, 13, 14);
+
+        OTSLine3D l = new OTSLine3D(p0, p1);
+        OTSLine3D e = l.extractFractional(0, 1);
+        assertEquals("size of extraction is 2", 2, e.size());
+        assertEquals("point 0 is p0", p0, e.get(0));
+        assertEquals("point 1 is p1", p1, e.get(1));
+        try
+        {
+            l.extractFractional(-0.1, 1);
+            fail("negative start should have thrown an exception");
+        }
+        catch (OTSGeometryException exception)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            l.extractFractional(Double.NaN, 1);
+            fail("NaN start should have thrown an exception");
+        }
+        catch (OTSGeometryException exception)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            l.extractFractional(0, 1.1);
+            fail("end > 1 should have thrown an exception");
+        }
+        catch (OTSGeometryException exception)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            l.extractFractional(0, Double.NaN);
+            fail("NaN end should have thrown an exception");
+        }
+        catch (OTSGeometryException exception)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            l.extractFractional(0.6, 0.4);
+            fail("start > end should have thrown an exception");
+        }
+        catch (OTSGeometryException exception)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            l.extract(-0.1, 1);
+            fail("negative start should have thrown an exception");
+        }
+        catch (OTSGeometryException exception)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            l.extract(Double.NaN, 1);
+            fail("NaN start should have thrown an exception");
+        }
+        catch (OTSGeometryException exception)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            l.extract(0, l.getLengthSI() + 0.1);
+            fail("end > length should have thrown an exception");
+        }
+        catch (OTSGeometryException exception)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            l.extract(0, Double.NaN);
+            fail("NaN end should have thrown an exception");
+        }
+        catch (OTSGeometryException exception)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            l.extract(0.6, 0.4);
+            fail("start > end should have thrown an exception");
+        }
+        catch (OTSGeometryException exception)
+        {
+            // Ignore expected exception
+        }
+
+        for (int i = 0; i < 10; i++)
+        {
+            for (int j = i + 1; j < 10; j++)
+            {
+                double start = i * l.getLengthSI() / 10;
+                double end = j * l.getLengthSI() / 10;
+                //System.err.println("i=" + i + ", j=" + j);
+                e = l.extract(start, end);
+                assertEquals("size of extract is 2", 2, e.size());
+                assertEquals("x of 0", p0.x + (p1.x - p0.x) * i / 10, e.get(0).x, 0.0001);
+                assertEquals("y of 0", p0.y + (p1.y - p0.y) * i / 10, e.get(0).y, 0.0001);
+                assertEquals("z of 0", p0.z + (p1.z - p0.z) * i / 10, e.get(0).z, 0.0001);
+                assertEquals("x of 1", p0.x + (p1.x - p0.x) * j / 10, e.get(1).x, 0.0001);
+                assertEquals("y of 1", p0.y + (p1.y - p0.y) * j / 10, e.get(1).y, 0.0001);
+                assertEquals("z of 1", p0.z + (p1.z - p0.z) * j / 10, e.get(1).z, 0.0001);
+            }
+        }
+
+        l = new OTSLine3D(p0, p1, p2);
+        for (int i = 0; i < 110; i++)
+        {
+            if (10 == i)
+            {
+                continue;   // results are not entirely predictable due to rounding errors
+            }
+            for (int j = i + 1; j < 110; j++)
+            {
+                if (10 == j)
+                {
+                    continue;   // results are not entirely predictable due to rounding errors
+                }
+                double start = i * l.getLengthSI() / 110;
+                double end = j * l.getLengthSI() / 110;
+                // System.err.println("first length is " + firstLength);
+                // System.err.println("second length is " + l.getLengthSI());
+                // System.err.println("i=" + i + ", j=" + j);
+                e = l.extract(start, end);
+                int expectedSize = i < 10 && j > 10 ? 3 : 2;
+                assertEquals("size is " + expectedSize, expectedSize, e.size());
+                if (i < 10)
+                {
+                    assertEquals("x of 0", p0.x + (p1.x - p0.x) * i / 10, e.get(0).x, 0.0001);
+                    assertEquals("y of 0", p0.y + (p1.y - p0.y) * i / 10, e.get(0).y, 0.0001);
+                    assertEquals("z of 0", p0.z + (p1.z - p0.z) * i / 10, e.get(0).z, 0.0001);
+                }
+                else
+                {
+                    assertEquals("x of 0", p1.x + (p2.x - p1.x) * (i - 10) / 100, e.get(0).x, 0.0001);
+                    assertEquals("y of 0", p1.y + (p2.y - p1.y) * (i - 10) / 100, e.get(0).y, 0.0001);
+                    assertEquals("z of 0", p1.z + (p2.z - p1.z) * (i - 10) / 100, e.get(0).z, 0.0001);
+                }
+                if (j < 10)
+                {
+                    assertEquals("x of 1", p0.x + (p1.x - p0.x) * j / 10, e.get(1).x, 0.0001);
+                    assertEquals("y of 1", p0.y + (p1.y - p0.y) * j / 10, e.get(1).y, 0.0001);
+                    assertEquals("z of 1", p0.z + (p1.z - p0.z) * j / 10, e.get(1).z, 0.0001);
+                }
+                else
+                {
+                    assertEquals("x of last", p1.x + (p2.x - p1.x) * (j - 10) / 100, e.getLast().x, 0.0001);
+                    assertEquals("y of last", p1.y + (p2.y - p1.y) * (j - 10) / 100, e.getLast().y, 0.0001);
+                    assertEquals("z of last", p1.z + (p2.z - p1.z) * (j - 10) / 100, e.getLast().z, 0.0001);
+                }
+                if (e.size() > 2)
+                {
+                    assertEquals("x of mid", p1.x, e.get(1).x, 0.0001);
+                    assertEquals("y of mid", p1.y, e.get(1).y, 0.0001);
+                    assertEquals("z of mid", p1.z, e.get(1).z, 0.0001);
+                }
+            }
+        }
+
     }
 
 }
