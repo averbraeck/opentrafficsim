@@ -59,7 +59,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * @throws NetworkException when the provided points do not constitute a valid line (too few points or identical adjacent
      *             points)
      */
-    public OTSLine3D(final OTSPoint3D[] points) throws NetworkException
+    public OTSLine3D(final OTSPoint3D... points) throws NetworkException
     {
         if (points.length < 2)
         {
@@ -105,9 +105,10 @@ public class OTSLine3D implements LocatableInterface, Serializable
         int nextIndex = 0;
         for (int i = 0; i < lines.length; i++)
         {
-            for (OTSPoint3D p : lines[i].getPoints())
+            OTSLine3D line = lines[i];
+            for (int j = 0 == i ? 0 : 1; j < line.size(); j++)
             {
-                points[nextIndex++] = p;
+                points[nextIndex++] = line.get(j);
             }
         }
         try
@@ -173,7 +174,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
      */
     OTSLine3D extract(double start, double end) throws OTSGeometryException
     {
-        if (start < 0 || start >= end || end > getLength().si)
+        if (Double.isNaN(start) || Double.isNaN(end) || start < 0 || start >= end || end > getLength().si)
         {
             throw new OTSGeometryException("Bad interval");
         }
@@ -182,6 +183,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         double segmentLength = 0;
         int index = 0;
         List<OTSPoint3D> pointList = new ArrayList<>();
+        System.err.println("interval " + start + ".." + end);
         while (start > cumulativeLength)
         {
             OTSPoint3D fromPoint = this.points[index];
@@ -200,9 +202,9 @@ public class OTSLine3D implements LocatableInterface, Serializable
         }
         else
         {
-            OTSPoint3D.interpolate((start - cumulativeLength) / segmentLength, this.points[index - 1], this.points[index]);
+            pointList.add(OTSPoint3D.interpolate((start - cumulativeLength) / segmentLength, this.points[index - 1], this.points[index]));
         }
-        while (end > cumulativeLength)
+        while (end > nextCumulativeLength)
         {
             OTSPoint3D fromPoint = this.points[index];
             index++;
@@ -213,7 +215,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
             OTSPoint3D toPoint = this.points[index];
             segmentLength = fromPoint.distanceSI(toPoint);
             nextCumulativeLength = cumulativeLength + segmentLength;
-            if (nextCumulativeLength >= start)
+            if (nextCumulativeLength >= end)
             {
                 break;
             }
@@ -225,7 +227,14 @@ public class OTSLine3D implements LocatableInterface, Serializable
         }
         else
         {
-            OTSPoint3D.interpolate((start - cumulativeLength) / segmentLength, this.points[index - 1], this.points[index]);
+            System.err.println("interpolating between points " + (index - 1) + " and " + index);
+            pointList.add(OTSPoint3D.interpolate((end - cumulativeLength) / segmentLength, this.points[index - 1],
+                    this.points[index]));
+        }
+        System.err.println("point list is");
+        for (OTSPoint3D p : pointList)
+        {
+            System.err.println("\t" + p);
         }
         try
         {
@@ -233,7 +242,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
         }
         catch (NetworkException exception)
         {
-            throw new OTSGeometryException("interval too short");
+            System.err.println("interval " + start + ".." + end + "too short");
+            throw new OTSGeometryException("interval " + start + ".." + end + "too short");
         }
     }
 
