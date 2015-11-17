@@ -150,8 +150,8 @@ public class OTSPoint3D implements LocatableInterface, Serializable
     public static OTSPoint3D interpolate(final double ratio, final OTSPoint3D zeroValue, final OTSPoint3D oneValue)
     {
         double complement = 1 - ratio;
-        return new OTSPoint3D(ratio * zeroValue.x + complement * oneValue.x, ratio * zeroValue.y + complement * oneValue.y,
-                ratio * zeroValue.z + complement * oneValue.z);
+        return new OTSPoint3D(complement * zeroValue.x + ratio * oneValue.x, complement * zeroValue.y + ratio * oneValue.y,
+                complement * zeroValue.z + ratio * oneValue.z);
     }
 
     /**
