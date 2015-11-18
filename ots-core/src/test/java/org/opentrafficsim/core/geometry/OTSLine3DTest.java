@@ -12,6 +12,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.junit.Test;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -499,6 +500,9 @@ public class OTSLine3DTest
     {
         OTSPoint3D p0 = new OTSPoint3D(1, 2, 3);
         OTSPoint3D p1 = new OTSPoint3D(2, 3, 4);
+        OTSPoint3D p1a = new OTSPoint3D(2.01, 3.01, 4.01);
+        OTSPoint3D p1b = new OTSPoint3D(2.02, 3.02, 4.02);
+        OTSPoint3D p1c = new OTSPoint3D(2.03, 3.03, 4.03);
         OTSPoint3D p2 = new OTSPoint3D(12, 13, 14);
 
         OTSLine3D l = new OTSLine3D(p0, p1);
@@ -603,72 +607,81 @@ public class OTSLine3DTest
             {
                 double start = i * l.getLengthSI() / 10;
                 double end = j * l.getLengthSI() / 10;
-                //System.err.println("i=" + i + ", j=" + j);
-                e = l.extract(start, end);
-                assertEquals("size of extract is 2", 2, e.size());
-                assertEquals("x of 0", p0.x + (p1.x - p0.x) * i / 10, e.get(0).x, 0.0001);
-                assertEquals("y of 0", p0.y + (p1.y - p0.y) * i / 10, e.get(0).y, 0.0001);
-                assertEquals("z of 0", p0.z + (p1.z - p0.z) * i / 10, e.get(0).z, 0.0001);
-                assertEquals("x of 1", p0.x + (p1.x - p0.x) * j / 10, e.get(1).x, 0.0001);
-                assertEquals("y of 1", p0.y + (p1.y - p0.y) * j / 10, e.get(1).y, 0.0001);
-                assertEquals("z of 1", p0.z + (p1.z - p0.z) * j / 10, e.get(1).z, 0.0001);
-            }
-        }
-
-        l = new OTSLine3D(p0, p1, p2);
-        for (int i = 0; i < 110; i++)
-        {
-            if (10 == i)
-            {
-                continue;   // results are not entirely predictable due to rounding errors
-            }
-            for (int j = i + 1; j < 110; j++)
-            {
-                if (10 == j)
-                {
-                    continue;   // results are not entirely predictable due to rounding errors
-                }
-                double start = i * l.getLengthSI() / 110;
-                double end = j * l.getLengthSI() / 110;
-                // System.err.println("first length is " + firstLength);
-                // System.err.println("second length is " + l.getLengthSI());
                 // System.err.println("i=" + i + ", j=" + j);
-                e = l.extract(start, end);
-                int expectedSize = i < 10 && j > 10 ? 3 : 2;
-                assertEquals("size is " + expectedSize, expectedSize, e.size());
-                if (i < 10)
+                for (OTSLine3D extractedLine : new OTSLine3D[] { l.extract(start, end),
+                        l.extract(new Length.Rel(start, LengthUnit.SI), new Length.Rel(end, LengthUnit.SI)),
+                        l.extractFractional(1.0 * i / 10, 1.0 * j / 10) })
                 {
-                    assertEquals("x of 0", p0.x + (p1.x - p0.x) * i / 10, e.get(0).x, 0.0001);
-                    assertEquals("y of 0", p0.y + (p1.y - p0.y) * i / 10, e.get(0).y, 0.0001);
-                    assertEquals("z of 0", p0.z + (p1.z - p0.z) * i / 10, e.get(0).z, 0.0001);
-                }
-                else
-                {
-                    assertEquals("x of 0", p1.x + (p2.x - p1.x) * (i - 10) / 100, e.get(0).x, 0.0001);
-                    assertEquals("y of 0", p1.y + (p2.y - p1.y) * (i - 10) / 100, e.get(0).y, 0.0001);
-                    assertEquals("z of 0", p1.z + (p2.z - p1.z) * (i - 10) / 100, e.get(0).z, 0.0001);
-                }
-                if (j < 10)
-                {
-                    assertEquals("x of 1", p0.x + (p1.x - p0.x) * j / 10, e.get(1).x, 0.0001);
-                    assertEquals("y of 1", p0.y + (p1.y - p0.y) * j / 10, e.get(1).y, 0.0001);
-                    assertEquals("z of 1", p0.z + (p1.z - p0.z) * j / 10, e.get(1).z, 0.0001);
-                }
-                else
-                {
-                    assertEquals("x of last", p1.x + (p2.x - p1.x) * (j - 10) / 100, e.getLast().x, 0.0001);
-                    assertEquals("y of last", p1.y + (p2.y - p1.y) * (j - 10) / 100, e.getLast().y, 0.0001);
-                    assertEquals("z of last", p1.z + (p2.z - p1.z) * (j - 10) / 100, e.getLast().z, 0.0001);
-                }
-                if (e.size() > 2)
-                {
-                    assertEquals("x of mid", p1.x, e.get(1).x, 0.0001);
-                    assertEquals("y of mid", p1.y, e.get(1).y, 0.0001);
-                    assertEquals("z of mid", p1.z, e.get(1).z, 0.0001);
+                    assertEquals("size of extract is 2", 2, extractedLine.size());
+                    assertEquals("x of 0", p0.x + (p1.x - p0.x) * i / 10, extractedLine.get(0).x, 0.0001);
+                    assertEquals("y of 0", p0.y + (p1.y - p0.y) * i / 10, extractedLine.get(0).y, 0.0001);
+                    assertEquals("z of 0", p0.z + (p1.z - p0.z) * i / 10, extractedLine.get(0).z, 0.0001);
+                    assertEquals("x of 1", p0.x + (p1.x - p0.x) * j / 10, extractedLine.get(1).x, 0.0001);
+                    assertEquals("y of 1", p0.y + (p1.y - p0.y) * j / 10, extractedLine.get(1).y, 0.0001);
+                    assertEquals("z of 1", p0.z + (p1.z - p0.z) * j / 10, extractedLine.get(1).z, 0.0001);
                 }
             }
         }
 
+        for (OTSLine3D line : new OTSLine3D[] { new OTSLine3D(p0, p1, p2), new OTSLine3D(p0, p1, p1a, p1b, p1c, p2) })
+        {
+            for (int i = 0; i < 110; i++)
+            {
+                if (10 == i)
+                {
+                    continue; // results are not entirely predictable due to rounding errors
+                }
+                for (int j = i + 1; j < 110; j++)
+                {
+                    if (10 == j)
+                    {
+                        continue; // results are not entirely predictable due to rounding errors
+                    }
+                    double start = i * line.getLengthSI() / 110;
+                    double end = j * line.getLengthSI() / 110;
+                    // System.err.println("first length is " + firstLength);
+                    // System.err.println("second length is " + line.getLengthSI());
+                    // System.err.println("i=" + i + ", j=" + j);
+                    for (OTSLine3D extractedLine : new OTSLine3D[] { line.extract(start, end),
+                            line.extract(new Length.Rel(start, LengthUnit.SI), new Length.Rel(end, LengthUnit.SI)),
+                            line.extractFractional(1.0 * i / 110, 1.0 * j / 110) })
+                    {
+                        int expectedSize = i < 10 && j > 10 ? line.size() : 2;
+                        assertEquals("size is " + expectedSize, expectedSize, extractedLine.size());
+                        if (i < 10)
+                        {
+                            assertEquals("x of 0", p0.x + (p1.x - p0.x) * i / 10, extractedLine.get(0).x, 0.0001);
+                            assertEquals("y of 0", p0.y + (p1.y - p0.y) * i / 10, extractedLine.get(0).y, 0.0001);
+                            assertEquals("z of 0", p0.z + (p1.z - p0.z) * i / 10, extractedLine.get(0).z, 0.0001);
+                        }
+                        else
+                        {
+                            assertEquals("x of 0", p1.x + (p2.x - p1.x) * (i - 10) / 100, extractedLine.get(0).x, 0.0001);
+                            assertEquals("y of 0", p1.y + (p2.y - p1.y) * (i - 10) / 100, extractedLine.get(0).y, 0.0001);
+                            assertEquals("z of 0", p1.z + (p2.z - p1.z) * (i - 10) / 100, extractedLine.get(0).z, 0.0001);
+                        }
+                        if (j < 10)
+                        {
+                            assertEquals("x of 1", p0.x + (p1.x - p0.x) * j / 10, extractedLine.get(1).x, 0.0001);
+                            assertEquals("y of 1", p0.y + (p1.y - p0.y) * j / 10, extractedLine.get(1).y, 0.0001);
+                            assertEquals("z of 1", p0.z + (p1.z - p0.z) * j / 10, extractedLine.get(1).z, 0.0001);
+                        }
+                        else
+                        {
+                            assertEquals("x of last", p1.x + (p2.x - p1.x) * (j - 10) / 100, extractedLine.getLast().x, 0.0001);
+                            assertEquals("y of last", p1.y + (p2.y - p1.y) * (j - 10) / 100, extractedLine.getLast().y, 0.0001);
+                            assertEquals("z of last", p1.z + (p2.z - p1.z) * (j - 10) / 100, extractedLine.getLast().z, 0.0001);
+                        }
+                        if (extractedLine.size() > 2)
+                        {
+                            assertEquals("x of mid", p1.x, extractedLine.get(1).x, 0.0001);
+                            assertEquals("y of mid", p1.y, extractedLine.get(1).y, 0.0001);
+                            assertEquals("z of mid", p1.z, extractedLine.get(1).z, 0.0001);
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }
