@@ -152,7 +152,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * @param start double; starting point, valid range [0..<cite>end</cite>)
      * @param end double; ending point, valid range (<cite>start</cite>..1]
      * @return OTSLine3D; the new OTSLine3D
-     * @throws OTSGeometryException when the interval is improper
+     * @throws OTSGeometryException when start >= end, or start < 0, or end > 1
      */
     OTSLine3D extractFractional(double start, double end) throws OTSGeometryException
     {
@@ -165,18 +165,30 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
+     * Create anew OTSLine3D that covers a sub-section of this OTSLine3D.
+     * @param start Length.Rel; the length along this OTSLine3D where the sub-section starts, valid range [0..<cite>end</cite>)
+     * @param end Length.Rel; length along this OTSLine3D where the sub-section ends, valid range
+     *            (<cite>start</cite>..<cite>length<cite> (length is the length of this OTSLine3D)
+     * @return OTSLine3D; the selected sub-section
+     * @throws OTSGeometryException when start >= end, or start < 0, or end > length
+     */
+    OTSLine3D extract(final Length.Rel start, final Length.Rel end) throws OTSGeometryException
+    {
+        return extract(start.si, end.si);
+    }
+    /**
      * Create a new OTSLine3D that covers a sub-section of this OTSLine3D.
      * @param start double; length along this OTSLine3D where the sub-section starts, valid range [0..<cite>end</cite>)
      * @param end double; length along this OTSLine3D where the sub-section ends, valid range
      *            (<cite>start</cite>..<cite>length<cite> (length is the length of this OTSLine3D)
      * @return OTSLine3D; the selected sub-section
-     * @throws OTSGeometryException
+     * @throws OTSGeometryException when start >= end, or start < 0, or end > length
      */
     OTSLine3D extract(double start, double end) throws OTSGeometryException
     {
         if (Double.isNaN(start) || Double.isNaN(end) || start < 0 || start >= end || end > getLength().si)
         {
-            throw new OTSGeometryException("Bad interval");
+            throw new OTSGeometryException("Bad interval (" + start + ".." + end + ")");
         }
         double cumulativeLength = 0;
         double nextCumulativeLength = 0;
