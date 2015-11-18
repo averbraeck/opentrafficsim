@@ -265,10 +265,6 @@ public class OTSLine3D implements LocatableInterface, Serializable
         }
     }
 
-    // split op fractie
-    // subline (fromfraction tofraction)
-    // subline (fromlength, tolength)
-
     /**
      * Build an array of OTSPoint3D from an array of Coordinate.
      * @param coordinates Coordinate[]; the coordinates
