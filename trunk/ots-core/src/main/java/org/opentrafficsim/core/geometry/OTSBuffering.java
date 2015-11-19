@@ -265,7 +265,7 @@ public final class OTSBuffering
                     points.set(index, new OTSPoint3D(p.x, p.y, 0));
                 }
             }
-            return new OTSLine3D(points);
+            return OTSLine3D.createAndCleanOTSLine3D(points);
         }
         catch (OTSGeometryException | NetworkException exception)
         {
