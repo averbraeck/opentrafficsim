@@ -1,8 +1,5 @@
 package org.opentrafficsim.core.geometry;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -29,29 +26,24 @@ public final class Test
      */
     public static void main(final String[] args) throws NetworkException, OTSGeometryException
     {
-        /*-
-        List<OTSPoint3D> line = new ArrayList<>();
-        line.add(new OTSPoint3D(5, 2.5));
-        line.add(new OTSPoint3D(4.8, 2.5));
-        line.add(new OTSPoint3D(4.6, 2.7));
-        line.add(new OTSPoint3D(2.2, 2.7));
-        line.add(new OTSPoint3D(2.2, 5));
-        OTSLine3D otsLine = new OTSLine3D(line);
-        System.out.println(OTSGeometry.printCoordinates("#reference line: \nc1,0,0\n#", otsLine, "\n    "));
-        OTSLine3D left = OTSBuffering.offsetGeometry(otsLine, 2.0);
+
+        OTSLine3D referenceLine =
+                new OTSLine3D(new OTSPoint3D(5, 2.5), new OTSPoint3D(4.8, 2.5), new OTSPoint3D(4.6, 2.7), new OTSPoint3D(2.2,
+                        2.7), new OTSPoint3D(2.2, 5));
+        System.out.println(OTSGeometry.printCoordinates("#reference line: \nc1,0,0\n#", referenceLine, "\n    "));
+        OTSLine3D left = referenceLine.offsetLine(2.0);
         System.out.println(OTSGeometry.printCoordinates("#left: \nc0,1,0\n#", left, "\n   "));
-        OTSLine3D right = OTSBuffering.offsetGeometry(otsLine, -2.0);
+        OTSLine3D right = referenceLine.offsetLine(-2.0);
         System.out.println(OTSGeometry.printCoordinates("#right: \nc0,1,0\n#", right, "\n   "));
-        */
-        
+
         /*-
         OTSLine3D otsLine = new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(10, 5, 0), new OTSPoint3D(20, 0, 0));
         System.out.println(OTSGeometry.printCoordinates("#reference line: \nc1,0,0\n#", otsLine, "\n    "));
-        OTSLine3D left = OTSBuffering.offsetGeometry(otsLine, 2.0);
+        OTSLine3D left = otsLine.offsetLine(2.0);
         System.out.println(OTSGeometry.printCoordinates("#left: \nc0,1,0\n#", left, "\n   "));
-        OTSLine3D right = OTSBuffering.offsetGeometry(otsLine, -2.0);
+        OTSLine3D right = otsLine.offsetLine(-2.0);
         System.out.println(OTSGeometry.printCoordinates("#buffer: \nc0,1,0\n#", right, "\n   "));
-        */
+         */
 
         /*-
         OTSLine3D referenceLine = new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(200, 100, 0), new OTSPoint3D(1000, 0, 0));
@@ -65,20 +57,20 @@ public final class Test
             double angle = Math.atan2(to.y - from.y, to.x - from.x);
             System.out.println("#Direction in segment " + i + " is " + Math.toDegrees(angle));
         }
-        // OTSLine3D leftEdge = OTSBuffering.offsetLine(centerLine, 1.5, 2);
-        // System.out.println(OTSGeometry.printCoordinates("#left edge: \nc0,0,1\n#", leftEdge, "\n   "));
-        OTSLine3D rightEdge = OTSBuffering.offsetLine(centerLine, -1.5, -2);
+        OTSLine3D leftEdge = centerLine.offsetLine(1.5, 2);
+        System.out.println(OTSGeometry.printCoordinates("#left edge: \nc0,0,1\n#", leftEdge, "\n   "));
+        OTSLine3D rightEdge = centerLine.offsetLine(-1.5, -2);
         System.out.println(OTSGeometry.printCoordinates("#right edge: \nc0,0,1\n#", rightEdge, "\n   "));
-        */
+         */
 
-        
+        /*-
         OTSLine3D reference =
                 new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(20, 10, 0), new OTSPoint3D(21, 10, 0), new OTSPoint3D(22,
                         9.5, 0), new OTSPoint3D(30, 0, 0));
         System.out.println(OTSGeometry.printCoordinates("#reference: \nc1,0,0\n#", reference, "\n    "));
-        OTSLine3D offset = OTSBuffering.offsetGeometry(reference, -3);
+        OTSLine3D offset = reference.offsetLine(-3);
         System.out.println(OTSGeometry.printCoordinates("#offset: \nc0,1,0\n#", offset, "\n    "));
-        
+         */
     }
 
 }

@@ -12,7 +12,6 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSBuffering;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
@@ -121,10 +120,10 @@ public class StripeAnimation extends Renderable2D
             {
                 OTSLine3D centerLine = stripe.getCenterLine();
                 Coordinate[] leftLine =
-                        OTSBuffering.offsetGeometry(centerLine, 0.2).getLineString()
+                        centerLine.offsetLine(0.2).getLineString()
                                 .buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
                 Coordinate[] rightLine =
-                        OTSBuffering.offsetGeometry(centerLine, -0.2).getLineString()
+                        centerLine.offsetLine(-0.2).getLineString()
                                 .buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
                 ArrayList<OTSPoint3D> result = new ArrayList<OTSPoint3D>(leftLine.length + rightLine.length);
                 for (int i = 0; i < leftLine.length; i++)
@@ -141,11 +140,11 @@ public class StripeAnimation extends Renderable2D
             case LEFTONLY: // |: - Draw left solid, right 3-9 dashed
                 {
                     OTSLine3D centerLine = stripe.getCenterLine();
-                    Geometry rightDesignLine = OTSBuffering.offsetGeometry(centerLine, -0.2).getLineString();
+                    Geometry rightDesignLine = centerLine.offsetLine(-0.2).getLineString();
                     ArrayList<OTSPoint3D> result =
                             makeDashes(new LengthIndexedLine(rightDesignLine), 0.2, 0, new double[] { 3, 9 });
                     Geometry leftDesignLine =
-                            OTSBuffering.offsetGeometry(centerLine, 0.2).getLineString()
+                            centerLine.offsetLine(0.2).getLineString()
                                     .buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT);
                     Coordinate[] leftCoordinates =
                             leftDesignLine.buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
@@ -160,11 +159,11 @@ public class StripeAnimation extends Renderable2D
             case RIGHTONLY: // :| - Draw left 3-9 dashed, right solid
                 {
                     OTSLine3D centerLine = stripe.getCenterLine();
-                    Geometry leftDesignLine = OTSBuffering.offsetGeometry(centerLine, 0.2).getLineString();
+                    Geometry leftDesignLine = centerLine.offsetLine(0.2).getLineString();
                     ArrayList<OTSPoint3D> result =
                             makeDashes(new LengthIndexedLine(leftDesignLine), 0.2, 0, new double[] { 3, 9 });
                     Geometry rightDesignLine =
-                            OTSBuffering.offsetGeometry(centerLine, -0.2).getLineString()
+                            centerLine.offsetLine(-0.2).getLineString()
                                     .buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT);
                     Coordinate[] rightCoordinates =
                             rightDesignLine.buffer(0.1, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
