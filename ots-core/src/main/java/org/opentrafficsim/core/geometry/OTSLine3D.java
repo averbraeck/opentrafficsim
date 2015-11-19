@@ -176,6 +176,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     {
         return extract(start.si, end.si);
     }
+
     /**
      * Create a new OTSLine3D that covers a sub-section of this OTSLine3D.
      * @param start double; length along this OTSLine3D where the sub-section starts, valid range [0..<cite>end</cite>)
@@ -195,7 +196,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         double segmentLength = 0;
         int index = 0;
         List<OTSPoint3D> pointList = new ArrayList<>();
-        //System.err.println("interval " + start + ".." + end);
+        // System.err.println("interval " + start + ".." + end);
         while (start > cumulativeLength)
         {
             OTSPoint3D fromPoint = this.points[index];
@@ -215,7 +216,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
         }
         else
         {
-            pointList.add(OTSPoint3D.interpolate((start - cumulativeLength) / segmentLength, this.points[index - 1], this.points[index]));
+            pointList.add(OTSPoint3D.interpolate((start - cumulativeLength) / segmentLength, this.points[index - 1],
+                    this.points[index]));
             if (end > nextCumulativeLength)
             {
                 pointList.add(this.points[index]);
@@ -245,7 +247,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         }
         else
         {
-            //System.err.println("interpolating between points " + (index - 1) + " and " + index);
+            // System.err.println("interpolating between points " + (index - 1) + " and " + index);
             pointList.add(OTSPoint3D.interpolate((end - cumulativeLength) / segmentLength, this.points[index - 1],
                     this.points[index]));
         }
@@ -293,9 +295,19 @@ public class OTSLine3D implements LocatableInterface, Serializable
             throw new NetworkException("Degenerate OTSLine3D; has " + points.length + " point"
                     + (points.length != 1 ? "s" : ""));
         }
+        return createAndCleanOTSLine3D(new ArrayList<>(Arrays.asList(points)));
+    }
 
+    /**
+     * Create an OTSLine3D, while cleaning repeating successive points.
+     * @param pointList List&lt;OTSPoint3D&gt;; list of the coordinates of the line as OTSPoint3D; any duplicate points in this
+     *            list are removed (this method may modify the provided list)
+     * @return OTSLine3D; the line
+     * @throws NetworkException when number of non-equal points &lt; 2
+     */
+    public static OTSLine3D createAndCleanOTSLine3D(final List<OTSPoint3D> pointList) throws NetworkException
+    {
         // clean successive equal points
-        ArrayList<OTSPoint3D> pointList = new ArrayList<>(Arrays.asList(points));
         int i = 1;
         while (i < pointList.size())
         {
@@ -308,7 +320,6 @@ public class OTSLine3D implements LocatableInterface, Serializable
                 i++;
             }
         }
-
         return new OTSLine3D(pointList);
     }
 
