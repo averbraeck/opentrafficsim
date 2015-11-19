@@ -22,7 +22,7 @@ import com.vividsolutions.jts.operation.buffer.BufferParameters;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public final class OTSBuffering
+public final class OTSBufferingOLD
 {
     /** Precision of buffer operations. */
     private static final int QUADRANTSEGMENTS = 16;
@@ -30,7 +30,7 @@ public final class OTSBuffering
     /**
      * 
      */
-    private OTSBuffering()
+    private OTSBufferingOLD()
     {
         // cannot be instantiated.
     }
@@ -102,12 +102,12 @@ public final class OTSBuffering
     }
 
     /**
-     * Construct parallel line without first constructing a buffer.
-     * @param referenceLine Geometry; the reference line
+     * Construct parallel line without.
+     * @param referenceLine OTSLine3D; the reference line
      * @param offset double; offset distance from the reference line; positive is LEFT, negative is RIGHT
      * @return OTSLine3D; the line that has the specified offset from the reference line
      */
-    public static OTSLine3D offsetGeometry(final OTSLine3D referenceLine, final double offset)
+    public static OTSLine3D offsetLine(final OTSLine3D referenceLine, final double offset)
     {
         try
         {
@@ -519,7 +519,7 @@ public final class OTSBuffering
     }
 
     /**
-     * Create the Geometry of a line at offset from a reference line. The offset may change linearly from its initial value at
+     * Create a line at linearly varying offset from a reference line. The offset may change linearly from its initial value at
      * the start of the reference line to its final offset value at the end of the reference line.
      * @param referenceLine Geometry; the Geometry of the reference line
      * @param offsetAtStart double; offset at the start of the reference line (positive value is Left, negative value is Right)
@@ -533,13 +533,13 @@ public final class OTSBuffering
         // System.out.println(OTSGeometry.printCoordinates("#referenceLine: \nc1,0,0\n# offset at start is " + offsetAtStart
         // + " at end is " + offsetAtEnd + "\n#", referenceLine, "\n   "));
 
-        OTSLine3D offsetLineAtStart = offsetGeometry(referenceLine, offsetAtStart);
+        OTSLine3D offsetLineAtStart = offsetLine(referenceLine, offsetAtStart);
         if (offsetAtStart == offsetAtEnd)
         {
             return offsetLineAtStart; // offset does not change
         }
         // System.out.println(OTSGeometry.printCoordinates("#offset line at start: \nc0,0,0\n#", offsetLineAtStart, "\n   "));
-        OTSLine3D offsetLineAtEnd = offsetGeometry(referenceLine, offsetAtEnd);
+        OTSLine3D offsetLineAtEnd = offsetLine(referenceLine, offsetAtEnd);
         // System.out.println(OTSGeometry.printCoordinates("#offset line at end: \nc0.7,0.7,0.7\n#", offsetLineAtEnd, "\n   "));
         Geometry startGeometry = offsetLineAtStart.getLineString();
         Geometry endGeometry = offsetLineAtEnd.getLineString();

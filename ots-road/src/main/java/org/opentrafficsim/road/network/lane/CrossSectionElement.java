@@ -8,7 +8,6 @@ import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.geometry.OTSBuffering;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -80,8 +79,8 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      * @throws NetworkException when id equal to null or not unique
      */
     public CrossSectionElement(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffsetAtBegin,
-        final Length.Rel lateralOffsetAtEnd, final Length.Rel beginWidth, final Length.Rel endWidth)
-        throws OTSGeometryException, NetworkException
+            final Length.Rel lateralOffsetAtEnd, final Length.Rel beginWidth, final Length.Rel endWidth)
+            throws OTSGeometryException, NetworkException
     {
         super();
         if (id == null)
@@ -103,8 +102,8 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
         this.endWidth = endWidth;
 
         this.centerLine =
-            OTSBuffering.offsetLine(this.getParentLink().getDesignLine(), this.designLineOffsetAtBegin.getSI(),
-                this.designLineOffsetAtEnd.getSI());
+                this.getParentLink().getDesignLine()
+                        .offsetLine(this.designLineOffsetAtBegin.getSI(), this.designLineOffsetAtEnd.getSI());
         this.length = this.centerLine.getLength();
         this.contour = constructContour(this);
 
@@ -238,12 +237,13 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;
      */
     public final Length.Rel getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
-        final double fractionalLongitudinalPosition)
+            final double fractionalLongitudinalPosition)
     {
         Length.Rel designLineOffset =
-            Length.Rel.interpolate(this.designLineOffsetAtBegin, this.designLineOffsetAtEnd, fractionalLongitudinalPosition);
+                Length.Rel
+                        .interpolate(this.designLineOffsetAtBegin, this.designLineOffsetAtEnd, fractionalLongitudinalPosition);
         Length.Rel halfWidth =
-            Length.Rel.interpolate(this.beginWidth, this.endWidth, fractionalLongitudinalPosition).multiplyBy(0.5);
+                Length.Rel.interpolate(this.beginWidth, this.endWidth, fractionalLongitudinalPosition).multiplyBy(0.5);
         switch (lateralDirection)
         {
             case LEFT:
@@ -263,11 +263,10 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;
      */
     public final Length.Rel getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
-        final Length.Rel longitudinalPosition)
+            final Length.Rel longitudinalPosition)
     {
         return getLateralBoundaryPosition(lateralDirection, longitudinalPosition.getSI() / getLength().getSI());
     }
-
 
     /**
      * Construct a buffer geometry by offsetting the linear geometry line with a distance and constructing a so-called "buffer"
@@ -280,12 +279,12 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     public static OTSLine3D constructContour(final CrossSectionElement cse) throws OTSGeometryException, NetworkException
     {
         OTSLine3D crossSectionDesignLine =
-            OTSBuffering.offsetLine(cse.getParentLink().getDesignLine(), cse.getDesignLineOffsetAtBegin().getSI(), cse
-                .getDesignLineOffsetAtEnd().getSI());
+                cse.getParentLink().getDesignLine()
+                        .offsetLine(cse.getDesignLineOffsetAtBegin().getSI(), cse.getDesignLineOffsetAtEnd().getSI());
         OTSLine3D rightBoundary =
-                OTSBuffering.offsetLine(crossSectionDesignLine, -cse.getBeginWidth().getSI() / 2, -cse.getEndWidth().getSI() / 2);
+                crossSectionDesignLine.offsetLine(-cse.getBeginWidth().getSI() / 2, -cse.getEndWidth().getSI() / 2);
         OTSLine3D leftBoundary =
-                OTSBuffering.offsetLine(crossSectionDesignLine, cse.getBeginWidth().getSI() / 2, cse.getEndWidth().getSI() / 2);
+                crossSectionDesignLine.offsetLine(cse.getBeginWidth().getSI() / 2, cse.getEndWidth().getSI() / 2);
         OTSPoint3D[] result = new OTSPoint3D[rightBoundary.size() + leftBoundary.size() + 1];
         int resultIndex = 0;
         for (int index = 0; index < rightBoundary.size(); index++)
@@ -303,7 +302,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public DirectedPoint getLocation() 
+    public DirectedPoint getLocation()
     {
         DirectedPoint centroid = this.contour.getLocation();
         return new DirectedPoint(centroid.x, centroid.y, getZ());
@@ -312,7 +311,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Bounds getBounds() 
+    public Bounds getBounds()
     {
         return this.contour.getBounds();
     }
@@ -323,7 +322,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     public String toString()
     {
         return String.format("CSE offset %.2fm..%.2fm, width %.2fm..%.2fm", this.designLineOffsetAtBegin.getSI(),
-            this.designLineOffsetAtEnd.getSI(), this.beginWidth.getSI(), this.endWidth.getSI());
+                this.designLineOffsetAtEnd.getSI(), this.beginWidth.getSI(), this.endWidth.getSI());
     }
 
     /** {@inheritDoc} */
@@ -339,7 +338,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     @Override
     public boolean equals(final Object obj)
     {
