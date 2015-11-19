@@ -12,7 +12,6 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.junit.Test;
 import org.opentrafficsim.core.network.NetworkException;
 

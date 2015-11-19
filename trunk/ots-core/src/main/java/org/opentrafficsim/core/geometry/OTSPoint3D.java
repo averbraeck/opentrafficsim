@@ -171,6 +171,27 @@ public class OTSPoint3D implements LocatableInterface, Serializable
      * @param point the point to which the distance has to be calculated.
      * @return the distance in 3D according to Pythagoras
      */
+    public final Length.Rel horizontalDistance(final OTSPoint3D point)
+    {
+        return new Length.Rel(horizontalDistanceSI(point), LengthUnit.SI);
+    }
+
+    /**
+     * @param point the point to which the distance has to be calculated.
+     * @return the distance in 3D according to Pythagoras, expressed in SI units
+     */
+    public final double horizontalDistanceSI(final OTSPoint3D point)
+    {
+        double dx = point.x - this.x;
+        double dy = point.y - this.y;
+
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    /**
+     * @param point the point to which the distance has to be calculated.
+     * @return the distance in 3D according to Pythagoras
+     */
     public final Length.Rel distance(final OTSPoint3D point)
     {
         return new Length.Rel(distanceSI(point), LengthUnit.SI);
