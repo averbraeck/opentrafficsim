@@ -23,6 +23,7 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometry;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -520,6 +521,9 @@ final class Links
                     Lane lane =
                         new Lane(csl, cseTag.name, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width,
                             cseTag.laneType, directionality, speedLimit, overtakingConditions);
+                    System.out.println(OTSGeometry.printCoordinates("#link design line: \nc1,0,0\n#", lane.getParentLink().getDesignLine(), "\n   "));
+                    System.out.println(OTSGeometry.printCoordinates("#lane center line: \nc0,1,0\n#", lane.getCenterLine(), "\n    "));
+                    System.out.println(OTSGeometry.printCoordinates("#lane contour: \nc0,0,1\n#", lane.getContour(), "\n    "));
                     cseList.add(lane);
                     lanes.add(lane);
                     linkTag.lanes.put(cseTag.name, lane);

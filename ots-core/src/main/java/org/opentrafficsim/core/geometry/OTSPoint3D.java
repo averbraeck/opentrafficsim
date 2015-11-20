@@ -309,7 +309,7 @@ public class OTSPoint3D implements LocatableInterface, Serializable
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return String.format("(%.2f,%.2f,%.2f)", this.x, this.y, this.z);
+        return String.format("(%.3f,%.3f,%.3f)", this.x, this.y, this.z);
     }
 
     /** {@inheritDoc} */

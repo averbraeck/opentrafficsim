@@ -76,7 +76,10 @@ public class OTSLine3D implements LocatableInterface, Serializable
         }
         this.points = points;
     }
-    
+
+    /** Switch debugging on or off. */
+    public static boolean debugOffsetLine = false;
+
     /**
      * Construct parallel line.
      * @param offset double; offset distance from the reference line; positive is LEFT, negative is RIGHT
@@ -105,6 +108,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
                         new OTSPoint3D(prevPoint.x - Math.sin(angle) * offset, prevPoint.y + Math.cos(angle) * offset);
                 OTSPoint3D segmentTo =
                         new OTSPoint3D(nextPoint.x - Math.sin(angle) * offset, nextPoint.y + Math.cos(angle) * offset);
+                boolean addSegment = true;
                 if (index > 0)
                 {
                     double deltaAngle = angle - prevAngle;
@@ -127,25 +131,61 @@ public class OTSLine3D implements LocatableInterface, Serializable
                             if (null != pPoint)
                             {
                                 double pAngle = Math.atan2(p.y - pPoint.y, p.x - pPoint.x);
-                                double totalAngle = angle - pAngle;
-                                if (Math.abs(totalAngle) > Math.PI)
+                                double angleDifference = angle - pAngle;
+                                if (Math.abs(angleDifference) > Math.PI)
                                 {
-                                    totalAngle += Math.signum(totalAngle) * 2 * Math.PI;
+                                    angleDifference += Math.signum(angleDifference) * 2 * Math.PI;
                                 }
-                                if (Math.abs(totalAngle) > 0.01)
+                                if (OTSLine3D.debugOffsetLine)
                                 {
-                                    // System.out.println("preceding segment " + pPoint + " to " + p + ", this segment "
-                                    // + segmentFrom + " to " + segmentTo + " totalAngle " + totalAngle);
-                                    OTSPoint3D intermediatePoint =
+                                    System.out.println("#preceding segment " + pPoint + " to " + p + ", this segment "
+                                            + segmentFrom + " to " + segmentTo + " angleDifference " + angleDifference);
+                                }
+                                if (Math.abs(angleDifference) > 0)// 0.01)
+                                {
+                                    OTSPoint3D intersection =
                                             OTSPoint3D.intersectionOfLineSegments(pPoint, p, segmentFrom, segmentTo);
-                                    if (null != intermediatePoint)
+                                    if (null != intersection)
                                     {
                                         // mark it as added point at inside corner
-                                        intermediatePoint =
-                                                new OTSPoint3D(intermediatePoint.x, intermediatePoint.y, Double.NaN);
-//                                        System.out.println("Inserting intersection of preceding segment and this segment "
-//                                                + intermediatePoint);
-                                        tempPoints.add(intermediatePoint);
+                                        intersection = new OTSPoint3D(intersection.x, intersection.y, Double.NaN);
+                                        if (tempPoints.size() - 1 == i)
+                                        {
+                                            if (OTSLine3D.debugOffsetLine)
+                                            {
+                                                System.out
+                                                        .println("#Replacing last point of preceding segment and first point of next segment by their intersection "
+                                                                + intersection);
+                                            }
+                                            tempPoints.remove(tempPoints.size() - 1);
+                                            segmentFrom = intersection;
+                                        }
+                                        else
+                                        {
+                                            if (OTSLine3D.debugOffsetLine)
+                                            {
+                                                System.out.println("#Adding intersection of preceding segment and next segment "
+                                                        + intersection);
+                                            }
+                                            tempPoints.add(intersection);
+                                        }
+                                        // tempPoints.set(tempPoints.size() - 1, intermediatePoint);
+                                    }
+                                }
+                                else
+                                {
+                                    if (debugOffsetLine)
+                                    {
+                                        System.out.println("#Not adding intersection of preceding segment and this segment "
+                                                + "(angle too small)");
+                                    }
+                                    if (i == tempPoints.size() - 1)
+                                    {
+                                        if (debugOffsetLine)
+                                        {
+                                            System.out.println("#Not adding segment");
+                                        }
+                                        addSegment = false;
                                     }
                                 }
                             }
@@ -182,18 +222,36 @@ public class OTSLine3D implements LocatableInterface, Serializable
                             OTSPoint3D intermediatePoint =
                                     new OTSPoint3D(prevPoint.x - Math.sin(intermediateAngle) * offset, prevPoint.y
                                             + Math.cos(intermediateAngle) * offset);
-//                            System.out.println("inserting intermediate point " + intermediatePoint + " for angle "
-//                                    + Math.toDegrees(intermediateAngle));
+                            if (OTSLine3D.debugOffsetLine)
+                            {
+                                System.out.println("#inserting arc point " + intermediatePoint + " for angle "
+                                        + Math.toDegrees(intermediateAngle));
+                            }
                             tempPoints.add(intermediatePoint);
                         }
                     }
                 }
-                tempPoints.add(segmentFrom);
-                tempPoints.add(segmentTo);
-                prevPoint = nextPoint;
-                prevAngle = angle;
+                if (addSegment)
+                {
+                    if (OTSLine3D.debugOffsetLine)
+                    {
+                        System.out.println("#Adding segmentFrom " + segmentFrom);
+                    }
+                    tempPoints.add(segmentFrom);
+                    if (OTSLine3D.debugOffsetLine)
+                    {
+                        System.out.println("#Adding segmentTo " + segmentTo);
+                    }
+                    tempPoints.add(segmentTo);
+                    prevPoint = nextPoint;
+                    prevAngle = angle;
+                }
             }
-            // System.out.println(OTSGeometry.printCoordinates("#before cleanup: \nc0,0,0\n#", new OTSLine3D(points), "\n   "));
+            if (OTSLine3D.debugOffsetLine)
+            {
+                System.out.println(OTSGeometry.printCoordinates("#before cleanup: \nc0,0,0\n#", new OTSLine3D(tempPoints),
+                        "\n   "));
+            }
             // Remove points that are closer than the specified offset
             for (int index = 1; index < tempPoints.size() - 1; index++)
             {
@@ -212,7 +270,10 @@ public class OTSLine3D implements LocatableInterface, Serializable
                             double distance = closestPoint.horizontalDistanceSI(checkPoint);
                             if (distance < bufferOffset - circlePrecision)
                             {
-                                // System.out.print("point " + checkPoint + " inside buffer (distance is " + distance + ")");
+                                if (OTSLine3D.debugOffsetLine)
+                                {
+                                    System.out.print("#point " + checkPoint + " inside buffer (distance is " + distance + ") ");
+                                }
                                 tooClose = true;
                                 break;
                             }
@@ -226,7 +287,10 @@ public class OTSLine3D implements LocatableInterface, Serializable
                 }
                 if (tooClose || !somewhereAtCorrectDistance)
                 {
-                    // System.out.println("Removing " + checkPoint);
+                    if (OTSLine3D.debugOffsetLine)
+                    {
+                        System.out.println("#Removing " + checkPoint);
+                    }
                     tempPoints.remove(index);
                     index--;
                 }
@@ -251,15 +315,14 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
-     * Create a line at linearly varying offset from this line. The offset may change linearly from its initial value at
-     * the start of the reference line to its final offset value at the end of the reference line.
+     * Create a line at linearly varying offset from this line. The offset may change linearly from its initial value at the
+     * start of the reference line to its final offset value at the end of the reference line.
      * @param offsetAtStart double; offset at the start of the reference line (positive value is Left, negative value is Right)
      * @param offsetAtEnd double; offset at the end of the reference line (positive value is Left, negative value is Right)
      * @return Geometry; the Geometry of the line at linearly changing offset of the reference line
      * @throws OTSGeometryException when this method fails to create the offset line
      */
-    public OTSLine3D offsetLine(final double offsetAtStart, final double offsetAtEnd)
-            throws OTSGeometryException
+    public OTSLine3D offsetLine(final double offsetAtStart, final double offsetAtEnd) throws OTSGeometryException
     {
         // System.out.println(OTSGeometry.printCoordinates("#referenceLine: \nc1,0,0\n# offset at start is " + offsetAtStart
         // + " at end is " + offsetAtEnd + "\n#", referenceLine, "\n   "));
@@ -982,7 +1045,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         }
         return this.bounds;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
