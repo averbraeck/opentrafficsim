@@ -87,6 +87,15 @@ public class OTSLine3D implements LocatableInterface, Serializable
      */
     public OTSLine3D offsetLine(final double offset)
     {
+//        try
+//        {
+//            return OTSBufferingOLD.offsetGeometryOLD(this, offset);
+//        }
+//        catch (OTSGeometryException exception)
+//        {
+//            exception.printStackTrace();
+//            return null;
+//        }
         try
         {
             double bufferOffset = Math.abs(offset);
