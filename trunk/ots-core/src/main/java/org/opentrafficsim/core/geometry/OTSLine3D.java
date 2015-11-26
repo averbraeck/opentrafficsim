@@ -423,9 +423,13 @@ public class OTSLine3D implements LocatableInterface, Serializable
         for (int i = 0; i < offsets.length; i++)
         {
             offsetLine[i] = offsetLine(offsets[i]);
+            // System.out.println(offsetLine[i].toExcel());
+            // System.out.println();
         }
 
         ArrayList<Coordinate> out = new ArrayList<Coordinate>();
+        Coordinate prevCoordinate = null;
+        final double tooClose = 0.05; // 5 cm
         for (int i = 0; i < offsets.length - 1; i++)
         {
             Geometry startGeometry =
@@ -440,8 +444,6 @@ public class OTSLine3D implements LocatableInterface, Serializable
             Coordinate[] secondCoordinates = endGeometry.getCoordinates();
             int firstIndex = 0;
             int secondIndex = 0;
-            Coordinate prevCoordinate = null;
-            final double tooClose = 0.05; // 5 cm
             while (firstIndex < firstCoordinates.length && secondIndex < secondCoordinates.length)
             {
                 double firstRatio =
@@ -1179,4 +1181,37 @@ public class OTSLine3D implements LocatableInterface, Serializable
         return true;
     }
 
+    /**
+     * @return excel XY plottable output
+     */
+    private String toExcel()
+    {
+        StringBuffer s = new StringBuffer();
+        for (OTSPoint3D p : this.points)
+        {
+            s.append(p.x + "\t" + p.y + "\n");
+        }
+        return s.toString();
+    }
+    /**
+     * @param args args
+     * @throws NetworkException in case of error
+     * @throws OTSGeometryException g
+     */
+    public static void main(final String[] args) throws NetworkException, OTSGeometryException
+    {
+        OTSLine3D line =
+            new OTSLine3D(new OTSPoint3D(-263.811, -86.551, 1.180), new OTSPoint3D(-262.945, -84.450, 1.180),
+                new OTSPoint3D(-261.966, -82.074, 1.180), new OTSPoint3D(-260.890, -79.464, 1.198), new OTSPoint3D(
+                    -259.909, -76.955, 1.198), new OTSPoint3D(-258.911, -74.400, 1.198), new OTSPoint3D(-257.830,
+                    -71.633, 1.234));
+        System.out.println(line.toExcel());
+        double[] relativeFractions =
+            new double[]{0.0, 0.19827228089475762, 0.30549496392494213, 0.5824753163948581, 0.6815307752261827,
+                0.7903990449840241, 0.8942375145295614, 1.0};
+        double[] offsets =
+            new double[]{2.9779999256134, 4.6029999256134, 3.886839156071996, 2.3664845198627207, 1.7858981925396709,
+                1.472348149010167, 2.0416709053157285, 2.798692100483229};
+        System.out.println(line.offsetLine(relativeFractions, offsets).toExcel());
+    }
 }
