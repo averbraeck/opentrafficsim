@@ -25,15 +25,17 @@ public abstract class Barrier extends RoadMarkerAlong
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
      * the StartNode towards the EndNode as the longitudinal direction.
      * @param parentLink Cross Section Link to which the element belongs.
-     * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section Link.
+     * @param beginCenterPosition the lateral start position compared to the linear geometry of the Cross Section Link.
+     * @param endCenterPosition the lateral end position compared to the linear geometry of the Cross Section Link.
      * @param beginWidth start width, positioned <i>symmetrically around</i> the lateral start position.
      * @param endWidth end width, positioned <i>symmetrically around</i> the lateral end position.
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Barrier(final CrossSectionLink parentLink, final Length.Rel lateralCenterPosition, final Length.Rel beginWidth,
-        final Length.Rel endWidth) throws OTSGeometryException, NetworkException
+    public Barrier(final CrossSectionLink parentLink, final Length.Rel beginCenterPosition,
+        final Length.Rel endCenterPosition, final Length.Rel beginWidth, final Length.Rel endWidth)
+        throws OTSGeometryException, NetworkException
     {
-        super(parentLink, lateralCenterPosition, beginWidth, endWidth);
+        super(parentLink, beginCenterPosition, endCenterPosition, beginWidth, endWidth);
     }
 }

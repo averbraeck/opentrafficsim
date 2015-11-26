@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.djunits.unit.SpeedUnit;
@@ -32,7 +33,7 @@ public class NoTrafficLane extends Lane
 
     /** Map that tells that speed is 0.0 for all GTU Types. */
     private static final Map<GTUType, Speed> SPEED_NULL = new HashMap<>();
-    
+
     /** the overtaking rules for a no-traffic lane. */
     private static final OvertakingConditions NO_OVERTAKING = new OvertakingConditions.None();
 
@@ -45,10 +46,10 @@ public class NoTrafficLane extends Lane
     /**
      * @param parentLink Cross Section Link to which the element belongs.
      * @param id String; the id of the lane. Should be unique within the parentLink.
-     * @param lateralOffsetAtStart Length.Rel; the lateral offset of the design line of the new
-     *            CrossSectionLink with respect to the design line of the parent Link at the start of the parent Link
-     * @param lateralOffsetAtEnd Length.Rel; the lateral offset of the design line of the new
-     *            CrossSectionLink with respect to the design line of the parent Link at the end of the parent Link
+     * @param lateralOffsetAtStart Length.Rel; the lateral offset of the design line of the new CrossSectionLink with respect to
+     *            the design line of the parent Link at the start of the parent Link
+     * @param lateralOffsetAtEnd Length.Rel; the lateral offset of the design line of the new CrossSectionLink with respect to
+     *            the design line of the parent Link at the end of the parent Link
      * @param beginWidth Length.Rel; start width, positioned <i>symmetrically around</i> the design line
      * @param endWidth Length.Rel; end width, positioned <i>symmetrically around</i> the design line
      * @throws OTSGeometryException when creation of the geometry fails
@@ -61,6 +62,39 @@ public class NoTrafficLane extends Lane
     {
         super(parentLink, id, lateralOffsetAtStart, lateralOffsetAtEnd, beginWidth, endWidth, LaneType.NONE,
             DIRECTIONALITY_NONE, SPEED_NULL, NO_OVERTAKING);
+    }
+
+    /**
+     * @param parentLink Cross Section Link to which the element belongs.
+     * @param id String; the id of the lane. Should be unique within the parentLink.
+     * @param lateralOffset Length.Rel; the lateral offset of the design line of the new CrossSectionLink with respect to the
+     *            design line of the parent Link
+     * @param width Length.Rel; width, positioned <i>symmetrically around</i> the design line
+     * @throws OTSGeometryException when creation of the geometry fails
+     * @throws NetworkException when id equal to null or not unique
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public NoTrafficLane(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffset,
+        final Length.Rel width) throws OTSGeometryException, NetworkException
+    {
+        super(parentLink, id, lateralOffset, width, LaneType.NONE, DIRECTIONALITY_NONE, SPEED_NULL, NO_OVERTAKING);
+    }
+
+    /**
+     * @param parentLink Cross Section Link to which the element belongs.
+     * @param id String; the id of the lane. Should be unique within the parentLink.
+     * @param crossSectionSlices The offsets and widths at positions along the line, relative to the design line of the parent
+     *            link. If there is just one with and offset, there should just be one element in the list with Length.Rel = 0.
+     *            If there are more slices, the last one should be at the length of the design line. If not, a NetworkException
+     *            is thrown.
+     * @throws OTSGeometryException when creation of the geometry fails
+     * @throws NetworkException when id equal to null or not unique
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public NoTrafficLane(final CrossSectionLink parentLink, final String id,
+        final List<CrossSectionSlice> crossSectionSlices) throws OTSGeometryException, NetworkException
+    {
+        super(parentLink, id, crossSectionSlices, LaneType.NONE, DIRECTIONALITY_NONE, SPEED_NULL, NO_OVERTAKING);
     }
 
     /** {@inheritDoc} */
