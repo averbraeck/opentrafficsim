@@ -45,12 +45,12 @@ public class NoTrafficLane extends Lane
     /**
      * @param parentLink Cross Section Link to which the element belongs.
      * @param id String; the id of the lane. Should be unique within the parentLink.
-     * @param lateralOffsetAtStart DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
+     * @param lateralOffsetAtStart Length.Rel; the lateral offset of the design line of the new
      *            CrossSectionLink with respect to the design line of the parent Link at the start of the parent Link
-     * @param lateralOffsetAtEnd DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
+     * @param lateralOffsetAtEnd Length.Rel; the lateral offset of the design line of the new
      *            CrossSectionLink with respect to the design line of the parent Link at the end of the parent Link
-     * @param beginWidth DoubleScalar.Rel&lt;LengthUnit&gt;; start width, positioned <i>symmetrically around</i> the design line
-     * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; end width, positioned <i>symmetrically around</i> the design line
+     * @param beginWidth Length.Rel; start width, positioned <i>symmetrically around</i> the design line
+     * @param endWidth Length.Rel; end width, positioned <i>symmetrically around</i> the design line
      * @throws OTSGeometryException when creation of the geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
