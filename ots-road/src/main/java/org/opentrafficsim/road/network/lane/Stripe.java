@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.lane;
 
+import java.util.List;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -9,8 +10,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
- * Longitudinal road stripes; simple constructors. For complex stripes, such as tapering ones or varying positions with respect
- * to the design line, use the RoadMarkerAlong.
+ * Longitudinal road stripes; simple constructors.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -67,16 +67,18 @@ public class Stripe extends RoadMarkerAlong
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
      * the StartNode towards the EndNode as the longitudinal direction.
      * @param parentLink Cross Section Link to which the element belongs
-     * @param lateralCenterPosition the lateral start position compared to the linear geometry of the Cross Section Link
-     * @param width positioned <i>symmetrically around</i> the center line given by the lateralCenterPosition
+     * @param crossSectionSlices The offsets and widths at positions along the line, relative to the design line of the parent
+     *            link. If there is just one with and offset, there should just be one element in the list with Length.Rel = 0.
+     *            If there are more slices, the last one should be at the length of the design line. If not, a NetworkException
+     *            is thrown.
      * @param permeable one of the enums of Stripe.Permeable to define the permeability
      * @throws OTSGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public Stripe(final CrossSectionLink parentLink, final Length.Rel lateralCenterPosition, final Length.Rel width,
+    public Stripe(final CrossSectionLink parentLink, final List<CrossSectionSlice> crossSectionSlices,
         final Permeable permeable) throws OTSGeometryException, NetworkException
     {
-        super(parentLink, lateralCenterPosition, width);
+        super(parentLink, crossSectionSlices);
         addPermeability(GTUType.ALL, permeable);
     }
 

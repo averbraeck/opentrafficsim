@@ -23,7 +23,6 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometry;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -656,7 +655,7 @@ final class Links
 
                 case SHOULDER:
                 {
-                    Shoulder shoulder = new Shoulder(csl, cseTag.name, cseTag.offset, cseTag.width, cseTag.width);
+                    Shoulder shoulder = new Shoulder(csl, cseTag.name, cseTag.offset, cseTag.width);
                     cseList.add(shoulder);
                     if (simulator != null && simulator instanceof AnimatorInterface)
                     {
