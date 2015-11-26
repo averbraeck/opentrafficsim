@@ -50,7 +50,7 @@ public abstract class AbstractSensor implements Sensor
 
     /**
      * @param lane The lane for which this is a sensor.
-     * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the position (between 0.0 and the length of the Lane) of
+     * @param longitudinalPosition Length.Rel; the position (between 0.0 and the length of the Lane) of
      *            the sensor on the design line of the lane.
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the sensor.

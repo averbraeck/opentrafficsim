@@ -133,12 +133,12 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * @param parentLink Cross Section Link to which the element belongs.
      * @param id the id of this lane within the link; should be unique within the link.
-     * @param lateralOffsetAtStart DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
-     *            CrossSectionLink with respect to the design line of the parent Link at the start of the parent Link
-     * @param lateralOffsetAtEnd DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
-     *            CrossSectionLink with respect to the design line of the parent Link at the end of the parent Link
-     * @param beginWidth DoubleScalar.Rel&lt;LengthUnit&gt;; start width, positioned <i>symmetrically around</i> the design line
-     * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; end width, positioned <i>symmetrically around</i> the design line
+     * @param lateralOffsetAtStart Length.Rel; the lateral offset of the design line of the new CrossSectionLink with respect to
+     *            the design line of the parent Link at the start of the parent Link
+     * @param lateralOffsetAtEnd Length.Rel; the lateral offset of the design line of the new CrossSectionLink with respect to
+     *            the design line of the parent Link at the end of the parent Link
+     * @param beginWidth Length.Rel; start width, positioned <i>symmetrically around</i> the design line
+     * @param endWidth Length.Rel; end width, positioned <i>symmetrically around</i> the design line
      * @param laneType type of lane to deduce compatibility with GTU types
      * @param directionalityMap in direction of geometry, reverse, or both, specified per GTU Type
      * @param speedLimitMap speed limit on this lane, specified per GTU Type
@@ -164,12 +164,12 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * @param parentLink Cross Section Link to which the element belongs.
      * @param id the id of this lane within the link; should be unique within the link.
-     * @param lateralOffsetAtStart DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
-     *            CrossSectionLink with respect to the design line of the parent Link at the start of the parent Link
-     * @param lateralOffsetAtEnd DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
-     *            CrossSectionLink with respect to the design line of the parent Link at the end of the parent Link
-     * @param beginWidth DoubleScalar.Rel&lt;LengthUnit&gt;; start width, positioned <i>symmetrically around</i> the design line
-     * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; end width, positioned <i>symmetrically around</i> the design line
+     * @param lateralOffsetAtStart Length.Rel; the lateral offset of the design line of the new CrossSectionLink with respect to
+     *            the design line of the parent Link at the start of the parent Link
+     * @param lateralOffsetAtEnd Length.Rel; the lateral offset of the design line of the new CrossSectionLink with respect to
+     *            the design line of the parent Link at the end of the parent Link
+     * @param beginWidth Length.Rel; start width, positioned <i>symmetrically around</i> the design line
+     * @param endWidth Length.Rel; end width, positioned <i>symmetrically around</i> the design line
      * @param laneType type of lane to deduce compatibility with GTU types
      * @param directionality in direction of geometry, reverse, or both
      * @param speedLimit speed limit on this lane
@@ -270,10 +270,13 @@ public class Lane extends CrossSectionElement implements Serializable
 
         if (direction.equals(LateralDirectionality.LEFT))
         {
-            if (Math.abs((this.designLineOffsetAtBegin.getSI() + this.beginWidth.getSI() / 2.0)
-                - (lane.designLineOffsetAtBegin.getSI() - lane.beginWidth.getSI() / 2.0)) < ADJACENT_MARGIN.getSI()
-                && Math.abs((this.designLineOffsetAtEnd.getSI() + this.endWidth.getSI() / 2.0)
-                    - (lane.designLineOffsetAtEnd.getSI() - lane.endWidth.getSI() / 2.0)) < ADJACENT_MARGIN.getSI())
+            // TODO take the cross section slices into account...
+            if (Math.abs((getDesignLineOffsetAtBegin().getSI() + getBeginWidth().getSI() / 2.0)
+                - (lane.getDesignLineOffsetAtBegin().getSI() - lane.getBeginWidth().getSI() / 2.0)) < ADJACENT_MARGIN
+                    .getSI()
+                && Math.abs((getDesignLineOffsetAtEnd().getSI() + getEndWidth().getSI() / 2.0)
+                    - (lane.getDesignLineOffsetAtEnd().getSI() - lane.getEndWidth().getSI() / 2.0)) < ADJACENT_MARGIN
+                        .getSI())
             {
                 // look at stripes between the two lanes
                 for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
@@ -281,10 +284,11 @@ public class Lane extends CrossSectionElement implements Serializable
                     if (cse instanceof Stripe)
                     {
                         Stripe stripe = (Stripe) cse;
-                        if (Math.abs((this.designLineOffsetAtBegin.getSI() + this.beginWidth.getSI() / 2.0)
-                            - stripe.designLineOffsetAtBegin.getSI()) < ADJACENT_MARGIN.getSI()
-                            && Math.abs((this.designLineOffsetAtEnd.getSI() + this.endWidth.getSI() / 2.0)
-                                - stripe.designLineOffsetAtEnd.getSI()) < ADJACENT_MARGIN.getSI())
+                        // TODO take the cross section slices into account...
+                        if (Math.abs((getDesignLineOffsetAtBegin().getSI() + getBeginWidth().getSI() / 2.0)
+                            - stripe.getDesignLineOffsetAtBegin().getSI()) < ADJACENT_MARGIN.getSI()
+                            && Math.abs((getDesignLineOffsetAtEnd().getSI() + getEndWidth().getSI() / 2.0)
+                                - stripe.getDesignLineOffsetAtEnd().getSI()) < ADJACENT_MARGIN.getSI())
                         {
                             if (!stripe.isPermeable(gtuType, LateralDirectionality.LEFT))
                             {
@@ -303,10 +307,13 @@ public class Lane extends CrossSectionElement implements Serializable
         else
         // direction.equals(LateralDirectionality.RIGHT)
         {
-            if (Math.abs((this.designLineOffsetAtBegin.getSI() - this.beginWidth.getSI() / 2.0)
-                - (lane.designLineOffsetAtBegin.getSI() + lane.beginWidth.getSI() / 2.0)) < ADJACENT_MARGIN.getSI()
-                && Math.abs((this.designLineOffsetAtEnd.getSI() - this.endWidth.getSI() / 2.0)
-                    - (lane.designLineOffsetAtEnd.getSI() + lane.endWidth.getSI() / 2.0)) < ADJACENT_MARGIN.getSI())
+            // TODO take the cross section slices into account...
+            if (Math.abs((getDesignLineOffsetAtBegin().getSI() - getBeginWidth().getSI() / 2.0)
+                - (lane.getDesignLineOffsetAtBegin().getSI() + lane.getBeginWidth().getSI() / 2.0)) < ADJACENT_MARGIN
+                    .getSI()
+                && Math.abs((getDesignLineOffsetAtEnd().getSI() - getEndWidth().getSI() / 2.0)
+                    - (lane.getDesignLineOffsetAtEnd().getSI() + lane.getEndWidth().getSI() / 2.0)) < ADJACENT_MARGIN
+                        .getSI())
             {
                 // look at stripes between the two lanes
                 for (CrossSectionElement cse : this.parentLink.getCrossSectionElementList())
@@ -314,10 +321,11 @@ public class Lane extends CrossSectionElement implements Serializable
                     if (cse instanceof Stripe)
                     {
                         Stripe stripe = (Stripe) cse;
-                        if (Math.abs((this.designLineOffsetAtBegin.getSI() - this.beginWidth.getSI() / 2.0)
-                            - stripe.designLineOffsetAtBegin.getSI()) < ADJACENT_MARGIN.getSI()
-                            && Math.abs((this.designLineOffsetAtEnd.getSI() - this.endWidth.getSI() / 2.0)
-                                - stripe.designLineOffsetAtEnd.getSI()) < ADJACENT_MARGIN.getSI())
+                        // TODO take the cross section slices into account...
+                        if (Math.abs((getDesignLineOffsetAtBegin().getSI() - getBeginWidth().getSI() / 2.0)
+                            - stripe.getDesignLineOffsetAtBegin().getSI()) < ADJACENT_MARGIN.getSI()
+                            && Math.abs((getDesignLineOffsetAtEnd().getSI() - getEndWidth().getSI() / 2.0)
+                                - stripe.getDesignLineOffsetAtEnd().getSI()) < ADJACENT_MARGIN.getSI())
                         {
                             if (!stripe.isPermeable(gtuType, LateralDirectionality.RIGHT))
                             {
@@ -393,8 +401,8 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * Retrieve the list of Sensors of this Lane in the specified distance range for the given GTUType. The sensors that are
      * triggered by GTUTypes.ALL are added as well. The resulting list is a defensive copy.
-     * @param minimumPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the minimum distance on the Lane (exclusive)
-     * @param maximumPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum distance on the Lane (inclusive)
+     * @param minimumPosition Length.Rel; the minimum distance on the Lane (exclusive)
+     * @param maximumPosition Length.Rel; the maximum distance on the Lane (inclusive)
      * @param gtuType the GTU type to provide the sensors for
      * @return List&lt;Sensor&gt;; list of the sensor in the specified range
      */
@@ -614,8 +622,7 @@ public class Lane extends CrossSectionElement implements Serializable
     /**
      * Add a LaneBasedGTU to the list of this Lane.
      * @param gtu LaneBasedGTU; the GTU to add
-     * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the longitudinal position that the newly added GTU will
-     *            have on this Lane
+     * @param longitudinalPosition Length.Rel; the longitudinal position that the newly added GTU will have on this Lane
      * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to
      *         a lane change operation)
      * @throws NetworkException when longitudinalPosition is negative or exceeds the length of this Lane

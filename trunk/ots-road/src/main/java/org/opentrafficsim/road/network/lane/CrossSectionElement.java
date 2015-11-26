@@ -1,12 +1,16 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.media.j3d.Bounds;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -37,21 +41,9 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected final CrossSectionLink parentLink;
 
-    /** The lateral offset from the design line of the parentLink at the start of the parentLink. */
+    /** The offsets and widths at positions along the line, relative to the design line of the parent link. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final Length.Rel designLineOffsetAtBegin;
-
-    /** The lateral offset from the design line of the parentLink at the end of the parentLink. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final Length.Rel designLineOffsetAtEnd;
-
-    /** Start width, positioned <i>symmetrically around</i> the lateral start position. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final Length.Rel beginWidth;
-
-    /** End width, positioned <i>symmetrically around</i> the lateral end position. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final Length.Rel endWidth;
+    protected final List<CrossSectionSlice> crossSectionSlices;
 
     /** The length of the line. Calculated once at the creation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -63,26 +55,22 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     /** The contour of the element. Calculated once at the creation. */
     private final OTSLine3D contour;
 
+    /** constant for relative length 0. */
+    private static final Length.Rel LENGTH_0 = new Length.Rel(0.0, LengthUnit.SI);
+
     /**
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
      * the StartNode towards the EndNode as the longitudinal direction.
      * @param id String; The id of the CrosssSectionElement. Should be unique within the parentLink.
      * @param parentLink CrossSectionLink; Link to which the element belongs.
-     * @param lateralOffsetAtBegin DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
-     *            CrossSectionLink with respect to the design line of the parent Link at the start of the parent Link
-     * @param lateralOffsetAtEnd DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral offset of the design line of the new
-     *            CrossSectionLink with respect to the design line of the parent Link at the end of the parent Link
-     * @param beginWidth DoubleScalar.Rel&lt;LengthUnit&gt;; width at start, positioned <i>symmetrically around</i> the design
-     *            line
-     * @param endWidth DoubleScalar.Rel&lt;LengthUnit&gt;; width at end, positioned <i>symmetrically around</i> the design line
+     * @param crossSectionSlices The offsets and widths at positions along the line, relative to the design line of the parent
+     *            link
      * @throws OTSGeometryException when creation of the geometry fails
      * @throws NetworkException when id equal to null or not unique
      */
-    public CrossSectionElement(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffsetAtBegin,
-            final Length.Rel lateralOffsetAtEnd, final Length.Rel beginWidth, final Length.Rel endWidth)
-            throws OTSGeometryException, NetworkException
+    public CrossSectionElement(final CrossSectionLink parentLink, final String id,
+        final List<CrossSectionSlice> crossSectionSlices) throws OTSGeometryException, NetworkException
     {
-        super();
         if (id == null)
         {
             throw new NetworkException("Constructor of CrossSectionElement -- id cannot be null");
@@ -91,23 +79,63 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
         {
             if (cse.getId().equals(id))
             {
-                throw new NetworkException("Constructor of CrossSectionElement -- id " + id + " not unique within the Link");
+                throw new NetworkException("Constructor of CrossSectionElement -- id " + id
+                    + " not unique within the Link");
             }
         }
         this.id = id;
         this.parentLink = parentLink;
-        this.designLineOffsetAtBegin = lateralOffsetAtBegin;
-        this.designLineOffsetAtEnd = lateralOffsetAtEnd;
-        this.beginWidth = beginWidth;
-        this.endWidth = endWidth;
+        this.crossSectionSlices = new ArrayList<>(crossSectionSlices); // copy of list with immutable slices
 
+        // TODO take the cross section slices into account...
         this.centerLine =
-                this.getParentLink().getDesignLine()
-                        .offsetLine(this.designLineOffsetAtBegin.getSI(), this.designLineOffsetAtEnd.getSI());
+            this.getParentLink().getDesignLine().offsetLine(getDesignLineOffsetAtBegin().getSI(),
+                getDesignLineOffsetAtEnd().getSI());
         this.length = this.centerLine.getLength();
         this.contour = constructContour(this);
 
         this.parentLink.addCrossSectionElement(this);
+    }
+
+    /**
+     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
+     * the StartNode towards the EndNode as the longitudinal direction.
+     * @param id String; The id of the CrosssSectionElement. Should be unique within the parentLink.
+     * @param parentLink CrossSectionLink; Link to which the element belongs.
+     * @param lateralOffsetAtBegin Length.Rel; the lateral offset of the design line of the new CrossSectionLink with respect to
+     *            the design line of the parent Link at the start of the parent Link
+     * @param lateralOffsetAtEnd Length.Rel; the lateral offset of the design line of the new CrossSectionLink with respect to
+     *            the design line of the parent Link at the end of the parent Link
+     * @param beginWidth Length.Rel; width at start, positioned <i>symmetrically around</i> the design line
+     * @param endWidth Length.Rel; width at end, positioned <i>symmetrically around</i> the design line
+     * @throws OTSGeometryException when creation of the geometry fails
+     * @throws NetworkException when id equal to null or not unique
+     */
+    public CrossSectionElement(final CrossSectionLink parentLink, final String id,
+        final Length.Rel lateralOffsetAtBegin, final Length.Rel lateralOffsetAtEnd, final Length.Rel beginWidth,
+        final Length.Rel endWidth) throws OTSGeometryException, NetworkException
+    {
+        this(parentLink, id, Arrays.asList(new CrossSectionSlice[]{
+            new CrossSectionSlice(LENGTH_0, lateralOffsetAtBegin, beginWidth),
+            new CrossSectionSlice(parentLink.getLength(), lateralOffsetAtEnd, endWidth)}));
+    }
+
+    /**
+     * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
+     * the StartNode towards the EndNode as the longitudinal direction.
+     * @param id String; The id of the CrosssSectionElement. Should be unique within the parentLink.
+     * @param parentLink CrossSectionLink; Link to which the element belongs.
+     * @param lateralOffset Length.Rel; the lateral offset of the design line of the new CrossSectionLink with respect to the
+     *            design line of the parent Link
+     * @param width Length.Rel; width, positioned <i>symmetrically around</i> the design line
+     * @throws OTSGeometryException when creation of the geometry fails
+     * @throws NetworkException when id equal to null or not unique
+     */
+    public CrossSectionElement(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffset,
+        final Length.Rel width) throws OTSGeometryException, NetworkException
+    {
+        this(parentLink, id, Arrays
+            .asList(new CrossSectionSlice[]{new CrossSectionSlice(LENGTH_0, lateralOffset, width)}));
     }
 
     /**
@@ -121,17 +149,19 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     /**
      * Retrieve the lateral offset from the Link design line at the specified longitudinal position.
      * @param fractionalPosition double; fractional longitudinal position on this Lane
-     * @return DoubleScalar.Rel&lt;LengthUnit&gt; the lateralCenterPosition at the specified longitudinal position
+     * @return Length.Rel the lateralCenterPosition at the specified longitudinal position
      */
     public final Length.Rel getLateralCenterPosition(final double fractionalPosition)
     {
-        return Length.Rel.interpolate(this.designLineOffsetAtBegin, this.designLineOffsetAtEnd, fractionalPosition);
+        // TODO take the cross section slices into account...
+        return Length.Rel.interpolate(this.getDesignLineOffsetAtBegin(), this.getDesignLineOffsetAtEnd(),
+            fractionalPosition);
     }
 
     /**
      * Retrieve the lateral offset from the Link design line at the specified longitudinal position.
-     * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the longitudinal position on this Lane
-     * @return DoubleScalar.Rel&lt;LengthUnit&gt; the lateralCenterPosition at the specified longitudinal position
+     * @param longitudinalPosition Length.Rel; the longitudinal position on this Lane
+     * @return Length.Rel the lateralCenterPosition at the specified longitudinal position
      */
     public final Length.Rel getLateralCenterPosition(final Length.Rel longitudinalPosition)
     {
@@ -141,7 +171,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     /**
      * Return the width of this CrossSectionElement at a specified longitudinal position.
      * @param longitudinalPosition DoubleScalar&lt;LengthUnit&gt;; the longitudinal position
-     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the width of this CrossSectionElement at the specified longitudinal position.
+     * @return Length.Rel; the width of this CrossSectionElement at the specified longitudinal position.
      */
     public final Length.Rel getWidth(final Length.Rel longitudinalPosition)
     {
@@ -151,17 +181,17 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     /**
      * Return the width of this CrossSectionElement at a specified fractional longitudinal position.
      * @param fractionalPosition double; the fractional longitudinal position
-     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the width of this CrossSectionElement at the specified fractional
-     *         longitudinal position.
+     * @return Length.Rel; the width of this CrossSectionElement at the specified fractional longitudinal position.
      */
     public final Length.Rel getWidth(final double fractionalPosition)
     {
-        return Length.Rel.interpolate(this.beginWidth, this.endWidth, fractionalPosition);
+        // TODO take the cross section slices into account...
+        return Length.Rel.interpolate(getBeginWidth(), getEndWidth(), fractionalPosition);
     }
 
     /**
      * Return the length of this CrossSectionElement as measured along the design line (which equals the center line).
-     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the length of this CrossSectionElement
+     * @return Length.Rel; the length of this CrossSectionElement
      */
     public final Length.Rel getLength()
     {
@@ -173,7 +203,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      */
     public final Length.Rel getDesignLineOffsetAtBegin()
     {
-        return this.designLineOffsetAtBegin;
+        return this.crossSectionSlices.get(0).getDesignLineOffset();
     }
 
     /**
@@ -181,7 +211,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      */
     public final Length.Rel getDesignLineOffsetAtEnd()
     {
-        return this.designLineOffsetAtEnd;
+        return this.crossSectionSlices.get(this.crossSectionSlices.size() - 1).getDesignLineOffset();
     }
 
     /**
@@ -189,7 +219,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      */
     public final Length.Rel getBeginWidth()
     {
-        return this.beginWidth;
+        return this.crossSectionSlices.get(0).getWidth();
     }
 
     /**
@@ -197,7 +227,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      */
     public final Length.Rel getEndWidth()
     {
-        return this.endWidth;
+        return this.crossSectionSlices.get(this.crossSectionSlices.size() - 1).getWidth();
     }
 
     /**
@@ -234,16 +264,18 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      * CrossSectionElement at the specified fractional longitudinal position.
      * @param lateralDirection LateralDirectionality; LEFT, or RIGHT
      * @param fractionalLongitudinalPosition double; ranges from 0.0 (begin of parentLink) to 1.0 (end of parentLink)
-     * @return DoubleScalar.Rel&lt;LengthUnit&gt;
+     * @return Length.Rel
      */
     public final Length.Rel getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
-            final double fractionalLongitudinalPosition)
+        final double fractionalLongitudinalPosition)
     {
+        // TODO take the cross section slices into account...
         Length.Rel designLineOffset =
-                Length.Rel
-                        .interpolate(this.designLineOffsetAtBegin, this.designLineOffsetAtEnd, fractionalLongitudinalPosition);
+            Length.Rel.interpolate(getDesignLineOffsetAtBegin(), getDesignLineOffsetAtEnd(),
+                fractionalLongitudinalPosition);
+        // TODO take the cross section slices into account...
         Length.Rel halfWidth =
-                Length.Rel.interpolate(this.beginWidth, this.endWidth, fractionalLongitudinalPosition).multiplyBy(0.5);
+            Length.Rel.interpolate(getBeginWidth(), getEndWidth(), fractionalLongitudinalPosition).multiplyBy(0.5);
         switch (lateralDirection)
         {
             case LEFT:
@@ -259,11 +291,11 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      * Return the lateral offset from the design line of the parent Link of the Left or Right boundary of this
      * CrossSectionElement at the specified longitudinal position.
      * @param lateralDirection LateralDirectionality; LEFT, or RIGHT
-     * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the position along the length of this CrossSectionElement
-     * @return DoubleScalar.Rel&lt;LengthUnit&gt;
+     * @param longitudinalPosition Length.Rel; the position along the length of this CrossSectionElement
+     * @return Length.Rel
      */
     public final Length.Rel getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
-            final Length.Rel longitudinalPosition)
+        final Length.Rel longitudinalPosition)
     {
         return getLateralBoundaryPosition(lateralDirection, longitudinalPosition.getSI() / getLength().getSI());
     }
@@ -276,15 +308,16 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
      * @throws OTSGeometryException when construction of the geometry fails
      * @throws NetworkException when the resulting contour is degenerate (cannot happen; we hope)
      */
-    public static OTSLine3D constructContour(final CrossSectionElement cse) throws OTSGeometryException, NetworkException
+    public static OTSLine3D constructContour(final CrossSectionElement cse) throws OTSGeometryException,
+        NetworkException
     {
         OTSLine3D crossSectionDesignLine =
-                cse.getParentLink().getDesignLine()
-                        .offsetLine(cse.getDesignLineOffsetAtBegin().getSI(), cse.getDesignLineOffsetAtEnd().getSI());
+            cse.getParentLink().getDesignLine().offsetLine(cse.getDesignLineOffsetAtBegin().getSI(),
+                cse.getDesignLineOffsetAtEnd().getSI());
         OTSLine3D rightBoundary =
-                crossSectionDesignLine.offsetLine(-cse.getBeginWidth().getSI() / 2, -cse.getEndWidth().getSI() / 2);
+            crossSectionDesignLine.offsetLine(-cse.getBeginWidth().getSI() / 2, -cse.getEndWidth().getSI() / 2);
         OTSLine3D leftBoundary =
-                crossSectionDesignLine.offsetLine(cse.getBeginWidth().getSI() / 2, cse.getEndWidth().getSI() / 2);
+            crossSectionDesignLine.offsetLine(cse.getBeginWidth().getSI() / 2, cse.getEndWidth().getSI() / 2);
         OTSPoint3D[] result = new OTSPoint3D[rightBoundary.size() + leftBoundary.size() + 1];
         int resultIndex = 0;
         for (int index = 0; index < rightBoundary.size(); index++)
@@ -321,8 +354,8 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return String.format("CSE offset %.2fm..%.2fm, width %.2fm..%.2fm", this.designLineOffsetAtBegin.getSI(),
-                this.designLineOffsetAtEnd.getSI(), this.beginWidth.getSI(), this.endWidth.getSI());
+        return String.format("CSE offset %.2fm..%.2fm, width %.2fm..%.2fm", getDesignLineOffsetAtBegin().getSI(),
+            getDesignLineOffsetAtEnd().getSI(), getBeginWidth().getSI(), getEndWidth().getSI());
     }
 
     /** {@inheritDoc} */
@@ -338,7 +371,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     @Override
     public boolean equals(final Object obj)
     {
