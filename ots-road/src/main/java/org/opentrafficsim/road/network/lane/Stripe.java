@@ -9,7 +9,8 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
- * Longitudinal road stripes.
+ * Longitudinal road stripes; simple constructors. For complex stripes, such as tapering ones or varying positions with respect
+ * to the design line, use the RoadMarkerAlong.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -36,7 +37,7 @@ public class Stripe extends RoadMarkerAlong
     public Stripe(final CrossSectionLink parentLink, final Length.Rel lateralCenterPosition, final Length.Rel width)
         throws OTSGeometryException, NetworkException
     {
-        super(parentLink, lateralCenterPosition, width, width);
+        super(parentLink, lateralCenterPosition, width);
     }
 
     /**
@@ -54,7 +55,7 @@ public class Stripe extends RoadMarkerAlong
     public Stripe(final CrossSectionLink parentLink, final Length.Rel lateralCenterPosition, final Length.Rel width,
         final Set<GTUType> gtuTypes, final Permeable permeable) throws OTSGeometryException, NetworkException
     {
-        super(parentLink, lateralCenterPosition, width, width);
+        super(parentLink, lateralCenterPosition, width);
         for (GTUType gtuType : gtuTypes)
         {
             addPermeability(gtuType, permeable);
@@ -75,7 +76,7 @@ public class Stripe extends RoadMarkerAlong
     public Stripe(final CrossSectionLink parentLink, final Length.Rel lateralCenterPosition, final Length.Rel width,
         final Permeable permeable) throws OTSGeometryException, NetworkException
     {
-        super(parentLink, lateralCenterPosition, width, width);
+        super(parentLink, lateralCenterPosition, width);
         addPermeability(GTUType.ALL, permeable);
     }
 

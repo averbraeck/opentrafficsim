@@ -194,6 +194,119 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
+     * @param parentLink Cross Section Link to which the element belongs.
+     * @param id the id of this lane within the link; should be unique within the link.
+     * @param lateralOffset Length.Rel; the lateral offset of the design line of the new CrossSectionLink with respect to the
+     *            design line of the parent Link
+     * @param width Length.Rel; width, positioned <i>symmetrically around</i> the design line
+     * @param laneType type of lane to deduce compatibility with GTU types
+     * @param directionalityMap in direction of geometry, reverse, or both, specified per GTU Type
+     * @param speedLimitMap speed limit on this lane, specified per GTU Type
+     * @param overtakingConditions the conditions for overtaking another GTU, viewed from this lane
+     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws NetworkException when id equal to null or not unique
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public Lane(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffset,
+        final Length.Rel width, final LaneType laneType,
+        final Map<GTUType, LongitudinalDirectionality> directionalityMap, final Map<GTUType, Speed> speedLimitMap,
+        final OvertakingConditions overtakingConditions) throws OTSGeometryException, NetworkException
+    {
+        super(parentLink, id, lateralOffset, width);
+        this.laneType = laneType;
+        this.directionalityMap = directionalityMap;
+        checkDirectionality();
+        this.speedLimitMap = speedLimitMap;
+        this.overtakingConditions = overtakingConditions;
+    }
+
+    /**
+     * @param parentLink Cross Section Link to which the element belongs.
+     * @param id the id of this lane within the link; should be unique within the link.
+     * @param lateralOffset Length.Rel; the lateral offset of the design line of the new CrossSectionLink with respect to the
+     *            design line of the parent Link
+     * @param width Length.Rel; width, positioned <i>symmetrically around</i> the design line
+     * @param laneType type of lane to deduce compatibility with GTU types
+     * @param directionality in direction of geometry, reverse, or both
+     * @param speedLimit speed limit on this lane
+     * @param overtakingConditions the conditions for overtaking another GTU, viewed from this lane
+     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws NetworkException when id equal to null or not unique
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public Lane(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffset,
+        final Length.Rel width, final LaneType laneType, final LongitudinalDirectionality directionality,
+        final Speed speedLimit, final OvertakingConditions overtakingConditions) throws OTSGeometryException,
+        NetworkException
+    {
+        super(parentLink, id, lateralOffset, width);
+        this.laneType = laneType;
+        this.directionalityMap = new LinkedHashMap<>(1);
+        this.directionalityMap.put(GTUType.ALL, directionality);
+        checkDirectionality();
+        this.speedLimitMap = new LinkedHashMap<>();
+        this.speedLimitMap.put(GTUType.ALL, speedLimit);
+        this.overtakingConditions = overtakingConditions;
+    }
+
+    /**
+     * @param parentLink Cross Section Link to which the element belongs.
+     * @param id the id of this lane within the link; should be unique within the link.
+     * @param crossSectionSlices The offsets and widths at positions along the line, relative to the design line of the parent
+     *            link. If there is just one with and offset, there should just be one element in the list with Length.Rel = 0.
+     *            If there are more slices, the last one should be at the length of the design line. If not, a NetworkException
+     *            is thrown.
+     * @param laneType type of lane to deduce compatibility with GTU types
+     * @param directionalityMap in direction of geometry, reverse, or both, specified per GTU Type
+     * @param speedLimitMap speed limit on this lane, specified per GTU Type
+     * @param overtakingConditions the conditions for overtaking another GTU, viewed from this lane
+     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws NetworkException when id equal to null or not unique
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public Lane(final CrossSectionLink parentLink, final String id, final List<CrossSectionSlice> crossSectionSlices,
+        final LaneType laneType, final Map<GTUType, LongitudinalDirectionality> directionalityMap,
+        final Map<GTUType, Speed> speedLimitMap, final OvertakingConditions overtakingConditions)
+        throws OTSGeometryException, NetworkException
+    {
+        super(parentLink, id, crossSectionSlices);
+        this.laneType = laneType;
+        this.directionalityMap = directionalityMap;
+        checkDirectionality();
+        this.speedLimitMap = speedLimitMap;
+        this.overtakingConditions = overtakingConditions;
+    }
+
+    /**
+     * @param parentLink Cross Section Link to which the element belongs.
+     * @param id the id of this lane within the link; should be unique within the link.
+     * @param crossSectionSlices The offsets and widths at positions along the line, relative to the design line of the parent
+     *            link. If there is just one with and offset, there should just be one element in the list with Length.Rel = 0.
+     *            If there are more slices, the last one should be at the length of the design line. If not, a NetworkException
+     *            is thrown.
+     * @param laneType type of lane to deduce compatibility with GTU types
+     * @param directionality in direction of geometry, reverse, or both
+     * @param speedLimit speed limit on this lane
+     * @param overtakingConditions the conditions for overtaking another GTU, viewed from this lane
+     * @throws OTSGeometryException when creation of the center line or contour geometry fails
+     * @throws NetworkException when id equal to null or not unique
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public Lane(final CrossSectionLink parentLink, final String id, final List<CrossSectionSlice> crossSectionSlices,
+        final LaneType laneType, final LongitudinalDirectionality directionality, final Speed speedLimit,
+        final OvertakingConditions overtakingConditions) throws OTSGeometryException, NetworkException
+    {
+        super(parentLink, id, crossSectionSlices);
+        this.laneType = laneType;
+        this.directionalityMap = new LinkedHashMap<>(1);
+        this.directionalityMap.put(GTUType.ALL, directionality);
+        checkDirectionality();
+        this.speedLimitMap = new LinkedHashMap<>();
+        this.speedLimitMap.put(GTUType.ALL, speedLimit);
+        this.overtakingConditions = overtakingConditions;
+    }
+
+    /**
      * Retrieve one of the sets of neighboring Lanes that is accessible for the given type of GTU. A defensive copy of the
      * internal data structure is returned.
      * @param direction LateralDirectionality; either LEFT or RIGHT, relative to the DESIGN LINE of the link (and the direction
