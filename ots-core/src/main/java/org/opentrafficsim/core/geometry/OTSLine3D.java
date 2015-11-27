@@ -898,9 +898,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * that case, the position will be extrapolated in the direction of the line at its start or end.
      * @param position the position on the line for which to calculate the point on, before, of after the line
      * @return a directed point
-     * @throws NetworkException when position could not be calculated
      */
-    public final DirectedPoint getLocationExtended(final Length.Rel position) throws NetworkException
+    public final DirectedPoint getLocationExtended(final Length.Rel position)
     {
         return getLocationExtendedSI(position.getSI());
     }
@@ -910,14 +909,20 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * that case, the position will be extrapolated in the direction of the line at its start or end.
      * @param positionSI the position on the line for which to calculate the point on, before, of after the line, in SI units
      * @return a directed point
-     * @throws NetworkException when position could not be calculated
      */
-    public final DirectedPoint getLocationExtendedSI(final double positionSI) throws NetworkException
+    public final DirectedPoint getLocationExtendedSI(final double positionSI)
     {
         makeLengthIndexedLine();
         if (positionSI >= 0.0 && positionSI <= getLengthSI())
         {
-            return getLocationSI(positionSI);
+            try
+            {
+                return getLocationSI(positionSI);
+            }
+            catch (NetworkException exception)
+            {
+                // cannot happen
+            }
         }
 
         // position before start point -- extrapolate
@@ -1184,7 +1189,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     /**
      * @return excel XY plottable output
      */
-    private String toExcel()
+    public final String toExcel()
     {
         StringBuffer s = new StringBuffer();
         for (OTSPoint3D p : this.points)
