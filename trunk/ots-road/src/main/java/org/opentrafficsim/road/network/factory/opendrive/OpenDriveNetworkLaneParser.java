@@ -170,13 +170,14 @@ public class OpenDriveNetworkLaneParser
         
         for (RoadTag roadTag : this.roadTags.values())
         {
+            //System.err.println("RoadTag " + roadTag.id);
             RoadTag.generateRegularRoads(roadTag, this.simulator, this);
         }
         
-        for (RoadTag roadTag : this.roadTags.values())
+/*        for (RoadTag roadTag : this.roadTags.values())
         {
             RoadTag.generateJunctionRoads(roadTag, this.simulator, this);
-        }
+        }*/
         
 /*        for(JunctionTag juncTag: this.junctionTags.values())
             JunctionTag.showJunctions(juncTag, this.simulator, this); */       

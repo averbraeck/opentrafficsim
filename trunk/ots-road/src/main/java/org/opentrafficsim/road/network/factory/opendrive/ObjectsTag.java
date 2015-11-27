@@ -18,12 +18,12 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class SignalsTag
+class ObjectsTag
 {
 
-    /** geometryTags */
+    /** objectTags */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    List<SignalTag> signalTags = new ArrayList<SignalTag>();
+    List<ObjectTag> objectTags = new ArrayList<ObjectTag>();
 
     /**
      * Parse the attributes of the road tag. The sub-elements are parsed in separate classes.
@@ -34,16 +34,17 @@ class SignalsTag
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseSignals(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
+    static void parseObjects(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
         throws SAXException, NetworkException
     {
-        SignalsTag signalsTag = new SignalsTag();
-        for (Node node0 : XMLParser.getNodes(nodeList, "signals"))
-            for (Node node : XMLParser.getNodes(node0.getChildNodes(), "signal"))
+        ObjectsTag objectsTag = new ObjectsTag();
+        for (Node node0 : XMLParser.getNodes(nodeList, "objects"))
+            for (Node node : XMLParser.getNodes(node0.getChildNodes(), "object"))
             {
-                SignalTag signalTag = SignalTag.parseSignal(node, parser);
-                signalsTag.signalTags.add(signalTag);
+                ObjectTag objectTag = ObjectTag.parseObject(node, parser);
+                objectsTag.objectTags.add(objectTag);
             }
-        roadTag.signalsTag = signalsTag;
+        roadTag.objectsTag = objectsTag;
+
     }
 }

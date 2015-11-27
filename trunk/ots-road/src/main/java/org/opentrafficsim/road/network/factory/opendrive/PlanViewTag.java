@@ -13,12 +13,14 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Length.Rel;
+import org.geotools.measure.AngleFormat;
 import org.opentrafficsim.core.geometry.Clothoid;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.factory.xml.units.AngleUnits;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -69,10 +71,38 @@ class PlanViewTag
 
                 planViewTag.geometryTags.add(geometryTag);
             }
+            
+            GeometryTag lastGeometryTag = new GeometryTag();
+            
+            GeometryTag previousTag = planViewTag.geometryTags.get(planViewTag.geometryTags.size()-1);
+            
+            lastGeometryTag.id = roadTag.id + "." + String.valueOf(geometryCount);
+
+            lastGeometryTag.length = new Length.Rel(0.0, LengthUnit.METER); 
+            //lastGeometryTag.length = roadTag.length.minus(previousTag.s);
+
+            lastGeometryTag.s = roadTag.length;
+
+            lastGeometryTag.x = new Length.Rel(0.0, LengthUnit.METER);
+            
+            lastGeometryTag.x = previousTag.x.plus(previousTag.length.multiplyBy(Math.cos(previousTag.hdg.si)));
+            
+            lastGeometryTag.y = new Length.Rel(0.0, LengthUnit.METER);
+            
+            lastGeometryTag.y = previousTag.y.plus(previousTag.length.multiplyBy(Math.sin(previousTag.hdg.si)));
+
+            lastGeometryTag.hdg = previousTag.hdg;
+            
+            
+            GeometryTag.makeOTSNode(lastGeometryTag);
+
+            planViewTag.geometryTags.add(lastGeometryTag);
+            
+            
             geometryCount = 0;
             for(GeometryTag geometryTag: planViewTag.geometryTags)
             {
-                if (geometryTag.spiralTag != null && geometryCount > 1)
+                if (geometryTag.spiralTag != null)
                     interpolateSpiral(parser, planViewTag, geometryTag, geometryCount);
                 if (geometryTag.arcTag != null)
                     interpolateArc(planViewTag, geometryTag, geometryCount, roadTag);
@@ -98,31 +128,29 @@ class PlanViewTag
         OTSPoint3D start = geometryTag.node.getPoint();
         Length.Rel length = geometryTag.length;
 
-        int numSegments = 100;// (int) (length.doubleValue()/1);
+        /*int numSegments = 100;// (int) (length.doubleValue()/1);
         
-        //if(startCurvature == 0.0d && length.doubleValue() > 0.5d)
-        {
-            double dy =
-                    geometryTag.y.doubleValue()
-                            - planViewTag.geometryTags.get(geometryCount - 1).y.doubleValue();
-            double dx =
-                    geometryTag.x.doubleValue()
-                            - planViewTag.geometryTags.get(geometryCount - 1).x.doubleValue();
+        OTSLine3D line = Clothoid.clothoid(start, AngleUtil.normalize(new Angle.Abs(geometryTag.hdg.si, AngleUnit.RADIAN)),
+                        startCurvature, endCurvature, length, new Length.Rel(0, LengthUnit.SI), numSegments);*/
+        
+        
+        List<OTSPoint3D> pOutPut = new ArrayList<OTSPoint3D>();
+                
+        Rel x1 = geometryTag.x.plus(geometryTag.length.multiplyBy(Math.cos(geometryTag.hdg.si)).multiplyBy(0.5));
+        Rel y1 = geometryTag.y.plus(geometryTag.length.multiplyBy(Math.sin(geometryTag.hdg.si)).multiplyBy(0.5));
 
-            Angle.Abs startDirection = new Angle.Abs(Math.PI *2 - Math.atan2(dy, dx), AngleUnit.RADIAN);
+        OTSPoint3D p = new OTSPoint3D(x1.si, y1.si);
+        pOutPut.add(p);
+        
+        Rel x2 = geometryTag.x.plus(geometryTag.length.multiplyBy(Math.cos(geometryTag.hdg.si)).multiplyBy(0.66));
+        Rel y2 = geometryTag.y.plus(geometryTag.length.multiplyBy(Math.sin(geometryTag.hdg.si)).multiplyBy(0.66));
 
-            OTSLine3D line =
-                    Clothoid.clothoid(start, startDirection, startCurvature, endCurvature, length, new Length.Rel(0,
-                            LengthUnit.SI) /* FIXME: elevation at end */, numSegments);
-            
-/*            line = clothoid(new OTSPoint3D(10, 10, 5), new Angle.Abs(Math.PI / 8, AngleUnit.RADIAN), new LinearDensity(0 * -0.03,
-                            LinearDensityUnit.PER_METER), new LinearDensity(0.04, LinearDensityUnit.PER_METER), new Length.Rel(100,
-                            LengthUnit.METER), new Length.Rel(15, LengthUnit.METER), 100);*/
+        OTSPoint3D q = new OTSPoint3D(x2.si, y2.si);
+        pOutPut.add(q);
+        
+        OTSLine3D otsLine = new OTSLine3D(pOutPut);
 
-            // parser.spiras.put(line.hashCode(), line);
-            //geometryTag.interLine = line;
-        }
-
+        //geometryTag.interLine = otsLine;
 
     }
 
@@ -187,7 +215,7 @@ class PlanViewTag
         // Calculate the distance between the two points
         double xDiff = pTo.x - pFrom.x;
         double yDiff = pTo.y - pFrom.y;
-        double distance = (float) Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+        double distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
         //System.out.println("Distance between From and To = " + distance);
 
         if (pRadius * 2.0f < distance) {
@@ -195,7 +223,7 @@ class PlanViewTag
         }
 
         // Calculate the middle of the expected curve.
-        float factor = (float) Math.sqrt((pRadius * pRadius) / ((pTo.x - pFrom.x) * (pTo.x - pFrom.x) + (pTo.y - pFrom.y) * (pTo.y - pFrom.y)) - 0.25f);
+        double factor = Math.sqrt((pRadius * pRadius) / ((pTo.x - pFrom.x) * (pTo.x - pFrom.x) + (pTo.y - pFrom.y) * (pTo.y - pFrom.y)) - 0.25f);
         double x = 0;
         double y = 0;
         if (side) {
@@ -210,8 +238,8 @@ class PlanViewTag
         //System.out.println("Middle = " + circleMiddlePoint);
 
         // Calculate the two reference angles
-        float angle1 = (float) Math.atan2(pFrom.y - circleMiddlePoint.y, pFrom.x - circleMiddlePoint.x);
-        float angle2 = (float) Math.atan2(pTo.y - circleMiddlePoint.y, pTo.x - circleMiddlePoint.x);        
+        double angle1 = Math.atan2(pFrom.y - circleMiddlePoint.y, pFrom.x - circleMiddlePoint.x);
+        double angle2 = Math.atan2(pTo.y - circleMiddlePoint.y, pTo.x - circleMiddlePoint.x);        
 
         // Calculate the step.
         double step = pMinDistance / pRadius;
@@ -219,7 +247,7 @@ class PlanViewTag
 
         // Swap them if needed
         if (angle1 > angle2) {
-            float temp = angle1;
+            double temp = angle1;
             angle1 = angle2;
             angle2 = temp;
 
@@ -227,26 +255,52 @@ class PlanViewTag
         
         if((pTo.x - circleMiddlePoint.x < 0) && (pTo.y - circleMiddlePoint.y < 0) && (pFrom.y - circleMiddlePoint.y > 0) && (pFrom.x - circleMiddlePoint.x < 0))
         {
-            float temp = angle1;
+            double temp = angle1;
             angle1 = angle2;
             angle2 = temp;
             
-            angle1 = (float) (angle1 -Math.PI*2);
+            angle1 = angle1 -Math.PI*2;
             //angle2 = (float) (angle2 - Math.PI);
         }
+        else if((pTo.x - circleMiddlePoint.x > 0) && (pTo.y - circleMiddlePoint.y < 0) && (pFrom.y - circleMiddlePoint.y > 0) && (pFrom.x - circleMiddlePoint.x < 0))
+        {
+            double temp = angle1;
+            angle1 = angle2;
+            angle2 = temp;
+            
+            angle1 = angle1 -Math.PI*2;
+        }
+        else if((pTo.x - circleMiddlePoint.x < 0) && (pTo.y - circleMiddlePoint.y < 0) && (pFrom.y - circleMiddlePoint.y > 0) && (pFrom.x - circleMiddlePoint.x > 0))
+        {
+            double temp = angle1;
+            angle1 = angle2;
+            angle2 = temp;
+            
+            angle1 = angle1 -Math.PI*2;
+            //angle2 = (float) (angle2 - Math.PI);
+        }
+/*        else if((pTo.x - circleMiddlePoint.x > 0) && (pTo.y - circleMiddlePoint.y > 0) && (pFrom.y - circleMiddlePoint.y > 0) && (pFrom.x - circleMiddlePoint.x > 0))
+        {
+            double temp = angle1;
+            angle1 = angle2;
+            angle2 = temp;
+            
+            angle1 = angle1 -Math.PI*2;
+            //angle2 = (float) (angle2 - Math.PI);
+        }*/
         
         boolean flipped = false;
         if (!shortest) {
             if (angle2 - angle1 < Math.PI) {
-                float temp = angle1;
+                double temp = angle1;
                 angle1 = angle2;
                 angle2 = temp;
                 angle2 += Math.PI * 2.0f;
                 flipped = true;
             }
         }
-        for (float f = angle1; f < angle2; f += step) {
-            OTSPoint3D p = new OTSPoint3D((float) Math.cos(f) * pRadius + circleMiddlePoint.x, (float) Math.sin(f) * pRadius + circleMiddlePoint.y);
+        for (double f = angle1; f < angle2; f += step) {
+            OTSPoint3D p = new OTSPoint3D(Math.cos(f) * pRadius + circleMiddlePoint.x, Math.sin(f) * pRadius + circleMiddlePoint.y);
             pOutPut.add(p);
         }
 /*        if (flipped ^ side) {
@@ -277,31 +331,40 @@ class PlanViewTag
         GeometryTag from = planViewTag.geometryTags.get(0);
         GeometryTag to = planViewTag.geometryTags.get(points - 1);
 
-        // OTSPoint3D[] coordinates = new OTSPoint3D[points];
         List<OTSPoint3D> coordinates = new ArrayList<OTSPoint3D>();
 
         for (GeometryTag geometryTag : planViewTag.geometryTags)
         {
             // String a[] = geometryTag.id.split("\\.");
-
-            coordinates.add(geometryTag.node.getPoint());
+            
+            if(coordinates.size()==0)
+            {
+                coordinates.add(geometryTag.node.getPoint());
+            }
+            else
+            {
+                if(geometryTag.node.getPoint().x != coordinates.get(coordinates.size()-1).x && geometryTag.node.getPoint().y != coordinates.get(coordinates.size()-1).y)
+                {
+                    coordinates.add(geometryTag.node.getPoint());
+                }
+            }
+            OTSPoint3D lastPoint = new OTSPoint3D(coordinates.get(coordinates.size()-1));
 
             if (geometryTag.interLine != null)
             {
                 for (OTSPoint3D point : geometryTag.interLine.getPoints())
                 {
-                    OTSPoint3D lastPoint = coordinates.get(coordinates.size()-1);
-                    double xDiff = lastPoint.x - point.x;
+/*                    double xDiff = lastPoint.x - point.x;
                     double yDiff = lastPoint.y - point.y;
-                    double distance = (float) Math.sqrt(xDiff * xDiff + yDiff * yDiff); 
-                    //if(distance > 0.01)
+                    double distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff); */
+                    if(lastPoint.x != point.x && lastPoint.y != point.y)
+                    {
                         coordinates.add(point);
+                        lastPoint = point;
+                    }
                 }
             }
 
-            // coordinates[Integer.valueOf(a[1])] = new OTSPoint3D(geometryTag.x.doubleValue(),
-            // geometryTag.y.doubleValue(),
-            // geometryTag.hdg.doubleValue());
         }
 
         OTSLine3D designLine = new OTSLine3D(coordinates);
@@ -314,5 +377,6 @@ class PlanViewTag
         // CrossSectionLink link = new CrossSectionLink(roadTag.id, from.node, to.node, LinkType.ALL, designLine,
         // LongitudinalDirectionality.BOTH, LaneKeepingPolicy.KEEP_LANE);
         return designLine;
+
     }
 }

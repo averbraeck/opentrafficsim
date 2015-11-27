@@ -44,7 +44,7 @@ class GeometryTag
     
     /** hdg position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel hdg = null;
+    Angle.Rel hdg = null;
 
     /** total length of the reference line in the xy-plane, as indicated in the XML document. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -96,7 +96,7 @@ class GeometryTag
         Node hdg = attributes.getNamedItem("hdg");
         if (hdg == null)
             throw new SAXException("Geometry: missing attribute hdg");
-        geometryTag.hdg = new Length.Rel(Double.parseDouble(hdg.getNodeValue().trim()), LengthUnit.METER);
+        geometryTag.hdg = new Angle.Rel(Double.parseDouble(hdg.getNodeValue().trim()), AngleUnit.RADIAN);
         
         Node length = attributes.getNamedItem("length");
         if (length == null)
@@ -120,7 +120,7 @@ class GeometryTag
     {
         Angle.Abs angle = new Angle.Abs(0.0, AngleUnit.SI);
         Angle.Abs slope = new Angle.Abs(0.0, AngleUnit.SI);
-        OTSPoint3D coordinate = new OTSPoint3D(geometryTag.x.doubleValue(),geometryTag.y.doubleValue(),geometryTag.hdg.doubleValue());
+        OTSPoint3D coordinate = new OTSPoint3D(geometryTag.x.doubleValue(),geometryTag.y.doubleValue());
         
         if (geometryTag.id == null)
         {
