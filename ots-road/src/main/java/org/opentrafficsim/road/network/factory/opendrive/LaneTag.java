@@ -43,7 +43,7 @@ class LaneTag
 
     /** width Tag */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    WidthTag widthTag = null;
+    List<WidthTag> widthTags = new ArrayList<>();
 
     /** RoadMark Tag */
     @SuppressWarnings("checkstyle:visibilitymodifier")

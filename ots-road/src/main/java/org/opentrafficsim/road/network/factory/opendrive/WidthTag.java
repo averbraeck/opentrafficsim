@@ -59,7 +59,7 @@ class WidthTag
             WidthTag widthTag = new WidthTag();
             NamedNodeMap attributes = node.getAttributes();
 
-            Node sOffst = attributes.getNamedItem("sOffst");
+            Node sOffst = attributes.getNamedItem("sOffset");
             if (sOffst != null)
                 widthTag.sOffst = new Length.Rel(Double.parseDouble(sOffst.getNodeValue().trim()), LengthUnit.METER);
             
@@ -79,10 +79,10 @@ class WidthTag
             if (d != null)
                 widthTag.d = new Length.Rel(Double.parseDouble(d.getNodeValue().trim()), LengthUnit.METER);
 
-            laneTag.widthTag = widthTag;
+            laneTag.widthTags.add(widthTag);
         }
 
-        if (widthCount > 1)
-            throw new SAXException("ROAD: more than one width tag for road");
+//        if (widthCount > 1)
+//            System.out.println("ROAD: more than one width tag for road");
     }
 }
