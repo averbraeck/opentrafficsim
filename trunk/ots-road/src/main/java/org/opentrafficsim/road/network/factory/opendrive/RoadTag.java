@@ -214,6 +214,8 @@ class RoadTag
             List<GeometryTag> tempGeometryTags = new ArrayList<GeometryTag>();
             tempGeometryTags = roadTag.planViewTag.geometryTags;
 
+            if(roadTag.id.equals("3766070"))
+                System.out.println();
             int currentIndex = 0;
             for (Integer laneSecIndex = 1; laneSecIndex < roadTag.lanesTag.laneSectionTags.size(); laneSecIndex++)
             {
@@ -252,7 +254,7 @@ class RoadTag
 //                             double yDiff = lastPoint.y - point.y; 
 //                             double distance = (float) Math.sqrt(xDiff * xDiff + yDiff * yDiff);
                                  
-                             if(lastPoint.x != point.x && lastPoint.y != point.y)
+                             if(lastPoint.x != point1.x && lastPoint.y != point1.y)
                              {
                                 points.add(point1);
                                 lastPoint = point1;
