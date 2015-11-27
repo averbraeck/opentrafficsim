@@ -55,6 +55,7 @@ import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.changing.Altruistic;
 import org.opentrafficsim.road.network.factory.opendrive.GeneratorAnimation;
 import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkWriter;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -175,8 +176,8 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
-            // URL url = URLResource.getResource("/OpenDrive.xodr");
-            URL url = URLResource.getResource("/testod.xodr");
+            URL url = URLResource.getResource("/OpenDrive.xodr");
+            //URL url = URLResource.getResource("/testod.xodr");
             this.simulator.setPauseOnError(false);
             OpenDriveNetworkLaneParser nlp = new OpenDriveNetworkLaneParser(this.simulator);
             OTSNetwork network = null;
@@ -189,6 +190,9 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
             {
                 exception.printStackTrace();
             }
+            
+            OpenDriveNetworkWriter writer = new OpenDriveNetworkWriter(network);
+            String outPut = writer.write();
 
             // Make a GTU Type
             GTUType carType = GTUType.makeGTUType("Car");
@@ -314,7 +318,7 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                 }
             }
 
-            CrossSectionLink link = (CrossSectionLink) network.getLink("3766053");
+/*            CrossSectionLink link = (CrossSectionLink) network.getLink("3766053");
             for (CrossSectionElement cse : link.getCrossSectionElementList())
             {
                 if (cse instanceof Lane)
@@ -339,7 +343,7 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
             catch (NetworkException exception)
             {
                 exception.printStackTrace();
-            }
+            }*/
         }
 
         /** {@inheritDoc} */
