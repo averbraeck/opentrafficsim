@@ -90,7 +90,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     {
         try
         {
-            return OTSBufferingOLD.offsetGeometryOLD(this, offset);
+            return OTSBufferingAV.offset(this, offset);
         }
         catch (OTSGeometryException exception)
         {
