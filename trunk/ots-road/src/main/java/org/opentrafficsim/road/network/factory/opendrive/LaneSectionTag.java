@@ -1,6 +1,8 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.djunits.unit.LengthUnit;
@@ -89,5 +91,32 @@ class LaneSectionTag
             }
 
         return laneSectionTag;
+    }
+
+    /**
+     * @param orientation
+     * @return lanes
+     */
+    public List<Lane> findLanes(String orientation)
+    {
+        List<Lane> lanes1 = new ArrayList<Lane>();
+        for(int key: this.lanes.keySet())
+        {
+            Lane lane = this.lanes.get(key);
+            if(key < 0)
+            {
+                if(orientation.equals("+") && this.rightLaneTags.get(key).type.equals("driving"))
+                    lanes1.add(lane);
+            }
+            else if(key > 0)
+            {
+                if(orientation.equals("-") && this.leftLaneTags.get(key).type.equals("driving"))
+                    lanes1.add(lane);
+            }
+                    
+        }
+        if(lanes1.size() != 1)
+            System.err.println("Exception in finding lanes");
+        return lanes1;
     }
 }

@@ -12,6 +12,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.road.gtu.lane.LaneBlockOnOff;
+import org.opentrafficsim.road.network.factory.opendrive.TrafficLightState;
 
 /**
  * Draw a road block.
@@ -47,13 +48,17 @@ public class DefaultBlockOnOffAnimation extends Renderable2D
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) 
     {
-        if (((LaneBlockOnOff) this.source).isBlocked())
+        if (((LaneBlockOnOff) this.source).getCurrentState().equals(TrafficLightState.RED))
         {
             graphics.setColor(Color.RED);
         }
-        else
+        else if (((LaneBlockOnOff) this.source).getCurrentState().equals(TrafficLightState.GREEN))
         {
             graphics.setColor(Color.GREEN);
+        }
+        else if (((LaneBlockOnOff) this.source).getCurrentState().equals(TrafficLightState.YELLOW))
+        {
+            graphics.setColor(Color.YELLOW);
         }
         Rectangle2D rectangle = new Rectangle2D.Double(-0.4, -this.halfWidth, 0.8, 2 * this.halfWidth);
         graphics.fill(rectangle);

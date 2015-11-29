@@ -21,9 +21,13 @@ import org.xml.sax.SAXException;
 class SignalsTag
 {
 
-    /** geometryTags */
+    /** signalTags */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<SignalTag> signalTags = new ArrayList<SignalTag>();
+    
+    /** SignalReferenceTag */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    List<SignalReferenceTag> signalReferenceTag = new ArrayList<SignalReferenceTag>();
 
     /**
      * Parse the attributes of the road tag. The sub-elements are parsed in separate classes.
@@ -39,11 +43,19 @@ class SignalsTag
     {
         SignalsTag signalsTag = new SignalsTag();
         for (Node node0 : XMLParser.getNodes(nodeList, "signals"))
+        {
             for (Node node : XMLParser.getNodes(node0.getChildNodes(), "signal"))
             {
                 SignalTag signalTag = SignalTag.parseSignal(node, parser);
                 signalsTag.signalTags.add(signalTag);
+                parser.signalTags.put(signalTag.id, signalTag);
             }
+            for (Node node : XMLParser.getNodes(node0.getChildNodes(), "signalReference"))
+            {
+                SignalReferenceTag signalReferenceTag = SignalReferenceTag.parseSignalReference(node, parser);
+                signalsTag.signalReferenceTag.add(signalReferenceTag);
+            }
+        }
         roadTag.signalsTag = signalsTag;
     }
 }

@@ -3,8 +3,10 @@ package org.opentrafficsim.road.network.factory.opendrive;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
+import org.opentrafficsim.road.network.lane.Lane;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -51,5 +53,35 @@ class LanesTag
             }
         roadTag.lanesTag = lanesTag;
 
+    }
+
+    /**
+     * @param s
+     * @return laneSection
+     */
+    public LaneSectionTag findDrivingLaneSec(Rel s)
+    {
+        for(int i=0; i< this.laneSectionTags.size(); i++)
+        {
+            if (i < this.laneSectionTags.size() - 1)
+            {
+                LaneSectionTag currentSec = this.laneSectionTags.get(i);
+                LaneSectionTag nextSec = this.laneSectionTags.get(i + 1);
+
+                if (s.si <= nextSec.s.si && s.si >= currentSec.s.si)
+                {
+                    return currentSec;
+                }
+            }
+            else
+            {
+                LaneSectionTag currentSec = this.laneSectionTags.get(i);
+                if (s.si >= currentSec.s.si)
+                {
+                    return currentSec;
+                }
+            }
+        }        
+        return null;
     }
 }
