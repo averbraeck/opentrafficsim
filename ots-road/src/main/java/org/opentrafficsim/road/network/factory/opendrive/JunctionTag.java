@@ -16,11 +16,13 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.road.gtu.lane.AbstractTrafficLight;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.opentrafficsim.road.network.factory.opendrive.LinkTag.ContactPointEnum;
@@ -101,128 +103,41 @@ class JunctionTag
         parser.junctionTags.put(junctionTag.id, junctionTag);
     }
 
-/*    *//**
+    /**
      * @param juncTag
      * @param simulator
      * @param openDriveNetworkLaneParser
-     * @throws NetworkException
-     * @throws OTSGeometryException
-     * @throws NamingException
-     *//*
-    public static void showJunctions(JunctionTag juncTag, OTSDEVSSimulatorInterface simulator,
-        OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException, OTSGeometryException,
-        NamingException
+     * @throws NamingException 
+     * @throws NetworkException 
+     * @throws GTUException 
+     */
+    public static void createController(JunctionTag juncTag, OTSDEVSSimulatorInterface simulator,
+            OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws GTUException, NetworkException, NamingException
     {
-        for (ConnectionTag connectionTag : juncTag.connectionTags.values())
+        if(juncTag.controllerTags.size() > 0)
         {
-            RoadTag inComing = openDriveNetworkLaneParser.roadTags.get(connectionTag.incomingRoad);
-            RoadTag connecting = openDriveNetworkLaneParser.roadTags.get(connectionTag.connectingRoad);
-
-            Lane inComingLane = null;
-            Lane connectingLane = null;
-            String sublinkId = juncTag.id + "." + connectionTag.id;
-            CrossSectionLink sublink = null;
-
-            List<OTSPoint3D> coordinates = new ArrayList<OTSPoint3D>();
-
-            OTSLine3D designLine = null;
-
-            if (inComing.linkTag.successorType != null && inComing.linkTag.successorType.equals("junction")
-                && inComing.linkTag.successorId.equals(juncTag.id))
+            Controller controller = new Controller(juncTag.id, simulator);
+            
+            for(ControllerTag controllerTag: juncTag.controllerTags.values())
             {
-                inComingLane =
-                    inComing.lanesTag.laneSectionTags.get(inComing.lanesTag.laneSectionTags.size() - 1).lanes
-                        .get(connectionTag.laneLinkFrom);
-                connectingLane = connecting.lanesTag.laneSectionTags.get(0).lanes.get(connectionTag.laneLinkTo);
+                int sequence = controllerTag.sequence;
+                String id = controllerTag.id;
+                String signalId = openDriveNetworkLaneParser.controllerTags.get(id).controlSignalID;
+                
+                //AbstractTrafficLight trafficLight = openDriveNetworkLaneParser.trafficLightsBySignals.get(signalId);
+                
+                for(AbstractTrafficLight trafficLight: openDriveNetworkLaneParser.trafficLightsBySignals.get(signalId))
+                    controller.addTrafficLight(sequence, trafficLight);
+                
+/*                String refId = signalId + ".ref";
+                if(openDriveNetworkLaneParser.trafficLightsBySignals.containsKey(refId))
+                {
+                    AbstractTrafficLight trafficLightRef = openDriveNetworkLaneParser.trafficLightsBySignals.get(refId);
+                    controller.addTrafficLight(sequence, trafficLightRef);
+                } */              
             }
-            else if (inComing.linkTag.predecessorType.equals("junction")
-                && inComing.linkTag.predecessorId.equals(juncTag.id))
-            {
-                inComingLane =
-                    connecting.lanesTag.laneSectionTags.get(connecting.lanesTag.laneSectionTags.size() - 1).lanes
-                        .get(connectionTag.laneLinkFrom);
-                connectingLane = inComing.lanesTag.laneSectionTags.get(0).lanes.get(connectionTag.laneLinkTo);
-            }
-            else
-            {
-                System.err.println("err in junctions!");
-            }
-
-            OTSNode from1 = inComing.link.getStartNode();
-            OTSNode from2 = inComing.link.getEndNode();
-            OTSNode from = null;
-
-            OTSNode to1 = connecting.link.getStartNode();
-            OTSNode to2 = connecting.link.getEndNode();
-            OTSNode to = null;
-
-            double dis1 = from1.getPoint().getCoordinate().distance(to1.getPoint().getCoordinate());
-            double dis2 = from1.getPoint().getCoordinate().distance(to2.getPoint().getCoordinate());
-
-            double dis3 = from2.getPoint().getCoordinate().distance(to1.getPoint().getCoordinate());
-            double dis4 = from2.getPoint().getCoordinate().distance(to2.getPoint().getCoordinate());
-
-            if (dis1 < dis2 && dis3 < dis4)
-            {
-                if (dis1 < dis3)
-                {
-                    from = from1;
-                    to = to1;
-                }
-                else
-                {
-                    from = from2;
-                    to = to1;
-                }
-
-            }
-            else if (dis1 > dis2 && dis3 < dis4)
-            {
-                if (dis2 < dis3)
-                {
-                    from = from1;
-                    to = to2;
-                }
-                else
-                {
-                    from = from2;
-                    to = to1;
-                }
-            }
-            else if (dis1 < dis2 && dis3 > dis4)
-            {
-                if (dis1 < dis4)
-                {
-                    from = from1;
-                    to = to1;
-                }
-                else
-                {
-                    from = from2;
-                    to = to2;
-                }
-            }
-            else if (dis1 > dis2 && dis3 > dis4)
-            {
-                if (dis2 < dis4)
-                {
-                    from = from1;
-                    to = to2;
-                }
-                else
-                {
-                    from = from2;
-                    to = to2;
-                }
-            }
-
-            coordinates.add(from.getPoint());
-
-            coordinates.add(to.getPoint());
-
-            if (from.equals(to))
-                return;
-
         }
-    }*/
+    }
+
+
 }

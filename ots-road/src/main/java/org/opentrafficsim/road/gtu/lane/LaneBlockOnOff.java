@@ -14,6 +14,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.animation.DefaultBlockOnOffAnimation;
+import org.opentrafficsim.road.network.factory.opendrive.TrafficLightState;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -31,6 +32,9 @@ public class LaneBlockOnOff extends AbstractTrafficLight
 {
     /** */
     private static final long serialVersionUID = 20150624L;
+    
+    private TrafficLightState currentState = TrafficLightState.RED;
+
 
     /**
      * @param name the name of the OnOffTrafficLight
@@ -54,26 +58,67 @@ public class LaneBlockOnOff extends AbstractTrafficLight
             {
                 // TODO
             }
-            getSimulator().scheduleEventRel(new Time.Rel(60.0, TimeUnit.SECOND), this, this, "changeColorTime", null);
+            //getSimulator().scheduleEventRel(new Time.Rel(60.0, TimeUnit.SECOND), this, this, "changeColorTime", null);
         }
-        catch (RemoteException | SimRuntimeException exception)
+        catch (RemoteException exception)
         {
             exception.printStackTrace();
         }
     }
-
-    protected void changeColorTime()
+    
+    
+    /**
+     * 
+     */
+    public void setGreen()
     {
         setBlocked(!isBlocked());
+        this.currentState = TrafficLightState.GREEN;
 
         try
         {
-            getSimulator().scheduleEventRel(new Time.Rel(60.0, TimeUnit.SECOND), this, this, "changeColorTime", null);
+            getSimulator().scheduleEventRel(new Time.Rel(15.0, TimeUnit.SECOND), this, this, "setYellow", null);
         }
         catch (SimRuntimeException exception)
         {
             exception.printStackTrace();
         }
+    }
+    
+    /**
+     * 
+     */
+    protected void setYellow()
+    {
+        //setBlocked(!isBlocked());
+        this.currentState = TrafficLightState.YELLOW;
+
+        try
+        {
+            getSimulator().scheduleEventRel(new Time.Rel(9.0, TimeUnit.SECOND), this, this, "setRed", null);
+        }
+        catch (SimRuntimeException exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+    
+    /**
+     * 
+     */
+    protected void setRed()
+    {
+        setBlocked(!isBlocked());
+        this.currentState = TrafficLightState.RED;
+    }
+    
+
+    /**
+     * @return currentState
+     */
+    public TrafficLightState getCurrentState()
+    {
+        return this.currentState;
     }
 
     /** {@inheritDoc} */

@@ -176,8 +176,8 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
-            URL url = URLResource.getResource("/OpenDrive.xodr");
-            //URL url = URLResource.getResource("/testod.xodr");
+            //URL url = URLResource.getResource("/OpenDrive.xodr");
+            URL url = URLResource.getResource("/testod.xodr");
             this.simulator.setPauseOnError(false);
             OpenDriveNetworkLaneParser nlp = new OpenDriveNetworkLaneParser(this.simulator);
             OTSNetwork network = null;

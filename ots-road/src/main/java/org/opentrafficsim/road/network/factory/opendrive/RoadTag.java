@@ -1,13 +1,19 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
 import java.awt.Color;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
+
+import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -24,6 +30,8 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.animation.LinkAnimation;
+import org.opentrafficsim.road.gtu.lane.AbstractTrafficLight;
+import org.opentrafficsim.road.gtu.lane.LaneBlockOnOff;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.ShoulderAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation;
@@ -214,8 +222,8 @@ class RoadTag
             List<GeometryTag> tempGeometryTags = new ArrayList<GeometryTag>();
             tempGeometryTags = roadTag.planViewTag.geometryTags;
 
-            if(roadTag.id.equals("3766070"))
-                System.out.println();
+/*            if(roadTag.id.equals("3766070"))
+                System.out.println();*/
             int currentIndex = 0;
             for (Integer laneSecIndex = 1; laneSecIndex < roadTag.lanesTag.laneSectionTags.size(); laneSecIndex++)
             {
@@ -829,7 +837,7 @@ class RoadTag
             }
     }
 
-    /**
+/*    *//**
      * @param roadTag
      * @param simulator
      * @param openDriveNetworkLaneParser
@@ -837,7 +845,7 @@ class RoadTag
      * @throws OTSGeometryException
      * @throws NamingException
      * @throws RemoteException
-     */
+     *//*
     static void generateJunctionRoads(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
         OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws OTSGeometryException, NetworkException,
         NamingException, RemoteException
@@ -1085,18 +1093,18 @@ class RoadTag
                 }
 
                 // show center lanes
-                /*
+                
                  * int centerLaneSize = currentLaneSec.centerLaneTags.size(); if (centerLaneSize > 1)
                  * System.err.println("Sth is wrong in center lane"); Length.Rel centerOffset = new Length.Rel(0.0,
                  * LengthUnit.METER); LaneTag centerLane = currentLaneSec.centerLaneTags.get(0); Length.Rel laneWidth = new
                  * Length.Rel(0.0, LengthUnit.METER); if (centerLane.widthTag != null) laneWidth = centerLane.widthTag.a; Stripe
                  * solidLine = new Stripe(currentLink, centerOffset, laneWidth); try { new StripeAnimation(solidLine, simulator,
                  * StripeAnimation.TYPE.SOLID); } catch (RemoteException exception) { exception.printStackTrace(); }
-                 */
+                 
 
             }
         }
-    }
+    }*/
 
     /**
      * @param roadTag
@@ -1148,6 +1156,145 @@ class RoadTag
                     LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_LANE);
 
             roadTag.link = newlink;
+        }
+    }
+
+    /**
+     * @param roadTag
+     * @param simulator
+     * @param openDriveNetworkLaneParser
+     * @throws NetworkException 
+     */
+    public static void generateTrafficLightsbySignal(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
+            OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException
+    {
+        for(SignalTag signalTag: roadTag.signalsTag.signalTags)
+        {
+            //Length.Rel sOffset = signalTag.s;
+            //Length.Rel tOffset = signalTag.t;
+            //String id = signalTag.id;
+            
+            LaneSectionTag laneSec = roadTag.lanesTag.findDrivingLaneSec(signalTag.s);
+            Lane lane = laneSec.findLanes(signalTag.orientation).get(0);            
+            
+            if(signalTag.type.equals("1000001") && signalTag.dynamic.equals("yes"))//generate traffic lights
+            {
+                try
+                {
+
+                    
+                    Length.Rel sOffset = null;
+                    
+                    if(!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
+                        sOffset = signalTag.s.minus(laneSec.s);
+                    else
+                        sOffset = signalTag.s.minus(laneSec.s).plus(new Length.Rel(0.5, LengthUnit.METER));
+                    
+                    Class<?> clazz = Class.forName(LaneBlockOnOff.class.getName());
+                    Constructor<?> trafficLightConstructor =
+                        ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class,
+                            Length.Rel.class, OTSDEVSSimulatorInterface.class});
+                                        
+                    AbstractTrafficLight trafficLight =
+                        (AbstractTrafficLight) trafficLightConstructor.newInstance(new Object[]{
+                                signalTag.id, lane, sOffset, simulator});
+                    
+                    
+                    if(!openDriveNetworkLaneParser.trafficLightsBySignals.containsKey(signalTag.id))
+                    {
+                        Set<AbstractTrafficLight> lights = new HashSet<AbstractTrafficLight>();
+                        openDriveNetworkLaneParser.trafficLightsBySignals.put(signalTag.id, lights);
+                    }
+                    
+                    if(!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
+                    {
+                        Set<AbstractTrafficLight> lights = new HashSet<AbstractTrafficLight>();
+                        openDriveNetworkLaneParser.trafficLightsByLanes.put(roadTag.id, lights);
+                    }
+
+                    
+                    openDriveNetworkLaneParser.trafficLightsBySignals.get(signalTag.id).add(trafficLight);
+                    openDriveNetworkLaneParser.trafficLightsByLanes.get(roadTag.id).add(trafficLight);
+
+                }
+                catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                    | IllegalAccessException | IllegalArgumentException | InvocationTargetException exception)
+                {
+                    throw new NetworkException("Traffic Light: CLASS NAME " + LaneBlockOnOff.class.getName()
+                        + " for " + signalTag.id + " on lane " + lane.toString()
+                        + " -- class not found or constructor not right", exception);
+                }
+            }
+            else if(signalTag.type.equals("206") && signalTag.dynamic.equals("no"))//generate stop sign
+            {
+                
+            }
+            else
+                System.err.println("Unknown signals");
+        }
+    }
+
+    /**
+     * @param roadTag
+     * @param simulator
+     * @param openDriveNetworkLaneParser
+     * @throws NetworkException 
+     */
+    public static void generateTrafficLightsbySignalReference(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
+            OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException
+    {
+        for(SignalReferenceTag signalReferenceTag: roadTag.signalsTag.signalReferenceTag)
+        {            
+            LaneSectionTag laneSec = roadTag.lanesTag.findDrivingLaneSec(signalReferenceTag.s);
+            Lane lane = laneSec.findLanes(signalReferenceTag.orientation).get(0); 
+            
+            SignalTag signalTag = openDriveNetworkLaneParser.signalTags.get(signalReferenceTag.id);
+            
+            if(signalTag.type.equals("1000001") && signalTag.dynamic.equals("yes"))//generate traffic lights
+            {
+                try
+                {                    
+                    Length.Rel sOffset = null;
+                    
+                    if(!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
+                        sOffset = signalReferenceTag.s.minus(laneSec.s);
+                    else
+                        sOffset = signalReferenceTag.s.minus(laneSec.s).plus(new Length.Rel(0.5, LengthUnit.METER));
+                    
+                    Class<?> clazz = Class.forName(LaneBlockOnOff.class.getName());
+                    Constructor<?> trafficLightConstructor =
+                        ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class,
+                            Length.Rel.class, OTSDEVSSimulatorInterface.class});
+                                        
+                    AbstractTrafficLight trafficLight =
+                        (AbstractTrafficLight) trafficLightConstructor.newInstance(new Object[]{
+                                signalTag.id + ".ref", lane, sOffset, simulator});
+                    
+                    if(!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
+                    {
+                        Set<AbstractTrafficLight> lights = new HashSet<AbstractTrafficLight>();
+                        openDriveNetworkLaneParser.trafficLightsByLanes.put(roadTag.id, lights);
+                    }
+                    
+                   // openDriveNetworkLaneParser.trafficLightsBySignals.put(trafficLight.getId(), trafficLight);
+                    openDriveNetworkLaneParser.trafficLightsBySignals.get(signalTag.id).add(trafficLight);
+                    openDriveNetworkLaneParser.trafficLightsByLanes.get(roadTag.id).add(trafficLight);
+
+                }
+                catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                    | IllegalAccessException | IllegalArgumentException | InvocationTargetException exception)
+                {
+                    throw new NetworkException("Traffic Light: CLASS NAME " + LaneBlockOnOff.class.getName()
+                        + " for " + signalTag.id + " on lane " + lane.toString()
+                        + " -- class not found or constructor not right", exception);
+                }
+            }
+            else if(signalTag.type.equals("206") && signalTag.dynamic.equals("no"))//generate stop sign
+            {
+                
+            }
+            else
+                System.err.println("Unknown signal references");
         }
     }
 

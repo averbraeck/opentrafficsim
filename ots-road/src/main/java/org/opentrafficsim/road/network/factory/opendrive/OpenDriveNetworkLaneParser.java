@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.xml.parsers.DocumentBuilder;
@@ -20,6 +21,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.gtu.lane.AbstractTrafficLight;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.w3c.dom.Document;
@@ -72,7 +74,20 @@ public class OpenDriveNetworkLaneParser
     
     /** OTS network*/
     @SuppressWarnings("visibilitymodifier")
-    protected OTSNetwork network = null;   
+    protected OTSNetwork network = null; 
+    
+    /** the signalTags that have been created. */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, SignalTag> signalTags = new HashMap<>();
+    
+    /** the trafficLights that have been created, organized by signals */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, Set<AbstractTrafficLight>> trafficLightsBySignals = new HashMap<>();
+    
+    /** the trafficLights that have been created, organized by lanes */
+    @SuppressWarnings("visibilitymodifier")
+    protected Map<String, Set<AbstractTrafficLight>> trafficLightsByLanes = new HashMap<>();
+    
 
     /**
      * @param simulator the simulator for creating the animation. Null if no animation needed.
@@ -174,13 +189,18 @@ public class OpenDriveNetworkLaneParser
             RoadTag.generateRegularRoads(roadTag, this.simulator, this);
         }
         
-/*        for (RoadTag roadTag : this.roadTags.values())
+        for (RoadTag roadTag : this.roadTags.values())
         {
-            RoadTag.generateJunctionRoads(roadTag, this.simulator, this);
-        }*/
+            RoadTag.generateTrafficLightsbySignal(roadTag, this.simulator, this);
+        }
         
-/*        for(JunctionTag juncTag: this.junctionTags.values())
-            JunctionTag.showJunctions(juncTag, this.simulator, this); */       
+        for (RoadTag roadTag : this.roadTags.values())
+        {
+            RoadTag.generateTrafficLightsbySignalReference(roadTag, this.simulator, this);
+        }
+        
+        for(JunctionTag juncTag: this.junctionTags.values())
+            JunctionTag.createController(juncTag, this.simulator, this);        
 
         // store the structure information in the network
         return this.network;
