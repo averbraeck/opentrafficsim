@@ -120,7 +120,7 @@ class GeometryTag
     {
         Angle.Abs angle = new Angle.Abs(0.0, AngleUnit.SI);
         Angle.Abs slope = new Angle.Abs(0.0, AngleUnit.SI);
-        OTSPoint3D coordinate = new OTSPoint3D(geometryTag.x.doubleValue(),geometryTag.y.doubleValue());
+        OTSPoint3D coordinate = new OTSPoint3D(geometryTag.x.doubleValue(),geometryTag.y.doubleValue(),0);
         
         if (geometryTag.id == null)
         {
