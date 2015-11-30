@@ -133,7 +133,7 @@ public class LaneAnimationOD extends Renderable2D
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         Lane lane = (Lane) getSource();
-        PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour());
+        PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour(), true);
         // paintLine(graphics, Color.yellow, lane.getLocation(), lane.getCenterLine());
         paintLine(graphics, Color.white, lane.getLocation(), lane.getContour());
         paintArrow(graphics, Color.yellow, lane.getLocation(), lane.getCenterLine(), 0.25, lane

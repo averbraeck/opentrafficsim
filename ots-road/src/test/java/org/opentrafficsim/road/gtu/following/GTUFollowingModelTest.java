@@ -32,8 +32,15 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
-import org.opentrafficsim.road.gtu.lane.changing.AbstractLaneChangeModel;
-import org.opentrafficsim.road.gtu.lane.changing.Egoistic;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
+import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechange.AbstractLaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Egoistic;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -263,7 +270,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
      * @param as AccelerationStep[2]; the result to verify
      * @param a0 DoubleScalar.Abs&lt;AccelerationUnit&gt;; the expected acceleration in as[0]
      * @param a1 DoubleScalar.Abs&lt;AccelerationUnit&gt;; the expected acceleration in as[1]
-     * @param validUntil DoubleScalar.Abs&lt;TimeUnit&gt;; the expected validUntil value in both entries of as
+     * @param validUntil Time.Abs; the expected validUntil value in both entries of as
      */
     private void checkAccelerationStep(final String description, final DualAccelerationStep as, final Acceleration a0,
         final Acceleration a1, final Time.Abs validUntil)

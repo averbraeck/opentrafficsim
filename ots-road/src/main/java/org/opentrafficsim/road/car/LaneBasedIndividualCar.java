@@ -24,12 +24,10 @@ import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
-import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
-import org.opentrafficsim.road.network.route.LaneBasedRouteGenerator;
-import org.opentrafficsim.road.network.route.LaneBasedRouteNavigator;
 
 /**
  * Augments the AbstractLaneBasedIndividualGTU with a LaneBasedIndividualCarBuilder and animation support
@@ -56,46 +54,42 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
     /**
      * @param id ID; the id of the GTU
      * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
-     * @param gtuFollowingModel GTUFollowingModel; the following model, including a reference to the simulator
-     * @param laneChangeModel LaneChangeModel; the lane change model
-     * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial positions of the car
-     *            on one or more lanes
+     * @param initialLongitudinalPositions Map&lt;Lane, Length.Rel&gt;; the initial positions of the car on one or more lanes
      * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the car on the lane
-     * @param length DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum length of the GTU (parallel with driving direction)
-     * @param width DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum width of the GTU (perpendicular to driving direction)
+     * @param length Length.Rel; the maximum length of the GTU (parallel with driving direction)
+     * @param width Length.Rel; the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumVelocity DoubleScalar.Abs&lt;SpeedUnit&gt;;the maximum speed of the GTU (in the driving direction)
-     * @param routeNavigator Route; the route that the GTU will follow
      * @param simulator OTSDEVSSimulatorInterface; the simulator
+     * @param strategicalPlanner the strategical planner (e.g., route determination) to use
+     * @param perception the lane-based perception model of the GTU
      * @throws NamingException if an error occurs when adding the animation handler
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GTUException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedIndividualCar(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
-        final LaneChangeModel laneChangeModel, final Set<DirectedLanePosition> initialLongitudinalPositions,
-        final Speed initialSpeed, final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
-        final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator)
-        throws NamingException, NetworkException, SimRuntimeException, GTUException
+    public LaneBasedIndividualCar(final String id, final GTUType gtuType,
+        final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
+        final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
+        final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
+        final LanePerception perception) throws NamingException, NetworkException, SimRuntimeException, GTUException
     {
-        this(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, length,
-            width, maximumVelocity, routeNavigator, simulator, DefaultCarAnimation.class, null);
+        this(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
+            strategicalPlanner, perception, DefaultCarAnimation.class, null);
     }
 
     /**
      * Construct a new LaneBasedIndividualCar.
      * @param id ID; the id of the GTU
      * @param gtuType GTUTYpe; the type of GTU, e.g. TruckType, CarType, BusType
-     * @param gtuFollowingModel GTUFollowingModel; the following model, including a reference to the simulator
-     * @param laneChangeModel LaneChangeModel; the lane change model
-     * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial positions of the car
-     *            on one or more lanes
+     * @param initialLongitudinalPositions Map&lt;Lane, Length.Rel&gt;; the initial positions of the car on one or more lanes
      * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the car on the lane
-     * @param length DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum length of the GTU (parallel with driving direction)
-     * @param width DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum width of the GTU (perpendicular to driving direction)
+     * @param length Length.Rel; the maximum length of the GTU (parallel with driving direction)
+     * @param width Length.Rel; the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumVelocity DoubleScalar.Abs&lt;SpeedUnit&gt;;the maximum speed of the GTU (in the driving direction)
-     * @param routeNavigator Route the route that the GTU will follow
      * @param simulator OTSDEVSSimulatorInterface; the simulator
+     * @param strategicalPlanner the strategical planner (e.g., route determination) to use
+     * @param perception the lane-based perception model of the GTU
      * @param animationClass Class&lt;? extends Renderable2D&gt;; the class for animation or null if no animation
      * @param gtuColorer GTUColorer; the GTUColorer that will be linked from the animation to determine the color (may be null
      *            in which case a default will be used)
@@ -105,15 +99,15 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
      * @throws GTUException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedIndividualCar(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
-        final LaneChangeModel laneChangeModel, final Set<DirectedLanePosition> initialLongitudinalPositions,
-        final Speed initialSpeed, final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
-        final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator,
-        final Class<? extends Renderable2D> animationClass, final GTUColorer gtuColorer) throws NamingException,
-        NetworkException, SimRuntimeException, GTUException
+    public LaneBasedIndividualCar(final String id, final GTUType gtuType,
+        final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
+        final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
+        final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
+        final LanePerception perception, final Class<? extends Renderable2D> animationClass, final GTUColorer gtuColorer)
+        throws NamingException, NetworkException, SimRuntimeException, GTUException
     {
-        super(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, length,
-            width, maximumVelocity, routeNavigator, simulator);
+        super(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
+            strategicalPlanner, perception);
 
         // sensor positions.
         // We take the rear position of the Car to be the reference point. So the front is the length
@@ -153,20 +147,6 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
             }
         }
     }
-
-    /*
-     * REMOVE START PrintWriter pwsimloc; PrintWriter pwthreadloc; OTSDEVSSimulatorInterface simulator; protected void simloc()
-     * { try { Map<Lane, Length.Rel> posmap = positions(getFront()); Lane lane = posmap.keySet().iterator().next();
-     * pwsimloc.write(getSimulator().getSimulatorTime().getTime().getSI() + "\t" + lane.toString() + "\t" +
-     * posmap.get(lane).getSI() + "\n"); pwsimloc.flush(); simulator.scheduleEventRel(new Time.Rel(0.1, SECOND), this, this,
-     * "simloc", null); } catch (RemoteException | NetworkException | SimRuntimeException e) { e.printStackTrace(); } }
-     * protected class ClockLocThread extends Thread {
-     * @Override public void run() { while (true) { try { Thread.sleep(100); Map<Lane, Length.Rel> posmap =
-     * positions(getFront()); Lane lane = posmap.keySet().iterator().next();
-     * pwthreadloc.write(getSimulator().getSimulatorTime().getTime().getSI() + "\t" + lane.toString() + "\t" +
-     * posmap.get(lane).getSI() + "\n"); pwthreadloc.flush(); } catch (RemoteException | NetworkException | InterruptedException
-     * e) { e.printStackTrace(); } } } } /* REMOVE END
-     */
 
     /** {@inheritDoc} */
     @Override
@@ -216,14 +196,14 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
      * 
      * <pre>
      * LaneBasedIndividualCar&lt;String&gt; car = new LaneBasedIndividualCarBuilder&lt;String&gt;().setId("Car:"+nr)
-     *    .setLength(new DoubleScalar.Rel&lt;LengthUnit&gt;(4.0, METER))....build(); 
+     *    .setLength(new Length.Rel(4.0, METER))....build(); 
      *    
      * or
      * 
      * LaneBasedIndividualCarBuilder&lt;String&gt; carBuilder = new LaneBasedIndividualCarBuilder&lt;String&gt;();
      * carBuilder.setId("Car:"+nr);
-     * carBuilder.setLength(new DoubleScalar.Rel&lt;LengthUnit&gt;(4.0, METER));
-     * carBuilder.setWidth(new DoubleScalar.Rel&lt;LengthUnit&gt;(1.8, METER));
+     * carBuilder.setLength(new Length.Rel(4.0, METER));
+     * carBuilder.setWidth(new Length.Rel(1.8, METER));
      * ...
      * LaneBasedIndividualCar&lt;String&gt; car = carBuilder.build();
      * </pre>
@@ -251,12 +231,6 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         /** The initial speed of the car on the lane. */
         private Speed initialSpeed = null;
 
-        /** CarFollowingModel used by this Car. */
-        private GTUFollowingModel gtuFollowingModel = null;
-
-        /** The lane change model. */
-        private LaneChangeModel laneChangeModel = null;
-
         /** The length of the GTU (parallel with driving direction). */
         private Length.Rel length = null;
 
@@ -275,8 +249,11 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         /** GTUColorer. */
         private GTUColorer gtuColorer = null;
 
-        /** Cached Route. */
-        private LaneBasedRouteGenerator routeGenerator = null;
+        /** Strategic planner. */
+        private LaneBasedStrategicalPlanner strategicalPlanner = null;
+
+        /** Perception. */
+        private LanePerception perception = null;
 
         /**
          * @param id set id
@@ -295,26 +272,6 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         public final LaneBasedIndividualCarBuilder setGtuType(final GTUType gtuType)
         {
             this.gtuType = gtuType;
-            return this;
-        }
-
-        /**
-         * @param gtuFollowingModel GTUFollowingModel; the GTU following model used by the built cars
-         * @return the class itself for chaining the setters
-         */
-        public final LaneBasedIndividualCarBuilder setGTUFollowingModel(final GTUFollowingModel gtuFollowingModel)
-        {
-            this.gtuFollowingModel = gtuFollowingModel;
-            return this;
-        }
-
-        /**
-         * @param laneChangeModel AbstractLaneChangeModel; the lane change model
-         * @return the class itself for chaining the setters
-         */
-        public final LaneBasedIndividualCarBuilder setLaneChangeModel(final LaneChangeModel laneChangeModel)
-        {
-            this.laneChangeModel = laneChangeModel;
             return this;
         }
 
@@ -380,6 +337,27 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         }
 
         /**
+         * @param strategicalPlanner set strategicalPlanner
+         * @return the class itself for chaining the setters
+         */
+        public final LaneBasedIndividualCarBuilder
+            setStrategicalPlanner(LaneBasedStrategicalPlanner strategicalPlanner)
+        {
+            this.strategicalPlanner = strategicalPlanner;
+            return this;
+        }
+
+        /**
+         * @param perception set perception
+         * @return the class itself for chaining the setters
+         */
+        public final LaneBasedIndividualCarBuilder setPerception(LanePerception perception)
+        {
+            this.perception = perception;
+            return this;
+        }
+
+        /**
          * @param animationClass set animation class
          * @return the class itself for chaining the setters
          */
@@ -391,29 +369,11 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @param routeGenerator set route generator.
-         * @return the class itself for chaining the setters
-         */
-        public final LaneBasedIndividualCarBuilder setRouteGenerator(final LaneBasedRouteGenerator routeGenerator)
-        {
-            this.routeGenerator = routeGenerator;
-            return this;
-        }
-
-        /**
          * @return id.
          */
         public final String getId()
         {
             return this.id;
-        }
-
-        /**
-         * @return route generator.
-         */
-        public final LaneBasedRouteGenerator getRouteGenerator()
-        {
-            return this.routeGenerator;
         }
 
         /**
@@ -438,22 +398,6 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         public final Speed getInitialSpeed()
         {
             return this.initialSpeed;
-        }
-
-        /**
-         * @return gtuFollowingModel.
-         */
-        public final GTUFollowingModel getGtuFollowingModel()
-        {
-            return this.gtuFollowingModel;
-        }
-
-        /**
-         * @return laneChangeModel.
-         */
-        public final LaneChangeModel getLaneChangeModel()
-        {
-            return this.laneChangeModel;
         }
 
         /**
@@ -489,6 +433,22 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         }
 
         /**
+         * @return strategicalPlanner
+         */
+        public final LaneBasedStrategicalPlanner getStrategicalPlanner()
+        {
+            return this.strategicalPlanner;
+        }
+
+        /**
+         * @return perception
+         */
+        public final LanePerception getPerception()
+        {
+            return this.perception;
+        }
+
+        /**
          * @return animationClass.
          */
         public final Class<? extends Renderable2D> getAnimationClass()
@@ -519,19 +479,17 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
          */
         public final LaneBasedIndividualCar build() throws Exception
         {
-            if (null == this.id || null == this.gtuType || null == this.gtuFollowingModel
-                || null == this.laneChangeModel || null == this.initialLongitudinalPositions
-                || null == this.initialSpeed || null == this.length || null == this.width
-                || null == this.maximumVelocity || null == this.routeGenerator || null == this.simulator)
+            if (null == this.id || null == this.gtuType || null == this.strategicalPlanner || null == this.perception
+                || null == this.initialLongitudinalPositions || null == this.initialSpeed || null == this.length
+                || null == this.width || null == this.maximumVelocity || null == this.simulator)
             {
                 // TODO Should throw a more specific Exception type
                 throw new GTUException("factory settings incomplete");
             }
             LaneBasedIndividualCar gtu =
-                new LaneBasedIndividualCar(this.id, this.gtuType, this.gtuFollowingModel, this.laneChangeModel,
-                    this.initialLongitudinalPositions, this.initialSpeed, this.length, this.width,
-                    this.maximumVelocity, this.routeGenerator.generateRouteNavigator(), this.simulator,
-                    this.animationClass, this.gtuColorer);
+                new LaneBasedIndividualCar(this.id, this.gtuType, this.initialLongitudinalPositions, this.initialSpeed,
+                    this.length, this.width, this.maximumVelocity, this.simulator, this.strategicalPlanner,
+                    this.perception, this.animationClass, this.gtuColorer);
             // System.out.println("Generated GTU " + gtu + " at t=" + this.simulator.getSimulatorTime());
             return gtu;
 

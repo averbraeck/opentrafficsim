@@ -21,19 +21,17 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar.LaneBasedIndividualCarBuilder;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
-import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.road.gtu.following.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.route.LaneBasedRouteGenerator;
-import org.opentrafficsim.road.network.route.LaneBasedRouteNavigator;
 
 /**
  * Common code for LaneBasedGTU generators that may have to postpone putting a GTU on the road due to congestion growing into
@@ -60,12 +58,6 @@ public abstract class AbstractGTUGenerator
 
     /** The GTU class to instantiate. */
     private final Class<?> gtuClass;
-
-    /** The GTU following model to use. */
-    private final GTUFollowingModel gtuFollowingModel;
-
-    /** The lane change model to use. */
-    private final LaneChangeModel laneChangeModel;
 
     /** Distribution of the initial speed of the GTU. */
     private final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist;
@@ -94,11 +86,14 @@ public abstract class AbstractGTUGenerator
     /** the direction in which the GTU has to be generated; DIR_PLUS or DIR_MINUS. */
     private final GTUDirectionality direction;
 
-    /** Route generator used to create a route for each generated GTU. */
-    private LaneBasedRouteGenerator routeGenerator;
-
     /** GTUColorer to use. */
     private final GTUColorer gtuColorer;
+
+    /** the lane-based strategical planner to use. */
+    private final LaneBasedStrategicalPlanner strategicalPlanner;
+
+    /** the LanePerception to use. */
+    private final LanePerception perception;
 
     /** Car builder list. */
     private List<LaneBasedIndividualCarBuilder> carBuilderList = new ArrayList<>();
@@ -112,8 +107,6 @@ public abstract class AbstractGTUGenerator
      * @param simulator the simulator to schedule the start of the generation
      * @param gtuType the type of GTU to generate
      * @param gtuClass the GTU class to instantiate
-     * @param gtuFollowingModel the GTU following model to use
-     * @param laneChangeModel the lane change model to use
      * @param initialSpeedDist distribution of the initial speed of the GTU
      * @param interarrivelTimeDist distribution of the interarrival time
      * @param maxGTUs maximum number of GTUs to generate
@@ -122,25 +115,24 @@ public abstract class AbstractGTUGenerator
      * @param lane the lane to generate the GTU on
      * @param position position on the lane, relative to the design line of the link
      * @param direction the direction on the lane in which the GTU has to be generated (DIR_PLUS, or DIR_MINUS)
-     * @param routeGenerator RouteGenerator; the route generator that will create a route for each generated GTU
      * @param gtuColorer the GTUColorer to use
+     * @param strategicalPlanner the lane-based strategical planner to use
+     * @param perception the LanePerception to use
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
-        final Class<?> gtuClass, final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel,
-        final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
+        final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
         final ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDist, final long maxGTUs,
         final Time.Abs startTime, final Time.Abs endTime, final Lane lane, final Length.Rel position,
-        final GTUDirectionality direction, final LaneBasedRouteGenerator routeGenerator, final GTUColorer gtuColorer)
+        final GTUDirectionality direction, final GTUColorer gtuColorer,
+        final LaneBasedStrategicalPlanner strategicalPlanner, final LanePerception perception)
         throws SimRuntimeException
     {
         super();
         this.name = name;
         this.gtuType = gtuType;
         this.gtuClass = gtuClass;
-        this.gtuFollowingModel = gtuFollowingModel;
-        this.laneChangeModel = laneChangeModel;
         this.initialSpeedDist = initialSpeedDist;
         this.interarrivelTimeDist = interarrivelTimeDist;
         this.maxGTUs = maxGTUs;
@@ -149,8 +141,9 @@ public abstract class AbstractGTUGenerator
         this.lane = lane;
         this.position = position;
         this.direction = direction;
-        this.routeGenerator = routeGenerator;
         this.gtuColorer = gtuColorer;
+        this.strategicalPlanner = strategicalPlanner;
+        this.perception = perception;
 
         simulator.scheduleEventAbs(startTime, this, this, "generate", null);
     }
@@ -183,8 +176,6 @@ public abstract class AbstractGTUGenerator
             LaneBasedIndividualCarBuilder carBuilder = new LaneBasedIndividualCarBuilder();
             carBuilder.setId(id);
             carBuilder.setGtuType(getGtuType());
-            carBuilder.setGTUFollowingModel(this.gtuFollowingModel);
-            carBuilder.setLaneChangeModel(this.laneChangeModel);
             Length.Rel carLength = getLengthDist().draw();
             carBuilder.setLength(carLength);
             carBuilder.setWidth(getWidthDist().draw());
@@ -194,8 +185,9 @@ public abstract class AbstractGTUGenerator
             Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
             initialLongitudinalPositions.add(new DirectedLanePosition(this.lane, this.position, this.direction));
             carBuilder.setInitialLongitudinalPositions(initialLongitudinalPositions);
-            carBuilder.setRouteGenerator(this.routeGenerator);
             carBuilder.setAnimationClass(DefaultCarAnimation.class);
+            carBuilder.setStrategicalPlanner(getStrategicalPlanner()); // TODO same instance? clone?
+            carBuilder.setPerception(getPerception()); // TODO same instance? clone?
             carBuilder.setGtuColorer(this.gtuColorer);
             this.generatedGTUs++;
 
@@ -261,23 +253,20 @@ public abstract class AbstractGTUGenerator
         }
 
         // test for sufficient headway
-        GTUFollowingModel followingModel = carBuilder.getGtuFollowingModel();
+        GTUFollowingModel followingModel =
+            carBuilder.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
 
-        HeadwayGTU headwayGTU =
-            headway(new Length.Rel(250.0, LengthUnit.METER), carBuilder.getRouteGenerator().generateRouteNavigator(),
-                generatorLane);
+        HeadwayGTU headwayGTU = headway(new Length.Rel(250.0, LengthUnit.METER), generatorLane);
         Length.Rel minimumHeadway = new Length.Rel(0.0, LengthUnit.METER);
         if (headwayGTU.getOtherGTU() != null)
         {
             minimumHeadway =
-                followingModel.minimumHeadway(carBuilder.getInitialSpeed(), headwayGTU.getOtherGTU()
-                    .getLongitudinalVelocity(), new Length.Rel(1.0, LengthUnit.CENTIMETER), generatorLane
-                    .getSpeedLimit(carBuilder.getGtuType()), carBuilder.getMaximumVelocity());
+                followingModel.minimumHeadway(carBuilder.getInitialSpeed(), headwayGTU.getOtherGTU().getVelocity(),
+                    new Length.Rel(1.0, LengthUnit.CENTIMETER), generatorLane.getSpeedLimit(carBuilder.getGtuType()),
+                    carBuilder.getMaximumVelocity());
             double acc =
-                followingModel
-                    .computeAcceleration(carBuilder.getInitialSpeed(), carBuilder.getMaximumVelocity(),
-                        headwayGTU.getOtherGTU().getLongitudinalVelocity(), minimumHeadway,
-                        carBuilder.getMaximumVelocity()).getSI();
+                followingModel.computeAcceleration(carBuilder.getInitialSpeed(), carBuilder.getMaximumVelocity(),
+                    headwayGTU.getOtherGTU().getVelocity(), minimumHeadway, carBuilder.getMaximumVelocity()).getSI();
             if (acc < 0)
             {
                 System.err.println(getSimulator().getSimulatorTime() + ", generator headway for GTU "
@@ -300,14 +289,12 @@ public abstract class AbstractGTUGenerator
      * @param cumDistanceSI the distance we have already covered searching on previous lanes
      * @param maxDistanceSI the maximum distance to look for in SI units; stays the same in subsequent calls
      * @param when the current or future time for which to calculate the headway
-     * @param routeNavigator Route; the route that the GTU intends to follow
      * @return the headway in SI units when we have found the GTU, or a null GTU with a distance of Double.MAX_VALUE meters when
      *         no other GTU could not be found within maxDistanceSI meters
      * @throws NetworkException when there is a problem with the geometry of the network
      */
     private HeadwayGTU headwayRecursiveForwardSI(final Lane theLane, final double lanePositionSI,
-        final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when,
-        final LaneBasedRouteNavigator routeNavigator) throws NetworkException
+        final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when) throws NetworkException
     {
         LaneBasedGTU otherGTU =
             theLane.getGtuAfter(new Length.Rel(lanePositionSI, LengthUnit.METER), RelativePosition.REAR, when);
@@ -338,8 +325,7 @@ public abstract class AbstractGTUGenerator
                     {
                         double traveledDistanceSI = cumDistanceSI + theLane.getLength().getSI() - lanePositionSI;
                         HeadwayGTU closest =
-                            headwayRecursiveForwardSI(nextLane, 0.0, traveledDistanceSI, maxDistanceSI, when,
-                                routeNavigator);
+                            headwayRecursiveForwardSI(nextLane, 0.0, traveledDistanceSI, maxDistanceSI, when);
                         if (closest.getDistanceSI() < maxDistanceSI
                             && closest.getDistanceSI() < foundMaxGTUDistanceSI.getDistanceSI())
                         {
@@ -418,14 +404,13 @@ public abstract class AbstractGTUGenerator
     /**
      * Find the first GTU starting on the specified lane following the specified route.
      * @param maxDistanceSI the maximum distance to look for in SI units
-     * @param routeNavigator Route; the route that the GTU intends to follow
      * @param generatorLane Lane; the lane on which the the search for a leader starts
      * @return the nearest GTU and the net headway to this GTU in SI units when we have found the GTU, or a null GTU with a
      *         distance of Double.MAX_VALUE meters when no other GTU could not be found within maxDistanceSI meters
      * @throws NetworkException when there is a problem with the geometry of the network
      */
-    private HeadwayGTU headwayGTUSIForward(final double maxDistanceSI, final LaneBasedRouteNavigator routeNavigator,
-        final Lane generatorLane) throws NetworkException
+    private HeadwayGTU headwayGTUSIForward(final double maxDistanceSI, final Lane generatorLane)
+        throws NetworkException
     {
         Time.Abs when = getSimulator().getSimulatorTime().getTime();
         HeadwayGTU foundMaxGTUDistanceSI = new HeadwayGTU(null, Double.MAX_VALUE);
@@ -433,9 +418,7 @@ public abstract class AbstractGTUGenerator
         HeadwayGTU closest;
         if (this.direction.equals(GTUDirectionality.DIR_PLUS))
         {
-            closest =
-                headwayRecursiveForwardSI(this.lane, generatorLane.getLength().getSI(), 0.0, maxDistanceSI, when,
-                    routeNavigator);
+            closest = headwayRecursiveForwardSI(this.lane, generatorLane.getLength().getSI(), 0.0, maxDistanceSI, when);
         }
         else
         {
@@ -451,16 +434,14 @@ public abstract class AbstractGTUGenerator
 
     /**
      * Check the available headway for GTU that is about to be constructed.
-     * @param maxDistance DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum distance to look for a leader
-     * @param routeNavigator RouteNavigator; the route that this GTU intends to take
+     * @param maxDistance Length.Rel; the maximum distance to look for a leader
      * @param generatorLane Lane; the lane on which the GTU is generated
      * @return HeadwayGTU; the available headway and the GTU at that headway
      * @throws NetworkException on network inconsistency
      */
-    public final HeadwayGTU headway(final Length.Rel maxDistance, final LaneBasedRouteNavigator routeNavigator,
-        final Lane generatorLane) throws NetworkException
+    public final HeadwayGTU headway(final Length.Rel maxDistance, final Lane generatorLane) throws NetworkException
     {
-        return headwayGTUSIForward(maxDistance.getSI(), routeNavigator, generatorLane);
+        return headwayGTUSIForward(maxDistance.getSI(), generatorLane);
     }
 
     /**
@@ -524,14 +505,6 @@ public abstract class AbstractGTUGenerator
     }
 
     /**
-     * @return gtuFollowingModel.
-     */
-    public final GTUFollowingModel getGtuFollowingModel()
-    {
-        return this.gtuFollowingModel;
-    }
-
-    /**
      * @return initialSpeedDist.
      */
     public final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> getInitialSpeedDist()
@@ -572,35 +545,27 @@ public abstract class AbstractGTUGenerator
     }
 
     /**
-     * @return routeGenerator.
-     */
-    public final RouteGenerator getRouteGenerator()
-    {
-        return this.routeGenerator;
-    }
-
-    /**
-     * @param routeGenerator set routeGenerator.
-     */
-    public final void setRouteGenerator(final LaneBasedRouteGenerator routeGenerator)
-    {
-        this.routeGenerator = routeGenerator;
-    }
-
-    /**
-     * @return laneChangeModel.
-     */
-    public final LaneChangeModel getLaneChangeModel()
-    {
-        return this.laneChangeModel;
-    }
-
-    /**
      * @return gtuColorer.
      */
     public final GTUColorer getGtuColorer()
     {
         return this.gtuColorer;
+    }
+
+    /**
+     * @return strategicalPlanner
+     */
+    public final LaneBasedStrategicalPlanner getStrategicalPlanner()
+    {
+        return this.strategicalPlanner;
+    }
+
+    /**
+     * @return perception
+     */
+    public final LanePerception getPerception()
+    {
+        return this.perception;
     }
 
 }

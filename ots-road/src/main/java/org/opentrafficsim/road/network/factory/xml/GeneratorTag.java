@@ -16,14 +16,17 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
 import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
-import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Altruistic;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.xml.CrossSectionElementTag.ElementType;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.route.FixedLaneBasedRouteGenerator;
-import org.opentrafficsim.road.network.route.LaneBasedRouteGenerator;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -50,7 +53,7 @@ class GeneratorTag
     /** direction in which to generate the GTU, relative to the design line of the Link. */
     // TOO parse direction, and add to XML formal
     GTUDirectionality gtuDirection = GTUDirectionality.DIR_PLUS;
-    
+
     /** GTU tag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     GTUTag gtuTag = null;
@@ -143,7 +146,7 @@ class GeneratorTag
             throw new NetworkException("GENERATOR: DIRECTION element not found in elements of link " + linkTag.name
                 + " - roadtype " + linkTag.roadTypeTag.name);
         generatorTag.gtuDirection = parseDirection(directionStr.getNodeValue().trim());
-        */
+         */
 
         if (attributes.getNamedItem("GTU") != null)
         {
@@ -287,14 +290,15 @@ class GeneratorTag
         Time.Abs startTime = generatorTag.startTime != null ? generatorTag.startTime : new Time.Abs(0.0, TimeUnit.SI);
         Time.Abs endTime =
             generatorTag.endTime != null ? generatorTag.endTime : new Time.Abs(Double.MAX_VALUE, TimeUnit.SI);
-        LaneBasedRouteGenerator rg =
-            new FixedLaneBasedRouteGenerator(new CompleteRoute("fixed route", generatorTag.gtuTag.gtuType, nodeList));
         Length.Rel position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);
+        LaneBasedDrivingCharacteristics drivingCharacteristics =
+            new LaneBasedDrivingCharacteristics(new IDMPlus(), new Altruistic());
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+        LanePerception perception = new LanePerception(null);
         new GTUGeneratorIndividual(generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType, gtuClass,
-            generatorTag.gtuTag.followingModel, generatorTag.gtuTag.laneChangeModel, generatorTag.initialSpeedDist,
-            generatorTag.iatDist, generatorTag.gtuTag.lengthDist, generatorTag.gtuTag.widthDist,
-            generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime, lane, position,
-            generatorTag.gtuDirection, rg, generatorTag.gtuColorer);
+            generatorTag.initialSpeedDist, generatorTag.iatDist, generatorTag.gtuTag.lengthDist,
+            generatorTag.gtuTag.widthDist, generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime,
+            lane, position, generatorTag.gtuDirection, generatorTag.gtuColorer, strategicalPlanner, perception);
 
         // TODO GTUMix
         // TODO RouteMix

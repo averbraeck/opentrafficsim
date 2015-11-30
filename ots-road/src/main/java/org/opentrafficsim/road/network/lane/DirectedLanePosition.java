@@ -1,8 +1,10 @@
 package org.opentrafficsim.road.network.lane;
 
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
 
 /**
  * <p>
@@ -16,18 +18,21 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
  */
 public class DirectedLanePosition
 {
+    /** the lane for the position. */
     private final Lane lane;
 
+    /** the position on the lane, relative to the cross section link (design line). */
     private final Length.Rel position;
 
+    /** the direction the vehicle is driving to -- either in the direction of the design line, or against it. */
     private final GTUDirectionality gtuDirection;
 
     /**
-     * @param lane
-     * @param position
-     * @param gtuDirection
+     * @param lane the lane for the position
+     * @param position the position on the lane, relative to the cross section link (design line)
+     * @param gtuDirection the direction the vehicle is driving to -- either in the direction of the design line, or against it
      */
-    public DirectedLanePosition(Lane lane, Rel position, GTUDirectionality gtuDirection)
+    public DirectedLanePosition(final Lane lane, final Length.Rel position, final GTUDirectionality gtuDirection)
     {
         super();
         this.lane = lane;
@@ -36,7 +41,7 @@ public class DirectedLanePosition
     }
 
     /**
-     * @return lane
+     * @return lane the lane for the position
      */
     public final Lane getLane()
     {
@@ -44,7 +49,7 @@ public class DirectedLanePosition
     }
 
     /**
-     * @return position
+     * @return position the position on the lane, relative to the cross section link (design line)
      */
     public final Length.Rel getPosition()
     {
@@ -52,11 +57,26 @@ public class DirectedLanePosition
     }
 
     /**
-     * @return gtuDirection
+     * @return gtuDirection the direction the vehicle is driving to -- either in the direction of the design line, or against it
      */
     public final GTUDirectionality getGtuDirection()
     {
         return this.gtuDirection;
+    }
+
+    /**
+     * @return the location of the GTU on the lane, in the right direction.
+     * @throws NetworkException when the position turns out to be outside of the lane
+     */
+    public DirectedPoint getLocation() throws NetworkException
+    {
+        double fraction = this.position.si / this.lane.getParentLink().getLength().si;
+        DirectedPoint p = this.lane.getCenterLine().getLocationFraction(fraction);
+        if (this.gtuDirection.equals(GTUDirectionality.DIR_PLUS))
+        {
+            return p;
+        }
+        return new DirectedPoint(p.x, p.y, p.z, p.getRotX(), p.getRotY(), p.getRotZ() + Math.PI);
     }
 
     /** {@inheritDoc} */

@@ -36,8 +36,12 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
-import org.opentrafficsim.road.gtu.following.HeadwayGTU;
-import org.opentrafficsim.road.gtu.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechange.AbstractLaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Altruistic;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Egoistic;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechange.LaneMovementStep;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -67,7 +71,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
      * @param name String; name of the new Link
      * @param from Node; start node of the new Link
      * @param to Node; end node of the new Link
-     * @param width DoubleScalar.Rel&lt;LengthUnit&gt;; the width of the new Link
+     * @param width Length.Rel; the width of the new Link
      * @return Link
      * @throws NetworkException
      */
@@ -91,9 +95,9 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
      * @param link Link; the link that owns the new Lane
      * @param id String; the id of the lane, has to be unique within the link
      * @param laneType LaneType&lt;String&gt;; the type of the new Lane
-     * @param latPos DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral position of the new Lane with respect to the design line of
+     * @param latPos Length.Rel; the lateral position of the new Lane with respect to the design line of
      *            the link
-     * @param width DoubleScalar.Rel&lt;LengthUnit&gt;; the width of the new Lane
+     * @param width Length.Rel; the width of the new Lane
      * @return Lane
      * @throws NamingException on ???
      * @throws NetworkException on ??

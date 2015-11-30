@@ -38,6 +38,7 @@ import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -234,7 +235,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
     /**
      * Retrieve the position of the detector.
-     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the position of the detector
+     * @return Length.Rel; the position of the detector
      */
     public final Length.Rel getPosition()
     {
@@ -267,8 +268,9 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
     /**
      * Add the effect of one passing car to this Fundamental Diagram.
      * @param gtu AbstractLaneBasedGTU; the GTU that passes the detection point
+     * @throws GTUException when the velocity of the GTU cannot be assessed
      */
-    public final void addData(final LaneBasedGTU gtu)
+    public final void addData(final LaneBasedGTU gtu) throws GTUException
     {
         Time.Abs detectionTime = gtu.getSimulator().getSimulatorTime().getTime();
         // Figure out the time bin
@@ -279,7 +281,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
             this.samples.add(new Sample());
         }
         Sample sample = this.samples.get(timeBin);
-        sample.addData(gtu.getLongitudinalVelocity(detectionTime));
+        sample.addData(gtu.getVelocity(detectionTime));
     }
 
     /**
@@ -607,7 +609,14 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         @Override
         public void trigger(final LaneBasedGTU gtu)
         {
-            addData(gtu);
+            try
+            {
+                addData(gtu);
+            }
+            catch (GTUException exception)
+            {
+                exception.printStackTrace(); // TODO
+            }
         }
 
         /** {@inheritDoc} */

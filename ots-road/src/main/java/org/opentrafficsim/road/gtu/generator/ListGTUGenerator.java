@@ -26,11 +26,10 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
-import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.route.LaneBasedRouteGenerator;
 
 /**
  * Generate GTUs at times prescribed in a text file.
@@ -54,20 +53,17 @@ public class ListGTUGenerator
     /** The type of GTUs generated. */
     private final GTUType gtuType;
 
-    /** The GTU following model used by all generated GTUs. */
-    private final GTUFollowingModel gtuFollowingModel;
-
-    /** The lane change model used by all generated GTUs. */
-    private final LaneChangeModel laneChangeModel;
-
-    /** The lane change model used by all generated GTUs. */
-    private final LaneBasedRouteGenerator routeGenerator;
-
     /** Initial speed of the generated GTUs. */
     private final Speed initialSpeed;
 
     /** The GTU colorer that will be linked to each generated GTU. */
     private final GTUColorer gtuColorer;
+
+    /** the lane-based strategical planner to use. */
+    private final LaneBasedStrategicalPlanner strategicalPlanner;
+
+    /** the LanePerception to use. */
+    private final LanePerception perception;
 
     /** The simulator that controls everything. */
     private final OTSDEVSSimulatorInterface simulator;
@@ -86,22 +82,21 @@ public class ListGTUGenerator
      * @param name String; name if this generator
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @param gtuType GTUType&lt;ID&gt;; the GTUType of the generated GTUs
-     * @param gtuFollowingModel GTUFollowingModel; the GTU following model of the generated GTUs
-     * @param laneChangeModel LaneChangeModel; the lane change model of the generated GTUs
      * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the generated GTUs
      * @param lane Lane; the lane on which the generated GTUs are placed
-     * @param position DoubleScalar.Rel&lt;LengthUnit&gt;; the position on the lane where the generated GTUs are placed
+     * @param position Length.Rel; the position on the lane where the generated GTUs are placed
      * @param direction the direction on the lane in which the GTU has to be generated (DIR_PLUS, or DIR_MINUS)
-     * @param routeGenerator RouteGenerator; the route generator that generates the routes of the generated GTUs
      * @param gtuColorer GTUColorere; the GTUColorer of the generated GTUs
+     * @param strategicalPlanner the lane-based strategical planner to use
+     * @param perception the LanePerception to use
      * @param fileName String; name of file with the times when another GTU is to be generated (XXXX STUB)
      * @throws SimRuntimeException on
      * @throws NetworkException on
      */
     public ListGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
-        final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel, final Speed initialSpeed,
-        final Lane lane, final Length.Rel position, final GTUDirectionality direction, final LaneBasedRouteGenerator routeGenerator,
-        final GTUColorer gtuColorer, final String fileName) throws SimRuntimeException, NetworkException
+        final Speed initialSpeed, final Lane lane, final Length.Rel position, final GTUDirectionality direction,
+        final GTUColorer gtuColorer, final LaneBasedStrategicalPlanner strategicalPlanner,
+        final LanePerception perception, final String fileName) throws SimRuntimeException, NetworkException
     {
         if (null == lane)
         {
@@ -110,12 +105,11 @@ public class ListGTUGenerator
         this.name = name;
         this.lane = lane;
         this.gtuType = gtuType;
-        this.gtuFollowingModel = gtuFollowingModel;
-        this.laneChangeModel = laneChangeModel;
         this.initialSpeed = initialSpeed;
         this.simulator = simulator;
         this.gtuColorer = gtuColorer;
-        this.routeGenerator = routeGenerator;
+        this.strategicalPlanner = strategicalPlanner;
+        this.perception = perception;
         try
         {
             this.reader = new BufferedReader(new FileReader(new File(fileName)));
@@ -175,10 +169,9 @@ public class ListGTUGenerator
         try
         {
             Length.Rel vehicleLength = new Length.Rel(4, LengthUnit.METER);
-            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, this.gtuFollowingModel,
-                this.laneChangeModel, initialPositions, this.initialSpeed, vehicleLength, new Length.Rel(1.8, LengthUnit.METER),
-                new Speed(200, SpeedUnit.KM_PER_HOUR), this.routeGenerator.generateRouteNavigator(), this.simulator,
-                DefaultCarAnimation.class, this.gtuColorer);
+            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, this.initialSpeed,
+                vehicleLength, new Length.Rel(1.8, LengthUnit.METER), new Speed(200, SpeedUnit.KM_PER_HOUR),
+                this.simulator, this.strategicalPlanner, this.perception, DefaultCarAnimation.class, this.gtuColorer);
             scheduleNextVehicle();
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)

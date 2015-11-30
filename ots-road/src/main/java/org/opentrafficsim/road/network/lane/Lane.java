@@ -21,6 +21,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -636,18 +637,19 @@ public class Lane extends CrossSectionElement implements Serializable
                             throw new NetworkException("scheduleTriggers for gtu: " + gtu + ", d<0 d=" + d);
                         }
 
-                        Time.Abs triggerTime = gtu.timeAtDistance(new Length.Rel(d, LengthUnit.METER));
-                        if (triggerTime.gt(gtu.getNextEvaluationTime()))
+                        OperationalPlan oPlan = gtu.getOperationalPlan();
+                        Time.Abs triggerTime = oPlan.timeAtDistance(new Length.Rel(d, LengthUnit.METER));
+                        if (triggerTime.gt(oPlan.getEndTime()))
                         {
                             System.err.println("Time=" + gtu.getSimulator().getSimulatorTime().getTime().getSI()
                                 + " - Scheduling trigger at " + triggerTime.getSI() + "s. > "
-                                + gtu.getNextEvaluationTime().getSI() + "s. (nextEvalTime) for sensor " + sensor
-                                + " , gtu " + gtu);
+                                + oPlan.getEndTime().getSI() + "s. (nextEvalTime) for sensor " + sensor + " , gtu "
+                                + gtu);
                             System.err.println("  v=" + gtu.getVelocity() + ", a=" + gtu.getAcceleration() + ", lane="
                                 + toString() + ", refStartSI=" + referenceStartSI + ", moveSI=" + referenceMoveSI);
                             triggerTime =
-                                new Time.Abs(gtu.getNextEvaluationTime().getSI()
-                                    - Math.ulp(gtu.getNextEvaluationTime().getSI()), TimeUnit.SI);
+                                new Time.Abs(oPlan.getEndTime().getSI() - Math.ulp(oPlan.getEndTime().getSI()),
+                                    TimeUnit.SI);
                             // gtu.timeAtDistance(new Length.Rel(-d, METER));
                             // System.exit(-1);
                         }
@@ -986,11 +988,6 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final void sample(final AbstractLaneBasedGTU gtu) throws NetworkException
     {
-        // FIXME: Hack; do not sample dummy vehicle at lane drop
-        if (gtu.getNextEvaluationTime().getSI() == Double.MAX_VALUE)
-        {
-            return;
-        }
         for (LaneBasedGTUSampler sampler : this.samplers)
         {
             sampler.addData(gtu, this);

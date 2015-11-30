@@ -46,6 +46,6 @@ public class ShoulderAnimation extends Renderable2D
     public final void paint(final Graphics2D graphics, final ImageObserver observer) 
     {
         Shoulder shoulder = (Shoulder) getSource();
-        PaintPolygons.paintMultiPolygon(graphics, this.color, shoulder.getLocation(), shoulder.getContour());
+        PaintPolygons.paintMultiPolygon(graphics, this.color, shoulder.getLocation(), shoulder.getContour(), true);
     }
 }

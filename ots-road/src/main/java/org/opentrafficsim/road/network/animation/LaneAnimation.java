@@ -46,6 +46,6 @@ public class LaneAnimation extends Renderable2D
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         Lane lane = (Lane) getSource();
-        PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour());
+        PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour(), true);
     }
 }

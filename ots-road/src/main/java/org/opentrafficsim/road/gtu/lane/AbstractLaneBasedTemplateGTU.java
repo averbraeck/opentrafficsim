@@ -1,21 +1,16 @@
 package org.opentrafficsim.road.gtu.lane;
 
-import java.util.Map;
 import java.util.Set;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 
 /**
  * <p>
@@ -38,21 +33,20 @@ public abstract class AbstractLaneBasedTemplateGTU extends AbstractLaneBasedGTU
     /**
      * @param id the id of the GTU
      * @param templateGTUType the TemplateGTUType, e.g. TruckType, CarType, BusType
-     * @param gtuFollowingModel the following model, including a reference to the simulator
      * @param initialLongitudinalPositions the initial positions of the car on one or more lanes
      * @param initialSpeed the initial speed of the car on the lane
-     * @param routeNavigator RouteNavigator; the navigator that the GTU will use
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GTUException when gtuFollowingModel is null
+     * @throws InstantiationException in case Perception or StrategicPlanner instantiation fails
+     * @throws IllegalAccessException in case Perception or StrategicPlanner constructor is not public
      */
-    public AbstractLaneBasedTemplateGTU(final String id, final TemplateGTUType templateGTUType,
-        final GTUFollowingModel gtuFollowingModel, final Set<DirectedLanePosition> initialLongitudinalPositions,
-        final Speed initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator) throws
-        NetworkException, SimRuntimeException, GTUException
+    public AbstractLaneBasedTemplateGTU(final String id, final LaneBasedTemplateGTUType templateGTUType,
+        final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed)
+        throws NetworkException, SimRuntimeException, GTUException, InstantiationException, IllegalAccessException
     {
-        super(id, templateGTUType.getGtuType(), gtuFollowingModel, null /* LaneChangeModel */, initialLongitudinalPositions,
-            initialSpeed, routeNavigator, templateGTUType.getSimulator());
+        super(id, templateGTUType.getGtuType(), initialLongitudinalPositions, initialSpeed, templateGTUType
+            .getSimulator(), templateGTUType.instantiateStrategicalPlanner(), templateGTUType.instantiatePerception());
         this.templateGTUType = templateGTUType;
     }
 
@@ -83,13 +77,6 @@ public abstract class AbstractLaneBasedTemplateGTU extends AbstractLaneBasedGTU
     public final Speed getMaximumVelocity()
     {
         return this.templateGTUType.getMaximumVelocity();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final OTSDEVSSimulatorInterface getSimulator()
-    {
-        return this.templateGTUType.getSimulator();
     }
 
 }

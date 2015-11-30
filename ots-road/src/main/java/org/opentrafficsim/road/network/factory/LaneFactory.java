@@ -81,11 +81,11 @@ public final class LaneFactory
      * @param link Link; the link that owns the new Lane
      * @param id String; the id of this lane, should be unique within the link
      * @param laneType LaneType&lt;String&gt;; the type of the new Lane
-     * @param latPosAtStart DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral position of the new Lane with respect to the design
+     * @param latPosAtStart Length.Rel; the lateral position of the new Lane with respect to the design
      *            line of the link at the start of the link
-     * @param latPosAtEnd DoubleScalar.Rel&lt;LengthUnit&gt;; the lateral position of the new Lane with respect to the design
+     * @param latPosAtEnd Length.Rel; the lateral position of the new Lane with respect to the design
      *            line of the link at the end of the link
-     * @param width DoubleScalar.Rel&lt;LengthUnit&gt;; the width of the new Lane
+     * @param width Length.Rel; the width of the new Lane
      * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit on the new Lane
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @return Lane

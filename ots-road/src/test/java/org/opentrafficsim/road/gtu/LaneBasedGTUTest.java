@@ -30,13 +30,13 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
-import org.opentrafficsim.road.gtu.following.FixedAccelerationModel;
-import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.road.gtu.following.HeadwayGTU;
-import org.opentrafficsim.road.gtu.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.changing.FixedLaneChangeModel;
-import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechange.FixedLaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechange.LaneChangeModel;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -427,9 +427,9 @@ public class LaneBasedGTUTest implements UNITS
 
     /**
      * Create the Map that records in which lane a GTU is registered.
-     * @param totalLongitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the front position of the GTU from the start of the
+     * @param totalLongitudinalPosition Length.Rel; the front position of the GTU from the start of the
      *            chain of Links
-     * @param gtuLength DoubleScalar.Rel&lt;LengthUnit&gt;; the length of the GTU
+     * @param gtuLength Length.Rel; the length of the GTU
      * @param links ArrayList&lt;CrossSectionLink&lt;?,?&gt;&gt;; the list of Links
      * @param fromLaneRank int; lowest rank of lanes that the GTU must be registered on (0-based)
      * @param uptoLaneRank int; highest rank of lanes that the GTU must be registered on (0-based)

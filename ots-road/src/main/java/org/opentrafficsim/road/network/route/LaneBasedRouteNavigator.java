@@ -24,10 +24,10 @@ public interface LaneBasedRouteNavigator extends RouteNavigator
     /**
      * Determine the suitability of being at a particular longitudinal position in a particular Lane for following this Route.
      * @param lane Lane; the lane to consider
-     * @param longitudinalPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the longitudinal position in the lane
+     * @param longitudinalPosition Length.Rel; the longitudinal position in the lane
      * @param gtu GTU; the GTU (used to check lane compatibility of lanes, and current lane the GTU is on)
-     * @param timeHorizon DoubleScalar.Rel&lt;TimeUnit&gt;; the maximum time that a driver may want to look ahead
-     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; a value that indicates within what distance the GTU should try to vacate this
+     * @param timeHorizon Time.Rel; the maximum time that a driver may want to look ahead
+     * @return Length.Rel; a value that indicates within what distance the GTU should try to vacate this
      *         lane.
      * @throws NetworkException on network inconsistency, or when the continuation Link at a branch cannot be determined
      */

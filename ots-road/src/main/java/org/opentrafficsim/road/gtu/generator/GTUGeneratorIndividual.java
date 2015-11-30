@@ -13,10 +13,9 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.route.LaneBasedRouteGenerator;
 
 /**
  * Generate GTUs.
@@ -47,8 +46,6 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
      * @param name the name of the generator
      * @param gtuType the type of GTU to generate
      * @param gtuClass the gtu class to instantiate
-     * @param gtuFollowingModel the GTU following model to use
-     * @param laneChangeModel the lane change model to use
      * @param initialSpeedDist distribution of the initial speed of the GTU
      * @param interarrivelTimeDist distribution of the interarrival time
      * @param maxGTUs maximum number of GTUs to generate
@@ -61,24 +58,25 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
      * @param lane Lane on which newly GTUs are placed
      * @param position position on the lane, relative to the design line of the link
      * @param direction the direction on the lane in which the GTU has to be generated (DIR_PLUS, or DIR_MINUS)
-     * @param routeGenerator RouteGenerator; the route generator that will create a route for each newly constructed GTU
      * @param gtuColorer the GTUColorer to use
+     * @param strategicalPlanner the lane-based strategical planner to use
+     * @param perception the LanePerception to use
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public GTUGeneratorIndividual(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
-        final Class<?> gtuClass, final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel,
-        final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
+        final Class<?> gtuClass, final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist,
         final ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDist,
         final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist,
         final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist,
         final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist, final long maxGTUs,
         final Time.Abs startTime, final Time.Abs endTime, final Lane lane, final Length.Rel position,
-        final GTUDirectionality direction, final LaneBasedRouteGenerator routeGenerator, final GTUColorer gtuColorer)
+        final GTUDirectionality direction, final GTUColorer gtuColorer,
+        final LaneBasedStrategicalPlanner strategicalPlanner, final LanePerception perception)
         throws SimRuntimeException
     {
-        super(name, simulator, gtuType, gtuClass, gtuFollowingModel, laneChangeModel, initialSpeedDist,
-            interarrivelTimeDist, maxGTUs, startTime, endTime, lane, position, direction, routeGenerator, gtuColorer);
+        super(name, simulator, gtuType, gtuClass, initialSpeedDist, interarrivelTimeDist, maxGTUs, startTime, endTime,
+            lane, position, direction, gtuColorer, strategicalPlanner, perception);
         this.simulator = simulator;
         this.lengthDist = lengthDist;
         this.widthDist = widthDist;

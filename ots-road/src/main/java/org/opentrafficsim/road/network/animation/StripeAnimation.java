@@ -204,7 +204,7 @@ public class StripeAnimation extends Renderable2D
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        PaintPolygons.paintMultiPolygon(graphics, Color.WHITE, ((Stripe) getSource()).getLocation(), this.line);
+        PaintPolygons.paintMultiPolygon(graphics, Color.WHITE, ((Stripe) getSource()).getLocation(), this.line, true);
     }
 
     /**

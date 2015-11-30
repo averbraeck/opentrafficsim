@@ -132,8 +132,8 @@ public class TemplateGTUTypeTest implements UNITS
      * Verify all the values in a TemplateGTUType&lt;String&gt;.
      * @param templateGTUType TemplateGTUType&lt;String&gt;; the TemplateGTUType
      * @param id String; the expected id
-     * @param length DoubleScalar.Rel&lt;LengthUnit&gt;; the expected length
-     * @param width DoubleScalar.Rel&lt;LengthUnit&gt;; the expected width
+     * @param length Length.Rel; the expected length
+     * @param width Length.Rel; the expected width
      * @param maximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the expected maximum velocity
      * @param simulator OTSDEVSSimulatorInterface; the expected simulator
      */
@@ -171,7 +171,7 @@ class DummyModelForTemplateGTUTest implements OTSModelInterface
 
     /**
      * Register the simulator.
-     * @param simulator SimulatorInterface&lt;DoubleScalar.Abs&lt;TimeUnit&gt;, DoubleScalar.Rel&lt;TimeUnit&gt;,
+     * @param simulator SimulatorInterface&lt;Time.Abs, Time.Rel,
      *            OTSSimTimeDouble&gt;; the simulator
      */
     public void setSimulator(
