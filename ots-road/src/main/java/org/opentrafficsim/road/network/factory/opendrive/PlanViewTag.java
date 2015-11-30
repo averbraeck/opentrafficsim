@@ -139,13 +139,13 @@ class PlanViewTag
         Rel x1 = geometryTag.x.plus(geometryTag.length.multiplyBy(Math.cos(geometryTag.hdg.si)).multiplyBy(0.5));
         Rel y1 = geometryTag.y.plus(geometryTag.length.multiplyBy(Math.sin(geometryTag.hdg.si)).multiplyBy(0.5));
 
-        OTSPoint3D p = new OTSPoint3D(x1.si, y1.si);
+        OTSPoint3D p = new OTSPoint3D(x1.si, y1.si, 0);
         pOutPut.add(p);
         
         Rel x2 = geometryTag.x.plus(geometryTag.length.multiplyBy(Math.cos(geometryTag.hdg.si)).multiplyBy(0.66));
         Rel y2 = geometryTag.y.plus(geometryTag.length.multiplyBy(Math.sin(geometryTag.hdg.si)).multiplyBy(0.66));
 
-        OTSPoint3D q = new OTSPoint3D(x2.si, y2.si);
+        OTSPoint3D q = new OTSPoint3D(x2.si, y2.si, 0);
         pOutPut.add(q);
         
         OTSLine3D otsLine = new OTSLine3D(pOutPut);
@@ -207,7 +207,7 @@ class PlanViewTag
         List<OTSPoint3D> pOutPut = new ArrayList<OTSPoint3D>();
 
         // Calculate the middle of the two given points.
-        OTSPoint3D mPoint = new OTSPoint3D((pFrom.x + pTo.x)/2, (pFrom.y + pTo.y)/2);
+        OTSPoint3D mPoint = new OTSPoint3D((pFrom.x + pTo.x)/2, (pFrom.y + pTo.y)/2, 0);
 
         //System.out.println("Middle Between From and To = " + mPoint);
 
@@ -233,7 +233,7 @@ class PlanViewTag
             x = 0.5f * (pFrom.x + pTo.x) - factor * (pTo.y - pFrom.y);
             y = 0.5f * (pFrom.y + pTo.y) - factor * (pFrom.x - pTo.x);
         }
-        OTSPoint3D circleMiddlePoint = new OTSPoint3D(x, y);
+        OTSPoint3D circleMiddlePoint = new OTSPoint3D(x, y, 0);
         
         //System.out.println("Middle = " + circleMiddlePoint);
 
@@ -300,7 +300,7 @@ class PlanViewTag
             }
         }
         for (double f = angle1; f < angle2; f += step) {
-            OTSPoint3D p = new OTSPoint3D(Math.cos(f) * pRadius + circleMiddlePoint.x, Math.sin(f) * pRadius + circleMiddlePoint.y);
+            OTSPoint3D p = new OTSPoint3D(Math.cos(f) * pRadius + circleMiddlePoint.x, Math.sin(f) * pRadius + circleMiddlePoint.y, 0);
             pOutPut.add(p);
         }
 /*        if (flipped ^ side) {

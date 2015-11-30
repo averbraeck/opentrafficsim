@@ -241,7 +241,7 @@ class RoadTag
                     if (currentGeometryTag.s.doubleValue() < laneSecLength.doubleValue())
                     {
                         OTSPoint3D point =
-                            new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue());
+                            new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(), 0);
                         
                         if(points.size()==0)
                             points.add(point);
@@ -277,7 +277,7 @@ class RoadTag
                     else
                     {
                         OTSPoint3D point =
-                            new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue());
+                            new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(), 0);
                         
                         if(points.size()==0)
                             points.add(point);
@@ -341,7 +341,7 @@ class RoadTag
                 GeometryTag currentGeometryTag = tempGeometryTags.get(indexGeometryTag);
 
                 OTSPoint3D point =
-                    new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue());
+                    new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(), 0);
                 points.add(point);
 
                 if (currentGeometryTag.interLine != null)
