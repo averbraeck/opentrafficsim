@@ -94,7 +94,8 @@ public class TemplateGTUType implements Serializable
     /**
      * @return gtuType.
      */
-    public final GTUType getGtuType()
+    @SuppressWarnings("checkstyle:designforextension")
+    public GTUType getGtuType()
     {
         return this.gtuType;
     }

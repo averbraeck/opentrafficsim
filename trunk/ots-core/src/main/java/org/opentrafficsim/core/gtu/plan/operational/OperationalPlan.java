@@ -6,6 +6,7 @@ import java.util.List;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -30,8 +31,11 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class OperationalPlan
+public class OperationalPlan implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20151114L;
+
     /** the path to follow from a certain time till a certain time. */
     private final OTSLine3D path;
 
@@ -171,6 +175,15 @@ public class OperationalPlan
     }
 
     /**
+     * Return the time it will take to complete the entire operational plan.
+     * @return the time it will take to complete the entire operational plan
+     */
+    public final Time.Abs getEndTime()
+    {
+        return this.startTime.plus(this.totalDuration);
+    }
+
+    /**
      * Provide the end location of this operational plan as a DirectedPoint.
      * @return the end location
      */
@@ -188,6 +201,17 @@ public class OperationalPlan
     }
 
     /**
+     * Return the time it will take to travel the given distance.
+     * @param distance the distance to calculate the time for
+     * @return the time it will take to have traveled the given distance
+     */
+    public final Time.Abs timeAtDistance(final Length.Rel distance)
+    {
+        // TODO
+        return this.startTime.plus(this.totalDuration);
+    }
+
+    /**
      * Calculate the location at the given time.
      * @param time the absolute time to look for a location
      * @return the location at the given time.
@@ -195,8 +219,57 @@ public class OperationalPlan
      */
     public final DirectedPoint getLocation(final Time.Abs time) throws NetworkException
     {
+        // TODO...
         double fraction = time.minus(this.startTime).si / this.totalDuration.si;
         return this.path.getLocationFraction(fraction);
+    }
+
+    /**
+     * Calculate the velocity of the GTU after the given duration since the start of the plan.
+     * @param time the relative time to look for a location
+     * @return the location after the given duration since the start of the plan.
+     * @throws NetworkException when the time is after the validity of the operational plan
+     */
+    public final Speed getVelocity(final Time.Rel time) throws NetworkException
+    {
+        // TODO
+        return SPEED_0;
+    }
+
+    /**
+     * Calculate the velocity of the GTU at the given time.
+     * @param time the absolute time to look for a location
+     * @return the location at the given time.
+     * @throws NetworkException when the time is after the validity of the operational plan
+     */
+    public final Speed getVelocity(final Time.Abs time) throws NetworkException
+    {
+        // TODO
+        return SPEED_0;
+    }
+
+    /**
+     * Calculate the acceleration of the GTU after the given duration since the start of the plan.
+     * @param time the relative time to look for a location
+     * @return the location after the given duration since the start of the plan.
+     * @throws NetworkException when the time is after the validity of the operational plan
+     */
+    public final Acceleration getAcceleration(final Time.Rel time) throws NetworkException
+    {
+        // TODO
+        return new Acceleration(0.0, AccelerationUnit.SI);
+    }
+
+    /**
+     * Calculate the acceleration of the GTU at the given time.
+     * @param time the absolute time to look for a location
+     * @return the location at the given time.
+     * @throws NetworkException when the time is after the validity of the operational plan
+     */
+    public final Acceleration getAcceleration(final Time.Abs time) throws NetworkException
+    {
+        // TODO
+        return new Acceleration(0.0, AccelerationUnit.SI);
     }
 
     /**
@@ -395,6 +468,14 @@ public class OperationalPlan
         }
 
         /**
+         * @return duration the duration of the acceleration or speed for this segment
+         */
+        public final double getDurationSI()
+        {
+            return this.duration.si;
+        }
+
+        /**
          * Calculate the distance covered by a GTU in this segment.
          * @return distance covered
          */
@@ -404,11 +485,25 @@ public class OperationalPlan
         }
 
         /**
-         * Calculate the distance covered by a GTU in this segment in time t.
+         * Calculate the distance covered by a GTU in this segment after relative time t.
          * @param t the relative time since starting this segment for which to calculate the distance covered
          * @return distance covered
          */
         abstract double distanceSI(double t);
+
+        /**
+         * Calculate the speed of a GTU in this segment after relative time t.
+         * @param t the relative time since starting this segment for which to calculate the speed
+         * @return speed at relative time t
+         */
+        abstract double speedSI(double t);
+
+        /**
+         * Calculate the acceleration of a GTU in this segment after relative time t.
+         * @param t the relative time since starting this segment for which to calculate the acceleration
+         * @return acceleration at relative time t
+         */
+        abstract double accelerationSI(double t);
 
         /**
          * Calculate the end speed for this segment.
@@ -497,17 +592,23 @@ public class OperationalPlan
 
         /** {@inheritDoc} */
         @Override
+        final double accelerationSI(final double t)
+        {
+            return this.acceleration.si;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        final double speedSI(final double t)
+        {
+            return this.v0.si + this.acceleration.si * t;
+        }
+
+        /** {@inheritDoc} */
+        @Override
         final Speed endSpeed()
         {
             return this.v0.plus(this.acceleration.multiplyBy(getDuration()));
-        }
-
-        /**
-         * @return acceleration
-         */
-        public final Acceleration getAcceleration()
-        {
-            return this.acceleration;
         }
 
         /** {@inheritDoc} */
@@ -580,6 +681,20 @@ public class OperationalPlan
         final double distanceSI(final double t)
         {
             return this.v0.si * t;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        final double accelerationSI(final double t)
+        {
+            return 0.0;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        final double speedSI(final double t)
+        {
+            return this.v0.si;
         }
 
         /** {@inheritDoc} */

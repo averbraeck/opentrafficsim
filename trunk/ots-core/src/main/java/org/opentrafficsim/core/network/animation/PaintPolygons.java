@@ -36,9 +36,10 @@ public final class PaintPolygons
      * @param color Color; the color to use
      * @param referencePoint DirectedPoint; the reference point
      * @param line array of points
+     * @param fill fill or just contour
      */
     public static void paintMultiPolygon(final Graphics2D graphics, final Color color, final DirectedPoint referencePoint,
-        final OTSLine3D line)
+        final OTSLine3D line, final boolean fill)
     {
         graphics.setColor(color);
         Path2D.Double path = new Path2D.Double();
@@ -50,7 +51,10 @@ public final class PaintPolygons
                 if (withinPath)
                 {
                     path.closePath();
-                    graphics.fill(path);
+                    if (fill)
+                    {
+                        graphics.fill(path);
+                    }
                 }
                 path = new Path2D.Double();
                 withinPath = false;

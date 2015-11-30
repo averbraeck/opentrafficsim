@@ -35,7 +35,7 @@ public final class IDMPropertySet
      * @param a DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum acceleration of the car
      * @param b DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum comfortable deceleration of the car
      * @param s0 DoubleScalar.Rel&lt;LengthUnit&gt;; the stationary distance headway
-     * @param tSafe DoubleScalar.Rel&lt;TimeUnit&gt;; the time headway
+     * @param tSafe Time.Rel; the time headway
      * @param displayPriority int; the display priority of the returned CompoundProperty
      * @return CompoundProperty
      */
@@ -88,7 +88,7 @@ public final class IDMPropertySet
     /**
      * Return the time headway.
      * @param set CompoundProperty (should have been created with makeIDMPropertySet)
-     * @return DoubleScalar.Abs&lt;TimeUnit&gt;
+     * @return Time.Abs
      */
     public static Time.Rel getTSafe(final CompoundProperty set)
     {

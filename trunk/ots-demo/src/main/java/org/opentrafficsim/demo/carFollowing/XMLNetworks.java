@@ -37,7 +37,6 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -51,14 +50,15 @@ import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
-import org.opentrafficsim.road.gtu.following.FixedAccelerationModel;
-import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.road.gtu.following.IDM;
-import org.opentrafficsim.road.gtu.following.IDMPlus;
-import org.opentrafficsim.road.gtu.lane.changing.AbstractLaneChangeModel;
-import org.opentrafficsim.road.gtu.lane.changing.Egoistic;
-import org.opentrafficsim.road.gtu.lane.changing.FixedLaneChangeModel;
-import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechange.AbstractLaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Egoistic;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechange.FixedLaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechange.LaneChangeModel;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -627,7 +627,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         @Override
         public Color getColor(GTU gtu)
         {
-            AbstractGTU agtu = (AbstractGTU) gtu;
+            AbstractLaneBasedGTU agtu = (AbstractLaneBasedGTU) gtu;
             RandomLaneBasedRouteNavigator rn = (RandomLaneBasedRouteNavigator) agtu.getRouteNavigator();
             if (rn.nextNextNodeToVisit().toString().toUpperCase().contains("END2"))
                 return Color.red;

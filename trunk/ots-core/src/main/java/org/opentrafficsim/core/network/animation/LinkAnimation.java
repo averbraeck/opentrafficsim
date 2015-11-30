@@ -48,8 +48,8 @@ public class LinkAnimation extends Renderable2D
     {
         Stroke oldStroke = graphics.getStroke();
         graphics.setStroke(new BasicStroke(this.width));
-        PaintPolygons
-            .paintMultiPolygon(graphics, Color.RED, getSource().getLocation(), ((Link) getSource()).getDesignLine());
+        PaintPolygons.paintMultiPolygon(graphics, Color.RED, getSource().getLocation(), ((Link) getSource())
+            .getDesignLine(), true);
         graphics.setStroke(oldStroke);
     }
 

@@ -22,7 +22,7 @@ import com.vividsolutions.jts.operation.buffer.BufferParameters;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public final class OTSBufferingOLD
+public final class OTSBufferingJTS
 {
     /** Precision of buffer operations. */
     private static final int QUADRANTSEGMENTS = 16;
@@ -30,7 +30,7 @@ public final class OTSBufferingOLD
     /**
      * 
      */
-    private OTSBufferingOLD()
+    private OTSBufferingJTS()
     {
         // cannot be instantiated.
     }
@@ -368,6 +368,20 @@ public final class OTSBufferingOLD
         Geometry geometryLine = referenceLine.getLineString();
         Coordinate[] bufferCoordinates =
             geometryLine.buffer(bufferOffset, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
+        
+        
+        
+//        try
+//        {
+//            System.out.println(new OTSLine3D(bufferCoordinates).toExcel());
+//        }
+//        catch (NetworkException exception1)
+//        {
+//            exception1.printStackTrace();
+//        }
+        
+        
+        
         // Z coordinates may be NaN at this point
 
         // find the coordinate indices closest to the start point and end point, at a distance of approximately the
@@ -396,28 +410,10 @@ public final class OTSBufferingOLD
         }
         if (startIndexSet.size() != 2)
         {
-            System.err.println(OTSGeometry.printCoordinates("#reference line: \nc1,0,0\n#", referenceLine, "\n    "));
-            try
-            {
-                System.err.println(OTSGeometry.printCoordinates("#buffer: \nc0,1,0\n#",
-                    new OTSLine3D(bufferCoordinates), "\n   "));
-            }
-            catch (NetworkException exception)
-            {
-                exception.printStackTrace();
-            }
-            for (int index : startIndexSet)
-            {
-                System.err.println("bufferCoordinate[start index " + index + "] is " + bufferCoordinates[index]);
-            }
             throw new OTSGeometryException("offsetGeometry: startIndexSet.size() = " + startIndexSet.size());
         }
         if (endIndexSet.size() != 2)
         {
-            for (int index : startIndexSet)
-            {
-                System.err.println("bufferCoordinate[start index " + index + "] is " + bufferCoordinates[index]);
-            }
             throw new OTSGeometryException("offsetGeometry: endIndexSet.size() = " + endIndexSet.size());
         }
 
@@ -614,11 +610,37 @@ public final class OTSBufferingOLD
      */
     public static void main(final String[] args) throws NetworkException, OTSGeometryException
     {
+        // OTSLine3D line =
+        // new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(-579.253, 60.157, 1.568),
+        // new OTSPoint3D(-579.253, 60.177, 1.568)});
+        // double offset = 4.83899987;
+        // System.out.println(OTSBufferingOLD.offsetGeometryOLD(line, offset));
         OTSLine3D line =
-            new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(-579.253, 60.157, 1.568),
-                new OTSPoint3D(-579.253, 60.177, 1.568)});
-        double offset = 4.83899987;
-        System.out.println(OTSBufferingOLD.offsetGeometryOLD(line, offset));
+            new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(-579.253, 60.157, 4.710),
+                new OTSPoint3D(-579.253, 60.144, 4.712), new OTSPoint3D(-579.253, 60.144, 0.000),
+                new OTSPoint3D(-579.251, 60.044, 0.000), new OTSPoint3D(-579.246, 59.944, 0.000),
+                new OTSPoint3D(-579.236, 59.845, 0.000), new OTSPoint3D(-579.223, 59.746, 0.000),
+                new OTSPoint3D(-579.206, 59.647, 0.000), new OTSPoint3D(-579.185, 59.549, 0.000),
+                new OTSPoint3D(-579.161, 59.452, 0.000), new OTSPoint3D(-579.133, 59.356, 0.000),
+                new OTSPoint3D(-579.101, 59.261, 0.000), new OTSPoint3D(-579.066, 59.168, 0.000),
+                new OTSPoint3D(-579.028, 59.075, 0.000), new OTSPoint3D(-578.986, 58.985, 0.000),
+                new OTSPoint3D(-578.940, 58.896, 0.000), new OTSPoint3D(-578.891, 58.809, 0.000),
+                new OTSPoint3D(-578.839, 58.723, 0.000), new OTSPoint3D(-578.784, 58.640, 0.000),
+                new OTSPoint3D(-578.725, 58.559, 0.000), new OTSPoint3D(-578.664, 58.480, 0.000),
+                new OTSPoint3D(-578.599, 58.403, 0.000), new OTSPoint3D(-578.532, 58.329, 0.000),
+                new OTSPoint3D(-578.462, 58.258, 0.000), new OTSPoint3D(-578.390, 58.189, 0.000),
+                new OTSPoint3D(-578.314, 58.123, 0.000), new OTSPoint3D(-578.237, 58.060, 0.000),
+                new OTSPoint3D(-578.157, 58.000, 0.000), new OTSPoint3D(-578.075, 57.943, 0.000),
+                new OTSPoint3D(-577.990, 57.889, 0.000), new OTSPoint3D(-577.904, 57.839, 0.000),
+                new OTSPoint3D(-577.816, 57.791, 0.000), new OTSPoint3D(-577.726, 57.747, 0.000),
+                new OTSPoint3D(-577.635, 57.707, 0.000), new OTSPoint3D(-577.542, 57.670, 0.000),
+                new OTSPoint3D(-577.448, 57.636, 0.000), new OTSPoint3D(-577.352, 57.606, 0.000),
+                new OTSPoint3D(-577.256, 57.580, 0.000), new OTSPoint3D(-577.159, 57.557, 0.000),
+                new OTSPoint3D(-577.060, 57.538, 0.000), new OTSPoint3D(-576.962, 57.523, 0.000),
+                new OTSPoint3D(-576.862, 57.512, 0.000), new OTSPoint3D(-576.763, 57.504, 0.000),
+                new OTSPoint3D(-576.663, 57.500, 0.000), new OTSPoint3D(-576.623, 57.500, 6.278),
+                new OTSPoint3D(-576.610, 57.500, 6.280), new OTSPoint3D(-567.499, 57.473, 6.280)});
+        System.out.println(line.toExcel());
+        System.out.println(OTSBufferingJTS.offsetGeometryOLD(line, -1.831));
     }
-
 }

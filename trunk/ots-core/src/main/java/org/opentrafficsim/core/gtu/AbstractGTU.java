@@ -1,9 +1,27 @@
 package org.opentrafficsim.core.gtu;
 
-import org.opentrafficsim.core.network.route.RouteNavigator;
+import java.rmi.RemoteException;
+
+import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
+import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
+import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+import org.opentrafficsim.core.network.NetworkException;
 
 /**
- * Implements id, GtuType, Route and odometer.
+ * Implements the basic functionalities of any GTU: the ability to move on 3D-space according to a plan.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -24,21 +42,119 @@ public abstract class AbstractGTU implements GTU
     /** the type of GTU, e.g. TruckType, CarType, BusType. */
     private final GTUType gtuType;
 
-    /** the route navigator to determine the route. */
-    private RouteNavigator routeNavigator;
+    /** the simulator to schedule activities on. */
+    private final OTSDEVSSimulatorInterface simulator;
+
+    /**
+     * the odometer which measures how much distance have we covered between instantiation and the last completed operational
+     * plan. In order to get a complete odometer reading, the progress of the current plan execution has to be added to this
+     * value.
+     */
+    private Length.Rel odometer;
+
+    /** the strategical planner that can instantiate tactical planners to determine mid-term decisions. */
+    private StrategicalPlanner strategicalPlanner;
+
+    /** the tactical planner that can generate an operational plan. */
+    private TacticalPlanner tacticalPlanner = null;
+
+    /** the current operational plan, which provides a short-term movement over time. */
+    private OperationalPlan operationalPlan = null;
+
+    /** the next move event as scheduled on the simulator, can be used for interrupting the current move. */
+    private SimEvent<OTSSimTimeDouble> nextMoveEvent;
+
+    /** the perception unit that takes care of observing the environment of the GTU. */
+    private Perception perception;
+
+    /** constant for zero speed. */
+    protected static final Speed SPEED_0 = new Speed(0.0, SpeedUnit.SI);
+
+    /** constant for zero acceleration. */
+    protected static final Acceleration ACCELERATION_0 = new Acceleration(0.0, AccelerationUnit.SI);
 
     /**
      * @param id the id of the GTU
      * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
-     * @param routeNavigator RouteNavigator; the navigator that determines the route that the GTU will take
-     * @throws GTUException when route is null
+     * @param simulator the simulator to schedule plan changes on
+     * @param strategicalPlanner the planner responsible for the overall 'mission' of the GTU, usually indicating where it needs
+     *            to go. It operates by instantiating tactical planners to do the work.
+     * @param perception the perception unit that takes care of observing the environment of the GTU
+     * @param initialLocation the initial location (and direction) of the GTU
+     * @throws SimRuntimeException when scheduling after the first move fails
+     * @throws NetworkException when the odometer fails to update (will never happen)
      */
-    public AbstractGTU(final String id, final GTUType gtuType, final RouteNavigator routeNavigator) throws GTUException
+    public AbstractGTU(final String id, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
+        final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation)
+        throws SimRuntimeException, NetworkException
     {
         super();
         this.id = id;
         this.gtuType = gtuType;
-        this.routeNavigator = routeNavigator;
+        this.simulator = simulator;
+        this.strategicalPlanner = strategicalPlanner;
+        this.perception = perception;
+        this.odometer = new Length.Rel(0.0, LengthUnit.SI);
+        if (initialLocation != null)
+        {
+            // schedule the first move now; scheduling so super constructors can still finish
+            // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
+            this.nextMoveEvent =
+                new SimEvent<>(new OTSSimTimeDouble(this.simulator.getSimulatorTime().getTime()), this, this, "move",
+                    new Object[]{initialLocation});
+            this.simulator.scheduleEvent(this.nextMoveEvent);
+        }
+    }
+
+    /**
+     * Move from the current location according to an operational plan to a location that will bring us nearer to reaching the
+     * location provided by the strategical planner. <br>
+     * This method can be overridden to carry out specific behavior during the execution of the plan (e.g., scheduling of
+     * triggers, entering or leaving lanes, etc.). Please bear in mind that the call to super.move() is essential, and that one
+     * has to take care to handle the situation that the plan gets interrupted.
+     * @param fromLocation the last known location (initial location, or end location of the previous operational plan)
+     * @throws SimRuntimeException when scheduling of the next move fails
+     * @throws NetworkException when the odometer fails to update (will never happen)
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    protected void move(final DirectedPoint fromLocation) throws SimRuntimeException, NetworkException
+    {
+        Time.Abs now = this.simulator.getSimulatorTime().getTime();
+
+        // add the odometer distance from the previous operational plan
+        // because a plan can be interrupted, we calculated the covered distance till 'now'
+        if (this.operationalPlan != null)
+        {
+            this.odometer = this.odometer.plus(this.operationalPlan.getTraveledDistance(now));
+        }
+
+        // ask the tactical planner to provide an operational plan
+        if (this.tacticalPlanner == null)
+        {
+            // ask the strategical planner to provide a tactical planner
+            this.tacticalPlanner = this.strategicalPlanner.generateTacticalPlanner(this);
+        }
+        this.operationalPlan = this.tacticalPlanner.generateOperationalPlan(this, now, fromLocation);
+
+        // schedule the next move at the end of the current operational plan
+        // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
+        this.nextMoveEvent =
+            new SimEvent<>(new OTSSimTimeDouble(now.plus(this.operationalPlan.getTotalDuration())), this, this, "move",
+                new Object[]{this.operationalPlan.getEndLocation()});
+        this.simulator.scheduleEvent(this.nextMoveEvent);
+    }
+
+    /**
+     * Interrupt the move and ask for a new plan. This method can be overridden to carry out the bookkeeping needed when the
+     * current plan gets interrupted.
+     * @throws SimRuntimeException when scheduling of the next move fails
+     * @throws NetworkException when the odometer fails to update (will never happen)
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    protected void interruptMove() throws SimRuntimeException, NetworkException
+    {
+        this.simulator.cancelEvent(this.nextMoveEvent);
+        move(this.operationalPlan.getLocation(this.simulator.getSimulatorTime().getTime()));
     }
 
     /** {@inheritDoc} */
@@ -64,19 +180,155 @@ public abstract class AbstractGTU implements GTU
     }
 
     /**
-     * @return routeNavigator
+     * @return simulator the simulator to schedule plan changes on
      */
-    public RouteNavigator getRouteNavigator()
+    public final OTSDEVSSimulatorInterface getSimulator()
     {
-        return this.routeNavigator;
+        return this.simulator;
     }
 
     /**
-     * @param routeNavigator set routeNavigator
+     * @return strategicalPlanner the planner responsible for the overall 'mission' of the GTU, usually indicating where it
+     *         needs to go. It operates by instantiating tactical planners to do the work.
      */
-    public final void setRouteNavigator(final RouteNavigator routeNavigator)
+    @SuppressWarnings("checkstyle:designforextension")
+    public StrategicalPlanner getStrategicalPlanner()
     {
-        this.routeNavigator = routeNavigator;
+        return this.strategicalPlanner;
+    }
+
+    /**
+     * @return tacticalPlanner the tactical planner that can generate an operational plan
+     */
+    public final TacticalPlanner getTacticalPlanner()
+    {
+        return this.tacticalPlanner;
+    }
+
+    /**
+     * @return operationalPlan the current operational plan, which provides a short-term movement over time
+     */
+    public final OperationalPlan getOperationalPlan()
+    {
+        return this.operationalPlan;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public Perception getPerception()
+    {
+        return this.perception;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Length.Rel getOdometer()
+    {
+        if (this.operationalPlan == null)
+        {
+            return this.odometer;
+        }
+        try
+        {
+            return this.odometer.plus(this.operationalPlan.getTraveledDistance(this.simulator.getSimulatorTime()
+                .getTime()));
+        }
+        catch (NetworkException ne)
+        {
+            return this.odometer;
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Speed getVelocity(final Time.Abs time)
+    {
+        if (this.operationalPlan == null)
+        {
+            return SPEED_0;
+        }
+        try
+        {
+            return this.operationalPlan.getVelocity(time);
+        }
+        catch (NetworkException ne)
+        {
+            // should not happen --there is a still valid operational plan. Return the end velocity of the plan.
+            try
+            {
+                return this.operationalPlan.getVelocity(this.operationalPlan.getTotalDuration());
+            }
+            catch (NetworkException ne2)
+            {
+                // this should not happen at all...
+                throw new RuntimeException(
+                    "getVelocity() could not derive a valid velocity for the current operationalPlan", ne2);
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Speed getVelocity()
+    {
+        return getVelocity(this.simulator.getSimulatorTime().getTime());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Acceleration getAcceleration(final Time.Abs time)
+    {
+        if (this.operationalPlan == null)
+        {
+            return ACCELERATION_0;
+        }
+        try
+        {
+            return this.operationalPlan.getAcceleration(time);
+        }
+        catch (NetworkException ne)
+        {
+            // should not happen --there is a still valid operational plan. Return the end acceleration of the plan.
+            try
+            {
+                return this.operationalPlan.getAcceleration(this.operationalPlan.getTotalDuration());
+            }
+            catch (NetworkException ne2)
+            {
+                // this should not happen at all...
+                throw new RuntimeException(
+                    "getAcceleration() could not derive a valid acceleration for the current operationalPlan", ne2);
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Acceleration getAcceleration()
+    {
+        return getAcceleration(this.simulator.getSimulatorTime().getTime());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final DirectedPoint getLocation() throws RemoteException
+    {
+        if (this.operationalPlan == null)
+        {
+            System.err.println("No operational plan");
+            return new DirectedPoint(0, 0, 0);
+        }
+        try
+        {
+            return this.operationalPlan.getLocation(this.simulator.getSimulatorTime().getTime());
+        }
+        catch (NetworkException exception)
+        {
+            System.err.println("Could not determine location, got exception: " + exception.getMessage());
+            exception.printStackTrace();
+            return new DirectedPoint(0, 0, 0);
+        }
     }
 
 }

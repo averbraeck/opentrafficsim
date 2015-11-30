@@ -35,10 +35,10 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
 
     /**
      * Create a simulation engine with animation; the easy way. PauseOnError is set to true;
-     * @param startTime DoubleScalar.Abs&lt;TimeUnit&gt;; the start time of the simulation
-     * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warm up period of the simulation (use new
-     *            DoubleScalar.Rel&lt;TimeUnit&gt;(0, SECOND) if you don't know what this is)
-     * @param runLength DoubleScalar.Rel&lt;TimeUnit&gt;; the duration of the simulation
+     * @param startTime Time.Abs; the start time of the simulation
+     * @param warmupPeriod Time.Rel; the warm up period of the simulation (use new
+     *            Time.Rel(0, SECOND) if you don't know what this is)
+     * @param runLength Time.Rel; the duration of the simulation
      * @param model OTSModelInterface; the simulation to execute
      * @throws SimRuntimeException on ???
      * @throws NamingException when context for the animation cannot be created
