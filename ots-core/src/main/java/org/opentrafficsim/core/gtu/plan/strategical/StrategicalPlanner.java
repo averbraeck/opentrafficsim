@@ -1,5 +1,6 @@
-package org.opentrafficsim.core.gtu;
+package org.opentrafficsim.core.gtu.plan.strategical;
 
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 
 /**

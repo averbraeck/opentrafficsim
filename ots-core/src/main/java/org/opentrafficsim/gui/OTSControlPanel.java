@@ -161,8 +161,8 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
     }
 
     /**
-     * Construct and schedule a SimEvent using a DoubleScalar.Abs&lt;TimeUnit&gt; to specify the execution time.
-     * @param executionTime DoubleScalar.Abs&lt;TimeUnit&gt;; the time at which the event must happen
+     * Construct and schedule a SimEvent using a Time.Abs to specify the execution time.
+     * @param executionTime Time.Abs; the time at which the event must happen
      * @param priority short; should be between <cite>SimEventInterface.MAX_PRIORITY</cite> and
      *            <cite>SimEventInterface.MIN_PRIORITY</cite>; most normal events should use
      *            <cite>SimEventInterface.NORMAL_PRIORITY</cite>
@@ -844,7 +844,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
 
         /**
          * Construct a new TimeEdit.
-         * @param initialValue DoubleScalar.Abs&lt;TimeUnit&gt;; the initial value for the TimeEdit
+         * @param initialValue Time.Abs; the initial value for the TimeEdit
          */
         TimeEdit(final Time.Abs initialValue)
         {
@@ -869,7 +869,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
 
         /**
          * Set or update the time shown in this TimeEdit.
-         * @param newValue DoubleScalar.Abs&lt;TimeUnit&gt;; the (new) value to set/show in this TimeEdit
+         * @param newValue Time.Abs; the (new) value to set/show in this TimeEdit
          */
         public void setTime(final Time.Abs newValue)
         {

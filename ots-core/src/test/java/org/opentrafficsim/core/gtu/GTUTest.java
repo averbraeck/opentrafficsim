@@ -7,18 +7,15 @@ import java.util.Map;
 
 import javax.media.j3d.Bounds;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
+import nl.tudelft.simulation.dsol.SimRuntimeException;
 
-import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Length.Abs;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
-import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.core.network.route.CompleteRouteNavigator;
-import org.opentrafficsim.core.network.route.RouteNavigator;
+import org.opentrafficsim.core.network.NetworkException;
 
 /**
  * Test the AbstractGTU class.
@@ -37,44 +34,33 @@ public class GTUTest
     /**
      * Test the constructor.
      * @throws GTUException
+     * @throws NetworkException 
+     * @throws SimRuntimeException 
      */
     @Test
-    public void testAbstractGTU() throws GTUException
+    public void testAbstractGTU() throws GTUException, SimRuntimeException, NetworkException
     {
         TestGTU firstGTU = null;
         TestGTU lastGTU = null;
-        for (String id : new String[] { "id1", "id2" })
+        for (String id : new String[]{"id1", "id2"})
         {
-            for (GTUType gtuType : new GTUType[] { GTUType.makeGTUType("gtu type 1"), GTUType.makeGTUType("gtu type 2") })
+            for (GTUType gtuType : new GTUType[]{GTUType.makeGTUType("gtu type 1"), GTUType.makeGTUType("gtu type 2")})
             {
-                CompleteRoute route1 = new CompleteRoute("Route 1", gtuType);
-                CompleteRoute route2 = new CompleteRoute("Route 2", gtuType);
-                for (RouteNavigator rn : new RouteNavigator[] { new CompleteRouteNavigator(route1),
-                        new CompleteRouteNavigator(route2) })
+                TestGTU gtu = new TestGTU(id, gtuType, null);
+                assertEquals("new GTU has correct id", id, gtu.getId());
+                assertEquals("new GTU has correct GTUType", gtuType, gtu.getGTUType());
+                assertEquals("new GTU has correct reference position", RelativePosition.REFERENCE_POSITION, gtu
+                    .getReference());
+                lastGTU = gtu;
+                if (null == firstGTU)
                 {
-                    TestGTU gtu = new TestGTU(id, gtuType, rn);
-                    assertEquals("new GTU has correct id", id, gtu.getId());
-                    assertEquals("new GTU has correct GTUType", gtuType, gtu.getGTUType());
-                    assertEquals("new GTU has correct route navigator", rn, gtu.getRouteNavigator());
-                    assertEquals("new GTU has correct reference position", RelativePosition.REFERENCE_POSITION,
-                            gtu.getReference());
-                    CompleteRoute route3 = new CompleteRoute("Route 3", gtuType);
-                    RouteNavigator rn3 = new CompleteRouteNavigator(route3);
-                    gtu.setRouteNavigator(rn3);
-                    assertEquals("new GTU now has another route navigator", rn3, gtu.getRouteNavigator());
-                    gtu.setRouteNavigator(rn); // restore original route navigator
-                    lastGTU = gtu;
-                    if (null == firstGTU)
-                    {
-                        firstGTU = gtu;
-                    }
+                    firstGTU = gtu;
                 }
             }
         }
         assertFalse("first GTU and last GTU have different id", firstGTU.getId().equals(lastGTU.getId()));
         assertFalse("first GTU and last GTU have different GTUType", firstGTU.getGTUType().equals(lastGTU.getGTUType()));
-        assertFalse("first GTU and last GTU have different RouteNavigator",
-                firstGTU.getRouteNavigator().equals(lastGTU.getRouteNavigator()));
+
     }
 }
 
@@ -85,15 +71,15 @@ class TestGTU extends AbstractGTU
     private static final long serialVersionUID = 20151111L;
 
     /**
-     * Construct a GTU.
      * @param id
      * @param gtuType
-     * @param routeNavigator
-     * @throws GTUException
+     * @param simulator
+     * @throws NetworkException 
+     * @throws SimRuntimeException 
      */
-    TestGTU(final String id, final GTUType gtuType, final RouteNavigator routeNavigator) throws GTUException
+    public TestGTU(String id, GTUType gtuType, OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException
     {
-        super(id, gtuType, routeNavigator);
+        super(id, gtuType, simulator, null, null, null);
     }
 
     /** {@inheritDoc} */
@@ -119,13 +105,6 @@ class TestGTU extends AbstractGTU
 
     /** {@inheritDoc} */
     @Override
-    public OTSDEVSSimulatorInterface getSimulator()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public RelativePosition getFront()
     {
         return null;
@@ -134,13 +113,6 @@ class TestGTU extends AbstractGTU
     /** {@inheritDoc} */
     @Override
     public RelativePosition getRear()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Speed getVelocity()
     {
         return null;
     }
@@ -161,28 +133,14 @@ class TestGTU extends AbstractGTU
 
     /** {@inheritDoc} */
     @Override
-    public Acceleration getAcceleration()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Abs getOdometer()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public DirectedPoint getLocation()
-    {
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public Bounds getBounds()
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DrivingCharacteristics getDrivingCharacteristics()
     {
         return null;
     }

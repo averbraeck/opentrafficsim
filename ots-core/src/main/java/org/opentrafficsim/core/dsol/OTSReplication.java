@@ -34,7 +34,7 @@ public class OTSReplication extends Replication<DoubleScalar.Abs<TimeUnit>, Doub
      * Create a new OTSReplication.
      * @param id String; id of the new OTSReplication
      * @param startTime OTSSimTimeDouble; the start time of the new OTSReplication
-     * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warmup period of the new OTSReplication
+     * @param warmupPeriod Time.Rel; the warmup period of the new OTSReplication
      * @param runLength DoubleScalarRel&lt;TimeUnit&gt;; the run length of the new OTSReplication
      * @param model OTSModelInterface; the model
      * @throws NamingException when the context for the replication cannot be created

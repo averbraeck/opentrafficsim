@@ -20,8 +20,8 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 public interface SimpleSimulatorInterface extends OTSDEVSSimulatorInterface
 {
     /**
-     * Construct and schedule a SimEvent using a DoubleScalar.Abs&lt;TimeUnit&gt; to specify the execution time.
-     * @param executionTime DoubleScalar.Abs&lt;TimeUnit&gt;; the time at which the event must happen
+     * Construct and schedule a SimEvent using a Time.Abs to specify the execution time.
+     * @param executionTime Time.Abs; the time at which the event must happen
      * @param priority short; should be between <cite>SimEventInterface.MAX_PRIORITY</cite> and
      *            <cite>SimEventInterface.MIN_PRIORITY</cite>; most normal events should use
      *            <cite>SimEventInterface.NORMAL_PRIORITY</cite>

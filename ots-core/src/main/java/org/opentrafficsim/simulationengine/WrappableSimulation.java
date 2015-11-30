@@ -24,10 +24,10 @@ public interface WrappableSimulation
 {
     /**
      * Build the simulation.
-     * @param startTime DoubleScalar.Abs&lt;TimeUnit&gt;; the start time of the simulation
-     * @param warmupPeriod DoubleScalar.Rel&lt;TimeUnit&gt;; the warm up period of the simulation (use new
-     *            DoubleScalar.Rel&lt;TimeUnit&gt;(0, SECOND) if you don't know what this is)
-     * @param runLength DoubleScalar.Rel&lt;TimeUnit&gt;; the duration of the simulation
+     * @param startTime Time.Abs; the start time of the simulation
+     * @param warmupPeriod Time.Rel; the warm up period of the simulation (use new
+     *            Time.Rel(0, SECOND) if you don't know what this is)
+     * @param runLength Time.Rel; the duration of the simulation
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user-modified) properties. This list must
      *            contain all the properties returned by getProperties(); any additional properties may be ignored
      * @return SimpleSimulation; the new simulation
