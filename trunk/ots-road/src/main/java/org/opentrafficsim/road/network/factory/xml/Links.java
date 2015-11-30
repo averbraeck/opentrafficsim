@@ -32,8 +32,8 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.AbstractTrafficLight;
-import org.opentrafficsim.road.gtu.lane.LaneBlock;
+import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLight;
+import org.opentrafficsim.road.gtu.lane.object.CSEBlock;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.ShoulderAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation;
@@ -552,7 +552,8 @@ final class Links
                     {
                         BlockTag blockTag = linkTag.blockTags.get(cseTag.name);
                         Length.Rel position = LinkTag.parseBeginEndPosition(blockTag.positionStr, lane);
-                        new LaneBlock(lane, position, simulator, null);
+                        CSEBlock block = CSEBlock.createCrossSectionElementBlock(lane, position);
+                        // TODO lane.addObject(block);
                     }
 
                     // TRAFFICLIGHT
@@ -570,6 +571,7 @@ final class Links
                                 AbstractTrafficLight trafficLight =
                                     (AbstractTrafficLight) trafficLightConstructor.newInstance(new Object[]{
                                         trafficLightTag.name, lane, position, simulator});
+                                // TODO lane.addObject(trafficLight);
                             }
                             catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
                                 | IllegalAccessException | IllegalArgumentException | InvocationTargetException

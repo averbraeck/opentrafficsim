@@ -7,7 +7,7 @@ import nl.tudelft.simulation.language.reflection.ClassUtil;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.AbstractTrafficLight;
+import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLight;
 import org.opentrafficsim.road.network.factory.xml.CrossSectionElementTag.ElementType;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.w3c.dom.NamedNodeMap;

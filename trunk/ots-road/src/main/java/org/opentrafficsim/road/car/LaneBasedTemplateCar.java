@@ -19,14 +19,12 @@ import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
-import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
-import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedTemplateGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUType;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 
 /**
  * <p>
@@ -52,46 +50,41 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
     /**
      * @param id ID; the id of the GTU
      * @param templateGtuType the template of the GTU
-     * @param gtuFollowingModel GTUFollowingModel; the following model, including a reference to the simulator
-     * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial positions of the car
-     *            on one or more lanes
+     * @param initialLongitudinalPositions Map&lt;Lane, Length.Rel&gt;; the initial positions of the car on one or more lanes
      * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the car on the lane
-     * @param routeNavigator Route of the GTU
      * @throws NamingException if an error occurs when adding the animation handler.
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
      * @throws GTUException when gtuFollowingModel is null
+     * @throws InstantiationException in case Perception or StrategicPlanner instantiation fails
+     * @throws IllegalAccessException in case Perception or StrategicPlanner constructor is not public
      */
-    public LaneBasedTemplateCar(final String id, final TemplateGTUType templateGtuType,
-        final GTUFollowingModel gtuFollowingModel, final Set<DirectedLanePosition> initialLongitudinalPositions,
-        final Speed initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator) throws NamingException,
-        NetworkException, SimRuntimeException, GTUException
+    public LaneBasedTemplateCar(final String id, final LaneBasedTemplateGTUType templateGtuType,
+        final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed) throws NamingException,
+        NetworkException, SimRuntimeException, GTUException, InstantiationException, IllegalAccessException
     {
-        this(id, templateGtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, routeNavigator,
-            DefaultCarAnimation.class);
+        this(id, templateGtuType, initialLongitudinalPositions, initialSpeed, DefaultCarAnimation.class);
     }
 
     /**
      * @param id ID; the id of the GTU
      * @param templateGtuType the template of the GTU
-     * @param gtuFollowingModel GTUFollowingModel; the following model, including a reference to the simulator
-     * @param initialLongitudinalPositions Map&lt;Lane, DoubleScalar.Rel&lt;LengthUnit&gt;&gt;; the initial positions of the car
-     *            on one or more lanes
+     * @param initialLongitudinalPositions Map&lt;Lane, Length.Rel&gt;; the initial positions of the car on one or more lanes
      * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the car on the lane
-     * @param routeNavigator Route; the route of the new car
      * @param animationClass Class&lt;? extends Renderable2D&gt;; the class for animation or null if no animation.
      * @throws NamingException if an error occurs when adding the animation handler.
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
      * @throws GTUException when gtuFollowingModel is null
+     * @throws InstantiationException in case Perception or StrategicPlanner instantiation fails
+     * @throws IllegalAccessException in case Perception or StrategicPlanner constructor is not public
      */
-    public LaneBasedTemplateCar(final String id, final TemplateGTUType templateGtuType,
-        final GTUFollowingModel gtuFollowingModel, final Set<DirectedLanePosition> initialLongitudinalPositions,
-        final Speed initialSpeed, final CompleteLaneBasedRouteNavigator routeNavigator,
+    public LaneBasedTemplateCar(final String id, final LaneBasedTemplateGTUType templateGtuType,
+        final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
         final Class<? extends Renderable2D> animationClass) throws NamingException, NetworkException,
-        SimRuntimeException, GTUException
+        SimRuntimeException, GTUException, InstantiationException, IllegalAccessException
     {
-        super(id, templateGtuType, gtuFollowingModel, initialLongitudinalPositions, initialSpeed, routeNavigator);
+        super(id, templateGtuType, initialLongitudinalPositions, initialSpeed);
 
         // sensor positions.
         // We take the rear position of the Car to be the reference point. So the front is the length
@@ -212,19 +205,13 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
         private String id = null;
 
         /** the type of GTU, e.g. TruckType, CarType, BusType. */
-        private TemplateGTUType templateGtuType = null;
+        private LaneBasedTemplateGTUType templateGtuType = null;
 
         /** the initial positions of the car on one or more lanes. */
         private Set<DirectedLanePosition> initialLongitudinalPositions = null;
 
         /** the initial speed of the car on the lane. */
         private Speed initialSpeed = null;
-
-        /** CarFollowingModel used by this Car. */
-        private GTUFollowingModel gtuFollowingModel = null;
-
-        /** Route followed by this Car. */
-        private CompleteLaneBasedRouteNavigator routeNavigator = null;
 
         /** animation. */
         private Class<? extends Renderable2D> animationClass = null;
@@ -243,7 +230,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
          * @param templateGtuType set the template for the gtuType
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedTemplateCarBuilder setTemplateGtuType(final TemplateGTUType templateGtuType)
+        public final LaneBasedTemplateCarBuilder setTemplateGtuType(final LaneBasedTemplateGTUType templateGtuType)
         {
             this.templateGtuType = templateGtuType;
             return this;
@@ -271,17 +258,6 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
         }
 
         /**
-         * @param routeNavigator RouteNavigator; the route
-         * @return the class itself for chaining the setters
-         */
-        public final LaneBasedTemplateCarBuilder
-            setRouteNavigator(final CompleteLaneBasedRouteNavigator routeNavigator)
-        {
-            this.routeNavigator = routeNavigator;
-            return this;
-        }
-
-        /**
          * @param animationClass set animation class
          * @return the class itself for chaining the setters
          */
@@ -297,14 +273,16 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
          * @throws NetworkException when the GTU cannot be placed on the given lane
          * @throws SimRuntimeException when the move method cannot be scheduled
          * @throws GTUException when gtuFollowingModel is null
+         * @throws InstantiationException in case Perception or StrategicPlanner instantiation fails
+         * @throws IllegalAccessException in case Perception or StrategicPlanner constructor is not public
          */
         public final LaneBasedTemplateCar build() throws NamingException, NetworkException, SimRuntimeException,
-            GTUException
+            GTUException, InstantiationException, IllegalAccessException
         {
             // TODO check that none of the variables (except animationClass) is null, and throw an exception if it is.
 
-            return new LaneBasedTemplateCar(this.id, this.templateGtuType, this.gtuFollowingModel,
-                this.initialLongitudinalPositions, this.initialSpeed, this.routeNavigator, this.animationClass);
+            return new LaneBasedTemplateCar(this.id, this.templateGtuType, this.initialLongitudinalPositions,
+                this.initialSpeed, this.animationClass);
         }
     }
 

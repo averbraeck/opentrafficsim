@@ -10,10 +10,9 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.following.GTUFollowingModel;
-import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
-import org.opentrafficsim.road.network.route.LaneBasedRouteNavigator;
 
 /**
  * Specific type of LaneBasedGTU. This class adds length, width, maximum velocity and a reference to the simulator to the
@@ -41,35 +40,30 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
     /** the maximum speed of the GTU (in the driving direction). */
     private final Speed maximumVelocity;
 
-    /** the simulator. */
-    private final OTSDEVSSimulatorInterface simulator;
-
     /**
      * Construct a new AbstractLaneBasedIndividualGTU.
      * @param id the id of the GTU
      * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
-     * @param gtuFollowingModel the following model, including a reference to the simulator
-     * @param laneChangeModel LaneChangeModel; the lane change model
      * @param initialLongitudinalPositions the initial positions of the car on one or more lanes
      * @param initialSpeed the initial speed of the car on the lane
      * @param length the maximum length of the GTU (parallel with driving direction)
      * @param width the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumVelocity the maximum speed of the GTU (in the driving direction)
-     * @param routeNavigator RouteNavigator; the individual route that the GTU will take
      * @param simulator the simulator
+     * @param strategicalPlanner the strategical planner (e.g., route determination) to use
+     * @param perception the lane-based perception model of the GTU
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GTUException when a parameter is invalid
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractLaneBasedIndividualGTU(final String id, final GTUType gtuType, final GTUFollowingModel gtuFollowingModel,
-        final LaneChangeModel laneChangeModel, final Set<DirectedLanePosition> initialLongitudinalPositions,
-        final Speed initialSpeed, final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
-        final LaneBasedRouteNavigator routeNavigator, final OTSDEVSSimulatorInterface simulator) throws
-        NetworkException, SimRuntimeException, GTUException
+    public AbstractLaneBasedIndividualGTU(final String id, final GTUType gtuType,
+        final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
+        final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
+        final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
+        final LanePerception perception) throws NetworkException, SimRuntimeException, GTUException
     {
-        super(id, gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, initialSpeed, routeNavigator,
-            simulator);
+        super(id, gtuType, initialLongitudinalPositions, initialSpeed, simulator, strategicalPlanner, perception);
         this.length = length;
         this.width = width;
         if (null == maximumVelocity)
@@ -77,7 +71,6 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
             throw new GTUException("maximumVelocity may not be null");
         }
         this.maximumVelocity = maximumVelocity;
-        this.simulator = simulator;
     }
 
     /** {@inheritDoc} */
@@ -99,13 +92,6 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
     public final Speed getMaximumVelocity()
     {
         return this.maximumVelocity;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final OTSDEVSSimulatorInterface getSimulator()
-    {
-        return this.simulator;
     }
 
 }

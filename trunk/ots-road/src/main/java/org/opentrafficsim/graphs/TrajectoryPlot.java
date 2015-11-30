@@ -51,8 +51,9 @@ import org.opentrafficsim.road.network.lane.Lane;
  * initial version Jul 24, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart, LaneBasedGTUSampler
-    
+public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart,
+    LaneBasedGTUSampler
+
 {
     /** */
     private static final long serialVersionUID = 20140724L;
@@ -77,7 +78,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     /**
      * Retrieve the cumulative length of the sampled path at the end of a path element.
      * @param index int; the index of the path element; if -1, the total length of the path is returned
-     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the cumulative length at the end of the specified path element
+     * @return Length.Rel; the cumulative length at the end of the specified path element
      */
     public final Length.Rel getCumulativeLength(final int index)
     {
@@ -467,8 +468,10 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         public final void addSegment(final AbstractLaneBasedGTU car, final Lane lane, final double positionOffset)
             throws NetworkException
         {
-            final int startSample = (int) Math.ceil(car.getLastEvaluationTime().getSI() / getSampleInterval().getSI());
-            final int endSample = (int) (Math.ceil(car.getNextEvaluationTime().getSI() / getSampleInterval().getSI()));
+            final int startSample =
+                (int) Math.ceil(car.getOperationalPlan().getStartTime().getSI() / getSampleInterval().getSI());
+            final int endSample =
+                (int) (Math.ceil(car.getOperationalPlan().getEndTime().getSI() / getSampleInterval().getSI()));
             for (int sample = startSample; sample < endSample; sample++)
             {
                 Time.Abs sampleTime = new Time.Abs(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
@@ -507,12 +510,13 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                 }
                 this.positions.add(position);
             }
-            this.currentEndTime = car.getNextEvaluationTime();
+            this.currentEndTime = car.getOperationalPlan().getEndTime();
             this.currentEndPosition =
-                new Length.Rel(car.position(lane, car.getReference(), this.currentEndTime).getSI() + positionOffset, LengthUnit.METER);
-            if (car.getNextEvaluationTime().gt(getMaximumTime()))
+                new Length.Rel(car.position(lane, car.getReference(), this.currentEndTime).getSI() + positionOffset,
+                    LengthUnit.METER);
+            if (car.getOperationalPlan().getEndTime().gt(getMaximumTime()))
             {
-                setMaximumTime(car.getNextEvaluationTime());
+                setMaximumTime(car.getOperationalPlan().getEndTime());
             }
         }
 

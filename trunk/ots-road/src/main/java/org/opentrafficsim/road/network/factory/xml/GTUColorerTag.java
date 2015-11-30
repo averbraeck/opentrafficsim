@@ -1,17 +1,14 @@
 package org.opentrafficsim.road.network.factory.xml;
 
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
-import org.opentrafficsim.road.gtu.animation.LaneChangeUrgeGTUColorer;
 import org.xml.sax.SAXException;
 
 /**
@@ -51,15 +48,12 @@ final class GTUColorerTag
             case "ACCELERATION":
                 return makeAccelerationGTUColorer(globalTag);
 
-            case "LANECHANGEURGE":
-                return makeLaneChangeUrgeGTUColorer(globalTag);
-
             case "SWITCHABLE":
                 return makeSwitchableGTUColorer(globalTag);
 
             default:
                 throw new SAXException("GTUCOLORER: unknown name " + name
-                    + " not one of ID|VELOCITY|ACCELERATION|LANECHANGEURGE|SWITCHABLE");
+                    + " not one of ID|VELOCITY|ACCELERATION|SWITCHABLE");
         }
     }
 
@@ -91,22 +85,11 @@ final class GTUColorerTag
      * @param globalTag to define the default parameters of the colorers
      * @return the corresponding GTUColorer
      */
-    static GTUColorer makeLaneChangeUrgeGTUColorer(final GlobalTag globalTag)
-    {
-        // TODO use parameters for LaneChangeUrgeGTUColorer
-        return new LaneChangeUrgeGTUColorer(new Length.Rel(100.0, LengthUnit.METER), new Length.Rel(100.0,
-            LengthUnit.METER));
-    }
-
-    /**
-     * @param globalTag to define the default parameters of the colorers
-     * @return the corresponding GTUColorer
-     */
     static GTUColorer makeSwitchableGTUColorer(final GlobalTag globalTag)
     {
         GTUColorer[] gtuColorers =
             new GTUColorer[]{new IDGTUColorer(), makeVelocityGTUColorer(globalTag),
-                makeAccelerationGTUColorer(globalTag), makeLaneChangeUrgeGTUColorer(globalTag)};
+                makeAccelerationGTUColorer(globalTag)};
         // TODO default colorer
         return new SwitchableGTUColorer(0, gtuColorers);
     }

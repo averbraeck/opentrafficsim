@@ -1,10 +1,8 @@
 package org.opentrafficsim.road.gtu.animation;
 
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
@@ -37,8 +35,9 @@ public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer
         COLORERS[2] =
             new AccelerationGTUColorer(new Acceleration(-4, AccelerationUnit.METER_PER_SECOND_2), new Acceleration(2,
                 AccelerationUnit.METER_PER_SECOND_2));
-        COLORERS[3] =
-            new LaneChangeUrgeGTUColorer(new Length.Rel(10, LengthUnit.METER), new Length.Rel(1000, LengthUnit.METER));
+        // TODO LaneChangeUrgeGTUColorer
+        // COLORERS[3] =
+        // new LaneChangeUrgeGTUColorer(new Length.Rel(10, LengthUnit.METER), new Length.Rel(1000, LengthUnit.METER));
     }
 
     /**

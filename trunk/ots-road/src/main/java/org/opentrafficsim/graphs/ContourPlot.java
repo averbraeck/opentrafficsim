@@ -159,7 +159,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     /**
      * Retrieve the cumulative length of the sampled path at the end of a path element.
      * @param index int; the index of the path element; if -1, the total length of the path is returned
-     * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the cumulative length at the end of the specified path element
+     * @return Length.Rel; the cumulative length at the end of the specified path element
      */
     public final Length.Rel getCumulativeLength(final int index)
     {
@@ -581,12 +581,12 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         {
             throw new Error("Cannot happen: Lane is not in the path");
         }
-        final Time.Abs fromTime = car.getLastEvaluationTime();
+        final Time.Abs fromTime = car.getOperationalPlan().getStartTime();
         if (car.position(lane, car.getReference(), fromTime).getSI() < 0 && lengthOffset > 0)
         {
             return;
         }
-        final Time.Abs toTime = car.getNextEvaluationTime();
+        final Time.Abs toTime = car.getOperationalPlan().getEndTime();
         if (toTime.getSI() > this.getXAxis().getMaximumValue().getSI())
         {
             extendXRange(toTime);
@@ -617,7 +617,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         double relativeMeanSpeed = (relativeToDistance - relativeFromDistance) / (relativeToTime - relativeFromTime);
         // The code for acceleration assumes that acceleration is constant (which is correct for IDM+, but may be
         // wrong for other car following algorithms).
-        double acceleration = car.getAcceleration(car.getLastEvaluationTime()).getSI();
+        double acceleration = car.getAcceleration(car.getOperationalPlan().getStartTime()).getSI();
         for (int timeBin = fromTimeBin; timeBin < toTimeBin; timeBin++)
         {
             if (timeBin < 0)

@@ -27,10 +27,10 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
-import org.opentrafficsim.road.gtu.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.changing.Egoistic;
-import org.opentrafficsim.road.gtu.lane.changing.LaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Egoistic;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechange.LaneChangeModel;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
@@ -184,7 +184,7 @@ class DummyModelForSensorTest implements OTSModelInterface
 
     /**
      * Register the simulator.
-     * @param simulator SimulatorInterface&lt;DoubleScalar.Abs&lt;TimeUnit&gt;, DoubleScalar.Rel&lt;TimeUnit&gt;,
+     * @param simulator SimulatorInterface&lt;Time.Abs, Time.Rel,
      *            OTSSimTimeDouble&gt;; the simulator
      */
     public final void setSimulator(
