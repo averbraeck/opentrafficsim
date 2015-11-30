@@ -1,36 +1,15 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
-import java.awt.Color;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.road.gtu.lane.AbstractTrafficLight;
-import org.opentrafficsim.road.network.animation.LaneAnimation;
+import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLight;
 import org.opentrafficsim.road.network.factory.XMLParser;
-import org.opentrafficsim.road.network.factory.opendrive.LinkTag.ContactPointEnum;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
-import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;

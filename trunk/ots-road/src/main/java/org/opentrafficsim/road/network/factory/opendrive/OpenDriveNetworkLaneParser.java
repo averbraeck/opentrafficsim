@@ -21,7 +21,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.gtu.lane.AbstractTrafficLight;
+import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLight;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.w3c.dom.Document;

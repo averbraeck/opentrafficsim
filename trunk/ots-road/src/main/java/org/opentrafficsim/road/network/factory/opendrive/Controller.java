@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -11,15 +10,12 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.animation.DefaultBlockOnOffAnimation;
-import org.opentrafficsim.road.gtu.lane.AbstractTrafficLight;
-import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLight;
 
 /**
  * Traffic Light Controller
@@ -47,8 +43,6 @@ public class Controller
     
     /**
      * @param name the name of the OnOffTrafficLight
-     * @param lane The lane where the block has to be put
-     * @param position the position on the lane as a length
      * @param simulator the simulator to avoid NullPointerExceptions
      * @throws GTUException when GTU cannot be created.
      * @throws NamingException if an error occurs when adding the animation handler
