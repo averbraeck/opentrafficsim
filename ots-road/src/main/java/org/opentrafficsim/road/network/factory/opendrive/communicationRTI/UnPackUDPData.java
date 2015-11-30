@@ -24,7 +24,8 @@ import org.opentrafficsim.road.network.factory.opendrive.data.RTIToOTSData;
 public class UnPackUDPData
 {
     /**
-     * @param args
+     * @param inputStream 
+     * @return RTIToOTSData element
      * @throws IOException
      */
     static RTIToOTSData unPack(DataInputStream inputStream) throws IOException
@@ -76,7 +77,7 @@ public class UnPackUDPData
 
     /**
      * @param inputStream
-     * @return
+     * @return float
      * @throws IOException
      */
     private static float parseFloat(DataInputStream inputStream) throws IOException
@@ -94,7 +95,7 @@ public class UnPackUDPData
 
     /**
      * @param inputStream
-     * @return
+     * @return int
      * @throws IOException
      */
     private static int parseInt(DataInputStream inputStream) throws IOException

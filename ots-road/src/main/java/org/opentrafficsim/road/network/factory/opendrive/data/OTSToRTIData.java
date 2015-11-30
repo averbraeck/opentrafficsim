@@ -61,7 +61,6 @@ public class OTSToRTIData
     
             
     /**
-     * @param timeStamp
      */
     public OTSToRTIData()
     {

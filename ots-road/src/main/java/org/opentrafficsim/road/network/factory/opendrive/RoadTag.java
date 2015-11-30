@@ -30,8 +30,8 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.animation.LinkAnimation;
-import org.opentrafficsim.road.gtu.lane.AbstractTrafficLight;
-import org.opentrafficsim.road.gtu.lane.LaneBlockOnOff;
+import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLight;
+import org.opentrafficsim.road.gtu.lane.object.CSEBlock;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.ShoulderAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation;
@@ -1190,7 +1190,7 @@ class RoadTag
                     else
                         sOffset = signalTag.s.minus(laneSec.s).plus(new Length.Rel(0.5, LengthUnit.METER));
                     
-                    Class<?> clazz = Class.forName(LaneBlockOnOff.class.getName());
+                    Class<?> clazz = Class.forName(CSEBlock.class.getName());
                     Constructor<?> trafficLightConstructor =
                         ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class,
                             Length.Rel.class, OTSDEVSSimulatorInterface.class});
@@ -1220,7 +1220,7 @@ class RoadTag
                 catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
                     | IllegalAccessException | IllegalArgumentException | InvocationTargetException exception)
                 {
-                    throw new NetworkException("Traffic Light: CLASS NAME " + LaneBlockOnOff.class.getName()
+                    throw new NetworkException("Traffic Light: CLASS NAME " + CSEBlock.class.getName()
                         + " for " + signalTag.id + " on lane " + lane.toString()
                         + " -- class not found or constructor not right", exception);
                 }
@@ -1261,7 +1261,7 @@ class RoadTag
                     else
                         sOffset = signalReferenceTag.s.minus(laneSec.s).plus(new Length.Rel(0.5, LengthUnit.METER));
                     
-                    Class<?> clazz = Class.forName(LaneBlockOnOff.class.getName());
+                    Class<?> clazz = Class.forName(CSEBlock.class.getName());
                     Constructor<?> trafficLightConstructor =
                         ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class,
                             Length.Rel.class, OTSDEVSSimulatorInterface.class});
@@ -1284,7 +1284,7 @@ class RoadTag
                 catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
                     | IllegalAccessException | IllegalArgumentException | InvocationTargetException exception)
                 {
-                    throw new NetworkException("Traffic Light: CLASS NAME " + LaneBlockOnOff.class.getName()
+                    throw new NetworkException("Traffic Light: CLASS NAME " + CSEBlock.class.getName()
                         + " for " + signalTag.id + " on lane " + lane.toString()
                         + " -- class not found or constructor not right", exception);
                 }
