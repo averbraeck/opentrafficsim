@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="${artifactId} ${version}" xmlns="http://maven.apache.org/DECORATION/1.6.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.6.0 http://maven.apache.org/xsd/decoration-1.6.0.xsd">
+
+  <publishDate position="left" format="dd-MM-yyyy hh:mm" />
+
+  <bannerRight>
+    <name>${artifactId} ${version}</name>
+  </bannerRight>
+
+  <body>
+
+   <menu name="MODULES">
+      <item name="ots-base" href="http://opentrafficsim.org/docs/${version}/index.html" />
+      <item name="ots-core" href="http://opentrafficsim.org/docs/${version}/ots-core/index.html" />
+      <item name="ots-road" href="http://opentrafficsim.org/docs/${version}/ots-road/index.html" />
+      <item name="ots-rail" href="http://opentrafficsim.org/docs/${version}/ots-rail/index.html" />
+      <item name="ots-water" href="http://opentrafficsim.org/docs/${version}/ots-water/index.html" />
+      <item name="ots-demo" href="http://opentrafficsim.org/docs/${version}/ots-demo/index.html" />
+    </menu>
+     
+    <menu name="PROJECT INFO">
+      <item name="About" href="index.html" />
+      <item name="Project Summary" href="project-summary.html" />
+      <item name="Dependencies" href="dependencies.html" />
+      <item name="Project Team" href="team-list.html" />
+      <item name="Project License" href="license.html" />
+    </menu>
+
+    <menu name="RELATED">
+      <item name="OTS Manual" href="http://opentrafficsim.org" target="_blank" />
+      <item name="DSOL" href="http://simulation.tudelft.nl/dsol/3.0/dsol-core/index.html" target="_blank" />
+      <item name="DJUNITS manual" href="http://djunits.org" target="_blank" />
+      <item name="DITTLab" href="http://dittlab.tudelft.nl" target="_blank" />
+      <item name="Simulation@TU Delft" href="http://simulation.tudelft.nl" target="_blank" />
+      <item name="About OTS" href="index.html" />
+    </menu>
+
+  </body>
+</project>
