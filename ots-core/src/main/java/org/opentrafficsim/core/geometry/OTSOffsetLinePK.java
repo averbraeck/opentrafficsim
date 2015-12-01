@@ -19,7 +19,7 @@ public class OTSOffsetLinePK
 {
 
     /** Debugging flag. */
-    static boolean debugOffsetLine;
+    static boolean debugOffsetLine = false;
 
     /**
      * Construct an offset line.
@@ -46,6 +46,10 @@ public class OTSOffsetLinePK
         {
             OTSPoint3D nextPoint = referenceLine.get(index + 1);
             double angle = Math.atan2(nextPoint.y - prevPoint.y, nextPoint.x - prevPoint.x);
+            if (debugOffsetLine)
+            {
+                System.out.println("#reference segment " + prevPoint + " to " + nextPoint + " angle " + Math.toDegrees(angle));
+            }
             OTSPoint3D segmentFrom =
                     new OTSPoint3D(prevPoint.x - Math.sin(angle) * offset, prevPoint.y + Math.cos(angle) * offset);
             OTSPoint3D segmentTo =
@@ -58,77 +62,7 @@ public class OTSOffsetLinePK
                 {
                     deltaAngle -= Math.signum(deltaAngle) * 2 * Math.PI;
                 }
-                if (deltaAngle * offset > 0)
-                {
-                    // Inside of curve of reference line.
-                    // Add the intersection point of each previous segment and the next segment
-                    OTSPoint3D pPoint = null;
-                    for (int i = 0; i < tempPoints.size(); i++)
-                    {
-                        OTSPoint3D p = tempPoints.get(i);
-                        if (null != pPoint)
-                        {
-                            double pAngle = Math.atan2(p.y - pPoint.y, p.x - pPoint.x);
-                            double angleDifference = angle - pAngle;
-                            if (Math.abs(angleDifference) > Math.PI)
-                            {
-                                angleDifference += Math.signum(angleDifference) * 2 * Math.PI;
-                            }
-                            if (debugOffsetLine)
-                            {
-                                System.out.println("#preceding segment " + pPoint + " to " + p + ", this segment "
-                                        + segmentFrom + " to " + segmentTo + " angleDifference "
-                                        + Math.toDegrees(angleDifference));
-                            }
-                            if (Math.abs(angleDifference) > 0)// 0.01)
-                            {
-                                OTSPoint3D intersection =
-                                        OTSPoint3D.intersectionOfLineSegments(pPoint, p, segmentFrom, segmentTo);
-                                if (null != intersection)
-                                {
-                                    if (tempPoints.size() - 1 == i)
-                                    {
-                                        if (debugOffsetLine)
-                                        {
-                                            System.out.println("#Replacing last point of preceding segment and "
-                                                    + "first point of next segment by their intersection " + intersection);
-                                        }
-                                        tempPoints.remove(tempPoints.size() - 1);
-                                        segmentFrom = intersection;
-                                    }
-                                    else
-                                    {
-                                        if (debugOffsetLine)
-                                        {
-                                            System.out.println("#Adding intersection of preceding segment and "
-                                                    + "next segment " + intersection);
-                                        }
-                                        tempPoints.add(intersection);
-                                    }
-                                    // tempPoints.set(tempPoints.size() - 1, intermediatePoint);
-                                }
-                            }
-                            else
-                            {
-                                if (debugOffsetLine)
-                                {
-                                    System.out.println("#Not adding intersection of preceding segment and this segment "
-                                            + "(angle too small)");
-                                }
-                                if (i == tempPoints.size() - 1)
-                                {
-                                    if (debugOffsetLine)
-                                    {
-                                        System.out.println("#Not adding segment");
-                                    }
-                                    addSegment = false;
-                                }
-                            }
-                        }
-                        pPoint = p;
-                    }
-                }
-                else
+                if (deltaAngle * offset <= 0)
                 {
                     // Outside of curve of reference line
                     // Approximate an arc using straight segments.
@@ -203,30 +137,71 @@ public class OTSOffsetLinePK
                         tempPoints.add(intermediatePoint);
                         prevArcPoint = intermediatePoint;
                     }
-                    // Find any intersection points of the last new segment and all previous segments
-                    OTSPoint3D prevSegFrom = null;
-                    int stopAt = tempPoints.size() - 1;
-                    for (int i = 0; i < stopAt; i++)
+                }
+                // Inside of curve of reference line.
+                // Add the intersection point of each previous segment and the next segment
+                OTSPoint3D pPoint = null;
+                for (int i = 0; i < tempPoints.size(); i++)
+                {
+                    OTSPoint3D p = tempPoints.get(i);
+                    if (null != pPoint)
                     {
-                        OTSPoint3D prevSegTo = tempPoints.get(i);
-                        if (null != prevSegFrom)
+                        double pAngle = Math.atan2(p.y - pPoint.y, p.x - pPoint.x);
+                        double angleDifference = angle - pAngle;
+                        if (Math.abs(angleDifference) > Math.PI)
                         {
-                            OTSPoint3D prevSegIntersection =
-                                    OTSPoint3D.intersectionOfLineSegments(prevArcPoint, segmentFrom, prevSegFrom, prevSegTo);
-                            if (null != prevSegIntersection
-                                    && prevSegIntersection.horizontalDistanceSI(prevArcPoint) > circlePrecision
-                                    && prevSegIntersection.horizontalDistanceSI(prevSegFrom) > circlePrecision
-                                    && prevSegIntersection.horizontalDistanceSI(prevSegTo) > circlePrecision)
+                            angleDifference += Math.signum(angleDifference) * 2 * Math.PI;
+                        }
+                        if (debugOffsetLine)
+                        {
+                            System.out.println("#preceding segment " + pPoint + " to " + p + ", next segment " + segmentFrom
+                                    + " to " + segmentTo + " angleDifference " + Math.toDegrees(angleDifference));
+                        }
+                        if (Math.abs(angleDifference) > 0)// 0.01)
+                        {
+                            OTSPoint3D intersection = OTSPoint3D.intersectionOfLineSegments(pPoint, p, segmentFrom, segmentTo);
+                            if (null != intersection)
+                            {
+                                if (tempPoints.size() - 1 == i)
+                                {
+                                    if (debugOffsetLine)
+                                    {
+                                        System.out.println("#Replacing last point of preceding segment and "
+                                                + "first point of next segment by their intersection " + intersection);
+                                    }
+                                    tempPoints.remove(tempPoints.size() - 1);
+                                    segmentFrom = intersection;
+                                }
+                                else
+                                {
+                                    if (debugOffsetLine)
+                                    {
+                                        System.out.println("#Adding intersection of preceding segment and " + "next segment "
+                                                + intersection);
+                                    }
+                                    tempPoints.add(intersection);
+                                }
+                                // tempPoints.set(tempPoints.size() - 1, intermediatePoint);
+                            }
+                        }
+                        else
+                        {
+                            if (debugOffsetLine)
+                            {
+                                System.out.println("#Not adding intersection of preceding segment and this segment "
+                                        + "(angle too small)");
+                            }
+                            if (i == tempPoints.size() - 1)
                             {
                                 if (debugOffsetLine)
                                 {
-                                    System.out.println("#inserting intersection in last arc segment " + prevSegIntersection);
+                                    System.out.println("#Not adding segment");
                                 }
-                                tempPoints.add(prevSegIntersection);
+                                addSegment = false;
                             }
                         }
-                        prevSegFrom = prevSegTo;
                     }
+                    pPoint = p;
                 }
             }
             if (addSegment)
