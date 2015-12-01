@@ -16,6 +16,8 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLight;
+import org.opentrafficsim.road.gtu.lane.object.TrafficLight;
+import org.opentrafficsim.road.gtu.lane.object.TrafficLight.TrafficLightColor;
 
 /**
  * Traffic Light Controller
@@ -89,7 +91,10 @@ public class Controller
             {
                 try
                 {
-                    this.simulator.scheduleEventRel(new Time.Rel(0.0, TimeUnit.SECOND), this, light, "setGreen", null);
+                    //System.out.println("traffic light 3 at time " + this.simulator.getSimulatorTime() + " is " + ((TrafficLight) light).getTrafficLightColor().toString());
+                    this.simulator.scheduleEventRel(new Time.Rel(0.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
+                    this.simulator.scheduleEventRel(new Time.Rel(15.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
+                    this.simulator.scheduleEventRel(new Time.Rel(24.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
                 } catch (SimRuntimeException exception)
                 {
                     exception.printStackTrace();
@@ -102,7 +107,9 @@ public class Controller
             {
                 try
                 {
-                    this.simulator.scheduleEventRel(new Time.Rel(0.0, TimeUnit.SECOND), this, light, "setGreen", null);
+                    this.simulator.scheduleEventRel(new Time.Rel(0.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
+                    this.simulator.scheduleEventRel(new Time.Rel(15.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
+                    this.simulator.scheduleEventRel(new Time.Rel(24.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
                 } catch (SimRuntimeException exception)
                 {
                     exception.printStackTrace();
@@ -115,7 +122,11 @@ public class Controller
             {
                 try
                 {
-                    this.simulator.scheduleEventRel(new Time.Rel(24.0, TimeUnit.SECOND), this, light, "setGreen", null);
+//                    System.out.println("traffic light 6 at time " + this.simulator.getSimulatorTime());
+
+                    this.simulator.scheduleEventRel(new Time.Rel(24.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
+                    this.simulator.scheduleEventRel(new Time.Rel(39.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
+                    this.simulator.scheduleEventRel(new Time.Rel(48.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
                 } catch (SimRuntimeException exception)
                 {
                     exception.printStackTrace();
@@ -128,7 +139,9 @@ public class Controller
             {
                 try
                 {
-                    this.simulator.scheduleEventRel(new Time.Rel(24.0, TimeUnit.SECOND), this, light, "setGreen", null);
+                    this.simulator.scheduleEventRel(new Time.Rel(24.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
+                    this.simulator.scheduleEventRel(new Time.Rel(39.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
+                    this.simulator.scheduleEventRel(new Time.Rel(48.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
                 } catch (SimRuntimeException exception)
                 {
                     exception.printStackTrace();
@@ -141,7 +154,11 @@ public class Controller
             {
                 try
                 {
-                    this.simulator.scheduleEventRel(new Time.Rel(48.0, TimeUnit.SECOND), this, light, "setGreen", null);
+//                    System.out.println("traffic light 9 at time " + this.simulator.getSimulatorTime());
+
+                    this.simulator.scheduleEventRel(new Time.Rel(48.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
+                    this.simulator.scheduleEventRel(new Time.Rel(63.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
+                    this.simulator.scheduleEventRel(new Time.Rel(72.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
                 } catch (SimRuntimeException exception)
                 {
                     exception.printStackTrace();
@@ -154,7 +171,9 @@ public class Controller
             {
                 try
                 {
-                    this.simulator.scheduleEventRel(new Time.Rel(48.0, TimeUnit.SECOND), this, light, "setGreen", null);
+                    this.simulator.scheduleEventRel(new Time.Rel(48.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
+                    this.simulator.scheduleEventRel(new Time.Rel(63.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
+                    this.simulator.scheduleEventRel(new Time.Rel(72.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
                 } catch (SimRuntimeException exception)
                 {
                     exception.printStackTrace();
@@ -167,7 +186,11 @@ public class Controller
             {
                 try
                 {
-                    this.simulator.scheduleEventRel(new Time.Rel(72.0, TimeUnit.SECOND), this, light, "setGreen", null);
+//                    System.out.println("traffic light 12 at time " + this.simulator.getSimulatorTime());
+
+                    this.simulator.scheduleEventRel(new Time.Rel(72.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
+                    this.simulator.scheduleEventRel(new Time.Rel(87.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
+                    this.simulator.scheduleEventRel(new Time.Rel(96.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
                 } catch (SimRuntimeException exception)
                 {
                     exception.printStackTrace();
@@ -180,7 +203,9 @@ public class Controller
             {
                 try
                 {
-                    this.simulator.scheduleEventRel(new Time.Rel(72.0, TimeUnit.SECOND), this, light, "setGreen", null);
+                    this.simulator.scheduleEventRel(new Time.Rel(72.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
+                    this.simulator.scheduleEventRel(new Time.Rel(87.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
+                    this.simulator.scheduleEventRel(new Time.Rel(96.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
                 } catch (SimRuntimeException exception)
                 {
                     exception.printStackTrace();

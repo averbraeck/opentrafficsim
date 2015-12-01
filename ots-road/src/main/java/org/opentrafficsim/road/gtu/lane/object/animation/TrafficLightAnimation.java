@@ -12,7 +12,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.animation.PaintPolygons;
-import org.opentrafficsim.road.gtu.lane.object.CSEBlock;
+import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLight;
 import org.opentrafficsim.road.gtu.lane.object.TrafficLight;
 
 /**
@@ -38,19 +38,20 @@ public class TrafficLightAnimation extends Renderable2D
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public TrafficLightAnimation(final CSEBlock source, final OTSSimulatorInterface simulator)
+    public TrafficLightAnimation(final AbstractTrafficLight source, final OTSSimulatorInterface simulator)
         throws NamingException, RemoteException
     {
         super(source, simulator);
-        setTranslate(false);
-        setRotate(false);
+        //setTranslate(false);
+        //setRotate(false);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc} 
+     * @throws RemoteException */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer)
+    public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException
     {
-        TrafficLight trafficLight = (TrafficLight) this.source;
+        TrafficLight trafficLight = (TrafficLight) this.getSource();
         Color fillColor;
         switch (trafficLight.getTrafficLightColor())
         {
@@ -71,7 +72,7 @@ public class TrafficLightAnimation extends Renderable2D
                 break;
         }
 
-        PaintPolygons.paintMultiPolygon(graphics, fillColor, POINT_000, trafficLight.getGeometry(),
+        PaintPolygons.paintMultiPolygon(graphics, fillColor, trafficLight.getLocation(), trafficLight.getGeometry(),
             true);
     }
 
