@@ -38,6 +38,6 @@ public class CSEBlock extends AbstractCSEObject
         final Length.Rel position) throws NetworkException
     {
         return new CSEBlock(AbstractCSEObject.createRectangleOnCSE(cse, position, new Length.Rel(0.5,
-            LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8)), new Length.Rel(1.0, LengthUnit.METER));
+            LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8), new Length.Rel(0.5, LengthUnit.METER)), new Length.Rel(1.0, LengthUnit.METER));
     }
 }

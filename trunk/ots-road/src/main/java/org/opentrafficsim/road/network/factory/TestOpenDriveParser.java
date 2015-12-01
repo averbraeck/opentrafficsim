@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.factory;
 
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.net.SocketException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -60,6 +61,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.opendrive.GeneratorAnimation;
 import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.opendrive.communicationRTI.ReceiverThread;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -205,6 +207,16 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
 
             // Make a GTU Type
             GTUType carType = GTUType.makeGTUType("Car");
+            
+            //new ReceiverThread(this.simulator).run();
+            
+            try
+            {
+                new Thread(new ReceiverThread(this.simulator, carType)).start();
+            } catch (SocketException exception1)
+            {
+                exception1.printStackTrace();
+            }
 
             // stream
             StreamInterface stream = new MersenneTwister(1);
@@ -251,10 +263,10 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                                 LaneBasedStrategicalPlanner strategicalPlanner =
                                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
                                 LanePerception perception = new LanePerception(null); // TODO
-                                new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
-                                    initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
-                                    startTime, endTime, lane, position, GTUDirectionality.DIR_PLUS,
-                                    makeSwitchableGTUColorer(), strategicalPlanner, perception);
+//                                new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
+//                                    initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
+//                                    startTime, endTime, lane, position, GTUDirectionality.DIR_PLUS,
+//                                    makeSwitchableGTUColorer(), strategicalPlanner, perception);
                                 try
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
@@ -302,10 +314,10 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                                 LaneBasedStrategicalPlanner strategicalPlanner =
                                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
                                 LanePerception perception = new LanePerception(null); // TODO
-                                new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
-                                    initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
-                                    startTime, endTime, lane, position, GTUDirectionality.DIR_MINUS,
-                                    makeSwitchableGTUColorer(), strategicalPlanner, perception);
+//                                new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
+//                                    initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
+//                                    startTime, endTime, lane, position, GTUDirectionality.DIR_MINUS,
+//                                    makeSwitchableGTUColorer(), strategicalPlanner, perception);
                                 try
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);

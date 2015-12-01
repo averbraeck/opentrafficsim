@@ -74,8 +74,11 @@ public class TrafficLight extends AbstractTrafficLight
     public static TrafficLight createTrafficLight(final CrossSectionElement cse, final Length.Rel position,
         final TrafficLightColor initialColor) throws NetworkException
     {
+//        return new TrafficLight(AbstractCSEObject.createRectangleOnCSE(cse, position, new Length.Rel(0.5,
+//            LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8), new Length.Rel(0.5, LengthUnit.METER)), new Length.Rel(0.5, LengthUnit.METER),
+//            initialColor);
         return new TrafficLight(AbstractCSEObject.createRectangleOnCSE(cse, position, new Length.Rel(0.5,
-            LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8)), new Length.Rel(0.5, LengthUnit.METER),
-            initialColor);
+                LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8), new Length.Rel(0.5, LengthUnit.METER)),
+                new Length.Rel(0.5, LengthUnit.METER), initialColor);
     }
 }

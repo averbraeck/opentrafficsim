@@ -36,12 +36,14 @@ public abstract class AbstractCSEObject extends StaticObject
      * @param position the relative position on the design line of the link for this block
      * @param length the length of the object, parallel to the center line of the cse
      * @param width the width of the object, perpendicular to the center line of the cse
+     * @param height the height of the object, above to the center line of the cse
      * @return a new Geometry on the right position on the cse
      * @throws NetworkException in case of degenerate line or position beyond the center line
      */
     protected static OTSLine3D createRectangleOnCSE(final CrossSectionElement cse, final Length.Rel position,
-        final Length.Rel length, final Length.Rel width) throws NetworkException
+        final Length.Rel length, final Length.Rel width, final Length.Rel height) throws NetworkException
     {
+        //TODO: REPAIR
         double fraction = position.si / cse.getParentLink().getLength().si;
         double w2 = width.si / 2.0;
         double l2 = length.si / 2.0;
@@ -51,10 +53,10 @@ public abstract class AbstractCSEObject extends StaticObject
         double l2sa = l2 * Math.sin(a);
         double w2ca = w2 * Math.cos(a + Math.PI / 2.0);
         double w2sa = w2 * Math.sin(a + Math.PI / 2.0);
-        OTSPoint3D p1 = new OTSPoint3D(cp.x - l2ca - w2ca, cp.y - l2sa - w2sa, cp.z);
-        OTSPoint3D p3 = new OTSPoint3D(cp.x + l2ca + w2ca, cp.y + l2sa + w2sa, cp.z);
-        OTSPoint3D p2 = new OTSPoint3D(cp.x + l2ca - w2ca, cp.y + l2sa - w2sa, cp.z);
-        OTSPoint3D p4 = new OTSPoint3D(cp.x - l2ca + w2ca, cp.y - l2sa + w2sa, cp.z);
+        OTSPoint3D p1 = new OTSPoint3D(cp.x - l2ca - w2ca, cp.y - l2sa - w2sa, cp.z + height.si);
+        OTSPoint3D p3 = new OTSPoint3D(cp.x + l2ca + w2ca, cp.y + l2sa + w2sa, cp.z + height.si);
+        OTSPoint3D p2 = new OTSPoint3D(cp.x + l2ca - w2ca, cp.y + l2sa - w2sa, cp.z + height.si);
+        OTSPoint3D p4 = new OTSPoint3D(cp.x - l2ca + w2ca, cp.y - l2sa + w2sa, cp.z + height.si);
         return new OTSLine3D(p1, p2, p3, p4, p1);
     }
 
@@ -64,12 +66,13 @@ public abstract class AbstractCSEObject extends StaticObject
      * @param position the relative position on the design line of the link for this block
      * @param length the length of the object, parallel to the center line of the cse
      * @param width the width of the object, perpendicular to the center line of the cse
+     * @param height the height of the object, above to the center line of the cse
      * @param distance the lateral distance of the object to the lane's center line; note: plus is left, minus is right
      * @return a new Geometry on the right position on the cse
      * @throws NetworkException in case of degenerate line or position beyond the center line
      */
     protected static OTSLine3D createRectangleNextToCSE(final CrossSectionElement cse, final Length.Rel position,
-        final Length.Rel length, final Length.Rel width, final Length.Rel distance) throws NetworkException
+        final Length.Rel length, final Length.Rel width, final Length.Rel height, final Length.Rel distance) throws NetworkException
     {
         double fraction = position.si / cse.getParentLink().getLength().si;
         double w2 = width.si / 2.0;
@@ -84,10 +87,10 @@ public abstract class AbstractCSEObject extends StaticObject
         double l2sa = l2 * Math.sin(a);
         double w2ca = w2 * Math.cos(a + Math.PI / 2.0);
         double w2sa = w2 * Math.sin(a + Math.PI / 2.0);
-        OTSPoint3D p1 = new OTSPoint3D(cp.x - l2ca - w2ca, cp.y - l2sa - w2sa, cp.z);
-        OTSPoint3D p3 = new OTSPoint3D(cp.x + l2ca + w2ca, cp.y + l2sa + w2sa, cp.z);
-        OTSPoint3D p2 = new OTSPoint3D(cp.x + l2ca - w2ca, cp.y + l2sa - w2sa, cp.z);
-        OTSPoint3D p4 = new OTSPoint3D(cp.x - l2ca + w2ca, cp.y - l2sa + w2sa, cp.z);
+        OTSPoint3D p1 = new OTSPoint3D(cp.x - l2ca - w2ca, cp.y - l2sa - w2sa, cp.z + height.si);
+        OTSPoint3D p3 = new OTSPoint3D(cp.x + l2ca + w2ca, cp.y + l2sa + w2sa, cp.z + height.si);
+        OTSPoint3D p2 = new OTSPoint3D(cp.x + l2ca - w2ca, cp.y + l2sa - w2sa, cp.z + height.si);
+        OTSPoint3D p4 = new OTSPoint3D(cp.x - l2ca + w2ca, cp.y - l2sa + w2sa, cp.z + height.si);
         return new OTSLine3D(p1, p2, p3, p4, p1);
     }
 

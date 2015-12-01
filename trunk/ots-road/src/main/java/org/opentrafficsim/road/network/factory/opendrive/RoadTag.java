@@ -32,6 +32,7 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLight;
 import org.opentrafficsim.road.gtu.lane.object.OldTrafficLight;
+import org.opentrafficsim.road.gtu.lane.object.animation.TrafficLightAnimation;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.ShoulderAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation;
@@ -1028,7 +1029,7 @@ class RoadTag
 
                     AbstractTrafficLight trafficLight =
                         (AbstractTrafficLight) trafficLightConstructor.newInstance(new Object[]{signalTag.id, lane,
-                            sOffset, simulator});
+                            sOffset, simulator});                    
 
                     if (!openDriveNetworkLaneParser.trafficLightsBySignals.containsKey(signalTag.id))
                     {
@@ -1097,7 +1098,7 @@ class RoadTag
 
                     AbstractTrafficLight trafficLight =
                         (AbstractTrafficLight) trafficLightConstructor.newInstance(new Object[]{signalTag.id + ".ref",
-                            lane, sOffset, simulator});
+                            lane, sOffset, simulator});                    
 
                     if (!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
                     {
