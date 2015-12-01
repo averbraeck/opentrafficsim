@@ -312,7 +312,7 @@ public abstract class AbstractGTU implements GTU
 
     /** {@inheritDoc} */
     @Override
-    public final DirectedPoint getLocation() throws RemoteException
+    public DirectedPoint getLocation() throws RemoteException
     {
         if (this.operationalPlan == null)
         {
