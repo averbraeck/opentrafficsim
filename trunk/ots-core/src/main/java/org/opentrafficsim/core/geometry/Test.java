@@ -367,9 +367,7 @@ public final class Test
         System.out.println(OTSGeometry.printCoordinates("#center:\nc0,1,0\n#", centerLine, "\n    "));
         for (int i = 1; i < centerLine.size() - 1; i++)
         {
-            double distance =
-                    OTSPoint3D.distanceLineSegmentToPoint(centerLine.get(0), centerLine.get(centerLine.size() - 1),
-                            centerLine.get(i));
+            double distance = centerLine.get(i).distanceToLineSegment(centerLine.get(0), centerLine.get(centerLine.size() - 1));
             System.out.println("#distance of intermediate point " + i + " to overall line is " + distance);
         }
         OTSLine3D right = centerLine.offsetLine(-2);

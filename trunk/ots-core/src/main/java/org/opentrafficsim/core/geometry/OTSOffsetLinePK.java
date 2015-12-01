@@ -271,7 +271,7 @@ public class OTSOffsetLinePK
                 OTSPoint3D p = referenceLine.get(i);
                 if (null != prevPoint)
                 {
-                    OTSPoint3D closestPoint = OTSPoint3D.closestPointOnSegmentToPoint(prevPoint, p, checkPoint);
+                    OTSPoint3D closestPoint = checkPoint.closestPointOnSegment(prevPoint, p);
                     double distance = closestPoint.horizontalDistanceSI(checkPoint);
                     if (distance < bufferOffset - circlePrecision)
                     {

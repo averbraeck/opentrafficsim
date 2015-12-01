@@ -278,32 +278,6 @@ public final class OTSBufferingJTS
     }
 
     /**
-     * Compute the 2D intersection of two infinite lines. Both lines are defined by two points (that should be distinct).
-     * @param line1P1 OTSPoint3D; first point of line 1
-     * @param line1P2 OTSPoint3D; second point of line 1
-     * @param line2P1 OTSPoint3D; first point of line 2
-     * @param line2P2 OTSPoint3D; second point of line 2
-     * @return OTSPoint3D; the intersection of the two lines, or null if the lines are (almost) parallel
-     */
-    private static OTSPoint3D intersectionOfLines(final OTSPoint3D line1P1, final OTSPoint3D line1P2,
-        final OTSPoint3D line2P1, final OTSPoint3D line2P2)
-    {
-        double determinant =
-            (line1P1.x - line1P2.x) * (line2P1.y - line2P2.y) - (line1P1.y - line1P2.y) * (line2P1.x - line2P2.x);
-        if (Math.abs(determinant) < 0.0000001)
-        {
-            return null;
-        }
-        return new OTSPoint3D(
-            ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.x - line2P2.x) - (line1P1.x - line1P2.x)
-                * (line2P1.x * line2P2.y - line2P1.y * line2P2.x))
-                / determinant,
-            ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.y - line2P2.y) - (line1P1.y - line1P2.y)
-                * (line2P1.x * line2P2.y - line2P1.y * line2P2.x))
-                / determinant);
-    }
-
-    /**
      * Compute the 2D intersection of two line segments. Both line segments are defined by two points (that should be distinct).
      * @param line1P1 OTSPoint3D; first point of line 1
      * @param line1P2 OTSPoint3D; second point of line 1
