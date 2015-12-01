@@ -583,7 +583,7 @@ public final class OTSBufferingAV
             }
             if (!found)
             {
-                System.err.println("offsetLine: Problem connecting one or more points");
+                System.err.println("#offsetLine: Problem connecting one or more points");
                 // System.out.println(toJava(line));
                 lines.clear();
                 offsetLine.clear();
