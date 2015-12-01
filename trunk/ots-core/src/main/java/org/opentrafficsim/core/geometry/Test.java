@@ -29,19 +29,19 @@ public final class Test
      * @param offset double; the offset
      * @return int; the number of failures
      */
-    public static int checkAll(final OTSLine3D reference, final double offset)
+    public static String checkAll(final OTSLine3D reference, final double offset)
     {
-        int result = 0;
+        String result = "";
         for (OTSLine3D.OffsetMethod offsetMethod : new OTSLine3D.OffsetMethod[] { OTSLine3D.OffsetMethod.JTS,
-                OTSLine3D.OffsetMethod.PK, OTSLine3D.OffsetMethod.AV })
+                OTSLine3D.OffsetMethod.PK /* , OTSLine3D.OffsetMethod.AV */})
         {
             if (!checkOffsetLine(reference, offset, offsetMethod))
             {
-                result++;
+                result += "fail " + offsetMethod + " " + offset + " ";
             }
             if (!checkOffsetLine(reference, -offset, offsetMethod))
             {
-                result++;
+                result += "fail " + offsetMethod + " " + (-offset) + " ";
             }
         }
         return result;
@@ -55,21 +55,20 @@ public final class Test
     public static void main(final String[] args) throws NetworkException, OTSGeometryException
     {
         OTSLine3D reference;
-        /*-
         // OTSLine3D.debugOffsetLine = true;
 
         reference =
                 new OTSLine3D(new OTSPoint3D(5, 2.5), new OTSPoint3D(4.8, 2.5), new OTSPoint3D(4.6, 2.7), new OTSPoint3D(2.2,
                         2.7), new OTSPoint3D(2.2, 5));
-        // fails JTS checkAll(reference, 2);
+        System.out.println("Kink near start:                                    " + checkAll(reference, 2));
 
         reference = new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(10, 5, 0), new OTSPoint3D(20, 0, 0));
-        // fails AV checkAll(reference, 2);
+        System.out.println("Single direction change far from ends:              " + checkAll(reference, 2));
 
         reference =
                 new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(20, 10, 0), new OTSPoint3D(21, 10, 0), new OTSPoint3D(22,
                         9.5, 0), new OTSPoint3D(30, 0, 0));
-        // fails AV checkAll(reference, -3);
+        System.out.println("Double direction change far from ends:              " + checkAll(reference, -3));
 
         // Reference line closely spaced points on a (relatively large) circle
         OTSPoint3D[] designLinePoints = new OTSPoint3D[8];
@@ -83,24 +82,26 @@ public final class Test
         }
         reference = new OTSLine3D(designLinePoints);
         // passes all
-        checkAll(reference, 2);
+        System.out.println("Closely spaced points on large circle:              " + checkAll(reference, 2));
 
         // Straight design line with some <i>noise</i> (sufficiently far from the end points).
         reference =
                 new OTSLine3D(new OTSPoint3D(10, 10, 0), new OTSPoint3D(9.999, 8, 0), new OTSPoint3D(9.996, 7.99, 0),
                         new OTSPoint3D(9.999, 7.98, 0), new OTSPoint3D(10.03, 7.95, 0), new OTSPoint3D(10.01, 7.94, 0),
                         new OTSPoint3D(10.0, 7.94, 0), new OTSPoint3D(10, 6, 0), new OTSPoint3D(10, 2, 0));
-        checkAll(reference, 2);
-         */
+        System.out.println("Straight reference with noise far from ends: " + checkAll(reference, 2));
+
         // Straight design line with some <i>noise</i> (close to the end points).
         reference =
                 new OTSLine3D(new OTSPoint3D(5, -1, 0), new OTSPoint3D(5, -2, 0), new OTSPoint3D(4.9, -2.01, 0),
                         new OTSPoint3D(5.1, -2.03, 0), new OTSPoint3D(5, -2.04, 0), new OTSPoint3D(5, -6, 0), new OTSPoint3D(
                                 4.9, -6.01, 0), new OTSPoint3D(5.1, -6.03, 0), new OTSPoint3D(5, -6.04, 0), new OTSPoint3D(5,
                                 -7.04, 0));
-        // checkAll(reference, 2);
-        OTSOffsetLinePK.debugOffsetLine = true;
-        checkOffsetLine(reference, -2, OTSLine3D.OffsetMethod.PK);
+        System.out.println("Straight reference with noise near ends:            " + checkAll(reference, 2));
+
+        // OTSOffsetLinePK.debugOffsetLine = true;
+        // checkOffsetLine(reference, -2, OTSLine3D.OffsetMethod.PK);
+        System.out.println("Test complete.");
 
         /*-
         int i = 8;
@@ -135,6 +136,9 @@ public final class Test
          */
     }
 
+    /** Print detailed output. */
+    static boolean printDetails = false;
+
     /**
      * Check the offsetLine method.
      * @param referenceLine OTSLine3D; the reference line
@@ -154,7 +158,7 @@ public final class Test
             OTSLine3D offsetLine = referenceLine.offsetLine(offset);
             if (null == offsetLine)
             {
-                if (OTSOffsetLinePK.debugOffsetLine)
+                if (printDetails)
                 {
                     System.out.println(String.format(Locale.US, "#offset %7.3f, method %3.3s returned null referenceLine %s",
                             offset, offsetMethod, referenceLine));
@@ -224,7 +228,7 @@ public final class Test
             }
             if (0 == referenceTooClose && 0 == resultTooClose && 0 == resultTooFar)
             {
-                if (OTSOffsetLinePK.debugOffsetLine)
+                if (printDetails)
                 {
                     System.out.println("#No errors detected");
                     System.out.println(OTSGeometry.printCoordinates("#reference: \nc1,0,0\n#", referenceLine, "\n    "));
@@ -233,30 +237,30 @@ public final class Test
                 return true;
             }
             double factor = 100d / (numSteps + 1);
-            if (OTSOffsetLinePK.debugOffsetLine)
+            if (printDetails)
             {
                 System.out.println(String.format(Locale.US, "#offset %7.3f, method %3.3s: result line too close for %5.1f%%, "
                         + "too far for %5.1f%%, reference too close for %5.1f%%", offset, offsetMethod,
                         resultTooClose * factor, resultTooFar * factor, referenceTooClose * factor));
-            }
-            for (int i = 0; i < closestToReference.length; i++)
-            {
-                if (closestToReference[i] > absOffset + maxErrorFar)
+                for (int i = 0; i < closestToReference.length; i++)
                 {
-                    DirectedPoint p = referenceLine.getLocationSI(i * referenceLength / numSteps);
-                    System.out.println(String.format("sc0.7,0.7,0.7w0.2M%.3f,%.3fl0,0r", p.x, p.y));
+                    if (closestToReference[i] > absOffset + maxErrorFar)
+                    {
+                        DirectedPoint p = referenceLine.getLocationSI(i * referenceLength / numSteps);
+                        System.out.println(String.format("sc0.7,0.7,0.7w0.2M%.3f,%.3fl0,0r", p.x, p.y));
+                    }
                 }
-            }
-            for (int i = 0; i < closestToResult.length; i++)
-            {
-                if (closestToResult[i] > absOffset + maxErrorFar || closestToResult[i] < absOffset - maxErrorClose)
+                for (int i = 0; i < closestToResult.length; i++)
                 {
-                    DirectedPoint p = offsetLine.getLocationSI(i * resultLength / numSteps);
-                    System.out.println(String.format("sw0.2M%.3f,%.3fl0,0r", p.x, p.y));
+                    if (closestToResult[i] > absOffset + maxErrorFar || closestToResult[i] < absOffset - maxErrorClose)
+                    {
+                        DirectedPoint p = offsetLine.getLocationSI(i * resultLength / numSteps);
+                        System.out.println(String.format("sw0.2M%.3f,%.3fl0,0r", p.x, p.y));
+                    }
                 }
+                System.out.println(OTSGeometry.printCoordinates("#reference: \nc1,0,0\n#", referenceLine, "\n    "));
+                System.out.println(OTSGeometry.printCoordinates("#offset: \nc0,1,0\n#", offsetLine, "\n    "));
             }
-            System.out.println(OTSGeometry.printCoordinates("#reference: \nc1,0,0\n#", referenceLine, "\n    "));
-            System.out.println(OTSGeometry.printCoordinates("#offset: \nc0,1,0\n#", offsetLine, "\n    "));
             return false;
         }
         catch (NetworkException | OTSGeometryException exception)
