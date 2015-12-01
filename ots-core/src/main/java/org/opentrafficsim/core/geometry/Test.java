@@ -99,7 +99,7 @@ public final class Test
                                 4.9, -6.01, 0), new OTSPoint3D(5.1, -6.03, 0), new OTSPoint3D(5, -6.04, 0), new OTSPoint3D(5,
                                 -7.04, 0));
         // checkAll(reference, 2);
-        OTSLine3D.debugOffsetLine = true;
+        OTSOffsetLinePK.debugOffsetLine = true;
         checkOffsetLine(reference, -2, OTSLine3D.OffsetMethod.PK);
 
         /*-
@@ -154,7 +154,7 @@ public final class Test
             OTSLine3D offsetLine = referenceLine.offsetLine(offset);
             if (null == offsetLine)
             {
-                if (OTSLine3D.debugOffsetLine)
+                if (OTSOffsetLinePK.debugOffsetLine)
                 {
                     System.out.println(String.format(Locale.US, "#offset %7.3f, method %3.3s returned null referenceLine %s",
                             offset, offsetMethod, referenceLine));
@@ -224,7 +224,7 @@ public final class Test
             }
             if (0 == referenceTooClose && 0 == resultTooClose && 0 == resultTooFar)
             {
-                if (OTSLine3D.debugOffsetLine)
+                if (OTSOffsetLinePK.debugOffsetLine)
                 {
                     System.out.println("#No errors detected");
                     System.out.println(OTSGeometry.printCoordinates("#reference: \nc1,0,0\n#", referenceLine, "\n    "));
@@ -233,7 +233,7 @@ public final class Test
                 return true;
             }
             double factor = 100d / (numSteps + 1);
-            if (OTSLine3D.debugOffsetLine)
+            if (OTSOffsetLinePK.debugOffsetLine)
             {
                 System.out.println(String.format(Locale.US, "#offset %7.3f, method %3.3s: result line too close for %5.1f%%, "
                         + "too far for %5.1f%%, reference too close for %5.1f%%", offset, offsetMethod,
