@@ -16,7 +16,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrafficLight extends CSEBlock
+public class TrafficLight extends AbstractTrafficLight
 {
     /** The GTU colors for a normal traffic light. */
     public enum TrafficLightColor
