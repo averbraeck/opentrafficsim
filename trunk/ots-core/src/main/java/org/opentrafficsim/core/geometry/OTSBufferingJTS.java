@@ -62,7 +62,7 @@ public final class OTSBufferingJTS
 
     /**
      * Compute the distance of a line segment to a point. If the the projected points lies outside the line segment, the nearest
-     * end point of the line segment is returned. Otherwise the point return lies between the end points of the line segment. <br />
+     * end point of the line segment is returned. Otherwise the point return lies between the end points of the line segment. <br>
      * Adapted from <a href="http://paulbourke.net/geometry/pointlineplane/DistancePoint.java"> example code provided by Paul
      * Bourke</a>.
      * @param lineP1 OTSPoint3D; start of line segment
@@ -77,7 +77,7 @@ public final class OTSBufferingJTS
 
     /**
      * Project a point on a line (2D). If the the projected points lies outside the line segment, the nearest end point of the
-     * line segment is returned. Otherwise the point return lies between the end points of the line segment. <br />
+     * line segment is returned. Otherwise the point return lies between the end points of the line segment. <br>
      * Adapted from <a href="http://paulbourke.net/geometry/pointlineplane/DistancePoint.java"> example code provided by Paul
      * Bourke</a>.
      * @param lineP1 OTSPoint3D; start of line segment
@@ -604,9 +604,9 @@ public final class OTSBufferingJTS
     }
 
     /**
-     * @param args
-     * @throws NetworkException
-     * @throws OTSGeometryException
+     * @param args args
+     * @throws NetworkException on error
+     * @throws OTSGeometryException on error
      */
     public static void main(final String[] args) throws NetworkException, OTSGeometryException
     {

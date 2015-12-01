@@ -150,8 +150,8 @@ public class OTSPoint3D implements LocatableInterface, Serializable
     public static OTSPoint3D interpolate(final double ratio, final OTSPoint3D zeroValue, final OTSPoint3D oneValue)
     {
         double complement = 1 - ratio;
-        return new OTSPoint3D(complement * zeroValue.x + ratio * oneValue.x, complement * zeroValue.y + ratio * oneValue.y,
-                complement * zeroValue.z + ratio * oneValue.z);
+        return new OTSPoint3D(complement * zeroValue.x + ratio * oneValue.x, complement * zeroValue.y + ratio
+            * oneValue.y, complement * zeroValue.z + ratio * oneValue.z);
     }
 
     /**
@@ -163,24 +163,24 @@ public class OTSPoint3D implements LocatableInterface, Serializable
      * @return OTSPoint3D; the intersection of the two lines, or null if the lines are (almost) parallel, or do not intersect
      */
     public static OTSPoint3D intersectionOfLineSegments(final OTSPoint3D line1P1, final OTSPoint3D line1P2,
-            final OTSPoint3D line2P1, final OTSPoint3D line2P2)
+        final OTSPoint3D line2P1, final OTSPoint3D line2P2)
     {
         double denominator =
-                (line2P2.y - line2P1.y) * (line1P2.x - line1P1.x) - (line2P2.x - line2P1.x) * (line1P2.y - line1P1.y);
+            (line2P2.y - line2P1.y) * (line1P2.x - line1P1.x) - (line2P2.x - line2P1.x) * (line1P2.y - line1P1.y);
         if (denominator == 0f)
         {
             return null; // lines are parallel (they might even be on top of each other, but we don't check that)
         }
         double uA =
-                ((line2P2.x - line2P1.x) * (line1P1.y - line2P1.y) - (line2P2.y - line2P1.y) * (line1P1.x - line2P1.x))
-                        / denominator;
+            ((line2P2.x - line2P1.x) * (line1P1.y - line2P1.y) - (line2P2.y - line2P1.y) * (line1P1.x - line2P1.x))
+                / denominator;
         if ((uA < 0f) || (uA > 1f))
         {
             return null; // intersection outside line 1
         }
         double uB =
-                ((line1P2.x - line1P1.x) * (line1P1.y - line2P1.y) - (line1P2.y - line1P1.y) * (line1P1.x - line2P1.x))
-                        / denominator;
+            ((line1P2.x - line1P1.x) * (line1P1.y - line2P1.y) - (line1P2.y - line1P1.y) * (line1P1.x - line2P1.x))
+                / denominator;
         if (uB < 0 || uB > 1)
         {
             return null; // intersection outside line 2
@@ -190,7 +190,7 @@ public class OTSPoint3D implements LocatableInterface, Serializable
 
     /**
      * Compute the distance of a line segment to a point. If the the projected points lies outside the line segment, the nearest
-     * end point of the line segment is returned. Otherwise the point return lies between the end points of the line segment. <br />
+     * end point of the line segment is returned. Otherwise the point return lies between the end points of the line segment. <br>
      * Adapted from <a href="http://paulbourke.net/geometry/pointlineplane/DistancePoint.java"> example code provided by Paul
      * Bourke</a>.
      * @param lineP1 OTSPoint3D; start of line segment
@@ -205,7 +205,7 @@ public class OTSPoint3D implements LocatableInterface, Serializable
 
     /**
      * Project a point on a line (2D). If the the projected points lies outside the line segment, the nearest end point of the
-     * line segment is returned. Otherwise the point return lies between the end points of the line segment. <br />
+     * line segment is returned. Otherwise the point return lies between the end points of the line segment. <br>
      * Adapted from <a href="http://paulbourke.net/geometry/pointlineplane/DistancePoint.java"> example code provided by Paul
      * Bourke</a>.
      * @param lineP1 OTSPoint3D; start of line segment
@@ -331,7 +331,7 @@ public class OTSPoint3D implements LocatableInterface, Serializable
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
+    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     public boolean equals(final Object obj)
     {
         if (this == obj)

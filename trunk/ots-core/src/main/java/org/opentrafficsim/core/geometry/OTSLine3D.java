@@ -345,7 +345,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * @param start double; starting point, valid range [0..<cite>end</cite>)
      * @param end double; ending point, valid range (<cite>start</cite>..1]
      * @return OTSLine3D; the new OTSLine3D
-     * @throws OTSGeometryException when start >= end, or start < 0, or end > 1
+     * @throws OTSGeometryException when start &gt;= end, or start &lt; 0, or end &gt; 1
      */
     public final OTSLine3D extractFractional(double start, double end) throws OTSGeometryException
     {
@@ -363,7 +363,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * @param end Length.Rel; length along this OTSLine3D where the sub-section ends, valid range
      *            (<cite>start</cite>..<cite>length</cite> (length is the length of this OTSLine3D)
      * @return OTSLine3D; the selected sub-section
-     * @throws OTSGeometryException when start >= end, or start < 0, or end > length
+     * @throws OTSGeometryException when start &gt;= end, or start &lt; 0, or end &gt; length
      */
     public final OTSLine3D extract(final Length.Rel start, final Length.Rel end) throws OTSGeometryException
     {
@@ -376,7 +376,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * @param end double; length along this OTSLine3D where the sub-section ends, valid range
      *            (<cite>start</cite>..<cite>length</cite> (length is the length of this OTSLine3D)
      * @return OTSLine3D; the selected sub-section
-     * @throws OTSGeometryException when start >= end, or start < 0, or end > length
+     * @throws OTSGeometryException when start &gt;= end, or start &lt; 0, or end &gt; length
      */
     public final OTSLine3D extract(double start, double end) throws OTSGeometryException
     {
