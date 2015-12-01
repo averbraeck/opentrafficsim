@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import javax.media.j3d.Bounds;
 
@@ -55,6 +56,9 @@ public class OTSLine3D implements LocatableInterface, Serializable
     /** the cached bounds; will be calculated when needed for the first time. */
     private Bounds bounds = null;
 
+    /** Debugging flag. */
+    static boolean debugOffsetLine;
+
     /**
      * @param points the array of points to construct this OTSLine3D from.
      * @throws NetworkException when the provided points do not constitute a valid line (too few points or identical adjacent
@@ -65,18 +69,33 @@ public class OTSLine3D implements LocatableInterface, Serializable
         if (points.length < 2)
         {
             throw new NetworkException("Degenerate OTSLine3D; has " + points.length + " point"
-                + (points.length != 1 ? "s" : ""));
+                    + (points.length != 1 ? "s" : ""));
         }
         for (int i = 1; i < points.length; i++)
         {
             if (points[i - 1].x == points[i].x && points[i - 1].y == points[i].y && points[i - 1].z == points[i].z)
             {
-                throw new NetworkException("Degenerate OTSLine3D; point " + (i - 1)
-                    + " has the same x, y and z as point " + i);
+                throw new NetworkException("Degenerate OTSLine3D; point " + (i - 1) + " has the same x, y and z as point " + i);
             }
         }
         this.points = points;
     }
+
+    /** Which offsetLine method to use... */
+    public enum OffsetMethod
+    {
+        /** Via JTS buffer. */
+        JTS,
+
+        /** Peter Knoppers. */
+        PK,
+
+        /** Alexander Verbraeck. */
+        AV;
+    };
+
+    /** Which offset line method to use... */
+    public static OffsetMethod OFFSETMETHOD = OffsetMethod.JTS;
 
     /**
      * Construct parallel line.
@@ -87,11 +106,312 @@ public class OTSLine3D implements LocatableInterface, Serializable
     {
         try
         {
-            return OTSBufferingJTS.offsetGeometryOLD(this, offset);
-            // return OTSBufferingPK.offsetLine(this, offset);
-            // return OTSBufferingAV.offsetLine(this, offset);
+            switch (OFFSETMETHOD)
+            {
+                case PK:
+                    double bufferOffset = Math.abs(offset);
+                    final double precision = 0.00001;
+                    if (bufferOffset < precision)
+                    {
+                        return this; // "This" is immutable (except for some cached fields); so we can safely return "this".
+                    }
+                    final double circlePrecision = 0.001;
+                    List<OTSPoint3D> tempPoints = new ArrayList<>();
+                    // Make good use of the fact that an OTSLine3D cannot have consecutive duplicate points and has > 1 points
+                    OTSPoint3D prevPoint = get(0);
+                    Double prevAngle = null;
+                    for (int index = 0; index < size() - 1; index++)
+                    {
+                        OTSPoint3D nextPoint = get(index + 1);
+                        double angle = Math.atan2(nextPoint.y - prevPoint.y, nextPoint.x - prevPoint.x);
+                        OTSPoint3D segmentFrom =
+                                new OTSPoint3D(prevPoint.x - Math.sin(angle) * offset, prevPoint.y + Math.cos(angle) * offset);
+                        OTSPoint3D segmentTo =
+                                new OTSPoint3D(nextPoint.x - Math.sin(angle) * offset, nextPoint.y + Math.cos(angle) * offset);
+                        boolean addSegment = true;
+                        if (index > 0)
+                        {
+                            double deltaAngle = angle - prevAngle;
+                            if (Math.abs(deltaAngle) > Math.PI)
+                            {
+                                deltaAngle -= Math.signum(deltaAngle) * 2 * Math.PI;
+                            }
+                            if (deltaAngle * offset > 0)
+                            {
+                                // Inside of curve of reference line.
+                                // Add the intersection point of each previous segment and the next segment
+                                OTSPoint3D pPoint = null;
+                                for (int i = 0; i < tempPoints.size(); i++)
+                                {
+                                    OTSPoint3D p = tempPoints.get(i);
+                                    if (null != pPoint)
+                                    {
+                                        double pAngle = Math.atan2(p.y - pPoint.y, p.x - pPoint.x);
+                                        double angleDifference = angle - pAngle;
+                                        if (Math.abs(angleDifference) > Math.PI)
+                                        {
+                                            angleDifference += Math.signum(angleDifference) * 2 * Math.PI;
+                                        }
+                                        if (OTSLine3D.debugOffsetLine)
+                                        {
+                                            System.out.println("#preceding segment " + pPoint + " to " + p + ", this segment "
+                                                    + segmentFrom + " to " + segmentTo + " angleDifference "
+                                                    + Math.toDegrees(angleDifference));
+                                        }
+                                        if (Math.abs(angleDifference) > 0)// 0.01)
+                                        {
+                                            OTSPoint3D intersection =
+                                                    OTSPoint3D.intersectionOfLineSegments(pPoint, p, segmentFrom, segmentTo);
+                                            if (null != intersection)
+                                            {
+                                                if (tempPoints.size() - 1 == i)
+                                                {
+                                                    if (OTSLine3D.debugOffsetLine)
+                                                    {
+                                                        System.out.println("#Replacing last point of preceding segment and "
+                                                                + "first point of next segment by their intersection "
+                                                                + intersection);
+                                                    }
+                                                    tempPoints.remove(tempPoints.size() - 1);
+                                                    segmentFrom = intersection;
+                                                }
+                                                else
+                                                {
+                                                    if (OTSLine3D.debugOffsetLine)
+                                                    {
+                                                        System.out.println("#Adding intersection of preceding segment and "
+                                                                + "next segment " + intersection);
+                                                    }
+                                                    tempPoints.add(intersection);
+                                                }
+                                                // tempPoints.set(tempPoints.size() - 1, intermediatePoint);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (debugOffsetLine)
+                                            {
+                                                System.out
+                                                        .println("#Not adding intersection of preceding segment and this segment "
+                                                                + "(angle too small)");
+                                            }
+                                            if (i == tempPoints.size() - 1)
+                                            {
+                                                if (debugOffsetLine)
+                                                {
+                                                    System.out.println("#Not adding segment");
+                                                }
+                                                addSegment = false;
+                                            }
+                                        }
+                                    }
+                                    pPoint = p;
+                                }
+                            }
+                            else
+                            {
+                                // Outside of curve of reference line
+                                // Approximate an arc using straight segments.
+                                // Determine how many segments are needed.
+                                int numSegments = 1;
+                                if (Math.abs(deltaAngle) > Math.PI / 2)
+                                {
+                                    numSegments = 2;
+                                }
+                                for (; numSegments < 1000; numSegments *= 2)
+                                {
+                                    double maxError = bufferOffset * (1 - Math.abs(Math.cos(deltaAngle / numSegments / 2)));
+                                    if (maxError < circlePrecision)
+                                    {
+                                        break; // required precision reached
+                                    }
+                                }
+                                OTSPoint3D prevArcPoint = tempPoints.get(tempPoints.size() - 1);
+                                // Generate the intermediate points
+                                for (int additionalPoint = 1; additionalPoint < numSegments; additionalPoint++)
+                                {
+                                    double intermediateAngle =
+                                            (additionalPoint * angle + (numSegments - additionalPoint) * prevAngle)
+                                                    / numSegments;
+                                    if (prevAngle * angle < 0 && Math.abs(prevAngle) > Math.PI / 2
+                                            && Math.abs(angle) > Math.PI / 2)
+                                    {
+                                        intermediateAngle += Math.PI;
+                                    }
+                                    OTSPoint3D intermediatePoint =
+                                            new OTSPoint3D(prevPoint.x - Math.sin(intermediateAngle) * offset, prevPoint.y
+                                                    + Math.cos(intermediateAngle) * offset);
+                                    // Find any intersection points of the new segment and all previous segments
+                                    OTSPoint3D prevSegFrom = null;
+                                    int stopAt = tempPoints.size();
+                                    for (int i = 0; i < stopAt; i++)
+                                    {
+                                        OTSPoint3D prevSegTo = tempPoints.get(i);
+                                        if (null != prevSegFrom)
+                                        {
+                                            OTSPoint3D prevSegIntersection =
+                                                    OTSPoint3D.intersectionOfLineSegments(prevArcPoint, intermediatePoint,
+                                                            prevSegFrom, prevSegTo);
+                                            if (null != prevSegIntersection
+                                                    && prevSegIntersection.horizontalDistanceSI(prevArcPoint) > circlePrecision
+                                                    && prevSegIntersection.horizontalDistanceSI(prevSegFrom) > circlePrecision
+                                                    && prevSegIntersection.horizontalDistanceSI(prevSegTo) > circlePrecision)
+                                            {
+                                                if (OTSLine3D.debugOffsetLine)
+                                                {
+                                                    System.out.println("#inserting intersection in arc segment "
+                                                            + prevSegIntersection);
+                                                }
+                                                tempPoints.add(prevSegIntersection);
+                                            }
+                                        }
+                                        prevSegFrom = prevSegTo;
+                                    }
+                                    OTSPoint3D nextSegmentIntersection =
+                                            OTSPoint3D.intersectionOfLineSegments(prevSegFrom, intermediatePoint, segmentFrom,
+                                                    segmentTo);
+                                    if (null != nextSegmentIntersection)
+                                    {
+                                        if (OTSLine3D.debugOffsetLine)
+                                        {
+                                            System.out.println("#inserting intersection of arc segment with next segment "
+                                                    + nextSegmentIntersection);
+                                        }
+                                        tempPoints.add(nextSegmentIntersection);
+                                    }
+                                    if (OTSLine3D.debugOffsetLine)
+                                    {
+                                        System.out.println("#inserting arc point " + intermediatePoint + " for angle "
+                                                + Math.toDegrees(intermediateAngle));
+                                    }
+                                    tempPoints.add(intermediatePoint);
+                                    prevArcPoint = intermediatePoint;
+                                }
+                                // Find any intersection points of the last new segment and all previous segments
+                                OTSPoint3D prevSegFrom = null;
+                                int stopAt = tempPoints.size() - 1;
+                                for (int i = 0; i < stopAt; i++)
+                                {
+                                    OTSPoint3D prevSegTo = tempPoints.get(i);
+                                    if (null != prevSegFrom)
+                                    {
+                                        OTSPoint3D prevSegIntersection =
+                                                OTSPoint3D.intersectionOfLineSegments(prevArcPoint, segmentFrom, prevSegFrom,
+                                                        prevSegTo);
+                                        if (null != prevSegIntersection
+                                                && prevSegIntersection.horizontalDistanceSI(prevArcPoint) > circlePrecision
+                                                && prevSegIntersection.horizontalDistanceSI(prevSegFrom) > circlePrecision
+                                                && prevSegIntersection.horizontalDistanceSI(prevSegTo) > circlePrecision)
+                                        {
+                                            if (OTSLine3D.debugOffsetLine)
+                                            {
+                                                System.out.println("#inserting intersection in last arc segment "
+                                                        + prevSegIntersection);
+                                            }
+                                            tempPoints.add(prevSegIntersection);
+                                        }
+                                    }
+                                    prevSegFrom = prevSegTo;
+                                }
+                            }
+                        }
+                        if (addSegment)
+                        {
+                            if (OTSLine3D.debugOffsetLine)
+                            {
+                                System.out.println("#Adding segmentFrom " + segmentFrom);
+                            }
+                            tempPoints.add(segmentFrom);
+                            if (OTSLine3D.debugOffsetLine)
+                            {
+                                System.out.println("#Adding segmentTo " + segmentTo);
+                            }
+                            tempPoints.add(segmentTo);
+                            prevPoint = nextPoint;
+                            prevAngle = angle;
+                        }
+                    }
+                    if (OTSLine3D.debugOffsetLine)
+                    {
+                        System.out.println("# before cleanup: \nc0,0,0\n");
+                        if (tempPoints.size() > 0)
+                        {
+                            OTSPoint3D p = tempPoints.get(0);
+                            System.out.println(String.format(Locale.US, "M %.3f,%.3f\n", p.x, p.y));
+                            for (int i = 1; i < tempPoints.size(); i++)
+                            {
+                                p = tempPoints.get(i);
+                                System.out.println(String.format(Locale.US, "L %.3f,%.3f\n", p.x, p.y));
+                            }
+                        }
+                    }
+                    // Remove points that are closer than the specified offset
+                    for (int index = 1; index < tempPoints.size() - 1; index++)
+                    {
+                        OTSPoint3D checkPoint = tempPoints.get(index);
+                        prevPoint = null;
+                        boolean tooClose = false;
+                        boolean somewhereAtCorrectDistance = false;
+                        for (int i = 0; i < size(); i++)
+                        {
+                            OTSPoint3D p = get(i);
+                            if (null != prevPoint)
+                            {
+                                OTSPoint3D closestPoint = OTSPoint3D.closestPointOnSegmentToPoint(prevPoint, p, checkPoint);
+                                double distance = closestPoint.horizontalDistanceSI(checkPoint);
+                                if (distance < bufferOffset - circlePrecision)
+                                {
+                                    if (OTSLine3D.debugOffsetLine)
+                                    {
+                                        System.out.print("#point " + checkPoint + " inside buffer (distance is " + distance
+                                                + ") ");
+                                    }
+                                    tooClose = true;
+                                    break;
+                                }
+                                else if (distance < bufferOffset + precision)
+                                {
+                                    somewhereAtCorrectDistance = true;
+                                }
+                            }
+                            prevPoint = p;
+                        }
+                        if (tooClose || !somewhereAtCorrectDistance)
+                        {
+                            if (OTSLine3D.debugOffsetLine)
+                            {
+                                System.out.println("#Removing " + checkPoint);
+                            }
+                            tempPoints.remove(index);
+                            index--;
+                        }
+                    }
+                    if (OTSLine3D.debugOffsetLine)
+                    {
+                        System.out.println("#after cleanup " + tempPoints.size() + " points left");
+                    }
+                    // Fix the z-coordinate of all points that were added as intersections of segments.
+                    for (int index = 0; index < tempPoints.size(); index++)
+                    {
+                        OTSPoint3D p = tempPoints.get(index);
+                        if (Double.isNaN(p.z))
+                        {
+                            tempPoints.set(index, new OTSPoint3D(p.x, p.y, 0));
+                        }
+                    }
+                    return OTSLine3D.createAndCleanOTSLine3D(tempPoints);
+
+                case AV:
+                    return OTSBufferingAV.offsetLine(this, offset);
+
+                case JTS:
+                    return OTSBufferingJTS.offsetLine(this, offset);
+
+                default:
+                    return null;
+            }
         }
-        catch (Exception exception)
+        catch (OTSGeometryException | NetworkException exception)
         {
             exception.printStackTrace();
             return null;
@@ -135,11 +455,11 @@ public class OTSLine3D implements LocatableInterface, Serializable
         while (firstIndex < firstCoordinates.length && secondIndex < secondCoordinates.length)
         {
             double firstRatio =
-                firstIndex < firstCoordinates.length ? first.indexOf(firstCoordinates[firstIndex]) / firstLength
-                    : Double.MAX_VALUE;
+                    firstIndex < firstCoordinates.length ? first.indexOf(firstCoordinates[firstIndex]) / firstLength
+                            : Double.MAX_VALUE;
             double secondRatio =
-                secondIndex < secondCoordinates.length ? second.indexOf(secondCoordinates[secondIndex]) / secondLength
-                    : Double.MAX_VALUE;
+                    secondIndex < secondCoordinates.length ? second.indexOf(secondCoordinates[secondIndex]) / secondLength
+                            : Double.MAX_VALUE;
             double ratio;
             if (firstRatio < secondRatio)
             {
@@ -154,8 +474,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
             Coordinate firstCoordinate = first.extractPoint(ratio * firstLength);
             Coordinate secondCoordinate = second.extractPoint(ratio * secondLength);
             Coordinate resultCoordinate =
-                new Coordinate((1 - ratio) * firstCoordinate.x + ratio * secondCoordinate.x, (1 - ratio)
-                    * firstCoordinate.y + ratio * secondCoordinate.y);
+                    new Coordinate((1 - ratio) * firstCoordinate.x + ratio * secondCoordinate.x, (1 - ratio)
+                            * firstCoordinate.y + ratio * secondCoordinate.y);
             if (null == prevCoordinate || resultCoordinate.distance(prevCoordinate) > tooClose)
             {
                 out.add(resultCoordinate);
@@ -190,8 +510,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * @return Geometry; the Geometry of the line at linearly changing offset of the reference line
      * @throws OTSGeometryException when this method fails to create the offset line
      */
-    public final OTSLine3D offsetLine(final double[] relativeFractions, final double[] offsets)
-        throws OTSGeometryException
+    public final OTSLine3D offsetLine(final double[] relativeFractions, final double[] offsets) throws OTSGeometryException
     {
         OTSLine3D[] offsetLine = new OTSLine3D[relativeFractions.length];
         for (int i = 0; i < offsets.length; i++)
@@ -207,9 +526,9 @@ public class OTSLine3D implements LocatableInterface, Serializable
         for (int i = 0; i < offsets.length - 1; i++)
         {
             Geometry startGeometry =
-                offsetLine[i].extractFractional(relativeFractions[i], relativeFractions[i + 1]).getLineString();
+                    offsetLine[i].extractFractional(relativeFractions[i], relativeFractions[i + 1]).getLineString();
             Geometry endGeometry =
-                offsetLine[i + 1].extractFractional(relativeFractions[i], relativeFractions[i + 1]).getLineString();
+                    offsetLine[i + 1].extractFractional(relativeFractions[i], relativeFractions[i + 1]).getLineString();
             LengthIndexedLine first = new LengthIndexedLine(startGeometry);
             double firstLength = startGeometry.getLength();
             LengthIndexedLine second = new LengthIndexedLine(endGeometry);
@@ -221,11 +540,11 @@ public class OTSLine3D implements LocatableInterface, Serializable
             while (firstIndex < firstCoordinates.length && secondIndex < secondCoordinates.length)
             {
                 double firstRatio =
-                    firstIndex < firstCoordinates.length ? first.indexOf(firstCoordinates[firstIndex]) / firstLength
-                        : Double.MAX_VALUE;
+                        firstIndex < firstCoordinates.length ? first.indexOf(firstCoordinates[firstIndex]) / firstLength
+                                : Double.MAX_VALUE;
                 double secondRatio =
-                    secondIndex < secondCoordinates.length ? second.indexOf(secondCoordinates[secondIndex])
-                        / secondLength : Double.MAX_VALUE;
+                        secondIndex < secondCoordinates.length ? second.indexOf(secondCoordinates[secondIndex]) / secondLength
+                                : Double.MAX_VALUE;
                 double ratio;
                 if (firstRatio < secondRatio)
                 {
@@ -240,8 +559,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
                 Coordinate firstCoordinate = first.extractPoint(ratio * firstLength);
                 Coordinate secondCoordinate = second.extractPoint(ratio * secondLength);
                 Coordinate resultCoordinate =
-                    new Coordinate((1 - ratio) * firstCoordinate.x + ratio * secondCoordinate.x, (1 - ratio)
-                        * firstCoordinate.y + ratio * secondCoordinate.y);
+                        new Coordinate((1 - ratio) * firstCoordinate.x + ratio * secondCoordinate.x, (1 - ratio)
+                                * firstCoordinate.y + ratio * secondCoordinate.y);
                 if (null == prevCoordinate || resultCoordinate.distance(prevCoordinate) > tooClose)
                 {
                     out.add(resultCoordinate);
@@ -410,7 +729,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         else
         {
             pointList.add(OTSPoint3D.interpolate((start - cumulativeLength) / segmentLength, this.points[index - 1],
-                this.points[index]));
+                    this.points[index]));
             if (end > nextCumulativeLength)
             {
                 pointList.add(this.points[index]);
@@ -442,7 +761,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         {
             // System.err.println("interpolating between points " + (index - 1) + " and " + index);
             pointList.add(OTSPoint3D.interpolate((end - cumulativeLength) / segmentLength, this.points[index - 1],
-                this.points[index]));
+                    this.points[index]));
         }
         // System.err.println("point list is");
         // for (OTSPoint3D p : pointList)
@@ -486,7 +805,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         if (points.length < 2)
         {
             throw new NetworkException("Degenerate OTSLine3D; has " + points.length + " point"
-                + (points.length != 1 ? "s" : ""));
+                    + (points.length != 1 ? "s" : ""));
         }
         return createAndCleanOTSLine3D(new ArrayList<>(Arrays.asList(points)));
     }
@@ -661,8 +980,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
             this.lengthIndexedLine[0] = 0.0;
             for (int i = 1; i < this.points.length; i++)
             {
-                this.lengthIndexedLine[i] =
-                    this.lengthIndexedLine[i - 1] + this.points[i - 1].distanceSI(this.points[i]);
+                this.lengthIndexedLine[i] = this.lengthIndexedLine[i - 1] + this.points[i - 1].distanceSI(this.points[i]);
             }
         }
     }
@@ -707,7 +1025,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
             OTSPoint3D p1 = this.points[0];
             OTSPoint3D p2 = this.points[1];
             return new DirectedPoint(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y), p1.z + fraction
-                * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+                    * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
         }
 
         // position beyond end point -- extrapolate
@@ -718,7 +1036,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         OTSPoint3D p1 = this.points[n2];
         OTSPoint3D p2 = this.points[n1];
         return new DirectedPoint(p2.x + fraction * (p2.x - p1.x), p2.y + fraction * (p2.y - p1.y), p2.z + fraction
-            * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+                * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
     }
 
     /**
@@ -805,8 +1123,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
         makeLengthIndexedLine();
         if (positionSI < 0.0 || positionSI > getLengthSI())
         {
-            throw new NetworkException("getLocationSI for line: position < 0.0 or > line length. Position = "
-                + positionSI + " m. Length = " + getLengthSI() + " m.");
+            throw new NetworkException("getLocationSI for line: position < 0.0 or > line length. Position = " + positionSI
+                    + " m. Length = " + getLengthSI() + " m.");
         }
 
         // handle special cases: position == 0.0, or position == length
@@ -830,7 +1148,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         OTSPoint3D p1 = this.points[index];
         OTSPoint3D p2 = this.points[index + 1];
         return new DirectedPoint(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y), p1.z + fraction
-            * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+                * (p2.z - p1.z), 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
     }
 
     /**
@@ -845,7 +1163,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         if (lengthSI <= 0.0 || lengthSI > getLengthSI())
         {
             throw new NetworkException("truncate for line: position <= 0.0 or > line length. Position = " + lengthSI
-                + " m. Length = " + getLengthSI() + " m.");
+                    + " m. Length = " + getLengthSI() + " m.");
         }
 
         // handle special case: position == length
@@ -861,8 +1179,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
         OTSPoint3D p1 = this.points[index];
         OTSPoint3D p2 = this.points[index + 1];
         OTSPoint3D newLastPoint =
-            new OTSPoint3D(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y), p1.z + fraction
-                * (p2.z - p1.z));
+                new OTSPoint3D(p1.x + fraction * (p2.x - p1.x), p1.y + fraction * (p2.y - p1.y), p1.z + fraction
+                        * (p2.z - p1.z));
         OTSPoint3D[] coords = new OTSPoint3D[index + 2];
         for (int i = 0; i <= index; i++)
         {
@@ -945,7 +1263,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     public boolean equals(final Object obj)
     {
         if (this == obj)
@@ -972,6 +1290,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         }
         return s.toString();
     }
+
     /**
      * @param args args
      * @throws NetworkException in case of error
@@ -980,17 +1299,17 @@ public class OTSLine3D implements LocatableInterface, Serializable
     public static void main(final String[] args) throws NetworkException, OTSGeometryException
     {
         OTSLine3D line =
-            new OTSLine3D(new OTSPoint3D(-263.811, -86.551, 1.180), new OTSPoint3D(-262.945, -84.450, 1.180),
-                new OTSPoint3D(-261.966, -82.074, 1.180), new OTSPoint3D(-260.890, -79.464, 1.198), new OTSPoint3D(
-                    -259.909, -76.955, 1.198), new OTSPoint3D(-258.911, -74.400, 1.198), new OTSPoint3D(-257.830,
-                    -71.633, 1.234));
+                new OTSLine3D(new OTSPoint3D(-263.811, -86.551, 1.180), new OTSPoint3D(-262.945, -84.450, 1.180),
+                        new OTSPoint3D(-261.966, -82.074, 1.180), new OTSPoint3D(-260.890, -79.464, 1.198), new OTSPoint3D(
+                                -259.909, -76.955, 1.198), new OTSPoint3D(-258.911, -74.400, 1.198), new OTSPoint3D(-257.830,
+                                -71.633, 1.234));
         System.out.println(line.toExcel());
         double[] relativeFractions =
-            new double[]{0.0, 0.19827228089475762, 0.30549496392494213, 0.5824753163948581, 0.6815307752261827,
-                0.7903990449840241, 0.8942375145295614, 1.0};
+                new double[] { 0.0, 0.19827228089475762, 0.30549496392494213, 0.5824753163948581, 0.6815307752261827,
+                        0.7903990449840241, 0.8942375145295614, 1.0 };
         double[] offsets =
-            new double[]{2.9779999256134, 4.6029999256134, 3.886839156071996, 2.3664845198627207, 1.7858981925396709,
-                1.472348149010167, 2.0416709053157285, 2.798692100483229};
+                new double[] { 2.9779999256134, 4.6029999256134, 3.886839156071996, 2.3664845198627207, 1.7858981925396709,
+                        1.472348149010167, 2.0416709053157285, 2.798692100483229 };
         System.out.println(line.offsetLine(relativeFractions, offsets).toExcel());
     }
 }
