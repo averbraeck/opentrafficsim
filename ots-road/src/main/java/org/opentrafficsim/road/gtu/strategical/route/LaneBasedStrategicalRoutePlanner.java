@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.strategical.route;
 
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.AbstractLaneBasedStrategicalPlanner;
@@ -20,12 +21,25 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
  */
 public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategicalPlanner implements LaneBasedStrategicalPlanner
 {
+    /** the route to drive. */
+    private final Route route;
+    
     /**
      * @param drivingCharacteristics the personal driving characteristics, which contain settings for the tactical planner
      */
     public LaneBasedStrategicalRoutePlanner(LaneBasedDrivingCharacteristics drivingCharacteristics)
     {
+        this(drivingCharacteristics, null);
+    }
+
+    /**
+     * @param drivingCharacteristics the personal driving characteristics, which contain settings for the tactical planner
+     * @param route the route to drive
+     */
+    public LaneBasedStrategicalRoutePlanner(LaneBasedDrivingCharacteristics drivingCharacteristics, final Route route)
+    {
         super(drivingCharacteristics);
+        this.route = route;
     }
 
     /** {@inheritDoc} */
@@ -33,6 +47,14 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     public TacticalPlanner generateTacticalPlanner(final GTU gtu)
     {
         return new LaneBasedCFLCTacticalPlanner(this);
+    }
+
+    /**
+     * @return route
+     */
+    public final Route getRoute()
+    {
+        return this.route;
     }
 
 }
