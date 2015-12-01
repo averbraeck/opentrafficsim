@@ -150,12 +150,13 @@ public class OTSPoint3D implements LocatableInterface, Serializable
     public static OTSPoint3D interpolate(final double ratio, final OTSPoint3D zeroValue, final OTSPoint3D oneValue)
     {
         double complement = 1 - ratio;
-        return new OTSPoint3D(complement * zeroValue.x + ratio * oneValue.x, complement * zeroValue.y + ratio
-            * oneValue.y, complement * zeroValue.z + ratio * oneValue.z);
+        return new OTSPoint3D(complement * zeroValue.x + ratio * oneValue.x, complement * zeroValue.y + ratio * oneValue.y,
+                complement * zeroValue.z + ratio * oneValue.z);
     }
 
     /**
-     * Compute the 2D intersection of two line segments. Both line segments are defined by two points (that should be distinct).
+     * Compute the 2D intersection of two line segments. The Z-component of the lines is ignored. Both line segments are defined
+     * by two points (that should be distinct).
      * @param line1P1 OTSPoint3D; first point of line segment 1
      * @param line1P2 OTSPoint3D; second point of line segment 1
      * @param line2P1 OTSPoint3D; first point of line segment 2
@@ -163,24 +164,24 @@ public class OTSPoint3D implements LocatableInterface, Serializable
      * @return OTSPoint3D; the intersection of the two lines, or null if the lines are (almost) parallel, or do not intersect
      */
     public static OTSPoint3D intersectionOfLineSegments(final OTSPoint3D line1P1, final OTSPoint3D line1P2,
-        final OTSPoint3D line2P1, final OTSPoint3D line2P2)
+            final OTSPoint3D line2P1, final OTSPoint3D line2P2)
     {
         double denominator =
-            (line2P2.y - line2P1.y) * (line1P2.x - line1P1.x) - (line2P2.x - line2P1.x) * (line1P2.y - line1P1.y);
+                (line2P2.y - line2P1.y) * (line1P2.x - line1P1.x) - (line2P2.x - line2P1.x) * (line1P2.y - line1P1.y);
         if (denominator == 0f)
         {
             return null; // lines are parallel (they might even be on top of each other, but we don't check that)
         }
         double uA =
-            ((line2P2.x - line2P1.x) * (line1P1.y - line2P1.y) - (line2P2.y - line2P1.y) * (line1P1.x - line2P1.x))
-                / denominator;
+                ((line2P2.x - line2P1.x) * (line1P1.y - line2P1.y) - (line2P2.y - line2P1.y) * (line1P1.x - line2P1.x))
+                        / denominator;
         if ((uA < 0f) || (uA > 1f))
         {
             return null; // intersection outside line 1
         }
         double uB =
-            ((line1P2.x - line1P1.x) * (line1P1.y - line2P1.y) - (line1P2.y - line1P1.y) * (line1P1.x - line2P1.x))
-                / denominator;
+                ((line1P2.x - line1P1.x) * (line1P1.y - line2P1.y) - (line1P2.y - line1P1.y) * (line1P1.x - line2P1.x))
+                        / denominator;
         if (uB < 0 || uB > 1)
         {
             return null; // intersection outside line 2
@@ -189,49 +190,76 @@ public class OTSPoint3D implements LocatableInterface, Serializable
     }
 
     /**
-     * Compute the distance of a line segment to a point. If the the projected points lies outside the line segment, the nearest
-     * end point of the line segment is returned. Otherwise the point return lies between the end points of the line segment. <br>
-     * Adapted from <a href="http://paulbourke.net/geometry/pointlineplane/DistancePoint.java"> example code provided by Paul
-     * Bourke</a>.
-     * @param lineP1 OTSPoint3D; start of line segment
-     * @param lineP2 OTSPoint3D; end of line segment
-     * @param point Point to project onto the line segment
-     * @return double; the distance of the projected point or one of the end points of the line segment to the point
+     * Compute the 2D intersection of two infinite lines. The Z-component of the lines is ignored. Both lines are defined by two
+     * points (that should be distinct).
+     * @param line1P1 OTSPoint3D; first point of line 1
+     * @param line1P2 OTSPoint3D; second point of line 1
+     * @param line2P1 OTSPoint3D; first point of line 2
+     * @param line2P2 OTSPoint3D; second point of line 2
+     * @return OTSPoint3D; the intersection of the two lines, or null if the lines are (almost) parallel
      */
-    public static double distanceLineSegmentToPoint(OTSPoint3D lineP1, OTSPoint3D lineP2, OTSPoint3D point)
+    public static OTSPoint3D intersectionOfLines(final OTSPoint3D line1P1, final OTSPoint3D line1P2, final OTSPoint3D line2P1,
+            final OTSPoint3D line2P2)
     {
-        return closestPointOnSegmentToPoint(lineP1, lineP2, point).distanceSI(point);
+        double determinant =
+                (line1P1.x - line1P2.x) * (line2P1.y - line2P2.y) - (line1P1.y - line1P2.y) * (line2P1.x - line2P2.x);
+        if (Math.abs(determinant) < 0.0000001)
+        {
+            return null;
+        }
+        return new OTSPoint3D(
+                ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.x - line2P2.x) - (line1P1.x - line1P2.x)
+                        * (line2P1.x * line2P2.y - line2P1.y * line2P2.x))
+                        / determinant,
+                ((line1P1.x * line1P2.y - line1P1.y * line1P2.x) * (line2P1.y - line2P2.y) - (line1P1.y - line1P2.y)
+                        * (line2P1.x * line2P2.y - line2P1.y * line2P2.x))
+                        / determinant);
     }
 
     /**
-     * Project a point on a line (2D). If the the projected points lies outside the line segment, the nearest end point of the
-     * line segment is returned. Otherwise the point return lies between the end points of the line segment. <br>
+     * Compute the distance to a line segment (2D; Z-component is ignored). If the projection of this point onto the line lies
+     * outside the line segment; the distance to nearest end point of the line segment is returned. Otherwise the distance to
+     * the line segment is returned. <br>
      * Adapted from <a href="http://paulbourke.net/geometry/pointlineplane/DistancePoint.java"> example code provided by Paul
      * Bourke</a>.
-     * @param lineP1 OTSPoint3D; start of line segment
-     * @param lineP2 OTSPoint3D; end of line segment
-     * @param point Point to project onto the line segment
+     * @param segmentPoint1 OTSPoint3D; start of line segment
+     * @param segmentPoint2 OTSPoint3D; end of line segment
+     * @return double; the distance of this point to (one of the end points of the line segment)
+     */
+    public double distanceToLineSegment(OTSPoint3D segmentPoint1, OTSPoint3D segmentPoint2)
+    {
+        return closestPointOnSegment(segmentPoint1, segmentPoint2).distanceSI(this);
+    }
+
+    /**
+     * Project a point on a line segment (2D - Z-component is ignored). If the the projected points lies outside the line
+     * segment, the nearest end point of the line segment is returned. Otherwise the returned point lies between the end points
+     * of the line segment. <br>
+     * Adapted from <a href="http://paulbourke.net/geometry/pointlineplane/DistancePoint.java"> example code provided by Paul
+     * Bourke</a>.
+     * @param segmentPoint1 OTSPoint3D; start of line segment
+     * @param segmentPoint2 OTSPoint3D; end of line segment
      * @return Point2D.Double; either <cite>lineP1</cite>, or <cite>lineP2</cite> or a new OTSPoint3D that lies somewhere in
      *         between those two
      */
-    public static OTSPoint3D closestPointOnSegmentToPoint(OTSPoint3D lineP1, OTSPoint3D lineP2, OTSPoint3D point)
+    public OTSPoint3D closestPointOnSegment(OTSPoint3D segmentPoint1, OTSPoint3D segmentPoint2)
     {
-        double dX = lineP2.x - lineP1.x;
-        double dY = lineP2.y - lineP1.y;
+        double dX = segmentPoint2.x - segmentPoint1.x;
+        double dY = segmentPoint2.y - segmentPoint1.y;
         if ((0 == dX) && (0 == dY))
-            return lineP1;
-        final double u = ((point.x - lineP1.x) * dX + (point.y - lineP1.y) * dY) / (dX * dX + dY * dY);
+            return segmentPoint1;
+        final double u = ((this.x - segmentPoint1.x) * dX + (this.y - segmentPoint1.y) * dY) / (dX * dX + dY * dY);
         if (u < 0)
-            return lineP1;
+            return segmentPoint1;
         else if (u > 1)
-            return lineP2;
+            return segmentPoint2;
         else
-            return new OTSPoint3D(lineP1.x + u * dX, lineP1.y + u * dY); // could use interpolate in stead
+            return new OTSPoint3D(segmentPoint1.x + u * dX, segmentPoint1.y + u * dY); // could use interpolate in stead
     }
 
     /**
      * @param point the point to which the distance has to be calculated.
-     * @return the distance in 3D according to Pythagoras, expressed in SI units
+     * @return the distance in 3D according to Pythagoras, expressed in the SI unit for length (meter)
      */
     public final double distanceSI(final OTSPoint3D point)
     {
@@ -244,16 +272,7 @@ public class OTSPoint3D implements LocatableInterface, Serializable
 
     /**
      * @param point the point to which the distance has to be calculated.
-     * @return the distance in 3D according to Pythagoras
-     */
-    public final Length.Rel horizontalDistance(final OTSPoint3D point)
-    {
-        return new Length.Rel(horizontalDistanceSI(point), LengthUnit.SI);
-    }
-
-    /**
-     * @param point the point to which the distance has to be calculated.
-     * @return the distance in 3D according to Pythagoras, expressed in SI units
+     * @return the distance in 3D according to Pythagoras, expressed in the SI unit for length (meter)
      */
     public final double horizontalDistanceSI(final OTSPoint3D point)
     {
@@ -261,6 +280,15 @@ public class OTSPoint3D implements LocatableInterface, Serializable
         double dy = point.y - this.y;
 
         return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    /**
+     * @param point the point to which the distance has to be calculated.
+     * @return the distance in 3D according to Pythagoras
+     */
+    public final Length.Rel horizontalDistance(final OTSPoint3D point)
+    {
+        return new Length.Rel(horizontalDistanceSI(point), LengthUnit.SI);
     }
 
     /**
@@ -331,7 +359,7 @@ public class OTSPoint3D implements LocatableInterface, Serializable
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @SuppressWarnings({ "checkstyle:designforextension", "checkstyle:needbraces" })
     public boolean equals(final Object obj)
     {
         if (this == obj)
