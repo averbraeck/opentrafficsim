@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.gtu.plan.operational;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -73,7 +75,7 @@ public class OperationalPlan implements Serializable
     static final Speed SPEED_0 = new Speed(0.0, SpeedUnit.SI);
 
     // TODO add method for timeAtDistance
-    
+
     /**
      * Construct an operational plan.
      * @param path the path to follow from a certain time till a certain time
@@ -92,7 +94,7 @@ public class OperationalPlan implements Serializable
         this.startTime = startTime;
         this.startSpeed = startSpeed;
         this.operationalPlanSegmentList = operationalPlanSegmentList;
-        this.segmentStartTimesSI = new double[operationalPlanSegmentList.size() + 1];
+        this.segmentStartTimesSI = new double[this.operationalPlanSegmentList.size() + 1];
 
         // check the driven distance of the segments
         Speed v0 = this.startSpeed;
@@ -119,6 +121,36 @@ public class OperationalPlan implements Serializable
         }
         this.totalDuration = new Time.Rel(durationSI, TimeUnit.SI);
         this.endSpeed = v0;
+    }
+
+    /**
+     * Build a plan where the GTU will wait for a certain time.
+     * @param waitPoint the point at which the GTU will wait
+     * @param startTime the current time or a time in the future when the plan should start
+     * @param duration the waiting time
+     * @throws NetworkException when construction of a waiting path fails
+     */
+    public OperationalPlan(final DirectedPoint waitPoint, final Time.Abs startTime, final Time.Rel duration)
+        throws NetworkException
+    {
+        this.startTime = startTime;
+        this.startSpeed = SPEED_0;
+        this.endSpeed = SPEED_0;
+        this.totalDuration = duration;
+
+        // make a path
+        OTSPoint3D p2 =
+            new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
+                waitPoint.z);
+        this.path = new OTSLine3D(new OTSPoint3D(waitPoint), p2);
+
+        this.operationalPlanSegmentList = new ArrayList<>();
+        Segment segment = new SpeedSegment(duration);
+        segment.setV0(SPEED_0);
+        this.operationalPlanSegmentList.add(segment);
+        this.segmentStartTimesSI = new double[2];
+        this.segmentStartTimesSI[0] = 0.0;
+        this.segmentStartTimesSI[1] = duration.si;
     }
 
     /**
@@ -221,7 +253,9 @@ public class OperationalPlan implements Serializable
     {
         // TODO...
         double fraction = time.minus(this.startTime).si / this.totalDuration.si;
-        return this.path.getLocationFraction(fraction);
+        DirectedPoint p = this.path.getLocationFraction(fraction);
+        p.setZ(p.getZ() + 0.001);
+        return p;
     }
 
     /**
