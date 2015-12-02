@@ -26,6 +26,25 @@ public class Orientation
     private float  roll;  // position[m]
 
     /**
+     * @param rotX
+     * @param rotY
+     * @param rotZ
+     */
+    public Orientation(double rotX, double rotY, double rotZ)
+    {
+        this.setPitch((float) rotY);
+        this.setRoll((float) rotX);
+        this.setYaw((float) rotZ);
+    }
+
+    /**
+     * 
+     */
+    public Orientation()
+    {
+    }
+
+    /**
      * @see java.lang.Object#toString()
      */
     public String toString()

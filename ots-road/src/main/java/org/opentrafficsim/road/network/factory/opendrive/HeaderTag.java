@@ -18,7 +18,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class HeaderTag
+public class HeaderTag
 {
     /** name of the map. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -62,11 +62,11 @@ class HeaderTag
     
     /** origin latitude of the map */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Angle.Rel originLat = null;
+    Length.Rel originLat = null;
     
     /** origin longitude of the map */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Angle.Rel originLong = null;
+    Length.Rel originLong = null;
     
     /** origin Hdg of the map */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -139,12 +139,12 @@ class HeaderTag
         Node originLat = attributes.getNamedItem("originLat");
         if (originLat == null)
             throw new SAXException("Header: missing attribute originLat");
-        headerTag.originLat = new Angle.Rel(Double.parseDouble(originLat.getNodeValue().trim()), AngleUnit.DEGREE);
+        headerTag.originLat = new Length.Rel(Double.parseDouble(originLat.getNodeValue().trim()), LengthUnit.METER);
 
         Node originLong = attributes.getNamedItem("originLong");
         if (originLong == null)
             throw new SAXException("Header: missing attribute originLong");
-        headerTag.originLong = new Angle.Rel(Double.parseDouble(originLong.getNodeValue().trim()), AngleUnit.DEGREE);
+        headerTag.originLong = new Length.Rel(Double.parseDouble(originLong.getNodeValue().trim()), LengthUnit.METER);
 
         Node originHdg = attributes.getNamedItem("originHdg");
         if (originHdg == null)
@@ -152,5 +152,21 @@ class HeaderTag
         headerTag.originHdg = new Angle.Rel(Double.parseDouble(originHdg.getNodeValue().trim()), AngleUnit.DEGREE);
         
         parser.headerTag = headerTag;
+    }
+
+    /**
+     * @return originLat
+     */
+    public Length.Rel getOriginLat()
+    {
+        return this.originLat;
+    }
+
+    /**
+     * @return originLong
+     */
+    public Length.Rel getOriginLong()
+    {
+        return this.originLong;
     }
 }

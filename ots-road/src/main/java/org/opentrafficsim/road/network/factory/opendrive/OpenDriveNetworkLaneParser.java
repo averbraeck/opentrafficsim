@@ -232,4 +232,12 @@ public class OpenDriveNetworkLaneParser
         return this.network;
     }
 
+    /**
+     * @return headerTag
+     */
+    public HeaderTag getHeaderTag()
+    {
+        return this.headerTag;
+    }
+
 }

@@ -26,6 +26,25 @@ public class Position
     private float  z;  // position[m]
 
     /**
+     * @param y2
+     * @param x2
+     * @param z2
+     */
+    public Position(double y2, double x2, double z2)
+    {
+        this.setX((float) y2);
+        this.setY((float) x2);
+        this.setZ((float) z2);
+    }
+
+    /**
+     * 
+     */
+    public Position()
+    {
+    }
+
+    /**
      * @see java.lang.Object#toString()
      */
     public String toString()
