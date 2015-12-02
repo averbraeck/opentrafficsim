@@ -6,6 +6,11 @@ import java.net.SocketException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.swing.JPanel;
@@ -15,6 +20,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistConstant;
 import nl.tudelft.simulation.jstats.distributions.DistExponential;
@@ -46,6 +52,7 @@ import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -64,6 +71,7 @@ import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkLanePar
 import org.opentrafficsim.road.network.factory.opendrive.communicationRTI.ReceiverThread;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.Sensor;
@@ -171,6 +179,8 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
 
         /** the simulator. */
         private OTSDEVSSimulatorInterface simulator;
+        
+        private List<LaneBasedIndividualCar> rtiCars;
 
         /** {@inheritDoc} */
         @Override
@@ -181,16 +191,10 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
+            
+            this.rtiCars = new ArrayList<LaneBasedIndividualCar>();
 
-            URL gisURL = URLResource.getResource("/gis/map.xml");
-            System.err.println("GIS-map file: " + gisURL.toString());
-
-            // TODO parse these from the xodr-file.
-            double latCenter = 37.40897623275873, lonCenter = -122.0246091728831;
-            CoordinateTransform latLonToXY = new CoordinateTransformLonLatToXY(lonCenter, latCenter);
-            new GisRenderable2D(this.simulator, gisURL, latLonToXY);
-
-            // URL url = URLResource.getResource("/OpenDrive.xodr");
+            //URL url = URLResource.getResource("/NASAames.xodr");
             URL url = URLResource.getResource("/testod.xodr");
             this.simulator.setPauseOnError(false);
             OpenDriveNetworkLaneParser nlp = new OpenDriveNetworkLaneParser(this.simulator);
@@ -204,19 +208,25 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
             {
                 exception.printStackTrace();
             }
+            
+            URL gisURL = URLResource.getResource("/gis/map.xml");
+            System.err.println("GIS-map file: " + gisURL.toString());
+
+            // TODO parse these from the xodr-file.
+            //double latCenter = 37.40897623275873, lonCenter = -122.0246091728831;//sunnyvale
+            //double latCenter = 37.419933552777, lonCenter = -122.05752616111000;//nasa
+            double latCenter = nlp.getHeaderTag().getOriginLat().si, lonCenter = nlp.getHeaderTag().getOriginLong().si;
+
+            CoordinateTransform latLonToXY = new CoordinateTransformLonLatToXY(lonCenter, latCenter);
+            new GisRenderable2D(this.simulator, gisURL, latLonToXY);
+            
 
             // Make a GTU Type
             GTUType carType = GTUType.makeGTUType("Car");
             
             //new ReceiverThread(this.simulator).run();
             
-            try
-            {
-                new Thread(new ReceiverThread(this.simulator, carType)).start();
-            } catch (SocketException exception1)
-            {
-                exception1.printStackTrace();
-            }
+
 
             // stream
             StreamInterface stream = new MersenneTwister(1);
@@ -235,6 +245,10 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maxSpeedDist =
                 new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(stream, 30.0, 35.0, 40.0),
                     SpeedUnit.MILE_PER_HOUR);
+           
+                ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> initialPosDist =
+                        new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 0.0, 1.0), LengthUnit.METER);
+
 
             // default colorer
 
@@ -346,8 +360,139 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                     }
                 }
             }
+            
+            CrossSectionLink link1 = (CrossSectionLink) network.getLink("3766054.1");
+            CrossSectionLink link2 = (CrossSectionLink) network.getLink("3766059.2");
+            CrossSectionLink link3 = (CrossSectionLink) network.getLink("3766068.1");
+            CrossSectionLink link4 = (CrossSectionLink) network.getLink("3766038.5");
+            CrossSectionLink link5 = (CrossSectionLink) network.getLink("3766043.1");
+            CrossSectionLink link6 = (CrossSectionLink) network.getLink("3766064.2");
+            CrossSectionLink link7 = (CrossSectionLink) network.getLink("3766046.1");
+            CrossSectionLink link8 = (CrossSectionLink) network.getLink("3766050.3");
+            
+            CompleteRoute cr1 = null, cr2 = null, cr3 = null, cr4 = null, cr5 = null, cr6 = null;
+            
+            List<Node> nodesVia1 = new ArrayList<Node>();
+            nodesVia1.add(link2.getStartNode());
+            nodesVia1.add(link3.getEndNode());
+            nodesVia1.add(link4.getStartNode());
+            nodesVia1.add(link5.getEndNode());
+            nodesVia1.add(link7.getEndNode());
+            nodesVia1.add(link8.getStartNode());
+            try
+            {
+                cr1 = network.getShortestRouteBetween(GTUType.ALL, link1.getStartNode(), link1.getStartNode(), nodesVia1);
+                Collections.reverse(nodesVia1);
+                cr2 = network.getShortestRouteBetween(GTUType.ALL, link1.getStartNode(), link1.getStartNode(), nodesVia1);
+            } catch (NetworkException exception)
+            {
+                exception.printStackTrace();
+            }
 
-            CrossSectionLink link = (CrossSectionLink) network.getLink("3766053");
+            
+            List<Node> nodesVia2 = new ArrayList<Node>();
+            nodesVia2.add(link3.getEndNode());
+            nodesVia2.add(link5.getEndNode());
+            try
+            {
+                cr3 = network.getShortestRouteBetween(GTUType.ALL, link3.getStartNode(), link3.getStartNode(), nodesVia2);
+                Collections.reverse(nodesVia2);
+                cr4 = network.getShortestRouteBetween(GTUType.ALL, link3.getStartNode(), link3.getStartNode(), nodesVia2);
+            } catch (NetworkException exception)
+            {
+                exception.printStackTrace();
+            }
+            
+            List<Node> nodesVia3 = new ArrayList<Node>();
+            nodesVia3.add(link7.getEndNode());
+            nodesVia3.add(link8.getEndNode());
+            try
+            {
+                cr5 = network.getShortestRouteBetween(GTUType.ALL, link6.getStartNode(), link6.getStartNode(), nodesVia3);
+                Collections.reverse(nodesVia3);
+                cr6 = network.getShortestRouteBetween(GTUType.ALL, link6.getStartNode(), link6.getStartNode(), nodesVia3);
+            } catch (NetworkException exception)
+            {
+                exception.printStackTrace();
+            }
+            
+            List<CompleteRoute> cRoutes = new ArrayList<>();
+            cRoutes.add(cr1);cRoutes.add(cr2);cRoutes.add(cr3);cRoutes.add(cr4);cRoutes.add(cr5);cRoutes.add(cr6);
+            Random routeRandom = new Random();
+            
+            List<CrossSectionLink> links = new ArrayList<>();
+            links.add(link1);links.add(link2);links.add(link3);links.add(link4);
+            links.add(link5);links.add(link6);links.add(link7);links.add(link8);
+            
+            for(int i = 0; i<52; i++)
+            {
+                CompleteRoute cr = cRoutes.get(routeRandom.nextInt(6));
+                
+                CrossSectionLink link;
+                while(true)
+                {
+                    link = links.get(routeRandom.nextInt(8));
+                    if(cr.getNodes().contains(link.getStartNode()))
+                        break;
+                }
+                
+                GTUDirectionality dir = GTUDirectionality.DIR_PLUS;
+                Lane lane = null;
+                
+                while(true)
+                {
+                    CrossSectionElement cse = link.getCrossSectionElementList().get(routeRandom.nextInt(link.getCrossSectionElementList().size()));
+                    if (cse instanceof Lane && !(cse instanceof NoTrafficLane) )
+                    {
+                        lane = (Lane) cse;
+                        break;
+
+                    }
+                }
+                
+                if (lane.getDirectionality(carType).equals(LongitudinalDirectionality.DIR_MINUS))
+                {
+                    dir = GTUDirectionality.DIR_MINUS;
+                }
+
+                
+                LaneBasedDrivingCharacteristics drivingCharacteristics =
+                        new LaneBasedDrivingCharacteristics(new IDMPlus(), new Altruistic());
+                LaneBasedStrategicalPlanner sPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, cr);
+                LanePerception perception = new LanePerception();
+                
+                DirectedLanePosition directedLanePosition = new DirectedLanePosition(lane, initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()), dir);
+                Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition> ();
+                lanepositionSet.add(directedLanePosition);
+                
+                try
+                {
+                    LaneBasedIndividualCar car = new LaneBasedIndividualCar(String.valueOf(i), carType, lanepositionSet, new Speed(0.0, SpeedUnit.METER_PER_SECOND),
+                            lengthDist.draw(), widthDist.draw(), maxSpeedDist.draw(), this.simulator, sPlanner, perception);
+                    this.rtiCars.add(car);
+                } catch (NamingException exception)
+                {
+                    exception.printStackTrace();
+                } catch (NetworkException exception)
+                {
+                    exception.printStackTrace();
+                } catch (GTUException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+            
+            
+            
+            try
+            {
+                new Thread(new ReceiverThread(this.simulator, carType, this.rtiCars)).start();
+            } catch (SocketException exception1)
+            {
+                exception1.printStackTrace();
+            }
+
+            /*CrossSectionLink link = (CrossSectionLink) network.getLink("3766053");
             for (CrossSectionElement cse : link.getCrossSectionElementList())
             {
                 if (cse instanceof Lane)
@@ -358,9 +503,9 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                         + lane.nextLanes(carType));
                 }
             }
-
+*/
             // test the shortest path method
-            Node nodeFrom = network.getLink("3766052").getEndNode();
+ /*           Node nodeFrom = network.getLink("3766052").getEndNode();
             Node nodeTo = network.getLink("3766035.1").getStartNode();
             CompleteRoute cr;
             try
@@ -372,7 +517,7 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
             catch (NetworkException exception)
             {
                 exception.printStackTrace();
-            }
+            }*/
         }
 
         /** {@inheritDoc} */

@@ -5,7 +5,9 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.List;
 
 import javax.naming.NamingException;
 
@@ -15,6 +17,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.network.factory.opendrive.data.OTSToRTIData;
 import org.opentrafficsim.road.network.factory.opendrive.data.RTIToOTSData;
 
 /**
@@ -46,21 +50,27 @@ public class ReceiverThread implements Runnable
     /** */
     OTSDEVSSimulatorInterface simulator;
     
+    /** */
     GTUType carType;
+    
+    /** */
+    List<LaneBasedIndividualCar> rtiCars;
     
     /**
      * @param simulator 
      * @param carType 
+     * @param rtiCars 
      * @throws SocketException 
      * 
      */
-    public ReceiverThread(OTSDEVSSimulatorInterface simulator, GTUType carType) throws SocketException
+    public ReceiverThread(OTSDEVSSimulatorInterface simulator, GTUType carType, List<LaneBasedIndividualCar> rtiCars) throws SocketException
     {
         super();
         this.Socket = new DatagramSocket(8090);
         this.receiveData = new byte[1000000];
         this.simulator = simulator;
         this.carType = carType;
+        this.rtiCars = rtiCars;
     }
 
 
@@ -88,13 +98,30 @@ public class ReceiverThread implements Runnable
             {
                 simData = UnPackUDPData.unPack(inputStream);
                 
-                System.out.println("yaw is " + simData.getEgoOri().getYaw() + ", pitch is " + simData.getEgoOri().getPitch() + ", roll is " + simData.getEgoOri().getRoll());
+                //System.out.println("yaw is " + simData.getEgoOri().getYaw() + ", pitch is " + simData.getEgoOri().getPitch() + ", roll is " + simData.getEgoOri().getRoll());
                 DirectedPoint position = new DirectedPoint(simData.getEgoPos().getY(), simData.getEgoPos().getX(), 1.0, 0.0,0.0, (Math.PI/2 - simData.getEgoOri().getYaw()));
                 
                 if(this.car == null)
                     this.car = new SubjectiveCar("nissan", this.carType, this.simulator, position);
                 
                 this.car.setPosition(position);
+                
+                InetAddress IPAddress = InetAddress.getLocalHost();
+                int port = 8091;
+                
+                OTSToRTIData data = new OTSToRTIData(this.rtiCars);
+                data.setTimeStamp(System.currentTimeMillis());
+                
+                byte[] sendData = PackUDPData.pack(data);
+                
+                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port); 
+                Socket.send(sendPacket);
+                
+                System.out.println(data.getTimeStamp() + " \n");
+                
+                data = null; 
+                sendData = null;
+                sendPacket = null;
                 
             } catch (IOException | SimRuntimeException | NetworkException | NamingException exception)
             {

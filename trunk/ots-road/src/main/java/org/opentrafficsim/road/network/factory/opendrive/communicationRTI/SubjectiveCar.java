@@ -193,7 +193,7 @@ public class SubjectiveCar extends AbstractGTU
     @Override
     public DirectedPoint getLocation() throws RemoteException
     {
-        System.out.println("Subjective car at position " + this.position);
+        //System.out.println("Subjective car at position " + this.position);
 
         return this.getPosition();
     }

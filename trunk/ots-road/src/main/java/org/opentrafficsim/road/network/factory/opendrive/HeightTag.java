@@ -68,6 +68,6 @@ class HeightTag
         }
 
         if (heightCount > 1)
-            throw new SAXException("ROAD: more than one height tag for road");
+            System.err.println("ROAD: more than one height tag for road");
     }
 }
