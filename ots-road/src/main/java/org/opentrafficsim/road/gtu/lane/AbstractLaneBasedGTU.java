@@ -103,6 +103,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         super(id, gtuType, simulator, strategicalPlanner, perception, initialLongitudinalPositions.iterator().next()
             .getLocation());
 
+        // register the GTU in the perception module
+        getPerception().setGtu(this);
+
         // register the GTU on the lanes
         for (DirectedLanePosition directedLanePosition : initialLongitudinalPositions)
         {
@@ -188,7 +191,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    protected final void move(final DirectedPoint fromLocation) throws SimRuntimeException, NetworkException
+    protected final void move(final DirectedPoint fromLocation) throws SimRuntimeException, NetworkException,
+        GTUException
     {
         // Only carry out move() if we still have lane(s) to drive on.
         // Note: a (Sink) trigger can have 'destroyed' us between the previous evaluation step and this one.

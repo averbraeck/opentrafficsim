@@ -262,7 +262,7 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                                     new LaneBasedDrivingCharacteristics(new IDMPlus(), new Altruistic());
                                 LaneBasedStrategicalPlanner strategicalPlanner =
                                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
-                                LanePerception perception = new LanePerception(null); // TODO
+                                LanePerception perception = new LanePerception();
 //                                new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
 //                                    initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
 //                                    startTime, endTime, lane, position, GTUDirectionality.DIR_PLUS,
@@ -313,7 +313,7 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                                     new LaneBasedDrivingCharacteristics(new IDMPlus(), new Altruistic());
                                 LaneBasedStrategicalPlanner strategicalPlanner =
                                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
-                                LanePerception perception = new LanePerception(null); // TODO
+                                LanePerception perception = new LanePerception();
 //                                new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
 //                                    initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
 //                                    startTime, endTime, lane, position, GTUDirectionality.DIR_MINUS,

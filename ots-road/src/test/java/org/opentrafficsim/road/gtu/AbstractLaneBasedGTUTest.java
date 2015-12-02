@@ -33,15 +33,18 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.FixedLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.LaneChangeModel;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
 
@@ -123,13 +126,17 @@ public class AbstractLaneBasedGTUTest implements UNITS
         @SuppressWarnings({"unchecked", "rawtypes"})
         CompleteRoute route = new CompleteRoute("Route", gtuType, nodeList);
         // Now we can make a GTU
+        LaneBasedDrivingCharacteristics drivingCharacteristics =
+            new LaneBasedDrivingCharacteristics(gfm, laneChangeModel);
+        LaneBasedStrategicalPlanner strategicalPlanner =
+            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, route);
         LaneBasedIndividualCar car =
-            new LaneBasedIndividualCar(carID, gtuType, gfm, laneChangeModel, initialLongitudinalPositions,
-                initialSpeed, carLength, carWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(route),
-                simulator);
+            new LaneBasedIndividualCar(carID, gtuType, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
+                maximumVelocity, simulator, strategicalPlanner, new LanePerception());
         // Now we can verify the various fields in the newly created Car
         assertEquals("ID of the car should be identical to the provided one", carID, car.getId());
-        assertEquals("GTU following model should be identical to the provided one", gfm, car.getGTUFollowingModel());
+        assertEquals("GTU following model should be identical to the provided one", gfm, car
+            .getDrivingCharacteristics().getGTUFollowingModel());
         assertEquals("Width should be identical to the provided width", carWidth, car.getWidth());
         assertEquals("Length should be identical to the provided length", carLength, car.getLength());
         assertEquals("GTU type should be identical to the provided one", gtuType, car.getGTUType());
@@ -138,9 +145,9 @@ public class AbstractLaneBasedGTUTest implements UNITS
         assertEquals("front in lanesGroupB[1] is positionB", positionB.getSI(), car.position(lanesGroupB[1],
             car.getReference()).getSI(), 0.0001);
         assertEquals("acceleration is 0", 0, car.getAcceleration().getSI(), 0.00001);
-        assertEquals("longitudinal velocity is " + initialSpeed, initialSpeed.getSI(), car.getLongitudinalVelocity()
-            .getSI(), 0.00001);
-        assertEquals("lastEvaluation time is 0", 0, car.getLastEvaluationTime().getSI(), 0.00001);
+        assertEquals("longitudinal velocity is " + initialSpeed, initialSpeed.getSI(), car.getVelocity().getSI(),
+            0.00001);
+        assertEquals("lastEvaluation time is 0", 0, car.getOperationalPlan().getStartTime().getSI(), 0.00001);
         // Test the position(Lane, RelativePosition) method
         try
         {
@@ -196,8 +203,8 @@ public class AbstractLaneBasedGTUTest implements UNITS
         }
         // Assign a movement to the car (10 seconds of acceleration of 2 m/s/s)
         // scheduled event that moves the car at t=0
-        assertEquals("lastEvaluation time is 0", 0, car.getLastEvaluationTime().getSI(), 0.00001);
-        assertEquals("nextEvaluation time is 0", 0, car.getNextEvaluationTime().getSI(), 0.00001);
+        assertEquals("lastEvaluation time is 0", 0, car.getOperationalPlan().getStartTime().getSI(), 0.00001);
+        assertEquals("nextEvaluation time is 0", 0, car.getOperationalPlan().getEndTime().getSI(), 0.00001);
         // Increase the simulator clock in small steps and verify the both positions on all lanes at each step
         double step = 0.01d;
         for (int i = 0;; i++)
@@ -227,16 +234,16 @@ public class AbstractLaneBasedGTUTest implements UNITS
 
             if (stepTime.getSI() > 0)
             {
-                assertEquals("nextEvaluation time is " + validFor, validFor.getSI(), car.getNextEvaluationTime()
-                    .getSI(), 0.0001);
+                assertEquals("nextEvaluation time is " + validFor, validFor.getSI(), car.getOperationalPlan()
+                    .getEndTime().getSI(), 0.0001);
                 assertEquals("acceleration is " + acceleration, acceleration.getSI(), car.getAcceleration().getSI(),
                     0.00001);
             }
-            Speed longitudinalVelocity = car.getLongitudinalVelocity();
+            Speed longitudinalVelocity = car.getVelocity();
             double expectedLongitudinalVelocity = initialSpeed.getSI() + stepTime.getSI() * acceleration.getSI();
             assertEquals("longitudinal velocity is " + expectedLongitudinalVelocity, expectedLongitudinalVelocity,
                 longitudinalVelocity.getSI(), 0.00001);
-            assertEquals("lateral velocity is 0", 0, car.getLateralVelocity().getSI(), 0.00001);
+            assertEquals("lateral velocity is 0", 0, car.getVelocity().getSI(), 0.00001);
             for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
             {
                 Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
@@ -411,8 +418,7 @@ class DummyModel implements OTSModelInterface
 
     /**
      * Register the simulator.
-     * @param simulator SimulatorInterface&lt;Time.Abs, Time.Rel,
-     *            OTSSimTimeDouble&gt;; the simulator
+     * @param simulator SimulatorInterface&lt;Time.Abs, Time.Rel, OTSSimTimeDouble&gt;; the simulator
      */
     public void setSimulator(
         SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)

@@ -8,7 +8,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.Perception;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -41,8 +44,11 @@ public class LanePerception implements Perception
     /** */
     private static final long serialVersionUID = 20151128L;
 
+    /** the time stamp of the last perception. */
+    private Time.Abs timestamp = new Time.Abs(Double.NaN, TimeUnit.SI);
+
     /** the lane based GTU for which this perception module stores information. */
-    private final LaneBasedGTU gtu;
+    private LaneBasedGTU gtu;
 
     /** the forward headway and (leader) GTU. */
     private HeadwayGTU forwardHeadwayGTU;
@@ -50,19 +56,43 @@ public class LanePerception implements Perception
     /** the backward headway and (follower) GTU. */
     private HeadwayGTU backwardHeadwayGTU;
 
+    /** the minimum speed limit of all lanes where the GTU is registered. */
+    private Speed speedLimit;
+
     /**
      * The adjacent lanes that are accessible for the GTU This information is cached, because it might be requested by different
      * functions in the tactical planner. The set of lanes is stored per LateralDirectionality (LEFT, RIGHT).
      */
     private final Map<Lane, EnumMap<LateralDirectionality, Set<Lane>>> accessibleAdjacentLanes = new HashMap<>();
 
+    /** the GTUs parallel to us. */
+    private final Map<Lane, Set<LaneBasedGTU>> parallelGTUs = new HashMap<>();
+
     /**
-     * @param gtu the lane based GTU for which this perception module stores information
+     * Create a new LanePerception module. Because the constructor is often called inside the constructor of a GTU, this
+     * constructor does not ask for the pointer to the GTU, as it is often impossible to provide at the time of construction.
+     * Use the setter of the GTU instead.
      */
-    public LanePerception(final LaneBasedGTU gtu)
+    public LanePerception()
     {
         super();
+    }
+
+    /**
+     * sets the GTU -- call this method before any call to the perceive() method!
+     * @param gtu the GTU for which this is the perception module
+     */
+    public final void setGtu(final LaneBasedGTU gtu)
+    {
         this.gtu = gtu;
+    }
+
+    /**
+     * @return whether perception has ever taken place or not
+     */
+    public boolean isInitialized()
+    {
+        return !Double.isNaN(this.timestamp.si);
     }
 
     /** {@inheritDoc} */
@@ -71,12 +101,37 @@ public class LanePerception implements Perception
     {
         try
         {
+            this.timestamp = this.gtu.getSimulator().getSimulatorTime().getTime();
+
+            // assess the speed limit
+            this.speedLimit = new Speed(Double.MAX_VALUE, SpeedUnit.SI);
+            for (Lane lane : this.gtu.getLanes().keySet())
+            {
+                if (lane.getSpeedLimit(this.gtu.getGTUType()).lt(this.speedLimit))
+                {
+                    this.speedLimit = lane.getSpeedLimit(this.gtu.getGTUType());
+                }
+            }
+
+            // determine who's in front of us and behind us
             this.forwardHeadwayGTU = headway(this.gtu.getDrivingCharacteristics().getForwardHeadwayDistance());
             this.backwardHeadwayGTU = headway(this.gtu.getDrivingCharacteristics().getBackwardHeadwayDistance());
-            
-            buildAccessibleAdjacentLanes();
-            
 
+            // determine where we might go
+            buildAccessibleAdjacentLanes();
+
+            // for the accessible lanes, see who is parallel with us
+            this.parallelGTUs.clear();
+            for (Lane lane : this.accessibleAdjacentLanes.keySet())
+            {
+                this.parallelGTUs.put(lane, parallel(lane, this.timestamp));
+            }
+
+            // for the accessible lanes, see who is ahead of us and in front of us
+            // TODO
+
+            // look for traffic lights, blocking objects, lane ends, or other objects that can force us to stop
+            // TODO
         }
         catch (NetworkException networkException)
         {
@@ -516,7 +571,6 @@ public class LanePerception implements Perception
         return Double.MAX_VALUE;
     }
 
-    
     /**
      * Build a set of Lanes that is adjacent to the given lane that this GTU can enter, for both lateral directions.
      */
@@ -534,6 +588,62 @@ public class LanePerception implements Perception
             }
             this.accessibleAdjacentLanes.put(lane, adjacentMap);
         }
-
     }
+
+    /**
+     * @return timestamp
+     */
+    public final Time.Abs getTimestamp()
+    {
+        return this.timestamp;
+    }
+
+    /**
+     * @return gtu
+     */
+    public final LaneBasedGTU getGtu()
+    {
+        return this.gtu;
+    }
+
+    /**
+     * @return forwardHeadwayGTU
+     */
+    public final HeadwayGTU getForwardHeadwayGTU()
+    {
+        return this.forwardHeadwayGTU;
+    }
+
+    /**
+     * @return backwardHeadwayGTU
+     */
+    public final HeadwayGTU getBackwardHeadwayGTU()
+    {
+        return this.backwardHeadwayGTU;
+    }
+
+    /**
+     * @return accessibleAdjacentLanes
+     */
+    public final Map<Lane, EnumMap<LateralDirectionality, Set<Lane>>> getAccessibleAdjacentLanes()
+    {
+        return this.accessibleAdjacentLanes;
+    }
+
+    /**
+     * @return parallelGTUs
+     */
+    public final Map<Lane, Set<LaneBasedGTU>> getParallelGTUs()
+    {
+        return this.parallelGTUs;
+    }
+
+    /**
+     * @return speedLimit
+     */
+    public final Speed getSpeedLimit()
+    {
+        return this.speedLimit;
+    }
+
 }

@@ -16,6 +16,8 @@ import java.io.Serializable;
  */
 public interface Perception extends Serializable
 {
-    /** update the perceived information and store it in a stateful manner. */
+    /**
+     * update the perceived information and store it in a stateful manner.
+     */
     void perceive();
 }

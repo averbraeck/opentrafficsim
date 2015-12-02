@@ -34,21 +34,23 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Altruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.LaneMovementStep;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
-import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 /**
@@ -95,8 +97,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
      * @param link Link; the link that owns the new Lane
      * @param id String; the id of the lane, has to be unique within the link
      * @param laneType LaneType&lt;String&gt;; the type of the new Lane
-     * @param latPos Length.Rel; the lateral position of the new Lane with respect to the design line of
-     *            the link
+     * @param latPos Length.Rel; the lateral position of the new Lane with respect to the design line of the link
      * @param width Length.Rel; the width of the new Lane
      * @return Lane
      * @throws NamingException on ???
@@ -179,12 +180,14 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
              * CRASH - FIXME - will have to wait for Network factory
              */);
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
+        LaneBasedDrivingCharacteristics drivingCharacteristics =
+            new LaneBasedDrivingCharacteristics(new IDMPlus(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(
+                1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d), laneChangeModel);
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
         LaneBasedIndividualCar car =
-            new LaneBasedIndividualCar("ReferenceCar", gtuType, new IDMPlus(new Acceleration(1, METER_PER_SECOND_2),
-                new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d),
-                laneChangeModel, initialLongitudinalPositions, new Speed(100, KM_PER_HOUR), new Length.Rel(4, METER),
-                new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
-                    new CompleteRoute("", GTUType.ALL)), simpleSimulator);
+            new LaneBasedIndividualCar("ReferenceCar", gtuType, initialLongitudinalPositions, new Speed(100,
+                KM_PER_HOUR), new Length.Rel(4, METER), new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR),
+                simpleSimulator, strategicalPlanner, new LanePerception());
         Collection<HeadwayGTU> sameLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         sameLaneGTUs.add(new HeadwayGTU(car, 0));
         Collection<HeadwayGTU> preferredLaneGTUs = new LinkedHashSet<HeadwayGTU>();
@@ -211,12 +214,15 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             initialLongitudinalPositions.add(new DirectedLanePosition(lanes[1], new Length.Rel(pos, METER),
                 GTUDirectionality.DIR_PLUS));
 
+            drivingCharacteristics =
+                new LaneBasedDrivingCharacteristics(new IDMPlus(new Acceleration(1, METER_PER_SECOND_2),
+                    new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d),
+                    laneChangeModel);
+            strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
             LaneBasedIndividualCar collisionCar =
-                new LaneBasedIndividualCar("LaneChangeBlockingCar", gtuType, new IDMPlus(new Acceleration(1,
-                    METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER),
-                    new Time.Rel(1, SECOND), 1d), laneChangeModel, otherLongitudinalPositions, new Speed(100,
+                new LaneBasedIndividualCar("LaneChangeBlockingCar", gtuType, otherLongitudinalPositions, new Speed(100,
                     KM_PER_HOUR), vehicleLength, new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR),
-                    new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simpleSimulator);
+                    simpleSimulator, strategicalPlanner, new LanePerception());
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU = new HeadwayGTU(collisionCar, pos - reference.getSI());
             preferredLaneGTUs.add(collisionHWGTU);
@@ -235,12 +241,15 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             initialLongitudinalPositions.add(new DirectedLanePosition(lanes[1], new Length.Rel(pos, METER),
                 GTUDirectionality.DIR_PLUS));
 
-            LaneBasedIndividualCar otherCar =
-                new LaneBasedIndividualCar("OtherCar", gtuType, new IDMPlus(new Acceleration(1, METER_PER_SECOND_2),
+            drivingCharacteristics =
+                new LaneBasedDrivingCharacteristics(new IDMPlus(new Acceleration(1, METER_PER_SECOND_2),
                     new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d),
-                    laneChangeModel, otherLongitudinalPositions, new Speed(100, KM_PER_HOUR), vehicleLength,
-                    new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
-                        new CompleteRoute("", GTUType.ALL)), simpleSimulator);
+                    laneChangeModel);
+            strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+            LaneBasedIndividualCar otherCar =
+                new LaneBasedIndividualCar("OtherCar", gtuType, otherLongitudinalPositions,
+                    new Speed(100, KM_PER_HOUR), vehicleLength, new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR),
+                    simpleSimulator, strategicalPlanner, new LanePerception());
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU =
                 new HeadwayGTU(otherCar, pos - car.position(lanes[0], car.getReference()).getSI());

@@ -121,9 +121,9 @@ public class XMLNetworkGeneratorTest implements UNITS
                         boolean not10ms = Math.abs(gtu.getVelocity().getSI() - 10.0) > 0.0001;
                         if (not10ms)
                         {
-                            // TODO repair headway in such a way that vehicle does not have to break (safe distance)
+                            // TODO repair headway in such a way that vehicle does not have to brake (safe distance)
                             System.err.println("Velocity of GTU " + gtu + "<> 10 m/s: " + gtu.getVelocity() + ", headway = "
-                                + gtu.headway(new Length.Rel(250.0, METER)));
+                                + gtu.getPerception().getForwardHeadwayGTU().getDistance());
                             // fail("Velocity of GTU " + gtu + "<> 10 m/s: " + gtu.getVelocity() + ", headway = "
                             // + gtu.headway(new Length.Rel(250.0, METER)));
                         }

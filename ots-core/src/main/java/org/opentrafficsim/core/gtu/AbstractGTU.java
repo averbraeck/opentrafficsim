@@ -1,6 +1,8 @@
 package org.opentrafficsim.core.gtu;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
@@ -9,12 +11,16 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
+import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Time.Rel;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
@@ -44,6 +50,12 @@ public abstract class AbstractGTU implements GTU
 
     /** the simulator to schedule activities on. */
     private final OTSDEVSSimulatorInterface simulator;
+
+    /** the maximum acceleration. */
+    private Acceleration maximumAcceleration;
+
+    /** the maximum deceleration, stored as a negative number. */
+    private Acceleration maximumDeceleration;
 
     /**
      * the odometer which measures how much distance have we covered between instantiation and the last completed operational
@@ -95,15 +107,23 @@ public abstract class AbstractGTU implements GTU
         this.strategicalPlanner = strategicalPlanner;
         this.perception = perception;
         this.odometer = new Length.Rel(0.0, LengthUnit.SI);
+        Time.Abs now = this.simulator.getSimulatorTime().getTime();
+
         if (initialLocation != null)
         {
             // schedule the first move now; scheduling so super constructors can still finish
             // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
             this.nextMoveEvent =
-                new SimEvent<>(new OTSSimTimeDouble(this.simulator.getSimulatorTime().getTime()), this, this, "move",
-                    new Object[]{initialLocation});
+                new SimEvent<>(new OTSSimTimeDouble(now), this, this, "move", new Object[]{initialLocation});
             this.simulator.scheduleEvent(this.nextMoveEvent);
         }
+        
+        // give the GTU a stand-still operational plan, valid for 0 seconds, so initialization will work
+        OTSPoint3D loc = initialLocation == null ? new OTSPoint3D(0, 0) : new OTSPoint3D(initialLocation);
+        OTSLine3D path = new OTSLine3D(loc, new OTSPoint3D(loc.x + 1.0E-10, loc.y, loc.z));
+        List<OperationalPlan.Segment> segment = new ArrayList<>();
+        segment.add(new OperationalPlan.SpeedSegment(new Time.Rel(0.1, TimeUnit.SECOND)));
+        this.operationalPlan = new OperationalPlan(path, now, SPEED_0, segment);
     }
 
     /**
@@ -115,9 +135,10 @@ public abstract class AbstractGTU implements GTU
      * @param fromLocation the last known location (initial location, or end location of the previous operational plan)
      * @throws SimRuntimeException when scheduling of the next move fails
      * @throws NetworkException when the odometer fails to update (will never happen)
+     * @throws GTUException when there is a problem creating a good path for the GTU
      */
     @SuppressWarnings("checkstyle:designforextension")
-    protected void move(final DirectedPoint fromLocation) throws SimRuntimeException, NetworkException
+    protected void move(final DirectedPoint fromLocation) throws SimRuntimeException, NetworkException, GTUException
     {
         Time.Abs now = this.simulator.getSimulatorTime().getTime();
 
@@ -149,9 +170,10 @@ public abstract class AbstractGTU implements GTU
      * current plan gets interrupted.
      * @throws SimRuntimeException when scheduling of the next move fails
      * @throws NetworkException when the odometer fails to update (will never happen)
+     * @throws GTUException when there is a problem creating a good path for the GTU
      */
     @SuppressWarnings("checkstyle:designforextension")
-    protected void interruptMove() throws SimRuntimeException, NetworkException
+    protected void interruptMove() throws SimRuntimeException, NetworkException, GTUException
     {
         this.simulator.cancelEvent(this.nextMoveEvent);
         move(this.operationalPlan.getLocation(this.simulator.getSimulatorTime().getTime()));
@@ -303,6 +325,46 @@ public abstract class AbstractGTU implements GTU
         }
     }
 
+    /**
+     * @return maximumAcceleration
+     */
+    public final Acceleration getMaximumAcceleration()
+    {
+        return this.maximumAcceleration;
+    }
+
+    /**
+     * @param maximumAcceleration set maximumAcceleration
+     */
+    public final void setMaximumAcceleration(final Acceleration maximumAcceleration)
+    {
+        if (maximumAcceleration.le(ACCELERATION_0))
+        {
+            throw new RuntimeException("Maximum acceleration of GTU " + this.id + " set to value <= 0");
+        }
+        this.maximumAcceleration = maximumAcceleration;
+    }
+
+    /**
+     * @return maximumDeceleration
+     */
+    public final Acceleration getMaximumDeceleration()
+    {
+        return this.maximumDeceleration;
+    }
+
+    /**
+     * @param maximumDeceleration set maximumDeceleration, stored as a negative number
+     */
+    public final void setMaximumDeceleration(final Acceleration maximumDeceleration)
+    {
+        if (maximumDeceleration.ge(ACCELERATION_0))
+        {
+            throw new RuntimeException("Maximum deceleration of GTU " + this.id + " set to value >= 0");
+        }
+        this.maximumDeceleration = maximumDeceleration;
+    }
+
     /** {@inheritDoc} */
     @Override
     public final Acceleration getAcceleration()
@@ -312,6 +374,7 @@ public abstract class AbstractGTU implements GTU
 
     /** {@inheritDoc} */
     @Override
+    @SuppressWarnings("checkstyle:designforextension")
     public DirectedPoint getLocation() throws RemoteException
     {
         if (this.operationalPlan == null)

@@ -1,23 +1,32 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
-import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanBuilder;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
-import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.LaneChangeModel;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -41,18 +50,15 @@ public class LaneBasedCFLCTacticalPlanner implements TacticalPlanner
     private static final long serialVersionUID = 20151125L;
 
     /** the strategic planner that has instantiated this tactical planner. */
-    private final StrategicalPlanner strategicalPlanner;
+    private final LaneBasedStrategicalPlanner strategicalPlanner;
 
-    /**
-     * The adjacent lanes that are accessible for this GTU per lane where the GTU drives. This information is cached, because it
-     * might be requested multiple times. The set of lanes is stored per LateralDirectionality (LEFT, RIGHT).
-     */
-    private final Map<Lane, EnumMap<LateralDirectionality, Set<Lane>>> accessibleAdjacentLanes = new HashMap<>();
+    /** Constant for zero speed. */
+    private static final Speed SPEED_0 = new Speed(0.0, SpeedUnit.SI);
 
     /**
      * @param strategicalPlanner the strategic planner that has instantiated this tactical planner
      */
-    public LaneBasedCFLCTacticalPlanner(final StrategicalPlanner strategicalPlanner)
+    public LaneBasedCFLCTacticalPlanner(final LaneBasedStrategicalPlanner strategicalPlanner)
     {
         this.strategicalPlanner = strategicalPlanner;
     }
@@ -60,48 +66,147 @@ public class LaneBasedCFLCTacticalPlanner implements TacticalPlanner
     /** {@inheritDoc} */
     @Override
     public OperationalPlan generateOperationalPlan(final GTU gtu, final Time.Abs startTime,
-        final DirectedPoint locationAtStartTime)
+        final DirectedPoint locationAtStartTime) throws NetworkException, GTUException
     {
         // ask Perception for the local situation
         LaneBasedGTU laneBasedGTU = (LaneBasedGTU) gtu;
         LanePerception perception = laneBasedGTU.getPerception();
         
-        
-        
-        return null;
+        if (!perception.isInitialized())
+        {
+            perception.perceive();
+        }
+
+        // get some models to help us make a plan
+        GTUFollowingModel gtuFollowingModel =
+            this.strategicalPlanner.getDrivingCharacteristics().getGTUFollowingModel();
+        LaneChangeModel laneChangeModel = this.strategicalPlanner.getDrivingCharacteristics().getLaneChangeModel();
+
+        // look at the conditions for headway
+        HeadwayGTU headwayGTU = perception.getForwardHeadwayGTU();
+        AccelerationStep accelerationStep = null;
+        try
+        {
+            if (headwayGTU.getOtherGTU() == null)
+            {
+                accelerationStep =
+                    gtuFollowingModel.computeAccelerationWithNoLeader(laneBasedGTU, perception.getSpeedLimit());
+            }
+            else
+            {
+                // TODO do not use the velocity of the other GTU, but the PERCEIVED velocity
+                accelerationStep =
+                    gtuFollowingModel.computeAcceleration(laneBasedGTU, headwayGTU.getOtherGTU().getVelocity(),
+                        headwayGTU.getDistance(), perception.getSpeedLimit());
+            }
+        }
+        catch (NetworkException exception)
+        {
+            // brake if an error happens...
+            OTSLine3D path = buildLanePathToFollowLane(laneBasedGTU, new Length.Rel(100.0, LengthUnit.METER));
+            return OperationalPlanBuilder.buildStopPlan(path, startTime, laneBasedGTU.getVelocity(), new Acceleration(
+                -1.0, AccelerationUnit.METER_PER_SECOND_2));
+        }
+
+        OTSLine3D path = buildLanePathToFollowLane(laneBasedGTU, new Length.Rel(100.0, LengthUnit.METER));
+        if (accelerationStep.getAcceleration().si < 0.0)
+        {
+            return OperationalPlanBuilder.buildMaximumAccelerationPlan(path, startTime, gtu.getVelocity(), SPEED_0, gtu
+                .getMaximumAcceleration(), gtu.getMaximumDeceleration());
+        }
+        else
+        {
+            return OperationalPlanBuilder.buildMaximumAccelerationPlan(path, startTime, gtu.getVelocity(), gtu
+                .getMaximumVelocity(), gtu.getMaximumAcceleration(), gtu.getMaximumDeceleration());
+        }
     }
 
-    
-    
-    
-    
-    
-    
+    /**
+     * @param gtu the GTU to generate the path for
+     * @param distance the length of the line to be generated
+     * @return a driving line for the next 'distance' meters
+     * @throws NetworkException when the driving path cannot be generated
+     */
+    private OTSLine3D buildLanePathToFollowLane(final LaneBasedGTU gtu, final Length.Rel distance)
+        throws NetworkException
+    {
+        Map<Lane, Length.Rel> positions = gtu.positions(gtu.getReference());
+        for (Lane lane : positions.keySet())
+        {
+            double posSI = positions.get(lane).si;
+            if (posSI >= 0.0 && posSI < lane.getLength().si)
+            {
+                try
+                {
+                    // this lane is a good base
+                    OTSLine3D path = lane.getCenterLine().extractFractional(posSI / lane.getParentLink().getLength().si, 1.0);
+                    if (gtu.getLanes().get(lane).equals(GTUDirectionality.DIR_MINUS))
+                    {
+                        path = path.reverse();
+                    }
+                    while (path.getLength().si < distance.si)
+                    {
+                        Map<Lane, GTUDirectionality> nextLanes = lane.nextLanes(gtu.getGTUType());
+                        if (nextLanes.size() == 1)
+                        {
+                            path = concat(path, nextLanes.keySet().iterator().next().getCenterLine());
+                        }
+                        else
+                        {
+                            // TODO 
+                            path = concat(path, nextLanes.keySet().iterator().next().getCenterLine());
+                        }
+                    }
+                    return path;
+                }
+                catch (OTSGeometryException geometryException)
+                {
+                    throw new NetworkException(geometryException);
+                }
+            }
+        }
 
-//    /**
-//     * Build a set of Lanes that is adjacent to the given lane that this GTU can enter, for both lateral directions.
-//     * @param lane Lane; the lane for which to add the accessible lanes.
-//     */
-//    private void addAccessibleAdjacentLanes(final Lane lane)
-//    {
-//        EnumMap<LateralDirectionality, Set<Lane>> adjacentMap = new EnumMap<>(LateralDirectionality.class);
-//        for (LateralDirectionality lateralDirection : LateralDirectionality.values())
-//        {
-//            Set<Lane> adjacentLanes = new HashSet<Lane>(1);
-//            adjacentLanes.addAll(lane.accessibleAdjacentLanes(lateralDirection, getGTUType()));
-//            adjacentMap.put(lateralDirection, adjacentLanes);
-//        }
-//        this.accessibleAdjacentLanes.put(lane, adjacentMap);
-//    }
-//
-//    /**
-//     * Remove the set of adjacent lanes when we leave the lane.
-//     * @param lane Lane; the lane for which to remove the accessible lanes.
-//     */
-//    private void removeAccessibleAdjacentLanes(final Lane lane)
-//    {
-//        this.accessibleAdjacentLanes.remove(lane);
-//    }
+        // we could not find a lane to continue driving on
+        throw new NetworkException("GTU " + gtu + " could not find a lane with its reference point on it among lanes: "
+            + positions.keySet());
+    }
 
+    private OTSLine3D concat(OTSLine3D line1, OTSLine3D line2) throws OTSGeometryException
+    {
+        if (line1.getLast().equals(line2.getFirst()))
+        {
+            return OTSLine3D.concatenate(line1, line2);
+        }
+        if (line1.getLast().equals(line2.getLast()))
+        {
+            return OTSLine3D.concatenate(line1, line2.reverse());
+        }
+        throw new OTSGeometryException("OTSLine3D concat - Lane center lines cannot be connected");
+    }
+    
+    // /**
+    // * Build a set of Lanes that is adjacent to the given lane that this GTU can enter, for both lateral directions.
+    // * @param lane Lane; the lane for which to add the accessible lanes.
+    // */
+    // private void addAccessibleAdjacentLanes(final Lane lane)
+    // {
+    // EnumMap<LateralDirectionality, Set<Lane>> adjacentMap = new EnumMap<>(LateralDirectionality.class);
+    // for (LateralDirectionality lateralDirection : LateralDirectionality.values())
+    // {
+    // Set<Lane> adjacentLanes = new HashSet<Lane>(1);
+    // adjacentLanes.addAll(lane.accessibleAdjacentLanes(lateralDirection, getGTUType()));
+    // adjacentMap.put(lateralDirection, adjacentLanes);
+    // }
+    // this.accessibleAdjacentLanes.put(lane, adjacentMap);
+    // }
+    //
+    // /**
+    // * Remove the set of adjacent lanes when we leave the lane.
+    // * @param lane Lane; the lane for which to remove the accessible lanes.
+    // */
+    // private void removeAccessibleAdjacentLanes(final Lane lane)
+    // {
+    // this.accessibleAdjacentLanes.remove(lane);
+    // }
 
 }

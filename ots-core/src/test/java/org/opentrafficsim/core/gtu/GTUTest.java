@@ -9,7 +9,7 @@ import javax.media.j3d.Bounds;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
-import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
@@ -34,8 +34,8 @@ public class GTUTest
     /**
      * Test the constructor.
      * @throws GTUException
-     * @throws NetworkException 
-     * @throws SimRuntimeException 
+     * @throws NetworkException
+     * @throws SimRuntimeException
      */
     @Test
     public void testAbstractGTU() throws GTUException, SimRuntimeException, NetworkException
@@ -74,10 +74,11 @@ class TestGTU extends AbstractGTU
      * @param id
      * @param gtuType
      * @param simulator
-     * @throws NetworkException 
-     * @throws SimRuntimeException 
+     * @throws NetworkException
+     * @throws SimRuntimeException
      */
-    public TestGTU(String id, GTUType gtuType, OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException
+    public TestGTU(String id, GTUType gtuType, OTSDEVSSimulatorInterface simulator) throws SimRuntimeException,
+        NetworkException
     {
         super(id, gtuType, simulator, null, null, null);
     }
@@ -144,4 +145,5 @@ class TestGTU extends AbstractGTU
     {
         return null;
     }
+
 }
