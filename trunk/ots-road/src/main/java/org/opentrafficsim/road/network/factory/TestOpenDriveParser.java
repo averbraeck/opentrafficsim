@@ -69,6 +69,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.opendrive.GeneratorAnimation;
 import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.opendrive.communicationRTI.RTICars;
 import org.opentrafficsim.road.network.factory.opendrive.communicationRTI.ReceiverThread;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -501,7 +502,7 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                 {
                     try
                     {
-                        LaneBasedIndividualCar car = new LaneBasedIndividualCar(String.valueOf(i), carType, lanepositionSet, new Speed(0.0, SpeedUnit.METER_PER_SECOND),
+                        RTICars car = new RTICars(String.valueOf(i), carType, lanepositionSet, new Speed(0.0, SpeedUnit.METER_PER_SECOND),
                                 carLength, widthDist.draw(), maxSpeedDist.draw(), this.simulator, sPlanner, perception);
                         this.rtiCars.add(car);
                         
