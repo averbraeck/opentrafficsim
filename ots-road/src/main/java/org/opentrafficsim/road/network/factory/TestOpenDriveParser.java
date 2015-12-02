@@ -60,6 +60,7 @@ import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
@@ -361,13 +362,13 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                 }
             }
             
-            CrossSectionLink link1 = (CrossSectionLink) network.getLink("3766054.1");
-            CrossSectionLink link2 = (CrossSectionLink) network.getLink("3766059.2");
-            CrossSectionLink link3 = (CrossSectionLink) network.getLink("3766068.1");
+            CrossSectionLink link1 = (CrossSectionLink) network.getLink("3766054.5");
+            CrossSectionLink link2 = (CrossSectionLink) network.getLink("3766059.7");
+            CrossSectionLink link3 = (CrossSectionLink) network.getLink("3766068.3");
             CrossSectionLink link4 = (CrossSectionLink) network.getLink("3766038.5");
-            CrossSectionLink link5 = (CrossSectionLink) network.getLink("3766043.1");
+            CrossSectionLink link5 = (CrossSectionLink) network.getLink("3766043.3");
             CrossSectionLink link6 = (CrossSectionLink) network.getLink("3766064.2");
-            CrossSectionLink link7 = (CrossSectionLink) network.getLink("3766046.1");
+            CrossSectionLink link7 = (CrossSectionLink) network.getLink("3766046.3");
             CrossSectionLink link8 = (CrossSectionLink) network.getLink("3766050.3");
             
             CompleteRoute cr1 = null, cr2 = null, cr3 = null, cr4 = null, cr5 = null, cr6 = null;
@@ -444,7 +445,7 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                     CrossSectionElement cse = link.getCrossSectionElementList().get(routeRandom.nextInt(link.getCrossSectionElementList().size()));
                     if (cse instanceof Lane && !(cse instanceof NoTrafficLane) )
                     {
-                        lane = (Lane) cse;
+                        lane = (Lane) cse;                        
                         break;
 
                     }
@@ -465,21 +466,62 @@ public class TestOpenDriveParser extends AbstractWrappableAnimation
                 Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition> ();
                 lanepositionSet.add(directedLanePosition);
                 
-                try
+                Length.Rel carLength = lengthDist.draw();
+                double genPosSI = directedLanePosition.getPosition().getSI();
+                double lengthSI = lane.getLength().getSI();
+                double frontNew = (genPosSI + carLength.getSI()) / lengthSI;
+                double rearNew = genPosSI / lengthSI;
+                
+                boolean isEnoughSpace = true;
+                
+                for (LaneBasedGTU gtu : lane.getGtuList())
                 {
-                    LaneBasedIndividualCar car = new LaneBasedIndividualCar(String.valueOf(i), carType, lanepositionSet, new Speed(0.0, SpeedUnit.METER_PER_SECOND),
-                            lengthDist.draw(), widthDist.draw(), maxSpeedDist.draw(), this.simulator, sPlanner, perception);
-                    this.rtiCars.add(car);
-                } catch (NamingException exception)
-                {
-                    exception.printStackTrace();
-                } catch (NetworkException exception)
-                {
-                    exception.printStackTrace();
-                } catch (GTUException exception)
-                {
-                    exception.printStackTrace();
+                    double frontGTU = 0;
+                    try
+                    {
+                        frontGTU = gtu.fractionalPosition(lane, gtu.getFront());
+                    } catch (NetworkException exception)
+                    {
+                        exception.printStackTrace();
+                    }
+                    double rearGTU = 0;
+                    try
+                    {
+                        rearGTU = gtu.fractionalPosition(lane, gtu.getRear());
+                    } catch (NetworkException exception)
+                    {
+                        exception.printStackTrace();
+                    }
+                    if ((frontNew >= rearGTU && frontNew <= frontGTU) || (rearNew >= rearGTU && rearNew <= frontGTU)
+                        || (frontGTU >= rearNew && frontGTU <= frontNew) || (rearGTU >= rearNew && rearGTU <= frontNew))
+                        isEnoughSpace = false;
                 }
+                
+                if(isEnoughSpace)
+                {
+                    try
+                    {
+                        LaneBasedIndividualCar car = new LaneBasedIndividualCar(String.valueOf(i), carType, lanepositionSet, new Speed(0.0, SpeedUnit.METER_PER_SECOND),
+                                carLength, widthDist.draw(), maxSpeedDist.draw(), this.simulator, sPlanner, perception);
+                        this.rtiCars.add(car);
+                        
+                    } catch (NamingException exception)
+                    {
+                        exception.printStackTrace();
+                    } catch (NetworkException exception)
+                    {
+                        exception.printStackTrace();
+                    } catch (GTUException exception)
+                    {
+                        exception.printStackTrace();
+                    }
+                }
+                else
+                {
+                    i = i-1;
+                }
+                
+
             }
             
             
