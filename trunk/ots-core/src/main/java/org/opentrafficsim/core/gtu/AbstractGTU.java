@@ -22,6 +22,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanBuilder;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.NetworkException;
@@ -117,13 +118,10 @@ public abstract class AbstractGTU implements GTU
                 new SimEvent<>(new OTSSimTimeDouble(now), this, this, "move", new Object[]{initialLocation});
             this.simulator.scheduleEvent(this.nextMoveEvent);
         }
-        
+
         // give the GTU a stand-still operational plan, valid for 0 seconds, so initialization will work
-        OTSPoint3D loc = initialLocation == null ? new OTSPoint3D(0, 0) : new OTSPoint3D(initialLocation);
-        OTSLine3D path = new OTSLine3D(loc, new OTSPoint3D(loc.x + 1.0E-10, loc.y, loc.z));
-        List<OperationalPlan.Segment> segment = new ArrayList<>();
-        segment.add(new OperationalPlan.SpeedSegment(new Time.Rel(0.1, TimeUnit.SECOND)));
-        this.operationalPlan = new OperationalPlan(path, now, SPEED_0, segment);
+        DirectedPoint p = initialLocation == null ? new DirectedPoint() : initialLocation;
+        this.operationalPlan = new OperationalPlan(p, now, new Time.Rel(1.0, TimeUnit.SECOND));
     }
 
     /**

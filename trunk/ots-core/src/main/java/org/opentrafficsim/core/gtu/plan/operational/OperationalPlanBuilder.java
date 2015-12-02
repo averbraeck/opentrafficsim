@@ -2,6 +2,8 @@ package org.opentrafficsim.core.gtu.plan.operational;
 
 import java.util.ArrayList;
 
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
@@ -35,7 +37,7 @@ public final class OperationalPlanBuilder
 
     /** maximum deceleration for unbounded accelerations: -1E12 m/s2. */
     private static final Acceleration MAX_DECELERATION = new Acceleration(-1E12, AccelerationUnit.SI);
-
+    
     /** private constructor. */
     private OperationalPlanBuilder()
     {

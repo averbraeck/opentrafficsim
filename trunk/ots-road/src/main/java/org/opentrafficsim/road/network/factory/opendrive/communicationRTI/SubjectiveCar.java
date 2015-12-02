@@ -54,10 +54,8 @@ public class SubjectiveCar extends AbstractGTU
 
     /**
      * @param id
-     * @param gtuType
+     * @param type
      * @param simulator
-     * @param strategicalPlanner
-     * @param perception
      * @param initialLocation
      * @throws SimRuntimeException
      * @throws NetworkException
