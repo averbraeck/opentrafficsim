@@ -111,7 +111,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
                     return OTSBufferingAV.offsetLine(this, offset);
 
                 case JTS:
-                    return OTSBufferingJTS.offsetLine(this, offset);
+                    return OTSBufferingJTS.offsetGeometryOLD(this, offset);
 
                 default:
                     return null;
