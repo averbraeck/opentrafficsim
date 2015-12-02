@@ -82,7 +82,27 @@ public final class Test
         {
             result = "time out ";
         }
-        executor.shutdown();
+        // There is something very non-trivial about shutting down an ExecutorService
+        // This code adapted from http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ExecutorService.html
+        executor.shutdown(); // Disable new tasks from being submitted
+        try
+        {
+            // Wait a while for existing tasks to terminate
+            if (!executor.awaitTermination(60, TimeUnit.MILLISECONDS))
+            {
+                executor.shutdownNow(); // Cancel currently executing tasks
+                // Wait a while for tasks to respond to being cancelled
+                if (!executor.awaitTermination(60, TimeUnit.MILLISECONDS))
+                    System.err.println("executor did not terminate");
+            }
+        }
+        catch (InterruptedException ie)
+        {
+            // (Re-)Cancel if current thread also interrupted
+            executor.shutdownNow();
+            // Preserve interrupt status
+            Thread.currentThread().interrupt();
+        }
         return String.format(Locale.US, "%3.3s %6.1f: %-8.8s  ", offsetMethod, offset, result);
     }
 
