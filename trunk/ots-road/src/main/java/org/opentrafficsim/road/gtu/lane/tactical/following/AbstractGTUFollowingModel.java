@@ -148,7 +148,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
                 / (2.0 * maximumSafeDeceleration().si), LengthUnit.SI);
         return computeAcceleration(gtu, gtu.getVelocity(), stopDistance, speedLimit);
         /*-
-        return computeAcceleration(gtu, gtu.getLongitudinalVelocity(), Calc.speedSquaredDividedByDoubleAcceleration(gtu
+        return computeAcceleration(gtu, gtu.getVelocity(), Calc.speedSquaredDividedByDoubleAcceleration(gtu
             .getMaximumVelocity(), maximumSafeDeceleration()), speedLimit);
          */
     }

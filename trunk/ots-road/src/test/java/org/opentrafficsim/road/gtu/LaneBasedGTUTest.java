@@ -31,12 +31,16 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.FixedLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.LaneChangeModel;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -119,22 +123,13 @@ public class LaneBasedGTUTest implements UNITS
         Length.Rel truckWidth = new Length.Rel(2.5, METER);
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
         Speed maximumVelocity = new Speed(120, KM_PER_HOUR);
-        try
-        {
-            new LaneBasedIndividualCar("Truck", truckType, null /* GTU following model */, laneChangeModel,
-                truckPositions, truckSpeed, truckLength, truckWidth, maximumVelocity,
-                new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
-            fail("null GTUFollowingModel should have thrown a GTUException");
-        }
-        catch (GTUException e)
-        {
-            // Ignore expected exception
-        }
         GTUFollowingModel gtuFollowingModel = new IDMPlus();
+        LaneBasedDrivingCharacteristics drivingCharacteristics =
+            new LaneBasedDrivingCharacteristics(gtuFollowingModel, laneChangeModel);
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
         LaneBasedIndividualCar truck =
-            new LaneBasedIndividualCar("Truck", truckType, gtuFollowingModel, laneChangeModel, truckPositions,
-                truckSpeed, truckLength, truckWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(
-                    new CompleteRoute("", GTUType.ALL)), simulator);
+            new LaneBasedIndividualCar("Truck", truckType, truckPositions, truckSpeed, truckLength, truckWidth,
+                maximumVelocity, simulator, strategicalPlanner, new LanePerception());
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
         int found = 0;
@@ -171,13 +166,15 @@ public class LaneBasedGTUTest implements UNITS
             * links.size(), lanesChecked);
         assertEquals("Truck should be registered in " + truckPositions.size() + " lanes", truckPositions.size(), found);
         Length.Rel forwardMaxDistance = new Length.Rel(9999, METER);
-        HeadwayGTU leader = truck.headway(forwardMaxDistance);
+        // TODO see how we can ask the vehicle to look this far ahead
+        HeadwayGTU leader = truck.getPerception().getForwardHeadwayGTU();
         assertTrue("With one vehicle in the network forward headway should return a value larger than maxDistance",
             forwardMaxDistance.getSI() < leader.getDistanceSI());
         assertEquals("With one vehicle in the network forward headwayGTU should return null", null, leader
             .getOtherGTU());
+        // TODO see how we can ask the vehicle to look this far behind
         Length.Rel reverseMaxDistance = new Length.Rel(-9999, METER);
-        HeadwayGTU follower = truck.headway(reverseMaxDistance);
+        HeadwayGTU follower = truck.getPerception().getBackwardHeadwayGTU();
         assertTrue("With one vehicle in the network reverse headway should return a value larger than maxDistance",
             Math.abs(reverseMaxDistance.getSI()) < follower.getDistanceSI());
         assertEquals("With one vehicle in the network reverse headwayGTU should return null", null, follower
@@ -199,11 +196,14 @@ public class LaneBasedGTUTest implements UNITS
                 Length.Rel carPosition = new Length.Rel(step, METER);
                 Set<DirectedLanePosition> carPositions =
                     buildPositionsSet(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
+                drivingCharacteristics = new LaneBasedDrivingCharacteristics(gtuFollowingModel, laneChangeModel);
+                strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
                 LaneBasedIndividualCar car =
-                    new LaneBasedIndividualCar("Car", carType, gtuFollowingModel, laneChangeModel, carPositions,
-                        carSpeed, carLength, carWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(
-                            new CompleteRoute("", GTUType.ALL)), simulator);
-                leader = truck.headway(forwardMaxDistance);
+                    new LaneBasedIndividualCar("Car", carType, carPositions, carSpeed, carLength, carWidth,
+                        maximumVelocity, simulator, strategicalPlanner, new LanePerception());
+                // leader = truck.headway(forwardMaxDistance);
+                // TODO see how we can ask the vehicle to look 'forwardMaxDistance' ahead
+                leader = truck.getPerception().getForwardHeadwayGTU();
                 double actualHeadway = leader.getDistanceSI();
                 double expectedHeadway =
                     laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
@@ -223,7 +223,8 @@ public class LaneBasedGTUTest implements UNITS
                 {
                     assertEquals("Leader should be the car", car, leaderGTU);
                 }
-                follower = truck.headway(reverseMaxDistance);
+                // TODO follower = truck.headway(reverseMaxDistance);
+                follower = truck.getPerception().getBackwardHeadwayGTU();
                 double actualReverseHeadway = follower.getDistanceSI();
                 double expectedReverseHeadway =
                     laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
@@ -381,10 +382,13 @@ public class LaneBasedGTUTest implements UNITS
             FixedAccelerationModel fam = new FixedAccelerationModel(acceleration, new Time.Rel(10, SECOND));
             LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
             Speed maximumVelocity = new Speed(200, KM_PER_HOUR);
+            LaneBasedDrivingCharacteristics drivingCharacteristics =
+                new LaneBasedDrivingCharacteristics(fam, laneChangeModel);
+            LaneBasedStrategicalPlanner strategicalPlanner =
+                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
             LaneBasedIndividualCar car =
-                new LaneBasedIndividualCar("Car", carType, fam, laneChangeModel, carPositions, carSpeed,
-                    new Length.Rel(4, METER), new Length.Rel(1.8, METER), maximumVelocity,
-                    new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
+                new LaneBasedIndividualCar("Car", carType, carPositions, carSpeed, new Length.Rel(4, METER),
+                    new Length.Rel(1.8, METER), maximumVelocity, simulator, strategicalPlanner, new LanePerception());
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new Time.Abs(61, SECOND));
             while (simulator.isRunning())
@@ -427,8 +431,7 @@ public class LaneBasedGTUTest implements UNITS
 
     /**
      * Create the Map that records in which lane a GTU is registered.
-     * @param totalLongitudinalPosition Length.Rel; the front position of the GTU from the start of the
-     *            chain of Links
+     * @param totalLongitudinalPosition Length.Rel; the front position of the GTU from the start of the chain of Links
      * @param gtuLength Length.Rel; the length of the GTU
      * @param links ArrayList&lt;CrossSectionLink&lt;?,?&gt;&gt;; the list of Links
      * @param fromLaneRank int; lowest rank of lanes that the GTU must be registered on (0-based)

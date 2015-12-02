@@ -30,19 +30,19 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform
 
     /** the y-center of the center point (0, 0). */
     private double centerY = 0.0;
-    
+
     /** the x-center of the center point (0, 0). */
     private final double lonCenter;
 
     /** the y-center of the center point (0, 0). */
     private final double latCenter;
-    
+
     /** one percent of a lat degree to y meters. */
-    private double lat1000dToM;
-    
+    private double latToM;
+
     /** one percent of a lon degree to x meters. */
-    private double lon1000dToM;
-    
+    private double lonToM;
+
     /** earth constants. */
     private static final double Re = 6378137;
 
@@ -50,6 +50,7 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform
     private static final double Rp = 6356752.31424518;
 
     /**
+     * Transformation from: https://en.wikipedia.org/wiki/Geographic_coordinate_system.
      * @param latCenter the latitude of the center point (0, 0)
      * @param lonCenter the longitude of the center point (0, 0)
      */
@@ -58,8 +59,10 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform
         super();
         this.latCenter = latCenter;
         this.lonCenter = lonCenter;
-        this.lat1000dToM = 111.31;
-        this.lon1000dToM = 88.32;
+        double lr = Math.toRadians(latCenter);
+        this.latToM =
+            111132.92 - 559.82 * Math.cos(2.0 * lr) + 1.175 * Math.cos(4.0 * lr) - 0.0023 * Math.cos(6.0 * lr); // 111.31;
+        this.lonToM = 111412.84 * Math.cos(lr) - 93.5 * Math.cos(3.0 * lr) - 0.118 * Math.cos(5.0 * lr); // 88.32;
     }
 
     /** {@inheritDoc} */
@@ -70,26 +73,7 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform
         return new float[]{(float) dt[0], (float) dt[1]};
     }
 
-    public double[] doubleTransformX(double lon, double lat)
-    {
-        CoordinateReferenceSystem srcCRS = DefaultGeographicCRS.WGS84;
-        CoordinateReferenceSystem destSRC = DefaultGeocentricCRS.CARTESIAN;
-        boolean lenient = true; // allow for some error due to different datums
-        try
-        {
-            MathTransform transform = CRS.findMathTransform(srcCRS, destSRC, lenient);
-            Coordinate c = new Coordinate(lon, lat);
-            Coordinate xy = JTS.transform(c, null ,transform); 
-            return new double[]{xy.x - this.centerX, xy.y - this.centerY};
-        }
-        catch (FactoryException | TransformException exception)
-        {
-            exception.printStackTrace();
-            return new double[]{this.centerX, this.centerY};
-        } 
-    }
-    
-    public double[] doubleTransformY(double lon, double lat)
+    public double[] doubleTransformWSG84toCartesianXY(double lon, double lat)
     {
         double latrad = lat / 180.0 * Math.PI;
         double lonrad = lon / 180.0 * Math.PI;
@@ -111,10 +95,10 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform
 
     public double[] doubleTransform(double lon, double lat)
     {
-        double x = (lon - this.lonCenter) * 1000 * this.lon1000dToM;
-        double y = (lat - this.latCenter) * 1000 * this.lat1000dToM;
+        double x = (lon - this.lonCenter) * this.lonToM;
+        double y = (lat - this.latCenter) * this.latToM;
 
         return new double[]{x, y};
     }
-    
+
 }

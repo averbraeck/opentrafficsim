@@ -381,8 +381,8 @@ public class ContourPlotTest implements UNITS
             {
                 ie = null; // ignore
             }
-        } // System.out.println("Car at start time " + car.getLastEvaluationTime() + " is at "
-          // + car.getPosition(car.getLastEvaluationTime()));
+        } // System.out.println("Car at start time " + car.getOperationalPlan().getStartTime() + " is at "
+          // + car.getPosition(car.getOperationalPlan().getStartTime()));
           // System.out.println("At time " + simulator.getSimulator().getSimulatorTime().getTime() + " car is at " + car);
         for (int item = 0; item < bins; item++)
         {
@@ -400,14 +400,14 @@ public class ContourPlotTest implements UNITS
             // figure out if the car has traveled through this cell
             // if (x >= 180)
             // System.out.println(String.format("t=%.3f, x=%.3f z=%f, exp=%.3f, carLast=%s, carNext=%s", x, y, z,
-            // expectedZValue, car.getLastEvaluationTime().getSI(), car.getNextEvaluationTime().getSI()));
+            // expectedZValue, car.getOperationalPlan().getStartTime().getSI(), car.getOperationalPlan().getEndTime().getSI()));
             boolean hit = false;
-            if (x + useTimeGranularity >= car.getLastEvaluationTime().getSI() && x <= car.getNextEvaluationTime().getSI())
+            if (x + useTimeGranularity >= car.getOperationalPlan().getStartTime().getSI() && x <= car.getOperationalPlan().getEndTime().getSI())
             {
                 // the car MAY have contributed to this cell
-                Time.Abs cellStartTime = new Time.Abs(Math.max(car.getLastEvaluationTime().getSI(), x), SECOND);
+                Time.Abs cellStartTime = new Time.Abs(Math.max(car.getOperationalPlan().getStartTime().getSI(), x), SECOND);
                 Time.Abs cellEndTime =
-                    new Time.Abs(Math.min(car.getNextEvaluationTime().getSI(), x + useTimeGranularity), SECOND);
+                    new Time.Abs(Math.min(car.getOperationalPlan().getEndTime().getSI(), x + useTimeGranularity), SECOND);
                 if (cellStartTime.lt(cellEndTime)
                     && car.position(lane, car.getReference(), cellStartTime).getSI() <= y + useDistanceGranularity
                     && car.position(lane, car.getReference(), cellEndTime).getSI() >= y)
@@ -478,7 +478,7 @@ public class ContourPlotTest implements UNITS
                 observedHighestTime = xValue;
             }
         }
-        Time.Abs carEndTime = car.getNextEvaluationTime();
+        Time.Abs carEndTime = car.getOperationalPlan().getEndTime();
         double expectedHighestTime = Math.floor((carEndTime.getSI() - 0.001) / useTimeGranularity) * useTimeGranularity;
         assertEquals("Time range should run up to " + expectedHighestTime, expectedHighestTime, observedHighestTime, 0.0001);
         // Check the updateHint method in the PointerHandler

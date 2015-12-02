@@ -6,7 +6,9 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
+import org.opentrafficsim.core.network.NetworkException;
 
 /**
  * Tactical planners generate operational plans that are in line with reaching the goals of the strategical plan. The modeler is
@@ -40,6 +42,9 @@ public interface TacticalPlanner extends Serializable
      * @param startTime the time from which the new operational plan has to be operational
      * @param locationAtStartTime the location of the GTU at the start time of the new plan
      * @return a new operational plan
+     * @throws NetworkException when there is a problem planning a path in the network
+     * @throws GTUException when there is a problem with the state of the GTU when planning a path
      */
-    OperationalPlan generateOperationalPlan(GTU gtu, Time.Abs startTime, DirectedPoint locationAtStartTime);
+    OperationalPlan generateOperationalPlan(GTU gtu, Time.Abs startTime, DirectedPoint locationAtStartTime)
+        throws NetworkException, GTUException;
 }

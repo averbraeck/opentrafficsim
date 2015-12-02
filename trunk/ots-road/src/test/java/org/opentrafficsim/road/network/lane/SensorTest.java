@@ -25,14 +25,16 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.LaneChangeModel;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.LaneFactory;
-import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 /**
@@ -66,10 +68,11 @@ public class SensorTest implements UNITS
         // And a simulator, but for that we first need something that implements OTSModelInterface
         OTSModelInterface model = new DummyModelForSensorTest();
         final SimpleSimulator simulator =
-            new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND), model);
+            new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND),
+                model);
         Lane[] lanesA =
-            LaneFactory
-                .makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new Speed(100, KM_PER_HOUR), simulator);
+            LaneFactory.makeMultiLane("A", nodeAFrom, nodeATo, null, 3, laneType, new Speed(100, KM_PER_HOUR),
+                simulator);
         Lane[] lanesB =
             LaneFactory.makeMultiLane("B", nodeATo, nodeBTo, null, 3, laneType, new Speed(100, KM_PER_HOUR), simulator);
 
@@ -103,8 +106,11 @@ public class SensorTest implements UNITS
         // Create a lane change model for the car
         LaneChangeModel laneChangeModel = new Egoistic();
         // Now we can make a car (GTU) (and we don't even have to hold a pointer to it)
-        new LaneBasedIndividualCar(carID, gtuType, fas, laneChangeModel, initialLongitudinalPositions, initialSpeed,
-            carLength, carWidth, maximumVelocity, new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
+        LaneBasedDrivingCharacteristics drivingCharacteristics =
+            new LaneBasedDrivingCharacteristics(fas, laneChangeModel);
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+        new LaneBasedIndividualCar(carID, gtuType, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
+            maximumVelocity, simulator, strategicalPlanner, new LanePerception());
         simulator.runUpTo(new Time.Abs(1, SECOND));
         while (simulator.isRunning())
         {
@@ -128,7 +134,8 @@ public class SensorTest implements UNITS
                 triggerEvent = event;
             }
         }
-        assertEquals("There should be three scheduled events (trigger, leaveLane, car.move, terminate)", 4, eventList.size());
+        assertEquals("There should be three scheduled events (trigger, leaveLane, car.move, terminate)", 4, eventList
+            .size());
         // The sensor should be triggered around t=38.3403 (exact value: 10 / 9 * (sqrt(3541) - 25))
         // System.out.println("trigger event is " + triggerEvent);
         assertEquals("Trigger event should be around 38.3403", 38.3403, triggerEvent.getAbsoluteExecutionTime().get()
@@ -149,15 +156,15 @@ class TriggerSensor extends AbstractSensor
      * @param name
      * @param simulator
      */
-    public TriggerSensor(final Lane lane, final Length.Rel longitudinalPosition, final RelativePosition.TYPE positionType,
-        final String name, OTSDEVSSimulatorInterface simulator)
+    public TriggerSensor(final Lane lane, final Length.Rel longitudinalPosition,
+        final RelativePosition.TYPE positionType, final String name, OTSDEVSSimulatorInterface simulator)
     {
         super(lane, longitudinalPosition, positionType, name, simulator);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void trigger(final LaneBasedGTU gtu) 
+    public void trigger(final LaneBasedGTU gtu)
     {
         // TODO check that the sensor is triggered at the right time.
     }
@@ -184,8 +191,7 @@ class DummyModelForSensorTest implements OTSModelInterface
 
     /**
      * Register the simulator.
-     * @param simulator SimulatorInterface&lt;Time.Abs, Time.Rel,
-     *            OTSSimTimeDouble&gt;; the simulator
+     * @param simulator SimulatorInterface&lt;Time.Abs, Time.Rel, OTSSimTimeDouble&gt;; the simulator
      */
     public final void setSimulator(
         SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
@@ -205,7 +211,7 @@ class DummyModelForSensorTest implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        
+
     {
         if (null == this.simulator)
         {

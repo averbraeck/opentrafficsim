@@ -30,18 +30,20 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.LaneChangeModel;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.SinkSensor;
-import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 /**
@@ -115,7 +117,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
             new SimpleSimulator(new Time.Abs(0, SECOND), new Time.Rel(0, SECOND), new Time.Rel(1800, SECOND), this);
 
         // add a sink 100 meter before the end of the lane.
-        lane.addSensor(new SinkSensor(lane, new Length.Rel(lane.getLength().getSI() - 100, METER), simulator), GTUType.ALL);
+        lane.addSensor(new SinkSensor(lane, new Length.Rel(lane.getLength().getSI() - 100, METER), simulator),
+            GTUType.ALL);
 
         simulator.runUpTo(time);
         while (simulator.isRunning())
@@ -134,8 +137,11 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         GTUFollowingModel gtuFollowingModel =
             new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(1000, SECOND));
         // Construct a car
-        new LaneBasedIndividualCar("1", gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, speed,
-            length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
+        LaneBasedDrivingCharacteristics drivingCharacteristics =
+            new LaneBasedDrivingCharacteristics(gtuFollowingModel, laneChangeModel);
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+        new LaneBasedIndividualCar("1", gtuType, initialLongitudinalPositions, speed, length, width, maxSpeed,
+            simulator, strategicalPlanner, new LanePerception());
         simulator.runUpTo(new Time.Abs(124, SECOND));
         while (simulator.isRunning())
         {
@@ -218,8 +224,10 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         }
         // Check that harmonic mean speed is computed
         speed = new Speed(10, KM_PER_HOUR);
-        new LaneBasedIndividualCar("1234", gtuType, gtuFollowingModel, laneChangeModel, initialLongitudinalPositions, speed,
-            length, width, maxSpeed, new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), simulator);
+        drivingCharacteristics = new LaneBasedDrivingCharacteristics(gtuFollowingModel, laneChangeModel);
+        strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+        new LaneBasedIndividualCar("1234", gtuType, initialLongitudinalPositions, speed, length, width, maxSpeed,
+            simulator, strategicalPlanner, new LanePerception());
         simulator.runUpTo(new Time.Abs(125, SECOND));
         while (simulator.isRunning())
         {
@@ -408,7 +416,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
     /** {@inheritDoc} */
     @Override
     public SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        
+
     {
         return null;
     }

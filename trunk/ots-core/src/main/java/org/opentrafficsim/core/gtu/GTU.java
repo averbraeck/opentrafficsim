@@ -45,10 +45,16 @@ public interface GTU extends LocatableInterface, Serializable
     /** @return the maximum width of the GTU (perpendicular to driving direction). */
     Length.Rel getWidth();
 
-    /** @return the maximum velocity of the GTU, in the linear direction */
+    /** @return the maximum velocity of the GTU, in the linear direction. */
     Speed getMaximumVelocity();
 
-    /** @return the type of GTU, e.g. TruckType, CarType, BusType */
+    /** @return the maximum acceleration of the GTU, in the linear direction. */
+    Acceleration getMaximumAcceleration();
+
+    /** @return the maximum deceleration of the GTU, in the linear direction, stored as a negative number. */
+    Acceleration getMaximumDeceleration();
+
+    /** @return the type of GTU, e.g. TruckType, CarType, BusType. */
     GTUType getGTUType();
 
     /** @return the simulator of the GTU. */

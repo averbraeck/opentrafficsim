@@ -175,8 +175,8 @@ public class TrajectoryPlotTest implements UNITS
     {
         // XXX we take the first (and only) lane on which the vehicle is registered.
         Lane lane = car.positions(car.getFront()).keySet().iterator().next();
-        Time.Abs initialTime = car.getLastEvaluationTime();
-        Time.Rel duration = car.getNextEvaluationTime().minus(car.getLastEvaluationTime());
+        Time.Abs initialTime = car.getOperationalPlan().getStartTime();
+        Time.Rel duration = car.getOperationalPlan().getTotalDuration();
         int expectedNumberOfSamples = (int) (duration.getSI() / this.sampleInterval.getSI());
         assertEquals("Number of samples in trajectory should be ", expectedNumberOfSamples, tp.getItemCount(series));
         // Check that the stored trajectory accurately matches the trajectory of the car at all sampling times
