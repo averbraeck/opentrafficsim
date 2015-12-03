@@ -195,8 +195,8 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
             
             this.rtiCars = new ArrayList<LaneBasedIndividualCar>();
 
-            //URL url = URLResource.getResource("/NASAames.xodr");
-            URL url = URLResource.getResource("/OpenDrive.xodr");
+            URL url = URLResource.getResource("/NASAames.xodr");
+            //URL url = URLResource.getResource("/OpenDrive.xodr");
             this.simulator.setPauseOnError(false);
             OpenDriveNetworkLaneParser nlp = new OpenDriveNetworkLaneParser(this.simulator);
             OTSNetwork network = null;
@@ -362,29 +362,26 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                 }
             }
             
-/*            CrossSectionLink link1 = (CrossSectionLink) network.getLink("3766054.5");
-            CrossSectionLink link2 = (CrossSectionLink) network.getLink("3766059.7");
-            CrossSectionLink link3 = (CrossSectionLink) network.getLink("3766068.3");
-            CrossSectionLink link4 = (CrossSectionLink) network.getLink("3766038.5");
-            CrossSectionLink link5 = (CrossSectionLink) network.getLink("3766043.3");
-            CrossSectionLink link6 = (CrossSectionLink) network.getLink("3766064.2");
-            CrossSectionLink link7 = (CrossSectionLink) network.getLink("3766046.3");
-            CrossSectionLink link8 = (CrossSectionLink) network.getLink("3766050.3");
+            CrossSectionLink link1 = (CrossSectionLink) network.getLink("54059");
+            CrossSectionLink link2 = (CrossSectionLink) network.getLink("117957");
+            CrossSectionLink link3 = (CrossSectionLink) network.getLink("54062");
+            CrossSectionLink link4 = (CrossSectionLink) network.getLink("54083");
+            CrossSectionLink link5 = (CrossSectionLink) network.getLink("54085");
+            CrossSectionLink link6 = (CrossSectionLink) network.getLink("54045");
+            CrossSectionLink link7 = (CrossSectionLink) network.getLink("166405.1");
+            CrossSectionLink link8 = (CrossSectionLink) network.getLink("54053");
             
             CompleteRoute cr1 = null, cr2 = null, cr3 = null, cr4 = null, cr5 = null, cr6 = null;
             
             List<Node> nodesVia1 = new ArrayList<Node>();
-            nodesVia1.add(link2.getStartNode());
-            nodesVia1.add(link3.getEndNode());
-            nodesVia1.add(link4.getStartNode());
-            nodesVia1.add(link5.getEndNode());
-            nodesVia1.add(link7.getEndNode());
-            nodesVia1.add(link8.getStartNode());
+            nodesVia1.add(link1.getStartNode());
+            //nodesVia1.add(link7.getStartNode());
+            //nodesVia1.add(link8.getStartNode());
             try
             {
-                cr1 = network.getShortestRouteBetween(GTUType.ALL, link1.getStartNode(), link1.getStartNode(), nodesVia1);
+                cr1 = network.getShortestRouteBetween(GTUType.ALL, link2.getStartNode(), link2.getStartNode(), nodesVia1);
                 Collections.reverse(nodesVia1);
-                cr2 = network.getShortestRouteBetween(GTUType.ALL, link1.getStartNode(), link1.getStartNode(), nodesVia1);
+                cr2 = network.getShortestRouteBetween(GTUType.ALL, link2.getStartNode(), link2.getStartNode(), nodesVia1);
             } catch (NetworkException exception)
             {
                 exception.printStackTrace();
@@ -392,8 +389,8 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
 
             
             List<Node> nodesVia2 = new ArrayList<Node>();
-            nodesVia2.add(link3.getEndNode());
             nodesVia2.add(link5.getEndNode());
+            nodesVia2.add(link6.getEndNode());
             try
             {
                 cr3 = network.getShortestRouteBetween(GTUType.ALL, link3.getStartNode(), link3.getStartNode(), nodesVia2);
@@ -405,7 +402,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
             }
             
             List<Node> nodesVia3 = new ArrayList<Node>();
-            nodesVia3.add(link7.getEndNode());
+            nodesVia3.add(link5.getEndNode());
             nodesVia3.add(link8.getEndNode());
             try
             {
@@ -524,8 +521,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
 
             }
             
-            
-            
+           
             try
             {
                 new Thread(new ReceiverThread(this.simulator, carType, this.rtiCars)).start();
@@ -533,7 +529,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
             {
                 exception1.printStackTrace();
             }
-*/
+
 
         }
 

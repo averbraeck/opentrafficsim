@@ -974,7 +974,7 @@ class RoadTag
 
             CrossSectionLink newlink =
                 new CrossSectionLink(roadTag.id, from, to, LinkType.ALL, roadTag.designLine,
-                    LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_LANE);
+                    LongitudinalDirectionality.DIR_PLUS, LaneKeepingPolicy.KEEP_LANE);
             roadTag.link = newlink;
 
             roadTag.link = newlink;
