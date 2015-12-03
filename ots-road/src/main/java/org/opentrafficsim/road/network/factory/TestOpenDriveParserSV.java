@@ -91,7 +91,7 @@ import org.xml.sax.SAXException;
  * initial version Oct 17, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class TestOpenDriveParserTest extends AbstractWrappableAnimation
+public class TestOpenDriveParserSV extends AbstractWrappableAnimation
 {
     /**
      * Main program.
@@ -107,7 +107,7 @@ public class TestOpenDriveParserTest extends AbstractWrappableAnimation
             {
                 try
                 {
-                    TestOpenDriveParserTest xmlModel = new TestOpenDriveParserTest();
+                    TestOpenDriveParserSV xmlModel = new TestOpenDriveParserSV();
                     // 1 hour simulation run for testing
                     xmlModel.buildAnimator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(0.0, TimeUnit.SECOND),
                         new Time.Rel(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
@@ -502,7 +502,7 @@ public class TestOpenDriveParserTest extends AbstractWrappableAnimation
                 {
                     try
                     {
-                        LaneBasedIndividualCar car = new LaneBasedIndividualCar(String.valueOf(i), carType, lanepositionSet, new Speed(0.0, SpeedUnit.METER_PER_SECOND),
+                        RTICars car = new RTICars(String.valueOf(i), carType, lanepositionSet, new Speed(0.0, SpeedUnit.METER_PER_SECOND),
                                 carLength, widthDist.draw(), maxSpeedDist.draw(), this.simulator, sPlanner, perception);
                         this.rtiCars.add(car);
                         
@@ -526,6 +526,14 @@ public class TestOpenDriveParserTest extends AbstractWrappableAnimation
             }
             
             
+            
+            try
+            {
+                new Thread(new ReceiverThread(this.simulator, carType, this.rtiCars)).start();
+            } catch (SocketException exception1)
+            {
+                exception1.printStackTrace();
+            }
 
             /*CrossSectionLink link = (CrossSectionLink) network.getLink("3766053");
             for (CrossSectionElement cse : link.getCrossSectionElementList())
