@@ -161,9 +161,10 @@ public class OpenDriveNetworkLaneParser
             LinkTag.parseLink(roadNode.getChildNodes(), this, roadTag);
             TypeTag.parseType(roadNode.getChildNodes(), this, roadTag);
             
+            ElevationProfileTag.parseElevationProfile(roadNode.getChildNodes(), this, roadTag);
+
             PlanViewTag.parsePlanView(roadNode.getChildNodes(), this, roadTag);
                         
-            ElevationProfileTag.parseElevationProfile(roadNode.getChildNodes(), this, roadTag);
             LateralProfileTag.parseElevationProfile(roadNode.getChildNodes(), this, roadTag);
             LanesTag.parseLanes(roadNode.getChildNodes(), this, roadTag);
             //ObjectsTag.parseObjects(roadNode.getChildNodes(), this, roadTag);

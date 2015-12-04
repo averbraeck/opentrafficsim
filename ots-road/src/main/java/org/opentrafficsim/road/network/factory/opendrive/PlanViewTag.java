@@ -3,6 +3,9 @@ package org.opentrafficsim.road.network.factory.opendrive;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.Set;
 import java.util.UUID;
 
 import org.djunits.unit.AngleUnit;
@@ -65,10 +68,16 @@ class PlanViewTag
         {
             for (Node node : XMLParser.getNodes(node0.getChildNodes(), "geometry"))
             {
+                
+                
                 GeometryTag geometryTag = GeometryTag.parseGeometry(node, parser);
                 geometryTag.id = roadTag.id + "." + String.valueOf(geometryCount);
                 geometryCount++;
 
+                geometryTag.z = assignHeight(geometryTag, roadTag.elevationProfileTag.elevationTags);
+                
+                GeometryTag.makeOTSNode(geometryTag);
+                                        
                 planViewTag.geometryTags.add(geometryTag);
             }
             
@@ -93,6 +102,8 @@ class PlanViewTag
 
             lastGeometryTag.hdg = previousTag.hdg;
             
+            lastGeometryTag.z = previousTag.z;
+            
             
             GeometryTag.makeOTSNode(lastGeometryTag);
 
@@ -111,6 +122,33 @@ class PlanViewTag
         }
         roadTag.designLine = buildDesignLine(planViewTag, roadTag);
 
+    }
+
+    /**
+     * @param geometryTag 
+     * @param elevationTags
+     * @return elevation
+     */
+    private static Length.Rel assignHeight(GeometryTag geometryTag, NavigableMap<Double, ElevationTag> elevationTags)
+    {
+        Double key = geometryTag.s.si;
+        if(elevationTags.containsKey(key))
+            return elevationTags.get(key).elevation;
+        else
+        {
+            Double before = elevationTags.floorKey(key);
+            Double after = elevationTags.ceilingKey(key);
+            
+            if(after == null)
+                return elevationTags.get(before).elevation;
+            
+            Double factor = (key - before)/(after - before);
+            
+            Length.Rel beHeight = elevationTags.get(before).elevation;
+            Length.Rel afHeight = elevationTags.get(after).elevation;
+            
+            return afHeight.minus(beHeight).multiplyBy(factor).plus(beHeight);
+        }
     }
 
     /**
@@ -207,7 +245,7 @@ class PlanViewTag
         List<OTSPoint3D> pOutPut = new ArrayList<OTSPoint3D>();
 
         // Calculate the middle of the two given points.
-        OTSPoint3D mPoint = new OTSPoint3D((pFrom.x + pTo.x)/2, (pFrom.y + pTo.y)/2, 0);
+        OTSPoint3D mPoint = new OTSPoint3D((pFrom.x + pTo.x)/2, (pFrom.y + pTo.y)/2, (pFrom.z + pTo.z)/2);
 
         //System.out.println("Middle Between From and To = " + mPoint);
 
@@ -299,8 +337,13 @@ class PlanViewTag
                 flipped = true;
             }
         }
+        
+        double zStep = (pTo.z - pFrom.z)/((angle2 - angle1)/step);
+        double zFirst = pFrom.z;
         for (double f = angle1; f < angle2; f += step) {
-            OTSPoint3D p = new OTSPoint3D(Math.cos(f) * pRadius + circleMiddlePoint.x, Math.sin(f) * pRadius + circleMiddlePoint.y, 0);
+            zFirst = zFirst + zStep;
+            OTSPoint3D p = new OTSPoint3D(Math.cos(f) * pRadius + circleMiddlePoint.x, Math.sin(f) * pRadius + circleMiddlePoint.y, zFirst);
+                        
             pOutPut.add(p);
         }
 /*        if (flipped ^ side) {
