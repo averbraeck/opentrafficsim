@@ -42,6 +42,10 @@ class GeometryTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel y = null;
     
+    /** z position (s-coordinate). */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    Length.Rel z = null;
+    
     /** hdg position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Angle.Rel hdg = null;
@@ -107,8 +111,6 @@ class GeometryTag
         
         ArcTag.parseArc(node.getChildNodes(), parser, geometryTag);
         
-        makeOTSNode(geometryTag);
-
         return geometryTag;
     }
     
@@ -120,7 +122,7 @@ class GeometryTag
     {
         Angle.Abs angle = new Angle.Abs(0.0, AngleUnit.SI);
         Angle.Abs slope = new Angle.Abs(0.0, AngleUnit.SI);
-        OTSPoint3D coordinate = new OTSPoint3D(geometryTag.x.doubleValue(),geometryTag.y.doubleValue(),0);
+        OTSPoint3D coordinate = new OTSPoint3D(geometryTag.x.doubleValue(),geometryTag.y.doubleValue(),geometryTag.z.doubleValue());
         
         if (geometryTag.id == null)
         {

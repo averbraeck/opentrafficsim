@@ -243,7 +243,7 @@ class RoadTag
                     if (currentGeometryTag.s.doubleValue() < laneSecLength.doubleValue())
                     {
                         OTSPoint3D point =
-                            new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(), 0);
+                            new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(), currentGeometryTag.z.doubleValue());
 
                         if (points.size() == 0)
                             points.add(point);
@@ -279,7 +279,7 @@ class RoadTag
                     else
                     {
                         OTSPoint3D point =
-                            new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(), 0);
+                            new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(), currentGeometryTag.z.doubleValue());
 
                         if (points.size() == 0)
                             points.add(point);
@@ -345,8 +345,19 @@ class RoadTag
                 GeometryTag currentGeometryTag = tempGeometryTags.get(indexGeometryTag);
 
                 OTSPoint3D point =
-                    new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(), 0);
-                points.add(point);
+                    new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(), currentGeometryTag.z.doubleValue());
+                //points.add(point);
+                
+                if (points.size() == 0)
+                    points.add(point);
+                else
+                {
+                    if (point.x != points.get(points.size() - 1).x
+                        && point.y != points.get(points.size() - 1).y)
+                        points.add(point);
+                }
+
+                OTSPoint3D lastPoint = new OTSPoint3D(points.get(points.size() - 1));
 
                 if (currentGeometryTag.interLine != null)
                 {
@@ -358,7 +369,12 @@ class RoadTag
                          * yDiff);
                          */
                         // if(distance > 0.01)
-                        points.add(point1);
+                        //points.add(point1);
+                        if (lastPoint.x != point.x && lastPoint.y != point.y)
+                        {
+                            points.add(point1);
+                            lastPoint = point1;
+                        }
                     }
                 }
             }

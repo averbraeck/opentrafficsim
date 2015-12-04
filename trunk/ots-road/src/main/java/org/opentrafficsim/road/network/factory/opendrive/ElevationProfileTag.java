@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
@@ -21,9 +21,9 @@ import org.xml.sax.SAXException;
 class ElevationProfileTag
 {
 
-    /** geometryTags */
+    /** elevationTags */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    List<ElevationTag> elevationTags = new ArrayList<ElevationTag>();
+    NavigableMap<Double, ElevationTag> elevationTags = new TreeMap<Double, ElevationTag>();
 
     /**
      * Parse the attributes of the road tag. The sub-elements are parsed in separate classes.
@@ -37,18 +37,14 @@ class ElevationProfileTag
     static void parseElevationProfile(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
         throws SAXException, NetworkException
     {
-        int elevationCount = 0;
+        ElevationProfileTag elevationProfileTag = new ElevationProfileTag();
+
         for (Node node0 : XMLParser.getNodes(nodeList, "elevationProfile"))
             for (Node node : XMLParser.getNodes(node0.getChildNodes(), "elevation"))
-        {
-            ElevationProfileTag elevationProfileTag = new ElevationProfileTag();
-            roadTag.elevationProfileTag = elevationProfileTag;
-            
+        {            
             ElevationTag elevationTag = ElevationTag.parseElevation(node, parser);
-            elevationTag.id = elevationCount;
-            elevationCount++;
-
-            elevationProfileTag.elevationTags.add(elevationTag);
+            elevationProfileTag.elevationTags.put(elevationTag.s.si, elevationTag);
         }
+        roadTag.elevationProfileTag = elevationProfileTag;
     }
 }

@@ -17,31 +17,30 @@ import org.xml.sax.SAXException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 class ElevationTag 
-{
-
-    /** sequence of the geometry. */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    int id = 0;
-    
+{   
     /** start position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel s = null;
     
-    /** a position (s-coordinate). */
+    /** a coefficient*/
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel a = null;
     
-    /** b position (s-coordinate). */
+    /** b coefficient*/
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel b = null;
     
-    /** c position (s-coordinate). */
+    /** c coefficient*/
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel c = null;
 
-    /** d position (s-coordinate) */
+    /** d coefficient*/
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel d = null;
+    
+    /** elevation = a + b*ds + c*ds2 + d*ds3 */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    Length.Rel elevation = null;
     
 
     /**
@@ -83,6 +82,9 @@ class ElevationTag
             throw new SAXException("Geometry: missing attribute d");
         elevationTag.d = new Length.Rel(Double.parseDouble(d.getNodeValue().trim()), LengthUnit.METER);
         
+        elevationTag.elevation = new Length.Rel(elevationTag.a.plus(elevationTag.b.multiplyBy(elevationTag.s.doubleValue()))
+                .plus(elevationTag.c.multiplyBy(Math.pow(elevationTag.s.doubleValue(), 2))).plus(
+                        elevationTag.d.multiplyBy(Math.pow(elevationTag.s.doubleValue(), 3))));
 
         return elevationTag;
     }
