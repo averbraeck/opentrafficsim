@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.math;
 
+import java.util.Locale;
+
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.StorageType;
@@ -9,7 +11,15 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.SpeedVector;
 
 /**
- * A 3D speed vector, decomposed in X, Y, and Z-speed.
+ * A 3D speed vector, decomposed in X, Y, and Z-speed with easy conversion from and to a spherical coordinate system. <br>
+ * <a href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">Physicists and mathematicians <strong>do not</strong>
+ * agree on the meaning of theta and phi.</a> In this class the convention in the physics domain is used:
+ * <ul>
+ * <li>theta is the angle from the z direction.</li>
+ * <li>phi is the projected angle in the xy-plane from the x direction.</li>
+ * </ul>
+ * N.B. In the geography domain yet another convention is used. <br>
+ * TODO Use generics to make this work for speeds as well as accelerations.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -21,10 +31,11 @@ import org.djunits.value.vdouble.vector.SpeedVector;
  */
 public class Speed3D
 {
-    /** the speed in 3D (XYZ coded). */
+    /** The speed in 3D (XYZ coded). */
     private final SpeedVector speed;
 
     /**
+     * Construct a new Speed3D from vector of strongly typed Cartesian coordinates.
      * @param speed the speeds in 3D (YPR coded)
      * @throws ValueException in case the vector does not have exactly three elements
      */
@@ -39,6 +50,7 @@ public class Speed3D
     }
 
     /**
+     * Construct a new Speed3D from three strongly typed Cartesian coordinates.
      * @param x the speed in the x-direction
      * @param y the speed in the y-direction
      * @param z the speed in the z-direction
@@ -47,10 +59,11 @@ public class Speed3D
     public Speed3D(final Speed x, final Speed y, final Speed z) throws ValueException
     {
         super();
-        this.speed = new SpeedVector(new Speed[]{x, y, z}, StorageType.DENSE);
+        this.speed = new SpeedVector(new Speed[] { x, y, z }, StorageType.DENSE);
     }
 
     /**
+     * Construct a new Speed3D from three double Cartesian coordinates and a speed unit.
      * @param x the speed in the x-direction
      * @param y the speed in the y-direction
      * @param z the speed in the z-direction
@@ -60,27 +73,31 @@ public class Speed3D
     public Speed3D(final double x, final double y, final double z, final SpeedUnit unit) throws ValueException
     {
         super();
-        this.speed = new SpeedVector(new double[]{x, y, z}, unit, StorageType.DENSE);
+        this.speed = new SpeedVector(new double[] { x, y, z }, unit, StorageType.DENSE);
     }
 
     /**
-     * Construct the 3D speed in polar coordinates.
-     * @param speed the speeds in the direction of the angle long the vector
-     * @param theta the angle perpendicular to the xy-plane
-     * @param phi the projected angle in the xy-plane
+     * Construct a new Speed3D from a strongly typed speed and polar coordinates.
+     * @param speed Speed; the speed in the direction of the angle along the vector
+     * @param theta Angle.Abs; the angle from the z direction
+     * @param phi Angle.Abs; the projected angle in the xy-plane from the x direction
      * @throws ValueException in case the vector does not have exactly three elements
      */
     public Speed3D(final Speed speed, final Angle.Abs theta, final Angle.Abs phi) throws ValueException
     {
         super();
         double r = speed.getInUnit();
+        // FIXME Redundant re-computation of "r * Math.sin(theta.si)". Or does the compiler take care of this?
+        // Also have a look at http://web.archive.org/web/20100729204636/http://home.broadpark.no/~alein/fsincos.html
+        // A mul, sub and sqrt can compute the cos from an earlier computed sine. Is sqrt faster than cos?
         double x = r * Math.sin(theta.si) * Math.cos(phi.si);
         double y = r * Math.sin(theta.si) * Math.sin(phi.si);
         double z = r * Math.cos(theta.si);
-        this.speed = new SpeedVector(new double[]{x, y, z}, speed.getUnit(), StorageType.DENSE);
+        this.speed = new SpeedVector(new double[] { x, y, z }, speed.getUnit(), StorageType.DENSE);
     }
 
     /**
+     * Retrieve the x-component of this Speed3D.
      * @return the speed in the x-direction.
      */
     public final Speed getX()
@@ -93,11 +110,12 @@ public class Speed3D
         {
             // should be impossible as we constructed the vector always with three elements
             throw new RuntimeException("getX() gave an exception; apparently vector " + this.speed
-                + " was not constructed right", exception);
+                    + " was not constructed right", exception);
         }
     }
 
     /**
+     * Retrieve the y-component of this Speed3D.
      * @return the speed in the y-direction.
      */
     public final Speed getY()
@@ -110,11 +128,12 @@ public class Speed3D
         {
             // should be impossible as we constructed the vector always with three elements
             throw new RuntimeException("getY() gave an exception; apparently vector " + this.speed
-                + " was not constructed right", exception);
+                    + " was not constructed right", exception);
         }
     }
 
     /**
+     * Retrieve the z-component of this Speed3D.
      * @return the speed in the z-direction.
      */
     public final Speed getZ()
@@ -127,11 +146,12 @@ public class Speed3D
         {
             // should be impossible as we constructed the vector always with three elements
             throw new RuntimeException("getZ() gave an exception; apparently vector " + this.speed
-                + " was not constructed right", exception);
+                    + " was not constructed right", exception);
         }
     }
 
     /**
+     * Retrieve the theta of this Speed3D.
      * @return the angle of direction perpendicular to the xy-plane
      */
     public final Angle.Abs getTheta()
@@ -144,6 +164,7 @@ public class Speed3D
     }
 
     /**
+     * Retrieve the phi of this Speed3D.
      * @return the projected angle of direction in the xy-plane
      */
     public final Angle.Abs getPhi()
@@ -154,6 +175,7 @@ public class Speed3D
     }
 
     /**
+     * Retrieve the norm of this Speed3D.
      * @return the combined speed in the direction of the angle
      */
     public final Speed getSpeed()
@@ -163,4 +185,13 @@ public class Speed3D
         double z = getZ().si;
         return new Speed(Math.sqrt(x * x + y * y + z * z), SpeedUnit.SI);
     }
+
+    /** {@inheritDoc} */
+    public final String toString()
+    {
+        return String.format(Locale.US, "Speed3D %s (%s, theta %s, phi %s)", this.speed, getSpeed(), new Angle.Abs(getTheta()
+                .getInUnit(AngleUnit.DEGREE), AngleUnit.DEGREE), new Angle.Abs(getPhi().getInUnit(AngleUnit.DEGREE),
+                AngleUnit.DEGREE));
+    }
+
 }

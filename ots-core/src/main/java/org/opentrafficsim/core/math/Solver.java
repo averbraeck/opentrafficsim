@@ -10,8 +10,15 @@ package org.opentrafficsim.core.math;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class Solver
+public final class Solver
 {
+    /**
+     * 
+     */
+    private Solver()
+    {
+        // cannot be instantiated.
+    }
 
     /**
      * Solve quadratic equation <cite>ax<sup>2</sup>+bx+c=0</cite> for <cite>x</cite>. Degenerate case <cite>a == 0</cite> is
