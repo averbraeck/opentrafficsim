@@ -1,8 +1,6 @@
 package org.opentrafficsim.core.gtu;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
@@ -16,15 +14,13 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djunits.value.vdouble.scalar.Time.Rel;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanBuilder;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+import org.opentrafficsim.core.model.OTSModel;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -79,6 +75,9 @@ public abstract class AbstractGTU implements GTU
 
     /** the perception unit that takes care of observing the environment of the GTU. */
     private Perception perception;
+    
+    /** the model in which this GTU is registered. */
+    private OTSModel model;
 
     /** constant for zero speed. */
     protected static final Speed SPEED_0 = new Speed(0.0, SpeedUnit.SI);
@@ -94,11 +93,13 @@ public abstract class AbstractGTU implements GTU
      *            to go. It operates by instantiating tactical planners to do the work.
      * @param perception the perception unit that takes care of observing the environment of the GTU
      * @param initialLocation the initial location (and direction) of the GTU
+     * @param model 
      * @throws SimRuntimeException when scheduling after the first move fails
      * @throws NetworkException when the odometer fails to update (will never happen)
      */
     public AbstractGTU(final String id, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
-        final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation)
+        final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation,
+        final OTSModel model)
         throws SimRuntimeException, NetworkException
     {
         super();
@@ -108,6 +109,7 @@ public abstract class AbstractGTU implements GTU
         this.strategicalPlanner = strategicalPlanner;
         this.perception = perception;
         this.odometer = new Length.Rel(0.0, LengthUnit.SI);
+        this.model = model;
         Time.Abs now = this.simulator.getSimulatorTime().getTime();
 
         if (initialLocation != null)
@@ -116,12 +118,12 @@ public abstract class AbstractGTU implements GTU
             // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
             this.nextMoveEvent =
                 new SimEvent<>(new OTSSimTimeDouble(now), this, this, "move", new Object[]{initialLocation});
-            this.simulator.scheduleEvent(this.nextMoveEvent);
+            //this.simulator.scheduleEvent(this.nextMoveEvent);
         }
 
         // give the GTU a stand-still operational plan, valid for 0 seconds, so initialization will work
         DirectedPoint p = initialLocation == null ? new DirectedPoint() : initialLocation;
-        this.operationalPlan = new OperationalPlan(p, now, new Time.Rel(1.0, TimeUnit.SECOND));
+        this.operationalPlan = new OperationalPlan(p, now, new Time.Rel(1.0e6, TimeUnit.SECOND));
     }
 
     /**
