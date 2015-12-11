@@ -24,4 +24,25 @@ public interface OTSModel
      * @return a set of GTUs as registered in the current model.
      */
     Set<GTU> getGTUs();
+    
+    /**
+     * Add a GTU to the network.
+     * @param gtu the GTU to add
+     */
+    void addGTU(GTU gtu);
+    
+    /**
+     * Remove a GTU from the network.
+     * @param gtu the GTU to remove
+     */
+    void removeGTU(GTU gtu);
+    
+    /**
+     * Test whether a GTU is registered in the network.
+     * @param gtu the GTU to search for
+     * @return whether the network contains this GTU
+     */
+    boolean containsGTU(GTU gtu);
+    
+
 }
