@@ -119,7 +119,7 @@ public abstract class AbstractGTU implements GTU
             // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
             this.nextMoveEvent =
                 new SimEvent<>(new OTSSimTimeDouble(now), this, this, "move", new Object[]{initialLocation});
-            //this.simulator.scheduleEvent(this.nextMoveEvent);
+            this.simulator.scheduleEvent(this.nextMoveEvent);
         }
 
         // give the GTU a stand-still operational plan, valid for 0 seconds, so initialization will work
