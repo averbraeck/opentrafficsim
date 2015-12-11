@@ -40,22 +40,23 @@ public class OTSLine3D implements LocatableInterface, Serializable
     /** */
     private static final long serialVersionUID = 20150722L;
 
-    /** the points of the line. */
+    /** The points of the line. */
     private final OTSPoint3D[] points;
 
-    /** the cumulative length of the line at point 'i'. */
+    /** The cumulative length of the line at point 'i'. */
     private double[] lengthIndexedLine = null;
 
-    /** the cached length; will be calculated when needed for the first time. */
+    /** The cached length; will be calculated when needed for the first time. */
     private double length = Double.NaN;
 
-    /** the cached centroid; will be calculated when needed for the first time. */
+    /** The cached centroid; will be calculated when needed for the first time. */
     private OTSPoint3D centroid = null;
 
-    /** the cached bounds; will be calculated when needed for the first time. */
+    /** The cached bounds; will be calculated when needed for the first time. */
     private Bounds bounds = null;
 
     /**
+     * Construct a new OTSLine3D.
      * @param points the array of points to construct this OTSLine3D from.
      * @throws NetworkException when the provided points do not constitute a valid line (too few points or identical adjacent
      *             points)
@@ -106,7 +107,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
             {
                 case PK:
                     return OTSOffsetLinePK.offsetLine(this, offset);
-                    
+
                 case AV:
                     return OTSBufferingAV.offsetLine(this, offset);
 
@@ -296,7 +297,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
 
     /**
      * Concatenate several OTSLine3D instances.
-     * @param lines OTSLine3D... one or more OTSLine3D. The last point of the first must match the first of the second, etc.
+     * @param lines OTSLine3D... one or more OTSLine3D. The last point of the first <strong>must</strong> match the first of the
+     *            second, etc.
      * @return OTSLine3D
      * @throws OTSGeometryException if zero lines are given, or when there is a gap between consecutive lines
      */
@@ -383,7 +385,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
-     * Create anew OTSLine3D that covers a sub-section of this OTSLine3D.
+     * Create a new OTSLine3D that covers a sub-section of this OTSLine3D.
      * @param start Length.Rel; the length along this OTSLine3D where the sub-section starts, valid range [0..<cite>end</cite>)
      * @param end Length.Rel; length along this OTSLine3D where the sub-section ends, valid range
      *            (<cite>start</cite>..<cite>length</cite> (length is the length of this OTSLine3D)
@@ -542,7 +544,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
-     * @param coordinates the array of coordinates to construct this OTSLine3D from.
+     * Construct a new OTSLine3D from an array of Coordinate.
+     * @param coordinates the array of coordinates to construct this OTSLine3D from
      * @throws NetworkException when the provided points do not constitute a valid line (too few points or identical adjacent
      *             points)
      */
@@ -552,9 +555,10 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
+     * Construct a new OTSLine3D from a LineString.
      * @param lineString the lineString to construct this OTSLine3D from.
-     * @throws NetworkException when the provided points do not constitute a valid line (too few points or identical adjacent
-     *             points)
+     * @throws NetworkException when the provided LineString does not constitute a valid line (too few points or identical
+     *             adjacent points)
      */
     public OTSLine3D(final LineString lineString) throws NetworkException
     {
@@ -562,8 +566,9 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
-     * @param geometry the geometry to construct this OTSLine3D from.
-     * @throws NetworkException when the provided points do not constitute a valid line (too few points or identical adjacent
+     * Construct a new OTSLine3D from a Geometry.
+     * @param geometry the geometry to construct this OTSLine3D from
+     * @throws NetworkException when the provided Geometry do not constitute a valid line (too few points or identical adjacent
      *             points)
      */
     public OTSLine3D(final Geometry geometry) throws NetworkException
@@ -572,6 +577,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
+     * Construct a new OTSLine3D from a List&lt;OTSPoint3D&gt;.
      * @param pointList the list of points to construct this OTSLine3D from.
      * @throws NetworkException when the provided points do not constitute a valid line (too few points or identical adjacent
      *             points)
@@ -582,7 +588,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
-     * @return an array of Coordinates corresponding to this OTSLine.
+     * Construct a Coordinate array and fill it with the points of this OTSLine3D.
+     * @return an array of Coordinates corresponding to this OTSLine
      */
     public final Coordinate[] getCoordinates()
     {
@@ -595,7 +602,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
-     * @return a LineString corresponding to this OTSLine.
+     * Construct a LineString from this OTSLine3D.
+     * @return a LineString corresponding to this OTSLine
      */
     public final LineString getLineString()
     {
@@ -606,7 +614,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
-     * @return the number of points on the line.
+     * Return the number of points in this OTSLine3D.
+     * @return the number of points on the line
      */
     public final int size()
     {
@@ -614,6 +623,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
+     * Return the first point of this OTSLine3D.
      * @return the first point on the line
      */
     public final OTSPoint3D getFirst()
@@ -622,6 +632,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
+     * Return the last point of this OTSLine3D.
      * @return the last point on the line
      */
     public final OTSPoint3D getLast()
@@ -630,8 +641,9 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
-     * @param i the index of the point to retrieve
-     * @return the i-th point of the line.
+     * Return one point of this OTSLine3D.
+     * @param i int; the index of the point to retrieve
+     * @return OTSPoint3d; the i-th point of the line
      * @throws OTSGeometryException when i &lt; 0 or i &gt; the number of points
      */
     public final OTSPoint3D get(final int i) throws OTSGeometryException
@@ -644,7 +656,9 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
-     * @return the length of the line in SI units.
+     * Return the length of this OTSLine3D as a strongly typed value. (Assumes that the coordinates of the points constituting
+     * this line are expressed in meters.)
+     * @return the length of the line in SI units
      */
     public final synchronized double getLengthSI()
     {
@@ -660,7 +674,9 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
-     * @return the length of the line.
+     * Return the length of this OTSLine3D in meters. (Assuming that the coordinates of the points constituting this line are
+     * expressed in meters.)
+     * @return the length of the line
      */
     public final Length.Rel getLength()
     {
@@ -668,7 +684,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
-     * @return the points of this line.
+     * Return an array of OTSPoint3D that represents this OTSLine3D. <strong>Do not modify the result.</strong>
+     * @return the points of this line
      */
     public final OTSPoint3D[] getPoints()
     {
@@ -676,7 +693,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
-     * make the length indexed line if it does not exist yet, and cache it.
+     * Make the length indexed line if it does not exist yet, and cache it.
      */
     private void makeLengthIndexedLine()
     {
@@ -998,7 +1015,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
-     * @param args args
+     * @param args String[]; the command line arguments (not used)
      * @throws NetworkException in case of error
      * @throws OTSGeometryException g
      */
