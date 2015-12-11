@@ -110,6 +110,7 @@ public abstract class AbstractGTU implements GTU
         this.perception = perception;
         this.odometer = new Length.Rel(0.0, LengthUnit.SI);
         this.model = model;
+        this.model.addGTU(this);
         Time.Abs now = this.simulator.getSimulatorTime().getTime();
 
         if (initialLocation != null)
@@ -126,6 +127,15 @@ public abstract class AbstractGTU implements GTU
         this.operationalPlan = new OperationalPlan(p, now, new Time.Rel(1.0e6, TimeUnit.SECOND));
     }
 
+    /**
+     * Destructor. Don't forget to call from any override to avoid memory leaks in the network.
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    public void destroy()
+    {
+        this.model.removeGTU(this);
+    }
+    
     /**
      * Move from the current location according to an operational plan to a location that will bring us nearer to reaching the
      * location provided by the strategical planner. <br>
