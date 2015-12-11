@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.math;
 
+import java.util.Locale;
+
 import org.djunits.unit.AngleUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
@@ -59,7 +61,7 @@ public interface Rotation3D
         public Abs(final Angle.Abs roll, final Angle.Abs pitch, final Angle.Abs yaw) throws ValueException
         {
             super();
-            this.rotation = new AngleVector.Abs(new Angle.Abs[]{roll, pitch, yaw}, StorageType.DENSE);
+            this.rotation = new AngleVector.Abs(new Angle.Abs[] { roll, pitch, yaw }, StorageType.DENSE);
         }
 
         /**
@@ -72,7 +74,7 @@ public interface Rotation3D
         public Abs(final double roll, final double pitch, final double yaw, final AngleUnit unit) throws ValueException
         {
             super();
-            this.rotation = new AngleVector.Abs(new double[]{roll, pitch, yaw}, unit, StorageType.DENSE);
+            this.rotation = new AngleVector.Abs(new double[] { roll, pitch, yaw }, unit, StorageType.DENSE);
         }
 
         /**
@@ -88,7 +90,7 @@ public interface Rotation3D
             {
                 // should be impossible as we constructed the vector always with three elements
                 throw new RuntimeException("getRoll() gave an exception; apparently vector " + this.rotation
-                    + " was not constructed right", exception);
+                        + " was not constructed right", exception);
             }
         }
 
@@ -105,7 +107,7 @@ public interface Rotation3D
             {
                 // should be impossible as we constructed the vector always with three elements
                 throw new RuntimeException("getPitch() gave an exception; apparently vector " + this.rotation
-                    + " was not constructed right", exception);
+                        + " was not constructed right", exception);
             }
         }
 
@@ -122,9 +124,16 @@ public interface Rotation3D
             {
                 // should be impossible as we constructed the vector always with three elements
                 throw new RuntimeException("getYaw() gave an exception; apparently vector " + this.rotation
-                    + " was not constructed right", exception);
+                        + " was not constructed right", exception);
             }
         }
+
+        /** {@inheritDoc} */
+        public final String toString()
+        {
+            return String.format(Locale.US, "Rotation3D.Abs roll %s, pitch %s, yaw %s", getRoll(), getPitch(), getYaw());
+        }
+        
     }
 
     /**
@@ -167,7 +176,7 @@ public interface Rotation3D
         public Rel(final Angle.Rel roll, final Angle.Rel pitch, final Angle.Rel yaw) throws ValueException
         {
             super();
-            this.rotation = new AngleVector.Rel(new Angle.Rel[]{roll, pitch, yaw}, StorageType.DENSE);
+            this.rotation = new AngleVector.Rel(new Angle.Rel[] { roll, pitch, yaw }, StorageType.DENSE);
         }
 
         /**
@@ -180,7 +189,7 @@ public interface Rotation3D
         public Rel(final double roll, final double pitch, final double yaw, final AngleUnit unit) throws ValueException
         {
             super();
-            this.rotation = new AngleVector.Rel(new double[]{roll, pitch, yaw}, unit, StorageType.DENSE);
+            this.rotation = new AngleVector.Rel(new double[] { roll, pitch, yaw }, unit, StorageType.DENSE);
         }
 
         /**
@@ -196,7 +205,7 @@ public interface Rotation3D
             {
                 // should be impossible as we constructed the vector always with three elements
                 throw new RuntimeException("getRoll() gave an exception; apparently vector " + this.rotation
-                    + " was not constructed right", exception);
+                        + " was not constructed right", exception);
             }
         }
 
@@ -213,7 +222,7 @@ public interface Rotation3D
             {
                 // should be impossible as we constructed the vector always with three elements
                 throw new RuntimeException("getPitch() gave an exception; apparently vector " + this.rotation
-                    + " was not constructed right", exception);
+                        + " was not constructed right", exception);
             }
         }
 
@@ -230,9 +239,16 @@ public interface Rotation3D
             {
                 // should be impossible as we constructed the vector always with three elements
                 throw new RuntimeException("getYaw() gave an exception; apparently vector " + this.rotation
-                    + " was not constructed right", exception);
+                        + " was not constructed right", exception);
             }
         }
+        
+        /** {@inheritDoc} */
+        public final String toString()
+        {
+            return String.format(Locale.US, "Rotation3D.Rel roll %s, pitch %s, yaw %s", getRoll(), getPitch(), getYaw());
+        }
+        
     }
 
 }
