@@ -35,7 +35,7 @@ import org.opentrafficsim.road.network.factory.opendrive.data.RTIToOTSData;
  * @version SVN $Revision: 31 $ $Author: averbraeck $
  * @date $Date: 2011-08-15 04:38:04 +0200 (Mon, 15 Aug 2011) $
  **/
-public class ReceiverThread implements Runnable
+public class ReceiverThread extends Thread
 {
     
     /** */
@@ -142,6 +142,7 @@ public class ReceiverThread implements Runnable
             
             //new Thread(new Responder(socket, packet)).start();
         }
+        System.err.println("RECEIVEDATA = NULL - ReceiverThread ended");
     }
 
 }

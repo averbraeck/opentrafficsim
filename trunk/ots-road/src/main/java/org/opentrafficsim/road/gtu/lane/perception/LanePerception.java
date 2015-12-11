@@ -13,8 +13,9 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.gtu.Perception;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.perception.PerceivedObject;
+import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -644,6 +645,14 @@ public class LanePerception implements Perception
     public final Speed getSpeedLimit()
     {
         return this.speedLimit;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Set<PerceivedObject> getPerceivedObjects()
+    {
+        // TODO getPerceivedObjects() in LanePerception
+        return new HashSet<PerceivedObject>();
     }
 
 }

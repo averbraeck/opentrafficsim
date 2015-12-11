@@ -10,6 +10,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
 /**
@@ -35,6 +36,7 @@ public abstract class AbstractLaneBasedTemplateGTU extends AbstractLaneBasedGTU
      * @param templateGTUType the TemplateGTUType, e.g. TruckType, CarType, BusType
      * @param initialLongitudinalPositions the initial positions of the car on one or more lanes
      * @param initialSpeed the initial speed of the car on the lane
+     * @param network the network that the GTU is initially registered in
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GTUException when gtuFollowingModel is null
@@ -42,11 +44,12 @@ public abstract class AbstractLaneBasedTemplateGTU extends AbstractLaneBasedGTU
      * @throws IllegalAccessException in case Perception or StrategicPlanner constructor is not public
      */
     public AbstractLaneBasedTemplateGTU(final String id, final LaneBasedTemplateGTUType templateGTUType,
-        final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed)
+        final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed, final OTSNetwork network)
         throws NetworkException, SimRuntimeException, GTUException, InstantiationException, IllegalAccessException
     {
         super(id, templateGTUType.getGtuType(), initialLongitudinalPositions, initialSpeed, templateGTUType
-            .getSimulator(), templateGTUType.instantiateStrategicalPlanner(), templateGTUType.instantiatePerception());
+            .getSimulator(), templateGTUType.instantiateStrategicalPlanner(), templateGTUType.instantiatePerception(),
+            network);
         this.templateGTUType = templateGTUType;
     }
 

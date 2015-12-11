@@ -294,11 +294,10 @@ class GeneratorTag
         LaneBasedDrivingCharacteristics drivingCharacteristics =
             new LaneBasedDrivingCharacteristics(new IDMPlus(), new Altruistic());
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
-        LanePerception perception = new LanePerception();
         new GTUGeneratorIndividual(generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType, gtuClass,
             generatorTag.initialSpeedDist, generatorTag.iatDist, generatorTag.gtuTag.lengthDist,
             generatorTag.gtuTag.widthDist, generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime,
-            lane, position, generatorTag.gtuDirection, generatorTag.gtuColorer, strategicalPlanner, perception);
+            lane, position, generatorTag.gtuDirection, generatorTag.gtuColorer, strategicalPlanner, LanePerception.class);
 
         // TODO GTUMix
         // TODO RouteMix
