@@ -93,7 +93,7 @@ public abstract class AbstractGTUGenerator
     private final LaneBasedStrategicalPlanner strategicalPlanner;
 
     /** the LanePerception to use. */
-    private final LanePerception perception;
+    private final Class<LanePerception> perceptionClass;
 
     /** Car builder list. */
     private List<LaneBasedIndividualCarBuilder> carBuilderList = new ArrayList<>();
@@ -116,8 +116,8 @@ public abstract class AbstractGTUGenerator
      * @param position position on the lane, relative to the design line of the link
      * @param direction the direction on the lane in which the GTU has to be generated (DIR_PLUS, or DIR_MINUS)
      * @param gtuColorer the GTUColorer to use
-     * @param strategicalPlanner the lane-based strategical planner to use
-     * @param perception the LanePerception to use
+     * @param strategicalPlanner the lane-based strategical planner to use (pretty much stateless, so can be shared)
+     * @param perceptionClass the LanePerception class to use (stateful, so has to be class-based)
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -126,7 +126,7 @@ public abstract class AbstractGTUGenerator
         final ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDist, final long maxGTUs,
         final Time.Abs startTime, final Time.Abs endTime, final Lane lane, final Length.Rel position,
         final GTUDirectionality direction, final GTUColorer gtuColorer,
-        final LaneBasedStrategicalPlanner strategicalPlanner, final LanePerception perception)
+        final LaneBasedStrategicalPlanner strategicalPlanner, final Class<LanePerception> perceptionClass)
         throws SimRuntimeException
     {
         super();
@@ -143,7 +143,7 @@ public abstract class AbstractGTUGenerator
         this.direction = direction;
         this.gtuColorer = gtuColorer;
         this.strategicalPlanner = strategicalPlanner;
-        this.perception = perception;
+        this.perceptionClass = perceptionClass;
 
         simulator.scheduleEventAbs(startTime, this, this, "generate", null);
     }
@@ -187,7 +187,7 @@ public abstract class AbstractGTUGenerator
             carBuilder.setInitialLongitudinalPositions(initialLongitudinalPositions);
             carBuilder.setAnimationClass(DefaultCarAnimation.class);
             carBuilder.setStrategicalPlanner(getStrategicalPlanner()); // TODO same instance? clone?
-            carBuilder.setPerception(getPerception()); // TODO same instance? clone?
+            carBuilder.setPerception(this.perceptionClass.newInstance()); // TODO same instance? clone?
             carBuilder.setGtuColorer(this.gtuColorer);
             this.generatedGTUs++;
 
@@ -563,9 +563,9 @@ public abstract class AbstractGTUGenerator
     /**
      * @return perception
      */
-    public final LanePerception getPerception()
+    public final Class<LanePerception> getPerceptionClass()
     {
-        return this.perception;
+        return this.perceptionClass;
     }
 
 }

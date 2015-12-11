@@ -10,6 +10,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -52,6 +53,7 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
      * @param simulator the simulator
      * @param strategicalPlanner the strategical planner (e.g., route determination) to use
      * @param perception the lane-based perception model of the GTU
+     * @param network the network that the GTU is initially registered in
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GTUException when a parameter is invalid
@@ -61,9 +63,11 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
         final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
         final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
         final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
-        final LanePerception perception) throws NetworkException, SimRuntimeException, GTUException
+        final LanePerception perception, final OTSNetwork network) throws NetworkException, SimRuntimeException,
+        GTUException
     {
-        super(id, gtuType, initialLongitudinalPositions, initialSpeed, simulator, strategicalPlanner, perception);
+        super(id, gtuType, initialLongitudinalPositions, initialSpeed, simulator, strategicalPlanner, perception,
+            network);
         this.length = length;
         this.width = width;
         if (null == maximumVelocity)

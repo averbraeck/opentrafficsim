@@ -134,27 +134,53 @@ public class LaneBasedCFLCTacticalPlanner implements TacticalPlanner
         for (Lane lane : positions.keySet())
         {
             double posSI = positions.get(lane).si;
-            if (posSI >= 0.0 && posSI < lane.getLength().si)
+            if (Math.abs(posSI - lane.getLength().si) < 0.00001) // TODO DELTA SHOULD BE BASED ON ulp()
+            {
+                posSI = lane.getLength().si;
+            }
+            if (posSI >= 0.0 && posSI <= lane.getLength().si)
             {
                 try
                 {
                     // this lane is a good base
-                    OTSLine3D path = lane.getCenterLine().extractFractional(posSI / lane.getParentLink().getLength().si, 1.0);
-                    if (gtu.getLanes().get(lane).equals(GTUDirectionality.DIR_MINUS))
+                    OTSLine3D path = null;
+                 
+                    if (gtu.getLanes().get(lane).equals(GTUDirectionality.DIR_PLUS) && posSI != positions.get(lane).si)
                     {
+                     // if we are at the end, don't create to avoid a degenerate line...
+                        path = lane.getCenterLine().extractFractional(posSI / lane.getParentLink().getLength().si, 1.0);
+                    }
+                    else if (gtu.getLanes().get(lane).equals(GTUDirectionality.DIR_MINUS) && posSI != 0.0)
+                    {
+                     // if we are at the start, don't create, don't create to avoid a degenerate line...
+                        path = lane.getCenterLine().extractFractional(0.0, posSI / lane.getParentLink().getLength().si).reverse();
                         path = path.reverse();
                     }
-                    while (path.getLength().si < distance.si)
+                    while (path == null || path.getLength().si < distance.si)
                     {
                         Map<Lane, GTUDirectionality> nextLanes = lane.nextLanes(gtu.getGTUType());
                         if (nextLanes.size() == 1)
                         {
-                            path = concat(path, nextLanes.keySet().iterator().next().getCenterLine());
+                            if (path == null)
+                            {
+                                path = nextLanes.keySet().iterator().next().getCenterLine();
+                            }
+                            else
+                            {
+                                path = concat(path, nextLanes.keySet().iterator().next().getCenterLine());
+                            }
                         }
                         else
                         {
                             // TODO 
-                            path = concat(path, nextLanes.keySet().iterator().next().getCenterLine());
+                            if (path == null)
+                            {
+                                path = nextLanes.keySet().iterator().next().getCenterLine();
+                            }
+                            else
+                            {
+                                path = concat(path, nextLanes.keySet().iterator().next().getCenterLine());
+                            }
                         }
                     }
                     return path;

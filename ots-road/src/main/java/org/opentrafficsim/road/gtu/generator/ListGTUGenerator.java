@@ -24,6 +24,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -74,6 +75,9 @@ public class ListGTUGenerator
     /** Number of GTUs created. */
     private int carsCreated = 0;
 
+    /** the network to initially register the cars in. */
+    private final OTSNetwork network;
+
     /**
      * Construct a GTU generator that takes the times to generate another GTU from an external source. <br>
      * Currently the external input is a text file in the local file system. This should be replaced by a more general
@@ -89,6 +93,7 @@ public class ListGTUGenerator
      * @param gtuColorer GTUColorere; the GTUColorer of the generated GTUs
      * @param strategicalPlanner the lane-based strategical planner to use
      * @param perception the LanePerception to use
+     * @param network the network to initially register the cars in
      * @param fileName String; name of file with the times when another GTU is to be generated (XXXX STUB)
      * @throws SimRuntimeException on
      * @throws NetworkException on
@@ -96,7 +101,8 @@ public class ListGTUGenerator
     public ListGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
         final Speed initialSpeed, final Lane lane, final Length.Rel position, final GTUDirectionality direction,
         final GTUColorer gtuColorer, final LaneBasedStrategicalPlanner strategicalPlanner,
-        final LanePerception perception, final String fileName) throws SimRuntimeException, NetworkException
+        final LanePerception perception, final OTSNetwork network, final String fileName) throws SimRuntimeException,
+        NetworkException
     {
         if (null == lane)
         {
@@ -110,6 +116,7 @@ public class ListGTUGenerator
         this.gtuColorer = gtuColorer;
         this.strategicalPlanner = strategicalPlanner;
         this.perception = perception;
+        this.network = network;
         try
         {
             this.reader = new BufferedReader(new FileReader(new File(fileName)));
@@ -171,7 +178,8 @@ public class ListGTUGenerator
             Length.Rel vehicleLength = new Length.Rel(4, LengthUnit.METER);
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, this.initialSpeed,
                 vehicleLength, new Length.Rel(1.8, LengthUnit.METER), new Speed(200, SpeedUnit.KM_PER_HOUR),
-                this.simulator, this.strategicalPlanner, this.perception, DefaultCarAnimation.class, this.gtuColorer);
+                this.simulator, this.strategicalPlanner, this.perception, DefaultCarAnimation.class, this.gtuColorer,
+                this.network);
             scheduleNextVehicle();
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)

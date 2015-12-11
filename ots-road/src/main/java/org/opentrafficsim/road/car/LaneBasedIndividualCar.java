@@ -25,6 +25,7 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -64,6 +65,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @param strategicalPlanner the strategical planner (e.g., route determination) to use
      * @param perception the lane-based perception model of the GTU
+     * @param network the network that the GTU is initially registered in
      * @throws NamingException if an error occurs when adding the animation handler
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
@@ -74,10 +76,11 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
         final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
         final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
-        final LanePerception perception) throws NamingException, NetworkException, SimRuntimeException, GTUException
+        final LanePerception perception, final OTSNetwork network) throws NamingException, NetworkException,
+        SimRuntimeException, GTUException
     {
         this(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
-            strategicalPlanner, perception, DefaultCarAnimation.class, null);
+            strategicalPlanner, perception, DefaultCarAnimation.class, null, network);
     }
 
     /**
@@ -95,6 +98,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
      * @param animationClass Class&lt;? extends Renderable2D&gt;; the class for animation or null if no animation
      * @param gtuColorer GTUColorer; the GTUColorer that will be linked from the animation to determine the color (may be null
      *            in which case a default will be used)
+     * @param network the network that the GTU is initially registered in
      * @throws NamingException if an error occurs when adding the animation handler
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
@@ -105,11 +109,12 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
         final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
         final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
-        final LanePerception perception, final Class<? extends Renderable2D> animationClass, final GTUColorer gtuColorer)
-        throws NamingException, NetworkException, SimRuntimeException, GTUException
+        final LanePerception perception, final Class<? extends Renderable2D> animationClass,
+        final GTUColorer gtuColorer, final OTSNetwork network) throws NamingException, NetworkException,
+        SimRuntimeException, GTUException
     {
         super(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
-            strategicalPlanner, perception);
+            strategicalPlanner, perception, network);
 
         // sensor positions.
         // We take the rear position of the Car to be the reference point. So the front is the length
@@ -260,6 +265,9 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         /** Perception. */
         private LanePerception perception = null;
 
+        /** Network. */
+        private OTSNetwork network = null;
+
         /**
          * @param id set id
          * @return the class itself for chaining the setters
@@ -374,6 +382,26 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         }
 
         /**
+         * @param gtuColorer set gtuColorer.
+         * @return the class itself for chaining the setters
+         */
+        public final LaneBasedIndividualCarBuilder setGtuColorer(final GTUColorer gtuColorer)
+        {
+            this.gtuColorer = gtuColorer;
+            return this;
+        }
+
+        /**
+         * @param network set network
+         * @return the class itself for chaining the setters
+         */
+        public final LaneBasedIndividualCarBuilder setNetwork(final OTSNetwork network)
+        {
+            this.network = network;
+            return this;
+        }
+
+        /**
          * @return id.
          */
         public final String getId()
@@ -470,11 +498,11 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         }
 
         /**
-         * @param gtuColorer set gtuColorer.
+         * @return network
          */
-        public final void setGtuColorer(final GTUColorer gtuColorer)
+        public final OTSNetwork getNetwork()
         {
-            this.gtuColorer = gtuColorer;
+            return this.network;
         }
 
         /**
@@ -486,16 +514,16 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         {
             if (null == this.id || null == this.gtuType || null == this.strategicalPlanner || null == this.perception
                 || null == this.initialLongitudinalPositions || null == this.initialSpeed || null == this.length
-                || null == this.width || null == this.maximumVelocity || null == this.simulator)
+                || null == this.width || null == this.maximumVelocity || null == this.simulator || null == this.network)
             {
                 // TODO Should throw a more specific Exception type
                 throw new GTUException("factory settings incomplete");
             }
+            
             LaneBasedIndividualCar gtu =
                 new LaneBasedIndividualCar(this.id, this.gtuType, this.initialLongitudinalPositions, this.initialSpeed,
                     this.length, this.width, this.maximumVelocity, this.simulator, this.strategicalPlanner,
-                    this.perception, this.animationClass, this.gtuColorer);
-            // System.out.println("Generated GTU " + gtu + " at t=" + this.simulator.getSimulatorTime());
+                    this.perception, this.animationClass, this.gtuColorer, this.network);
             return gtu;
 
         }

@@ -19,9 +19,9 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.DrivingCharacteristics;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.gtu.Perception;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
+import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -65,7 +65,7 @@ public class SubjectiveCar extends AbstractGTU
     public SubjectiveCar(String id, GTUType type, OTSDEVSSimulatorInterface simulator, DirectedPoint initialLocation)
             throws SimRuntimeException, NetworkException, RemoteException, NamingException
     {
-        super(id, type, simulator, null, null, null);
+        super(id, type, simulator, null, null, null, null);
         this.position = initialLocation;
         System.out.println("Subjective car created at position " + this.position);
         
@@ -89,7 +89,7 @@ public class SubjectiveCar extends AbstractGTU
             StrategicalPlanner strategicalPlanner, Perception perception, DirectedPoint initialLocation)
             throws SimRuntimeException, NetworkException
     {
-        super(id, gtuType, simulator, strategicalPlanner, perception, initialLocation);
+        super(id, gtuType, simulator, strategicalPlanner, perception, initialLocation, null);
     }
 
     /**

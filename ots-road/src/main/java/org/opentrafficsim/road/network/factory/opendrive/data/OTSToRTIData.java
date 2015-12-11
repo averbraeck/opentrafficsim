@@ -76,7 +76,7 @@ public class OTSToRTIData
             Position position = new Position(rtiCars.get(i).getLocation().getY(), rtiCars.get(i).getLocation().getX(), 0.15);
             this.exoPos.add(position);
             
-            Orientation orientation = new Orientation(rtiCars.get(i).getLocation().getRotX(), rtiCars.get(i).getLocation().getRotY(), rtiCars.get(i).getLocation().getRotZ());
+            Orientation orientation = new Orientation(rtiCars.get(i).getLocation().getRotX(), rtiCars.get(i).getLocation().getRotY(), Math.PI/2 - rtiCars.get(i).getLocation().getRotZ());
             this.exoOri.add(orientation);
             
             Velocity vel = new Velocity();

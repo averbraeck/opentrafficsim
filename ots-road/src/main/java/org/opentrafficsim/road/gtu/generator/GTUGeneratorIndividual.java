@@ -60,7 +60,7 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
      * @param direction the direction on the lane in which the GTU has to be generated (DIR_PLUS, or DIR_MINUS)
      * @param gtuColorer the GTUColorer to use
      * @param strategicalPlanner the lane-based strategical planner to use
-     * @param perception the LanePerception to use
+     * @param perceptionClass the LanePerception class to use (stateful, so has to be class-based)
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -72,11 +72,11 @@ public class GTUGeneratorIndividual extends AbstractGTUGenerator
         final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist, final long maxGTUs,
         final Time.Abs startTime, final Time.Abs endTime, final Lane lane, final Length.Rel position,
         final GTUDirectionality direction, final GTUColorer gtuColorer,
-        final LaneBasedStrategicalPlanner strategicalPlanner, final LanePerception perception)
+        final LaneBasedStrategicalPlanner strategicalPlanner, final Class<LanePerception> perceptionClass)
         throws SimRuntimeException
     {
         super(name, simulator, gtuType, gtuClass, initialSpeedDist, interarrivelTimeDist, maxGTUs, startTime, endTime,
-            lane, position, direction, gtuColorer, strategicalPlanner, perception);
+            lane, position, direction, gtuColorer, strategicalPlanner, perceptionClass);
         this.simulator = simulator;
         this.lengthDist = lengthDist;
         this.widthDist = widthDist;

@@ -20,6 +20,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedTemplateGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUType;
@@ -52,6 +53,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      * @param templateGtuType the template of the GTU
      * @param initialLongitudinalPositions Map&lt;Lane, Length.Rel&gt;; the initial positions of the car on one or more lanes
      * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the car on the lane
+     * @param network the network that the GTU is initially registered in
      * @throws NamingException if an error occurs when adding the animation handler.
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
@@ -60,10 +62,11 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      * @throws IllegalAccessException in case Perception or StrategicPlanner constructor is not public
      */
     public LaneBasedTemplateCar(final String id, final LaneBasedTemplateGTUType templateGtuType,
-        final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed) throws NamingException,
-        NetworkException, SimRuntimeException, GTUException, InstantiationException, IllegalAccessException
+        final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed, final OTSNetwork network)
+        throws NamingException, NetworkException, SimRuntimeException, GTUException, InstantiationException,
+        IllegalAccessException
     {
-        this(id, templateGtuType, initialLongitudinalPositions, initialSpeed, DefaultCarAnimation.class);
+        this(id, templateGtuType, initialLongitudinalPositions, initialSpeed, DefaultCarAnimation.class, network);
     }
 
     /**
@@ -72,6 +75,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      * @param initialLongitudinalPositions Map&lt;Lane, Length.Rel&gt;; the initial positions of the car on one or more lanes
      * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the car on the lane
      * @param animationClass Class&lt;? extends Renderable2D&gt;; the class for animation or null if no animation.
+     * @param network the network that the GTU is initially registered in
      * @throws NamingException if an error occurs when adding the animation handler.
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
@@ -81,10 +85,10 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      */
     public LaneBasedTemplateCar(final String id, final LaneBasedTemplateGTUType templateGtuType,
         final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
-        final Class<? extends Renderable2D> animationClass) throws NamingException, NetworkException,
-        SimRuntimeException, GTUException, InstantiationException, IllegalAccessException
+        final Class<? extends Renderable2D> animationClass, final OTSNetwork network) throws NamingException,
+        NetworkException, SimRuntimeException, GTUException, InstantiationException, IllegalAccessException
     {
-        super(id, templateGtuType, initialLongitudinalPositions, initialSpeed);
+        super(id, templateGtuType, initialLongitudinalPositions, initialSpeed, network);
 
         // sensor positions.
         // We take the rear position of the Car to be the reference point. So the front is the length
@@ -216,6 +220,9 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
         /** animation. */
         private Class<? extends Renderable2D> animationClass = null;
 
+        /** Network. */
+        private OTSNetwork network = null;
+
         /**
          * @param id set id
          * @return the class itself for chaining the setters
@@ -268,6 +275,16 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
         }
 
         /**
+         * @param network set network
+         * @return the class itself for chaining the setters
+         */
+        public final LaneBasedTemplateCarBuilder setNetwork(final OTSNetwork network)
+        {
+            this.network = network;
+            return this;
+        }
+
+        /**
          * @return the built Car with the set properties
          * @throws NamingException if an error occurs when adding the animation handler
          * @throws NetworkException when the GTU cannot be placed on the given lane
@@ -279,10 +296,15 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
         public final LaneBasedTemplateCar build() throws NamingException, NetworkException, SimRuntimeException,
             GTUException, InstantiationException, IllegalAccessException
         {
-            // TODO check that none of the variables (except animationClass) is null, and throw an exception if it is.
+            if (null == this.id || null == this.initialLongitudinalPositions || null == this.initialSpeed
+                || null == this.templateGtuType || null == this.animationClass || null == this.network)
+            {
+                // TODO Should throw a more specific Exception type
+                throw new GTUException("factory settings incomplete");
+            }
 
             return new LaneBasedTemplateCar(this.id, this.templateGtuType, this.initialLongitudinalPositions,
-                this.initialSpeed, this.animationClass);
+                this.initialSpeed, this.animationClass, this.network);
         }
     }
 
