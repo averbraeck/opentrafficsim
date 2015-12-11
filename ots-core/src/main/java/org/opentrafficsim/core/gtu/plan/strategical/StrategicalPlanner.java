@@ -1,7 +1,12 @@
 package org.opentrafficsim.core.gtu.plan.strategical;
 
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.LinkDirection;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 
 /**
  * A strategicalPlanner is the planner responsible for the overall 'mission' of the GTU, usually indicating where it needs to
@@ -24,4 +29,25 @@ public interface StrategicalPlanner
      * @return a new tactical planner
      */
     TacticalPlanner generateTacticalPlanner(GTU gtu);
+
+    /**
+     * Determine the next node in a network based on a current Link we are on.
+     * @param link the link we are on
+     * @param direction the direction the GTU is driving on the link
+     * @return the next node in the route AFTER the current link
+     * @throws NetworkException when no route planner is present or the final node in the current link cannot be found in the
+     *             route
+     */
+    Node nextNode(final Link link, final GTUDirectionality direction) throws NetworkException;
+
+    /**
+     * Determine the next link and driving direction (with or against the design line) in a network based on a current Link we
+     * are on.
+     * @param link the link we are on
+     * @param direction the direction the GTU is driving on the link
+     * @return the next link and GTU direction in the route AFTER the current link
+     * @throws NetworkException when no route planner is present or the final node in the current link cannot be found in the
+     *             route
+     */
+    LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction) throws NetworkException;
 }

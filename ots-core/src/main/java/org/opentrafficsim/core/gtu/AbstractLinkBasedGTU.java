@@ -4,8 +4,10 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 
 /**
  * <p>
@@ -21,6 +23,9 @@ public abstract class AbstractLinkBasedGTU extends AbstractGTU
 {
     /** */
     private static final long serialVersionUID = 20151114L;
+    
+    /** the network in which this GTU is (initially) registered. */
+    private OTSNetwork network;
 
     /**
      * @param id the id of the GTU
@@ -30,14 +35,34 @@ public abstract class AbstractLinkBasedGTU extends AbstractGTU
      *            to go. It operates by instantiating tactical planners to do the work.
      * @param perception the perception unit that takes care of observing the environment of the GTU
      * @param initialLocation the initial location (and direction) of the GTU
+     * @param network the network in which this GTU is (initially) registered
      * @throws SimRuntimeException when scheduling after the first move fails
      * @throws NetworkException when the odometer fails to update (will never happen)
      */
     public AbstractLinkBasedGTU(final String id, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
-        final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation)
+        final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation,
+        final OTSNetwork network)
         throws SimRuntimeException, NetworkException
     {
-        super(id, gtuType, simulator, strategicalPlanner, perception, initialLocation);
+        super(id, gtuType, simulator, strategicalPlanner, perception, initialLocation, network);
+        this.network = network;
     }
 
+    /**
+     * @return the network in which the GTU is registered
+     */
+    public final OTSNetwork getNetwork()
+    {
+        return this.network;
+    }
+
+    /**
+     * @param network change the network this GTU is registered in
+     */
+    public final void setNetwork(final OTSNetwork network)
+    {
+        this.network = network;
+    }
+
+    
 }

@@ -10,7 +10,9 @@ import java.util.Set;
 
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleWeightedGraph;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.model.OTSModel;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 
@@ -26,7 +28,7 @@ import org.opentrafficsim.core.network.route.Route;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class OTSNetwork implements Network, Serializable
+public class OTSNetwork implements Network, OTSModel, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150722;
@@ -46,6 +48,9 @@ public class OTSNetwork implements Network, Serializable
     /** Graphs to calculate shortest paths per GTUType. */
     private Map<GTUType, SimpleWeightedGraph<Node, LinkEdge<Link>>> linkGraphs = new HashMap<>();
 
+    /** GTUs registered in this network. */
+    private Set<GTU> gtus = new HashSet<>();
+    
     /**
      * Construction of an empty network.
      * @param id the network id.
@@ -445,4 +450,45 @@ public class OTSNetwork implements Network, Serializable
         }
         return route;
     }
+
+    /***************************************************************************************/
+    /**************************************** GTUs *****************************************/
+    /***************************************************************************************/
+
+    /**
+     * Add a GTU to the network.
+     * @param gtu the GTU to add
+     */
+    public final void addGTU(final GTU gtu)
+    {
+        this.gtus.add(gtu);
+    }
+    
+    /**
+     * Remove a GTU from the network.
+     * @param gtu the GTU to remove
+     */
+    public final void removeGTU(final GTU gtu)
+    {
+        this.gtus.remove(gtu);
+    }
+    
+    /**
+     * Test whether a GTU is registered in the network.
+     * @param gtu the GTU to search for
+     * @return whether the network contains this GTU
+     */
+    public final boolean containsGTU(final GTU gtu)
+    {
+        return this.gtus.contains(gtu);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public final Set<GTU> getGTUs()
+    {
+        // defensive copy
+        return new HashSet<GTU>(this.gtus);
+    }
+
 }
