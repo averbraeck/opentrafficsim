@@ -24,6 +24,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -90,6 +91,8 @@ public class SensorTest implements UNITS
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new DirectedLanePosition(lanesA[1], positionA, GTUDirectionality.DIR_PLUS));
 
+        OTSNetwork network = new OTSNetwork("network");
+        
         // A Car needs an initial speed
         Speed initialSpeed = new Speed(50, KM_PER_HOUR);
         // Length of the Car
@@ -110,7 +113,7 @@ public class SensorTest implements UNITS
             new LaneBasedDrivingCharacteristics(fas, laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
         new LaneBasedIndividualCar(carID, gtuType, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
-            maximumVelocity, simulator, strategicalPlanner, new LanePerception());
+            maximumVelocity, simulator, strategicalPlanner, new LanePerception(), network);
         simulator.runUpTo(new Time.Abs(1, SECOND));
         while (simulator.isRunning())
         {

@@ -30,6 +30,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
@@ -62,7 +63,9 @@ import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
  */
 public class AbstractLaneBasedGTUTest implements UNITS
 {
-
+    /** network. */
+    private OTSNetwork network = new OTSNetwork("network");
+    
     /**
      * Test that the constructor puts the supplied values in the correct fields, then check the motion of the GTU.
      * @throws Exception when something goes wrong (should not happen)
@@ -132,7 +135,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, route);
         LaneBasedIndividualCar car =
             new LaneBasedIndividualCar(carID, gtuType, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
-                maximumVelocity, simulator, strategicalPlanner, new LanePerception());
+                maximumVelocity, simulator, strategicalPlanner, new LanePerception(), this.network);
         // Now we can verify the various fields in the newly created Car
         assertEquals("ID of the car should be identical to the provided one", carID, car.getId());
         assertEquals("GTU following model should be identical to the provided one", gfm, car
