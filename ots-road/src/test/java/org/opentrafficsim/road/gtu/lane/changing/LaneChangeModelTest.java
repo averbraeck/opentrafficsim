@@ -33,6 +33,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
@@ -68,6 +69,9 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
     /** */
     private static final long serialVersionUID = 20150313;
 
+    /** network. */
+    private OTSNetwork network = new OTSNetwork("network");
+    
     /**
      * Create a Link.
      * @param name String; name of the new Link
@@ -187,7 +191,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         LaneBasedIndividualCar car =
             new LaneBasedIndividualCar("ReferenceCar", gtuType, initialLongitudinalPositions, new Speed(100,
                 KM_PER_HOUR), new Length.Rel(4, METER), new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR),
-                simpleSimulator, strategicalPlanner, new LanePerception());
+                simpleSimulator, strategicalPlanner, new LanePerception(), this.network);
         Collection<HeadwayGTU> sameLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         sameLaneGTUs.add(new HeadwayGTU(car, 0));
         Collection<HeadwayGTU> preferredLaneGTUs = new LinkedHashSet<HeadwayGTU>();
@@ -222,7 +226,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             LaneBasedIndividualCar collisionCar =
                 new LaneBasedIndividualCar("LaneChangeBlockingCar", gtuType, otherLongitudinalPositions, new Speed(100,
                     KM_PER_HOUR), vehicleLength, new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR),
-                    simpleSimulator, strategicalPlanner, new LanePerception());
+                    simpleSimulator, strategicalPlanner, new LanePerception(), this.network);
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU = new HeadwayGTU(collisionCar, pos - reference.getSI());
             preferredLaneGTUs.add(collisionHWGTU);
@@ -249,7 +253,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             LaneBasedIndividualCar otherCar =
                 new LaneBasedIndividualCar("OtherCar", gtuType, otherLongitudinalPositions,
                     new Speed(100, KM_PER_HOUR), vehicleLength, new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR),
-                    simpleSimulator, strategicalPlanner, new LanePerception());
+                    simpleSimulator, strategicalPlanner, new LanePerception(), this.network);
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU =
                 new HeadwayGTU(otherCar, pos - car.position(lanes[0], car.getReference()).getSI());

@@ -34,6 +34,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -78,6 +79,7 @@ public class CarTest implements UNITS
         GTUType gtuType = GTUType.makeGTUType("Car");
         LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(gtuType);
+        OTSNetwork network = new OTSNetwork("network");
         Lane lane = makeLane(laneType);
         Length.Rel initialPosition = new Length.Rel(12, METER);
         Speed initialSpeed = new Speed(34, KM_PER_HOUR);
@@ -87,7 +89,7 @@ public class CarTest implements UNITS
         LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualCar referenceCar =
             makeReferenceCar("12345", gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
-                laneChangeModel);
+                laneChangeModel, network);
         assertEquals("The car should store it's ID", "12345", referenceCar.getId());
         assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(),
             referenceCar.position(lane, referenceCar.getReference(), initialTime).getSI(), 0.0001);
@@ -134,6 +136,7 @@ public class CarTest implements UNITS
      *            getLastEvalutionTime())
      * @param gtuFollowingModel GTUFollowingModel; the GTU following model
      * @param laneChangeModel LaneChangeModel; the lane change model
+     * @param network the network
      * @return Car; the new Car
      * @throws NamingException on network error when making the animation
      * @throws NetworkException when the GTU cannot be placed on the given lane.
@@ -142,8 +145,8 @@ public class CarTest implements UNITS
      */
     public static LaneBasedIndividualCar makeReferenceCar(final String id, final GTUType gtuType, final Lane lane,
         final Length.Rel initialPosition, final Speed initialSpeed, final OTSDEVSSimulator simulator,
-        final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel) throws NamingException,
-        NetworkException, SimRuntimeException, GTUException
+        final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSNetwork network)
+        throws NamingException, NetworkException, SimRuntimeException, GTUException
     {
         Length.Rel length = new Length.Rel(5.0, METER);
         Length.Rel width = new Length.Rel(2.0, METER);
@@ -154,7 +157,7 @@ public class CarTest implements UNITS
             new LaneBasedDrivingCharacteristics(gtuFollowingModel, laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
         return new LaneBasedIndividualCar(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width,
-            maxSpeed, simulator, strategicalPlanner, new LanePerception());
+            maxSpeed, simulator, strategicalPlanner, new LanePerception(), network);
     }
 
     /**

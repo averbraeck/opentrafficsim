@@ -29,6 +29,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
@@ -63,6 +64,9 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
 {
     /** */
     private static final long serialVersionUID = 20150227L;
+
+    /** network. */
+    private OTSNetwork network = new OTSNetwork("network");
 
     /**
      * Test that the methods required by the GTUFollowingModel interface.
@@ -115,7 +119,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
         LaneBasedIndividualCar gtu =
             new LaneBasedIndividualCar("12345", carType, initialLongitudinalPositions, speed, length, width, maxSpeed,
-                simulator, strategicalPlanner, new LanePerception());
+                simulator, strategicalPlanner, new LanePerception(), this.network);
         Length.Rel longerHeadway = minimumHeadway.plus(precision);
         Acceleration longerHeadwayAcceleration =
             gtuFollowingModel.computeAcceleration(speed, maxSpeed, speed, longerHeadway, speedLimit);
@@ -162,7 +166,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
             GTUDirectionality.DIR_PLUS));
         LaneBasedIndividualCar gtu50m =
             new LaneBasedIndividualCar("100050", carType, initialLongitudinalPositions50, speed, length, width,
-                maxSpeed, simulator, strategicalPlanner, new LanePerception());
+                maxSpeed, simulator, strategicalPlanner, new LanePerception(), this.network);
         HeadwayGTU hwgtu50m = new HeadwayGTU(gtu50m, headway50m.getSI());
         Collection<HeadwayGTU> otherGTUs = new ArrayList<HeadwayGTU>();
         DualAccelerationStep asEmpty = gtuFollowingModel.computeAcceleration(gtu, otherGTUs, speedLimit);
@@ -188,7 +192,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         initialLongitudinalPositions100.put(lane, initialPosition.plus(headway100m));
         LaneBasedIndividualCar gtu100m =
             new LaneBasedIndividualCar("100100", carType, initialLongitudinalPositions50, speed, length, width,
-                maxSpeed, simulator, strategicalPlanner, new LanePerception());
+                maxSpeed, simulator, strategicalPlanner, new LanePerception(), this.network);
         HeadwayGTU hwgtu100m = new HeadwayGTU(gtu100m, headway100m.getSI());
         otherGTUs.add(hwgtu100m);
         DualAccelerationStep as50and100m = gtuFollowingModel.computeAcceleration(gtu, otherGTUs, speedLimit);
@@ -216,7 +220,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         initialLongitudinalPositionsOverlapping.put(lane, initialPosition.plus(new Length.Rel(1, METER)));
         LaneBasedIndividualCar gtu1m =
             new LaneBasedIndividualCar("100100", carType, initialLongitudinalPositions50, speed, length, width,
-                maxSpeed, simulator, strategicalPlanner, new LanePerception());
+                maxSpeed, simulator, strategicalPlanner, new LanePerception(), this.network);
         HeadwayGTU hwgtu1m = new HeadwayGTU(gtu1m, java.lang.Double.NaN);
         otherGTUs.add(hwgtu1m);
         DualAccelerationStep as1m = gtuFollowingModel.computeAcceleration(gtu, otherGTUs, speedLimit);
@@ -235,7 +239,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
 
         LaneBasedIndividualCar gtuMinus75m =
             new LaneBasedIndividualCar("100075", carType, initialLongitudinalPositionsMinus75, speed, length, width,
-                maxSpeed, simulator, strategicalPlanner, new LanePerception());
+                maxSpeed, simulator, strategicalPlanner, new LanePerception(), this.network);
         HeadwayGTU hwgtuMinus75m = new HeadwayGTU(gtuMinus75m, headwayMinus75m.getSI());
         otherGTUs.add(hwgtuMinus75m);
         DualAccelerationStep asMinus75And100m = gtuFollowingModel.computeAcceleration(gtu, otherGTUs, speedLimit);
@@ -252,7 +256,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
 
         LaneBasedIndividualCar gtuMinus200m =
             new LaneBasedIndividualCar("100200", carType, initialLongitudinalPositionsMinus200, speed, length, width,
-                maxSpeed, simulator, strategicalPlanner, new LanePerception());
+                maxSpeed, simulator, strategicalPlanner, new LanePerception(), this.network);
         HeadwayGTU hwgtuMinus200m = new HeadwayGTU(gtuMinus200m, headwayMinus200m.getSI());
         otherGTUs.add(hwgtuMinus200m);
         DualAccelerationStep asMinus200Minus75And100m =

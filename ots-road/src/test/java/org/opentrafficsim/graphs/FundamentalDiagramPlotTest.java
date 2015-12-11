@@ -30,6 +30,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
@@ -60,6 +61,9 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
     /** */
     private static final long serialVersionUID = 20150226L;
 
+    /** network. */
+    private OTSNetwork network = new OTSNetwork("network");
+    
     /**
      * Test the FundamentalDiagram.
      * @throws Exception when something goes wrong (should not happen)
@@ -141,7 +145,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
             new LaneBasedDrivingCharacteristics(gtuFollowingModel, laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
         new LaneBasedIndividualCar("1", gtuType, initialLongitudinalPositions, speed, length, width, maxSpeed,
-            simulator, strategicalPlanner, new LanePerception());
+            simulator, strategicalPlanner, new LanePerception(), this.network);
         simulator.runUpTo(new Time.Abs(124, SECOND));
         while (simulator.isRunning())
         {
@@ -227,7 +231,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         drivingCharacteristics = new LaneBasedDrivingCharacteristics(gtuFollowingModel, laneChangeModel);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
         new LaneBasedIndividualCar("1234", gtuType, initialLongitudinalPositions, speed, length, width, maxSpeed,
-            simulator, strategicalPlanner, new LanePerception());
+            simulator, strategicalPlanner, new LanePerception(), this.network);
         simulator.runUpTo(new Time.Abs(125, SECOND));
         while (simulator.isRunning())
         {

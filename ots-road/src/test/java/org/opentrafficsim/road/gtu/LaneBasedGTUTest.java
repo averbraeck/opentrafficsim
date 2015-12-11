@@ -27,6 +27,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
@@ -63,6 +64,8 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  */
 public class LaneBasedGTUTest implements UNITS
 {
+    /** network. */
+    private OTSNetwork network = new OTSNetwork("network");
 
     /**
      * Test if a Truck covering a specified range of lanes can <i>see</i> a Car covering a specified range of lanes. <br>
@@ -129,7 +132,7 @@ public class LaneBasedGTUTest implements UNITS
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
         LaneBasedIndividualCar truck =
             new LaneBasedIndividualCar("Truck", truckType, truckPositions, truckSpeed, truckLength, truckWidth,
-                maximumVelocity, simulator, strategicalPlanner, new LanePerception());
+                maximumVelocity, simulator, strategicalPlanner, new LanePerception(), network);
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
         int found = 0;
@@ -200,7 +203,7 @@ public class LaneBasedGTUTest implements UNITS
                 strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
                 LaneBasedIndividualCar car =
                     new LaneBasedIndividualCar("Car", carType, carPositions, carSpeed, carLength, carWidth,
-                        maximumVelocity, simulator, strategicalPlanner, new LanePerception());
+                        maximumVelocity, simulator, strategicalPlanner, new LanePerception(), this.network);
                 // leader = truck.headway(forwardMaxDistance);
                 // TODO see how we can ask the vehicle to look 'forwardMaxDistance' ahead
                 leader = truck.getPerception().getForwardHeadwayGTU();
@@ -388,7 +391,8 @@ public class LaneBasedGTUTest implements UNITS
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
             LaneBasedIndividualCar car =
                 new LaneBasedIndividualCar("Car", carType, carPositions, carSpeed, new Length.Rel(4, METER),
-                    new Length.Rel(1.8, METER), maximumVelocity, simulator, strategicalPlanner, new LanePerception());
+                    new Length.Rel(1.8, METER), maximumVelocity, simulator, strategicalPlanner, new LanePerception(),
+                    this.network);
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new Time.Abs(61, SECOND));
             while (simulator.isRunning())
