@@ -9,13 +9,14 @@ import javax.media.j3d.Bounds;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.Test;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
+import org.opentrafficsim.core.model.OTSModel;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 
 /**
  * Test the AbstractGTU class.
@@ -42,11 +43,12 @@ public class GTUTest
     {
         TestGTU firstGTU = null;
         TestGTU lastGTU = null;
+        OTSNetwork model = new OTSNetwork("network");
         for (String id : new String[]{"id1", "id2"})
         {
             for (GTUType gtuType : new GTUType[]{GTUType.makeGTUType("gtu type 1"), GTUType.makeGTUType("gtu type 2")})
             {
-                TestGTU gtu = new TestGTU(id, gtuType, null);
+                TestGTU gtu = new TestGTU(id, gtuType, null, model);
                 assertEquals("new GTU has correct id", id, gtu.getId());
                 assertEquals("new GTU has correct GTUType", gtuType, gtu.getGTUType());
                 assertEquals("new GTU has correct reference position", RelativePosition.REFERENCE_POSITION, gtu
@@ -74,13 +76,14 @@ class TestGTU extends AbstractGTU
      * @param id
      * @param gtuType
      * @param simulator
+     * @param model
      * @throws NetworkException
      * @throws SimRuntimeException
      */
-    public TestGTU(String id, GTUType gtuType, OTSDEVSSimulatorInterface simulator) throws SimRuntimeException,
+    public TestGTU(String id, GTUType gtuType, OTSDEVSSimulatorInterface simulator, OTSModel model) throws SimRuntimeException,
         NetworkException
     {
-        super(id, gtuType, simulator, null, null, null);
+        super(id, gtuType, simulator, null, null, null, model);
     }
 
     /** {@inheritDoc} */
