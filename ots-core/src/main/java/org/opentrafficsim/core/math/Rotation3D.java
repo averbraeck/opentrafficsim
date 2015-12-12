@@ -9,7 +9,8 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.vector.AngleVector;
 
 /**
- * 3D-rotation, RPY coded, also called phi-theta-psi coded.
+ * 3D-rotation, RPY coded (longitudinal roll along the x-axis, lateral pitch along the y-axis and vertical yaw along the
+ * z-axis), also called Tait–Bryan angles o0r Cardan angles.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -22,7 +23,7 @@ import org.djunits.value.vdouble.vector.AngleVector;
 public interface Rotation3D
 {
     /**
-     * The absolute RPY coded 3D-rotation.
+     * The absolute RPY coded 3D-rotation. Angles are absolute and relate to the absolute XYZ-frame of the world.
      * <p>
      * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
      * All rights reserved. <br>
@@ -61,7 +62,7 @@ public interface Rotation3D
         public Abs(final Angle.Abs roll, final Angle.Abs pitch, final Angle.Abs yaw) throws ValueException
         {
             super();
-            this.rotation = new AngleVector.Abs(new Angle.Abs[] { roll, pitch, yaw }, StorageType.DENSE);
+            this.rotation = new AngleVector.Abs(new Angle.Abs[]{roll, pitch, yaw}, StorageType.DENSE);
         }
 
         /**
@@ -74,7 +75,7 @@ public interface Rotation3D
         public Abs(final double roll, final double pitch, final double yaw, final AngleUnit unit) throws ValueException
         {
             super();
-            this.rotation = new AngleVector.Abs(new double[] { roll, pitch, yaw }, unit, StorageType.DENSE);
+            this.rotation = new AngleVector.Abs(new double[]{roll, pitch, yaw}, unit, StorageType.DENSE);
         }
 
         /**
@@ -90,7 +91,7 @@ public interface Rotation3D
             {
                 // should be impossible as we constructed the vector always with three elements
                 throw new RuntimeException("getRoll() gave an exception; apparently vector " + this.rotation
-                        + " was not constructed right", exception);
+                    + " was not constructed right", exception);
             }
         }
 
@@ -107,7 +108,7 @@ public interface Rotation3D
             {
                 // should be impossible as we constructed the vector always with three elements
                 throw new RuntimeException("getPitch() gave an exception; apparently vector " + this.rotation
-                        + " was not constructed right", exception);
+                    + " was not constructed right", exception);
             }
         }
 
@@ -124,20 +125,21 @@ public interface Rotation3D
             {
                 // should be impossible as we constructed the vector always with three elements
                 throw new RuntimeException("getYaw() gave an exception; apparently vector " + this.rotation
-                        + " was not constructed right", exception);
+                    + " was not constructed right", exception);
             }
         }
 
         /** {@inheritDoc} */
         public final String toString()
         {
-            return String.format(Locale.US, "Rotation3D.Abs roll %s, pitch %s, yaw %s", getRoll(), getPitch(), getYaw());
+            return String
+                .format(Locale.US, "Rotation3D.Abs roll %s, pitch %s, yaw %s", getRoll(), getPitch(), getYaw());
         }
-        
+
     }
 
     /**
-     * The relative RPY coded 3D-rotation.
+     * The relative RPY coded 3D-rotation. Angles are relative, and can relate to e.g. the inertial frame of a GTU.
      * <p>
      * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
      * All rights reserved. <br>
@@ -176,7 +178,7 @@ public interface Rotation3D
         public Rel(final Angle.Rel roll, final Angle.Rel pitch, final Angle.Rel yaw) throws ValueException
         {
             super();
-            this.rotation = new AngleVector.Rel(new Angle.Rel[] { roll, pitch, yaw }, StorageType.DENSE);
+            this.rotation = new AngleVector.Rel(new Angle.Rel[]{roll, pitch, yaw}, StorageType.DENSE);
         }
 
         /**
@@ -189,7 +191,7 @@ public interface Rotation3D
         public Rel(final double roll, final double pitch, final double yaw, final AngleUnit unit) throws ValueException
         {
             super();
-            this.rotation = new AngleVector.Rel(new double[] { roll, pitch, yaw }, unit, StorageType.DENSE);
+            this.rotation = new AngleVector.Rel(new double[]{roll, pitch, yaw}, unit, StorageType.DENSE);
         }
 
         /**
@@ -205,7 +207,7 @@ public interface Rotation3D
             {
                 // should be impossible as we constructed the vector always with three elements
                 throw new RuntimeException("getRoll() gave an exception; apparently vector " + this.rotation
-                        + " was not constructed right", exception);
+                    + " was not constructed right", exception);
             }
         }
 
@@ -222,7 +224,7 @@ public interface Rotation3D
             {
                 // should be impossible as we constructed the vector always with three elements
                 throw new RuntimeException("getPitch() gave an exception; apparently vector " + this.rotation
-                        + " was not constructed right", exception);
+                    + " was not constructed right", exception);
             }
         }
 
@@ -239,16 +241,17 @@ public interface Rotation3D
             {
                 // should be impossible as we constructed the vector always with three elements
                 throw new RuntimeException("getYaw() gave an exception; apparently vector " + this.rotation
-                        + " was not constructed right", exception);
+                    + " was not constructed right", exception);
             }
         }
-        
+
         /** {@inheritDoc} */
         public final String toString()
         {
-            return String.format(Locale.US, "Rotation3D.Rel roll %s, pitch %s, yaw %s", getRoll(), getPitch(), getYaw());
+            return String
+                .format(Locale.US, "Rotation3D.Rel roll %s, pitch %s, yaw %s", getRoll(), getPitch(), getYaw());
         }
-        
+
     }
 
 }

@@ -19,7 +19,6 @@ import org.djunits.value.vdouble.vector.SpeedVector;
  * <li>phi is the projected angle in the xy-plane from the x direction.</li>
  * </ul>
  * N.B. In the geography domain yet another convention is used. <br>
- * TODO Use generics to make this work for speeds as well as accelerations.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -86,14 +85,8 @@ public class Speed3D
     public Speed3D(final Speed speed, final Angle.Abs theta, final Angle.Abs phi) throws ValueException
     {
         super();
-        double r = speed.getInUnit();
-        // FIXME Redundant re-computation of "r * Math.sin(theta.si)". Or does the compiler take care of this?
-        // Also have a look at http://web.archive.org/web/20100729204636/http://home.broadpark.no/~alein/fsincos.html
-        // A mul, sub and sqrt can compute the cos from an earlier computed sine. Is sqrt faster than cos?
-        double x = r * Math.sin(theta.si) * Math.cos(phi.si);
-        double y = r * Math.sin(theta.si) * Math.sin(phi.si);
-        double z = r * Math.cos(theta.si);
-        this.speed = new SpeedVector(new double[] { x, y, z }, speed.getUnit(), StorageType.DENSE);
+        double[] xyz = Scalar3D.polarToCartesian(speed.getInUnit(), theta.si, phi.si);
+        this.speed = new SpeedVector(xyz, speed.getUnit(), StorageType.DENSE);
     }
 
     /**
@@ -156,11 +149,7 @@ public class Speed3D
      */
     public final Angle.Abs getTheta()
     {
-        double x = getX().si;
-        double y = getY().si;
-        double z = getZ().si;
-        double r = Math.sqrt(x * x + y * y + z * z);
-        return new Angle.Abs(Math.acos(z / r), AngleUnit.SI);
+        return Scalar3D.cartesianToTheta(getX().si, getY().si, getZ().si);
     }
 
     /**
@@ -169,9 +158,7 @@ public class Speed3D
      */
     public final Angle.Abs getPhi()
     {
-        double x = getX().si;
-        double y = getY().si;
-        return new Angle.Abs(Math.atan2(y, x), AngleUnit.SI);
+        return Scalar3D.cartesianToPhi(getX().si, getY().si);
     }
 
     /**
@@ -180,10 +167,7 @@ public class Speed3D
      */
     public final Speed getSpeed()
     {
-        double x = getX().si;
-        double y = getY().si;
-        double z = getZ().si;
-        return new Speed(Math.sqrt(x * x + y * y + z * z), SpeedUnit.SI);
+        return new Speed(Scalar3D.cartesianToRadius(getX().si, getY().si, getZ().si), SpeedUnit.SI);
     }
 
     /** {@inheritDoc} */
