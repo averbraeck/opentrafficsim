@@ -13,10 +13,8 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djunits.value.vdouble.scalar.Time.Abs;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.math.Solver;
@@ -90,7 +88,7 @@ public class OperationalPlan implements Serializable
      *             differ more than a given threshold
      */
     public OperationalPlan(final OTSLine3D path, final Time.Abs startTime, final Speed startSpeed,
-            final List<Segment> operationalPlanSegmentList) throws NetworkException
+        final List<Segment> operationalPlanSegmentList) throws NetworkException
     {
         super();
         this.path = path;
@@ -120,7 +118,7 @@ public class OperationalPlan implements Serializable
         if (Math.abs(distanceSI - this.path.getLengthSI()) > MAX_DELTA_SI)
         {
             throw new NetworkException("Path length and calculated driven distance differ too much: delta = "
-                    + Math.abs(distanceSI - this.path.getLengthSI()) + " m");
+                + Math.abs(distanceSI - this.path.getLengthSI()) + " m");
         }
         this.totalDuration = new Time.Rel(durationSI, TimeUnit.SI);
         this.endSpeed = v0;
@@ -134,7 +132,7 @@ public class OperationalPlan implements Serializable
      * @throws NetworkException when construction of a waiting path fails
      */
     public OperationalPlan(final DirectedPoint waitPoint, final Time.Abs startTime, final Time.Rel duration)
-            throws NetworkException
+        throws NetworkException
     {
         this.startTime = startTime;
         this.startSpeed = SPEED_0;
@@ -143,8 +141,8 @@ public class OperationalPlan implements Serializable
 
         // make a path
         OTSPoint3D p2 =
-                new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
-                        waitPoint.z);
+            new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
+                waitPoint.z);
         this.path = new OTSLine3D(new OTSPoint3D(waitPoint), p2);
 
         this.operationalPlanSegmentList = new ArrayList<>();
@@ -250,7 +248,7 @@ public class OperationalPlan implements Serializable
             if (distanceOfSegment > remainingDistanceSI)
             {
                 return new Time.Abs(timeAtStartOfSegment
-                        + segment.timeAtDistance(new Length.Rel(remainingDistanceSI, LengthUnit.SI)).si, TimeUnit.SI);
+                    + segment.timeAtDistance(new Length.Rel(remainingDistanceSI, LengthUnit.SI)).si, TimeUnit.SI);
             }
             remainingDistanceSI -= distanceOfSegment;
             timeAtStartOfSegment += segment.getDurationSI();
@@ -349,12 +347,12 @@ public class OperationalPlan implements Serializable
             if (timeSI >= this.segmentStartTimesSI[i] && timeSI <= this.segmentStartTimesSI[i + 1])
             {
                 return traveledDistance
-                        + this.operationalPlanSegmentList.get(i).distanceSI(timeSI - this.segmentStartTimesSI[i]);
+                    + this.operationalPlanSegmentList.get(i).distanceSI(timeSI - this.segmentStartTimesSI[i]);
             }
             traveledDistance += this.operationalPlanSegmentList.get(i).distanceSI();
         }
         throw new NetworkException("getTraveledDistance has a time " + duration
-                + " which is longer than the duration of the entire plan: " + this.totalDuration);
+            + " which is longer than the duration of the entire plan: " + this.totalDuration);
     }
 
     /**
@@ -398,7 +396,9 @@ public class OperationalPlan implements Serializable
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.operationalPlanSegmentList == null) ? 0 : this.operationalPlanSegmentList.hashCode());
+        result =
+            prime * result
+                + ((this.operationalPlanSegmentList == null) ? 0 : this.operationalPlanSegmentList.hashCode());
         result = prime * result + ((this.path == null) ? 0 : this.path.hashCode());
         result = prime * result + ((this.startSpeed == null) ? 0 : this.startSpeed.hashCode());
         result = prime * result + ((this.startTime == null) ? 0 : this.startTime.hashCode());
@@ -406,7 +406,7 @@ public class OperationalPlan implements Serializable
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
+    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
     @Override
     public boolean equals(final Object obj)
     {
@@ -453,9 +453,10 @@ public class OperationalPlan implements Serializable
     @Override
     public String toString()
     {
-        return "OperationalPlan [path=" + this.path + ", startTime=" + this.startTime + ", startSpeed=" + this.startSpeed
-                + ", operationalPlanSegmentList=" + this.operationalPlanSegmentList + ", totalDuration=" + this.totalDuration
-                + ", segmentStartTimesSI=" + Arrays.toString(this.segmentStartTimesSI) + ", endSpeed = " + this.endSpeed + "]";
+        return "OperationalPlan [path=" + this.path + ", startTime=" + this.startTime + ", startSpeed="
+            + this.startSpeed + ", operationalPlanSegmentList=" + this.operationalPlanSegmentList + ", totalDuration="
+            + this.totalDuration + ", segmentStartTimesSI=" + Arrays.toString(this.segmentStartTimesSI)
+            + ", endSpeed = " + this.endSpeed + "]";
     }
 
     /****************************************************************************************************************/
@@ -560,10 +561,10 @@ public class OperationalPlan implements Serializable
         /**
          * Calculate the time it takes for the GTU to travel from the start of this Segment to the specified distance within
          * this Segment.
-         * @param distance
-         * @return
+         * @param distance the distance for which the travel time has to be calculated
+         * @return the time at distance
          */
-        abstract Time.Rel timeAtDistance(Length.Rel distance);
+        abstract Time.Rel timeAtDistance(final Length.Rel distance);
 
         /** {@inheritDoc} */
         @SuppressWarnings("checkstyle:designforextension")
@@ -578,7 +579,7 @@ public class OperationalPlan implements Serializable
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
+        @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
         @Override
         public boolean equals(final Object obj)
         {
@@ -699,7 +700,7 @@ public class OperationalPlan implements Serializable
 
         /** {@inheritDoc} */
         @Override
-        Time.Rel timeAtDistance(Length.Rel distance)
+        public final Time.Rel timeAtDistance(final Length.Rel distance)
         {
             double[] solutions = Solver.solve(this.acceleration.si / 2, this.v0.si, -distance.si);
             // Find the solution that occurs within our duration (there should be only one).
@@ -785,7 +786,7 @@ public class OperationalPlan implements Serializable
 
         /** {@inheritDoc} */
         @Override
-        Time.Rel timeAtDistance(Length.Rel distance)
+        public final Time.Rel timeAtDistance(final Length.Rel distance)
         {
             double[] solution = Solver.solve(this.v0.si, -distance.si);
             if (solution.length > 0 && solution[0] >= 0 && solution[0] <= getDurationSI())
