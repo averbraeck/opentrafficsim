@@ -15,6 +15,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Length.Rel;
+import org.djunits.value.vdouble.scalar.Time.Abs;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.math.Solver;
@@ -88,7 +90,7 @@ public class OperationalPlan implements Serializable
      *             differ more than a given threshold
      */
     public OperationalPlan(final OTSLine3D path, final Time.Abs startTime, final Speed startSpeed,
-        final List<Segment> operationalPlanSegmentList) throws NetworkException
+            final List<Segment> operationalPlanSegmentList) throws NetworkException
     {
         super();
         this.path = path;
@@ -118,7 +120,7 @@ public class OperationalPlan implements Serializable
         if (Math.abs(distanceSI - this.path.getLengthSI()) > MAX_DELTA_SI)
         {
             throw new NetworkException("Path length and calculated driven distance differ too much: delta = "
-                + Math.abs(distanceSI - this.path.getLengthSI()) + " m");
+                    + Math.abs(distanceSI - this.path.getLengthSI()) + " m");
         }
         this.totalDuration = new Time.Rel(durationSI, TimeUnit.SI);
         this.endSpeed = v0;
@@ -132,7 +134,7 @@ public class OperationalPlan implements Serializable
      * @throws NetworkException when construction of a waiting path fails
      */
     public OperationalPlan(final DirectedPoint waitPoint, final Time.Abs startTime, final Time.Rel duration)
-        throws NetworkException
+            throws NetworkException
     {
         this.startTime = startTime;
         this.startSpeed = SPEED_0;
@@ -143,8 +145,8 @@ public class OperationalPlan implements Serializable
         // FIXME: the GTU travels along this path during the duration of the OperationalPlan.
         // Storing a path may not be such a great idea...
         OTSPoint3D p2 =
-            new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
-                waitPoint.z);
+                new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
+                        waitPoint.z);
         this.path = new OTSLine3D(new OTSPoint3D(waitPoint), p2);
 
         this.operationalPlanSegmentList = new ArrayList<>();
@@ -236,6 +238,98 @@ public class OperationalPlan implements Serializable
     }
 
     /**
+     * Store a Segment and the progress within that segment in one Object.
+     * <p>
+     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+     * <p>
+     * @version $Revision$, $LastChangedDate$, by $Author$, initial version Dec 16, 2015 <br>
+     * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+     */
+    private class SegmentProgress
+    {
+        /** Active Segment. */
+        public final Segment segment;
+
+        /** Start time of the Segment. */
+        public final Time.Abs segmentStartTime;
+
+        /** Position on the path of the plan. */
+        public final Length.Rel segmentStartPosition;
+
+        /**
+         * Construct a new SegmentProgress object.
+         * @param segment Segment; the Segment
+         * @param segmentStartTime Time.Abs; the start time of the Segment
+         * @param segmentStartPosition Length.Rel; the position of the start of the segment on the path of the OperationalPlan
+         */
+        public SegmentProgress(final Segment segment, final Time.Abs segmentStartTime, final Length.Rel segmentStartPosition)
+        {
+            this.segment = segment;
+            this.segmentStartTime = segmentStartTime;
+            this.segmentStartPosition = segmentStartPosition;
+        }
+
+        /**
+         * Retrieve the Segment.
+         * @return Segment
+         */
+        public final Segment getSegment()
+        {
+            return this.segment;
+        }
+
+        /**
+         * Retrieve the start time of the Segment.
+         * @return Time.Abs; the start time of the Segment
+         */
+        public final Time.Abs getSegmentStartTime()
+        {
+            return this.segmentStartTime;
+        }
+
+        /**
+         * Retrieve the fractionalPosition at the start of the Segment.
+         * @return double; the fractional position at the start of the Segment
+         */
+        public final Length.Rel getPosition()
+        {
+            return this.segmentStartPosition;
+        }
+        
+        public final String toString()
+        {
+            return String.format("SegmentProgress %s %s %s", this.segment, this.segmentStartPosition, this.segmentStartTime);
+        }
+    }
+
+    /**
+     * Find the Segment and the progress within that Segment at a specified time.
+     * @param time Time.Abs; the time
+     * @return SegmentProgress; the Segment and progress within that segment, or null when no Segment applies to the specified
+     *         time
+     */
+    private final SegmentProgress getSegmentProgress(final Time.Abs time)
+    {
+        if (time.lt(this.startTime))
+        {
+            return null; // FIXME: Not yet in this OperationalPlan; this is probably an error; throw an Exception?
+        }
+        double cumulativeDistance = 0;
+        for (int i = 0; i < this.segmentStartTimesSI.length - 1; i++)
+        {
+            if (this.startTime.si + this.segmentStartTimesSI[i + 1] >= time.si)
+            {
+                return new SegmentProgress(this.operationalPlanSegmentList.get(i), new Time.Abs(this.startTime.si
+                        + this.segmentStartTimesSI[i], TimeUnit.SI), new Length.Rel(cumulativeDistance, LengthUnit.SI));
+            }
+        }
+        // FIXME: After end of this OperationalPlan; might throw an Exception
+        return null;
+    }
+
+    /**
      * Return the time it will take to travel the given distance.
      * @param distance the distance to calculate the time for
      * @return the time it will take to have traveled the given distance
@@ -250,7 +344,7 @@ public class OperationalPlan implements Serializable
             if (distanceOfSegment > remainingDistanceSI)
             {
                 return new Time.Abs(timeAtStartOfSegment
-                    + segment.timeAtDistance(new Length.Rel(remainingDistanceSI, LengthUnit.SI)).si, TimeUnit.SI);
+                        + segment.timeAtDistance(new Length.Rel(remainingDistanceSI, LengthUnit.SI)).si, TimeUnit.SI);
             }
             remainingDistanceSI -= distanceOfSegment;
             timeAtStartOfSegment += segment.getDurationSI();
@@ -266,8 +360,28 @@ public class OperationalPlan implements Serializable
      */
     public final DirectedPoint getLocation(final Time.Abs time) throws NetworkException
     {
+        SegmentProgress sp = getSegmentProgress(time);
+        if (null == sp)
+        {
+            if (time.le(this.startTime))
+            {
+                return this.path.getLocationFraction(0); // FIXME: should we throw an exception instead?
+            }
+            else if (this.startTime.plus(this.totalDuration).ge(time))
+            {
+                return this.path.getLocationFraction(1); // FIXME: should we throw an exception instead?
+            }
+            else
+            {
+                // Cannot happen
+                throw new Error("getSegmentProgress failed for time " + time + " on " + this);
+            }
+        }
+        double fraction =
+                (sp.getPosition().si + sp.getSegment().distanceSI(time.minus(sp.getSegmentStartTime()).si))
+                        / this.path.getLengthSI();
         // TODO...
-        double fraction = time.minus(this.startTime).si / this.totalDuration.si;
+        // double fraction = time.minus(this.startTime).si / this.totalDuration.si;
         DirectedPoint p = this.path.getLocationFraction(fraction);
         p.setZ(p.getZ() + 0.001);
         return p;
@@ -317,7 +431,13 @@ public class OperationalPlan implements Serializable
      */
     public final Acceleration getAcceleration(final Time.Abs time) throws NetworkException
     {
-        // TODO
+        SegmentProgress sp = getSegmentProgress(time);
+        if (null != sp)
+        {
+            return new Acceleration(sp.getSegment().accelerationSI(time.minus(sp.getSegmentStartTime()).si),
+                    AccelerationUnit.SI);
+        }
+        // Not (yet) planned; return 0.
         return new Acceleration(0.0, AccelerationUnit.SI);
     }
 
@@ -349,12 +469,12 @@ public class OperationalPlan implements Serializable
             if (timeSI >= this.segmentStartTimesSI[i] && timeSI <= this.segmentStartTimesSI[i + 1])
             {
                 return traveledDistance
-                    + this.operationalPlanSegmentList.get(i).distanceSI(timeSI - this.segmentStartTimesSI[i]);
+                        + this.operationalPlanSegmentList.get(i).distanceSI(timeSI - this.segmentStartTimesSI[i]);
             }
             traveledDistance += this.operationalPlanSegmentList.get(i).distanceSI();
         }
         throw new NetworkException("getTraveledDistance has a time " + duration
-            + " which is longer than the duration of the entire plan: " + this.totalDuration);
+                + " which is longer than the duration of the entire plan: " + this.totalDuration);
     }
 
     /**
@@ -398,9 +518,7 @@ public class OperationalPlan implements Serializable
     {
         final int prime = 31;
         int result = 1;
-        result =
-            prime * result
-                + ((this.operationalPlanSegmentList == null) ? 0 : this.operationalPlanSegmentList.hashCode());
+        result = prime * result + ((this.operationalPlanSegmentList == null) ? 0 : this.operationalPlanSegmentList.hashCode());
         result = prime * result + ((this.path == null) ? 0 : this.path.hashCode());
         result = prime * result + ((this.startSpeed == null) ? 0 : this.startSpeed.hashCode());
         result = prime * result + ((this.startTime == null) ? 0 : this.startTime.hashCode());
@@ -408,7 +526,7 @@ public class OperationalPlan implements Serializable
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
+    @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
     @Override
     public boolean equals(final Object obj)
     {
@@ -455,10 +573,9 @@ public class OperationalPlan implements Serializable
     @Override
     public String toString()
     {
-        return "OperationalPlan [path=" + this.path + ", startTime=" + this.startTime + ", startSpeed="
-            + this.startSpeed + ", operationalPlanSegmentList=" + this.operationalPlanSegmentList + ", totalDuration="
-            + this.totalDuration + ", segmentStartTimesSI=" + Arrays.toString(this.segmentStartTimesSI)
-            + ", endSpeed = " + this.endSpeed + "]";
+        return "OperationalPlan [path=" + this.path + ", startTime=" + this.startTime + ", startSpeed=" + this.startSpeed
+                + ", operationalPlanSegmentList=" + this.operationalPlanSegmentList + ", totalDuration=" + this.totalDuration
+                + ", segmentStartTimesSI=" + Arrays.toString(this.segmentStartTimesSI) + ", endSpeed = " + this.endSpeed + "]";
     }
 
     /****************************************************************************************************************/
@@ -581,7 +698,7 @@ public class OperationalPlan implements Serializable
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
+        @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
         @Override
         public boolean equals(final Object obj)
         {
