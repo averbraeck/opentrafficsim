@@ -140,6 +140,8 @@ public class OperationalPlan implements Serializable
         this.totalDuration = duration;
 
         // make a path
+        // FIXME: the GTU travels along this path during the duration of the OperationalPlan.
+        // Storing a path may not be such a great idea...
         OTSPoint3D p2 =
             new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
                 waitPoint.z);
