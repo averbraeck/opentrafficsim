@@ -87,6 +87,7 @@ public class OperationalPlanTest
         assertEquals("Speed at end is " + endSpeed, endSpeed.si, actualEndSpeed, 0.000001);
         assertEquals("End time is " + endTime, endTime.si, op.getEndTime().si, 0.00001);
         // FIXME: getAcceleration returns bogus result
-        // assertEquals("Required acceleration is " + a, a.si, op.getAcceleration(startTime).si, 0.000001);
+        System.out.println("acceleration according to plan is " + op.getAcceleration(startTime));
+        assertEquals("Required acceleration is " + a, a.si, op.getAcceleration(startTime).si, 0.000001);
     }
 }
