@@ -62,9 +62,10 @@ public class OperationalPlanTest
         assertEquals("Start time is " + startTime, startTime.si, op.getStartTime().si, 0.00001);
         assertEquals("End speed is " + endSpeed, endSpeed.si, op.getEndSpeed().si, 0.00001);
         // What acceleration is required to reach endSpeed at the end of the path?
+        // (This mathematical derivation constructed independently from the OperationalPlanBuilder code.)
         double pathLength = path.getLengthSI();
-        // Solve eq 1 startSpeed * t + 0.5 * a * t * t == pathLength
-        // And e1 2 startSpeed + t * a == endSpeed
+        // Solve eq 1: startSpeed * t + 0.5 * a * t * t == pathLength
+        // And eq 2: startSpeed + t * a == endSpeed
         // ==> t * a = endSpeed - startSpeed
         double speedDifference = endSpeed.minus(startSpeed).si;
         // ==> a == speedDifference / t
@@ -83,10 +84,9 @@ public class OperationalPlanTest
         System.out.println("driven length is " + actualLength + " pathLength is " + pathLength);
         assertEquals("Driven length is " + actualLength, actualLength, pathLength, 0.00001);
         double actualEndSpeed = startSpeed.si + t * a.si;
-        System.out.println("Actual end speed is " + actualEndSpeed + " intended end speed is " +  endSpeed.si);
+        System.out.println("Actual end speed is " + actualEndSpeed + " intended end speed is " + endSpeed.si);
         assertEquals("Speed at end is " + endSpeed, endSpeed.si, actualEndSpeed, 0.000001);
         assertEquals("End time is " + endTime, endTime.si, op.getEndTime().si, 0.00001);
-        // FIXME: getAcceleration returns bogus result
         System.out.println("acceleration according to plan is " + op.getAcceleration(startTime));
         assertEquals("Required acceleration is " + a, a.si, op.getAcceleration(startTime).si, 0.000001);
     }
