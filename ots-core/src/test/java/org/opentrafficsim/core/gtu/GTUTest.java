@@ -2,6 +2,7 @@ package org.opentrafficsim.core.gtu;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -41,15 +42,19 @@ public class GTUTest implements OTSModelInterface
 
 {
 
+    /** */
+    private static final long serialVersionUID = 20151217L;
+
     /**
      * Test the constructor.
      * @throws GTUException
      * @throws NetworkException
      * @throws SimRuntimeException
      * @throws NamingException 
+     * @throws RemoteException 
      */
     @Test
-    public void testAbstractGTU() throws GTUException, SimRuntimeException, NetworkException, NamingException
+    public void testAbstractGTU() throws GTUException, SimRuntimeException, NetworkException, NamingException, RemoteException
     {
         TestGTU firstGTU = null;
         TestGTU lastGTU = null;
@@ -65,6 +70,9 @@ public class GTUTest implements OTSModelInterface
                 assertEquals("new GTU has correct GTUType", gtuType, gtu.getGTUType());
                 assertEquals("new GTU has correct reference position", RelativePosition.REFERENCE_POSITION, gtu
                     .getReference());
+                assertEquals("new GTU has correct simulator", simulator, gtu.getSimulator());
+                assertEquals("new GTU has odometer value 0", 0, gtu.getOdometer().si, 0);
+                assertTrue("new GTU is stored in the model", model.getGTUs().contains(gtu));
                 lastGTU = gtu;
                 if (null == firstGTU)
                 {
@@ -83,6 +91,7 @@ public class GTUTest implements OTSModelInterface
             SimulatorInterface<Abs<TimeUnit>, org.djunits.value.vdouble.scalar.DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
             throws SimRuntimeException, RemoteException
     {
+        // Not used
     }
 
     /** {@inheritDoc} */

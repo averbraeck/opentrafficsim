@@ -115,14 +115,14 @@ public abstract class AbstractGTU implements GTU
 
         if (initialLocation != null)
         {
-            // schedule the first move now; scheduling so super constructors can still finish
-            // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
+            // Schedule the first move now; scheduling so super constructors can still finish.
+            // Store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
             this.nextMoveEvent =
                 new SimEvent<>(new OTSSimTimeDouble(now), this, this, "move", new Object[]{initialLocation});
             this.simulator.scheduleEvent(this.nextMoveEvent);
         }
 
-        // give the GTU a stand-still operational plan, valid for 0 seconds, so initialization will work
+        // Give the GTU a stand-still operational plan, valid for 0 seconds, so initialization will work
         DirectedPoint p = initialLocation == null ? new DirectedPoint() : initialLocation;
         this.operationalPlan = new OperationalPlan(p, now, new Time.Rel(1.0e6, TimeUnit.SECOND));
     }
