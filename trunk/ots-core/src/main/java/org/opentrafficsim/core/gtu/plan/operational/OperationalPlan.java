@@ -15,8 +15,6 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djunits.value.vdouble.scalar.Length.Rel;
-import org.djunits.value.vdouble.scalar.Time.Abs;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.math.Solver;
@@ -143,7 +141,7 @@ public class OperationalPlan implements Serializable
 
         // make a path
         // FIXME: the GTU travels along this path during the duration of the OperationalPlan.
-        // Storing a path may not be such a great idea...
+        // Storing a path in a STATIONARY OperationalPlan may not be such a great idea...
         OTSPoint3D p2 =
                 new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
                         waitPoint.z);
