@@ -21,10 +21,11 @@ import org.opentrafficsim.core.math.Solver;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
- * An OperationalPlan indicates a shape in the world with a speed profile that a GTU will use to move. The OperationalPlan can
- * be updated or replaced at any time (also before it has been totally executed), for which a tactical planner is responsible.
- * The operational plan is implemented using segments of the movement (time, location, speed, acceleration) that the GTU will
- * use to plan its location and movement.
+ * An Operational plan describes a path through the world with a speed profile that a GTU intends to follow. The OperationalPlan
+ * can be updated or replaced at any time (including before it has been totally executed), for which a tactical planner is
+ * responsible. The operational plan is implemented using segments of the movement (time, location, speed, acceleration) that
+ * the GTU will use to plan its location and movement. Within an OperationalPlan the GTU cannot reverse direction along the path
+ * of movement. This ensures that the timeAtDistance method will never have to select among several valid solutions.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -39,43 +40,44 @@ public class OperationalPlan implements Serializable
     /** */
     private static final long serialVersionUID = 20151114L;
 
-    /** the path to follow from a certain time till a certain time. */
+    /** The path to follow from a certain time till a certain time. */
     private final OTSLine3D path;
 
-    /** the absolute start time when we start executing the path. */
+    /** The absolute start time when we start executing the path. */
     private final Time.Abs startTime;
 
-    /** the GTU speed when we start executing the path. */
+    /** The GTU speed when we start executing the path. */
     private final Speed startSpeed;
 
-    /** the segments that make up the path with an acceleration, constant speed or deceleration profile. */
+    /** The segments that make up the path with an acceleration, constant speed or deceleration profile. */
     private final List<OperationalPlan.Segment> operationalPlanSegmentList;
 
-    /** the duration of executing the entire operational plan. */
+    /** The duration of executing the entire operational plan. */
     private final Time.Rel totalDuration;
 
-    /** the speed at the end of the operational plan. */
+    /** The speed at the end of the operational plan. */
     private final Speed endSpeed;
 
     /**
-     * an array of relative start times of each segment, expressed in the SI unit, where the last time is the overall ending
+     * An array of relative start times of each segment, expressed in the SI unit, where the last time is the overall ending
      * time of the operational plan.
      */
     private final double[] segmentStartTimesSI;
 
     /**
-     * the maximum difference in the length of the path and the calculated driven distance implied by the segment list. The same
+     * The maximum difference in the length of the path and the calculated driven distance implied by the segment list. The same
      * constant is also used as a maximum between speeds of segments that should align in terms of speed.
      */
     static final double MAX_DELTA_SI = 1E-6;
 
-    /** the drifting speed. Speeds under this value will be cropped to zero. */
+    /** The drifting speed. Speeds under this value will be cropped to zero. */
     static final double DRIFTING_SPEED_SI = 1E-3;
 
-    /** a constant for zero speed. */
+    /** The zero zero speed constant. */
     static final Speed SPEED_0 = new Speed(0.0, SpeedUnit.SI);
 
-    // TODO add method for timeAtDistance
+    /** The no-acceleration constant. */
+    private static final Acceleration ACCELERATION_0 = new Acceleration(0, AccelerationUnit.SI);
 
     /**
      * Construct an operational plan.
@@ -125,7 +127,9 @@ public class OperationalPlan implements Serializable
     }
 
     /**
-     * Build a plan where the GTU will wait for a certain time.
+     * Build a plan where the GTU will wait for a certain time. <br>
+     * FIXME: the stationary OperationalPlan should be constructed with a dedicated OperationalPlanBuilder. It should probably
+     * be package protected.
      * @param waitPoint the point at which the GTU will wait
      * @param startTime the current time or a time in the future when the plan should start
      * @param duration the waiting time
@@ -140,7 +144,7 @@ public class OperationalPlan implements Serializable
         this.totalDuration = duration;
 
         // make a path
-        // FIXME: the GTU travels along this path during the duration of the OperationalPlan.
+        // FIXME: the stationary GTU actually moves (along this path) during the duration of the OperationalPlan.
         // Storing a path in a STATIONARY OperationalPlan may not be such a great idea...
         OTSPoint3D p2 =
                 new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
@@ -295,7 +299,7 @@ public class OperationalPlan implements Serializable
         {
             return this.segmentStartPosition;
         }
-        
+
         public final String toString()
         {
             return String.format("SegmentProgress %s %s %s", this.segment, this.segmentStartPosition, this.segmentStartTime);
@@ -323,7 +327,7 @@ public class OperationalPlan implements Serializable
                         + this.segmentStartTimesSI[i], TimeUnit.SI), new Length.Rel(cumulativeDistance, LengthUnit.SI));
             }
         }
-        // FIXME: After end of this OperationalPlan; might throw an Exception
+        // FIXME: After end of this OperationalPlan; should we throw an Exception?
         return null;
     }
 
@@ -378,8 +382,6 @@ public class OperationalPlan implements Serializable
         double fraction =
                 (sp.getPosition().si + sp.getSegment().distanceSI(time.minus(sp.getSegmentStartTime()).si))
                         / this.path.getLengthSI();
-        // TODO...
-        // double fraction = time.minus(this.startTime).si / this.totalDuration.si;
         DirectedPoint p = this.path.getLocationFraction(fraction);
         p.setZ(p.getZ() + 0.001);
         return p;
@@ -393,8 +395,7 @@ public class OperationalPlan implements Serializable
      */
     public final Speed getVelocity(final Time.Rel time) throws NetworkException
     {
-        // TODO
-        return SPEED_0;
+        return getVelocity(time.plus(this.startTime));
     }
 
     /**
@@ -405,8 +406,24 @@ public class OperationalPlan implements Serializable
      */
     public final Speed getVelocity(final Time.Abs time) throws NetworkException
     {
-        // TODO
-        return SPEED_0;
+        SegmentProgress sp = getSegmentProgress(time);
+        if (null == sp)
+        {
+            if (time.le(this.startTime))
+            {
+                return this.getStartSpeed(); // FIXME: should we throw an exception instead?
+            }
+            else if (this.startTime.plus(this.totalDuration).ge(time))
+            {
+                return this.getEndSpeed(); // FIXME: should we throw an exception instead?
+            }
+            else
+            {
+                // Cannot happen
+                throw new Error("getSegmentProgress failed for time " + time + " on " + this);
+            }
+        }
+        return new Speed(sp.segment.speedSI(time.minus(sp.segmentStartTime).si), SpeedUnit.SI);
     }
 
     /**
@@ -417,8 +434,7 @@ public class OperationalPlan implements Serializable
      */
     public final Acceleration getAcceleration(final Time.Rel time) throws NetworkException
     {
-        // TODO
-        return new Acceleration(0.0, AccelerationUnit.SI);
+        return getAcceleration(time.plus(this.startTime));
     }
 
     /**
@@ -435,8 +451,8 @@ public class OperationalPlan implements Serializable
             return new Acceleration(sp.getSegment().accelerationSI(time.minus(sp.getSegmentStartTime()).si),
                     AccelerationUnit.SI);
         }
-        // Not (yet) planned; return 0.
-        return new Acceleration(0.0, AccelerationUnit.SI);
+        // Not (yet) planned; return 0 acceleration.
+        return ACCELERATION_0;
     }
 
     /**
@@ -447,8 +463,8 @@ public class OperationalPlan implements Serializable
      */
     public final DirectedPoint getLocation(final Time.Rel time) throws NetworkException
     {
-        double fraction = time.si / this.totalDuration.si;
-        return this.path.getLocationFraction(fraction);
+        double distanceSI = getTraveledDistanceSI(time);
+        return this.path.getLocationExtendedSI(distanceSI);
     }
 
     /**
@@ -460,19 +476,41 @@ public class OperationalPlan implements Serializable
      */
     public final double getTraveledDistanceSI(final Time.Rel duration) throws NetworkException
     {
-        double timeSI = duration.si;
-        double traveledDistance = 0.0;
-        for (int i = 0; i < this.segmentStartTimesSI.length; i++)
+        Time.Abs absTime = duration.plus(this.startTime);
+        SegmentProgress sp = getSegmentProgress(absTime);
+        if (null == sp)
         {
-            if (timeSI >= this.segmentStartTimesSI[i] && timeSI <= this.segmentStartTimesSI[i + 1])
+            if (duration.si < 0)
             {
-                return traveledDistance
-                        + this.operationalPlanSegmentList.get(i).distanceSI(timeSI - this.segmentStartTimesSI[i]);
+                return 0; // FIXME: should we throw an exception instead?
             }
-            traveledDistance += this.operationalPlanSegmentList.get(i).distanceSI();
+            else if (this.totalDuration.ge(duration))
+            {
+                throw new NetworkException("getTraveledDistance has a time " + duration
+                        + " which is longer than the duration of the entire plan: " + this.totalDuration);
+                // return this.path.getLengthSI();
+            }
+            else
+            {
+                // Cannot happen
+                throw new Error("getSegmentProgress failed for duration " + duration + " on " + this);
+            }
         }
-        throw new NetworkException("getTraveledDistance has a time " + duration
-                + " which is longer than the duration of the entire plan: " + this.totalDuration);
+        return sp.segment.distanceSI(absTime.minus(sp.segmentStartTime).si);
+
+        // double timeSI = duration.si;
+        // double traveledDistance = 0.0;
+        // for (int i = 0; i < this.segmentStartTimesSI.length; i++)
+        // {
+        // if (timeSI >= this.segmentStartTimesSI[i] && timeSI <= this.segmentStartTimesSI[i + 1])
+        // {
+        // return traveledDistance
+        // + this.operationalPlanSegmentList.get(i).distanceSI(timeSI - this.segmentStartTimesSI[i]);
+        // }
+        // traveledDistance += this.operationalPlanSegmentList.get(i).distanceSI();
+        // }
+        // throw new NetworkException("getTraveledDistance has a time " + duration
+        // + " which is longer than the duration of the entire plan: " + this.totalDuration);
     }
 
     /**
