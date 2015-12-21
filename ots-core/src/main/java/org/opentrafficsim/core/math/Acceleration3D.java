@@ -29,7 +29,7 @@ import org.djunits.value.vdouble.vector.AccelerationVector;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class Accerleration3D
+public class Acceleration3D
 {
     /** The acceleration in 3D (XYZ coded). */
     private final AccelerationVector acceleration;
@@ -39,7 +39,7 @@ public class Accerleration3D
      * @param acceleration the accelerations in 3D (YPR coded)
      * @throws ValueException in case the vector does not have exactly three elements
      */
-    public Accerleration3D(final AccelerationVector acceleration) throws ValueException
+    public Acceleration3D(final AccelerationVector acceleration) throws ValueException
     {
         super();
         if (acceleration.size() != 3)
@@ -56,7 +56,7 @@ public class Accerleration3D
      * @param z the acceleration in the z-direction
      * @throws ValueException in case the units are incorrect
      */
-    public Accerleration3D(final Acceleration x, final Acceleration y, final Acceleration z) throws ValueException
+    public Acceleration3D(final Acceleration x, final Acceleration y, final Acceleration z) throws ValueException
     {
         super();
         this.acceleration = new AccelerationVector(new Acceleration[]{x, y, z}, StorageType.DENSE);
@@ -70,7 +70,7 @@ public class Accerleration3D
      * @param unit the unit of the xyz parameters
      * @throws ValueException in case the units are incorrect
      */
-    public Accerleration3D(final double x, final double y, final double z, final AccelerationUnit unit)
+    public Acceleration3D(final double x, final double y, final double z, final AccelerationUnit unit)
         throws ValueException
     {
         super();
@@ -84,7 +84,7 @@ public class Accerleration3D
      * @param phi Angle.Abs; the projected angle in the xy-plane from the x direction
      * @throws ValueException in case the vector does not have exactly three elements
      */
-    public Accerleration3D(final Acceleration acceleration, final Angle.Abs theta, final Angle.Abs phi)
+    public Acceleration3D(final Acceleration acceleration, final Angle.Abs theta, final Angle.Abs phi)
         throws ValueException
     {
         super();
