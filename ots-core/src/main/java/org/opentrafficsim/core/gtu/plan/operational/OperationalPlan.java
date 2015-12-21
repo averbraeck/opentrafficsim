@@ -397,7 +397,6 @@ public class OperationalPlan implements Serializable
      */
     public final Speed getVelocity(final Time.Rel time) throws NetworkException
     {
-        // FIXME: this looks like STUB that should have been replaced some time ago
         return getVelocity(time.plus(this.startTime));
     }
 
