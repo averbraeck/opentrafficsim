@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.math;
 
+import org.djunits.value.ValueException;
+
 /**
  * Solvers for simple equations.
  * <p>
@@ -47,6 +49,47 @@ public final class Solver
         }
         discriminant = Math.sqrt(discriminant);
         return new double[] { (-b + discriminant) / 2 / a, (-b - discriminant) / 2 / a };
+    }
+
+    /**
+     * Solve a quadratic or linear equation and return the solution that is closest (but not less than) a boundary.
+     * @param lowerBound double; minimum value of good solution
+     * @param a double; quadratic coefficient
+     * @param b double; linear coefficient
+     * @param c double; value of the quadratic function for x==0
+     * @return double; the solution that is closest (but not less than) a boundary
+     * @throws ValueException if there is no acceptable solution
+     */
+    public static double firstSolutionAfter(final double lowerBound, final double a, final double b, final double c)
+            throws ValueException
+    {
+        double[] solutions = solve(a, b, c);
+        if (0 == solutions.length)
+        {
+            throw new ValueException("No solutions");
+        }
+        else if (1 == solutions.length)
+        {
+            if (solutions[0] >= lowerBound)
+            {
+                return solutions[0];
+            }
+            throw new ValueException("Only one solution and it is before lowerBound");
+        }
+        // Two solutions
+        if (solutions[0] < lowerBound && solutions[1] < lowerBound)
+        {
+            throw new ValueException("Both solutions are before lowerBound");
+        }
+        if (solutions[0] < lowerBound)
+        {
+            return solutions[1];
+        }
+        if (solutions[1] < lowerBound)
+        {
+            return solutions[0];
+        }
+        return Math.min(solutions[0], solutions[1]);
     }
 
     /**
