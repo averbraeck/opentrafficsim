@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.gtu.plan.operational;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.AccelerationUnit;
@@ -10,6 +11,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.NetworkException;
@@ -60,6 +62,7 @@ public class OperationalPlanTest
         assertEquals("Start speed is " + startSpeed, startSpeed.si, op.getStartSpeed().si, 0.00001);
         assertEquals("Start time is " + startTime, startTime.si, op.getStartTime().si, 0.00001);
         assertEquals("End speed is " + endSpeed, endSpeed.si, op.getEndSpeed().si, 0.00001);
+        assertEquals("getPath returns the path", path, op.getPath());
         // What acceleration is required to reach endSpeed at the end of the path?
         // (This mathematical derivation constructed independently from the OperationalPlanBuilder code.)
         double pathLength = path.getLengthSI();
@@ -88,5 +91,27 @@ public class OperationalPlanTest
         assertEquals("End time is " + endTime, endTime.si, op.getEndTime().si, 0.00001);
         System.out.println("acceleration according to plan is " + op.getAcceleration(startTime));
         assertEquals("Required acceleration is " + a, a.si, op.getAcceleration(startTime).si, 0.000001);
+        assertEquals("total duration", endTime.minus(startTime).si, op.getTotalDuration().si, 0.00001);
+        DirectedPoint dp = op.getEndLocation();
+        try
+        {
+            assertEquals("end location", 0, new OTSPoint3D(dp).distanceSI(path.get(1)), 0.00001);
+        }
+        catch (OTSGeometryException exception)
+        {
+            fail("Caught unexpected exception");
+            exception.printStackTrace();
+        }
+        int steps = 20;
+        for (int i = 0; i <= steps; i++)
+        {
+            double stepTime = startTime.si + t * i / steps * 0.9999;// sometimes fails for endTime
+            DirectedPoint actualPosition = op.getLocation(new Time.Abs(stepTime, TimeUnit.SI));
+            double deltaT = stepTime - startTime.si;
+            double fraction = (startSpeed.si * deltaT + 0.5 * a.si * deltaT * deltaT ) / path.getLength().si;
+            OTSPoint3D expectedPosition = new OTSPoint3D(path.getLocationFraction(fraction));
+            // TODO actualPosition appears to be bogus in the current "implementation".
+            // assertEquals("Position at time " + deltaT, expectedPosition.distance(new OTSPoint3D(actualPosition)), 0.0001);
+        }
     }
 }

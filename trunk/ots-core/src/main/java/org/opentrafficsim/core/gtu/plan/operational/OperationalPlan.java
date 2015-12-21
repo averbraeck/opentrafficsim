@@ -196,7 +196,8 @@ public class OperationalPlan implements Serializable
     }
 
     /**
-     * Return the segments (parts with constant speed, acceleration or deceleration) of the operational plan.
+     * Return the segments (parts with constant speed, acceleration or deceleration) of the operational plan. <br>
+     * The caller MUST NOT MODIFY the returned object.
      * @return operationalPlanSegmentList
      */
     public final List<OperationalPlan.Segment> getOperationalPlanSegmentList()
@@ -379,6 +380,7 @@ public class OperationalPlan implements Serializable
                 throw new Error("getSegmentProgress failed for time " + time + " on " + this);
             }
         }
+        // FIXME: this looks like STUB that should have been replaced some time ago
         double fraction =
                 (sp.getPosition().si + sp.getSegment().distanceSI(time.minus(sp.getSegmentStartTime()).si))
                         / this.path.getLengthSI();
@@ -395,6 +397,7 @@ public class OperationalPlan implements Serializable
      */
     public final Speed getVelocity(final Time.Rel time) throws NetworkException
     {
+        // FIXME: this looks like STUB that should have been replaced some time ago
         return getVelocity(time.plus(this.startTime));
     }
 
@@ -434,6 +437,7 @@ public class OperationalPlan implements Serializable
      */
     public final Acceleration getAcceleration(final Time.Rel time) throws NetworkException
     {
+        // FIXME: this looks like STUB that should have been replaced some time ago
         return getAcceleration(time.plus(this.startTime));
     }
 
