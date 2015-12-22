@@ -308,7 +308,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                 System.err.println(toString());
                 System.err.println(this.lanes);
                 System.err.println(this.fractionalLinkPositions);
-                throw e;
+                throw new NetworkException(e);
             }
             if (Double.isNaN(loc.getSI()))
             {

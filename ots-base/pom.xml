@@ -607,6 +607,10 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
         <version>${maven.changes.version}</version>
+        <configuration>
+          <escapeHTML>false</escapeHTML>
+          <xmlPath>../ots-base/src/changes/changes.xml</xmlPath>
+        </configuration>
         <reportSets>
           <reportSet>
             <reports>

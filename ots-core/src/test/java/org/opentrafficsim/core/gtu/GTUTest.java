@@ -23,9 +23,9 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
-import org.opentrafficsim.core.model.OTSModel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.perception.PerceivableContext;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 /**
@@ -117,7 +117,7 @@ class TestGTU extends AbstractGTU
      * @throws NetworkException
      * @throws SimRuntimeException
      */
-    public TestGTU(String id, GTUType gtuType, OTSDEVSSimulatorInterface simulator, OTSModel model) throws SimRuntimeException,
+    public TestGTU(String id, GTUType gtuType, OTSDEVSSimulatorInterface simulator, PerceivableContext model) throws SimRuntimeException,
         NetworkException
     {
         super(id, gtuType, simulator, null, null, null, model);

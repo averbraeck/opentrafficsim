@@ -359,7 +359,7 @@ public class OperationalPlan implements Serializable
         double fraction =
                 (sp.getPosition().si + sp.getSegment().distanceSI(time.minus(sp.getSegmentStartTime()).si))
                         / this.path.getLengthSI();
-        DirectedPoint p = this.path.getLocationFraction(fraction);
+        DirectedPoint p = this.path.getLocationFraction(fraction, 1E-6);
         p.setZ(p.getZ() + 0.001);
         return p;
     }

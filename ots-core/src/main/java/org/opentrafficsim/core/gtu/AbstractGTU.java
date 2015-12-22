@@ -17,8 +17,8 @@ import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
-import org.opentrafficsim.core.model.OTSModel;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.perception.PerceivableContext;
 
 /**
  * Implements the basic functionalities of any GTU: the ability to move on 3D-space according to a plan.
@@ -74,7 +74,7 @@ public abstract class AbstractGTU implements GTU
     private Perception perception;
     
     /** the model in which this GTU is registered. */
-    private OTSModel model;
+    private PerceivableContext perceivableContext;
 
     /**
      * @param id the id of the GTU
@@ -84,13 +84,13 @@ public abstract class AbstractGTU implements GTU
      *            to go. It operates by instantiating tactical planners to do the work.
      * @param perception the perception unit that takes care of observing the environment of the GTU
      * @param initialLocation the initial location (and direction) of the GTU
-     * @param model 
+     * @param perceivableContext the perceivable context in which this GTU will be registered
      * @throws SimRuntimeException when scheduling after the first move fails
      * @throws NetworkException when the odometer fails to update (will never happen)
      */
     public AbstractGTU(final String id, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
         final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation,
-        final OTSModel model)
+        final PerceivableContext perceivableContext)
         throws SimRuntimeException, NetworkException
     {
         super();
@@ -100,8 +100,8 @@ public abstract class AbstractGTU implements GTU
         this.strategicalPlanner = strategicalPlanner;
         this.perception = perception;
         this.odometer = Length.Rel.ZERO;
-        this.model = model;
-        this.model.addGTU(this);
+        this.perceivableContext = perceivableContext;
+        this.perceivableContext.addGTU(this);
         Time.Abs now = this.simulator.getSimulatorTime().getTime();
 
         if (initialLocation != null)
@@ -124,7 +124,7 @@ public abstract class AbstractGTU implements GTU
     @SuppressWarnings("checkstyle:designforextension")
     public void destroy()
     {
-        this.model.removeGTU(this);
+        this.perceivableContext.removeGTU(this);
     }
     
     /**
