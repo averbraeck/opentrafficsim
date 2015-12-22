@@ -266,7 +266,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                             if (Integer.parseInt(lane.getId()) < 0)
                             {
                                 // make a generator
-                                Time.Abs startTime = new Time.Abs(0.0, TimeUnit.SI);
+                                Time.Abs startTime = Time.Abs.ZERO;
                                 Time.Abs endTime = new Time.Abs(Double.MAX_VALUE, TimeUnit.SI);
                                 Length.Rel position = lane.getLength().lt(M25) ? M0 : M25;
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
@@ -316,7 +316,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                             if (Integer.parseInt(lane.getId()) > 0)
                             {
                                 // make a generator
-                                Time.Abs startTime = new Time.Abs(0.0, TimeUnit.SI);
+                                Time.Abs startTime = Time.Abs.ZERO;
                                 Time.Abs endTime = new Time.Abs(Double.MAX_VALUE, TimeUnit.SI);
                                 Length.Rel position =
                                     lane.getLength().lt(M25) ? lane.getLength() : lane.getLength().minus(M25);

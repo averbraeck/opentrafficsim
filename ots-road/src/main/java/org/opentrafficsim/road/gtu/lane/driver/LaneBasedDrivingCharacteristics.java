@@ -53,8 +53,8 @@ public class LaneBasedDrivingCharacteristics implements DrivingCharacteristics
     /** how far does the driver of this GTU look ahead when perceiving the environment. */ 
     private Length.Rel forwardHeadwayDistance = new Length.Rel(250.0, LengthUnit.METER);
     
-    /** how far does the driver of this GTU look back when perceiving the environment. */ 
-    private Length.Rel backwardHeadwayDistance= new Length.Rel(100.0, LengthUnit.METER);;
+    /** how far does the driver of this GTU look back when perceiving the environment, stored as a negative number. */ 
+    private Length.Rel backwardHeadwayDistance= new Length.Rel(-100.0, LengthUnit.METER);
     
     /** update frequency. */
     private Frequency averagePerceptionUpdateFrequency = new Frequency(0.5, FrequencyUnit.PER_SECOND);
@@ -118,7 +118,7 @@ public class LaneBasedDrivingCharacteristics implements DrivingCharacteristics
     }
 
     /**
-     * @return backwardHeadwayDistance
+     * @return backwardHeadwayDistance, as a negative number
      */
     public final Length.Rel getBackwardHeadwayDistance()
     {

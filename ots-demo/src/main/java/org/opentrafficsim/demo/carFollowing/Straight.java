@@ -42,8 +42,8 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.graphs.AccelerationContourPlot;
 import org.opentrafficsim.graphs.ContourPlot;
 import org.opentrafficsim.graphs.DensityContourPlot;
@@ -53,11 +53,15 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Egoistic;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -66,7 +70,6 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Sensor;
 import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
-import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.BooleanProperty;
@@ -100,8 +103,8 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
         outputProperties.add(new BooleanProperty("Speed", "Speed contour plot", true, false, 2));
         outputProperties.add(new BooleanProperty("Acceleration", "Acceleration contour plot", true, false, 3));
         outputProperties.add(new BooleanProperty("Trajectories", "Trajectory (time/distance) diagram", true, false, 4));
-        this.properties.add(new CompoundProperty("Output graphs", "Select the graphical output", outputProperties, true,
-            1000));
+        this.properties.add(new CompoundProperty("Output graphs", "Select the graphical output", outputProperties,
+            true, 1000));
     }
 
     /** {@inheritDoc} */
@@ -150,8 +153,8 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
                     localProperties.add(IDMPropertySet.makeIDMPropertySet("Truck", new Acceleration(0.5,
                         METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
                         new Time.Rel(1.0, SECOND), 3));
-                    straight.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND),
-                        new Time.Rel(3600.0, SECOND), localProperties, null, true);
+                    straight.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0,
+                        SECOND), localProperties, null, true);
                     straight.panel.getTabbedPane().addTab("info", straight.makeInfoPane());
                 }
                 catch (SimRuntimeException | NamingException exception)
@@ -339,6 +342,9 @@ class StraightModel implements OTSModelInterface, UNITS
     /** the simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
+    /** network. */
+    private OTSNetwork network = new OTSNetwork("network");
+
     /** the headway (inter-vehicle time). */
     private Time.Rel headway;
 
@@ -410,9 +416,11 @@ class StraightModel implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public final void constructModel(
-        final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-        throws SimRuntimeException, RemoteException
+    public final
+        void
+        constructModel(
+            final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+            throws SimRuntimeException, RemoteException
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         OTSNode from = new OTSNode("From", new OTSPoint3D(getMinimumDistance().getSI(), 0, 0));
@@ -427,9 +435,9 @@ class StraightModel implements OTSModelInterface, UNITS
             CrossSectionLink endLink = LaneFactory.makeLink("endLink", to, end, null);
             // No overtaking, single lane
             Lane sinkLane =
-                new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0), this.lane
-                    .getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
-                    LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.None());
+                new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
+                    this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0),
+                    laneType, LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.None());
             Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, METER), this.simulator);
             sinkLane.addSensor(sensor, GTUType.ALL);
             String carFollowingModelName = null;
@@ -519,16 +527,19 @@ class StraightModel implements OTSModelInterface, UNITS
             // 1500 [veh / hour] == 2.4s headway
             this.headway = new Time.Rel(3600.0 / 1500.0, SECOND);
             // Schedule creation of the first car (it will re-schedule itself one headway later, etc.).
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, SECOND), this, this, "generateCar", null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.0, SECOND), this, this, "generateCar",
+                null);
             // Create a block at t = 5 minutes
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, SECOND), this, this, "createBlock", null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(300, SECOND), this, this, "createBlock",
+                null);
             // Remove the block at t = 7 minutes
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(420, SECOND), this, this, "removeBlock", null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(420, SECOND), this, this, "removeBlock",
+                null);
             // Schedule regular updates of the graphs
             for (int t = 1; t <= 1800; t++)
             {
-                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, SECOND), this, this, "drawGraphs",
-                    null);
+                this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(t - 0.001, SECOND), this, this,
+                    "drawGraphs", null);
             }
         }
         catch (SimRuntimeException | NamingException | NetworkException | OTSGeometryException exception)
@@ -559,11 +570,14 @@ class StraightModel implements OTSModelInterface, UNITS
         initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
         try
         {
+            LaneBasedDrivingCharacteristics drivingCharacteristics =
+                new LaneBasedDrivingCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
+            LaneBasedStrategicalPlanner strategicalPlanner =
+                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
             this.block =
-                new LaneBasedIndividualCar("999999", this.gtuType, this.carFollowingModelCars, this.laneChangeModel,
-                    initialPositions, new Speed(0, KM_PER_HOUR), new Length.Rel(4, METER), new Length.Rel(1.8, METER),
-                    new Speed(0, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)),
-                    this.simulator, DefaultCarAnimation.class, this.gtuColorer);
+                new LaneBasedIndividualCar("999999", this.gtuType, initialPositions, new Speed(0, KM_PER_HOUR),
+                    new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed(0, KM_PER_HOUR), this.simulator,
+                    strategicalPlanner, new LanePerception(), DefaultCarAnimation.class, this.gtuColorer, this.network);
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
         {
@@ -593,15 +607,20 @@ class StraightModel implements OTSModelInterface, UNITS
         try
         {
             Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
-            GTUFollowingModel gtuFollowingModel = generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
+            GTUFollowingModel gtuFollowingModel =
+                generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
             if (null == gtuFollowingModel)
             {
                 throw new Error("gtuFollowingModel is null");
             }
-            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, gtuFollowingModel, this.laneChangeModel,
-                initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR),
-                new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), this.simulator, DefaultCarAnimation.class,
-                this.gtuColorer);
+            LaneBasedDrivingCharacteristics drivingCharacteristics =
+                new LaneBasedDrivingCharacteristics(gtuFollowingModel, this.laneChangeModel);
+            LaneBasedStrategicalPlanner strategicalPlanner =
+                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
+                vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
+                strategicalPlanner, new LanePerception(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
@@ -612,8 +631,8 @@ class StraightModel implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        throws RemoteException
+    public final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
+        getSimulator() throws RemoteException
     {
         return this.simulator;
     }

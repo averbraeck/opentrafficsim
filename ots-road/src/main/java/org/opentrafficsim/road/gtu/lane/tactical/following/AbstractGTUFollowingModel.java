@@ -171,7 +171,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
         if (minimumSIDeceleration >= maximumDeceleration)
         {
             // Weird... The GTU following model allows zero headway
-            return new Length.Rel(0, LengthUnit.SI);
+            return Length.Rel.ZERO;
         }
         double maximumSI = 1; // this is - deliberately - way too small
         double maximumSIDeceleration = Double.NaN;

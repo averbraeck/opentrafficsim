@@ -120,8 +120,8 @@ class GeometryTag
      */
     static OTSNode makeOTSNode(final GeometryTag geometryTag)
     {
-        Angle.Abs angle = new Angle.Abs(0.0, AngleUnit.SI);
-        Angle.Abs slope = new Angle.Abs(0.0, AngleUnit.SI);
+        Angle.Abs angle = Angle.Abs.ZERO;
+        Angle.Abs slope = Angle.Abs.ZERO;
         OTSPoint3D coordinate = new OTSPoint3D(geometryTag.x.doubleValue(),geometryTag.y.doubleValue(),geometryTag.z.doubleValue());
         
         if (geometryTag.id == null)

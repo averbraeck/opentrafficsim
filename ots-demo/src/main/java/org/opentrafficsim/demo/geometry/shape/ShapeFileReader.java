@@ -247,11 +247,13 @@ public final class ShapeFileReader implements UNITS
                     CrossSectionLink linkBA = null;
                     linkAB =
                         new CrossSectionLink(nr, nodeA, nodeB, LinkType.ALL, new OTSLine3D(new OTSPoint3D[]{
-                            nodeA.getPoint(), nodeB.getPoint()}), LaneKeepingPolicy.KEEP_RIGHT);
+                            nodeA.getPoint(), nodeB.getPoint()}), LongitudinalDirectionality.DIR_BOTH,
+                            LaneKeepingPolicy.KEEP_RIGHT);
                     animate(linkAB, typeWegVak, simulator);
                     linkBA =
                         new CrossSectionLink(nrBA, nodeB, nodeA, LinkType.ALL, new OTSLine3D(new OTSPoint3D[]{
-                            nodeB.getPoint(), nodeA.getPoint()}), LaneKeepingPolicy.KEEP_RIGHT);
+                            nodeB.getPoint(), nodeA.getPoint()}), LongitudinalDirectionality.DIR_BOTH,
+                            LaneKeepingPolicy.KEEP_RIGHT);
                     animate(linkBA, typeWegVak, simulator);
                     if (direction == 1)
                     {
@@ -430,15 +432,16 @@ public final class ShapeFileReader implements UNITS
         try
         {
             // middenberm
-            Shoulder sM = new Shoulder(link, "sM", new Length.Rel(0.0, METER), m10, m10);
+            Shoulder sM = new Shoulder(link, "sM", new Length.Rel(0.0, METER), m10);
             new ShoulderAnimation(sM, simulator, Color.GREEN);
             for (int i = -1; i <= 1; i += 2)
             {
                 LongitudinalDirectionality dir =
                     (i < 0) ? LongitudinalDirectionality.DIR_PLUS : LongitudinalDirectionality.DIR_MINUS;
+                String lr = i < 0 ? "L" : "R";
                 //
                 Lane laneEM =
-                    new NoTrafficLane(link, "EM", new Length.Rel(i * 0.75, METER), new Length.Rel(i * 0.75, METER),
+                    new NoTrafficLane(link, lr + "." + "EM", new Length.Rel(i * 0.75, METER), new Length.Rel(i * 0.75, METER),
                         m05, m05);
                 new LaneAnimation(laneEM, simulator, Color.LIGHT_GRAY);
                 double lat = 1;
@@ -446,7 +449,7 @@ public final class ShapeFileReader implements UNITS
                 {
                     lat += i * 1.75;
                     Lane lane =
-                        new Lane(link, "lane." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER), m35, m35,
+                        new Lane(link, "lane." + lr + "." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER), m35, m35,
                             null, dir, speedLimit, new OvertakingConditions.LeftAndRight());
                     new LaneAnimation(lane, simulator, Color.GRAY);
                     lat += i * 1.75;
@@ -456,17 +459,17 @@ public final class ShapeFileReader implements UNITS
                 {
                     lat += i * 1.75;
                     Lane lane =
-                        new NoTrafficLane(link, "extra." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER),
+                        new NoTrafficLane(link, "extra." + lr + "." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER),
                             m35, m35);
                     new LaneAnimation(lane, simulator, Color.LIGHT_GRAY);
                     lat += i * 1.75;
                 }
                 Lane laneEO =
-                    new NoTrafficLane(link, "EO", new Length.Rel(lat + i * 0.25, METER), new Length.Rel(lat + i * 0.25,
+                    new NoTrafficLane(link, lr + "." + "EO", new Length.Rel(lat + i * 0.25, METER), new Length.Rel(lat + i * 0.25,
                         METER), m05, m05);
                 new LaneAnimation(laneEO, simulator, Color.LIGHT_GRAY);
                 lat += i * 0.5;
-                Shoulder sO = new Shoulder(link, "sO", new Length.Rel(lat, METER), m10, m10);
+                Shoulder sO = new Shoulder(link, lr + "." + "sO", new Length.Rel(lat, METER), m10);
                 new ShoulderAnimation(sO, simulator, Color.GREEN);
             }
         }
@@ -496,7 +499,7 @@ public final class ShapeFileReader implements UNITS
         {
             if (middenberm)
             {
-                Shoulder sM = new Shoulder(link, "sM", new Length.Rel(0.0, METER), m10, m10);
+                Shoulder sM = new Shoulder(link, "sM", new Length.Rel(0.0, METER), m10);
                 new ShoulderAnimation(sM, simulator, Color.GREEN);
             }
             for (int i = -1; i <= 1; i += 2)
@@ -507,9 +510,10 @@ public final class ShapeFileReader implements UNITS
                 for (int j = 0; j < n; j++)
                 {
                     lat += i * 1.5;
+                    String lr = i < 0 ? "L" : "R";
                     Lane lane =
-                        new Lane(link, "lane." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER), m30, m30,
-                            null, dir, speedLimit, new OvertakingConditions.LeftAndRight());
+                        new Lane(link, "lane." + lr + "." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER),
+                            m30, m30, null, dir, speedLimit, new OvertakingConditions.LeftAndRight());
                     new LaneAnimation(lane, simulator, Color.DARK_GRAY);
                     lat += i * 1.5;
                 }
