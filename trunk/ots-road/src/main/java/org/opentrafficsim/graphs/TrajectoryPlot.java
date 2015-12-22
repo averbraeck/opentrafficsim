@@ -181,7 +181,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         result.getXYPlot().setDomainAxis(xAxis);
         result.getXYPlot().setRangeAxis(yAxis);
-        Length.Rel minimumPosition = new Length.Rel(0, LengthUnit.SI);
+        Length.Rel minimumPosition = Length.Rel.ZERO;
         Length.Rel maximumPosition = getCumulativeLength(-1);
         configureAxis(result.getXYPlot().getRangeAxis(), DoubleScalar.minus(maximumPosition, minimumPosition).getSI());
         final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) result.getXYPlot().getRenderer();

@@ -6,7 +6,6 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -52,9 +51,6 @@ public class LaneBasedCFLCTacticalPlanner implements TacticalPlanner
     /** the strategic planner that has instantiated this tactical planner. */
     private final LaneBasedStrategicalPlanner strategicalPlanner;
 
-    /** Constant for zero speed. */
-    private static final Speed SPEED_0 = new Speed(0.0, SpeedUnit.SI);
-
     /**
      * @param strategicalPlanner the strategic planner that has instantiated this tactical planner
      */
@@ -71,7 +67,7 @@ public class LaneBasedCFLCTacticalPlanner implements TacticalPlanner
         // ask Perception for the local situation
         LaneBasedGTU laneBasedGTU = (LaneBasedGTU) gtu;
         LanePerception perception = laneBasedGTU.getPerception();
-        
+
         if (!perception.isInitialized())
         {
             perception.perceive();
@@ -111,13 +107,13 @@ public class LaneBasedCFLCTacticalPlanner implements TacticalPlanner
         OTSLine3D path = buildLanePathToFollowLane(laneBasedGTU, new Length.Rel(100.0, LengthUnit.METER));
         if (accelerationStep.getAcceleration().si < 0.0)
         {
-            return OperationalPlanBuilder.buildMaximumAccelerationPlan(path, startTime, gtu.getVelocity(), SPEED_0, gtu
-                .getMaximumAcceleration(), gtu.getMaximumDeceleration());
+            return OperationalPlanBuilder.buildMaximumAccelerationPlan(path, startTime, gtu.getVelocity(), Speed.ZERO,
+                gtu.getMaximumAcceleration(), gtu.getMaximumDeceleration());
         }
         else
         {
-            return OperationalPlanBuilder.buildMaximumAccelerationPlan(path, startTime, gtu.getVelocity(), gtu
-                .getMaximumVelocity(), gtu.getMaximumAcceleration(), gtu.getMaximumDeceleration());
+            return OperationalPlanBuilder.buildMaximumAccelerationPlan(path, startTime, gtu.getVelocity(),
+                gtu.getMaximumVelocity(), gtu.getMaximumAcceleration(), gtu.getMaximumDeceleration());
         }
     }
 
@@ -144,16 +140,18 @@ public class LaneBasedCFLCTacticalPlanner implements TacticalPlanner
                 {
                     // this lane is a good base
                     OTSLine3D path = null;
-                 
+
                     if (gtu.getLanes().get(lane).equals(GTUDirectionality.DIR_PLUS) && posSI != positions.get(lane).si)
                     {
-                     // if we are at the end, don't create to avoid a degenerate line...
+                        // if we are at the end, don't create to avoid a degenerate line...
                         path = lane.getCenterLine().extractFractional(posSI / lane.getParentLink().getLength().si, 1.0);
                     }
                     else if (gtu.getLanes().get(lane).equals(GTUDirectionality.DIR_MINUS) && posSI != 0.0)
                     {
-                     // if we are at the start, don't create, don't create to avoid a degenerate line...
-                        path = lane.getCenterLine().extractFractional(0.0, posSI / lane.getParentLink().getLength().si).reverse();
+                        // if we are at the start, don't create, don't create to avoid a degenerate line...
+                        path =
+                            lane.getCenterLine().extractFractional(0.0, posSI / lane.getParentLink().getLength().si)
+                                .reverse();
                         path = path.reverse();
                     }
                     while (path == null || path.getLength().si < distance.si)
@@ -172,7 +170,7 @@ public class LaneBasedCFLCTacticalPlanner implements TacticalPlanner
                         }
                         else
                         {
-                            // TODO 
+                            // TODO
                             if (path == null)
                             {
                                 path = nextLanes.keySet().iterator().next().getCenterLine();
@@ -209,7 +207,7 @@ public class LaneBasedCFLCTacticalPlanner implements TacticalPlanner
         }
         throw new OTSGeometryException("OTSLine3D concat - Lane center lines cannot be connected");
     }
-    
+
     // /**
     // * Build a set of Lanes that is adjacent to the given lane that this GTU can enter, for both lateral directions.
     // * @param lane Lane; the lane for which to add the accessible lanes.

@@ -1,9 +1,11 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,10 +15,14 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.perception.PerceivedObject;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
@@ -50,6 +56,9 @@ public class LanePerception implements Perception
 
     /** the lane based GTU for which this perception module stores information. */
     private LaneBasedGTU gtu;
+
+    /** the lanes ahead of us for the given headway; stored so it is only calculated once per perception round. */
+    private List<Lane> laneListForward = new ArrayList<>();
 
     /** the forward headway and (leader) GTU. */
     private HeadwayGTU forwardHeadwayGTU;
@@ -98,46 +107,114 @@ public class LanePerception implements Perception
 
     /** {@inheritDoc} */
     @Override
-    public void perceive()
+    public void perceive() throws GTUException, NetworkException
     {
-        try
+        if (this.gtu == null)
         {
-            this.timestamp = this.gtu.getSimulator().getSimulatorTime().getTime();
+            throw new GTUException("gtu value has not been initialized for LanePerception.perceive() method");
+        }
 
-            // assess the speed limit
-            this.speedLimit = new Speed(Double.MAX_VALUE, SpeedUnit.SI);
-            for (Lane lane : this.gtu.getLanes().keySet())
+        this.timestamp = this.gtu.getSimulator().getSimulatorTime().getTime();
+
+        // assess the speed limit where we are right now
+        this.speedLimit = new Speed(Double.MAX_VALUE, SpeedUnit.SI);
+        for (Lane lane : this.gtu.getLanes().keySet())
+        {
+            if (lane.getSpeedLimit(this.gtu.getGTUType()).lt(this.speedLimit))
             {
-                if (lane.getSpeedLimit(this.gtu.getGTUType()).lt(this.speedLimit))
+                this.speedLimit = lane.getSpeedLimit(this.gtu.getGTUType());
+            }
+        }
+
+        // build a list of lanes forward, with a maximum headway.
+        buildLaneListForward(this.gtu.getDrivingCharacteristics().getForwardHeadwayDistance());
+
+        // determine who's in front of us and behind us
+        this.forwardHeadwayGTU = headway(this.gtu.getDrivingCharacteristics().getForwardHeadwayDistance());
+        this.backwardHeadwayGTU = headway(this.gtu.getDrivingCharacteristics().getBackwardHeadwayDistance());
+
+        // determine where we might go
+        buildAccessibleAdjacentLanes();
+
+        // for the accessible lanes, see who is parallel with us
+        this.parallelGTUs.clear();
+        for (Lane lane : this.accessibleAdjacentLanes.keySet())
+        {
+            this.parallelGTUs.put(lane, parallel(lane, this.timestamp));
+        }
+
+        // for the accessible lanes, see who is ahead of us and in front of us
+        // TODO see who is ahead of us and in front of us
+
+        // look for traffic lights, blocking objects, lane ends, or other objects that can force us to stop
+        // TODO other objects that can force us to stop
+    }
+
+    /**
+     * Build a list of lanes forward, with a maximum headway relative to the reference point of the GTU.
+     * @param maxHeadway the maximum length for which lanes should be returned
+     * @throws NetworkException when the vehicle is not on one of the lanes on which it is registered
+     */
+    private void buildLaneListForward(final Length.Rel maxHeadway) throws NetworkException
+    {
+        this.laneListForward.clear();
+        Lane lane = getReferenceLane();
+        this.laneListForward.add(lane);
+        Length.Rel lengthForward =
+            this.gtu.getLanes().get(lane).equals(GTUDirectionality.DIR_PLUS) ? this.gtu.position(lane,
+                this.gtu.getReference()) : lane.getLength().minus(this.gtu.position(lane, this.gtu.getReference()));
+        while (lengthForward.lt(maxHeadway))
+        {
+            Map<Lane, GTUDirectionality> lanes = lane.nextLanes(this.gtu.getGTUType());
+            if (lanes.size() == 0)
+            {
+                // dead end. return with the list as is.
+                return;
+            }
+            if (lanes.size() == 1)
+            {
+                lane = lanes.keySet().iterator().next();
+                this.laneListForward.add(lane);
+                lengthForward = lengthForward.plus(lane.getLength());
+            }
+            else
+            {
+                // multiple next lanes; ask the strategical planner where to go
+                LinkDirection ld =
+                    this.gtu.getStrategicalPlanner().nextLinkDirection(lane.getParentLink(),
+                        this.gtu.getLanes().get(lane));
+                Link nextLink = ld.getLink();
+                for (Lane nextLane : lanes.keySet())
                 {
-                    this.speedLimit = lane.getSpeedLimit(this.gtu.getGTUType());
+                    if (nextLane.getParentLink().equals(nextLink))
+                    {
+                        lane = nextLane;
+                        this.laneListForward.add(lane);
+                        lengthForward = lengthForward.plus(lane.getLength());
+                        break;
+                    }
                 }
             }
-
-            // determine who's in front of us and behind us
-            this.forwardHeadwayGTU = headway(this.gtu.getDrivingCharacteristics().getForwardHeadwayDistance());
-            this.backwardHeadwayGTU = headway(this.gtu.getDrivingCharacteristics().getBackwardHeadwayDistance());
-
-            // determine where we might go
-            buildAccessibleAdjacentLanes();
-
-            // for the accessible lanes, see who is parallel with us
-            this.parallelGTUs.clear();
-            for (Lane lane : this.accessibleAdjacentLanes.keySet())
-            {
-                this.parallelGTUs.put(lane, parallel(lane, this.timestamp));
-            }
-
-            // for the accessible lanes, see who is ahead of us and in front of us
-            // TODO
-
-            // look for traffic lights, blocking objects, lane ends, or other objects that can force us to stop
-            // TODO
         }
-        catch (NetworkException networkException)
+    }
+
+    /**
+     * @return a lane on which the reference point is between start and end.
+     * @throws NetworkException when the reference point of the GTU is not on any of the lanes on which it is registered
+     */
+    private Lane getReferenceLane() throws NetworkException
+    {
+        Map<Lane, Length.Rel> positions = this.gtu.positions(this.gtu.getReference());
+        for (Lane lane : positions.keySet())
         {
-            throw new RuntimeException(networkException);
+            double posSI = positions.get(lane).si;
+            if (posSI >= 0.0 && posSI <= lane.getLength().si)
+            {
+                return lane;
+            }
         }
+        throw new NetworkException("The reference point of GTU " + this.gtu
+            + " is not on any of the lanes on which it is registered");
     }
 
     /**
@@ -605,6 +682,14 @@ public class LanePerception implements Perception
     public final LaneBasedGTU getGtu()
     {
         return this.gtu;
+    }
+
+    /**
+     * @return laneListForward
+     */
+    public final List<Lane> getLaneListForward()
+    {
+        return this.laneListForward;
     }
 
     /**

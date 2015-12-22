@@ -32,7 +32,7 @@ public abstract class AbstractLaneBasedRouteNavigator implements LaneBasedRouteN
     public static final Length.Rel NOLANECHANGENEEDED = new Length.Rel(Double.MAX_VALUE, LengthUnit.SI);
 
     /** Return value of suitability when a lane change is required <i>right now</i>. */
-    public static final Length.Rel GETOFFTHISLANENOW = new Length.Rel(0, LengthUnit.SI);
+    public static final Length.Rel GETOFFTHISLANENOW = Length.Rel.ZERO;
 
     /**
      * Compute the suitability of a lane from which lane changes are required to get to the next point on the Route.<br>

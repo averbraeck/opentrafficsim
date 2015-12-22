@@ -287,7 +287,7 @@ class GeneratorTag
         {
             nodeList.add(parser.nodeTags.get(nodeTag.name).node);
         }
-        Time.Abs startTime = generatorTag.startTime != null ? generatorTag.startTime : new Time.Abs(0.0, TimeUnit.SI);
+        Time.Abs startTime = generatorTag.startTime != null ? generatorTag.startTime : Time.Abs.ZERO;
         Time.Abs endTime =
             generatorTag.endTime != null ? generatorTag.endTime : new Time.Abs(Double.MAX_VALUE, TimeUnit.SI);
         Length.Rel position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);

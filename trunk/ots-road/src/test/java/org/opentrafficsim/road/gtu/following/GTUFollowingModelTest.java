@@ -89,7 +89,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         String longName = gtuFollowingModel.getLongName();
         assertNotNull("getLongName must return non-null value", longName);
         assertTrue("getLongName result must not be the empty string", longName.length() > 0);
-        Speed speed = new Speed(0, SpeedUnit.SI);
+        Speed speed = Speed.ZERO;
         Length.Rel precision = new Length.Rel(0.5, METER);
         Speed maxSpeed = new Speed(200, KM_PER_HOUR);
         Speed speedLimit = new Speed(100, KM_PER_HOUR);
@@ -140,7 +140,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
             .getValidUntil().getSI(), 0.001);
         assertTrue("acceleration of stationary gtu with no leader should be > 0", 0 < noLeader.getAcceleration()
             .getSI());
-        precision = new Length.Rel(0, LengthUnit.SI);
+        precision = Length.Rel.ZERO;
         try
         {
             gtuFollowingModel.minimumHeadway(speed, speed, precision, speedLimit, maxSpeed);

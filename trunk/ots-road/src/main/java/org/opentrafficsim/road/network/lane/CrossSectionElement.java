@@ -10,7 +10,6 @@ import javax.media.j3d.Bounds;
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -54,9 +53,6 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
 
     /** The contour of the element. Calculated once at the creation. */
     private final OTSLine3D contour;
-
-    /** constant for relative length 0. */
-    private static final Length.Rel LENGTH_0 = new Length.Rel(0.0, LengthUnit.SI);
 
     /**
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction, with the direction from
@@ -156,7 +152,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
         final Length.Rel endWidth) throws OTSGeometryException, NetworkException
     {
         this(parentLink, id, Arrays.asList(new CrossSectionSlice[]{
-            new CrossSectionSlice(LENGTH_0, lateralOffsetAtBegin, beginWidth),
+            new CrossSectionSlice(Length.Rel.ZERO, lateralOffsetAtBegin, beginWidth),
             new CrossSectionSlice(parentLink.getLength(), lateralOffsetAtEnd, endWidth)}));
     }
 
@@ -175,7 +171,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
         final Length.Rel width) throws OTSGeometryException, NetworkException
     {
         this(parentLink, id, Arrays
-            .asList(new CrossSectionSlice[]{new CrossSectionSlice(LENGTH_0, lateralOffset, width)}));
+            .asList(new CrossSectionSlice[]{new CrossSectionSlice(Length.Rel.ZERO, lateralOffset, width)}));
     }
 
     /**
