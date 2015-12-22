@@ -266,7 +266,7 @@ public abstract class AbstractGTU implements GTU
             return this.odometer.plus(this.operationalPlan.getTraveledDistance(this.simulator.getSimulatorTime()
                 .getTime()));
         }
-        catch (NetworkException ne)
+        catch (NetworkException | GTUException ne)
         {
             return this.odometer;
         }
@@ -284,14 +284,14 @@ public abstract class AbstractGTU implements GTU
         {
             return this.operationalPlan.getVelocity(time);
         }
-        catch (NetworkException ne)
+        catch (NetworkException | GTUException ne)
         {
             // should not happen --there is a still valid operational plan. Return the end velocity of the plan.
             try
             {
                 return this.operationalPlan.getVelocity(this.operationalPlan.getTotalDuration());
             }
-            catch (NetworkException ne2)
+            catch (NetworkException | GTUException ne2)
             {
                 // this should not happen at all...
                 throw new RuntimeException(
@@ -319,14 +319,14 @@ public abstract class AbstractGTU implements GTU
         {
             return this.operationalPlan.getAcceleration(time);
         }
-        catch (NetworkException ne)
+        catch (NetworkException | GTUException ne)
         {
             // should not happen --there is a still valid operational plan. Return the end acceleration of the plan.
             try
             {
                 return this.operationalPlan.getAcceleration(this.operationalPlan.getTotalDuration());
             }
-            catch (NetworkException ne2)
+            catch (NetworkException | GTUException ne2)
             {
                 // this should not happen at all...
                 throw new RuntimeException(
@@ -396,7 +396,7 @@ public abstract class AbstractGTU implements GTU
         {
             return this.operationalPlan.getLocation(this.simulator.getSimulatorTime().getTime());
         }
-        catch (NetworkException exception)
+        catch (NetworkException | GTUException exception)
         {
             System.err.println("Could not determine location, got exception: " + exception.getMessage());
             exception.printStackTrace();
