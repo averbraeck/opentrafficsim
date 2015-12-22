@@ -44,8 +44,8 @@
     <sonar.scm.disabled>true</sonar.scm.disabled>
 
     <ots.version>${project.version}</ots.version>
-    <djunits.version>1.02.04</djunits.version>
-    <dsol.version>3.00.17</dsol.version>
+    <djunits.version>1.02.05</djunits.version>
+    <dsol.version>3.00.18</dsol.version>
     <junit.version>4.11</junit.version>
     <java3d.version>1.5.1</java3d.version>
     <geotools.version>12.0</geotools.version>
