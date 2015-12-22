@@ -12,9 +12,9 @@ import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.model.OTSModel;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.perception.PerceivableContext;
 
 /**
  * A Network consists of a set of links. Each link has, in its turn, a start node and an end node.
@@ -28,7 +28,7 @@ import org.opentrafficsim.core.network.route.Route;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class OTSNetwork implements Network, OTSModel, Serializable
+public class OTSNetwork implements Network, PerceivableContext, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150722;

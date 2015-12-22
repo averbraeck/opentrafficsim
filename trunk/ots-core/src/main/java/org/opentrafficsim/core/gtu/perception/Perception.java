@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.perception.PerceivedObject;
 
 /**
  * The perception module of a GTU. It is responsible for perceiving (sensing) the environment of the GTU, which includes the

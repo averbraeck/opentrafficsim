@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.gtu.perception;
+package org.opentrafficsim.core.perception;
 
 import java.io.Serializable;
 
