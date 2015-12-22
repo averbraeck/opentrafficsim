@@ -36,8 +36,8 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
     /**
      * Create a simulation engine with animation; the easy way. PauseOnError is set to true;
      * @param startTime Time.Abs; the start time of the simulation
-     * @param warmupPeriod Time.Rel; the warm up period of the simulation (use new
-     *            Time.Rel(0, SECOND) if you don't know what this is)
+     * @param warmupPeriod Time.Rel; the warm up period of the simulation (use new Time.Rel(0, SECOND) if you don't know what
+     *            this is)
      * @param runLength Time.Rel; the duration of the simulation
      * @param model OTSModelInterface; the simulation to execute
      * @throws SimRuntimeException on ???
@@ -91,7 +91,43 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
                 r1 = this.relativeMillis(factor);
             }
 
-            // peek at the first event and determine the time difference relative to RT speed.
+            // check if we are behind; syncTime is the needed current time on the wall-clock
+            double syncTime = (System.currentTimeMillis() - clockTime0) * msec1 * factor;
+            // delta is the time we might be behind
+            double simTime = this.simulatorTime.minus(simTime0).doubleValue();
+
+            if (syncTime > simTime)
+            {
+                // we are behind
+                if (!isCatchup())
+                {
+                    // if no catch-up: re-baseline.
+                    clockTime0 = System.currentTimeMillis();
+                    simTime0 = this.simulatorTime;
+                }
+                else
+                {
+                    // jump to the required wall-clock related time or to the time of the next event, whichever comes
+                    // first
+                    synchronized (super.semaphore)
+                    {
+                        Time.Rel delta = relativeMillis((syncTime - simTime) / msec1);
+                        OTSSimTimeDouble absSyncTime = this.simulatorTime.plus(delta);
+                        OTSSimTimeDouble eventTime = this.eventList.first().getAbsoluteExecutionTime();
+                        if (absSyncTime.lt(eventTime))
+                        {
+                            this.simulatorTime = absSyncTime;
+                        }
+                        else
+                        {
+                            this.simulatorTime = eventTime;
+                        }
+                    }
+                }
+            }
+
+            // peek at the first event and determine the time difference relative to RT speed; that determines
+            // how long we have to wait.
             SimEventInterface<OTSSimTimeDouble> event = this.eventList.first();
             double simTimeDiffMillis =
                 (event.getAbsoluteExecutionTime().minus(simTime0)).doubleValue() / (msec1 * factor);
@@ -101,28 +137,13 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
              * number of milliseconds we have to wait. if speed == 10, we have to wait 1/10 of that. If the speed == 0.1, we
              * have to wait 10 times that amount. We might also be behind.
              */
-            if (simTimeDiffMillis < (System.currentTimeMillis() - clockTime0))
-            {
-                // we are behind.
-                if (!isCatchup())
-                {
-                    // if no catch-up: re-baseline.
-                    clockTime0 = System.currentTimeMillis();
-                    simTime0 = this.simulatorTime;
-                }
-                else
-                {
-                    // if catch-up: indicate we were behind.
-                    this.fireTimedEvent(BACKLOG_EVENT, this.simulatorTime, null);
-                }
-            }
-            else
+            if (simTimeDiffMillis >= (System.currentTimeMillis() - clockTime0))
             {
                 while (simTimeDiffMillis > System.currentTimeMillis() - clockTime0)
                 {
                     try
                     {
-                        Thread.sleep(1);
+                        Thread.sleep(10);
 
                         // check if speedFactor has changed. If yes: break out of this loop and execute event.
                         // this could cause a jump.
@@ -138,11 +159,24 @@ public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimula
                         ie = null;
                     }
 
-                    // make a small time step for the animation during wallclock waiting.
-                    // but never beyond the next event time.
-                    if (this.simulatorTime.plus(r1).lt(event.getAbsoluteExecutionTime()))
+                    // check if an event has been inserted. In a real-time situation this can be dome by other threads
+                    if (!event.equals(this.eventList.first())) // event inserted by a thread...
                     {
-                        this.simulatorTime.add(r1);
+                        event = this.eventList.first();
+                        simTimeDiffMillis =
+                            (event.getAbsoluteExecutionTime().minus(simTime0)).doubleValue() / (msec1 * factor);
+                    }
+                    else
+                    {
+                        // make a small time step for the animation during wallclock waiting.
+                        // but never beyond the next event time.
+                        if (this.simulatorTime.plus(r1).lt(event.getAbsoluteExecutionTime()))
+                        {
+                            synchronized (super.semaphore)
+                            {
+                                this.simulatorTime.add(r1);
+                            }
+                        }
                     }
                 }
             }

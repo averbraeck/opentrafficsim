@@ -337,6 +337,7 @@ public class OTSNetwork implements Network, OTSModel, Serializable
     @Override
     public final void buildGraph(final GTUType gtuType)
     {
+        // TODO take connections into accound, and possibly do node expansion to build the graph
         @SuppressWarnings("rawtypes")
         Class linkEdgeClass = LinkEdge.class;
         @SuppressWarnings("unchecked")

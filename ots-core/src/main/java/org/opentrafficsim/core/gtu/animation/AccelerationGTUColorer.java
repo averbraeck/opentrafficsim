@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.core.gtu.GTU;
 
@@ -49,18 +48,17 @@ public class AccelerationGTUColorer implements GTUColorer
         this.maximumDeceleration = maximumDeceleration;
         this.maximumAcceleration = maximumAcceleration;
         this.legend = new ArrayList<LegendEntry>(5);
-        Acceleration zeroValue = new Acceleration(0, AccelerationUnit.SI);
         for (int index = 0; index < decelerationColors.length - 1; index++)
         {
             double ratio = index * 1.0 / (decelerationColors.length - 1);
-            Acceleration acceleration = Acceleration.interpolate(this.maximumDeceleration, zeroValue, ratio);
+            Acceleration acceleration = Acceleration.interpolate(this.maximumDeceleration, Acceleration.ZERO, ratio);
             this.legend.add(new LegendEntry(decelerationColors[index], acceleration.toString(), "deceleration"
                 + acceleration.toString()));
         }
         for (int index = 0; index < accelerationColors.length; index++)
         {
             double ratio = index * 1.0 / (accelerationColors.length - 1);
-            Acceleration acceleration = Acceleration.interpolate(zeroValue, this.maximumAcceleration, ratio);
+            Acceleration acceleration = Acceleration.interpolate(Acceleration.ZERO, this.maximumAcceleration, ratio);
             this.legend.add(new LegendEntry(accelerationColors[index], acceleration.toString(), "acceleration"
                 + acceleration.toString()));
         }
@@ -68,7 +66,7 @@ public class AccelerationGTUColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public final Color getColor(final GTU gtu) 
+    public final Color getColor(final GTU gtu)
     {
         Acceleration acceleration = gtu.getAcceleration();
         double ratio;
@@ -94,8 +92,8 @@ public class AccelerationGTUColorer implements GTUColorer
         }
         // Interpolate
         int floor = (int) Math.floor(ratio);
-        return ColorInterpolator.interpolateColor(this.legend.get(floor).getColor(), this.legend.get(floor + 1).getColor(),
-            ratio - floor);
+        return ColorInterpolator.interpolateColor(this.legend.get(floor).getColor(), this.legend.get(floor + 1)
+            .getColor(), ratio - floor);
     }
 
     /** {@inheritDoc} */

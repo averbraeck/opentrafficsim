@@ -6,9 +6,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.LengthUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -79,12 +76,6 @@ public abstract class AbstractGTU implements GTU
     /** the model in which this GTU is registered. */
     private OTSModel model;
 
-    /** constant for zero speed. */
-    protected static final Speed SPEED_0 = new Speed(0.0, SpeedUnit.SI);
-
-    /** constant for zero acceleration. */
-    protected static final Acceleration ACCELERATION_0 = new Acceleration(0.0, AccelerationUnit.SI);
-
     /**
      * @param id the id of the GTU
      * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
@@ -108,7 +99,7 @@ public abstract class AbstractGTU implements GTU
         this.simulator = simulator;
         this.strategicalPlanner = strategicalPlanner;
         this.perception = perception;
-        this.odometer = new Length.Rel(0.0, LengthUnit.SI);
+        this.odometer = Length.Rel.ZERO;
         this.model = model;
         this.model.addGTU(this);
         Time.Abs now = this.simulator.getSimulatorTime().getTime();
@@ -278,7 +269,7 @@ public abstract class AbstractGTU implements GTU
     {
         if (this.operationalPlan == null)
         {
-            return SPEED_0;
+            return Speed.ZERO;
         }
         try
         {
@@ -313,7 +304,7 @@ public abstract class AbstractGTU implements GTU
     {
         if (this.operationalPlan == null)
         {
-            return ACCELERATION_0;
+            return Acceleration.ZERO;
         }
         try
         {
@@ -348,7 +339,7 @@ public abstract class AbstractGTU implements GTU
      */
     public final void setMaximumAcceleration(final Acceleration maximumAcceleration)
     {
-        if (maximumAcceleration.le(ACCELERATION_0))
+        if (maximumAcceleration.le(Acceleration.ZERO))
         {
             throw new RuntimeException("Maximum acceleration of GTU " + this.id + " set to value <= 0");
         }
@@ -368,7 +359,7 @@ public abstract class AbstractGTU implements GTU
      */
     public final void setMaximumDeceleration(final Acceleration maximumDeceleration)
     {
-        if (maximumDeceleration.ge(ACCELERATION_0))
+        if (maximumDeceleration.ge(Acceleration.ZERO))
         {
             throw new RuntimeException("Maximum deceleration of GTU " + this.id + " set to value >= 0");
         }

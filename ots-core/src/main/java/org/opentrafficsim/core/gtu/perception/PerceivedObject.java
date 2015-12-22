@@ -2,8 +2,6 @@ package org.opentrafficsim.core.gtu.perception;
 
 import java.io.Serializable;
 
-import nl.tudelft.simulation.language.d3.DirectedPoint;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
