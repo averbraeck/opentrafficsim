@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -31,9 +32,10 @@ public class OperationalPlanTest
     /**
      * Test OperationalPlan.
      * @throws NetworkException
+     * @throws GTUException 
      */
     @Test
-    public void testOperationalPlan() throws NetworkException
+    public void testOperationalPlan() throws NetworkException, GTUException
     {
         DirectedPoint waitPoint = new DirectedPoint(12, 13, 14, 15, 16, 17);
         Time.Abs startTime = new Time.Abs(100, TimeUnit.SECOND);
@@ -48,8 +50,8 @@ public class OperationalPlanTest
             Time.Abs t = startTime.plus(new Time.Rel(i, TimeUnit.SECOND));
             DirectedPoint locationAtT = op.getLocation(t);
             System.out.println("Location at time " + t + " is " + locationAtT);
-            // assertEquals("Distance from wait point at " + t + " is 0", 0, waitPoint.distance(locationAtT), 0.0001);
-            // FIXME fails due to design bug in the stand-still OperationalPlan
+            // Use a tolerance that is larger than the z-offset (0.001)
+            assertEquals("Distance from wait point at " + t + " is 0", 0, waitPoint.distance(locationAtT), 0.002);
         }
         OTSLine3D path = new OTSLine3D(new OTSPoint3D(12, 13, 14), new OTSPoint3D(123, 234, 345));
         Speed startSpeed = new Speed(20, SpeedUnit.KM_PER_HOUR);
