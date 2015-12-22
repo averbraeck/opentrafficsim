@@ -4,7 +4,6 @@ import java.rmi.RemoteException;
 
 import javax.media.j3d.Bounds;
 
-import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -21,7 +20,7 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class StaticObject implements LocatableInterface
+public class StaticObject implements ObjectInterface
 {
     /** the top-level 2D outline of the object. */
     private final OTSLine3D geometry;

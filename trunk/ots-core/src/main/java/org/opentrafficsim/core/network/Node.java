@@ -46,6 +46,15 @@ public interface Node extends LocatableInterface, Serializable
 
     /** @return the links connected to this Node */
     Set<Link> getLinks();
+    
+    /** 
+     * Determine the links connecting from the previous link via this Node for the given GTU type.
+     * @param gtuType the GTU type to determine the next links for
+     * @param prevLink the incoming link to the Node
+     * @return a set of links connecting from the previous link via this Node for the given GTU type
+     * @throws NetworkException if thhe incoming link is not connected to this node for the given GTU type
+     */
+    Set<Link> nextLinks(GTUType gtuType, Link prevLink) throws NetworkException;
 
     /**
      * Check if the current node is linked to the given Node in the specified direction for the given GTUType. This can mean
@@ -56,7 +65,7 @@ public interface Node extends LocatableInterface, Serializable
      * @param toNode the to node
      * @return whether two nodes are linked in the specified direction.
      */
-    boolean isDirectionallyConnectedTo(final GTUType gtuType, final Node toNode);
+    boolean isDirectionallyConnectedTo(GTUType gtuType, Node toNode);
 
     /** {@inheritDoc} */
     @Override

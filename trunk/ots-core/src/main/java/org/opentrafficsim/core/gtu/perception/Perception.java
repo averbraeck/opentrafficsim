@@ -3,6 +3,9 @@ package org.opentrafficsim.core.gtu.perception;
 import java.io.Serializable;
 import java.util.Set;
 
+import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.network.NetworkException;
+
 /**
  * The perception module of a GTU. It is responsible for perceiving (sensing) the environment of the GTU, which includes the
  * locations of other GTUs. Perception is done at a certain time, and the perceived information might have a limited validity.
@@ -19,11 +22,13 @@ public interface Perception extends Serializable
 {
     /**
      * Update the perceived information and store it in a stateful manner.
+     * @throws GTUException when GTU has not been properly initialized.
+     * @throws NetworkException in case of inconsistencies in the network during perception calculations.
      */
-    void perceive();
-    
+    void perceive() throws GTUException, NetworkException;
+
     /**
-     * Return information about the perceived objects with their (estimated) location, speed, and state. 
+     * Return information about the perceived objects with their (estimated) location, speed, and state.
      * @return a set of objects within the perception range and angle
      */
     Set<PerceivedObject> getPerceivedObjects();
