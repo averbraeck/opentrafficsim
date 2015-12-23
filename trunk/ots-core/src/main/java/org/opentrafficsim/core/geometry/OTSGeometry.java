@@ -42,7 +42,8 @@ public final class OTSGeometry
      */
     public static String printCoordinates(final String prefix, final OTSPoint3D[] coordinates, final String separator)
     {
-        return printCoordinates(prefix + "(" + coordinates.length + " pts)", coordinates, 0, coordinates.length, separator);
+        return printCoordinates(prefix + "(" + coordinates.length + " pts)", coordinates, 0, coordinates.length,
+            separator);
     }
 
     /**
@@ -67,7 +68,7 @@ public final class OTSGeometry
      * @return String
      */
     public static String printCoordinates(final String prefix, final OTSPoint3D[] points, final int fromIndex,
-            final int toIndex, final String separator)
+        final int toIndex, final String separator)
     {
         StringBuilder result = new StringBuilder();
         result.append(prefix);

@@ -675,14 +675,7 @@ public final class OTSBufferingAV
         {
             otsPoints.add(new OTSPoint3D(point.getX(), point.getY(), 0.0));
         }
-        try
-        {
-            return new OTSLine3D(otsPoints);
-        }
-        catch (NetworkException ne)
-        {
-            throw new OTSGeometryException(ne);
-        }
+        return new OTSLine3D(otsPoints);
     }
 
     private static Path2D.Double makeRectangle(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3,
@@ -800,7 +793,7 @@ public final class OTSBufferingAV
                 return null; // situation e.
             if (p1e.equals(p2s) && line1.ptLineDist(p2e) > 0 && line2.ptLineDist(p1s) > 0)
                 return null; // situation e.
-            
+
             // situation a, b or c; create an ordered list of 4 points, based on distance
             SortedMap<Double, Point2D> pointMap = new TreeMap<>();
             pointMap.put(0.0, p1s);
@@ -824,7 +817,7 @@ public final class OTSBufferingAV
             if (cross.distance(line1.getP1()) > 0)
                 lines.add(new Line2D.Double(line1.getP1(), cross));
             if (cross.distance(line1.getP2()) > 0)
-            lines.add(new Line2D.Double(cross, line1.getP2()));
+                lines.add(new Line2D.Double(cross, line1.getP2()));
             if (cross.distance(line2.getP1()) > 0)
                 lines.add(new Line2D.Double(line2.getP1(), cross));
             if (cross.distance(line2.getP2()) > 0)

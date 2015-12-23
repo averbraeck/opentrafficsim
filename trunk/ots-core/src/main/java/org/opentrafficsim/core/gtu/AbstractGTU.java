@@ -72,7 +72,7 @@ public abstract class AbstractGTU implements GTU
 
     /** the perception unit that takes care of observing the environment of the GTU. */
     private Perception perception;
-
+    
     /** the model in which this GTU is registered. */
     private PerceivableContext perceivableContext;
 
@@ -89,8 +89,9 @@ public abstract class AbstractGTU implements GTU
      * @throws NetworkException when the odometer fails to update (will never happen)
      */
     public AbstractGTU(final String id, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
-            final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation,
-            final PerceivableContext perceivableContext) throws SimRuntimeException, NetworkException
+        final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation,
+        final PerceivableContext perceivableContext)
+        throws SimRuntimeException, NetworkException
     {
         super();
         this.id = id;
@@ -108,24 +109,24 @@ public abstract class AbstractGTU implements GTU
             // Schedule the first move now; scheduling so super constructors can still finish.
             // Store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
             this.nextMoveEvent =
-                    new SimEvent<>(new OTSSimTimeDouble(now), this, this, "move", new Object[] { initialLocation });
+                new SimEvent<>(new OTSSimTimeDouble(now), this, this, "move", new Object[]{initialLocation});
             this.simulator.scheduleEvent(this.nextMoveEvent);
         }
 
         // Give the GTU a stand-still operational plan, valid for 0 seconds, so initialization will work
         DirectedPoint p = initialLocation == null ? new DirectedPoint() : initialLocation;
-        this.operationalPlan = new OperationalPlan(p, now, new Time.Rel(1.0e6, TimeUnit.SECOND));
+        this.operationalPlan = new OperationalPlan(p, now, new Time.Rel(1.0e-6, TimeUnit.SECOND));
     }
 
     /**
-     * Destructor. Don't forget to call from any override to ensure that destroyed GTUs can no longer be seen by other GTUs.
+     * Destructor. Don't forget to call from any override to avoid memory leaks in the network.
      */
     @SuppressWarnings("checkstyle:designforextension")
     public void destroy()
     {
         this.perceivableContext.removeGTU(this);
     }
-
+    
     /**
      * Move from the current location according to an operational plan to a location that will bring us nearer to reaching the
      * location provided by the strategical planner. <br>
@@ -156,12 +157,23 @@ public abstract class AbstractGTU implements GTU
             this.tacticalPlanner = this.strategicalPlanner.generateTacticalPlanner(this);
         }
         this.operationalPlan = this.tacticalPlanner.generateOperationalPlan(this, now, fromLocation);
+        
+        
+try
+{
+    System.out.println(this + " move; pos = " + getLocation());
+}
+catch (RemoteException exception)
+{
+    exception.printStackTrace();
+}        
+        
 
         // schedule the next move at the end of the current operational plan
         // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
         this.nextMoveEvent =
-                new SimEvent<>(new OTSSimTimeDouble(now.plus(this.operationalPlan.getTotalDuration())), this, this, "move",
-                        new Object[] { this.operationalPlan.getEndLocation() });
+            new SimEvent<>(new OTSSimTimeDouble(now.plus(this.operationalPlan.getTotalDuration())), this, this, "move",
+                new Object[]{this.operationalPlan.getEndLocation()});
         this.simulator.scheduleEvent(this.nextMoveEvent);
     }
 
@@ -253,7 +265,8 @@ public abstract class AbstractGTU implements GTU
         }
         try
         {
-            return this.odometer.plus(this.operationalPlan.getTraveledDistance(this.simulator.getSimulatorTime().getTime()));
+            return this.odometer.plus(this.operationalPlan.getTraveledDistance(this.simulator.getSimulatorTime()
+                .getTime()));
         }
         catch (NetworkException | GTUException ne)
         {
@@ -283,8 +296,8 @@ public abstract class AbstractGTU implements GTU
             catch (NetworkException | GTUException ne2)
             {
                 // this should not happen at all...
-                throw new RuntimeException("getVelocity() could not derive a valid velocity for the current operationalPlan",
-                        ne2);
+                throw new RuntimeException(
+                    "getVelocity() could not derive a valid velocity for the current operationalPlan", ne2);
             }
         }
     }
@@ -319,7 +332,7 @@ public abstract class AbstractGTU implements GTU
             {
                 // this should not happen at all...
                 throw new RuntimeException(
-                        "getAcceleration() could not derive a valid acceleration for the current operationalPlan", ne2);
+                    "getAcceleration() could not derive a valid acceleration for the current operationalPlan", ne2);
             }
         }
     }
