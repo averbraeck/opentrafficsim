@@ -2,8 +2,6 @@ package org.opentrafficsim.core.geometry;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.opentrafficsim.core.network.NetworkException;
-
 /**
  * Generation of B&eacute;zier curves. <br>
  * The class implements the cubic(...) method to generate a cubic B&eacute;zier curve using the following formula: B(t) = (1 -
@@ -48,10 +46,11 @@ public final class Bezier
      * @param control2 the second control point
      * @param end the end point of the B&eacute;zier curve
      * @return a cubic B&eacute;zier curve between start and end, with the two provided control points
-     * @throws NetworkException in case the number of points is less than 2 or the B&eacute;zier curve could not be constructed
+     * @throws OTSGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
+     *             constructed
      */
     public static OTSLine3D cubic(final int numPoints, final OTSPoint3D start, final OTSPoint3D control1,
-        final OTSPoint3D control2, final OTSPoint3D end) throws NetworkException
+        final OTSPoint3D control2, final OTSPoint3D end) throws OTSGeometryException
     {
         OTSPoint3D[] points = new OTSPoint3D[numPoints];
         for (int n = 0; n < numPoints; n++)
@@ -72,10 +71,11 @@ public final class Bezier
      * @param start the directed start point of the B&eacute;zier curve
      * @param end the directed end point of the B&eacute;zier curve
      * @return a cubic B&eacute;zier curve between start and end, with the two provided control points
-     * @throws NetworkException in case the number of points is less than 2 or the B&eacute;zier curve could not be constructed
+     * @throws OTSGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
+     *             constructed
      */
     public static OTSLine3D cubic(final int numPoints, final DirectedPoint start, final DirectedPoint end)
-        throws NetworkException
+        throws OTSGeometryException
     {
         double distance2 =
             Math.sqrt((end.x - start.x) * (end.x - start.x) + (end.y - start.y) * (end.y - start.y)) / 2.0;
@@ -95,9 +95,10 @@ public final class Bezier
      * @param start the directed start point of the B&eacute;zier curve
      * @param end the directed end point of the B&eacute;zier curve
      * @return a cubic B&eacute;zier curve between start and end, with the two provided control points
-     * @throws NetworkException in case the number of points is less than 2 or the B&eacute;zier curve could not be constructed
+     * @throws OTSGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
+     *             constructed
      */
-    public static OTSLine3D cubic(final DirectedPoint start, final DirectedPoint end) throws NetworkException
+    public static OTSLine3D cubic(final DirectedPoint start, final DirectedPoint end) throws OTSGeometryException
     {
         return cubic(DEFAULT_NUM_POINTS, start, end);
     }
@@ -129,9 +130,10 @@ public final class Bezier
      * @param points the points of the curve, where the first and last are begin and end point, and the intermediate ones are
      *            control points. There should be at least two points.
      * @return the B&eacute;zier value B(t) of degree n, where n is the number of points in the array
-     * @throws NetworkException in case the number of points is less than 2 or the B&eacute;zier curve could not be constructed
+     * @throws OTSGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
+     *             constructed
      */
-    public static OTSLine3D bezier(final int numPoints, final OTSPoint3D... points) throws NetworkException
+    public static OTSLine3D bezier(final int numPoints, final OTSPoint3D... points) throws OTSGeometryException
     {
         OTSPoint3D[] result = new OTSPoint3D[numPoints];
         double[] px = new double[points.length];
@@ -159,9 +161,10 @@ public final class Bezier
      * @param points the points of the curve, where the first and last are begin and end point, and the intermediate ones are
      *            control points. There should be at least two points.
      * @return the B&eacute;zier value B(t) of degree n, where n is the number of points in the array
-     * @throws NetworkException in case the number of points is less than 2 or the B&eacute;zier curve could not be constructed
+     * @throws OTSGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
+     *             constructed
      */
-    public static OTSLine3D bezier(final OTSPoint3D... points) throws NetworkException
+    public static OTSLine3D bezier(final OTSPoint3D... points) throws OTSGeometryException
     {
         return bezier(DEFAULT_NUM_POINTS, points);
     }
@@ -210,18 +213,18 @@ public final class Bezier
 
     /**
      * @param args args
-     * @throws NetworkException ne
+     * @throws OTSGeometryException ne
      */
-    public static void main(final String[] args) throws NetworkException
+    public static void main(final String[] args) throws OTSGeometryException
     {
-//        DirectedPoint s = new DirectedPoint(0, 0, 0, 0, 0, -Math.PI/2.0);
-//        DirectedPoint e = new DirectedPoint(10, 10, 20, 0, 0, Math.PI);
-//        OTSLine3D b1 = Bezier.cubic(s, e);
-//        for (OTSPoint3D p : b1.getPoints())
-//        {
-//            System.out.println(p.x + "\t" + p.y + "\t" + p.z);
-//        }
-        
+        // DirectedPoint s = new DirectedPoint(0, 0, 0, 0, 0, -Math.PI/2.0);
+        // DirectedPoint e = new DirectedPoint(10, 10, 20, 0, 0, Math.PI);
+        // OTSLine3D b1 = Bezier.cubic(s, e);
+        // for (OTSPoint3D p : b1.getPoints())
+        // {
+        // System.out.println(p.x + "\t" + p.y + "\t" + p.z);
+        // }
+
         OTSPoint3D s = new OTSPoint3D(0, 0, 0);
         OTSPoint3D s1 = new OTSPoint3D(10, 0, 0);
         OTSPoint3D m1 = new OTSPoint3D(25, 5, 0);

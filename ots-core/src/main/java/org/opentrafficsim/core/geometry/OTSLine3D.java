@@ -13,7 +13,6 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.network.NetworkException;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
@@ -58,21 +57,21 @@ public class OTSLine3D implements LocatableInterface, Serializable
     /**
      * Construct a new OTSLine3D.
      * @param points the array of points to construct this OTSLine3D from.
-     * @throws NetworkException when the provided points do not constitute a valid line (too few points or identical adjacent
-     *             points)
+     * @throws OTSGeometryException when the provided points do not constitute a valid line (too few points or identical
+     *             adjacent points)
      */
-    public OTSLine3D(final OTSPoint3D... points) throws NetworkException
+    public OTSLine3D(final OTSPoint3D... points) throws OTSGeometryException
     {
         if (points.length < 2)
         {
-            throw new NetworkException("Degenerate OTSLine3D; has " + points.length + " point"
+            throw new OTSGeometryException("Degenerate OTSLine3D; has " + points.length + " point"
                 + (points.length != 1 ? "s" : ""));
         }
         for (int i = 1; i < points.length; i++)
         {
             if (points[i - 1].x == points[i].x && points[i - 1].y == points[i].y && points[i - 1].z == points[i].z)
             {
-                throw new NetworkException("Degenerate OTSLine3D; point " + (i - 1)
+                throw new OTSGeometryException("Degenerate OTSLine3D; point " + (i - 1)
                     + " has the same x, y and z as point " + i);
             }
         }
@@ -100,7 +99,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * @param offset double; offset distance from the reference line; positive is LEFT, negative is RIGHT
      * @return OTSLine3D; the line that has the specified offset from the reference line
      */
-    public OTSLine3D offsetLine(final double offset)
+    public final OTSLine3D offsetLine(final double offset)
     {
         try
         {
@@ -202,7 +201,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
 
             return new OTSLine3D(resultCoordinates);
         }
-        catch (NetworkException exception)
+        catch (OTSGeometryException exception)
         {
             // System.err.println("CANNOT HAPPEN");
             throw new Error("Caught impossible exception in OTSLine3D " + exception.getMessage());
@@ -290,7 +289,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
 
             return new OTSLine3D(resultCoordinates);
         }
-        catch (NetworkException exception)
+        catch (OTSGeometryException exception)
         {
             // System.err.println("CANNOT HAPPEN");
             throw new Error("Caught impossible exception in OTSLine3D " + exception.getMessage());
@@ -337,7 +336,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         {
             return new OTSLine3D(points);
         }
-        catch (NetworkException exception)
+        catch (OTSGeometryException exception)
         {
             // Cannot happen
             exception.printStackTrace();
@@ -361,7 +360,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         {
             return new OTSLine3D(resultPoints);
         }
-        catch (NetworkException exception)
+        catch (OTSGeometryException exception)
         {
             // Cannot happen
             exception.printStackTrace();
@@ -376,7 +375,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * @return OTSLine3D; the new OTSLine3D
      * @throws OTSGeometryException when start &gt;= end, or start &lt; 0, or end &gt; 1
      */
-    public final OTSLine3D extractFractional(double start, double end) throws OTSGeometryException
+    public final OTSLine3D extractFractional(final double start, final double end) throws OTSGeometryException
     {
         if (start < 0 || start >= end || end > 1)
         {
@@ -407,7 +406,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * @return OTSLine3D; the selected sub-section
      * @throws OTSGeometryException when start &gt;= end, or start &lt; 0, or end &gt; length
      */
-    public final OTSLine3D extract(double start, double end) throws OTSGeometryException
+    public final OTSLine3D extract(final double start, final double end) throws OTSGeometryException
     {
         if (Double.isNaN(start) || Double.isNaN(end) || start < 0 || start >= end || end > getLength().si)
         {
@@ -482,7 +481,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         {
             return new OTSLine3D(pointList);
         }
-        catch (NetworkException exception)
+        catch (OTSGeometryException exception)
         {
             System.err.println("interval " + start + ".." + end + "too short");
             throw new OTSGeometryException("interval " + start + ".." + end + "too short");
@@ -508,13 +507,13 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * Create an OTSLine3D, while cleaning repeating successive points.
      * @param points the coordinates of the line as OTSPoint3D
      * @return the line
-     * @throws NetworkException when number of points &lt; 2
+     * @throws OTSGeometryException when number of points &lt; 2
      */
-    public static OTSLine3D createAndCleanOTSLine3D(final OTSPoint3D[] points) throws NetworkException
+    public static OTSLine3D createAndCleanOTSLine3D(final OTSPoint3D[] points) throws OTSGeometryException
     {
         if (points.length < 2)
         {
-            throw new NetworkException("Degenerate OTSLine3D; has " + points.length + " point"
+            throw new OTSGeometryException("Degenerate OTSLine3D; has " + points.length + " point"
                 + (points.length != 1 ? "s" : ""));
         }
         return createAndCleanOTSLine3D(new ArrayList<>(Arrays.asList(points)));
@@ -525,9 +524,9 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * @param pointList List&lt;OTSPoint3D&gt;; list of the coordinates of the line as OTSPoint3D; any duplicate points in this
      *            list are removed (this method may modify the provided list)
      * @return OTSLine3D; the line
-     * @throws NetworkException when number of non-equal points &lt; 2
+     * @throws OTSGeometryException when number of non-equal points &lt; 2
      */
-    public static OTSLine3D createAndCleanOTSLine3D(final List<OTSPoint3D> pointList) throws NetworkException
+    public static OTSLine3D createAndCleanOTSLine3D(final List<OTSPoint3D> pointList) throws OTSGeometryException
     {
         // clean successive equal points
         int i = 1;
@@ -548,10 +547,10 @@ public class OTSLine3D implements LocatableInterface, Serializable
     /**
      * Construct a new OTSLine3D from an array of Coordinate.
      * @param coordinates the array of coordinates to construct this OTSLine3D from
-     * @throws NetworkException when the provided points do not constitute a valid line (too few points or identical adjacent
-     *             points)
+     * @throws OTSGeometryException when the provided points do not constitute a valid line (too few points or identical
+     *             adjacent points)
      */
-    public OTSLine3D(final Coordinate[] coordinates) throws NetworkException
+    public OTSLine3D(final Coordinate[] coordinates) throws OTSGeometryException
     {
         this(coordinatesToOTSPoint3D(coordinates));
     }
@@ -559,10 +558,10 @@ public class OTSLine3D implements LocatableInterface, Serializable
     /**
      * Construct a new OTSLine3D from a LineString.
      * @param lineString the lineString to construct this OTSLine3D from.
-     * @throws NetworkException when the provided LineString does not constitute a valid line (too few points or identical
+     * @throws OTSGeometryException when the provided LineString does not constitute a valid line (too few points or identical
      *             adjacent points)
      */
-    public OTSLine3D(final LineString lineString) throws NetworkException
+    public OTSLine3D(final LineString lineString) throws OTSGeometryException
     {
         this(lineString.getCoordinates());
     }
@@ -570,10 +569,10 @@ public class OTSLine3D implements LocatableInterface, Serializable
     /**
      * Construct a new OTSLine3D from a Geometry.
      * @param geometry the geometry to construct this OTSLine3D from
-     * @throws NetworkException when the provided Geometry do not constitute a valid line (too few points or identical adjacent
-     *             points)
+     * @throws OTSGeometryException when the provided Geometry do not constitute a valid line (too few points or identical
+     *             adjacent points)
      */
-    public OTSLine3D(final Geometry geometry) throws NetworkException
+    public OTSLine3D(final Geometry geometry) throws OTSGeometryException
     {
         this(geometry.getCoordinates());
     }
@@ -581,10 +580,10 @@ public class OTSLine3D implements LocatableInterface, Serializable
     /**
      * Construct a new OTSLine3D from a List&lt;OTSPoint3D&gt;.
      * @param pointList the list of points to construct this OTSLine3D from.
-     * @throws NetworkException when the provided points do not constitute a valid line (too few points or identical adjacent
-     *             points)
+     * @throws OTSGeometryException when the provided points do not constitute a valid line (too few points or identical
+     *             adjacent points)
      */
-    public OTSLine3D(final List<OTSPoint3D> pointList) throws NetworkException
+    public OTSLine3D(final List<OTSPoint3D> pointList) throws OTSGeometryException
     {
         this(pointList.toArray(new OTSPoint3D[pointList.size()]));
     }
@@ -737,7 +736,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
             {
                 return getLocationSI(positionSI);
             }
-            catch (NetworkException exception)
+            catch (OTSGeometryException exception)
             {
                 // cannot happen
             }
@@ -769,13 +768,14 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * Get the location at a fraction of the line, with its direction. Fraction should be between 0.0 and 1.0.
      * @param fraction the fraction for which to calculate the point on the line
      * @return a directed point
-     * @throws NetworkException when fraction less than 0.0 or more than 1.0.
+     * @throws OTSGeometryException when fraction less than 0.0 or more than 1.0.
      */
-    public final DirectedPoint getLocationFraction(final double fraction) throws NetworkException
+    public final DirectedPoint getLocationFraction(final double fraction) throws OTSGeometryException
     {
         if (fraction < 0.0 || fraction > 1.0)
         {
-            throw new NetworkException("getLocationFraction for line: fraction < 0.0 or > 1.0. fraction = " + fraction);
+            throw new OTSGeometryException("getLocationFraction for line: fraction < 0.0 or > 1.0. fraction = "
+                + fraction);
         }
         return getLocationSI(fraction * getLengthSI());
     }
@@ -785,26 +785,27 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * @param fraction the fraction for which to calculate the point on the line
      * @param tolerance the delta from 0.0 and 1.0 that will be forgiven
      * @return a directed point
-     * @throws NetworkException when fraction less than 0.0 or more than 1.0.
+     * @throws OTSGeometryException when fraction less than 0.0 or more than 1.0.
      */
     public final DirectedPoint getLocationFraction(final double fraction, final double tolerance)
-        throws NetworkException
+        throws OTSGeometryException
     {
         if (fraction < -tolerance || fraction > 1.0 + tolerance)
         {
-            throw new NetworkException(
+            throw new OTSGeometryException(
                 "getLocationFraction for line: fraction < 0.0 - tolerance or > 1.0 + tolerance; fraction = " + fraction);
         }
-        return getLocationSI(fraction * getLengthSI());
+        double f = fraction < 0 ? 0.0 : fraction > 1.0 ? 1.0 : fraction;
+        return getLocationSI(f * getLengthSI());
     }
 
     /**
      * Get the location at a position on the line, with its direction. Position should be between 0.0 and line length.
      * @param position the position on the line for which to calculate the point on the line
      * @return a directed point
-     * @throws NetworkException when position less than 0.0 or more than line length.
+     * @throws OTSGeometryException when position less than 0.0 or more than line length.
      */
-    public final DirectedPoint getLocation(final Length.Rel position) throws NetworkException
+    public final DirectedPoint getLocation(final Length.Rel position) throws OTSGeometryException
     {
         return getLocationSI(position.getSI());
     }
@@ -813,9 +814,9 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * Binary search for a position on the line.
      * @param pos the position to look for.
      * @return the index below the position; the position is between points[index] and points[index+1]
-     * @throws NetworkException when index could not be found
+     * @throws OTSGeometryException when index could not be found
      */
-    private int find(final double pos) throws NetworkException
+    private int find(final double pos) throws OTSGeometryException
     {
         if (pos == 0)
         {
@@ -851,7 +852,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
                 lo = mid + 1;
             }
         }
-        throw new NetworkException("Could not find position " + pos + " on line with length indexes: "
+        throw new OTSGeometryException("Could not find position " + pos + " on line with length indexes: "
             + this.lengthIndexedLine);
          */
     }
@@ -860,14 +861,14 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * Get the location at a position on the line, with its direction. Position should be between 0.0 and line length.
      * @param positionSI the position on the line for which to calculate the point on the line
      * @return a directed point
-     * @throws NetworkException when position less than 0.0 or more than line length.
+     * @throws OTSGeometryException when position less than 0.0 or more than line length.
      */
-    public final DirectedPoint getLocationSI(final double positionSI) throws NetworkException
+    public final DirectedPoint getLocationSI(final double positionSI) throws OTSGeometryException
     {
         makeLengthIndexedLine();
         if (positionSI < 0.0 || positionSI > getLengthSI())
         {
-            throw new NetworkException("getLocationSI for line: position < 0.0 or > line length. Position = "
+            throw new OTSGeometryException("getLocationSI for line: position < 0.0 or > line length. Position = "
                 + positionSI + " m. Length = " + getLengthSI() + " m.");
         }
 
@@ -899,15 +900,15 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * Truncate a line at the given length (less than the length of the line, and larger than zero) and return a new line.
      * @param lengthSI the location where to truncate the line
      * @return a new OTSLine3D truncated at the exact position where line.getLength() == lengthSI
-     * @throws NetworkException when position less than 0.0 or more than line length.
+     * @throws OTSGeometryException when position less than 0.0 or more than line length.
      */
-    public final OTSLine3D truncate(final double lengthSI) throws NetworkException
+    public final OTSLine3D truncate(final double lengthSI) throws OTSGeometryException
     {
         makeLengthIndexedLine();
         if (lengthSI <= 0.0 || lengthSI > getLengthSI())
         {
-            throw new NetworkException("truncate for line: position <= 0.0 or > line length. Position = " + lengthSI
-                + " m. Length = " + getLengthSI() + " m.");
+            throw new OTSGeometryException("truncate for line: position <= 0.0 or > line length. Position = "
+                + lengthSI + " m. Length = " + getLengthSI() + " m.");
         }
 
         // handle special case: position == length
@@ -1037,10 +1038,9 @@ public class OTSLine3D implements LocatableInterface, Serializable
 
     /**
      * @param args String[]; the command line arguments (not used)
-     * @throws NetworkException in case of error
-     * @throws OTSGeometryException g
+     * @throws OTSGeometryException in case of error
      */
-    public static void main(final String[] args) throws NetworkException, OTSGeometryException
+    public static void main(final String[] args) throws OTSGeometryException
     {
         OTSLine3D line =
             new OTSLine3D(new OTSPoint3D(-263.811, -86.551, 1.180), new OTSPoint3D(-262.945, -84.450, 1.180),

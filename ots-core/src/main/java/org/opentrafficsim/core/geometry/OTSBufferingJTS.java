@@ -269,7 +269,7 @@ public final class OTSBufferingJTS
             }
             return OTSLine3D.createAndCleanOTSLine3D(points);
         }
-        catch (OTSGeometryException | NetworkException exception)
+        catch (OTSGeometryException exception)
         {
             System.err.println("Cannot happen");
             exception.printStackTrace();
@@ -333,7 +333,7 @@ public final class OTSBufferingJTS
             {
                 return new OTSLine3D(referenceCoordinates);
             }
-            catch (NetworkException exception)
+            catch (OTSGeometryException exception)
             {
                 // System.err.println("CANNOT HAPPEN");
                 throw new Error("Caught impossible exception while creating OTSLine3D: " + exception.getMessage());
@@ -342,20 +342,16 @@ public final class OTSBufferingJTS
         Geometry geometryLine = referenceLine.getLineString();
         Coordinate[] bufferCoordinates =
             geometryLine.buffer(bufferOffset, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
-        
-        
-        
-//        try
-//        {
-//            System.out.println(new OTSLine3D(bufferCoordinates).toExcel());
-//        }
-//        catch (NetworkException exception1)
-//        {
-//            exception1.printStackTrace();
-//        }
-        
-        
-        
+
+        // try
+        // {
+        // System.out.println(new OTSLine3D(bufferCoordinates).toExcel());
+        // }
+        // catch (NetworkException exception1)
+        // {
+        // exception1.printStackTrace();
+        // }
+
         // Z coordinates may be NaN at this point
 
         // find the coordinate indices closest to the start point and end point, at a distance of approximately the
@@ -485,7 +481,7 @@ public final class OTSBufferingJTS
         {
             return new OTSLine3D(coordinates);
         }
-        catch (NetworkException exception)
+        catch (OTSGeometryException exception)
         {
             // System.err.println("CANNOT HAPPEN");
             throw new Error("Caught impossible exception in OTSLine3D: " + exception.getMessage());
@@ -570,7 +566,7 @@ public final class OTSBufferingJTS
 
             return new OTSLine3D(resultCoordinates);
         }
-        catch (NetworkException exception)
+        catch (OTSGeometryException exception)
         {
             // System.err.println("CANNOT HAPPEN");
             throw new Error("Caught impossible exception in OTSLine3D " + exception.getMessage());

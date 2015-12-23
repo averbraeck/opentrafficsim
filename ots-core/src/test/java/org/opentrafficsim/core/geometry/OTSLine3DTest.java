@@ -38,7 +38,7 @@ public class OTSLine3DTest
     @Test
     public void constructorsTest() throws OTSGeometryException, NetworkException
     {
-        double[] values = { -999, 0, 99, 9999 }; // Keep this list short; execution time grows with 9th power of length
+        double[] values = {-999, 0, 99, 9999}; // Keep this list short; execution time grows with 9th power of length
         OTSPoint3D[] points = new OTSPoint3D[0]; // Empty array
         try
         {
@@ -164,8 +164,8 @@ public class OTSLine3DTest
         for (int i = 1; i < points.length; i++)
         {
             length +=
-                    Math.sqrt(Math.pow(points[i].x - points[i - 1].x, 2) + Math.pow(points[i].y - points[i - 1].y, 2)
-                            + Math.pow(points[i].z - points[i - 1].z, 2));
+                Math.sqrt(Math.pow(points[i].x - points[i - 1].x, 2) + Math.pow(points[i].y - points[i - 1].y, 2)
+                    + Math.pow(points[i].z - points[i - 1].z, 2));
         }
         assertEquals("length", length, line.getLength().si, 10 * Math.ulp(length));
         assertEquals("length", length, line.getLength().si, 10 * Math.ulp(length));
@@ -192,12 +192,12 @@ public class OTSLine3DTest
 
     /**
      * Test that exception is thrown when it should be.
-     * @throws NetworkException on failure
+     * @throws OTSGeometryException on failure
      */
     @Test
-    public void exceptionTest() throws NetworkException
+    public void exceptionTest() throws OTSGeometryException
     {
-        OTSLine3D line = new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(1, 2, 3), new OTSPoint3D(4, 5, 6) });
+        OTSLine3D line = new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(1, 2, 3), new OTSPoint3D(4, 5, 6)});
         try
         {
             line.get(-1);
@@ -220,15 +220,15 @@ public class OTSLine3DTest
 
     /**
      * Test the getLocationExtended method and friends.
-     * @throws NetworkException on failure
+     * @throws OTSGeometryException on failure
      */
     @Test
-    public void locationExtendedTest() throws NetworkException
+    public void locationExtendedTest() throws OTSGeometryException
     {
         OTSPoint3D p0 = new OTSPoint3D(10, 20, 30);
         OTSPoint3D p1 = new OTSPoint3D(40, 50, 60);
         OTSPoint3D p2 = new OTSPoint3D(90, 80, 70);
-        OTSLine3D l = new OTSLine3D(new OTSPoint3D[] { p0, p1, p2 });
+        OTSLine3D l = new OTSLine3D(new OTSPoint3D[]{p0, p1, p2});
         checkGetLocation(l, -10, null, Math.atan2(p1.y - p0.y, p1.x - p0.x));
         checkGetLocation(l, -0.0001, p0, Math.atan2(p1.y - p0.y, p1.x - p0.x));
         checkGetLocation(l, 0, p0, Math.atan2(p1.y - p0.y, p1.x - p0.x));
@@ -245,10 +245,10 @@ public class OTSLine3DTest
      * @param fraction double; relative position to check
      * @param expectedPoint OTSPoint3D; expected location of the result
      * @param expectedZRotation double; expected Z rotation of the result
-     * @throws NetworkException on failure
+     * @throws OTSGeometryException on failure
      */
     private void checkGetLocation(OTSLine3D line, double fraction, OTSPoint3D expectedPoint, double expectedZRotation)
-            throws NetworkException
+        throws OTSGeometryException
     {
         double length = line.getLengthSI();
         checkDirectedPoint(line.getLocationExtendedSI(fraction * length), expectedPoint, expectedZRotation);
@@ -259,27 +259,27 @@ public class OTSLine3DTest
             try
             {
                 line.getLocationSI(fraction * length);
-                fail("getLocation should have thrown a NetworkException");
+                fail("getLocation should have thrown a OTSGeometryException");
             }
-            catch (NetworkException ne)
+            catch (OTSGeometryException ne)
             {
                 // Ignore expected exception
             }
             try
             {
                 line.getLocation(typedLength);
-                fail("getLocation should have thrown a NetworkException");
+                fail("getLocation should have thrown a OTSGeometryException");
             }
-            catch (NetworkException ne)
+            catch (OTSGeometryException ne)
             {
                 // Ignore expected exception
             }
             try
             {
                 line.getLocationFraction(fraction);
-                fail("getLocation should have thrown a NetworkException");
+                fail("getLocation should have thrown a OTSGeometryException");
             }
-            catch (NetworkException ne)
+            catch (OTSGeometryException ne)
             {
                 // Ignore expected exception
             }
@@ -305,32 +305,33 @@ public class OTSLine3DTest
         if (null != expectedPoint)
         {
             OTSPoint3D p = new OTSPoint3D(dp);
-            assertEquals("locationExtendedSI(0) returns approximately expected point", 0, expectedPoint.distanceSI(p), 0.1);
+            assertEquals("locationExtendedSI(0) returns approximately expected point", 0, expectedPoint.distanceSI(p),
+                0.1);
         }
         assertEquals("z-rotation at 0", expectedZRotation, dp.getRotZ(), 0.001);
     }
 
     /**
      * Test getLocation method.
-     * @throws NetworkException on failure
+     * @throws OTSGeometryException on failure
      */
     @Test
-    public void locationTest() throws NetworkException
+    public void locationTest() throws OTSGeometryException
     {
         OTSPoint3D p0 = new OTSPoint3D(10, 20, 60);
         OTSPoint3D p1 = new OTSPoint3D(40, 50, 60);
         OTSPoint3D p2 = new OTSPoint3D(90, 70, 90);
-        OTSLine3D l = new OTSLine3D(new OTSPoint3D[] { p0, p1, p2 });
+        OTSLine3D l = new OTSLine3D(new OTSPoint3D[]{p0, p1, p2});
         DirectedPoint dp = l.getLocation();
         assertEquals("centroid x", 50, dp.x, 0.001);
         assertEquals("centroid y", 45, dp.y, 0.001);
         assertEquals("centroid z", 75, dp.z, 0.001);
-        l = new OTSLine3D(new OTSPoint3D[] { p1, p0, p2 }); // Some arguments swapped
+        l = new OTSLine3D(new OTSPoint3D[]{p1, p0, p2}); // Some arguments swapped
         dp = l.getLocation();
         assertEquals("centroid x", 50, dp.x, 0.001);
         assertEquals("centroid y", 45, dp.y, 0.001);
         assertEquals("centroid z", 75, dp.z, 0.001);
-        l = new OTSLine3D(new OTSPoint3D[] { p0, p1 }); // Two points; all in same Z-plane
+        l = new OTSLine3D(new OTSPoint3D[]{p0, p1}); // Two points; all in same Z-plane
         dp = l.getLocation();
         assertEquals("centroid x", 25, dp.x, 0.001);
         assertEquals("centroid y", 35, dp.y, 0.001);
@@ -339,40 +340,40 @@ public class OTSLine3DTest
 
     /**
      * Test the createAndCleanOTSLine3D method
-     * @throws NetworkException should never happen
      * @throws OTSGeometryException should never happen
      */
     @Test
-    public void cleanTest() throws NetworkException, OTSGeometryException
+    public void cleanTest() throws OTSGeometryException
     {
-        OTSPoint3D[] tooShort = new OTSPoint3D[] {};
+        OTSPoint3D[] tooShort = new OTSPoint3D[]{};
         try
         {
             OTSLine3D.createAndCleanOTSLine3D(tooShort);
             fail("Array with no points should have thrown an exception");
         }
-        catch (NetworkException ne)
+        catch (OTSGeometryException ne)
         {
             // Ignore expected exception
         }
-        tooShort = new OTSPoint3D[] { new OTSPoint3D(1, 2, 3) };
+        tooShort = new OTSPoint3D[]{new OTSPoint3D(1, 2, 3)};
         try
         {
             OTSLine3D.createAndCleanOTSLine3D(tooShort);
             fail("Array with no points should have thrown an exception");
         }
-        catch (NetworkException ne)
+        catch (OTSGeometryException ne)
         {
             // Ignore expected exception
         }
         OTSPoint3D p0 = new OTSPoint3D(1, 2, 3);
         OTSPoint3D p1 = new OTSPoint3D(4, 5, 6);
-        OTSPoint3D[] points = new OTSPoint3D[] { p0, p1 };
+        OTSPoint3D[] points = new OTSPoint3D[]{p0, p1};
         OTSLine3D result = OTSLine3D.createAndCleanOTSLine3D(points);
         assertTrue("first point is p0", p0.equals(result.get(0)));
         assertTrue("second point is p1", p1.equals(result.get(1)));
         OTSPoint3D p1Same = new OTSPoint3D(4, 5, 6);
-        result = OTSLine3D.createAndCleanOTSLine3D(new OTSPoint3D[] { p0, p0, p0, p0, p1Same, p0, p1, p1, p1Same, p1, p1 });
+        result =
+            OTSLine3D.createAndCleanOTSLine3D(new OTSPoint3D[]{p0, p0, p0, p0, p1Same, p0, p1, p1, p1Same, p1, p1});
         assertEquals("result should contain 4 points", 4, result.size());
         assertTrue("first point is p0", p0.equals(result.get(0)));
         assertTrue("second point is p1", p1.equals(result.get(1)));
@@ -382,44 +383,44 @@ public class OTSLine3DTest
 
     /**
      * Test the equals method.
-     * @throws NetworkException should never happen
+     * @throws OTSGeometryException should never happen
      */
     @Test
-    public void equalsTest() throws NetworkException
+    public void equalsTest() throws OTSGeometryException
     {
         OTSPoint3D p0 = new OTSPoint3D(1.1, 2.2, 3.3);
         OTSPoint3D p1 = new OTSPoint3D(2.1, 2.2, 3.3);
         OTSPoint3D p2 = new OTSPoint3D(3.1, 2.2, 3.3);
 
-        OTSLine3D line = new OTSLine3D(new OTSPoint3D[] { p0, p1, p2 });
+        OTSLine3D line = new OTSLine3D(new OTSPoint3D[]{p0, p1, p2});
         assertTrue("OTSLine3D is equal to itself", line.equals(line));
         assertFalse("OTSLine3D is not equal to null", line.equals(null));
         assertFalse("OTSLine3D is not equals to some other kind of Object", line.equals(new String("hello")));
-        OTSLine3D line2 = new OTSLine3D(new OTSPoint3D[] { p0, p1, p2 });
-        assertTrue("OTSLine3D is equal ot other OTSLine3D that has the exact same list of OTSPoint3D", line.equals(line2));
+        OTSLine3D line2 = new OTSLine3D(new OTSPoint3D[]{p0, p1, p2});
+        assertTrue("OTSLine3D is equal ot other OTSLine3D that has the exact same list of OTSPoint3D",
+            line.equals(line2));
         OTSPoint3D p2Same = new OTSPoint3D(3.1, 2.2, 3.3);
-        line2 = new OTSLine3D(new OTSPoint3D[] { p0, p1, p2Same });
+        line2 = new OTSLine3D(new OTSPoint3D[]{p0, p1, p2Same});
         assertTrue("OTSLine3D is equal ot other OTSLine3D that has the exact same list of OTSPoint3D; even if some of "
-                + "those point are different instances with the same coordinates", line.equals(line2));
+            + "those point are different instances with the same coordinates", line.equals(line2));
         OTSPoint3D p2NotSame = new OTSPoint3D(3.1, 2.2, 3.35);
-        line2 = new OTSLine3D(new OTSPoint3D[] { p0, p1, p2NotSame });
+        line2 = new OTSLine3D(new OTSPoint3D[]{p0, p1, p2NotSame});
         assertFalse("OTSLine3D is not equal ot other OTSLine3D that differs in one coordinate", line.equals(line2));
-        line2 = new OTSLine3D(new OTSPoint3D[] { p0, p1, p2, p2NotSame });
+        line2 = new OTSLine3D(new OTSPoint3D[]{p0, p1, p2, p2NotSame});
         assertFalse(
-                "OTSLine3D is not equal ot other OTSLine3D that has more points (but is identical up to the common length)",
-                line.equals(line2));
+            "OTSLine3D is not equal ot other OTSLine3D that has more points (but is identical up to the common length)",
+            line.equals(line2));
         assertFalse(
-                "OTSLine3D is not equal ot other OTSLine3D that has fewer points  (but is identical up to the common length)",
-                line2.equals(line));
+            "OTSLine3D is not equal ot other OTSLine3D that has fewer points  (but is identical up to the common length)",
+            line2.equals(line));
     }
 
     /**
      * Test the concatenate method.
-     * @throws NetworkException
      * @throws OTSGeometryException
      */
     @Test
-    public void concatenateTest() throws NetworkException, OTSGeometryException
+    public void concatenateTest() throws OTSGeometryException
     {
         OTSPoint3D p0 = new OTSPoint3D(1.1, 2.2, 3.3);
         OTSPoint3D p1 = new OTSPoint3D(2.1, 2.2, 3.3);
@@ -458,11 +459,10 @@ public class OTSLine3DTest
 
     /**
      * Test the reverse method.
-     * @throws NetworkException
      * @throws OTSGeometryException
      */
     @Test
-    public void reverseTest() throws NetworkException, OTSGeometryException
+    public void reverseTest() throws OTSGeometryException
     {
         OTSPoint3D p0 = new OTSPoint3D(1.1, 2.2, 3.3);
         OTSPoint3D p1 = new OTSPoint3D(2.1, 2.2, 3.3);
@@ -491,11 +491,10 @@ public class OTSLine3DTest
 
     /**
      * Test the extract and extractFraction methods.
-     * @throws NetworkException
      * @throws OTSGeometryException
      */
     @Test
-    public void extractTest() throws NetworkException, OTSGeometryException
+    public void extractTest() throws OTSGeometryException
     {
         OTSPoint3D p0 = new OTSPoint3D(1, 2, 3);
         OTSPoint3D p1 = new OTSPoint3D(2, 3, 4);
@@ -607,9 +606,9 @@ public class OTSLine3DTest
                 double start = i * l.getLengthSI() / 10;
                 double end = j * l.getLengthSI() / 10;
                 // System.err.println("i=" + i + ", j=" + j);
-                for (OTSLine3D extractedLine : new OTSLine3D[] { l.extract(start, end),
-                        l.extract(new Length.Rel(start, LengthUnit.SI), new Length.Rel(end, LengthUnit.SI)),
-                        l.extractFractional(1.0 * i / 10, 1.0 * j / 10) })
+                for (OTSLine3D extractedLine : new OTSLine3D[]{l.extract(start, end),
+                    l.extract(new Length.Rel(start, LengthUnit.SI), new Length.Rel(end, LengthUnit.SI)),
+                    l.extractFractional(1.0 * i / 10, 1.0 * j / 10)})
                 {
                     assertEquals("size of extract is 2", 2, extractedLine.size());
                     assertEquals("x of 0", p0.x + (p1.x - p0.x) * i / 10, extractedLine.get(0).x, 0.0001);
@@ -622,7 +621,7 @@ public class OTSLine3DTest
             }
         }
 
-        for (OTSLine3D line : new OTSLine3D[] { new OTSLine3D(p0, p1, p2), new OTSLine3D(p0, p1, p1a, p1b, p1c, p2) })
+        for (OTSLine3D line : new OTSLine3D[]{new OTSLine3D(p0, p1, p2), new OTSLine3D(p0, p1, p1a, p1b, p1c, p2)})
         {
             for (int i = 0; i < 110; i++)
             {
@@ -641,9 +640,9 @@ public class OTSLine3DTest
                     // System.err.println("first length is " + firstLength);
                     // System.err.println("second length is " + line.getLengthSI());
                     // System.err.println("i=" + i + ", j=" + j);
-                    for (OTSLine3D extractedLine : new OTSLine3D[] { line.extract(start, end),
-                            line.extract(new Length.Rel(start, LengthUnit.SI), new Length.Rel(end, LengthUnit.SI)),
-                            line.extractFractional(1.0 * i / 110, 1.0 * j / 110) })
+                    for (OTSLine3D extractedLine : new OTSLine3D[]{line.extract(start, end),
+                        line.extract(new Length.Rel(start, LengthUnit.SI), new Length.Rel(end, LengthUnit.SI)),
+                        line.extractFractional(1.0 * i / 110, 1.0 * j / 110)})
                     {
                         int expectedSize = i < 10 && j > 10 ? line.size() : 2;
                         assertEquals("size is " + expectedSize, expectedSize, extractedLine.size());
@@ -655,9 +654,12 @@ public class OTSLine3DTest
                         }
                         else
                         {
-                            assertEquals("x of 0", p1.x + (p2.x - p1.x) * (i - 10) / 100, extractedLine.get(0).x, 0.0001);
-                            assertEquals("y of 0", p1.y + (p2.y - p1.y) * (i - 10) / 100, extractedLine.get(0).y, 0.0001);
-                            assertEquals("z of 0", p1.z + (p2.z - p1.z) * (i - 10) / 100, extractedLine.get(0).z, 0.0001);
+                            assertEquals("x of 0", p1.x + (p2.x - p1.x) * (i - 10) / 100, extractedLine.get(0).x,
+                                0.0001);
+                            assertEquals("y of 0", p1.y + (p2.y - p1.y) * (i - 10) / 100, extractedLine.get(0).y,
+                                0.0001);
+                            assertEquals("z of 0", p1.z + (p2.z - p1.z) * (i - 10) / 100, extractedLine.get(0).z,
+                                0.0001);
                         }
                         if (j < 10)
                         {
@@ -667,9 +669,12 @@ public class OTSLine3DTest
                         }
                         else
                         {
-                            assertEquals("x of last", p1.x + (p2.x - p1.x) * (j - 10) / 100, extractedLine.getLast().x, 0.0001);
-                            assertEquals("y of last", p1.y + (p2.y - p1.y) * (j - 10) / 100, extractedLine.getLast().y, 0.0001);
-                            assertEquals("z of last", p1.z + (p2.z - p1.z) * (j - 10) / 100, extractedLine.getLast().z, 0.0001);
+                            assertEquals("x of last", p1.x + (p2.x - p1.x) * (j - 10) / 100, extractedLine.getLast().x,
+                                0.0001);
+                            assertEquals("y of last", p1.y + (p2.y - p1.y) * (j - 10) / 100, extractedLine.getLast().y,
+                                0.0001);
+                            assertEquals("z of last", p1.z + (p2.z - p1.z) * (j - 10) / 100, extractedLine.getLast().z,
+                                0.0001);
                         }
                         if (extractedLine.size() > 2)
                         {
