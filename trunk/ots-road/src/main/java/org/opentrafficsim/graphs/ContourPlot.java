@@ -418,7 +418,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     {
         if (item < 0 || item >= getItemCount(0))
         {
-            throw new Error("yAxisBin: item out of range (value is " + item + "), valid range is 0.." + getItemCount(0));
+            throw new RuntimeException("yAxisBin: item out of range (value is " + item + "), valid range is 0.." + getItemCount(0));
         }
         return item % yAxisBins();
     }
@@ -433,7 +433,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     {
         if (item < 0 || item >= getItemCount(0))
         {
-            throw new Error("xAxisBin: item out of range (value is " + item + "), valid range is 0.." + getItemCount(0));
+            throw new RuntimeException("xAxisBin: item out of range (value is " + item + "), valid range is 0.." + getItemCount(0));
         }
         return item / yAxisBins();
     }
@@ -585,7 +585,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
         }
         else
         {
-            throw new Error("Cannot happen: Lane is not in the path");
+            throw new RuntimeException("Cannot happen: Lane is not in the path");
         }
         final Time.Abs fromTime = car.getOperationalPlan().getStartTime();
         if (car.position(lane, car.getReference(), fromTime).getSI() < 0 && lengthOffset > 0)
