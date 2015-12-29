@@ -45,7 +45,7 @@ public class OTSLine3DTest
             runConstructors(points);
             fail("Should have thrown a NetworkException");
         }
-        catch (NetworkException exception)
+        catch (OTSGeometryException exception)
         {
             // Ignore expected exception
         }
@@ -62,7 +62,7 @@ public class OTSLine3DTest
                         runConstructors(points);
                         fail("Should have thrown a NetworkException");
                     }
-                    catch (NetworkException exception)
+                    catch (OTSGeometryException exception)
                     {
                         // Ignore expected exception
                     }
@@ -82,7 +82,7 @@ public class OTSLine3DTest
                                         runConstructors(points);
                                         fail("Should have thrown a NetworkException");
                                     }
-                                    catch (NetworkException exception)
+                                    catch (OTSGeometryException exception)
                                     {
                                         // Ignore expected exception
                                     }
@@ -107,7 +107,7 @@ public class OTSLine3DTest
                                                         runConstructors(points);
                                                         fail("Should have thrown a NetworkException");
                                                     }
-                                                    catch (NetworkException exception)
+                                                    catch (OTSGeometryException exception)
                                                     {
                                                         // Ignore expected exception
                                                     }
