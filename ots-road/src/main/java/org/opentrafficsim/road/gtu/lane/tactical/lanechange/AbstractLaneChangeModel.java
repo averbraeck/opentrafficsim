@@ -7,6 +7,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -62,8 +63,8 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             if (straightAccelerationSteps.getLeaderAcceleration().getSI() < -9999)
             {
                 System.out.println("Problem");
-                gtu.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel().computeAcceleration(gtu,
-                    sameLaneGTUs, speedLimit);
+                gtu.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel()
+                    .computeAcceleration(gtu, sameLaneGTUs, speedLimit);
             }
             Acceleration straightA = applyDriverPersonality(straightAccelerationSteps).plus(laneChangeThreshold);
             DualAccelerationStep nonPreferrredAccelerationSteps =
@@ -144,12 +145,10 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             // Merge to the adjacent nonPreferred lane; i.e. start an overtaking procedure
             return new LaneMovementStep(nonPreferrredAccelerationSteps.getLeaderAccelerationStep(), nonPreferred);
         }
-        catch (NetworkException exception)
+        catch (NetworkException | GTUException exception)
         {
-            exception.printStackTrace();
+            throw new RuntimeException(exception);
         }
-        throw new Error(
-            "Cannot happen: computeLaneChangeAndAcceleration failed to decide whether or not to change lane");
     }
 
     /**
@@ -157,9 +156,8 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
      * lane change decisions.
      * @param accelerationSteps DualAccelerationStep; the DualAccelerationStep that contains the AccelerationStep that the
      *            reference GTU will make and the AccelerationStep that the (new) follower GTU will make
-     * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration that the personality of the driver uses (in a
-     *         comparison to a similarly computed acceleration in the non-, or different-lane-changed state) to decide if a lane
-     *         change should be performed
+     * @return Acceleration; the acceleration that the personality of the driver uses (in a comparison to a similarly computed
+     *         acceleration in the non-, or different-lane-changed state) to decide if a lane change should be performed
      */
     public abstract Acceleration applyDriverPersonality(DualAccelerationStep accelerationSteps);
 }

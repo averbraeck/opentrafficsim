@@ -130,8 +130,9 @@ public class XmlNetworkLaneParser
         NodeList networkNodeList = document.getDocumentElement().getChildNodes();
 
         if (!document.getDocumentElement().getNodeName().equals("NETWORK"))
-            throw new SAXException("XmlNetworkLaneParser.build: XML document does not start with an NETWORK tag, found "
-                + document.getDocumentElement().getNodeName() + " instead");
+            throw new SAXException(
+                "XmlNetworkLaneParser.build: XML document does not start with an NETWORK tag, found "
+                    + document.getDocumentElement().getNodeName() + " instead");
 
         // there should be some definitions using DEFINITIONS tags (could be more than one due to include files)
         List<Node> definitionNodes = XMLParser.getNodes(networkNodeList, "DEFINITIONS");
@@ -142,7 +143,7 @@ public class XmlNetworkLaneParser
         // make the GTUTypes ALL and NONE to get started
         this.gtuTypes.put("ALL", GTUType.ALL);
         this.gtuTypes.put("NONE", GTUType.NONE);
-        
+
         // parse the DEFINITIONS tags
         for (Node definitionNode : definitionNodes)
             GlobalTag.parseGlobal(definitionNode.getChildNodes(), this);

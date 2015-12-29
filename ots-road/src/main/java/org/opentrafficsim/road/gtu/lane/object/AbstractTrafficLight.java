@@ -25,4 +25,3 @@ public class AbstractTrafficLight extends AbstractCSEObject
     }
 
 }
-

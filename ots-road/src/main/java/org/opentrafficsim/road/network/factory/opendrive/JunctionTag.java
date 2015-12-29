@@ -86,37 +86,36 @@ class JunctionTag
      * @param juncTag
      * @param simulator
      * @param openDriveNetworkLaneParser
-     * @throws NamingException 
-     * @throws NetworkException 
-     * @throws GTUException 
+     * @throws NamingException
+     * @throws NetworkException
+     * @throws GTUException
      */
     public static void createController(JunctionTag juncTag, OTSDEVSSimulatorInterface simulator,
-            OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws GTUException, NetworkException, NamingException
+        OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws GTUException, NetworkException, NamingException
     {
-        if(juncTag.controllerTags.size() > 0)
+        if (juncTag.controllerTags.size() > 0)
         {
             Controller controller = new Controller(juncTag.id, simulator);
-            
-            for(ControllerTag controllerTag: juncTag.controllerTags.values())
+
+            for (ControllerTag controllerTag : juncTag.controllerTags.values())
             {
                 int sequence = controllerTag.sequence;
                 String id = controllerTag.id;
                 String signalId = openDriveNetworkLaneParser.controllerTags.get(id).controlSignalID;
-                
-                //AbstractTrafficLight trafficLight = openDriveNetworkLaneParser.trafficLightsBySignals.get(signalId);
-                
-                for(AbstractTrafficLight trafficLight: openDriveNetworkLaneParser.trafficLightsBySignals.get(signalId))
+
+                // AbstractTrafficLight trafficLight = openDriveNetworkLaneParser.trafficLightsBySignals.get(signalId);
+
+                for (AbstractTrafficLight trafficLight : openDriveNetworkLaneParser.trafficLightsBySignals
+                    .get(signalId))
                     controller.addTrafficLight(sequence, trafficLight);
-                
-/*                String refId = signalId + ".ref";
-                if(openDriveNetworkLaneParser.trafficLightsBySignals.containsKey(refId))
-                {
-                    AbstractTrafficLight trafficLightRef = openDriveNetworkLaneParser.trafficLightsBySignals.get(refId);
-                    controller.addTrafficLight(sequence, trafficLightRef);
-                } */              
+
+                /*
+                 * String refId = signalId + ".ref"; if(openDriveNetworkLaneParser.trafficLightsBySignals.containsKey(refId)) {
+                 * AbstractTrafficLight trafficLightRef = openDriveNetworkLaneParser.trafficLightsBySignals.get(refId);
+                 * controller.addTrafficLight(sequence, trafficLightRef); }
+                 */
             }
         }
     }
-
 
 }

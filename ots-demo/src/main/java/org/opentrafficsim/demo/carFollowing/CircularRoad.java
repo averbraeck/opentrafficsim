@@ -598,7 +598,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
 
     /**
      * Generate cars at a fixed rate (implemented by re-scheduling this method).
-     * @param initialPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the initial position of the new cars
+     * @param initialPosition Length.Rel; the initial position of the new cars
      * @param lane Lane; the lane on which the new cars are placed
      * @param gtuType GTUType&lt;String&gt;; the type of the new cars
      * @throws NamingException on ???

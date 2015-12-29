@@ -4,50 +4,52 @@ package org.opentrafficsim.road.network.factory.opendrive.data;
  * <br />
  * Copyright (c) 2013-2014 Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving. All rights reserved. <br />
  * Some parts of the software (c) 2011-2014 TU Delft, Faculty of TBM, Systems & Simulation <br />
- * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk
- * Onderzoek TNO (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten
- * Binnenvaart, Ab Ovo Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en
- * Leefomgeving, including the right to sub-license sources and derived products to third parties. <br />
- * 
+ * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk Onderzoek TNO
+ * (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten Binnenvaart, Ab Ovo
+ * Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving, including the
+ * right to sub-license sources and derived products to third parties. <br />
  * @version Mar 24, 2013 <br>
  * @author <a href="http://tudelft.nl/averbraeck">Alexander Verbraeck </a>
  * @version SVN $Revision: 31 $ $Author: averbraeck $
  * @date $Date: 2011-08-15 04:38:04 +0200 (Mon, 15 Aug 2011) $
  **/
 public class RTIToOTSData
-{    
-    /** time stamp*/
-    private float timeStamp;//int32_t64 Hans suggests
-    
+{
+    /** time stamp */
+    private float timeStamp;// int32_t64 Hans suggests
+
     /** */
     private float deltaT;
-    
-    //my vehicle state
+
+    // my vehicle state
     /** */
-    private Position  egoPos;  // position[m]
+    private Position egoPos; // position[m]
+
     /** */
     private Orientation egoOri;
+
     /** */
-    private Velocity  egoVel; // local reference frame
+    private Velocity egoVel; // local reference frame
+
     /** */
     private AngularVel egoAngVel;
 
-   
     /** */
     private int intersection_type;
+
     /** */
     private int intersection_phase;
+
     /** */
     private float intersection_distance;
-    
-    
+
     /**
      * 
      */
     public RTIToOTSData()
     {
 
-        this.setEgoPos(new Position());  // position[m]
+        this.setEgoPos(new Position()); // position[m]
 
         this.setEgoOri(new Orientation());
 
@@ -58,16 +60,16 @@ public class RTIToOTSData
 
     /**
      * @see java.lang.Object#toString()
-     */    
+     */
     @Override
     public String toString()
     {
-        return "RTIToOTSData [timeStamp=" + this.getTimeStamp() + "\ndeltaT=" + this.getDeltaT() + "\negoPos=" + this.getEgoPos()
-                + "\negoOri=" + this.getEgoOri() + "\negoVel=" + this.getEgoVel() + "\negoAngVel=" + this.getEgoAngVel()
-                + "\nintersection_type=" + this.getIntersection_type() + "\nintersection_phase=" + this.getIntersection_phase()
-                + "\nintersection_distance=" + this.getIntersection_distance() + "]";
+        return "RTIToOTSData [timeStamp=" + this.getTimeStamp() + "\ndeltaT=" + this.getDeltaT() + "\negoPos="
+            + this.getEgoPos() + "\negoOri=" + this.getEgoOri() + "\negoVel=" + this.getEgoVel() + "\negoAngVel="
+            + this.getEgoAngVel() + "\nintersection_type=" + this.getIntersection_type() + "\nintersection_phase="
+            + this.getIntersection_phase() + "\nintersection_distance=" + this.getIntersection_distance() + "]";
     }
-    
+
     /**
      * @return timeStamp
      */
@@ -75,7 +77,7 @@ public class RTIToOTSData
     {
         return this.timeStamp;
     }
-    
+
     /**
      * @param timeStamp set timeStamp
      */
@@ -83,7 +85,7 @@ public class RTIToOTSData
     {
         this.timeStamp = timeStamp;
     }
-    
+
     /**
      * @return deltaT
      */
@@ -91,7 +93,7 @@ public class RTIToOTSData
     {
         return this.deltaT;
     }
-    
+
     /**
      * @param deltaT set deltaT
      */
@@ -99,7 +101,7 @@ public class RTIToOTSData
     {
         this.deltaT = deltaT;
     }
-    
+
     /**
      * @return intersection_type
      */
@@ -107,7 +109,7 @@ public class RTIToOTSData
     {
         return this.intersection_type;
     }
-    
+
     /**
      * @param intersection_type set intersection_type
      */
@@ -115,7 +117,7 @@ public class RTIToOTSData
     {
         this.intersection_type = intersection_type;
     }
-    
+
     /**
      * @return intersection_phase
      */
@@ -123,7 +125,7 @@ public class RTIToOTSData
     {
         return this.intersection_phase;
     }
-    
+
     /**
      * @param intersection_phase set intersection_phase
      */
@@ -131,7 +133,7 @@ public class RTIToOTSData
     {
         this.intersection_phase = intersection_phase;
     }
-    
+
     /**
      * @return intersection_distance
      */
@@ -139,7 +141,7 @@ public class RTIToOTSData
     {
         return this.intersection_distance;
     }
-    
+
     /**
      * @param intersection_distance set intersection_distance
      */
@@ -211,7 +213,5 @@ public class RTIToOTSData
     {
         this.egoAngVel = egoAngVel;
     }
-        
+
 }
-
-

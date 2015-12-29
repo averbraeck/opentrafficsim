@@ -28,7 +28,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class CrossSectionElementTag 
+class CrossSectionElementTag
 {
     /** element types. */
     @SuppressWarnings({"javadoc", "checkstyle:javadocvariable"})

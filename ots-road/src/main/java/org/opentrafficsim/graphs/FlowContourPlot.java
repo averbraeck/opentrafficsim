@@ -9,6 +9,7 @@ import org.djunits.value.ValueException;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.vector.MutableLengthVector;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.simulationengine.OTSSimulationException;
 
 /**
  * Flow contour plot.
@@ -29,8 +30,9 @@ public class FlowContourPlot extends ContourPlot
      * Create a new FlowContourPlot.
      * @param caption String; text to show above the FlowContourPlot
      * @param path List&lt;Lane&gt;; the series of Lanes that will provide the data for this TrajectoryPlot
+     * @throws OTSSimulationException in case of problems initializing the graph
      */
-    public FlowContourPlot(final String caption, final List<Lane> path)
+    public FlowContourPlot(final String caption, final List<Lane> path) throws OTSSimulationException
     {
         super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
             STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), path, 2500d, 1500d,

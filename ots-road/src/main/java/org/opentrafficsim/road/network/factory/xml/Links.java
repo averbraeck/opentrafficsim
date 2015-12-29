@@ -298,8 +298,7 @@ final class Links
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle);
                     nodeTag.angle =
-                        new Angle.Abs(AngleUtil.normalize(linkTag.arcTag.startAngle + Math.PI / 2.0),
-                            AngleUnit.SI);
+                        new Angle.Abs(AngleUtil.normalize(linkTag.arcTag.startAngle + Math.PI / 2.0), AngleUnit.SI);
                 }
                 else
                 {
@@ -310,8 +309,7 @@ final class Links
                     coordinate.x = linkTag.arcTag.center.x + radiusSI * Math.cos(linkTag.arcTag.startAngle);
                     coordinate.y = linkTag.arcTag.center.y + radiusSI * Math.sin(linkTag.arcTag.startAngle);
                     nodeTag.angle =
-                        new Angle.Abs(AngleUtil.normalize(linkTag.arcTag.startAngle - Math.PI / 2.0),
-                            AngleUnit.SI);
+                        new Angle.Abs(AngleUtil.normalize(linkTag.arcTag.startAngle - Math.PI / 2.0), AngleUnit.SI);
                 }
                 coordinate.z -= lengthSI * Math.sin(slope);
                 nodeTag.coordinate = new OTSPoint3D(coordinate.x, coordinate.y, coordinate.z);
@@ -326,11 +324,11 @@ final class Links
      * @param linkTag the link to process
      * @param parser the parser with the lists of information
      * @param simulator to be able to make the animation
-     * @throws NetworkException when both nodes are null.
+     * @throws OTSGeometryException when both nodes are null.
      * @throws NamingException when node animation cannot link to the animation context.
      */
     static void buildLink(final LinkTag linkTag, final XmlNetworkLaneParser parser,
-        final OTSDEVSSimulatorInterface simulator) throws NetworkException, NamingException
+        final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException, NamingException
     {
         int points = 2;
         if (linkTag.arcTag != null)
@@ -369,7 +367,7 @@ final class Links
             }
         }
         OTSLine3D designLine = new OTSLine3D(coordinates);
-        // TODO the directionality has to be read from the XML-file. To keep the examples working, 
+        // TODO the directionality has to be read from the XML-file. To keep the examples working,
         // TODO LongitudinalDirectionality.BOTH is inserted for the time being.
         CrossSectionLink link =
             new CrossSectionLink(linkTag.name, linkTag.nodeStartTag.node, linkTag.nodeEndTag.node, LinkType.ALL,
@@ -520,9 +518,12 @@ final class Links
                     Lane lane =
                         new Lane(csl, cseTag.name, cseTag.offset, cseTag.offset, cseTag.width, cseTag.width,
                             cseTag.laneType, directionality, speedLimit, overtakingConditions);
-                    //System.out.println(OTSGeometry.printCoordinates("#link design line: \nc1,0,0\n#", lane.getParentLink().getDesignLine(), "\n   "));
-                    //System.out.println(OTSGeometry.printCoordinates("#lane center line: \nc0,1,0\n#", lane.getCenterLine(), "\n    "));
-                    //System.out.println(OTSGeometry.printCoordinates("#lane contour: \nc0,0,1\n#", lane.getContour(), "\n    "));
+                    // System.out.println(OTSGeometry.printCoordinates("#link design line: \nc1,0,0\n#",
+                    // lane.getParentLink().getDesignLine(), "\n   "));
+                    // System.out.println(OTSGeometry.printCoordinates("#lane center line: \nc0,1,0\n#", lane.getCenterLine(),
+                    // "\n    "));
+                    // System.out.println(OTSGeometry.printCoordinates("#lane contour: \nc0,0,1\n#", lane.getContour(),
+                    // "\n    "));
                     cseList.add(lane);
                     lanes.add(lane);
                     linkTag.lanes.put(cseTag.name, lane);

@@ -10,6 +10,7 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.vector.MutableDoubleVector;
 import org.djunits.value.vdouble.vector.MutableTimeVector;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.simulationengine.OTSSimulationException;
 
 /**
  * Density contour plot.
@@ -30,8 +31,9 @@ public class DensityContourPlot extends ContourPlot
      * Create a new DensityContourPlot.
      * @param caption String; text to show above the DensityContourPlot
      * @param path List&lt;Lane&gt;; the series of Lanes that will provide the data for this TrajectoryPlot
+     * @throws OTSSimulationException in case of problems initializing the graph
      */
-    public DensityContourPlot(final String caption, final List<Lane> path)
+    public DensityContourPlot(final String caption, final List<Lane> path) throws OTSSimulationException
     {
         super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
             STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), path, 120d, 10d, 0d,
@@ -63,8 +65,8 @@ public class DensityContourPlot extends ContourPlot
         {
             try
             {
-                this.cumulativeTimes.add(new MutableTimeVector.Abs(new double[this.getYAxis()
-                    .getBinCount()], TimeUnit.SECOND, StorageType.DENSE));
+                this.cumulativeTimes.add(new MutableTimeVector.Abs(new double[this.getYAxis().getBinCount()],
+                    TimeUnit.SECOND, StorageType.DENSE));
             }
             catch (ValueException exception)
             {
@@ -121,7 +123,8 @@ public class DensityContourPlot extends ContourPlot
                 firstTimeBin, endTimeBin, firstDistanceBin, endDistanceBin));
             exception.printStackTrace();
         }
-        return 1000 * cumulativeTimeInSI / this.getXAxis().getCurrentGranularity() / this.getYAxis().getCurrentGranularity();
+        return 1000 * cumulativeTimeInSI / this.getXAxis().getCurrentGranularity()
+            / this.getYAxis().getCurrentGranularity();
     }
 
 }

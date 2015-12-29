@@ -30,14 +30,15 @@ public class NodeAnimation extends Renderable2D
      * @throws NamingException when animation context cannot be found.
      * @throws RemoteException on communication failure
      */
-    public NodeAnimation(final Node node, final OTSSimulatorInterface simulator) throws NamingException, RemoteException
+    public NodeAnimation(final Node node, final OTSSimulatorInterface simulator) throws NamingException,
+        RemoteException
     {
         super(node, simulator);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer) 
+    public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         graphics.setColor(Color.BLACK);
         graphics.draw(new Ellipse2D.Double(-1.0, -1.0, 2.0, 2.0));

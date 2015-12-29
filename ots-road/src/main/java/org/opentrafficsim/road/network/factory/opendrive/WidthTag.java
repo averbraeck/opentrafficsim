@@ -18,7 +18,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class WidthTag 
+class WidthTag
 {
     /** sOffst. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -27,15 +27,15 @@ class WidthTag
     /** a. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel a = null;
-    
+
     /** b. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel b = null;
-    
+
     /** c. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel c = null;
-    
+
     /** d. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel d = null;
@@ -62,19 +62,19 @@ class WidthTag
             Node sOffst = attributes.getNamedItem("sOffset");
             if (sOffst != null)
                 widthTag.sOffst = new Length.Rel(Double.parseDouble(sOffst.getNodeValue().trim()), LengthUnit.METER);
-            
+
             Node a = attributes.getNamedItem("a");
             if (a != null)
                 widthTag.a = new Length.Rel(Double.parseDouble(a.getNodeValue().trim()), LengthUnit.METER);
-            
+
             Node b = attributes.getNamedItem("b");
             if (b != null)
                 widthTag.b = new Length.Rel(Double.parseDouble(b.getNodeValue().trim()), LengthUnit.METER);
-            
+
             Node c = attributes.getNamedItem("c");
             if (c != null)
                 widthTag.c = new Length.Rel(Double.parseDouble(c.getNodeValue().trim()), LengthUnit.METER);
-            
+
             Node d = attributes.getNamedItem("d");
             if (d != null)
                 widthTag.d = new Length.Rel(Double.parseDouble(d.getNodeValue().trim()), LengthUnit.METER);
@@ -82,7 +82,7 @@ class WidthTag
             laneTag.widthTags.add(widthTag);
         }
 
-//        if (widthCount > 1)
-//            System.out.println("ROAD: more than one width tag for road");
+        // if (widthCount > 1)
+        // System.out.println("ROAD: more than one width tag for road");
     }
 }

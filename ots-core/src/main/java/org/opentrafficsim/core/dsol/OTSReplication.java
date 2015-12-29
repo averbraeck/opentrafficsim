@@ -17,7 +17,8 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  *          initial version Aug 15, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class OTSReplication extends Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
+public class OTSReplication extends
+    Replication<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
 {
     /**
      * @param experiment Experiment
@@ -39,8 +40,9 @@ public class OTSReplication extends Replication<DoubleScalar.Abs<TimeUnit>, Doub
      * @param model OTSModelInterface; the model
      * @throws NamingException when the context for the replication cannot be created
      */
-    public OTSReplication(final String id, final OTSSimTimeDouble startTime, final DoubleScalar.Rel<TimeUnit> warmupPeriod,
-        final DoubleScalar.Rel<TimeUnit> runLength, final OTSModelInterface model) throws NamingException
+    public OTSReplication(final String id, final OTSSimTimeDouble startTime,
+        final DoubleScalar.Rel<TimeUnit> warmupPeriod, final DoubleScalar.Rel<TimeUnit> runLength,
+        final OTSModelInterface model) throws NamingException
     {
         super(id, startTime, warmupPeriod, runLength, model);
     }

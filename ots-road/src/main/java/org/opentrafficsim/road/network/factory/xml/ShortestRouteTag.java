@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ShortestRouteTag 
+class ShortestRouteTag
 {
     /** name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -76,7 +76,8 @@ class ShortestRouteTag
                 throw new SAXException("SHORTESTROUTE: missing attribute FROM");
             String fromNode = attributes.getNamedItem("FROM").getNodeValue().trim();
             if (!parser.nodeTags.containsKey(fromNode))
-                throw new SAXException("SHORTESTROUTE " + shortestRouteTag.name + ": FROM node " + fromNode + " not found");
+                throw new SAXException("SHORTESTROUTE " + shortestRouteTag.name + ": FROM node " + fromNode
+                    + " not found");
             shortestRouteTag.from = parser.nodeTags.get(fromNode);
 
             if (attributes.getNamedItem("NODELIST") != null)

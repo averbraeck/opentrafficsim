@@ -92,7 +92,8 @@ public class StringProperty extends AbstractProperty<String>
     @Override
     public AbstractProperty<String> deepCopy()
     {
-        return new StringProperty(this.shortName, this.description, this.value, this.readOnly, this.getDisplayPriority());
+        return new StringProperty(this.shortName, this.description, this.value, this.readOnly,
+            this.getDisplayPriority());
     }
 
 }

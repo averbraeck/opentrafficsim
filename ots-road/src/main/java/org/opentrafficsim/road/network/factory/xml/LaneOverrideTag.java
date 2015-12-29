@@ -23,7 +23,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 24, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class LaneOverrideTag 
+class LaneOverrideTag
 {
     /** speed limit. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -63,8 +63,8 @@ class LaneOverrideTag
             throw new NetworkException("LANEOVERRIDE: LANE " + name.trim() + " no ROADTYPE for link " + linkTag.name);
         CrossSectionElementTag laneTag = linkTag.roadTypeTag.cseTags.get(name.trim());
         if (laneTag == null)
-            throw new NetworkException("LANEOVERRIDE: Lane with LANE " + name.trim() + " not found in elements of link "
-                + linkTag.name + " - roadtype " + linkTag.roadTypeTag.name);
+            throw new NetworkException("LANEOVERRIDE: Lane with LANE " + name.trim()
+                + " not found in elements of link " + linkTag.name + " - roadtype " + linkTag.roadTypeTag.name);
         if (linkTag.laneOverrideTags.containsKey(name))
             throw new SAXException("LANEOVERRIDE: LANE OVERRIDE with LANE " + name + " defined twice");
 

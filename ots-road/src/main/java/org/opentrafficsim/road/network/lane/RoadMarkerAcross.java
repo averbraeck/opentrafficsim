@@ -2,8 +2,6 @@ package org.opentrafficsim.road.network.lane;
 
 import org.djunits.value.vdouble.scalar.Length;
 
-
-
 /**
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -14,7 +12,7 @@ import org.djunits.value.vdouble.scalar.Length;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class RoadMarkerAcross 
+public abstract class RoadMarkerAcross
 {
     /** Cross section element for which this is a road marker. Usually this will be a Lane. */
     private final CrossSectionElement crossSectionElement;

@@ -16,7 +16,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class SignalTag 
+class SignalTag
 {
     /** s. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -25,39 +25,39 @@ class SignalTag
     /** t. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel t = null;
-    
+
     /** id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String id = null;
-    
+
     /** name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
-    
+
     /** dynamic. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String dynamic = null;
-    
+
     /** orientation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String orientation = null;
-    
+
     /** zOffset. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel zOffset = null;
-    
+
     /** country. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String country = null;
-    
+
     /** type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String type = null;
-    
+
     /** sub type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String subtype = null;
-    
+
     /** value. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String value = null;
@@ -71,8 +71,8 @@ class SignalTag
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static SignalTag parseSignal(final Node node, final OpenDriveNetworkLaneParser parser)
-        throws SAXException, NetworkException
+    static SignalTag parseSignal(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException,
+        NetworkException
     {
         SignalTag signalTag = new SignalTag();
         NamedNodeMap attributes = node.getAttributes();

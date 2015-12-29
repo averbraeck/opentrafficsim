@@ -47,7 +47,8 @@ public final class ReadOSMFile
      * @throws MalformedURLException when <cite>location</cite> is not valid
      */
     public ReadOSMFile(final String location, final List<OSMTag> wantedTags, final List<String> filteredKeys,
-        final ProgressListener progressListener) throws URISyntaxException, FileNotFoundException, MalformedURLException
+        final ProgressListener progressListener) throws URISyntaxException, FileNotFoundException,
+        MalformedURLException
     {
         URL url = new URL(location);
         File file = new File(url.toURI());

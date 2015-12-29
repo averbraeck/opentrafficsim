@@ -32,7 +32,6 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.animation.LinkAnimation;
 import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLight;
 import org.opentrafficsim.road.gtu.lane.object.OldTrafficLight;
-import org.opentrafficsim.road.gtu.lane.object.animation.TrafficLightAnimation;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.ShoulderAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation;
@@ -243,7 +242,8 @@ class RoadTag
                     if (currentGeometryTag.s.doubleValue() < laneSecLength.doubleValue())
                     {
                         OTSPoint3D point =
-                            new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(), currentGeometryTag.z.doubleValue());
+                            new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(),
+                                currentGeometryTag.z.doubleValue());
 
                         if (points.size() == 0)
                             points.add(point);
@@ -279,7 +279,8 @@ class RoadTag
                     else
                     {
                         OTSPoint3D point =
-                            new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(), currentGeometryTag.z.doubleValue());
+                            new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(),
+                                currentGeometryTag.z.doubleValue());
 
                         if (points.size() == 0)
                             points.add(point);
@@ -345,15 +346,15 @@ class RoadTag
                 GeometryTag currentGeometryTag = tempGeometryTags.get(indexGeometryTag);
 
                 OTSPoint3D point =
-                    new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(), currentGeometryTag.z.doubleValue());
-                //points.add(point);
-                
+                    new OTSPoint3D(currentGeometryTag.x.doubleValue(), currentGeometryTag.y.doubleValue(),
+                        currentGeometryTag.z.doubleValue());
+                // points.add(point);
+
                 if (points.size() == 0)
                     points.add(point);
                 else
                 {
-                    if (point.x != points.get(points.size() - 1).x
-                        && point.y != points.get(points.size() - 1).y)
+                    if (point.x != points.get(points.size() - 1).x && point.y != points.get(points.size() - 1).y)
                         points.add(point);
                 }
 
@@ -369,7 +370,7 @@ class RoadTag
                          * yDiff);
                          */
                         // if(distance > 0.01)
-                        //points.add(point1);
+                        // points.add(point1);
                         if (lastPoint.x != point.x && lastPoint.y != point.y)
                         {
                             points.add(point1);
@@ -471,18 +472,18 @@ class RoadTag
                 {
                     leftLane.widthTags.get(0).sOffst =
                         leftLane.widthTags.get(0).a.plus(leftLane.widthTags.get(0).b.multiplyBy(ds.doubleValue()))
-                            .plus(leftLane.widthTags.get(0).c.multiplyBy(Math.pow(ds.doubleValue(), 2))).plus(
-                                leftLane.widthTags.get(0).d.multiplyBy(Math.pow(ds.doubleValue(), 3)));
+                            .plus(leftLane.widthTags.get(0).c.multiplyBy(Math.pow(ds.doubleValue(), 2)))
+                            .plus(leftLane.widthTags.get(0).d.multiplyBy(Math.pow(ds.doubleValue(), 3)));
 
                     Length.Rel laneWidth_start = leftLane.widthTags.get(0).a;
                     Length.Rel laneWidth_end = leftLane.widthTags.get(0).sOffst;
 
                     Length.Rel leftOffset_start =
-                        lastLane.getDesignLineOffsetAtBegin().plus(lastLane.getBeginWidth().multiplyBy(0.5)).plus(
-                            laneWidth_start.multiplyBy(0.5));
+                        lastLane.getDesignLineOffsetAtBegin().plus(lastLane.getBeginWidth().multiplyBy(0.5))
+                            .plus(laneWidth_start.multiplyBy(0.5));
                     Length.Rel leftOffset_end =
-                        lastLane.getDesignLineOffsetAtEnd().plus(lastLane.getEndWidth().multiplyBy(0.5)).plus(
-                            laneWidth_end.multiplyBy(0.5));
+                        lastLane.getDesignLineOffsetAtEnd().plus(lastLane.getEndWidth().multiplyBy(0.5))
+                            .plus(laneWidth_end.multiplyBy(0.5));
 
                     Length.Rel length = currentLink.getLength();
 
@@ -506,13 +507,13 @@ class RoadTag
                         if (factor < 0.98)
                         {
                             Length.Rel width =
-                                widthTag.a.plus(widthTag.b.multiplyBy(relativeLength.doubleValue())).plus(
-                                    widthTag.c.multiplyBy(Math.pow(relativeLength.doubleValue(), 2))).plus(
-                                    widthTag.d.multiplyBy(Math.pow(relativeLength.doubleValue(), 3)));
+                                widthTag.a.plus(widthTag.b.multiplyBy(relativeLength.doubleValue()))
+                                    .plus(widthTag.c.multiplyBy(Math.pow(relativeLength.doubleValue(), 2)))
+                                    .plus(widthTag.d.multiplyBy(Math.pow(relativeLength.doubleValue(), 3)));
 
                             Length.Rel offSet =
-                                lastLane.getLateralCenterPosition(factor).plus(
-                                    lastLane.getWidth(factor).multiplyBy(0.5)).plus(width.multiplyBy(0.5));
+                                lastLane.getLateralCenterPosition(factor)
+                                    .plus(lastLane.getWidth(factor).multiplyBy(0.5)).plus(width.multiplyBy(0.5));
 
                             relativeLength = currentLink.getLength().multiplyBy(factor);
 
@@ -673,18 +674,18 @@ class RoadTag
                 {
                     rightLane.widthTags.get(0).sOffst =
                         rightLane.widthTags.get(0).a.plus(rightLane.widthTags.get(0).b.multiplyBy(ds.doubleValue()))
-                            .plus(rightLane.widthTags.get(0).c.multiplyBy(Math.pow(ds.doubleValue(), 2))).plus(
-                                rightLane.widthTags.get(0).d.multiplyBy(Math.pow(ds.doubleValue(), 3)));
+                            .plus(rightLane.widthTags.get(0).c.multiplyBy(Math.pow(ds.doubleValue(), 2)))
+                            .plus(rightLane.widthTags.get(0).d.multiplyBy(Math.pow(ds.doubleValue(), 3)));
 
                     Length.Rel laneWidth_start = rightLane.widthTags.get(0).a;
                     Length.Rel laneWidth_end = rightLane.widthTags.get(0).sOffst;
 
                     Length.Rel leftOffset_start =
-                        lastLane.getDesignLineOffsetAtBegin().minus(lastLane.getBeginWidth().multiplyBy(0.5)).minus(
-                            laneWidth_start.multiplyBy(0.5));
+                        lastLane.getDesignLineOffsetAtBegin().minus(lastLane.getBeginWidth().multiplyBy(0.5))
+                            .minus(laneWidth_start.multiplyBy(0.5));
                     Length.Rel leftOffset_end =
-                        lastLane.getDesignLineOffsetAtEnd().minus(lastLane.getEndWidth().multiplyBy(0.5)).minus(
-                            laneWidth_end.multiplyBy(0.5));
+                        lastLane.getDesignLineOffsetAtEnd().minus(lastLane.getEndWidth().multiplyBy(0.5))
+                            .minus(laneWidth_end.multiplyBy(0.5));
 
                     Length.Rel length = currentLink.getLength();
 
@@ -708,13 +709,13 @@ class RoadTag
                         if (factor < 0.98)
                         {
                             Length.Rel width =
-                                widthTag.a.plus(widthTag.b.multiplyBy(relativeLength.doubleValue())).plus(
-                                    widthTag.c.multiplyBy(Math.pow(relativeLength.doubleValue(), 2))).plus(
-                                    widthTag.d.multiplyBy(Math.pow(relativeLength.doubleValue(), 3)));
+                                widthTag.a.plus(widthTag.b.multiplyBy(relativeLength.doubleValue()))
+                                    .plus(widthTag.c.multiplyBy(Math.pow(relativeLength.doubleValue(), 2)))
+                                    .plus(widthTag.d.multiplyBy(Math.pow(relativeLength.doubleValue(), 3)));
 
                             Length.Rel offSet =
-                                lastLane.getLateralCenterPosition(factor).minus(
-                                    lastLane.getWidth(factor).multiplyBy(0.5)).minus(width.multiplyBy(0.5));
+                                lastLane.getLateralCenterPosition(factor)
+                                    .minus(lastLane.getWidth(factor).multiplyBy(0.5)).minus(width.multiplyBy(0.5));
 
                             relativeLength = currentLink.getLength().multiplyBy(factor);
 
@@ -1045,7 +1046,7 @@ class RoadTag
 
                     AbstractTrafficLight trafficLight =
                         (AbstractTrafficLight) trafficLightConstructor.newInstance(new Object[]{signalTag.id, lane,
-                            sOffset, simulator});                    
+                            sOffset, simulator});
 
                     if (!openDriveNetworkLaneParser.trafficLightsBySignals.containsKey(signalTag.id))
                     {
@@ -1114,7 +1115,7 @@ class RoadTag
 
                     AbstractTrafficLight trafficLight =
                         (AbstractTrafficLight) trafficLightConstructor.newInstance(new Object[]{signalTag.id + ".ref",
-                            lane, sOffset, simulator});                    
+                            lane, sOffset, simulator});
 
                     if (!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
                     {

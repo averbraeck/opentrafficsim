@@ -215,7 +215,8 @@ class FillTag
         {
             nodeList.add(parser.nodeTags.get(nodeTag.name).node);
         }
-        LaneBasedRouteGenerator rg = new FixedLaneBasedRouteGenerator(new CompleteRoute("fixed route", GTUType.ALL, nodeList));
+        LaneBasedRouteGenerator rg =
+            new FixedLaneBasedRouteGenerator(new CompleteRoute("fixed route", GTUType.ALL, nodeList));
 
         // TODO create a FILL
 

@@ -68,7 +68,8 @@ class CompatibilityTag
      * @return a list of GTUTags
      * @throws SAXException when node could not be found
      */
-    private static List<GTUTag> parseGTUList(final String gtuNames, final XmlNetworkLaneParser parser) throws SAXException
+    private static List<GTUTag> parseGTUList(final String gtuNames, final XmlNetworkLaneParser parser)
+        throws SAXException
     {
         List<GTUTag> gtuList = new ArrayList<>();
         String[] ns = gtuNames.split("\\s");

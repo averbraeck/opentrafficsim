@@ -7,7 +7,7 @@ import java.util.Set;
 import org.opentrafficsim.core.gtu.GTUType;
 
 /**
- * Link type to indicate compatibility with GTU types. 
+ * Link type to indicate compatibility with GTU types.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -38,7 +38,7 @@ public class LinkType implements Serializable
     {
         ALL.addCompatibility(GTUType.ALL);
     }
-    
+
     /**
      * @param id the id of the lane type.
      */

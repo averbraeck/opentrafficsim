@@ -20,7 +20,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class SpeedTag 
+class SpeedTag
 {
     /** sOffst. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -29,7 +29,6 @@ class SpeedTag
     /** max speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Speed max = null;
-    
 
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.
@@ -45,14 +44,14 @@ class SpeedTag
     {
         int speedCount = 0;
         for (Node node : XMLParser.getNodes(nodeList, "speed"))
-        {            
+        {
             SpeedTag speedTag = new SpeedTag();
             NamedNodeMap attributes = node.getAttributes();
 
             Node sOffst = attributes.getNamedItem("sOffst");
             if (sOffst != null)
                 speedTag.sOffst = new Length.Rel(Double.parseDouble(sOffst.getNodeValue().trim()), LengthUnit.METER);
-            
+
             Node max = attributes.getNamedItem("max");
             if (max != null)
                 speedTag.max = new Speed(Double.parseDouble(max.getNodeValue().trim()), SpeedUnit.METER_PER_SECOND);

@@ -6,6 +6,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
@@ -42,10 +43,12 @@ public abstract class AbstractLaneBasedTemplateGTU extends AbstractLaneBasedGTU
      * @throws GTUException when gtuFollowingModel is null
      * @throws InstantiationException in case Perception or StrategicPlanner instantiation fails
      * @throws IllegalAccessException in case Perception or StrategicPlanner constructor is not public
+     * @throws OTSGeometryException when the initial path is wrong
      */
     public AbstractLaneBasedTemplateGTU(final String id, final LaneBasedTemplateGTUType templateGTUType,
         final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed, final OTSNetwork network)
-        throws NetworkException, SimRuntimeException, GTUException, InstantiationException, IllegalAccessException
+        throws NetworkException, SimRuntimeException, GTUException, InstantiationException, IllegalAccessException,
+        OTSGeometryException
     {
         super(id, templateGTUType.getGtuType(), initialLongitudinalPositions, initialSpeed, templateGTUType
             .getSimulator(), templateGTUType.instantiateStrategicalPlanner(), templateGTUType.instantiatePerception(),

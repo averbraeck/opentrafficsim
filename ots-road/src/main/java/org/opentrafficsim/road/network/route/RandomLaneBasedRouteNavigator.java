@@ -7,9 +7,7 @@ import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djunits.value.vdouble.scalar.Length.Rel;
-import org.opentrafficsim.core.gtu.GTU;
-import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -128,7 +126,7 @@ public class RandomLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavigat
     /** {@inheritDoc} */
     @Override
     public final Length.Rel suitability(final Lane lane, final Length.Rel longitudinalPosition, final LaneBasedGTU gtu,
-        final Time.Rel timeHorizon) throws NetworkException
+        final Time.Rel timeHorizon) throws GTUException
     {
         double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();
         boolean laneConnectedToDestination = false;
@@ -153,7 +151,8 @@ public class RandomLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavigat
             else
                 return new Length.Rel(remainingDistance, LengthUnit.METER);
         }
-        else // not my lane
+        else
+        // not my lane
         {
             if (!laneConnectedToDestination)
                 return new Length.Rel(500.0, LengthUnit.METER);

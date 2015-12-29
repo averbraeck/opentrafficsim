@@ -1,5 +1,5 @@
 /**
- * Test classes. 
+ * Test classes.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -10,3 +10,4 @@
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 package org.opentrafficsim.road.test;
+

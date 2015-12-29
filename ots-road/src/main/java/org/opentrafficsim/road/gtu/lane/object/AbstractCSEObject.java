@@ -3,9 +3,9 @@ package org.opentrafficsim.road.gtu.lane.object;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.StaticObject;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 
@@ -38,12 +38,12 @@ public abstract class AbstractCSEObject extends StaticObject
      * @param width the width of the object, perpendicular to the center line of the cse
      * @param height the height of the object, above to the center line of the cse
      * @return a new Geometry on the right position on the cse
-     * @throws NetworkException in case of degenerate line or position beyond the center line
+     * @throws OTSGeometryException in case of degenerate line or position beyond the center line
      */
     protected static OTSLine3D createRectangleOnCSE(final CrossSectionElement cse, final Length.Rel position,
-        final Length.Rel length, final Length.Rel width, final Length.Rel height) throws NetworkException
+        final Length.Rel length, final Length.Rel width, final Length.Rel height) throws OTSGeometryException
     {
-        //TODO: REPAIR
+        // TODO: REPAIR
         double fraction = position.si / cse.getParentLink().getLength().si;
         double w2 = width.si / 2.0;
         double l2 = length.si / 2.0;
@@ -69,10 +69,11 @@ public abstract class AbstractCSEObject extends StaticObject
      * @param height the height of the object, above to the center line of the cse
      * @param distance the lateral distance of the object to the lane's center line; note: plus is left, minus is right
      * @return a new Geometry on the right position on the cse
-     * @throws NetworkException in case of degenerate line or position beyond the center line
+     * @throws OTSGeometryException in case of degenerate line or position beyond the center line
      */
     protected static OTSLine3D createRectangleNextToCSE(final CrossSectionElement cse, final Length.Rel position,
-        final Length.Rel length, final Length.Rel width, final Length.Rel height, final Length.Rel distance) throws NetworkException
+        final Length.Rel length, final Length.Rel width, final Length.Rel height, final Length.Rel distance)
+        throws OTSGeometryException
     {
         double fraction = position.si / cse.getParentLink().getLength().si;
         double w2 = width.si / 2.0;
@@ -81,8 +82,8 @@ public abstract class AbstractCSEObject extends StaticObject
         DirectedPoint cp = cse.getCenterLine().getLocationFraction(fraction);
         double a = cp.getRotZ();
         cp =
-            new DirectedPoint(cp.x + d * Math.cos(a + Math.PI / 2.0), cp.y + d * Math.sin(a + Math.PI / 2.0), cp.z, cp
-                .getRotX(), cp.getRotY(), cp.getRotZ());
+            new DirectedPoint(cp.x + d * Math.cos(a + Math.PI / 2.0), cp.y + d * Math.sin(a + Math.PI / 2.0), cp.z,
+                cp.getRotX(), cp.getRotY(), cp.getRotZ());
         double l2ca = l2 * Math.cos(a);
         double l2sa = l2 * Math.sin(a);
         double w2ca = w2 * Math.cos(a + Math.PI / 2.0);

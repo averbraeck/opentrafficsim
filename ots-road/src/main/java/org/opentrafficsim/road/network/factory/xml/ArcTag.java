@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.factory.xml;
 
-
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -20,7 +19,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 24, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ArcTag 
+class ArcTag
 {
     /** angle. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -60,8 +59,8 @@ class ArcTag
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseArc(final Node arcNode, final XmlNetworkLaneParser parser, final LinkTag linkTag) throws SAXException,
-        NetworkException
+    static void parseArc(final Node arcNode, final XmlNetworkLaneParser parser, final LinkTag linkTag)
+        throws SAXException, NetworkException
     {
         NamedNodeMap arcAttributes = arcNode.getAttributes();
         linkTag.arcTag = new ArcTag();

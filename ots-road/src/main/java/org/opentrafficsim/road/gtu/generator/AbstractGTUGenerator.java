@@ -226,9 +226,11 @@ public abstract class AbstractGTUGenerator
      * generated safely.
      * @param carBuilder the car to be generated
      * @return true if car can be safely built, false otherwise.
-     * @throws NetworkException if GTU does not have a position on the lane where it is registered
+     * @throws NetworkException when the speed limit of the lane is not known
+     * @throws GTUException if GTU does not have a position on the lane where it is registered
      */
-    protected final boolean enoughSpace(final LaneBasedIndividualCarBuilder carBuilder) throws NetworkException
+    protected final boolean enoughSpace(final LaneBasedIndividualCarBuilder carBuilder) throws NetworkException,
+        GTUException
     {
         DirectedLanePosition directedLanePosition = carBuilder.getInitialLongitudinalPositions().iterator().next();
         Lane generatorLane = directedLanePosition.getLane();
@@ -291,10 +293,10 @@ public abstract class AbstractGTUGenerator
      * @param when the current or future time for which to calculate the headway
      * @return the headway in SI units when we have found the GTU, or a null GTU with a distance of Double.MAX_VALUE meters when
      *         no other GTU could not be found within maxDistanceSI meters
-     * @throws NetworkException when there is a problem with the geometry of the network
+     * @throws GTUException when there is a problem with the geometry of the network
      */
     private HeadwayGTU headwayRecursiveForwardSI(final Lane theLane, final double lanePositionSI,
-        final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when) throws NetworkException
+        final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when) throws GTUException
     {
         LaneBasedGTU otherGTU =
             theLane.getGtuAfter(new Length.Rel(lanePositionSI, LengthUnit.METER), RelativePosition.REAR, when);
@@ -351,10 +353,10 @@ public abstract class AbstractGTUGenerator
      * @param when the current or future time for which to calculate the headway
      * @return the headway in SI units when we have found the GTU, or a null GTU with a distance of Double.MAX_VALUE meters when
      *         no other GTU could not be found within maxDistanceSI meters
-     * @throws NetworkException when there is a problem with the geometry of the network
+     * @throws GTUException when there is a problem with the geometry of the network
      */
     private HeadwayGTU headwayRecursiveBackwardSI(final Lane theLane, final double lanePositionSI,
-        final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when) throws NetworkException
+        final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when) throws GTUException
     {
         LaneBasedGTU otherGTU =
             theLane.getGtuBefore(new Length.Rel(lanePositionSI, LengthUnit.METER), RelativePosition.FRONT, when);
@@ -407,10 +409,9 @@ public abstract class AbstractGTUGenerator
      * @param generatorLane Lane; the lane on which the the search for a leader starts
      * @return the nearest GTU and the net headway to this GTU in SI units when we have found the GTU, or a null GTU with a
      *         distance of Double.MAX_VALUE meters when no other GTU could not be found within maxDistanceSI meters
-     * @throws NetworkException when there is a problem with the geometry of the network
+     * @throws GTUException when there is a problem with the geometry of the network
      */
-    private HeadwayGTU headwayGTUSIForward(final double maxDistanceSI, final Lane generatorLane)
-        throws NetworkException
+    private HeadwayGTU headwayGTUSIForward(final double maxDistanceSI, final Lane generatorLane) throws GTUException
     {
         Time.Abs when = getSimulator().getSimulatorTime().getTime();
         HeadwayGTU foundMaxGTUDistanceSI = new HeadwayGTU(null, Double.MAX_VALUE);
@@ -437,9 +438,9 @@ public abstract class AbstractGTUGenerator
      * @param maxDistance Length.Rel; the maximum distance to look for a leader
      * @param generatorLane Lane; the lane on which the GTU is generated
      * @return HeadwayGTU; the available headway and the GTU at that headway
-     * @throws NetworkException on network inconsistency
+     * @throws GTUException on network inconsistency
      */
-    public final HeadwayGTU headway(final Length.Rel maxDistance, final Lane generatorLane) throws NetworkException
+    public final HeadwayGTU headway(final Length.Rel maxDistance, final Lane generatorLane) throws GTUException
     {
         return headwayGTUSIForward(maxDistance.getSI(), generatorLane);
     }

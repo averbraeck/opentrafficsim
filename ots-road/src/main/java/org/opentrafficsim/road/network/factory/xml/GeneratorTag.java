@@ -297,7 +297,8 @@ class GeneratorTag
         new GTUGeneratorIndividual(generatorTag.laneName, simulator, generatorTag.gtuTag.gtuType, gtuClass,
             generatorTag.initialSpeedDist, generatorTag.iatDist, generatorTag.gtuTag.lengthDist,
             generatorTag.gtuTag.widthDist, generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime,
-            lane, position, generatorTag.gtuDirection, generatorTag.gtuColorer, strategicalPlanner, LanePerception.class);
+            lane, position, generatorTag.gtuDirection, generatorTag.gtuColorer, strategicalPlanner,
+            LanePerception.class);
 
         // TODO GTUMix
         // TODO RouteMix

@@ -16,7 +16,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class SignalReferenceTag 
+class SignalReferenceTag
 {
     /** s. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -25,15 +25,14 @@ class SignalReferenceTag
     /** t. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel t = null;
-    
+
     /** id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    String id = null;    
-    
+    String id = null;
+
     /** orientation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String orientation = null;
-    
 
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.

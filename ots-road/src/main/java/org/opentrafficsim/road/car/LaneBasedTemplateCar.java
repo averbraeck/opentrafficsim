@@ -16,6 +16,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
@@ -52,7 +53,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      * @param id ID; the id of the GTU
      * @param templateGtuType the template of the GTU
      * @param initialLongitudinalPositions Map&lt;Lane, Length.Rel&gt;; the initial positions of the car on one or more lanes
-     * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the car on the lane
+     * @param initialSpeed Speed; the initial speed of the car on the lane
      * @param network the network that the GTU is initially registered in
      * @throws NamingException if an error occurs when adding the animation handler.
      * @throws NetworkException when the GTU cannot be placed on the given lane.
@@ -60,11 +61,12 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      * @throws GTUException when gtuFollowingModel is null
      * @throws InstantiationException in case Perception or StrategicPlanner instantiation fails
      * @throws IllegalAccessException in case Perception or StrategicPlanner constructor is not public
+     * @throws OTSGeometryException when the initial path is wrong
      */
     public LaneBasedTemplateCar(final String id, final LaneBasedTemplateGTUType templateGtuType,
         final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed, final OTSNetwork network)
         throws NamingException, NetworkException, SimRuntimeException, GTUException, InstantiationException,
-        IllegalAccessException
+        IllegalAccessException, OTSGeometryException
     {
         this(id, templateGtuType, initialLongitudinalPositions, initialSpeed, DefaultCarAnimation.class, network);
     }
@@ -73,7 +75,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      * @param id ID; the id of the GTU
      * @param templateGtuType the template of the GTU
      * @param initialLongitudinalPositions Map&lt;Lane, Length.Rel&gt;; the initial positions of the car on one or more lanes
-     * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the car on the lane
+     * @param initialSpeed Speed; the initial speed of the car on the lane
      * @param animationClass Class&lt;? extends Renderable2D&gt;; the class for animation or null if no animation.
      * @param network the network that the GTU is initially registered in
      * @throws NamingException if an error occurs when adding the animation handler.
@@ -82,11 +84,13 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      * @throws GTUException when gtuFollowingModel is null
      * @throws InstantiationException in case Perception or StrategicPlanner instantiation fails
      * @throws IllegalAccessException in case Perception or StrategicPlanner constructor is not public
+     * @throws OTSGeometryException when the initial path is wrong
      */
     public LaneBasedTemplateCar(final String id, final LaneBasedTemplateGTUType templateGtuType,
         final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
         final Class<? extends Renderable2D> animationClass, final OTSNetwork network) throws NamingException,
-        NetworkException, SimRuntimeException, GTUException, InstantiationException, IllegalAccessException
+        NetworkException, SimRuntimeException, GTUException, InstantiationException, IllegalAccessException,
+        OTSGeometryException
     {
         super(id, templateGtuType, initialLongitudinalPositions, initialSpeed, network);
 
@@ -170,7 +174,7 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
             Lane frontLane = frontPositions.keySet().iterator().next();
             return String.format("Car %s front:%s[%s]", getId(), frontLane, frontPositions.get(frontLane));
         }
-        catch (NetworkException exception)
+        catch (GTUException exception)
         {
             exception.printStackTrace();
         }
@@ -182,14 +186,14 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
      * 
      * <pre>
      * LaneBasedTemplateCar&lt;String&gt; car = new LaneBasedTemplateCarBuilder&lt;String&gt;().setId("Car:"+nr)
-     *    .setInitialSpeed(new DoubleScalar.Rel&lt;SpeedUnit&gt;(80.0, KM_PER_HOUR))....build(); 
+     *    .setInitialSpeed(new Speed(80.0, KM_PER_HOUR))....build(); 
      *    
      * or
      * 
      * LaneBasedTemplateCarBuilder&lt;String&gt; carBuilder = new LaneBasedTemplateCarBuilder&lt;String&gt;();
      * carBuilder.setId("Car:"+nr);
      * carBuilder.setTemplateGtuType(TruckTemplate);
-     * carBuilder.setInitialSpeed(new DoubleScalar.Rel&lt;SpeedUnit&gt;(80.0, KM_PER_HOUR));
+     * carBuilder.setInitialSpeed(new Speed(80.0, KM_PER_HOUR));
      * ...
      * LaneBasedTemplateCar&lt;String&gt; car = carBuilder.build();
      * </pre>
@@ -292,9 +296,10 @@ public class LaneBasedTemplateCar extends AbstractLaneBasedTemplateGTU
          * @throws GTUException when gtuFollowingModel is null
          * @throws InstantiationException in case Perception or StrategicPlanner instantiation fails
          * @throws IllegalAccessException in case Perception or StrategicPlanner constructor is not public
+         * @throws OTSGeometryException when the initial path is wrong
          */
         public final LaneBasedTemplateCar build() throws NamingException, NetworkException, SimRuntimeException,
-            GTUException, InstantiationException, IllegalAccessException
+            GTUException, InstantiationException, IllegalAccessException, OTSGeometryException
         {
             if (null == this.id || null == this.initialLongitudinalPositions || null == this.initialSpeed
                 || null == this.templateGtuType || null == this.animationClass || null == this.network)

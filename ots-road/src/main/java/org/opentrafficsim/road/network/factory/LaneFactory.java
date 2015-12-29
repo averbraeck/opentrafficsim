@@ -51,10 +51,10 @@ public final class LaneFactory
      * @param to Node; end Node of the new Link
      * @param intermediatePoints OTSPoint3D[]; array of intermediate coordinates (may be null)
      * @return Link; the newly constructed Link
-     * @throws NetworkException when the design line is degenerate (only one point or duplicate point)
+     * @throws OTSGeometryException when the design line is degenerate (only one point or duplicate point)
      */
     public static CrossSectionLink makeLink(final String name, final OTSNode from, final OTSNode to,
-        final OTSPoint3D[] intermediatePoints) throws NetworkException
+        final OTSPoint3D[] intermediatePoints) throws OTSGeometryException
     {
         int coordinateCount = 2 + (null == intermediatePoints ? 0 : intermediatePoints.length);
         OTSPoint3D[] points = new OTSPoint3D[coordinateCount];
@@ -68,7 +68,7 @@ public final class LaneFactory
             }
         }
         OTSLine3D designLine = new OTSLine3D(points);
-        // XXX for now, the overarchingg link allows traffic in both directions. If that is not the intention, 
+        // XXX for now, the overarchingg link allows traffic in both directions. If that is not the intention,
         // change to LongitudinalDirectionality.FORWARD
         CrossSectionLink link =
             new CrossSectionLink(name, from, to, LinkType.ALL, designLine, LongitudinalDirectionality.DIR_BOTH,
@@ -81,12 +81,12 @@ public final class LaneFactory
      * @param link Link; the link that owns the new Lane
      * @param id String; the id of this lane, should be unique within the link
      * @param laneType LaneType&lt;String&gt;; the type of the new Lane
-     * @param latPosAtStart Length.Rel; the lateral position of the new Lane with respect to the design
-     *            line of the link at the start of the link
-     * @param latPosAtEnd Length.Rel; the lateral position of the new Lane with respect to the design
-     *            line of the link at the end of the link
+     * @param latPosAtStart Length.Rel; the lateral position of the new Lane with respect to the design line of the link at the
+     *            start of the link
+     * @param latPosAtEnd Length.Rel; the lateral position of the new Lane with respect to the design line of the link at the
+     *            end of the link
      * @param width Length.Rel; the width of the new Lane
-     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit on the new Lane
+     * @param speedLimit Speed; the speed limit on the new Lane
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @return Lane
      * @throws NamingException when names cannot be registered for animation
@@ -126,7 +126,7 @@ public final class LaneFactory
      * @param to Node; ending node of the new Lane
      * @param intermediatePoints OTSPoint3D[]; intermediate coordinates or null to create a straight road
      * @param laneType LaneType; type of the new Lane
-     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit on the new Lane
+     * @param speedLimit Speed; the speed limit on the new Lane
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @return Lane; the new Lane
      * @throws NamingException when names cannot be registered for animation
@@ -155,7 +155,7 @@ public final class LaneFactory
      * @param laneOffsetAtStart int; extra offset from design line in lane widths at start of link
      * @param laneOffsetAtEnd int; extra offset from design line in lane widths at end of link
      * @param laneType LaneType; type of the new Lanes
-     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit on all lanes
+     * @param speedLimit Speed; the speed limit on all lanes
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
@@ -194,7 +194,7 @@ public final class LaneFactory
      * @param intermediatePoints OTSPoint3D[]; intermediate coordinates or null to create a straight road
      * @param laneCount int; number of lanes in the road
      * @param laneType LaneType; type of the new Lanes
-     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt; the speed limit (applies to all generated lanes)
+     * @param speedLimit Speed the speed limit (applies to all generated lanes)
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation

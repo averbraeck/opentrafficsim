@@ -38,10 +38,9 @@ public class AccelerationGTUColorer implements GTUColorer
 
     /**
      * Construct a new AccelerationGTUColorer.
-     * @param maximumDeceleration DoubleScalar.Abs&lt;AccelerationUnit&gt;; the deceleration (negative acceleration) that
-     *            corresponds to the first (red) legend entry
-     * @param maximumAcceleration DoubleScalar.Abs&lt;AccelerationUnit&gt;; the deceleration that corresponds to the last (blue)
+     * @param maximumDeceleration Acceleration; the deceleration (negative acceleration) that corresponds to the first (red)
      *            legend entry
+     * @param maximumAcceleration Acceleration; the deceleration that corresponds to the last (blue) legend entry
      */
     public AccelerationGTUColorer(final Acceleration maximumDeceleration, final Acceleration maximumAcceleration)
     {

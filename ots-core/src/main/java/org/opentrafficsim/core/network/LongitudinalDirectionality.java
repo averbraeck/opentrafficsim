@@ -12,7 +12,7 @@ package org.opentrafficsim.core.network;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public enum LongitudinalDirectionality 
+public enum LongitudinalDirectionality
 {
     /** Direction the same as the direction of the graph, increasing fractional position when driving in this direction. */
     DIR_PLUS,

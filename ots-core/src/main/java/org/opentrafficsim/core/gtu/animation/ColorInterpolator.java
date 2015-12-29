@@ -31,12 +31,11 @@ public final class ColorInterpolator
     {
         if (ratio < 0 || ratio > 1)
         {
-            throw new Error("Bad ratio (should be between 0 and 1; got " + ratio + ")");
+            throw new RuntimeException("Bad ratio (should be between 0 and 1; got " + ratio + ")");
         }
         double complement = 1 - ratio;
         return new Color((int) (zero.getRed() * complement + one.getRed() * ratio),
-            (int) (zero.getGreen() * complement + one.getGreen() * ratio), (int) (zero.getBlue() * complement + one
-                .getBlue()
-                * ratio));
+            (int) (zero.getGreen() * complement + one.getGreen() * ratio),
+            (int) (zero.getBlue() * complement + one.getBlue() * ratio));
     }
 }

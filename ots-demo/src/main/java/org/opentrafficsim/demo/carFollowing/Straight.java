@@ -71,6 +71,7 @@ import org.opentrafficsim.road.network.lane.Sensor;
 import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.BooleanProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
@@ -157,7 +158,7 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
                         SECOND), localProperties, null, true);
                     straight.panel.getTabbedPane().addTab("info", straight.makeInfoPane());
                 }
-                catch (SimRuntimeException | NamingException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -205,7 +206,7 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts()
+    protected final JPanel makeCharts() throws OTSSimulationException
     {
 
         // Make the tab with the plots
@@ -561,9 +562,8 @@ class StraightModel implements OTSModelInterface, UNITS
 
     /**
      * Set up the block.
-     * @throws RemoteException on communications failure
      */
-    protected final void createBlock() throws RemoteException
+    protected final void createBlock()
     {
         Length.Rel initialPosition = new Length.Rel(4000, METER);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
@@ -575,11 +575,11 @@ class StraightModel implements OTSModelInterface, UNITS
             LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
             this.block =
-                new LaneBasedIndividualCar("999999", this.gtuType, initialPositions, new Speed(0, KM_PER_HOUR),
-                    new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed(0, KM_PER_HOUR), this.simulator,
+                new LaneBasedIndividualCar("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
+                    new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed(0.0, KM_PER_HOUR), this.simulator,
                     strategicalPlanner, new LanePerception(), DefaultCarAnimation.class, this.gtuColorer, this.network);
         }
-        catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
+        catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
         {
             exception.printStackTrace();
         }
@@ -620,10 +620,9 @@ class StraightModel implements OTSModelInterface, UNITS
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
                 vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
                 strategicalPlanner, new LanePerception(), DefaultCarAnimation.class, this.gtuColorer, this.network);
-
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
-        catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
+        catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
         {
             exception.printStackTrace();
         }

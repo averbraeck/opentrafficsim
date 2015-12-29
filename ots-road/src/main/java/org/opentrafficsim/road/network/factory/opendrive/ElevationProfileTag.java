@@ -34,17 +34,17 @@ class ElevationProfileTag
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseElevationProfile(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
-        throws SAXException, NetworkException
+    static void parseElevationProfile(final NodeList nodeList, final OpenDriveNetworkLaneParser parser,
+        final RoadTag roadTag) throws SAXException, NetworkException
     {
         ElevationProfileTag elevationProfileTag = new ElevationProfileTag();
 
         for (Node node0 : XMLParser.getNodes(nodeList, "elevationProfile"))
             for (Node node : XMLParser.getNodes(node0.getChildNodes(), "elevation"))
-        {            
-            ElevationTag elevationTag = ElevationTag.parseElevation(node, parser);
-            elevationProfileTag.elevationTags.put(elevationTag.s.si, elevationTag);
-        }
+            {
+                ElevationTag elevationTag = ElevationTag.parseElevation(node, parser);
+                elevationProfileTag.elevationTags.put(elevationTag.s.si, elevationTag);
+            }
         roadTag.elevationProfileTag = elevationProfileTag;
     }
 }

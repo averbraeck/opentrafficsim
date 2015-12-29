@@ -58,7 +58,7 @@ public class Speed3D
     public Speed3D(final Speed x, final Speed y, final Speed z) throws ValueException
     {
         super();
-        this.speed = new SpeedVector(new Speed[] { x, y, z }, StorageType.DENSE);
+        this.speed = new SpeedVector(new Speed[]{x, y, z}, StorageType.DENSE);
     }
 
     /**
@@ -72,7 +72,7 @@ public class Speed3D
     public Speed3D(final double x, final double y, final double z, final SpeedUnit unit) throws ValueException
     {
         super();
-        this.speed = new SpeedVector(new double[] { x, y, z }, unit, StorageType.DENSE);
+        this.speed = new SpeedVector(new double[]{x, y, z}, unit, StorageType.DENSE);
     }
 
     /**
@@ -103,7 +103,7 @@ public class Speed3D
         {
             // should be impossible as we constructed the vector always with three elements
             throw new RuntimeException("getX() gave an exception; apparently vector " + this.speed
-                    + " was not constructed right", exception);
+                + " was not constructed right", exception);
         }
     }
 
@@ -121,7 +121,7 @@ public class Speed3D
         {
             // should be impossible as we constructed the vector always with three elements
             throw new RuntimeException("getY() gave an exception; apparently vector " + this.speed
-                    + " was not constructed right", exception);
+                + " was not constructed right", exception);
         }
     }
 
@@ -139,7 +139,7 @@ public class Speed3D
         {
             // should be impossible as we constructed the vector always with three elements
             throw new RuntimeException("getZ() gave an exception; apparently vector " + this.speed
-                    + " was not constructed right", exception);
+                + " was not constructed right", exception);
         }
     }
 
@@ -173,9 +173,9 @@ public class Speed3D
     /** {@inheritDoc} */
     public final String toString()
     {
-        return String.format(Locale.US, "Speed3D %s (%s, theta %s, phi %s)", this.speed, getSpeed(), new Angle.Abs(getTheta()
-                .getInUnit(AngleUnit.DEGREE), AngleUnit.DEGREE), new Angle.Abs(getPhi().getInUnit(AngleUnit.DEGREE),
-                AngleUnit.DEGREE));
+        return String.format(Locale.US, "Speed3D %s (%s, theta %s, phi %s)", this.speed, getSpeed(), new Angle.Abs(
+            getTheta().getInUnit(AngleUnit.DEGREE), AngleUnit.DEGREE),
+            new Angle.Abs(getPhi().getInUnit(AngleUnit.DEGREE), AngleUnit.DEGREE));
     }
 
 }

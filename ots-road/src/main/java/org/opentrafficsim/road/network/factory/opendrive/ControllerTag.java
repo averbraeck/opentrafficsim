@@ -8,12 +8,11 @@ import org.xml.sax.SAXException;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck
- * $, initial version Jul 23, 2015 <br>
+ * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
+ * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 class ControllerTag
@@ -26,7 +25,7 @@ class ControllerTag
     /** type */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String type = null;
-    
+
     /** name */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
@@ -34,7 +33,7 @@ class ControllerTag
     /** sequence. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Integer sequence = null;
-    
+
     /** id of the control signal. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String controlSignalID = null;
@@ -53,7 +52,7 @@ class ControllerTag
      */
     @SuppressWarnings("checkstyle:needbraces")
     static ControllerTag parseController(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException,
-            NetworkException
+        NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         ControllerTag controllerTag = new ControllerTag();
@@ -66,7 +65,7 @@ class ControllerTag
         Node type = attributes.getNamedItem("type");
         if (type != null)
             controllerTag.type = type.getNodeValue().trim();
-        
+
         Node name = attributes.getNamedItem("name");
         if (name != null)
             controllerTag.name = name.getNodeValue().trim();
@@ -75,11 +74,11 @@ class ControllerTag
         if (sequence == null)
             throw new SAXException("LANE: missing attribute sequence");
         controllerTag.sequence = Integer.parseInt(sequence.getNodeValue().trim());
-        
+
         for (Node control : XMLParser.getNodes(node.getChildNodes(), "control"))
         {
             NamedNodeMap attributes1 = control.getAttributes();
-            
+
             Node signalId = attributes1.getNamedItem("signalId");
             controllerTag.controlSignalID = signalId.getNodeValue().trim();
 

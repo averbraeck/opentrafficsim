@@ -5,7 +5,6 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
 
-
 /**
  * A simple way to construct a SwitchableGTUColorer set up with the "standard" set of GTUColorers. <br>
  * Do not assume that the set of GTUColorers in the result will never change.

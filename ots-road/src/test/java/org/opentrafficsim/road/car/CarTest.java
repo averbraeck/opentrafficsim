@@ -130,8 +130,8 @@ public class CarTest implements UNITS
      * @param id String; the name (number) of the Car
      * @param gtuType GTUType; the type of the new car
      * @param lane Lane; the lane on which the new Car is positioned
-     * @param initialPosition DoubleScalar.Abs&lt;LengthUnit&gt;; the initial longitudinal position of the new Car
-     * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed
+     * @param initialPosition Length.Rel; the initial longitudinal position of the new Car
+     * @param initialSpeed Speed; the initial speed
      * @param simulator OTSDEVVSimulator; the simulator that controls the new Car (and supplies the initial value for
      *            getLastEvalutionTime())
      * @param gtuFollowingModel GTUFollowingModel; the GTU following model
@@ -142,11 +142,12 @@ public class CarTest implements UNITS
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
      * @throws GTUException when construction of the GTU fails (probably due to an invalid parameter)
+     * @throws OTSGeometryException when the initial path is wrong
      */
     public static LaneBasedIndividualCar makeReferenceCar(final String id, final GTUType gtuType, final Lane lane,
         final Length.Rel initialPosition, final Speed initialSpeed, final OTSDEVSSimulator simulator,
         final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSNetwork network)
-        throws NamingException, NetworkException, SimRuntimeException, GTUException
+        throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
         Length.Rel length = new Length.Rel(5.0, METER);
         Length.Rel width = new Length.Rel(2.0, METER);

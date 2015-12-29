@@ -3,7 +3,7 @@ package org.opentrafficsim.core.object;
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 
 /**
- * Generic object that can be placed in the model. This could be implemented for a traffic light, a road sign, or an obstacle. 
+ * Generic object that can be placed in the model. This could be implemented for a traffic light, a road sign, or an obstacle.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -17,4 +17,3 @@ public interface ObjectInterface extends LocatableInterface
 {
     // nothing for now
 }
-

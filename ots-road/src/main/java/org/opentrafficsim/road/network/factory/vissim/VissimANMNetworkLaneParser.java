@@ -38,45 +38,45 @@ import org.xml.sax.SAXException;
  */
 public class VissimANMNetworkLaneParser
 {
-//    /** global values from the GLOBAL tag. */
-//    @SuppressWarnings("visibilitymodifier")
-//    protected GlobalTag globalTag;
-//
-//    /** the UNprocessed nodes for further reference. */
-//    @SuppressWarnings("visibilitymodifier")
-//    protected Map<String, NodeTag> nodeTags = new HashMap<>();
-//
-//    /** the UNprocessed links for further reference. */
-//    @SuppressWarnings("visibilitymodifier")
-//    protected Map<String, LinkTag> linkTags = new HashMap<>();
-//
-//    /** the gtu tags for further reference. */
-//    @SuppressWarnings("visibilitymodifier")
-//    protected Map<String, GTUTag> gtuTags = new HashMap<>();
-//
-//    /** the gtumix tags for further reference. */
-//    @SuppressWarnings("visibilitymodifier")
-//    protected Map<String, GTUMixTag> gtuMixTags = new HashMap<>();
-//
-//    /** the route tags for further reference. */
-//    @SuppressWarnings("visibilitymodifier")
-//    protected Map<String, RouteTag> routeTags = new HashMap<>();
-//
-//    /** the route mix tags for further reference. */
-//    @SuppressWarnings("visibilitymodifier")
-//    protected Map<String, RouteMixTag> routeMixTags = new HashMap<>();
-//
-//    /** the shortest route tags for further reference. */
-//    @SuppressWarnings("visibilitymodifier")
-//    protected Map<String, ShortestRouteTag> shortestRouteTags = new HashMap<>();
-//
-//    /** the shortest route mix tags for further reference. */
-//    @SuppressWarnings("visibilitymodifier")
-//    protected Map<String, ShortestRouteMixTag> shortestRouteMixTags = new HashMap<>();
-//
-//    /** the road type tags for further reference. */
-//    @SuppressWarnings("visibilitymodifier")
-//    protected Map<String, RoadTypeTag> roadTypeTags = new HashMap<>();
+    // /** global values from the GLOBAL tag. */
+    // @SuppressWarnings("visibilitymodifier")
+    // protected GlobalTag globalTag;
+    //
+    // /** the UNprocessed nodes for further reference. */
+    // @SuppressWarnings("visibilitymodifier")
+    // protected Map<String, NodeTag> nodeTags = new HashMap<>();
+    //
+    // /** the UNprocessed links for further reference. */
+    // @SuppressWarnings("visibilitymodifier")
+    // protected Map<String, LinkTag> linkTags = new HashMap<>();
+    //
+    // /** the gtu tags for further reference. */
+    // @SuppressWarnings("visibilitymodifier")
+    // protected Map<String, GTUTag> gtuTags = new HashMap<>();
+    //
+    // /** the gtumix tags for further reference. */
+    // @SuppressWarnings("visibilitymodifier")
+    // protected Map<String, GTUMixTag> gtuMixTags = new HashMap<>();
+    //
+    // /** the route tags for further reference. */
+    // @SuppressWarnings("visibilitymodifier")
+    // protected Map<String, RouteTag> routeTags = new HashMap<>();
+    //
+    // /** the route mix tags for further reference. */
+    // @SuppressWarnings("visibilitymodifier")
+    // protected Map<String, RouteMixTag> routeMixTags = new HashMap<>();
+    //
+    // /** the shortest route tags for further reference. */
+    // @SuppressWarnings("visibilitymodifier")
+    // protected Map<String, ShortestRouteTag> shortestRouteTags = new HashMap<>();
+    //
+    // /** the shortest route mix tags for further reference. */
+    // @SuppressWarnings("visibilitymodifier")
+    // protected Map<String, ShortestRouteMixTag> shortestRouteMixTags = new HashMap<>();
+    //
+    // /** the road type tags for further reference. */
+    // @SuppressWarnings("visibilitymodifier")
+    // protected Map<String, RoadTypeTag> roadTypeTags = new HashMap<>();
 
     /** the GTUTypes that have been created. public to make it accessible from LaneAttributes. */
     @SuppressWarnings("visibilitymodifier")
@@ -130,8 +130,9 @@ public class VissimANMNetworkLaneParser
         NodeList networkNodeList = document.getDocumentElement().getChildNodes();
 
         if (!document.getDocumentElement().getNodeName().equals("NETWORK"))
-            throw new SAXException("XmlNetworkLaneParser.build: XML document does not start with an NETWORK tag, found "
-                + document.getDocumentElement().getNodeName() + " instead");
+            throw new SAXException(
+                "XmlNetworkLaneParser.build: XML document does not start with an NETWORK tag, found "
+                    + document.getDocumentElement().getNodeName() + " instead");
 
         // there should be some definitions using DEFINITIONS tags (could be more than one due to include files)
         List<Node> definitionNodes = XMLParser.getNodes(networkNodeList, "DEFINITIONS");
@@ -142,39 +143,39 @@ public class VissimANMNetworkLaneParser
         // make the GTUTypes ALL and NONE to get started
         this.gtuTypes.put("ALL", GTUType.ALL);
         this.gtuTypes.put("NONE", GTUType.NONE);
-        
+
         // parse the DEFINITIONS tags
-//        for (Node definitionNode : definitionNodes)
-//            GlobalTag.parseGlobal(definitionNode.getChildNodes(), this);
-//        for (Node definitionNode : definitionNodes)
-//            GTUTag.parseGTUs(definitionNode.getChildNodes(), this);
-//        for (Node definitionNode : definitionNodes)
-//            GTUMixTag.parseGTUMix(definitionNode.getChildNodes(), this);
-//        for (Node definitionNode : definitionNodes)
-//            LaneTypeTag.parseLaneTypes(definitionNode.getChildNodes(), this);
-//        for (Node definitionNode : definitionNodes)
-//            CompatibilityTag.parseCompatibilities(definitionNode.getChildNodes(), this);
-//        for (Node definitionNode : definitionNodes)
-//            RoadTypeTag.parseRoadTypes(definitionNode.getChildNodes(), this);
+        // for (Node definitionNode : definitionNodes)
+        // GlobalTag.parseGlobal(definitionNode.getChildNodes(), this);
+        // for (Node definitionNode : definitionNodes)
+        // GTUTag.parseGTUs(definitionNode.getChildNodes(), this);
+        // for (Node definitionNode : definitionNodes)
+        // GTUMixTag.parseGTUMix(definitionNode.getChildNodes(), this);
+        // for (Node definitionNode : definitionNodes)
+        // LaneTypeTag.parseLaneTypes(definitionNode.getChildNodes(), this);
+        // for (Node definitionNode : definitionNodes)
+        // CompatibilityTag.parseCompatibilities(definitionNode.getChildNodes(), this);
+        // for (Node definitionNode : definitionNodes)
+        // RoadTypeTag.parseRoadTypes(definitionNode.getChildNodes(), this);
 
         // parse the NETWORK tag
-//        NodeTag.parseNodes(networkNodeList, this);
-//        RouteTag.parseRoutes(networkNodeList, this);
-//        ShortestRouteTag.parseShortestRoutes(networkNodeList, this);
-//        RouteMixTag.parseRouteMix(networkNodeList, this);
-//        ShortestRouteMixTag.parseShortestRouteMix(networkNodeList, this);
-//        LinkTag.parseLinks(networkNodeList, this);
+        // NodeTag.parseNodes(networkNodeList, this);
+        // RouteTag.parseRoutes(networkNodeList, this);
+        // ShortestRouteTag.parseShortestRoutes(networkNodeList, this);
+        // RouteMixTag.parseRouteMix(networkNodeList, this);
+        // ShortestRouteMixTag.parseShortestRouteMix(networkNodeList, this);
+        // LinkTag.parseLinks(networkNodeList, this);
 
         // process nodes and links to calculate coordinates and positions
-//        Links.calculateNodeCoordinates(this);
-//        for (LinkTag linkTag : this.linkTags.values())
-//            Links.buildLink(linkTag, this, this.simulator);
-//        for (LinkTag linkTag : this.linkTags.values())
-//            Links.applyRoadTypeToLink(linkTag, this, this.simulator);
+        // Links.calculateNodeCoordinates(this);
+        // for (LinkTag linkTag : this.linkTags.values())
+        // Links.buildLink(linkTag, this, this.simulator);
+        // for (LinkTag linkTag : this.linkTags.values())
+        // Links.applyRoadTypeToLink(linkTag, this, this.simulator);
 
         // process the routes
-//        for (RouteTag routeTag : this.routeTags.values())
-//            routeTag.makeRoute();
+        // for (RouteTag routeTag : this.routeTags.values())
+        // routeTag.makeRoute();
         // TODO shortestRoute, routeMix, ShortestRouteMix
 
         // store the structure information in the network
@@ -189,19 +190,19 @@ public class VissimANMNetworkLaneParser
     private OTSNetwork makeNetwork(final String name) throws NetworkException
     {
         OTSNetwork network = new OTSNetwork(name);
-//        for (NodeTag nodeTag : this.nodeTags.values())
-//        {
-//            network.addNode(nodeTag.node);
-//        }
-//        for (LinkTag linkTag : this.linkTags.values())
-//        {
-//            network.addLink(linkTag.link);
-//        }
-//        for (RouteTag routeTag : this.routeTags.values())
-//        {
-//            // TODO Make routes GTU specific. See what to do with GTUType.ALL for routes
-//            network.addRoute(GTUType.ALL, routeTag.route);
-//        }
+        // for (NodeTag nodeTag : this.nodeTags.values())
+        // {
+        // network.addNode(nodeTag.node);
+        // }
+        // for (LinkTag linkTag : this.linkTags.values())
+        // {
+        // network.addLink(linkTag.link);
+        // }
+        // for (RouteTag routeTag : this.routeTags.values())
+        // {
+        // // TODO Make routes GTU specific. See what to do with GTUType.ALL for routes
+        // network.addRoute(GTUType.ALL, routeTag.route);
+        // }
         return network;
     }
 

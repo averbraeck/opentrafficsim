@@ -5,8 +5,6 @@ import java.io.Serializable;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 
-
-
 /**
  * A RelativePosition is a position on a GTU; e.g. the front, rear, position of the driver, etc. <br>
  * A RelativePosition stores the offset of the position from the reference position of the GTU.

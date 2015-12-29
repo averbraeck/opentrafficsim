@@ -133,7 +133,7 @@ class Axis
                 return;
             }
         }
-        throw new Error("Illegal granularity " + newGranularity);
+        throw new RuntimeException("Illegal granularity " + newGranularity);
     }
 
     /**
@@ -154,7 +154,7 @@ class Axis
     {
         if (null != this.maximumValue && newMaximumValue.getSI() < this.maximumValue.getSI())
         {
-            throw new Error("maximum value may not be decreased");
+            throw new RuntimeException("maximum value may not be decreased");
         }
         this.maximumValue = newMaximumValue;
     }

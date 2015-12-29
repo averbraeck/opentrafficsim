@@ -238,8 +238,8 @@ public class SuperDemo implements UNITS
         try
         {
             CompoundProperty simulationSettings =
-                new CompoundProperty("Simulation settings", "Select the simulation network and traffic composition", null,
-                    false, 0);
+                new CompoundProperty("Simulation settings", "Select the simulation network and traffic composition",
+                    null, false, 0);
             /*
              * This is ugly, but it gets the job done... Insert a dummy property at the top and later replace the property
              * editor for the dummy property by the simulationSelection JPanel.
@@ -269,24 +269,24 @@ public class SuperDemo implements UNITS
                     }
                 }
                 simulationSettings.add(new ProbabilityDistributionProperty("Traffic composition",
-                    "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"}, new Double[]{
-                        0.8, 0.2}, false, 5));
+                    "<html>Mix of passenger cars and trucks</html>", new String[]{"passenger car", "truck"},
+                    new Double[]{0.8, 0.2}, false, 5));
                 CompoundProperty modelSelection =
                     new CompoundProperty("Model selection", "Modeling specific settings", null, false, 300);
                 modelSelection.add(new SelectionProperty("Simulation scale", "Level of detail of the simulation",
                     new String[]{"Micro", "Macro", "Meta"}, 0, true, 0));
-                modelSelection.add(new SelectionProperty("Car following model", "<html>The car following model determines "
-                    + "the acceleration that a vehicle will make taking into account "
-                    + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
-                    + "curvature of the road) capabilities of the vehicle and personality " + "of the driver.</html>",
-                    new String[]{"IDM", "IDM+"}, 1, false, 1));
-                modelSelection
-                    .add(IDMPropertySet.makeIDMPropertySet("Car", new Acceleration(1.0, METER_PER_SECOND_2),
-                        new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2.0, METER),
-                        new Time.Rel(1.0, SECOND), 2));
+                modelSelection.add(new SelectionProperty("Car following model",
+                    "<html>The car following model determines "
+                        + "the acceleration that a vehicle will make taking into account "
+                        + "nearby vehicles, infrastructural restrictions (e.g. speed limit, "
+                        + "curvature of the road) capabilities of the vehicle and personality "
+                        + "of the driver.</html>", new String[]{"IDM", "IDM+"}, 1, false, 1));
                 modelSelection.add(IDMPropertySet
-                    .makeIDMPropertySet("Truck", new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25,
-                        METER_PER_SECOND_2), new Length.Rel(2.0, METER), new Time.Rel(1.0, SECOND), 3));
+                    .makeIDMPropertySet("Car", new Acceleration(1.0, METER_PER_SECOND_2), new Acceleration(1.5,
+                        METER_PER_SECOND_2), new Length.Rel(2.0, METER), new Time.Rel(1.0, SECOND), 2));
+                modelSelection.add(IDMPropertySet.makeIDMPropertySet("Truck",
+                    new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.25, METER_PER_SECOND_2),
+                    new Length.Rel(2.0, METER), new Time.Rel(1.0, SECOND), 3));
                 properties.add(properties.size() > 0 ? 1 : 0, modelSelection);
             }
             properties.add(0, simulationSettings);
@@ -393,7 +393,8 @@ public class SuperDemo implements UNITS
 
             });
             result.add(pdpe, BorderLayout.LINE_END);
-            result.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) new JLabel("ABC").getPreferredSize().getHeight()));
+            result.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) new JLabel("ABC").getPreferredSize()
+                .getHeight()));
             result.setToolTipText(pdp.getDescription());
         }
         else if (ap instanceof IntegerProperty)
@@ -455,7 +456,8 @@ public class SuperDemo implements UNITS
                 public void stateChanged(final ChangeEvent changeEvent)
                 {
                     double value =
-                        slider.getValue() * (cp.getMaximumValue() - cp.getMinimumValue()) / useSteps + cp.getMinimumValue();
+                        slider.getValue() * (cp.getMaximumValue() - cp.getMinimumValue()) / useSteps
+                            + cp.getMinimumValue();
                     currentValue.setText(String.format(DefaultLocale.getLocale(), cp.getFormatString(), value));
                     if (slider.getValueIsAdjusting())
                     {

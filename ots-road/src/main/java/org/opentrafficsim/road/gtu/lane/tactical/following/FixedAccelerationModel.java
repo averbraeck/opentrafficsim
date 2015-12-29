@@ -29,8 +29,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
 
     /**
      * Create a new FixedAccelerationModel.
-     * @param acceleration DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration that will be returned by the
-     *            computeAcceleration methods
+     * @param acceleration Acceleration; the acceleration that will be returned by the computeAcceleration methods
      * @param duration Time.Abs; the duration that the acceleration will be maintained
      */
     public FixedAccelerationModel(final Acceleration acceleration, final Time.Rel duration)
@@ -50,7 +49,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
 
     /**
      * Retrieve the acceleration of this FixedAccelerationModel.
-     * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration of this FixedAccelerationModel
+     * @return Acceleration; the acceleration of this FixedAccelerationModel
      */
     public final Acceleration getAcceleration()
     {

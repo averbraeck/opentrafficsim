@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Paint;
 
 import org.jfree.chart.renderer.PaintScale;
+import org.opentrafficsim.simulationengine.OTSSimulationException;
 
 /**
  * Create a continuous color paint scale. <br>
@@ -34,17 +35,19 @@ public class ContinuousColorPaintScale implements PaintScale
      * @param format Format string to render the value under the mouse in a human readable format
      * @param bounds Double[] array of boundary values (all values must be distinct and the number of values must be &gt;= 2)
      * @param boundColors Color[] array of the colors to use at the boundary values (must have same size as bounds)
+     * @throws OTSSimulationException when bounds are wrong
      */
     ContinuousColorPaintScale(final String format, final double[] bounds, final Color[] boundColors)
+        throws OTSSimulationException
     {
         this.format = format;
         if (bounds.length < 2)
         {
-            throw new Error("bounds must have >= 2 entries");
+            throw new OTSSimulationException("bounds must have >= 2 entries");
         }
         if (bounds.length != boundColors.length)
         {
-            throw new Error("bounds must have same length as boundColors");
+            throw new OTSSimulationException("bounds must have same length as boundColors");
         }
         this.bounds = new double[bounds.length];
         this.boundColors = new Color[bounds.length];
@@ -66,7 +69,7 @@ public class ContinuousColorPaintScale implements PaintScale
             }
             if (bestIndex < 0)
             {
-                throw new Error("duplicate value in bounds");
+                throw new OTSSimulationException("duplicate value in bounds");
             }
             this.bounds[nextBound] = bounds[bestIndex];
             this.boundColors[nextBound] = boundColors[bestIndex];

@@ -50,7 +50,7 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
 
     /** GTUs registered in this network. */
     private Set<GTU> gtus = new HashSet<>();
-    
+
     /**
      * Construction of an empty network.
      * @param id the network id.
@@ -464,7 +464,7 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
     {
         this.gtus.add(gtu);
     }
-    
+
     /**
      * Remove a GTU from the network.
      * @param gtu the GTU to remove
@@ -473,7 +473,7 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
     {
         this.gtus.remove(gtu);
     }
-    
+
     /**
      * Test whether a GTU is registered in the network.
      * @param gtu the GTU to search for
@@ -483,7 +483,7 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
     {
         return this.gtus.contains(gtu);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final Set<GTU> getGTUs()

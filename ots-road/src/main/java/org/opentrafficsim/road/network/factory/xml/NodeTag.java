@@ -27,7 +27,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class NodeTag 
+class NodeTag
 {
     /** name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -56,7 +56,8 @@ class NodeTag
      * @throws NetworkException when parsing of GTU tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseNodes(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException, NetworkException
+    static void parseNodes(final NodeList nodeList, final XmlNetworkLaneParser parser) throws SAXException,
+        NetworkException
     {
         for (Node node : XMLParser.getNodes(nodeList, "NODE"))
         {
@@ -127,8 +128,8 @@ class NodeTag
      * @throws NetworkException when point cannot be instantiated
      * @throws NamingException when animation context cannot be found.
      */
-    static OTSNode makeOTSNode(final NodeTag nodeTag, final XmlNetworkLaneParser parser)
-        throws NetworkException, NamingException
+    static OTSNode makeOTSNode(final NodeTag nodeTag, final XmlNetworkLaneParser parser) throws NetworkException,
+        NamingException
     {
         String id = nodeTag.name;
         Angle.Abs angle = nodeTag.angle == null ? new Angle.Abs(0.0, AngleUnit.SI) : nodeTag.angle;

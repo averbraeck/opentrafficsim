@@ -77,8 +77,8 @@ class GTUMixTag
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    private static void parseGTUMixGTUTag(final Node gtuNode, final XmlNetworkLaneParser parser, final GTUMixTag gtuMixTag)
-        throws NetworkException, SAXException
+    private static void parseGTUMixGTUTag(final Node gtuNode, final XmlNetworkLaneParser parser,
+        final GTUMixTag gtuMixTag) throws NetworkException, SAXException
     {
         NamedNodeMap attributes = gtuNode.getAttributes();
 

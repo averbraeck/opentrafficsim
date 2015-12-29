@@ -172,7 +172,8 @@ public interface ContinuousDistFloatScalar
                     return (T) new FloatDimensionless.Rel((float) getDistribution().draw(), getUnit());
 
                 case "ElectricalChargeUnit":
-                    return (T) new FloatElectricalCharge((float) getDistribution().draw(), (ElectricalChargeUnit) getUnit());
+                    return (T) new FloatElectricalCharge((float) getDistribution().draw(),
+                        (ElectricalChargeUnit) getUnit());
 
                 case "ElectricalCurrentUnit":
                     return (T) new FloatElectricalCurrent((float) getDistribution().draw(),

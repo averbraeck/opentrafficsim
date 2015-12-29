@@ -1,10 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
-import org.djunits.unit.AngleUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -20,12 +17,11 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ArcTag 
+class ArcTag
 {
     /** degree of the curve at the start(s-coordinate?). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel curvature = null;
-
 
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.
@@ -33,11 +29,11 @@ class ArcTag
      * @param parser the parser with the lists of information
      * @param geometryTag the GeometryTag to which this element belongs
      * @throws SAXException when parsing of the tag fails
-     * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseArc(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final GeometryTag geometryTag)
-        throws SAXException, NetworkException
+    static void
+        parseArc(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final GeometryTag geometryTag)
+            throws SAXException
     {
         int typeCount = 0;
         for (Node node : XMLParser.getNodes(nodeList, "arc"))

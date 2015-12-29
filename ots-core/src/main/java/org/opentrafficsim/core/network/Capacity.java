@@ -24,4 +24,3 @@ public interface Capacity
     void setCapacity(final Frequency capacity);
 
 }
-

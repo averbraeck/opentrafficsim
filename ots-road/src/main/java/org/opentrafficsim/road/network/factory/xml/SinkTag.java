@@ -30,8 +30,8 @@ class SinkTag
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseSink(final Node node, final XmlNetworkLaneParser parser, final LinkTag linkTag) throws SAXException,
-        NetworkException
+    static void parseSink(final Node node, final XmlNetworkLaneParser parser, final LinkTag linkTag)
+        throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         SinkTag sinkTag = new SinkTag();

@@ -92,7 +92,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     };
 
     /** Which offset line method to use... */
-    public static OffsetMethod OFFSETMETHOD = OffsetMethod.JTS;
+    public static final OffsetMethod OFFSETMETHOD = OffsetMethod.JTS;
 
     /**
      * Construct parallel line.
@@ -194,18 +194,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         {
             resultCoordinates[index] = out.get(index);
         }
-        try
-        {
-            // System.out.println(OTSGeometry.printCoordinates("#offset line: \nc0,1,0\n# offset at start is " + offsetAtStart
-            // + " at end is " + offsetAtEnd + "\n#", new OTSLine3D(resultCoordinates), "\n   "));
-
-            return new OTSLine3D(resultCoordinates);
-        }
-        catch (OTSGeometryException exception)
-        {
-            // System.err.println("CANNOT HAPPEN");
-            throw new Error("Caught impossible exception in OTSLine3D " + exception.getMessage());
-        }
+        return new OTSLine3D(resultCoordinates);
     }
 
     /**
@@ -282,18 +271,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         {
             resultCoordinates[index] = out.get(index);
         }
-        try
-        {
-            // System.out.println(OTSGeometry.printCoordinates("#offset line: \nc0,1,0\n# offset at start is " + offsetAtStart
-            // + " at end is " + offsetAtEnd + "\n#", new OTSLine3D(resultCoordinates), "\n   "));
-
-            return new OTSLine3D(resultCoordinates);
-        }
-        catch (OTSGeometryException exception)
-        {
-            // System.err.println("CANNOT HAPPEN");
-            throw new Error("Caught impossible exception in OTSLine3D " + exception.getMessage());
-        }
+        return new OTSLine3D(resultCoordinates);
     }
 
     /**
@@ -332,16 +310,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
                 points[nextIndex++] = line.get(j);
             }
         }
-        try
-        {
-            return new OTSLine3D(points);
-        }
-        catch (OTSGeometryException exception)
-        {
-            // Cannot happen
-            exception.printStackTrace();
-            throw new Error(exception.getCause());
-        }
+        return new OTSLine3D(points);
     }
 
     /**
@@ -363,8 +332,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         catch (OTSGeometryException exception)
         {
             // Cannot happen
-            exception.printStackTrace();
-            throw new Error(exception.getCause());
+            throw new RuntimeException(exception);
         }
     }
 
@@ -468,15 +436,9 @@ public class OTSLine3D implements LocatableInterface, Serializable
         }
         else
         {
-            // System.err.println("interpolating between points " + (index - 1) + " and " + index);
             pointList.add(OTSPoint3D.interpolate((end - cumulativeLength) / segmentLength, this.points[index - 1],
                 this.points[index]));
         }
-        // System.err.println("point list is");
-        // for (OTSPoint3D p : pointList)
-        // {
-        // System.err.println("\t" + p);
-        // }
         try
         {
             return new OTSLine3D(pointList);
@@ -657,8 +619,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
-     * Return the length of this OTSLine3D as a strongly typed value. (Assumes that the coordinates of the points constituting
-     * this line are expressed in meters.)
+     * Return the length of this OTSLine3D as a double value in SI units. (Assumes that the coordinates of the points
+     * constituting this line are expressed in meters.)
      * @return the length of the line in SI units
      */
     public final synchronized double getLengthSI()

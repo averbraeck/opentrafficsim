@@ -270,8 +270,8 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
      * Verify a result of computeAcceleration.
      * @param description String; description of the result to check
      * @param as AccelerationStep[2]; the result to verify
-     * @param a0 DoubleScalar.Abs&lt;AccelerationUnit&gt;; the expected acceleration in as[0]
-     * @param a1 DoubleScalar.Abs&lt;AccelerationUnit&gt;; the expected acceleration in as[1]
+     * @param a0 Acceleration; the expected acceleration in as[0]
+     * @param a1 Acceleration; the expected acceleration in as[1]
      * @param validUntil Time.Abs; the expected validUntil value in both entries of as
      */
     private void checkAccelerationStep(final String description, final DualAccelerationStep as, final Acceleration a0,

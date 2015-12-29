@@ -50,6 +50,7 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -77,6 +78,7 @@ import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.Sensor;
 import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.xml.sax.SAXException;
 
@@ -110,7 +112,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                     xmlModel.buildAnimator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(0.0, TimeUnit.SECOND),
                         new Time.Rel(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
                 }
-                catch (SimRuntimeException | NamingException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -281,7 +283,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
                                 }
-                                catch (RemoteException | NamingException | NetworkException exception)
+                                catch (RemoteException | NamingException | OTSGeometryException exception)
                                 {
                                     exception.printStackTrace();
                                 }
@@ -332,7 +334,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
                                 }
-                                catch (RemoteException | NamingException | NetworkException exception)
+                                catch (RemoteException | NamingException | OTSGeometryException exception)
                                 {
                                     exception.printStackTrace();
                                 }
@@ -498,7 +500,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                     {
                         frontGTU = gtu.fractionalPosition(lane, gtu.getFront());
                     }
-                    catch (NetworkException exception)
+                    catch (GTUException exception)
                     {
                         exception.printStackTrace();
                     }
@@ -507,7 +509,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                     {
                         rearGTU = gtu.fractionalPosition(lane, gtu.getRear());
                     }
-                    catch (NetworkException exception)
+                    catch (GTUException exception)
                     {
                         exception.printStackTrace();
                     }
@@ -527,15 +529,8 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                         this.rtiCars.add(car);
 
                     }
-                    catch (NamingException exception)
-                    {
-                        exception.printStackTrace();
-                    }
-                    catch (NetworkException exception)
-                    {
-                        exception.printStackTrace();
-                    }
-                    catch (GTUException exception)
+                    catch (NamingException | NetworkException | GTUException | OperationalPlanException
+                        | OTSGeometryException exception)
                     {
                         exception.printStackTrace();
                     }

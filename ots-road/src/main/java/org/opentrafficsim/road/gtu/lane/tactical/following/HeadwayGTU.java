@@ -54,8 +54,8 @@ public class HeadwayGTU
 
     /**
      * Retrieve the strongly typed distance to the other GTU.
-     * @return Length.Rel; the distance to the GTU, return value null indicates that the other GTU is
-     *         parallel to the reference GTU
+     * @return Length.Rel; the distance to the GTU, return value null indicates that the other GTU is parallel to the reference
+     *         GTU
      */
     public final Length.Rel getDistance()
     {

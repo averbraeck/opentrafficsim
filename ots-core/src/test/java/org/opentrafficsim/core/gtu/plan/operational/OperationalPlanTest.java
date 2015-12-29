@@ -14,8 +14,6 @@ import org.junit.Test;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.network.NetworkException;
 
 /**
  * Test the OperationalPlan and OperationalPlanBuilder classes.
@@ -31,11 +29,11 @@ public class OperationalPlanTest
 {
     /**
      * Test OperationalPlan.
-     * @throws NetworkException
-     * @throws GTUException 
+     * @throws OTSGeometryException
+     * @throws OperationalPlanException
      */
     @Test
-    public void testOperationalPlan() throws NetworkException, GTUException
+    public void testOperationalPlan() throws OperationalPlanException, OTSGeometryException
     {
         DirectedPoint waitPoint = new DirectedPoint(12, 13, 14, 15, 16, 17);
         Time.Abs startTime = new Time.Abs(100, TimeUnit.SECOND);
@@ -59,8 +57,8 @@ public class OperationalPlanTest
         Acceleration maxAcceleration = new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2);
         Acceleration maxDeceleration = new Acceleration(6, AccelerationUnit.METER_PER_SECOND_2);
         op =
-                OperationalPlanBuilder.buildGradualAccelerationPlan(path, startTime, startSpeed, endSpeed, maxAcceleration,
-                        maxDeceleration);
+            OperationalPlanBuilder.buildGradualAccelerationPlan(path, startTime, startSpeed, endSpeed, maxAcceleration,
+                maxDeceleration);
         assertEquals("Start speed is " + startSpeed, startSpeed.si, op.getStartSpeed().si, 0.00001);
         assertEquals("Start time is " + startTime, startTime.si, op.getStartTime().si, 0.00001);
         assertEquals("End speed is " + endSpeed, endSpeed.si, op.getEndSpeed().si, 0.00001);
@@ -110,7 +108,7 @@ public class OperationalPlanTest
             double stepTime = startTime.si + t * i / steps * 0.9999;// sometimes fails for endTime
             DirectedPoint actualPosition = op.getLocation(new Time.Abs(stepTime, TimeUnit.SI));
             double deltaT = stepTime - startTime.si;
-            double fraction = (startSpeed.si * deltaT + 0.5 * a.si * deltaT * deltaT ) / path.getLength().si;
+            double fraction = (startSpeed.si * deltaT + 0.5 * a.si * deltaT * deltaT) / path.getLength().si;
             OTSPoint3D expectedPosition = new OTSPoint3D(path.getLocationFraction(fraction));
             // TODO actualPosition appears to be bogus in the current "implementation".
             // assertEquals("Position at time " + deltaT, expectedPosition.distance(new OTSPoint3D(actualPosition)), 0.0001);

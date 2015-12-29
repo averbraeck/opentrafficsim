@@ -2,8 +2,8 @@ package org.opentrafficsim.road.gtu.lane.object;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 
 /**
@@ -32,12 +32,13 @@ public class CSEBlock extends AbstractCSEObject
      * @param cse the cross section element, e.g. lane, where the block is located
      * @param position the relative position on the design line of the link for this block
      * @return a new CrossSectionElementBlock on the right position on the cse
-     * @throws NetworkException in case the position is outside the CSE
+     * @throws OTSGeometryException in case the position is outside the CSE
      */
-    public static CSEBlock createCrossSectionElementBlock(final CrossSectionElement cse,
-        final Length.Rel position) throws NetworkException
+    public static CSEBlock createCrossSectionElementBlock(final CrossSectionElement cse, final Length.Rel position)
+        throws OTSGeometryException
     {
-        return new CSEBlock(AbstractCSEObject.createRectangleOnCSE(cse, position, new Length.Rel(0.5,
-            LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8), new Length.Rel(0.5, LengthUnit.METER)), new Length.Rel(1.0, LengthUnit.METER));
+        return new CSEBlock(AbstractCSEObject.createRectangleOnCSE(cse, position,
+            new Length.Rel(0.5, LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8), new Length.Rel(0.5,
+                LengthUnit.METER)), new Length.Rel(1.0, LengthUnit.METER));
     }
 }

@@ -8,7 +8,6 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 
-
 /**
  * Typed extension of the SimulatorInterface without remote exceptions.
  * <p>

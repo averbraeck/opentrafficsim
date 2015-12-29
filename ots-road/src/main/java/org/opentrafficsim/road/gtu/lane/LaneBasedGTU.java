@@ -6,8 +6,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -29,15 +29,15 @@ public interface LaneBasedGTU extends GTU
     /** {@inheritDoc} */
     @Override
     LanePerception getPerception();
-    
+
     /** {@inheritDoc} */
     @Override
     LaneBasedDrivingCharacteristics getDrivingCharacteristics();
-    
+
     /** {@inheritDoc} */
     @Override
     LaneBasedStrategicalPlanner getStrategicalPlanner();
-    
+
     /**
      * @return the lanes on which the GTU is registered.
      */
@@ -51,9 +51,9 @@ public interface LaneBasedGTU extends GTU
      * @param gtuDirection the direction of the GTU on the lane (which can be bidirectional). If the GTU has a positive
      *            velocity, it is moving in this direction.
      * @param position the position on the lane.
-     * @throws NetworkException on network inconsistency
+     * @throws GTUException when positioning the GTU on the lane causes a problem
      */
-    void enterLane(Lane lane, Length.Rel position, GTUDirectionality gtuDirection) throws NetworkException;
+    void enterLane(Lane lane, Length.Rel position, GTUDirectionality gtuDirection) throws GTUException;
 
     /**
      * Unregister the GTU from a lane.
@@ -69,9 +69,9 @@ public interface LaneBasedGTU extends GTU
      * taken.
      * @param relativePosition the position on the vehicle relative to the reference point.
      * @return the lanes and the position on the lanes where the GTU is currently registered, for the given position of the GTU.
-     * @throws NetworkException when the vehicle is not on one of the lanes on which it is registered.
+     * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane, Length.Rel> positions(RelativePosition relativePosition) throws NetworkException;
+    Map<Lane, Length.Rel> positions(RelativePosition relativePosition) throws GTUException;
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
@@ -80,9 +80,9 @@ public interface LaneBasedGTU extends GTU
      * @param when the future time for which to calculate the positions.
      * @return the lanes and the position on the lanes where the GTU will be registered at the time, for the given position of
      *         the GTU.
-     * @throws NetworkException when the vehicle is not on one of the lanes on which it is registered.
+     * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane, Length.Rel> positions(RelativePosition relativePosition, Time.Abs when) throws NetworkException;
+    Map<Lane, Length.Rel> positions(RelativePosition relativePosition, Time.Abs when) throws GTUException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane at the current
@@ -90,9 +90,9 @@ public interface LaneBasedGTU extends GTU
      * @param lane the position on this lane will be returned.
      * @param relativePosition the position on the vehicle relative to the reference point.
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position, relative to the center line of the Lane.
-     * @throws NetworkException when the vehicle is not on the given lane.
+     * @throws GTUException when the vehicle is not on the given lane.
      */
-    Length.Rel position(Lane lane, RelativePosition relativePosition) throws NetworkException;
+    Length.Rel position(Lane lane, RelativePosition relativePosition) throws GTUException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane.
@@ -100,9 +100,9 @@ public interface LaneBasedGTU extends GTU
      * @param relativePosition the position on the vehicle relative to the reference point.
      * @param when the future time for which to calculate the positions.
      * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position, relative to the center line of the Lane.
-     * @throws NetworkException when the vehicle is not on the given lane.
+     * @throws GTUException when the vehicle is not on the given lane.
      */
-    Length.Rel position(Lane lane, RelativePosition relativePosition, Time.Abs when) throws NetworkException;
+    Length.Rel position(Lane lane, RelativePosition relativePosition, Time.Abs when) throws GTUException;
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
@@ -110,9 +110,9 @@ public interface LaneBasedGTU extends GTU
      * next to each other and we compare an 'inner' and 'outer' curve.<br>
      * @param relativePosition the position on the vehicle relative to the reference point.
      * @return the lanes and the position on the lanes where the GTU is currently registered, for the given position of the GTU.
-     * @throws NetworkException when the vehicle is not on one of the lanes on which it is registered.
+     * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane, Double> fractionalPositions(RelativePosition relativePosition) throws NetworkException;
+    Map<Lane, Double> fractionalPositions(RelativePosition relativePosition) throws GTUException;
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
@@ -122,9 +122,9 @@ public interface LaneBasedGTU extends GTU
      * @param when the future time for which to calculate the positions.
      * @return the lanes and the position on the lanes where the GTU will be registered at the time, for the given position of
      *         the GTU.
-     * @throws NetworkException when the vehicle is not on one of the lanes on which it is registered.
+     * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane, Double> fractionalPositions(RelativePosition relativePosition, Time.Abs when) throws NetworkException;
+    Map<Lane, Double> fractionalPositions(RelativePosition relativePosition, Time.Abs when) throws GTUException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane, as a fraction
@@ -134,9 +134,9 @@ public interface LaneBasedGTU extends GTU
      * @param relativePosition the position on the vehicle relative to the reference point.
      * @param when the future time for which to calculate the positions.
      * @return the fractional relative position on the lane at the given time.
-     * @throws NetworkException when the vehicle is not on the given lane.
+     * @throws GTUException when the vehicle is not on the given lane.
      */
-    double fractionalPosition(Lane lane, RelativePosition relativePosition, Time.Abs when) throws NetworkException;
+    double fractionalPosition(Lane lane, RelativePosition relativePosition, Time.Abs when) throws GTUException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane, as a fraction
@@ -145,9 +145,9 @@ public interface LaneBasedGTU extends GTU
      * @param lane the position on this lane will be returned.
      * @param relativePosition the position on the vehicle relative to the reference point.
      * @return the fractional relative position on the lane at the given time.
-     * @throws NetworkException when the vehicle is not on the given lane.
+     * @throws GTUException when the vehicle is not on the given lane.
      */
-    double fractionalPosition(Lane lane, RelativePosition relativePosition) throws NetworkException;
+    double fractionalPosition(Lane lane, RelativePosition relativePosition) throws GTUException;
 
     /**
      * Return the longitudinal position that this GTU would have if it were to change to another Lane with a / the current
@@ -156,9 +156,9 @@ public interface LaneBasedGTU extends GTU
      * @param relativePosition RelativePosition; the point on this GTU that must be projected
      * @param when Time.Abs; the time for which to project the position of this GTU
      * @return Length.Rel; the position of this GTU in the projectionLane
-     * @throws NetworkException when projectionLane it not in any of the CrossSectionLink that the GTU is on
+     * @throws GTUException when projectionLane it not in any of the CrossSectionLink that the GTU is on
      */
     Length.Rel projectedPosition(Lane projectionLane, RelativePosition relativePosition, Time.Abs when)
-        throws NetworkException;
+        throws GTUException;
 
 }

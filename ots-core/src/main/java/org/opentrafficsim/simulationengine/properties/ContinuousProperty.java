@@ -138,8 +138,8 @@ public class ContinuousProperty extends AbstractProperty<Double>
     @Override
     public AbstractProperty<Double> deepCopy()
     {
-        return new ContinuousProperty(this.shortName, this.description, this.value, this.minimumValue, this.maximumValue,
-            this.format, this.readOnly, getDisplayPriority());
+        return new ContinuousProperty(this.shortName, this.description, this.value, this.minimumValue,
+            this.maximumValue, this.format, this.readOnly, getDisplayPriority());
     }
 
 }

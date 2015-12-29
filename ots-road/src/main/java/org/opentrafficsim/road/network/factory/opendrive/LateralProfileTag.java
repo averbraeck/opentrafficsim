@@ -34,8 +34,8 @@ class LateralProfileTag
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseElevationProfile(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
-        throws SAXException, NetworkException
+    static void parseElevationProfile(final NodeList nodeList, final OpenDriveNetworkLaneParser parser,
+        final RoadTag roadTag) throws SAXException, NetworkException
     {
         for (Node node0 : XMLParser.getNodes(nodeList, "lateralProfile"))
         {

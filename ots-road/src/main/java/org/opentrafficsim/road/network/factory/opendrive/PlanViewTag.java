@@ -3,42 +3,27 @@ package org.opentrafficsim.road.network.factory.opendrive;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.NavigableMap;
-import java.util.Set;
 import java.util.UUID;
 
-import org.djunits.unit.AngleUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.LinearDensityUnit;
-import org.djunits.value.AngleUtil;
-import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Length.Rel;
-import org.geotools.measure.AngleFormat;
-import org.opentrafficsim.core.geometry.Clothoid;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.network.LinkType;
-import org.opentrafficsim.core.network.LongitudinalDirectionality;
-import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.factory.xml.units.AngleUnits;
 import org.opentrafficsim.road.network.factory.XMLParser;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck
- * $, initial version Jul 23, 2015 <br>
+ * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
+ * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 class PlanViewTag
@@ -54,11 +39,11 @@ class PlanViewTag
      * @param parser the parser with the lists of information
      * @param roadTag the RoadTag to which this element belongs
      * @throws SAXException when parsing of the tag fails
-     * @throws NetworkException when parsing of the tag fails
+     * @throws OTSGeometryException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
     static void parsePlanView(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
-            throws SAXException, NetworkException
+        throws SAXException, OTSGeometryException
     {
         int geometryCount = 0;
         PlanViewTag planViewTag = new PlanViewTag();
@@ -68,50 +53,47 @@ class PlanViewTag
         {
             for (Node node : XMLParser.getNodes(node0.getChildNodes(), "geometry"))
             {
-                
-                
+
                 GeometryTag geometryTag = GeometryTag.parseGeometry(node, parser);
                 geometryTag.id = roadTag.id + "." + String.valueOf(geometryCount);
                 geometryCount++;
 
                 geometryTag.z = assignHeight(geometryTag, roadTag.elevationProfileTag.elevationTags);
-                
+
                 GeometryTag.makeOTSNode(geometryTag);
-                                        
+
                 planViewTag.geometryTags.add(geometryTag);
             }
-            
+
             GeometryTag lastGeometryTag = new GeometryTag();
-            
-            GeometryTag previousTag = planViewTag.geometryTags.get(planViewTag.geometryTags.size()-1);
-            
+
+            GeometryTag previousTag = planViewTag.geometryTags.get(planViewTag.geometryTags.size() - 1);
+
             lastGeometryTag.id = roadTag.id + "." + String.valueOf(geometryCount);
 
-            lastGeometryTag.length = new Length.Rel(0.0, LengthUnit.METER); 
-            //lastGeometryTag.length = roadTag.length.minus(previousTag.s);
+            lastGeometryTag.length = new Length.Rel(0.0, LengthUnit.METER);
+            // lastGeometryTag.length = roadTag.length.minus(previousTag.s);
 
             lastGeometryTag.s = roadTag.length;
 
             lastGeometryTag.x = new Length.Rel(0.0, LengthUnit.METER);
-            
+
             lastGeometryTag.x = previousTag.x.plus(previousTag.length.multiplyBy(Math.cos(previousTag.hdg.si)));
-            
+
             lastGeometryTag.y = new Length.Rel(0.0, LengthUnit.METER);
-            
+
             lastGeometryTag.y = previousTag.y.plus(previousTag.length.multiplyBy(Math.sin(previousTag.hdg.si)));
 
             lastGeometryTag.hdg = previousTag.hdg;
-            
+
             lastGeometryTag.z = previousTag.z;
-            
-            
+
             GeometryTag.makeOTSNode(lastGeometryTag);
 
             planViewTag.geometryTags.add(lastGeometryTag);
-            
-            
+
             geometryCount = 0;
-            for(GeometryTag geometryTag: planViewTag.geometryTags)
+            for (GeometryTag geometryTag : planViewTag.geometryTags)
             {
                 if (geometryTag.spiralTag != null)
                     interpolateSpiral(parser, planViewTag, geometryTag, geometryCount);
@@ -125,28 +107,28 @@ class PlanViewTag
     }
 
     /**
-     * @param geometryTag 
+     * @param geometryTag
      * @param elevationTags
      * @return elevation
      */
     private static Length.Rel assignHeight(GeometryTag geometryTag, NavigableMap<Double, ElevationTag> elevationTags)
     {
         Double key = geometryTag.s.si;
-        if(elevationTags.containsKey(key))
+        if (elevationTags.containsKey(key))
             return elevationTags.get(key).elevation;
         else
         {
             Double before = elevationTags.floorKey(key);
             Double after = elevationTags.ceilingKey(key);
-            
-            if(after == null)
+
+            if (after == null)
                 return elevationTags.get(before).elevation;
-            
-            Double factor = (key - before)/(after - before);
-            
+
+            Double factor = (key - before) / (after - before);
+
             Length.Rel beHeight = elevationTags.get(before).elevation;
             Length.Rel afHeight = elevationTags.get(after).elevation;
-            
+
             return afHeight.minus(beHeight).multiplyBy(factor).plus(beHeight);
         }
     }
@@ -155,72 +137,73 @@ class PlanViewTag
      * @param parser
      * @param planViewTag
      * @param geometryTag
-     * @param geometryCount 
-     * @throws NetworkException
+     * @param geometryCount
+     * @throws OTSGeometryException
      */
     private static void interpolateSpiral(OpenDriveNetworkLaneParser parser, PlanViewTag planViewTag,
-            GeometryTag geometryTag, int geometryCount) throws NetworkException
+        GeometryTag geometryTag, int geometryCount) throws OTSGeometryException
     {
         double startCurvature = geometryTag.spiralTag.curvStart.doubleValue();
         double endCurvature = geometryTag.spiralTag.curvEnd.doubleValue();
         OTSPoint3D start = geometryTag.node.getPoint();
         Length.Rel length = geometryTag.length;
 
-        /*int numSegments = 100;// (int) (length.doubleValue()/1);
-        
-        OTSLine3D line = Clothoid.clothoid(start, AngleUtil.normalize(new Angle.Abs(geometryTag.hdg.si, AngleUnit.RADIAN)),
-                        startCurvature, endCurvature, length, new Length.Rel(0, LengthUnit.SI), numSegments);*/
-        
-        
+        /*
+         * int numSegments = 100;// (int) (length.doubleValue()/1); OTSLine3D line = Clothoid.clothoid(start,
+         * AngleUtil.normalize(new Angle.Abs(geometryTag.hdg.si, AngleUnit.RADIAN)), startCurvature, endCurvature, length, new
+         * Length.Rel(0, LengthUnit.SI), numSegments);
+         */
+
         List<OTSPoint3D> pOutPut = new ArrayList<OTSPoint3D>();
-                
+
         Rel x1 = geometryTag.x.plus(geometryTag.length.multiplyBy(Math.cos(geometryTag.hdg.si)).multiplyBy(0.5));
         Rel y1 = geometryTag.y.plus(geometryTag.length.multiplyBy(Math.sin(geometryTag.hdg.si)).multiplyBy(0.5));
 
         OTSPoint3D p = new OTSPoint3D(x1.si, y1.si, 0);
         pOutPut.add(p);
-        
+
         Rel x2 = geometryTag.x.plus(geometryTag.length.multiplyBy(Math.cos(geometryTag.hdg.si)).multiplyBy(0.66));
         Rel y2 = geometryTag.y.plus(geometryTag.length.multiplyBy(Math.sin(geometryTag.hdg.si)).multiplyBy(0.66));
 
         OTSPoint3D q = new OTSPoint3D(x2.si, y2.si, 0);
         pOutPut.add(q);
-        
+
         OTSLine3D otsLine = new OTSLine3D(pOutPut);
 
-        //geometryTag.interLine = otsLine;
+        // geometryTag.interLine = otsLine;
 
     }
 
     /**
      * @param planViewTag
      * @param geometryTag
-     * @param geometryCount 
-     * @param roadTag 
-     * @throws NetworkException 
+     * @param geometryCount
+     * @param roadTag
+     * @throws OTSGeometryException
      */
-    private static void interpolateArc(PlanViewTag planViewTag, GeometryTag geometryTag, int geometryCount, RoadTag roadTag) throws NetworkException
-    {        
+    private static void interpolateArc(PlanViewTag planViewTag, GeometryTag geometryTag, int geometryCount,
+        RoadTag roadTag) throws OTSGeometryException
+    {
         double curvature = geometryTag.arcTag.curvature.doubleValue();
         OTSPoint3D start = geometryTag.node.getPoint();
         OTSPoint3D end = planViewTag.geometryTags.get(geometryCount + 1).node.getPoint();
-        
+
         Length.Rel length = geometryTag.length;
-                
-        double radius = 1/curvature;
+
+        double radius = 1 / curvature;
         boolean side = false;
-        
+
         List<OTSPoint3D> line = null;
-        
-        if(curvature < 0)
+
+        if (curvature < 0)
         {
-            //side = true;            
-            line = generateCurve(end, start, Math.abs(radius), 0.05, true, side);            
-            Collections.reverse(line);                           
+            // side = true;
+            line = generateCurve(end, start, Math.abs(radius), 0.05, true, side);
+            Collections.reverse(line);
         }
         else
         {
-            line = generateCurve(start, end, Math.abs(radius), 0.05, true, side);                       
+            line = generateCurve(start, end, Math.abs(radius), 0.05, true, side);
         }
 
         OTSLine3D otsLine = new OTSLine3D(line);
@@ -229,7 +212,6 @@ class PlanViewTag
 
     }
 
-    
     /**
      * @param pFrom
      * @param pTo
@@ -239,97 +221,105 @@ class PlanViewTag
      * @param side
      * @return list
      */
-    private static List<OTSPoint3D> generateCurve(OTSPoint3D pFrom, OTSPoint3D pTo, double pRadius, double pMinDistance, boolean shortest, boolean side)
+    private static List<OTSPoint3D> generateCurve(OTSPoint3D pFrom, OTSPoint3D pTo, double pRadius,
+        double pMinDistance, boolean shortest, boolean side)
     {
 
         List<OTSPoint3D> pOutPut = new ArrayList<OTSPoint3D>();
 
         // Calculate the middle of the two given points.
-        OTSPoint3D mPoint = new OTSPoint3D((pFrom.x + pTo.x)/2, (pFrom.y + pTo.y)/2, (pFrom.z + pTo.z)/2);
+        OTSPoint3D mPoint = new OTSPoint3D((pFrom.x + pTo.x) / 2, (pFrom.y + pTo.y) / 2, (pFrom.z + pTo.z) / 2);
 
-        //System.out.println("Middle Between From and To = " + mPoint);
-
+        // System.out.println("Middle Between From and To = " + mPoint);
 
         // Calculate the distance between the two points
         double xDiff = pTo.x - pFrom.x;
         double yDiff = pTo.y - pFrom.y;
         double distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
-        //System.out.println("Distance between From and To = " + distance);
+        // System.out.println("Distance between From and To = " + distance);
 
-        if (pRadius * 2.0f < distance) {
+        if (pRadius * 2.0f < distance)
+        {
             throw new IllegalArgumentException("The radius is too small! The given points wont fall on the circle.");
         }
 
         // Calculate the middle of the expected curve.
-        double factor = Math.sqrt((pRadius * pRadius) / ((pTo.x - pFrom.x) * (pTo.x - pFrom.x) + (pTo.y - pFrom.y) * (pTo.y - pFrom.y)) - 0.25f);
+        double factor =
+            Math.sqrt((pRadius * pRadius)
+                / ((pTo.x - pFrom.x) * (pTo.x - pFrom.x) + (pTo.y - pFrom.y) * (pTo.y - pFrom.y)) - 0.25f);
         double x = 0;
         double y = 0;
-        if (side) {
+        if (side)
+        {
             x = 0.5f * (pFrom.x + pTo.x) + factor * (pTo.y - pFrom.y);
             y = 0.5f * (pFrom.y + pTo.y) + factor * (pFrom.x - pTo.x);
-        } else {
+        }
+        else
+        {
             x = 0.5f * (pFrom.x + pTo.x) - factor * (pTo.y - pFrom.y);
             y = 0.5f * (pFrom.y + pTo.y) - factor * (pFrom.x - pTo.x);
         }
         OTSPoint3D circleMiddlePoint = new OTSPoint3D(x, y, 0);
-        
-        //System.out.println("Middle = " + circleMiddlePoint);
+
+        // System.out.println("Middle = " + circleMiddlePoint);
 
         // Calculate the two reference angles
         double angle1 = Math.atan2(pFrom.y - circleMiddlePoint.y, pFrom.x - circleMiddlePoint.x);
-        double angle2 = Math.atan2(pTo.y - circleMiddlePoint.y, pTo.x - circleMiddlePoint.x);        
+        double angle2 = Math.atan2(pTo.y - circleMiddlePoint.y, pTo.x - circleMiddlePoint.x);
 
         // Calculate the step.
         double step = pMinDistance / pRadius;
-        //System.out.println("Step = " + step);
+        // System.out.println("Step = " + step);
 
         // Swap them if needed
-        if (angle1 > angle2) {
+        if (angle1 > angle2)
+        {
             double temp = angle1;
             angle1 = angle2;
             angle2 = temp;
 
         }
-        
-        if((pTo.x - circleMiddlePoint.x < 0) && (pTo.y - circleMiddlePoint.y < 0) && (pFrom.y - circleMiddlePoint.y > 0) && (pFrom.x - circleMiddlePoint.x < 0))
+
+        if ((pTo.x - circleMiddlePoint.x < 0) && (pTo.y - circleMiddlePoint.y < 0)
+            && (pFrom.y - circleMiddlePoint.y > 0) && (pFrom.x - circleMiddlePoint.x < 0))
         {
             double temp = angle1;
             angle1 = angle2;
             angle2 = temp;
-            
-            angle1 = angle1 -Math.PI*2;
-            //angle2 = (float) (angle2 - Math.PI);
+
+            angle1 = angle1 - Math.PI * 2;
+            // angle2 = (float) (angle2 - Math.PI);
         }
-        else if((pTo.x - circleMiddlePoint.x > 0) && (pTo.y - circleMiddlePoint.y < 0) && (pFrom.y - circleMiddlePoint.y > 0) && (pFrom.x - circleMiddlePoint.x < 0))
+        else if ((pTo.x - circleMiddlePoint.x > 0) && (pTo.y - circleMiddlePoint.y < 0)
+            && (pFrom.y - circleMiddlePoint.y > 0) && (pFrom.x - circleMiddlePoint.x < 0))
         {
             double temp = angle1;
             angle1 = angle2;
             angle2 = temp;
-            
-            angle1 = angle1 -Math.PI*2;
+
+            angle1 = angle1 - Math.PI * 2;
         }
-        else if((pTo.x - circleMiddlePoint.x < 0) && (pTo.y - circleMiddlePoint.y < 0) && (pFrom.y - circleMiddlePoint.y > 0) && (pFrom.x - circleMiddlePoint.x > 0))
+        else if ((pTo.x - circleMiddlePoint.x < 0) && (pTo.y - circleMiddlePoint.y < 0)
+            && (pFrom.y - circleMiddlePoint.y > 0) && (pFrom.x - circleMiddlePoint.x > 0))
         {
             double temp = angle1;
             angle1 = angle2;
             angle2 = temp;
-            
-            angle1 = angle1 -Math.PI*2;
-            //angle2 = (float) (angle2 - Math.PI);
+
+            angle1 = angle1 - Math.PI * 2;
+            // angle2 = (float) (angle2 - Math.PI);
         }
-/*        else if((pTo.x - circleMiddlePoint.x > 0) && (pTo.y - circleMiddlePoint.y > 0) && (pFrom.y - circleMiddlePoint.y > 0) && (pFrom.x - circleMiddlePoint.x > 0))
-        {
-            double temp = angle1;
-            angle1 = angle2;
-            angle2 = temp;
-            
-            angle1 = angle1 -Math.PI*2;
-            //angle2 = (float) (angle2 - Math.PI);
-        }*/
-        
+        /*
+         * else if((pTo.x - circleMiddlePoint.x > 0) && (pTo.y - circleMiddlePoint.y > 0) && (pFrom.y - circleMiddlePoint.y > 0)
+         * && (pFrom.x - circleMiddlePoint.x > 0)) { double temp = angle1; angle1 = angle2; angle2 = temp; angle1 = angle1
+         * -Math.PI*2; //angle2 = (float) (angle2 - Math.PI); }
+         */
+
         boolean flipped = false;
-        if (!shortest) {
-            if (angle2 - angle1 < Math.PI) {
+        if (!shortest)
+        {
+            if (angle2 - angle1 < Math.PI)
+            {
                 double temp = angle1;
                 angle1 = angle2;
                 angle2 = temp;
@@ -337,34 +327,33 @@ class PlanViewTag
                 flipped = true;
             }
         }
-        
-        double zStep = (pTo.z - pFrom.z)/((angle2 - angle1)/step);
+
+        double zStep = (pTo.z - pFrom.z) / ((angle2 - angle1) / step);
         double zFirst = pFrom.z;
-        for (double f = angle1; f < angle2; f += step) {
+        for (double f = angle1; f < angle2; f += step)
+        {
             zFirst = zFirst + zStep;
-            OTSPoint3D p = new OTSPoint3D(Math.cos(f) * pRadius + circleMiddlePoint.x, Math.sin(f) * pRadius + circleMiddlePoint.y, zFirst);
-                        
+            OTSPoint3D p =
+                new OTSPoint3D(Math.cos(f) * pRadius + circleMiddlePoint.x,
+                    Math.sin(f) * pRadius + circleMiddlePoint.y, zFirst);
+
             pOutPut.add(p);
         }
-/*        if (flipped ^ side) {
-            pOutPut.add(pFrom);
-        } else {
-            pOutPut.add(pTo);
-        }*/
+        /*
+         * if (flipped ^ side) { pOutPut.add(pFrom); } else { pOutPut.add(pTo); }
+         */
 
         return pOutPut;
     }
 
-    
     /**
-     * Find the nodes one by one that have one coordinate defined, and one not defined, and try to build the network
-     * from there.
+     * Find the nodes one by one that have one coordinate defined, and one not defined, and try to build the network from there.
      * @param roadTag the road tag
      * @param planViewTag the link to process
      * @return a CrossSectionLink
-     * @throws NetworkException when OTSLine3D cannot be constructed
+     * @throws OTSGeometryException when OTSLine3D cannot be constructed
      */
-    static OTSLine3D buildDesignLine(final PlanViewTag planViewTag, final RoadTag roadTag) throws NetworkException
+    static OTSLine3D buildDesignLine(final PlanViewTag planViewTag, final RoadTag roadTag) throws OTSGeometryException
     {
         int points = planViewTag.geometryTags.size();
 
@@ -379,28 +368,30 @@ class PlanViewTag
         for (GeometryTag geometryTag : planViewTag.geometryTags)
         {
             // String a[] = geometryTag.id.split("\\.");
-            
-            if(coordinates.size()==0)
+
+            if (coordinates.size() == 0)
             {
                 coordinates.add(geometryTag.node.getPoint());
             }
             else
             {
-                if(geometryTag.node.getPoint().x != coordinates.get(coordinates.size()-1).x && geometryTag.node.getPoint().y != coordinates.get(coordinates.size()-1).y)
+                if (geometryTag.node.getPoint().x != coordinates.get(coordinates.size() - 1).x
+                    && geometryTag.node.getPoint().y != coordinates.get(coordinates.size() - 1).y)
                 {
                     coordinates.add(geometryTag.node.getPoint());
                 }
             }
-            OTSPoint3D lastPoint = new OTSPoint3D(coordinates.get(coordinates.size()-1));
+            OTSPoint3D lastPoint = new OTSPoint3D(coordinates.get(coordinates.size() - 1));
 
             if (geometryTag.interLine != null)
             {
                 for (OTSPoint3D point : geometryTag.interLine.getPoints())
                 {
-/*                    double xDiff = lastPoint.x - point.x;
-                    double yDiff = lastPoint.y - point.y;
-                    double distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff); */
-                    if(lastPoint.x != point.x && lastPoint.y != point.y)
+                    /*
+                     * double xDiff = lastPoint.x - point.x; double yDiff = lastPoint.y - point.y; double distance =
+                     * Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+                     */
+                    if (lastPoint.x != point.x && lastPoint.y != point.y)
                     {
                         coordinates.add(point);
                         lastPoint = point;

@@ -38,8 +38,9 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
      * @throws PropertyException when the array is empty, any value is outside the range 0.0 .. 1.0, or when the sum of the
      *             values is not equal to 1.0 within a small error margin
      */
-    public ProbabilityDistributionProperty(final String shortName, final String description, final String[] elementNames,
-        final Double[] initialValue, final boolean readOnly, final int displayPriority) throws PropertyException
+    public ProbabilityDistributionProperty(final String shortName, final String description,
+        final String[] elementNames, final Double[] initialValue, final boolean readOnly, final int displayPriority)
+        throws PropertyException
     {
         super(displayPriority);
         this.shortName = shortName;
@@ -206,8 +207,9 @@ public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
         }
         catch (PropertyException exception)
         {
-            throw new Error("Cannot happen (the current values should ALWAYS be suitable for constructing a new "
-                + "ProbabilityDistributionProperty)");
+            throw new RuntimeException(
+                "Cannot happen (the current values should ALWAYS be suitable for constructing a new "
+                    + "ProbabilityDistributionProperty)");
         }
     }
 

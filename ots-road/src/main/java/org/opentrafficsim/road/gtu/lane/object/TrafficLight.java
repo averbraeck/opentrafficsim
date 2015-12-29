@@ -2,8 +2,8 @@ package org.opentrafficsim.road.gtu.lane.object;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 
 /**
@@ -29,7 +29,7 @@ public class TrafficLight extends AbstractTrafficLight
 
         /** GTU is allowed to drive. */
         GREEN,
-        
+
         /** Traffic light is not working. */
         BLACK
     };
@@ -47,7 +47,7 @@ public class TrafficLight extends AbstractTrafficLight
         super(geometry, height);
         this.trafficLightColor = initialColor;
     }
-    
+
     /**
      * @return the trafficLightColor
      */
@@ -69,16 +69,17 @@ public class TrafficLight extends AbstractTrafficLight
      * @param position the relative position on the design line of the link for this traffic light
      * @param initialColor the initial color of the traffic light
      * @return a new CrossSectionElementBlock on the right position on the cse
-     * @throws NetworkException in case the position is outside the CSE
+     * @throws OTSGeometryException in case the position is outside the CSE
      */
     public static TrafficLight createTrafficLight(final CrossSectionElement cse, final Length.Rel position,
-        final TrafficLightColor initialColor) throws NetworkException
+        final TrafficLightColor initialColor) throws OTSGeometryException
     {
-//        return new TrafficLight(AbstractCSEObject.createRectangleOnCSE(cse, position, new Length.Rel(0.5,
-//            LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8), new Length.Rel(0.5, LengthUnit.METER)), new Length.Rel(0.5, LengthUnit.METER),
-//            initialColor);
+        // return new TrafficLight(AbstractCSEObject.createRectangleOnCSE(cse, position, new Length.Rel(0.5,
+        // LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8), new Length.Rel(0.5, LengthUnit.METER)), new
+        // Length.Rel(0.5, LengthUnit.METER),
+        // initialColor);
         return new TrafficLight(AbstractCSEObject.createRectangleOnCSE(cse, position, new Length.Rel(0.5,
-                LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8), new Length.Rel(0.5, LengthUnit.METER)),
-                new Length.Rel(0.5, LengthUnit.METER), initialColor);
+            LengthUnit.METER), cse.getWidth(position).multiplyBy(0.8), new Length.Rel(0.5, LengthUnit.METER)),
+            new Length.Rel(0.5, LengthUnit.METER), initialColor);
     }
 }

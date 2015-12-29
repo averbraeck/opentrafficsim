@@ -39,16 +39,16 @@ public interface Sensor extends Serializable, Comparable<Sensor>, LocatableInter
      * Trigger an action on the GTU. Normally this is the GTU that triggered the sensor. The typical call therefore is
      * <code>sensor.trigger(this);</code>.
      * @param gtu the GTU for which to carry out the trigger action.
-    */
+     */
     void trigger(LaneBasedGTU gtu);
 
     /** @return The name of the sensor. */
     String getName();
-    
+
     /** {@inheritDoc} */
     @Override
     DirectedPoint getLocation();
-    
+
     /** {@inheritDoc} */
     @Override
     Bounds getBounds();

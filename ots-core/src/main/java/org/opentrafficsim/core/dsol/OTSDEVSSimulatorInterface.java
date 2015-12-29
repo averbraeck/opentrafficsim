@@ -36,8 +36,7 @@ public interface OTSDEVSSimulatorInterface extends
     void scheduleEvent(SimEventInterface<OTSSimTimeDouble> event) throws SimRuntimeException;
 
     /**
-     * schedules a methodCall at a relative duration. The executionTime is thus
-     * simulator.getSimulatorTime()+relativeDuration.
+     * schedules a methodCall at a relative duration. The executionTime is thus simulator.getSimulatorTime()+relativeDuration.
      * @param relativeDelay the relativeDelay in timeUnits of the simulator.
      * @param priority the priority compared to other events scheduled at the same time.
      * @param source the source of the event
@@ -46,12 +45,11 @@ public interface OTSDEVSSimulatorInterface extends
      * @param args the arguments.
      * @throws SimRuntimeException whenever the event is scheduled in the past.
      */
-    void scheduleEventRel(Time.Rel relativeDelay, short priority, Object source, Object target,
-        String method, Object[] args) throws SimRuntimeException;
+    void scheduleEventRel(Time.Rel relativeDelay, short priority, Object source, Object target, String method,
+        Object[] args) throws SimRuntimeException;
 
     /**
-     * schedules a methodCall at a relative duration. The executionTime is thus
-     * simulator.getSimulatorTime()+relativeDuration.
+     * schedules a methodCall at a relative duration. The executionTime is thus simulator.getSimulatorTime()+relativeDuration.
      * @param relativeDelay the relativeDelay in timeUnits of the simulator.
      * @param source the source of the event
      * @param target the target
@@ -59,8 +57,8 @@ public interface OTSDEVSSimulatorInterface extends
      * @param args the arguments.
      * @throws SimRuntimeException whenever the event is scheduled in the past.
      */
-    void scheduleEventRel(Time.Rel relativeDelay, Object source, Object target, String method,
-        Object[] args) throws SimRuntimeException;
+    void scheduleEventRel(Time.Rel relativeDelay, Object source, Object target, String method, Object[] args)
+        throws SimRuntimeException;
 
     /** {@inheritDoc} */
     @Override
@@ -76,8 +74,8 @@ public interface OTSDEVSSimulatorInterface extends
      * @param args the arguments.
      * @throws SimRuntimeException whenever the event is scheduled in the past.
      */
-    void scheduleEventAbs(Time.Abs absoluteTime, Object source, Object target, String method,
-        Object[] args) throws SimRuntimeException;
+    void scheduleEventAbs(Time.Abs absoluteTime, Object source, Object target, String method, Object[] args)
+        throws SimRuntimeException;
 
     /**
      * schedules a methodCall at an absolute time.
@@ -89,8 +87,8 @@ public interface OTSDEVSSimulatorInterface extends
      * @param args the arguments.
      * @throws SimRuntimeException whenever the event is scheduled in the past.
      */
-    void scheduleEventAbs(Time.Abs absoluteTime, short priority, Object source, Object target,
-        String method, Object[] args) throws SimRuntimeException;
+    void scheduleEventAbs(Time.Abs absoluteTime, short priority, Object source, Object target, String method,
+        Object[] args) throws SimRuntimeException;
 
     /** {@inheritDoc} */
     @Override
