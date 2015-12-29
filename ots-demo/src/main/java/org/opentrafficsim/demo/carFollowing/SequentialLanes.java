@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -23,6 +24,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.gui.swing.HTMLPanel;
 import nl.tudelft.simulation.dsol.gui.swing.TablePanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
@@ -36,15 +38,17 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.graphs.AccelerationContourPlot;
 import org.opentrafficsim.graphs.ContourPlot;
 import org.opentrafficsim.graphs.DensityContourPlot;
@@ -54,11 +58,15 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Egoistic;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -66,8 +74,8 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Sensor;
 import org.opentrafficsim.road.network.lane.SinkSensor;
-import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.BooleanProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
@@ -156,7 +164,7 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
                         SECOND), localProperties, null, true);
                     sequential.panel.getTabbedPane().addTab("info", sequential.makeInfoPane());
                 }
-                catch (SimRuntimeException | NamingException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -204,7 +212,7 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts()
+    protected final JPanel makeCharts() throws OTSSimulationException
     {
         // Make the tab with the plots
         AbstractProperty<?> output =
@@ -328,6 +336,9 @@ class SequentialModel implements OTSModelInterface, UNITS
     /** the simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
+    /** network. */
+    private OTSNetwork network = new OTSNetwork("network");
+
     /** The nodes of our network in the order that all GTUs will visit them. */
     private ArrayList<OTSNode> nodes = new ArrayList<OTSNode>();
 
@@ -397,6 +408,26 @@ class SequentialModel implements OTSModelInterface, UNITS
         return new ArrayList<Lane>(this.path);
     }
 
+    /**
+     * @param n1 node 1
+     * @param n2 node 2
+     * @param n3 node 3
+     * @param n4 node 4
+     * @return line
+     * @throws OTSGeometryException on failure of Bezier curve creation
+     */
+    private OTSLine3D makeBezier(final OTSNode n1, final OTSNode n2, final OTSNode n3, final OTSNode n4)
+        throws OTSGeometryException
+    {
+        OTSPoint3D p1 = n1.getPoint();
+        OTSPoint3D p2 = n2.getPoint();
+        OTSPoint3D p3 = n3.getPoint();
+        OTSPoint3D p4 = n4.getPoint();
+        DirectedPoint dp1 = new DirectedPoint(p2.x, p2.y, p2.z, 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+        DirectedPoint dp2 = new DirectedPoint(p3.x, p3.y, p3.z, 0.0, 0.0, Math.atan2(p4.y - p3.y, p4.x - p3.x));
+        return Bezier.cubic(dp1, dp2);
+    }
+
     /** {@inheritDoc} */
     @Override
     public final void constructModel(
@@ -405,30 +436,42 @@ class SequentialModel implements OTSModelInterface, UNITS
     {
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         this.speedLimit = new Speed(100, KM_PER_HOUR);
+
         this.nodes = new ArrayList<OTSNode>();
-        // TODO use: int[] linkBoundaries = {0, 1000, 1001, 2001, 2200};
-        int[] linkBoundaries = {0, 1000, 2001, 2200};
-        for (int xPos : linkBoundaries)
-        {
-            this.nodes.add(new OTSNode("Node at " + xPos, new OTSPoint3D(xPos, xPos > 1001 ? 200 : -10, 0)));
-        }
+        OTSNode n0 = new OTSNode("Node(0,0)", new OTSPoint3D(0, 0));
+        OTSNode n1 = new OTSNode("Node(1000,0)", new OTSPoint3D(1000, 0));
+        OTSNode n2 = new OTSNode("Node(1020,3)", new OTSPoint3D(1020, 3));
+        OTSNode n3 = new OTSNode("Node(2000,197)", new OTSPoint3D(2000, 197));
+        OTSNode n4 = new OTSNode("Node(2020,200)", new OTSPoint3D(2020, 200));
+        OTSNode n5 = new OTSNode("Node(2200,200)", new OTSPoint3D(2200, 200));
+        this.nodes.addAll(Arrays.asList(new OTSNode[]{n0, n1, n2, n3, n4, n5}));
+
         LaneType laneType = new LaneType("CarLane");
         laneType.addCompatibility(this.gtuType);
-        // Now we can build a series of Links with one Lane on them
-        ArrayList<CrossSectionLink> links = new ArrayList<CrossSectionLink>();
-        for (int i = 1; i < this.nodes.size(); i++)
+
+        try
         {
-            OTSNode fromNode = this.nodes.get(i - 1);
-            OTSNode toNode = this.nodes.get(i);
-            String linkName = fromNode.getId() + "-" + toNode.getId();
-            try
+            // Now we can build a series of Links with one Lane on them
+            ArrayList<CrossSectionLink> links = new ArrayList<CrossSectionLink>();
+            OTSLine3D l01 = new OTSLine3D(n0.getPoint(), n1.getPoint());
+            OTSLine3D l12 = makeBezier(n0, n1, n2, n3);
+            OTSLine3D l23 = new OTSLine3D(n2.getPoint(), n3.getPoint());
+            OTSLine3D l34 = makeBezier(n2, n3, n4, n5);
+            OTSLine3D l45 = new OTSLine3D(n4.getPoint(), n5.getPoint());
+            OTSLine3D[] lines = new OTSLine3D[]{l01, l12, l23, l34, l45};
+
+            for (int i = 1; i < this.nodes.size(); i++)
             {
+                OTSNode fromNode = this.nodes.get(i - 1);
+                OTSNode toNode = this.nodes.get(i);
+                OTSLine3D line = lines[i - 1];
+                String linkName = fromNode.getId() + "-" + toNode.getId();
                 Lane[] lanes =
-                    LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, this.speedLimit,
-                        this.simulator);
+                    LaneFactory.makeMultiLane(linkName, fromNode, toNode, line.getPoints(), 1, laneType,
+                        this.speedLimit, this.simulator);
                 if (i == this.nodes.size() - 1)
                 {
-                    Sensor sensor = new SinkSensor(lanes[0], new Length.Rel(10.0, METER), this.simulator);
+                    Sensor sensor = new SinkSensor(lanes[0], new Length.Rel(100.0, METER), this.simulator);
                     lanes[0].addSensor(sensor, GTUType.ALL);
                 }
                 this.path.add(lanes[0]);
@@ -438,10 +481,10 @@ class SequentialModel implements OTSModelInterface, UNITS
                     this.initialLane = lanes[0];
                 }
             }
-            catch (NamingException | NetworkException | OTSGeometryException exception)
-            {
-                exception.printStackTrace();
-            }
+        }
+        catch (NamingException | NetworkException | OTSGeometryException exception)
+        {
+            exception.printStackTrace();
         }
 
         // 1500 [veh / hour] == 2.4s headway
@@ -602,14 +645,16 @@ class SequentialModel implements OTSModelInterface, UNITS
             {
                 throw new Error("gtuFollowingModel is null");
             }
-            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, generateTruck
-                ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel, initialPositions,
-                initialSpeed, vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR),
-                new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), this.simulator,
-                DefaultCarAnimation.class, this.gtuColorer);
+            LaneBasedDrivingCharacteristics drivingCharacteristics =
+                new LaneBasedDrivingCharacteristics(gtuFollowingModel, this.laneChangeModel);
+            LaneBasedStrategicalPlanner strategicalPlanner =
+                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
+                vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
+                strategicalPlanner, new LanePerception(), DefaultCarAnimation.class, this.gtuColorer, this.network);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
-        catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
+        catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
         {
             exception.printStackTrace();
         }

@@ -2,7 +2,10 @@ package org.opentrafficsim.road.network.factory;
 
 import java.awt.Color;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.naming.NamingException;
@@ -49,25 +52,24 @@ public final class LaneFactory
      * @param name String; name of the new Link
      * @param from Node; start Node of the new Link
      * @param to Node; end Node of the new Link
-     * @param intermediatePoints OTSPoint3D[]; array of intermediate coordinates (may be null)
+     * @param intermediatePoints OTSPoint3D[]; array of intermediate coordinates (may be null); the intermediate points may
+     *            contain the coordinates of the from node and to node
      * @return Link; the newly constructed Link
      * @throws OTSGeometryException when the design line is degenerate (only one point or duplicate point)
      */
     public static CrossSectionLink makeLink(final String name, final OTSNode from, final OTSNode to,
         final OTSPoint3D[] intermediatePoints) throws OTSGeometryException
     {
-        int coordinateCount = 2 + (null == intermediatePoints ? 0 : intermediatePoints.length);
-        OTSPoint3D[] points = new OTSPoint3D[coordinateCount];
-        points[0] = new OTSPoint3D(from.getPoint().x, from.getPoint().y, 0);
-        points[points.length - 1] = new OTSPoint3D(to.getPoint().x, to.getPoint().y, 0);
-        if (null != intermediatePoints)
+        List<OTSPoint3D> pointList = intermediatePoints == null ? new ArrayList<>() : Arrays.asList(intermediatePoints);
+        if (pointList.size() == 0 || !from.getPoint().equals(pointList.get(0)))
         {
-            for (int i = 0; i < intermediatePoints.length; i++)
-            {
-                points[i + 1] = new OTSPoint3D(intermediatePoints[i]);
-            }
+            pointList.add(0, from.getPoint());
         }
-        OTSLine3D designLine = new OTSLine3D(points);
+        if (pointList.size() == 0 || !to.getPoint().equals(pointList.get(pointList.size() - 1)))
+        {
+            pointList.add(to.getPoint());
+        }
+        OTSLine3D designLine = new OTSLine3D(pointList);
         // XXX for now, the overarchingg link allows traffic in both directions. If that is not the intention,
         // change to LongitudinalDirectionality.FORWARD
         CrossSectionLink link =
@@ -124,7 +126,8 @@ public final class LaneFactory
      * @param name String; name of the Lane (and also of the Link that owns it)
      * @param from Node; starting node of the new Lane
      * @param to Node; ending node of the new Lane
-     * @param intermediatePoints OTSPoint3D[]; intermediate coordinates or null to create a straight road
+     * @param intermediatePoints OTSPoint3D[]; intermediate coordinates or null to create a straight road; the intermediate
+     *            points may contain the coordinates of the from node and to node
      * @param laneType LaneType; type of the new Lane
      * @param speedLimit Speed; the speed limit on the new Lane
      * @param simulator OTSDEVSSimulatorInterface; the simulator
@@ -150,7 +153,8 @@ public final class LaneFactory
      * @param name String; name of the Link
      * @param from Node; starting node of the new Lane
      * @param to Node; ending node of the new Lane
-     * @param intermediatePoints OTSPoint3D[]; intermediate coordinates or null to create a straight road
+     * @param intermediatePoints OTSPoint3D[]; intermediate coordinates or null to create a straight road; the intermediate
+     *            points may contain the coordinates of the from node and to node
      * @param laneCount int; number of lanes in the road
      * @param laneOffsetAtStart int; extra offset from design line in lane widths at start of link
      * @param laneOffsetAtEnd int; extra offset from design line in lane widths at end of link
@@ -191,7 +195,8 @@ public final class LaneFactory
      * @param name String; name of the Link
      * @param from Node; starting node of the new Lane
      * @param to Node; ending node of the new Lane
-     * @param intermediatePoints OTSPoint3D[]; intermediate coordinates or null to create a straight road
+     * @param intermediatePoints OTSPoint3D[]; intermediate coordinates or null to create a straight road; the intermediate
+     *            points may contain the coordinates of the from node and to node
      * @param laneCount int; number of lanes in the road
      * @param laneType LaneType; type of the new Lanes
      * @param speedLimit Speed the speed limit (applies to all generated lanes)

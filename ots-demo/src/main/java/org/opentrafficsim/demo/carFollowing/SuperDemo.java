@@ -46,6 +46,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.gui.LabeledPanel;
 import org.opentrafficsim.gui.ProbabilityDistributionEditor;
 import org.opentrafficsim.gui.SimulatorFrame;
+import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.BooleanProperty;
@@ -204,7 +205,7 @@ public class SuperDemo implements UNITS
                     simulation.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0,
                         SECOND), SuperDemo.this.activeProperties, null, false);
                 }
-                catch (SimRuntimeException | NetworkException | NamingException exception)
+                catch (SimRuntimeException | NetworkException | NamingException | OTSSimulationException exception)
                 {
                     exception.printStackTrace();
                 }

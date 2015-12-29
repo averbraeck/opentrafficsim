@@ -38,6 +38,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.graphs.AccelerationContourPlot;
@@ -298,6 +299,9 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
 {
     /** */
     private static final long serialVersionUID = 20141121L;
+
+    /** network. */
+    private OTSNetwork network = new OTSNetwork("network");
 
     /** the simulator. */
     private OTSDEVSSimulatorInterface simulator;
