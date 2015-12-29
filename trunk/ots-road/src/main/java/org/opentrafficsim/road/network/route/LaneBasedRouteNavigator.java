@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.route;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.RouteNavigator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -27,10 +28,10 @@ public interface LaneBasedRouteNavigator extends RouteNavigator
      * @param longitudinalPosition Length.Rel; the longitudinal position in the lane
      * @param gtu GTU; the GTU (used to check lane compatibility of lanes, and current lane the GTU is on)
      * @param timeHorizon Time.Rel; the maximum time that a driver may want to look ahead
-     * @return Length.Rel; a value that indicates within what distance the GTU should try to vacate this
-     *         lane.
-     * @throws NetworkException on network inconsistency, or when the continuation Link at a branch cannot be determined
+     * @return Length.Rel; a value that indicates within what distance the GTU should try to vacate this lane.
+     * @throws NetworkException when the network shows inconsistencies
+     * @throws GTUException when the continuation Link at a branch cannot be determined
      */
     Length.Rel suitability(final Lane lane, final Length.Rel longitudinalPosition, final LaneBasedGTU gtu,
-        final Time.Rel timeHorizon) throws NetworkException;
+        final Time.Rel timeHorizon) throws NetworkException, GTUException;
 }

@@ -14,14 +14,13 @@ public enum OvertakingDirection
 {
     /** left only. */
     LEFT,
-    
+
     /** right only. */
     RIGHT,
-    
+
     /** left and right are both allowed. */
     BOTH,
-    
+
     /** neither left nor right are allowed. */
     NONE;
 }
-

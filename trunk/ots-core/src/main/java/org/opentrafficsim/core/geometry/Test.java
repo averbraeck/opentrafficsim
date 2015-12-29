@@ -484,6 +484,40 @@ public final class Test
     static boolean printDetails = false;
 
     /**
+     * Construct parallel line.
+     * @param referenceLine OTSLine3D; the reference line
+     * @param offset double; the offset
+     * @param offsetMethod OTSLine3D.OffsetMethod; the offset method
+     * @return OTSLine3D; the line that has the specified offset from the reference line
+     */
+    private static OTSLine3D offsetLine(final OTSLine3D referenceLine, final double offset,
+        final OTSLine3D.OffsetMethod offsetMethod)
+    {
+        try
+        {
+            switch (offsetMethod)
+            {
+                case PK:
+                    return OTSOffsetLinePK.offsetLine(referenceLine, offset);
+
+                case AV:
+                    return OTSBufferingAV.offsetLine(referenceLine, offset);
+
+                case JTS:
+                    return OTSBufferingJTS.offsetGeometryOLD(referenceLine, offset);
+
+                default:
+                    return null;
+            }
+        }
+        catch (OTSGeometryException exception)
+        {
+            exception.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
      * Check the offsetLine method.
      * @param referenceLine OTSLine3D; the reference line
      * @param offset double; the offset
@@ -498,8 +532,7 @@ public final class Test
         double maxErrorClose = 0.002;
         try
         {
-            OTSLine3D.OFFSETMETHOD = offsetMethod;
-            OTSLine3D offsetLine = referenceLine.offsetLine(offset);
+            OTSLine3D offsetLine = offsetLine(referenceLine, offset, offsetMethod);
             if (null == offsetLine)
             {
                 if (printDetails)

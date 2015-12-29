@@ -46,8 +46,8 @@ public interface Node extends LocatableInterface, Serializable
 
     /** @return the links connected to this Node */
     Set<Link> getLinks();
-    
-    /** 
+
+    /**
      * Determine the links connecting from the previous link via this Node for the given GTU type.
      * @param gtuType the GTU type to determine the next links for
      * @param prevLink the incoming link to the Node

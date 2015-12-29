@@ -18,7 +18,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class HeightTag 
+class HeightTag
 {
     /** sOffst. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -27,11 +27,10 @@ class HeightTag
     /** inner. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel inner = null;
-    
+
     /** outer. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel outer = null;
-
 
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.
@@ -55,11 +54,11 @@ class HeightTag
             Node sOffst = attributes.getNamedItem("sOffst");
             if (sOffst != null)
                 heightTag.sOffst = new Length.Rel(Double.parseDouble(sOffst.getNodeValue().trim()), LengthUnit.METER);
-            
+
             Node inner = attributes.getNamedItem("inner");
             if (inner != null)
                 heightTag.inner = new Length.Rel(Double.parseDouble(inner.getNodeValue().trim()), LengthUnit.METER);
-            
+
             Node outer = attributes.getNamedItem("outer");
             if (outer != null)
                 heightTag.outer = new Length.Rel(Double.parseDouble(outer.getNodeValue().trim()), LengthUnit.METER);

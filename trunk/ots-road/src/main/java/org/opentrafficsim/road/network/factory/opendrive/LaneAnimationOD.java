@@ -14,11 +14,11 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.animation.PaintPolygons;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -99,12 +99,12 @@ public class LaneAnimationOD extends Renderable2D
                 path.lineTo(ar1.x - ref.x, -ar1.y + ref.y);
                 path.moveTo(end.x - ref.x, -end.y + ref.y);
                 Point2d ar2 =
-                        new Point2d(end.x + ar * Math.cos(start.getRotZ() + 1.25 * Math.PI), end.y + ar
-                            * Math.sin(start.getRotZ() + 1.25 * Math.PI));
-                    path.lineTo(ar2.x - ref.x, -ar2.y + ref.y);
+                    new Point2d(end.x + ar * Math.cos(start.getRotZ() + 1.25 * Math.PI), end.y + ar
+                        * Math.sin(start.getRotZ() + 1.25 * Math.PI));
+                path.lineTo(ar2.x - ref.x, -ar2.y + ref.y);
                 graphics.draw(path);
             }
-            
+
             if (dir.equals(LongitudinalDirectionality.DIR_MINUS) || dir.equals(LongitudinalDirectionality.DIR_BOTH))
             {
                 path = new Path2D.Double();
@@ -115,14 +115,14 @@ public class LaneAnimationOD extends Renderable2D
                 path.lineTo(ar1.x - ref.x, -ar1.y + ref.y);
                 path.moveTo(start.x - ref.x, -start.y + ref.y);
                 Point2d ar2 =
-                        new Point2d(start.x + ar * Math.cos(start.getRotZ() - 0.25 * Math.PI), start.y + ar
-                            * Math.sin(start.getRotZ() - 0.25 * Math.PI));
-                    path.lineTo(ar2.x - ref.x, -ar2.y + ref.y);
+                    new Point2d(start.x + ar * Math.cos(start.getRotZ() - 0.25 * Math.PI), start.y + ar
+                        * Math.sin(start.getRotZ() - 0.25 * Math.PI));
+                path.lineTo(ar2.x - ref.x, -ar2.y + ref.y);
                 graphics.draw(path);
             }
 
         }
-        catch (NetworkException exception)
+        catch (OTSGeometryException exception)
         {
             exception.printStackTrace();
         }
@@ -136,11 +136,11 @@ public class LaneAnimationOD extends Renderable2D
         PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour(), true);
         // paintLine(graphics, Color.yellow, lane.getLocation(), lane.getCenterLine());
         paintLine(graphics, Color.white, lane.getLocation(), lane.getContour());
-        paintArrow(graphics, Color.yellow, lane.getLocation(), lane.getCenterLine(), 0.25, lane
-            .getDirectionality(GTUType.ALL));
-        paintArrow(graphics, Color.green, lane.getLocation(), lane.getCenterLine(), 0.50, lane
-            .getDirectionality(GTUType.ALL));
-        paintArrow(graphics, Color.blue, lane.getLocation(), lane.getCenterLine(), 0.75, lane
-            .getDirectionality(GTUType.ALL));
+        paintArrow(graphics, Color.yellow, lane.getLocation(), lane.getCenterLine(), 0.25,
+            lane.getDirectionality(GTUType.ALL));
+        paintArrow(graphics, Color.green, lane.getLocation(), lane.getCenterLine(), 0.50,
+            lane.getDirectionality(GTUType.ALL));
+        paintArrow(graphics, Color.blue, lane.getLocation(), lane.getCenterLine(), 0.75,
+            lane.getDirectionality(GTUType.ALL));
     }
 }

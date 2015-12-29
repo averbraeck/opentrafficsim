@@ -3,10 +3,10 @@ package org.opentrafficsim.core.gtu;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 
 /**
@@ -23,7 +23,7 @@ public abstract class AbstractLinkBasedGTU extends AbstractGTU
 {
     /** */
     private static final long serialVersionUID = 20151114L;
-    
+
     /** the network in which this GTU is (initially) registered. */
     private OTSNetwork network;
 
@@ -35,16 +35,17 @@ public abstract class AbstractLinkBasedGTU extends AbstractGTU
      *            to go. It operates by instantiating tactical planners to do the work.
      * @param perception the perception unit that takes care of observing the environment of the GTU
      * @param initialLocation the initial location (and direction) of the GTU
+     * @param initialSpeed the initial speed of the GTU
      * @param network the network in which this GTU is (initially) registered
      * @throws SimRuntimeException when scheduling after the first move fails
-     * @throws NetworkException when the odometer fails to update (will never happen)
+     * @throws GTUException when the construction of the original waiting path fails
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     public AbstractLinkBasedGTU(final String id, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
         final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation,
-        final OTSNetwork network)
-        throws SimRuntimeException, NetworkException
+        final Speed initialSpeed, final OTSNetwork network) throws SimRuntimeException, GTUException
     {
-        super(id, gtuType, simulator, strategicalPlanner, perception, initialLocation, network);
+        super(id, gtuType, simulator, strategicalPlanner, perception, initialLocation, initialSpeed, network);
         this.network = network;
     }
 
@@ -64,5 +65,4 @@ public abstract class AbstractLinkBasedGTU extends AbstractGTU
         this.network = network;
     }
 
-    
 }

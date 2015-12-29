@@ -38,8 +38,8 @@ public final class PaintPolygons
      * @param line array of points
      * @param fill fill or just contour
      */
-    public static void paintMultiPolygon(final Graphics2D graphics, final Color color, final DirectedPoint referencePoint,
-        final OTSLine3D line, final boolean fill)
+    public static void paintMultiPolygon(final Graphics2D graphics, final Color color,
+        final DirectedPoint referencePoint, final OTSLine3D line, final boolean fill)
     {
         graphics.setColor(color);
         Path2D.Double path = new Path2D.Double();

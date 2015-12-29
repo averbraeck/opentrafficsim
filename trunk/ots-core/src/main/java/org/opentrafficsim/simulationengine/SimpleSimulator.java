@@ -34,8 +34,8 @@ public class SimpleSimulator extends OTSDEVSSimulator implements SimpleSimulator
     /**
      * Create a simulation engine without animation; the easy way. PauseOnError is set to true;
      * @param startTime OTSSimTimeDouble; the start time of the simulation
-     * @param warmupPeriod Time.Rel; the warm up period of the simulation (use new
-     *            Time.Rel(0, SECOND) if you don't know what this is)
+     * @param warmupPeriod Time.Rel; the warm up period of the simulation (use new Time.Rel(0, SECOND) if you don't know what
+     *            this is)
      * @param runLength Time.Rel; the duration of the simulation
      * @param model OTSModelInterface; the simulation to execute
      * @throws SimRuntimeException on ???

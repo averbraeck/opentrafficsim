@@ -329,28 +329,11 @@ public final class OTSBufferingJTS
         if (bufferOffset < precision) // if this is not added, and offset = 1E-16: CRASH
         {
             // return a copy of the reference line
-            try
-            {
-                return new OTSLine3D(referenceCoordinates);
-            }
-            catch (OTSGeometryException exception)
-            {
-                // System.err.println("CANNOT HAPPEN");
-                throw new Error("Caught impossible exception while creating OTSLine3D: " + exception.getMessage());
-            }
+            return new OTSLine3D(referenceCoordinates);
         }
         Geometry geometryLine = referenceLine.getLineString();
         Coordinate[] bufferCoordinates =
             geometryLine.buffer(bufferOffset, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
-
-        // try
-        // {
-        // System.out.println(new OTSLine3D(bufferCoordinates).toExcel());
-        // }
-        // catch (NetworkException exception1)
-        // {
-        // exception1.printStackTrace();
-        // }
 
         // Z coordinates may be NaN at this point
 
@@ -477,15 +460,7 @@ public final class OTSBufferingJTS
             coordinates = new Coordinate[coordinateList2.size()];
             coordinateList2.toArray(coordinates);
         }
-        try
-        {
-            return new OTSLine3D(coordinates);
-        }
-        catch (OTSGeometryException exception)
-        {
-            // System.err.println("CANNOT HAPPEN");
-            throw new Error("Caught impossible exception in OTSLine3D: " + exception.getMessage());
-        }
+        return new OTSLine3D(coordinates);
     }
 
     /**
@@ -559,18 +534,7 @@ public final class OTSBufferingJTS
         {
             resultCoordinates[index] = out.get(index);
         }
-        try
-        {
-            // System.out.println(OTSGeometry.printCoordinates("#offset line: \nc0,1,0\n# offset at start is " + offsetAtStart
-            // + " at end is " + offsetAtEnd + "\n#", new OTSLine3D(resultCoordinates), "\n   "));
-
-            return new OTSLine3D(resultCoordinates);
-        }
-        catch (OTSGeometryException exception)
-        {
-            // System.err.println("CANNOT HAPPEN");
-            throw new Error("Caught impossible exception in OTSLine3D " + exception.getMessage());
-        }
+        return new OTSLine3D(resultCoordinates);
     }
 
     /**

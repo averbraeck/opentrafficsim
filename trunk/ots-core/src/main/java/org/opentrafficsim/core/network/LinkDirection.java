@@ -16,7 +16,7 @@ public class LinkDirection
 {
     /** the link. */
     private final Link link;
-    
+
     /** the direction on the link, with or against the design line. */
     private final GTUDirectionality direction;
 
@@ -48,4 +48,3 @@ public class LinkDirection
     }
 
 }
-

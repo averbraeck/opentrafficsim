@@ -3,8 +3,6 @@ package org.opentrafficsim.road.gtu.lane.tactical.following;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Time;
 
-
-
 /**
  * Container for two instances of an AccelerationStep. One for the GTU that is deciding its move (the leader); one for the GTU
  * that will/would be the (new) follower of that GTU.
@@ -16,7 +14,7 @@ import org.djunits.value.vdouble.scalar.Time;
  *          initial version 11 mrt. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class DualAccelerationStep 
+public class DualAccelerationStep
 {
     /** AccelerationStep for the leader. */
     private final AccelerationStep leaderAccelerationStep;

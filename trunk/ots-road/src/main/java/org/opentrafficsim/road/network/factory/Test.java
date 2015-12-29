@@ -29,10 +29,9 @@ public class Test
         System.out.println(xy[0] + ", " + xy[1]);
         System.out.println();
         xy = latLonToXY.doubleTransform(-122.0256091728831, 37.40897623275873); // minx,y
-        System.out.println(xy[0] + ", " + xy[1]); 
+        System.out.println(xy[0] + ", " + xy[1]);
         xy = latLonToXY.doubleTransform(-122.0246091728831, 37.40997623275873); // maxx,y
         System.out.println(xy[0] + ", " + xy[1]);
     }
 
 }
-

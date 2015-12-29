@@ -7,7 +7,7 @@ import javax.naming.NamingException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.road.gtu.lane.object.animation.TrafficLightAnimation;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -29,21 +29,24 @@ public class OldTrafficLight extends TrafficLight
      * @param lane
      * @param position
      * @param simulator
-     * @throws NetworkException 
+     * @throws OTSGeometryException
      */
     public OldTrafficLight(final String id, final Lane lane, final Length.Rel position,
-        final OTSDEVSSimulatorInterface simulator) throws NetworkException
+        final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException
     {
         super(AbstractCSEObject.createRectangleOnCSE(lane, position, new Length.Rel(0.5, LengthUnit.METER), lane
-            .getWidth(position).multiplyBy(0.8), new Length.Rel(0.5, LengthUnit.METER)), new Length.Rel(0.5, LengthUnit.METER), TrafficLightColor.RED);
-        
+            .getWidth(position).multiplyBy(0.8), new Length.Rel(0.5, LengthUnit.METER)), new Length.Rel(0.5,
+            LengthUnit.METER), TrafficLightColor.RED);
+
         try
         {
             new TrafficLightAnimation(this, simulator);
-        } catch (RemoteException exception)
+        }
+        catch (RemoteException exception)
         {
             exception.printStackTrace();
-        } catch (NamingException exception)
+        }
+        catch (NamingException exception)
         {
             exception.printStackTrace();
         }

@@ -284,9 +284,9 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
             CrossSectionLink endLink = LaneFactory.makeLink("endLink", to, end, null);
             // No overtaking, single (sink) lane
             Lane sinkLane =
-                new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0), this.lane
-                    .getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
-                    LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.None());
+                new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
+                    this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0),
+                    laneType, LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.None());
             Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, METER), this.simulator);
             sinkLane.addSensor(sensor, GTUType.ALL);
         }

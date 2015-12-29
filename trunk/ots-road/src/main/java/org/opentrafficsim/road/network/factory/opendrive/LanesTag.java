@@ -6,7 +6,6 @@ import java.util.List;
 import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
-import org.opentrafficsim.road.network.lane.Lane;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -38,7 +37,7 @@ class LanesTag
     @SuppressWarnings("checkstyle:needbraces")
     static void parseLanes(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final RoadTag roadTag)
         throws SAXException, NetworkException
-    {        
+    {
         int laneSectionCount = 0;
         LanesTag lanesTag = new LanesTag();
 
@@ -61,7 +60,7 @@ class LanesTag
      */
     public LaneSectionTag findDrivingLaneSec(Rel s)
     {
-        for(int i=0; i< this.laneSectionTags.size(); i++)
+        for (int i = 0; i < this.laneSectionTags.size(); i++)
         {
             if (i < this.laneSectionTags.size() - 1)
             {
@@ -81,7 +80,7 @@ class LanesTag
                     return currentSec;
                 }
             }
-        }        
+        }
         return null;
     }
 }

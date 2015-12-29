@@ -32,9 +32,9 @@ public final class IDMPropertySet
     /**
      * Create a CompoundProperty for the IDM or IDMPlus parameters for a specified car type.
      * @param carType String; the type of the car
-     * @param a DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum acceleration of the car
-     * @param b DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum comfortable deceleration of the car
-     * @param s0 DoubleScalar.Rel&lt;LengthUnit&gt;; the stationary distance headway
+     * @param a Acceleration; the maximum acceleration of the car
+     * @param b Acceleration; the maximum comfortable deceleration of the car
+     * @param s0 Length.Rel; the stationary distance headway
      * @param tSafe Time.Rel; the time headway
      * @param displayPriority int; the display priority of the returned CompoundProperty
      * @return CompoundProperty
@@ -58,7 +58,7 @@ public final class IDMPropertySet
     /**
      * Return the maximum acceleration.
      * @param set CompoundProperty (should have been created with makeIDMPropertySet)
-     * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;
+     * @return Acceleration
      */
     public static Acceleration getA(final CompoundProperty set)
     {
@@ -68,7 +68,7 @@ public final class IDMPropertySet
     /**
      * Return the maximum comfortable deceleration.
      * @param set CompoundProperty (should have been created with makeIDMPropertySet)
-     * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;
+     * @return Acceleration
      */
     public static Acceleration getB(final CompoundProperty set)
     {
@@ -78,7 +78,7 @@ public final class IDMPropertySet
     /**
      * Return the static headway.
      * @param set CompoundProperty (should have been created with makeIDMPropertySet)
-     * @return DoubleScalar.Abs&lt;LengthUnit&gt;
+     * @return Length.Rel
      */
     public static Length.Rel getS0(final CompoundProperty set)
     {
@@ -106,13 +106,13 @@ public final class IDMPropertySet
         AbstractProperty<?> pp = set.findByShortName(name);
         if (null == pp)
         {
-            throw new Error("Cannot find sub property " + name);
+            throw new RuntimeException("Cannot find sub property " + name);
         }
         if (pp instanceof ContinuousProperty)
         {
             return ((ContinuousProperty) pp).getValue();
         }
-        throw new Error("Cannot find Continuous sub property " + name + " in " + set.getShortName());
+        throw new RuntimeException("Cannot find Continuous sub property " + name + " in " + set.getShortName());
     }
 
 }

@@ -52,7 +52,7 @@ public class SwitchableGTUColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public final Color getColor(final GTU gtu) 
+    public final Color getColor(final GTU gtu)
     {
         return this.activeColorer.getColor(gtu);
     }

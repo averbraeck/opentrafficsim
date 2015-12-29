@@ -5,12 +5,12 @@ import static org.junit.Assert.assertEquals;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Length;
 import org.junit.Test;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.network.LinkLocation;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -29,10 +29,10 @@ public class LinkLocationTest implements UNITS
 {
     /**
      * Test constructor and verify all getters.
-     * @throws NetworkException
+     * @throws OTSGeometryException
      */
     @Test
-    public void linkLocationTest() throws NetworkException
+    public void linkLocationTest() throws OTSGeometryException
     {
         // Preparations
         OTSNode nodeFrom = new OTSNode("From", new OTSPoint3D(0, 0, 0));

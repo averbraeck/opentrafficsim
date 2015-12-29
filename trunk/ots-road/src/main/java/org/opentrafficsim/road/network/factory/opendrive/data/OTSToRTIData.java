@@ -10,11 +10,10 @@ import org.opentrafficsim.road.car.LaneBasedIndividualCar;
  * <br />
  * Copyright (c) 2013-2014 Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving. All rights reserved. <br />
  * Some parts of the software (c) 2011-2014 TU Delft, Faculty of TBM, Systems & Simulation <br />
- * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk
- * Onderzoek TNO (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten
- * Binnenvaart, Ab Ovo Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en
- * Leefomgeving, including the right to sub-license sources and derived products to third parties. <br />
- * 
+ * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk Onderzoek TNO
+ * (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten Binnenvaart, Ab Ovo
+ * Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving, including the
+ * right to sub-license sources and derived products to third parties. <br />
  * @version Mar 24, 2013 <br>
  * @author <a href="http://tudelft.nl/averbraeck">Alexander Verbraeck </a>
  * @version SVN $Revision: 31 $ $Author: averbraeck $
@@ -24,90 +23,94 @@ public class OTSToRTIData
 {
     /** */
     private long timeStamp;
-    
+
     /** */
     private int NumCars = 52;
-    
+
     /** */
     private int NumPedestrians = 12;
-    
+
     /** */
     private int NumObjects = 11;
-    
 
-    ///trafficState
+    // /trafficState
     /** */
     private List<Position> exoPos = new ArrayList<Position>();
-    
+
     /** */
     private List<Orientation> exoOri = new ArrayList<Orientation>();
-    /** */
-    private List<Velocity> exoVel = new ArrayList<Velocity>();//global reference frame
 
-    
-    ///padestrianState
+    /** */
+    private List<Velocity> exoVel = new ArrayList<Velocity>();// global reference frame
+
+    // /padestrianState
     /** */
     private List<Position> pedPos = new ArrayList<Position>();
+
     /** */
     private List<Orientation> pedOri = new ArrayList<Orientation>();
-    /** */
-    private List<Velocity> pedVel = new ArrayList<Velocity>();//global reference frame
 
-    
-    ///objectState
+    /** */
+    private List<Velocity> pedVel = new ArrayList<Velocity>();// global reference frame
+
+    // /objectState
     /** */
     private List<Position> objPos = new ArrayList<Position>();
+
     /** */
     private List<Orientation> objOri = new ArrayList<Orientation>();
+
     /** */
-    private List<Velocity> objVel = new ArrayList<Velocity>();//global reference frame    
-    
-            
+    private List<Velocity> objVel = new ArrayList<Velocity>();// global reference frame
+
     /**
-     * @param rtiCars 
-     * @throws RemoteException 
+     * @param rtiCars
+     * @throws RemoteException
      */
     public OTSToRTIData(List<LaneBasedIndividualCar> rtiCars) throws RemoteException
     {
-        //this.setTimeStamp(System.currentTimeMillis());
-        
-        for(int i = 0; i<this.NumCars; i++)
+        // this.setTimeStamp(System.currentTimeMillis());
+
+        for (int i = 0; i < this.NumCars; i++)
         {
-            Position position = new Position(rtiCars.get(i).getLocation().getY(), rtiCars.get(i).getLocation().getX(), 0.15);
+            Position position =
+                new Position(rtiCars.get(i).getLocation().getY(), rtiCars.get(i).getLocation().getX(), 0.15);
             this.exoPos.add(position);
-            
-            Orientation orientation = new Orientation(rtiCars.get(i).getLocation().getRotX(), rtiCars.get(i).getLocation().getRotY(), Math.PI/2 - rtiCars.get(i).getLocation().getRotZ());
+
+            Orientation orientation =
+                new Orientation(rtiCars.get(i).getLocation().getRotX(), rtiCars.get(i).getLocation().getRotY(), Math.PI
+                    / 2 - rtiCars.get(i).getLocation().getRotZ());
             this.exoOri.add(orientation);
-            
+
             Velocity vel = new Velocity();
             this.exoVel.add(vel);
         }
-        
-        for(int i = 0; i<this.NumPedestrians; i++)
+
+        for (int i = 0; i < this.NumPedestrians; i++)
         {
             Position position = new Position();
             this.pedPos.add(position);
-            
+
             Orientation orientation = new Orientation();
             this.pedOri.add(orientation);
-            
+
             Velocity vel = new Velocity();
             this.pedVel.add(vel);
         }
-        
-        for(int i = 0; i<this.NumObjects; i++)
+
+        for (int i = 0; i < this.NumObjects; i++)
         {
             Position position = new Position();
             this.objPos.add(position);
-            
+
             Orientation orientation = new Orientation();
             this.objOri.add(orientation);
-            
+
             Velocity vel = new Velocity();
             this.objVel.add(vel);
         }
     }
-    
+
     /**
      * 
      */
@@ -122,6 +125,7 @@ public class OTSToRTIData
     {
         return this.exoPos;
     }
+
     /**
      * @return exoOri
      */
@@ -129,6 +133,7 @@ public class OTSToRTIData
     {
         return this.exoOri;
     }
+
     /**
      * @return exoVel
      */
@@ -136,6 +141,7 @@ public class OTSToRTIData
     {
         return this.exoVel;
     }
+
     /**
      * @return pedPos
      */
@@ -143,6 +149,7 @@ public class OTSToRTIData
     {
         return this.pedPos;
     }
+
     /**
      * @return pedOri
      */
@@ -150,6 +157,7 @@ public class OTSToRTIData
     {
         return this.pedOri;
     }
+
     /**
      * @return pedVel
      */
@@ -157,6 +165,7 @@ public class OTSToRTIData
     {
         return this.pedVel;
     }
+
     /**
      * @return objPos
      */
@@ -164,6 +173,7 @@ public class OTSToRTIData
     {
         return this.objPos;
     }
+
     /**
      * @return objOri
      */
@@ -171,6 +181,7 @@ public class OTSToRTIData
     {
         return this.objOri;
     }
+
     /**
      * @return objVel
      */
@@ -178,6 +189,7 @@ public class OTSToRTIData
     {
         return this.objVel;
     }
+
     /**
      * @return numCars
      */
@@ -185,6 +197,7 @@ public class OTSToRTIData
     {
         return this.NumCars;
     }
+
     /**
      * @param numCars set numCars
      */
@@ -192,6 +205,7 @@ public class OTSToRTIData
     {
         this.NumCars = numCars;
     }
+
     /**
      * @return numPedestrians
      */
@@ -199,6 +213,7 @@ public class OTSToRTIData
     {
         return this.NumPedestrians;
     }
+
     /**
      * @param numPedestrians set numPedestrians
      */
@@ -206,6 +221,7 @@ public class OTSToRTIData
     {
         this.NumPedestrians = numPedestrians;
     }
+
     /**
      * @return numObjects
      */
@@ -213,6 +229,7 @@ public class OTSToRTIData
     {
         return this.NumObjects;
     }
+
     /**
      * @param numObjects set numObjects
      */

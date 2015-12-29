@@ -24,7 +24,7 @@ class LinkTag
     /** predecessor id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String predecessorId = null;
-    
+
     /** predecessor Type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String predecessorType = null;
@@ -36,7 +36,7 @@ class LinkTag
     /** successor id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String successorId = null;
-    
+
     /** successor Type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String successorType = null;
@@ -92,12 +92,15 @@ class LinkTag
 
                 Node elementId = attributes.getNamedItem("elementId");
                 if (elementId == null)
-                    throw new SAXException("ROAD.LINK.PREDECESSOR: missing attribute elementId for ROAD.ID=" + roadTag.id);
+                    throw new SAXException("ROAD.LINK.PREDECESSOR: missing attribute elementId for ROAD.ID="
+                        + roadTag.id);
 
                 Node elementType = attributes.getNamedItem("elementType");
                 if (elementType == null)
-                    throw new SAXException("ROAD.LINK.PREDECESSOR: missing attribute elementType for ROAD.ID=" + roadTag.id);
-                if ("road".equals(elementType.getNodeValue().trim()) || "junction".equals(elementType.getNodeValue().trim()))
+                    throw new SAXException("ROAD.LINK.PREDECESSOR: missing attribute elementType for ROAD.ID="
+                        + roadTag.id);
+                if ("road".equals(elementType.getNodeValue().trim())
+                    || "junction".equals(elementType.getNodeValue().trim()))
                 {
                     linkTag.predecessorType = elementType.getNodeValue().trim();
                     linkTag.predecessorId = elementId.getNodeValue().trim();
@@ -108,8 +111,9 @@ class LinkTag
 
                 Node contactPoint = attributes.getNamedItem("contactPoint");
                 if (contactPoint != null)
-                    //System.out.println("ROAD " + roadTag.id + " has no contactPoint for PREDECESSOR " + elementType.getNodeValue().trim() + elementId.getNodeValue().trim());
-                //else
+                // System.out.println("ROAD " + roadTag.id + " has no contactPoint for PREDECESSOR " +
+                // elementType.getNodeValue().trim() + elementId.getNodeValue().trim());
+                // else
                 {
                     if ("start".equals(contactPoint.getNodeValue().trim()))
                         linkTag.predecessorContactPoint = ContactPointEnum.START;
@@ -137,8 +141,10 @@ class LinkTag
 
                 Node elementType = attributes.getNamedItem("elementType");
                 if (elementType == null)
-                    throw new SAXException("ROAD.LINK.SUCCESSOR: missing attribute elementType for ROAD.ID=" + roadTag.id);
-                if ("road".equals(elementType.getNodeValue().trim()) || "junction".equals(elementType.getNodeValue().trim()))
+                    throw new SAXException("ROAD.LINK.SUCCESSOR: missing attribute elementType for ROAD.ID="
+                        + roadTag.id);
+                if ("road".equals(elementType.getNodeValue().trim())
+                    || "junction".equals(elementType.getNodeValue().trim()))
                 {
                     linkTag.successorType = elementType.getNodeValue().trim();
                     linkTag.successorId = elementId.getNodeValue().trim();
@@ -149,8 +155,9 @@ class LinkTag
 
                 Node contactPoint = attributes.getNamedItem("contactPoint");
                 if (contactPoint != null)
-                    //System.out.println("ROAD " + roadTag.id + " has no contactPoint for SUCCESSOR " + elementType.getNodeValue().trim() + elementId.getNodeValue().trim());
-                //else
+                // System.out.println("ROAD " + roadTag.id + " has no contactPoint for SUCCESSOR " +
+                // elementType.getNodeValue().trim() + elementId.getNodeValue().trim());
+                // else
                 {
                     if ("start".equals(contactPoint.getNodeValue().trim()))
                         linkTag.successorContactPoint = ContactPointEnum.START;

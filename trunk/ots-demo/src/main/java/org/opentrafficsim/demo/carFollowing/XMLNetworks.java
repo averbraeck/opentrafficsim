@@ -139,8 +139,8 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
         {
             TrajectoryPlot tp =
-                new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), new Time.Rel(0.5, SECOND), this.model
-                    .getPath(graphIndex));
+                new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), new Time.Rel(0.5, SECOND),
+                    this.model.getPath(graphIndex));
             tp.setTitle("Trajectory Graph");
             tp.setExtendedState(Frame.MAXIMIZED_BOTH);
             LaneBasedGTUSampler graph = tp;
@@ -416,8 +416,9 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             }
             else
             {
-                setupSink(LaneFactory.makeMultiLane("SecondVia to end2", secondVia, end2, null, lanesOnBranch,
-                    lanesOnCommon - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator), laneType);
+                setupSink(
+                    LaneFactory.makeMultiLane("SecondVia to end2", secondVia, end2, null, lanesOnBranch, lanesOnCommon
+                        - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator), laneType);
                 List<LaneBasedRouteProbability> routeProbabilities = new ArrayList<>();
                 // ArrayList<Node> mainRoute = new ArrayList<Node>();
                 // mainRoute.add(firstVia); mainRoute.add(secondVia); mainRoute.add(end);
@@ -509,8 +510,8 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         {
             // Overtaking left and right allowed on the sinkLane
             Lane sinkLane =
-                new Lane(endLink, lane.getId() + "." + "sinkLane", lane.getLateralCenterPosition(1.0), lane
-                    .getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType,
+                new Lane(endLink, lane.getId() + "." + "sinkLane", lane.getLateralCenterPosition(1.0),
+                    lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType,
                     LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.LeftAndRight());
             Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, METER), this.simulator);
             sinkLane.addSensor(sensor, GTUType.ALL);

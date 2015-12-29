@@ -18,7 +18,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class RoadMarkTag 
+class RoadMarkTag
 {
     /** sOffst. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -27,19 +27,19 @@ class RoadMarkTag
     /** type */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String type = null;
-    
+
     /** weight */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String weight = null;
-    
+
     /** color */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String color = null;
-    
+
     /** width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel width = null;
-    
+
     /** laneChange */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String laneChange = null;
@@ -66,31 +66,30 @@ class RoadMarkTag
             Node sOffst = attributes.getNamedItem("sOffst");
             if (sOffst != null)
                 roadMarkTag.sOffst = new Length.Rel(Double.parseDouble(sOffst.getNodeValue().trim()), LengthUnit.METER);
-            
+
             Node type = attributes.getNamedItem("type");
             if (type != null)
                 roadMarkTag.type = type.getNodeValue().trim();
-           
+
             Node weight = attributes.getNamedItem("weight");
             if (weight != null)
                 roadMarkTag.weight = weight.getNodeValue().trim();
-            
+
             Node color = attributes.getNamedItem("color");
             if (color != null)
                 roadMarkTag.color = color.getNodeValue().trim();
-          
+
             Node width = attributes.getNamedItem("width");
             if (width != null)
                 roadMarkTag.width = new Length.Rel(Double.parseDouble(width.getNodeValue().trim()), LengthUnit.METER);
-            
+
             Node laneChange = attributes.getNamedItem("laneChange");
             if (laneChange != null)
                 roadMarkTag.laneChange = laneChange.getNodeValue().trim();
 
-            laneTag.roadMarkTags.add(roadMarkCount, roadMarkTag); 
+            laneTag.roadMarkTags.add(roadMarkCount, roadMarkTag);
             roadMarkCount++;
         }
-
 
     }
 }

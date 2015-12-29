@@ -502,7 +502,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
 
         /**
          * Add one Car detection to this Sample.
-         * @param speed DoubleScalar.Rel&lt;SpeedUnit&gt;; the detected speed
+         * @param speed Speed; the detected speed
          */
         public void addData(final Speed speed)
         {
@@ -592,8 +592,7 @@ public class FundamentalDiagram extends JFrame implements XYDataset, ActionListe
         /**
          * Construct a FundamentalDiagramSensor.
          * @param lane Lane; the Lane on which the new FundamentalDiagramSensor is to be added
-         * @param longitudinalPosition DoubleScalar.Abs&lt;LengthUnit&gt;; longitudinal position on the Lane of the new
-         *            FundamentalDiagramSensor
+         * @param longitudinalPosition Length.Rel; longitudinal position on the Lane of the new FundamentalDiagramSensor
          * @param simulator simulator to allow animation
          * @throws NetworkException on network inconsistency
          */

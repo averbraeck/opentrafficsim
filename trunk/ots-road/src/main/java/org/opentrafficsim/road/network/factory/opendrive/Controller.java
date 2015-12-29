@@ -16,7 +16,6 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLight;
-import org.opentrafficsim.road.gtu.lane.object.TrafficLight;
 import org.opentrafficsim.road.gtu.lane.object.TrafficLight.TrafficLightColor;
 
 /**
@@ -32,17 +31,16 @@ import org.opentrafficsim.road.gtu.lane.object.TrafficLight.TrafficLightColor;
  */
 public class Controller
 {
-    
+
     /** */
     private OTSDEVSSimulatorInterface simulator;
-    
+
     /** */
     private String id;
-    
+
     /** */
     private Map<Integer, Set<AbstractTrafficLight>> trafficLights = new HashMap<Integer, Set<AbstractTrafficLight>>();
-    
-    
+
     /**
      * @param name the name of the OnOffTrafficLight
      * @param simulator the simulator to avoid NullPointerExceptions
@@ -50,14 +48,15 @@ public class Controller
      * @throws NamingException if an error occurs when adding the animation handler
      * @throws NetworkException when the GTU cannot be placed on the given lane
      */
-    public Controller(final String name, final OTSDEVSSimulatorInterface simulator) throws GTUException, NetworkException, NamingException
+    public Controller(final String name, final OTSDEVSSimulatorInterface simulator) throws GTUException,
+        NetworkException, NamingException
     {
         this.id = name;
         this.simulator = simulator;
 
         try
         {
-            //new DefaultBlockOnOffAnimation(this, getSimulator());
+            // new DefaultBlockOnOffAnimation(this, getSimulator());
             // animation
             if (simulator instanceof OTSAnimatorInterface)
             {
@@ -77,136 +76,169 @@ public class Controller
     protected void unBlock()
     {
         try
-        {            
+        {
             this.simulator.scheduleEventRel(new Time.Rel(96.0, TimeUnit.SECOND), this, this, "unBlock", null);
         }
         catch (SimRuntimeException exception)
         {
             exception.printStackTrace();
         }
-        
-        if(this.trafficLights.containsKey(3))
-        {
-            for(AbstractTrafficLight light: this.trafficLights.get(3))
-            {
-                try
-                {
-                    //System.out.println("traffic light 3 at time " + this.simulator.getSimulatorTime() + " is " + ((TrafficLight) light).getTrafficLightColor().toString());
-                    this.simulator.scheduleEventRel(new Time.Rel(0.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
-                    this.simulator.scheduleEventRel(new Time.Rel(15.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
-                    this.simulator.scheduleEventRel(new Time.Rel(24.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
-                } catch (SimRuntimeException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
-        }
-        if(this.trafficLights.containsKey(4))
-        {
-            for(AbstractTrafficLight light: this.trafficLights.get(4))
-            {
-                try
-                {
-                    this.simulator.scheduleEventRel(new Time.Rel(0.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
-                    this.simulator.scheduleEventRel(new Time.Rel(15.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
-                    this.simulator.scheduleEventRel(new Time.Rel(24.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
-                } catch (SimRuntimeException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
-        }
-        if(this.trafficLights.containsKey(6))
-        {
-            for(AbstractTrafficLight light: this.trafficLights.get(6))
-            {
-                try
-                {
-//                    System.out.println("traffic light 6 at time " + this.simulator.getSimulatorTime());
 
-                    this.simulator.scheduleEventRel(new Time.Rel(24.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
-                    this.simulator.scheduleEventRel(new Time.Rel(39.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
-                    this.simulator.scheduleEventRel(new Time.Rel(48.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
-                } catch (SimRuntimeException exception)
+        if (this.trafficLights.containsKey(3))
+        {
+            for (AbstractTrafficLight light : this.trafficLights.get(3))
+            {
+                try
+                {
+                    // System.out.println("traffic light 3 at time " + this.simulator.getSimulatorTime() + " is " +
+                    // ((TrafficLight) light).getTrafficLightColor().toString());
+                    this.simulator.scheduleEventRel(new Time.Rel(0.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
+                    this.simulator.scheduleEventRel(new Time.Rel(15.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
+                    this.simulator.scheduleEventRel(new Time.Rel(24.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
+                }
+                catch (SimRuntimeException exception)
                 {
                     exception.printStackTrace();
                 }
             }
         }
-        if(this.trafficLights.containsKey(7))
+        if (this.trafficLights.containsKey(4))
         {
-            for(AbstractTrafficLight light: this.trafficLights.get(7))
+            for (AbstractTrafficLight light : this.trafficLights.get(4))
             {
                 try
                 {
-                    this.simulator.scheduleEventRel(new Time.Rel(24.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
-                    this.simulator.scheduleEventRel(new Time.Rel(39.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
-                    this.simulator.scheduleEventRel(new Time.Rel(48.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
-                } catch (SimRuntimeException exception)
+                    this.simulator.scheduleEventRel(new Time.Rel(0.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
+                    this.simulator.scheduleEventRel(new Time.Rel(15.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
+                    this.simulator.scheduleEventRel(new Time.Rel(24.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
+                }
+                catch (SimRuntimeException exception)
                 {
                     exception.printStackTrace();
                 }
             }
         }
-        if(this.trafficLights.containsKey(9))
+        if (this.trafficLights.containsKey(6))
         {
-            for(AbstractTrafficLight light: this.trafficLights.get(9))
+            for (AbstractTrafficLight light : this.trafficLights.get(6))
             {
                 try
                 {
-//                    System.out.println("traffic light 9 at time " + this.simulator.getSimulatorTime());
+                    // System.out.println("traffic light 6 at time " + this.simulator.getSimulatorTime());
 
-                    this.simulator.scheduleEventRel(new Time.Rel(48.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
-                    this.simulator.scheduleEventRel(new Time.Rel(63.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
-                    this.simulator.scheduleEventRel(new Time.Rel(72.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
-                } catch (SimRuntimeException exception)
+                    this.simulator.scheduleEventRel(new Time.Rel(24.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
+                    this.simulator.scheduleEventRel(new Time.Rel(39.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
+                    this.simulator.scheduleEventRel(new Time.Rel(48.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
+                }
+                catch (SimRuntimeException exception)
                 {
                     exception.printStackTrace();
                 }
             }
         }
-        if(this.trafficLights.containsKey(10))
+        if (this.trafficLights.containsKey(7))
         {
-            for(AbstractTrafficLight light: this.trafficLights.get(10))
+            for (AbstractTrafficLight light : this.trafficLights.get(7))
             {
                 try
                 {
-                    this.simulator.scheduleEventRel(new Time.Rel(48.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
-                    this.simulator.scheduleEventRel(new Time.Rel(63.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
-                    this.simulator.scheduleEventRel(new Time.Rel(72.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
-                } catch (SimRuntimeException exception)
+                    this.simulator.scheduleEventRel(new Time.Rel(24.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
+                    this.simulator.scheduleEventRel(new Time.Rel(39.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
+                    this.simulator.scheduleEventRel(new Time.Rel(48.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
+                }
+                catch (SimRuntimeException exception)
                 {
                     exception.printStackTrace();
                 }
             }
         }
-        if(this.trafficLights.containsKey(12))
+        if (this.trafficLights.containsKey(9))
         {
-            for(AbstractTrafficLight light: this.trafficLights.get(12))
+            for (AbstractTrafficLight light : this.trafficLights.get(9))
             {
                 try
                 {
-//                    System.out.println("traffic light 12 at time " + this.simulator.getSimulatorTime());
+                    // System.out.println("traffic light 9 at time " + this.simulator.getSimulatorTime());
 
-                    this.simulator.scheduleEventRel(new Time.Rel(72.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
-                    this.simulator.scheduleEventRel(new Time.Rel(87.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
-                    this.simulator.scheduleEventRel(new Time.Rel(96.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
-                } catch (SimRuntimeException exception)
+                    this.simulator.scheduleEventRel(new Time.Rel(48.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
+                    this.simulator.scheduleEventRel(new Time.Rel(63.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
+                    this.simulator.scheduleEventRel(new Time.Rel(72.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
+                }
+                catch (SimRuntimeException exception)
                 {
                     exception.printStackTrace();
                 }
             }
         }
-        if(this.trafficLights.containsKey(13))
+        if (this.trafficLights.containsKey(10))
         {
-            for(AbstractTrafficLight light: this.trafficLights.get(13))
+            for (AbstractTrafficLight light : this.trafficLights.get(10))
             {
                 try
                 {
-                    this.simulator.scheduleEventRel(new Time.Rel(72.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
-                    this.simulator.scheduleEventRel(new Time.Rel(87.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
-                    this.simulator.scheduleEventRel(new Time.Rel(96.0, TimeUnit.SECOND), this, light, "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
-                } catch (SimRuntimeException exception)
+                    this.simulator.scheduleEventRel(new Time.Rel(48.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
+                    this.simulator.scheduleEventRel(new Time.Rel(63.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
+                    this.simulator.scheduleEventRel(new Time.Rel(72.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
+                }
+                catch (SimRuntimeException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+        }
+        if (this.trafficLights.containsKey(12))
+        {
+            for (AbstractTrafficLight light : this.trafficLights.get(12))
+            {
+                try
+                {
+                    // System.out.println("traffic light 12 at time " + this.simulator.getSimulatorTime());
+
+                    this.simulator.scheduleEventRel(new Time.Rel(72.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
+                    this.simulator.scheduleEventRel(new Time.Rel(87.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
+                    this.simulator.scheduleEventRel(new Time.Rel(96.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
+                }
+                catch (SimRuntimeException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+        }
+        if (this.trafficLights.containsKey(13))
+        {
+            for (AbstractTrafficLight light : this.trafficLights.get(13))
+            {
+                try
+                {
+                    this.simulator.scheduleEventRel(new Time.Rel(72.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.GREEN});
+                    this.simulator.scheduleEventRel(new Time.Rel(87.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.YELLOW});
+                    this.simulator.scheduleEventRel(new Time.Rel(96.0, TimeUnit.SECOND), this, light,
+                        "setTrafficLightColor", new Object[]{TrafficLightColor.RED});
+                }
+                catch (SimRuntimeException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -220,7 +252,7 @@ public class Controller
      */
     public void addTrafficLight(int sequence2, AbstractTrafficLight trafficLight)
     {
-        if(!this.trafficLights.containsKey(sequence2))
+        if (!this.trafficLights.containsKey(sequence2))
         {
             Set<AbstractTrafficLight> trafficLightsSet = new HashSet<AbstractTrafficLight>();
             this.trafficLights.put(sequence2, trafficLightsSet);

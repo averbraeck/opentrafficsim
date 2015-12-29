@@ -25,7 +25,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class GlobalTag 
+class GlobalTag
 {
     /** default speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -95,7 +95,7 @@ class GlobalTag
             if (lkp != null)
                 parser.globalTag.defaultLaneKeepingPolicy =
                     LaneAttributes.parseLaneKeepingPolicy(lkp.getNodeValue().trim());
-            
+
             Node oc = attributes.getNamedItem("DEFAULTOVERTAKING");
             if (oc != null)
                 parser.globalTag.defaultOvertakingConditions =

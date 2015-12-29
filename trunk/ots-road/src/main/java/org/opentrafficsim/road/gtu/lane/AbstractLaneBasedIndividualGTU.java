@@ -7,6 +7,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -57,6 +58,7 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GTUException when a parameter is invalid
+     * @throws OTSGeometryException when the initial path is wrong
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractLaneBasedIndividualGTU(final String id, final GTUType gtuType,
@@ -64,7 +66,7 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
         final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
         final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
         final LanePerception perception, final OTSNetwork network) throws NetworkException, SimRuntimeException,
-        GTUException
+        GTUException, OTSGeometryException
     {
         super(id, gtuType, initialLongitudinalPositions, initialSpeed, simulator, strategicalPlanner, perception,
             network);

@@ -147,14 +147,14 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
                         simulator);
                 OTSNode destination =
                     new OTSNode("Destination", new OTSPoint3D(1000, targetLaneConfiguration > 0 ? 100 : -100, 0));
-                LaneFactory.makeMultiLane("DestinationLink", branchPoint, destination, null, Math
-                    .abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? 0 : LANECOUNT
-                    + targetLaneConfiguration, 0, laneType, speedLimit, simulator);
+                LaneFactory.makeMultiLane("DestinationLink", branchPoint, destination, null,
+                    Math.abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? 0 : LANECOUNT
+                        + targetLaneConfiguration, 0, laneType, speedLimit, simulator);
                 OTSNode nonDestination =
                     new OTSNode("Non-Destination", new OTSPoint3D(1000, targetLaneConfiguration > 0 ? -100 : 100, 0));
-                LaneFactory.makeMultiLane("Non-DestinationLink", branchPoint, nonDestination, null, LANECOUNT
-                    - Math.abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? LANECOUNT
-                    - targetLaneConfiguration : 0, 0, laneType, speedLimit, simulator);
+                LaneFactory.makeMultiLane("Non-DestinationLink", branchPoint, nonDestination, null,
+                    LANECOUNT - Math.abs(targetLaneConfiguration), targetLaneConfiguration > 0 ? LANECOUNT
+                        - targetLaneConfiguration : 0, 0, laneType, speedLimit, simulator);
                 CompleteRoute route = new CompleteRoute("route", gtuType);
                 route.addNode(from);
                 route.addNode(branchPoint);
@@ -213,7 +213,7 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
 
     /**
      * @param caption String; the caption for the chart
-     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed limit
+     * @param speedLimit Speed; the speed limit
      * @return JFreeChart; the newly created graph
      */
     private JFreeChart createChart(final String caption, final Speed speedLimit)

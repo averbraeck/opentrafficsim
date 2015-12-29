@@ -292,9 +292,9 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                 CrossSectionLink endLink = LaneFactory.makeLink("endLink", to, end, null);
                 // No overtaking, single lane
                 Lane sinkLane =
-                    new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0), this.lane
-                        .getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
-                        LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.None());
+                    new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
+                        this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0),
+                        laneType, LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.None());
                 Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, METER), this.simulator);
                 sinkLane.addSensor(sensor, GTUType.ALL);
             }
@@ -402,7 +402,8 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                     new LaneBasedIndividualCar("999999", this.gtuType, this.carFollowingModelCars,
                         this.laneChangeModel, initialPositions, new Speed(0, KM_PER_HOUR), new Length.Rel(4, METER),
                         new Length.Rel(1.8, METER), new Speed(0, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
-                            new CompleteRoute("", GTUType.ALL)), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
+                            new CompleteRoute("", GTUType.ALL)), this.simulator, DefaultCarAnimation.class,
+                        this.gtuColorer);
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
             {
@@ -441,8 +442,8 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                 new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, generateTruck
                     ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel,
                     initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, METER), new Speed(200,
-                        KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), this.simulator,
-                    DefaultCarAnimation.class, this.gtuColorer);
+                        KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)),
+                    this.simulator, DefaultCarAnimation.class, this.gtuColorer);
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)

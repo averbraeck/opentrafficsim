@@ -9,8 +9,8 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.network.NetworkException;
 
 /**
  * <p>
@@ -50,15 +50,15 @@ public abstract class AbstractSensor implements Sensor
 
     /**
      * @param lane The lane for which this is a sensor.
-     * @param longitudinalPosition Length.Rel; the position (between 0.0 and the length of the Lane) of
-     *            the sensor on the design line of the lane.
+     * @param longitudinalPosition Length.Rel; the position (between 0.0 and the length of the Lane) of the sensor on the design
+     *            line of the lane.
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the sensor.
      * @param name the name of the sensor.
      * @param simulator the simulator for being able to generate the animation.
      */
-    public AbstractSensor(final Lane lane, final Length.Rel longitudinalPosition, final RelativePosition.TYPE positionType,
-        final String name, final OTSDEVSSimulatorInterface simulator)
+    public AbstractSensor(final Lane lane, final Length.Rel longitudinalPosition,
+        final RelativePosition.TYPE positionType, final String name, final OTSDEVSSimulatorInterface simulator)
     {
         this.lane = lane;
         this.longitudinalPositionSI = longitudinalPosition.getSI();
@@ -97,7 +97,7 @@ public abstract class AbstractSensor implements Sensor
 
     /** {@inheritDoc} */
     @Override
-    public final DirectedPoint getLocation() 
+    public final DirectedPoint getLocation()
     {
         if (this.location == null)
         {
@@ -106,7 +106,7 @@ public abstract class AbstractSensor implements Sensor
                 this.location = this.lane.getCenterLine().getLocationSI(this.longitudinalPositionSI);
                 this.location.z = this.lane.getLocation().z + 0.01;
             }
-            catch (NetworkException exception)
+            catch (OTSGeometryException exception)
             {
                 exception.printStackTrace();
                 return null;
@@ -117,13 +117,13 @@ public abstract class AbstractSensor implements Sensor
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds getBounds() 
+    public final Bounds getBounds()
     {
         if (this.bounds == null)
         {
             this.bounds =
-                new BoundingBox(new Point3d(-0.4, -this.lane.getWidth(0.0).getSI() * 0.4, 0.0), new Point3d(0.4, this.lane
-                    .getWidth(0.0).getSI() * 0.4, this.lane.getLocation().z + 0.01));
+                new BoundingBox(new Point3d(-0.4, -this.lane.getWidth(0.0).getSI() * 0.4, 0.0), new Point3d(0.4,
+                    this.lane.getWidth(0.0).getSI() * 0.4, this.lane.getLocation().z + 0.01));
         }
         return this.bounds;
     }
@@ -178,7 +178,8 @@ public abstract class AbstractSensor implements Sensor
         }
         else if (!this.lane.equals(other.lane))
             return false;
-        if (Double.doubleToLongBits(this.longitudinalPositionSI) != Double.doubleToLongBits(other.longitudinalPositionSI))
+        if (Double.doubleToLongBits(this.longitudinalPositionSI) != Double
+            .doubleToLongBits(other.longitudinalPositionSI))
             return false;
         if (this.positionType == null)
         {

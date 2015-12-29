@@ -76,6 +76,7 @@ import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.Sensor;
 import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.xml.sax.SAXException;
 
@@ -109,7 +110,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                     xmlModel.buildAnimator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(0.0, TimeUnit.SECOND),
                         new Time.Rel(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
                 }
-                catch (SimRuntimeException | NamingException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -280,7 +281,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
                                 }
-                                catch (RemoteException | NamingException | NetworkException exception)
+                                catch (RemoteException | NamingException | OTSGeometryException exception)
                                 {
                                     exception.printStackTrace();
                                 }
@@ -331,7 +332,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
                                 }
-                                catch (RemoteException | NamingException | NetworkException exception)
+                                catch (RemoteException | NamingException | OTSGeometryException exception)
                                 {
                                     exception.printStackTrace();
                                 }
@@ -494,7 +495,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                     {
                         frontGTU = gtu.fractionalPosition(lane, gtu.getFront());
                     }
-                    catch (NetworkException exception)
+                    catch (GTUException exception)
                     {
                         exception.printStackTrace();
                     }
@@ -503,7 +504,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                     {
                         rearGTU = gtu.fractionalPosition(lane, gtu.getRear());
                     }
-                    catch (NetworkException exception)
+                    catch (GTUException exception)
                     {
                         exception.printStackTrace();
                     }
@@ -523,15 +524,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                         this.rtiCars.add(car);
 
                     }
-                    catch (NamingException exception)
-                    {
-                        exception.printStackTrace();
-                    }
-                    catch (NetworkException exception)
-                    {
-                        exception.printStackTrace();
-                    }
-                    catch (GTUException exception)
+                    catch (NamingException | NetworkException | GTUException | OTSGeometryException exception)
                     {
                         exception.printStackTrace();
                     }

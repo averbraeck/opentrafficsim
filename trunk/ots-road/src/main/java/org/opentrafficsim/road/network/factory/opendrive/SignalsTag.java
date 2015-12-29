@@ -24,7 +24,7 @@ class SignalsTag
     /** signalTags */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<SignalTag> signalTags = new ArrayList<SignalTag>();
-    
+
     /** SignalReferenceTag */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<SignalReferenceTag> signalReferenceTag = new ArrayList<SignalReferenceTag>();

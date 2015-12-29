@@ -123,7 +123,8 @@ public final class Distributions
         }
         catch (IndexOutOfBoundsException e)
         {
-            throw new NetworkException("makeDistContinuous - wrong number of parameters for distribution function " + ds);
+            throw new NetworkException("makeDistContinuous - wrong number of parameters for distribution function "
+                + ds);
         }
     }
 
@@ -169,7 +170,8 @@ public final class Distributions
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> parseTimeDistRel(final String s) throws NetworkException
+    public static ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> parseTimeDistRel(final String s)
+        throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];
@@ -186,7 +188,8 @@ public final class Distributions
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static ContinuousDistDoubleScalar.Abs<Time.Abs, TimeUnit> parseTimeDistAbs(final String s) throws NetworkException
+    public static ContinuousDistDoubleScalar.Abs<Time.Abs, TimeUnit> parseTimeDistAbs(final String s)
+        throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];
@@ -203,7 +206,8 @@ public final class Distributions
      * @return a typed continuous random distribution.
      * @throws NetworkException in case of a parse error.
      */
-    public static ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> parseSpeedDistRel(final String s) throws NetworkException
+    public static ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> parseSpeedDistRel(final String s)
+        throws NetworkException
     {
         String[] s1 = s.split("\\(");
         String ds = s1[0];

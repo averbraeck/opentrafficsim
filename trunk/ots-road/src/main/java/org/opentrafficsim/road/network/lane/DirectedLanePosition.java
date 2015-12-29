@@ -3,8 +3,8 @@ package org.opentrafficsim.road.network.lane;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
-import org.opentrafficsim.core.network.NetworkException;
 
 /**
  * <p>
@@ -66,9 +66,9 @@ public class DirectedLanePosition
 
     /**
      * @return the location of the GTU on the lane, in the right direction.
-     * @throws NetworkException when the position turns out to be outside of the lane
+     * @throws OTSGeometryException when the position turns out to be outside of the lane
      */
-    public DirectedPoint getLocation() throws NetworkException
+    public DirectedPoint getLocation() throws OTSGeometryException
     {
         double fraction = this.position.si / this.lane.getParentLink().getLength().si;
         DirectedPoint p = this.lane.getCenterLine().getLocationFraction(fraction);

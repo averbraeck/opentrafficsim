@@ -15,11 +15,10 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
-import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.math.Solver;
-import org.opentrafficsim.core.network.NetworkException;
 
 /**
  * An Operational plan describes a path through the world with a speed profile that a GTU intends to follow. The OperationalPlan
@@ -59,11 +58,14 @@ public class OperationalPlan implements Serializable
     /** The speed at the end of the operational plan. */
     private final Speed endSpeed;
 
+    /** wait plan? */
+    private final boolean waitPlan;
+
     /**
      * An array of relative start times of each segment, expressed in the SI unit, where the last time is the overall ending
      * time of the operational plan.
      */
-    private final double[] segmentStartTimesSI;
+    private final double[] segmentStartTimesRelSI;
 
     /**
      * The maximum difference in the length of the path and the calculated driven distance implied by the segment list. The same
@@ -72,27 +74,26 @@ public class OperationalPlan implements Serializable
     static final double MAX_DELTA_SI = 1E-6;
 
     /** The drifting speed. Speeds under this value will be cropped to zero. */
-    static final double DRIFTING_SPEED_SI = 1E-3;
+    public static final double DRIFTING_SPEED_SI = 1E-3;
 
     /**
      * Construct an operational plan.
-     * @param path the path to follow from a certain time till a certain time
+     * @param path the path to follow from a certain time till a certain time. The path should have <i>at least</i> the length
      * @param startTime the absolute start time when we start executing the path
      * @param startSpeed the GTU speed when we start executing the path
      * @param operationalPlanSegmentList the segments that make up the path with an acceleration, constant speed or deceleration
      *            profile
-     * @throws NetworkException when the length of the path and the calculated driven distance implied by the segment list
-     *             differ more than a given threshold
+     * @throws OperationalPlanException when the path is too short for the operation
      */
     public OperationalPlan(final OTSLine3D path, final Time.Abs startTime, final Speed startSpeed,
-            final List<Segment> operationalPlanSegmentList) throws NetworkException
+        final List<Segment> operationalPlanSegmentList) throws OperationalPlanException
     {
         super();
-        this.path = path;
+        this.waitPlan = false;
         this.startTime = startTime;
         this.startSpeed = startSpeed;
         this.operationalPlanSegmentList = operationalPlanSegmentList;
-        this.segmentStartTimesSI = new double[this.operationalPlanSegmentList.size() + 1];
+        this.segmentStartTimesRelSI = new double[this.operationalPlanSegmentList.size() + 1];
 
         // check the driven distance of the segments
         Speed v0 = this.startSpeed;
@@ -106,16 +107,20 @@ public class OperationalPlan implements Serializable
             }
             Segment segment = this.operationalPlanSegmentList.get(i);
             segment.setV0(v0);
-            this.segmentStartTimesSI[i] = durationSI;
+            this.segmentStartTimesRelSI[i] = durationSI;
             distanceSI += segment.distanceSI();
             v0 = segment.endSpeed();
             durationSI += segment.getDuration().si;
         }
-        this.segmentStartTimesSI[this.segmentStartTimesSI.length - 1] = durationSI;
-        if (Math.abs(distanceSI - this.path.getLengthSI()) > MAX_DELTA_SI)
+        this.segmentStartTimesRelSI[this.segmentStartTimesRelSI.length - 1] = durationSI;
+        try
         {
-            throw new NetworkException("Path length and calculated driven distance differ too much: delta = "
-                    + Math.abs(distanceSI - this.path.getLengthSI()) + " m");
+            this.path = path.extract(0.0, distanceSI);
+        }
+        catch (OTSGeometryException exception)
+        {
+            System.err.println("st = " + startTime + ", ss = " + startSpeed + ", seg = " + operationalPlanSegmentList);
+            throw new OperationalPlanException(exception);
         }
         this.totalDuration = new Time.Rel(durationSI, TimeUnit.SI);
         this.endSpeed = v0;
@@ -126,11 +131,12 @@ public class OperationalPlan implements Serializable
      * @param waitPoint the point at which the GTU will wait
      * @param startTime the current time or a time in the future when the plan should start
      * @param duration the waiting time
-     * @throws NetworkException when construction of a waiting path fails
+     * @throws OperationalPlanException when construction of a waiting path fails
      */
     public OperationalPlan(final DirectedPoint waitPoint, final Time.Abs startTime, final Time.Rel duration)
-            throws NetworkException
+        throws OperationalPlanException
     {
+        this.waitPlan = true;
         this.startTime = startTime;
         this.startSpeed = Speed.ZERO;
         this.endSpeed = Speed.ZERO;
@@ -138,17 +144,24 @@ public class OperationalPlan implements Serializable
 
         // make a path
         OTSPoint3D p2 =
-                new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
-                        waitPoint.z);
-        this.path = new OTSLine3D(new OTSPoint3D(waitPoint), p2);
+            new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
+                waitPoint.z);
+        try
+        {
+            this.path = new OTSLine3D(new OTSPoint3D(waitPoint), p2);
+        }
+        catch (OTSGeometryException exception)
+        {
+            throw new OperationalPlanException(exception);
+        }
 
         this.operationalPlanSegmentList = new ArrayList<>();
         Segment segment = new SpeedSegment(duration);
         segment.setV0(Speed.ZERO);
         this.operationalPlanSegmentList.add(segment);
-        this.segmentStartTimesSI = new double[2];
-        this.segmentStartTimesSI[0] = 0.0;
-        this.segmentStartTimesSI[1] = duration.si;
+        this.segmentStartTimesRelSI = new double[2];
+        this.segmentStartTimesRelSI[0] = 0.0;
+        this.segmentStartTimesRelSI[1] = duration.si;
     }
 
     /**
@@ -222,9 +235,16 @@ public class OperationalPlan implements Serializable
     {
         try
         {
-            return this.path.getLocationFraction(1.0);
+            if (this.waitPlan)
+            {
+                return this.path.getLocationFraction(0.0); // no move...
+            }
+            else
+            {
+                return this.path.getLocationFraction(1.0);
+            }
         }
-        catch (NetworkException exception)
+        catch (OTSGeometryException exception)
         {
             // should not happen -- only for fractions less than 0.0 or larger than 1.0.
             throw new RuntimeException(exception);
@@ -234,7 +254,8 @@ public class OperationalPlan implements Serializable
     /**
      * Store a Segment and the progress within that segment in one Object.
      * <p>
-     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
+     * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version Dec 16, 2015 <br>
@@ -244,13 +265,13 @@ public class OperationalPlan implements Serializable
     private class SegmentProgress
     {
         /** Active Segment. */
-        public final Segment segment;
+        private final Segment segment;
 
         /** Start time of the Segment. */
-        public final Time.Abs segmentStartTime;
+        private final Time.Abs segmentStartTime;
 
         /** Position on the path of the plan. */
-        public final Length.Rel segmentStartPosition;
+        private final Length.Rel segmentStartPosition;
 
         /**
          * Construct a new SegmentProgress object.
@@ -258,7 +279,7 @@ public class OperationalPlan implements Serializable
          * @param segmentStartTime Time.Abs; the start time of the Segment
          * @param segmentStartPosition Length.Rel; the position of the start of the segment on the path of the OperationalPlan
          */
-        public SegmentProgress(final Segment segment, final Time.Abs segmentStartTime, final Length.Rel segmentStartPosition)
+        SegmentProgress(final Segment segment, final Time.Abs segmentStartTime, final Length.Rel segmentStartPosition)
         {
             this.segment = segment;
             this.segmentStartTime = segmentStartTime;
@@ -287,14 +308,17 @@ public class OperationalPlan implements Serializable
          * Retrieve the fractionalPosition at the start of the Segment.
          * @return double; the fractional position at the start of the Segment
          */
-        public final Length.Rel getPosition()
+        public final Length.Rel getSegmentStartPosition()
         {
             return this.segmentStartPosition;
         }
 
+        /** {@inheritDoc} */
+        @Override
         public final String toString()
         {
-            return String.format("SegmentProgress %s %s %s", this.segment, this.segmentStartPosition, this.segmentStartTime);
+            return String.format("SegmentProgress segment=%s startpos.rel=%s starttime.abs=%s", this.segment,
+                this.segmentStartPosition, this.segmentStartTime);
         }
     }
 
@@ -303,24 +327,26 @@ public class OperationalPlan implements Serializable
      * @param time Time.Abs; the time
      * @return SegmentProgress; the Segment and progress within that segment, or null when no Segment applies to the specified
      *         time
-     * @throws GTUException when SegmentProgress cannot be determined
+     * @throws OperationalPlanException when SegmentProgress cannot be determined
      */
-    private final SegmentProgress getSegmentProgress(final Time.Abs time) throws GTUException
+    private SegmentProgress getSegmentProgress(final Time.Abs time) throws OperationalPlanException
     {
         if (time.lt(this.startTime))
         {
-            throw new GTUException("SegmentProgress cannot be determined for time before startTime of this OperationalPlan");
+            throw new OperationalPlanException(
+                "SegmentProgress cannot be determined for time before startTime of this OperationalPlan");
         }
         double cumulativeDistance = 0;
-        for (int i = 0; i < this.segmentStartTimesSI.length - 1; i++)
+        for (int i = 0; i < this.segmentStartTimesRelSI.length - 1; i++)
         {
-            if (this.startTime.si + this.segmentStartTimesSI[i + 1] >= time.si)
+            if (this.startTime.si + this.segmentStartTimesRelSI[i + 1] >= time.si)
             {
                 return new SegmentProgress(this.operationalPlanSegmentList.get(i), new Time.Abs(this.startTime.si
-                        + this.segmentStartTimesSI[i], TimeUnit.SI), new Length.Rel(cumulativeDistance, LengthUnit.SI));
+                    + this.segmentStartTimesRelSI[i], TimeUnit.SI), new Length.Rel(cumulativeDistance, LengthUnit.SI));
             }
         }
-        throw new GTUException("SegmentProgress cannot be determined for time after endTime of this OperationalPlan");
+        throw new OperationalPlanException(
+            "SegmentProgress cannot be determined for time after endTime of this OperationalPlan");
     }
 
     /**
@@ -338,7 +364,7 @@ public class OperationalPlan implements Serializable
             if (distanceOfSegment > remainingDistanceSI)
             {
                 return new Time.Abs(timeAtStartOfSegment
-                        + segment.timeAtDistance(new Length.Rel(remainingDistanceSI, LengthUnit.SI)).si, TimeUnit.SI);
+                    + segment.timeAtDistance(new Length.Rel(remainingDistanceSI, LengthUnit.SI)).si, TimeUnit.SI);
             }
             remainingDistanceSI -= distanceOfSegment;
             timeAtStartOfSegment += segment.getDurationSI();
@@ -350,16 +376,24 @@ public class OperationalPlan implements Serializable
      * Calculate the location at the given time.
      * @param time the absolute time to look for a location
      * @return the location at the given time.
-     * @throws NetworkException when the time is after the validity of the operational plan
-     * @throws GTUException when the location is not defined in this OperationalPlan for the given time
+     * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final DirectedPoint getLocation(final Time.Abs time) throws NetworkException, GTUException
+    public final DirectedPoint getLocation(final Time.Abs time) throws OperationalPlanException
     {
         SegmentProgress sp = getSegmentProgress(time);
         double fraction =
-                (sp.getPosition().si + sp.getSegment().distanceSI(time.minus(sp.getSegmentStartTime()).si))
-                        / this.path.getLengthSI();
-        DirectedPoint p = this.path.getLocationFraction(fraction, 1E-6);
+            (sp.getSegmentStartPosition().si + sp.getSegment().distanceSI(time.minus(sp.getSegmentStartTime()).si))
+                / this.path.getLengthSI();
+        // System.out.println(fraction);
+        DirectedPoint p = new DirectedPoint();
+        try
+        {
+            p = this.path.getLocationFraction(fraction, 1E-6);
+        }
+        catch (OTSGeometryException exception)
+        {
+            throw new OperationalPlanException(exception);
+        }
         p.setZ(p.getZ() + 0.001);
         return p;
     }
@@ -368,10 +402,9 @@ public class OperationalPlan implements Serializable
      * Calculate the velocity of the GTU after the given duration since the start of the plan.
      * @param time the relative time to look for a location
      * @return the location after the given duration since the start of the plan.
-     * @throws NetworkException when the time is after the validity of the operational plan
-     * @throws GTUException when the location is not defined in this OperationalPlan for the given time
+     * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final Speed getVelocity(final Time.Rel time) throws NetworkException, GTUException
+    public final Speed getVelocity(final Time.Rel time) throws OperationalPlanException
     {
         return getVelocity(time.plus(this.startTime));
     }
@@ -380,23 +413,21 @@ public class OperationalPlan implements Serializable
      * Calculate the velocity of the GTU at the given time.
      * @param time the absolute time to look for a location
      * @return the location at the given time.
-     * @throws NetworkException when the time is after the validity of the operational plan
-     * @throws GTUException when the location is not defined in this OperationalPlan for the given time
+     * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final Speed getVelocity(final Time.Abs time) throws NetworkException, GTUException
+    public final Speed getVelocity(final Time.Abs time) throws OperationalPlanException
     {
         SegmentProgress sp = getSegmentProgress(time);
-        return new Speed(sp.segment.speedSI(time.minus(sp.segmentStartTime).si), SpeedUnit.SI);
+        return new Speed(sp.getSegment().speedSI(time.minus(sp.getSegmentStartTime()).si), SpeedUnit.SI);
     }
 
     /**
      * Calculate the acceleration of the GTU after the given duration since the start of the plan.
      * @param time the relative time to look for a location
      * @return the location after the given duration since the start of the plan.
-     * @throws NetworkException when the time is after the validity of the operational plan
-     * @throws GTUException when the location is not defined in this OperationalPlan for the given time
+     * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final Acceleration getAcceleration(final Time.Rel time) throws NetworkException, GTUException
+    public final Acceleration getAcceleration(final Time.Rel time) throws OperationalPlanException
     {
         return getAcceleration(time.plus(this.startTime));
     }
@@ -405,23 +436,22 @@ public class OperationalPlan implements Serializable
      * Calculate the acceleration of the GTU at the given time.
      * @param time the absolute time to look for a location
      * @return the location at the given time.
-     * @throws NetworkException when the time is after the validity of the operational plan
-     * @throws GTUException when the location is not defined in this OperationalPlan for the given time
+     * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final Acceleration getAcceleration(final Time.Abs time) throws NetworkException, GTUException
+    public final Acceleration getAcceleration(final Time.Abs time) throws OperationalPlanException
     {
         SegmentProgress sp = getSegmentProgress(time);
-        return new Acceleration(sp.getSegment().accelerationSI(time.minus(sp.getSegmentStartTime()).si), AccelerationUnit.SI);
+        return new Acceleration(sp.getSegment().accelerationSI(time.minus(sp.getSegmentStartTime()).si),
+            AccelerationUnit.SI);
     }
 
     /**
      * Calculate the location after the given duration since the start of the plan.
      * @param time the relative time to look for a location
      * @return the location after the given duration since the start of the plan.
-     * @throws NetworkException when the time is after the validity of the operational plan
-     * @throws GTUException when the location is not defined in this OperationalPlan for the given time
+     * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final DirectedPoint getLocation(final Time.Rel time) throws NetworkException, GTUException
+    public final DirectedPoint getLocation(final Time.Rel time) throws OperationalPlanException
     {
         double distanceSI = getTraveledDistanceSI(time);
         return this.path.getLocationExtendedSI(distanceSI);
@@ -432,24 +462,22 @@ public class OperationalPlan implements Serializable
      * returns the traveled distance as a double in SI units.
      * @param duration the relative time to calculate the traveled distance
      * @return the distance traveled as part of this plan after the given duration since the start of the plan.
-     * @throws NetworkException when the time is after the validity of the operational plan
-     * @throws GTUException when the location is not defined in this OperationalPlan for the given time
+     * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final double getTraveledDistanceSI(final Time.Rel duration) throws NetworkException, GTUException
+    public final double getTraveledDistanceSI(final Time.Rel duration) throws OperationalPlanException
     {
         Time.Abs absTime = duration.plus(this.startTime);
         SegmentProgress sp = getSegmentProgress(absTime);
-        return sp.segment.distanceSI(absTime.minus(sp.segmentStartTime).si);
+        return sp.getSegment().distanceSI(absTime.minus(sp.getSegmentStartTime()).si);
     }
 
     /**
      * Calculate the distance traveled as part of this plan after the given duration since the start of the plan.
      * @param duration the relative time to calculate the traveled distance
      * @return the distance traveled as part of this plan after the given duration since the start of the plan.
-     * @throws NetworkException when the time is after the validity of the operational plan
-     * @throws GTUException when the location is not defined in this OperationalPlan for the given time
+     * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final Length.Rel getTraveledDistance(final Time.Rel duration) throws NetworkException, GTUException
+    public final Length.Rel getTraveledDistance(final Time.Rel duration) throws OperationalPlanException
     {
         return new Length.Rel(getTraveledDistanceSI(duration), LengthUnit.SI);
     }
@@ -459,10 +487,9 @@ public class OperationalPlan implements Serializable
      * distance as a double in SI units.
      * @param time the absolute time to calculate the traveled distance for as part of this plan
      * @return the distance traveled as part of this plan at the given time
-     * @throws NetworkException when the time is after the validity of the operational plan
-     * @throws GTUException when the location is not defined in this OperationalPlan for the given time
+     * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final double getTraveledDistanceSI(final Time.Abs time) throws NetworkException, GTUException
+    public final double getTraveledDistanceSI(final Time.Abs time) throws OperationalPlanException
     {
         return getTraveledDistanceSI(time.minus(this.startTime));
     }
@@ -471,10 +498,9 @@ public class OperationalPlan implements Serializable
      * Calculate the distance traveled as part of this plan at the given absolute time.
      * @param time the absolute time to calculate the traveled distance for as part of this plan
      * @return the distance traveled as part of this plan at the given time
-     * @throws NetworkException when the time is after the validity of the operational plan
-     * @throws GTUException when the location is not defined in this OperationalPlan for the given time
+     * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final Length.Rel getTraveledDistance(final Time.Abs time) throws NetworkException, GTUException
+    public final Length.Rel getTraveledDistance(final Time.Abs time) throws OperationalPlanException
     {
         return new Length.Rel(getTraveledDistanceSI(time.minus(this.startTime)), LengthUnit.SI);
     }
@@ -486,7 +512,9 @@ public class OperationalPlan implements Serializable
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.operationalPlanSegmentList == null) ? 0 : this.operationalPlanSegmentList.hashCode());
+        result =
+            prime * result
+                + ((this.operationalPlanSegmentList == null) ? 0 : this.operationalPlanSegmentList.hashCode());
         result = prime * result + ((this.path == null) ? 0 : this.path.hashCode());
         result = prime * result + ((this.startSpeed == null) ? 0 : this.startSpeed.hashCode());
         result = prime * result + ((this.startTime == null) ? 0 : this.startTime.hashCode());
@@ -494,7 +522,7 @@ public class OperationalPlan implements Serializable
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
+    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
     @Override
     public boolean equals(final Object obj)
     {
@@ -541,9 +569,10 @@ public class OperationalPlan implements Serializable
     @Override
     public String toString()
     {
-        return "OperationalPlan [path=" + this.path + ", startTime=" + this.startTime + ", startSpeed=" + this.startSpeed
-                + ", operationalPlanSegmentList=" + this.operationalPlanSegmentList + ", totalDuration=" + this.totalDuration
-                + ", segmentStartTimesSI=" + Arrays.toString(this.segmentStartTimesSI) + ", endSpeed = " + this.endSpeed + "]";
+        return "OperationalPlan [path=" + this.path + ", startTime=" + this.startTime + ", startSpeed="
+            + this.startSpeed + ", operationalPlanSegmentList=" + this.operationalPlanSegmentList + ", totalDuration="
+            + this.totalDuration + ", segmentStartTimesSI=" + Arrays.toString(this.segmentStartTimesRelSI)
+            + ", endSpeed = " + this.endSpeed + "]";
     }
 
     /****************************************************************************************************************/
@@ -666,7 +695,7 @@ public class OperationalPlan implements Serializable
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
+        @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
         @Override
         public boolean equals(final Object obj)
         {

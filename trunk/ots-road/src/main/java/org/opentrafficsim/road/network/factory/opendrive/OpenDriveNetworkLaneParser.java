@@ -43,11 +43,11 @@ public class OpenDriveNetworkLaneParser
     /** Header tag. */
     @SuppressWarnings("visibilitymodifier")
     protected HeaderTag headerTag = null;
-    
+
     /** Junction tags. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, ControllerTag> controllerTags = new HashMap<>();
-    
+
     /** Controller tags. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, JunctionTag> junctionTags = new HashMap<>();
@@ -71,23 +71,22 @@ public class OpenDriveNetworkLaneParser
     /** the simulator for creating the animation. Null if no animation needed. */
     @SuppressWarnings("visibilitymodifier")
     protected OTSDEVSSimulatorInterface simulator;
-    
-    /** OTS network*/
+
+    /** OTS network */
     @SuppressWarnings("visibilitymodifier")
-    protected OTSNetwork network = null; 
-    
+    protected OTSNetwork network = null;
+
     /** the signalTags that have been created. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, SignalTag> signalTags = new HashMap<>();
-    
+
     /** the trafficLights that have been created, organized by signals */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, Set<AbstractTrafficLight>> trafficLightsBySignals = new HashMap<>();
-    
+
     /** the trafficLights that have been created, organized by lanes */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, Set<AbstractTrafficLight>> trafficLightsByLanes = new HashMap<>();
-    
 
     /**
      * @param simulator the simulator for creating the animation. Null if no animation needed.
@@ -128,7 +127,7 @@ public class OpenDriveNetworkLaneParser
             throw new SAXException(
                 "OpenDriveNetworkLaneParser.build: XML document does not start with an OpenDRIVE tag, found "
                     + document.getDocumentElement().getNodeName() + " instead");
-        
+
         this.network = new OTSNetwork(url.toString());
 
         // there should be a header tag
@@ -142,7 +141,7 @@ public class OpenDriveNetworkLaneParser
         List<Node> junctionNodes = XMLParser.getNodes(networkNodeList, "junction");
         for (Node junctionNode : junctionNodes)
             JunctionTag.parseJunction(junctionNode, this);
-        
+
         // parse the controller tags
         List<Node> controllerNodes = XMLParser.getNodes(networkNodeList, "controller");
         for (Node controllerNode : controllerNodes)
@@ -160,48 +159,48 @@ public class OpenDriveNetworkLaneParser
             RoadTag roadTag = RoadTag.parseRoad(roadNode, this);
             LinkTag.parseLink(roadNode.getChildNodes(), this, roadTag);
             TypeTag.parseType(roadNode.getChildNodes(), this, roadTag);
-            
+
             ElevationProfileTag.parseElevationProfile(roadNode.getChildNodes(), this, roadTag);
 
             PlanViewTag.parsePlanView(roadNode.getChildNodes(), this, roadTag);
-                        
+
             LateralProfileTag.parseElevationProfile(roadNode.getChildNodes(), this, roadTag);
             LanesTag.parseLanes(roadNode.getChildNodes(), this, roadTag);
-            //ObjectsTag.parseObjects(roadNode.getChildNodes(), this, roadTag);
+            // ObjectsTag.parseObjects(roadNode.getChildNodes(), this, roadTag);
             SignalsTag.parseSignals(roadNode.getChildNodes(), this, roadTag);
             /*-SurfaceTag.parseSurface(roadNode.getChildNodes(), this, roadTag);
             RailroadTag.parseRailroad(roadNode.getChildNodes(), this, roadTag);
-             */            
+             */
         }
-        
+
         for (RoadTag roadTag : this.roadTags.values())
         {
             RoadTag.buildLink(roadTag, this);
         }
-        
+
         for (RoadTag roadTag : this.roadTags.values())
         {
             RoadTag.buildSubLinks(roadTag, this.simulator, this);
         }
-        
+
         for (RoadTag roadTag : this.roadTags.values())
         {
-            //System.err.println("RoadTag " + roadTag.id);
+            // System.err.println("RoadTag " + roadTag.id);
             RoadTag.generateRegularRoads(roadTag, this.simulator, this);
         }
-        
+
         for (RoadTag roadTag : this.roadTags.values())
         {
             RoadTag.generateTrafficLightsbySignal(roadTag, this.simulator, this);
         }
-        
+
         for (RoadTag roadTag : this.roadTags.values())
         {
             RoadTag.generateTrafficLightsbySignalReference(roadTag, this.simulator, this);
         }
-        
-        for(JunctionTag juncTag: this.junctionTags.values())
-            JunctionTag.createController(juncTag, this.simulator, this);        
+
+        for (JunctionTag juncTag : this.junctionTags.values())
+            JunctionTag.createController(juncTag, this.simulator, this);
 
         // store the structure information in the network
         return this.network;

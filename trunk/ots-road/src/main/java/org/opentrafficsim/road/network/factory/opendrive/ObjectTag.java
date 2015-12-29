@@ -18,7 +18,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ObjectTag 
+class ObjectTag
 {
     /** s. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -27,55 +27,55 @@ class ObjectTag
     /** t. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel t = null;
-    
+
     /** id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String id = null;
-    
+
     /** name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
-    
+
     /** orientation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String orientation = null;
-    
+
     /** zOffset. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel zOffset = null;
-    
+
     /** type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String type = null;
-    
+
     /** validLength. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel validLength = null;
-    
+
     /** length. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel length = null;
-    
+
     /** width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel width = null;
-    
+
     /** height. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel height = null;
-    
+
     /** hdg. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Angle.Rel hdg = null;
-    
+
     /** pitch. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Angle.Rel pitch = null;
-    
+
     /** roll. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Angle.Rel roll = null;
-    
+
     /**
      * Parse the attributes of the road.type tag. The sub-elements are parsed in separate classes.
      * @param node the node with signal information
@@ -85,8 +85,8 @@ class ObjectTag
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static ObjectTag parseObject(final Node node, final OpenDriveNetworkLaneParser parser)
-        throws SAXException, NetworkException
+    static ObjectTag parseObject(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException,
+        NetworkException
     {
         ObjectTag objectTag = new ObjectTag();
         NamedNodeMap attributes = node.getAttributes();
@@ -121,28 +121,29 @@ class ObjectTag
 
         Node validLength = attributes.getNamedItem("validLength");
         if (validLength != null)
-            objectTag.validLength = new Length.Rel(Double.parseDouble(validLength.getNodeValue().trim()), LengthUnit.METER);
-        
+            objectTag.validLength =
+                new Length.Rel(Double.parseDouble(validLength.getNodeValue().trim()), LengthUnit.METER);
+
         Node length = attributes.getNamedItem("length");
         if (length != null)
             objectTag.length = new Length.Rel(Double.parseDouble(length.getNodeValue().trim()), LengthUnit.METER);
-        
+
         Node width = attributes.getNamedItem("width");
         if (width != null)
             objectTag.width = new Length.Rel(Double.parseDouble(width.getNodeValue().trim()), LengthUnit.METER);
-        
+
         Node height = attributes.getNamedItem("height");
         if (height != null)
             objectTag.height = new Length.Rel(Double.parseDouble(height.getNodeValue().trim()), LengthUnit.METER);
-        
+
         Node hdg = attributes.getNamedItem("hdg");
         if (hdg != null)
             objectTag.hdg = new Angle.Rel(Double.parseDouble(hdg.getNodeValue().trim()), AngleUnit.RADIAN);
-        
+
         Node pitch = attributes.getNamedItem("pitch");
         if (pitch != null)
             objectTag.pitch = new Angle.Rel(Double.parseDouble(pitch.getNodeValue().trim()), AngleUnit.RADIAN);
-        
+
         Node roll = attributes.getNamedItem("roll");
         if (roll != null)
             objectTag.roll = new Angle.Rel(Double.parseDouble(roll.getNodeValue().trim()), AngleUnit.RADIAN);

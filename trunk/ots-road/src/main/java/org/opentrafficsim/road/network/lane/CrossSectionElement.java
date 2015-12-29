@@ -101,8 +101,8 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
                 + " has a first slice with relativeLength is not equal to 0.0");
         }
         if (this.crossSectionSlices.size() > 1
-            && this.crossSectionSlices.get(this.crossSectionSlices.size() - 1).getRelativeLength().ne(
-                this.parentLink.getLength()))
+            && this.crossSectionSlices.get(this.crossSectionSlices.size() - 1).getRelativeLength()
+                .ne(this.parentLink.getLength()))
         {
             throw new NetworkException("CrossSectionElement " + id + " for " + parentLink
                 + " has a last slice with relativeLength is not equal to the length of the parent link");
@@ -111,8 +111,8 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
         if (this.crossSectionSlices.size() <= 2)
         {
             this.centerLine =
-                this.getParentLink().getDesignLine().offsetLine(getDesignLineOffsetAtBegin().getSI(),
-                    getDesignLineOffsetAtEnd().getSI());
+                this.getParentLink().getDesignLine()
+                    .offsetLine(getDesignLineOffsetAtBegin().getSI(), getDesignLineOffsetAtEnd().getSI());
         }
         else
         {
@@ -170,8 +170,8 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     public CrossSectionElement(final CrossSectionLink parentLink, final String id, final Length.Rel lateralOffset,
         final Length.Rel width) throws OTSGeometryException, NetworkException
     {
-        this(parentLink, id, Arrays
-            .asList(new CrossSectionSlice[]{new CrossSectionSlice(Length.Rel.ZERO, lateralOffset, width)}));
+        this(parentLink, id, Arrays.asList(new CrossSectionSlice[]{new CrossSectionSlice(Length.Rel.ZERO,
+            lateralOffset, width)}));
     }
 
     /**
@@ -259,9 +259,11 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
             return Length.Rel.interpolate(this.getBeginWidth(), this.getEndWidth(), fractionalPosition);
         }
         int sliceNr = calculateSliceNumber(fractionalPosition);
-        return Length.Rel.interpolate(this.crossSectionSlices.get(sliceNr).getWidth(), this.crossSectionSlices.get(
-            sliceNr + 1).getWidth(), fractionalPosition - this.crossSectionSlices.get(sliceNr).getRelativeLength().si
-            / this.parentLink.getLength().si);
+        return Length.Rel.interpolate(
+            this.crossSectionSlices.get(sliceNr).getWidth(),
+            this.crossSectionSlices.get(sliceNr + 1).getWidth(),
+            fractionalPosition - this.crossSectionSlices.get(sliceNr).getRelativeLength().si
+                / this.parentLink.getLength().si);
     }
 
     /**
@@ -409,8 +411,8 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
         if (cse.crossSectionSlices.size() <= 2)
         {
             OTSLine3D crossSectionDesignLine =
-                cse.getParentLink().getDesignLine().offsetLine(cse.getDesignLineOffsetAtBegin().getSI(),
-                    cse.getDesignLineOffsetAtEnd().getSI());
+                cse.getParentLink().getDesignLine()
+                    .offsetLine(cse.getDesignLineOffsetAtBegin().getSI(), cse.getDesignLineOffsetAtEnd().getSI());
             OTSLine3D rightBoundary =
                 crossSectionDesignLine.offsetLine(-cse.getBeginWidth().getSI() / 2, -cse.getEndWidth().getSI() / 2);
             OTSLine3D leftBoundary =

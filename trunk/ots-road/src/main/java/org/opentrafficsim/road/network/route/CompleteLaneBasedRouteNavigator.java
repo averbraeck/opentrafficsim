@@ -7,6 +7,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -88,7 +89,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
     /** {@inheritDoc} */
     @Override
     public final Length.Rel suitability(final Lane lane, final Length.Rel longitudinalPosition, final LaneBasedGTU gtu,
-        final Time.Rel timeHorizon) throws NetworkException
+        final Time.Rel timeHorizon) throws NetworkException, GTUException
     {
         double remainingDistance = lane.getLength().getSI() - longitudinalPosition.getSI();
         double spareTime = timeHorizon.getSI() - remainingDistance / lane.getSpeedLimit(gtu.getGTUType()).getSI();
@@ -126,7 +127,7 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
             }
             else
             { // Look beyond this nextNode
-                // XXX WRONG
+              // XXX WRONG
                 Link nextLink = nextNode.getLinks().iterator().next(); // cannot be null
                 if (nextLink instanceof CrossSectionLink)
                 {
@@ -153,8 +154,8 @@ public class CompleteLaneBasedRouteNavigator extends AbstractLaneBasedRouteNavig
                                 // first in the set
                             }
                         }
-                        for (Lane adjacentLane : currentLane.accessibleAdjacentLanes(LateralDirectionality.LEFT, gtu
-                            .getGTUType()))
+                        for (Lane adjacentLane : currentLane.accessibleAdjacentLanes(LateralDirectionality.LEFT,
+                            gtu.getGTUType()))
                         {
                             if (adjacentLane.nextLanes(gtu.getGTUType()).size() > 0)
                             {

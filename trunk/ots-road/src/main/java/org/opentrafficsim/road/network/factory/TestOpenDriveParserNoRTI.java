@@ -2,7 +2,6 @@ package org.opentrafficsim.road.network.factory;
 
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.net.SocketException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -20,7 +19,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import nl.javel.gisbeans.io.esri.CoordinateTransform;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
-import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.jstats.distributions.DistConstant;
 import nl.tudelft.simulation.jstats.distributions.DistExponential;
@@ -59,7 +57,6 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
-import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -69,8 +66,6 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.opendrive.GeneratorAnimation;
 import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkLaneParser;
-import org.opentrafficsim.road.network.factory.opendrive.communicationRTI.RTICars;
-import org.opentrafficsim.road.network.factory.opendrive.communicationRTI.ReceiverThread;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -79,6 +74,7 @@ import org.opentrafficsim.road.network.lane.NoTrafficLane;
 import org.opentrafficsim.road.network.lane.Sensor;
 import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.xml.sax.SAXException;
 
@@ -112,7 +108,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                     xmlModel.buildAnimator(new Time.Abs(0.0, TimeUnit.SECOND), new Time.Rel(0.0, TimeUnit.SECOND),
                         new Time.Rel(60.0, TimeUnit.MINUTE), new ArrayList<AbstractProperty<?>>(), null, true);
                 }
-                catch (SimRuntimeException | NamingException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -283,7 +279,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
                                 }
-                                catch (RemoteException | NamingException | NetworkException exception)
+                                catch (RemoteException | NamingException | OTSGeometryException exception)
                                 {
                                     exception.printStackTrace();
                                 }
@@ -334,7 +330,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                                 {
                                     new GeneratorAnimation(lane, position, this.simulator);
                                 }
-                                catch (RemoteException | NamingException | NetworkException exception)
+                                catch (RemoteException | NamingException | OTSGeometryException exception)
                                 {
                                     exception.printStackTrace();
                                 }
@@ -500,7 +496,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                     {
                         frontGTU = gtu.fractionalPosition(lane, gtu.getFront());
                     }
-                    catch (NetworkException exception)
+                    catch (GTUException exception)
                     {
                         exception.printStackTrace();
                     }
@@ -509,7 +505,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                     {
                         rearGTU = gtu.fractionalPosition(lane, gtu.getRear());
                     }
-                    catch (NetworkException exception)
+                    catch (GTUException exception)
                     {
                         exception.printStackTrace();
                     }
@@ -529,15 +525,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                         this.rtiCars.add(car);
 
                     }
-                    catch (NamingException exception)
-                    {
-                        exception.printStackTrace();
-                    }
-                    catch (NetworkException exception)
-                    {
-                        exception.printStackTrace();
-                    }
-                    catch (GTUException exception)
+                    catch (NamingException | NetworkException | GTUException | OTSGeometryException exception)
                     {
                         exception.printStackTrace();
                     }

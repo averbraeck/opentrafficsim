@@ -107,9 +107,9 @@ public final class Convert
      * This method converts an OSM link to an OTS link.
      * @param link OSM Link to be converted
      * @return OTS Link
-     * @throws NetworkException on failure
+     * @throws OTSGeometryException on failure
      */
-    public CrossSectionLink convertLink(final OSMLink link) throws NetworkException
+    public CrossSectionLink convertLink(final OSMLink link) throws OTSGeometryException
     {
         if (null == link.getStart().getOtsNode())
         {
@@ -136,8 +136,8 @@ public final class Convert
         // XXX How to figure out whether to keep left, right or keep lane?
         // XXX How to figure out if this is a lane in one or two directions? For now, two is assumed...
         result =
-            new CrossSectionLink(link.getId(), start, end, LinkType.ALL, designLine, LongitudinalDirectionality.DIR_BOTH,
-                LaneKeepingPolicy.KEEP_RIGHT);
+            new CrossSectionLink(link.getId(), start, end, LinkType.ALL, designLine,
+                LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_RIGHT);
         return result;
     }
 
@@ -255,7 +255,8 @@ public final class Convert
                 laneType = makeLaneType(org.opentrafficsim.road.network.factory.osm.PredefinedGTUTypes.CAR);
                 if (osmLink.getLanes() == 1 && !osmLink.isOneway())
                 {
-                    laneAttributes = new LaneAttributes(laneType, Color.LIGHT_GRAY, LongitudinalDirectionality.DIR_BOTH);
+                    laneAttributes =
+                        new LaneAttributes(laneType, Color.LIGHT_GRAY, LongitudinalDirectionality.DIR_BOTH);
                     structure.put(0, laneAttributes);
                 }
                 else
@@ -336,7 +337,8 @@ public final class Convert
                         laneAttributes =
                             new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_MINUS);
                         structure.put(0 - backwards, laneAttributes);
-                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_PLUS);
+                        laneAttributes =
+                            new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_PLUS);
                         structure.put(forwards - 1, laneAttributes);
                         break;
                     case "track": // cycleway:track is separated by a gap from the highway.
@@ -345,7 +347,8 @@ public final class Convert
                         laneAttributes =
                             new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_MINUS);
                         structure.put(0 - backwards, laneAttributes);
-                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_PLUS);
+                        laneAttributes =
+                            new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_PLUS);
                         structure.put(forwards - 1, laneAttributes);
                         break;
                     case "shared_lane": // cycleway:shared_lane is embedded into the highway.
@@ -356,7 +359,8 @@ public final class Convert
                         laneAttributes =
                             new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_MINUS);
                         structure.put(0 - backwards, laneAttributes);
-                        laneAttributes = new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_PLUS);
+                        laneAttributes =
+                            new LaneAttributes(laneType, Color.ORANGE, LongitudinalDirectionality.DIR_PLUS);
                         structure.put(forwards - 1, laneAttributes);
                         break;
                     default:
@@ -377,17 +381,20 @@ public final class Convert
                         laneAttributes =
                             new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.DIR_MINUS);
                         structure.put(0 - backwards, laneAttributes);
-                        laneAttributes = new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.DIR_PLUS);
+                        laneAttributes =
+                            new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.DIR_PLUS);
                         structure.put(forwards - 1, laneAttributes);
                         break;
                     case "left":
                         backwards++;
-                        laneAttributes = new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.DIR_BOTH);
+                        laneAttributes =
+                            new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.DIR_BOTH);
                         structure.put(0 - backwards, laneAttributes);
                         break;
                     case "right":
                         forwards++;
-                        laneAttributes = new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.DIR_BOTH);
+                        laneAttributes =
+                            new LaneAttributes(laneType, Color.YELLOW, LongitudinalDirectionality.DIR_BOTH);
                         structure.put(forwards - 1, laneAttributes);
                         break;
                     default:
@@ -641,8 +648,9 @@ public final class Convert
                 color = Color.RED;
                 // FIXME overtaking conditions per country and/or type of road?
                 newLane =
-                    new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(), laneAttributes
-                        .getWidth(), laneType, directionality, speedLimit, new OvertakingConditions.LeftAndRight());
+                    new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
+                        laneAttributes.getWidth(), laneType, directionality, speedLimit,
+                        new OvertakingConditions.LeftAndRight());
                 SinkSensor sensor = new SinkSensor(newLane, new Length.Rel(0.25, LengthUnit.METER), simulator);
                 newLane.addSensor(sensor, GTUType.ALL);
             }
@@ -651,16 +659,18 @@ public final class Convert
                 color = Color.BLUE;
                 // FIXME overtaking conditions per country and/or type of road?
                 newLane =
-                    new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(), laneAttributes
-                        .getWidth(), laneType, directionality, speedLimit, new OvertakingConditions.LeftAndRight());
+                    new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
+                        laneAttributes.getWidth(), laneType, directionality, speedLimit,
+                        new OvertakingConditions.LeftAndRight());
             }
             else
             {
                 color = laneAttributes.getColor();
                 // FIXME overtaking conditions per country and/or type of road?
                 newLane =
-                    new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(), laneAttributes
-                        .getWidth(), laneType, directionality, speedLimit, new OvertakingConditions.LeftAndRight());
+                    new Lane(otslink, "lane." + laneNum, latPos, latPos, laneAttributes.getWidth(),
+                        laneAttributes.getWidth(), laneType, directionality, speedLimit,
+                        new OvertakingConditions.LeftAndRight());
             }
             if (simulator instanceof OTSAnimatorInterface)
             {

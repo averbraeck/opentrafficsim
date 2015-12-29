@@ -50,7 +50,7 @@ public class LaneChangeUrgeGTUColorer implements GTUColorer
         String[] labelTable = {"left", "neutral", "right"};
         if (colorTable.length != labelTable.length)
         {
-            throw new Error("Length of colorTable must be equal to length of labelTable");
+            throw new RuntimeException("Length of colorTable must be equal to length of labelTable");
         }
         this.legend = new ArrayList<LegendEntry>(colorTable.length + 1);
         String minimum = "Lane change should be completed within" + this.minimumLaneChangeDistance.toString();
@@ -114,7 +114,7 @@ public class LaneChangeUrgeGTUColorer implements GTUColorer
 
         /**
          * Construct a new LaneChangeDistanceAndDirection object.
-         * @param distance DoubleScalar.Abs&lt;LengthUnit&gt;; the distance available for performing a lane change
+         * @param distance Length.Rel; the distance available for performing a lane change
          * @param left Boolean; if true the lane change to perform is to the left; if false, the lane change to perform is to
          *            the right; if null, no lane change is needed, or possible
          */

@@ -3,7 +3,10 @@ package org.opentrafficsim.core.gtu;
 import java.io.Serializable;
 import java.util.Map;
 
+import javax.media.j3d.Bounds;
+
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -119,7 +122,16 @@ public interface GTU extends LocatableInterface, Serializable
 
     /** @return the perception module of this GTU */
     Perception getPerception();
-    
+
     /** @return the driving characteristics of this GTU (driver). */
     DrivingCharacteristics getDrivingCharacteristics();
+
+    /** {@inheritDoc} */
+    @Override
+    DirectedPoint getLocation();
+
+    /** {@inheritDoc} */
+    @Override
+    Bounds getBounds();
+
 }

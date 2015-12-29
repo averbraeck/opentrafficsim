@@ -1,10 +1,7 @@
 package org.opentrafficsim.road.network.factory.opendrive;
 
-import org.djunits.unit.AngleUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -13,12 +10,11 @@ import org.xml.sax.SAXException;
 
 /**
  * <p>
- * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
- * reserved. <br>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
- * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck
- * $, initial version Jul 23, 2015 <br>
+ * $LastChangedDate: 2015-07-24 02:58:59 +0200 (Fri, 24 Jul 2015) $, @version $Revision: 1147 $, by $Author: averbraeck $,
+ * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 class SpiralTag
@@ -37,11 +33,10 @@ class SpiralTag
      * @param parser the parser with the lists of information
      * @param geometryTag the GeometryTag to which this element belongs
      * @throws SAXException when parsing of the tag fails
-     * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseSpiral(final NodeList nodeList, final OpenDriveNetworkLaneParser parser, final GeometryTag geometryTag)
-            throws SAXException, NetworkException
+    static void parseSpiral(final NodeList nodeList, final OpenDriveNetworkLaneParser parser,
+        final GeometryTag geometryTag) throws SAXException
     {
         int typeCount = 0;
         for (Node node : XMLParser.getNodes(nodeList, "spiral"))
@@ -53,7 +48,8 @@ class SpiralTag
 
             Node curvStart = attributes.getNamedItem("curvStart");
             if (curvStart != null)
-                spiralTag.curvStart = new Length.Rel(Double.parseDouble(curvStart.getNodeValue().trim()), LengthUnit.SI);
+                spiralTag.curvStart =
+                    new Length.Rel(Double.parseDouble(curvStart.getNodeValue().trim()), LengthUnit.SI);
 
             Node curvEnd = attributes.getNamedItem("curvEnd");
             if (curvEnd != null)

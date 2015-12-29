@@ -63,7 +63,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation
     @Override
     public final SimpleAnimator buildAnimator(final Time.Abs startTime, final Time.Rel warmupPeriod,
         final Time.Rel runLength, final ArrayList<AbstractProperty<?>> userModifiedProperties, final Rectangle rect,
-        final boolean eoc) throws SimRuntimeException, NamingException
+        final boolean eoc) throws SimRuntimeException, NamingException, OTSSimulationException
     {
         this.savedUserModifiedProperties = userModifiedProperties;
         this.exitOnClose = eoc;
@@ -83,7 +83,8 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation
         final SimpleAnimator simulator = new SimpleAnimator(startTime, warmupPeriod, runLength, model);
         try
         {
-            this.panel = new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
+            this.panel =
+                new OTSAnimationPanel(makeAnimationRectangle(), new Dimension(1024, 768), simulator, this, colorer);
         }
         catch (RemoteException exception)
         {
@@ -105,21 +106,24 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation
             frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         }
 
-        frame.setDefaultCloseOperation(this.exitOnClose ? WindowConstants.EXIT_ON_CLOSE : WindowConstants.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(this.exitOnClose ? WindowConstants.EXIT_ON_CLOSE
+            : WindowConstants.DISPOSE_ON_CLOSE);
         return simulator;
     }
 
     /**
      * @return the JPanel with the charts; the result will be put in the statistics tab. May return null; this causes no
      *         statistics tab to be created.
+     * @throws OTSSimulationException in case the chart, axes or legend cannot be generated
      */
-    protected abstract JPanel makeCharts();
+    protected abstract JPanel makeCharts() throws OTSSimulationException;
 
     /**
      * @param colorer the GTU colorer to use.
      * @return the demo model. Don't forget to keep a local copy.
+     * @throws OTSSimulationException in case the construction of the model fails
      */
-    protected abstract OTSModelInterface makeModel(GTUColorer colorer);
+    protected abstract OTSModelInterface makeModel(GTUColorer colorer) throws OTSSimulationException;
 
     /**
      * @return the initial rectangle for the animation.
@@ -136,7 +140,7 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation
     /** {@inheritDoc} */
     @Override
     public final SimpleSimulatorInterface rebuildSimulator(final Rectangle rect) throws SimRuntimeException,
-        NetworkException, NamingException
+        NetworkException, NamingException, OTSSimulationException
     {
         return buildAnimator(this.savedStartTime, this.savedWarmupPeriod, this.savedRunLength,
             this.savedUserModifiedProperties, rect, this.exitOnClose);

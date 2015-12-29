@@ -30,8 +30,8 @@ class BlockTag
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static void parseBlock(final Node node, final XmlNetworkLaneParser parser, final LinkTag linkTag) throws SAXException,
-        NetworkException
+    static void parseBlock(final Node node, final XmlNetworkLaneParser parser, final LinkTag linkTag)
+        throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         BlockTag blockTag = new BlockTag();

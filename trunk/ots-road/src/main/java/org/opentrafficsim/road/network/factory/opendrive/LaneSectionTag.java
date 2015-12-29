@@ -23,16 +23,16 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class LaneSectionTag 
+class LaneSectionTag
 {
 
     /** sequence of the laneSection. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     int id = 0;
-    
+
     /** start position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Length.Rel s = null;       
+    Length.Rel s = null;
 
     /** left lanes */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -45,7 +45,7 @@ class LaneSectionTag
     /** right lanes */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<Integer, LaneTag> rightLaneTags = new HashMap<Integer, LaneTag>();
-    
+
     /** all lanes */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<Integer, Lane> lanes = new HashMap<Integer, Lane>();
@@ -59,7 +59,8 @@ class LaneSectionTag
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static LaneSectionTag parseLaneSection(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException, NetworkException
+    static LaneSectionTag parseLaneSection(final Node node, final OpenDriveNetworkLaneParser parser)
+        throws SAXException, NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         LaneSectionTag laneSectionTag = new LaneSectionTag();
@@ -82,7 +83,7 @@ class LaneSectionTag
                 LaneTag laneTag = LaneTag.parseLane(laneNode, parser);
                 laneSectionTag.centerLaneTags.put(laneTag.id, laneTag);
             }
-        
+
         for (Node rightNode : XMLParser.getNodes(node.getChildNodes(), "right"))
             for (Node laneNode : XMLParser.getNodes(rightNode.getChildNodes(), "lane"))
             {
@@ -100,22 +101,22 @@ class LaneSectionTag
     public List<Lane> findLanes(String orientation)
     {
         List<Lane> lanes1 = new ArrayList<Lane>();
-        for(int key: this.lanes.keySet())
+        for (int key : this.lanes.keySet())
         {
             Lane lane = this.lanes.get(key);
-            if(key < 0)
+            if (key < 0)
             {
-                if(orientation.equals("+") && this.rightLaneTags.get(key).type.equals("driving"))
+                if (orientation.equals("+") && this.rightLaneTags.get(key).type.equals("driving"))
                     lanes1.add(lane);
             }
-            else if(key > 0)
+            else if (key > 0)
             {
-                if(orientation.equals("-") && this.leftLaneTags.get(key).type.equals("driving"))
+                if (orientation.equals("-") && this.leftLaneTags.get(key).type.equals("driving"))
                     lanes1.add(lane);
             }
-                    
+
         }
-        if(lanes1.size() != 1)
+        if (lanes1.size() != 1)
             System.err.println("Exception in finding lanes");
         return lanes1;
     }

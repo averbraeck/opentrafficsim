@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network.route;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -65,7 +66,7 @@ public class JustDriveRouteNavigator extends AbstractLaneBasedRouteNavigator
     /** {@inheritDoc} */
     @Override
     public final Length.Rel suitability(final Lane lane, final Length.Rel longitudinalPosition, final LaneBasedGTU gtu,
-        final Time.Rel timeHorizon) throws NetworkException
+        final Time.Rel timeHorizon) throws GTUException
     {
         return new Length.Rel(50.0, LengthUnit.METER);
     }

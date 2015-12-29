@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.factory.opendrive.communicationRTI;
 
-import java.rmi.RemoteException;
 import java.util.Set;
 
 import javax.naming.NamingException;
@@ -11,8 +10,10 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
@@ -58,11 +59,14 @@ public class RTICars extends LaneBasedIndividualCar
      * @throws SimRuntimeException
      * @throws NetworkException
      * @throws NamingException
+     * @throws OperationalPlanException
+     * @throws OTSGeometryException
      */
     public RTICars(String valueOf, GTUType carType, Set<DirectedLanePosition> lanepositionSet, Speed speed,
         Rel carLength, Rel draw, Speed draw2, OTSDEVSSimulatorInterface simulator,
         LaneBasedStrategicalPlanner sPlanner, LanePerception perception, final OTSNetwork network)
-        throws NamingException, NetworkException, SimRuntimeException, GTUException
+        throws NamingException, NetworkException, SimRuntimeException, GTUException, OperationalPlanException,
+        OTSGeometryException
     {
         super(valueOf, carType, lanepositionSet, speed, carLength, draw, draw2, simulator, sPlanner, perception,
             network);
@@ -73,7 +77,7 @@ public class RTICars extends LaneBasedIndividualCar
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public DirectedPoint getLocation() throws RemoteException
+    public DirectedPoint getLocation()
     {
         double x = this.current.x + (0.01 * (Math.cos(this.current.getRotZ())));
         double y = this.current.y + (0.01 * (Math.sin(this.current.getRotZ())));

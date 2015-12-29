@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.factory.xml;
 
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.LengthUnits;
@@ -17,7 +16,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 24, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class StraightTag 
+class StraightTag
 {
     /** length. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

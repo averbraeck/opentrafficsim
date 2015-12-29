@@ -6,7 +6,6 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.math.Rotation3D.Abs;
 import org.opentrafficsim.core.math.Speed3D;
 
-
 /**
  * Information about a perceived object, which can be a GTU, a road sign, a traffic light, or an obstacle. This implementation
  * stores the information internally as (perceived) absolute locations.
@@ -27,12 +26,8 @@ public class PerceivedObject2D implements PerceivedObject
     /** the perceived object type. */
     PerceivedObjectType perceivedObjectType;
 
-    
-    
     // TODO finish PerceivedObject2D
-    
-    
-    
+
     /** {@inheritDoc} */
     @Override
     public PerceivedObjectType getPerceivedObjectType()

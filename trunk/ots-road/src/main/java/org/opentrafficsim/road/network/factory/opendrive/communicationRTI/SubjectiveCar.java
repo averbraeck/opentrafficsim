@@ -18,6 +18,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.DrivingCharacteristics;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
@@ -29,11 +30,10 @@ import org.opentrafficsim.core.network.NetworkException;
  * <br />
  * Copyright (c) 2013-2014 Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving. All rights reserved. <br />
  * Some parts of the software (c) 2011-2014 TU Delft, Faculty of TBM, Systems & Simulation <br />
- * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk
- * Onderzoek TNO (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten
- * Binnenvaart, Ab Ovo Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en
- * Leefomgeving, including the right to sub-license sources and derived products to third parties. <br />
- * 
+ * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk Onderzoek TNO
+ * (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten Binnenvaart, Ab Ovo
+ * Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving, including the
+ * right to sub-license sources and derived products to third parties. <br />
  * @version Mar 24, 2013 <br>
  * @author <a href="http://tudelft.nl/averbraeck">Alexander Verbraeck </a>
  * @version SVN $Revision: 31 $ $Author: averbraeck $
@@ -47,9 +47,9 @@ public class SubjectiveCar extends AbstractGTU
 
     /** */
     private DirectedPoint position = null;
-    
+
     private Length.Rel length;
-    
+
     private Length.Rel width;
 
     /**
@@ -57,21 +57,21 @@ public class SubjectiveCar extends AbstractGTU
      * @param type
      * @param simulator
      * @param initialLocation
+     * @throws GTUException
      * @throws SimRuntimeException
-     * @throws NetworkException
-     * @throws NamingException 
-     * @throws RemoteException 
+     * @throws NamingException
+     * @throws RemoteException
      */
     public SubjectiveCar(String id, GTUType type, OTSDEVSSimulatorInterface simulator, DirectedPoint initialLocation)
-            throws SimRuntimeException, NetworkException, RemoteException, NamingException
+        throws SimRuntimeException, GTUException, RemoteException, NamingException
     {
-        super(id, type, simulator, null, null, null, null);
+        super(id, type, simulator, null, null, initialLocation, Speed.ZERO, null);
         this.position = initialLocation;
         System.out.println("Subjective car created at position " + this.position);
-        
+
         this.length = new Length.Rel(4.0, LengthUnit.METER);
         this.width = new Length.Rel(2.0, LengthUnit.METER);
-        
+
         new SubjectiveCarAnimation(this, simulator);
     }
 
@@ -84,12 +84,13 @@ public class SubjectiveCar extends AbstractGTU
      * @param initialLocation
      * @throws SimRuntimeException
      * @throws NetworkException
+     * @throws GTUException
      */
     public SubjectiveCar(String id, GTUType gtuType, OTSDEVSSimulatorInterface simulator,
-            StrategicalPlanner strategicalPlanner, Perception perception, DirectedPoint initialLocation)
-            throws SimRuntimeException, NetworkException
+        StrategicalPlanner strategicalPlanner, Perception perception, DirectedPoint initialLocation)
+        throws SimRuntimeException, NetworkException, GTUException
     {
-        super(id, gtuType, simulator, strategicalPlanner, perception, initialLocation, null);
+        super(id, gtuType, simulator, strategicalPlanner, perception, initialLocation, Speed.ZERO, null);
     }
 
     /**
@@ -167,7 +168,7 @@ public class SubjectiveCar extends AbstractGTU
      * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getBounds()
      */
     @Override
-    public Bounds getBounds() throws RemoteException
+    public Bounds getBounds()
     {
         double dx = 0.5 * getLength().doubleValue();
         double dy = 0.5 * getWidth().doubleValue();
@@ -191,9 +192,9 @@ public class SubjectiveCar extends AbstractGTU
     }
 
     @Override
-    public DirectedPoint getLocation() throws RemoteException
+    public DirectedPoint getLocation()
     {
-        //System.out.println("Subjective car at position " + this.position);
+        // System.out.println("Subjective car at position " + this.position);
 
         return this.getPosition();
     }

@@ -19,6 +19,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -86,7 +87,7 @@ public class ListGTUGenerator
      * @param name String; name if this generator
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @param gtuType GTUType&lt;ID&gt;; the GTUType of the generated GTUs
-     * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the generated GTUs
+     * @param initialSpeed Speed; the initial speed of the generated GTUs
      * @param lane Lane; the lane on which the generated GTUs are placed
      * @param position Length.Rel; the position on the lane where the generated GTUs are placed
      * @param direction the direction on the lane in which the GTU has to be generated (DIR_PLUS, or DIR_MINUS)
@@ -182,7 +183,7 @@ public class ListGTUGenerator
                 this.network);
             scheduleNextVehicle();
         }
-        catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
+        catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
         {
             exception.printStackTrace();
         }

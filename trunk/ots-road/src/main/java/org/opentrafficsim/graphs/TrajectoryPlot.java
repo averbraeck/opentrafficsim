@@ -37,6 +37,7 @@ import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYDataset;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -333,7 +334,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
     private ArrayList<Trajectory> trajectoryIndices = new ArrayList<Trajectory>();
 
     /** {@inheritDoc} */
-    public final void addData(final AbstractLaneBasedGTU car, final Lane lane) throws NetworkException
+    public final void addData(final AbstractLaneBasedGTU car, final Lane lane) throws NetworkException, GTUException
     {
         // final Time.Abs startTime = car.getLastEvaluationTime();
         // System.out.println("addData car: " + car + ", lastEval: " + startTime);
@@ -464,9 +465,10 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
          * @param positionOffset double; offset needed to convert the position in the current Lane to a position on the
          *            trajectory
          * @throws NetworkException when car is not on lane anymore
+         * @throws GTUException on problems obtaining data from the GTU
          */
         public final void addSegment(final AbstractLaneBasedGTU car, final Lane lane, final double positionOffset)
-            throws NetworkException
+            throws NetworkException, GTUException
         {
             final int startSample =
                 (int) Math.ceil(car.getOperationalPlan().getStartTime().getSI() / getSampleInterval().getSI());

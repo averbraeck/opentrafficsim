@@ -13,10 +13,6 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.gtu.animation.GTUColorer;
-import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 
 /**
  * Draw a car.
@@ -45,11 +41,9 @@ public class SubjectiveCarAnimation extends Renderable2D
         super(source, simulator);
     }
 
-
-
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer) 
+    public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         final SubjectiveCar car = (SubjectiveCar) getSource();
         final double length = car.getLength().getSI();

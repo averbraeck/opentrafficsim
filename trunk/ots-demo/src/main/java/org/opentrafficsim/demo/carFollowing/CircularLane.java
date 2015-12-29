@@ -60,6 +60,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.BooleanProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
@@ -153,7 +154,7 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
                     circularLane.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(
                         3600.0, SECOND), propertyList, null, true);
                 }
-                catch (SimRuntimeException | NamingException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -178,14 +179,14 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts()
+    protected final JPanel makeCharts() throws OTSSimulationException
     {
         // Make the tab with the plots
         AbstractProperty<?> output =
             new CompoundProperty("", "", this.properties, false, 0).findByShortName("Output graphs");
         if (null == output)
         {
-            throw new Error("Cannot find output properties");
+            throw new OTSSimulationException("Cannot find output properties");
         }
         ArrayList<BooleanProperty> graphs = new ArrayList<BooleanProperty>();
         if (output instanceof CompoundProperty)
@@ -205,7 +206,7 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
         }
         else
         {
-            throw new Error("output properties should be compound");
+            throw new OTSSimulationException("output properties should be compound");
         }
         int graphCount = graphs.size();
         int columns = (int) Math.ceil(Math.sqrt(graphCount));
@@ -251,7 +252,7 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
                 }
                 else
                 {
-                    throw new Error("Unhandled type of contourplot: " + graphName);
+                    throw new OTSSimulationException("Unhandled type of contourplot: " + graphName);
                 }
                 graph = cp;
                 container = cp.getContentPane();
@@ -383,7 +384,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
             AbstractProperty<?> cfmp = propertyContainer.findByShortName("Car following model");
             if (null == cfmp)
             {
-                throw new Error("Cannot find \"Car following model\" property");
+                throw new SimRuntimeException("Cannot find \"Car following model\" property");
             }
             if (cfmp instanceof SelectionProperty)
             {
@@ -391,7 +392,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
             }
             else
             {
-                throw new Error("\"Car following model\" property has wrong type");
+                throw new SimRuntimeException("\"Car following model\" property has wrong type");
             }
             Iterator<AbstractProperty<ArrayList<AbstractProperty<?>>>> iterator =
                 new CompoundProperty("", "", this.properties, false, 0).iterator();
@@ -460,7 +461,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                         }
                         else
                         {
-                            throw new Error("Unknown gtu following model: " + carFollowingModelName);
+                            throw new SimRuntimeException("Unknown gtu following model: " + carFollowingModelName);
                         }
                         if (ap.getShortName().contains(" Car "))
                         {
@@ -472,7 +473,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                         }
                         else
                         {
-                            throw new Error("Cannot determine gtu type for " + ap.getShortName());
+                            throw new SimRuntimeException("Cannot determine gtu type for " + ap.getShortName());
                         }
                     }
                 }
@@ -568,7 +569,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
     /**
      * Generate cars at a fixed rate (implemented by re-scheduling this method).
      * @param lane Lane; the lane on which the new cars are placed
-     * @param initialPosition DoubleScalar.Rel&lt;LengthUnit&gt;; the initial longitudinal position of the new cars on the lane
+     * @param initialPosition Length.Rel; the initial longitudinal position of the new cars on the lane
      * @throws GTUException should not happen
      */
     protected final void generateCar(final Lane lane, final Length.Rel initialPosition) throws GTUException
@@ -584,17 +585,17 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                 generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
             if (null == gtuFollowingModel)
             {
-                throw new Error("gtuFollowingModel is null");
+                throw new GTUException("gtuFollowingModel is null");
             }
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, generateTruck
                 ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel, initialPositions,
                 initialSpeed, vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR),
-                new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), this.simulator, DefaultCarAnimation.class,
-                this.gtuColorer);
+                new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)), this.simulator,
+                DefaultCarAnimation.class, this.gtuColorer);
         }
         catch (NamingException | SimRuntimeException | NetworkException exception)
         {
-            exception.printStackTrace();
+            throw new GTUException(exception);
         }
     }
 

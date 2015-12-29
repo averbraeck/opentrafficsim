@@ -23,7 +23,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class TrafficLightTag 
+class TrafficLightTag
 {
     /** name, cannot be null in implementation of traffic light. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -59,11 +59,11 @@ class TrafficLightTag
             throw new NetworkException("TRAFFICLIGHT: LANE " + laneName + " no ROADTYPE for link " + linkTag.name);
         CrossSectionElementTag cseTag = linkTag.roadTypeTag.cseTags.get(laneName);
         if (cseTag == null)
-            throw new NetworkException("TRAFFICLIGHT: LANE " + laneName + " not found in elements of link " + linkTag.name
-                + " - roadtype " + linkTag.roadTypeTag.name);
+            throw new NetworkException("TRAFFICLIGHT: LANE " + laneName + " not found in elements of link "
+                + linkTag.name + " - roadtype " + linkTag.roadTypeTag.name);
         if (cseTag.elementType != ElementType.LANE)
-            throw new NetworkException("TRAFFICLIGHT: LANE " + laneName + " not a real GTU lane for link " + linkTag.name
-                + " - roadtype " + linkTag.roadTypeTag.name);
+            throw new NetworkException("TRAFFICLIGHT: LANE " + laneName + " not a real GTU lane for link "
+                + linkTag.name + " - roadtype " + linkTag.roadTypeTag.name);
         if (linkTag.generatorTags.containsKey(laneName))
             throw new SAXException("TRAFFICLIGHT for LANE with NAME " + laneName + " defined twice");
 

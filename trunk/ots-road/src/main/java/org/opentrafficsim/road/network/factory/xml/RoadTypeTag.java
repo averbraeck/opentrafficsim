@@ -26,7 +26,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class RoadTypeTag 
+class RoadTypeTag
 {
     /** name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")

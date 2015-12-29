@@ -20,7 +20,7 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class TypeTag 
+class TypeTag
 {
     /** start position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -57,7 +57,7 @@ class TypeTag
             if (s == null)
                 throw new SAXException("ROAD.TYPE: missing attribute s for ROAD.ID=" + roadTag.id);
             typeTag.s = new Length.Rel(Double.parseDouble(s.getNodeValue().trim()), LengthUnit.METER);
-            
+
             Node type = attributes.getNamedItem("type");
             if (type == null)
                 throw new SAXException("ROAD.TYPE: missing attribute type for ROAD.ID=" + roadTag.id);

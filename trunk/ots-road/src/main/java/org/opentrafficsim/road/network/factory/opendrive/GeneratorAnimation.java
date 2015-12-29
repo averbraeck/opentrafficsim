@@ -16,7 +16,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -43,10 +43,10 @@ public class GeneratorAnimation extends Renderable2D
      * @param simulator the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
-     * @throws NetworkException 
+     * @throws OTSGeometryException
      */
     public GeneratorAnimation(final Lane lane, final Length.Rel position, final OTSSimulatorInterface simulator)
-        throws NamingException, RemoteException, NetworkException
+        throws NamingException, RemoteException, OTSGeometryException
     {
         super(new GenPos(lane, position), simulator);
         this.halfWidth = 0.4 * (lane.getBeginWidth().si + lane.getEndWidth().si) / 2.0;
@@ -81,9 +81,9 @@ public class GeneratorAnimation extends Renderable2D
         /**
          * @param lane the lane where the generator is
          * @param position the position on the lane
-         * @throws NetworkException  on position out of bounds
+         * @throws OTSGeometryException on position out of bounds
          */
-        public GenPos(final Lane lane, final Length.Rel position) throws NetworkException
+        public GenPos(final Lane lane, final Length.Rel position) throws OTSGeometryException
         {
             this.location = lane.getCenterLine().getLocation(position);
             this.width = (lane.getBeginWidth().si + lane.getEndWidth().si) / 2.0; // avg width

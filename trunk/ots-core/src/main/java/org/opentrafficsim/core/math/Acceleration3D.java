@@ -2,12 +2,12 @@ package org.opentrafficsim.core.math;
 
 import java.util.Locale;
 
-import org.djunits.unit.AngleUnit;
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.AngleUnit;
 import org.djunits.value.StorageType;
 import org.djunits.value.ValueException;
-import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.vector.AccelerationVector;
 
 /**

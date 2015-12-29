@@ -29,7 +29,7 @@ public class VelocityGTUColorer implements GTUColorer
 
     /**
      * Construct a new VelocityGTUColorer.
-     * @param maximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed at (and above) which the returned color will be green
+     * @param maximumSpeed Speed; the speed at (and above) which the returned color will be green
      */
     public VelocityGTUColorer(final Speed maximumSpeed)
     {
@@ -48,7 +48,7 @@ public class VelocityGTUColorer implements GTUColorer
 
     /** {@inheritDoc} */
     @Override
-    public final Color getColor(final GTU gtu) 
+    public final Color getColor(final GTU gtu)
     {
         Speed speed = gtu.getVelocity();
         double ratio = speed.getSI() / this.maximumSpeed.getSI() * (this.legend.size() - 1);
@@ -62,8 +62,8 @@ public class VelocityGTUColorer implements GTUColorer
         }
         // Interpolate
         int floor = (int) Math.floor(ratio);
-        return ColorInterpolator.interpolateColor(this.legend.get(floor).getColor(), this.legend.get(floor + 1).getColor(),
-            ratio - floor);
+        return ColorInterpolator.interpolateColor(this.legend.get(floor).getColor(), this.legend.get(floor + 1)
+            .getColor(), ratio - floor);
     }
 
     /** {@inheritDoc} */

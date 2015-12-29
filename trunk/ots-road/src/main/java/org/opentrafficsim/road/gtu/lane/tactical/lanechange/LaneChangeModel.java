@@ -21,7 +21,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="http://www.citg.tudelft.nl">Yufei Yuan</a>
  */
-public interface LaneChangeModel 
+public interface LaneChangeModel
 {
     /**
      * Compute the acceleration and lane change.
@@ -33,12 +33,11 @@ public interface LaneChangeModel
      * @param leftLaneTraffic Collection&lt;GTU&gt;; the set of observable GTUs in the adjacent lane into which GTUs should
      *            merge to overtake other traffic (must be null if there is no such lane)
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
-     * @param preferredLaneRouteIncentive DoubleScalar.Rel&lt;AccelerationUnit&gt;; route incentive to merge to the adjacent
-     *            lane where GTUs should drive in the absence of other traffic
-     * @param laneChangeThreshold DoubleScalar.Rel&lt;AccelerationUnit&gt;; threshold that prevents lane changes that have very
-     *            little benefit
-     * @param nonPreferredLaneRouteIncentive DoubleScalar.Rel&lt;AccelerationUnit&gt;; route incentive to merge to the adjacent
-     *            lane into which GTUs should merge to overtake other traffic
+     * @param preferredLaneRouteIncentive Acceleration; route incentive to merge to the adjacent lane where GTUs should drive in
+     *            the absence of other traffic
+     * @param laneChangeThreshold Acceleration; threshold that prevents lane changes that have very little benefit
+     * @param nonPreferredLaneRouteIncentive Acceleration; route incentive to merge to the adjacent lane into which GTUs should
+     *            merge to overtake other traffic
      * @return LaneMovementStep; the result of the lane change and GTU following model
      */
     @SuppressWarnings("checkstyle:parameternumber")

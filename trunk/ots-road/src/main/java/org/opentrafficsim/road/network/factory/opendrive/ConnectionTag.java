@@ -16,33 +16,32 @@ import org.xml.sax.SAXException;
  * initial version Jul 23, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-class ConnectionTag 
+class ConnectionTag
 {
 
     /** id of the lane. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String id = null;
-    
+
     /** incoming Road id */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String incomingRoad = null;
-    
+
     /** connecting Road id */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String connectingRoad = null;
-    
+
     /** contact point. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ContactPointEnum contactPoint = null;
-    
+
     /** lane Link From. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Integer laneLinkFrom = null;
-    
+
     /** lane Link To. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Integer laneLinkTo = null;
-    
 
     /**
      * Parse the attributes of the road tag. The sub-elements are parsed in separate classes.
@@ -53,7 +52,8 @@ class ConnectionTag
      * @throws NetworkException when parsing of the tag fails
      */
     @SuppressWarnings("checkstyle:needbraces")
-    static ConnectionTag parseConnection(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException, NetworkException
+    static ConnectionTag parseConnection(final Node node, final OpenDriveNetworkLaneParser parser) throws SAXException,
+        NetworkException
     {
         NamedNodeMap attributes = node.getAttributes();
         ConnectionTag connectionTag = new ConnectionTag();
@@ -62,20 +62,20 @@ class ConnectionTag
         if (id == null)
             throw new SAXException("LANE: missing attribute id");
         connectionTag.id = id.getNodeValue().trim();
-        
+
         Node incomingRoad = attributes.getNamedItem("incomingRoad");
         if (incomingRoad == null)
             throw new SAXException("LANE: missing attribute incomingRoad");
         connectionTag.incomingRoad = incomingRoad.getNodeValue().trim();
-        
+
         Node connectingRoad = attributes.getNamedItem("connectingRoad");
         if (connectingRoad == null)
             throw new SAXException("LANE: missing attribute connectingRoad");
         connectionTag.connectingRoad = connectingRoad.getNodeValue().trim();
-        
+
         Node contactPoint = attributes.getNamedItem("contactPoint");
         if (contactPoint == null)
-            throw new SAXException("LANE: missing attribute contactPoint");        
+            throw new SAXException("LANE: missing attribute contactPoint");
         else
         {
             if ("start".equals(contactPoint.getNodeValue().trim()))
@@ -83,20 +83,20 @@ class ConnectionTag
             else if ("end".equals(contactPoint.getNodeValue().trim()))
                 connectionTag.contactPoint = ContactPointEnum.END;
             else
-                throw new SAXException("contactPoint is neither 'start' nor 'end' but: " + contactPoint.getNodeValue().trim());
+                throw new SAXException("contactPoint is neither 'start' nor 'end' but: "
+                    + contactPoint.getNodeValue().trim());
         }
-        
-        
+
         for (Node laneLink : XMLParser.getNodes(node.getChildNodes(), "laneLink"))
-            {
-                NamedNodeMap attributes1 = laneLink.getAttributes();
+        {
+            NamedNodeMap attributes1 = laneLink.getAttributes();
 
-                Node from = attributes1.getNamedItem("from");
-                connectionTag.laneLinkFrom = Integer.parseInt(from.getNodeValue().trim());
+            Node from = attributes1.getNamedItem("from");
+            connectionTag.laneLinkFrom = Integer.parseInt(from.getNodeValue().trim());
 
-                Node to = attributes1.getNamedItem("to");
-                connectionTag.laneLinkTo = Integer.parseInt(to.getNodeValue().trim());
-            }
+            Node to = attributes1.getNamedItem("to");
+            connectionTag.laneLinkTo = Integer.parseInt(to.getNodeValue().trim());
+        }
 
         return connectionTag;
     }

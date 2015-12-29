@@ -26,8 +26,8 @@ public interface WrappableAnimation
     /**
      * Build the animation.
      * @param startTime Time.Abs; the start time of the simulation
-     * @param warmupPeriod Time.Rel; the warm up period of the simulation (use new
-     *            Time.Rel(0, SECOND) if you don't know what this is)
+     * @param warmupPeriod Time.Rel; the warm up period of the simulation (use new Time.Rel(0, SECOND) if you don't know what
+     *            this is)
      * @param runLength Time.Rel; the duration of the simulation
      * @param properties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user-modified) properties. This list must
      *            contain all the properties returned by getProperties(); any additional properties may be ignored
@@ -37,10 +37,12 @@ public interface WrappableAnimation
      * @throws SimRuntimeException on ???
      * @throws NetworkException on Network inconsistency
      * @throws NamingException when context for the animation cannot be created
+     * @throws OTSSimulationException when the construction of the simulation, the control panel, the animation, or the charts
+     *             fails
      */
-    SimpleSimulatorInterface buildAnimator(final Time.Abs startTime, final Time.Rel warmupPeriod, final Time.Rel runLength,
-        ArrayList<AbstractProperty<?>> properties, Rectangle rect, boolean exitOnClose) throws SimRuntimeException,
-        NetworkException, NamingException;
+    SimpleSimulatorInterface buildAnimator(final Time.Abs startTime, final Time.Rel warmupPeriod,
+        final Time.Rel runLength, ArrayList<AbstractProperty<?>> properties, Rectangle rect, boolean exitOnClose)
+        throws SimRuntimeException, NetworkException, NamingException, OTSSimulationException;
 
     /**
      * Restart (rebuild) the simulation.
@@ -49,9 +51,10 @@ public interface WrappableAnimation
      * @throws SimRuntimeException on ???
      * @throws NetworkException on Network inconsistency
      * @throws NamingException when context for the animation cannot be created
+     * @throws OTSSimulationException when the (re)construction of the simulation model fails
      */
     SimpleSimulatorInterface rebuildSimulator(Rectangle rect) throws SimRuntimeException, NetworkException,
-        NamingException;
+        NamingException, OTSSimulationException;
 
     /**
      * Return a very short description of the simulation.

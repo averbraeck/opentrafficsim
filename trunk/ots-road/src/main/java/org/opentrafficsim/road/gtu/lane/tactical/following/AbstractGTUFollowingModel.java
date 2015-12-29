@@ -91,8 +91,8 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
                 {
                     // This one is ahead
                     AccelerationStep as =
-                        gfm.computeAcceleration(referenceGTU, headwayGTU.getOtherGTU().getVelocity(when), headwayGTU
-                            .getDistance(), speedLimit);
+                        gfm.computeAcceleration(referenceGTU, headwayGTU.getOtherGTU().getVelocity(when),
+                            headwayGTU.getDistance(), speedLimit);
                     if (null == referenceGTUAccelerationStep
                         || as.getAcceleration().lt(referenceGTUAccelerationStep.getAcceleration()))
                     {
@@ -123,7 +123,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
     {
         try
         {
-            final Time.Abs currentTime = follower.getOperationalPlan().getEndTime();
+            final Time.Abs currentTime = follower.getSimulator().getSimulatorTime().getTime();
             final Speed followerSpeed = follower.getVelocity(currentTime);
             final Speed followerMaximumSpeed = follower.getMaximumVelocity();
             Acceleration newAcceleration =

@@ -12,6 +12,7 @@ import org.djunits.value.vdouble.vector.MutableDoubleVector;
 import org.djunits.value.vdouble.vector.MutableLengthVector;
 import org.djunits.value.vdouble.vector.MutableTimeVector;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.simulationengine.OTSSimulationException;
 
 /**
  * Speed contour plot.
@@ -32,8 +33,9 @@ public class SpeedContourPlot extends ContourPlot
      * Create a new SpeedContourPlot.
      * @param caption String; text to show above the SpeedContourPlot
      * @param path List&lt;Lane&gt;; the series of Lanes that will provide the data for this TrajectoryPlot
+     * @throws OTSSimulationException in case of problems initializing the graph
      */
-    public SpeedContourPlot(final String caption, final List<Lane> path)
+    public SpeedContourPlot(final String caption, final List<Lane> path) throws OTSSimulationException
     {
         super(caption, new Axis(INITIALLOWERTIMEBOUND, INITIALUPPERTIMEBOUND, STANDARDTIMEGRANULARITIES,
             STANDARDTIMEGRANULARITIES[STANDARDINITIALTIMEGRANULARITYINDEX], "", "Time", "%.0fs"), path, 0d, 40d, 150d,

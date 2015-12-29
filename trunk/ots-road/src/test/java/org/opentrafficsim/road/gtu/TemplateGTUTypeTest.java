@@ -134,7 +134,7 @@ public class TemplateGTUTypeTest implements UNITS
      * @param id String; the expected id
      * @param length Length.Rel; the expected length
      * @param width Length.Rel; the expected width
-     * @param maximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the expected maximum velocity
+     * @param maximumSpeed Speed; the expected maximum velocity
      * @param simulator OTSDEVSSimulatorInterface; the expected simulator
      */
     private void verifyFields(final TemplateGTUType templateGTUType, final String id,

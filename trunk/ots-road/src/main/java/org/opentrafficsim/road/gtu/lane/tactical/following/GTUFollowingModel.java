@@ -27,7 +27,7 @@ public interface GTUFollowingModel
      * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their leader,
      * or should slow down for a crossing from accelerating to unsafe speeds.
      * @param follower LaneBasedGTU; the GTU for which acceleration is computed
-     * @param leaderSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed of the leader
+     * @param leaderSpeed Speed; the speed of the leader
      * @param headway Length.Rel; the headway of the leader
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the local speed limit
      * @return AccelerationStep; the result of application of the GTU following model
@@ -40,15 +40,14 @@ public interface GTUFollowingModel
      * Compute the acceleration that would be used to follow a leader.<br>
      * TODO We should probably add a <i>be ready to stop before</i> argument to prevent vehicles that cannot see their leader,
      * or should slow down for a crossing from accelerating to unsafe speeds.
-     * @param followerSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed of the follower at the current time
-     * @param followerMaximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the maximum speed that the follower is capable of driving
-     *            at
-     * @param leaderSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the speed of the follower at the current time
-     * @param headway Length.Rel; the <b>net</b> headway (distance between the front of the follower to
-     *            the rear of the leader) at the current time
-     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the local speed limit
-     * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; the acceleration (or, if negative, deceleration) resulting from
-     *         application of the GTU following model
+     * @param followerSpeed Speed; the speed of the follower at the current time
+     * @param followerMaximumSpeed Speed; the maximum speed that the follower is capable of driving at
+     * @param leaderSpeed Speed; the speed of the follower at the current time
+     * @param headway Length.Rel; the <b>net</b> headway (distance between the front of the follower to the rear of the leader)
+     *            at the current time
+     * @param speedLimit Speed; the local speed limit
+     * @return Acceleration; the acceleration (or, if negative, deceleration) resulting from application of the GTU following
+     *         model
      */
     Acceleration computeAcceleration(final Speed followerSpeed, Speed followerMaximumSpeed, final Speed leaderSpeed,
         final Length.Rel headway, final Speed speedLimit);
@@ -64,7 +63,7 @@ public interface GTUFollowingModel
      * @param referenceGTU LaneBasedGTU; the GTU for which the accelerations are computed
      * @param otherGTUs Collection&lt;HeadwayGTU&gt;; the other GTUs. A negative headway value indicates that the other GTU is a
      *            follower. NB. If the referenceGTU is contained in this Collection, it is ignored.
-     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the local speed limit
+     * @param speedLimit Speed; the local speed limit
      * @return DualAccelerationStep; the result with the lowest accelerations (or most severe decelerations) of application of
      *         the GTU following model of the referenceGTU for each leader and follower
      * @throws NetworkException on network inconsistency
@@ -75,7 +74,7 @@ public interface GTUFollowingModel
     /**
      * Compute the acceleration that would be used if the is not leader in sight.
      * @param gtu LaneBasedGTU; the GTU for which acceleration is computed
-     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the local speed limit
+     * @param speedLimit Speed; the local speed limit
      * @return AccelerationStep; the result of application of the GTU following model
      * @throws NetworkException on network inconsistency
      */
@@ -85,11 +84,11 @@ public interface GTUFollowingModel
     /**
      * Compute the minimum <b>net</b> headway given the speed of the follower and the leader.<br>
      * At the returned headway, the follower would decelerate with it's maximum comfortable deceleration.
-     * @param followerSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; speed of the follower
-     * @param leaderSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; speed of the leader
+     * @param followerSpeed Speed; speed of the follower
+     * @param leaderSpeed Speed; speed of the leader
      * @param precision Length.Rel; the required precision of the result (must be &gt; 0)
-     * @param speedLimit DoubleScalar.Abs&lt;SpeedUnit&gt;; the local speed limit
-     * @param followerMaximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the maximum speed that the follower can drive at
+     * @param speedLimit Speed; the local speed limit
+     * @param followerMaximumSpeed Speed; the maximum speed that the follower can drive at
      * @return Length.Rel
      */
     Length.Rel minimumHeadway(Speed followerSpeed, Speed leaderSpeed, Length.Rel precision, Speed speedLimit,
@@ -99,7 +98,7 @@ public interface GTUFollowingModel
      * Return the maximum safe deceleration for use in gap acceptance models. This is the deceleration that may be enforced upon
      * a new follower due to entering a road or changing into an adjacent lane. The result shall be a <b>positive value</b>. In
      * most car following models this value is named <cite>b</cite>.
-     * @return DoubleScalar.Abs&lt;AccelerationUnit&gt;; must be a positive value!
+     * @return Acceleration; must be a positive value!
      */
     Acceleration maximumSafeDeceleration();
 

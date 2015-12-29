@@ -19,6 +19,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -58,10 +59,10 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
      * @param id ID; the id of the GTU
      * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
      * @param initialLongitudinalPositions Map&lt;Lane, Length.Rel&gt;; the initial positions of the car on one or more lanes
-     * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the car on the lane
+     * @param initialSpeed Speed; the initial speed of the car on the lane
      * @param length Length.Rel; the maximum length of the GTU (parallel with driving direction)
      * @param width Length.Rel; the maximum width of the GTU (perpendicular to driving direction)
-     * @param maximumVelocity DoubleScalar.Abs&lt;SpeedUnit&gt;;the maximum speed of the GTU (in the driving direction)
+     * @param maximumVelocity Speed;the maximum speed of the GTU (in the driving direction)
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @param strategicalPlanner the strategical planner (e.g., route determination) to use
      * @param perception the lane-based perception model of the GTU
@@ -70,6 +71,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GTUException when a parameter is invalid
+     * @throws OTSGeometryException when the initial path is wrong
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualCar(final String id, final GTUType gtuType,
@@ -77,7 +79,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
         final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
         final LanePerception perception, final OTSNetwork network) throws NamingException, NetworkException,
-        SimRuntimeException, GTUException
+        SimRuntimeException, GTUException, OTSGeometryException
     {
         this(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
             strategicalPlanner, perception, DefaultCarAnimation.class, null, network);
@@ -88,10 +90,10 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
      * @param id ID; the id of the GTU
      * @param gtuType GTUTYpe; the type of GTU, e.g. TruckType, CarType, BusType
      * @param initialLongitudinalPositions Map&lt;Lane, Length.Rel&gt;; the initial positions of the car on one or more lanes
-     * @param initialSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the initial speed of the car on the lane
+     * @param initialSpeed Speed; the initial speed of the car on the lane
      * @param length Length.Rel; the maximum length of the GTU (parallel with driving direction)
      * @param width Length.Rel; the maximum width of the GTU (perpendicular to driving direction)
-     * @param maximumVelocity DoubleScalar.Abs&lt;SpeedUnit&gt;;the maximum speed of the GTU (in the driving direction)
+     * @param maximumVelocity Speed;the maximum speed of the GTU (in the driving direction)
      * @param simulator OTSDEVSSimulatorInterface; the simulator
      * @param strategicalPlanner the strategical planner (e.g., route determination) to use
      * @param perception the lane-based perception model of the GTU
@@ -103,6 +105,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GTUException when a parameter is invalid
+     * @throws OTSGeometryException when the initial path is wrong
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneBasedIndividualCar(final String id, final GTUType gtuType,
@@ -111,7 +114,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
         final LanePerception perception, final Class<? extends Renderable2D> animationClass,
         final GTUColorer gtuColorer, final OTSNetwork network) throws NamingException, NetworkException,
-        SimRuntimeException, GTUException
+        SimRuntimeException, GTUException, OTSGeometryException
     {
         super(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
             strategicalPlanner, perception, network);
@@ -119,12 +122,11 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         // sensor positions.
         // We take the rear position of the Car to be the reference point. So the front is the length
         // of the Car away from the reference point in the positive (driving) X-direction.
-        Length.Rel zero = new Length.Rel(0.0d, LengthUnit.METER);
-        Length.Rel dx = new Length.Rel(getLength().getSI(), LengthUnit.METER);
-        this.relativePositions
-            .put(RelativePosition.FRONT, new RelativePosition(dx, zero, zero, RelativePosition.FRONT));
-        this.relativePositions
-            .put(RelativePosition.REAR, new RelativePosition(zero, zero, zero, RelativePosition.REAR));
+        Length.Rel dx2 = new Length.Rel(getLength().getSI() / 2.0, LengthUnit.METER);
+        this.relativePositions.put(RelativePosition.FRONT, new RelativePosition(dx2, Length.Rel.ZERO, Length.Rel.ZERO,
+            RelativePosition.FRONT));
+        this.relativePositions.put(RelativePosition.REAR, new RelativePosition(dx2.multiplyBy(-1.0), Length.Rel.ZERO,
+            Length.Rel.ZERO, RelativePosition.REAR));
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
 
         setMaximumAcceleration(new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2));
@@ -519,7 +521,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
                 // TODO Should throw a more specific Exception type
                 throw new GTUException("factory settings incomplete");
             }
-            
+
             LaneBasedIndividualCar gtu =
                 new LaneBasedIndividualCar(this.id, this.gtuType, this.initialLongitudinalPositions, this.initialSpeed,
                     this.length, this.width, this.maximumVelocity, this.simulator, this.strategicalPlanner,

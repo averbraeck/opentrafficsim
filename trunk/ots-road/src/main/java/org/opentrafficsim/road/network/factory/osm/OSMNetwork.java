@@ -228,7 +228,8 @@ public class OSMNetwork
                 // Something similar occurs in Duesseldorf (PK), but here the node ids are different; work-around below
                 if (fromNode.getLatitude() == toNode.getLatitude() && fromNode.getLongitude() == toNode.getLongitude())
                 {
-                    warningListener.warning(new WarningEvent(this, String.format("Node clash %s vs %s", fromNode, toNode)));
+                    warningListener.warning(new WarningEvent(this, String.format("Node clash %s vs %s", fromNode,
+                        toNode)));
                     // FIXME: should probably assign all link end points of toNode to fromNode
                     continue;
                 }
@@ -237,8 +238,8 @@ public class OSMNetwork
             }
         }
         this.links = newLinks;
-        progressListener
-            .progress(new ProgressEvent(this, "Link creation finished. Created " + this.links.size() + " links."));
+        progressListener.progress(new ProgressEvent(this, "Link creation finished. Created " + this.links.size()
+            + " links."));
     }
 
     /**
@@ -340,8 +341,8 @@ public class OSMNetwork
                     }
                     redundancyRemoved = true;
                     OSMLink replacementLink =
-                        new OSMLink(link1.getStart(), link2.getEnd(), link1.getTags(),
-                            link1.getLength() + link2.getLength(), link1.getLanes(), link1.getForwardLanes());
+                        new OSMLink(link1.getStart(), link2.getEnd(), link1.getTags(), link1.getLength()
+                            + link2.getLength(), link1.getLanes(), link1.getForwardLanes());
                     if (!link1.getSplineList().isEmpty())
                     {
                         for (OSMNode n1 : link1.getSplineList())

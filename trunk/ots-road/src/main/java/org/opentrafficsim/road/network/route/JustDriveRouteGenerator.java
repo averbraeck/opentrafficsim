@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.route;
 
-import org.opentrafficsim.core.network.Link;
-
 /**
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>

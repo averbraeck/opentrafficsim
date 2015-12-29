@@ -15,6 +15,7 @@ public class RandomLaneBasedRouteGenerator implements LaneBasedRouteGenerator
 {
     /** the generation link. */
     private final Link link;
+
     /**
      * @param link the link to use in the generation
      */

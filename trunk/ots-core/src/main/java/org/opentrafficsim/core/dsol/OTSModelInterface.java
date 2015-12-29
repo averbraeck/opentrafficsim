@@ -17,5 +17,5 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
 public interface OTSModelInterface extends
     ModelInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
 {
-    // typed extension
+    //
 }

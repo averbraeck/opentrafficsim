@@ -15,11 +15,10 @@ public enum PerceivedObjectType
 {
     /** GTU. */
     GTU,
-    
+
     /** Fixed object, static. */
     FIXEDSTATIC,
-    
+
     /** Fixed object, dynamic. */
     FIXEDDYNAMIC;
 }
-

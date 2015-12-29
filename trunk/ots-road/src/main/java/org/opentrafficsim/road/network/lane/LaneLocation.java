@@ -3,8 +3,6 @@ package org.opentrafficsim.road.network.lane;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 
-
-
 /**
  * "1D" implementation.
  * <p>
@@ -16,7 +14,7 @@ import org.djunits.value.vdouble.scalar.Length;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneLocation 
+public class LaneLocation
 {
     /** The lane of the location of a point relative to the GTU. */
     private final Lane lane;

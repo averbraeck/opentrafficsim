@@ -298,7 +298,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
 
                 if (null == OTSControlPanel.this.wrappableAnimation)
                 {
-                    throw new Error("Do not know how to restart this simulation");
+                    throw new RuntimeException("Do not know how to restart this simulation");
                 }
 
                 // find the JFrame position and dimensions
@@ -625,7 +625,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         {
             if (minimum <= 0 || minimum > initialValue || initialValue > maximum)
             {
-                throw new Error("Bad (combination of) minimum, maximum and initialValue; "
+                throw new RuntimeException("Bad (combination of) minimum, maximum and initialValue; "
                     + "(restrictions: 0 < minimum <= initialValue <= maximum)");
             }
             switch (ticksPerDecade)
@@ -640,7 +640,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                     this.ratios = new int[]{1, 2, 5};
                     break;
                 default:
-                    throw new Error("Bad ticksPerDecade value (must be 1, 2 or 3)");
+                    throw new RuntimeException("Bad ticksPerDecade value (must be 1, 2 or 3)");
             }
             int minimumTick = (int) Math.floor(Math.log10(minimum / initialValue) * ticksPerDecade);
             int maximumTick = (int) Math.ceil(Math.log10(maximum / initialValue) * ticksPerDecade);

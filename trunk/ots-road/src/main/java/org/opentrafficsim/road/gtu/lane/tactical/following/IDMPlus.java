@@ -65,9 +65,8 @@ public class IDMPlus extends AbstractGTUFollowingModel
 
     /**
      * Construct a new IDMPlus car following model.
-     * @param a DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum acceleration of a stationary vehicle (normal value is 1
-     *            m/s/s)
-     * @param b DoubleScalar.Abs&lt;AccelerationUnit&gt;; the maximum deemed-safe deceleration (this is a positive value)
+     * @param a Acceleration; the maximum acceleration of a stationary vehicle (normal value is 1 m/s/s)
+     * @param b Acceleration; the maximum deemed-safe deceleration (this is a positive value)
      * @param s0 Length.Rel; the minimum stationary headway
      * @param tSafe Time.Rel; the minimum time-headway
      * @param delta double; the speed limit adherence (1.0; mean free speed equals the speed limit; 1.1: mean free speed equals
@@ -86,7 +85,7 @@ public class IDMPlus extends AbstractGTUFollowingModel
     /**
      * Desired speed (taking into account the urge to drive a little faster or slower than the posted speed limit).
      * @param speedLimit DoubleScalarAbs&lt;SpeedUnit&gt;; the speed limit
-     * @param followerMaximumSpeed DoubleScalar.Abs&lt;SpeedUnit&gt;; the maximum speed that the follower can drive
+     * @param followerMaximumSpeed Speed; the maximum speed that the follower can drive
      * @return DoubleScalarRel&lt;SpeedUnit&gt;; the desired speed
      */
     private Speed vDes(final Speed speedLimit, final Speed followerMaximumSpeed)

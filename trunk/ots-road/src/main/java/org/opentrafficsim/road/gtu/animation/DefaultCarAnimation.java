@@ -79,7 +79,7 @@ public class DefaultCarAnimation extends Renderable2D
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer) 
+    public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         final LaneBasedIndividualCar car = (LaneBasedIndividualCar) getSource();
         final double length = car.getLength().getSI();

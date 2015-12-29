@@ -1,5 +1,6 @@
 package org.opentrafficsim.graphs;
 
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -20,9 +21,10 @@ public interface LaneBasedGTUSampler
      * Add the movement of an AbstractLaneBasedGTU to a graph.
      * @param gtu AbstractLaneBasedGTU; the AbstractLaneBasedGTU
      * @param lane Lane; the Lane for which the movement must be added
+     * @throws GTUException on problems obtaining the data from the GTU
      * @throws NetworkException on network-related inconsistency
      */
-    void addData(AbstractLaneBasedGTU gtu, Lane lane) throws NetworkException;
+    void addData(AbstractLaneBasedGTU gtu, Lane lane) throws GTUException, NetworkException;
 
     /**
      * Force redraw of the graph.

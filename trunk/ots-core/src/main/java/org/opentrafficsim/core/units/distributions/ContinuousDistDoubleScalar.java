@@ -72,8 +72,8 @@ public interface ContinuousDistDoubleScalar
      * @param <T> The absolute DoubleScalar type
      * @param <U> The unit type used
      */
-    public static class Abs<T extends DoubleScalar.Abs<U>, U extends Unit<U>> extends
-        AbstractContinuousDistScalar implements Absolute
+    public static class Abs<T extends DoubleScalar.Abs<U>, U extends Unit<U>> extends AbstractContinuousDistScalar
+        implements Absolute
     {
         /**
          * @param distribution the wrapped distribution function.
@@ -124,8 +124,8 @@ public interface ContinuousDistDoubleScalar
      * @param <T> The absolute DoubleScalar type
      * @param <U> The unit type used
      */
-    public static class Rel<T extends DoubleScalar.Rel<U>, U extends Unit<U>> extends
-        AbstractContinuousDistScalar implements Relative
+    public static class Rel<T extends DoubleScalar.Rel<U>, U extends Unit<U>> extends AbstractContinuousDistScalar
+        implements Relative
     {
         /**
          * @param distribution the wrapped distribution function.

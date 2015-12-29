@@ -50,7 +50,7 @@ public class DefaultSensorAnimation extends Renderable2D
 
     /** {@inheritDoc} */
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer) 
+    public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         graphics.setColor(this.color);
         Rectangle2D rectangle = new Rectangle2D.Double(-0.4, -this.halfWidth, 0.8, 2 * this.halfWidth);

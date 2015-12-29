@@ -19,6 +19,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
@@ -708,10 +709,9 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param fractionalPosition double; the fractional position that the newly added GTU will have on this Lane
      * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to
      *         a lane change operation)
-     * @throws NetworkException when the fractionalPosition is outside the range 0..1, or the GTU is already registered on this
-     *             Lane
+     * @throws GTUException when the fractionalPosition is outside the range 0..1, or the GTU is already registered on this Lane
      */
-    public final int addGTU(final LaneBasedGTU gtu, final double fractionalPosition) throws NetworkException
+    public final int addGTU(final LaneBasedGTU gtu, final double fractionalPosition) throws GTUException
     {
         // figure out the rank for the new GTU
         int index;
@@ -720,10 +720,9 @@ public class Lane extends CrossSectionElement implements Serializable
             LaneBasedGTU otherGTU = this.gtuList.get(index);
             if (gtu == otherGTU)
             {
-                throw new NetworkException("GTU " + gtu + " already registered on Lane " + this
-                    + " [registered lanes: " + gtu.positions(gtu.getFront()).keySet() + "] locations: "
-                    + gtu.positions(gtu.getFront()).values() + " time: "
-                    + gtu.getSimulator().getSimulatorTime().getTime());
+                throw new GTUException("GTU " + gtu + " already registered on Lane " + this + " [registered lanes: "
+                    + gtu.positions(gtu.getFront()).keySet() + "] locations: " + gtu.positions(gtu.getFront()).values()
+                    + " time: " + gtu.getSimulator().getSimulatorTime().getTime());
             }
             if (otherGTU.fractionalPosition(this, otherGTU.getFront()) >= fractionalPosition)
             {
@@ -740,9 +739,9 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param longitudinalPosition Length.Rel; the longitudinal position that the newly added GTU will have on this Lane
      * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to
      *         a lane change operation)
-     * @throws NetworkException when longitudinalPosition is negative or exceeds the length of this Lane
+     * @throws GTUException when longitudinalPosition is negative or exceeds the length of this Lane
      */
-    public final int addGTU(final LaneBasedGTU gtu, final Length.Rel longitudinalPosition) throws NetworkException
+    public final int addGTU(final LaneBasedGTU gtu, final Length.Rel longitudinalPosition) throws GTUException
     {
         return addGTU(gtu, longitudinalPosition.getSI() / getLength().getSI());
     }
@@ -762,10 +761,10 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param relativePosition the relative position of the GTU we are looking for.
      * @param when the time for which to evaluate the positions.
      * @return the first GTU after a position on this lane, or null if no GTU could be found.
-     * @throws NetworkException when there is a problem with the position of the GTUs on the lane.
+     * @throws GTUException when there is a problem with the position of the GTUs on the lane.
      */
     public final LaneBasedGTU getGtuAfter(final Length.Rel position, final RelativePosition.TYPE relativePosition,
-        final Time.Abs when) throws NetworkException
+        final Time.Abs when) throws GTUException
     {
         for (LaneBasedGTU gtu : this.gtuList)
         {
@@ -785,7 +784,7 @@ public class Lane extends CrossSectionElement implements Serializable
             }
             else
             {
-                throw new NetworkException("Can only use Lane.getGtuAfter(...) method with FRONT and REAR positions");
+                throw new GTUException("Can only use Lane.getGtuAfter(...) method with FRONT and REAR positions");
             }
         }
         return null;
@@ -797,10 +796,10 @@ public class Lane extends CrossSectionElement implements Serializable
      * @param relativePosition the relative position of the GTU we are looking for.
      * @param when the time for which to evaluate the positions.
      * @return the first GTU before a position on this lane, or null if no GTU could be found.
-     * @throws NetworkException when there is a problem with the position of the GTUs on the lane.
+     * @throws GTUException when there is a problem with the position of the GTUs on the lane.
      */
     public final LaneBasedGTU getGtuBefore(final Length.Rel position, final RelativePosition.TYPE relativePosition,
-        final Time.Abs when) throws NetworkException
+        final Time.Abs when) throws GTUException
     {
         for (int i = this.gtuList.size() - 1; i >= 0; i--)
         {
@@ -821,7 +820,7 @@ public class Lane extends CrossSectionElement implements Serializable
             }
             else
             {
-                throw new NetworkException("Can only use Lane.getGtuBefore(...) method with FRONT and REAR positions");
+                throw new GTUException("Can only use Lane.getGtuBefore(...) method with FRONT and REAR positions");
             }
         }
         return null;
@@ -985,8 +984,9 @@ public class Lane extends CrossSectionElement implements Serializable
      * Add the movement of a GTU to all graphs that sample this Lane.
      * @param gtu AbstractLaneBasedGTU; the GTU to sample
      * @throws NetworkException on network inconsistency
+     * @throws GTUException on problems obtaining data from the GTU for the graph
      */
-    public final void sample(final AbstractLaneBasedGTU gtu) throws NetworkException
+    public final void sample(final AbstractLaneBasedGTU gtu) throws NetworkException, GTUException
     {
         for (LaneBasedGTUSampler sampler : this.samplers)
         {
