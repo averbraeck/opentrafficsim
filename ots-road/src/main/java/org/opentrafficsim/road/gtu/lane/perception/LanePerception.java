@@ -70,6 +70,10 @@ public class LanePerception implements Perception
     /** the GTUs parallel to us. */
     private final Map<Lane, Set<LaneBasedGTU>> parallelGTUs = new HashMap<>();
 
+    /** the GTUs parallel to us in a certain direction. */
+    private final EnumMap<LateralDirectionality, Set<LaneBasedGTU>> parallelDirectionalGTUs =
+        new EnumMap<LateralDirectionality, Set<LaneBasedGTU>>(LateralDirectionality.class);
+
     /**
      * Create a new LanePerception module. Because the constructor is often called inside the constructor of a GTU, this
      * constructor does not ask for the pointer to the GTU, as it is often impossible to provide at the time of construction.
@@ -130,6 +134,12 @@ public class LanePerception implements Perception
         for (Lane lane : this.accessibleAdjacentLanes.keySet())
         {
             this.parallelGTUs.put(lane, parallel(lane, this.timestamp));
+        }
+        
+        for (LateralDirectionality dir : LateralDirectionality.values())
+        {
+            this.parallelDirectionalGTUs.put(dir, new HashSet<LaneBasedGTU>());
+            this.parallelDirectionalGTUs.get(dir).addAll(parallel(dir, this.timestamp));
         }
 
         // for the accessible lanes, see who is ahead of us and in front of us
@@ -635,6 +645,14 @@ public class LanePerception implements Perception
     public final Map<Lane, Set<LaneBasedGTU>> getParallelGTUs()
     {
         return this.parallelGTUs;
+    }
+
+    /**
+     * @return parallelGTUs
+     */
+    public final EnumMap<LateralDirectionality, Set<LaneBasedGTU>> getParallelDirectionalGTUs()
+    {
+        return this.parallelDirectionalGTUs;
     }
 
     /**

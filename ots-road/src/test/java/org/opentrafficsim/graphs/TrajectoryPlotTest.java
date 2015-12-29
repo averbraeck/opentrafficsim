@@ -6,7 +6,7 @@ import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
-import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -19,7 +19,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * initial version Aug 22, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrajectoryPlotTest implements UNITS 
+public class TrajectoryPlotTest implements UNITS
 {
     /** Sample interval for the TrajectoryPlot. */
     Time.Rel sampleInterval = new Time.Rel(0.25, SECOND);
@@ -168,10 +168,10 @@ public class TrajectoryPlotTest implements UNITS
      * @param car Car; the car whose trajectory was sampled
      * @param series Integer; the series in the TrajectoryPlot that should correspond to the car
      * @param tp TrajectoryPlot; the TrajectoryPlot that contains the samples
-     * @throws NetworkException when car is not on lane anymore
+     * @throws GTUException when car is not on lane anymore
      */
     private void verifyTrajectory(final LaneBasedIndividualCar car, final int series, final TrajectoryPlot tp)
-        throws NetworkException
+        throws GTUException
     {
         // XXX we take the first (and only) lane on which the vehicle is registered.
         Lane lane = car.positions(car.getFront()).keySet().iterator().next();
