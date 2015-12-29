@@ -237,36 +237,36 @@ public class ContourPlotTest implements UNITS
                 try
                 {
                     cp.getXValue(0, -1);
-                    fail("Should have thrown an Error");
+                    fail("Should have thrown an Exception");
                 }
-                catch (Error e)
+                catch (RuntimeException e)
                 {
                     // Ignore
                 }
                 try
                 {
                     cp.getXValue(0, bins);
-                    fail("Should have thrown an Error");
+                    fail("Should have thrown an Exception");
                 }
-                catch (Error e)
+                catch (RuntimeException e)
                 {
                     // Ignore
                 }
                 try
                 {
                     cp.yAxisBin(-1);
-                    fail("Should have thrown an Error");
+                    fail("Should have thrown an Exception");
                 }
-                catch (Error e)
+                catch (RuntimeException e)
                 {
                     // Ignore
                 }
                 try
                 {
                     cp.yAxisBin(bins);
-                    fail("Should have thrown an Error");
+                    fail("Should have thrown an Exception");
                 }
-                catch (Error e)
+                catch (RuntimeException e)
                 {
                     // Ignore
                 }
@@ -276,36 +276,36 @@ public class ContourPlotTest implements UNITS
         try
         {
             cp.actionPerformed(new ActionEvent(cp, 0, "blabla"));
-            fail("Should have thrown an Error");
+            fail("Should have thrown an Exception");
         }
-        catch (Error e)
+        catch (RuntimeException e)
         {
             // Ignore
         }
         try
         {
             cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularity -1"));
-            fail("Should have thrown an Error");
+            fail("Should have thrown an Exception");
         }
-        catch (Error e)
+        catch (RuntimeException e)
         {
             // ignore
         }
         try
         {
             cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularity abc"));
-            fail("Should have thrown an Error");
+            fail("Should have thrown an Exception");
         }
-        catch (Error e)
+        catch (RuntimeException e)
         {
             // ignore
         }
         try
         {
             cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularitIE 10")); // typo in the event name
-            fail("Should have thrown an Error");
+            fail("Should have thrown an Exception");
         }
-        catch (Error e)
+        catch (RuntimeException e)
         {
             // ignore
         }

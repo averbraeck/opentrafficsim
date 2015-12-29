@@ -204,10 +204,11 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             return; // Done; do not re-schedule execution of this move method.
         }
 
-        // store the new positions
+        // store the new positions, and sample statistics
         Map<Link, Double> newLinkPositions = new HashMap<>();
         for (Lane lane : this.lanes.keySet())
         {
+            lane.sample(this);
             newLinkPositions.put(lane.getParentLink(), lane.fraction(position(lane, getReference())));
         }
 
