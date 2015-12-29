@@ -283,6 +283,19 @@ public class OTSLine3D implements LocatableInterface, Serializable
      */
     public static OTSLine3D concatenate(final OTSLine3D... lines) throws OTSGeometryException
     {
+        return concatenate(0.0, lines);
+    }
+
+    /**
+     * Concatenate several OTSLine3D instances.
+     * @param toleranceSI the tolerance between the end point of a line and the first point of the next line
+     * @param lines OTSLine3D... one or more OTSLine3D. The last point of the first <strong>must</strong> match the first of the
+     *            second, etc.
+     * @return OTSLine3D
+     * @throws OTSGeometryException if zero lines are given, or when there is a gap between consecutive lines
+     */
+    public static OTSLine3D concatenate(final double toleranceSI, final OTSLine3D... lines) throws OTSGeometryException
+    {
         if (0 == lines.length)
         {
             throw new OTSGeometryException("Empty argument list");
@@ -294,7 +307,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         int size = lines[0].size();
         for (int i = 1; i < lines.length; i++)
         {
-            if (lines[i - 1].getLast().distance(lines[i].getFirst()).si > 0)
+            if (lines[i - 1].getLast().distance(lines[i].getFirst()).si > toleranceSI)
             {
                 throw new OTSGeometryException("Lines are not connected");
             }

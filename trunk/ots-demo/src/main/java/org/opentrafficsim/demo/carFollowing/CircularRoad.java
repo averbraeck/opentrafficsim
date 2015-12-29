@@ -38,6 +38,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.graphs.AccelerationContourPlot;
@@ -61,6 +62,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.BooleanProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
@@ -167,7 +169,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
                     circularRoad.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(
                         3600.0, SECOND), propertyList, null, true);
                 }
-                catch (SimRuntimeException | NamingException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -200,7 +202,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts()
+    protected final JPanel makeCharts() throws OTSSimulationException
     {
         // Make the tab with the plots
         AbstractProperty<?> output =
@@ -327,6 +329,9 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
 
     /** the simulator. */
     private OTSDEVSSimulatorInterface simulator;
+
+    /** network. */
+    private OTSNetwork network = new OTSNetwork("network");
 
     /** Number of cars created. */
     private int carsCreated = 0;

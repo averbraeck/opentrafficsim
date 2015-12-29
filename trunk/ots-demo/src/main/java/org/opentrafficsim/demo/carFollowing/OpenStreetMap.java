@@ -28,6 +28,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -218,7 +219,7 @@ public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
             }
             this.osmNetwork.makeLinks(this.warningListener, this.progressListener);
         }
-        catch (URISyntaxException | IOException | NetworkException exception)
+        catch (URISyntaxException | IOException | NetworkException | OTSGeometryException exception)
         {
             exception.printStackTrace();
             return null;
@@ -291,6 +292,9 @@ class OSMModel implements OTSModelInterface
 
     /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
+
+    /** network. */
+    private OTSNetwork network = new OTSNetwork("network");
 
     /** Provided Network. */
     private OSMNetwork osmNetwork;

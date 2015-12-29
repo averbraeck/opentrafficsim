@@ -35,6 +35,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.graphs.FundamentalDiagramLane;
@@ -55,6 +56,7 @@ import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
+import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.ProbabilityDistributionProperty;
 import org.opentrafficsim.simulationengine.properties.PropertyException;
@@ -123,7 +125,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                     fundamentalDiagramsLane.buildAnimator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND),
                         new Time.Rel(3600.0, SECOND), fundamentalDiagramsLane.getProperties(), null, true);
                 }
-                catch (SimRuntimeException | NamingException exception)
+                catch (SimRuntimeException | NamingException | OTSSimulationException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -148,7 +150,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
 
     /** {@inheritDoc} */
     @Override
-    protected final JPanel makeCharts()
+    protected final JPanel makeCharts() throws OTSSimulationException
     {
         final int panelsPerRow = 3;
         TablePanel charts = new TablePanel(3, panelsPerRow);
@@ -213,6 +215,9 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
     {
         /** */
         private static final long serialVersionUID = 20140820L;
+
+        /** network. */
+        private OTSNetwork network = new OTSNetwork("network");
 
         /** the simulator. */
         private OTSDEVSSimulatorInterface simulator;

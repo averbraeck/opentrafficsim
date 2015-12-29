@@ -44,6 +44,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
@@ -186,6 +187,9 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
 
     /** the simulator. */
     private OTSDEVSSimulatorInterface simulator;
+
+    /** network. */
+    private OTSNetwork network = new OTSNetwork("network");
 
     /** The plots. */
     private ArrayList<LaneBasedGTUSampler> plots = new ArrayList<LaneBasedGTUSampler>();
