@@ -292,7 +292,7 @@ public class LaneBasedGTUTest implements UNITS
                     }
                 }
                 Set<LaneBasedGTU> leftParallel =
-                    truck.parallel(LateralDirectionality.LEFT, simulator.getSimulatorTime().getTime());
+                    truck.getPerception().getParallelDirectionalGTUs().get(LateralDirectionality.LEFT);
                 int expectedLeftSize =
                     laneRank + carLanesCovered - 1 < truckFromLane - 1 || laneRank >= truckUpToLane
                         || step + carLength.getSI() <= truckPosition.getSI()
@@ -305,7 +305,7 @@ public class LaneBasedGTUTest implements UNITS
                     assertTrue("Parallel GTU should be the car", leftParallel.contains(car));
                 }
                 Set<LaneBasedGTU> rightParallel =
-                    truck.parallel(LateralDirectionality.RIGHT, simulator.getSimulatorTime().getTime());
+                    truck.getPerception().getParallelDirectionalGTUs().get(LateralDirectionality.RIGHT);
                 int expectedRightSize =
                     laneRank + carLanesCovered - 1 <= truckFromLane || laneRank > truckUpToLane + 1
                         || step + carLength.getSI() < truckPosition.getSI()

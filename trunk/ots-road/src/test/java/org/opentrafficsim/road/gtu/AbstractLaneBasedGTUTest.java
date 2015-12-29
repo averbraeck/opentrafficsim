@@ -26,9 +26,9 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -65,7 +65,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
 {
     /** network. */
     private OTSNetwork network = new OTSNetwork("network");
-    
+
     /**
      * Test that the constructor puts the supplied values in the correct fields, then check the motion of the GTU.
      * @throws Exception when something goes wrong (should not happen)
@@ -143,10 +143,10 @@ public class AbstractLaneBasedGTUTest implements UNITS
         assertEquals("Width should be identical to the provided width", carWidth, car.getWidth());
         assertEquals("Length should be identical to the provided length", carLength, car.getLength());
         assertEquals("GTU type should be identical to the provided one", gtuType, car.getGTUType());
-        assertEquals("front in lanesGroupA[1] is positionA", positionA.getSI(), car.position(lanesGroupA[1],
-            car.getReference()).getSI(), 0.0001);
-        assertEquals("front in lanesGroupB[1] is positionB", positionB.getSI(), car.position(lanesGroupB[1],
-            car.getReference()).getSI(), 0.0001);
+        assertEquals("front in lanesGroupA[1] is positionA", positionA.getSI(),
+            car.position(lanesGroupA[1], car.getReference()).getSI(), 0.0001);
+        assertEquals("front in lanesGroupB[1] is positionB", positionB.getSI(),
+            car.position(lanesGroupB[1], car.getReference()).getSI(), 0.0001);
         assertEquals("acceleration is 0", 0, car.getAcceleration().getSI(), 0.00001);
         assertEquals("longitudinal velocity is " + initialSpeed, initialSpeed.getSI(), car.getVelocity().getSI(),
             0.00001);
@@ -157,7 +157,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
             car.position(null, car.getFront());
             fail("position on null lane should have thrown a NetworkException");
         }
-        catch (NetworkException ne)
+        catch (GTUException ne)
         {
             // Ignore
         }
@@ -189,11 +189,11 @@ public class AbstractLaneBasedGTUTest implements UNITS
                             }
                             // System.out.println("reported position: " + position);
                             // System.out.println("expected position: " + expectedPosition);
-                            assertEquals("Position should match initial position", expectedPosition.getSI(), position
-                                .getSI(), 0.0001);
+                            assertEquals("Position should match initial position", expectedPosition.getSI(),
+                                position.getSI(), 0.0001);
                         }
                     }
-                    catch (NetworkException ne)
+                    catch (GTUException ne)
                     {
                         if (!expectException)
                         {
@@ -254,12 +254,12 @@ public class AbstractLaneBasedGTUTest implements UNITS
                 Double pos = positions.get(lanesGroupA[1]);
                 // System.out.println("Fractional positions: " + positions);
                 assertTrue("Car should be in lane 1 of lane group A", null != pos);
-                assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos, car
-                    .fractionalPosition(lanesGroupA[1], relativePosition), 0.0000001);
+                assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
+                    car.fractionalPosition(lanesGroupA[1], relativePosition), 0.0000001);
                 pos = positions.get(lanesGroupB[1]);
                 assertTrue("Car should be in lane 1 of lane group B", null != pos);
-                assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos, car
-                    .fractionalPosition(lanesGroupB[1], relativePosition), 0.0000001);
+                assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
+                    car.fractionalPosition(lanesGroupB[1], relativePosition), 0.0000001);
             }
             for (Lane[] laneGroup : new Lane[][]{lanesGroupA, lanesGroupB})
             {
@@ -300,7 +300,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
                                     position.getSI(), 0.0001);
                             }
                         }
-                        catch (NetworkException ne)
+                        catch (GTUException ne)
                         {
                             if (!expectException)
                             {
@@ -337,7 +337,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
                                     fractionalPosition, 0.000001);
                             }
                         }
-                        catch (NetworkException ne)
+                        catch (GTUException ne)
                         {
                             if (!expectException)
                             {
@@ -363,19 +363,19 @@ public class AbstractLaneBasedGTUTest implements UNITS
             assertEquals("Car should be in three lanes", 3, positions.size());
             Double pos = positions.get(lanesGroupA[1]);
             assertTrue("Car should be in lane 1 of lane group A", null != pos);
-            assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos, car
-                .fractionalPosition(lanesGroupA[1], relativePosition), 0.0000001);
+            assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
+                car.fractionalPosition(lanesGroupA[1], relativePosition), 0.0000001);
             pos = positions.get(lanesGroupB[1]);
             assertTrue("Car should be in lane 1 of lane group B", null != pos);
-            assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos, car
-                .fractionalPosition(lanesGroupB[1], relativePosition), 0.0000001);
+            assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
+                car.fractionalPosition(lanesGroupB[1], relativePosition), 0.0000001);
             pos = positions.get(lanesGroupC[0]);
             assertTrue("Car should be in lane 0 of lane group C", null != pos);
             // The next one fails - maybe I don't understand something - PK
             // assertEquals("fractional position should be 0", 0,
             // car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
-            assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos, car
-                .fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
+            assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
+                car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
         }
         car.leaveLane(lanesGroupA[1]);
         for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
@@ -384,15 +384,15 @@ public class AbstractLaneBasedGTUTest implements UNITS
             assertEquals("Car should be in two lanes", 2, positions.size());
             Double pos = positions.get(lanesGroupB[1]);
             assertTrue("Car should be in lane 1 of lane group B", null != pos);
-            assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos, car
-                .fractionalPosition(lanesGroupB[1], relativePosition), 0.0000001);
+            assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
+                car.fractionalPosition(lanesGroupB[1], relativePosition), 0.0000001);
             pos = positions.get(lanesGroupC[0]);
             assertTrue("Car should be in lane 0 of lane group C", null != pos);
             // The next one fails - maybe I don't understand something - PK
             // assertEquals("fractional position should be 0", 0,
             // car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
-            assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos, car
-                .fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
+            assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
+                car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
         }
         // TODO
         // removeLane should throw an Error when the car is not on that lane (currently this is silently ignored)
