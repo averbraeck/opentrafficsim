@@ -60,7 +60,9 @@ public final class LaneFactory
     public static CrossSectionLink makeLink(final String name, final OTSNode from, final OTSNode to,
         final OTSPoint3D[] intermediatePoints) throws OTSGeometryException
     {
-        List<OTSPoint3D> pointList = intermediatePoints == null ? new ArrayList<>() : Arrays.asList(intermediatePoints);
+        List<OTSPoint3D> pointList =
+            intermediatePoints == null ? new ArrayList<OTSPoint3D>() : new ArrayList<OTSPoint3D>(
+                Arrays.asList(intermediatePoints));
         if (pointList.size() == 0 || !from.getPoint().equals(pointList.get(0)))
         {
             pointList.add(0, from.getPoint());
@@ -69,6 +71,35 @@ public final class LaneFactory
         {
             pointList.add(to.getPoint());
         }
+
+        /*-
+        // see if an intermediate point needs to be created to the start of the link in the right direction
+        OTSPoint3D s1 = pointList.get(0);
+        OTSPoint3D s2 = pointList.get(1);
+        double dy = s2.y - s1.y;
+        double dx = s2.x - s1.x;
+        double a = from.getLocation().getRotZ();
+        if (Math.abs(a - Math.atan2(dy, dx)) > 1E-6)
+        {
+            double r = Math.min(1.0, Math.sqrt(dy * dy + dx * dx) / 4.0); 
+            OTSPoint3D extra = new OTSPoint3D(s1.x + r * Math.cos(a), s1.y + r * Math.sin(a), s1.z);
+            pointList.add(1, extra);
+        }
+        
+        // see if an intermediate point needs to be created to the end of the link in the right direction
+        s1 = pointList.get(pointList.size() - 2);
+        s2 = pointList.get(pointList.size() - 1);
+        dy = s2.y - s1.y;
+        dx = s2.x - s1.x;
+        a = to.getLocation().getRotZ() - Math.PI;
+        if (Math.abs(a - Math.atan2(dy, dx)) > 1E-6)
+        {
+            double r = Math.min(1.0, Math.sqrt(dy * dy + dx * dx) / 4.0); 
+            OTSPoint3D extra = new OTSPoint3D(s2.x + r * Math.cos(a), s2.y + r * Math.sin(a), s2.z);
+            pointList.add(pointList.size() - 2, extra);
+        }
+        */
+        
         OTSLine3D designLine = new OTSLine3D(pointList);
         // XXX for now, the overarchingg link allows traffic in both directions. If that is not the intention,
         // change to LongitudinalDirectionality.FORWARD
