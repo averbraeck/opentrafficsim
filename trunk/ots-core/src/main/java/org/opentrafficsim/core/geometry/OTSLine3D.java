@@ -775,6 +775,16 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
+     * Get the location at a fraction of the line (or outside the line), with its direction. 
+     * @param fraction the fraction for which to calculate the point on the line
+     * @return a directed point
+     */
+    public final DirectedPoint getLocationFractionExtended(final double fraction)
+    {
+        return getLocationExtendedSI(fraction * getLengthSI());
+    }
+
+    /**
      * Get the location at a position on the line, with its direction. Position should be between 0.0 and line length.
      * @param position the position on the line for which to calculate the point on the line
      * @return a directed point

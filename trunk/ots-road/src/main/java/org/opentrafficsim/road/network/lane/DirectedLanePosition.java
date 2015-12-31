@@ -71,7 +71,7 @@ public class DirectedLanePosition
     public DirectedPoint getLocation() throws OTSGeometryException
     {
         double fraction = this.position.si / this.lane.getParentLink().getLength().si;
-        DirectedPoint p = this.lane.getCenterLine().getLocationFraction(fraction);
+        DirectedPoint p = this.lane.getCenterLine().getLocationFractionExtended(fraction);
         if (this.gtuDirection.equals(GTUDirectionality.DIR_PLUS))
         {
             return p;
