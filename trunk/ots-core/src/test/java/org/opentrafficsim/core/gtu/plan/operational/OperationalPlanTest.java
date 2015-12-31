@@ -51,7 +51,7 @@ public class OperationalPlanTest
         {
             Time.Abs t = startTime.plus(new Time.Rel(i, TimeUnit.SECOND));
             DirectedPoint locationAtT = op.getLocation(t);
-            System.out.println("Location at time " + t + " is " + locationAtT);
+            //System.out.println("Location at time " + t + " is " + locationAtT);
             // Use a tolerance that is larger than the z-offset (0.001)
             assertEquals("Distance from wait point at " + t + " is 0", 0, waitPoint.distance(locationAtT), 0.002);
         }
@@ -91,18 +91,18 @@ public class OperationalPlanTest
         // t == pathLength / (startSpeed + 0.5 * speedDifference)
         double t = pathLength / (startSpeed.si + 0.5 * speedDifference);
         Time.Abs endTime = startTime.plus(new Time.Rel(t, TimeUnit.SECOND));
-        System.out.println("End time is " + endTime);
+        // System.out.println("End time is " + endTime);
         Acceleration a = new Acceleration(speedDifference / t, AccelerationUnit.SI);
-        System.out.println("required acceleration is " + a);
+        // System.out.println("required acceleration is " + a);
         // Check the result
         double actualLength = startSpeed.si * t + 0.5 * a.si * t * t;
-        System.out.println("driven length is " + actualLength + " pathLength is " + pathLength);
+        // System.out.println("driven length is " + actualLength + " pathLength is " + pathLength);
         assertEquals("Driven length is " + actualLength, actualLength, pathLength, 0.00001);
         double actualEndSpeed = startSpeed.si + t * a.si;
-        System.out.println("Actual end speed is " + actualEndSpeed + " intended end speed is " + endSpeed.si);
+        // System.out.println("Actual end speed is " + actualEndSpeed + " intended end speed is " + endSpeed.si);
         assertEquals("Speed at end is " + endSpeed, endSpeed.si, actualEndSpeed, 0.000001);
         assertEquals("End time is " + endTime, endTime.si, op.getEndTime().si, 0.00001);
-        System.out.println("acceleration according to plan is " + op.getAcceleration(startTime));
+        // System.out.println("acceleration according to plan is " + op.getAcceleration(startTime));
         assertEquals("Required acceleration is " + a, a.si, op.getAcceleration(startTime).si, 0.000001);
         assertEquals("total duration", endTime.minus(startTime).si, op.getTotalDuration().si, 0.00001);
         DirectedPoint dp = op.getEndLocation();
@@ -142,10 +142,10 @@ public class OperationalPlanTest
             assertEquals("acceleration at abs time", a.si, actualAcceleration, 0.00001);
             actualAcceleration = op.getAcceleration(relTime).si;
             assertEquals("acceleration at rel time", a.si, actualAcceleration, 0.00001);
-            assertEquals("actual traveled distance at abs time", expectedDistance, op.getTraveledDistance(absTime).si, 0.0001);
-            assertEquals("actual traveled distance at rel time", expectedDistance, op.getTraveledDistance(relTime).si, 0.0001);
-            assertEquals("actual traveled distanceSI at abs time", expectedDistance, op.getTraveledDistanceSI(absTime), 0.0001);
-            assertEquals("actual traveled distanceSI at rel time", expectedDistance, op.getTraveledDistanceSI(relTime), 0.0001);
+            assertEquals("traveled distance at abs time", expectedDistance, op.getTraveledDistance(absTime).si, 0.0001);
+            assertEquals("traveled distance at rel time", expectedDistance, op.getTraveledDistance(relTime).si, 0.0001);
+            assertEquals("traveled distanceSI at abs time", expectedDistance, op.getTraveledDistanceSI(absTime), 0.0001);
+            assertEquals("traveled distanceSI at rel time", expectedDistance, op.getTraveledDistanceSI(relTime), 0.0001);
         }
     }
 }
