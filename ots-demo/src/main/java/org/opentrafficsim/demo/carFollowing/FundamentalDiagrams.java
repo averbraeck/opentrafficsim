@@ -36,15 +36,18 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.graphs.FundamentalDiagram;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Egoistic;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -53,7 +56,6 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Sensor;
 import org.opentrafficsim.road.network.lane.SinkSensor;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
-import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
@@ -403,14 +405,17 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
             initialPositions.add(new DirectedLanePosition(this.getLane(), initialPosition, GTUDirectionality.DIR_PLUS));
             try
             {
+                LaneBasedDrivingCharacteristics drivingCharacteristics =
+                    new LaneBasedDrivingCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
+                LaneBasedStrategicalPlanner strategicalPlanner =
+                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
                 this.block =
-                    new LaneBasedIndividualCar("999999", this.gtuType, this.carFollowingModelCars,
-                        this.laneChangeModel, initialPositions, new Speed(0, KM_PER_HOUR), new Length.Rel(4, METER),
-                        new Length.Rel(1.8, METER), new Speed(0, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
-                            new CompleteRoute("", GTUType.ALL)), this.simulator, DefaultCarAnimation.class,
-                        this.gtuColorer);
+                    new LaneBasedIndividualCar("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
+                        new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed(0.0, KM_PER_HOUR),
+                        this.simulator, strategicalPlanner, new LanePerception(), DefaultCarAnimation.class,
+                        this.gtuColorer, this.network);
             }
-            catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
+            catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
             {
                 exception.printStackTrace();
             }
@@ -444,14 +449,17 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                 {
                     throw new Error("gtuFollowingModel is null");
                 }
-                new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, generateTruck
-                    ? this.carFollowingModelTrucks : this.carFollowingModelCars, this.laneChangeModel,
-                    initialPositions, initialSpeed, vehicleLength, new Length.Rel(1.8, METER), new Speed(200,
-                        KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(new CompleteRoute("", GTUType.ALL)),
-                    this.simulator, DefaultCarAnimation.class, this.gtuColorer);
+                LaneBasedDrivingCharacteristics drivingCharacteristics =
+                    new LaneBasedDrivingCharacteristics(gtuFollowingModel, this.laneChangeModel);
+                LaneBasedStrategicalPlanner strategicalPlanner =
+                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+                new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
+                    vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
+                    strategicalPlanner, new LanePerception(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             }
-            catch (SimRuntimeException | NamingException | NetworkException | GTUException exception)
+            catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
             {
                 exception.printStackTrace();
             }
