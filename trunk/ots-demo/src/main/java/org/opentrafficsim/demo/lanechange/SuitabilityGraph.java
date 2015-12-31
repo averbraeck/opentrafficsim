@@ -39,6 +39,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
@@ -107,7 +108,7 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
                 {
                     suitabilityGraph.drawPlots();
                 }
-                catch (NamingException | NetworkException | SimRuntimeException | OTSGeometryException exception)
+                catch (NamingException | NetworkException | SimRuntimeException | OTSGeometryException | GTUException exception)
                 {
                     exception.printStackTrace();
                 }
@@ -121,9 +122,10 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
      * @throws NamingException on ???
      * @throws SimRuntimeException on ???
      * @throws OTSGeometryException
+     * @throws GTUException
      */
     protected final void drawPlots() throws NamingException, NetworkException, SimRuntimeException,
-        OTSGeometryException
+        OTSGeometryException, GTUException
     {
         SimpleSimulator simulator =
             new SimpleSimulator(new Time.Abs(0, TimeUnit.SI), new Time.Rel(0, TimeUnit.SI), new Time.Rel(99999,
