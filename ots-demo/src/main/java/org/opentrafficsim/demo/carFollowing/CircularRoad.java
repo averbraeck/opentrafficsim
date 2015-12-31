@@ -40,7 +40,6 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.graphs.AccelerationContourPlot;
 import org.opentrafficsim.graphs.ContourPlot;
 import org.opentrafficsim.graphs.DensityContourPlot;
@@ -50,17 +49,20 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Altruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Egoistic;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 import org.opentrafficsim.simulationengine.properties.AbstractProperty;
@@ -561,11 +563,8 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                     // Actual headway is uniformly distributed around headway
                     double laneRelativePos = pos > lane1Length ? pos - lane1Length : pos;
                     double actualHeadway = headway + (random.nextDouble() * 2 - 1) * variability;
+                    System.out.println(lane + ", len=" + lane.getLength() + ", pos=" + laneRelativePos);
                     generateCar(new Length.Rel(laneRelativePos, METER), lane, gtuType);
-                    /*
-                     * if (pos > trackLength / 4 && pos < 3 * trackLength / 4) { generateCar(new Length.Rel(pos + headway / 2,
-                     * METER), laneIndex, gtuType); }
-                     */
                     pos += actualHeadway;
                 }
             }
@@ -610,19 +609,23 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
      * @throws SimRuntimeException cannot happen
      * @throws NetworkException on network inconsistency
      * @throws GTUException when something goes wrong during construction of the car
+     * @throws OTSGeometryException when the initial position is outside the center line of the lane
      */
     protected final void generateCar(final Length.Rel initialPosition, final Lane lane, final GTUType gtuType)
-        throws NamingException, NetworkException, SimRuntimeException, GTUException
+        throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         Speed initialSpeed = new Speed(0, KM_PER_HOUR);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
-        new LaneBasedIndividualCar("" + (++this.carsCreated), gtuType, generateTruck ? this.carFollowingModelTrucks
-            : this.carFollowingModelCars, this.laneChangeModel, initialPositions, initialSpeed, vehicleLength,
-            new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), new CompleteLaneBasedRouteNavigator(
-                new CompleteRoute("", GTUType.ALL)), this.simulator, DefaultCarAnimation.class, this.gtuColorer);
+        LaneBasedDrivingCharacteristics drivingCharacteristics =
+            new LaneBasedDrivingCharacteristics(generateTruck ? this.carFollowingModelTrucks
+                : this.carFollowingModelCars, this.laneChangeModel);
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+        new LaneBasedIndividualCar("" + (++this.carsCreated), gtuType, initialPositions, initialSpeed, vehicleLength,
+            new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, strategicalPlanner,
+            new LanePerception(), DefaultCarAnimation.class, this.gtuColorer, this.network);
     }
 
     /** {@inheritDoc} */
