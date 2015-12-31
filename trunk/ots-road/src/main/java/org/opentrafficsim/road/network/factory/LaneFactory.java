@@ -10,11 +10,14 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
+import nl.tudelft.simulation.language.d3.DirectedPoint;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSAnimatorInterface;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -243,6 +246,69 @@ public final class LaneFactory
         final OTSDEVSSimulatorInterface simulator) throws NamingException, NetworkException, OTSGeometryException
     {
         return makeMultiLane(name, from, to, intermediatePoints, laneCount, 0, 0, laneType, speedLimit, simulator);
+    }
+    
+    /**
+     * Create a simple road with the specified number of Lanes, based on a Bezier curve.<br>
+     * This method returns an array of Lane. These lanes are embedded in a Link that can be accessed through the getParentLink
+     * method of the Lane.
+     * @param name String; name of the Link
+     * @param n1 Node; control node for the start direction
+     * @param n2 Node; starting node of the new Lane
+     * @param n3 Node; ending node of the new Lane
+     * @param n4 Node; control node for the end direction
+     * @param laneCount int; number of lanes in the road
+     * @param laneOffsetAtStart int; extra offset from design line in lane widths at start of link
+     * @param laneOffsetAtEnd int; extra offset from design line in lane widths at end of link
+     * @param laneType LaneType; type of the new Lanes
+     * @param speedLimit Speed; the speed limit on all lanes
+     * @param simulator OTSDEVSSimulatorInterface; the simulator
+     * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
+     * @throws NamingException when names cannot be registered for animation
+     * @throws NetworkException on topological problems
+     * @throws OTSGeometryException when creation of center line or contour fails
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public static Lane[] makeMultiLaneBezier(final String name, final OTSNode n1, final OTSNode n2, final OTSNode n3, final OTSNode n4,
+        final int laneCount, final int laneOffsetAtStart,
+        final int laneOffsetAtEnd, final LaneType laneType, final Speed speedLimit,
+        final OTSDEVSSimulatorInterface simulator) throws NamingException, NetworkException, OTSGeometryException
+    {
+        OTSLine3D bezier = makeBezier(n1, n2, n3, n4);
+        final CrossSectionLink link = makeLink(name, n2, n3, bezier.getPoints());
+        Lane[] result = new Lane[laneCount];
+        Length.Rel width = new Length.Rel(4.0, LengthUnit.METER);
+        for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
+        {
+            // Be ware! LEFT is lateral positive, RIGHT is lateral negative.
+            Length.Rel latPosAtStart =
+                new Length.Rel((-0.5 - laneIndex - laneOffsetAtStart) * width.getSI(), LengthUnit.SI);
+            Length.Rel latPosAtEnd =
+                new Length.Rel((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.SI);
+            result[laneIndex] =
+                makeLane(link, "lane." + laneIndex, laneType, latPosAtStart, latPosAtEnd, width, speedLimit, simulator);
+        }
+        return result;
+    }
+
+    /**
+     * @param n1 node 1
+     * @param n2 node 2
+     * @param n3 node 3
+     * @param n4 node 4
+     * @return line between n2 and n3 with start-direction n1--&gt;n2 and end-direction n3--&gt;n4
+     * @throws OTSGeometryException on failure of Bezier curve creation
+     */
+    public static OTSLine3D makeBezier(final OTSNode n1, final OTSNode n2, final OTSNode n3, final OTSNode n4)
+        throws OTSGeometryException
+    {
+        OTSPoint3D p1 = n1.getPoint();
+        OTSPoint3D p2 = n2.getPoint();
+        OTSPoint3D p3 = n3.getPoint();
+        OTSPoint3D p4 = n4.getPoint();
+        DirectedPoint dp1 = new DirectedPoint(p2.x, p2.y, p2.z, 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+        DirectedPoint dp2 = new DirectedPoint(p3.x, p3.y, p3.z, 0.0, 0.0, Math.atan2(p4.y - p3.y, p4.x - p3.x));
+        return Bezier.cubic(dp1, dp2);
     }
 
 }

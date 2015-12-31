@@ -849,6 +849,10 @@ public class Lane extends CrossSectionElement implements Serializable
      */
     public final Map<Lane, GTUDirectionality> nextLanes(final GTUType gtuType)
     {
+        if (toString().contains("From2"))
+        {
+            System.out.println(this);
+        }
         if (this.nextLanes == null)
         {
             this.nextLanes = new LinkedHashMap<>(1);

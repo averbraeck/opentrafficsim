@@ -408,26 +408,6 @@ class SequentialModel implements OTSModelInterface, UNITS
         return new ArrayList<Lane>(this.path);
     }
 
-    /**
-     * @param n1 node 1
-     * @param n2 node 2
-     * @param n3 node 3
-     * @param n4 node 4
-     * @return line
-     * @throws OTSGeometryException on failure of Bezier curve creation
-     */
-    private OTSLine3D makeBezier(final OTSNode n1, final OTSNode n2, final OTSNode n3, final OTSNode n4)
-        throws OTSGeometryException
-    {
-        OTSPoint3D p1 = n1.getPoint();
-        OTSPoint3D p2 = n2.getPoint();
-        OTSPoint3D p3 = n3.getPoint();
-        OTSPoint3D p4 = n4.getPoint();
-        DirectedPoint dp1 = new DirectedPoint(p2.x, p2.y, p2.z, 0.0, 0.0, Math.atan2(p2.y - p1.y, p2.x - p1.x));
-        DirectedPoint dp2 = new DirectedPoint(p3.x, p3.y, p3.z, 0.0, 0.0, Math.atan2(p4.y - p3.y, p4.x - p3.x));
-        return Bezier.cubic(dp1, dp2);
-    }
-
     /** {@inheritDoc} */
     @Override
     public final void constructModel(
@@ -454,9 +434,9 @@ class SequentialModel implements OTSModelInterface, UNITS
             // Now we can build a series of Links with one Lane on them
             ArrayList<CrossSectionLink> links = new ArrayList<CrossSectionLink>();
             OTSLine3D l01 = new OTSLine3D(n0.getPoint(), n1.getPoint());
-            OTSLine3D l12 = makeBezier(n0, n1, n2, n3);
+            OTSLine3D l12 = LaneFactory.makeBezier(n0, n1, n2, n3);
             OTSLine3D l23 = new OTSLine3D(n2.getPoint(), n3.getPoint());
-            OTSLine3D l34 = makeBezier(n2, n3, n4, n5);
+            OTSLine3D l34 = LaneFactory.makeBezier(n2, n3, n4, n5);
             OTSLine3D l45 = new OTSLine3D(n4.getPoint(), n5.getPoint());
             OTSLine3D[] lines = new OTSLine3D[]{l01, l12, l23, l34, l45};
 
