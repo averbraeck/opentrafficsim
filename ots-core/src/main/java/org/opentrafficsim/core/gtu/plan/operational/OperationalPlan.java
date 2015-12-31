@@ -119,7 +119,8 @@ public class OperationalPlan implements Serializable
         }
         catch (OTSGeometryException exception)
         {
-            System.err.println("st = " + startTime + ", ss = " + startSpeed + ", seg = " + operationalPlanSegmentList);
+            System.err.println("st = " + startTime + ", ss = " + startSpeed + ", seg = " + operationalPlanSegmentList
+                + ", distanceSI = " + distanceSI + ", path = " + path);
             throw new OperationalPlanException(exception);
         }
         this.totalDuration = new Time.Rel(durationSI, TimeUnit.SI);
