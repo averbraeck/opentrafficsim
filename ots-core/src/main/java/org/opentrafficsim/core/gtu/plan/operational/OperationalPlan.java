@@ -165,7 +165,8 @@ public class OperationalPlan implements Serializable
     }
 
     /**
-     * Return the path that will be traveled.
+     * Return the path that will be traveled. If the plan is a wait plan, the start point of the path is good; the
+     * end point of the path is bogus (should only be used to determine the orientation of the GTU).
      * @return the path
      */
     public final OTSLine3D getPath()
