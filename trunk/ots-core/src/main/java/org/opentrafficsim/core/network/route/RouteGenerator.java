@@ -14,8 +14,8 @@ package org.opentrafficsim.core.network.route;
 public interface RouteGenerator
 {
     /**
-     * Generate a RouteNavigator.
-     * @return RouteNavigator; the generated RouteNavigator
+     * Generate a Route. Generation can be based on GTU type, randomness, fixed, or otherwise.
+     * @return a Route, which can be complete or partial.
      */
-    RouteNavigator generateRouteNavigator();
+    Route generateRoute();
 }

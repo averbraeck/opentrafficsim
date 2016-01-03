@@ -3,6 +3,7 @@ package org.opentrafficsim.core.network.route;
 import org.opentrafficsim.core.network.Node;
 
 /**
+ * Generate a fixed route (always the same).
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -11,16 +12,16 @@ import org.opentrafficsim.core.network.Node;
  * initial version 20 mrt. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FixedRouteGenerator implements RouteGenerator, Comparable<FixedRouteGenerator>
+public class FixedRouteGenerator implements RouteGenerator
 {
     /** The route that is returned on every call to generateRoute. */
-    private final CompleteRoute route;
+    private final Route route;
 
     /**
      * Construct a new FixedRouteGenerator.
      * @param route the CompleteRoute to generate
      */
-    public FixedRouteGenerator(final CompleteRoute route)
+    public FixedRouteGenerator(final Route route)
     {
         this.route = route;
     }
@@ -28,59 +29,17 @@ public class FixedRouteGenerator implements RouteGenerator, Comparable<FixedRout
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
-    public RouteNavigator generateRouteNavigator()
-    {
-        return new CompleteRouteNavigator(this.route);
-    }
-
-    /**
-     * @return route.
-     */
-    public final CompleteRoute getRoute()
+    public Route generateRoute()
     {
         return this.route;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final int compareTo(final FixedRouteGenerator o)
+    /**
+     * @return the fixed route.
+     */
+    public final Route getRoute()
     {
-        /*-
-
-        TODO repair compareTo(...)
-        
-        List<Node> otherNodes = o.nodeList;
-        String myEndNodeId = this.nodeList.get(this.nodeList.size() - 1).getId().toString();
-        String otherEndNodeId = otherNodes.get(otherNodes.size() - 1).getId().toString();
-        int result = myEndNodeId.compareTo(otherEndNodeId);
-        if (0 != result)
-        {
-            return result;
-        }
-        int sizeDifference = this.nodeList.size() - otherNodes.size();
-        if (sizeDifference > 0)
-        {
-            return 1;
-        }
-        else if (sizeDifference < 0)
-        {
-            return -1;
-        }
-        // This is a tough one
-        for (int index = this.nodeList.size() - 1; --index >= 0;)
-        {
-            String myNodeId = this.nodeList.get(index).getId().toString();
-            String otherNodeId = otherNodes.get(index).getId().toString();
-            result = myNodeId.compareTo(otherNodeId);
-            if (0 != result)
-            {
-                return result;
-            }
-        }
-        // FIXME: this goes VERY wrong if different Nodes can have the same id
-
-         */
-        return 0;
+        return this.route;
     }
 
     /** {@inheritDoc} */

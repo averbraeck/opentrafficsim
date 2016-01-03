@@ -14,12 +14,12 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
 import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.FixedRouteGenerator;
+import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.network.factory.xml.CrossSectionElementTag.ElementType;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.route.FixedLaneBasedRouteGenerator;
-import org.opentrafficsim.road.network.route.LaneBasedRouteGenerator;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -215,8 +215,8 @@ class FillTag
         {
             nodeList.add(parser.nodeTags.get(nodeTag.name).node);
         }
-        LaneBasedRouteGenerator rg =
-            new FixedLaneBasedRouteGenerator(new CompleteRoute("fixed route", GTUType.ALL, nodeList));
+        RouteGenerator rg =
+            new FixedRouteGenerator(new CompleteRoute("fixed route", GTUType.ALL, nodeList));
 
         // TODO create a FILL
 

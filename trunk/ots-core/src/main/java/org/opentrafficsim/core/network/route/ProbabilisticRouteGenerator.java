@@ -9,6 +9,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
+ * Generate one of a set of routes, based on a discrete probability density function.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -31,8 +32,8 @@ public class ProbabilisticRouteGenerator implements RouteGenerator
 
     /**
      * Construct a new ProbabilistiRouteGenerator using the given random stream.
-     * @param routeProbabilities the Routes with the probabilities for each one. Instead of probabilities, (observed)
-     *            frequencies may be used; i.e. the provided values are internally scaled to add up to 1.0.
+     * @param routeProbabilities the Routes with the (non-cumulative) probabilities for each one. Instead of probabilities,
+     *            (observed) frequencies may be used; The provided values are internally normalized to add up to 1.0.
      * @param stream the random stream to use
      * @throws NetworkException when the probabilities or frequencies are invalid (negative, or all zero)
      */
@@ -68,59 +69,59 @@ public class ProbabilisticRouteGenerator implements RouteGenerator
 
     /** {@inheritDoc} */
     @Override
-    public final CompleteRouteNavigator generateRouteNavigator()
+    public final Route generateRoute()
     {
         double randomValue = this.random.draw();
         for (int index = 0; index < this.cumulativeProbabilities.length; index++)
         {
             if (this.cumulativeProbabilities[index] >= randomValue)
             {
-                return this.routeProbabilities.get(index).getRouteNavigator();
+                return this.routeProbabilities.get(index).getRoute();
             }
         }
-        return this.routeProbabilities.get(0).getRouteNavigator();
+        return this.routeProbabilities.get(0).getRoute();
     }
 
     /**
-     * Combination of route and probability or frequency.
+     * Combination of route and probability or frequency, <i>non</i>-cumulative.
      * <p>
      * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
      * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
-     * @version Jul 22, 2015 <br>
+     * $LastChangedDate$, @version $Revision$, by $Author$,
+     * initial version 20 Mar 2015 <br>
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
-     * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
      */
     public static class RouteProbability implements Serializable
     {
         /** */
         private static final long serialVersionUID = 20150722L;
 
-        /** the route navigator. */
-        private final CompleteRouteNavigator routeNavigator;
+        /** the route. */
+        private final Route route;
 
         /** the probability or frequency of the route. */
         private final double probability;
 
         /**
-         * @param routeNavigator the route navigator.
-         * @param probability the probability or frequency of the route.
+         * @param route the route belonging to this probability.
+         * @param probability the probability or frequency of the route, <i>non</i>-cumulative.
          */
-        public RouteProbability(final CompleteRouteNavigator routeNavigator, final double probability)
+        public RouteProbability(final Route route, final double probability)
         {
             super();
-            this.routeNavigator = routeNavigator;
+            this.route = route;
             this.probability = probability;
         }
 
         /**
          * @return route.
          */
-        public final CompleteRouteNavigator getRouteNavigator()
+        public final Route getRoute()
         {
-            return this.routeNavigator;
+            return this.route;
         }
 
         /**

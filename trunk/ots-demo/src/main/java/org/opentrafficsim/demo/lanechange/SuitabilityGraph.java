@@ -48,7 +48,6 @@ import org.opentrafficsim.gui.SimulatorFrame;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.route.CompleteLaneBasedRouteNavigator;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 /**
@@ -161,7 +160,6 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
                 route.addNode(from);
                 route.addNode(branchPoint);
                 route.addNode(destination);
-                CompleteLaneBasedRouteNavigator navigator = new CompleteLaneBasedRouteNavigator(route);
                 SuitabilityData dataset =
                     (SuitabilityData) ((XYPlot) (this.charts[row][column].getPlot())).getDataset();
                 for (int laneIndex = 0; laneIndex < LANECOUNT; laneIndex++)
@@ -171,12 +169,12 @@ public class SuitabilityGraph implements OTSModelInterface, UNITS
                     for (int position = 0; position <= mainLength; position += 10)
                     {
                         Length.Rel longitudinalPosition = new Length.Rel(position, METER);
-                        Length.Rel suitability =
-                            navigator.suitability(lane, longitudinalPosition, null, this.timeHorizon); // TODO null
-                        if (suitability.getSI() <= mainLength)
-                        {
-                            dataset.addXYPair(key, mainLength - position, suitability.getSI());
-                        }
+                        // TODO Length.Rel suitability =
+                        // navigator.suitability(lane, longitudinalPosition, null, this.timeHorizon);
+                        // if (suitability.getSI() <= mainLength)
+                        // {
+                        // dataset.addXYPair(key, mainLength - position, suitability.getSI());
+                        // }
                     }
                     dataset.reGraph();
                 }
