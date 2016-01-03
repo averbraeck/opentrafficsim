@@ -1,8 +1,11 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -13,15 +16,16 @@ import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
- * Lane-based tactical planner that can generate an operational plan for the lane-based GTU.
- * <p>
- * This lane-based tactical planner makes decisions based on headway (GTU following model) and lane change (Lane Change model).
- * It can ask the strategic planner for assistance on the overarching route to take.
+ * A lane-based tactical planner generates an operational plan for the lane-based GTU. It can ask the strategic planner for
+ * assistance on the route to take when the network splits. This abstract class contains a number of helper methods that make it
+ * easy to implement a tactical planner.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -48,11 +52,16 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
     }
 
     /**
-     * @param gtu the GTU for which to retermine the lane on which the GTU's reference point lies
-     * @return a lane on which the reference point is between start and end.
-     * @throws GTUException when the reference point of the GTU is not on any of the lanes on which it is registered
+     * The reference lane is the widest lane on which the reference point of the GTU is fully registered. If the reference point
+     * is not fully registered on one of the lanes, return a lane where the reference point is not fully registered as a
+     * fallback option. This can g=for instance happen when the GTU has just been generated, or when the GTU is about to be
+     * destroyed at the end of a lane.
+     * @param gtu the GTU for which to determine the lane on which the GTU's reference point lies
+     * @return the widest lane on which the reference point lies between start and end, or any lane where the GTU is registered
+     *         as a fallback option.
+     * @throws GTUException when the GTU's positions cannot be determined or when the GTU is not registered on any lane.
      */
-    protected Lane getReferenceLane(final LaneBasedGTU gtu) throws GTUException
+    public Lane getReferenceLane(final LaneBasedGTU gtu) throws GTUException
     {
         Map<Lane, Length.Rel> positions = gtu.positions(gtu.getReference());
         for (Lane lane : positions.keySet())
@@ -60,6 +69,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             double posSI = positions.get(lane).si;
             if (posSI >= 0.0 && posSI <= lane.getLength().si)
             {
+                // TODO widest lane in case we are registered on more than one lane with the reference point
                 return lane;
             }
         }
@@ -69,15 +79,16 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
 
     /**
      * Build a list of lanes forward, with a maximum headway relative to the reference point of the GTU.
-     * @param gtu the gtu for shich to calculate the lane list
+     * @param gtu the gtu for which to calculate the lane list
      * @param maxHeadway the maximum length for which lanes should be returned
-     * @return thhe path to follow when staying in the same lane
+     * @return an instance that provides the following information for an operational plan: the lanes to follow, and the path to
+     *         follow when staying on the same lane.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
      * @throws OTSGeometryException when there is a problem with the path construction
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    protected OTSLine3D buildLaneListForward(final LaneBasedGTU gtu, final Length.Rel maxHeadway) throws GTUException,
-        OTSGeometryException, NetworkException
+    protected LanePathInfo buildLaneListForward(final LaneBasedGTU gtu, final Length.Rel maxHeadway)
+        throws GTUException, OTSGeometryException, NetworkException
     {
         List<Lane> laneListForward = new ArrayList<>();
         Lane lane = getReferenceLane(gtu);
@@ -106,7 +117,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             if (lanes.size() == 0)
             {
                 // dead end. return with the list as is.
-                return path;
+                return new LanePathInfo(path, laneListForward);
             }
             if (lanes.size() == 1)
             {
@@ -115,6 +126,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             else
             {
                 // multiple next lanes; ask the strategical planner where to go
+                // note: this is not necessarily a split; it could e.g. be a bike path on a road
                 LinkDirection ld =
                     gtu.getStrategicalPlanner().nextLinkDirection(lane.getParentLink(), gtu.getLanes().get(lane));
                 Link nextLink = ld.getLink();
@@ -163,7 +175,135 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             }
             lastLane = lane;
         }
-        return path;
+        return new LanePathInfo(path, laneListForward);
+    }
+
+    /**
+     * Calculate the next location where the network splits, with a maximum headway relative to the reference point of the GTU.
+     * @param gtu the gtu for which to calculate the lane list
+     * @param maxHeadway the maximum length for which lanes should be returned
+     * @return an instance that provides the following information for an operational plan: whether the network splits, the node
+     *         where it splits, and the current lanes that lead to the right node after the split node.
+     * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
+     * @throws OTSGeometryException when there is a problem with the path construction
+     * @throws NetworkException when the strategic planner is not able to return a next node in the route
+     */
+    protected NextSplitInfo determineNextSplit(final LaneBasedGTU gtu, final Length.Rel maxHeadway)
+        throws GTUException, OTSGeometryException, NetworkException
+    {
+        OTSNode nextSplitNode = null;
+        Set<Lane> correctCurrentLanes = new HashSet<>();
+        Lane referenceLane = getReferenceLane(gtu);
+        Link lastLink = referenceLane.getParentLink();
+        GTUDirectionality lastGtuDir = gtu.getLanes().get(referenceLane);
+        Length.Rel lengthForward;
+        Length.Rel position = gtu.position(referenceLane, gtu.getReference());
+        OTSNode lastNode;
+        if (lastGtuDir.equals(GTUDirectionality.DIR_PLUS))
+        {
+            lengthForward = referenceLane.getLength().minus(position);
+            lastNode = referenceLane.getParentLink().getEndNode();
+        }
+        else
+        {
+            lengthForward = gtu.position(referenceLane, gtu.getReference());
+            lastNode = referenceLane.getParentLink().getStartNode();
+        }
+
+        // see if we have a split within maxHeadway distance
+        while (lengthForward.lt(maxHeadway) && nextSplitNode == null)
+        {
+            // calculate the number of "outgoing" links
+            Set<Link> links = lastNode.getLinks(); // safe copy
+            Iterator<Link> linkIterator = links.iterator();
+            while (linkIterator.hasNext())
+            {
+                Link link = linkIterator.next();
+                if (link.equals(lastLink) || !link.getLinkType().isCompatible(gtu.getGTUType()))
+                {
+                    linkIterator.remove();
+                }
+            }
+
+            // see if we have a split
+            if (links.size() > 1)
+            {
+                nextSplitNode = lastNode;
+                LinkDirection ld = gtu.getStrategicalPlanner().nextLinkDirection(lastLink, lastGtuDir);
+                // which lane(s) we are registered on and adjacent lanes link to a lane
+                // that is on the route at the next split?
+                for (CrossSectionElement cse : referenceLane.getParentLink().getCrossSectionElementList())
+                {
+                    if (cse instanceof Lane)
+                    {
+                        Lane l = (Lane) cse;
+                        if (connectsToPath(l, gtu, nextSplitNode))
+                        {
+                            correctCurrentLanes.add(l);
+                        }
+                    }
+                }
+                System.out.println("Split - on lane " + referenceLane + "; good lanes: " + correctCurrentLanes);
+                return new NextSplitInfo(nextSplitNode, correctCurrentLanes);
+            }
+
+            if (links.size() == 0)
+            {
+                return new NextSplitInfo(null, correctCurrentLanes);
+            }
+
+            // just one link
+            Link link = links.iterator().next();
+
+            // determine direction for the path
+            if (lastGtuDir.equals(GTUDirectionality.DIR_PLUS))
+            {
+                if (lastLink.getEndNode().equals(link.getStartNode()))
+                {
+                    // -----> O ----->, GTU moves ---->
+                    lastGtuDir = GTUDirectionality.DIR_PLUS;
+                    lastNode = (OTSNode) lastLink.getEndNode();
+                }
+                else
+                {
+                    // -----> O <-----, GTU moves ---->
+                    lastGtuDir = GTUDirectionality.DIR_MINUS;
+                    lastNode = (OTSNode) lastLink.getEndNode();
+                }
+            }
+            else
+            {
+                if (lastLink.getStartNode().equals(link.getStartNode()))
+                {
+                    // <----- O ----->, GTU moves ---->
+                    lastNode = (OTSNode) lastLink.getStartNode();
+                    lastGtuDir = GTUDirectionality.DIR_PLUS;
+                }
+                else
+                {
+                    // <----- O <-----, GTU moves ---->
+                    lastNode = (OTSNode) lastLink.getStartNode();
+                    lastGtuDir = GTUDirectionality.DIR_MINUS;
+                }
+            }
+            lastLink = links.iterator().next();
+            lengthForward = lengthForward.plus(lastLink.getLength());
+        }
+
+        return new NextSplitInfo(null, correctCurrentLanes);
+    }
+
+    /**
+     * Determine whether the lane is directly connected to our route, in other words: if we would (continue to) drive on the given
+     * lane, can we take the right branch at the nextSplitNode without switching lanes?
+     * @param lane the lane to examine
+     * @param gtu the GTU for which we have to determine the lane suitability
+     * @param nextSplitNode the node for which we examine the split
+     * @return whether the lane is connected to our path
+     */
+    private boolean connectsToPath(final Lane lane, final LaneBasedGTU gtu, final OTSNode nextSplitNode)
+    {
+        return true;
     }
 
     /**

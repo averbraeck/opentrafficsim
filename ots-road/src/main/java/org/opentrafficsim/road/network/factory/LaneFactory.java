@@ -104,10 +104,8 @@ public final class LaneFactory
         */
         
         OTSLine3D designLine = new OTSLine3D(pointList);
-        // XXX for now, the overarchingg link allows traffic in both directions. If that is not the intention,
-        // change to LongitudinalDirectionality.FORWARD
         CrossSectionLink link =
-            new CrossSectionLink(name, from, to, LinkType.ALL, designLine, LongitudinalDirectionality.DIR_BOTH,
+            new CrossSectionLink(name, from, to, LinkType.ALL, designLine, LongitudinalDirectionality.DIR_PLUS,
                 LaneKeepingPolicy.KEEP_RIGHT);
         return link;
     }

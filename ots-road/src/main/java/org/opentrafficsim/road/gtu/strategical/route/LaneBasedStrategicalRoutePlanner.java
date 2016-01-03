@@ -7,14 +7,17 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.AbstractLaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 
 /**
- * Strategical planner, route-based, with personal driving characteristics, which contain settings for the tactical planner.
+ * Strategical planner, route-based, with personal driving characteristics, which contain settings for the tactical planner. The
+ * tactical planner will only consult the route when the GTU has multiple possibilities on a node, so the route does not have to
+ * be complete. As long as all 'splitting' nodes are part of the route and have a valid successor node (connected by a Link),
+ * the strategical planner is able to make a plan.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -28,7 +31,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     LaneBasedStrategicalPlanner
 {
     /** the route to drive. */
-    private final CompleteRoute route;
+    private final Route route;
 
     /**
      * @param drivingCharacteristics the personal driving characteristics, which contain settings for the tactical planner
@@ -42,8 +45,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * @param drivingCharacteristics the personal driving characteristics, which contain settings for the tactical planner
      * @param route the route to drive
      */
-    public LaneBasedStrategicalRoutePlanner(LaneBasedDrivingCharacteristics drivingCharacteristics,
-        final CompleteRoute route)
+    public LaneBasedStrategicalRoutePlanner(LaneBasedDrivingCharacteristics drivingCharacteristics, final Route route)
     {
         super(drivingCharacteristics);
         this.route = route;
@@ -103,9 +105,9 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     }
 
     /**
-     * @return route
+     * @return the route
      */
-    public final CompleteRoute getRoute()
+    public final Route getRoute()
     {
         return this.route;
     }

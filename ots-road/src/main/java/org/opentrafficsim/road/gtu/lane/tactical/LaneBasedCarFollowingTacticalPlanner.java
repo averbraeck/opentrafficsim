@@ -6,7 +6,6 @@ import java.util.List;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -21,13 +20,14 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechange.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 
 /**
- * Lane-based tactical planner that implements car following and lane change behavior. This lane-based tactical planner makes
- * decisions based on headway (GTU following model) and lane change (Lane Change model), and will generate an operational plan
- * for the GTU. It can ask the strategic planner for assistance on the route to take when the network splits.
+ * Lane-based tactical planner that implements car following behavior. This tactical planner retrieves the car following model
+ * from the strategical planner and will generate an operational plan for the GTU.
+ * <p>
+ * This lane-based tactical planner makes decisions based on headway (GTU following model). It can ask the strategic planner for
+ * assistance on the route to take when the network splits.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -37,7 +37,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlanner
+public class LaneBasedCarFollowingTacticalPlanner extends AbstractLaneBasedTacticalPlanner
 {
     /** */
     private static final long serialVersionUID = 20151125L;
@@ -45,7 +45,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
     /**
      * @param strategicalPlanner the strategic planner that has instantiated this tactical planner
      */
-    public LaneBasedCFLCTacticalPlanner(final LaneBasedStrategicalPlanner strategicalPlanner)
+    public LaneBasedCarFollowingTacticalPlanner(final LaneBasedStrategicalPlanner strategicalPlanner)
     {
         super(strategicalPlanner);
     }
@@ -71,7 +71,6 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
         // get some models to help us make a plan
         GTUFollowingModel gtuFollowingModel =
             getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
-        LaneChangeModel laneChangeModel = getStrategicalPlanner().getDrivingCharacteristics().getLaneChangeModel();
 
         // look at the conditions for headway
         HeadwayGTU headwayGTU = perception.getForwardHeadwayGTU();
@@ -88,20 +87,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                 gtuFollowingModel.computeAcceleration(laneBasedGTU, headwayGTU.getOtherGTU().getVelocity(),
                     headwayGTU.getDistance(), perception.getSpeedLimit());
         }
-        Time.Rel duration = accelerationStep.getValidUntil().minus(gtu.getSimulator().getSimulatorTime().getTime());
 
-        // Are we in the right lane for the route?
-        NextSplitInfo nextSplitInfo = null;
-        try
-        {
-            nextSplitInfo =
-                determineNextSplit(laneBasedGTU, getStrategicalPlanner().getDrivingCharacteristics()
-                    .getForwardHeadwayDistance());
-        }
-        catch (OTSGeometryException exception)
-        {
-            throw new GTUException(exception);
-        }
+        Time.Rel duration = accelerationStep.getValidUntil().minus(gtu.getSimulator().getSimulatorTime().getTime());
 
         // see if we have to continue standing still. In that case, generate a stand still plan
         if (accelerationStep.getAcceleration().si < 1E-6
