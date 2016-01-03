@@ -303,6 +303,9 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      */
     private boolean connectsToPath(final Lane lane, final LaneBasedGTU gtu, final OTSNode nextSplitNode)
     {
+        // TODO: distance till split-node
+        // TODO: lane.connectsTo(Set<Lane>, maxDistance)
+        
         return true;
     }
 
