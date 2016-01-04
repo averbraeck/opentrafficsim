@@ -63,24 +63,38 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     public Node nextNode(final Link link, final GTUDirectionality direction) throws NetworkException
     {
         LinkDirection linkDirection = nextLinkDirection(link, direction);
-        return linkDirection.getDirection().equals(GTUDirectionality.DIR_PLUS) ? linkDirection.getLink().getEndNode()
-            : linkDirection.getLink().getStartNode();
+        return linkDirection.getNodeTo();
     }
 
     /** {@inheritDoc} */
     @Override
     public LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction) throws NetworkException
     {
+        Node lastNode = direction.equals(GTUDirectionality.DIR_PLUS) ? link.getEndNode() : link.getStartNode();
+        return nextLinkDirection(lastNode);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Node nextNode(final Node node) throws NetworkException
+    {
+        LinkDirection linkDirection = nextLinkDirection(node);
+        return linkDirection.getNodeTo();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public LinkDirection nextLinkDirection(final Node node) throws NetworkException
+    {
         if (this.route == null)
         {
             throw new NetworkException("LaneBasedStrategicalRoutePlanner does not have a route");
         }
-        Node lastNode = direction.equals(GTUDirectionality.DIR_PLUS) ? link.getEndNode() : link.getStartNode();
-        int i = this.route.getNodes().indexOf(lastNode);
+        int i = this.route.getNodes().indexOf(node);
         if (i == -1)
         {
-            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link, but node "
-                + lastNode + " not in route " + this.route);
+            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link, but node " + node
+                + " not in route " + this.route);
         }
         if (i == this.route.getNodes().size() - 1)
         {
@@ -88,7 +102,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                 + "but the GTU reached the last node for route " + this.route);
         }
         Node nextNode = this.route.getNode(i + 1);
-        for (Link l : lastNode.getLinks())
+        for (Link l : node.getLinks())
         {
             if (l.getStartNode().equals(nextNode))
             {
@@ -100,7 +114,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
             }
         }
         throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link, "
-            + "but no link could be found connecting node " + lastNode + " and node " + nextNode + " for route "
+            + "but no link could be found connecting node " + node + " and node " + nextNode + " for route "
             + this.route);
     }
 

@@ -23,12 +23,9 @@ public class NextSplitInfo implements Serializable
     /** */
     private static final long serialVersionUID = 20151231L;
 
-    /** indicates whether the route splits within the given distance. */
-    private final boolean split;
-
     /** if the route splits, at what node does it split? */
     private final OTSNode nextSplitNode;
-
+    
     /**
      * if the route splits, what are the lane(s) and/or adjacent lane(s) on which the reference point of the GTU is registered
      * that lead us in the direction of the route provided by the strategical planner.
@@ -43,7 +40,6 @@ public class NextSplitInfo implements Serializable
     public NextSplitInfo(final OTSNode nextSplitNode, final Set<Lane> correctCurrentLanes)
     {
         super();
-        this.split = nextSplitNode != null;
         this.nextSplitNode = nextSplitNode;
         this.correctCurrentLanes = correctCurrentLanes;
     }
@@ -53,7 +49,7 @@ public class NextSplitInfo implements Serializable
      */
     public final boolean isSplit()
     {
-        return this.split;
+        return this.nextSplitNode != null;
     }
 
     /**
