@@ -47,4 +47,19 @@ public class LinkDirection
         return this.direction;
     }
 
+    /**
+     * @return the destination node of the linkdirection
+     */
+    public final Node getNodeTo()
+    {
+        return this.direction.equals(GTUDirectionality.DIR_PLUS) ? this.link.getEndNode() : this.link.getStartNode();
+    }
+
+    /**
+     * @return the origin node of the linkdirection
+     */
+    public final Node getNodeFrom()
+    {
+        return this.direction.equals(GTUDirectionality.DIR_PLUS) ? this.link.getStartNode() : this.link.getEndNode();
+    }
 }
