@@ -105,7 +105,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
         }
         else
         {
-            lengthForward = gtu.position(lane, gtu.getReference());
+            lengthForward = position;
             path = lane.getCenterLine().extract(Length.Rel.ZERO, position).reverse();
         }
 
@@ -179,6 +179,96 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
     }
 
     /**
+     * Build a list of lanes forward, with a maximum headway.
+     * @param gtu the gtu for which to calculate the lane list
+     * @param maxHeadway the maximum length for which lanes should be returned
+     * @param startLane the first lane in the list
+     * @param startLaneFractionalPosition the fractional position on the start lane
+     * @param startDirectionality the driving direction on the start lane
+     * @return a list of lanes, connected to the startLane and following the path of the StrategicalPlanner.
+     * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
+     * @throws OTSGeometryException when there is a problem with the path construction
+     * @throws NetworkException when the strategic planner is not able to return a next node in the route
+     */
+    protected List<Lane> buildLaneListForward(final LaneBasedGTU gtu, final Length.Rel maxHeadway,
+        final Lane startLane, final double startLaneFractionalPosition, final GTUDirectionality startDirectionality)
+        throws GTUException, OTSGeometryException, NetworkException
+    {
+        List<Lane> laneListForward = new ArrayList<>();
+        Lane lane = startLane;
+        Lane lastLane = startLane;
+        GTUDirectionality lastGtuDir = startDirectionality;
+        laneListForward.add(lane);
+        Length.Rel position = lane.position(startLaneFractionalPosition);
+        Length.Rel lengthForward =
+            lastGtuDir.equals(GTUDirectionality.DIR_PLUS) ? lane.getLength().minus(position) : position;
+
+        while (lengthForward.lt(maxHeadway))
+        {
+            Map<Lane, GTUDirectionality> lanes =
+                lastGtuDir.equals(GTUDirectionality.DIR_PLUS) ? lane.nextLanes(gtu.getGTUType()) : lane.prevLanes(gtu
+                    .getGTUType());
+            if (lanes.size() == 0)
+            {
+                // dead end. return with the list as is.
+                return laneListForward;
+            }
+            if (lanes.size() == 1)
+            {
+                lane = lanes.keySet().iterator().next();
+            }
+            else
+            {
+                // multiple next lanes; ask the strategical planner where to go
+                // note: this is not necessarily a split; it could e.g. be a bike path on a road
+                LinkDirection ld =
+                    gtu.getStrategicalPlanner().nextLinkDirection(lane.getParentLink(), gtu.getLanes().get(lane));
+                Link nextLink = ld.getLink();
+                for (Lane nextLane : lanes.keySet())
+                {
+                    if (nextLane.getParentLink().equals(nextLink))
+                    {
+                        lane = nextLane;
+                        break;
+                    }
+                }
+            }
+            laneListForward.add(lane);
+            lengthForward = lengthForward.plus(lane.getLength());
+
+            // determine direction for the path
+            if (lastGtuDir.equals(GTUDirectionality.DIR_PLUS))
+            {
+                if (lastLane.getParentLink().getEndNode().equals(lane.getParentLink().getStartNode()))
+                {
+                    // -----> O ----->, GTU moves ---->
+                    lastGtuDir = GTUDirectionality.DIR_PLUS;
+                }
+                else
+                {
+                    // -----> O <-----, GTU moves ---->
+                    lastGtuDir = GTUDirectionality.DIR_MINUS;
+                }
+            }
+            else
+            {
+                if (lastLane.getParentLink().getStartNode().equals(lane.getParentLink().getStartNode()))
+                {
+                    // <----- O ----->, GTU moves ---->
+                    lastGtuDir = GTUDirectionality.DIR_PLUS;
+                }
+                else
+                {
+                    // <----- O <-----, GTU moves ---->
+                    lastGtuDir = GTUDirectionality.DIR_MINUS;
+                }
+            }
+            lastLane = lane;
+        }
+        return laneListForward;
+    }
+
+    /**
      * Calculate the next location where the network splits, with a maximum headway relative to the reference point of the GTU.
      * @param gtu the gtu for which to calculate the lane list
      * @param maxHeadway the maximum length for which lanes should be returned
@@ -196,6 +286,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
         Lane referenceLane = getReferenceLane(gtu);
         Link lastLink = referenceLane.getParentLink();
         GTUDirectionality lastGtuDir = gtu.getLanes().get(referenceLane);
+        GTUDirectionality referenceLaneDirectionality = lastGtuDir;
         Length.Rel lengthForward;
         Length.Rel position = gtu.position(referenceLane, gtu.getReference());
         OTSNode lastNode;
@@ -209,6 +300,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             lengthForward = gtu.position(referenceLane, gtu.getReference());
             lastNode = referenceLane.getParentLink().getStartNode();
         }
+        double referenceLaneFractionalPosition = position.si / referenceLane.getLength().si;
 
         // see if we have a split within maxHeadway distance
         while (lengthForward.lt(maxHeadway) && nextSplitNode == null)
@@ -229,7 +321,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             if (links.size() > 1)
             {
                 nextSplitNode = lastNode;
-                LinkDirection ld = gtu.getStrategicalPlanner().nextLinkDirection(lastLink, lastGtuDir);
+                LinkDirection ld = gtu.getStrategicalPlanner().nextLinkDirection(nextSplitNode);
                 // which lane(s) we are registered on and adjacent lanes link to a lane
                 // that is on the route at the next split?
                 for (CrossSectionElement cse : referenceLane.getParentLink().getCrossSectionElementList())
@@ -237,7 +329,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
                     if (cse instanceof Lane)
                     {
                         Lane l = (Lane) cse;
-                        if (connectsToPath(l, gtu, nextSplitNode))
+                        if (connectsToPath(gtu, maxHeadway, l, referenceLaneFractionalPosition,
+                            referenceLaneDirectionality, ld.getLink()))
                         {
                             correctCurrentLanes.add(l);
                         }
@@ -294,19 +387,134 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
     }
 
     /**
-     * Determine whether the lane is directly connected to our route, in other words: if we would (continue to) drive on the given
-     * lane, can we take the right branch at the nextSplitNode without switching lanes?
-     * @param lane the lane to examine
+     * Determine whether the lane is directly connected to our route, in other words: if we would (continue to) drive on the
+     * given lane, can we take the right branch at the nextSplitNode without switching lanes?
      * @param gtu the GTU for which we have to determine the lane suitability
-     * @param nextSplitNode the node for which we examine the split
+     * @param maxHeadway the maximum length for use in the calculation
+     * @param startLane the first lane in the list
+     * @param startLaneFractionalPosition the fractional position on the start lane
+     * @param startDirectionality the driving direction on the start lane
+     * @param linkAfterSplit the link after the split to which we should connect
      * @return whether the lane is connected to our path
+     * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
+     * @throws OTSGeometryException when there is a problem with the path construction
+     * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    private boolean connectsToPath(final Lane lane, final LaneBasedGTU gtu, final OTSNode nextSplitNode)
+    protected boolean
+        connectsToPath(final LaneBasedGTU gtu, final Length.Rel maxHeadway, final Lane startLane,
+            final double startLaneFractionalPosition, final GTUDirectionality startDirectionality,
+            final Link linkAfterSplit) throws GTUException, OTSGeometryException, NetworkException
     {
-        // TODO: distance till split-node
-        // TODO: lane.connectsTo(Set<Lane>, maxDistance)
-        
-        return true;
+        List<Lane> lanes =
+            buildLaneListForward(gtu, maxHeadway, startLane, startLaneFractionalPosition, startDirectionality);
+        for (Lane lane : lanes)
+        {
+            if (lane.getParentLink().equals(linkAfterSplit))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Make a list of links on which to drive next, with a maximum headway relative to the reference point of the GTU.
+     * @param gtu the gtu for which to calculate the link list
+     * @param maxHeadway the maximum length for which links should be returned
+     * @return a list of links on which to drive next
+     * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
+     * @throws OTSGeometryException when there is a problem with the path construction
+     * @throws NetworkException when the strategic planner is not able to return a next node in the route
+     */
+    protected List<LinkDirection> buildLinkListForward(final LaneBasedGTU gtu, final Length.Rel maxHeadway)
+        throws GTUException, OTSGeometryException, NetworkException
+    {
+        List<LinkDirection> linkList = new ArrayList<>();
+        Lane referenceLane = getReferenceLane(gtu);
+        Link lastLink = referenceLane.getParentLink();
+        GTUDirectionality lastGtuDir = gtu.getLanes().get(referenceLane);
+        linkList.add(new LinkDirection(lastLink, lastGtuDir));
+        Length.Rel lengthForward;
+        Length.Rel position = gtu.position(referenceLane, gtu.getReference());
+        OTSNode lastNode;
+        if (lastGtuDir.equals(GTUDirectionality.DIR_PLUS))
+        {
+            lengthForward = referenceLane.getLength().minus(position);
+            lastNode = referenceLane.getParentLink().getEndNode();
+        }
+        else
+        {
+            lengthForward = gtu.position(referenceLane, gtu.getReference());
+            lastNode = referenceLane.getParentLink().getStartNode();
+        }
+
+        // see if we have a split within maxHeadway distance
+        while (lengthForward.lt(maxHeadway))
+        {
+            // calculate the number of "outgoing" links
+            Set<Link> links = lastNode.getLinks(); // is a safe copy
+            Iterator<Link> linkIterator = links.iterator();
+            while (linkIterator.hasNext())
+            {
+                Link link = linkIterator.next();
+                if (link.equals(lastLink) || !link.getLinkType().isCompatible(gtu.getGTUType()))
+                {
+                    linkIterator.remove();
+                }
+            }
+
+            if (links.size() == 0)
+            {
+                return linkList; // the path stops here...
+            }
+
+            Link link;
+            if (links.size() > 1)
+            {
+                LinkDirection ld = gtu.getStrategicalPlanner().nextLinkDirection(lastLink, lastGtuDir);
+                link = ld.getLink();
+            }
+            else
+            {
+                link = links.iterator().next();
+            }
+
+            // determine direction for the path
+            if (lastGtuDir.equals(GTUDirectionality.DIR_PLUS))
+            {
+                if (lastLink.getEndNode().equals(link.getStartNode()))
+                {
+                    // -----> O ----->, GTU moves ---->
+                    lastGtuDir = GTUDirectionality.DIR_PLUS;
+                    lastNode = (OTSNode) lastLink.getEndNode();
+                }
+                else
+                {
+                    // -----> O <-----, GTU moves ---->
+                    lastGtuDir = GTUDirectionality.DIR_MINUS;
+                    lastNode = (OTSNode) lastLink.getEndNode();
+                }
+            }
+            else
+            {
+                if (lastLink.getStartNode().equals(link.getStartNode()))
+                {
+                    // <----- O ----->, GTU moves ---->
+                    lastNode = (OTSNode) lastLink.getStartNode();
+                    lastGtuDir = GTUDirectionality.DIR_PLUS;
+                }
+                else
+                {
+                    // <----- O <-----, GTU moves ---->
+                    lastNode = (OTSNode) lastLink.getStartNode();
+                    lastGtuDir = GTUDirectionality.DIR_MINUS;
+                }
+            }
+            lastLink = link;
+            linkList.add(new LinkDirection(lastLink, lastGtuDir));
+            lengthForward = lengthForward.plus(lastLink.getLength());
+        }
+        return linkList;
     }
 
     /**

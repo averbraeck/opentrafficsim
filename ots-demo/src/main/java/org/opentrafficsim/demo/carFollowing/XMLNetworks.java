@@ -490,7 +490,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                     }
                     if (branching > 1)
                     {
-                        throw new NetworkException("Thisnetwork should not have lane split points");
+                        throw new NetworkException("This network should not have lane split points");
                     }
                     lane = lane.nextLanes(this.gtuType).keySet().iterator().next();
                 }
