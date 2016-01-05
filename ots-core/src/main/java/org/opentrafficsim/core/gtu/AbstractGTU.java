@@ -166,17 +166,17 @@ public abstract class AbstractGTU implements GTU
     {
         Time.Abs now = this.simulator.getSimulatorTime().getTime();
 
-        // add the odometer distance from the previous operational plan
-        // because a plan can be interrupted, we calculated the covered distance till 'now'
+        // Add the odometer distance from the currently running operational plan.
+        // Because a plan can be interrupted, we explicitly calculate the covered distance till 'now'
         if (this.operationalPlan != null)
         {
             this.odometer = this.odometer.plus(this.operationalPlan.getTraveledDistance(now));
         }
 
-        // ask the tactical planner to provide an operational plan
+        // Do we have an operational plan?
         if (this.tacticalPlanner == null)
         {
-            // ask the strategical planner to provide a tactical planner
+            // Tell the strategical planner to provide a tactical planner
             this.tacticalPlanner = this.strategicalPlanner.generateTacticalPlanner(this);
         }
         this.operationalPlan = this.tacticalPlanner.generateOperationalPlan(this, now, fromLocation);
