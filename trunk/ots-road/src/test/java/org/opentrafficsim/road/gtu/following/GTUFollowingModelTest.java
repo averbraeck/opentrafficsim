@@ -163,7 +163,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         }
         Length.Rel headway50m = new Length.Rel(50, METER);
         Set<DirectedLanePosition> initialLongitudinalPositions50 = new LinkedHashSet<>(1);
-        initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition.plus(headway50m),
+        initialLongitudinalPositions50.add(new DirectedLanePosition(lane, initialPosition.plus(headway50m),
             GTUDirectionality.DIR_PLUS));
         LaneBasedIndividualCar gtu50m =
             new LaneBasedIndividualCar("100050", carType, initialLongitudinalPositions50, speed, length, width,
@@ -235,7 +235,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         // Follower at 75m
         Length.Rel headwayMinus75m = new Length.Rel(-75, METER);
         Set<DirectedLanePosition> initialLongitudinalPositionsMinus75 = new LinkedHashSet<>(1);
-        initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition.plus(headwayMinus75m),
+        initialLongitudinalPositionsMinus75.add(new DirectedLanePosition(lane, initialPosition.plus(headwayMinus75m),
             GTUDirectionality.DIR_PLUS));
 
         LaneBasedIndividualCar gtuMinus75m =
@@ -252,7 +252,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         // Another follower at 200m
         Length.Rel headwayMinus200m = new Length.Rel(-200, METER);
         Set<DirectedLanePosition> initialLongitudinalPositionsMinus200 = new LinkedHashSet<>(1);
-        initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition.plus(headwayMinus200m),
+        initialLongitudinalPositionsMinus200.add(new DirectedLanePosition(lane, initialPosition.plus(headwayMinus200m),
             GTUDirectionality.DIR_PLUS));
 
         LaneBasedIndividualCar gtuMinus200m =
