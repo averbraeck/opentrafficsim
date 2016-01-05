@@ -38,6 +38,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Egoistic;
@@ -93,10 +94,10 @@ public class CarTest implements UNITS
         assertEquals("The car should store it's ID", "12345", referenceCar.getId());
         assertEquals("At t=initialTime the car should be at it's initial position", initialPosition.getSI(),
             referenceCar.position(lane, referenceCar.getReference(), initialTime).getSI(), 0.0001);
-        assertEquals("The car should store it's initial speed", initialSpeed.getSI(), referenceCar.getVelocity(
-            initialTime).getSI(), 0.00001);
-        assertEquals("The car should have an initial acceleration equal to 0", 0, referenceCar.getAcceleration(
-            initialTime).getSI(), 0.0001);
+        assertEquals("The car should store it's initial speed", initialSpeed.getSI(),
+            referenceCar.getVelocity(initialTime).getSI(), 0.00001);
+        assertEquals("The car should have an initial acceleration equal to 0", 0,
+            referenceCar.getAcceleration(initialTime).getSI(), 0.0001);
         assertEquals("The gtu following model should be " + gtuFollowingModel, gtuFollowingModel, referenceCar
             .getDrivingCharacteristics().getGTUFollowingModel());
         // There is (currently) no way to retrieve the lane change model of a GTU.
@@ -156,7 +157,8 @@ public class CarTest implements UNITS
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         LaneBasedDrivingCharacteristics drivingCharacteristics =
             new LaneBasedDrivingCharacteristics(gtuFollowingModel, laneChangeModel);
-        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+        LaneBasedStrategicalPlanner strategicalPlanner =
+            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
         return new LaneBasedIndividualCar(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width,
             maxSpeed, simulator, strategicalPlanner, new LanePerception(), network);
     }

@@ -32,6 +32,7 @@ import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
@@ -126,10 +127,11 @@ public class LaneBasedGTUTest implements UNITS
         GTUFollowingModel gtuFollowingModel = new IDMPlus();
         LaneBasedDrivingCharacteristics drivingCharacteristics =
             new LaneBasedDrivingCharacteristics(gtuFollowingModel, laneChangeModel);
-        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+        LaneBasedStrategicalPlanner strategicalPlanner =
+            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
         LaneBasedIndividualCar truck =
             new LaneBasedIndividualCar("Truck", truckType, truckPositions, truckSpeed, truckLength, truckWidth,
-                maximumVelocity, simulator, strategicalPlanner, new LanePerception(), network);
+                maximumVelocity, simulator, strategicalPlanner, new LanePerception(), this.network);
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
         int found = 0;
@@ -197,7 +199,8 @@ public class LaneBasedGTUTest implements UNITS
                 Set<DirectedLanePosition> carPositions =
                     buildPositionsSet(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
                 drivingCharacteristics = new LaneBasedDrivingCharacteristics(gtuFollowingModel, laneChangeModel);
-                strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+                strategicalPlanner =
+                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
                 LaneBasedIndividualCar car =
                     new LaneBasedIndividualCar("Car", carType, carPositions, carSpeed, carLength, carWidth,
                         maximumVelocity, simulator, strategicalPlanner, new LanePerception(), this.network);
@@ -384,7 +387,7 @@ public class LaneBasedGTUTest implements UNITS
             LaneBasedDrivingCharacteristics drivingCharacteristics =
                 new LaneBasedDrivingCharacteristics(fam, laneChangeModel);
             LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
             LaneBasedIndividualCar car =
                 new LaneBasedIndividualCar("Car", carType, carPositions, carSpeed, new Length.Rel(4, METER),
                     new Length.Rel(1.8, METER), maximumVelocity, simulator, strategicalPlanner, new LanePerception(),

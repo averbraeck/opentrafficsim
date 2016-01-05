@@ -35,6 +35,7 @@ import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Egoistic;
@@ -63,7 +64,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
 
     /** network. */
     private OTSNetwork network = new OTSNetwork("network");
-    
+
     /**
      * Test the FundamentalDiagram.
      * @throws Exception when something goes wrong (should not happen)
@@ -143,7 +144,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         // Construct a car
         LaneBasedDrivingCharacteristics drivingCharacteristics =
             new LaneBasedDrivingCharacteristics(gtuFollowingModel, laneChangeModel);
-        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+        LaneBasedStrategicalPlanner strategicalPlanner =
+            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
         new LaneBasedIndividualCar("1", gtuType, initialLongitudinalPositions, speed, length, width, maxSpeed,
             simulator, strategicalPlanner, new LanePerception(), this.network);
         simulator.runUpTo(new Time.Abs(124, SECOND));
@@ -229,7 +231,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         // Check that harmonic mean speed is computed
         speed = new Speed(10, KM_PER_HOUR);
         drivingCharacteristics = new LaneBasedDrivingCharacteristics(gtuFollowingModel, laneChangeModel);
-        strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+        strategicalPlanner =
+            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
         new LaneBasedIndividualCar("1234", gtuType, initialLongitudinalPositions, speed, length, width, maxSpeed,
             simulator, strategicalPlanner, new LanePerception(), this.network);
         simulator.runUpTo(new Time.Abs(125, SECOND));

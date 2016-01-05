@@ -54,18 +54,20 @@ public interface StrategicalPlanner
     /**
      * Determine the next node in a network based on a given node.
      * @param node the node for which we want to find the successor
+     * @param previousLink the link before the node to avoid U-turn
      * @return the next node in the route AFTER the current node
      * @throws NetworkException when no route planner is present or the node cannot be found in the route of the GTU
      */
-    Node nextNode(final Node node) throws NetworkException;
+    Node nextNode(final Node node, final Link previousLink) throws NetworkException;
 
     /**
      * Determine the next link and driving direction (with or against the design line) in a network based on a node and a
      * driving direction of the GTU.
      * @param node the node for which we want to find the successor in the driving direction of the GTU
+     * @param previousLink the link before the node to avoid U-turn
      * @return the next link and GTU direction in the route AFTER the current link
      * @throws NetworkException when no route planner is present or the final node in the current link cannot be found in the
      *             route
      */
-    LinkDirection nextLinkDirection(final Node node) throws NetworkException;
+    LinkDirection nextLinkDirection(final Node node, final Link previousLink) throws NetworkException;
 }

@@ -30,6 +30,7 @@ import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.LaneChangeModel;
@@ -92,7 +93,7 @@ public class SensorTest implements UNITS
         initialLongitudinalPositions.add(new DirectedLanePosition(lanesA[1], positionA, GTUDirectionality.DIR_PLUS));
 
         OTSNetwork network = new OTSNetwork("network");
-        
+
         // A Car needs an initial speed
         Speed initialSpeed = new Speed(50, KM_PER_HOUR);
         // Length of the Car
@@ -111,7 +112,8 @@ public class SensorTest implements UNITS
         // Now we can make a car (GTU) (and we don't even have to hold a pointer to it)
         LaneBasedDrivingCharacteristics drivingCharacteristics =
             new LaneBasedDrivingCharacteristics(fas, laneChangeModel);
-        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+        LaneBasedStrategicalPlanner strategicalPlanner =
+            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
         new LaneBasedIndividualCar(carID, gtuType, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
             maximumVelocity, simulator, strategicalPlanner, new LanePerception(), network);
         simulator.runUpTo(new Time.Abs(1, SECOND));
@@ -137,8 +139,8 @@ public class SensorTest implements UNITS
                 triggerEvent = event;
             }
         }
-        assertEquals("There should be three scheduled events (trigger, leaveLane, car.move, terminate)", 4, eventList
-            .size());
+        assertEquals("There should be three scheduled events (trigger, leaveLane, car.move, terminate)", 4,
+            eventList.size());
         // The sensor should be triggered around t=38.3403 (exact value: 10 / 9 * (sqrt(3541) - 25))
         // System.out.println("trigger event is " + triggerEvent);
         assertEquals("Trigger event should be around 38.3403", 38.3403, triggerEvent.getAbsoluteExecutionTime().get()

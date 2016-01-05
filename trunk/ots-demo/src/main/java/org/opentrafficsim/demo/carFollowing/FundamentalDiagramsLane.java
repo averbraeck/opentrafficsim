@@ -42,6 +42,7 @@ import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
@@ -421,7 +422,8 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 LaneBasedDrivingCharacteristics drivingCharacteristics =
                     new LaneBasedDrivingCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
                 LaneBasedStrategicalPlanner strategicalPlanner =
-                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
+                        new LaneBasedGTUFollowingTacticalPlanner());
                 this.block =
                     new LaneBasedIndividualCar("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
                         new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed(0.0, KM_PER_HOUR),
@@ -466,7 +468,8 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 LaneBasedDrivingCharacteristics drivingCharacteristics =
                     new LaneBasedDrivingCharacteristics(gtuFollowingModel, this.laneChangeModel);
                 LaneBasedStrategicalPlanner strategicalPlanner =
-                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
+                        new LaneBasedGTUFollowingTacticalPlanner());
                 new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
                     vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
                     strategicalPlanner, new LanePerception(), DefaultCarAnimation.class, this.gtuColorer, this.network);

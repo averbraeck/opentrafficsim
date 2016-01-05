@@ -36,6 +36,7 @@ import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.FixedLaneChangeModel;
@@ -126,13 +127,12 @@ public class AbstractLaneBasedGTUTest implements UNITS
         nodeList.add(nodeAFrom);
         nodeList.add(nodeATo);
         // Route of the Car
-        @SuppressWarnings({"unchecked", "rawtypes"})
         CompleteRoute route = new CompleteRoute("Route", gtuType, nodeList);
         // Now we can make a GTU
         LaneBasedDrivingCharacteristics drivingCharacteristics =
             new LaneBasedDrivingCharacteristics(gfm, laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
-            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, route);
+                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner(), route);
         LaneBasedIndividualCar car =
             new LaneBasedIndividualCar(carID, gtuType, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
                 maximumVelocity, simulator, strategicalPlanner, new LanePerception(), this.network);

@@ -54,6 +54,7 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
@@ -297,13 +298,13 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                 2, METER), new Time.Rel(1, SECOND), 1d);
 
         LaneBasedDrivingCharacteristics drivingCharacteristics =
-                new LaneBasedDrivingCharacteristics(this.carFollowingModel, laneChangeModel);
-            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
-            LaneBasedIndividualCar referenceCar =
-                new LaneBasedIndividualCar("ReferenceCar", gtuType, initialLongitudinalPositions,
-                    referenceSpeed, new Length.Rel(4, METER), new Length.Rel(2, METER), new Speed(
-                        150, KM_PER_HOUR), simpleSimulator, strategicalPlanner, new LanePerception(),
-                    this.network);
+            new LaneBasedDrivingCharacteristics(this.carFollowingModel, laneChangeModel);
+        LaneBasedStrategicalPlanner strategicalPlanner =
+            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
+        LaneBasedIndividualCar referenceCar =
+            new LaneBasedIndividualCar("ReferenceCar", gtuType, initialLongitudinalPositions, referenceSpeed,
+                new Length.Rel(4, METER), new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR), simpleSimulator,
+                strategicalPlanner, new LanePerception(), this.network);
         Collection<HeadwayGTU> sameLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         sameLaneGTUs.add(new HeadwayGTU(referenceCar, 0));
         // TODO play with the speed limit
@@ -376,7 +377,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
             GTUDirectionality.DIR_PLUS));
         LaneBasedDrivingCharacteristics drivingCharacteristics =
             new LaneBasedDrivingCharacteristics(this.carFollowingModel, laneChangeModel);
-        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+        LaneBasedStrategicalPlanner strategicalPlanner =
+            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
         LaneBasedIndividualCar otherCar =
             new LaneBasedIndividualCar("otherCar", referenceCar.getGTUType(), initialLongitudinalPositions,
                 referenceCar.getVelocity().plus(deltaV), new Length.Rel(4, METER), new Length.Rel(2, METER), new Speed(

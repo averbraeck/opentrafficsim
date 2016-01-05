@@ -61,6 +61,7 @@ import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Altruistic;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -271,7 +272,8 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                                 LaneBasedDrivingCharacteristics drivingCharacteristics =
                                     new LaneBasedDrivingCharacteristics(new IDMPlus(), new Altruistic());
                                 LaneBasedStrategicalPlanner strategicalPlanner =
-                                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+                                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
+                                        new LaneBasedCFLCTacticalPlanner());
                                 LanePerception perception = new LanePerception();
                                 // new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
                                 // initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
@@ -322,7 +324,8 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                                 LaneBasedDrivingCharacteristics drivingCharacteristics =
                                     new LaneBasedDrivingCharacteristics(new IDMPlus(), new Altruistic());
                                 LaneBasedStrategicalPlanner strategicalPlanner =
-                                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics);
+                                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
+                                        new LaneBasedCFLCTacticalPlanner());
                                 LanePerception perception = new LanePerception();
                                 // new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
                                 // initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
@@ -471,7 +474,8 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
 
                 LaneBasedDrivingCharacteristics drivingCharacteristics =
                     new LaneBasedDrivingCharacteristics(new IDMPlus(), new Altruistic());
-                LaneBasedStrategicalPlanner sPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, cr);
+                LaneBasedStrategicalPlanner sPlanner =
+                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
                 LanePerception perception = new LanePerception();
 
                 DirectedLanePosition directedLanePosition =
