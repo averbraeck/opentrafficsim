@@ -20,7 +20,6 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
-import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 
 /**
  * Lane-based tactical planner that implements car following behavior. This tactical planner retrieves the car following model
@@ -37,17 +36,17 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedCarFollowingTacticalPlanner extends AbstractLaneBasedTacticalPlanner
+public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacticalPlanner
 {
     /** */
     private static final long serialVersionUID = 20151125L;
 
     /**
-     * @param strategicalPlanner the strategic planner that has instantiated this tactical planner
+     * Instantiated a tactical planner with just GTU following behavior and no lane changes.
      */
-    public LaneBasedCarFollowingTacticalPlanner(final LaneBasedStrategicalPlanner strategicalPlanner)
+    public LaneBasedGTUFollowingTacticalPlanner()
     {
-        super(strategicalPlanner);
+        super();
     }
 
     /** {@inheritDoc} */
@@ -70,7 +69,7 @@ public class LaneBasedCarFollowingTacticalPlanner extends AbstractLaneBasedTacti
 
         // get some models to help us make a plan
         GTUFollowingModel gtuFollowingModel =
-            getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
+            laneBasedGTU.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
 
         // look at the conditions for headway
         HeadwayGTU headwayGTU = perception.getForwardHeadwayGTU();

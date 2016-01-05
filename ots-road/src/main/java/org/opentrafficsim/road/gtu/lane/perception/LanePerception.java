@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -61,6 +62,12 @@ public class LanePerception implements Perception
     /** the minimum speed limit of all lanes where the GTU is registered. */
     private Speed speedLimit;
 
+    /** the GTUs on the left side. */
+    private Collection<HeadwayGTU> neighboringGTUsLeft;
+
+    /** the GTUs on the right side. */
+    private Collection<HeadwayGTU> neighboringGTUsRight;
+
     /**
      * The adjacent lanes that are accessible for the GTU This information is cached, because it might be requested by different
      * functions in the tactical planner. The set of lanes is stored per LateralDirectionality (LEFT, RIGHT).
@@ -111,6 +118,8 @@ public class LanePerception implements Perception
         }
 
         this.timestamp = this.gtu.getSimulator().getSimulatorTime().getTime();
+        Length.Rel maximumForwardHeadway = this.gtu.getDrivingCharacteristics().getForwardHeadwayDistance();
+        Length.Rel maximumReverseHeadway = this.gtu.getDrivingCharacteristics().getBackwardHeadwayDistance();
 
         // assess the speed limit where we are right now
         this.speedLimit = new Speed(Double.MAX_VALUE, SpeedUnit.SI);
@@ -123,8 +132,8 @@ public class LanePerception implements Perception
         }
 
         // determine who's in front of us and behind us
-        this.forwardHeadwayGTU = headway(this.gtu.getDrivingCharacteristics().getForwardHeadwayDistance());
-        this.backwardHeadwayGTU = headway(this.gtu.getDrivingCharacteristics().getBackwardHeadwayDistance());
+        this.forwardHeadwayGTU = headway(maximumForwardHeadway);
+        this.backwardHeadwayGTU = headway(maximumReverseHeadway);
 
         // determine where we might go
         buildAccessibleAdjacentLanes();
@@ -135,7 +144,7 @@ public class LanePerception implements Perception
         {
             this.parallelGTUs.put(lane, parallel(lane, this.timestamp));
         }
-        
+
         for (LateralDirectionality dir : LateralDirectionality.values())
         {
             this.parallelDirectionalGTUs.put(dir, new HashSet<LaneBasedGTU>());
@@ -143,7 +152,12 @@ public class LanePerception implements Perception
         }
 
         // for the accessible lanes, see who is ahead of us and in front of us
-        // TODO see who is ahead of us and in front of us
+        this.neighboringGTUsLeft =
+            collectNeighborLaneTraffic(LateralDirectionality.LEFT, this.timestamp, maximumForwardHeadway,
+                maximumReverseHeadway);
+        this.neighboringGTUsRight =
+            collectNeighborLaneTraffic(LateralDirectionality.RIGHT, this.timestamp, maximumForwardHeadway,
+                maximumReverseHeadway);
 
         // look for traffic lights, blocking objects, lane ends, or other objects that can force us to stop
         // TODO other objects that can force us to stop
@@ -308,6 +322,45 @@ public class LanePerception implements Perception
             }
         }
         return bestLane;
+    }
+
+    /**
+     * Collect relevant traffic in adjacent lanes. Parallel traffic is included with headway equal to Double.NaN.
+     * @param directionality LateralDirectionality; either <cite>LateralDirectionality.LEFT</cite>, or
+     *            <cite>LateralDirectionality.RIGHT</cite>
+     * @param when DoubleScalar.Abs&lt;TimeUnit&gt;; the (current) time
+     * @param maximumForwardHeadway DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum forward search distance
+     * @param maximumReverseHeadway DoubleScalar.Rel&lt;LengthUnit&gt;; the maximum reverse search distance
+     * @return Collection&lt;LaneBasedGTU&gt;;
+     * @throws NetworkException on network inconsistency
+     * @throws GTUException on problems with the GTU state (e.g., position)
+     */
+    private Collection<HeadwayGTU> collectNeighborLaneTraffic(final LateralDirectionality directionality,
+        final Time.Abs when, final Length.Rel maximumForwardHeadway, final Length.Rel maximumReverseHeadway)
+        throws NetworkException, GTUException
+    {
+        Collection<HeadwayGTU> result = new HashSet<HeadwayGTU>();
+        for (LaneBasedGTU p : parallel(directionality, when))
+        {
+            result.add(new HeadwayGTU(p, Double.NaN));
+        }
+        for (Lane lane : this.gtu.getLanes().keySet())
+        {
+            for (Lane adjacentLane : this.accessibleAdjacentLanes.get(lane).get(directionality))
+            {
+                HeadwayGTU leader = headway(adjacentLane, maximumForwardHeadway);
+                if (null != leader.getOtherGTU() && !result.contains(leader))
+                {
+                    result.add(leader);
+                }
+                HeadwayGTU follower = headway(adjacentLane, maximumReverseHeadway);
+                if (null != follower.getOtherGTU() && !result.contains(follower))
+                {
+                    result.add(new HeadwayGTU(follower.getOtherGTU(), -follower.getDistanceSI()));
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -637,6 +690,22 @@ public class LanePerception implements Perception
     public final Map<Lane, EnumMap<LateralDirectionality, Set<Lane>>> getAccessibleAdjacentLanes()
     {
         return this.accessibleAdjacentLanes;
+    }
+
+    /**
+     * @return neighboringGTUsLeft
+     */
+    public final Collection<HeadwayGTU> getNeighboringGTUsLeft()
+    {
+        return this.neighboringGTUsLeft;
+    }
+
+    /**
+     * @return neighboringGTUsRight
+     */
+    public final Collection<HeadwayGTU> getNeighboringGTUsRight()
+    {
+        return this.neighboringGTUsRight;
     }
 
     /**

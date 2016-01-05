@@ -18,7 +18,6 @@ import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -40,15 +39,12 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
     /** */
     private static final long serialVersionUID = 20151125L;
 
-    /** the strategic planner that has instantiated this tactical planner. */
-    private final LaneBasedStrategicalPlanner strategicalPlanner;
-
     /**
-     * @param strategicalPlanner the strategic planner that has instantiated this tactical planner
+     * Instantiated a tactical planner.
      */
-    public AbstractLaneBasedTacticalPlanner(final LaneBasedStrategicalPlanner strategicalPlanner)
+    public AbstractLaneBasedTacticalPlanner()
     {
-        this.strategicalPlanner = strategicalPlanner;
+        super();
     }
 
     /**
@@ -72,6 +68,11 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
                 // TODO widest lane in case we are registered on more than one lane with the reference point
                 return lane;
             }
+        }
+        for (Lane lane : positions.keySet())
+        {
+            // TODO lane closest to length or 0
+            return lane;
         }
         throw new GTUException("The reference point of GTU " + gtu
             + " is not on any of the lanes on which it is registered");
@@ -321,7 +322,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             if (links.size() > 1)
             {
                 nextSplitNode = lastNode;
-                LinkDirection ld = gtu.getStrategicalPlanner().nextLinkDirection(nextSplitNode);
+                LinkDirection ld = gtu.getStrategicalPlanner().nextLinkDirection(nextSplitNode, lastLink);
                 // which lane(s) we are registered on and adjacent lanes link to a lane
                 // that is on the route at the next split?
                 for (CrossSectionElement cse : referenceLane.getParentLink().getCrossSectionElementList())
@@ -336,7 +337,6 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
                         }
                     }
                 }
-                System.out.println("Split - on lane " + referenceLane + "; good lanes: " + correctCurrentLanes);
                 return new NextSplitInfo(nextSplitNode, correctCurrentLanes);
             }
 
@@ -515,13 +515,5 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             lengthForward = lengthForward.plus(lastLink.getLength());
         }
         return linkList;
-    }
-
-    /**
-     * @return the strategicalPlanner
-     */
-    public final LaneBasedStrategicalPlanner getStrategicalPlanner()
-    {
-        return this.strategicalPlanner;
     }
 }
