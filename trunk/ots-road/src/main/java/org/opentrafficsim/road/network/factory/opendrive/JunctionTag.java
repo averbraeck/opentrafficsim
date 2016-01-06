@@ -8,7 +8,7 @@ import javax.naming.NamingException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLight;
+import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLightNew;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -105,7 +105,7 @@ class JunctionTag
 
                 // AbstractTrafficLight trafficLight = openDriveNetworkLaneParser.trafficLightsBySignals.get(signalId);
 
-                for (AbstractTrafficLight trafficLight : openDriveNetworkLaneParser.trafficLightsBySignals
+                for (AbstractTrafficLightNew trafficLight : openDriveNetworkLaneParser.trafficLightsBySignals
                     .get(signalId))
                     controller.addTrafficLight(sequence, trafficLight);
 

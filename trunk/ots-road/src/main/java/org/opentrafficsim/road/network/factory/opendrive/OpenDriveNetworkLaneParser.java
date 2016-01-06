@@ -21,7 +21,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLight;
+import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLightNew;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.w3c.dom.Document;
@@ -82,11 +82,11 @@ public class OpenDriveNetworkLaneParser
 
     /** the trafficLights that have been created, organized by signals */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, Set<AbstractTrafficLight>> trafficLightsBySignals = new HashMap<>();
+    protected Map<String, Set<AbstractTrafficLightNew>> trafficLightsBySignals = new HashMap<>();
 
     /** the trafficLights that have been created, organized by lanes */
     @SuppressWarnings("visibilitymodifier")
-    protected Map<String, Set<AbstractTrafficLight>> trafficLightsByLanes = new HashMap<>();
+    protected Map<String, Set<AbstractTrafficLightNew>> trafficLightsByLanes = new HashMap<>();
 
     /**
      * @param simulator the simulator for creating the animation. Null if no animation needed.

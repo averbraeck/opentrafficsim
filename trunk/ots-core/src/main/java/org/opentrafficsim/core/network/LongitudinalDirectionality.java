@@ -87,4 +87,31 @@ public enum LongitudinalDirectionality
     {
         return this.equals(DIR_MINUS) || this.equals(DIR_BOTH);
     }
+
+    /**
+     * Easy access method to test if the directionality is FORWARD.
+     * @return whether the directionality is FORWARD
+     */
+    public final boolean isForward()
+    {
+        return this.equals(DIR_PLUS);
+    }
+
+    /**
+     * Easy access method to test if the directionality is BACKWARD or BOTH.
+     * @return whether the directionality is BACKWARD or BOTH
+     */
+    public final boolean isBackward()
+    {
+        return this.equals(DIR_MINUS);
+    }
+    
+    /**
+     * Easy access method to test if the directionality is BACKWARD or BOTH.
+     * @return whether the directionality is BACKWARD or BOTH
+     */
+    public final boolean isBoth()
+    {
+        return this.equals(DIR_BOTH);
+    }
 }

@@ -21,6 +21,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar.LaneBasedIndividualCarBuilder;
@@ -95,9 +96,12 @@ public abstract class AbstractGTUGenerator
     /** the LanePerception to use. */
     private final Class<LanePerception> perceptionClass;
 
+    /** network. */
+    private final OTSNetwork network;
+
     /** Car builder list. */
     private List<LaneBasedIndividualCarBuilder> carBuilderList = new ArrayList<>();
-
+    
     /** Number of generated GTUs. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected long numberGTUs = 0;
@@ -118,6 +122,7 @@ public abstract class AbstractGTUGenerator
      * @param gtuColorer the GTUColorer to use
      * @param strategicalPlanner the lane-based strategical planner to use (pretty much stateless, so can be shared)
      * @param perceptionClass the LanePerception class to use (stateful, so has to be class-based)
+     * @param network the network to register the generated GTUs into
      * @throws SimRuntimeException when simulation scheduling fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -126,7 +131,8 @@ public abstract class AbstractGTUGenerator
         final ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDist, final long maxGTUs,
         final Time.Abs startTime, final Time.Abs endTime, final Lane lane, final Length.Rel position,
         final GTUDirectionality direction, final GTUColorer gtuColorer,
-        final LaneBasedStrategicalPlanner strategicalPlanner, final Class<LanePerception> perceptionClass)
+        final LaneBasedStrategicalPlanner strategicalPlanner, final Class<LanePerception> perceptionClass,
+        final OTSNetwork network)
         throws SimRuntimeException
     {
         super();
@@ -144,6 +150,7 @@ public abstract class AbstractGTUGenerator
         this.gtuColorer = gtuColorer;
         this.strategicalPlanner = strategicalPlanner;
         this.perceptionClass = perceptionClass;
+        this.network = network;
 
         simulator.scheduleEventAbs(startTime, this, this, "generate", null);
     }
@@ -189,6 +196,7 @@ public abstract class AbstractGTUGenerator
             carBuilder.setStrategicalPlanner(getStrategicalPlanner()); // TODO same instance? clone?
             carBuilder.setPerception(this.perceptionClass.newInstance()); // TODO same instance? clone?
             carBuilder.setGtuColorer(this.gtuColorer);
+            carBuilder.setNetwork(this.network);
             this.generatedGTUs++;
 
             if (enoughSpace(carBuilder))

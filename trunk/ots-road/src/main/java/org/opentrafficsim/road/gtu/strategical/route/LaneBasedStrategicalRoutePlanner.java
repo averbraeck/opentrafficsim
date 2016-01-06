@@ -1,7 +1,11 @@
 package org.opentrafficsim.road.gtu.strategical.route;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
@@ -11,6 +15,9 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.strategical.AbstractLaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.Lane;
 
 /**
  * Strategical planner, route-based, with personal driving characteristics, which contain settings for the tactical planner. The
@@ -67,31 +74,34 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
 
     /** {@inheritDoc} */
     @Override
-    public Node nextNode(final Link link, final GTUDirectionality direction) throws NetworkException
+    public Node nextNode(final Link link, final GTUDirectionality direction, final GTUType gtuType)
+        throws NetworkException
     {
-        LinkDirection linkDirection = nextLinkDirection(link, direction);
+        LinkDirection linkDirection = nextLinkDirection(link, direction, gtuType);
         return linkDirection.getNodeTo();
     }
 
     /** {@inheritDoc} */
     @Override
-    public LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction) throws NetworkException
+    public LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction, final GTUType gtuType)
+        throws NetworkException
     {
         Node lastNode = direction.equals(GTUDirectionality.DIR_PLUS) ? link.getEndNode() : link.getStartNode();
-        return nextLinkDirection(lastNode, link);
+        return nextLinkDirection(lastNode, link, gtuType);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Node nextNode(final Node node, final Link previousLink) throws NetworkException
+    public Node nextNode(final Node node, final Link previousLink, final GTUType gtuType) throws NetworkException
     {
-        LinkDirection linkDirection = nextLinkDirection(node, previousLink);
+        LinkDirection linkDirection = nextLinkDirection(node, previousLink, gtuType);
         return linkDirection.getNodeTo();
     }
 
     /** {@inheritDoc} */
     @Override
-    public LinkDirection nextLinkDirection(final Node node, final Link previousLink) throws NetworkException
+    public LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GTUType gtuType)
+        throws NetworkException
     {
         // if there is no split, don't ask the route
         if (node.getLinks().size() == 1 && previousLink != null)
@@ -119,7 +129,55 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
             }
         }
 
-        // More than 2 links... We have to check the route!
+        // if we only have one way to go, don't bother about the route yet
+        Set<Link> links = node.getLinks();
+        for (Iterator<Link> linkIterator = links.iterator(); linkIterator.hasNext();)
+        {
+            Link link = linkIterator.next();
+            if (link.equals(previousLink))
+            {
+                linkIterator.remove();
+            }
+            else
+            {
+                // does the directionality of the link forbid us to go in?
+                if ((link.getStartNode().equals(node) && link.getDirectionality(gtuType).isBackward())
+                    || (link.getEndNode().equals(node) && link.getDirectionality(gtuType).isForward()))
+                {
+                    linkIterator.remove();
+                }
+                else
+                {
+                    // are there no lanes from the node into this link in the outgoing direction?
+                    boolean out = false;
+                    CrossSectionLink csLink = (CrossSectionLink) link;
+                    for (CrossSectionElement cse : csLink.getCrossSectionElementList())
+                    {
+                        if (cse instanceof Lane)
+                        {
+                            Lane lane = (Lane) cse;
+                            if ((link.getStartNode().equals(node) && lane.getDirectionality(gtuType).isForward())
+                                || (link.getEndNode().equals(node) && lane.getDirectionality(gtuType).isBackward()))
+                            {
+                                out = true;
+                            }
+                        }
+                    }
+                    if (!out)
+                    {
+                        linkIterator.remove();
+                    }
+                }
+            }
+        }
+        if (links.size() == 1)
+        {
+            Link link = links.iterator().next();
+            return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS)
+            : new LinkDirection(link, GTUDirectionality.DIR_MINUS);
+        }
+
+        // more than 2 links... We have to check the route!
         if (this.route == null)
         {
             throw new NetworkException("LaneBasedStrategicalRoutePlanner does not have a route");

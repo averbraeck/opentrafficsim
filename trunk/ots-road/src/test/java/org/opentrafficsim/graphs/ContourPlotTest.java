@@ -62,6 +62,7 @@ public class ContourPlotTest implements UNITS
     /**
      * Create a dummy path for the tests.
      * @param laneType the lane type
+     * @param gtuType the GTU type
      * @return List&lt;Lane&gt;; the dummy path
      * @throws Exception when something goes wrong (should not happen)
      */

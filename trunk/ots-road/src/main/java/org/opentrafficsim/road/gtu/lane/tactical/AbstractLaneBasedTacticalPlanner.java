@@ -99,6 +99,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
         Length.Rel lengthForward;
         Length.Rel position = gtu.position(lane, gtu.getReference());
         OTSLine3D path;
+        try
+        {
         if (lastGtuDir.equals(GTUDirectionality.DIR_PLUS))
         {
             lengthForward = lane.getLength().minus(position);
@@ -109,7 +111,14 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             lengthForward = position;
             path = lane.getCenterLine().extract(Length.Rel.ZERO, position).reverse();
         }
-
+        } catch (OTSGeometryException exception)
+        {
+            System.err.println("GTU " + gtu + ": " + exception.getMessage());
+            System.err.println(lane + ", len=" + lane.getLength());
+            System.err.println(position);
+            throw exception;
+        }
+        
         while (lengthForward.lt(maxHeadway))
         {
             Map<Lane, GTUDirectionality> lanes =
@@ -129,7 +138,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
                 // multiple next lanes; ask the strategical planner where to go
                 // note: this is not necessarily a split; it could e.g. be a bike path on a road
                 LinkDirection ld =
-                    gtu.getStrategicalPlanner().nextLinkDirection(lane.getParentLink(), gtu.getLanes().get(lane));
+                    gtu.getStrategicalPlanner().nextLinkDirection(lane.getParentLink(), gtu.getLanes().get(lane),
+                        gtu.getGTUType());
                 Link nextLink = ld.getLink();
                 for (Lane nextLane : lanes.keySet())
                 {
@@ -223,7 +233,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
                 // multiple next lanes; ask the strategical planner where to go
                 // note: this is not necessarily a split; it could e.g. be a bike path on a road
                 LinkDirection ld =
-                    gtu.getStrategicalPlanner().nextLinkDirection(lane.getParentLink(), gtu.getLanes().get(lane));
+                    gtu.getStrategicalPlanner().nextLinkDirection(lane.getParentLink(), gtu.getLanes().get(lane),
+                        gtu.getGTUType());
                 Link nextLink = ld.getLink();
                 for (Lane nextLane : lanes.keySet())
                 {
@@ -322,7 +333,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             if (links.size() > 1)
             {
                 nextSplitNode = lastNode;
-                LinkDirection ld = gtu.getStrategicalPlanner().nextLinkDirection(nextSplitNode, lastLink);
+                LinkDirection ld =
+                    gtu.getStrategicalPlanner().nextLinkDirection(nextSplitNode, lastLink, gtu.getGTUType());
                 // which lane(s) we are registered on and adjacent lanes link to a lane
                 // that is on the route at the next split?
                 for (CrossSectionElement cse : referenceLane.getParentLink().getCrossSectionElementList())
@@ -471,7 +483,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             Link link;
             if (links.size() > 1)
             {
-                LinkDirection ld = gtu.getStrategicalPlanner().nextLinkDirection(lastLink, lastGtuDir);
+                LinkDirection ld =
+                    gtu.getStrategicalPlanner().nextLinkDirection(lastLink, lastGtuDir, gtu.getGTUType());
                 link = ld.getLink();
             }
             else

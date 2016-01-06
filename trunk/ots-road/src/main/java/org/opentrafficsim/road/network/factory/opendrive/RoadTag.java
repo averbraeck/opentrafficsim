@@ -30,7 +30,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.animation.LinkAnimation;
-import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLight;
+import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLightNew;
 import org.opentrafficsim.road.gtu.lane.object.OldTrafficLight;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.ShoulderAnimation;
@@ -1044,19 +1044,19 @@ class RoadTag
                         ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class, Length.Rel.class,
                             OTSDEVSSimulatorInterface.class});
 
-                    AbstractTrafficLight trafficLight =
-                        (AbstractTrafficLight) trafficLightConstructor.newInstance(new Object[]{signalTag.id, lane,
+                    AbstractTrafficLightNew trafficLight =
+                        (AbstractTrafficLightNew) trafficLightConstructor.newInstance(new Object[]{signalTag.id, lane,
                             sOffset, simulator});
 
                     if (!openDriveNetworkLaneParser.trafficLightsBySignals.containsKey(signalTag.id))
                     {
-                        Set<AbstractTrafficLight> lights = new HashSet<AbstractTrafficLight>();
+                        Set<AbstractTrafficLightNew> lights = new HashSet<AbstractTrafficLightNew>();
                         openDriveNetworkLaneParser.trafficLightsBySignals.put(signalTag.id, lights);
                     }
 
                     if (!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
                     {
-                        Set<AbstractTrafficLight> lights = new HashSet<AbstractTrafficLight>();
+                        Set<AbstractTrafficLightNew> lights = new HashSet<AbstractTrafficLightNew>();
                         openDriveNetworkLaneParser.trafficLightsByLanes.put(roadTag.id, lights);
                     }
 
@@ -1113,13 +1113,13 @@ class RoadTag
                         ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class, Length.Rel.class,
                             OTSDEVSSimulatorInterface.class});
 
-                    AbstractTrafficLight trafficLight =
-                        (AbstractTrafficLight) trafficLightConstructor.newInstance(new Object[]{signalTag.id + ".ref",
+                    AbstractTrafficLightNew trafficLight =
+                        (AbstractTrafficLightNew) trafficLightConstructor.newInstance(new Object[]{signalTag.id + ".ref",
                             lane, sOffset, simulator});
 
                     if (!openDriveNetworkLaneParser.trafficLightsByLanes.containsKey(roadTag.id))
                     {
-                        Set<AbstractTrafficLight> lights = new HashSet<AbstractTrafficLight>();
+                        Set<AbstractTrafficLightNew> lights = new HashSet<AbstractTrafficLightNew>();
                         openDriveNetworkLaneParser.trafficLightsByLanes.put(roadTag.id, lights);
                     }
 
