@@ -415,10 +415,10 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      */
     protected final int yAxisBin(final int item)
     {
-        if (item < 0 || item >= getItemCount(0))
+        int maxItem = getItemCount(0);
+        if (item < 0 || item >= maxItem)
         {
-            throw new RuntimeException("yAxisBin: item out of range (value is " + item + "), valid range is 0.."
-                    + getItemCount(0));
+            throw new RuntimeException("yAxisBin: item out of range (value is " + item + "), valid range is 0.." + maxItem);
         }
         return item % yAxisBins();
     }
@@ -431,10 +431,10 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
      */
     protected final int xAxisBin(final int item)
     {
-        if (item < 0 || item >= getItemCount(0))
+        int maxItem = getItemCount(0);
+        if (item < 0 || item >= maxItem)
         {
-            throw new RuntimeException("xAxisBin: item out of range (value is " + item + "), valid range is 0.."
-                    + getItemCount(0));
+            throw new RuntimeException("xAxisBin: item out of range (value is " + item + "), valid range is 0.." + maxItem);
         }
         return item / yAxisBins();
     }
@@ -566,8 +566,8 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     @Override
     public final void addData(final AbstractLaneBasedGTU car, final Lane lane) throws NetworkException, GTUException
     {
-//        System.out.println("addData car: " + car + ", lastEval: " + car.getSimulator().getSimulatorTime()
-//                + " position of rear on lane " + lane + " is " + car.position(lane, car.getRear()));
+        // System.out.println("addData car: " + car + ", lastEval: " + car.getSimulator().getSimulatorTime()
+        // + " position of rear on lane " + lane + " is " + car.position(lane, car.getRear()));
         // Convert the position of the car to a position on path.
         double lengthOffset = 0;
         int index = this.path.indexOf(lane);
