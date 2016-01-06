@@ -566,8 +566,8 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
     @Override
     public final void addData(final AbstractLaneBasedGTU car, final Lane lane) throws NetworkException, GTUException
     {
-        System.out.println("addData car: " + car + ", lastEval: " + car.getSimulator().getSimulatorTime()
-                + " position of rear on lane " + lane + " is " + car.position(lane, car.getRear()));
+//        System.out.println("addData car: " + car + ", lastEval: " + car.getSimulator().getSimulatorTime()
+//                + " position of rear on lane " + lane + " is " + car.position(lane, car.getRear()));
         // Convert the position of the car to a position on path.
         double lengthOffset = 0;
         int index = this.path.indexOf(lane);
@@ -673,8 +673,10 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
                 }
                 final double duration = relativeDuration * this.getXAxis().getGranularities()[0];
                 final double distance = duration * relativeMeanSpeed * this.getYAxis().getGranularities()[0];
-                System.out.println(String.format("timeBin=%d, distanceBin=%d, duration=%f, distance=%f", timeBin,
-                        distanceBin, duration, distance));
+                // System.out.println(String.format(
+                // "timeBin=%d, distanceBin=%d, duration=%f, distance=%f, timeBinSize=%f, distanceBinSize=%f", timeBin,
+                // distanceBin, duration, distance, this.getYAxis().getGranularities()[0], this.getXAxis()
+                // .getGranularities()[0]));
                 incrementBinData(timeBin, distanceBin, duration, distance, acceleration);
                 relativeFromTime += relativeDuration;
                 binDistanceStart = distanceBin + 1;
