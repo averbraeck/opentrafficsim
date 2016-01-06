@@ -531,7 +531,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             }
             Node nextNode =
                     ((LaneBasedStrategicalRoutePlanner) getStrategicalPlanner()).nextNode(lane.getParentLink(),
-                            GTUDirectionality.DIR_PLUS);
+                            GTUDirectionality.DIR_PLUS, getGTUType());
             if (null == nextNode)
             {
                 throw new GTUException(this + " reaches branch and the route returns null as nextNodeToVisit");
@@ -592,7 +592,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             }
             Node prevNode =
                     ((LaneBasedStrategicalRoutePlanner) getStrategicalPlanner()).nextNode(lane.getParentLink(),
-                            GTUDirectionality.DIR_MINUS);
+                            GTUDirectionality.DIR_MINUS, getGTUType());
             if (null == prevNode)
             {
                 throw new GTUException(this + " reaches branch and the route returns null as nextNodeToVisit");

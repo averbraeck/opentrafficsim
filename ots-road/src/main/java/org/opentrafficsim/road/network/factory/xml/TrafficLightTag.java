@@ -7,6 +7,7 @@ import nl.tudelft.simulation.language.reflection.ClassUtil;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLight;
 import org.opentrafficsim.road.network.factory.xml.CrossSectionElementTag.ElementType;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -92,13 +93,13 @@ class TrafficLightTag
             try
             {
                 ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class, Length.Rel.class,
-                    OTSDEVSSimulatorInterface.class});
+                    OTSDEVSSimulatorInterface.class, OTSNetwork.class});
             }
             catch (NoSuchMethodException nsme)
             {
                 throw new SAXException("TRAFFICLIGHT: CLASS NAME " + trafficLightTag.className + " for trafficLight "
                     + trafficLightTag.name + " on lane " + laneName
-                    + " -- no constructor with arguments (String, Lane, Length.Rel, OTSDEVSSimulatorInterface)");
+                    + " -- no constructor with arguments (String, Lane, Length.Rel, OTSDEVSSimulatorInterface, OTSNetwork)");
             }
         }
         catch (ClassNotFoundException cnfe)

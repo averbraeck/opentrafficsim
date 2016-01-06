@@ -300,7 +300,7 @@ class GeneratorTag
             generatorTag.initialSpeedDist, generatorTag.iatDist, generatorTag.gtuTag.lengthDist,
             generatorTag.gtuTag.widthDist, generatorTag.gtuTag.maxSpeedDist, generatorTag.maxGTUs, startTime, endTime,
             lane, position, generatorTag.gtuDirection, generatorTag.gtuColorer, strategicalPlanner,
-            LanePerception.class);
+            LanePerception.class, parser.network);
 
         // TODO GTUMix
         // TODO RouteMix

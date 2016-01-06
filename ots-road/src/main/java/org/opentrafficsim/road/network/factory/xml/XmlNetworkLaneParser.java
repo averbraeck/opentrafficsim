@@ -94,6 +94,10 @@ public class XmlNetworkLaneParser
     @SuppressWarnings("visibilitymodifier")
     protected OTSDEVSSimulatorInterface simulator;
 
+    /** the network to register the GTUs in. */
+    @SuppressWarnings("visibilitymodifier")
+    protected OTSNetwork network;
+
     /**
      * @param simulator the simulator for creating the animation. Null if no animation needed.
      */
@@ -121,6 +125,7 @@ public class XmlNetworkLaneParser
     {
         if (url.getFile().length() > 0 && !(new File(url.getFile()).exists()))
             throw new SAXException("XmlNetworkLaneParser.build: File url.getFile() does not exist");
+        this.network = new OTSNetwork(url.toString());
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -179,31 +184,29 @@ public class XmlNetworkLaneParser
         // TODO shortestRoute, routeMix, ShortestRouteMix
 
         // store the structure information in the network
-        return makeNetwork(url.toString());
+        return makeNetwork();
     }
 
     /**
-     * @param name the name of the network
      * @return the OTSNetwork with the static information about the network
      * @throws NetworkException if items cannot be added to the Network
      */
-    private OTSNetwork makeNetwork(final String name) throws NetworkException
+    private OTSNetwork makeNetwork() throws NetworkException
     {
-        OTSNetwork network = new OTSNetwork(name);
         for (NodeTag nodeTag : this.nodeTags.values())
         {
-            network.addNode(nodeTag.node);
+            this.network.addNode(nodeTag.node);
         }
         for (LinkTag linkTag : this.linkTags.values())
         {
-            network.addLink(linkTag.link);
+            this.network.addLink(linkTag.link);
         }
         for (RouteTag routeTag : this.routeTags.values())
         {
             // TODO Make routes GTU specific. See what to do with GTUType.ALL for routes
-            network.addRoute(GTUType.ALL, routeTag.route);
+            this.network.addRoute(GTUType.ALL, routeTag.route);
         }
-        return network;
+        return this.network;
     }
 
 }

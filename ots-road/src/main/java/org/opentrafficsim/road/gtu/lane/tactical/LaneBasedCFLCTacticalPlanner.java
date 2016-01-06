@@ -535,7 +535,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             }
             else
             { // Look beyond this nextNode
-                Link nextLink = gtu.getStrategicalPlanner().nextLinkDirection(nextNode, lastLink).getLink();
+                Link nextLink =
+                    gtu.getStrategicalPlanner().nextLinkDirection(nextNode, lastLink, gtu.getGTUType()).getLink();
                 if (nextLink instanceof CrossSectionLink)
                 {
                     nextNode = nextLink.getEndNode();
@@ -605,7 +606,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
         // We have now found the first upcoming branching Node
         // Which continuing link is the one we need?
         Map<Lane, Length.Rel> suitabilityOfLanesBeforeBranch = new HashMap<Lane, Length.Rel>();
-        Link linkAfterBranch = gtu.getStrategicalPlanner().nextLinkDirection(nextSplitNode, lastLink).getLink();
+        Link linkAfterBranch =
+            gtu.getStrategicalPlanner().nextLinkDirection(nextSplitNode, lastLink, gtu.getGTUType()).getLink();
         for (CrossSectionElement cse : linkBeforeBranch.getCrossSectionElementList())
         {
             if (cse instanceof Lane)

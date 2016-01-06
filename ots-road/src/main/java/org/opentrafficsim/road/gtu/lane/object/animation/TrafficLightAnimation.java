@@ -12,7 +12,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.animation.PaintPolygons;
-import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLight;
+import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLightNew;
 import org.opentrafficsim.road.gtu.lane.object.TrafficLight;
 
 /**
@@ -38,7 +38,7 @@ public class TrafficLightAnimation extends Renderable2D
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public TrafficLightAnimation(final AbstractTrafficLight source, final OTSSimulatorInterface simulator)
+    public TrafficLightAnimation(final AbstractTrafficLightNew source, final OTSSimulatorInterface simulator)
         throws NamingException, RemoteException
     {
         super(source, simulator);

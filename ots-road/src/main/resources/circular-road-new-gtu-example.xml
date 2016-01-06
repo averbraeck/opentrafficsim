@@ -86,9 +86,9 @@
 
   <LINK NAME="L1" NODESTART="N1" NODEEND="N1a" ROADTYPE="r3" LANEKEEPING="KEEPLANE">
     <ARC RADIUS="1000m" ANGLE="45 deg" DIRECTION="L" />
-    <!-- TRAFFICLIGHT LANE="A2" POSITION="END-10cm" CLASS="org.opentrafficsim.road.gtu.lane.LaneBlockOnOff" / -->
-    <!-- TRAFFICLIGHT LANE="A3" POSITION="END-10cm" CLASS="org.opentrafficsim.road.gtu.lane.LaneBlockOnOff" / -->
-    <!-- BLOCK LANE="A1" POSITION="END-10cm" / -->
+    <TRAFFICLIGHT LANE="A2" POSITION="END-10cm" CLASS="org.opentrafficsim.road.gtu.lane.object.LaneBlockOnOff" />
+    <TRAFFICLIGHT LANE="A3" POSITION="END-10cm" CLASS="org.opentrafficsim.road.gtu.lane.object.LaneBlockOnOff" />
+    <BLOCK LANE="A1" POSITION="END-10cm" />
   </LINK>
 
   <LINK NAME="L1a" NODESTART="N1a" NODEEND="N2" ROADTYPE="r2">

@@ -32,8 +32,9 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.object.AbstractTrafficLight;
-import org.opentrafficsim.road.gtu.lane.object.CSEBlock;
+import org.opentrafficsim.road.gtu.lane.object.LaneBlock;
 import org.opentrafficsim.road.network.animation.LaneAnimation;
 import org.opentrafficsim.road.network.animation.ShoulderAnimation;
 import org.opentrafficsim.road.network.animation.StripeAnimation;
@@ -553,8 +554,7 @@ final class Links
                     {
                         BlockTag blockTag = linkTag.blockTags.get(cseTag.name);
                         Length.Rel position = LinkTag.parseBeginEndPosition(blockTag.positionStr, lane);
-                        CSEBlock block = CSEBlock.createCrossSectionElementBlock(lane, position);
-                        // TODO lane.addObject(block);
+                        new LaneBlock(lane, position, simulator, null, parser.network);
                     }
 
                     // TRAFFICLIGHT
@@ -567,19 +567,18 @@ final class Links
                                 Class<?> clazz = Class.forName(trafficLightTag.className);
                                 Constructor<?> trafficLightConstructor =
                                     ClassUtil.resolveConstructor(clazz, new Class[]{String.class, Lane.class,
-                                        Length.Rel.class, OTSDEVSSimulatorInterface.class});
+                                        Length.Rel.class, OTSDEVSSimulatorInterface.class, OTSNetwork.class});
                                 Length.Rel position = LinkTag.parseBeginEndPosition(trafficLightTag.positionStr, lane);
                                 AbstractTrafficLight trafficLight =
                                     (AbstractTrafficLight) trafficLightConstructor.newInstance(new Object[]{
-                                        trafficLightTag.name, lane, position, simulator});
-                                // TODO lane.addObject(trafficLight);
+                                        trafficLightTag.name, lane, position, simulator, parser.network});
                             }
                             catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
                                 | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                                 | NetworkException exception)
                             {
-                                throw new NetworkException("SENSOR: CLASS NAME " + trafficLightTag.className
-                                    + " for sensor " + trafficLightTag.name + " on lane " + lane.toString()
+                                throw new NetworkException("TRAFFICLIGHT: CLASS NAME " + trafficLightTag.className
+                                    + " for traffic light " + trafficLightTag.name + " on lane " + lane.toString()
                                     + " -- class not found or constructor not right", exception);
                             }
                         }
