@@ -25,7 +25,7 @@
     <xsd:complexType>
       <xsd:sequence>
         <xsd:choice>
-          <xsd:element name="SPLINE" />
+          <xsd:element name="BEZIER" />
           <xsd:element name="STRAIGHT">
             <xsd:complexType>
               <xsd:attribute name="LENGTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
