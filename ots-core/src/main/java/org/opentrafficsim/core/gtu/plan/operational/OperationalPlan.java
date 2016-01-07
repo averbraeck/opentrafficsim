@@ -86,9 +86,19 @@ public class OperationalPlan implements Serializable
      * @throws OperationalPlanException when the path is too short for the operation
      */
     public OperationalPlan(final OTSLine3D path, final Time.Abs startTime, final Speed startSpeed,
-        final List<Segment> operationalPlanSegmentList) throws OperationalPlanException
+            final List<Segment> operationalPlanSegmentList) throws OperationalPlanException
     {
-        super();
+        try
+        {
+            if (path.size() == 2 && path.get(0).y < -5 && path.get(1).y > -5)
+            {
+                System.out.println("Let op");
+            }
+        }
+        catch (OTSGeometryException exception1)
+        {
+            exception1.printStackTrace();
+        }
         this.waitPlan = false;
         this.startTime = startTime;
         this.startSpeed = startSpeed;
@@ -119,8 +129,8 @@ public class OperationalPlan implements Serializable
         }
         catch (OTSGeometryException exception)
         {
-            System.err.println("st = " + startTime + ", ss = " + startSpeed + ", seg = " + operationalPlanSegmentList
-                + ", distanceSI = " + distanceSI + ", path = " + path);
+            // System.err.println("About to throw OperationalPlanException: st = " + startTime + ", ss = " + startSpeed
+            // + ", seg = " + operationalPlanSegmentList + ", distanceSI = " + distanceSI + ", path = " + path);
             throw new OperationalPlanException(exception);
         }
         this.totalDuration = new Time.Rel(durationSI, TimeUnit.SI);
@@ -135,7 +145,7 @@ public class OperationalPlan implements Serializable
      * @throws OperationalPlanException when construction of a waiting path fails
      */
     public OperationalPlan(final DirectedPoint waitPoint, final Time.Abs startTime, final Time.Rel duration)
-        throws OperationalPlanException
+            throws OperationalPlanException
     {
         this.waitPlan = true;
         this.startTime = startTime;
@@ -145,8 +155,8 @@ public class OperationalPlan implements Serializable
 
         // make a path
         OTSPoint3D p2 =
-            new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
-                waitPoint.z);
+                new OTSPoint3D(waitPoint.x + Math.cos(waitPoint.getRotZ()), waitPoint.y + Math.sin(waitPoint.getRotZ()),
+                        waitPoint.z);
         try
         {
             this.path = new OTSLine3D(new OTSPoint3D(waitPoint), p2);
@@ -166,8 +176,8 @@ public class OperationalPlan implements Serializable
     }
 
     /**
-     * Return the path that will be traveled. If the plan is a wait plan, the start point of the path is good; the
-     * end point of the path is bogus (should only be used to determine the orientation of the GTU).
+     * Return the path that will be traveled. If the plan is a wait plan, the start point of the path is good; the end point of
+     * the path is bogus (should only be used to determine the orientation of the GTU).
      * @return the path
      */
     public final OTSLine3D getPath()
@@ -320,7 +330,7 @@ public class OperationalPlan implements Serializable
         public final String toString()
         {
             return String.format("SegmentProgress segment=%s startpos.rel=%s starttime.abs=%s", this.segment,
-                this.segmentStartPosition, this.segmentStartTime);
+                    this.segmentStartPosition, this.segmentStartTime);
         }
     }
 
@@ -336,7 +346,7 @@ public class OperationalPlan implements Serializable
         if (time.lt(this.startTime))
         {
             throw new OperationalPlanException(
-                "SegmentProgress cannot be determined for time before startTime of this OperationalPlan");
+                    "SegmentProgress cannot be determined for time before startTime of this OperationalPlan");
         }
         double cumulativeDistance = 0;
         for (int i = 0; i < this.segmentStartTimesRelSI.length - 1; i++)
@@ -344,11 +354,11 @@ public class OperationalPlan implements Serializable
             if (this.startTime.si + this.segmentStartTimesRelSI[i + 1] >= time.si)
             {
                 return new SegmentProgress(this.operationalPlanSegmentList.get(i), new Time.Abs(this.startTime.si
-                    + this.segmentStartTimesRelSI[i], TimeUnit.SI), new Length.Rel(cumulativeDistance, LengthUnit.SI));
+                        + this.segmentStartTimesRelSI[i], TimeUnit.SI), new Length.Rel(cumulativeDistance, LengthUnit.SI));
             }
         }
         throw new OperationalPlanException(
-            "SegmentProgress cannot be determined for time after endTime of this OperationalPlan");
+                "SegmentProgress cannot be determined for time after endTime of this OperationalPlan");
     }
 
     /**
@@ -366,7 +376,7 @@ public class OperationalPlan implements Serializable
             if (distanceOfSegment > remainingDistanceSI)
             {
                 return new Time.Abs(timeAtStartOfSegment
-                    + segment.timeAtDistance(new Length.Rel(remainingDistanceSI, LengthUnit.SI)).si, TimeUnit.SI);
+                        + segment.timeAtDistance(new Length.Rel(remainingDistanceSI, LengthUnit.SI)).si, TimeUnit.SI);
             }
             remainingDistanceSI -= distanceOfSegment;
             timeAtStartOfSegment += segment.getDurationSI();
@@ -384,8 +394,8 @@ public class OperationalPlan implements Serializable
     {
         SegmentProgress sp = getSegmentProgress(time);
         double fraction =
-            (sp.getSegmentStartPosition().si + sp.getSegment().distanceSI(time.minus(sp.getSegmentStartTime()).si))
-                / this.path.getLengthSI();
+                (sp.getSegmentStartPosition().si + sp.getSegment().distanceSI(time.minus(sp.getSegmentStartTime()).si))
+                        / this.path.getLengthSI();
         // System.out.println(fraction);
         DirectedPoint p = new DirectedPoint();
         try
@@ -443,8 +453,7 @@ public class OperationalPlan implements Serializable
     public final Acceleration getAcceleration(final Time.Abs time) throws OperationalPlanException
     {
         SegmentProgress sp = getSegmentProgress(time);
-        return new Acceleration(sp.getSegment().accelerationSI(time.minus(sp.getSegmentStartTime()).si),
-            AccelerationUnit.SI);
+        return new Acceleration(sp.getSegment().accelerationSI(time.minus(sp.getSegmentStartTime()).si), AccelerationUnit.SI);
     }
 
     /**
@@ -514,9 +523,7 @@ public class OperationalPlan implements Serializable
     {
         final int prime = 31;
         int result = 1;
-        result =
-            prime * result
-                + ((this.operationalPlanSegmentList == null) ? 0 : this.operationalPlanSegmentList.hashCode());
+        result = prime * result + ((this.operationalPlanSegmentList == null) ? 0 : this.operationalPlanSegmentList.hashCode());
         result = prime * result + ((this.path == null) ? 0 : this.path.hashCode());
         result = prime * result + ((this.startSpeed == null) ? 0 : this.startSpeed.hashCode());
         result = prime * result + ((this.startTime == null) ? 0 : this.startTime.hashCode());
@@ -524,7 +531,7 @@ public class OperationalPlan implements Serializable
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
+    @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
     @Override
     public boolean equals(final Object obj)
     {
@@ -571,10 +578,10 @@ public class OperationalPlan implements Serializable
     @Override
     public String toString()
     {
-        return "OperationalPlan [path=" + this.path + ", startTime=" + this.startTime + ", startSpeed="
-            + this.startSpeed + ", operationalPlanSegmentList=" + this.operationalPlanSegmentList + ", totalDuration="
-            + this.totalDuration + ", segmentStartTimesSI=" + Arrays.toString(this.segmentStartTimesRelSI)
-            + ", endSpeed = " + this.endSpeed + "]";
+        return "OperationalPlan [path=" + this.path + ", startTime=" + this.startTime + ", startSpeed=" + this.startSpeed
+                + ", operationalPlanSegmentList=" + this.operationalPlanSegmentList + ", totalDuration=" + this.totalDuration
+                + ", segmentStartTimesSI=" + Arrays.toString(this.segmentStartTimesRelSI) + ", endSpeed = " + this.endSpeed
+                + "]";
     }
 
     /****************************************************************************************************************/
@@ -697,7 +704,7 @@ public class OperationalPlan implements Serializable
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
+        @SuppressWarnings({ "checkstyle:needbraces", "checkstyle:designforextension" })
         @Override
         public boolean equals(final Object obj)
         {
