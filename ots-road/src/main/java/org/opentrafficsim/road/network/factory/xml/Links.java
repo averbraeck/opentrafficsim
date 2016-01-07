@@ -15,6 +15,7 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
+import nl.tudelft.simulation.language.d3.DirectedPoint;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.djunits.unit.AngleUnit;
@@ -23,6 +24,7 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
@@ -331,18 +333,23 @@ final class Links
     static void buildLink(final LinkTag linkTag, final XmlNetworkLaneParser parser,
         final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException, NamingException
     {
-        int points = 2;
-        if (linkTag.arcTag != null)
-        {
-            points = (Math.abs(linkTag.arcTag.angle.getSI()) <= Math.PI / 2.0) ? 64 : 128;
-        }
         NodeTag from = linkTag.nodeStartTag;
         NodeTag to = linkTag.nodeEndTag;
-        OTSPoint3D[] coordinates = new OTSPoint3D[points];
-        coordinates[0] = new OTSPoint3D(from.coordinate.x, from.coordinate.y, from.coordinate.z);
-        coordinates[coordinates.length - 1] = new OTSPoint3D(to.coordinate.x, to.coordinate.y, to.coordinate.z);
+        OTSPoint3D[] coordinates = null;
+
+        if (linkTag.straightTag != null)
+        {
+            coordinates = new OTSPoint3D[2];
+            coordinates[0] = new OTSPoint3D(from.coordinate.x, from.coordinate.y, from.coordinate.z);
+            coordinates[1] = new OTSPoint3D(to.coordinate.x, to.coordinate.y, to.coordinate.z);
+        }
+
         if (linkTag.arcTag != null)
         {
+            int points = (Math.abs(linkTag.arcTag.angle.getSI()) <= Math.PI / 2.0) ? 64 : 128;
+            coordinates = new OTSPoint3D[points];
+            coordinates[0] = new OTSPoint3D(from.coordinate.x, from.coordinate.y, from.coordinate.z);
+            coordinates[coordinates.length - 1] = new OTSPoint3D(to.coordinate.x, to.coordinate.y, to.coordinate.z);
             double angleStep = linkTag.arcTag.angle.getSI() / points;
             double slopeStep = (to.coordinate.z - from.coordinate.z) / points;
             double radiusSI = linkTag.arcTag.radius.getSI();
@@ -367,6 +374,16 @@ final class Links
                 }
             }
         }
+
+        if (linkTag.bezierTag != null)
+        {
+            coordinates =
+                Bezier.cubic(128,
+                    new DirectedPoint(from.coordinate.x, from.coordinate.y, from.coordinate.z, 0, 0, from.angle.si),
+                    new DirectedPoint(to.coordinate.x, to.coordinate.y, to.coordinate.z, 0, 0, to.angle.si))
+                    .getPoints();
+        }
+
         OTSLine3D designLine = new OTSLine3D(coordinates);
         // TODO the directionality has to be read from the XML-file. To keep the examples working,
         // TODO LongitudinalDirectionality.BOTH is inserted for the time being.

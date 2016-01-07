@@ -72,6 +72,10 @@ final class LinkTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ArcTag arcTag = null;
 
+    /** bezier. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    BezierTag bezierTag = null;
+
     /** map of lane name to lane override. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, LaneOverrideTag> laneOverrideTags = new HashMap<>();
@@ -185,12 +189,17 @@ final class LinkTag
 
             List<Node> straightNodes = XMLParser.getNodes(node.getChildNodes(), "STRAIGHT");
             List<Node> arcNodes = XMLParser.getNodes(node.getChildNodes(), "ARC");
+            List<Node> bezierNodes = XMLParser.getNodes(node.getChildNodes(), "BEZIER");
             if (straightNodes.size() > 1)
                 throw new SAXException("LINK: more than one STRAIGHT tag for link " + linkTag.name);
+            if (bezierNodes.size() > 1)
+                throw new SAXException("LINK: more than one BEZIER tag for link " + linkTag.name);
             if (arcNodes.size() > 1)
                 throw new SAXException("LINK: more than one ARC tag for link " + linkTag.name);
-            if (straightNodes.size() == 1 && arcNodes.size() == 1)
-                throw new SAXException("LINK: both an ARC tag and a STRAIGHT tag for link " + linkTag.name);
+            if (straightNodes.size() + arcNodes.size() + bezierNodes.size() > 1)
+                throw new SAXException("LINK: multiple tags (STRAIGHT, ARC, BEZIER) for link " + linkTag.name);
+            if (straightNodes.size() + arcNodes.size() + bezierNodes.size() == 0)
+                throw new SAXException("LINK: no tags (STRAIGHT, ARC, BEZIER) for link " + linkTag.name);
 
             // parse the STRAIGHT tag
             if (straightNodes.size() == 1)
@@ -199,6 +208,10 @@ final class LinkTag
             // parse the ARC tags
             if (arcNodes.size() == 1)
                 ArcTag.parseArc(arcNodes.get(0), parser, linkTag);
+
+            // parse the BEZIER tag
+            if (bezierNodes.size() == 1)
+                BezierTag.parseBezier(bezierNodes.get(0), parser, linkTag);
 
             parser.linkTags.put(linkTag.name, linkTag);
 
