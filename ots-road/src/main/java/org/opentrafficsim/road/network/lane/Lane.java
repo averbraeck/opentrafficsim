@@ -832,7 +832,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * acceptable.
      */
     /** Lateral alignment margin for longitudinally connected Lanes. */
-    static final Length.Rel MARGIN = new Length.Rel(0.5, LengthUnit.METER);
+    public static final Length.Rel MARGIN = new Length.Rel(0.5, LengthUnit.METER);
 
     /**
      * NextLanes returns the successor lane(s) in the design line direction, if any exist.<br>

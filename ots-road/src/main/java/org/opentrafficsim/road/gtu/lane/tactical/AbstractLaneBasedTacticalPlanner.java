@@ -159,13 +159,13 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
                 if (lastLane.getParentLink().getEndNode().equals(lane.getParentLink().getStartNode()))
                 {
                     // -----> O ----->, GTU moves ---->
-                    path = OTSLine3D.concatenate(0.25, path, lane.getCenterLine());
+                    path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine());
                     lastGtuDir = GTUDirectionality.DIR_PLUS;
                 }
                 else
                 {
                     // -----> O <-----, GTU moves ---->
-                    path = OTSLine3D.concatenate(0.25, path, lane.getCenterLine().reverse());
+                    path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine().reverse());
                     lastGtuDir = GTUDirectionality.DIR_MINUS;
                 }
             }
@@ -174,13 +174,13 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
                 if (lastLane.getParentLink().getStartNode().equals(lane.getParentLink().getStartNode()))
                 {
                     // <----- O ----->, GTU moves ---->
-                    path = OTSLine3D.concatenate(0.25, path, lane.getCenterLine());
+                    path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine());
                     lastGtuDir = GTUDirectionality.DIR_PLUS;
                 }
                 else
                 {
                     // <----- O <-----, GTU moves ---->
-                    path = OTSLine3D.concatenate(0.25, path, lane.getCenterLine().reverse());
+                    path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine().reverse());
                     lastGtuDir = GTUDirectionality.DIR_MINUS;
                 }
             }

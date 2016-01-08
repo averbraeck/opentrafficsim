@@ -69,8 +69,6 @@ class SensorTag
         if (cseTag.elementType != ElementType.LANE)
             throw new NetworkException("SENSOR: LANE " + laneName + " not a real GTU lane for link " + linkTag.name
                 + " - roadtype " + linkTag.roadTypeTag.name);
-        if (linkTag.generatorTags.containsKey(laneName))
-            throw new SAXException("SENSOR for LANE with NAME " + laneName + " defined twice");
 
         Node position = attributes.getNamedItem("POSITION");
         if (position == null)
