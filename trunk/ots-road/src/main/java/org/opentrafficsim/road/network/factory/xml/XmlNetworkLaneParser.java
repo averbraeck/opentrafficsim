@@ -171,17 +171,17 @@ public class XmlNetworkLaneParser
         ShortestRouteMixTag.parseShortestRouteMix(networkNodeList, this);
         LinkTag.parseLinks(networkNodeList, this);
 
+        // process the routes
+        for (RouteTag routeTag : this.routeTags.values())
+            routeTag.makeRoute();
+        // TODO shortestRoute, routeMix, ShortestRouteMix
+
         // process nodes and links to calculate coordinates and positions
         Links.calculateNodeCoordinates(this);
         for (LinkTag linkTag : this.linkTags.values())
             Links.buildLink(linkTag, this, this.simulator);
         for (LinkTag linkTag : this.linkTags.values())
             Links.applyRoadTypeToLink(linkTag, this, this.simulator);
-
-        // process the routes
-        for (RouteTag routeTag : this.routeTags.values())
-            routeTag.makeRoute();
-        // TODO shortestRoute, routeMix, ShortestRouteMix
 
         // store the structure information in the network
         return makeNetwork();

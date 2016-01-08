@@ -65,8 +65,6 @@ class TrafficLightTag
         if (cseTag.elementType != ElementType.LANE)
             throw new NetworkException("TRAFFICLIGHT: LANE " + laneName + " not a real GTU lane for link "
                 + linkTag.name + " - roadtype " + linkTag.roadTypeTag.name);
-        if (linkTag.generatorTags.containsKey(laneName))
-            throw new SAXException("TRAFFICLIGHT for LANE with NAME " + laneName + " defined twice");
 
         Node position = attributes.getNamedItem("POSITION");
         if (position == null)
@@ -97,9 +95,14 @@ class TrafficLightTag
             }
             catch (NoSuchMethodException nsme)
             {
-                throw new SAXException("TRAFFICLIGHT: CLASS NAME " + trafficLightTag.className + " for trafficLight "
-                    + trafficLightTag.name + " on lane " + laneName
-                    + " -- no constructor with arguments (String, Lane, Length.Rel, OTSDEVSSimulatorInterface, OTSNetwork)");
+                throw new SAXException(
+                    "TRAFFICLIGHT: CLASS NAME "
+                        + trafficLightTag.className
+                        + " for trafficLight "
+                        + trafficLightTag.name
+                        + " on lane "
+                        + laneName
+                        + " -- no constructor with arguments (String, Lane, Length.Rel, OTSDEVSSimulatorInterface, OTSNetwork)");
             }
         }
         catch (ClassNotFoundException cnfe)
