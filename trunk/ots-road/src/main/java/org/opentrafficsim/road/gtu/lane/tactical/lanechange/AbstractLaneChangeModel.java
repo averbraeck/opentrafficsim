@@ -67,17 +67,17 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                     .computeAcceleration(gtu, sameLaneGTUs, speedLimit);
             }
             Acceleration straightA = applyDriverPersonality(straightAccelerationSteps).plus(laneChangeThreshold);
-            DualAccelerationStep nonPreferrredAccelerationSteps =
+            DualAccelerationStep nonPreferredAccelerationSteps =
                 null == nonPreferredLane ? null : gtu.getStrategicalPlanner().getDrivingCharacteristics()
                     .getGTUFollowingModel().computeAcceleration(gtu, nonPreferredLaneGTUs, speedLimit);
-            if (null != nonPreferrredAccelerationSteps
-                && nonPreferrredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getStrategicalPlanner()
+            if (null != nonPreferredAccelerationSteps
+                && nonPreferredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getStrategicalPlanner()
                     .getDrivingCharacteristics().getGTUFollowingModel().maximumSafeDeceleration().getSI())
             {
-                nonPreferrredAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
+                nonPreferredAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
             }
             Acceleration nonPreferredA =
-                null == nonPreferredLane ? null : applyDriverPersonality(nonPreferrredAccelerationSteps);
+                null == nonPreferredLane ? null : applyDriverPersonality(nonPreferredAccelerationSteps);
             DualAccelerationStep preferredAccelerationSteps =
                 null == preferredLane ? null : gtu.getStrategicalPlanner().getDrivingCharacteristics()
                     .getGTUFollowingModel().computeAcceleration(gtu, preferredLaneGTUs, speedLimit);
@@ -102,7 +102,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                     if (DoubleScalar.plus(nonPreferredA, nonPreferredLaneRouteIncentive).gt(straightA))
                     {
                         // Merge to the nonPreferred lane; i.e. start an overtaking procedure
-                        return new LaneMovementStep(nonPreferrredAccelerationSteps.getLeaderAccelerationStep(),
+                        return new LaneMovementStep(nonPreferredAccelerationSteps.getLeaderAccelerationStep(),
                             nonPreferred);
                     }
                     else
@@ -143,7 +143,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 return new LaneMovementStep(preferredAccelerationSteps.getLeaderAccelerationStep(), preferred);
             }
             // Merge to the adjacent nonPreferred lane; i.e. start an overtaking procedure
-            return new LaneMovementStep(nonPreferrredAccelerationSteps.getLeaderAccelerationStep(), nonPreferred);
+            return new LaneMovementStep(nonPreferredAccelerationSteps.getLeaderAccelerationStep(), nonPreferred);
         }
         catch (NetworkException | GTUException exception)
         {
