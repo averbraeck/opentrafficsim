@@ -47,25 +47,25 @@ public class LanePerception implements Perception
     /** */
     private static final long serialVersionUID = 20151128L;
 
-    /** the time stamp of the last perception. */
+    /** The time stamp of the last perception. */
     private Time.Abs timestamp = new Time.Abs(Double.NaN, TimeUnit.SI);
 
-    /** the lane based GTU for which this perception module stores information. */
+    /** The lane based GTU for which this perception module stores information. */
     private LaneBasedGTU gtu;
 
-    /** the forward headway and (leader) GTU. */
+    /** The forward headway and (leader) GTU. */
     private HeadwayGTU forwardHeadwayGTU;
 
-    /** the backward headway and (follower) GTU. */
+    /** The backward headway and (follower) GTU. */
     private HeadwayGTU backwardHeadwayGTU;
 
-    /** the minimum speed limit of all lanes where the GTU is registered. */
+    /** The minimum speed limit of all lanes where the GTU is registered. */
     private Speed speedLimit;
 
-    /** the GTUs on the left side. */
+    /** The GTUs on the left side. */
     private Collection<HeadwayGTU> neighboringGTUsLeft;
 
-    /** the GTUs on the right side. */
+    /** The GTUs on the right side. */
     private Collection<HeadwayGTU> neighboringGTUsRight;
 
     /**
@@ -74,10 +74,10 @@ public class LanePerception implements Perception
      */
     private final Map<Lane, EnumMap<LateralDirectionality, Set<Lane>>> accessibleAdjacentLanes = new HashMap<>();
 
-    /** the GTUs parallel to us. */
+    /** The GTUs parallel to us. */
     private final Map<Lane, Set<LaneBasedGTU>> parallelGTUs = new HashMap<>();
 
-    /** the GTUs parallel to us in a certain direction. */
+    /** The GTUs parallel to us in a certain direction. */
     private final EnumMap<LateralDirectionality, Set<LaneBasedGTU>> parallelDirectionalGTUs =
         new EnumMap<LateralDirectionality, Set<LaneBasedGTU>>(LateralDirectionality.class);
 
