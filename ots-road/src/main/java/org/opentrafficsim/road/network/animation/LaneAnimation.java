@@ -1,9 +1,9 @@
 package org.opentrafficsim.road.network.animation;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
 
@@ -12,7 +12,7 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
-import org.opentrafficsim.core.network.animation.PaintPolygons;
+import org.opentrafficsim.core.network.animation.PaintLine;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -53,15 +53,21 @@ public class LaneAnimation extends Renderable2D
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         Lane lane = (Lane) getSource();
-        PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour(), true);
+        // PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour(), true);
 
         if (this.drawCenterLine)
         {
-            Stroke oldStroke = graphics.getStroke();
-            graphics.setStroke(new BasicStroke(0.25f));
-            PaintPolygons.paintMultiPolygon(graphics, Color.RED, lane.getLocation(), lane.getParentLink()
-                .getDesignLine(), false);
-            graphics.setStroke(oldStroke);
+            PaintLine.paintLine(graphics, Color.RED, 0.25, lane.getLocation(), lane.getCenterLine());
+            Shape startCircle =
+                new Ellipse2D.Double(lane.getCenterLine().getFirst().x - lane.getLocation().x - 0.25, -lane
+                    .getCenterLine().getFirst().y + lane.getLocation().y - 0.25, 0.5, 0.5);
+            Shape endCircle =
+                new Ellipse2D.Double(lane.getCenterLine().getLast().x - lane.getLocation().x - 0.25, -lane
+                    .getCenterLine().getLast().y + lane.getLocation().y - 0.25, 0.5, 0.5);
+            graphics.setColor(Color.BLUE);
+            graphics.fill(startCircle);
+            graphics.setColor(Color.RED);
+            graphics.fill(endCircle);
         }
     }
 }

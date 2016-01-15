@@ -44,6 +44,7 @@ public class SimpleTrafficLight extends AbstractTrafficLight
         OTSGeometryException
     {
         super(name, lane, position, simulator, network);
+        setBlocked(false);
     }
 
 }
