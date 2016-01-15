@@ -8,7 +8,8 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 
 /**
- * All lane change models must implement this interface.
+ * All lane change models must implement this interface. <br>
+ * TODO: Lane change models should use the perceived nearby GTUs rather than a provided list of same lane traffic, etc.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
