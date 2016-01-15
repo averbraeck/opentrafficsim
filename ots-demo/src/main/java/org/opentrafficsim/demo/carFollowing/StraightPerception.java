@@ -29,6 +29,7 @@ import nl.tudelft.simulation.jstats.distributions.DistTriangular;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
+import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
@@ -432,7 +433,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
     DistContinuous forwardHeadwayDist = new DistTriangular(new MersenneTwister(20), 20, 50, 100);
 
     /**
-     * @return List&lt;Lane*gt;; the set of lanes for the specified index
+     * @return List&lt;Lane&gt;; the set of lanes for the specified index
      */
     public List<Lane> getPath()
     {
@@ -632,11 +633,22 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
         try
         {
             Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
-            GTUFollowingModel gtuFollowingModel =
-                generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
-            if (null == gtuFollowingModel)
+            GTUFollowingModel gtuFollowingModel;
+            if (generateTruck)
             {
-                throw new Error("gtuFollowingModel is null");
+                Acceleration a = new Acceleration(0.5, AccelerationUnit.METER_PER_SECOND_2); // max acceleration
+                Acceleration b = new Acceleration(1.25, AccelerationUnit.METER_PER_SECOND_2); // max xomfortable deceleration
+                Length.Rel s0 = new Length.Rel(4, LengthUnit.METER); // headway distance
+                Time.Rel tSafe = new Time.Rel(2.0, TimeUnit.SECOND); // time headway
+                gtuFollowingModel = new IDMPlus(a, b, s0, tSafe, 1.0);
+            }
+            else
+            {
+                Acceleration a = new Acceleration(2.0, AccelerationUnit.METER_PER_SECOND_2); // max acceleration
+                Acceleration b = new Acceleration(3, AccelerationUnit.METER_PER_SECOND_2); // max xomfortable deceleration
+                Length.Rel s0 = new Length.Rel(2.0, LengthUnit.METER); // headway distance
+                Time.Rel tSafe = new Time.Rel(1.0, TimeUnit.SECOND); // time headway
+                gtuFollowingModel = new IDMPlus(a, b, s0, tSafe, 1.0);
             }
             LaneBasedDrivingCharacteristics drivingCharacteristics =
                 new LaneBasedDrivingCharacteristics(gtuFollowingModel, this.laneChangeModel);

@@ -72,8 +72,15 @@ public final class PaintPolygons
         if (withinPath)
         {
             path.closePath();
+            if (fill)
+            {
+                graphics.fill(path);
+            }
+            else
+            {
+                graphics.draw(path);
+            }
         }
-        graphics.fill(path);
     }
 
 }

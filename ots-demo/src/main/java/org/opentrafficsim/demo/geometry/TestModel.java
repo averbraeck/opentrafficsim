@@ -194,14 +194,14 @@ public class TestModel implements OTSModelInterface, UNITS
 
         try
         {
-            new LaneAnimation(laneELL, this.simulator, Color.GRAY);
-            new LaneAnimation(laneL1, this.simulator, Color.GRAY);
-            new LaneAnimation(laneL2, this.simulator, Color.GRAY);
-            new LaneAnimation(laneELM, this.simulator, Color.GRAY);
-            new LaneAnimation(laneERM, this.simulator, Color.GRAY);
-            new LaneAnimation(laneR2, this.simulator, Color.GRAY);
-            new LaneAnimation(laneR1, this.simulator, Color.GRAY);
-            new LaneAnimation(laneERR, this.simulator, Color.GRAY);
+            new LaneAnimation(laneELL, this.simulator, Color.GRAY, false);
+            new LaneAnimation(laneL1, this.simulator, Color.GRAY, false);
+            new LaneAnimation(laneL2, this.simulator, Color.GRAY, false);
+            new LaneAnimation(laneELM, this.simulator, Color.GRAY, false);
+            new LaneAnimation(laneERM, this.simulator, Color.GRAY, false);
+            new LaneAnimation(laneR2, this.simulator, Color.GRAY, false);
+            new LaneAnimation(laneR1, this.simulator, Color.GRAY, false);
+            new LaneAnimation(laneERR, this.simulator, Color.GRAY, false);
 
             new ShoulderAnimation(sL, this.simulator, Color.GREEN);
             new ShoulderAnimation(sM, this.simulator, Color.GREEN);

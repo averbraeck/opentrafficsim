@@ -140,7 +140,7 @@ public class TestGMParser extends AbstractWrappableAnimation
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
-            URL url = URLResource.getResource("/networkv2_90km_V5.xml");
+            URL url = URLResource.getResource("/networkv2_90km_V5b.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {
