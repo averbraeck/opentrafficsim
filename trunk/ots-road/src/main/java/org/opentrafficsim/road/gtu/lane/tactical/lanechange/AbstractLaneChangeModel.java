@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.lanechange;
 import java.util.Collection;
 import java.util.Map;
 
+import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Length;
@@ -31,14 +32,17 @@ import org.opentrafficsim.road.network.lane.Lane;
  */
 public abstract class AbstractLaneChangeModel implements LaneChangeModel
 {
+    /** Attempt to overcome rounding errors. */
+    private static Acceleration extraThreshold = new Acceleration(0.000001, AccelerationUnit.SI);
+
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
     public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
-        final Collection<HeadwayGTU> sameLaneGTUs, final Collection<HeadwayGTU> preferredLaneGTUs,
-        final Collection<HeadwayGTU> nonPreferredLaneGTUs, final Speed speedLimit,
-        final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
-        final Acceleration nonPreferredLaneRouteIncentive)
+            final Collection<HeadwayGTU> sameLaneGTUs, final Collection<HeadwayGTU> preferredLaneGTUs,
+            final Collection<HeadwayGTU> nonPreferredLaneGTUs, final Speed speedLimit,
+            final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
+            final Acceleration nonPreferredLaneRouteIncentive)
     {
         try
         {
@@ -49,41 +53,40 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             // road cars are supposed to drive
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;
             final LateralDirectionality nonPreferred = LateralDirectionality.LEFT;
-            Lane nonPreferredLane =
-                gtu.getPerception().bestAccessibleAdjacentLane(lane, nonPreferred, longitudinalPosition);
+            Lane nonPreferredLane = gtu.getPerception().bestAccessibleAdjacentLane(lane, nonPreferred, longitudinalPosition);
             Lane preferredLane = gtu.getPerception().bestAccessibleAdjacentLane(lane, preferred, longitudinalPosition);
             GTUFollowingModel gtuFollowingModel =
-                gtu.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
+                    gtu.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
             if (null == gtuFollowingModel)
             {
                 throw new Error("GTU " + gtu + " has null GTUFollowingModel");
             }
             DualAccelerationStep straightAccelerationSteps =
-                gtuFollowingModel.computeAcceleration(gtu, sameLaneGTUs, speedLimit);
+                    gtuFollowingModel.computeAcceleration(gtu, sameLaneGTUs, speedLimit);
             if (straightAccelerationSteps.getLeaderAcceleration().getSI() < -9999)
             {
                 System.out.println("Problem");
                 gtu.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel()
-                    .computeAcceleration(gtu, sameLaneGTUs, speedLimit);
+                        .computeAcceleration(gtu, sameLaneGTUs, speedLimit);
             }
             Acceleration straightA = applyDriverPersonality(straightAccelerationSteps).plus(laneChangeThreshold);
             DualAccelerationStep nonPreferredAccelerationSteps =
-                null == nonPreferredLane ? null : gtu.getStrategicalPlanner().getDrivingCharacteristics()
-                    .getGTUFollowingModel().computeAcceleration(gtu, nonPreferredLaneGTUs, speedLimit);
+                    null == nonPreferredLane ? null : gtu.getStrategicalPlanner().getDrivingCharacteristics()
+                            .getGTUFollowingModel().computeAcceleration(gtu, nonPreferredLaneGTUs, speedLimit);
             if (null != nonPreferredAccelerationSteps
-                && nonPreferredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getStrategicalPlanner()
-                    .getDrivingCharacteristics().getGTUFollowingModel().maximumSafeDeceleration().getSI())
+                    && nonPreferredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getStrategicalPlanner()
+                            .getDrivingCharacteristics().getGTUFollowingModel().maximumSafeDeceleration().getSI())
             {
                 nonPreferredAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
             }
             Acceleration nonPreferredA =
-                null == nonPreferredLane ? null : applyDriverPersonality(nonPreferredAccelerationSteps);
+                    null == nonPreferredLane ? null : applyDriverPersonality(nonPreferredAccelerationSteps);
             DualAccelerationStep preferredAccelerationSteps =
-                null == preferredLane ? null : gtu.getStrategicalPlanner().getDrivingCharacteristics()
-                    .getGTUFollowingModel().computeAcceleration(gtu, preferredLaneGTUs, speedLimit);
+                    null == preferredLane ? null : gtu.getStrategicalPlanner().getDrivingCharacteristics()
+                            .getGTUFollowingModel().computeAcceleration(gtu, preferredLaneGTUs, speedLimit);
             if (null != preferredAccelerationSteps
-                && preferredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getStrategicalPlanner()
-                    .getDrivingCharacteristics().getGTUFollowingModel().maximumSafeDeceleration().getSI())
+                    && preferredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getStrategicalPlanner()
+                            .getDrivingCharacteristics().getGTUFollowingModel().maximumSafeDeceleration().getSI())
             {
                 preferredAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
             }
@@ -99,11 +102,10 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 else
                 {
                     // Merge to nonPreferredLane is possible; merge to preferredLane is NOT possible
-                    if (DoubleScalar.plus(nonPreferredA, nonPreferredLaneRouteIncentive).gt(straightA))
+                    if (DoubleScalar.plus(nonPreferredA, nonPreferredLaneRouteIncentive).gt(straightA.plus(extraThreshold)))
                     {
                         // Merge to the nonPreferred lane; i.e. start an overtaking procedure
-                        return new LaneMovementStep(nonPreferredAccelerationSteps.getLeaderAccelerationStep(),
-                            nonPreferred);
+                        return new LaneMovementStep(nonPreferredAccelerationSteps.getLeaderAccelerationStep(), nonPreferred);
                     }
                     else
                     {
@@ -116,7 +118,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             if (null == nonPreferredA)
             {
                 // Merge to preferredLane is possible; merge to nonPreferred lane is NOT possible
-                if (DoubleScalar.plus(preferredA, preferredLaneRouteIncentive).gt(straightA))
+                if (DoubleScalar.plus(preferredA, preferredLaneRouteIncentive).plus(extraThreshold).ge(straightA))
                 {
                     // Merge to the preferred lane; i.e. finish (or cancel) an overtaking procedure
                     return new LaneMovementStep(preferredAccelerationSteps.getLeaderAccelerationStep(), preferred);
@@ -128,16 +130,17 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 }
             }
             // All merges are possible
-            Acceleration preferredAttractiveness = preferredA.plus(preferredLaneRouteIncentive).minus(straightA);
+            Acceleration preferredAttractiveness =
+                    preferredA.plus(preferredLaneRouteIncentive).minus(straightA).plus(extraThreshold);
             Acceleration nonPreferredAttractiveness =
-                nonPreferredA.plus(nonPreferredLaneRouteIncentive).minus(straightA);
-            if (preferredAttractiveness.getSI() <= 0 && nonPreferredAttractiveness.getSI() < 0)
+                    nonPreferredA.plus(nonPreferredLaneRouteIncentive).minus(straightA).minus(extraThreshold);
+            if (preferredAttractiveness.getSI() < 0 && nonPreferredAttractiveness.getSI() <= 0)
             {
                 // Stay in current lane
                 return new LaneMovementStep(straightAccelerationSteps.getLeaderAccelerationStep(), null);
 
             }
-            if (preferredAttractiveness.getSI() > 0 && preferredAttractiveness.gt(nonPreferredAttractiveness))
+            if (preferredAttractiveness.getSI() >= 0 && preferredAttractiveness.gt(nonPreferredAttractiveness))
             {
                 // Merge to the preferred lane; i.e. finish (or cancel) an overtaking procedure
                 return new LaneMovementStep(preferredAccelerationSteps.getLeaderAccelerationStep(), preferred);
