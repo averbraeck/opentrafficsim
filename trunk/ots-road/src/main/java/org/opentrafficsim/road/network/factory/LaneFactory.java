@@ -143,7 +143,7 @@ public final class LaneFactory
         {
             try
             {
-                new LaneAnimation(result, simulator, Color.LIGHT_GRAY);
+                new LaneAnimation(result, simulator, Color.LIGHT_GRAY, false);
             }
             catch (RemoteException exception)
             {

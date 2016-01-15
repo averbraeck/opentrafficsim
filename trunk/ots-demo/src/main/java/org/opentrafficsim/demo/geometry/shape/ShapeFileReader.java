@@ -443,7 +443,7 @@ public final class ShapeFileReader implements UNITS
                 Lane laneEM =
                     new NoTrafficLane(link, lr + "." + "EM", new Length.Rel(i * 0.75, METER), new Length.Rel(i * 0.75,
                         METER), m05, m05);
-                new LaneAnimation(laneEM, simulator, Color.LIGHT_GRAY);
+                new LaneAnimation(laneEM, simulator, Color.LIGHT_GRAY, false);
                 double lat = 1;
                 for (int j = 0; j < n; j++)
                 {
@@ -451,7 +451,7 @@ public final class ShapeFileReader implements UNITS
                     Lane lane =
                         new Lane(link, "lane." + lr + "." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER),
                             m35, m35, null, dir, speedLimit, new OvertakingConditions.LeftAndRight());
-                    new LaneAnimation(lane, simulator, Color.GRAY);
+                    new LaneAnimation(lane, simulator, Color.GRAY, false);
                     lat += i * 1.75;
                 }
                 // spitsstroken
@@ -461,13 +461,13 @@ public final class ShapeFileReader implements UNITS
                     Lane lane =
                         new NoTrafficLane(link, "extra." + lr + "." + j, new Length.Rel(lat, METER), new Length.Rel(
                             lat, METER), m35, m35);
-                    new LaneAnimation(lane, simulator, Color.LIGHT_GRAY);
+                    new LaneAnimation(lane, simulator, Color.LIGHT_GRAY, false);
                     lat += i * 1.75;
                 }
                 Lane laneEO =
                     new NoTrafficLane(link, lr + "." + "EO", new Length.Rel(lat + i * 0.25, METER), new Length.Rel(lat
                         + i * 0.25, METER), m05, m05);
-                new LaneAnimation(laneEO, simulator, Color.LIGHT_GRAY);
+                new LaneAnimation(laneEO, simulator, Color.LIGHT_GRAY, false);
                 lat += i * 0.5;
                 Shoulder sO = new Shoulder(link, lr + "." + "sO", new Length.Rel(lat, METER), m10);
                 new ShoulderAnimation(sO, simulator, Color.GREEN);
@@ -514,7 +514,7 @@ public final class ShapeFileReader implements UNITS
                     Lane lane =
                         new Lane(link, "lane." + lr + "." + j, new Length.Rel(lat, METER), new Length.Rel(lat, METER),
                             m30, m30, null, dir, speedLimit, new OvertakingConditions.LeftAndRight());
-                    new LaneAnimation(lane, simulator, Color.DARK_GRAY);
+                    new LaneAnimation(lane, simulator, Color.DARK_GRAY, false);
                     lat += i * 1.5;
                 }
             }
@@ -541,7 +541,7 @@ public final class ShapeFileReader implements UNITS
             Lane lane =
                 new Lane(link, "lane", new Length.Rel(0.0, METER), new Length.Rel(0.0, METER), m60, m60, null,
                     LongitudinalDirectionality.DIR_PLUS, speedLimit, new OvertakingConditions.LeftAndRight());
-            new LaneAnimation(lane, simulator, Color.DARK_GRAY);
+            new LaneAnimation(lane, simulator, Color.DARK_GRAY, false);
         }
         catch (NamingException | RemoteException | OTSGeometryException ne)
         {

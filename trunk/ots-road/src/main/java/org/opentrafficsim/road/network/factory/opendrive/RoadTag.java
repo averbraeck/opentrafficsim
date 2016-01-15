@@ -592,7 +592,7 @@ class RoadTag
 
                     try
                     {
-                        new LaneAnimation(lane, simulator, color);
+                        new LaneAnimation(lane, simulator, color, false);
                     }
                     catch (RemoteException exception)
                     {
@@ -647,7 +647,7 @@ class RoadTag
                         currentLaneSec.lanes.put(leftLane.id, lane);
 
                         lastLane = lane;
-                        new LaneAnimation(lane, simulator, color);
+                        new LaneAnimation(lane, simulator, color, false);
                     }
                     catch (Exception exception)
                     {
@@ -792,7 +792,7 @@ class RoadTag
 
                     try
                     {
-                        new LaneAnimation(lane, simulator, color);
+                        new LaneAnimation(lane, simulator, color, false);
                     }
                     catch (RemoteException exception)
                     {
@@ -838,7 +838,7 @@ class RoadTag
 
                         currentLaneSec.lanes.put(rightLane.id, lane);
                         lastLane = lane;
-                        new LaneAnimation(lane, simulator, color);
+                        new LaneAnimation(lane, simulator, color, false);
                     }
                     catch (Exception exception)
                     {

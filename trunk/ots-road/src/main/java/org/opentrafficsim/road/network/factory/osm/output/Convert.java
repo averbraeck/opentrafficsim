@@ -676,7 +676,7 @@ public final class Convert
             {
                 try
                 {
-                    new LaneAnimation(newLane, simulator, color);
+                    new LaneAnimation(newLane, simulator, color, false);
                 }
                 catch (RemoteException exception)
                 {
