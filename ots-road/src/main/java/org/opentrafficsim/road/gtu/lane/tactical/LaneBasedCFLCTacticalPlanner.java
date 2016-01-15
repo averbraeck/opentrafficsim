@@ -168,7 +168,10 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                             new Acceleration(laneIncentives.get(1)),
                             new Acceleration(laneIncentives.get(preferred == LateralDirectionality.RIGHT ? 0 : 2)));
             Time.Rel duration = lcmr.getGfmr().getValidUntil().minus(gtu.getSimulator().getSimulatorTime().getTime());
-
+            // if ("1".equals(gtu.getId()))
+            // {
+            // System.out.println(String.format("%s: laneIncentives %s, lcmr %s", gtu, laneIncentives, lcmr));
+            // }
             if (lcmr.getLaneChange() != null)
             {
                 Collection<Lane> oldLaneSet = new HashSet<Lane>(laneBasedGTU.getLanes().keySet());
