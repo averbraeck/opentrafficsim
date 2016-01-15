@@ -197,6 +197,17 @@ final class Links
                 }
                 linkTag.straightTag.length =
                     linkTag.nodeStartTag.node.getPoint().distance(linkTag.nodeEndTag.node.getPoint());
+                // set the angles of the nodes
+                double angle =
+                    Math.atan2(linkTag.nodeEndTag.node.getLocation().y - linkTag.nodeStartTag.node.getLocation().y,
+                        linkTag.nodeEndTag.node.getLocation().x - linkTag.nodeStartTag.node.getLocation().x);
+                // TODO test for over-specification (i.e. node direction was already specified)
+                linkTag.nodeStartTag.angle = new Angle.Abs(angle, AngleUnit.SI);
+                linkTag.nodeEndTag.angle = new Angle.Abs(angle, AngleUnit.SI);
+                double slope = linkTag.nodeStartTag.node.getSlope().getSI();
+                linkTag.nodeStartTag.slope = new Angle.Abs(slope, AngleUnit.SI);
+                slope = linkTag.nodeEndTag.node.getSlope().getSI();
+                linkTag.nodeEndTag.slope = new Angle.Abs(slope, AngleUnit.SI);
             }
         }
 
@@ -549,7 +560,7 @@ final class Links
                     {
                         try
                         {
-                            new LaneAnimation(lane, simulator, color, false);
+                            new LaneAnimation(lane, simulator, color, true);
                         }
                         catch (RemoteException exception)
                         {

@@ -138,8 +138,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
                 // multiple next lanes; ask the strategical planner where to go
                 // note: this is not necessarily a split; it could e.g. be a bike path on a road
                 LinkDirection ld =
-                    gtu.getStrategicalPlanner().nextLinkDirection(lane.getParentLink(), gtu.getLanes().get(lane),
-                        gtu.getGTUType());
+                    gtu.getStrategicalPlanner().nextLinkDirection(lane.getParentLink(), /* gtu.getLanes().get(lane), */
+                        lastGtuDir, gtu.getGTUType());
                 Link nextLink = ld.getLink();
                 for (Lane nextLane : lanes.keySet())
                 {
