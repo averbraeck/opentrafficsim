@@ -412,7 +412,7 @@
 	<NODE NAME="N4b" COORDINATE="(166, 3835)" ANGLE="127.6942 deg" />
 	<NODE NAME="N3b" COORDINATE="(149, 3857)" ANGLE="133.7811 deg" />
 	<NODE NAME="N2b" COORDINATE="(80, 3929)" ANGLE="136.0947 deg" />
-	<NODE NAME="N1b" COORDINATE="(0, 4006)" />
+	<NODE NAME="N1b" COORDINATE="(0, 4006)" ANGLE="136.0947 deg"/>
 
 	<NODE NAME="N225a_uit" COORDINATE="(130, 3810)" ANGLE="225.0 deg" />
 	<NODE NAME="N225a_uit2" COORDINATE="(40, 3750)"/>
@@ -492,15 +492,15 @@
 	<LINK NAME="L4a" NODESTART="N4a" NODEEND="N5a" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
 	</LINK>
-	<LINK NAME="L5a" NODESTART="N5a" NODEEND="N6a" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+	<LINK NAME="L5a1" NODESTART="N5a" NODEEND="N6a" ROADTYPE="RT2ln_ref0">
+		<BEZIER />
 		<SENSOR NAME="TT_a1" LANE="A1" POSITION="35m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_a1" LANE="A2" POSITION="35m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L6a" NODESTART="N6a" NODEEND="N7a" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 		<SENSOR NAME="231_02.7" LANE="A1" POSITION="END-17.2722m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="231_02.8" LANE="A2" POSITION="END-17.2722m"
@@ -522,13 +522,13 @@
 			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
 	</LINK>
 	<LINK NAME="L8a" NODESTART="N8a" NODEEND="N10a" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L10a" NODESTART="N10a" NODEEND="N11a" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L11a" NODESTART="N11a" NODEEND="N12a" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L12a" NODESTART="N12a" NODEEND="N13a" ROADTYPE="RT4ln_ref0">
 		<STRAIGHT />
@@ -550,17 +550,17 @@
 			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
 	</LINK>
 	<LINK NAME="L13a" NODESTART="N13a" NODEEND="N15a" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L15a" NODESTART="N15a" NODEEND="N16a" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 		<SENSOR NAME="TT_a2" LANE="A1" POSITION="75m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_a2" LANE="A2" POSITION="75m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L16a" NODESTART="N16a" NODEEND="N17a" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L17a" NODESTART="N17a" NODEEND="N18a" ROADTYPE="RT4ln_ref1">
 		<STRAIGHT />
@@ -590,13 +590,13 @@
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L18a" NODESTART="N18a" NODEEND="N20a" ROADTYPE="RT3ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L20a" NODESTART="N20a" NODEEND="N21a" ROADTYPE="RT3ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L21a" NODESTART="N21a" NODEEND="N22a" ROADTYPE="RT3ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 		<SENSOR NAME="245_02.10" LANE="A1" POSITION="END-24.8685m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="245_02.11" LANE="A2" POSITION="END-24.8685m"
@@ -624,13 +624,13 @@
 			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
 	</LINK>
 	<LINK NAME="L23a" NODESTART="N23a" NODEEND="N25a" ROADTYPE="RT3ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L25a" NODESTART="N25a" NODEEND="N26a" ROADTYPE="RT3ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L26a" NODESTART="N26a" NODEEND="N27a" ROADTYPE="RT3ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L27a" NODESTART="N27a" NODEEND="N28a" ROADTYPE="RT5ln_ref1">
 		<STRAIGHT />
@@ -666,10 +666,10 @@
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L28a" NODESTART="N28a" NODEEND="N30a" ROADTYPE="RT3ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L30a" NODESTART="N30a" NODEEND="N31a" ROADTYPE="RT3ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 		<SENSOR NAME="TT_a3" LANE="A1" POSITION="39m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_a3" LANE="A2" POSITION="39m"
@@ -678,64 +678,64 @@
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L31a" NODESTART="N31a" NODEEND="N32a" ROADTYPE="RT3ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 		<BLOCK LANE="A3" POSITION="END-1.55mm" />
 	</LINK>
 	<LINK NAME="L32a" NODESTART="N32a" NODEEND="N33a1" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L32a1" NODESTART="N33a1" NODEEND="N33a2" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>	
 	<LINK NAME="L33a" NODESTART="N33a2" NODEEND="N34a1" ROADTYPE="RT2ln_ref0">
 		<STRAIGHT />
 	</LINK>
 	<LINK NAME="L33a1" NODESTART="N34a1" NODEEND="N34a2" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L34a" NODESTART="N34a2" NODEEND="N35a" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L35a" NODESTART="N35a" NODEEND="N36a" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L36a" NODESTART="N36a" NODEEND="N37a" ROADTYPE="RT3ln_ref1">
 		<STRAIGHT />
 	</LINK>
 	<LINK NAME="L37a" NODESTART="N37a" NODEEND="N38a" ROADTYPE="RT3ln_ref1">
-		<STRAIGHT />
+		<BEZIER />
 		<BLOCK LANE="A1" POSITION="END-1.55mm" />
 	</LINK>
 	<LINK NAME="L38a" NODESTART="N38a" NODEEND="N39a" ROADTYPE="RT2ln_ref0">
 		<STRAIGHT />
 	</LINK>
 	<LINK NAME="L39a" NODESTART="N39a" NODEEND="N40a" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L40a" NODESTART="N40a" NODEEND="N41a" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L41a" NODESTART="N41a" NODEEND="N42a" ROADTYPE="RT3ln_ref1">
-		<STRAIGHT />
+		<BEZIER />
 		<BLOCK LANE="A1" POSITION="END-1.55mm" />
 	</LINK>
 	<LINK NAME="L42a" NODESTART="N42a" NODEEND="N43a1" ROADTYPE="RT2ln_ref0">
 		<STRAIGHT />
 	</LINK>
 	<LINK NAME="L42a1" NODESTART="N43a1" NODEEND="N43a2" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L43a" NODESTART="N43a2" NODEEND="N44a1" ROADTYPE="RT2ln_ref0">
 		<STRAIGHT />
 	</LINK>
 	<LINK NAME="L43a1" NODESTART="N44a1" NODEEND="N44a2" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L44a" NODESTART="N44a2" NODEEND="N45a" ROADTYPE="RT2ln_ref0">
 		<STRAIGHT />
 	</LINK>
 	<LINK NAME="L45a" NODESTART="N45a" NODEEND="N46a" ROADTYPE="RT3ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 		<SENSOR NAME="291_02.10" LANE="A1" POSITION="END-5.28m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="291_02.11" LANE="A2" POSITION="END-5.28m"
@@ -763,10 +763,10 @@
 			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
 	</LINK>
 	<LINK NAME="L47a" NODESTART="N47a" NODEEND="N49a" ROADTYPE="RT3ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L49a" NODESTART="N49a" NODEEND="N50a" ROADTYPE="RT3ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 		<SENSOR NAME="TT_a4" LANE="A1" POSITION="66m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_a4" LANE="A2" POSITION="66m"
@@ -797,76 +797,76 @@
 			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
 	</LINK>
 	<LINK NAME="L48b" NODESTART="N49b" NODEEND="N48b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L47b" NODESTART="N48b" NODEEND="N47b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L46b" NODESTART="N47b" NODEEND="N46b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 		<SENSOR NAME="TT_b4" LANE="A1" POSITION="30m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_b4" LANE="A2" POSITION="30m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L45b" NODESTART="N46b" NODEEND="N45b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L44b" NODESTART="N45b" NODEEND="N44b2" ROADTYPE="RT2ln_ref0">
 		<STRAIGHT />
 	</LINK>
 	<LINK NAME="L44b1" NODESTART="N44b2" NODEEND="N44b1" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L43b" NODESTART="N44b1" NODEEND="N43b2" ROADTYPE="RT2ln_ref0">
 		<STRAIGHT />
 	</LINK>
 	<LINK NAME="L43b1" NODESTART="N43b2" NODEEND="N43b1" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L42b" NODESTART="N43b1" NODEEND="N42b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L41b" NODESTART="N42b" NODEEND="N41b" ROADTYPE="RT3ln_ref1">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L40b" NODESTART="N41b" NODEEND="N40b" ROADTYPE="RT3ln_ref1">
-		<STRAIGHT />
+		<BEZIER />
 		<BLOCK LANE="A1" POSITION="END-1.55mm" />
 	</LINK>
 	<LINK NAME="L39b" NODESTART="N40b" NODEEND="N39b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L38b" NODESTART="N39b" NODEEND="N38b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L37b" NODESTART="N38b" NODEEND="N37b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L36b" NODESTART="N37b" NODEEND="N36b" ROADTYPE="RT3ln_ref1">
 		<STRAIGHT />
 	</LINK>
 	<LINK NAME="L35b" NODESTART="N36b" NODEEND="N35b" ROADTYPE="RT3ln_ref1">
-		<STRAIGHT />
+		<BEZIER />
 		<BLOCK LANE="A1" POSITION="END-1.55mm" />
 	</LINK>
 	<LINK NAME="L34b" NODESTART="N35b" NODEEND="N34b2" ROADTYPE="RT2ln_ref0">
 		<STRAIGHT />
 	</LINK>
 	<LINK NAME="L34b1" NODESTART="N34b2" NODEEND="N34b1" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L33b" NODESTART="N34b1" NODEEND="N33b2" ROADTYPE="RT2ln_ref0">
 		<STRAIGHT />
 	</LINK>
 	<LINK NAME="L33b1" NODESTART="N33b2" NODEEND="N33b1" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L32b" NODESTART="N33b1" NODEEND="N32b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L31b" NODESTART="N32b" NODEEND="N31b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L30b" NODESTART="N31b" NODEEND="N30b" ROADTYPE="RT5ln_ref1">
 		<STRAIGHT />
@@ -902,26 +902,26 @@
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L29b" NODESTART="N30b" NODEEND="N29b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L28b" NODESTART="N29b" NODEEND="N28b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L27b" NODESTART="N28b" NODEEND="N27b2" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 		<SENSOR NAME="TT_b3" LANE="A1" POSITION="50m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_b3" LANE="A2" POSITION="50m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L26b1" NODESTART="N27b2" NODEEND="N27b1" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L26b" NODESTART="N27b1" NODEEND="N26b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L25b" NODESTART="N26b" NODEEND="N25b" ROADTYPE="RT3ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 		<SENSOR NAME="245_08.1" LANE="A1" POSITION="END-1.5m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="245_08.1" LANE="A1" POSITION="END-1.55m"
@@ -940,16 +940,16 @@
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L24b" NODESTART="N25b" NODEEND="N24b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L23b" NODESTART="N24b" NODEEND="N23b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L22b" NODESTART="N23b" NODEEND="N22b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L21b" NODESTART="N22b" NODEEND="N21b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L20b" NODESTART="N21b" NODEEND="N20b" ROADTYPE="RT4ln_ref0">
 		<STRAIGHT />
@@ -979,16 +979,16 @@
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L19b" NODESTART="N20b" NODEEND="N19b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L18b" NODESTART="N19b" NODEEND="N18b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L17b" NODESTART="N18b" NODEEND="N17b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L16b" NODESTART="N17b" NODEEND="N16b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L15b" NODESTART="N16b" NODEEND="N15b" ROADTYPE="RT4ln_ref2">
 		<STRAIGHT />
@@ -1010,20 +1010,20 @@
 			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
 	</LINK>
 	<LINK NAME="L14b" NODESTART="N15b" NODEEND="N14b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L13b" NODESTART="N14b" NODEEND="N13b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L12b" NODESTART="N13b" NODEEND="N12b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 		<SENSOR NAME="TT_b2" LANE="A1" POSITION="60m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_b2" LANE="A2" POSITION="60m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L11b" NODESTART="N12b" NODEEND="N11b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L10b" NODESTART="N11b" NODEEND="N10b" ROADTYPE="RT4ln_ref0">
 		<STRAIGHT />
@@ -1049,16 +1049,16 @@
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L9b" NODESTART="N10b" NODEEND="N9b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L8b" NODESTART="N9b" NODEEND="N8b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L7b" NODESTART="N8b" NODEEND="N7b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L6b" NODESTART="N7b" NODEEND="N6b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L5b" NODESTART="N6b" NODEEND="N5b" ROADTYPE="RT4ln_ref1">
 		<STRAIGHT />
@@ -1088,20 +1088,20 @@
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L4b" NODESTART="N5b" NODEEND="N4b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L3b" NODESTART="N4b" NODEEND="N3b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 	</LINK>
 	<LINK NAME="L2b" NODESTART="N3b" NODEEND="N2b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 		<SENSOR NAME="TT_b1" LANE="A1" POSITION="56m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_b1" LANE="A2" POSITION="56m"
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L1b" NODESTART="N2b" NODEEND="N1b" ROADTYPE="RT2ln_ref0">
-		<STRAIGHT />
+		<BEZIER />
 		<SINK LANE="A1" POSITION="END-20m" />
 		<SINK LANE="A2" POSITION="END-20m" />
 	</LINK>
