@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.geometry;
 
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -9,6 +10,7 @@ import org.opentrafficsim.core.network.NetworkException;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.util.GeometryExtracter;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import com.vividsolutions.jts.operation.buffer.BufferParameters;
 
@@ -337,130 +339,132 @@ public final class OTSBufferingJTS
 
         // Z coordinates may be NaN at this point
 
-        // find the coordinate indices closest to the start point and end point, at a distance of approximately the
-        // offset
+        // find the coordinate indices closest to the start point and end point,
+        // at a distance of approximately the offset
         Coordinate sC0 = referenceCoordinates[0];
         Coordinate sC1 = referenceCoordinates[1];
         Coordinate eCm1 = referenceCoordinates[referenceCoordinates.length - 1];
         Coordinate eCm2 = referenceCoordinates[referenceCoordinates.length - 2];
-        Set<Integer> startIndexSet = new HashSet<>();
-        Set<Coordinate> startSet = new HashSet<Coordinate>();
-        Set<Integer> endIndexSet = new HashSet<>();
-        Set<Coordinate> endSet = new HashSet<Coordinate>();
-        for (int i = 0; i < bufferCoordinates.length; i++) // Note: the last coordinate = the first coordinate
-        {
-            Coordinate c = bufferCoordinates[i];
-            if (Math.abs(c.distance(sC0) - bufferOffset) < bufferOffset * precision && !startSet.contains(c))
-            {
-                startIndexSet.add(i);
-                startSet.add(c);
-            }
-            if (Math.abs(c.distance(eCm1) - bufferOffset) < bufferOffset * precision && !endSet.contains(c))
-            {
-                endIndexSet.add(i);
-                endSet.add(c);
-            }
-        }
-        if (startIndexSet.size() != 2)
-        {
-            throw new OTSGeometryException("offsetGeometry: startIndexSet.size() = " + startIndexSet.size());
-        }
-        if (endIndexSet.size() != 2)
-        {
-            throw new OTSGeometryException("offsetGeometry: endIndexSet.size() = " + endIndexSet.size());
-        }
 
-        // which point(s) are in the right direction of the start / end?
-        int startIndex = -1;
-        int endIndex = -1;
         double expectedStartAngle = norm(angle(sC0, sC1) + Math.signum(offset) * Math.PI / 2.0);
         double expectedEndAngle = norm(angle(eCm2, eCm1) + Math.signum(offset) * Math.PI / 2.0);
-        for (int ic : startIndexSet)
-        {
-            if (norm(expectedStartAngle - angle(sC0, bufferCoordinates[ic])) < Math.PI / 4.0
-                || norm(angle(sC0, bufferCoordinates[ic]) - expectedStartAngle) < Math.PI / 4.0)
-            {
-                startIndex = ic;
-            }
-        }
-        for (int ic : endIndexSet)
-        {
-            if (norm(expectedEndAngle - angle(eCm1, bufferCoordinates[ic])) < Math.PI / 4.0
-                || norm(angle(eCm1, bufferCoordinates[ic]) - expectedEndAngle) < Math.PI / 4.0)
-            {
-                endIndex = ic;
-            }
-        }
-        if (startIndex == -1 || endIndex == -1)
-        {
-            throw new OTSGeometryException("offsetGeometry: could not find startIndex or endIndex");
-        }
-        startIndexSet.remove(startIndex);
-        endIndexSet.remove(endIndex);
+        Coordinate sExpected =
+            new Coordinate(sC0.x + bufferOffset * Math.cos(expectedStartAngle), sC0.y + bufferOffset
+                * Math.sin(expectedStartAngle));
+        Coordinate eExpected =
+            new Coordinate(eCm1.x + bufferOffset * Math.cos(expectedEndAngle), eCm1.y + bufferOffset
+                * Math.sin(expectedEndAngle));
 
-        // Make two lists, one in each direction; start at "start" and end at "end".
-        List<Coordinate> coordinateList1 = new ArrayList<>();
-        List<Coordinate> coordinateList2 = new ArrayList<>();
-        boolean use1 = true;
-        boolean use2 = true;
-
-        int i = startIndex;
-        while (i != endIndex)
+        // which coordinates are closest to sExpected and eExpected?
+        double dS = Double.MAX_VALUE;
+        double dE = Double.MAX_VALUE;
+        int sIndex = -1;
+        int eIndex = -1;
+        for (int i = 0; i < bufferCoordinates.length; i++)
         {
-            if (!coordinateList1.contains(bufferCoordinates[i]))
+            Coordinate c = bufferCoordinates[i];
+            double dsc = c.distance(sExpected);
+            double dec = c.distance(eExpected);
+            if (dsc < dS)
             {
-                coordinateList1.add(bufferCoordinates[i]);
+                dS = dsc;
+                sIndex = i;
             }
-            i = (i + 1) % bufferCoordinates.length;
-            if (startIndexSet.contains(i) || endIndexSet.contains(i))
+            if (dec < dE)
             {
-                use1 = false;
+                dE = dec;
+                eIndex = i;
             }
-        }
-        if (!coordinateList1.contains(bufferCoordinates[endIndex]))
-        {
-            coordinateList1.add(bufferCoordinates[endIndex]);
         }
 
-        i = startIndex;
-        while (i != endIndex)
+        if (sIndex == -1)
         {
-            if (!coordinateList2.contains(bufferCoordinates[i]))
+            throw new OTSGeometryException("offsetGeometry: startIndex not found for line " + referenceLine);
+        }
+        if (eIndex == -1)
+        {
+            throw new OTSGeometryException("offsetGeometry: endIndex not found for line " + referenceLine);
+        }
+        if (dS > 0.01)
+        {
+            /*- System.err.println(referenceLine.toExcel() + "\n\n\n\n" + new OTSLine3D(bufferCoordinates).toExcel()
+                + "\n\n\n\n" + sExpected + "\n" + eExpected); */
+            throw new OTSGeometryException("offsetGeometry: startDistance too big (" + dS + ") for line "
+                + referenceLine);
+        }
+        if (dE > 0.01)
+        {
+            throw new OTSGeometryException("offsetGeometry: endDistance too big (" + dE + ") for line " + referenceLine);
+        }
+
+        // try positive direction
+        boolean ok = true;
+        int i = sIndex;
+        Coordinate lastC = null;
+        List<OTSPoint3D> result = new ArrayList<>();
+        while (ok)
+        {
+            Coordinate c = bufferCoordinates[i];
+            if (lastC != null && close(c, lastC, sC0, eCm1))
             {
-                coordinateList2.add(bufferCoordinates[i]);
+                ok = false;
+                break;
+            }
+            result.add(new OTSPoint3D(c));
+            if (i == eIndex)
+            {
+                return OTSLine3D.createAndCleanOTSLine3D(result);
+            }
+            i = (i == bufferCoordinates.length - 1) ? 0 : i + 1;
+            lastC = c;
+        }
+
+        // try negative direction
+        ok = true;
+        i = sIndex;
+        lastC = null;
+        result = new ArrayList<>();
+        while (ok)
+        {
+            Coordinate c = bufferCoordinates[i];
+            if (lastC != null && close(c, lastC, sC0, eCm1))
+            {
+                ok = false;
+                break;
+            }
+            result.add(new OTSPoint3D(c));
+            if (i == eIndex)
+            {
+                return OTSLine3D.createAndCleanOTSLine3D(result);
             }
             i = (i == 0) ? bufferCoordinates.length - 1 : i - 1;
-            if (startIndexSet.contains(i) || endIndexSet.contains(i))
-            {
-                use2 = false;
-            }
-        }
-        if (!coordinateList2.contains(bufferCoordinates[endIndex]))
-        {
-            coordinateList2.add(bufferCoordinates[endIndex]);
+            lastC = c;
         }
 
-        if (!use1 && !use2)
+        /*- System.err.println(referenceLine.toExcel() + "\n\n\n\n" + new OTSLine3D(bufferCoordinates).toExcel()
+            + "\n\n\n\n" + sExpected + "\n" + eExpected); */
+        throw new OTSGeometryException("offsetGeometry: could not find offset in either direction for line "
+            + referenceLine);
+    }
+
+    /**
+     * Check if the points check[] are close to the line [lineC1..LineC2].
+     * @param lineC1 first point of the line
+     * @param lineC2 second point of the line
+     * @param check the coordinates to check
+     * @return whether one of the points to check is close to the line.
+     */
+    private static boolean close(final Coordinate lineC1, final Coordinate lineC2, final Coordinate... check)
+    {
+        Line2D.Double line = new Line2D.Double(lineC1.x, lineC1.y, lineC2.x, lineC2.y);
+        for (Coordinate c : check)
         {
-            throw new OTSGeometryException("offsetGeometry: could not find path from start to end for offset");
+            if (line.ptSegDist(c.x, c.y) < 0.01)
+            {
+                return true;
+            }
         }
-        if (use1 && use2)
-        {
-            throw new OTSGeometryException(
-                "offsetGeometry: Both paths from start to end for offset were found to be ok");
-        }
-        Coordinate[] coordinates;
-        if (use1)
-        {
-            coordinates = new Coordinate[coordinateList1.size()];
-            coordinateList1.toArray(coordinates);
-        }
-        else
-        {
-            coordinates = new Coordinate[coordinateList2.size()];
-            coordinateList2.toArray(coordinates);
-        }
-        return new OTSLine3D(coordinates);
+        return false;
     }
 
     /**
