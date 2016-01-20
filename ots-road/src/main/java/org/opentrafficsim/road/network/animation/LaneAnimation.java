@@ -13,6 +13,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.network.animation.PaintLine;
+import org.opentrafficsim.core.network.animation.PaintPolygons;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -53,7 +54,10 @@ public class LaneAnimation extends Renderable2D
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         Lane lane = (Lane) getSource();
-        // PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour(), true);
+        if (this.color != null)
+        {
+            PaintPolygons.paintMultiPolygon(graphics, this.color, lane.getLocation(), lane.getContour(), true);
+        }
 
         if (this.drawCenterLine)
         {

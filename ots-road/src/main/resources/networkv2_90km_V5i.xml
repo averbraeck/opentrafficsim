@@ -1501,7 +1501,7 @@
 		<TRAFFICLIGHT NAME="225_04.1" LANE="A1" POSITION="END-1.55m"
 			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
 	</LINK>
-	<LINK NAME="L225b_inL" NODESTART="N225b_in" NODEEND="N5a"
+	<!-- LINK NAME="L225b_inL" NODESTART="N225b_in" NODEEND="N5a"
 		ROADTYPE="RT1ln_ref0">
 		<BEZIER />
 	</LINK>
@@ -1512,6 +1512,6 @@
 			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="225_11.2" LANE="A1" POSITION="END-1.55m"
 			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
-	</LINK>
+	</LINK -->
 
 </NETWORK>
