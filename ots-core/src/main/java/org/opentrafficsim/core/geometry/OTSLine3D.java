@@ -126,6 +126,72 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
+     * Construct a line that is equal to this line except for segments that are shorter than the <cite>noiseLevel</cite>. The
+     * result is guaranteed to start with the first point of this line and end with the last point of this line.
+     * @param noiseLevel double; the minimum segment length that is <b>not</b> removed
+     * @return OTSLine3D; the filtered line
+     */
+    public final OTSLine3D noiseFilteredLine(final double noiseLevel)
+    {
+        if (this.size() <= 2)
+        {
+            return this; // Except for some cached fields; an OTSLine3D is immutable; so safe to return
+        }
+        OTSPoint3D prevPoint = null;
+        List<OTSPoint3D> list = null;
+        for (int index = 0; index < this.size(); index++)
+        {
+            OTSPoint3D currentPoint = this.points[index];
+            if (null != prevPoint && prevPoint.distanceSI(currentPoint) < noiseLevel)
+            {
+                if (null == list)
+                {
+                    // Found something to filter; copy this up to (and including) prevPoint
+                    list = new ArrayList<OTSPoint3D>();
+                    for (int i = 0; i < index; i++)
+                    {
+                        list.add(this.points[i]);
+                    }
+                }
+                if (index == this.size() - 1)
+                {
+                    if (list.size() > 0)
+                    {
+                        // Replace the last point of the result by the last point of this OTSLine3D
+                        list.set(list.size() - 1, currentPoint);
+                    }
+                    else
+                    {
+                        // Append the last point of this even though it is close to the first point than the noise value to
+                        // comply with the requirement that first and last point of this are ALWAYS included in the result.
+                        list.add(currentPoint);
+                    }
+                }
+                continue; // Do not replace prevPoint by currentPoint
+            }
+            else if (null != list)
+            {
+                list.add(currentPoint);
+            }
+            prevPoint = currentPoint;
+        }
+        if (null == list)
+        {
+            return this;
+        }
+        try
+        {
+            return new OTSLine3D(list);
+        }
+        catch (OTSGeometryException exception)
+        {
+            System.err.println("CANNOT HAPPEN");
+            exception.printStackTrace();
+            throw new Error(exception);
+        }
+    }
+
+    /**
      * Create a line at linearly varying offset from this line. The offset may change linearly from its initial value at the
      * start of the reference line to its final offset value at the end of the reference line.
      * @param offsetAtStart double; offset at the start of the reference line (positive value is Left, negative value is Right)
