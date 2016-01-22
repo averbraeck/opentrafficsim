@@ -92,7 +92,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     };
 
     /** Which offset line method to use... */
-    public static final OffsetMethod OFFSETMETHOD = OffsetMethod.JTS;
+    public static final OffsetMethod OFFSETMETHOD = OffsetMethod.PK;
 
     /**
      * Construct parallel line.
@@ -155,7 +155,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
                 }
                 if (index == this.size() - 1)
                 {
-                    if (list.size() > 0)
+                    if (list.size() > 1)
                     {
                         // Replace the last point of the result by the last point of this OTSLine3D
                         list.set(list.size() - 1, currentPoint);
