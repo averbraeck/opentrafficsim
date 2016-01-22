@@ -217,7 +217,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
             double latCenter = nlp.getHeaderTag().getOriginLat().si, lonCenter = nlp.getHeaderTag().getOriginLong().si;
 
             CoordinateTransform latLonToXY = new CoordinateTransformLonLatToXY(lonCenter, latCenter);
-            new GisRenderable2D(this.simulator, gisURL, latLonToXY);
+            // PK hide the map new GisRenderable2D(this.simulator, gisURL, latLonToXY);
 
             // Make a GTU Type
             GTUType carType = GTUType.makeGTUType("Car");

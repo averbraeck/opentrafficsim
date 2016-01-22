@@ -29,37 +29,44 @@ public class OTSOffsetLinePK
      */
     public static OTSLine3D offsetLine(final OTSLine3D referenceLine, final double offset) throws OTSGeometryException
     {
-        if (referenceLine.size() > 1 && referenceLine.getFirst().horizontalDistanceSI(new OTSPoint3D(-200.376, -111.999)) < 0.1
-                && referenceLine.get(1).horizontalDistanceSI(new OTSPoint3D(-204.098, -100.180)) < 0.1 && Math.abs(offset) > 1)
-        {
-            debugOffsetLine = true;
-            for (int i = 0; i < referenceLine.size(); i++)
-            {
-                System.out.println(String.format(
-                        Locale.US,
-                        "point %2d: %20s,%20s%s",
-                        i,
-                        referenceLine.get(i).x,
-                        referenceLine.get(i).y,
-                        (i == 0 ? "" : " (" + Math.toDegrees(Math.atan2(referenceLine.get(i).y - referenceLine.get(i - 1).y,
-                                referenceLine.get(i).x - referenceLine.get(i - 1).x)) + ")")));
-            }
-            System.out.println("# offset is " + offset);
-            System.out.println(OTSGeometry.printCoordinates("#reference:\nc1,0,0\n#", referenceLine, "\n    "));
-        }
-        else
-        {
-            debugOffsetLine = false;
-        }
+        // if (referenceLine.size() > 1 && referenceLine.getFirst().horizontalDistanceSI(new OTSPoint3D(-200.376, -111.999)) <
+        // 0.1
+        // && referenceLine.get(1).horizontalDistanceSI(new OTSPoint3D(-204.098, -100.180)) < 0.1 && Math.abs(offset) > 1)
+        
+        // if (referenceLine.size() > 1 && referenceLine.getFirst().horizontalDistanceSI(new OTSPoint3D(-177.580, -169.726)) <
+        // 0.1
+        // && referenceLine.get(1).horizontalDistanceSI(new OTSPoint3D(-179.028, -166.084)) < 0.1 && Math.abs(offset) > 1
+        // && referenceLine.size() == 0)
+        // {
+        // debugOffsetLine = true;
+        // for (int i = 0; i < referenceLine.size(); i++)
+        // {
+        // System.out.println(String.format(
+        // Locale.US,
+        // "point %2d: %20s,%20s%s",
+        // i,
+        // referenceLine.get(i).x,
+        // referenceLine.get(i).y,
+        // (i == 0 ? "" : " ("
+        // + Math.toDegrees(Math.atan2(referenceLine.get(i).y - referenceLine.get(i - 1).y,
+        // referenceLine.get(i).x - referenceLine.get(i - 1).x)) + ")")));
+        // }
+        // System.out.println("# offset is " + offset);
+        // System.out.println(OTSGeometry.printCoordinates("#reference:\nc0,0,0\n#", referenceLine, "\n    "));
+        // }
+        // else
+        // {
+        // debugOffsetLine = false;
+        // }
         double bufferOffset = Math.abs(offset);
         final double precision = 0.00001;
         if (bufferOffset < precision)
         {
             return referenceLine; // "This" is immutable (except for some cached fields); so we can safely return "this".
         }
-        
+
         final double circlePrecision = 0.001;
-        OTSLine3D filteredReferenceLine = referenceLine.noiseFilteredLine(circlePrecision);
+        OTSLine3D filteredReferenceLine = referenceLine.noiseFilteredLine(Math.max(circlePrecision, bufferOffset / 10));
         List<OTSPoint3D> tempPoints = new ArrayList<>();
         // Make good use of the fact that an OTSLine3D cannot have consecutive duplicate points and has > 1 points
         OTSPoint3D prevPoint = filteredReferenceLine.get(0);
@@ -248,11 +255,11 @@ public class OTSOffsetLinePK
             if (tempPoints.size() > 0)
             {
                 OTSPoint3D p = tempPoints.get(0);
-                System.out.println(String.format(Locale.US, "M %.3f,%.3f\n", p.x, p.y));
+                System.out.println(String.format(Locale.US, "M %.3f,%.3f", p.x, p.y));
                 for (int i = 1; i < tempPoints.size(); i++)
                 {
                     p = tempPoints.get(i);
-                    System.out.println(String.format(Locale.US, "L %.3f,%.3f\n", p.x, p.y));
+                    System.out.println(String.format(Locale.US, "L %.3f,%.3f", p.x, p.y));
                 }
             }
         }

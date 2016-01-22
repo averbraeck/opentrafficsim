@@ -55,4 +55,41 @@ public class OTSPolygon3D extends OTSLine3D
         super(geometry);
     }
 
+    /**
+     * Determine if a point is horizontally (ignoring Z-coordinates) contained within this OTSPolygon3D. <br />
+     * Derived from <a href=
+     * "http://bbs.dartmouth.edu/~fangq/MATH/download/source/Determining%20if%20a%20point%20lies%20on%20the%20interior%20of%20a%20polygon.htm"
+     * > Paul Bourke's Determining if a point lies on the interior of a polygon</a>.
+     * @param point OTSPoint3D; the point
+     * @return boolean; true if the <cite>point</cite> lies within this OTSPolygon3D; false if the <cite>point</cite> lies
+     *         outside this OTSPolygon3D; true if the <cite>point</cite> coincides exactly with one of the points defining this
+     *         OTSPolygon3D, unpredictable (but reproducible) if the <cite>point</cite> lies on the boundary of this
+     *         OTSPolygon3D
+     */
+    public boolean contains(OTSPoint3D point)
+    {
+        // First take care of the case where point coincides with one of the points on the polygon
+        for (OTSPoint3D p : getPoints())
+            if ((p.x == point.x) && (p.y == point.y))
+                return true; // we'll consider that a hit
+        // http://paulbourke.net/geometry/insidepoly/ (Solution 2; 2D)
+        double sumAngle = 0;
+        OTSPoint3D prevPoint = getLast();
+        for (OTSPoint3D p : getPoints())
+        {
+            double theta1 = Math.atan2(prevPoint.y - point.y, prevPoint.x - point.x);
+            double theta2 = Math.atan2(p.y - point.y, p.x - point.x);
+            double diffTheta = theta2 - theta1;
+            while (diffTheta > Math.PI)
+                diffTheta -= 2 * Math.PI;
+            while (diffTheta < -Math.PI)
+                diffTheta += 2 * Math.PI;
+            sumAngle += diffTheta;
+            // System.out.println(String.format("theta1=%.3f, theta2=%.3f diff=%.3f sum=%.3f", Math.toDegrees(theta1),
+            // Math.toDegrees(theta2), Math.toDegrees(diffTheta), Math.toDegrees(sumAngle)));
+            prevPoint = p;
+        }
+        return (sumAngle > Math.PI) || (sumAngle < -Math.PI);
+    }
+
 }
