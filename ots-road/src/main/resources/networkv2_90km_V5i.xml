@@ -445,7 +445,7 @@
 	<NODE NAME="N249a_in"  COORDINATE="(2050, 2240)" ANGLE="80.0 deg" />
 	<NODE NAME="N249a_in2"  COORDINATE="(2040, 2120)"/>
 	<NODE NAME="N291a_in"  COORDINATE="(4270, 160)" ANGLE="0.0 deg" />
-	<NODE NAME="N291a_in2"  COORDINATE="(4160, 140) "/>
+	<NODE NAME="N291a_in2"  COORDINATE="(4160, 140)"/>
 
 	<NODE NAME="N291b_in"  COORDINATE="(4340, 170)" ANGLE="180.0 deg" />
 	<NODE NAME="N291b_in2"  COORDINATE="(4420, 170)"/>
@@ -1501,17 +1501,4 @@
 		<TRAFFICLIGHT NAME="225_04.1" LANE="A1" POSITION="END-1.55m"
 			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
 	</LINK>
-	<!-- LINK NAME="L225b_inL" NODESTART="N225b_in" NODEEND="N5a"
-		ROADTYPE="RT1ln_ref0">
-		<BEZIER />
-	</LINK>
-	<LINK NAME="L225b_inL2" NODESTART="N225b_uit2" NODEEND="N225b_uit"
-		ROADTYPE="RT1ln_ref0">
-		<STRAIGHT />
-		<SENSOR NAME="225_11.2" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
-		<TRAFFICLIGHT NAME="225_11.2" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
-	</LINK -->
-
 </NETWORK>

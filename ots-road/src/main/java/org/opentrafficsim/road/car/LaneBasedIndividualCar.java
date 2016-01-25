@@ -29,7 +29,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
@@ -78,7 +78,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
         final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
         final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
-        final LanePerception perception, final OTSNetwork network) throws NamingException, NetworkException,
+        final LanePerceptionFull perception, final OTSNetwork network) throws NamingException, NetworkException,
         SimRuntimeException, GTUException, OTSGeometryException
     {
         this(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
@@ -112,7 +112,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
         final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
         final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
-        final LanePerception perception, final Class<? extends Renderable2D> animationClass,
+        final LanePerceptionFull perception, final Class<? extends Renderable2D> animationClass,
         final GTUColorer gtuColorer, final OTSNetwork network) throws NamingException, NetworkException,
         SimRuntimeException, GTUException, OTSGeometryException
     {
@@ -265,7 +265,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         private LaneBasedStrategicalPlanner strategicalPlanner = null;
 
         /** Perception. */
-        private LanePerception perception = null;
+        private LanePerceptionFull perception = null;
 
         /** Network. */
         private OTSNetwork network = null;
@@ -366,7 +366,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
          * @param perception set perception
          * @return the class itself for chaining the setters
          */
-        public final LaneBasedIndividualCarBuilder setPerception(LanePerception perception)
+        public final LaneBasedIndividualCarBuilder setPerception(LanePerceptionFull perception)
         {
             this.perception = perception;
             return this;
@@ -478,7 +478,7 @@ public class LaneBasedIndividualCar extends AbstractLaneBasedIndividualGTU
         /**
          * @return perception
          */
-        public final LanePerception getPerception()
+        public final LanePerceptionFull getPerception()
         {
             return this.perception;
         }

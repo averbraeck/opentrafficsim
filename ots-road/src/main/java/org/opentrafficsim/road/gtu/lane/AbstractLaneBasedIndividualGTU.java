@@ -12,7 +12,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
@@ -65,7 +65,7 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
         final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
         final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
         final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
-        final LanePerception perception, final OTSNetwork network) throws NetworkException, SimRuntimeException,
+        final LanePerceptionFull perception, final OTSNetwork network) throws NetworkException, SimRuntimeException,
         GTUException, OTSGeometryException
     {
         super(id, gtuType, initialLongitudinalPositions, initialSpeed, simulator, strategicalPlanner, perception,

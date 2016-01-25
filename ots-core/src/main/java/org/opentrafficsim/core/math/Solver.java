@@ -32,7 +32,7 @@ public final class Solver
      */
     public static double[] solve(final double a, final double b, final double c)
     {
-        if (0 == a)
+        if (Math.abs(a) < 1E-8) // rounding errors will yield incorrect solutions if we allow very small a
         {
             // Degenerate; linear equation
             return solve(b, c);

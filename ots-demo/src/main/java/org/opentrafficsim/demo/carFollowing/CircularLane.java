@@ -37,6 +37,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -50,7 +51,7 @@ import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
@@ -491,7 +492,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
             }
             this.lane1 =
                 LaneFactory.makeMultiLane("Lane1", start, halfway, coordsHalf1, 1, laneType, this.speedLimit,
-                    this.simulator)[0];
+                    this.simulator, LongitudinalDirectionality.DIR_PLUS)[0];
             this.path.add(this.lane1);
 
             OTSPoint3D[] coordsHalf2 = new OTSPoint3D[127];
@@ -502,7 +503,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
             }
             this.lane2 =
                 LaneFactory.makeMultiLane("Lane2", halfway, start, coordsHalf2, 1, laneType, this.speedLimit,
-                    this.simulator)[0];
+                    this.simulator, LongitudinalDirectionality.DIR_PLUS)[0];
             this.path.add(this.lane2);
 
             // Put the (not very evenly spaced) cars on track1
@@ -600,7 +601,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner());
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
                 vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
-                strategicalPlanner, new LanePerception(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+                strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
         }
         catch (NamingException | SimRuntimeException | NetworkException | OTSGeometryException exception)
         {

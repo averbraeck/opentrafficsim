@@ -37,6 +37,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -50,7 +51,7 @@ import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
@@ -535,7 +536,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
             }
             Lane[] lanes1 =
                 LaneFactory.makeMultiLane("FirstHalf", start, halfway, coordsHalf1, laneCount, laneType,
-                    this.speedLimit, this.simulator);
+                    this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
             OTSPoint3D[] coordsHalf2 = new OTSPoint3D[127];
             for (int i = 0; i < coordsHalf2.length; i++)
             {
@@ -544,7 +545,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
             }
             Lane[] lanes2 =
                 LaneFactory.makeMultiLane("SecondHalf", halfway, start, coordsHalf2, laneCount, laneType,
-                    this.speedLimit, this.simulator);
+                    this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
             for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
             {
                 this.paths.get(laneIndex).add(lanes1[laneIndex]);
@@ -627,7 +628,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
         new LaneBasedIndividualCar("" + (++this.carsCreated), gtuType, initialPositions, initialSpeed, vehicleLength,
             new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, strategicalPlanner,
-            new LanePerception(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+            new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
     }
 
     /** {@inheritDoc} */

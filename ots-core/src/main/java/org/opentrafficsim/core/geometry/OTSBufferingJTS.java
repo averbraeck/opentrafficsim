@@ -387,8 +387,8 @@ public final class OTSBufferingJTS
         }
         if (dS > 0.01)
         {
-            /*- System.err.println(referenceLine.toExcel() + "\n\n\n\n" + new OTSLine3D(bufferCoordinates).toExcel()
-                + "\n\n\n\n" + sExpected + "\n" + eExpected); */
+            System.err.println(referenceLine.toExcel() + "\n\n\n\n" + new OTSLine3D(bufferCoordinates).toExcel()
+                + "\n\n\n\n" + sExpected + "\n" + eExpected); 
             throw new OTSGeometryException("offsetGeometry: startDistance too big (" + dS + ") for line "
                 + referenceLine);
         }

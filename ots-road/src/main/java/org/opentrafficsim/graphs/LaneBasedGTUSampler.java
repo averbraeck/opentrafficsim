@@ -2,7 +2,7 @@ package org.opentrafficsim.graphs;
 
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -24,7 +24,7 @@ public interface LaneBasedGTUSampler
      * @throws GTUException on problems obtaining the data from the GTU
      * @throws NetworkException on network-related inconsistency
      */
-    void addData(AbstractLaneBasedGTU gtu, Lane lane) throws GTUException, NetworkException;
+    void addData(LaneBasedGTU gtu, Lane lane) throws GTUException, NetworkException;
 
     /**
      * Force redraw of the graph.

@@ -127,4 +127,20 @@ public class CrossSectionLink extends OTSLink implements Serializable
     {
         return this.laneKeepingPolicy;
     }
+    
+    /**
+     * @param id the cse.id to search for
+     * @return the cross section element with the given id, or null if not found
+     */
+    public final CrossSectionElement getCrossSectionElement(final String id)
+    {
+        for (CrossSectionElement cse : this.crossSectionElementList)
+        {
+            if (cse.getId().equals(id))
+            {
+                return cse;
+            }
+        }
+        return null;
+    }
 }

@@ -61,7 +61,7 @@ import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Altruistic;
@@ -276,7 +276,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                                 LaneBasedStrategicalPlanner strategicalPlanner =
                                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
                                         new LaneBasedCFLCTacticalPlanner());
-                                LanePerception perception = new LanePerception();
+                                LanePerceptionFull perception = new LanePerceptionFull();
                                 // new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
                                 // initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
                                 // startTime, endTime, lane, position, GTUDirectionality.DIR_PLUS,
@@ -328,7 +328,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                                 LaneBasedStrategicalPlanner strategicalPlanner =
                                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
                                         new LaneBasedCFLCTacticalPlanner());
-                                LanePerception perception = new LanePerception();
+                                LanePerceptionFull perception = new LanePerceptionFull();
                                 // new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
                                 // initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
                                 // startTime, endTime, lane, position, GTUDirectionality.DIR_MINUS,
@@ -481,7 +481,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                     new LaneBasedDrivingCharacteristics(new IDMPlus(), new Altruistic());
                 LaneBasedStrategicalPlanner sPlanner =
                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
-                LanePerception perception = new LanePerception();
+                LanePerceptionFull perception = new LanePerceptionFull();
 
                 DirectedLanePosition directedLanePosition =
                     new DirectedLanePosition(lane,

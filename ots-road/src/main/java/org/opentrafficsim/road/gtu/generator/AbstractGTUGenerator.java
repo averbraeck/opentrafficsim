@@ -27,7 +27,7 @@ import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar.LaneBasedIndividualCarBuilder;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -94,14 +94,14 @@ public abstract class AbstractGTUGenerator
     private final LaneBasedStrategicalPlanner strategicalPlanner;
 
     /** the LanePerception to use. */
-    private final Class<LanePerception> perceptionClass;
+    private final Class<LanePerceptionFull> perceptionClass;
 
     /** network. */
     private final OTSNetwork network;
 
     /** Car builder list. */
     private List<LaneBasedIndividualCarBuilder> carBuilderList = new ArrayList<>();
-    
+
     /** Number of generated GTUs. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected long numberGTUs = 0;
@@ -131,9 +131,8 @@ public abstract class AbstractGTUGenerator
         final ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDist, final long maxGTUs,
         final Time.Abs startTime, final Time.Abs endTime, final Lane lane, final Length.Rel position,
         final GTUDirectionality direction, final GTUColorer gtuColorer,
-        final LaneBasedStrategicalPlanner strategicalPlanner, final Class<LanePerception> perceptionClass,
-        final OTSNetwork network)
-        throws SimRuntimeException
+        final LaneBasedStrategicalPlanner strategicalPlanner, final Class<LanePerceptionFull> perceptionClass,
+        final OTSNetwork network) throws SimRuntimeException
     {
         super();
         this.name = name;
@@ -306,8 +305,10 @@ public abstract class AbstractGTUGenerator
     private HeadwayGTU headwayRecursiveForwardSI(final Lane theLane, final double lanePositionSI,
         final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when) throws GTUException
     {
+        // TODO: THIS METHOD IS ALSO IN PERCEPTION -- DON'T DUPLICATE; ALSO, THIS VERSION IS RONG.
         LaneBasedGTU otherGTU =
-            theLane.getGtuAfter(new Length.Rel(lanePositionSI, LengthUnit.METER), RelativePosition.REAR, when);
+            theLane.getGtuAhead(new Length.Rel(lanePositionSI, LengthUnit.METER), GTUDirectionality.DIR_PLUS,
+                RelativePosition.REAR, when);
         if (otherGTU != null)
         {
             double distanceM =
@@ -366,8 +367,10 @@ public abstract class AbstractGTUGenerator
     private HeadwayGTU headwayRecursiveBackwardSI(final Lane theLane, final double lanePositionSI,
         final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when) throws GTUException
     {
+        // TODO: THIS METHOD IS ALSO IN PERCEPTION -- DON'T DUPLICATE; ALSO, THIS VERSION IS RONG.
         LaneBasedGTU otherGTU =
-            theLane.getGtuBefore(new Length.Rel(lanePositionSI, LengthUnit.METER), RelativePosition.FRONT, when);
+            theLane.getGtuBehind(new Length.Rel(lanePositionSI, LengthUnit.METER), GTUDirectionality.DIR_PLUS,
+                RelativePosition.FRONT, when);
         if (otherGTU != null)
         {
             double distanceM =
@@ -572,7 +575,7 @@ public abstract class AbstractGTUGenerator
     /**
      * @return perception
      */
-    public final Class<LanePerception> getPerceptionClass()
+    public final Class<LanePerceptionFull> getPerceptionClass()
     {
         return this.perceptionClass;
     }

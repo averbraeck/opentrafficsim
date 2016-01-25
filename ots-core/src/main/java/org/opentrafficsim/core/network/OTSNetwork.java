@@ -387,11 +387,13 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
         route.addNode(nodeFrom);
         for (LinkEdge<Link> link : path.getPathEdgeList())
         {
-            if (route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getEndNode()))
+            if (!link.getLink().getEndNode().equals(route.destinationNode())
+                && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getEndNode()))
             {
                 route.addNode(link.getLink().getEndNode());
             }
-            else if (route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getStartNode()))
+            else if (!link.getLink().getStartNode().equals(route.destinationNode())
+                && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getStartNode()))
             {
                 route.addNode(link.getLink().getStartNode());
             }
@@ -433,11 +435,13 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
             }
             for (LinkEdge<Link> link : path.getPathEdgeList())
             {
-                if (route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getEndNode()))
+                if (!link.getLink().getEndNode().equals(route.destinationNode())
+                    && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getEndNode()))
                 {
                     route.addNode(link.getLink().getEndNode());
                 }
-                else if (route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getStartNode()))
+                else if (!link.getLink().getStartNode().equals(route.destinationNode())
+                    && route.destinationNode().isDirectionallyConnectedTo(gtuType, link.getLink().getStartNode()))
                 {
                     route.addNode(link.getLink().getStartNode());
                 }

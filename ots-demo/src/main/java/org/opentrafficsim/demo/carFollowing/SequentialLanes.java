@@ -44,6 +44,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -57,7 +58,7 @@ import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
@@ -416,6 +417,9 @@ class SequentialModel implements OTSModelInterface, UNITS
         this.simulator = (OTSDEVSSimulatorInterface) theSimulator;
         this.speedLimit = new Speed(100, KM_PER_HOUR);
 
+        // TODO Bezier curves make 180 degree mistake when minus is true
+        boolean minus = false;
+
         this.nodes = new ArrayList<OTSNode>();
         OTSNode n0 = new OTSNode("Node(0,0)", new OTSPoint3D(0, 0));
         OTSNode n1 = new OTSNode("Node(1000,0)", new OTSPoint3D(1000, 0));
@@ -434,7 +438,8 @@ class SequentialModel implements OTSModelInterface, UNITS
             ArrayList<CrossSectionLink> links = new ArrayList<CrossSectionLink>();
             OTSLine3D l01 = new OTSLine3D(n0.getPoint(), n1.getPoint());
             OTSLine3D l12 = LaneFactory.makeBezier(n0, n1, n2, n3);
-            OTSLine3D l23 = new OTSLine3D(n2.getPoint(), n3.getPoint());
+            OTSLine3D l23 =
+                minus ? new OTSLine3D(n3.getPoint(), n2.getPoint()) : new OTSLine3D(n2.getPoint(), n3.getPoint());
             OTSLine3D l34 = LaneFactory.makeBezier(n2, n3, n4, n5);
             OTSLine3D l45 = new OTSLine3D(n4.getPoint(), n5.getPoint());
             OTSLine3D[] lines = new OTSLine3D[]{l01, l12, l23, l34, l45};
@@ -445,9 +450,12 @@ class SequentialModel implements OTSModelInterface, UNITS
                 OTSNode toNode = this.nodes.get(i);
                 OTSLine3D line = lines[i - 1];
                 String linkName = fromNode.getId() + "-" + toNode.getId();
+                LongitudinalDirectionality direction =
+                    line.equals(l23) && minus ? LongitudinalDirectionality.DIR_MINUS
+                        : LongitudinalDirectionality.DIR_PLUS;
                 Lane[] lanes =
                     LaneFactory.makeMultiLane(linkName, fromNode, toNode, line.getPoints(), 1, laneType,
-                        this.speedLimit, this.simulator);
+                        this.speedLimit, this.simulator, direction);
                 if (i == this.nodes.size() - 1)
                 {
                     Sensor sensor = new SinkSensor(lanes[0], new Length.Rel(100.0, METER), this.simulator);
@@ -630,7 +638,7 @@ class SequentialModel implements OTSModelInterface, UNITS
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner());
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
                 vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
-                strategicalPlanner, new LanePerception(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+                strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
