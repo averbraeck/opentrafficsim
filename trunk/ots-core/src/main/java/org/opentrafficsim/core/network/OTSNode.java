@@ -106,6 +106,13 @@ public class OTSNode implements Node, LocatableInterface, Serializable
         this.links.add(link);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final void removeLink(final Link link)
+    {
+        this.links.remove(link);
+    }
+
     /**
      * Add a single connection for a GTU type to the connections map. The data structures will be created is it does not exist
      * yet.

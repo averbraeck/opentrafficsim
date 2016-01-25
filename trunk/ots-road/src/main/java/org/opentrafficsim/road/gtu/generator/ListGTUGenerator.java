@@ -28,7 +28,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -65,7 +65,7 @@ public class ListGTUGenerator
     private final LaneBasedStrategicalPlanner strategicalPlanner;
 
     /** the LanePerception to use. */
-    private final LanePerception perception;
+    private final LanePerceptionFull perception;
 
     /** The simulator that controls everything. */
     private final OTSDEVSSimulatorInterface simulator;
@@ -102,7 +102,7 @@ public class ListGTUGenerator
     public ListGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
         final Speed initialSpeed, final Lane lane, final Length.Rel position, final GTUDirectionality direction,
         final GTUColorer gtuColorer, final LaneBasedStrategicalPlanner strategicalPlanner,
-        final LanePerception perception, final OTSNetwork network, final String fileName) throws SimRuntimeException,
+        final LanePerceptionFull perception, final OTSNetwork network, final String fileName) throws SimRuntimeException,
         NetworkException
     {
         if (null == lane)

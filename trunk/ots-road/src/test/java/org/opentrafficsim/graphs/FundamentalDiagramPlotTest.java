@@ -34,7 +34,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
@@ -147,7 +147,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         LaneBasedStrategicalPlanner strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
         new LaneBasedIndividualCar("1", gtuType, initialLongitudinalPositions, speed, length, width, maxSpeed,
-            simulator, strategicalPlanner, new LanePerception(), this.network);
+            simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
         simulator.runUpTo(new Time.Abs(124, SECOND));
         while (simulator.isRunning())
         {
@@ -234,7 +234,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
         new LaneBasedIndividualCar("1234", gtuType, initialLongitudinalPositions, speed, length, width, maxSpeed,
-            simulator, strategicalPlanner, new LanePerception(), this.network);
+            simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
         simulator.runUpTo(new Time.Abs(125, SECOND));
         while (simulator.isRunning())
         {

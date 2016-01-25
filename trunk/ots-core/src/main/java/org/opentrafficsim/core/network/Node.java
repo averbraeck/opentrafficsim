@@ -44,7 +44,13 @@ public interface Node extends LocatableInterface, Serializable
      */
     void addLink(Link link);
 
-    /** @return the links connected to this Node */
+    /**
+     * Remove a link from this Node.
+     * @param link the link to remove.
+     */
+    void removeLink(Link link);
+
+    /** @return a safe copy of the links connected to this Node */
     Set<Link> getLinks();
 
     /**

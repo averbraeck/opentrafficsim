@@ -67,7 +67,7 @@ import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
@@ -456,9 +456,12 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
         {
             LaneType laneType = new LaneType("CarLane");
             laneType.addCompatibility(this.gtuType);
-            this.lane = LaneFactory.makeLane("Lane", from, to, null, laneType, this.speedLimit, this.simulator);
+            this.lane =
+                LaneFactory.makeLane("Lane", from, to, null, laneType, this.speedLimit, this.simulator,
+                    LongitudinalDirectionality.DIR_PLUS);
             this.path.add(this.lane);
-            CrossSectionLink endLink = LaneFactory.makeLink("endLink", to, end, null);
+            CrossSectionLink endLink =
+                LaneFactory.makeLink("endLink", to, end, null, LongitudinalDirectionality.DIR_PLUS);
             // No overtaking, single lane
             Lane sinkLane =
                 new Lane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
@@ -603,7 +606,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             this.block =
                 new LaneBasedIndividualCar("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
                     new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed(0.0, KM_PER_HOUR), this.simulator,
-                    strategicalPlanner, new LanePerception(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+                    strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
         {
@@ -658,7 +661,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             LaneBasedPerceivingCar car =
                 new LaneBasedPerceivingCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
                     vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
-                    strategicalPlanner, new LanePerception(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+                    strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             car.setPerceptionInterval(new Time.Rel(this.perceptionIntervalDist.draw(), TimeUnit.SECOND));
             car.getStrategicalPlanner().getDrivingCharacteristics()
@@ -745,7 +748,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
             final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
             final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
-            final LanePerception perception, final OTSNetwork network) throws NamingException, NetworkException,
+            final LanePerceptionFull perception, final OTSNetwork network) throws NamingException, NetworkException,
             SimRuntimeException, GTUException, OTSGeometryException
         {
             super(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
@@ -781,7 +784,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
             final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
             final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
-            final LanePerception perception, final Class<? extends Renderable2D> animationClass,
+            final LanePerceptionFull perception, final Class<? extends Renderable2D> animationClass,
             final GTUColorer gtuColorer, final OTSNetwork network) throws NamingException, NetworkException,
             SimRuntimeException, GTUException, OTSGeometryException
         {
@@ -834,7 +837,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
         {
             // ask Perception for the local situation
             LaneBasedGTU laneBasedGTU = (LaneBasedGTU) gtu;
-            LanePerception perception = laneBasedGTU.getPerception();
+            LanePerceptionFull perception = laneBasedGTU.getPerception();
 
             // if the GTU's maximum speed is zero (block), generate a stand still plan
             if (laneBasedGTU.getMaximumVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)

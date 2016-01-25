@@ -41,7 +41,7 @@ import org.opentrafficsim.graphs.FundamentalDiagramLane;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
@@ -304,13 +304,15 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                         new OTSNode("Node " + (laneNr + 1),
                             new OTSPoint3D(node.getPoint().x + this.laneLength.si, 0, 0));
                     Lane lane =
-                        LaneFactory.makeLane("Lane", node, next, null, laneType, this.speedLimit, this.simulator);
+                        LaneFactory.makeLane("Lane", node, next, null, laneType, this.speedLimit, this.simulator,
+                            LongitudinalDirectionality.DIR_PLUS);
                     this.lanes.add(lane);
                     node = next;
                 }
                 // create SinkLane
                 OTSNode end = new OTSNode("End", new OTSPoint3D(node.getPoint().x + 50.0, 0, 0));
-                CrossSectionLink endLink = LaneFactory.makeLink("endLink", node, end, null);
+                CrossSectionLink endLink =
+                    LaneFactory.makeLink("endLink", node, end, null, LongitudinalDirectionality.DIR_PLUS);
                 int last = this.lanes.size() - 1;
                 Lane sinkLane =
                     new Lane(endLink, "sinkLane", this.lanes.get(last).getLateralCenterPosition(1.0), this.lanes.get(
@@ -427,7 +429,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 this.block =
                     new LaneBasedIndividualCar("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
                         new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed(0.0, KM_PER_HOUR),
-                        this.simulator, strategicalPlanner, new LanePerception(), DefaultCarAnimation.class,
+                        this.simulator, strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class,
                         this.gtuColorer, this.network);
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
@@ -472,7 +474,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                         new LaneBasedGTUFollowingTacticalPlanner());
                 new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
                     vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
-                    strategicalPlanner, new LanePerception(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+                    strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)

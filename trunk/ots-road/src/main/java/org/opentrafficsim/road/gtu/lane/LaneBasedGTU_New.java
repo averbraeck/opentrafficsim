@@ -24,7 +24,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface LaneBasedGTU extends GTU
+public interface LaneBasedGTU_New extends GTU
 {
     /** {@inheritDoc} */
     @Override
@@ -39,15 +39,21 @@ public interface LaneBasedGTU extends GTU
     LaneBasedStrategicalPlanner getStrategicalPlanner();
 
     /**
-     * @return the lanes on which the GTU is registered.
+     * Provide a map of the lanes on which the GTU was registered with its reference point at the start of the current
+     * operational plan, together with the direction on those lanes compared to the design line of the link. Usually this will
+     * be one lane; in case of overlapping lanes, a lane change, or a very wide GTU, the method can also return multiple lanes.
+     * @return the lanes on which the GTU was registered with its reference point at the start of the current operational plan.
      */
-    Map<Lane, GTUDirectionality> getLanes();
+    Map<Lane, GTUDirectionality> getReferenceLanes();
 
+    /**
+     * Provide a full set of the lanes that the vehicle is 
+     */
     /**
      * insert GTU at a certain position. This can happen at setup (first initialization), and after a lane change of the GTU.
      * The relative position that will be registered is the referencePosition (dx, dy, dz) = (0, 0, 0). Front and rear positions
      * are relative towards this position.
-     * @param lane the lane to add to the list of lanes on which the GTU is registered.
+     * @param lane the lane to add to the GTU on.
      * @param gtuDirection the direction of the GTU on the lane (which can be bidirectional). If the GTU has a positive
      *            velocity, it is moving in this direction.
      * @param position the position on the lane.
@@ -57,7 +63,7 @@ public interface LaneBasedGTU extends GTU
 
     /**
      * Unregister the GTU from a lane.
-     * @param lane the lane to remove from the list of lanes on which the GTU is registered.
+     * @param lane the lane to remove from the GTU from.
      */
     void leaveLane(Lane lane);
 
@@ -71,7 +77,7 @@ public interface LaneBasedGTU extends GTU
      * @return the lanes and the position on the lanes where the GTU is currently registered, for the given position of the GTU.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane, Length.Rel> positions(RelativePosition relativePosition) throws GTUException;
+    Map<Lane, Length.Rel> positionsX(RelativePosition relativePosition) throws GTUException;
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
@@ -82,7 +88,7 @@ public interface LaneBasedGTU extends GTU
      *         the GTU.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane, Length.Rel> positions(RelativePosition relativePosition, Time.Abs when) throws GTUException;
+    Map<Lane, Length.Rel> positionsX(RelativePosition relativePosition, Time.Abs when) throws GTUException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane at the current
@@ -112,7 +118,7 @@ public interface LaneBasedGTU extends GTU
      * @return the lanes and the position on the lanes where the GTU is currently registered, for the given position of the GTU.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane, Double> fractionalPositions(RelativePosition relativePosition) throws GTUException;
+    Map<Lane, Double> fractionalPositionsX(RelativePosition relativePosition) throws GTUException;
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
@@ -124,7 +130,7 @@ public interface LaneBasedGTU extends GTU
      *         the GTU.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered.
      */
-    Map<Lane, Double> fractionalPositions(RelativePosition relativePosition, Time.Abs when) throws GTUException;
+    Map<Lane, Double> fractionalPositionsX(RelativePosition relativePosition, Time.Abs when) throws GTUException;
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane, as a fraction

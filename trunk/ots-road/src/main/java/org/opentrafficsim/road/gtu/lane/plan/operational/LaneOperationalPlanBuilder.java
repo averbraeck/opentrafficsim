@@ -66,7 +66,7 @@ public final class LaneOperationalPlanBuilder
      * @throws OTSGeometryException in case the lanes are not connected or firstLanePosition is larger than the length of the
      *             first lane
      */
-    public static OperationalPlan buildGradualAccelerationPlan(final List<Lane> lanes,
+    public static LaneBasedOperationalPlan buildGradualAccelerationPlan(final List<Lane> lanes,
         final Length.Rel firstLanePosition, final Length.Rel distance, final Time.Abs startTime,
         final Speed startSpeed, final Speed endSpeed, final Acceleration maxAcceleration,
         final Acceleration maxDeceleration) throws OperationalPlanException, OTSGeometryException
@@ -107,7 +107,7 @@ public final class LaneOperationalPlanBuilder
         }
         ArrayList<OperationalPlan.Segment> segmentList = new ArrayList<>();
         segmentList.add(segment);
-        return new OperationalPlan(path, startTime, startSpeed, segmentList);
+        return new LaneBasedOperationalPlan(path, startTime, startSpeed, segmentList, lanes);
     }
 
     /**
@@ -154,7 +154,7 @@ public final class LaneOperationalPlanBuilder
      * @throws OTSGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
      *             first lane
      */
-    public static OperationalPlan buildGradualAccelerationPlan(final List<Lane> lanes,
+    public static LaneBasedOperationalPlan buildGradualAccelerationPlan(final List<Lane> lanes,
         final Length.Rel firstLanePosition, final Length.Rel distance, final Time.Abs startTime,
         final Speed startSpeed, final Speed endSpeed) throws OperationalPlanException, OTSGeometryException
     {
@@ -180,7 +180,7 @@ public final class LaneOperationalPlanBuilder
      * @throws OTSGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
      *             first lane
      */
-    public static OperationalPlan buildMaximumAccelerationPlan(final List<Lane> lanes,
+    public static LaneBasedOperationalPlan buildMaximumAccelerationPlan(final List<Lane> lanes,
         final Length.Rel firstLanePosition, final Length.Rel distance, final Time.Abs startTime,
         final Speed startSpeed, final Speed endSpeed, final Acceleration acceleration, final Acceleration deceleration)
         throws OperationalPlanException, OTSGeometryException
@@ -238,7 +238,7 @@ public final class LaneOperationalPlanBuilder
                             // if endSpeed == 0, we cannot reach the end of the path. Therefore, build a partial path.
                             OTSLine3D partialPath = path.truncate(x.si);
                             segmentList.add(new OperationalPlan.AccelerationSegment(t, deceleration));
-                            return new OperationalPlan(partialPath, startTime, startSpeed, segmentList);
+                            return new LaneBasedOperationalPlan(partialPath, startTime, startSpeed, segmentList, lanes);
                         }
                         // we reach the (lower) end speed, larger than zero, before the end of the segment. Make two segments.
                         segmentList.add(new OperationalPlan.AccelerationSegment(t, deceleration));
@@ -253,7 +253,7 @@ public final class LaneOperationalPlanBuilder
             }
 
         }
-        return new OperationalPlan(path, startTime, startSpeed, segmentList);
+        return new LaneBasedOperationalPlan(path, startTime, startSpeed, segmentList, lanes);
     }
 
     /**
@@ -271,7 +271,7 @@ public final class LaneOperationalPlanBuilder
      * @throws OTSGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
      *             first lane
      */
-    public static OperationalPlan buildStopPlan(final List<Lane> lanes, final Length.Rel firstLanePosition,
+    public static LaneBasedOperationalPlan buildStopPlan(final List<Lane> lanes, final Length.Rel firstLanePosition,
         final Length.Rel distance, final Time.Abs startTime, final Speed startSpeed, final Acceleration deceleration)
         throws OperationalPlanException, OTSGeometryException
     {

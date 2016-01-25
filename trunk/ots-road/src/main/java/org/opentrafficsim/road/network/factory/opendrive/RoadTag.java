@@ -13,6 +13,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import nl.tudelft.simulation.language.reflection.ClassUtil;
 
 import org.djunits.unit.LengthUnit;
@@ -129,7 +130,7 @@ class RoadTag
     /** the calculated Link. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<CrossSectionLink> subLinks = new ArrayList<>();
-
+    
     /** the lanetype that allows all traffic. */
     static LaneType LANETYPE_ALL = null;
 
@@ -449,7 +450,8 @@ class RoadTag
             Stripe centerStripe = new Stripe(currentLink, centerOffset, laneWidth);
             try
             {
-                new StripeAnimation(centerStripe, simulator, StripeAnimation.TYPE.SOLID);
+                Renderable2D animation = new StripeAnimation(centerStripe, simulator, StripeAnimation.TYPE.SOLID);
+                openDriveNetworkLaneParser.animationMap.put(centerStripe, animation);
             }
             catch (RemoteException exception)
             {
@@ -569,11 +571,13 @@ class RoadTag
 
                     try
                     {
-                        new LaneAnimationOD(lane, simulator, color);
+                        Renderable2D animation = new LaneAnimationOD(lane, simulator, color);
+                        openDriveNetworkLaneParser.animationMap.put(lane, animation);
                     }
                     catch (RemoteException exception)
                     {
-                        new LinkAnimation(currentLink, simulator, 0.01f);
+                        Renderable2D animation = new LinkAnimation(currentLink, simulator, 0.01f);
+                        openDriveNetworkLaneParser.animationMap.put(currentLink, animation);
                         exception.printStackTrace();
                     }
                 }
@@ -592,7 +596,8 @@ class RoadTag
 
                     try
                     {
-                        new LaneAnimation(lane, simulator, color, false);
+                        Renderable2D animation = new LaneAnimation(lane, simulator, color, false);
+                        openDriveNetworkLaneParser.animationMap.put(lane, animation);
                     }
                     catch (RemoteException exception)
                     {
@@ -607,7 +612,8 @@ class RoadTag
 
                     try
                     {
-                        new StripeAnimation(solidLine, simulator, StripeAnimation.TYPE.SOLID);
+                        Renderable2D animation = new StripeAnimation(solidLine, simulator, StripeAnimation.TYPE.SOLID);
+                        openDriveNetworkLaneParser.animationMap.put(solidLine, animation);
                     }
                     catch (RemoteException exception)
                     {
@@ -622,7 +628,8 @@ class RoadTag
 
                     try
                     {
-                        new ShoulderAnimation(shoulder, simulator, color);
+                        Renderable2D animation = new ShoulderAnimation(shoulder, simulator, color);
+                        openDriveNetworkLaneParser.animationMap.put(shoulder, animation);
                     }
                     catch (RemoteException exception)
                     {
@@ -647,11 +654,13 @@ class RoadTag
                         currentLaneSec.lanes.put(leftLane.id, lane);
 
                         lastLane = lane;
-                        new LaneAnimation(lane, simulator, color, false);
+                        Renderable2D animation = new LaneAnimation(lane, simulator, color, false);
+                        openDriveNetworkLaneParser.animationMap.put(lane, animation);
                     }
                     catch (Exception exception)
                     {
-                        new LinkAnimation(currentLink, simulator, 0.01f);
+                        Renderable2D animation = new LinkAnimation(currentLink, simulator, 0.01f);
+                        openDriveNetworkLaneParser.animationMap.put(currentLink, animation);
                         exception.printStackTrace();
                     }
                 }
@@ -773,11 +782,13 @@ class RoadTag
 
                         lastLane = lane;
 
-                        new LaneAnimationOD(lane, simulator, color);
+                        Renderable2D animation = new LaneAnimationOD(lane, simulator, color);
+                        openDriveNetworkLaneParser.animationMap.put(lane, animation);
                     }
                     catch (Exception exception)
                     {
-                        new LinkAnimation(currentLink, simulator, 0.01f);
+                        Renderable2D animation = new LinkAnimation(currentLink, simulator, 0.01f);
+                        openDriveNetworkLaneParser.animationMap.put(currentLink, animation);
                         exception.printStackTrace();
                     }
                 }
@@ -792,7 +803,8 @@ class RoadTag
 
                     try
                     {
-                        new LaneAnimation(lane, simulator, color, false);
+                        Renderable2D animation = new LaneAnimation(lane, simulator, color, false);
+                        openDriveNetworkLaneParser.animationMap.put(lane, animation);
                     }
                     catch (RemoteException exception)
                     {
@@ -806,7 +818,8 @@ class RoadTag
                     lastLane = solidLine;
                     try
                     {
-                        new StripeAnimation(solidLine, simulator, StripeAnimation.TYPE.SOLID);
+                        Renderable2D animation = new StripeAnimation(solidLine, simulator, StripeAnimation.TYPE.SOLID);
+                        openDriveNetworkLaneParser.animationMap.put(solidLine, animation);
                     }
                     catch (RemoteException exception)
                     {
@@ -821,7 +834,8 @@ class RoadTag
 
                     try
                     {
-                        new ShoulderAnimation(shoulder, simulator, color);
+                        Renderable2D animation = new ShoulderAnimation(shoulder, simulator, color);
+                        openDriveNetworkLaneParser.animationMap.put(shoulder, animation);
                     }
                     catch (RemoteException exception)
                     {
@@ -838,11 +852,13 @@ class RoadTag
 
                         currentLaneSec.lanes.put(rightLane.id, lane);
                         lastLane = lane;
-                        new LaneAnimation(lane, simulator, color, false);
+                        Renderable2D animation = new LaneAnimation(lane, simulator, color, false);
+                        openDriveNetworkLaneParser.animationMap.put(lane, animation);
                     }
                     catch (Exception exception)
                     {
-                        new LinkAnimation(currentLink, simulator, 0.01f);
+                        Renderable2D animation = new LinkAnimation(currentLink, simulator, 0.01f);
+                        openDriveNetworkLaneParser.animationMap.put(currentLink, animation);
                         exception.printStackTrace();
                     }
                 }

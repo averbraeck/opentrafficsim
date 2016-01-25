@@ -58,7 +58,7 @@ import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
@@ -408,10 +408,11 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             }
 
             setupGenerator(LaneFactory.makeMultiLane("From to FirstVia", from, firstVia, null, merge ? lanesOnMain
-                : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator));
+                : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator,
+                LongitudinalDirectionality.DIR_PLUS));
             Lane[] common =
                 LaneFactory.makeMultiLane("FirstVia to SecondVia", firstVia, secondVia, null, lanesOnCommon, laneType,
-                    this.speedLimit, this.simulator);
+                    this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
             if (merge)
             {
                 for (int i = lanesOnCommonCompressed; i < lanesOnCommon; i++)
@@ -420,14 +421,16 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                 }
             }
             setupSink(LaneFactory.makeMultiLane("SecondVia to end", secondVia, end, null, merge
-                ? lanesOnCommonCompressed : lanesOnMain, laneType, this.speedLimit, this.simulator), laneType);
+                ? lanesOnCommonCompressed : lanesOnMain, laneType, this.speedLimit, this.simulator,
+                LongitudinalDirectionality.DIR_PLUS), laneType);
             if (merge)
             {
                 setupGenerator(LaneFactory.makeMultiLane("From2a to From2b", from2a, from2b, null, lanesOnBranch, 0,
-                    lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator));
+                    lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator,
+                    LongitudinalDirectionality.DIR_PLUS));
                 LaneFactory.makeMultiLaneBezier("From2b to FirstVia", from2a, from2b, firstVia, secondVia,
                     lanesOnBranch, lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType,
-                    this.speedLimit, this.simulator);
+                    this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
 
                 // provide a route -- at the merge point, the GTU can otherwise decide to "go back"
                 ArrayList<Node> mainRouteNodes = new ArrayList<Node>();
@@ -439,12 +442,13 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             }
             else
             {
-                LaneFactory.makeMultiLaneBezier("SecondVia to end2a", firstVia, secondVia, end2a, end2b,
-                    lanesOnBranch, lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType,
-                    this.speedLimit, this.simulator);
+                LaneFactory.makeMultiLaneBezier("SecondVia to end2a", firstVia, secondVia, end2a, end2b, lanesOnBranch,
+                    lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit,
+                    this.simulator, LongitudinalDirectionality.DIR_PLUS);
                 setupSink(
                     LaneFactory.makeMultiLane("end2a to end2b", end2a, end2b, null, lanesOnBranch, lanesOnCommon
-                        - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator), laneType);
+                        - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator,
+                        LongitudinalDirectionality.DIR_PLUS), laneType);
 
                 // determine the routes
                 List<RouteProbability> routeProbabilities = new ArrayList<>();
@@ -541,7 +545,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         double endY =
             to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
         OTSNode end = new OTSNode("END", new OTSPoint3D(endX, endY, to.getPoint().z));
-        CrossSectionLink endLink = LaneFactory.makeLink("endLink", to, end, null);
+        CrossSectionLink endLink = LaneFactory.makeLink("endLink", to, end, null, LongitudinalDirectionality.DIR_PLUS);
         for (Lane lane : lanes)
         {
             // Overtaking left and right allowed on the sinkLane
@@ -580,7 +584,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
         new LaneBasedIndividualCar("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
             new Length.Rel(1, METER), lane.getWidth(1), new Speed(0.0, KM_PER_HOUR), this.simulator,
-            strategicalPlanner, new LanePerception(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+            strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
         return lane;
     }
 
@@ -631,7 +635,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                     this.routeGenerator.generateRoute());
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
                 vehicleLength, new Length.Rel(1.8, METER), new Speed(speed, KM_PER_HOUR), this.simulator,
-                strategicalPlanner, new LanePerception(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+                strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
 
             Object[] arguments = new Object[1];
             arguments[0] = lane;

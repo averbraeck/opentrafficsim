@@ -28,7 +28,6 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
-import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.changing.OvertakingConditions;
 
@@ -96,7 +95,7 @@ public class Lane extends CrossSectionElement implements Serializable
     // TODO allow for direction-dependent sensors
     private final SortedMap<Double, List<GTUTypeSensor>> sensors = new TreeMap<>();
 
-    /** GTUs ordered by increasing longitudinal position. */
+    /** GTUs ordered by increasing longitudinal position; increasing in the direction of the center line. */
     private final List<LaneBasedGTU> gtuList = new ArrayList<LaneBasedGTU>();
 
     /**
@@ -756,74 +755,60 @@ public class Lane extends CrossSectionElement implements Serializable
     }
 
     /**
-     * TODO WHAT DOES AFTER MEAN? In the driving direction of a GTU? In the 'absolute' direction of the design line?
-     * @param position the front position after which the relative position of a GTU will be searched.
-     * @param relativePosition the relative position of the GTU we are looking for.
+     * Get the first GTU where the relativePosition is in front of a certain position on the lane, in a driving direction on
+     * this lane, compared to the DESIGN LINE.
+     * @param position the position after which the relative position of a GTU will be searched.
+     * @param direction whether we are looking in the the center line direction or against the center line direction.
+     * @param relativePosition the relative position we want to compare against
      * @param when the time for which to evaluate the positions.
-     * @return the first GTU after a position on this lane, or null if no GTU could be found.
+     * @return the first GTU after a position on this lane in the given direction, or null if no GTU could be found.
      * @throws GTUException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGTU getGtuAfter(final Length.Rel position, final RelativePosition.TYPE relativePosition,
-        final Time.Abs when) throws GTUException
+    public final LaneBasedGTU getGtuAhead(final Length.Rel position, final GTUDirectionality direction,
+        final RelativePosition.TYPE relativePosition, final Time.Abs when) throws GTUException
     {
-        for (LaneBasedGTU gtu : this.gtuList)
+        if (direction.equals(GTUDirectionality.DIR_PLUS))
         {
-            if (relativePosition.equals(RelativePosition.FRONT))
+            for (LaneBasedGTU gtu : this.gtuList)
             {
-                if (gtu.position(this, gtu.getFront(), when).gt(position))
+                if (gtu.position(this, gtu.getRelativePositions().get(relativePosition), when).gt(position))
                 {
                     return gtu;
                 }
             }
-            else if (relativePosition.equals(RelativePosition.REAR))
+        }
+        else
+        {
+            for (int i = this.gtuList.size() - 1; i >= 0; i--)
             {
-                if (gtu.position(this, gtu.getRear(), when).ge(position))// PK was >; not >=
+                LaneBasedGTU gtu = this.gtuList.get(i);
+                if (gtu.position(this, gtu.getRelativePositions().get(relativePosition), when).lt(position))
                 {
                     return gtu;
                 }
-            }
-            else
-            {
-                throw new GTUException("Can only use Lane.getGtuAfter(...) method with FRONT and REAR positions");
             }
         }
         return null;
     }
 
     /**
-     * TODO WHAT DOES BEFORE MEAN? In the driving direction of a GTU? In the 'absolute' direction of the design line?
-     * @param position the front position before which the relative position of a GTU will be searched.
+     * Get the first GTU where the relativePosition is behind a certain position on the lane, in a driving direction on this
+     * lane, compared to the DESIGN LINE.
+     * @param position the position before which the relative position of a GTU will be searched.
+     * @param direction whether we are looking in the the center line direction or against the center line direction.
      * @param relativePosition the relative position of the GTU we are looking for.
      * @param when the time for which to evaluate the positions.
-     * @return the first GTU before a position on this lane, or null if no GTU could be found.
+     * @return the first GTU before a position on this lane in the given direction, or null if no GTU could be found.
      * @throws GTUException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGTU getGtuBefore(final Length.Rel position, final RelativePosition.TYPE relativePosition,
-        final Time.Abs when) throws GTUException
+    public final LaneBasedGTU getGtuBehind(final Length.Rel position, final GTUDirectionality direction,
+        final RelativePosition.TYPE relativePosition, final Time.Abs when) throws GTUException
     {
-        for (int i = this.gtuList.size() - 1; i >= 0; i--)
+        if (direction.equals(GTUDirectionality.DIR_PLUS))
         {
-            LaneBasedGTU gtu = this.gtuList.get(i);
-            if (relativePosition.equals(RelativePosition.FRONT))
-            {
-                if (gtu.position(this, gtu.getFront(), when).getSI() < position.getSI())
-                {
-                    return gtu;
-                }
-            }
-            else if (relativePosition.equals(RelativePosition.REAR))
-            {
-                if (gtu.position(this, gtu.getRear(), when).getSI() < position.getSI())
-                {
-                    return gtu;
-                }
-            }
-            else
-            {
-                throw new GTUException("Can only use Lane.getGtuBefore(...) method with FRONT and REAR positions");
-            }
+            return getGtuAhead(position, GTUDirectionality.DIR_MINUS, relativePosition, when);
         }
-        return null;
+        return getGtuAhead(position, direction, relativePosition, when);
     }
 
     /*
@@ -986,7 +971,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * @throws NetworkException on network inconsistency
      * @throws GTUException on problems obtaining data from the GTU for the graph
      */
-    public final void sample(final AbstractLaneBasedGTU gtu) throws NetworkException, GTUException
+    public final void sample(final LaneBasedGTU gtu) throws NetworkException, GTUException
     {
         for (LaneBasedGTUSampler sampler : this.samplers)
         {

@@ -1,8 +1,10 @@
 package org.opentrafficsim.road.gtu.lane;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,6 +22,8 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSLine3D;
+import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -32,6 +36,9 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
+import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
+import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LanePathInfo;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -41,20 +48,12 @@ import org.opentrafficsim.road.network.lane.Lane;
 
 /**
  * This class contains most of the code that is needed to run a lane based GTU. <br>
- * The starting point of a LaneBasedTU is that it can be in <b>multiple lanes</b> at the same time. This can be due to a lane
- * change (lateral), or due to crossing a link (front of the GTU is on another Lane than rear of the GTU). If a Lane is shorter
- * than the length of the GTU (e.g. when we do node expansion on a crossing, this is very well possible), a GTU could occupy
- * dozens of Lanes at the same time.
+ * The starting point of a LaneBasedTU is that its reference 'point' can be in <b>multiple lanes</b> at the same time. This can
+ * be due to a lane change (lateral), or due to lanes that overlap (e.g. a bike path or a tramway on a lane).
  * <p>
- * When calculating a headway, the GTU has to look in successive lanes. When Lanes (or underlying CrossSectionLinks) diverge,
- * the headway algorithms have to look at multiple Lanes and return the minimum headway in each of the Lanes. When the Lanes (or
- * underlying CrossSectionLinks) converge, "parallel" traffic is not taken into account in the headway calculation. Instead, gap
- * acceptance algorithms or their equivalent should guide the merging behavior.
- * <p>
- * To decide its movement, an AbstractLaneBasedGTU applies its car following algorithm and lane change algorithm to set the
- * acceleration and any lane change operation to perform. It then schedules the triggers that will add it to subsequent lanes
- * and remove it from current lanes as needed during the time step that is has committed to. Finally, it re-schedules its next
- * movement evaluation with the simulator.
+ * To decide its movement, an AbstractLaneBasedGTU applies its tactical planner to set the acceleration and lane change
+ * operation to perform. It then schedules the triggers that will add it to subsequent lanes and remove it from current lanes as
+ * needed during the operational plan.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -64,7 +63,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBasedGTU
+public abstract class AbstractLaneBasedGTU_New extends AbstractGTU implements LaneBasedGTU
 {
     /** */
     private static final long serialVersionUID = 20140822L;
@@ -103,7 +102,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @throws OTSGeometryException when the initial path is wrong
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractLaneBasedGTU(final String id, final GTUType gtuType,
+    public AbstractLaneBasedGTU_New(final String id, final GTUType gtuType,
         final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
         final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
         final LanePerceptionFull perception, final OTSNetwork network) throws NetworkException, SimRuntimeException,
@@ -204,12 +203,12 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final Map<Lane, GTUDirectionality> getLanes()
-    {
-        return this.lanes;
-    }
+//    /** {@inheritDoc} */
+//    @Override
+//    public final Map<Lane, GTUDirectionality> getLanes()
+//    {
+//        return this.lanes;
+//    }
 
     /** {@inheritDoc} */
     @Override
@@ -354,13 +353,77 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /**
      * Schedule the triggers for this GTU that are going to happen until the next evaluation time. Also schedule the
+     * registration and deregistration of lanes when the vehicle enters or leaves them, at the exact right time.
+     * @throws NetworkException on network inconsistency
+     * @throws SimRuntimeException should never happen
+     * @throws GTUException when a branch is reached where the GTU does not know where to go next
+     */
+    private void scheduleTriggers() throws NetworkException, SimRuntimeException, GTUException
+    {
+        double timestep = getOperationalPlan().getTotalDuration().si;
+
+        try
+        {
+            // determine the path of the front and the rear of our GTU
+            OTSLine3D pathReference = getOperationalPlan().getPath();
+            List<OTSPoint3D> fList = Arrays.asList(pathReference.getPoints());
+            fList.add(new OTSPoint3D(pathReference.getLocationExtendedSI(pathReference.getLengthSI()
+                + getFront().getDx().si)));
+            OTSLine3D pathFront = new OTSLine3D(fList).extract(getFront().getDx().si, pathReference.getLengthSI());
+            List<OTSPoint3D> rList = Arrays.asList(pathReference.getPoints());
+            rList.add(0, new OTSPoint3D(pathReference.getLocationExtendedSI(getRear().getDx().si)));
+            OTSLine3D pathRear = new OTSLine3D(rList).extract(0, pathReference.getLengthSI() + getRear().getDx().si);
+
+            // determine the links we drive on
+            LanePathInfo lanePathInfo =
+                AbstractLaneBasedTacticalPlanner.buildLaneListForward(this, pathReference.getLength());
+            Set<CrossSectionLink> links = new HashSet<>();
+            for (Lane lane : lanePathInfo.getLaneList())
+            {
+                links.add(lane.getParentLink());
+            }
+
+            // if we make a lane change, register the new lane at the start of the maneuver
+            // and deregister the old one at the end
+            boolean laneChange =
+                getOperationalPlan() instanceof LaneBasedOperationalPlan
+                    ? ((LaneBasedOperationalPlan) getOperationalPlan()).isLaneChange() : false;
+
+            // if we make a lane change, immediately register the GTU in the parallel reference lane
+            // this is a (design choice)
+
+            // see if we cross the start line of any of the unregistered lanes with our front path (enter)
+            for (CrossSectionLink link : links)
+            {
+                for (CrossSectionElement cse : link.getCrossSectionElementList())
+                {
+                    if (cse instanceof Lane)
+                    {
+                        Lane lane = (Lane) cse;
+                        if (!this.lanes.keySet().contains(lane))
+                        {
+
+                        }
+                    }
+                }
+            }
+
+        }
+        catch (OTSGeometryException ge)
+        {
+            throw new GTUException(ge);
+        }
+    }
+
+    /**
+     * Schedule the triggers for this GTU that are going to happen until the next evaluation time. Also schedule the
      * registration and deregistration of lanes when the vehicle enters or leaves them, at the exact right time. <br>
      * Note: when the GTU makes a lane change, the vehicle will be registered for both lanes during the entire maneuver.
      * @throws NetworkException on network inconsistency
      * @throws SimRuntimeException should never happen
      * @throws GTUException when a branch is reached where the GTU does not know where to go next
      */
-    private void scheduleTriggers() throws NetworkException, SimRuntimeException, GTUException
+    private void scheduleTriggersX() throws NetworkException, SimRuntimeException, GTUException
     {
         /*
          * Move the vehicle into any new lanes with the front, and schedule entrance during this time step and calculate the

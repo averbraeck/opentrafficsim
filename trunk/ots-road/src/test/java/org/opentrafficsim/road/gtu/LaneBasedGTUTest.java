@@ -26,12 +26,13 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
@@ -111,7 +112,7 @@ public class LaneBasedGTUTest implements UNITS
             String linkName = fromNode.getId() + "-" + toNode.getId();
             Lane[] lanes =
                 LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, laneCount, laneType, new Speed(100,
-                    KM_PER_HOUR), simulator);
+                    KM_PER_HOUR), simulator, LongitudinalDirectionality.DIR_PLUS);
             links.add(lanes[0].getParentLink());
         }
         // Create a long truck with its front (reference) one meter in the last link on the 3rd lane
@@ -131,7 +132,7 @@ public class LaneBasedGTUTest implements UNITS
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
         LaneBasedIndividualCar truck =
             new LaneBasedIndividualCar("Truck", truckType, truckPositions, truckSpeed, truckLength, truckWidth,
-                maximumVelocity, simulator, strategicalPlanner, new LanePerception(), this.network);
+                maximumVelocity, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
         int found = 0;
@@ -203,7 +204,7 @@ public class LaneBasedGTUTest implements UNITS
                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
                 LaneBasedIndividualCar car =
                     new LaneBasedIndividualCar("Car", carType, carPositions, carSpeed, carLength, carWidth,
-                        maximumVelocity, simulator, strategicalPlanner, new LanePerception(), this.network);
+                        maximumVelocity, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
                 // leader = truck.headway(forwardMaxDistance);
                 // TODO see how we can ask the vehicle to look 'forwardMaxDistance' ahead
                 leader = truck.getPerception().getForwardHeadwayGTU();
@@ -375,7 +376,7 @@ public class LaneBasedGTUTest implements UNITS
             String linkName = "AB";
             Lane lane =
                 LaneFactory.makeMultiLane(linkName, fromNode, toNode, null, 1, laneType, new Speed(200, KM_PER_HOUR),
-                    simulator)[0];
+                    simulator, LongitudinalDirectionality.DIR_PLUS)[0];
             Length.Rel carPosition = new Length.Rel(100, METER);
             Set<DirectedLanePosition> carPositions = new LinkedHashSet<>(1);
             carPositions.add(new DirectedLanePosition(lane, carPosition, GTUDirectionality.DIR_PLUS));
@@ -390,7 +391,7 @@ public class LaneBasedGTUTest implements UNITS
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
             LaneBasedIndividualCar car =
                 new LaneBasedIndividualCar("Car", carType, carPositions, carSpeed, new Length.Rel(4, METER),
-                    new Length.Rel(1.8, METER), maximumVelocity, simulator, strategicalPlanner, new LanePerception(),
+                    new Length.Rel(1.8, METER), maximumVelocity, simulator, strategicalPlanner, new LanePerceptionFull(),
                     this.network);
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new Time.Abs(61, SECOND));

@@ -38,7 +38,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -104,7 +104,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
         final OTSDEVSSimulatorInterface simulator, final OTSNetwork network) throws GTUException, NetworkException,
         NamingException, SimRuntimeException, OTSGeometryException
     {
-        super(name, BLOCK_GTU, simulator, dummyStrategicalPlanner, new LanePerception(), lane.getCenterLine()
+        super(name, BLOCK_GTU, simulator, dummyStrategicalPlanner, new LanePerceptionFull(), lane.getCenterLine()
             .getLocation(position), Speed.ZERO, network);
         this.positionTL = position;
         this.laneTL = lane;
@@ -338,9 +338,9 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public LanePerception getPerception()
+    public LanePerceptionFull getPerception()
     {
-        return (LanePerception) super.getPerception();
+        return (LanePerceptionFull) super.getPerception();
     }
 
     /* ========================================================================================================= */

@@ -26,7 +26,6 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.data.DomainOrder;
 import org.junit.Test;
@@ -34,6 +33,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.car.CarTest;
@@ -72,12 +72,12 @@ public class ContourPlotTest implements UNITS
         ArrayList<Lane> result = new ArrayList<Lane>();
         Lane[] lanes =
                 LaneFactory.makeMultiLane("AtoB", new OTSNode("A", new OTSPoint3D(1234, 0, 0)), b, null, 1, laneType,
-                        new Speed(100, KM_PER_HOUR), null);
+                        new Speed(100, KM_PER_HOUR), null, LongitudinalDirectionality.DIR_PLUS);
         result.add(lanes[0]);
         // Make a continuation lane to prevent errors when the operational plan exceeds the available remaining length
         lanes =
                 LaneFactory.makeMultiLane("BtoC", b, new OTSNode("C", new OTSPoint3D(99999, 0, 0)), null, 1, laneType,
-                        new Speed(100, KM_PER_HOUR), null);
+                        new Speed(100, KM_PER_HOUR), null, LongitudinalDirectionality.DIR_PLUS);
         // System.out.println("continuation lane is " + lanes[0] + " length is " + lanes[0].getLength());
         // System.out.println("next lanes is " + result.get(0).nextLanes(gtuType));
         return result;

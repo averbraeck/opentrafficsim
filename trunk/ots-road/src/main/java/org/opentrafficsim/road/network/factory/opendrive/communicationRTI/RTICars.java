@@ -17,7 +17,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
@@ -64,7 +64,7 @@ public class RTICars extends LaneBasedIndividualCar
      */
     public RTICars(String valueOf, GTUType carType, Set<DirectedLanePosition> lanepositionSet, Speed speed,
         Rel carLength, Rel draw, Speed draw2, OTSDEVSSimulatorInterface simulator,
-        LaneBasedStrategicalPlanner sPlanner, LanePerception perception, final OTSNetwork network)
+        LaneBasedStrategicalPlanner sPlanner, LanePerceptionFull perception, final OTSNetwork network)
         throws NamingException, NetworkException, SimRuntimeException, GTUException, OperationalPlanException,
         OTSGeometryException
     {

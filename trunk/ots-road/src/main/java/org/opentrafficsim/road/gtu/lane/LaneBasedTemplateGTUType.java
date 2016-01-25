@@ -8,7 +8,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 
 /**
@@ -27,7 +27,7 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType
 
     /** the strategical planner (e.g., route determination) to use. */
 
-    private final Class<LanePerception> perceptionClass;
+    private final Class<LanePerceptionFull> perceptionClass;
 
     /** perceptionClass the lane-based perception model of the GTU. */
 
@@ -46,7 +46,7 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType
         final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist,
         final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist,
         final OTSDEVSSimulatorInterface simulator, Class<LaneBasedStrategicalPlanner> strategicalPlannerClass,
-        Class<LanePerception> perceptionClass) throws GTUException
+        Class<LanePerceptionFull> perceptionClass) throws GTUException
     {
         super(id, lengthDist, widthDist, maximumSpeedDist, simulator);
         this.strategicalPlannerClass = strategicalPlannerClass;
@@ -58,7 +58,7 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType
      * @throws InstantiationException in case instantiation fails
      * @throws IllegalAccessException in case constructor is not public
      */
-    protected LanePerception instantiatePerception() throws InstantiationException, IllegalAccessException
+    protected LanePerceptionFull instantiatePerception() throws InstantiationException, IllegalAccessException
     {
         return this.perceptionClass.newInstance();
     }

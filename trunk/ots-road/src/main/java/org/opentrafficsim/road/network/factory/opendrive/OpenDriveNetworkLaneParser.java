@@ -14,6 +14,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -87,6 +88,10 @@ public class OpenDriveNetworkLaneParser
     /** the trafficLights that have been created, organized by lanes */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, Set<AbstractTrafficLightNew>> trafficLightsByLanes = new HashMap<>();
+
+    /** the generated animation per object. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    public Map<Object, Renderable2D> animationMap = new HashMap<>();
 
     /**
      * @param simulator the simulator for creating the animation. Null if no animation needed.

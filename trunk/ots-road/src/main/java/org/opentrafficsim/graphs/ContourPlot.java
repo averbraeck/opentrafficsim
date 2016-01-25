@@ -42,7 +42,7 @@ import org.jfree.data.general.DatasetGroup;
 import org.jfree.data.xy.XYZDataset;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
 
@@ -564,7 +564,7 @@ public abstract class ContourPlot extends JFrame implements ActionListener, XYZD
 
     /** {@inheritDoc} */
     @Override
-    public final void addData(final AbstractLaneBasedGTU car, final Lane lane) throws NetworkException, GTUException
+    public final void addData(final LaneBasedGTU car, final Lane lane) throws NetworkException, GTUException
     {
         // System.out.println("addData car: " + car + ", lastEval: " + car.getSimulator().getSimulatorTime()
         // + " position of rear on lane " + lane + " is " + car.position(lane, car.getRear()));
