@@ -157,6 +157,13 @@ final class Links
     static void calculateNodeCoordinates(final LinkTag linkTag, final XmlNetworkLaneParser parser)
         throws NetworkException, NamingException
     {
+        // if all are defined, return...
+        if (linkTag.nodeStartTag.node != null && linkTag.nodeStartTag.angle != null && linkTag.nodeEndTag.node != null
+            && linkTag.nodeEndTag.angle != null)
+        {
+            return;
+        }
+
         // calculate dx, dy and dz for the straight or the arc.
         if (linkTag.nodeStartTag.node != null && linkTag.nodeEndTag.node != null)
         {
@@ -345,18 +352,45 @@ final class Links
         final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException, NamingException
     {
         NodeTag from = linkTag.nodeStartTag;
+        OTSPoint3D startPoint = new OTSPoint3D(from.coordinate);
+        double startAngle = linkTag.rotationStart != null ? linkTag.rotationStart.si : from.angle.si;
+        if (linkTag.offsetStart != null && linkTag.offsetStart.si != 0.0)
+        {
+            // shift the start point perpendicular to the node direction or read from tag
+            double offset = linkTag.offsetStart.si;
+            startPoint =
+                new OTSPoint3D(startPoint.x + offset * Math.cos(startAngle + Math.PI / 2.0), startPoint.y + offset
+                    * Math.sin(startAngle + Math.PI / 2.0), startPoint.z);
+            System.out.println("fc = " + from.coordinate + ", sa = " + startAngle + ", so = " + offset + ", sp = "
+                + startPoint);
+        }
+
         NodeTag to = linkTag.nodeEndTag;
+        OTSPoint3D endPoint = new OTSPoint3D(to.coordinate);
+        double endAngle = linkTag.rotationEnd != null ? linkTag.rotationEnd.si : to.angle.si;
+        if (linkTag.offsetEnd != null && linkTag.offsetEnd.si != 0.0)
+        {
+            // shift the start point perpendicular to the node direction or read from tag
+            double offset = linkTag.offsetEnd.si;
+            endPoint =
+                new OTSPoint3D(endPoint.x + offset * Math.cos(endAngle + Math.PI / 2.0), endPoint.y + offset
+                    * Math.sin(endAngle + Math.PI / 2.0), endPoint.z);
+            System.out.println("tc = " + to.coordinate + ", ea = " + endAngle + ", eo = " + offset + ", ep = "
+                + endPoint);
+        }
+
         OTSPoint3D[] coordinates = null;
 
         if (linkTag.straightTag != null)
         {
             coordinates = new OTSPoint3D[2];
-            coordinates[0] = new OTSPoint3D(from.coordinate.x, from.coordinate.y, from.coordinate.z);
-            coordinates[1] = new OTSPoint3D(to.coordinate.x, to.coordinate.y, to.coordinate.z);
+            coordinates[0] = startPoint;
+            coordinates[1] = endPoint;
         }
 
         if (linkTag.arcTag != null)
         {
+            // TODO move the radius if there is an start and end offset? How?
             int points = (Math.abs(linkTag.arcTag.angle.getSI()) <= Math.PI / 2.0) ? 64 : 128;
             coordinates = new OTSPoint3D[points];
             coordinates[0] = new OTSPoint3D(from.coordinate.x, from.coordinate.y, from.coordinate.z);
@@ -389,10 +423,8 @@ final class Links
         if (linkTag.bezierTag != null)
         {
             coordinates =
-                Bezier.cubic(128,
-                    new DirectedPoint(from.coordinate.x, from.coordinate.y, from.coordinate.z, 0, 0, from.angle.si),
-                    new DirectedPoint(to.coordinate.x, to.coordinate.y, to.coordinate.z, 0, 0, to.angle.si))
-                    .getPoints();
+                Bezier.cubic(128, new DirectedPoint(startPoint.x, startPoint.y, startPoint.z, 0, 0, startAngle),
+                    new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0, 0, endAngle)).getPoints();
         }
 
         OTSLine3D designLine = new OTSLine3D(coordinates);
