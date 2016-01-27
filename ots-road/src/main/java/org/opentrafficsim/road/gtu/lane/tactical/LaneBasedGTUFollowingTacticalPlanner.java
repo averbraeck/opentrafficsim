@@ -119,6 +119,12 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
             Segment segment = new OperationalPlan.AccelerationSegment(duration, accelerationStep.getAcceleration());
             operationalPlanSegmentList.add(segment);
         }
+        double t = accelerationStep.getValidUntil().minus(gtu.getSimulator().getSimulatorTime().get()).si;
+        double s = gtu.getVelocity().si * t + 0.5 * accelerationStep.getAcceleration().si * t * t;
+        if (path.getLengthSI() < s)
+        {
+            System.err.println("path is too short: path length is " + path.getLengthSI() + ", s is " + s);
+        }
         OperationalPlan op = new OperationalPlan(path, startTime, gtu.getVelocity(), operationalPlanSegmentList);
         return op;
     }
