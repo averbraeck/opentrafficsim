@@ -320,8 +320,8 @@
 	<NODE NAME="N24a" COORDINATE="(1666, 2489)" ANGLE="318.0128 deg" />
 	<NODE NAME="N25a" COORDINATE="(1686, 2471)" ANGLE="321.1269 deg" />
 	<NODE NAME="N26a" COORDINATE="(1784, 2392)" ANGLE="323.8543 deg" />
-	<NODE NAME="N27a" COORDINATE="(1899, 2308)" ANGLE="323.8543 deg" />
-	<NODE NAME="N28a" COORDINATE="(2009, 2272)" ANGLE="351.6341 deg" />
+	<NODE NAME="N27a" COORDINATE="(1899, 2308)" />
+	<NODE NAME="N28a" COORDINATE="(2009, 2272)" />
 	<NODE NAME="N29a" COORDINATE="(2043, 2267)" ANGLE="356.8202 deg" />
 	<NODE NAME="N30a" COORDINATE="(2079, 2265)" ANGLE="11.4066 deg" />
 	<NODE NAME="N31a" COORDINATE="(2193, 2288)" ANGLE="12.4791 deg" />
@@ -331,7 +331,7 @@
 	<NODE NAME="N33a2" COORDINATE="(2999,2450)" ANGLE="346.0568 deg" />
 	<NODE NAME="N34a" COORDINATE="(3260, 2385)" ANGLE="318.3665 deg" />
 	<NODE NAME="N34a2" COORDINATE="(3268,2378)" ANGLE="318.3665 deg" />
-	<NODE NAME="N34a1" COORDINATE="(3231,2392)" ANGLE="318.3665 deg" />
+	<NODE NAME="N34a1" COORDINATE="(3231,2392)" />
 	<NODE NAME="N35a" COORDINATE="(3341, 2313)" ANGLE="317.9019 deg" />
 	<NODE NAME="N36a" COORDINATE="(3455, 2210)" ANGLE="317.7792 deg" />
 	<NODE NAME="N37a" COORDINATE="(3509, 2161)" ANGLE="318.3665 deg" />
@@ -341,29 +341,29 @@
 	<NODE NAME="N41a" COORDINATE="(4149, 1589)" ANGLE="318.0128 deg" />
 	<NODE NAME="N42a" COORDINATE="(4249, 1499)" ANGLE="318.0128 deg" />
 	<NODE NAME="N43a" COORDINATE="(4559, 1220)" ANGLE="278.8807 deg" />
-	<NODE NAME="N43a1" COORDINATE="(4528, 1248)" ANGLE="278.8807 deg" />
+	<NODE NAME="N43a1" COORDINATE="(4528, 1248)" />
 	<NODE NAME="N43a2" COORDINATE="(4565, 1182)" ANGLE="278.8807 deg" />
 	<NODE NAME="N44a" COORDINATE="(4619, 836)" ANGLE="239.2645 deg" />
-	<NODE NAME="N44a1" COORDINATE="(4613, 874)" ANGLE="239.2645 deg" />
+	<NODE NAME="N44a1" COORDINATE="(4613, 874)" />
 	<NODE NAME="N44a2" COORDINATE="(4590, 788)" ANGLE="239.2645 deg" />
-	<NODE NAME="N45a" COORDINATE="(4333, 355)" ANGLE="249.444 deg" />
+	<NODE NAME="N45a" COORDINATE="(4333, 355)" />
 	<NODE NAME="N46a" COORDINATE="(4321, 323)" ANGLE="263.6598 deg" />
-	<NODE NAME="N47a" COORDINATE="(4308, 206)" ANGLE="275.9061 deg" />
+	<NODE NAME="N47a" COORDINATE="(4308, 206)" />
 	<NODE NAME="N48a" COORDINATE="(4311, 177)" ANGLE="281.6894 deg" />
 	<NODE NAME="N49a" COORDINATE="(4317, 148)" ANGLE="302.6961 deg" />
 	<NODE NAME="N50a" COORDINATE="(4412, 0)" ANGLE="302.6961 deg" />
 
 	<NODE NAME="N50b" COORDINATE="(4412, 0)" ANGLE="122.6961 deg" />
-	<NODE NAME="N49b" COORDINATE="(4317, 148)" ANGLE="101.6894 deg" />
+	<NODE NAME="N49b" COORDINATE="(4317, 148)" />
 	<NODE NAME="N48b" COORDINATE="(4311, 177)" ANGLE="95.9061 deg" />
 	<NODE NAME="N47b" COORDINATE="(4308, 206)" ANGLE="83.6598 deg" />
 	<NODE NAME="N46b" COORDINATE="(4321, 323)" ANGLE="69.444 deg" />
 	<NODE NAME="N45b" COORDINATE="(4333, 355)" ANGLE="59.2645 deg" />
 	<NODE NAME="N44b" COORDINATE="(4619, 836)" ANGLE="98.8807 deg" />
-	<NODE NAME="N44b2" COORDINATE="(4590, 788)" ANGLE="98.8807 deg" />
+	<NODE NAME="N44b2" COORDINATE="(4590, 788)" />
 	<NODE NAME="N44b1" COORDINATE="(4613, 874)" ANGLE="98.8807 deg" />
-	<NODE NAME="N43b" COORDINATE="(4559, 1220)" ANGLE="138.0128 deg" />
-	<NODE NAME="N43b2" COORDINATE="(4565, 1182)" ANGLE="138.0128 deg" />
+	<NODE NAME="N43b" COORDINATE="(4559, 1220)" />
+	<NODE NAME="N43b2" COORDINATE="(4565, 1182)" />
 	<NODE NAME="N43b1" COORDINATE="(4528, 1248)" ANGLE="138.0128 deg" />
 	<NODE NAME="N42b" COORDINATE="(4249, 1499)" ANGLE="138.0128 deg" />
 	<NODE NAME="N41b" COORDINATE="(4149, 1589)" ANGLE="138.5763 deg" />
@@ -374,14 +374,14 @@
 	<NODE NAME="N36b" COORDINATE="(3455, 2210)" ANGLE="137.9019 deg" />
 	<NODE NAME="N35b" COORDINATE="(3341, 2313)" ANGLE="138.3665 deg" />
 	<NODE NAME="N34b" COORDINATE="(3260, 2385)" ANGLE="166.0568 deg" />
-	<NODE NAME="N34b1" COORDINATE="(3231,2392)" ANGLE="166.0568 deg" />
-	<NODE NAME="N34b2" COORDINATE="(3268,2378)" ANGLE="166.0568 deg" />	
+	<NODE NAME="N34b1" COORDINATE="(3231,2392)" />
+	<NODE NAME="N34b2" COORDINATE="(3268,2378)" />	
 	<NODE NAME="N33b" COORDINATE="(2970, 2457)" ANGLE="192.2321 deg" />
 	<NODE NAME="N33b2" COORDINATE="(2999,2450)" ANGLE="192.2321 deg" />
 	<NODE NAME="N33b1" COORDINATE="(2905,2443)" ANGLE="192.2321 deg" />
 	<NODE NAME="N32b" COORDINATE="(2315, 2315)" ANGLE="192.4791 deg" />
 	<NODE NAME="N31b" COORDINATE="(2193, 2288)" ANGLE="191.4066 deg" />
-	<NODE NAME="N30b" COORDINATE="(2079, 2265)" ANGLE="176.8202 deg" />
+	<NODE NAME="N30b" COORDINATE="(2079, 2265)" />
 	<NODE NAME="N29b" COORDINATE="(2043, 2267)" ANGLE="171.6341 deg" />
 	<NODE NAME="N28b" COORDINATE="(2009, 2272)" ANGLE="161.8781 deg" />
 	<NODE NAME="N27b" COORDINATE="(1899, 2308)" ANGLE="143.8543 deg" />
@@ -403,7 +403,7 @@
 	<NODE NAME="N13b" COORDINATE="(860, 3195)" ANGLE="138.9542 deg" />
 	<NODE NAME="N12b" COORDINATE="(744, 3296)" ANGLE="141.009 deg" />
 	<NODE NAME="N11b" COORDINATE="(723, 3313)" ANGLE="136.8476 deg" />
-	<NODE NAME="N10b" COORDINATE="(627, 3403)" ANGLE="144.6888 deg" />
+	<NODE NAME="N10b" COORDINATE="(627, 3403)" />
 	<NODE NAME="N9b" COORDINATE="(603, 3420)" ANGLE="136.3972 deg" />
 	<NODE NAME="N8b" COORDINATE="(582, 3440)" ANGLE="138.5517 deg" />
 	<NODE NAME="N7b" COORDINATE="(505, 3508)" ANGLE="137.6213 deg" />
@@ -414,48 +414,48 @@
 	<NODE NAME="N2b" COORDINATE="(80, 3929)" ANGLE="136.0947 deg" />
 	<NODE NAME="N1b" COORDINATE="(0, 4006)" ANGLE="136.0947 deg"/>
 
-	<NODE NAME="N225a_uit" COORDINATE="(130, 3810)" ANGLE="225.0 deg" />
+	<NODE NAME="N225a_uit" COORDINATE="(130, 3810)"  />
 	<NODE NAME="N225a_uit2" COORDINATE="(40, 3750)"/>
-	<NODE NAME="N231a_uit" COORDINATE="(570, 3380)" ANGLE="225.0 deg" />
+	<NODE NAME="N231a_uit" COORDINATE="(570, 3380)"  />
 	<NODE NAME="N231a_uit2" COORDINATE="(490, 3300)"/>
-	<NODE NAME="N239a_uit"  COORDINATE="(1160, 2880)" ANGLE="225.0 deg" />
+	<NODE NAME="N239a_uit"  COORDINATE="(1160, 2880)"  />
 	<NODE NAME="N239a_uit2"  COORDINATE="(1100, 2800)"/>
-	<NODE NAME="N245a_uit"  COORDINATE="(1640, 2440)" ANGLE="225.0 deg" />
+	<NODE NAME="N245a_uit"  COORDINATE="(1640, 2440)"  />
 	<NODE NAME="N245a_uit2"  COORDINATE="(1580, 2380)"/>
-	<NODE NAME="N249a_uit"  COORDINATE="(2030, 2240)" ANGLE="260.0 deg" />
+	<NODE NAME="N249a_uit"  COORDINATE="(2030, 2240)" />
 	<NODE NAME="N249a_uit2"  COORDINATE="(2020, 2120)"/>
-	<NODE NAME="N291a_uit"  COORDINATE="(4270, 180)" ANGLE="180.0 deg" />
+	<NODE NAME="N291a_uit"  COORDINATE="(4270, 170)"  />
 	<NODE NAME="N291a_uit2"  COORDINATE="(4160, 160)"/>
 
-	<NODE NAME="N249b_uit"  COORDINATE="(2040, 2290)" ANGLE="100.0 deg" />
+	<NODE NAME="N249b_uit"  COORDINATE="(2040, 2290)"  />
 	<NODE NAME="N249b_uit2"  COORDINATE="(2040, 2400)"/>
-	<NODE NAME="N234b_uit"  COORDINATE="(900, 3220)" ANGLE="45.0 deg" />
+	<NODE NAME="N234b_uit"  COORDINATE="(910, 3220)"  />
 	<NODE NAME="N234b_uit2"  COORDINATE="(980, 3300)"/>
-	<NODE NAME="N225b_uit" COORDINATE="(200, 3875)" ANGLE="45.0 deg" />
+	<NODE NAME="N225b_uit" COORDINATE="(200, 3875)" />
 	<NODE NAME="N225b_uit2" COORDINATE="(290, 3950)"/>
 
-	<NODE NAME="N225a_in" COORDINATE="(130, 3800)" ANGLE="45.0 deg" />
+	<NODE NAME="N225a_in" COORDINATE="(130, 3810)" />
 	<NODE NAME="N225a_in2" COORDINATE="(50, 3720)"/>
-	<NODE NAME="N231a_in" COORDINATE="(570, 3390)" ANGLE="45.0 deg" />
+	<NODE NAME="N231a_in" COORDINATE="(560, 3390)" />
 	<NODE NAME="N231a_in2" COORDINATE="(540, 3320)"/>
-	<NODE NAME="N239a_in"  COORDINATE="(1150, 2870)" ANGLE="45.0 deg" />
+	<NODE NAME="N239a_in"  COORDINATE="(1140, 2870)" />
 	<NODE NAME="N239a_in2"  COORDINATE="(1100, 2790)"/>
-	<NODE NAME="N245a_in"  COORDINATE="(1630, 2450)" ANGLE="45.0 deg" />
+	<NODE NAME="N245a_in"  COORDINATE="(1630, 2450)" />
 	<NODE NAME="N245a_in2"  COORDINATE="(1560, 2360)"/>
-	<NODE NAME="N249a_in"  COORDINATE="(2050, 2240)" ANGLE="80.0 deg" />
+	<NODE NAME="N249a_in"  COORDINATE="(2040, 2230)" />
 	<NODE NAME="N249a_in2"  COORDINATE="(2040, 2120)"/>
-	<NODE NAME="N291a_in"  COORDINATE="(4270, 160)" ANGLE="0.0 deg" />
-	<NODE NAME="N291a_in2"  COORDINATE="(4160, 140)"/>
+	<NODE NAME="N291a_in"  COORDINATE="(4260, 180)" />
+	<NODE NAME="N291a_in2"  COORDINATE="(4160, 140) "/>
 
-	<NODE NAME="N291b_in"  COORDINATE="(4340, 170)" ANGLE="180.0 deg" />
+	<NODE NAME="N291b_in"  COORDINATE="(4340, 170)" />
 	<NODE NAME="N291b_in2"  COORDINATE="(4420, 170)"/>
-	<NODE NAME="N249b_in"  COORDINATE="(2040, 2300)" ANGLE="260.0 deg" />
+	<NODE NAME="N249b_in"  COORDINATE="(2040, 2300)" />
 	<NODE NAME="N249b_in2"  COORDINATE="(2040, 2410)"/>
-	<NODE NAME="N245b_in"  COORDINATE="(1700, 2530)" ANGLE="225.0 deg" />
+	<NODE NAME="N245b_in"  COORDINATE="(1700, 2530)" />
 	<NODE NAME="N245b_in2"  COORDINATE="(1770, 2610)"/>
-	<NODE NAME="N234b_in"  COORDINATE="(930, 3210)" ANGLE="225.0 deg" />
+	<NODE NAME="N234b_in"  COORDINATE="(915, 3210)" />
 	<NODE NAME="N234b_in2"  COORDINATE="(980, 3300)"/>
-	<NODE NAME="N225b_in" COORDINATE="(200, 3875)" ANGLE="225.0 deg" />
+	<NODE NAME="N225b_in" COORDINATE="(200, 3875)" />
 	
 	<ROUTE NAME="A"
 		NODELIST="N1a N2a N3a N4a N5a N6a N7a N8a N10a N11a N12a N13a N15a N16a N17a N18a N20a N21a N22a N23a N25a N26a N27a N28a N30a N31a N32a N33a1 N33a2 N34a1 N34a2 N35a N36a N37a N38a N39a N40a N41a N42a N43a1 N43a2 N44a1 N44a2 N45a N46a N47a N49a N50a" />
@@ -464,27 +464,25 @@
 
 	<LINK NAME="L1a" NODESTART="N1a" NODEEND="N2a" ROADTYPE="RT2ln_ref0">
 		<STRAIGHT />
-        <GENERATOR LANE="A1" POSITION="10 m" GTU="CAR" ROUTE="A" IAT="EXPO(10) s" GTUCOLORER="SWITCHABLE" INITIALSPEED="CONST(0.0) m/s" />
-        <GENERATOR LANE="A2" POSITION="10 m" GTU="CAR" ROUTE="A" IAT="EXPO(10) s" GTUCOLORER="SWITCHABLE" INITIALSPEED="CONST(0.0) m/s" />
 	</LINK>
 	<LINK NAME="L2a" NODESTART="N2a" NODEEND="N3a" ROADTYPE="RT4ln_ref1">
 		<BEZIER />
 		<SENSOR NAME="225_01.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="225_01.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="225_02.1" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="225_02.1" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="225_02.2" LANE="A3" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="225_02.2" LANE="A3" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="225_03.1" LANE="A4" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="225_03.1" LANE="A4" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
 	<LINK NAME="L3a" NODESTART="N3a" NODEEND="N4a" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
@@ -495,31 +493,31 @@
 	<LINK NAME="L5a1" NODESTART="N5a" NODEEND="N6a" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
 		<SENSOR NAME="TT_a1" LANE="A1" POSITION="35m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_a1" LANE="A2" POSITION="35m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L6a" NODESTART="N6a" NODEEND="N7a" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
 		<SENSOR NAME="231_02.7" LANE="A1" POSITION="END-17.2722m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="231_02.8" LANE="A2" POSITION="END-17.2722m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L7a" NODESTART="N7a" NODEEND="N8a" ROADTYPE="RT3ln_ref1">
 		<STRAIGHT />
 		<SENSOR NAME="231_01.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="231_01.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="231_02.1" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="231_02.1" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="231_02.2" LANE="A3" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="231_02.2" LANE="A3" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
 	<LINK NAME="L8a" NODESTART="N8a" NODEEND="N10a" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
@@ -533,21 +531,21 @@
 	<LINK NAME="L12a" NODESTART="N12a" NODEEND="N13a" ROADTYPE="RT4ln_ref0">
 		<STRAIGHT />
 		<SENSOR NAME="234_02.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="234_02.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="234_02.2" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="234_02.2" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="234_03.1" LANE="A3" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="234_03.1" LANE="A3" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="234_03.2" LANE="A4" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="234_03.2" LANE="A4" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
 	<LINK NAME="L13a" NODESTART="N13a" NODEEND="N15a" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
@@ -555,9 +553,9 @@
 	<LINK NAME="L15a" NODESTART="N15a" NODEEND="N16a" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
 		<SENSOR NAME="TT_a2" LANE="A1" POSITION="75m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_a2" LANE="A2" POSITION="75m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L16a" NODESTART="N16a" NODEEND="N17a" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
@@ -565,29 +563,29 @@
 	<LINK NAME="L17a" NODESTART="N17a" NODEEND="N18a" ROADTYPE="RT4ln_ref1">
 		<STRAIGHT />
 		<SENSOR NAME="239_01.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="239_01.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="239_02.1" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="239_02.1" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="239_02.2" LANE="A3" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="239_02.2" LANE="A3" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="239_02.3" LANE="A4" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="239_02.3" LANE="A4" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="239_01.3" LANE="A1" POSITION="END-60m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="239_02.7" LANE="A2" POSITION="END-80m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="239_02.8" LANE="A3" POSITION="END-80m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="239_02.9" LANE="A4" POSITION="END-80m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L18a" NODESTART="N18a" NODEEND="N20a" ROADTYPE="RT3ln_ref0">
 		<BEZIER />
@@ -598,30 +596,30 @@
 	<LINK NAME="L21a" NODESTART="N21a" NODEEND="N22a" ROADTYPE="RT3ln_ref0">
 		<BEZIER />
 		<SENSOR NAME="245_02.10" LANE="A1" POSITION="END-24.8685m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="245_02.11" LANE="A2" POSITION="END-24.8685m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="245_02.12" LANE="A3" POSITION="END-24.8685m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L22a" NODESTART="N22a" NODEEND="N23a" ROADTYPE="RT4ln_ref1">
 		<STRAIGHT />
 		<SENSOR NAME="245_01.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="245_01.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="245_02.1" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="245_02.1" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="245_02.2" LANE="A3" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="245_02.2" LANE="A3" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="245_02.3" LANE="A4" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="245_02.3" LANE="A4" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
 	<LINK NAME="L23a" NODESTART="N23a" NODEEND="N25a" ROADTYPE="RT3ln_ref0">
 		<BEZIER />
@@ -635,35 +633,35 @@
 	<LINK NAME="L27a" NODESTART="N27a" NODEEND="N28a" ROADTYPE="RT5ln_ref1">
 		<STRAIGHT />
 		<SENSOR NAME="249_01.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="249_01.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="249_02.1" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="249_02.1" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="249_02.2" LANE="A3" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="249_02.2" LANE="A3" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="249_02.3" LANE="A4" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="249_02.3" LANE="A4" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="249_03.1" LANE="A5" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="249_03.1" LANE="A5" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="249_01.3" LANE="A1" POSITION="END-60m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="249_02.7" LANE="A2" POSITION="END-80m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="249_02.8" LANE="A3" POSITION="END-80m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="249_02.9" LANE="A4" POSITION="END-80m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="249_03.3" LANE="A5" POSITION="END-60m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L28a" NODESTART="N28a" NODEEND="N30a" ROADTYPE="RT3ln_ref0">
 		<BEZIER />
@@ -671,11 +669,11 @@
 	<LINK NAME="L30a" NODESTART="N30a" NODEEND="N31a" ROADTYPE="RT3ln_ref0">
 		<BEZIER />
 		<SENSOR NAME="TT_a3" LANE="A1" POSITION="39m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_a3" LANE="A2" POSITION="39m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_a3" LANE="A3" POSITION="39m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L31a" NODESTART="N31a" NODEEND="N32a" ROADTYPE="RT3ln_ref0">
 		<BEZIER />
@@ -737,30 +735,30 @@
 	<LINK NAME="L45a" NODESTART="N45a" NODEEND="N46a" ROADTYPE="RT3ln_ref0">
 		<BEZIER />
 		<SENSOR NAME="291_02.10" LANE="A1" POSITION="END-5.28m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="291_02.11" LANE="A2" POSITION="END-5.28m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="291_02.12" LANE="A3" POSITION="END-5.28m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L46a" NODESTART="N46a" NODEEND="N47a" ROADTYPE="RT4ln_ref1">
 		<STRAIGHT />
 		<SENSOR NAME="291_01.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="291_01.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="291_02.1" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="291_02.1" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="291_02.2" LANE="A3" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="291_02.2" LANE="A3" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="291_02.3" LANE="A4" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="291_02.3" LANE="A4" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
 	<LINK NAME="L47a" NODESTART="N47a" NODEEND="N49a" ROADTYPE="RT3ln_ref0">
 		<BEZIER />
@@ -768,11 +766,11 @@
 	<LINK NAME="L49a" NODESTART="N49a" NODEEND="N50a" ROADTYPE="RT3ln_ref0">
 		<BEZIER />
 		<SENSOR NAME="TT_a4" LANE="A1" POSITION="66m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_a4" LANE="A2" POSITION="66m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_a4" LANE="A3" POSITION="66m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 		<SINK LANE="A1" POSITION="END-20m" />
 		<SINK LANE="A2" POSITION="END-20m" />
 		<SINK LANE="A3" POSITION="END-20m" />
@@ -780,21 +778,21 @@
 	<LINK NAME="L49b" NODESTART="N50b" NODEEND="N49b" ROADTYPE="RT4ln_ref0">
 		<STRAIGHT />
 		<SENSOR NAME="291_08.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="291_08.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="291_08.2" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="291_08.2" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="291_09.1" LANE="A3" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="291_09.1" LANE="A3" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="291_09.2" LANE="A4" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="291_09.2" LANE="A4" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
 	<LINK NAME="L48b" NODESTART="N49b" NODEEND="N48b" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
@@ -805,9 +803,9 @@
 	<LINK NAME="L46b" NODESTART="N47b" NODEEND="N46b" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
 		<SENSOR NAME="TT_b4" LANE="A1" POSITION="30m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_b4" LANE="A2" POSITION="30m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L45b" NODESTART="N46b" NODEEND="N45b" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
@@ -871,35 +869,35 @@
 	<LINK NAME="L30b" NODESTART="N31b" NODEEND="N30b" ROADTYPE="RT5ln_ref1">
 		<STRAIGHT />
 		<SENSOR NAME="249_07.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="249_07.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="249_08.1" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="249_08.1" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="249_08.2" LANE="A3" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="249_08.2" LANE="A3" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="249_09.1" LANE="A4" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="249_09.1" LANE="A4" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="249_09.2" LANE="A5" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="249_09.2" LANE="A5" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="249_07.3" LANE="A1" POSITION="END-60m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="249_08.5" LANE="A2" POSITION="END-80m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="249_08.6" LANE="A3" POSITION="END-80m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="249_09.5" LANE="A4" POSITION="END-60m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="249_09.6" LANE="A5" POSITION="END-60m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L29b" NODESTART="N30b" NODEEND="N29b" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
@@ -910,9 +908,9 @@
 	<LINK NAME="L27b" NODESTART="N28b" NODEEND="N27b2" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
 		<SENSOR NAME="TT_b3" LANE="A1" POSITION="50m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_b3" LANE="A2" POSITION="50m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L26b1" NODESTART="N27b2" NODEEND="N27b1" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
@@ -923,21 +921,21 @@
 	<LINK NAME="L25b" NODESTART="N26b" NODEEND="N25b" ROADTYPE="RT3ln_ref0">
 		<BEZIER />
 		<SENSOR NAME="245_08.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="245_08.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="245_08.2" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="245_08.2" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="245_09.1" LANE="A3" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="245_09.1" LANE="A3" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="245_08.7" LANE="A1" POSITION="END-120m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="245_08.8" LANE="A2" POSITION="END-120m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L24b" NODESTART="N25b" NODEEND="N24b" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
@@ -954,29 +952,29 @@
 	<LINK NAME="L20b" NODESTART="N21b" NODEEND="N20b" ROADTYPE="RT4ln_ref0">
 		<STRAIGHT />
 		<SENSOR NAME="239_08.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="239_08.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="239_08.2" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="239_08.2" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="239_09.1" LANE="A3" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="239_09.1" LANE="A3" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="239_09.2" LANE="A4" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="239_09.2" LANE="A4" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="239_08.5" LANE="A1" POSITION="END-80m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="239_08.6" LANE="A2" POSITION="END-80m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="239_09.5" LANE="A3" POSITION="END-60m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="239_09.6" LANE="A4" POSITION="END-60m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L19b" NODESTART="N20b" NODEEND="N19b" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
@@ -993,21 +991,21 @@
 	<LINK NAME="L15b" NODESTART="N16b" NODEEND="N15b" ROADTYPE="RT4ln_ref2">
 		<STRAIGHT />
 		<SENSOR NAME="234_07.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="234_07.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="234_07.2" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="234_07.2" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="234_08.1" LANE="A3" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="234_08.1" LANE="A3" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="234_08.2" LANE="A4" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="234_08.2" LANE="A4" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
 	<LINK NAME="L14b" NODESTART="N15b" NODEEND="N14b" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
@@ -1018,9 +1016,9 @@
 	<LINK NAME="L12b" NODESTART="N13b" NODEEND="N12b" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
 		<SENSOR NAME="TT_b2" LANE="A1" POSITION="60m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_b2" LANE="A2" POSITION="60m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L11b" NODESTART="N12b" NODEEND="N11b" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
@@ -1028,25 +1026,25 @@
 	<LINK NAME="L10b" NODESTART="N11b" NODEEND="N10b" ROADTYPE="RT4ln_ref0">
 		<STRAIGHT />
 		<SENSOR NAME="231_08.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="231_08.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="231_08.2" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="231_08.2" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="231_09.1" LANE="A3" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="231_09.1" LANE="A3" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="231_09.2" LANE="A4" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="231_09.2" LANE="A4" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="231_08.7" LANE="A1" POSITION="END-120m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="231_08.8" LANE="A2" POSITION="END-120m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L9b" NODESTART="N10b" NODEEND="N9b" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
@@ -1063,29 +1061,29 @@
 	<LINK NAME="L5b" NODESTART="N6b" NODEEND="N5b" ROADTYPE="RT4ln_ref1">
 		<STRAIGHT />
 		<SENSOR NAME="225_07.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="225_07.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="225_08.1" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="225_08.1" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="225_08.2" LANE="A3" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="225_08.2" LANE="A3" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="225_09.1" LANE="A4" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="225_09.1" LANE="A4" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="225_07.3" LANE="A1" POSITION="END-60m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="225_08.5" LANE="A2" POSITION="END-80m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="225_08.6" LANE="A3" POSITION="END-80m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="225_09.3" LANE="A4" POSITION="END-60m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.CheckSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L4b" NODESTART="N5b" NODEEND="N4b" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
@@ -1096,9 +1094,9 @@
 	<LINK NAME="L2b" NODESTART="N3b" NODEEND="N2b" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
 		<SENSOR NAME="TT_b1" LANE="A1" POSITION="56m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 		<SENSOR NAME="TT_b1" LANE="A2" POSITION="56m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.MeasureSensor" TRIGGER="FRONT" />
 	</LINK>
 	<LINK NAME="L1b" NODESTART="N2b" NODEEND="N1b" ROADTYPE="RT2ln_ref0">
 		<BEZIER />
@@ -1169,11 +1167,11 @@
 		<STRAIGHT />
 		<SINK LANE="A1" POSITION="END-20m" />
 	</LINK>
-	<LINK NAME="L249a_uitL" NODESTART="N28a" NODEEND="N249a_uit"
+	<LINK NAME="L249a_uitL" NODESTART="N28a" NODEEND="N249b_uit"
 		ROADTYPE="RT1ln_ref-3">
 		<BEZIER />
 	</LINK>
-	<LINK NAME="L249a_uitL2" NODESTART="N249a_uit" NODEEND="N249a_uit2"
+	<LINK NAME="L249a_uitL2" NODESTART="N249b_uit" NODEEND="N249b_uit2"
 		ROADTYPE="RT1ln_ref-3">
 		<STRAIGHT />
 		<SINK LANE="A1" POSITION="END-20m" />
@@ -1256,7 +1254,8 @@
 		<SINK LANE="A1" POSITION="END-20m" />
 		<SINK LANE="A2" POSITION="END-20m" />
 	</LINK>
-	<LINK NAME="L225b_uitR" NODESTART="N5b" NODEEND="N225b_uit"
+	<LINK NAME="L225b_uitRN225a_in
+	" NODESTART="N5b" NODEEND="N225b_uit"
 		ROADTYPE="RT1ln_ref1">
 		<BEZIER />
 	</LINK>
@@ -1274,7 +1273,14 @@
 		<STRAIGHT  />
 		<SINK LANE="A1" POSITION="END-20m" />
 	</LINK>
-
+	<LINK NAME="L231b_inL2" NODESTART="N231a_uit2" NODEEND="N231a_in"
+		ROADTYPE="RT1ln_ref-1">
+		<STRAIGHT  />
+		<SENSOR NAME="231_12.1" LANE="A1" POSITION="END-1.5m"
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
+		<TRAFFICLIGHT NAME="231_12.1" LANE="A1" POSITION="END-1.55m"
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
+	</LINK>
 	<LINK NAME="L225a_inR" NODESTART="N225a_in" NODEEND="N5a"
 		ROADTYPE="RT1ln_ref0">
 		<BEZIER />
@@ -1283,9 +1289,9 @@
 		ROADTYPE="RT1ln_ref0">
 		<STRAIGHT />
 		<SENSOR NAME="225_10.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="225_10.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
 	<LINK NAME="L231a_inR" NODESTART="N231a_in" NODEEND="N10a"
 		ROADTYPE="RT2ln_ref0">
@@ -1295,13 +1301,13 @@
 		ROADTYPE="RT2ln_ref0">
 		<STRAIGHT  />
 		<SENSOR NAME="231_10.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="231_10.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="231_10.2" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="231_10.2" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
 	<LINK NAME="L234a_inL" NODESTART="N234b_in" NODEEND="N15a"
 		ROADTYPE="RT2ln_ref0">
@@ -1311,13 +1317,13 @@
 		ROADTYPE="RT2ln_ref0">
 		<STRAIGHT  />
 		<SENSOR NAME="234_06.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="234_06.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="234_06.2" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="234_06.2" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
 	<LINK NAME="L239a_inR" NODESTART="N239a_in" NODEEND="N20a"
 		ROADTYPE="RT2ln_ref0">
@@ -1327,13 +1333,13 @@
 		ROADTYPE="RT2ln_ref0">
 		<STRAIGHT  />
 		<SENSOR NAME="239_10.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="239_10.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="239_10.2" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="239_10.2" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
 	<LINK NAME="L245a_inR" NODESTART="N245a_in" NODEEND="N25a"
 		ROADTYPE="RT1ln_ref0">
@@ -1359,20 +1365,20 @@
 		ROADTYPE="RT2ln_ref0">
 		<STRAIGHT  />
 		<SENSOR NAME="249_10.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="249_10.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="249_10.2" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="249_10.2" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
-	<LINK NAME="L249a_inL" NODESTART="N249a_in" NODEEND="N30a"
-		ROADTYPE="RT1ln_ref-2">
+	<LINK NAME="L249a_inL" NODESTART="N249a_in" NODEEND="N28b"
+		ROADTYPE="RT1ln_ref-1">
 		<BEZIER  />
 	</LINK>
 	<LINK NAME="L249a_inL2" NODESTART="N249a_uit2" NODEEND="N249a_in"
-		ROADTYPE="RT1ln_ref-2">
+		ROADTYPE="RT1ln_ref-1">
 		<STRAIGHT  />
 	</LINK>
 	<LINK NAME="L291a_inR" NODESTART="N291a_in" NODEEND="N49a"
@@ -1383,20 +1389,20 @@
 		ROADTYPE="RT2ln_ref0">
 		<STRAIGHT  />
 		<SENSOR NAME="291_10.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="291_10.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="291_10.2" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="291_10.2" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
-	<LINK NAME="L291a_inL" NODESTART="N291a_in" NODEEND="N49a"
-		ROADTYPE="RT1ln_ref-2">
+	<LINK NAME="L291a_inL" NODESTART="N291a_in" NODEEND="N47b"
+		ROADTYPE="RT1ln_ref-1">
 		<BEZIER  />
 	</LINK>
 	<LINK NAME="L291a_inL2" NODESTART="N291a_uit2" NODEEND="N291a_in"
-		ROADTYPE="RT1ln_ref-2">
+		ROADTYPE="RT1ln_ref-1">
 		<STRAIGHT  />
 	</LINK>
 
@@ -1408,23 +1414,13 @@
 		ROADTYPE="RT1ln_ref0">
 		<STRAIGHT  />
 		<SENSOR NAME="291_04.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="291_04.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
-	<LINK NAME="L291b_inL" NODESTART="N291b_in" NODEEND="N47b"
-		ROADTYPE="RT1ln_ref-1">
-		<BEZIER  />
-	</LINK>
-	<LINK NAME="L291b_inL2" NODESTART="N291b_in2" NODEEND="N291b_in"
-		ROADTYPE="RT1ln_ref-1">
-		<STRAIGHT  />
-		<SENSOR NAME="291_11.2" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
-		<TRAFFICLIGHT NAME="291_11.2" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
-	</LINK>
-	<LINK NAME="L249b_inL" NODESTART="N249b_in" NODEEND="N28b"
+
+
+	<LINK NAME="L249b_inL" NODESTART="N249b_in" NODEEND="N30a"
 		ROADTYPE="RT2ln_ref0">
 		<BEZIER  />
 	</LINK>
@@ -1432,13 +1428,13 @@
 		ROADTYPE="RT2ln_ref0">
 		<STRAIGHT  />
 		<SENSOR NAME="249_12.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="249_12.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="249_12.2" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="249_12.2" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
 	<LINK NAME="L245b_inR" NODESTART="N245b_in" NODEEND="N23b"
 		ROADTYPE="RT1ln_ref0">
@@ -1448,7 +1444,7 @@
 		ROADTYPE="RT1ln_ref0">
 		<STRAIGHT  />
 	</LINK>
-	<LINK NAME="L245b_inL" NODESTART="N245b_in" NODEEND="N23b"
+	<LINK NAME="L245b_inL" NODESTART="N245b_in" NODEEND="N25a"
 		ROADTYPE="RT1ln_ref-1">
 		<BEZIER  />
 	</LINK>
@@ -1464,13 +1460,13 @@
 		ROADTYPE="RT2ln_ref0">
 		<STRAIGHT  />
 		<SENSOR NAME="239_12.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="239_12.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 		<SENSOR NAME="239_12.2" LANE="A2" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="239_12.2" LANE="A2" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
 	<LINK NAME="L234b_inR" NODESTART="N234b_in" NODEEND="N13b"
 		ROADTYPE="RT1ln_ref0">
@@ -1480,25 +1476,25 @@
 		ROADTYPE="RT1ln_ref0">
 		<STRAIGHT  />
 		<SENSOR NAME="234_04.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
 		<TRAFFICLIGHT NAME="234_04.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
 	<LINK NAME="L231b_inL" NODESTART="N231a_in" NODEEND="N8b"
 		ROADTYPE="RT1ln_ref-1">
 		<BEZIER  />
 	</LINK>
-	<LINK NAME="L225a_inL" NODESTART="N225a_in" NODEEND="N3b"
+	<LINK NAME="L225b_inL" NODESTART="N225b_in" NODEEND="N5a"
 		ROADTYPE="RT1ln_ref0">
 		<BEZIER />
 	</LINK>
-
-	<LINK NAME="L225b_inR2" NODESTART="N225b_uit2" NODEEND="N225b_uit"
+	<LINK NAME="L225b_inL2" NODESTART="N225b_uit2" NODEEND="N225b_in"
 		ROADTYPE="RT1ln_ref0">
 		<STRAIGHT />
-		<SENSOR NAME="225_04.1" LANE="A1" POSITION="END-1.5m"
-			CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor" TRIGGER="FRONT" />
-		<TRAFFICLIGHT NAME="225_04.1" LANE="A1" POSITION="END-1.55m"
-			CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
+		<SENSOR NAME="225_5.1" LANE="A1" POSITION="END-1.5m"
+			CLASS="nl.grontmij.smarttraffic.model.GenerateSensor" TRIGGER="FRONT" />
+		<TRAFFICLIGHT NAME="225_11.2" LANE="A1" POSITION="END-1.55m"
+			CLASS="nl.grontmij.smarttraffic.model.TrafficLight" />
 	</LINK>
+
 </NETWORK>
