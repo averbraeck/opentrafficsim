@@ -19,6 +19,21 @@ public class OTSOffsetLinePK
     /** Debugging flag. */
     static boolean debugOffsetLine = false;
 
+    /** Precision of approximation of arcs in the offsetLine method. */
+    static double circlePrecision = 0.001;
+
+    /** Noise in the reference line less than this value is always filtered. */
+    static double offsetMinimumFilterValue = 0.001;
+
+    /** Noise in the reference line greater than this value is never filtered. */
+    static double offsetMaximumFilterValue = 0.1;
+
+    /**
+     * Noise in the reference line less than <cite>offset / offsetFilterRatio</cite> is filtered except when the resulting value
+     * exceeds <cite>offsetMaximumFilterValue</cite>.
+     */
+    static double offsetFilterRatio = 10;
+
     /**
      * Construct an offset line.
      * @param referenceLine OTSLine3D; the reference line
@@ -32,7 +47,7 @@ public class OTSOffsetLinePK
         // if (referenceLine.size() > 1 && referenceLine.getFirst().horizontalDistanceSI(new OTSPoint3D(-200.376, -111.999)) <
         // 0.1
         // && referenceLine.get(1).horizontalDistanceSI(new OTSPoint3D(-204.098, -100.180)) < 0.1 && Math.abs(offset) > 1)
-        
+
         // if (referenceLine.size() > 1 && referenceLine.getFirst().horizontalDistanceSI(new OTSPoint3D(-177.580, -169.726)) <
         // 0.1
         // && referenceLine.get(1).horizontalDistanceSI(new OTSPoint3D(-179.028, -166.084)) < 0.1 && Math.abs(offset) > 1
@@ -62,11 +77,12 @@ public class OTSOffsetLinePK
         final double precision = 0.00001;
         if (bufferOffset < precision)
         {
-            return referenceLine; // "This" is immutable (except for some cached fields); so we can safely return "this".
+            return referenceLine; // "OTSLine3D" is immutable (except for some cached fields); so we can safely return it.
         }
 
-        final double circlePrecision = 0.001;
-        OTSLine3D filteredReferenceLine = referenceLine.noiseFilteredLine(Math.max(circlePrecision, bufferOffset / 10));
+        OTSLine3D filteredReferenceLine =
+                referenceLine.noiseFilteredLine(Math.max(offsetMinimumFilterValue,
+                        Math.min(bufferOffset / 10, offsetMaximumFilterValue)));
         List<OTSPoint3D> tempPoints = new ArrayList<>();
         // Make good use of the fact that an OTSLine3D cannot have consecutive duplicate points and has > 1 points
         OTSPoint3D prevPoint = filteredReferenceLine.get(0);
@@ -101,13 +117,14 @@ public class OTSOffsetLinePK
                     {
                         numSegments = 2;
                     }
-                    for (; numSegments < 1000; numSegments *= 2)
+                    while (true)
                     {
                         double maxError = bufferOffset * (1 - Math.abs(Math.cos(deltaAngle / numSegments / 2)));
                         if (maxError < circlePrecision)
                         {
                             break; // required precision reached
                         }
+                        numSegments *= 2;
                     }
                     OTSPoint3D prevArcPoint = tempPoints.get(tempPoints.size() - 1);
                     // Generate the intermediate points
