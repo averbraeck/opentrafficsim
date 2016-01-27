@@ -75,6 +75,7 @@ public class OTSPolygon3D extends OTSLine3D
         // http://paulbourke.net/geometry/insidepoly/ (Solution 2; 2D)
         double sumAngle = 0;
         OTSPoint3D prevPoint = getLast();
+        // TODO: using atan twice in a loop is expensive; should look for a faster algorithm.
         for (OTSPoint3D p : getPoints())
         {
             double theta1 = Math.atan2(prevPoint.y - point.y, prevPoint.x - point.x);
