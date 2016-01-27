@@ -56,7 +56,7 @@ public class OTSPolygon3D extends OTSLine3D
     }
 
     /**
-     * Determine if a point is horizontally (ignoring Z-coordinates) contained within this OTSPolygon3D. <br />
+     * Determine if a point is horizontally (ignoring Z-coordinates) contained within this OTSPolygon3D. <br>
      * Derived from <a href=
      * "http://bbs.dartmouth.edu/~fangq/MATH/download/source/Determining%20if%20a%20point%20lies%20on%20the%20interior%20of%20a%20polygon.htm"
      * > Paul Bourke's Determining if a point lies on the interior of a polygon</a>.
