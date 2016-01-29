@@ -87,6 +87,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
                     headwayGTU.getDistance(), perception.getSpeedLimit());
         }
 
+        // TODO put this in the AccelerationStep class
         Time.Rel duration = accelerationStep.getValidUntil().minus(gtu.getSimulator().getSimulatorTime().getTime());
 
         // see if we have to continue standing still. In that case, generate a stand still plan
@@ -97,17 +98,10 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         }
 
         // build a list of lanes forward, with a maximum headway.
-        OTSLine3D path;
-        try
-        {
-            path =
-                buildLaneListForward(laneBasedGTU, laneBasedGTU.getDrivingCharacteristics().getForwardHeadwayDistance())
-                    .getPath();
-        }
-        catch (OTSGeometryException exception)
-        {
-            throw new GTUException(exception);
-        }
+        LanePathInfo lpi =
+            buildLaneListForward(laneBasedGTU, laneBasedGTU.getDrivingCharacteristics().getForwardHeadwayDistance());
+        OTSLine3D path = lpi.getPath();
+
         List<Segment> operationalPlanSegmentList = new ArrayList<>();
         if (accelerationStep.getAcceleration().si == 0.0)
         {
@@ -119,12 +113,15 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
             Segment segment = new OperationalPlan.AccelerationSegment(duration, accelerationStep.getAcceleration());
             operationalPlanSegmentList.add(segment);
         }
+        // CHECK start
         double t = accelerationStep.getValidUntil().minus(gtu.getSimulator().getSimulatorTime().get()).si;
         double s = gtu.getVelocity().si * t + 0.5 * accelerationStep.getAcceleration().si * t * t;
         if (path.getLengthSI() < s)
         {
-            System.err.println("path is too short: path length is " + path.getLengthSI() + ", s is " + s);
+            System.err.println("path for GTU " + laneBasedGTU + " is too short: path length is " + path.getLengthSI()
+                + ", s is " + s + ", lanes = " + lpi.getLaneList());
         }
+        // CHECK end
         OperationalPlan op = new OperationalPlan(path, startTime, gtu.getVelocity(), operationalPlanSegmentList);
         return op;
     }

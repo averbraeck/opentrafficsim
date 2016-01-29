@@ -85,11 +85,10 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      * @return an instance that provides the following information for an operational plan: the lanes to follow, and the path to
      *         follow when staying on the same lane.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
-     * @throws OTSGeometryException when there is a problem with the path construction
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
     public static LanePathInfo buildLaneListForward(final LaneBasedGTU gtu, final Length.Rel maxHeadway)
-        throws GTUException, OTSGeometryException, NetworkException
+        throws GTUException, NetworkException
     {
         List<Lane> laneListForward = new ArrayList<>();
         Lane lane = getReferenceLane(gtu);
@@ -117,7 +116,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             System.err.println("GTU " + gtu + ": " + exception.getMessage());
             System.err.println(lane + ", len=" + lane.getLength());
             System.err.println(position);
-            throw exception;
+            throw new GTUException(exception);
         }
 
         while (lengthForward.lt(maxHeadway))
@@ -173,37 +172,45 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             lengthForward = lengthForward.plus(lane.getLength());
 
             // determine direction for the path
-            if (lastGtuDir.equals(GTUDirectionality.DIR_PLUS))
+            try
             {
-                if (lastLane.getParentLink().getEndNode().equals(lane.getParentLink().getStartNode()))
+                if (lastGtuDir.equals(GTUDirectionality.DIR_PLUS))
                 {
-                    // -----> O ----->, GTU moves ---->
-                    path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine());
-                    lastGtuDir = GTUDirectionality.DIR_PLUS;
+                    if (lastLane.getParentLink().getEndNode().equals(lane.getParentLink().getStartNode()))
+                    {
+                        // -----> O ----->, GTU moves ---->
+                        path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine());
+                        lastGtuDir = GTUDirectionality.DIR_PLUS;
+                    }
+                    else
+                    {
+                        // -----> O <-----, GTU moves ---->
+                        path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine().reverse());
+                        lastGtuDir = GTUDirectionality.DIR_MINUS;
+                    }
                 }
                 else
                 {
-                    // -----> O <-----, GTU moves ---->
-                    path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine().reverse());
-                    lastGtuDir = GTUDirectionality.DIR_MINUS;
+                    if (lastLane.getParentLink().getStartNode().equals(lane.getParentLink().getStartNode()))
+                    {
+                        // <----- O ----->, GTU moves ---->
+                        path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine());
+                        lastGtuDir = GTUDirectionality.DIR_PLUS;
+                    }
+                    else
+                    {
+                        // <----- O <-----, GTU moves ---->
+                        path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine().reverse());
+                        lastGtuDir = GTUDirectionality.DIR_MINUS;
+                    }
                 }
+                lastLane = lane;
             }
-            else
+            catch (OTSGeometryException exception)
             {
-                if (lastLane.getParentLink().getStartNode().equals(lane.getParentLink().getStartNode()))
-                {
-                    // <----- O ----->, GTU moves ---->
-                    path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine());
-                    lastGtuDir = GTUDirectionality.DIR_PLUS;
-                }
-                else
-                {
-                    // <----- O <-----, GTU moves ---->
-                    path = OTSLine3D.concatenate(Lane.MARGIN.si, path, lane.getCenterLine().reverse());
-                    lastGtuDir = GTUDirectionality.DIR_MINUS;
-                }
+                throw new GTUException(exception);
             }
-            lastLane = lane;
+
         }
         return new LanePathInfo(path, laneListForward);
     }
