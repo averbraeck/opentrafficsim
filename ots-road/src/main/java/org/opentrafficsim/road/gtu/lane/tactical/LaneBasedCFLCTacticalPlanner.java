@@ -125,13 +125,13 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             HeadwayGTU sameLaneLeader = perception.getForwardHeadwayGTU();
             HeadwayGTU sameLaneFollower = perception.getBackwardHeadwayGTU();
             Collection<HeadwayGTU> sameLaneTraffic = new ArrayList<HeadwayGTU>();
-            if (null != sameLaneLeader.getOtherGTU())
+            if (null != sameLaneLeader.getGTU())
             {
                 sameLaneTraffic.add(sameLaneLeader);
             }
-            if (null != sameLaneFollower.getOtherGTU())
+            if (null != sameLaneFollower.getGTU())
             {
-                sameLaneTraffic.add(new HeadwayGTU(sameLaneFollower.getOtherGTU(), -sameLaneFollower.getDistanceSI()));
+                sameLaneTraffic.add(new HeadwayGTU(sameLaneFollower.getGTU(), -sameLaneFollower.getDistanceSI()));
             }
 
             // Are we in the right lane for the route?

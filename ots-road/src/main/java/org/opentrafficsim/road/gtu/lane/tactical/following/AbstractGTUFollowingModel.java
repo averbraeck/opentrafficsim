@@ -43,7 +43,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
         // Find out if there is an immediate collision
         for (HeadwayGTU headwayGTU : otherGTUs)
         {
-            if (headwayGTU.getOtherGTU() != referenceGTU && null == headwayGTU.getDistance())
+            if (headwayGTU.getGTU() != referenceGTU && null == headwayGTU.getDistance())
             {
                 return TOODANGEROUS;
             }
@@ -54,11 +54,11 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
         // Find the leader and the follower that cause/experience the least positive (most negative) acceleration.
         for (HeadwayGTU headwayGTU : otherGTUs)
         {
-            if (null == headwayGTU.getOtherGTU())
+            if (null == headwayGTU.getGTU())
             {
                 System.out.println("FollowAcceleration.acceleration: Cannot happen");
             }
-            if (headwayGTU.getOtherGTU() == referenceGTU)
+            if (headwayGTU.getGTU() == referenceGTU)
             {
                 continue;
             }
@@ -68,7 +68,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
                 {
                     // This one is behind
                     AccelerationStep as =
-                        gfm.computeAcceleration(headwayGTU.getOtherGTU(), referenceGTU.getVelocity(when),
+                        gfm.computeAcceleration(headwayGTU.getGTU(), referenceGTU.getVelocity(when),
                             new Length.Rel(-headwayGTU.getDistanceSI(), LengthUnit.SI), speedLimit);
                     if (null == followerAccelerationStep
                         || as.getAcceleration().lt(followerAccelerationStep.getAcceleration()))
@@ -91,7 +91,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
                 {
                     // This one is ahead
                     AccelerationStep as =
-                        gfm.computeAcceleration(referenceGTU, headwayGTU.getOtherGTU().getVelocity(when),
+                        gfm.computeAcceleration(referenceGTU, headwayGTU.getGTU().getVelocity(when),
                             headwayGTU.getDistance(), speedLimit);
                     if (null == referenceGTUAccelerationStep
                         || as.getAcceleration().lt(referenceGTUAccelerationStep.getAcceleration()))

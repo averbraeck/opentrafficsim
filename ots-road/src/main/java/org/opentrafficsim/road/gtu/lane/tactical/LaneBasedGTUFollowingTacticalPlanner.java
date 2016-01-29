@@ -74,7 +74,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         // look at the conditions for headway
         HeadwayGTU headwayGTU = perception.getForwardHeadwayGTU();
         AccelerationStep accelerationStep = null;
-        if (headwayGTU.getOtherGTU() == null)
+        if (headwayGTU.getGTU() == null)
         {
             accelerationStep =
                 gtuFollowingModel.computeAccelerationWithNoLeader(laneBasedGTU, perception.getSpeedLimit());
@@ -83,7 +83,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         {
             // TODO do not use the velocity of the other GTU, but the PERCEIVED velocity
             accelerationStep =
-                gtuFollowingModel.computeAcceleration(laneBasedGTU, headwayGTU.getOtherGTU().getVelocity(),
+                gtuFollowingModel.computeAcceleration(laneBasedGTU, headwayGTU.getGTU().getVelocity(),
                     headwayGTU.getDistance(), perception.getSpeedLimit());
         }
 
