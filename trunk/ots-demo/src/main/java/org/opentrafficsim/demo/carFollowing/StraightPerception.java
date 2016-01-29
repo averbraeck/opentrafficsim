@@ -606,7 +606,8 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             this.block =
                 new LaneBasedIndividualCar("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
                     new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed(0.0, KM_PER_HOUR), this.simulator,
-                    strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+                    strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer,
+                    this.network);
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
         {
@@ -661,7 +662,8 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             LaneBasedPerceivingCar car =
                 new LaneBasedPerceivingCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
                     vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
-                    strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+                    strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer,
+                    this.network);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             car.setPerceptionInterval(new Time.Rel(this.perceptionIntervalDist.draw(), TimeUnit.SECOND));
             car.getStrategicalPlanner().getDrivingCharacteristics()
@@ -854,7 +856,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             // look at the conditions for headway
             HeadwayGTU headwayGTU = perception.getForwardHeadwayGTU();
             AccelerationStep accelerationStep = null;
-            if (headwayGTU.getOtherGTU() == null)
+            if (headwayGTU.getGTU() == null)
             {
                 accelerationStep =
                     gtuFollowingModel.computeAccelerationWithNoLeader(laneBasedGTU, perception.getSpeedLimit());
@@ -863,7 +865,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             {
                 // TODO do not use the velocity of the other GTU, but the PERCEIVED velocity
                 accelerationStep =
-                    gtuFollowingModel.computeAcceleration(laneBasedGTU, headwayGTU.getOtherGTU().getVelocity(),
+                    gtuFollowingModel.computeAcceleration(laneBasedGTU, headwayGTU.getGTU().getVelocity(),
                         headwayGTU.getDistance(), perception.getSpeedLimit());
             }
 
@@ -878,16 +880,9 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
 
             // build a list of lanes forward, with a maximum headway.
             OTSLine3D path;
-            try
-            {
-                path =
-                    buildLaneListForward(laneBasedGTU,
-                        laneBasedGTU.getDrivingCharacteristics().getForwardHeadwayDistance()).getPath();
-            }
-            catch (OTSGeometryException exception)
-            {
-                throw new GTUException(exception);
-            }
+            path =
+                buildLaneListForward(laneBasedGTU, laneBasedGTU.getDrivingCharacteristics().getForwardHeadwayDistance())
+                    .getPath();
             List<Segment> operationalPlanSegmentList = new ArrayList<>();
             if (accelerationStep.getAcceleration().si == 0.0)
             {
