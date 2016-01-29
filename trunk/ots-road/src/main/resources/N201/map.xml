@@ -72,9 +72,9 @@
 			<shapeFile>/N201/natural.shp</shapeFile>
 		</data>
 		<color>
-			<r>127</r>
+			<r>255</r>
 			<g>255</g>
-			<b>197</b>
+			<b>255</b>
 		</color>
 		<outlineColor>
 			<r>0</r>
