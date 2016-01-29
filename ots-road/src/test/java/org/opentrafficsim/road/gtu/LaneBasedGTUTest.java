@@ -25,7 +25,6 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -173,15 +172,13 @@ public class LaneBasedGTUTest implements UNITS
         HeadwayGTU leader = truck.getPerception().getForwardHeadwayGTU();
         assertTrue("With one vehicle in the network forward headway should return a value larger than maxDistance",
             forwardMaxDistance.getSI() < leader.getDistanceSI());
-        assertEquals("With one vehicle in the network forward headwayGTU should return null", null,
-            leader.getGTU());
+        assertEquals("With one vehicle in the network forward headwayGTU should return null", null, leader.getGTU());
         // TODO see how we can ask the vehicle to look this far behind
         Length.Rel reverseMaxDistance = new Length.Rel(-9999, METER);
         HeadwayGTU follower = truck.getPerception().getBackwardHeadwayGTU();
         assertTrue("With one vehicle in the network reverse headway should return a value larger than maxDistance",
             Math.abs(reverseMaxDistance.getSI()) < follower.getDistanceSI());
-        assertEquals("With one vehicle in the network reverse headwayGTU should return null", null,
-            follower.getGTU());
+        assertEquals("With one vehicle in the network reverse headwayGTU should return null", null, follower.getGTU());
         Length.Rel carLength = new Length.Rel(4, METER);
         Length.Rel carWidth = new Length.Rel(1.8, METER);
         Speed carSpeed = new Speed(0, KM_PER_HOUR);
@@ -295,8 +292,7 @@ public class LaneBasedGTUTest implements UNITS
                         assertEquals("Follower should be null", null, followerGTU);
                     }
                 }
-                Set<LaneBasedGTU> leftParallel =
-                    truck.getPerception().getParallelDirectionalGTUs().get(LateralDirectionality.LEFT);
+                Set<LaneBasedGTU> leftParallel = truck.getPerception().getParallelGTUsLeft();
                 int expectedLeftSize =
                     laneRank + carLanesCovered - 1 < truckFromLane - 1 || laneRank >= truckUpToLane
                         || step + carLength.getSI() <= truckPosition.getSI()
@@ -308,8 +304,7 @@ public class LaneBasedGTUTest implements UNITS
                 {
                     assertTrue("Parallel GTU should be the car", leftParallel.contains(car));
                 }
-                Set<LaneBasedGTU> rightParallel =
-                    truck.getPerception().getParallelDirectionalGTUs().get(LateralDirectionality.RIGHT);
+                Set<LaneBasedGTU> rightParallel = truck.getPerception().getParallelGTUsRight();
                 int expectedRightSize =
                     laneRank + carLanesCovered - 1 <= truckFromLane || laneRank > truckUpToLane + 1
                         || step + carLength.getSI() < truckPosition.getSI()
@@ -391,8 +386,8 @@ public class LaneBasedGTUTest implements UNITS
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
             LaneBasedIndividualCar car =
                 new LaneBasedIndividualCar("Car", carType, carPositions, carSpeed, new Length.Rel(4, METER),
-                    new Length.Rel(1.8, METER), maximumVelocity, simulator, strategicalPlanner, new LanePerceptionFull(),
-                    this.network);
+                    new Length.Rel(1.8, METER), maximumVelocity, simulator, strategicalPlanner,
+                    new LanePerceptionFull(), this.network);
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new Time.Abs(61, SECOND));
             while (simulator.isRunning())

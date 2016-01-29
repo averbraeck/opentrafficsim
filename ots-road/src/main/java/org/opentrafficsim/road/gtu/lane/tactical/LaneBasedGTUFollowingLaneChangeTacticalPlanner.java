@@ -21,8 +21,24 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 
 /**
- * Lane-based tactical planner that implements car following behavior. This tactical planner retrieves the car following model
- * from the strategical planner and will generate an operational plan for the GTU.
+ * Lane-based tactical planner that implements car following behavior and rule-based lane change. This tactical planner
+ * retrieves the car following model from the strategical planner and will generate an operational plan for the GTU.
+ * <p>
+ * A lane change occurs when:
+ * <ol>
+ * <li>The route indicates that the current lane does not lead to the destination; main choices are the time when the GTU
+ * switches to the "right" lane, and what should happen when the split gets closer and the lane change has failed. Observations
+ * indicate that vehicles if necessary stop in their current lane until they can go to the desired lane. A lane drop is
+ * automatically part of this implementation, because the lane with a lane drop will not lead to the GTU's destination.</li>
+ * <li>The desired speed of the vehicle is a particular delta-speed higher than its predecessor, the headway to the predecessor
+ * in the current lane has exceeded a certain value, it is allowed to change to the target lane, the target lane lies on the
+ * GTU's route, and the gap in the target lane is acceptable (including the evaluation of the perceived speed of a following GTU
+ * in the target lane).</li>
+ * <li>The current lane is not the optimum lane given the traffic rules (for example, to keep right), the headway to the
+ * predecessor on the target lane is greater than a certain value, the speed of the predecessor on the target lane is greater
+ * than or equal to our speed, the target lane is on the route, it is allowed to switch to the target lane, and the gap at the
+ * target lane is acceptable (including the perceived speed of any vehicle in front or behind on the target lane).</li>
+ * </ol>
  * <p>
  * This lane-based tactical planner makes decisions based on headway (GTU following model). It can ask the strategic planner for
  * assistance on the route to take when the network splits.
@@ -35,15 +51,15 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacticalPlanner
+public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLaneBasedTacticalPlanner
 {
     /** */
-    private static final long serialVersionUID = 20151125L;
+    private static final long serialVersionUID = 20160129L;
 
     /**
      * Instantiated a tactical planner with just GTU following behavior and no lane changes.
      */
-    public LaneBasedGTUFollowingTacticalPlanner()
+    public LaneBasedGTUFollowingLaneChangeTacticalPlanner()
     {
         super();
     }
@@ -66,6 +82,15 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         // perceive every time step... This is the 'classical' way of tactical planning.
         perception.perceive();
 
+        // Step 1: Do we want to change lanes because of the current lane not leading to our destination?
+        
+
+        // Step 2. Do we want to change lanes because of our predecessor on the current lane?
+
+        
+        // Step 3. Do we want to change lanes because of traffic rules?
+
+        
         // get some models to help us make a plan
         GTUFollowingModel gtuFollowingModel =
             laneBasedGTU.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();

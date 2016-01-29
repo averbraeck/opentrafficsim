@@ -50,15 +50,16 @@ public class LanePerceptionFull extends AbstractLanePerception implements Percep
     @Override
     public void perceive() throws GTUException, NetworkException
     {
-        updateTimestamp();
         updateSpeedLimit();
-        // TODO updateLanePlan(); includes objects that can force us to stop, such as traffic lights
+        updateLanePlan(); 
         updateForwardHeadwayGTU();
         updateBackwardHeadwayGTU();
-        updateAccessibleAdjacentLanes();
-        updateParallelGTUs();
-        updateLeftLaneTraffic();
-        updateRightLaneTraffic();
+        updateAccessibleAdjacentLanesLeft();
+        updateAccessibleAdjacentLanesRight();
+        updateParallelGTUsLeft();
+        updateParallelGTUsRight();
+        updateLaneTrafficLeft();
+        updateLaneTrafficRight();
     }
 
 }

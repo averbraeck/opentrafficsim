@@ -15,20 +15,49 @@ import nl.javel.gisbeans.io.esri.CoordinateTransform;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.D2.GisRenderable2D;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.jstats.distributions.DistConstant;
+import nl.tudelft.simulation.jstats.distributions.DistExponential;
+import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.animation.AccelerationGTUColorer;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
+import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
+import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
+import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.factory.CoordinateTransformLonLatToXY;
+import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
+import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.test.TestGMParser.WGS84ToRDNewTransform.Coords;
 import org.opentrafficsim.simulationengine.AbstractWrappableAnimation;
 import org.opentrafficsim.simulationengine.OTSSimulationException;
@@ -144,11 +173,12 @@ public class TestGMParser extends AbstractWrappableAnimation
                 throws SimRuntimeException
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
-            URL url = URLResource.getResource("/networkv2_90km_V5i.xml");
+            URL url = URLResource.getResource("/networkv2_90km_V5i2.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
+            OTSNetwork network = null;
             try
             {
-                nlp.build(url);
+                network = nlp.build(url);
             }
             catch (NetworkException | ParserConfigurationException | SAXException | IOException | NamingException
                 | GTUException | OTSGeometryException exception)
@@ -158,13 +188,60 @@ public class TestGMParser extends AbstractWrappableAnimation
 
             URL gisURL = URLResource.getResource("/N201/map.xml");
             System.err.println("GIS-map file: " + gisURL.toString());
-
-            // double latCenter = nlp.getHeaderTag().getOriginLat().si, lonCenter = nlp.getHeaderTag().getOriginLong().si;
-
-            // CoordinateTransform latLonToXY = new CoordinateTransformLonLatToXY(lonCenter, latCenter);
             CoordinateTransform rdto0 = new CoordinateTransformRD(104450, 478845);
             new GisRenderable2D(this.simulator, gisURL, rdto0);
 
+            // make the GTU generators.
+            GTUType carType = GTUType.makeGTUType("CAR");
+            StreamInterface stream = new MersenneTwister(1);
+            ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist =
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 0.0), SpeedUnit.METER_PER_SECOND);
+            ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDist =
+                new ContinuousDistDoubleScalar.Rel<>(new DistExponential(stream, 7.0), TimeUnit.SECOND);
+            ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist =
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 4.5), LengthUnit.METER);
+            ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist =
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 2.0), LengthUnit.METER);
+            ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist =
+                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 140.0), SpeedUnit.KM_PER_HOUR);
+            int maxGTUs = Integer.MAX_VALUE;
+            Time.Abs startTime = Time.Abs.ZERO;
+            Time.Abs endTime = new Time.Abs(1E24, TimeUnit.HOUR);
+            GTUColorer gtuColorer =
+                new SwitchableGTUColorer(0, new IDGTUColorer(), new VelocityGTUColorer(new Speed(100.0,
+                    SpeedUnit.KM_PER_HOUR)), new AccelerationGTUColorer(new Acceleration(-1.0,
+                    AccelerationUnit.METER_PER_SECOND_2), new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2)));
+            GTUFollowingModel gtuFollowingModel = new IDMPlus();
+            LaneBasedDrivingCharacteristics drivingCharacteristics =
+                new LaneBasedDrivingCharacteristics(gtuFollowingModel, null);
+            TacticalPlanner fixedTacticalPlanner = new LaneBasedGTUFollowingTacticalPlanner();
+            LaneBasedStrategicalPlanner strategicalPlanner =
+                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, fixedTacticalPlanner);
+            Class<LanePerceptionFull> perceptionClass = LanePerceptionFull.class;
+
+            CrossSectionLink L2a = (CrossSectionLink) network.getLink("L2a");
+            Lane L2a_A2 = (Lane) L2a.getCrossSectionElement("A2");
+            Lane L2a_A3 = (Lane) L2a.getCrossSectionElement("A3");
+            new GTUGeneratorIndividual("L2a_A2", this.simulator, carType, LaneBasedIndividualCar.class,
+                initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
+                endTime, L2a_A2, new Length.Rel(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
+                strategicalPlanner, perceptionClass, network);
+            new GTUGeneratorIndividual("L2a_A3", this.simulator, carType, LaneBasedIndividualCar.class,
+                initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
+                endTime, L2a_A3, new Length.Rel(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
+                strategicalPlanner, perceptionClass, network);
+
+            CrossSectionLink L49b = (CrossSectionLink) network.getLink("L49b");
+            Lane L49b_A1 = (Lane) L49b.getCrossSectionElement("A1");
+            Lane L49b_A2 = (Lane) L49b.getCrossSectionElement("A2");
+            new GTUGeneratorIndividual("L49b_A1", this.simulator, carType, LaneBasedIndividualCar.class,
+                initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
+                endTime, L49b_A1, new Length.Rel(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
+                strategicalPlanner, perceptionClass, network);
+            new GTUGeneratorIndividual("L49b_A2", this.simulator, carType, LaneBasedIndividualCar.class,
+                initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
+                endTime, L49b_A2, new Length.Rel(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
+                strategicalPlanner, perceptionClass, network);
         }
 
         /** {@inheritDoc} */
@@ -216,7 +293,7 @@ public class TestGMParser extends AbstractWrappableAnimation
             catch (Exception exception)
             {
                 exception.printStackTrace();
-                return new double[] {0, 0};
+                return new double[]{0, 0};
             }
         }
     }
@@ -248,7 +325,8 @@ public class TestGMParser extends AbstractWrappableAnimation
             {      0.0  ,      0.0  ,    0.0  ,   0.0  ,  0.0  , }};
         //@formatter:on
 
-        public static void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) throws Exception
+        public static void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts)
+            throws Exception
         {
             int offsetDelta = dstOff - srcOff;
             for (int i = srcOff; i < srcOff + numPts && i + 1 < srcPts.length && i + offsetDelta + 1 < dstPts.length; i +=
@@ -260,7 +338,7 @@ public class TestGMParser extends AbstractWrappableAnimation
             }
         }
 
-        private static Coords ellipswgs842rd(double EW, double NS) throws Exception
+        private static Coords ellipswgs842rd(double EW, double NS)
         {
             Coords result = new Coords();
             int p;
@@ -269,7 +347,7 @@ public class TestGMParser extends AbstractWrappableAnimation
             double de = 0.36 * (EW - 5.38720621);
             if (NS <= 50 || NS >= 54 || EW <= 3 || (EW >= 8))
             {
-                throw new Exception("Error: input out of range (" + EW + ", " + NS + ")");
+                System.err.println("Error: ellipswgs842rd input out of range (" + EW + ", " + NS + ")");
             }
 
             for (p = 0; p < 5; p++)
