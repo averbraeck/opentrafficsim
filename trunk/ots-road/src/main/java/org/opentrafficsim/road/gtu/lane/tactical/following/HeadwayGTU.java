@@ -18,28 +18,28 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 public class HeadwayGTU
 {
     /** the other GTU. */
-    private final LaneBasedGTU otherGTU;
+    private final LaneBasedGTU gtu;
 
     /** the distance to the GTU in meters. */
     private final double distanceSI;
 
     /**
      * Construct a new HeadwayGTU.
-     * @param otherGTU the other GTU
+     * @param gtu the GTU in front of us
      * @param distanceSI the distance to the other GTU in meters; if the other GTU is parallel, use distance Double.NaN
      */
-    public HeadwayGTU(final LaneBasedGTU otherGTU, final double distanceSI)
+    public HeadwayGTU(final LaneBasedGTU gtu, final double distanceSI)
     {
-        this.otherGTU = otherGTU;
+        this.gtu = gtu;
         this.distanceSI = distanceSI;
     }
 
     /**
-     * @return the other GTU.
+     * @return the GTU in front of us.
      */
-    public final LaneBasedGTU getOtherGTU()
+    public final LaneBasedGTU getGTU()
     {
-        return this.otherGTU;
+        return this.gtu;
     }
 
     /**
@@ -69,7 +69,7 @@ public class HeadwayGTU
     /** {@inheritDoc} */
     public final String toString()
     {
-        return String.format("Headway %s to %s", getDistance(), this.otherGTU);
+        return String.format("Headway %s to %s", getDistance(), this.gtu);
     }
 
 }

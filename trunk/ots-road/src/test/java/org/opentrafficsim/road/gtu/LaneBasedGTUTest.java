@@ -174,14 +174,14 @@ public class LaneBasedGTUTest implements UNITS
         assertTrue("With one vehicle in the network forward headway should return a value larger than maxDistance",
             forwardMaxDistance.getSI() < leader.getDistanceSI());
         assertEquals("With one vehicle in the network forward headwayGTU should return null", null,
-            leader.getOtherGTU());
+            leader.getGTU());
         // TODO see how we can ask the vehicle to look this far behind
         Length.Rel reverseMaxDistance = new Length.Rel(-9999, METER);
         HeadwayGTU follower = truck.getPerception().getBackwardHeadwayGTU();
         assertTrue("With one vehicle in the network reverse headway should return a value larger than maxDistance",
             Math.abs(reverseMaxDistance.getSI()) < follower.getDistanceSI());
         assertEquals("With one vehicle in the network reverse headwayGTU should return null", null,
-            follower.getOtherGTU());
+            follower.getGTU());
         Length.Rel carLength = new Length.Rel(4, METER);
         Length.Rel carWidth = new Length.Rel(1.8, METER);
         Speed carSpeed = new Speed(0, KM_PER_HOUR);
@@ -218,7 +218,7 @@ public class LaneBasedGTUTest implements UNITS
                 // + " laneRank " + laneRank + " expected headway " + expectedHeadway);
                 // The next assert found a subtle bug (">" in stead of ">=")
                 assertEquals("Forward headway should return " + expectedHeadway, expectedHeadway, actualHeadway, 0.1);
-                LaneBasedGTU leaderGTU = leader.getOtherGTU();
+                LaneBasedGTU leaderGTU = leader.getGTU();
                 if (expectedHeadway == Double.MAX_VALUE)
                 {
                     assertEquals("Leader should be null", null, leaderGTU);
@@ -236,7 +236,7 @@ public class LaneBasedGTUTest implements UNITS
                         - carLength.getSI() - step;
                 assertEquals("Reverse headway should return " + expectedReverseHeadway, expectedReverseHeadway,
                     actualReverseHeadway, 0.1);
-                LaneBasedGTU followerGTU = follower.getOtherGTU();
+                LaneBasedGTU followerGTU = follower.getGTU();
                 if (expectedReverseHeadway == Double.MAX_VALUE)
                 {
                     assertEquals("Follower should be null", null, followerGTU);
@@ -266,7 +266,7 @@ public class LaneBasedGTUTest implements UNITS
                             - truckLength.getSI() - truckPosition.getSI();
                     assertEquals("Headway on lane " + laneIndex + " should be " + expectedHeadway, expectedHeadway,
                         actualHeadway, 0.001);
-                    leaderGTU = leader.getOtherGTU();
+                    leaderGTU = leader.getGTU();
                     if (laneIndex >= laneRank && laneIndex <= laneRank + carLanesCovered - 1
                         && step - truckLength.getSI() - truckPosition.getSI() > 0)
                     {
@@ -284,7 +284,7 @@ public class LaneBasedGTUTest implements UNITS
                             .getSI() - carLength.getSI() - step;
                     assertEquals("Headway on lane " + laneIndex + " should be " + expectedReverseHeadway,
                         expectedReverseHeadway, actualReverseHeadway, 0.001);
-                    followerGTU = follower.getOtherGTU();
+                    followerGTU = follower.getGTU();
                     if (laneIndex >= laneRank && laneIndex <= laneRank + carLanesCovered - 1
                         && step + carLength.getSI() < truckPosition.getSI())
                     {

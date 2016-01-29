@@ -267,19 +267,19 @@ public abstract class AbstractGTUGenerator
 
         HeadwayGTU headwayGTU = headway(new Length.Rel(250.0, LengthUnit.METER), generatorLane);
         Length.Rel minimumHeadway = new Length.Rel(0.0, LengthUnit.METER);
-        if (headwayGTU.getOtherGTU() != null)
+        if (headwayGTU.getGTU() != null)
         {
             minimumHeadway =
-                followingModel.minimumHeadway(carBuilder.getInitialSpeed(), headwayGTU.getOtherGTU().getVelocity(),
+                followingModel.minimumHeadway(carBuilder.getInitialSpeed(), headwayGTU.getGTU().getVelocity(),
                     new Length.Rel(1.0, LengthUnit.CENTIMETER), generatorLane.getSpeedLimit(carBuilder.getGtuType()),
                     carBuilder.getMaximumVelocity());
             double acc =
                 followingModel.computeAcceleration(carBuilder.getInitialSpeed(), carBuilder.getMaximumVelocity(),
-                    headwayGTU.getOtherGTU().getVelocity(), minimumHeadway, carBuilder.getMaximumVelocity()).getSI();
+                    headwayGTU.getGTU().getVelocity(), minimumHeadway, carBuilder.getMaximumVelocity()).getSI();
             if (acc < 0)
             {
                 System.err.println(getSimulator().getSimulatorTime() + ", generator headway for GTU "
-                    + headwayGTU.getOtherGTU() + ", distance " + headwayGTU.getDistanceSI() + " m, max "
+                    + headwayGTU.getGTU() + ", distance " + headwayGTU.getDistanceSI() + " m, max "
                     + minimumHeadway + ", has to brake with a=" + acc + " m/s^2");
                 return false;
             }

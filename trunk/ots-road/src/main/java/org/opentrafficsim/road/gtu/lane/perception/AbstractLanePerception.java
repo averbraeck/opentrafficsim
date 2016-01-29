@@ -468,14 +468,14 @@ public abstract class AbstractLanePerception implements Perception
             for (Lane adjacentLane : this.accessibleAdjacentLanes.get(lane).get(directionality))
             {
                 HeadwayGTU leader = headway(adjacentLane, this.gtu.getLanes().get(lane), maximumForwardHeadway);
-                if (null != leader.getOtherGTU() && !result.contains(leader))
+                if (null != leader.getGTU() && !result.contains(leader))
                 {
                     result.add(leader);
                 }
                 HeadwayGTU follower = headway(adjacentLane, this.gtu.getLanes().get(lane), maximumReverseHeadway);
-                if (null != follower.getOtherGTU() && !result.contains(follower))
+                if (null != follower.getGTU() && !result.contains(follower))
                 {
-                    result.add(new HeadwayGTU(follower.getOtherGTU(), -follower.getDistanceSI()));
+                    result.add(new HeadwayGTU(follower.getGTU(), -follower.getDistanceSI()));
                 }
             }
         }
