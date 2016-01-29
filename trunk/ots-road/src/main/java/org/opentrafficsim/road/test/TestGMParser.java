@@ -112,7 +112,7 @@ public class TestGMParser extends AbstractWrappableAnimation
     @Override
     protected final Double makeAnimationRectangle()
     {
-        return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
+        return new Rectangle2D.Double(0, 2900, 1400, 1200);
     }
 
     /**
