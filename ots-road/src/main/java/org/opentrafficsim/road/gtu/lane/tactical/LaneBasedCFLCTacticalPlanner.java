@@ -20,7 +20,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.AccelerationVector;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -128,13 +127,14 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             HeadwayGTU sameLaneLeader = perception.getForwardHeadwayGTU();
             HeadwayGTU sameLaneFollower = perception.getBackwardHeadwayGTU();
             Collection<HeadwayGTU> sameLaneTraffic = new ArrayList<HeadwayGTU>();
-            if (null != sameLaneLeader.getGTU())
+            if (null != sameLaneLeader.getGtuId())
             {
                 sameLaneTraffic.add(sameLaneLeader);
             }
-            if (null != sameLaneFollower.getGTU())
+            if (null != sameLaneFollower.getGtuId())
             {
-                sameLaneTraffic.add(new HeadwayGTU(sameLaneFollower.getGTU(), -sameLaneFollower.getDistanceSI()));
+                sameLaneTraffic.add(new HeadwayGTU(sameLaneFollower.getGtuId(), sameLaneFollower.getGtuSpeed(),
+                    -sameLaneFollower.getDistanceSI()));
             }
 
             // Are we in the right lane for the route?
@@ -288,7 +288,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                 return op;
             }
         }
-        catch (OTSGeometryException | ValueException exception)
+        catch (ValueException exception)
         {
             throw new GTUException(exception);
         }

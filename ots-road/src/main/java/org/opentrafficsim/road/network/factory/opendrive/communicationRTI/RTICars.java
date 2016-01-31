@@ -7,7 +7,7 @@ import javax.naming.NamingException;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
-import org.djunits.value.vdouble.scalar.Length.Rel;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
@@ -21,19 +21,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 
-/**
- * <br />
- * Copyright (c) 2013-2014 Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving. All rights reserved. <br />
- * Some parts of the software (c) 2011-2014 TU Delft, Faculty of TBM, Systems & Simulation <br />
- * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk Onderzoek TNO
- * (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten Binnenvaart, Ab Ovo
- * Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving, including the
- * right to sub-license sources and derived products to third parties. <br />
- * @version Mar 24, 2013 <br>
- * @author <a href="http://tudelft.nl/averbraeck">Alexander Verbraeck </a>
- * @version SVN $Revision: 31 $ $Author: averbraeck $
- * @date $Date: 2011-08-15 04:38:04 +0200 (Mon, 15 Aug 2011) $
- **/
+/** */
 public class RTICars extends LaneBasedIndividualCar
 {
 
@@ -44,31 +32,31 @@ public class RTICars extends LaneBasedIndividualCar
     DirectedPoint current = new DirectedPoint(0, 0, 0, 0, 0, 0);
 
     /**
-     * @param valueOf
-     * @param carType
-     * @param lanepositionSet
-     * @param speed
-     * @param carLength
-     * @param draw
-     * @param draw2
-     * @param simulator
-     * @param sPlanner
-     * @param perception
-     * @param network
-     * @throws GTUException
-     * @throws SimRuntimeException
-     * @throws NetworkException
-     * @throws NamingException
-     * @throws OperationalPlanException
-     * @throws OTSGeometryException
+     * @param valueOf car id
+     * @param carType GTU type
+     * @param lanepositionSet lanes for registration
+     * @param speed initial car speed
+     * @param carLength car length
+     * @param width car width
+     * @param maxSpeed maximum velocity of the car
+     * @param simulator the simulator
+     * @param sPlanner the strategical planner unit
+     * @param perception the perception unit
+     * @param network the network on which the car will be registered
+     * @throws GTUException on GTU inconsistency
+     * @throws SimRuntimeException when operational plan event cannot be scheduled
+     * @throws NetworkException on network inconsistency
+     * @throws NamingException when animation cannot be registered
+     * @throws OperationalPlanException when operational plan cannot be constructed or executed
+     * @throws OTSGeometryException when position cannot be determined
      */
     public RTICars(String valueOf, GTUType carType, Set<DirectedLanePosition> lanepositionSet, Speed speed,
-        Rel carLength, Rel draw, Speed draw2, OTSDEVSSimulatorInterface simulator,
+        Length.Rel carLength, Length.Rel width, Speed maxSpeed, OTSDEVSSimulatorInterface simulator,
         LaneBasedStrategicalPlanner sPlanner, LanePerceptionFull perception, final OTSNetwork network)
         throws NamingException, NetworkException, SimRuntimeException, GTUException, OperationalPlanException,
         OTSGeometryException
     {
-        super(valueOf, carType, lanepositionSet, speed, carLength, draw, draw2, simulator, sPlanner, perception,
+        super(valueOf, carType, lanepositionSet, speed, carLength, width, maxSpeed, simulator, sPlanner, perception,
             network);
 
         this.current = this.getOperationalPlan().getLocation(simulator.getSimulatorTime().getTime());

@@ -113,7 +113,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             initialLongitudinalPositions).iterator().next().getLocation(), initialSpeed, network);
 
         // register the GTU in the perception module
-        getPerception().setGtu(this);
+        getPerception().setGTU(this);
 
         // register the GTU on the lanes
         for (DirectedLanePosition directedLanePosition : initialLongitudinalPositions)
@@ -208,7 +208,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     @Override
     public final Map<Lane, GTUDirectionality> getLanes()
     {
-        return this.lanes;
+        return new HashMap<Lane, GTUDirectionality>(this.lanes);
     }
 
     /** {@inheritDoc} */

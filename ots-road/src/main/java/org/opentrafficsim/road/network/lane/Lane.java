@@ -984,7 +984,7 @@ public class Lane extends CrossSectionElement implements Serializable
      * 90 km/h.
      * @param gtuType the GTU type to provide the speed limit for
      * @return the speedLimit.
-     * @throws NetworkException
+     * @throws NetworkException on network inconsistency
      */
     public final Speed getSpeedLimit(final GTUType gtuType) throws NetworkException
     {

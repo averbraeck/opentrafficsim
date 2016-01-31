@@ -20,4 +20,21 @@ public enum LateralDirectionality
     /** Direction to the right of the longitudinal orientation of the GTU, relative to the forward driving direction. */
     RIGHT;
 
+    /**
+     * Determine whether the direction is the left direction.
+     * @return whether the direction is the left direction
+     */
+    public boolean isLeft()
+    {
+        return this.equals(LEFT);
+    }
+
+    /**
+     * Determine whether the direction is the right direction.
+     * @return whether the direction is the right direction
+     */
+    public boolean isRight()
+    {
+        return this.equals(LEFT);
+    }
 }

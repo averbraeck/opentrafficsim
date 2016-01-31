@@ -299,7 +299,7 @@ public class TestGMParser extends AbstractWrappableAnimation
     }
 
     /**
-     * <p />
+     * <p>
      * Copyright (c) 2011 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. The
      * source code and binary code of this software is proprietary information of Delft University of Technology. Specific
      * MathTransform for WGS84 WGS84 (EPSG:4326) to RD_new (EPSG:28992) conversions. Code based on C code by Peter Knoppers as
@@ -340,7 +340,7 @@ public class TestGMParser extends AbstractWrappableAnimation
 
         private static Coords ellipswgs842rd(double EW, double NS)
         {
-            Coords result = new Coords();
+            Coords result = new Coords(0, 0);
             int p;
             double pown = 1;
             double dn = 0.36 * (NS - 52.15517440);
@@ -370,9 +370,6 @@ public class TestGMParser extends AbstractWrappableAnimation
         {
             public double x, y;
 
-            public Coords()
-            {
-            }
 
             public Coords(double x, double y)
             {

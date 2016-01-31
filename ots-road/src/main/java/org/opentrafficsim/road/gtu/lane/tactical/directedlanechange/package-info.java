@@ -9,5 +9,5 @@
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-package org.opentrafficsim.road.gtu.lane.tactical.lanechange;
+package org.opentrafficsim.road.gtu.lane.tactical.directedlanechange;
 

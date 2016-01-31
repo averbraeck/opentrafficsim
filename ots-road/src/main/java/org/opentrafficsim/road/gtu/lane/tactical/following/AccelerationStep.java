@@ -22,16 +22,21 @@ public class AccelerationStep
 
     /** Time when the current time slot ends. */
     private final Time.Abs validUntil;
+    
+    /** duration of the time step. */
+    final Time.Rel duration;
 
     /**
      * Create a new GTUFollowingModelResult.
      * @param acceleration DoubleScalarAbs&lt;AccelerationUnit&gt;; computed acceleration
      * @param validUntil Time.Abs; time when this result expires
+     * @param duration Time.Rel; duration of the time step
      */
-    public AccelerationStep(final Acceleration acceleration, final Time.Abs validUntil)
+    public AccelerationStep(final Acceleration acceleration, final Time.Abs validUntil, final Time.Rel duration)
     {
         this.acceleration = acceleration;
         this.validUntil = validUntil;
+        this.duration = duration;
     }
 
     /**
@@ -48,6 +53,14 @@ public class AccelerationStep
     public final Time.Abs getValidUntil()
     {
         return this.validUntil;
+    }
+
+    /**
+     * @return duration.
+     */
+    public final Time.Rel getDuration()
+    {
+        return this.duration;
     }
 
     /**

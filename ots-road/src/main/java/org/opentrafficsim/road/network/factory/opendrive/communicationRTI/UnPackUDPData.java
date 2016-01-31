@@ -7,25 +7,13 @@ import java.nio.ByteOrder;
 
 import org.opentrafficsim.road.network.factory.opendrive.data.RTIToOTSData;
 
-/**
- * <br />
- * Copyright (c) 2013-2014 Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving. All rights reserved. <br />
- * Some parts of the software (c) 2011-2014 TU Delft, Faculty of TBM, Systems & Simulation <br />
- * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk Onderzoek TNO
- * (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten Binnenvaart, Ab Ovo
- * Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving, including the
- * right to sub-license sources and derived products to third parties. <br />
- * @version Mar 24, 2013 <br>
- * @author <a href="http://tudelft.nl/averbraeck">Alexander Verbraeck </a>
- * @version SVN $Revision: 31 $ $Author: averbraeck $
- * @date $Date: 2011-08-15 04:38:04 +0200 (Mon, 15 Aug 2011) $
- **/
+/** */
 public class UnPackUDPData
 {
     /**
-     * @param inputStream
-     * @return RTIToOTSData element
-     * @throws IOException
+     * @param inputStream input stream of data
+     * @return RTIToOTSData element 
+     * @throws IOException on i/o error
      */
     static RTIToOTSData unPack(DataInputStream inputStream) throws IOException
     {
@@ -74,9 +62,9 @@ public class UnPackUDPData
     }
 
     /**
-     * @param inputStream
-     * @return float
-     * @throws IOException
+     * @param inputStream input data stream
+     * @return float 
+     * @throws IOException on i/o error
      */
     private static float parseFloat(DataInputStream inputStream) throws IOException
     {
@@ -92,9 +80,9 @@ public class UnPackUDPData
     }
 
     /**
-     * @param inputStream
+     * @param inputStream input data stream
      * @return int
-     * @throws IOException
+     * @throws IOException on i/o error
      */
     private static int parseInt(DataInputStream inputStream) throws IOException
     {

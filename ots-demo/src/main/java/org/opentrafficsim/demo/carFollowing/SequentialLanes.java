@@ -311,8 +311,8 @@ public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
     {
         return "<html><h1>Simulation of a straight one-lane road consisting of three consecutive Links</H1>"
             + "Simulation of a single lane road consisting of two 1 km stretches with a 1m stretch in between. "
-            + "This will test transition of a GTU from one lane section onto the next.<br />"
-            + "Vehicles are generated at a constant rate of 1500 veh/hour.<br />"
+            + "This will test transition of a GTU from one lane section onto the next.<br>"
+            + "Vehicles are generated at a constant rate of 1500 veh/hour.<br>"
             + "Selected trajectory and contour plots are generated during the simulation.</html>";
     }
 

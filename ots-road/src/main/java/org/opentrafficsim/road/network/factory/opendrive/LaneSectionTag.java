@@ -95,8 +95,8 @@ class LaneSectionTag
     }
 
     /**
-     * @param orientation
-     * @return lanes
+     * @param orientation Plus or minus orientation, indicated by '+' or '-'
+     * @return lanes a list of lanes in the given orientation
      */
     public List<Lane> findLanes(String orientation)
     {

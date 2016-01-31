@@ -6,19 +6,7 @@ import java.util.List;
 
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 
-/**
- * <br />
- * Copyright (c) 2013-2014 Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving. All rights reserved. <br />
- * Some parts of the software (c) 2011-2014 TU Delft, Faculty of TBM, Systems & Simulation <br />
- * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk Onderzoek TNO
- * (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten Binnenvaart, Ab Ovo
- * Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving, including the
- * right to sub-license sources and derived products to third parties. <br />
- * @version Mar 24, 2013 <br>
- * @author <a href="http://tudelft.nl/averbraeck">Alexander Verbraeck </a>
- * @version SVN $Revision: 31 $ $Author: averbraeck $
- * @date $Date: 2011-08-15 04:38:04 +0200 (Mon, 15 Aug 2011) $
- **/
+/** */
 public class OTSToRTIData
 {
     /** */
@@ -64,8 +52,8 @@ public class OTSToRTIData
     private List<Velocity> objVel = new ArrayList<Velocity>();// global reference frame
 
     /**
-     * @param rtiCars
-     * @throws RemoteException
+     * @param rtiCars cars to prepare for RTI software
+     * @throws RemoteException on unability to retrieve the location of one of the cars
      */
     public OTSToRTIData(List<LaneBasedIndividualCar> rtiCars) throws RemoteException
     {

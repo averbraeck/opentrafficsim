@@ -16,7 +16,6 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
@@ -43,7 +42,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractLanePerception implements Perception
+public abstract class AbstractLanePerception implements LanePerception
 {
     /** */
     private static final long serialVersionUID = 20151128L;
@@ -88,11 +87,9 @@ public abstract class AbstractLanePerception implements Perception
         super();
     }
 
-    /**
-     * sets the GTU -- call this method before any call to the perceive() method!
-     * @param gtu the GTU for which this is the perception module
-     */
-    public final void setGtu(final LaneBasedGTU gtu)
+    /** {@inheritDoc} */
+    @Override
+    public final void setGTU(final LaneBasedGTU gtu)
     {
         this.gtu = gtu;
     }
@@ -111,12 +108,9 @@ public abstract class AbstractLanePerception implements Perception
         return this.gtu.getSimulator().getSimulatorTime().getTime();
     }
 
-    /**
-     * Update the perceived speed limit.
-     * @throws NetworkException when the speed limit for a GTU type cannot be retreived from the network.
-     * @throws GTUException when the GTU was not initialized yet.
-     */
-    protected void updateSpeedLimit() throws GTUException, NetworkException
+    /** {@inheritDoc} */
+    @Override
+    public void updateSpeedLimit() throws GTUException, NetworkException
     {
         Time.Abs timestamp = getTimestamp();
         // assess the speed limit where we are right now
@@ -130,35 +124,27 @@ public abstract class AbstractLanePerception implements Perception
         }
     }
 
-    /**
-     * Update who's in front of us and how far away the nearest GTU is.
-     * @throws GTUException when the GTU was not initialized yet.
-     * @throws NetworkException when the headway cannot be determined for this GTU, usually due to routing problems.
-     */
-    protected void updateForwardHeadwayGTU() throws GTUException, NetworkException
+    /** {@inheritDoc} */
+    @Override
+    public void updateForwardHeadwayGTU() throws GTUException, NetworkException
     {
         Time.Abs timestamp = getTimestamp();
         Length.Rel maximumForwardHeadway = this.gtu.getDrivingCharacteristics().getForwardHeadwayDistance();
         this.forwardHeadwayGTU = new TimeStampedObject<>(headway(maximumForwardHeadway), timestamp);
     }
 
-    /**
-     * Update who's behind us and how far away the nearest GTU is.
-     * @throws GTUException when the GTU was not initialized yet.
-     * @throws NetworkException when the headway cannot be determined for this GTU, usually due to routing problems.
-     */
-    protected void updateBackwardHeadwayGTU() throws GTUException, NetworkException
+    /** {@inheritDoc} */
+    @Override
+    public void updateBackwardHeadwayGTU() throws GTUException, NetworkException
     {
         Time.Abs timestamp = getTimestamp();
         Length.Rel maximumReverseHeadway = this.gtu.getDrivingCharacteristics().getBackwardHeadwayDistance();
         this.backwardHeadwayGTU = new TimeStampedObject<>(headway(maximumReverseHeadway), timestamp);
     }
 
-    /**
-     * Build a set of Lanes that is adjacent to the given lane that this GTU can enter, for the left lateral direction.
-     * @throws GTUException when the GTU was not initialized yet.
-     */
-    protected void updateAccessibleAdjacentLanesLeft() throws GTUException
+    /** {@inheritDoc} */
+    @Override
+    public void updateAccessibleAdjacentLanesLeft() throws GTUException
     {
         Time.Abs timestamp = getTimestamp();
         Map<Lane, Set<Lane>> accessibleAdjacentLanesMap = new HashMap<>();
@@ -171,11 +157,9 @@ public abstract class AbstractLanePerception implements Perception
         this.accessibleAdjacentLanesLeft = new TimeStampedObject<>(accessibleAdjacentLanesMap, timestamp);
     }
 
-    /**
-     * Build a set of Lanes that is adjacent to the given lane that this GTU can enter, for the left lateral direction.
-     * @throws GTUException when the GTU was not initialized yet.
-     */
-    protected void updateAccessibleAdjacentLanesRight() throws GTUException
+    /** {@inheritDoc} */
+    @Override
+    public void updateAccessibleAdjacentLanesRight() throws GTUException
     {
         Time.Abs timestamp = getTimestamp();
         Map<Lane, Set<Lane>> accessibleAdjacentLanesMap = new HashMap<>();
@@ -188,11 +172,9 @@ public abstract class AbstractLanePerception implements Perception
         this.accessibleAdjacentLanesRight = new TimeStampedObject<>(accessibleAdjacentLanesMap, timestamp);
     }
 
-    /**
-     * Update the information about the GTUs parallel to our GTU on the left side.
-     * @throws GTUException when the GTU was not initialized yet.
-     */
-    protected void updateParallelGTUsLeft() throws GTUException
+    /** {@inheritDoc} */
+    @Override
+    public void updateParallelGTUsLeft() throws GTUException
     {
         Time.Abs timestamp = getTimestamp();
         if (this.accessibleAdjacentLanesLeft == null
@@ -208,11 +190,9 @@ public abstract class AbstractLanePerception implements Perception
         this.parallelGTUsLeft = new TimeStampedObject<>(parallelGTUSet, timestamp);
     }
 
-    /**
-     * Update the information about the GTUs parallel to our GTU on the right side.
-     * @throws GTUException when the GTU was not initialized yet.
-     */
-    protected void updateParallelGTUsRight() throws GTUException
+    /** {@inheritDoc} */
+    @Override
+    public void updateParallelGTUsRight() throws GTUException
     {
         Time.Abs timestamp = getTimestamp();
         if (this.accessibleAdjacentLanesRight == null
@@ -228,12 +208,9 @@ public abstract class AbstractLanePerception implements Perception
         this.parallelGTUsRight = new TimeStampedObject<>(parallelGTUSet, timestamp);
     }
 
-    /**
-     * Update the information about the GTUs left of our GTU, and behind us or ahead on the left hand side.
-     * @throws GTUException when the GTU was not initialized yet.
-     * @throws NetworkException
-     */
-    protected void updateLaneTrafficLeft() throws GTUException, NetworkException
+    /** {@inheritDoc} */
+    @Override
+    public void updateLaneTrafficLeft() throws GTUException, NetworkException
     {
         Time.Abs timestamp = getTimestamp();
         if (this.accessibleAdjacentLanesLeft == null
@@ -255,12 +232,9 @@ public abstract class AbstractLanePerception implements Perception
                 maximumForwardHeadway, maximumReverseHeadway), timestamp);
     }
 
-    /**
-     * Update the information about the GTUs right of our GTU, and behind us or ahead on the left hand side.
-     * @throws GTUException when the GTU was not initialized yet.
-     * @throws NetworkException
-     */
-    protected void updateLaneTrafficRight() throws GTUException, NetworkException
+    /** {@inheritDoc} */
+    @Override
+    public void updateLaneTrafficRight() throws GTUException, NetworkException
     {
         Time.Abs timestamp = getTimestamp();
         if (this.accessibleAdjacentLanesRight == null
@@ -282,43 +256,25 @@ public abstract class AbstractLanePerception implements Perception
                 maximumForwardHeadway, maximumReverseHeadway), timestamp);
     }
 
-    /**
-     * Provide a list of lanes that we can follow to a point where we have to stop. This includes objects that can force us to
-     * stop, such as traffic lights. <br>
-     * TODO: the exact formulation of a lane plan has not been fully determined yet.
-     * @throws GTUException when the GTU has not been set
-     */
-    protected void updateLanePlan() throws GTUException
-    {
-        Time.Abs timestamp = getTimestamp();
-
-    }
-
-    /**
-     * @param lateralDirection the direction to return the accessible adjacent lane map for
-     * @return the accessible adjacent lane map for the given direction
-     */
-    private Map<Lane, Set<Lane>> accessibleAdjacentLaneMap(final LateralDirectionality lateralDirection)
+    /** {@inheritDoc} */
+    @Override
+    public Map<Lane, Set<Lane>> accessibleAdjacentLaneMap(final LateralDirectionality lateralDirection)
     {
         return lateralDirection.equals(LateralDirectionality.LEFT) ? this.accessibleAdjacentLanesLeft.getObject()
             : this.accessibleAdjacentLanesRight.getObject();
     }
 
-    /**
-     * @param lateralDirection the direction to return the parallel GTU map for
-     * @return the parallel GTU map for the given direction
-     */
-    private Set<LaneBasedGTU> parallelGTUMap(final LateralDirectionality lateralDirection)
+    /** {@inheritDoc} */
+    @Override
+    public Set<LaneBasedGTU> parallelGTUs(final LateralDirectionality lateralDirection)
     {
         return lateralDirection.equals(LateralDirectionality.LEFT) ? this.parallelGTUsLeft.getObject()
             : this.parallelGTUsRight.getObject();
     }
 
-    /**
-     * @param lateralDirection the direction to return the neighboring GTU collection for
-     * @return the neighboring GTU collection for the given direction
-     */
-    private Collection<HeadwayGTU> neighboringGTUCollection(final LateralDirectionality lateralDirection)
+    /** {@inheritDoc} */
+    @Override
+    public Collection<HeadwayGTU> neighboringGTUCollection(final LateralDirectionality lateralDirection)
     {
         return lateralDirection.equals(LateralDirectionality.LEFT) ? this.neighboringGTUsLeft.getObject()
             : this.neighboringGTUsRight.getObject();
@@ -336,7 +292,7 @@ public abstract class AbstractLanePerception implements Perception
      * <b>Note:</b> Headway is the net headway and calculated on a front-to-back basis.
      * @param maxDistance the maximum distance to look for the nearest GTU; positive values search forwards; negative values
      *            search backwards
-     * @return HeadwayGTU; the headway and the GTU
+     * @return HeadwayGTU; the headway and the GTU information
      * @throws GTUException when there is an error with the next lanes in the network.
      * @throws NetworkException when there is a problem with the route planner
      */
@@ -513,21 +469,21 @@ public abstract class AbstractLanePerception implements Perception
         Collection<HeadwayGTU> result = new HashSet<HeadwayGTU>();
         for (LaneBasedGTU p : parallel(directionality, when))
         {
-            result.add(new HeadwayGTU(p, Double.NaN));
+            result.add(new HeadwayGTU(p.getId(), p.getVelocity(), Double.NaN));
         }
         for (Lane lane : this.gtu.getLanes().keySet())
         {
             for (Lane adjacentLane : accessibleAdjacentLaneMap(directionality).get(lane))
             {
                 HeadwayGTU leader = headway(adjacentLane, this.gtu.getLanes().get(lane), maximumForwardHeadway);
-                if (null != leader.getGTU() && !result.contains(leader))
+                if (null != leader.getGtuSpeed() && !result.contains(leader))
                 {
                     result.add(leader);
                 }
                 HeadwayGTU follower = headway(adjacentLane, this.gtu.getLanes().get(lane), maximumReverseHeadway);
-                if (null != follower.getGTU() && !result.contains(follower))
+                if (null != follower.getGtuSpeed() && !result.contains(follower))
                 {
-                    result.add(new HeadwayGTU(follower.getGTU(), -follower.getDistanceSI()));
+                    result.add(new HeadwayGTU(follower.getGtuId(), follower.getGtuSpeed(), -follower.getDistanceSI()));
                 }
             }
         }
@@ -537,14 +493,14 @@ public abstract class AbstractLanePerception implements Perception
     /**
      * @param maxDistanceSI the maximum distance to look for in SI units
      * @return the nearest GTU and the net headway to this GTU in SI units when we have found the GTU, or a null GTU with a
-     *         distance of Double.MAX_VALUE meters when no other GTU could not be found within maxDistanceSI meters
+     *         distance of maxDistanceSI meters when no other GTU could not be found within maxDistanceSI meters
      * @throws GTUException when there is a problem with the geometry of the network
      * @throws NetworkException when there is a problem with the route planner
      */
     private HeadwayGTU headwayGTUSI(final double maxDistanceSI) throws GTUException, NetworkException
     {
         Time.Abs time = this.gtu.getSimulator().getSimulatorTime().getTime();
-        HeadwayGTU foundMaxGTUDistanceSI = new HeadwayGTU(null, Double.MAX_VALUE);
+        HeadwayGTU foundMaxGTUDistanceSI = new HeadwayGTU(null, null, maxDistanceSI);
         // search for the closest GTU on all current lanes we are registered on.
         if (maxDistanceSI > 0.0)
         {
@@ -613,9 +569,9 @@ public abstract class AbstractLanePerception implements Perception
                     + lanePositionSI;
             if (distanceSI > 0 && distanceSI <= maxDistanceSI)
             {
-                return new HeadwayGTU(otherGTU, distanceSI);
+                return new HeadwayGTU(otherGTU.getId(), otherGTU.getVelocity(), distanceSI);
             }
-            return new HeadwayGTU(null, maxDistanceSI);
+            return new HeadwayGTU(null, null, maxDistanceSI);
         }
 
         double distanceSI =
@@ -624,7 +580,7 @@ public abstract class AbstractLanePerception implements Perception
         if (distanceSI > maxDistanceSI)
         {
             // No other GTU was found on one of the current lanes or their successors.
-            return new HeadwayGTU(null, maxDistanceSI);
+            return new HeadwayGTU(null, null, maxDistanceSI);
         }
 
         // Continue search on successor lanes (if they exist). If not, STOP AT THE LANE DROP.
@@ -632,7 +588,7 @@ public abstract class AbstractLanePerception implements Perception
         GTUType gtuType = this.gtu.getGTUType();
         if (lane.nextLanes(gtuType).size() == 0)
         {
-            return new HeadwayGTU(null, distanceSI);
+            return new HeadwayGTU(null, null, distanceSI);
         }
 
         // is there a next lane that is on our path?
@@ -658,7 +614,7 @@ public abstract class AbstractLanePerception implements Perception
             if (nextLane == null)
             {
                 // none of the next lanes keep us on the route
-                return new HeadwayGTU(null, distanceSI);
+                return new HeadwayGTU(null, null, distanceSI);
             }
         }
         return headwayRecursiveForwardSI(nextLane, nextDir, 0.0, distanceSI, maxDistanceSI, when);
@@ -693,9 +649,9 @@ public abstract class AbstractLanePerception implements Perception
                 cumDistanceSI + lanePositionSI - otherGTU.position(lane, otherGTU.getFront(), when).getSI();
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
-                return new HeadwayGTU(otherGTU, distanceM);
+                return new HeadwayGTU(otherGTU.getId(), otherGTU.getVelocity(), distanceM);
             }
-            return new HeadwayGTU(null, Double.MAX_VALUE);
+            return new HeadwayGTU(null, null, Double.MAX_VALUE);
         }
 
         // Continue search on predecessor lanes.
@@ -704,7 +660,7 @@ public abstract class AbstractLanePerception implements Perception
             // is there a predecessor link?
             if (lane.prevLanes(this.gtu.getGTUType()).size() > 0)
             {
-                HeadwayGTU foundMaxGTUDistanceSI = new HeadwayGTU(null, Double.MAX_VALUE);
+                HeadwayGTU foundMaxGTUDistanceSI = new HeadwayGTU(null, null, Double.MAX_VALUE);
                 for (Lane prevLane : lane.prevLanes(this.gtu.getGTUType()).keySet())
                 {
                     // What is behind us is INDEPENDENT of the followed route!
@@ -724,7 +680,7 @@ public abstract class AbstractLanePerception implements Perception
         }
 
         // No other GTU was not on one of the current lanes or their successors.
-        return new HeadwayGTU(null, Double.MAX_VALUE);
+        return new HeadwayGTU(null, null, Double.MAX_VALUE);
     }
 
     /**
@@ -834,81 +790,71 @@ public abstract class AbstractLanePerception implements Perception
         return Double.MAX_VALUE;
     }
 
-    /**
-     * @return gtu
-     */
-    public final LaneBasedGTU getGtu()
+    /** {@inheritDoc} */
+    @Override
+    public final LaneBasedGTU getGTU()
     {
         return this.gtu;
     }
 
-    /**
-     * @return forwardHeadwayGTU
-     */
+    /** {@inheritDoc} */
+    @Override
     public final HeadwayGTU getForwardHeadwayGTU()
     {
         return this.forwardHeadwayGTU.getObject();
     }
 
-    /**
-     * @return backwardHeadwayGTU
-     */
+    /** {@inheritDoc} */
+    @Override
     public final HeadwayGTU getBackwardHeadwayGTU()
     {
         return this.backwardHeadwayGTU.getObject();
     }
 
-    /**
-     * @return accessibleAdjacentLanesLeft
-     */
+    /** {@inheritDoc} */
+    @Override
     public final Map<Lane, Set<Lane>> getAccessibleAdjacentLanesLeft()
     {
         return this.accessibleAdjacentLanesLeft.getObject();
     }
 
-    /**
-     * @return accessibleAdjacentLanesRight
-     */
+    /** {@inheritDoc} */
+    @Override
     public final Map<Lane, Set<Lane>> getAccessibleAdjacentLanesRight()
     {
         return this.accessibleAdjacentLanesRight.getObject();
     }
 
-    /**
-     * @return neighboringGTUsLeft
-     */
+    /** {@inheritDoc} */
+    @Override
     public final Collection<HeadwayGTU> getNeighboringGTUsLeft()
     {
         return this.neighboringGTUsLeft.getObject();
     }
 
-    /**
-     * @return neighboringGTUsRight
-     */
+    /** {@inheritDoc} */
+    @Override
     public final Collection<HeadwayGTU> getNeighboringGTUsRight()
     {
         return this.neighboringGTUsRight.getObject();
     }
 
-    /**
-     * @return parallelGTUsLeft
-     */
+    /** {@inheritDoc} */
+    @Override
     public final Set<LaneBasedGTU> getParallelGTUsLeft()
     {
         return this.parallelGTUsLeft.getObject();
     }
 
-    /**
-     * @return parallelGTUsRight
-     */
+    /** {@inheritDoc} */
+    @Override
     public final Set<LaneBasedGTU> getParallelGTUsRight()
     {
         return this.parallelGTUsRight.getObject();
     }
 
-    /**
-     * @return speedLimit
-     */
+    /** {@inheritDoc} */
+    @Override
     public final Speed getSpeedLimit()
     {
         return this.speedLimit.getObject();
@@ -922,82 +868,71 @@ public abstract class AbstractLanePerception implements Perception
         return new HashSet<PerceivedObject>();
     }
 
-    /**
-     * @return TimeStamped forwardHeadwayGTU
-     */
+    /** {@inheritDoc} */
+    @Override
     public final TimeStampedObject<HeadwayGTU> getTimeStampedForwardHeadwayGTU()
     {
         return this.forwardHeadwayGTU;
     }
 
-    /**
-     * @return TimeStamped backwardHeadwayGTU
-     */
+    /** {@inheritDoc} */
+    @Override
     public final TimeStampedObject<HeadwayGTU> getTimeStampedBackwardHeadwayGTU()
     {
         return this.backwardHeadwayGTU;
     }
 
-    /**
-     * @return TimeStamped accessibleAdjacentLanesLeft
-     */
+    /** {@inheritDoc} */
+    @Override
     public final TimeStampedObject<Map<Lane, Set<Lane>>> getTimeStampedAccessibleAdjacentLanesLeft()
     {
         return this.accessibleAdjacentLanesLeft;
     }
 
-    /**
-     * @return TimeStamped accessibleAdjacentLanesRight
-     */
+    /** {@inheritDoc} */
+    @Override
     public final TimeStampedObject<Map<Lane, Set<Lane>>> getTimeStampedAccessibleAdjacentLanesRight()
     {
         return this.accessibleAdjacentLanesRight;
     }
 
-    /**
-     * @return TimeStamped neighboringGTUsLeft
-     */
+    /** {@inheritDoc} */
+    @Override
     public final TimeStampedObject<Collection<HeadwayGTU>> getTimeStampedNeighboringGTUsLeft()
     {
         return this.neighboringGTUsLeft;
     }
 
-    /**
-     * @return TimeStamped neighboringGTUsRight
-     */
+    /** {@inheritDoc} */
+    @Override
     public final TimeStampedObject<Collection<HeadwayGTU>> getTimeStampedNeighboringGTUsRight()
     {
         return this.neighboringGTUsRight;
     }
 
-    /**
-     * @return TimeStamped parallelGTUsLeft
-     */
+    /** {@inheritDoc} */
+    @Override
     public final TimeStampedObject<Set<LaneBasedGTU>> getTimeStampedParallelGTUsLeft()
     {
         return this.parallelGTUsLeft;
     }
 
-    /**
-     * @return TimeStamped parallelGTUsRight
-     */
+    /** {@inheritDoc} */
+    @Override
     public final TimeStampedObject<Set<LaneBasedGTU>> getTimeStampedParallelGTUsRight()
     {
         return this.parallelGTUsRight;
     }
 
-    /**
-     * @return TimeStamped speedLimit
-     */
+    /** {@inheritDoc} */
+    @Override
     public final TimeStampedObject<Speed> getTimeStampedSpeedLimit()
     {
         return this.speedLimit;
     }
 
-    /**
-     * @return TimeStamped perceived objects
-     * @throws GTUException when GTU was not initialized
-     */
+    /** {@inheritDoc} */
+    @Override
     public TimeStampedObject<Set<PerceivedObject>> getTimeStampedPerceivedObjects() throws GTUException
     {
         // TODO getPerceivedObjects() in LanePerception

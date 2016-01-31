@@ -281,9 +281,9 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
     public final String description()
     {
         return "<html><h1>Circular Lane simulation</h1>"
-            + "Vehicles are unequally distributed over a one lane ring road.<br />"
+            + "Vehicles are unequally distributed over a one lane ring road.<br>"
             + "When simulation starts, all vehicles begin driving and some shockwaves may develop (depending on "
-            + "the selected track length and car following parameters).<br />"
+            + "the selected track length and car following parameters).<br>"
             + "Selected trajectory and contour plots are generated during the simulation.</html>";
     }
 

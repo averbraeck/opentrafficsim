@@ -247,8 +247,8 @@ public class Controller
     }
 
     /**
-     * @param sequence2
-     * @param trafficLight
+     * @param sequence2 sequence2
+     * @param trafficLight trafficLight
      */
     public void addTrafficLight(int sequence2, AbstractTrafficLightNew trafficLight)
     {

@@ -25,11 +25,11 @@ public class OldTrafficLight extends TrafficLight
 {
 
     /**
-     * @param id
-     * @param lane
-     * @param position
-     * @param simulator
-     * @throws OTSGeometryException
+     * @param id traffic light id
+     * @param lane lane where the traffic light is located
+     * @param position position of the traffic light on the lane, in the design direction
+     * @param simulator simulator on which to schedule color changes
+     * @throws OTSGeometryException on failure to place the object
      */
     public OldTrafficLight(final String id, final Lane lane, final Length.Rel position,
         final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException

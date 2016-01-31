@@ -39,7 +39,7 @@ public interface LaneBasedGTU extends GTU
     LaneBasedStrategicalPlanner getStrategicalPlanner();
 
     /**
-     * @return the lanes on which the GTU is registered.
+     * @return a safe copy of the lanes on which the GTU is registered.
      */
     Map<Lane, GTUDirectionality> getLanes();
 
