@@ -26,19 +26,7 @@ import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.network.NetworkException;
 
-/**
- * <br />
- * Copyright (c) 2013-2014 Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving. All rights reserved. <br />
- * Some parts of the software (c) 2011-2014 TU Delft, Faculty of TBM, Systems & Simulation <br />
- * This software is licensed without restrictions to Nederlandse Organisatie voor Toegepast Natuurwetenschappelijk Onderzoek TNO
- * (TNO), Erasmus University Rotterdam, Delft University of Technology, Panteia B.V., Stichting Projecten Binnenvaart, Ab Ovo
- * Nederland B.V., Modality Software Solutions B.V., and Rijkswaterstaat - Dienst Water, Verkeer en Leefomgeving, including the
- * right to sub-license sources and derived products to third parties. <br />
- * @version Mar 24, 2013 <br>
- * @author <a href="http://tudelft.nl/averbraeck">Alexander Verbraeck </a>
- * @version SVN $Revision: 31 $ $Author: averbraeck $
- * @date $Date: 2011-08-15 04:38:04 +0200 (Mon, 15 Aug 2011) $
- **/
+/** */
 public class SubjectiveCar extends AbstractGTU
 {
 
@@ -48,19 +36,21 @@ public class SubjectiveCar extends AbstractGTU
     /** */
     private DirectedPoint position = null;
 
+    /** */
     private Length.Rel length;
 
+    /** */
     private Length.Rel width;
 
     /**
-     * @param id
-     * @param type
-     * @param simulator
-     * @param initialLocation
-     * @throws GTUException
-     * @throws SimRuntimeException
-     * @throws NamingException
-     * @throws RemoteException
+     * @param id car id
+     * @param type GTU type
+     * @param simulator simulator
+     * @param initialLocation location
+     * @throws GTUException when GTU cannot be initialized
+     * @throws SimRuntimeException when operational plan execution or perception execution cannot be scheduled
+     * @throws NamingException when animation cannot be registered
+     * @throws RemoteException when animation context or simulator cannot be reached
      */
     public SubjectiveCar(String id, GTUType type, OTSDEVSSimulatorInterface simulator, DirectedPoint initialLocation)
         throws SimRuntimeException, GTUException, RemoteException, NamingException
@@ -76,15 +66,15 @@ public class SubjectiveCar extends AbstractGTU
     }
 
     /**
-     * @param id
-     * @param gtuType
-     * @param simulator
-     * @param strategicalPlanner
-     * @param perception
-     * @param initialLocation
-     * @throws SimRuntimeException
-     * @throws NetworkException
-     * @throws GTUException
+     * @param id car id
+     * @param gtuType GTU type
+     * @param strategicalPlanner the strategical planner of the GTU
+     * @param perception the perception unit of the GTU
+     * @param simulator simulator
+     * @param initialLocation location
+     * @throws GTUException when GTU cannot be initialized
+     * @throws SimRuntimeException when operational plan execution or perception execution cannot be scheduled
+     * @throws NetworkException on inconsistency of the network
      */
     public SubjectiveCar(String id, GTUType gtuType, OTSDEVSSimulatorInterface simulator,
         StrategicalPlanner strategicalPlanner, Perception perception, DirectedPoint initialLocation)
@@ -94,7 +84,7 @@ public class SubjectiveCar extends AbstractGTU
     }
 
     /**
-     * @see org.opentrafficsim.core.gtu.GTU#getLength()
+     * {@inheritDoc}
      */
     @Override
     public Rel getLength()
@@ -103,7 +93,7 @@ public class SubjectiveCar extends AbstractGTU
     }
 
     /**
-     * @see org.opentrafficsim.core.gtu.GTU#getWidth()
+     * {@inheritDoc}
      */
     @Override
     public Rel getWidth()
@@ -112,7 +102,7 @@ public class SubjectiveCar extends AbstractGTU
     }
 
     /**
-     * @see org.opentrafficsim.core.gtu.GTU#getMaximumVelocity()
+     * {@inheritDoc}
      */
     @Override
     public Speed getMaximumVelocity()
@@ -121,7 +111,7 @@ public class SubjectiveCar extends AbstractGTU
     }
 
     /**
-     * @see org.opentrafficsim.core.gtu.GTU#getFront()
+     * {@inheritDoc}
      */
     @Override
     public RelativePosition getFront()
@@ -130,7 +120,7 @@ public class SubjectiveCar extends AbstractGTU
     }
 
     /**
-     * @see org.opentrafficsim.core.gtu.GTU#getRear()
+     * {@inheritDoc}
      */
     @Override
     public RelativePosition getRear()
@@ -139,7 +129,7 @@ public class SubjectiveCar extends AbstractGTU
     }
 
     /**
-     * @see org.opentrafficsim.core.gtu.GTU#getRelativePositions()
+     * {@inheritDoc}
      */
     @Override
     public Map<TYPE, RelativePosition> getRelativePositions()
@@ -148,7 +138,7 @@ public class SubjectiveCar extends AbstractGTU
     }
 
     /**
-     * @see org.opentrafficsim.core.gtu.GTU#destroy()
+     * {@inheritDoc}
      */
     @Override
     public void destroy()
@@ -156,7 +146,7 @@ public class SubjectiveCar extends AbstractGTU
     }
 
     /**
-     * @see org.opentrafficsim.core.gtu.GTU#getDrivingCharacteristics()
+     * {@inheritDoc}
      */
     @Override
     public DrivingCharacteristics getDrivingCharacteristics()
@@ -165,7 +155,7 @@ public class SubjectiveCar extends AbstractGTU
     }
 
     /**
-     * @see nl.tudelft.simulation.dsol.animation.LocatableInterface#getBounds()
+     * {@inheritDoc}
      */
     @Override
     public Bounds getBounds()
@@ -191,6 +181,7 @@ public class SubjectiveCar extends AbstractGTU
         this.position = position;
     }
 
+    /** {@inheritDoc} */
     @Override
     public DirectedPoint getLocation()
     {

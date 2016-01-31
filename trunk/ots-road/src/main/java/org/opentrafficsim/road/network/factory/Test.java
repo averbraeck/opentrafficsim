@@ -15,7 +15,7 @@ import nl.javel.gisbeans.io.esri.CoordinateTransform;
 public class Test
 {
     /**
-     * @param args
+     * @param args args
      */
     public static void main(String[] args)
     {

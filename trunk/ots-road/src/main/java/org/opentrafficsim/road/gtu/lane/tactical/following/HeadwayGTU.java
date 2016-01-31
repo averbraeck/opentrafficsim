@@ -2,10 +2,10 @@ package org.opentrafficsim.road.gtu.lane.tactical.following;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.djunits.value.vdouble.scalar.Speed;
 
 /**
- * Container for a reference to a LaneBasedGTU and a headway.
+ * Container for a reference to information about a LaneBasedGTU and a headway.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -17,29 +17,42 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  */
 public class HeadwayGTU
 {
-    /** the other GTU. */
-    private final LaneBasedGTU gtu;
+    /** the id of the GTU for comparison purposes. */
+    private final String gtuId;
+    
+    /** the (perceived) speed of the other GTU. Can be null if unknown. */
+    private final Speed gtuSpeed;
 
     /** the distance to the GTU in meters. */
     private final double distanceSI;
 
     /**
-     * Construct a new HeadwayGTU.
-     * @param gtu the GTU in front of us
+     * Construct a new HeadwayGTU information object.
+     * @param gtuId the id of the GTU for comparison purposes
+     * @param gtuSpeed the (perceived) speed of the GTU in front of us; can be null if unknown
      * @param distanceSI the distance to the other GTU in meters; if the other GTU is parallel, use distance Double.NaN
      */
-    public HeadwayGTU(final LaneBasedGTU gtu, final double distanceSI)
+    public HeadwayGTU(final String gtuId, final Speed gtuSpeed, final double distanceSI)
     {
-        this.gtu = gtu;
+        this.gtuId = gtuId;
+        this.gtuSpeed = gtuSpeed;
         this.distanceSI = distanceSI;
     }
 
     /**
-     * @return the GTU in front of us.
+     * @return the id of the GTU for comparison purposes
      */
-    public final LaneBasedGTU getGTU()
+    public final String getGtuId()
     {
-        return this.gtu;
+        return this.gtuId;
+    }
+
+    /**
+     * @return the (perceived) speed of the GTU in front of us; can be null if unknown.
+     */
+    public final Speed getGtuSpeed()
+    {
+        return this.gtuSpeed;
     }
 
     /**
@@ -69,7 +82,7 @@ public class HeadwayGTU
     /** {@inheritDoc} */
     public final String toString()
     {
-        return String.format("Headway %s to %s", getDistance(), this.gtu);
+        return String.format("Headway %s to GTU %s with speed %s", getDistance(), getGtuId(), getGtuSpeed());
     }
 
 }

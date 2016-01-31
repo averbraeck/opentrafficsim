@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
+import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
@@ -71,13 +72,13 @@ public class ContourPlotTest implements UNITS
         OTSNode b = new OTSNode("B", new OTSPoint3D(12345, 0, 0));
         ArrayList<Lane> result = new ArrayList<Lane>();
         Lane[] lanes =
-                LaneFactory.makeMultiLane("AtoB", new OTSNode("A", new OTSPoint3D(1234, 0, 0)), b, null, 1, laneType,
-                        new Speed(100, KM_PER_HOUR), null, LongitudinalDirectionality.DIR_PLUS);
+            LaneFactory.makeMultiLane("AtoB", new OTSNode("A", new OTSPoint3D(1234, 0, 0)), b, null, 1, laneType,
+                new Speed(100, KM_PER_HOUR), null, LongitudinalDirectionality.DIR_PLUS);
         result.add(lanes[0]);
         // Make a continuation lane to prevent errors when the operational plan exceeds the available remaining length
         lanes =
-                LaneFactory.makeMultiLane("BtoC", b, new OTSNode("C", new OTSPoint3D(99999, 0, 0)), null, 1, laneType,
-                        new Speed(100, KM_PER_HOUR), null, LongitudinalDirectionality.DIR_PLUS);
+            LaneFactory.makeMultiLane("BtoC", b, new OTSNode("C", new OTSPoint3D(99999, 0, 0)), null, 1, laneType,
+                new Speed(100, KM_PER_HOUR), null, LongitudinalDirectionality.DIR_PLUS);
         // System.out.println("continuation lane is " + lanes[0] + " length is " + lanes[0].getLength());
         // System.out.println("next lanes is " + result.get(0).nextLanes(gtuType));
         return result;
@@ -206,8 +207,8 @@ public class ContourPlotTest implements UNITS
      *            expected when no car has passed
      * @throws Exception when something goes wrong (should not happen)
      */
-    public static void standardContourTests(final ContourPlot cp, Lane lane, GTUType gtuType, final double expectedZValue,
-            final double expectedZValueWithTraffic) throws Exception
+    public static void standardContourTests(final ContourPlot cp, Lane lane, GTUType gtuType,
+        final double expectedZValue, final double expectedZValueWithTraffic) throws Exception
     {
         assertEquals("seriesCount should be 1", 1, cp.getSeriesCount());
         assertEquals("domainOrder should be ASCENDING", DomainOrder.ASCENDING, cp.getDomainOrder());
@@ -217,12 +218,12 @@ public class ContourPlotTest implements UNITS
         int xBins = cp.xAxisBins();
         int yBins = cp.yAxisBins();
         int expectedXBins =
-                (int) Math.ceil((DoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND, ContourPlot.INITIALLOWERTIMEBOUND)
-                        .getSI()) / ContourPlot.STANDARDTIMEGRANULARITIES[ContourPlot.STANDARDINITIALTIMEGRANULARITYINDEX]);
+            (int) Math.ceil((DoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND, ContourPlot.INITIALLOWERTIMEBOUND)
+                .getSI()) / ContourPlot.STANDARDTIMEGRANULARITIES[ContourPlot.STANDARDINITIALTIMEGRANULARITYINDEX]);
         assertEquals("Initial xBins should be " + expectedXBins, expectedXBins, xBins);
         int expectedYBins =
-                (int) Math.ceil(lane.getLength().getSI()
-                        / ContourPlot.STANDARDDISTANCEGRANULARITIES[ContourPlot.STANDARDINITIALDISTANCEGRANULARITYINDEX]);
+            (int) Math.ceil(lane.getLength().getSI()
+                / ContourPlot.STANDARDDISTANCEGRANULARITIES[ContourPlot.STANDARDINITIALDISTANCEGRANULARITYINDEX]);
         assertEquals("yBins should be " + expectedYBins, expectedYBins, yBins);
         int bins = cp.getItemCount(0);
         assertEquals("Total bin count is product of xBins * yBins", xBins * yBins, bins);
@@ -239,8 +240,8 @@ public class ContourPlotTest implements UNITS
                 cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularity " + distanceGranularity));
                 cp.reGraph();
                 expectedXBins =
-                        (int) Math.ceil((DoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND,
-                                ContourPlot.INITIALLOWERTIMEBOUND).getSI()) / timeGranularity);
+                    (int) Math.ceil((DoubleScalar.minus(ContourPlot.INITIALUPPERTIMEBOUND,
+                        ContourPlot.INITIALLOWERTIMEBOUND).getSI()) / timeGranularity);
                 xBins = cp.xAxisBins();
                 assertEquals("Modified xBins should be " + expectedXBins, expectedXBins, xBins);
                 expectedYBins = (int) Math.ceil(lane.getLength().getSI() / distanceGranularity);
@@ -251,15 +252,17 @@ public class ContourPlotTest implements UNITS
                 for (int item = 0; item < bins; item++)
                 {
                     double x = cp.getXValue(0, item);
-                    assertTrue("X should be >= " + initialLowerTimeBoundString, x >= ContourPlot.INITIALLOWERTIMEBOUND.getSI());
-                    assertTrue("X should be <= " + initialUpperTimeBoundString, x <= ContourPlot.INITIALUPPERTIMEBOUND.getSI());
+                    assertTrue("X should be >= " + initialLowerTimeBoundString,
+                        x >= ContourPlot.INITIALLOWERTIMEBOUND.getSI());
+                    assertTrue("X should be <= " + initialUpperTimeBoundString,
+                        x <= ContourPlot.INITIALUPPERTIMEBOUND.getSI());
                     Number alternateX = cp.getX(0, item);
                     assertEquals("getXValue and getX should return things that have the same value", x,
-                            alternateX.doubleValue(), 0.000001);
+                        alternateX.doubleValue(), 0.000001);
                     double y = cp.getYValue(0, item);
                     Number alternateY = cp.getY(0, item);
                     assertEquals("getYValue and getY should return things that have the same value", y,
-                            alternateY.doubleValue(), 0.000001);
+                        alternateY.doubleValue(), 0.000001);
                     double z = cp.getZValue(0, item);
                     if (Double.isNaN(expectedZValue))
                     {
@@ -276,8 +279,8 @@ public class ContourPlotTest implements UNITS
                     }
                     else
                     {
-                        assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue, alternateZ.doubleValue(),
-                                0.0000);
+                        assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue,
+                            alternateZ.doubleValue(), 0.0000);
                     }
                 }
                 try
@@ -359,7 +362,7 @@ public class ContourPlotTest implements UNITS
         final double useTimeGranularity = 30; // [s]
         cp.actionPerformed(new ActionEvent(cp, 0, "setTimeGranularity " + useTimeGranularity));
         final double useDistanceGranularity =
-                ContourPlot.STANDARDDISTANCEGRANULARITIES[ContourPlot.STANDARDDISTANCEGRANULARITIES.length - 1];
+            ContourPlot.STANDARDDISTANCEGRANULARITIES[ContourPlot.STANDARDDISTANCEGRANULARITIES.length - 1];
         cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularity " + useDistanceGranularity));
         cp.reGraph();
         bins = cp.getItemCount(0);
@@ -368,38 +371,41 @@ public class ContourPlotTest implements UNITS
         Speed initialSpeed = new Speed(50, KM_PER_HOUR);
         ContourPlotModel model = new ContourPlotModel();
         SimpleSimulator simulator =
-                new SimpleSimulator(initialTime, new Time.Rel(0, SECOND), new Time.Rel(1800, SECOND), model);
+            new SimpleSimulator(initialTime, new Time.Rel(0, SECOND), new Time.Rel(1800, SECOND), model);
         // Create a car running 50 km.h
-        SequentialFixedAccelerationModel gtuFollowingModel = new SequentialFixedAccelerationModel(simulator);
+        SequentialFixedAccelerationModel gtuFollowingModel =
+            new SequentialFixedAccelerationModel(simulator, new Acceleration(2.0, AccelerationUnit.METER_PER_SECOND_2));
         // Make the car run at constant speed for one minute
-        gtuFollowingModel
-                .addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(60, SECOND)));
+        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(60,
+            SECOND)));
         // Make the car run at constant speed for another minute
-        gtuFollowingModel
-                .addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(600, SECOND)));
+        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(600,
+            SECOND)));
         // Make the car run at constant speed for five more minutes
-        gtuFollowingModel
-                .addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(300, SECOND)));
+        gtuFollowingModel.addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(300,
+            SECOND)));
         LaneChangeModel laneChangeModel = new Egoistic();
         OTSNetwork network = new OTSNetwork("network");
         LaneBasedIndividualCar car =
-                CarTest.makeReferenceCar("0", gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
-                        laneChangeModel, network);
+            CarTest.makeReferenceCar("0", gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
+                laneChangeModel, network);
         car.getStrategicalPlanner().getDrivingCharacteristics()
-                .setForwardHeadwayDistance(new Length.Rel(10, LengthUnit.KILOMETER));
+            .setForwardHeadwayDistance(new Length.Rel(10, LengthUnit.KILOMETER));
         // Check that the initial data in the graph contains no trace of any car.
         for (int item = 0; item < bins; item++)
         {
             double x = cp.getXValue(0, item);
-            assertTrue("X should be >= " + ContourPlot.INITIALLOWERTIMEBOUND, x >= ContourPlot.INITIALLOWERTIMEBOUND.getSI());
-            assertTrue("X should be <= " + ContourPlot.INITIALUPPERTIMEBOUND, x <= ContourPlot.INITIALUPPERTIMEBOUND.getSI());
+            assertTrue("X should be >= " + ContourPlot.INITIALLOWERTIMEBOUND,
+                x >= ContourPlot.INITIALLOWERTIMEBOUND.getSI());
+            assertTrue("X should be <= " + ContourPlot.INITIALUPPERTIMEBOUND,
+                x <= ContourPlot.INITIALUPPERTIMEBOUND.getSI());
             Number alternateX = cp.getX(0, item);
-            assertEquals("getXValue and getX should return things that have the same value", x, alternateX.doubleValue(),
-                    0.000001);
+            assertEquals("getXValue and getX should return things that have the same value", x,
+                alternateX.doubleValue(), 0.000001);
             double y = cp.getYValue(0, item);
             Number alternateY = cp.getY(0, item);
-            assertEquals("getYValue and getY should return things that have the same value", y, alternateY.doubleValue(),
-                    0.000001);
+            assertEquals("getYValue and getY should return things that have the same value", y,
+                alternateY.doubleValue(), 0.000001);
             double z = cp.getZValue(0, item);
             if (Double.isNaN(expectedZValue))
             {
@@ -416,7 +422,8 @@ public class ContourPlotTest implements UNITS
             }
             else
             {
-                assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue, alternateZ.doubleValue(), 0.0000);
+                assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue, alternateZ.doubleValue(),
+                    0.0000);
             }
         }
         // System.out.println("Running simulator from " + simulator.getSimulatorTime().get() + " to "
@@ -441,15 +448,17 @@ public class ContourPlotTest implements UNITS
         for (int item = 0; item < bins; item++)
         {
             double x = cp.getXValue(0, item);
-            assertTrue("X should be >= " + ContourPlot.INITIALLOWERTIMEBOUND, x >= ContourPlot.INITIALLOWERTIMEBOUND.getSI());
-            assertTrue("X should be <= " + ContourPlot.INITIALUPPERTIMEBOUND, x <= ContourPlot.INITIALUPPERTIMEBOUND.getSI());
+            assertTrue("X should be >= " + ContourPlot.INITIALLOWERTIMEBOUND,
+                x >= ContourPlot.INITIALLOWERTIMEBOUND.getSI());
+            assertTrue("X should be <= " + ContourPlot.INITIALUPPERTIMEBOUND,
+                x <= ContourPlot.INITIALUPPERTIMEBOUND.getSI());
             Number alternateX = cp.getX(0, item);
-            assertEquals("getXValue and getX should return things that have the same value", x, alternateX.doubleValue(),
-                    0.000001);
+            assertEquals("getXValue and getX should return things that have the same value", x,
+                alternateX.doubleValue(), 0.000001);
             double y = cp.getYValue(0, item);
             Number alternateY = cp.getY(0, item);
-            assertEquals("getYValue and getY should return things that have the same value", y, alternateY.doubleValue(),
-                    0.000001);
+            assertEquals("getYValue and getY should return things that have the same value", y,
+                alternateY.doubleValue(), 0.000001);
             double z = cp.getZValue(0, item);
             // figure out if the car has traveled through this cell
             // if (x >= 180)
@@ -458,12 +467,14 @@ public class ContourPlotTest implements UNITS
             // .getSI()));
             boolean hit = false;
             if (x + useTimeGranularity >= 0// car.getOperationalPlan().getStartTime().getSI()
-                    && x < 60)// car.getOperationalPlan().getEndTime().getSI())
+                && x < 60)// car.getOperationalPlan().getEndTime().getSI())
             {
                 // the car MAY have contributed to this cell
-                Time.Abs cellStartTime = new Time.Abs(Math.max(car.getOperationalPlan().getStartTime().getSI(), x), SECOND);
+                Time.Abs cellStartTime =
+                    new Time.Abs(Math.max(car.getOperationalPlan().getStartTime().getSI(), x), SECOND);
                 Time.Abs cellEndTime =
-                        new Time.Abs(Math.min(car.getOperationalPlan().getEndTime().getSI(), x + useTimeGranularity), SECOND);
+                    new Time.Abs(Math.min(car.getOperationalPlan().getEndTime().getSI(), x + useTimeGranularity),
+                        SECOND);
                 // System.out.println("cellStartTime=" + cellStartTime + ", cellEndTime=" + cellEndTime);
                 // The next if statement is the problem
                 // if (cellStartTime.lt(cellEndTime)
@@ -488,11 +499,12 @@ public class ContourPlotTest implements UNITS
                     if (Double.isNaN(z))
                     {
                         printMatrix(cp, 0, 10, 0, 10);
-                        System.out.println("Oops - z is NaN, expected z value with traffic is " + expectedZValueWithTraffic);
+                        System.out.println("Oops - z is NaN, expected z value with traffic is "
+                            + expectedZValueWithTraffic);
                     }
                     assertEquals("Z value should be " + expectedZValueWithTraffic, expectedZValueWithTraffic, z, 0.0001);
                     assertEquals("Z value should be " + expectedZValueWithTraffic, expectedZValueWithTraffic,
-                            alternateZ.doubleValue(), 0.0001);
+                        alternateZ.doubleValue(), 0.0001);
                 }
                 else
                 {
@@ -536,8 +548,8 @@ public class ContourPlotTest implements UNITS
                 }
                 else
                 {
-                    assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue, alternateZ.doubleValue(),
-                            0.0000);
+                    assertEquals("Alternate Z value should be " + expectedZValue, expectedZValue,
+                        alternateZ.doubleValue(), 0.0000);
                 }
             }
         }
@@ -570,8 +582,10 @@ public class ContourPlotTest implements UNITS
             }
         }
         double expectedHighestTime =
-                Math.floor((car.getSimulator().getSimulatorTime().get().si - 0.001) / useTimeGranularity) * useTimeGranularity;
-        assertEquals("Time range should run up to " + expectedHighestTime, expectedHighestTime, observedHighestTime, 0.0001);
+            Math.floor((car.getSimulator().getSimulatorTime().get().si - 0.001) / useTimeGranularity)
+                * useTimeGranularity;
+        assertEquals("Time range should run up to " + expectedHighestTime, expectedHighestTime, observedHighestTime,
+            0.0001);
         // Check the updateHint method in the PointerHandler
         // First get the panel that stores the result of updateHint (this is ugly)
         JLabel hintPanel = null;
@@ -688,8 +702,8 @@ class ContourPlotModel implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public void constructModel(
-            SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
-            throws SimRuntimeException
+        SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+        throws SimRuntimeException
     {
         // NOT USED
     }

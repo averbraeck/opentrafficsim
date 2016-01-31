@@ -65,7 +65,8 @@ public class IDMPlusTest implements UNITS
     @Test
     public final void computeAcceleration() throws Exception
     {
-        // Check a car standing still with no leaders accelerates with maximum acceleration
+        // Test 1. Check a car standing still with no leaders accelerates with maximum acceleration
+        // cars have #10 and up
         SimpleSimulator simulator =
             new SimpleSimulator(new Time.Abs(0, SECOND), new Time.Rel(0, SECOND), new Time.Rel(3600, SECOND),
                 new IDMPlusTestModel());
@@ -86,84 +87,109 @@ public class IDMPlusTest implements UNITS
         initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
-        LaneBasedDrivingCharacteristics drivingCharacteristics =
+        LaneBasedDrivingCharacteristics drivingCharacteristicsIDM =
             new LaneBasedDrivingCharacteristics(carFollowingModel, laneChangeModel);
-        LaneBasedStrategicalPlanner strategicalPlanner =
-            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner());
-        LaneBasedIndividualCar referenceCar =
-            new LaneBasedIndividualCar("12345", gtuType, initialLongitudinalPositions, initialSpeed, length, width,
-                maxSpeed, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
+        LaneBasedStrategicalPlanner strategicalPlannerIDM =
+            new LaneBasedStrategicalRoutePlanner(drivingCharacteristicsIDM, new LaneBasedGTUFollowingTacticalPlanner());
+        LaneBasedIndividualCar referenceCar10 =
+            new LaneBasedIndividualCar("10", gtuType, initialLongitudinalPositions, initialSpeed, length, width,
+                maxSpeed, simulator, strategicalPlannerIDM, new LanePerceptionFull(), this.network);
+        referenceCar10.getPerception().perceive();
         Speed speedLimit = new Speed(100, KM_PER_HOUR);
-        AccelerationStep cfmr = carFollowingModel.computeAccelerationWithNoLeader(referenceCar, speedLimit);
+        AccelerationStep cfmr =
+            carFollowingModel.computeAccelerationStepWithNoLeader(referenceCar10, referenceCar10
+                .getDrivingCharacteristics().getForwardHeadwayDistance(), speedLimit);
         assertEquals("Standard time slice in IDM+ is 0.5s", 0.5, cfmr.getValidUntil().getSI(), 0.0001);
         assertEquals("Acceleration should be maximum", 1.25, cfmr.getAcceleration().getSI(), 0.0001);
         // Create another car at exactly the stationary following distance
         // Check that the follower remains stationary
         Length.Rel leaderPosition =
-            new Length.Rel(2 + referenceCar.getLength().getSI()
-                + referenceCar.position(lane, referenceCar.getReference(), initialTime).getSI(), METER);
+            new Length.Rel(2 + referenceCar10.getLength().getSI()
+                + referenceCar10.position(lane, referenceCar10.getReference(), initialTime).getSI(), METER);
         Set<DirectedLanePosition> leaderPositions = new LinkedHashSet<>(1);
         leaderPositions.add(new DirectedLanePosition(lane, leaderPosition, GTUDirectionality.DIR_PLUS));
 
         // The leader gets a car following model that makes it stay in place for a loooong time
         FixedAccelerationModel fam =
             new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(9999, SECOND));
-        drivingCharacteristics = new LaneBasedDrivingCharacteristics(fam, laneChangeModel);
-        strategicalPlanner =
-            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner());
-        LaneBasedIndividualCar leaderCar =
-            new LaneBasedIndividualCar("23456", gtuType, leaderPositions, initialSpeed, length, width, maxSpeed,
-                simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
+        LaneBasedDrivingCharacteristics drivingCharacteristicsFAM =
+            new LaneBasedDrivingCharacteristics(fam, laneChangeModel);
+        LaneBasedStrategicalPlanner strategicalPlannerFAM =
+            new LaneBasedStrategicalRoutePlanner(drivingCharacteristicsFAM, new LaneBasedGTUFollowingTacticalPlanner());
+        LaneBasedIndividualCar leaderCar11 =
+            new LaneBasedIndividualCar("11", gtuType, leaderPositions, initialSpeed, length, width, maxSpeed,
+                simulator, strategicalPlannerFAM, new LanePerceptionFull(), this.network);
+        leaderCar11.getPerception().perceive();
         HeadwayGTU leader =
-            new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
-                - initialPosition.getSI());
+            new HeadwayGTU(leaderCar11.getId(), leaderCar11.getVelocity(), leaderPosition.getSI()
+                - referenceCar10.getLength().getSI() - initialPosition.getSI());
         cfmr =
-            carFollowingModel.computeAcceleration(referenceCar, leaderCar.getVelocity(), leader.getDistance(),
-                speedLimit);
+            carFollowingModel.computeAccelerationStep(referenceCar10, leaderCar11.getVelocity(), leader.getDistance(),
+                leaderCar11.getDrivingCharacteristics().getForwardHeadwayDistance(), speedLimit);
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         leaderPosition =
-            new Length.Rel(1000 + (3 + referenceCar.getLength().getSI() + referenceCar.position(lane,
-                referenceCar.getFront(), initialTime).getSI()), METER);
+            new Length.Rel(1000 + (3 + referenceCar10.getLength().getSI() + referenceCar10.position(lane,
+                referenceCar10.getFront(), initialTime).getSI()), METER);
         leaderPositions = new LinkedHashSet<>(1);
         leaderPositions.add(new DirectedLanePosition(lane, leaderPosition, GTUDirectionality.DIR_PLUS));
         // Exercise the if statement that ignores leaders that are further ahead
-        drivingCharacteristics = new LaneBasedDrivingCharacteristics(fam, laneChangeModel);
-        strategicalPlanner =
-            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner());
-        LaneBasedIndividualCar leaderCar2 =
-            new LaneBasedIndividualCar("34567", gtuType, leaderPositions, initialSpeed, length, width, maxSpeed,
-                simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
+        drivingCharacteristicsFAM = new LaneBasedDrivingCharacteristics(fam, laneChangeModel);
+        strategicalPlannerFAM =
+            new LaneBasedStrategicalRoutePlanner(drivingCharacteristicsFAM, new LaneBasedGTUFollowingTacticalPlanner());
+        LaneBasedIndividualCar leaderCar12 =
+            new LaneBasedIndividualCar("12", gtuType, leaderPositions, initialSpeed, length, width, maxSpeed,
+                simulator, strategicalPlannerFAM, new LanePerceptionFull(), this.network);
+        leaderCar12.getPerception().perceive();
         // Verify that the result is independent of the order of adding in the Collection
         Collection<HeadwayGTU> leaders = new ArrayList<HeadwayGTU>();
         HeadwayGTU leader2 =
-            new HeadwayGTU(leaderCar2, leaderPosition.getSI() - referenceCar.getLength().getSI()
-                - initialPosition.getSI());
+            new HeadwayGTU(leaderCar12.getId(), leaderCar12.getVelocity(), leaderPosition.getSI()
+                - referenceCar10.getLength().getSI() - initialPosition.getSI());
         leaders.add(leader2); // Put the 2nd leader in first place
         leaders.add(leader);
-        cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit).getLeaderAccelerationStep();
+        cfmr =
+            carFollowingModel.computeDualAccelerationStep(referenceCar10, leaders,
+                referenceCar10.getDrivingCharacteristics().getForwardHeadwayDistance(), speedLimit)
+                .getLeaderAccelerationStep();
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         leaders.clear();
         leaders.add(leader); // Put the 1st leader in first place
         leaders.add(leader2);
-        cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit).getLeaderAccelerationStep();
+        cfmr =
+            carFollowingModel.computeDualAccelerationStep(referenceCar10, leaders,
+                referenceCar10.getDrivingCharacteristics().getForwardHeadwayDistance(), speedLimit)
+                .getLeaderAccelerationStep();
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
+        referenceCar10.destroy();
+        leaderCar11.destroy();
+        leaderCar12.destroy();
+
+        // Test 2, cars have #20 and up
+        LaneBasedIndividualCar referenceCar20 =
+            new LaneBasedIndividualCar("20", gtuType, initialLongitudinalPositions, initialSpeed, length, width,
+                maxSpeed, simulator, strategicalPlannerIDM, new LanePerceptionFull(), this.network);
         leaders.clear();
         leaderPosition =
-            new Length.Rel(-(3 + referenceCar.getLength().getSI() + referenceCar.position(lane,
-                referenceCar.getFront(), initialTime).getSI()), METER);
+            new Length.Rel(-(3 + referenceCar20.getLength().getSI())
+                + referenceCar20.position(lane, referenceCar20.getFront(), initialTime).getSI(), METER);
         leaderPositions = new LinkedHashSet<>(1);
         leaderPositions.add(new DirectedLanePosition(lane, leaderPosition, GTUDirectionality.DIR_PLUS));
-        leaderCar.destroy();
-        leaderCar2.destroy();
-        leaderCar =
-            new LaneBasedIndividualCar("223344", gtuType, leaderPositions, initialSpeed, length, width, maxSpeed,
-                simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
+        LaneBasedIndividualCar leaderCar21 =
+            new LaneBasedIndividualCar("21", gtuType, leaderPositions, initialSpeed, length, width, maxSpeed,
+                simulator, strategicalPlannerFAM, new LanePerceptionFull(), this.network);
+        referenceCar20.getPerception().perceive();
+        leaderCar21.getPerception().perceive();
         leader =
-            new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
-                - initialPosition.getSI());
+            new HeadwayGTU(leaderCar21.getId(), leaderCar21.getVelocity(), leaderPosition.getSI()
+                - referenceCar20.getLength().getSI() - initialPosition.getSI());
         leaders.add(leader);
-        cfmr = carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit).getFollowerAccelerationStep();
-        assertEquals("Acceleration should be 1.25", 1.25, cfmr.getAcceleration().getSI(), 0.0001);
+        cfmr =
+            carFollowingModel.computeDualAccelerationStep(referenceCar20, leaders,
+                referenceCar20.getDrivingCharacteristics().getForwardHeadwayDistance(), speedLimit)
+                .getLeaderAccelerationStep();
+        assertEquals("Leader acceleration should be 1.25", 1.25, cfmr.getAcceleration().getSI(), 0.0001);
+        leaderCar21.destroy();
+
         // Check that the returned acceleration increases with the distance to the leader
         double referenceAcceleration = -1;
         for (int spareDistance = 0; spareDistance <= 500; spareDistance++)
@@ -171,33 +197,42 @@ public class IDMPlusTest implements UNITS
             leaders.clear();
             leaderPosition =
                 new Length.Rel(spareDistance
-                    + (3 + referenceCar.getLength().getSI() + referenceCar.position(lane, referenceCar.getFront(),
-                        initialTime).getSI()), METER);
+                    + (3 + referenceCar20.getLength().getSI() + referenceCar20.position(lane,
+                        referenceCar20.getFront(), initialTime).getSI()), METER);
             leaderPositions = new LinkedHashSet<>(1);
             leaderPositions.add(new DirectedLanePosition(lane, leaderPosition, GTUDirectionality.DIR_PLUS));
-            leaderCar =
+            LaneBasedIndividualCar leaderCar22 =
                 new LaneBasedIndividualCar("0", gtuType, leaderPositions, initialSpeed, length, width, maxSpeed,
-                    simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
+                    simulator, strategicalPlannerFAM, new LanePerceptionFull(), this.network);
+            leaderCar22.getPerception().perceive();
             leader =
-                new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
-                    - initialPosition.getSI());
+                new HeadwayGTU(leaderCar22.getId(), leaderCar22.getVelocity(), leaderPosition.getSI()
+                    - referenceCar20.getLength().getSI() - initialPosition.getSI());
             leaders.add(leader);
             cfmr =
-                carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit).getFollowerAccelerationStep();
+                carFollowingModel.computeDualAccelerationStep(referenceCar20, leaders,
+                    referenceCar20.getDrivingCharacteristics().getForwardHeadwayDistance(), speedLimit)
+                    .getFollowerAccelerationStep();
             double acceleration = cfmr.getAcceleration().getSI();
             // System.out.println("Acceleration with stationary leader at " + spareDistance + " is " + acceleration);
             assertTrue("acceleration should not decrease when distance to leader is increased",
                 acceleration >= referenceAcceleration);
             referenceAcceleration = acceleration;
-            leaderCar.destroy();
+            leaderCar22.destroy();
         }
         assertTrue("Highest acceleration should be less than max", referenceAcceleration <= 1.25);
-        // Check that the returned acceleration increases with the speed of the leader
-        // System.out.println("");
+        referenceCar20.destroy();
+
+        // Test 3. Check that the returned acceleration increases with the speed of the leader
+        // cars have #30 and up
+        LaneBasedIndividualCar referenceCar30 =
+            new LaneBasedIndividualCar("30", gtuType, initialLongitudinalPositions, initialSpeed, length, width,
+                maxSpeed, simulator, strategicalPlannerIDM, new LanePerceptionFull(), this.network);
+        referenceCar30.getPerception().perceive();
         referenceAcceleration = Double.NEGATIVE_INFINITY;
         leaderPosition =
-            new Length.Rel(2 + 3 + referenceCar.getLength().getSI()
-                + referenceCar.position(lane, referenceCar.getFront(), initialTime).getSI(), METER);
+            new Length.Rel(2 + 3 + referenceCar30.getLength().getSI()
+                + referenceCar30.position(lane, referenceCar30.getFront(), initialTime).getSI(), METER);
         leaderPositions = new LinkedHashSet<>(1);
         leaderPositions.add(new DirectedLanePosition(lane, leaderPosition, GTUDirectionality.DIR_PLUS));
         // In IDM+ the reference car must have non-zero speed for the leader speed to have any effect
@@ -206,59 +241,68 @@ public class IDMPlusTest implements UNITS
         {
             Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
             initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
-            referenceCar.destroy();
-            drivingCharacteristics = new LaneBasedDrivingCharacteristics(carFollowingModel, laneChangeModel);
-            strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner());
-            referenceCar =
-                new LaneBasedIndividualCar("12345", gtuType, initialPositions, initialSpeed, length, width, maxSpeed,
-                    simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
+            referenceCar30.destroy();
+            drivingCharacteristicsIDM = new LaneBasedDrivingCharacteristics(carFollowingModel, laneChangeModel);
+            strategicalPlannerIDM =
+                new LaneBasedStrategicalRoutePlanner(drivingCharacteristicsIDM,
+                    new LaneBasedGTUFollowingTacticalPlanner());
+            referenceCar30 =
+                new LaneBasedIndividualCar("30", gtuType, initialPositions, initialSpeed, length, width, maxSpeed,
+                    simulator, strategicalPlannerIDM, new LanePerceptionFull(), this.network);
             leaders.clear();
             Speed leaderSpeed = new Speed(integerLeaderSpeed, METER_PER_SECOND);
-            drivingCharacteristics = new LaneBasedDrivingCharacteristics(fam, laneChangeModel);
-            strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner());
-            leaderCar =
-                new LaneBasedIndividualCar("0", gtuType, leaderPositions, leaderSpeed, length, width, maxSpeed,
-                    simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
+            drivingCharacteristicsFAM = new LaneBasedDrivingCharacteristics(fam, laneChangeModel);
+            strategicalPlannerFAM =
+                new LaneBasedStrategicalRoutePlanner(drivingCharacteristicsFAM,
+                    new LaneBasedGTUFollowingTacticalPlanner());
+            LaneBasedIndividualCar leaderCar31 =
+                new LaneBasedIndividualCar("31", gtuType, leaderPositions, leaderSpeed, length, width, maxSpeed,
+                    simulator, strategicalPlannerFAM, new LanePerceptionFull(), this.network);
+            leaderCar31.getPerception().perceive();
             leader =
-                new HeadwayGTU(leaderCar, leaderPosition.getSI() - referenceCar.getLength().getSI()
-                    - initialPosition.getSI());
+                new HeadwayGTU(leaderCar31.getId(), leaderCar31.getVelocity(), leaderPosition.getSI()
+                    - referenceCar30.getLength().getSI() - initialPosition.getSI());
             leaders.add(leader);
             // System.out.println("referenceCar: " + referenceCar);
             // System.out.println("leaderCar   : " + leaderCar);
             cfmr =
-                carFollowingModel.computeAcceleration(referenceCar, leaders, speedLimit).getFollowerAccelerationStep();
+                carFollowingModel.computeDualAccelerationStep(referenceCar30, leaders,
+                    referenceCar30.getDrivingCharacteristics().getForwardHeadwayDistance(), speedLimit)
+                    .getFollowerAccelerationStep();
             double acceleration = cfmr.getAcceleration().getSI();
             // System.out.println("Acceleration with leader driving " + integerLeaderSpeed + " m/s is " + acceleration);
             assertTrue("acceleration should not decrease when leader speed is increased",
                 acceleration >= referenceAcceleration);
             referenceAcceleration = acceleration;
-            leaderCar.destroy();
+            leaderCar31.destroy();
         }
         assertTrue("Highest acceleration should be less than max", referenceAcceleration <= 1.25);
-        // Check that a car that is 100m behind a stationary car accelerates, then decelerates and stops at the right
-        // point. (In IDM+ the car oscillates a while around the final position with pretty good damping.)
+        referenceCar30.destroy();
+
+        // Test 4. Check that a car that is 100m behind a stationary car accelerates, then decelerates and stops at
+        // the right point. (In IDM+ the car oscillates a while around the final position with pretty good damping.)
+        // Cars have #40 and up
         initialPosition = new Length.Rel(100, METER);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         initialSpeed = new Speed(0, METER_PER_SECOND);
-        referenceCar.destroy();
-        drivingCharacteristics = new LaneBasedDrivingCharacteristics(carFollowingModel, laneChangeModel);
-        strategicalPlanner =
-            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner());
-        referenceCar =
-            new LaneBasedIndividualCar("12345", gtuType, initialPositions, initialSpeed, length, width, maxSpeed,
-                simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
+        drivingCharacteristicsIDM = new LaneBasedDrivingCharacteristics(carFollowingModel, laneChangeModel);
+        strategicalPlannerIDM =
+            new LaneBasedStrategicalRoutePlanner(drivingCharacteristicsIDM, new LaneBasedGTUFollowingTacticalPlanner());
+        LaneBasedIndividualCar referenceCar40 =
+            new LaneBasedIndividualCar("40", gtuType, initialPositions, initialSpeed, length, width, maxSpeed,
+                simulator, strategicalPlannerIDM, new LanePerceptionFull(), this.network);
+        referenceCar40.getPerception().perceive();
         leaderPosition =
-            new Length.Rel(100 + 3 + referenceCar.getLength().getSI()
-                + referenceCar.position(lane, referenceCar.getFront(), initialTime).getSI(), METER);
-        drivingCharacteristics = new LaneBasedDrivingCharacteristics(fam, laneChangeModel);
-        strategicalPlanner =
-            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner());
-        leaderCar =
-            new LaneBasedIndividualCar("0", gtuType, leaderPositions, initialSpeed, length, width, maxSpeed, simulator,
-                strategicalPlanner, new LanePerceptionFull(), this.network);
+            new Length.Rel(100 + 3 + referenceCar40.getLength().getSI()
+                + referenceCar40.position(lane, referenceCar40.getFront(), initialTime).getSI(), METER);
+        drivingCharacteristicsFAM = new LaneBasedDrivingCharacteristics(fam, laneChangeModel);
+        strategicalPlannerFAM =
+            new LaneBasedStrategicalRoutePlanner(drivingCharacteristicsFAM, new LaneBasedGTUFollowingTacticalPlanner());
+        LaneBasedIndividualCar leaderCar41 =
+            new LaneBasedIndividualCar("41", gtuType, leaderPositions, initialSpeed, length, width, maxSpeed,
+                simulator, strategicalPlannerFAM, new LanePerceptionFull(), this.network);
+        leaderCar41.getPerception().perceive();
         for (int timeStep = 0; timeStep < 200; timeStep++)
         {
             Time.Abs simulateUntil = new Time.Abs(0.1 * timeStep, TimeUnit.SI);
@@ -268,6 +312,8 @@ public class IDMPlusTest implements UNITS
                 try
                 {
                     Thread.sleep(1);
+                    System.out.println(referenceCar40 + ", t= " + simulator.getSimulatorTime().get() + ", pos="
+                        + referenceCar40.getLocation());
                 }
                 catch (InterruptedException ie)
                 {
@@ -278,14 +324,16 @@ public class IDMPlusTest implements UNITS
             // simulateUntil, referenceCar, referenceCar.getVelocity(), leaderCar));
             if (timeStep > 120)
             {
-                double position = referenceCar.position(lane, referenceCar.getFront()).getSI();
+                double position = referenceCar40.position(lane, referenceCar40.getFront()).getSI();
                 assertEquals("After 20 seconds the referenceCar should now be very close to " + s0
-                    + " before the rear of the leader",
-                    leaderCar.position(lane, referenceCar.getRear()).getSI() - s0.getSI(), position, 0.2);
-                assertEquals("After 20 seconds the speed of the referenceCar should be almost 0", 0, referenceCar
+                    + " before the rear of the leader", leaderCar41.position(lane, referenceCar40.getRear()).getSI()
+                    - s0.getSI(), position, 0.2);
+                assertEquals("After 20 seconds the speed of the referenceCar should be almost 0", 0, referenceCar40
                     .getVelocity().getSI(), 0.2);
             }
         }
+        referenceCar40.destroy();
+        leaderCar41.destroy();
     }
 
 }

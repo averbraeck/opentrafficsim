@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -32,24 +31,31 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
     /** The simulator engine. */
     private final OTSDEVSSimulatorInterface simulator;
 
+    /** the maximum safe deceleration. */
+    private final Acceleration maximumSafeDeceleration;
+
     /**
      * Construct a SequentialFixedAccelerationModel with empty list of FixedAccelerationModel steps.
      * @param simulator DEVSSimulator; the simulator (needed to obtain the current simulation time)
+     * @param maximumSafeDeceleration specified maximum safe deceleration
      */
-    public SequentialFixedAccelerationModel(final OTSDEVSSimulatorInterface simulator)
+    public SequentialFixedAccelerationModel(final OTSDEVSSimulatorInterface simulator,
+        final Acceleration maximumSafeDeceleration)
     {
         this.simulator = simulator;
+        this.maximumSafeDeceleration = maximumSafeDeceleration;
     }
 
     /**
      * Construct a SequentialFixedAccelerationModel and load it with a list of FixedAccelerationModel steps.
      * @param simulator DEVSSimulator; the simulator (needed to obtain the current simulation time)
+     * @param maximumSafeDeceleration specified maximum safe deceleration
      * @param steps Set&lt;FixedAccelerationModel&gt;; the list of FixedAccelerationModel steps.
      */
     public SequentialFixedAccelerationModel(final OTSDEVSSimulatorInterface simulator,
-        final Set<FixedAccelerationModel> steps)
+        final Acceleration maximumSafeDeceleration, final Set<FixedAccelerationModel> steps)
     {
-        this(simulator);
+        this(simulator, maximumSafeDeceleration);
         this.steps.addAll(steps);
     }
 
@@ -134,10 +140,9 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration maximumSafeDeceleration()
+    public final Acceleration getMaximumSafeDeceleration()
     {
-        // TODO specify in constructor
-        return new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2);
+        return this.maximumSafeDeceleration;
     }
 
     /** {@inheritDoc} */

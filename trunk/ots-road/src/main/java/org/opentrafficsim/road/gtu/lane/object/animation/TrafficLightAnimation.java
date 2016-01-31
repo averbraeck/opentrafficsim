@@ -48,7 +48,6 @@ public class TrafficLightAnimation extends Renderable2D
 
     /**
      * {@inheritDoc}
-     * @throws RemoteException
      */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer) throws RemoteException

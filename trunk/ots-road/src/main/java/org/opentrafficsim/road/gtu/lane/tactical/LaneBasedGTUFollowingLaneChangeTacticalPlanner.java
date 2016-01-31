@@ -2,23 +2,28 @@ package org.opentrafficsim.road.gtu.lane.tactical;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.GTU;
+import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
+import org.opentrafficsim.road.network.lane.Lane;
 
 /**
  * Lane-based tactical planner that implements car following behavior and rule-based lane change. This tactical planner
@@ -71,7 +76,8 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
     {
         // ask Perception for the local situation
         LaneBasedGTU laneBasedGTU = (LaneBasedGTU) gtu;
-        LanePerceptionFull perception = laneBasedGTU.getPerception();
+        LanePerception perception = laneBasedGTU.getPerception();
+        LaneBasedDrivingCharacteristics drivingCharacteristics = laneBasedGTU.getDrivingCharacteristics();
 
         // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
         if (laneBasedGTU.getMaximumVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
@@ -79,74 +85,165 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
             return new OperationalPlan(locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.SECOND));
         }
 
-        // perceive every time step... This is the 'classical' way of tactical planning.
-        perception.perceive();
+        // perceive the forward headway, accessible lanes and speed limit.
+        perception.updateForwardHeadwayGTU();
+        perception.updateAccessibleAdjacentLanesLeft();
+        perception.updateAccessibleAdjacentLanesRight();
+        perception.updateSpeedLimit();
+
+        // find out where we are going
+        Length.Rel forwardHeadway = drivingCharacteristics.getForwardHeadwayDistance();
+        LanePathInfo lanePathInfo = buildLaneListForward(laneBasedGTU, forwardHeadway);
+        NextSplitInfo nextSplitInfo = determineNextSplit(laneBasedGTU, forwardHeadway);
+        Set<Lane> correctLanes = laneBasedGTU.getLanes().keySet();
+        correctLanes.retainAll(nextSplitInfo.getCorrectCurrentLanes());
 
         // Step 1: Do we want to change lanes because of the current lane not leading to our destination?
-        
-
-        // Step 2. Do we want to change lanes because of our predecessor on the current lane?
-
-        
-        // Step 3. Do we want to change lanes because of traffic rules?
-
-        
-        // get some models to help us make a plan
-        GTUFollowingModel gtuFollowingModel =
-            laneBasedGTU.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
-
-        // look at the conditions for headway
-        HeadwayGTU headwayGTU = perception.getForwardHeadwayGTU();
-        AccelerationStep accelerationStep = null;
-        if (headwayGTU.getGTU() == null)
+        if (lanePathInfo.getPath().getLength().lt(forwardHeadway))
         {
-            accelerationStep =
-                gtuFollowingModel.computeAccelerationWithNoLeader(laneBasedGTU, perception.getSpeedLimit());
-        }
-        else
-        {
-            // TODO do not use the velocity of the other GTU, but the PERCEIVED velocity
-            accelerationStep =
-                gtuFollowingModel.computeAcceleration(laneBasedGTU, headwayGTU.getGTU().getVelocity(),
-                    headwayGTU.getDistance(), perception.getSpeedLimit());
+            if (correctLanes.isEmpty())
+            {
+                LateralDirectionality direction = determineLeftRight(laneBasedGTU, nextSplitInfo);
+                if (direction != null)
+                {
+                    OperationalPlan laneChangePlan =
+                        makeLaneChangePlan(laneBasedGTU, perception, lanePathInfo, direction);
+                    if (laneChangePlan != null)
+                    {
+                        return laneChangePlan;
+                    }
+                }
+            }
         }
 
-        // TODO put this in the AccelerationStep class
-        Time.Rel duration = accelerationStep.getValidUntil().minus(gtu.getSimulator().getSimulatorTime().getTime());
+        // TODO Step 2. Do we want to change lanes because of our predecessor on the current lane?
+
+        // TODO Step 3. Do we want to change lanes because of traffic rules?
+
+        // No lane change. Continue on current lane.
+        AccelerationStep accelerationStep =
+            calculateAcceleratonStep(laneBasedGTU, perception, perception.getForwardHeadwayGTU(), lanePathInfo
+                .getPath().getLength());
 
         // see if we have to continue standing still. In that case, generate a stand still plan
         if (accelerationStep.getAcceleration().si < 1E-6
             && laneBasedGTU.getVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
         {
-            return new OperationalPlan(locationAtStartTime, startTime, duration);
+            return new OperationalPlan(locationAtStartTime, startTime, accelerationStep.getDuration());
         }
 
         // build a list of lanes forward, with a maximum headway.
-        LanePathInfo lpi =
-            buildLaneListForward(laneBasedGTU, laneBasedGTU.getDrivingCharacteristics().getForwardHeadwayDistance());
-        OTSLine3D path = lpi.getPath();
-
         List<Segment> operationalPlanSegmentList = new ArrayList<>();
         if (accelerationStep.getAcceleration().si == 0.0)
         {
-            Segment segment = new OperationalPlan.SpeedSegment(duration);
+            Segment segment = new OperationalPlan.SpeedSegment(accelerationStep.getDuration());
             operationalPlanSegmentList.add(segment);
         }
         else
         {
-            Segment segment = new OperationalPlan.AccelerationSegment(duration, accelerationStep.getAcceleration());
+            Segment segment =
+                new OperationalPlan.AccelerationSegment(accelerationStep.getDuration(),
+                    accelerationStep.getAcceleration());
             operationalPlanSegmentList.add(segment);
         }
-        // CHECK start
-        double t = accelerationStep.getValidUntil().minus(gtu.getSimulator().getSimulatorTime().get()).si;
-        double s = gtu.getVelocity().si * t + 0.5 * accelerationStep.getAcceleration().si * t * t;
-        if (path.getLengthSI() < s)
-        {
-            System.err.println("path for GTU " + laneBasedGTU + " is too short: path length is " + path.getLengthSI()
-                + ", s is " + s + ", lanes = " + lpi.getLaneList());
-        }
-        // CHECK end
-        OperationalPlan op = new OperationalPlan(path, startTime, gtu.getVelocity(), operationalPlanSegmentList);
+        OperationalPlan op =
+            new OperationalPlan(lanePathInfo.getPath(), startTime, gtu.getVelocity(), operationalPlanSegmentList);
         return op;
+    }
+
+    /**
+     * We are not on a lane that leads to our destination. Determine whether the lateral direction to go is left or right.
+     * @param laneBasedGTU the gtu
+     * @param nextSplitInfo the information about the next split
+     * @return the lateral direction to go, or null if this cannot be determined
+     */
+    private LateralDirectionality
+        determineLeftRight(final LaneBasedGTU laneBasedGTU, final NextSplitInfo nextSplitInfo)
+    {
+        // are the lanes in nextSplitInfo.getCorrectCurrentLanes() left or right of the current lane(s) of the GTU?
+        for (Lane correctLane : nextSplitInfo.getCorrectCurrentLanes())
+        {
+            for (Lane currentLane : laneBasedGTU.getLanes().keySet())
+            {
+                if (correctLane.getParentLink().equals(currentLane.getParentLink()))
+                {
+                    double deltaOffset =
+                        correctLane.getDesignLineOffsetAtBegin().si - currentLane.getDesignLineOffsetAtBegin().si;
+                    if (laneBasedGTU.getLanes().get(currentLane).equals(GTUDirectionality.DIR_PLUS))
+                    {
+                        return deltaOffset > 0 ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT;
+                    }
+                    else
+                    {
+                        return deltaOffset < 0 ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Calculate the AccelerationStep given a GTUFollowing model for a given headway.
+     * @param laneBasedGTU the GTU to calculate the acceleration step for
+     * @param perception the perception of the GTU
+     * @param headwayGTU the headway and GTU that is our predecessor
+     * @param maxDistance the maximum distance to drive, e.g. due to a lane drop
+     * @return the acceleration step
+     * @throws GTUException when the velocity of the GTU cannot be determined
+     */
+    AccelerationStep calculateAcceleratonStep(LaneBasedGTU laneBasedGTU, LanePerception perception,
+        HeadwayGTU headwayGTU, Length.Rel maxDistance) throws GTUException
+    {
+        // get some models to help us make a plan
+        GTUFollowingModel gtuFollowingModel =
+            laneBasedGTU.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
+
+        if (headwayGTU.getGtuId() == null)
+        {
+            return gtuFollowingModel.computeAccelerationStepWithNoLeader(laneBasedGTU, maxDistance,
+                perception.getSpeedLimit());
+        }
+        else
+        {
+            // TODO do not use the velocity of the other GTU, but the PERCEIVED velocity
+            return gtuFollowingModel.computeAccelerationStep(laneBasedGTU, headwayGTU.getGtuSpeed(),
+                headwayGTU.getDistance(), maxDistance, perception.getSpeedLimit());
+        }
+    }
+
+    /**
+     * Make a lane change in the given direction if possible, and return the operational plan, or null if a lane change is not
+     * possible.
+     * @param laneBasedGTU the GTU that has to make the lane change
+     * @param perception the perception, where forward headway, accessible lanes and speed limit have been assessed
+     * @param lanePathInfo the information for the path on the current lane
+     * @param direction the lateral direction, either LEFT or RIGHT
+     * @return the operational plan for the required lane change, or null if a lane change is not possible.
+     * @throws NetworkException when there is a network inconsistency in updating the perception
+     * @throws GTUException when there is an issue retrieving GTU information for the perception update
+     */
+    private OperationalPlan makeLaneChangePlan(final LaneBasedGTU laneBasedGTU, final LanePerception perception,
+        final LanePathInfo lanePathInfo, final LateralDirectionality direction) throws GTUException, NetworkException
+    {
+        if (direction.isLeft())
+        {
+            perception.updateParallelGTUsLeft();
+            perception.updateLaneTrafficLeft();
+        }
+        else
+        {
+            perception.updateParallelGTUsRight();
+            perception.updateLaneTrafficRight();
+        }
+        if (perception.parallelGTUs(direction).isEmpty())
+        {
+            return null;
+        }
+
+        // how big is the headway on our lane and what about the gap on the target lane?
+        // suppose we spend 3 seconds doing the lane change, safety = 20 m and 1 second
+
+        return null;
     }
 }

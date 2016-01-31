@@ -168,7 +168,8 @@ public class AbstractLaneBasedGTUTest implements UNITS
             {
                 Lane lane = laneGroup[laneIndex];
                 boolean expectException = 1 != laneIndex;
-                for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
+                for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getReference(),
+                    car.getRear()})
                 {
                     // System.out.println("lane:" + lane + ", expectedException: " + expectException
                     // + ", relativePostion: " + relativePosition);
@@ -182,12 +183,8 @@ public class AbstractLaneBasedGTUTest implements UNITS
                         }
                         else
                         {
-                            Length.Rel expectedPosition = laneGroup == lanesGroupA ? positionA : positionB;
-                            // FIXME There should be a better way to check equality of RelativePosition
-                            if (relativePosition.getDx().getSI() != 0)
-                            {
-                                expectedPosition = expectedPosition.plus(carLength);
-                            }
+                            Length.Rel expectedPosition = laneGroup.equals(lanesGroupA) ? positionA : positionB;
+                            expectedPosition = expectedPosition.plus(relativePosition.getDx());
                             // System.out.println("reported position: " + position);
                             // System.out.println("expected position: " + expectedPosition);
                             assertEquals("Position should match initial position", expectedPosition.getSI(),
@@ -247,7 +244,6 @@ public class AbstractLaneBasedGTUTest implements UNITS
             double expectedLongitudinalVelocity = initialSpeed.getSI() + stepTime.getSI() * acceleration.getSI();
             assertEquals("longitudinal velocity is " + expectedLongitudinalVelocity, expectedLongitudinalVelocity,
                 longitudinalVelocity.getSI(), 0.00001);
-            assertEquals("lateral velocity is 0", 0, car.getVelocity().getSI(), 0.00001);
             for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
             {
                 Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
@@ -268,7 +264,8 @@ public class AbstractLaneBasedGTUTest implements UNITS
                 {
                     Lane lane = laneGroup[laneIndex];
                     boolean expectException = 1 != laneIndex;
-                    for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getRear()})
+                    for (RelativePosition relativePosition : new RelativePosition[]{car.getFront(), car.getReference(),
+                        car.getRear()})
                     {
                         // System.out.println("lane:" + lane + ", expectedException: " + expectException
                         // + ", relativePostion: " + relativePosition);
@@ -290,11 +287,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
                                 expectedPosition =
                                     expectedPosition.plus(new Length.Rel(0.5 * acceleration.getSI() * stepTime.getSI()
                                         * stepTime.getSI(), LengthUnit.SI));
-                                // FIXME There should be a (better) way to check equality of RelativePosition
-                                if (relativePosition.getDx().getSI() != 0)
-                                {
-                                    expectedPosition = expectedPosition.plus(carLength);
-                                }
+                                expectedPosition = expectedPosition.plus(relativePosition.getDx());
                                 // System.out.println("reported position: " + position);
                                 // System.out.println("expected position: " + expectedPosition);
                                 assertEquals("Position should match initial position", expectedPosition.getSI(),
@@ -326,11 +319,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
                                 expectedPosition =
                                     expectedPosition.plus(new Length.Rel(0.5 * acceleration.getSI() * stepTime.getSI()
                                         * stepTime.getSI(), LengthUnit.SI));
-                                // FIXME There should be a (better) way to check equality of RelativePosition
-                                if (relativePosition.getDx().getSI() != 0)
-                                {
-                                    expectedPosition = expectedPosition.plus(carLength);
-                                }
+                                expectedPosition = expectedPosition.plus(relativePosition.getDx());
                                 // System.out.println("reported position: " + position);
                                 // System.out.println("expected position: " + expectedPosition);
                                 double expectedFractionalPosition = expectedPosition.getSI() / lane.getLength().getSI();
@@ -395,10 +384,8 @@ public class AbstractLaneBasedGTUTest implements UNITS
             assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)", pos,
                 car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
         }
-        // TODO
-        // removeLane should throw an Error when the car is not on that lane (currently this is silently ignored)
-        // TODO
-        // figure out why the added lane has a non-zero position
+        // TODO removeLane should throw an Error when the car is not on that lane (currently this is silently ignored)
+        // TODO figure out why the added lane has a non-zero position
     }
 }
 

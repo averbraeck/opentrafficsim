@@ -182,7 +182,7 @@ public class Trajectories extends AbstractWrappableAnimation implements UNITS
             + "Simulation of a single lane road of 5 km length. Vechicles are generated at a constant rate of "
             + "1500 veh/hour. At time 300s a blockade is inserted at position 4km; this blockade is removed at time "
             + "420s. This blockade simulates a bridge opening.<br>"
-            + "The blockade causes a traffic jam that slowly dissolves after the blockade is removed.<br />"
+            + "The blockade causes a traffic jam that slowly dissolves after the blockade is removed.<br>"
             + "Output is a Trajectory plots.</html>";
     }
 

@@ -42,7 +42,6 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
@@ -69,6 +68,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LanePathInfo;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
@@ -325,7 +325,7 @@ public class StraightPerception extends AbstractWrappableAnimation implements UN
             + "Simulation of a single lane road of 5 km length. Vehicles are generated at a constant rate of "
             + "1500 veh/hour. At time 300s a blockade is inserted at position 4km; this blockade is removed at "
             + "time 420s. This blockade simulates a bridge opening.<br>"
-            + "The blockade causes a traffic jam that slowly dissolves after the blockade is removed.<br />"
+            + "The blockade causes a traffic jam that slowly dissolves after the blockade is removed.<br>"
             + "Selected trajectory and contour plots are generated during the simulation.</html>";
     }
 
@@ -853,48 +853,50 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             GTUFollowingModel gtuFollowingModel =
                 laneBasedGTU.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
 
+            // get the lane plan
+            LanePathInfo lanePathInfo =
+                buildLaneListForward(laneBasedGTU, laneBasedGTU.getDrivingCharacteristics().getForwardHeadwayDistance());
+            Length.Rel maxDistance = lanePathInfo.getPath().getLength();
+
             // look at the conditions for headway
             HeadwayGTU headwayGTU = perception.getForwardHeadwayGTU();
             AccelerationStep accelerationStep = null;
-            if (headwayGTU.getGTU() == null)
+            if (headwayGTU.getGtuId() == null)
             {
                 accelerationStep =
-                    gtuFollowingModel.computeAccelerationWithNoLeader(laneBasedGTU, perception.getSpeedLimit());
+                    gtuFollowingModel.computeAccelerationStepWithNoLeader(laneBasedGTU, maxDistance,
+                        perception.getSpeedLimit());
             }
             else
             {
                 // TODO do not use the velocity of the other GTU, but the PERCEIVED velocity
                 accelerationStep =
-                    gtuFollowingModel.computeAcceleration(laneBasedGTU, headwayGTU.getGTU().getVelocity(),
-                        headwayGTU.getDistance(), perception.getSpeedLimit());
+                    gtuFollowingModel.computeAccelerationStep(laneBasedGTU, headwayGTU.getGtuSpeed(),
+                        headwayGTU.getDistance(), maxDistance, perception.getSpeedLimit());
             }
-
-            Time.Rel duration = accelerationStep.getValidUntil().minus(gtu.getSimulator().getSimulatorTime().getTime());
 
             // see if we have to continue standing still. In that case, generate a stand still plan
             if (accelerationStep.getAcceleration().si < 1E-6
                 && laneBasedGTU.getVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
             {
-                return new OperationalPlan(locationAtStartTime, startTime, duration);
+                return new OperationalPlan(locationAtStartTime, startTime, accelerationStep.getDuration());
             }
 
-            // build a list of lanes forward, with a maximum headway.
-            OTSLine3D path;
-            path =
-                buildLaneListForward(laneBasedGTU, laneBasedGTU.getDrivingCharacteristics().getForwardHeadwayDistance())
-                    .getPath();
             List<Segment> operationalPlanSegmentList = new ArrayList<>();
             if (accelerationStep.getAcceleration().si == 0.0)
             {
-                Segment segment = new OperationalPlan.SpeedSegment(duration);
+                Segment segment = new OperationalPlan.SpeedSegment(accelerationStep.getDuration());
                 operationalPlanSegmentList.add(segment);
             }
             else
             {
-                Segment segment = new OperationalPlan.AccelerationSegment(duration, accelerationStep.getAcceleration());
+                Segment segment =
+                    new OperationalPlan.AccelerationSegment(accelerationStep.getDuration(),
+                        accelerationStep.getAcceleration());
                 operationalPlanSegmentList.add(segment);
             }
-            OperationalPlan op = new OperationalPlan(path, startTime, gtu.getVelocity(), operationalPlanSegmentList);
+            OperationalPlan op =
+                new OperationalPlan(lanePathInfo.getPath(), startTime, gtu.getVelocity(), operationalPlanSegmentList);
             return op;
         }
     }

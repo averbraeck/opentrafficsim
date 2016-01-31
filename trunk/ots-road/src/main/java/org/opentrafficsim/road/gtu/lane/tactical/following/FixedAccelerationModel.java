@@ -66,7 +66,7 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration maximumSafeDeceleration()
+    public final Acceleration getMaximumSafeDeceleration()
     {
         // TODO should be specified in constructor
         return new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2);

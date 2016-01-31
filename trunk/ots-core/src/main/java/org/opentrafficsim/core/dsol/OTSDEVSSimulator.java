@@ -6,6 +6,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.experiment.ReplicationMode;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
@@ -81,6 +82,32 @@ public class OTSDEVSSimulator extends
     public final void runUpTo(final Time.Abs when) throws SimRuntimeException
     {
         super.runUpTo(when);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:designforextension")
+    public void start() throws SimRuntimeException
+    {
+        if (this.isRunning())
+        {
+            throw new SimRuntimeException("Cannot start a running simulator");
+        }
+        if (this.replication == null)
+        {
+            throw new SimRuntimeException("Cannot start a simulator" + " without replication details");
+        }
+        if (this.simulatorTime.ge(this.replication.getTreatment().getEndTime()))
+        {
+            throw new SimRuntimeException("Cannot start simulator : " + "simulatorTime = runLength");
+        }
+        synchronized (this.semaphore)
+        {
+            this.running = true;
+            this.fireEvent(START_EVENT);
+            this.fireTimedEvent(SimulatorInterface.TIME_CHANGED_EVENT, this.simulatorTime, this.simulatorTime);
+            this.worker.interrupt();
+        }
     }
 
 }

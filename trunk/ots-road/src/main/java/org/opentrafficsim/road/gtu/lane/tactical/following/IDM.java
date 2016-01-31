@@ -90,6 +90,7 @@ public class IDM extends AbstractGTUFollowingModel
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
         final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit)
     {
+        // TODO maxDistance
         // System.out.println("Applying IDM for " + follower + " headway is " + headway);
         // dV is the approach speed
         Speed dV = followerSpeed.minus(leaderSpeed);
@@ -146,7 +147,7 @@ public class IDM extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration maximumSafeDeceleration()
+    public final Acceleration getMaximumSafeDeceleration()
     {
         return this.b;
     }

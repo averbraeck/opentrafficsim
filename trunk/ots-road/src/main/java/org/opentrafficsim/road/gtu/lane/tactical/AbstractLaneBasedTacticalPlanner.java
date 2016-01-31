@@ -113,7 +113,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
         }
         catch (OTSGeometryException exception)
         {
-            System.err.println("GTU " + gtu + ": " + exception.getMessage());
+            System.err.println(gtu + ": " + exception.getMessage());
             System.err.println(lane + ", len=" + lane.getLength());
             System.err.println(position);
             throw new GTUException(exception);
@@ -224,12 +224,11 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      * @param startDirectionality the driving direction on the start lane
      * @return a list of lanes, connected to the startLane and following the path of the StrategicalPlanner.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
-     * @throws OTSGeometryException when there is a problem with the path construction
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
     protected static List<Lane> buildLaneListForward(final LaneBasedGTU gtu, final Length.Rel maxHeadway,
         final Lane startLane, final double startLaneFractionalPosition, final GTUDirectionality startDirectionality)
-        throws GTUException, OTSGeometryException, NetworkException
+        throws GTUException, NetworkException
     {
         List<Lane> laneListForward = new ArrayList<>();
         Lane lane = startLane;
@@ -313,11 +312,10 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      * @return an instance that provides the following information for an operational plan: whether the network splits, the node
      *         where it splits, and the current lanes that lead to the right node after the split node.
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
-     * @throws OTSGeometryException when there is a problem with the path construction
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
     public static NextSplitInfo determineNextSplit(final LaneBasedGTU gtu, final Length.Rel maxHeadway)
-        throws GTUException, OTSGeometryException, NetworkException
+        throws GTUException, NetworkException
     {
         OTSNode nextSplitNode = null;
         Set<Lane> correctCurrentLanes = new HashSet<>();
@@ -435,13 +433,12 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      * @param linkAfterSplit the link after the split to which we should connect
      * @return whether the lane is connected to our path
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
-     * @throws OTSGeometryException when there is a problem with the path construction
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
     protected static boolean
         connectsToPath(final LaneBasedGTU gtu, final Length.Rel maxHeadway, final Lane startLane,
             final double startLaneFractionalPosition, final GTUDirectionality startDirectionality,
-            final Link linkAfterSplit) throws GTUException, OTSGeometryException, NetworkException
+            final Link linkAfterSplit) throws GTUException, NetworkException
     {
         List<Lane> lanes =
             buildLaneListForward(gtu, maxHeadway, startLane, startLaneFractionalPosition, startDirectionality);
@@ -461,11 +458,10 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      * @param maxHeadway the maximum length for which links should be returned
      * @return a list of links on which to drive next
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
-     * @throws OTSGeometryException when there is a problem with the path construction
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
     protected static List<LinkDirection> buildLinkListForward(final LaneBasedGTU gtu, final Length.Rel maxHeadway)
-        throws GTUException, OTSGeometryException, NetworkException
+        throws GTUException, NetworkException
     {
         List<LinkDirection> linkList = new ArrayList<>();
         Lane referenceLane = getReferenceLane(gtu);

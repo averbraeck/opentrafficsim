@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.factory.opendrive;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.djunits.value.vdouble.scalar.Length.Rel;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.factory.XMLParser;
 import org.w3c.dom.Node;
@@ -55,10 +55,10 @@ class LanesTag
     }
 
     /**
-     * @param s
-     * @return laneSection
+     * @param s progression on the lane in the design direction
+     * @return laneSection the section belonging to 's' progression
      */
-    public LaneSectionTag findDrivingLaneSec(Rel s)
+    public LaneSectionTag findDrivingLaneSec(Length.Rel s)
     {
         for (int i = 0; i < this.laneSectionTags.size(); i++)
         {

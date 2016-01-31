@@ -96,7 +96,7 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
     public CircularRoad()
     {
         this.properties.add(new SelectionProperty("Lane changing",
-            "<html>The lane change strategies vary in politeness.<br />"
+            "<html>The lane change strategies vary in politeness.<br>"
                 + "Two types are implemented:<ul><li>Egoistic (looks only at personal gain).</li>"
                 + "<li>Altruistic (assigns effect on new and current follower the same weight as "
                 + "the personal gain).</html>", new String[]{"Egoistic", "Altruistic"}, 0, false, 500));
@@ -308,9 +308,9 @@ public class CircularRoad extends AbstractWrappableAnimation implements UNITS
     public final String description()
     {
         return "<html><h1>Circular Road simulation</h1>"
-            + "Vehicles are unequally distributed over a two lane ring road.<br />"
+            + "Vehicles are unequally distributed over a two lane ring road.<br>"
             + "When simulation starts, all vehicles begin driving, some lane changes will occurr and some "
-            + "shockwaves should develop.<br />"
+            + "shockwaves should develop.<br>"
             + "Trajectories and contourplots are generated during the simulation for both lanes.</html>";
     }
 

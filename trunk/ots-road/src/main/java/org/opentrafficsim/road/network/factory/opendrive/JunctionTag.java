@@ -83,12 +83,12 @@ class JunctionTag
     }
 
     /**
-     * @param juncTag
-     * @param simulator
-     * @param openDriveNetworkLaneParser
-     * @throws NamingException
-     * @throws NetworkException
-     * @throws GTUException
+     * @param juncTag junction tag
+     * @param simulator the simulator
+     * @param openDriveNetworkLaneParser the parser
+     * @throws NamingException when an animation registration fails
+     * @throws NetworkException when the network is inconsistent
+     * @throws GTUException when the traffic light (a GTU at the moment) has an error
      */
     public static void createController(JunctionTag juncTag, OTSDEVSSimulatorInterface simulator,
         OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws GTUException, NetworkException, NamingException

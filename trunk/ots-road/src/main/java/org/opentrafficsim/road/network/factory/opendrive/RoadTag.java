@@ -191,12 +191,12 @@ class RoadTag
     }
 
     /**
-     * @param roadTag
-     * @param simulator
-     * @param openDriveNetworkLaneParser
-     * @throws NetworkException
-     * @throws OTSGeometryException
-     * @throws NamingException
+     * @param roadTag the road tag
+     * @param simulator the simulator
+     * @param openDriveNetworkLaneParser the parser
+     * @throws NetworkException on network error
+     * @throws OTSGeometryException on geometry or position error
+     * @throws NamingException on error registering the animation
      */
     static void buildSubLinks(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
         OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws OTSGeometryException, NetworkException,
@@ -403,13 +403,13 @@ class RoadTag
     }
 
     /**
-     * @param roadTag
-     * @param simulator
-     * @param openDriveNetworkLaneParser
-     * @throws NetworkException
-     * @throws OTSGeometryException
-     * @throws NamingException
-     * @throws RemoteException
+     * @param roadTag the road tag
+     * @param simulator the simulator
+     * @param openDriveNetworkLaneParser the parser
+     * @throws NetworkException on network error
+     * @throws OTSGeometryException on geometry or position error
+     * @throws NamingException on error registering the animation
+     * @throws RemoteException on error reaching the animation or simulator
      */
     static void generateRegularRoads(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
         OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws OTSGeometryException, NetworkException,
@@ -868,111 +868,9 @@ class RoadTag
         }
     }
 
-    /*    *//**
-     * @param roadTag
-     * @param simulator
-     * @param openDriveNetworkLaneParser
-     * @throws NetworkException
-     * @throws OTSGeometryException
-     * @throws NamingException
-     * @throws RemoteException
-     */
-    /*
-     * static void generateJunctionRoads(RoadTag roadTag, OTSDEVSSimulatorInterface simulator, OpenDriveNetworkLaneParser
-     * openDriveNetworkLaneParser) throws OTSGeometryException, NetworkException, NamingException, RemoteException { if
-     * (!roadTag.junctionId.equals("-1")) { LaneTag currentLaneTag =
-     * roadTag.lanesTag.laneSectionTags.get(0).rightLaneTags.get(-1); // connecting start of the lane JunctionTag junctionTag =
-     * openDriveNetworkLaneParser.junctionTags.get(roadTag.junctionId); ConnectionTag connectionTag =
-     * junctionTag.connectionTags.get(roadTag.id); RoadTag incomingRoadTag =
-     * openDriveNetworkLaneParser.roadTags.get(connectionTag.incomingRoad); Lane inComingLane = null; OTSPoint3D point1 = null;
-     * OTSPoint3D point2 = null; Length.Rel halfWidth_Start = null; Length.Rel offset_Start = null; Length.Rel center_Start =
-     * null; if (Integer.parseInt(currentLaneTag.predecessorId) != connectionTag.laneLinkFrom)
-     * System.err.println("Sth is wrong in junction lane link from"); if (incomingRoadTag.linkTag.successorType != null &&
-     * incomingRoadTag.linkTag.successorType.equals("junction") && incomingRoadTag.linkTag.successorId.equals(junctionTag.id)) {
-     * inComingLane = incomingRoadTag.lanesTag.laneSectionTags.get(incomingRoadTag.lanesTag.laneSectionTags.size() - 1).lanes
-     * .get(connectionTag.laneLinkFrom); point1 = inComingLane.getParentLink().getDesignLine().get(
-     * inComingLane.getParentLink().getDesignLine().size() - 1); point2 =
-     * inComingLane.getCenterLine().get(inComingLane.getCenterLine().size() - 1); halfWidth_Start =
-     * inComingLane.getEndWidth().multiplyBy(0.5); offset_Start = inComingLane.getDesignLineOffsetAtEnd(); center_Start =
-     * inComingLane.getLateralCenterPosition(1.0); } else { inComingLane =
-     * incomingRoadTag.lanesTag.laneSectionTags.get(0).lanes.get(connectionTag.laneLinkFrom); point1 =
-     * inComingLane.getParentLink().getDesignLine().get(0); point2 = inComingLane.getCenterLine().get(0); halfWidth_Start =
-     * inComingLane.getBeginWidth().multiplyBy(0.5); offset_Start = inComingLane.getDesignLineOffsetAtBegin(); center_Start =
-     * inComingLane.getLateralCenterPosition(0.0); } if (offset_Start.minus(center_Start).doubleValue() > 0.1)
-     * System.out.println("Sth is wrong in offset of junction road"); double dis = Math.sqrt((point2.x - point1.x) * (point2.x -
-     * point1.x) + (point2.y - point1.y) * (point2.y - point1.y)); if ((center_Start.doubleValue() - dis) > 0.1)
-     * System.out.println("Sth is wrong in offset of junction road"); double factor =
-     * halfWidth_Start.divideBy(dis).doubleValue(); OTSPoint3D newPoint_Start = new OTSPoint3D(point2.x - (point2.x - point1.x)
-     * * factor, point2.y - (point2.y - point1.y) * factor); // connecting end of the lane RoadTag outgoingRoadTag =
-     * openDriveNetworkLaneParser.roadTags.get(roadTag.linkTag.successorId); Lane outGoingLane = null; OTSPoint3D point3 = null;
-     * OTSPoint3D point4 = null; Length.Rel halfWidth_End = null; Length.Rel offset_End = null; Length.Rel center_End = null; if
-     * (roadTag.linkTag.successorContactPoint.equals(ContactPointEnum.START)) { outGoingLane =
-     * outgoingRoadTag.lanesTag.laneSectionTags.get(0).lanes.get(Integer .parseInt(currentLaneTag.successorId)); point3 =
-     * outGoingLane.getParentLink().getDesignLine().get(0); point4 = outGoingLane.getCenterLine().get(0); halfWidth_End =
-     * outGoingLane.getBeginWidth().multiplyBy(0.5); offset_End = outGoingLane.getDesignLineOffsetAtBegin(); center_End =
-     * outGoingLane.getLateralCenterPosition(0.0); } else { outGoingLane =
-     * outgoingRoadTag.lanesTag.laneSectionTags.get(outgoingRoadTag.lanesTag.laneSectionTags.size() - 1).lanes
-     * .get(Integer.parseInt(currentLaneTag.successorId)); point3 = outGoingLane.getParentLink().getDesignLine().get(
-     * outGoingLane.getParentLink().getDesignLine().size() - 1); point4 =
-     * outGoingLane.getCenterLine().get(outGoingLane.getCenterLine().size() - 1); halfWidth_End =
-     * outGoingLane.getEndWidth().multiplyBy(0.5); offset_End = outGoingLane.getDesignLineOffsetAtEnd(); center_End =
-     * outGoingLane.getLateralCenterPosition(1.0); } if (offset_End.minus(center_End).doubleValue() > 0.1)
-     * System.out.println("Sth is wrong in offset of junction road"); double dis2 = Math.sqrt((point4.x - point3.x) * (point4.x
-     * - point3.x) + (point4.y - point3.y) * (point4.y - point3.y)); if ((offset_End.doubleValue() - dis2) > 0.1)
-     * System.out.println("Sth is wrong in offset of junction road"); double factor2 =
-     * halfWidth_End.divideBy(dis2).doubleValue(); OTSPoint3D newPoint_End = new OTSPoint3D(point4.x - (point4.x - point3.x) *
-     * factor2, point4.y - (point4.y - point3.y) * factor2); for (int laneSecIndex = 0; laneSecIndex <
-     * roadTag.lanesTag.laneSectionTags.size(); laneSecIndex++) { LaneSectionTag currentLaneSec =
-     * roadTag.lanesTag.laneSectionTags.get(laneSecIndex); // CrossSectionLink currentLink = roadTag.subLinks.get(laneSecIndex);
-     * Length.Rel ds = new Length.Rel(0.0, LengthUnit.METER); LaneSectionTag nextLaneSec; if (laneSecIndex !=
-     * roadTag.lanesTag.laneSectionTags.size() - 1) { nextLaneSec = roadTag.lanesTag.laneSectionTags.get(laneSecIndex + 1); ds =
-     * nextLaneSec.s.minus(currentLaneSec.s); } else { ds = roadTag.length.minus(currentLaneSec.s); } // no left lanes int
-     * leftLaneSize = currentLaneSec.leftLaneTags.size(); if (leftLaneSize != 0)
-     * System.out.println("Sth is wrong in left lanes of junction road"); // one right lane int rightLaneSize =
-     * currentLaneSec.rightLaneTags.size(); if (rightLaneSize > 1)
-     * System.out.println("Sth is wrong in right lanes of junction road"); Length.Rel rightOffset_start = new Length.Rel(0.0,
-     * LengthUnit.METER); Length.Rel rightOffset_end = new Length.Rel(0.0, LengthUnit.METER); for (int rightLaneIndex = 1;
-     * rightLaneIndex <= rightLaneSize; rightLaneIndex++) { LaneTag rightLane =
-     * currentLaneSec.rightLaneTags.get(-rightLaneIndex); rightLane.widthTags.get(0).sOffst =
-     * rightLane.widthTags.get(0).a.plus(rightLane.widthTags.get(0).b.multiplyBy(ds.doubleValue()))
-     * .plus(rightLane.widthTags.get(0).c.multiplyBy(Math.pow(ds.doubleValue(), 2)))
-     * .plus(rightLane.widthTags.get(0).d.multiplyBy(Math.pow(ds.doubleValue(), 3))); Length.Rel laneWidth_start =
-     * halfWidth_Start.multiplyBy(2.0); Length.Rel laneWidth_end = halfWidth_End.multiplyBy(2.0); rightOffset_start =
-     * rightOffset_start.minus(laneWidth_start.multiplyBy(0.5)); rightOffset_end =
-     * rightOffset_end.minus(laneWidth_end.multiplyBy(0.5)); OvertakingConditions overtakingConditions = null; Speed speed =
-     * null; if (rightLane.speedTags.size() > 0) speed = rightLane.speedTags.get(0).max; if (speed == null) { //
-     * System.err.println("speed.max == null for " + rightLane.id.toString()); speed = new Speed(30.0, SpeedUnit.MILE_PER_HOUR);
-     * } Map<GTUType, Speed> speedLimit = new LinkedHashMap<>(); speedLimit.put(GTUType.ALL, speed); if
-     * (rightLane.type.equals("driving")) { LongitudinalDirectionality direction = LongitudinalDirectionality.DIR_PLUS;
-     * Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>(); directionality.put(GTUType.ALL,
-     * direction); Color color = Color.gray; Lane lane = null; CrossSectionLink newlink = null; try { if (-rightLaneIndex == -1)
-     * { OTSPoint3D[] currentLine = roadTag.designLine.getPoints(); List<OTSPoint3D> coordinates = new ArrayList<OTSPoint3D>();
-     * double distance = Math.sqrt((newPoint_Start.x - currentLine[0].x) (newPoint_Start.x - currentLine[0].x) +
-     * (newPoint_Start.y - currentLine[0].y) (newPoint_Start.y - currentLine[0].y)); if (distance > 0.1)
-     * coordinates.add(newPoint_Start); // coordinates.add(newPoint_Start); for (OTSPoint3D point : currentLine) {
-     * coordinates.add(point); } coordinates.add(newPoint_End); OTSLine3D designLine = new OTSLine3D(coordinates); newlink = new
-     * CrossSectionLink(roadTag.id, roadTag.startNode, roadTag.endNode, LinkType.ALL, designLine,
-     * LongitudinalDirectionality.DIR_BOTH, LaneKeepingPolicy.KEEP_LANE); roadTag.link = newlink; roadTag.subLinks.add(newlink);
-     * if (!openDriveNetworkLaneParser.network.containsNode(roadTag.startNode))
-     * openDriveNetworkLaneParser.network.addNode(roadTag.startNode); if
-     * (!openDriveNetworkLaneParser.network.containsNode(roadTag.endNode))
-     * openDriveNetworkLaneParser.network.addNode(roadTag.endNode); openDriveNetworkLaneParser.network.addLink(newlink); lane =
-     * new Lane(newlink, rightLane.id.toString(), rightOffset_start, rightOffset_end, laneWidth_start, laneWidth_end,
-     * LANETYPE_ALL, directionality, speedLimit, overtakingConditions); currentLaneSec.lanes.put(rightLane.id, lane); new
-     * LaneAnimationOD(lane, simulator, color); } } catch (Exception exception) { new LinkAnimation(newlink, simulator, 0.01f);
-     * exception.printStackTrace(); } } rightOffset_start = rightOffset_start.minus(laneWidth_start.multiplyBy(0.5));
-     * rightOffset_end = rightOffset_end.minus(laneWidth_end.multiplyBy(0.5)); } // show center lanes int centerLaneSize =
-     * currentLaneSec.centerLaneTags.size(); if (centerLaneSize > 1) System.err.println("Sth is wrong in center lane");
-     * Length.Rel centerOffset = new Length.Rel(0.0, LengthUnit.METER); LaneTag centerLane =
-     * currentLaneSec.centerLaneTags.get(0); Length.Rel laneWidth = new Length.Rel(0.0, LengthUnit.METER); if
-     * (centerLane.widthTag != null) laneWidth = centerLane.widthTag.a; Stripe solidLine = new Stripe(currentLink, centerOffset,
-     * laneWidth); try { new StripeAnimation(solidLine, simulator, StripeAnimation.TYPE.SOLID); } catch (RemoteException
-     * exception) { exception.printStackTrace(); } } } }
-     */
-
     /**
-     * @param roadTag
-     * @param openDriveNetworkLaneParser
+     * @param roadTag the road tag
+     * @param openDriveNetworkLaneParser the parser
      */
     public static void buildLink(RoadTag roadTag, OpenDriveNetworkLaneParser openDriveNetworkLaneParser)
     {
@@ -1026,10 +924,10 @@ class RoadTag
     }
 
     /**
-     * @param roadTag
-     * @param simulator
-     * @param openDriveNetworkLaneParser
-     * @throws NetworkException
+     * @param roadTag the road tag
+     * @param simulator the simulator
+     * @param openDriveNetworkLaneParser the parser
+     * @throws NetworkException on network error
      */
     public static void generateTrafficLightsbySignal(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
         OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException
@@ -1098,10 +996,10 @@ class RoadTag
     }
 
     /**
-     * @param roadTag
-     * @param simulator
-     * @param openDriveNetworkLaneParser
-     * @throws NetworkException
+     * @param roadTag the road tag
+     * @param simulator the simulator
+     * @param openDriveNetworkLaneParser the parser
+     * @throws NetworkException on network error
      */
     public static void generateTrafficLightsbySignalReference(RoadTag roadTag, OTSDEVSSimulatorInterface simulator,
         OpenDriveNetworkLaneParser openDriveNetworkLaneParser) throws NetworkException

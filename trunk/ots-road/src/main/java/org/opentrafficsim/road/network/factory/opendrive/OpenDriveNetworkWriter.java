@@ -18,10 +18,10 @@ public class OpenDriveNetworkWriter
     protected OTSNetwork network = null;
 
     /** */
-    private String outPut = null;
+    private String output = null;
 
     /**
-     * @param network
+     * @param network the network
      */
     public OpenDriveNetworkWriter(OTSNetwork network)
     {
@@ -38,7 +38,7 @@ public class OpenDriveNetworkWriter
         writeRoads();
         writeJunctions();
 
-        return this.outPut;
+        return this.output;
     }
 
     /**

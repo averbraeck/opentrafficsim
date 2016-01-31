@@ -180,10 +180,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         initialLongitudinalPositions.add(new DirectedLanePosition(lanes[0], new Length.Rel(100, METER),
             GTUDirectionality.DIR_PLUS));
         SimpleSimulator simpleSimulator =
-            new SimpleSimulator(new Time.Abs(0, SECOND), new Time.Rel(0, SECOND), new Time.Rel(3600, SECOND), this
-            /*
-             * CRASH - FIXME - will have to wait for Network factory
-             */);
+            new SimpleSimulator(new Time.Abs(0, SECOND), new Time.Rel(0, SECOND), new Time.Rel(3600, SECOND), this);
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedDrivingCharacteristics drivingCharacteristics =
             new LaneBasedDrivingCharacteristics(new IDMPlus(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(
@@ -194,8 +191,9 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             new LaneBasedIndividualCar("ReferenceCar", gtuType, initialLongitudinalPositions, new Speed(100,
                 KM_PER_HOUR), new Length.Rel(4, METER), new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR),
                 simpleSimulator, strategicalPlanner, new LanePerceptionFull(), this.network);
+        car.getPerception().perceive();
         Collection<HeadwayGTU> sameLaneGTUs = new LinkedHashSet<HeadwayGTU>();
-        sameLaneGTUs.add(new HeadwayGTU(car, 0));
+        sameLaneGTUs.add(new HeadwayGTU(car.getId(), car.getVelocity(), 0));
         Collection<HeadwayGTU> preferredLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         Collection<HeadwayGTU> nonPreferredLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         LaneMovementStep laneChangeModelResult =
@@ -217,7 +215,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         for (double pos = collisionStart.getSI() + 0.01; pos < collisionEnd.getSI() - 0.01; pos += 0.1)
         {
             Set<DirectedLanePosition> otherLongitudinalPositions = new LinkedHashSet<>(1);
-            initialLongitudinalPositions.add(new DirectedLanePosition(lanes[1], new Length.Rel(pos, METER),
+            otherLongitudinalPositions.add(new DirectedLanePosition(lanes[1], new Length.Rel(pos, METER),
                 GTUDirectionality.DIR_PLUS));
 
             drivingCharacteristics =
@@ -231,7 +229,8 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
                     KM_PER_HOUR), vehicleLength, new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR),
                     simpleSimulator, strategicalPlanner, new LanePerceptionFull(), this.network);
             preferredLaneGTUs.clear();
-            HeadwayGTU collisionHWGTU = new HeadwayGTU(collisionCar, pos - reference.getSI());
+            HeadwayGTU collisionHWGTU =
+                new HeadwayGTU(collisionCar.getId(), collisionCar.getVelocity(), pos - reference.getSI());
             preferredLaneGTUs.add(collisionHWGTU);
             laneChangeModelResult =
                 new Egoistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs,
@@ -245,7 +244,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         for (double pos = 0; pos < 200; pos += 5)
         {
             Set<DirectedLanePosition> otherLongitudinalPositions = new LinkedHashSet<>(1);
-            initialLongitudinalPositions.add(new DirectedLanePosition(lanes[1], new Length.Rel(pos, METER),
+            otherLongitudinalPositions.add(new DirectedLanePosition(lanes[1], new Length.Rel(pos, METER),
                 GTUDirectionality.DIR_PLUS));
 
             drivingCharacteristics =
@@ -260,7 +259,8 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
                     simpleSimulator, strategicalPlanner, new LanePerceptionFull(), this.network);
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU =
-                new HeadwayGTU(otherCar, pos - car.position(lanes[0], car.getReference()).getSI());
+                new HeadwayGTU(otherCar.getId(), otherCar.getVelocity(), pos
+                    - car.position(lanes[0], car.getReference()).getSI());
             preferredLaneGTUs.add(collisionHWGTU);
             laneChangeModelResult =
                 new Egoistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs,

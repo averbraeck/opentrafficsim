@@ -3,9 +3,10 @@ package org.opentrafficsim.road.gtu.lane.tactical.lanechange;
 import java.util.Collection;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 
@@ -40,36 +41,27 @@ public class FixedLaneChangeModel implements LaneChangeModel
         final Collection<HeadwayGTU> sameLaneTraffic, final Collection<HeadwayGTU> rightLaneTraffic,
         final Collection<HeadwayGTU> leftLaneTraffic, final Speed speedLimit,
         final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
-        final Acceleration nonPreferredLaneRouteIncentive)
+        final Acceleration nonPreferredLaneRouteIncentive) throws GTUException
     {
-        try
+        Length.Rel headway = gtu.getDrivingCharacteristics().getForwardHeadwayDistance();
+        if (null == this.laneChange)
         {
-            if (null == this.laneChange)
-            {
-                return new LaneMovementStep(gtu.getStrategicalPlanner().getDrivingCharacteristics()
-                    .getGTUFollowingModel().computeAcceleration(gtu, sameLaneTraffic, speedLimit)
-                    .getLeaderAccelerationStep(), null);
-            }
-            else if (LateralDirectionality.LEFT == this.laneChange)
-            {
-                return new LaneMovementStep(gtu.getStrategicalPlanner().getDrivingCharacteristics()
-                    .getGTUFollowingModel().computeAcceleration(gtu, leftLaneTraffic, speedLimit)
-                    .getLeaderAccelerationStep(), this.laneChange);
-            }
-            else if (LateralDirectionality.RIGHT == this.laneChange)
-            {
-                return new LaneMovementStep(gtu.getStrategicalPlanner().getDrivingCharacteristics()
-                    .getGTUFollowingModel().computeAcceleration(gtu, rightLaneTraffic, speedLimit)
-                    .getLeaderAccelerationStep(), this.laneChange);
-            }
-            throw new Error("Program Error - unhandled LateralDirectionality");
+            return new LaneMovementStep(gtu.getDrivingCharacteristics().getGTUFollowingModel()
+                .computeDualAccelerationStep(gtu, sameLaneTraffic, headway, speedLimit).getLeaderAccelerationStep(), null);
         }
-        catch (NetworkException exception)
+        else if (LateralDirectionality.LEFT == this.laneChange)
         {
-            exception.printStackTrace();
-            throw new Error(
-                "Cannot happen: caught NetworkException in FixedLaneChangeModel.computerLaneChangeAndAcceleration");
+            return new LaneMovementStep(gtu.getDrivingCharacteristics().getGTUFollowingModel()
+                .computeDualAccelerationStep(gtu, leftLaneTraffic, headway, speedLimit).getLeaderAccelerationStep(),
+                this.laneChange);
         }
+        else if (LateralDirectionality.RIGHT == this.laneChange)
+        {
+            return new LaneMovementStep(gtu.getDrivingCharacteristics().getGTUFollowingModel()
+                .computeDualAccelerationStep(gtu, rightLaneTraffic, headway, speedLimit).getLeaderAccelerationStep(),
+                this.laneChange);
+        }
+        throw new Error("Program Error - unhandled LateralDirectionality");
     }
 
     /** {@inheritDoc} */

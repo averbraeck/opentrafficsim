@@ -192,7 +192,7 @@ public abstract class AbstractGTU implements GTU
     /**
      * Interrupt the move and ask for a new plan. This method can be overridden to carry out the bookkeeping needed when the
      * current plan gets interrupted.
-     * @throws OperationalPlanException
+     * @throws OperationalPlanException when there was a problem retrieving the location from the running plan
      * @throws SimRuntimeException when scheduling of the next move fails
      * @throws OperationalPlanException when there is a problem creating a good path for the GTU
      * @throws GTUException when there is a problem with the state of the GTU when planning a path

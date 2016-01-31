@@ -23,9 +23,9 @@ public class Test2
     }
 
     /**
-     * @param args
-     * @throws NetworkException
-     * @throws OTSGeometryException
+     * @param args args
+     * @throws NetworkException on error
+     * @throws OTSGeometryException on error
      */
     public static void main(String[] args) throws NetworkException, OTSGeometryException
     {

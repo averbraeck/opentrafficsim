@@ -97,6 +97,7 @@ public class IDMPlus extends AbstractGTUFollowingModel
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
         final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit)
     {
+        // TODO maxDistance
         double leftComponent = 1 - Math.pow(followerSpeed.getSI() / vDes(speedLimit, followerMaximumSpeed).getSI(), 4);
         if (Double.isNaN(leftComponent))
         {
@@ -140,7 +141,7 @@ public class IDMPlus extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
-    public final Acceleration maximumSafeDeceleration()
+    public final Acceleration getMaximumSafeDeceleration()
     {
         return this.b;
     }

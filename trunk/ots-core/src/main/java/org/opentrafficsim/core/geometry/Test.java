@@ -653,7 +653,7 @@ public final class Test
 
     /**
      * Kink near end of design line.
-     * @throws OTSGeometryException
+     * @throws OTSGeometryException  on error
      */
     public static void test1() throws OTSGeometryException
     {
@@ -677,7 +677,7 @@ public final class Test
 
     /**
      * Kink halfway (far from any endpoint).
-     * @throws OTSGeometryException
+     * @throws OTSGeometryException on error
      */
     public static void test2() throws OTSGeometryException
     {
@@ -691,7 +691,7 @@ public final class Test
 
     /**
      * Kink plus decreasing width.
-     * @throws OTSGeometryException
+     * @throws OTSGeometryException on error
      */
     public static void test3() throws OTSGeometryException
     {
@@ -715,7 +715,7 @@ public final class Test
 
     /**
      * Two kinks, (too) close together.
-     * @throws OTSGeometryException
+     * @throws OTSGeometryException on error
      */
     public static void test4() throws OTSGeometryException
     {
@@ -729,7 +729,7 @@ public final class Test
 
     /**
      * Two-segment design line with minimal change of direction.
-     * @throws OTSGeometryException
+     * @throws OTSGeometryException on error
      */
     public static void test5() throws OTSGeometryException
     {
@@ -761,7 +761,7 @@ public final class Test
 
     /**
      * Straight design line with some <i>noise</i> (sufficiently far from the end points).
-     * @throws OTSGeometryException
+     * @throws OTSGeometryException on error
      */
     public static void test6() throws OTSGeometryException
     {
@@ -779,7 +779,7 @@ public final class Test
 
     /**
      * Straight design line with more <i>noise</i> (sufficiently far from the end points).
-     * @throws OTSGeometryException
+     * @throws OTSGeometryException on error
      */
     public static void test7() throws OTSGeometryException
     {
@@ -800,7 +800,7 @@ public final class Test
 
     /**
      * Straight design line with more <i>noise</i> (close to the end points).
-     * @throws OTSGeometryException
+     * @throws OTSGeometryException on error
      */
     public static void test8() throws OTSGeometryException
     {

@@ -43,7 +43,7 @@ public class GeneratorAnimation extends Renderable2D
      * @param simulator the simulator to schedule on
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
-     * @throws OTSGeometryException
+     * @throws OTSGeometryException if position out of bounds
      */
     public GeneratorAnimation(final Lane lane, final Length.Rel position, final OTSSimulatorInterface simulator)
         throws NamingException, RemoteException, OTSGeometryException
