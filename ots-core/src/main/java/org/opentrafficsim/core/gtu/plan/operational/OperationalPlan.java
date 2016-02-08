@@ -125,7 +125,7 @@ public class OperationalPlan implements Serializable
         this.segmentStartTimesRelSI[this.segmentStartTimesRelSI.length - 1] = durationSI;
         try
         {
-            this.path = path.extract(0.0, distanceSI);
+            this.path = path.extract(0.0, Math.min(distanceSI, path.getLengthSI()));
         }
         catch (OTSGeometryException exception)
         {

@@ -97,6 +97,13 @@ public class IDMPlus extends AbstractGTUFollowingModel
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
         final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit)
     {
+        return computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, headway, speedLimit, this.stepSize);
+    }
+    
+    /** {@inheritDoc} */
+    public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
+        final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit, final Time.Rel stepSize)
+    {
         // TODO maxDistance
         double leftComponent = 1 - Math.pow(followerSpeed.getSI() / vDes(speedLimit, followerMaximumSpeed).getSI(), 4);
         if (Double.isNaN(leftComponent))
@@ -125,9 +132,9 @@ public class IDMPlus extends AbstractGTUFollowingModel
 
         double rightComponent = 1 - Math.pow(sStar.getSI() / headway.getSI(), 2);
         Acceleration newAcceleration = new Acceleration(this.a).multiplyBy(Math.min(leftComponent, rightComponent));
-        if (newAcceleration.getSI() * this.stepSize.getSI() + followerSpeed.getSI() < 0)
+        if (newAcceleration.getSI() * stepSize.getSI() + followerSpeed.getSI() < 0)
         {
-            newAcceleration = new Acceleration(-followerSpeed.getSI() / this.stepSize.getSI(), AccelerationUnit.SI);
+            newAcceleration = new Acceleration(-followerSpeed.getSI() / stepSize.getSI(), AccelerationUnit.SI);
         }
         return newAcceleration;
     }
@@ -136,7 +143,7 @@ public class IDMPlus extends AbstractGTUFollowingModel
     @Override
     public final Time.Rel getStepSize()
     {
-        return new Time.Rel(this.stepSize);
+        return this.stepSize;
     }
 
     /** {@inheritDoc} */

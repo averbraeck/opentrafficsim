@@ -308,7 +308,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                 new Length.Rel(4, METER), new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR), simpleSimulator,
                 strategicalPlanner, new LanePerceptionFull(), this.network);
         Collection<HeadwayGTU> sameLaneGTUs = new LinkedHashSet<HeadwayGTU>();
-        sameLaneGTUs.add(new HeadwayGTU(referenceCar.getId(), referenceCar.getVelocity(), 0));
+        sameLaneGTUs
+            .add(new HeadwayGTU(referenceCar.getId(), referenceCar.getVelocity(), 0, referenceCar.getGTUType()));
         // TODO play with the speed limit
         // TODO play with the preferredLaneRouteIncentive
         LaneMovementStep lowResult =
@@ -393,7 +394,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
                 referenceCar.getReference());
         HeadwayGTU otherGTU =
             new HeadwayGTU(otherCar.getId(), otherCar.getVelocity(), DoubleScalar.minus(otherCarPosition,
-                referenceCarPosition).getSI());
+                referenceCarPosition).getSI(), otherCar.getGTUType());
         if (mergeRight)
         {
             preferredLaneGTUs.add(otherGTU);

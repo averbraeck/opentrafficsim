@@ -8,6 +8,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -39,51 +40,52 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
     public final DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
         final LateralDirectionality direction, final Collection<HeadwayGTU> sameLaneGTUs,
         final Collection<HeadwayGTU> otherLaneGTUs, final Length.Rel maxDistance, final Speed speedLimit,
-        final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold) throws GTUException
+        final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold,
+        final Time.Rel laneChangeTime) throws GTUException
     {
         Map<Lane, Length.Rel> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
         Lane lane = positions.keySet().iterator().next();
         Length.Rel longitudinalPosition = positions.get(lane);
-        Lane preferredLane = gtu.getPerception().bestAccessibleAdjacentLane(lane, direction, longitudinalPosition);
+        Lane otherLane = gtu.getPerception().bestAccessibleAdjacentLane(lane, direction, longitudinalPosition);
         GTUFollowingModel gtuFollowingModel = gtu.getDrivingCharacteristics().getGTUFollowingModel();
         if (null == gtuFollowingModel)
         {
             throw new Error("GTU " + gtu + " has null GTUFollowingModel");
         }
-        DualAccelerationStep straightAccelerationSteps =
-            gtuFollowingModel.computeDualAccelerationStep(gtu, sameLaneGTUs, maxDistance, speedLimit);
-        if (straightAccelerationSteps.getLeaderAcceleration().getSI() < -9999)
+        DualAccelerationStep thisLaneAccelerationSteps =
+            gtuFollowingModel.computeDualAccelerationStep(gtu, sameLaneGTUs, maxDistance, speedLimit, laneChangeTime);
+        if (thisLaneAccelerationSteps.getLeaderAcceleration().getSI() < -9999)
         {
-            System.out.println("Problem");
-            gtu.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel()
-                .computeDualAccelerationStep(gtu, sameLaneGTUs, maxDistance, speedLimit);
+            System.out.println("GTU " + gtu
+                + " has a problem: straightAccelerationSteps.getLeaderAcceleration().getSI() < -9999");
         }
-        Acceleration straightA = applyDriverPersonality(straightAccelerationSteps).plus(laneChangeThreshold);
-        DualAccelerationStep preferredAccelerationSteps =
-            null == preferredLane ? null : gtu.getStrategicalPlanner().getDrivingCharacteristics()
-                .getGTUFollowingModel().computeDualAccelerationStep(gtu, otherLaneGTUs, maxDistance, speedLimit);
-        if (null != preferredAccelerationSteps
-            && preferredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getStrategicalPlanner()
-                .getDrivingCharacteristics().getGTUFollowingModel().getMaximumSafeDeceleration().getSI())
+        Acceleration straightA = applyDriverPersonality(thisLaneAccelerationSteps).plus(laneChangeThreshold);
+        DualAccelerationStep otherLaneAccelerationSteps =
+            null == otherLane ? null : gtuFollowingModel.computeDualAccelerationStep(gtu, otherLaneGTUs, maxDistance,
+                speedLimit, laneChangeTime);
+        if (null != otherLaneAccelerationSteps
+            && otherLaneAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getDrivingCharacteristics()
+                .getGTUFollowingModel().getMaximumSafeDeceleration().getSI())
         {
-            preferredAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
+            otherLaneAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
         }
-        Acceleration preferredA = null == preferredLane ? null : applyDriverPersonality(preferredAccelerationSteps);
-        if (null == preferredA)
+        Acceleration otherLaneAcceleration =
+            null == otherLane ? null : applyDriverPersonality(otherLaneAccelerationSteps);
+        if (null == otherLaneAcceleration)
         {
             // No lane change possible; this is definitely the easy case
-            return new DirectedLaneMovementStep(straightAccelerationSteps.getLeaderAccelerationStep(), null);
+            return new DirectedLaneMovementStep(thisLaneAccelerationSteps.getLeaderAccelerationStep(), null);
         }
-        // A merge to the preferredLane is possible
-        if (DoubleScalar.plus(preferredA, otherLaneRouteIncentive).plus(extraThreshold).ge(straightA))
+        // A merge to the other lane is possible
+        if (DoubleScalar.plus(otherLaneAcceleration, otherLaneRouteIncentive).plus(extraThreshold).ge(straightA))
         {
-            // Merge to the preferred lane; i.e. finish (or cancel) an overtaking procedure
-            return new DirectedLaneMovementStep(preferredAccelerationSteps.getLeaderAccelerationStep(), direction);
+            // Merge to the other lane
+            return new DirectedLaneMovementStep(otherLaneAccelerationSteps.getLeaderAccelerationStep(), direction);
         }
         else
         {
             // Stay in current lane
-            return new DirectedLaneMovementStep(straightAccelerationSteps.getLeaderAccelerationStep(), null);
+            return new DirectedLaneMovementStep(thisLaneAccelerationSteps.getLeaderAccelerationStep(), null);
         }
     }
 

@@ -90,6 +90,13 @@ public class IDM extends AbstractGTUFollowingModel
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
         final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit)
     {
+        return computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, headway, speedLimit, this.stepSize);
+    }
+    
+    /** {@inheritDoc} */
+    public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
+        final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit, final Time.Rel stepSize)
+    {
         // TODO maxDistance
         // System.out.println("Applying IDM for " + follower + " headway is " + headway);
         // dV is the approach speed
@@ -129,10 +136,10 @@ public class IDM extends AbstractGTUFollowingModel
         Acceleration aInteraction =
             new Acceleration(-Math.pow(this.a.getSI() * sStar.getSI() / headway.getSI(), 2), AccelerationUnit.SI);
         Acceleration newAcceleration = aFree.plus(aInteraction);
-        if (newAcceleration.getSI() * this.stepSize.getSI() + followerSpeed.getSI() < 0)
+        if (newAcceleration.getSI() * stepSize.getSI() + followerSpeed.getSI() < 0)
         {
             // System.out.println("Limiting deceleration to prevent moving backwards");
-            newAcceleration = new Acceleration(-followerSpeed.getSI() / this.stepSize.getSI(), AccelerationUnit.SI);
+            newAcceleration = new Acceleration(-followerSpeed.getSI() / stepSize.getSI(), AccelerationUnit.SI);
         }
         // System.out.println("newAcceleration is " + newAcceleration);
         return newAcceleration;
@@ -142,7 +149,7 @@ public class IDM extends AbstractGTUFollowingModel
     @Override
     public final Time.Rel getStepSize()
     {
-        return new Time.Rel(this.stepSize);
+        return this.stepSize;
     }
 
     /** {@inheritDoc} */

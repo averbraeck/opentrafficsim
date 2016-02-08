@@ -140,6 +140,15 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
 
     /** {@inheritDoc} */
     @Override
+    public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
+        final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit, final Time.Rel stepSize)
+    {
+        // TODO incorporate stepSize
+        return getAccelerationModel().getAcceleration();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public final Acceleration getMaximumSafeDeceleration()
     {
         return this.maximumSafeDeceleration;

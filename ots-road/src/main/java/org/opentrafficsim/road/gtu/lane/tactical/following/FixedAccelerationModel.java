@@ -59,6 +59,14 @@ public class FixedAccelerationModel extends AbstractGTUFollowingModel
     /** {@inheritDoc} */
     @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
+        final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit, final Time.Rel stepSize)
+    {
+        return this.acceleration;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
         final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit)
     {
         return this.acceleration;
