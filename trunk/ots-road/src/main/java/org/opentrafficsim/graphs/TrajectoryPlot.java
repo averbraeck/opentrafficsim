@@ -470,55 +470,64 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         public final void addSegment(final LaneBasedGTU car, final Lane lane, final double positionOffset)
             throws NetworkException, GTUException
         {
-            final int startSample =
-                (int) Math.ceil(car.getOperationalPlan().getStartTime().getSI() / getSampleInterval().getSI());
-            final int endSample =
-                (int) (Math.ceil(car.getOperationalPlan().getEndTime().getSI() / getSampleInterval().getSI()));
-            for (int sample = startSample; sample < endSample; sample++)
+            try
             {
-                Time.Abs sampleTime = new Time.Abs(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
-                Double position = car.position(lane, car.getReference(), sampleTime).getSI() + positionOffset;
-                if (this.positions.size() > 0 && position < this.currentEndPosition.getSI() - 0.001)
+                final int startSample =
+                    (int) Math.ceil(car.getOperationalPlan().getStartTime().getSI() / getSampleInterval().getSI());
+                final int endSample =
+                    (int) (Math.ceil(car.getOperationalPlan().getEndTime().getSI() / getSampleInterval().getSI()));
+                for (int sample = startSample; sample < endSample; sample++)
                 {
-                    if (0 != positionOffset)
+                    Time.Abs sampleTime = new Time.Abs(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
+                    Double position = car.position(lane, car.getReference(), sampleTime).getSI() + positionOffset;
+                    if (this.positions.size() > 0 && position < this.currentEndPosition.getSI() - 0.001)
                     {
-                        // System.out.println("Already added " + car);
-                        break;
+                        if (0 != positionOffset)
+                        {
+                            // System.out.println("Already added " + car);
+                            break;
+                        }
+                        // System.out.println("inserting null for " + car);
+                        position = null; // Wrapping on circular path?
                     }
-                    // System.out.println("inserting null for " + car);
-                    position = null; // Wrapping on circular path?
+                    if (this.positions.size() == 0)
+                    {
+                        this.firstSample = sample;
+                    }
+                    /*-
+                    if (sample - this.firstSample > this.positions.size())
+                    {
+                        System.out.println("Inserting " + (sample - this.positions.size()) 
+                                + " nulls; this is trajectory number " + trajectoryIndices.indexOf(this));
+                    }
+                     */
+                    while (sample - this.firstSample > this.positions.size())
+                    {
+                        // System.out.println("Inserting nulls");
+                        this.positions.add(null); // insert nulls as place holders for unsampled data (usually because
+                                                  // vehicle was temporarily in a parallel Lane)
+                    }
+                    if (null != position && this.positions.size() > sample - this.firstSample)
+                    {
+                        // System.out.println("Skipping sample " + car);
+                        continue;
+                    }
+                    this.positions.add(position);
                 }
-                if (this.positions.size() == 0)
+                this.currentEndTime = car.getOperationalPlan().getEndTime();
+                this.currentEndPosition =
+                    new Length.Rel(
+                        car.position(lane, car.getReference(), this.currentEndTime).getSI() + positionOffset,
+                        LengthUnit.METER);
+                if (car.getOperationalPlan().getEndTime().gt(getMaximumTime()))
                 {
-                    this.firstSample = sample;
+                    setMaximumTime(car.getOperationalPlan().getEndTime());
                 }
-                /*-
-                if (sample - this.firstSample > this.positions.size())
-                {
-                    System.out.println("Inserting " + (sample - this.positions.size()) 
-                            + " nulls; this is trajectory number " + trajectoryIndices.indexOf(this));
-                }
-                 */
-                while (sample - this.firstSample > this.positions.size())
-                {
-                    // System.out.println("Inserting nulls");
-                    this.positions.add(null); // insert nulls as place holders for unsampled data (usually because
-                                              // vehicle was temporarily in a parallel Lane)
-                }
-                if (null != position && this.positions.size() > sample - this.firstSample)
-                {
-                    // System.out.println("Skipping sample " + car);
-                    continue;
-                }
-                this.positions.add(position);
             }
-            this.currentEndTime = car.getOperationalPlan().getEndTime();
-            this.currentEndPosition =
-                new Length.Rel(car.position(lane, car.getReference(), this.currentEndTime).getSI() + positionOffset,
-                    LengthUnit.METER);
-            if (car.getOperationalPlan().getEndTime().gt(getMaximumTime()))
+            catch (Exception e)
             {
-                setMaximumTime(car.getOperationalPlan().getEndTime());
+                // TODO lane change causes error...
+                System.err.println("Trajectoryplot lane change difficulty...: " + e.getMessage());
             }
         }
 

@@ -193,7 +193,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
                 simpleSimulator, strategicalPlanner, new LanePerceptionFull(), this.network);
         car.getPerception().perceive();
         Collection<HeadwayGTU> sameLaneGTUs = new LinkedHashSet<HeadwayGTU>();
-        sameLaneGTUs.add(new HeadwayGTU(car.getId(), car.getVelocity(), 0));
+        sameLaneGTUs.add(new HeadwayGTU(car.getId(), car.getVelocity(), 0, car.getGTUType()));
         Collection<HeadwayGTU> preferredLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         Collection<HeadwayGTU> nonPreferredLaneGTUs = new LinkedHashSet<HeadwayGTU>();
         LaneMovementStep laneChangeModelResult =
@@ -230,7 +230,8 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
                     simpleSimulator, strategicalPlanner, new LanePerceptionFull(), this.network);
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU =
-                new HeadwayGTU(collisionCar.getId(), collisionCar.getVelocity(), pos - reference.getSI());
+                new HeadwayGTU(collisionCar.getId(), collisionCar.getVelocity(), pos - reference.getSI(),
+                    collisionCar.getGTUType());
             preferredLaneGTUs.add(collisionHWGTU);
             laneChangeModelResult =
                 new Egoistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs,
@@ -260,7 +261,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             preferredLaneGTUs.clear();
             HeadwayGTU collisionHWGTU =
                 new HeadwayGTU(otherCar.getId(), otherCar.getVelocity(), pos
-                    - car.position(lanes[0], car.getReference()).getSI());
+                    - car.position(lanes[0], car.getReference()).getSI(), otherCar.getGTUType());
             preferredLaneGTUs.add(collisionHWGTU);
             laneChangeModelResult =
                 new Egoistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs,

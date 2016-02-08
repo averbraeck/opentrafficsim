@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -28,18 +29,20 @@ public class DirectedFixedLaneChangeModel implements DirectedLaneChangeModel
     public final DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
         final LateralDirectionality direction, final Collection<HeadwayGTU> sameLaneTraffic,
         final Collection<HeadwayGTU> otherLaneTraffic, final Length.Rel maxDistance, final Speed speedLimit,
-        final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold) throws GTUException
+        final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold,
+        final Time.Rel laneChangeTime) throws GTUException
     {
         if (null == direction)
         {
-            return new DirectedLaneMovementStep(gtu.getStrategicalPlanner().getDrivingCharacteristics()
-                .getGTUFollowingModel().computeDualAccelerationStep(gtu, sameLaneTraffic, maxDistance, speedLimit)
-                .getLeaderAccelerationStep(), null);
+            return new DirectedLaneMovementStep(
+                gtu.getDrivingCharacteristics().getGTUFollowingModel()
+                    .computeDualAccelerationStep(gtu, sameLaneTraffic, maxDistance, speedLimit)
+                    .getLeaderAccelerationStep(), null);
         }
         else
         {
-            return new DirectedLaneMovementStep(gtu.getStrategicalPlanner().getDrivingCharacteristics()
-                .getGTUFollowingModel().computeDualAccelerationStep(gtu, otherLaneTraffic, maxDistance, speedLimit)
+            return new DirectedLaneMovementStep(gtu.getDrivingCharacteristics().getGTUFollowingModel()
+                .computeDualAccelerationStep(gtu, otherLaneTraffic, maxDistance, speedLimit)
                 .getLeaderAccelerationStep(), direction);
         }
     }

@@ -122,7 +122,7 @@ public class IDMPlusTest implements UNITS
         leaderCar11.getPerception().perceive();
         HeadwayGTU leader =
             new HeadwayGTU(leaderCar11.getId(), leaderCar11.getVelocity(), leaderPosition.getSI()
-                - referenceCar10.getLength().getSI() - initialPosition.getSI());
+                - referenceCar10.getLength().getSI() - initialPosition.getSI(), leaderCar11.getGTUType());
         cfmr =
             carFollowingModel.computeAccelerationStep(referenceCar10, leaderCar11.getVelocity(), leader.getDistance(),
                 leaderCar11.getDrivingCharacteristics().getForwardHeadwayDistance(), speedLimit);
@@ -144,7 +144,7 @@ public class IDMPlusTest implements UNITS
         Collection<HeadwayGTU> leaders = new ArrayList<HeadwayGTU>();
         HeadwayGTU leader2 =
             new HeadwayGTU(leaderCar12.getId(), leaderCar12.getVelocity(), leaderPosition.getSI()
-                - referenceCar10.getLength().getSI() - initialPosition.getSI());
+                - referenceCar10.getLength().getSI() - initialPosition.getSI(), leaderCar12.getGTUType());
         leaders.add(leader2); // Put the 2nd leader in first place
         leaders.add(leader);
         cfmr =
@@ -181,7 +181,7 @@ public class IDMPlusTest implements UNITS
         leaderCar21.getPerception().perceive();
         leader =
             new HeadwayGTU(leaderCar21.getId(), leaderCar21.getVelocity(), leaderPosition.getSI()
-                - referenceCar20.getLength().getSI() - initialPosition.getSI());
+                - referenceCar20.getLength().getSI() - initialPosition.getSI(), leaderCar21.getGTUType());
         leaders.add(leader);
         cfmr =
             carFollowingModel.computeDualAccelerationStep(referenceCar20, leaders,
@@ -207,7 +207,7 @@ public class IDMPlusTest implements UNITS
             leaderCar22.getPerception().perceive();
             leader =
                 new HeadwayGTU(leaderCar22.getId(), leaderCar22.getVelocity(), leaderPosition.getSI()
-                    - referenceCar20.getLength().getSI() - initialPosition.getSI());
+                    - referenceCar20.getLength().getSI() - initialPosition.getSI(), leaderCar22.getGTUType());
             leaders.add(leader);
             cfmr =
                 carFollowingModel.computeDualAccelerationStep(referenceCar20, leaders,
@@ -261,7 +261,7 @@ public class IDMPlusTest implements UNITS
             leaderCar31.getPerception().perceive();
             leader =
                 new HeadwayGTU(leaderCar31.getId(), leaderCar31.getVelocity(), leaderPosition.getSI()
-                    - referenceCar30.getLength().getSI() - initialPosition.getSI());
+                    - referenceCar30.getLength().getSI() - initialPosition.getSI(), leaderCar31.getGTUType());
             leaders.add(leader);
             // System.out.println("referenceCar: " + referenceCar);
             // System.out.println("leaderCar   : " + leaderCar);

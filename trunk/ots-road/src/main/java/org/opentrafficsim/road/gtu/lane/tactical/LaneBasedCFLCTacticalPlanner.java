@@ -134,7 +134,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             if (null != sameLaneFollower.getGtuId())
             {
                 sameLaneTraffic.add(new HeadwayGTU(sameLaneFollower.getGtuId(), sameLaneFollower.getGtuSpeed(),
-                    -sameLaneFollower.getDistanceSI()));
+                    -sameLaneFollower.getDistance().si, sameLaneFollower.getGtuType()));
             }
 
             // Are we in the right lane for the route?

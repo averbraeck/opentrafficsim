@@ -60,6 +60,7 @@ import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
@@ -407,9 +408,10 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                 }
             }
 
-            setupGenerator(LaneFactory.makeMultiLane("From to FirstVia", from, firstVia, null, merge ? lanesOnMain
+            Lane[] startLanes = LaneFactory.makeMultiLane("From to FirstVia", from, firstVia, null, merge ? lanesOnMain
                 : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator,
-                LongitudinalDirectionality.DIR_PLUS));
+                LongitudinalDirectionality.DIR_PLUS);
+            setupGenerator(new Lane[] {startLanes[0]});
             Lane[] common =
                 LaneFactory.makeMultiLane("FirstVia to SecondVia", firstVia, secondVia, null, lanesOnCommon, laneType,
                     this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
@@ -581,7 +583,9 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         LaneChangeModel lcm = new FixedLaneChangeModel(null);
         LaneBasedDrivingCharacteristics drivingCharacteristics = new LaneBasedDrivingCharacteristics(gfm, lcm);
         LaneBasedStrategicalPlanner strategicalPlanner =
-            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
+            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
+                new LaneBasedGTUFollowingLaneChangeTacticalPlanner());
+        // new LaneBasedCFLCTacticalPlanner());
         new LaneBasedIndividualCar("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
             new Length.Rel(1, METER), lane.getWidth(1), new Speed(0.0, KM_PER_HOUR), this.simulator,
             strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
@@ -631,8 +635,8 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             LaneBasedDrivingCharacteristics drivingCharacteristics =
                 new LaneBasedDrivingCharacteristics(gtuFollowingModel, this.laneChangeModel);
             LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner(),
-                    this.routeGenerator.generateRoute());
+                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
+                    new LaneBasedGTUFollowingLaneChangeTacticalPlanner(), this.routeGenerator.generateRoute());
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
                 vehicleLength, new Length.Rel(1.8, METER), new Speed(speed, KM_PER_HOUR), this.simulator,
                 strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);

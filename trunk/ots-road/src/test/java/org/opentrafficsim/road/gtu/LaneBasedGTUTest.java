@@ -173,14 +173,14 @@ public class LaneBasedGTUTest implements UNITS
         HeadwayGTU leader = truck.getPerception().getForwardHeadwayGTU();
         assertTrue(
             "With one vehicle in the network forward headway should return a value larger than zero, and smaller than maxDistance",
-            forwardMaxDistance.getSI() >= leader.getDistanceSI() && leader.getDistanceSI() > 0);
+            forwardMaxDistance.getSI() >= leader.getDistance().si && leader.getDistance().si > 0);
         assertEquals("With one vehicle in the network forward headwayGTU should return null", null, leader.getGtuId());
         // TODO see how we can ask the vehicle to look this far behind
         Length.Rel reverseMaxDistance = truck.getDrivingCharacteristics().getBackwardHeadwayDistance();
         HeadwayGTU follower = truck.getPerception().getBackwardHeadwayGTU();
         assertTrue(
             "With one vehicle in the network reverse headway should return a value less than zero, and smaller than |maxDistance|",
-            Math.abs(reverseMaxDistance.getSI()) >= Math.abs(follower.getDistanceSI()) && follower.getDistanceSI() < 0);
+            Math.abs(reverseMaxDistance.getSI()) >= Math.abs(follower.getDistance().si) && follower.getDistance().si < 0);
         assertEquals("With one vehicle in the network reverse headwayGTU should return null", null, follower.getGtuId());
         Length.Rel carLength = new Length.Rel(4, METER);
         Length.Rel carWidth = new Length.Rel(1.8, METER);
@@ -208,7 +208,7 @@ public class LaneBasedGTUTest implements UNITS
                 // leader = truck.headway(forwardMaxDistance);
                 // TODO see how we can ask the vehicle to look 'forwardMaxDistance' ahead
                 leader = truck.getPerception().getForwardHeadwayGTU();
-                double actualHeadway = leader.getDistanceSI();
+                double actualHeadway = leader.getDistance().si;
                 double expectedHeadway =
                     laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
                         || step - truckPosition.getSI() - truckLength.getSI() <= 0 ? Double.MAX_VALUE : step
@@ -229,7 +229,7 @@ public class LaneBasedGTUTest implements UNITS
                 }
                 // TODO follower = truck.headway(reverseMaxDistance);
                 follower = truck.getPerception().getBackwardHeadwayGTU();
-                double actualReverseHeadway = follower.getDistanceSI();
+                double actualReverseHeadway = follower.getDistance().si;
                 double expectedReverseHeadway =
                     laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
                         || step + carLength.getSI() >= truckPosition.getSI() ? Double.MAX_VALUE : truckPosition.getSI()
@@ -259,7 +259,7 @@ public class LaneBasedGTUTest implements UNITS
                         }
                     }
                     leader = truck.getPerception().getForwardHeadwayGTU();
-                    actualHeadway = leader.getDistanceSI();
+                    actualHeadway = leader.getDistance().si;
                     expectedHeadway =
                         laneIndex < laneRank || laneIndex > laneRank + carLanesCovered - 1
                             || step - truckLength.getSI() - truckPosition.getSI() <= 0 ? Double.MAX_VALUE : step
@@ -277,7 +277,7 @@ public class LaneBasedGTUTest implements UNITS
                         assertEquals("Leader id should be null", null, leaderGtuId);
                     }
                     follower = truck.getPerception().getBackwardHeadwayGTU();
-                    actualReverseHeadway = follower.getDistanceSI();
+                    actualReverseHeadway = follower.getDistance().si;
                     expectedReverseHeadway =
                         laneIndex < laneRank || laneIndex > laneRank + carLanesCovered - 1
                             || step + carLength.getSI() >= truckPosition.getSI() ? Double.MAX_VALUE : truckPosition

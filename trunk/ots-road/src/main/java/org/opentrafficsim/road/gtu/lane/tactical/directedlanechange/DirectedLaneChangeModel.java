@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
@@ -38,6 +39,7 @@ public interface DirectedLaneChangeModel
      *            absence of other traffic
      * @param laneChangeThreshold Acceleration; threshold that prevents lane changes that have very little benefit merge to
      *            overtake other traffic
+     * @param laneChangeTime time spent to overtake
      * @return LaneMovementStep; the result of the lane change and GTU following model
      * @throws GTUException when the position of the GTU on the lane(s) cannot be determined
      */
@@ -45,7 +47,8 @@ public interface DirectedLaneChangeModel
     DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
         final LateralDirectionality direction, final Collection<HeadwayGTU> sameLaneTraffic,
         final Collection<HeadwayGTU> otherLaneTraffic, final Length.Rel maxDistance, final Speed speedLimit,
-        final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold) throws GTUException;
+        final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold,
+        Time.Rel laneChangeTime) throws GTUException;
 
     /**
      * Return the name of this GTU following model.
