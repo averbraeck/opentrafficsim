@@ -88,17 +88,6 @@ public class OperationalPlan implements Serializable
     public OperationalPlan(final OTSLine3D path, final Time.Abs startTime, final Speed startSpeed,
         final List<Segment> operationalPlanSegmentList) throws OperationalPlanException
     {
-        try
-        {
-            if (path.size() == 2 && path.get(0).y < -5 && path.get(1).y > -5)
-            {
-                System.out.println("Let op");
-            }
-        }
-        catch (OTSGeometryException exception1)
-        {
-            exception1.printStackTrace();
-        }
         this.waitPlan = false;
         this.startTime = startTime;
         this.startSpeed = startSpeed;
