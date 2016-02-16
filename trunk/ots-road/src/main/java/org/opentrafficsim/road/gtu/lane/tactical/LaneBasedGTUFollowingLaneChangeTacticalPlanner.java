@@ -284,6 +284,11 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
             perception.getForwardHeadwayGTU() == null || perception.getForwardHeadwayGTU().getDistance() == null ? gtu
                 .getDrivingCharacteristics().getForwardHeadwayDistance() : perception.getForwardHeadwayGTU()
                 .getDistance();
+        if (currentLaneLeaderHeadway.si > lanePathInfo.getPath().getLengthSI())
+        {
+            currentLaneLeaderHeadway = lanePathInfo.getPath().getLength();
+            currentLaneLeaderSpeed = Speed.ZERO;
+        }
         AccelerationStep currentLaneStep =
             gtu.getDrivingCharacteristics()
                 .getGTUFollowingModel()
@@ -305,6 +310,13 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
                     gtu.getDrivingCharacteristics().getForwardHeadwayDistance(), perception.getSpeedLimit(),
                     new Time.Rel(2.0, TimeUnit.SECOND));
 
+        // XXX
+        if (gtu.getId().contains("241"))
+        {
+            System.out.println("241");
+        }
+        // XXX
+        
         // choose the most conservative one
         AccelerationStep accelerationStep =
             currentLaneStep.getAcceleration().si < alternativeLaneStep.getAcceleration().si ? currentLaneStep

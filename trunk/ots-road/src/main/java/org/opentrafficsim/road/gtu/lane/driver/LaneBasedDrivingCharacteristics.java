@@ -10,7 +10,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.DrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechange.LaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 
 /**
  * Driving characteristics of the driver. Sets the parameters for the car following model and the lane change model (e.g., gap

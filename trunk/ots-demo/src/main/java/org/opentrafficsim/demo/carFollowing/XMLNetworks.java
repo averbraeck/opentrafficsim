@@ -65,10 +65,10 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationMode
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechange.AbstractLaneChangeModel;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Egoistic;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechange.FixedLaneChangeModel;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechange.LaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.LaneFactory;
@@ -412,6 +412,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                 : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator,
                 LongitudinalDirectionality.DIR_PLUS);
             setupGenerator(new Lane[] {startLanes[0]});
+            // XXX setupGenerator(startLanes);
             Lane[] common =
                 LaneFactory.makeMultiLane("FirstVia to SecondVia", firstVia, secondVia, null, lanesOnCommon, laneType,
                     this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
@@ -637,6 +638,9 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
                     new LaneBasedGTUFollowingLaneChangeTacticalPlanner(), this.routeGenerator.generateRoute());
+//            LaneBasedStrategicalPlanner strategicalPlanner =
+//                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
+//                        new LaneBasedCFLCTacticalPlanner(), this.routeGenerator.generateRoute());
             new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
                 vehicleLength, new Length.Rel(1.8, METER), new Speed(speed, KM_PER_HOUR), this.simulator,
                 strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
