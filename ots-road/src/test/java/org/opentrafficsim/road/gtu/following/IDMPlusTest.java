@@ -34,8 +34,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationMode
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechange.AbstractLaneChangeModel;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechange.Egoistic;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
