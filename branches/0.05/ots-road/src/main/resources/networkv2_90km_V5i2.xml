@@ -392,20 +392,12 @@
     <BEZIER />
     <SENSOR NAME="225_01.1" LANE="A1" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor"
       TRIGGER="FRONT" />
-    <TRAFFICLIGHT NAME="225_01.1" LANE="A1" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
     <SENSOR NAME="225_02.1" LANE="A2" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor"
       TRIGGER="FRONT" />
-    <TRAFFICLIGHT NAME="225_02.1" LANE="A2" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
     <SENSOR NAME="225_02.2" LANE="A3" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor"
       TRIGGER="FRONT" />
-    <TRAFFICLIGHT NAME="225_02.2" LANE="A3" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
     <SENSOR NAME="225_03.1" LANE="A4" POSITION="END-1.5m" CLASS="org.opentrafficsim.road.network.lane.SimpleReportingSensor"
       TRIGGER="FRONT" />
-    <TRAFFICLIGHT NAME="225_03.1" LANE="A4" POSITION="END-1.55m"
-      CLASS="org.opentrafficsim.road.gtu.lane.object.SimpleTrafficLight" />
   </LINK>
   <LINK NAME="L3a" NODESTART="N3a" NODEEND="N4a" ROADTYPE="RT2ln_ref0">
     <BEZIER />
@@ -1284,7 +1276,7 @@
   </LINK>
 
 
-  <LINK NAME="L249b_inL" NODESTART="N249b_in" NODEEND="N30a" ROADTYPE="RT2ln_ref0">
+  <LINK NAME="L249b_inL" NODESTART="N249b_in" NODEEND="N30a" ROADTYPE="RT2ln_ref0" OFFSETEND="3m">
     <BEZIER />
   </LINK>
   <LINK NAME="L249b_inL2" NODESTART="N249b_uit2" NODEEND="N249b_in" ROADTYPE="RT2ln_ref0">
