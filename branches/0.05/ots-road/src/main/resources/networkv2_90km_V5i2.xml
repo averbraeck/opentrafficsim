@@ -1,3 +1,6 @@
+	<LINK NAME="L31auIT" NODESTART="N32a" NODEEND="N32aUit" ROADTYPE="RT1ln_ref-2">
+		<BEZIER />
+	</LINK>
 <?xml version="1.0" encoding="UTF-8" ?>
 <NETWORK xmlns="http://www.opentrafficsim.org/ots" xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.opentrafficsim.org/ots http://www.opentrafficsim.org/docs/ots-network.xsd" xmlns:xi="http://www.w3.org/2001/XInclude">
@@ -1098,7 +1101,7 @@
     <STRAIGHT />
     <SINK LANE="A1" POSITION="END-20m" />
   </LINK>
-  <LINK NAME="L249b_uitL" NODESTART="N30b" NODEEND="N249a_uit" ROADTYPE="RT2ln_ref-2">
+  <LINK NAME="L249b_uitL" NODESTART="N30b" NODEEND="N249a_uit" ROADTYPE="RT2ln_ref-3">
     <BEZIER />
   </LINK>
   <LINK NAME="L249b_uitL2" NODESTART="N249a_uit" NODEEND="N249a_uit2" ROADTYPE="RT2ln_ref-2">

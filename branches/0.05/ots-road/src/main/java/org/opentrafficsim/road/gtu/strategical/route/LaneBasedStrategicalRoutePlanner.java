@@ -34,8 +34,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategicalPlanner implements
-    LaneBasedStrategicalPlanner
-{
+    LaneBasedStrategicalPlanner {
     /** the route to drive. */
     private final Route route;
 
@@ -47,8 +46,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * @param fixedTacticalPlanner the tactical planner to use for the GTU
      */
     public LaneBasedStrategicalRoutePlanner(LaneBasedDrivingCharacteristics drivingCharacteristics,
-        final TacticalPlanner fixedTacticalPlanner)
-    {
+        final TacticalPlanner fixedTacticalPlanner) {
         this(drivingCharacteristics, fixedTacticalPlanner, null);
     }
 
@@ -58,8 +56,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * @param route the route to drive
      */
     public LaneBasedStrategicalRoutePlanner(LaneBasedDrivingCharacteristics drivingCharacteristics,
-        final TacticalPlanner fixedTacticalPlanner, final Route route)
-    {
+        final TacticalPlanner fixedTacticalPlanner, final Route route) {
         super(drivingCharacteristics);
         this.route = route;
         this.fixedTacticalPlanner = fixedTacticalPlanner;
@@ -67,16 +64,13 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
 
     /** {@inheritDoc} */
     @Override
-    public TacticalPlanner generateTacticalPlanner(final GTU gtu)
-    {
+    public TacticalPlanner generateTacticalPlanner(final GTU gtu) {
         return this.fixedTacticalPlanner;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Node nextNode(final Link link, final GTUDirectionality direction, final GTUType gtuType)
-        throws NetworkException
-    {
+    public Node nextNode(final Link link, final GTUDirectionality direction, final GTUType gtuType) throws NetworkException {
         LinkDirection linkDirection = nextLinkDirection(link, direction, gtuType);
         return linkDirection.getNodeTo();
     }
@@ -84,16 +78,14 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     /** {@inheritDoc} */
     @Override
     public LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction, final GTUType gtuType)
-        throws NetworkException
-    {
+        throws NetworkException {
         Node lastNode = direction.equals(GTUDirectionality.DIR_PLUS) ? link.getEndNode() : link.getStartNode();
         return nextLinkDirection(lastNode, link, gtuType);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Node nextNode(final Node node, final Link previousLink, final GTUType gtuType) throws NetworkException
-    {
+    public Node nextNode(final Node node, final Link previousLink, final GTUType gtuType) throws NetworkException {
         LinkDirection linkDirection = nextLinkDirection(node, previousLink, gtuType);
         return linkDirection.getNodeTo();
     }
@@ -101,28 +93,22 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     /** {@inheritDoc} */
     @Override
     public LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GTUType gtuType)
-        throws NetworkException
-    {
+        throws NetworkException {
         // if there is no split, don't ask the route
-        if (node.getLinks().size() == 1 && previousLink != null)
-        {
+        if (node.getLinks().size() == 1 && previousLink != null) {
             // end node
             throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link, but node " + node
                 + " has no successors");
         }
-        if (node.getLinks().size() == 1 && previousLink == null)
-        {
+        if (node.getLinks().size() == 1 && previousLink == null) {
             // start node
             Link link = node.getLinks().iterator().next();
             return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS)
                 : new LinkDirection(link, GTUDirectionality.DIR_MINUS);
         }
-        if (node.getLinks().size() == 2)
-        {
-            for (Link link : node.getLinks())
-            {
-                if (!link.equals(previousLink))
-                {
+        if (node.getLinks().size() == 2) {
+            for (Link link : node.getLinks()) {
+                if (!link.equals(previousLink)) {
                     return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS)
                         : new LinkDirection(link, GTUDirectionality.DIR_MINUS);
                 }
@@ -131,90 +117,73 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
 
         // if we only have one way to go, don't bother about the route yet
         Set<Link> links = node.getLinks();
-        for (Iterator<Link> linkIterator = links.iterator(); linkIterator.hasNext();)
-        {
+        for (Iterator<Link> linkIterator = links.iterator(); linkIterator.hasNext();) {
             Link link = linkIterator.next();
-            if (link.equals(previousLink))
-            {
+            if (link.equals(previousLink)) {
                 linkIterator.remove();
-            }
-            else
-            {
+            } else {
                 // does the directionality of the link forbid us to go in?
-                if ((link.getStartNode().equals(node) && link.getDirectionality(gtuType).isBackward())
-                    || (link.getEndNode().equals(node) && link.getDirectionality(gtuType).isForward()))
-                {
+                if ((link.getStartNode().equals(node) && link.getDirectionality(gtuType).isBackward()) || (link.getEndNode()
+                    .equals(node) && link.getDirectionality(gtuType).isForward())) {
                     linkIterator.remove();
-                }
-                else
-                {
+                } else {
                     // are there no lanes from the node into this link in the outgoing direction?
                     boolean out = false;
                     CrossSectionLink csLink = (CrossSectionLink) link;
-                    for (CrossSectionElement cse : csLink.getCrossSectionElementList())
-                    {
-                        if (cse instanceof Lane)
-                        {
+                    for (CrossSectionElement cse : csLink.getCrossSectionElementList()) {
+                        if (cse instanceof Lane) {
                             Lane lane = (Lane) cse;
-                            if ((link.getStartNode().equals(node) && lane.getDirectionality(gtuType).isForward())
-                                || (link.getEndNode().equals(node) && lane.getDirectionality(gtuType).isBackward()))
-                            {
+                            if ((link.getStartNode().equals(node) && lane.getDirectionality(gtuType).isForward()) || (link
+                                .getEndNode().equals(node) && lane.getDirectionality(gtuType).isBackward())) {
                                 out = true;
                             }
                         }
                     }
-                    if (!out)
-                    {
+                    if (!out) {
                         linkIterator.remove();
                     }
                 }
             }
         }
-        if (links.size() == 1)
-        {
+        if (links.size() == 1) {
             Link link = links.iterator().next();
             return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS)
-            : new LinkDirection(link, GTUDirectionality.DIR_MINUS);
+                : new LinkDirection(link, GTUDirectionality.DIR_MINUS);
         }
 
         // more than 2 links... We have to check the route!
-        if (this.route == null)
-        {
+        if (this.route == null) {
             throw new NetworkException("LaneBasedStrategicalRoutePlanner does not have a route");
         }
         int i = this.route.getNodes().indexOf(node);
-        if (i == -1)
-        {
+        if (i == -1) {
             throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from "
                 + previousLink + ", but node " + node + " not in route " + this.route);
         }
-        if (i == this.route.getNodes().size() - 1)
-        {
-            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from "
-                + previousLink + ", but the GTU reached the last node for route " + this.route);
+        if (i == this.route.getNodes().size() - 1) {
+            return previousLink.getStartNode().equals(node) ? new LinkDirection(previousLink, GTUDirectionality.DIR_PLUS)
+                : new LinkDirection(previousLink, GTUDirectionality.DIR_MINUS);
+
+            // throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from "
+            // + previousLink + ", but the GTU reached the last node for route " + this.route);
         }
         Node nextNode = this.route.getNode(i + 1);
-        for (Link link : node.getLinks())
-        {
-            if (link.getStartNode().equals(nextNode))
-            {
+        for (Link link : node.getLinks()) {
+            if (link.getStartNode().equals(nextNode)) {
                 return new LinkDirection(link, GTUDirectionality.DIR_MINUS);
             }
-            if (link.getEndNode().equals(nextNode))
-            {
+            if (link.getEndNode().equals(nextNode)) {
                 return new LinkDirection(link, GTUDirectionality.DIR_PLUS);
             }
         }
-        throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next linkcoming from "
-            + previousLink + ", but no link could be found connecting node " + node + " and node " + nextNode
-            + " for route " + this.route);
+        throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next linkcoming from " + previousLink
+            + ", but no link could be found connecting node " + node + " and node " + nextNode + " for route " + this.route);
     }
 
     /**
      * @return the route
      */
-    public final Route getRoute()
-    {
+    public final Route getRoute() {
         return this.route;
     }
 

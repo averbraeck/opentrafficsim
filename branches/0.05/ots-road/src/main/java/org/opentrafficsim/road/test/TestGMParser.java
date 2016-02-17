@@ -41,9 +41,11 @@ import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
@@ -157,7 +159,7 @@ public class TestGMParser extends AbstractWrappableAnimation {
             final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> pSimulator)
                 throws SimRuntimeException {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
-            URL url = URLResource.getResource("/networkv2_90km_V5i2.xml");
+            URL url = URLResource.getResource("/networkv4_parser.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             OTSNetwork network = null;
             try {
@@ -192,9 +194,10 @@ public class TestGMParser extends AbstractWrappableAnimation {
                 SpeedUnit.KM_PER_HOUR)), new AccelerationGTUColorer(new Acceleration(-1.0,
                     AccelerationUnit.METER_PER_SECOND_2), new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2)));
             GTUFollowingModel gtuFollowingModel = new IDMPlus();
+            LaneChangeModel laneChange = new Egoistic();
             LaneBasedDrivingCharacteristics drivingCharacteristics = new LaneBasedDrivingCharacteristics(gtuFollowingModel,
-                null);
-            TacticalPlanner fixedTacticalPlanner = new LaneBasedGTUFollowingTacticalPlanner();
+                laneChange);
+            TacticalPlanner fixedTacticalPlanner = new LaneBasedGTUFollowingLaneChangeTacticalPlanner();
             Route routeA = network.getRoute(GTUType.ALL, "A");
             Route routeB = network.getRoute(GTUType.ALL, "B");
             LaneBasedStrategicalPlanner strategicalPlannerA = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
