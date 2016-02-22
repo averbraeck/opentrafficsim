@@ -119,6 +119,12 @@ public class Lane extends CrossSectionElement implements Serializable {
     private Map<GTUType, Map<Lane, GTUDirectionality>> nextLanes = null;
 
     /**
+     * Next lane(s) down stream (!) following this lane that some GTU types can drive from or onto. Next is defined in the
+     * direction of the design line. Initially null so we can calculate and cache the first time the method is called.
+     */
+    private Map<GTUType, Map<Lane, GTUDirectionality>> nextLanesDown = null;
+
+    /**
      * Previous lane(s) preceding this lane that some GTU types can drive from or onto. Previous is defined relative to the
      * direction of the design line. Initially null so we can calculate and cache the first time the method is called.
      */
@@ -781,12 +787,12 @@ public class Lane extends CrossSectionElement implements Serializable {
      * @return set of Lanes following this lane for the given GTU type.
      */
     public final Map<Lane, GTUDirectionality> nextLanesDown(final GTUType gtuType) {
-        if (this.nextLanes == null) {
-            this.nextLanes = new LinkedHashMap<>(1);
+        if (this.nextLanesDown == null) {
+            this.nextLanesDown = new LinkedHashMap<>(1);
         }
-        if (!this.nextLanes.containsKey(gtuType)) {
+        if (!this.nextLanesDown.containsKey(gtuType)) {
             Map<Lane, GTUDirectionality> laneMap = new LinkedHashMap<>(1);
-            this.nextLanes.put(gtuType, laneMap);
+            this.nextLanesDown.put(gtuType, laneMap);
             // Construct (and cache) the result.
             for (Link link : getParentLink().getEndNode().getLinks()) {
                 if (!(link.equals(this.getParentLink())) && link instanceof CrossSectionLink) {
@@ -806,7 +812,7 @@ public class Lane extends CrossSectionElement implements Serializable {
                 }
             }
         }
-        return this.nextLanes.get(gtuType);
+        return this.nextLanesDown.get(gtuType);
     }
 
     /**
