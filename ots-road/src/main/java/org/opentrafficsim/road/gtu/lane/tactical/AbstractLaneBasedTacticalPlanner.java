@@ -19,6 +19,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
+import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -134,7 +135,6 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
         List<Lane> laneListForward = new ArrayList<>();
         Lane lane = startLane;
         GTUDirectionality lastGtuDir = startDirectionality;
-        laneListForward.add(lane);
         Length.Rel position = lane.position(startLaneFractionalPosition);
         Lane lastLane = lane;
         laneListForward.add(lane);
@@ -346,6 +346,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
 
     /**
      * Calculate the next location where the network splits, with a maximum headway relative to the reference point of the GTU.
+     * Note: a lane drop is also considered a split (!).
      * @param gtu the gtu for which to calculate the lane list
      * @param maxHeadway the maximum length for which lanes should be returned
      * @return an instance that provides the following information for an operational plan: whether the network splits, the node
@@ -390,6 +391,53 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
                 {
                     linkIterator.remove();
                 }
+            }
+
+            // calculate the number of incoming and outgoing lanes on the link
+            boolean laneChange = false;
+            if (links.size() == 1)
+            {
+                for (CrossSectionElement cse : ((CrossSectionLink) lastLink).getCrossSectionElementList())
+                {
+                    if (cse instanceof Lane && lastGtuDir.isPlus())
+                    {
+                        Lane lane = (Lane) cse;
+                        if (lane.nextLanes(gtu.getGTUType()).size() == 0)
+                        {
+                            laneChange = true;
+                        }
+                    }
+                    if (cse instanceof Lane && lastGtuDir.isMinus())
+                    {
+                        Lane lane = (Lane) cse;
+                        if (lane.prevLanes(gtu.getGTUType()).size() == 0)
+                        {
+                            laneChange = true;
+                        }
+                    }
+                }
+            }
+
+            // see if we have a lane drop
+            if (laneChange)
+            {
+                nextSplitNode = lastNode;
+                LinkDirection ld =
+                    gtu.getStrategicalPlanner().nextLinkDirection(nextSplitNode, lastLink, gtu.getGTUType());
+                // which lane(s) we are registered on and adjacent lanes link to a lane
+                // that does not drop?
+                for (CrossSectionElement cse : referenceLane.getParentLink().getCrossSectionElementList())
+                {
+                    if (cse instanceof Lane)
+                    {
+                        Lane l = (Lane) cse;
+                        if (noLaneDrop(gtu, maxHeadway, l, referenceLaneFractionalPosition, referenceLaneDirectionality))
+                        {
+                            correctCurrentLanes.add(l);
+                        }
+                    }
+                }
+                return new NextSplitInfo(nextSplitNode, correctCurrentLanes);
             }
 
             // see if we have a split
@@ -490,6 +538,31 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             }
         }
         return false;
+    }
+
+    /**
+     * Determine whether the lane does not drop, in other words: if we would (continue to) drive on the given lane, can we
+     * continue to drive at the nextSplitNode without switching lanes?
+     * @param gtu the GTU for which we have to determine the lane suitability
+     * @param maxHeadway the maximum length for use in the calculation
+     * @param startLane the first lane in the list
+     * @param startLaneFractionalPosition the fractional position on the start lane
+     * @param startDirectionality the driving direction on the start lane
+     * @return whether the lane is connected to our path
+     * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
+     * @throws NetworkException when the strategic planner is not able to return a next node in the route
+     */
+    protected static boolean noLaneDrop(final LaneBasedGTU gtu, final Length.Rel maxHeadway, final Lane startLane,
+        final double startLaneFractionalPosition, final GTUDirectionality startDirectionality) throws GTUException,
+        NetworkException
+    {
+        LanePathInfo lpi =
+            buildLaneListForward(gtu, maxHeadway, startLane, startLaneFractionalPosition, startDirectionality);
+        if (lpi.getPath().getLength().lt(maxHeadway))
+        {
+            return false;
+        }
+        return true;
     }
 
     /**

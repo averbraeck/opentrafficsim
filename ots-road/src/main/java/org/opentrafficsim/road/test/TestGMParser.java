@@ -43,6 +43,7 @@ import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
@@ -56,6 +57,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.xml.XmlNetworkLaneParser;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.test.TestGMParser.WGS84ToRDNewTransform.Coords;
@@ -185,7 +187,7 @@ public class TestGMParser extends AbstractWrappableAnimation
             {
                 exception.printStackTrace();
             }
-
+            
             URL gisURL = URLResource.getResource("/N201/map.xml");
             System.err.println("GIS-map file: " + gisURL.toString());
             CoordinateTransform rdto0 = new CoordinateTransformRD(104450, 478845);
