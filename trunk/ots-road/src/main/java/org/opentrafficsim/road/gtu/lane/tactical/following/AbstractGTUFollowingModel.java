@@ -98,6 +98,10 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
                     referenceGTUAccelerationStep = as;
                 }
             }
+            if (referenceGTU.getId().contains("39"))
+            {
+                System.out.println("39 - fas=" + followerAccelerationStep + ", ras=" + referenceGTUAccelerationStep);
+            }
         }
         if (null == followerAccelerationStep)
         {

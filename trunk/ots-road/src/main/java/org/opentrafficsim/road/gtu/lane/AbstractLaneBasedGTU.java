@@ -398,36 +398,40 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             {
                 if (frontPosSI <= lane.getLength().si && nextFrontPosSI > lane.getLength().si)
                 {
-                    Lane nextLane = determineNextLane(lane);
-                    GTUDirectionality direction = lane.nextLanes(getGTUType()).get(nextLane);
-                    /*
-                     * We have to register the position at the previous timestep to keep calculations consistent. And we have to
-                     * correct for the position of the reference point. The idea is that we register the vehicle 'before' the
-                     * entrance of the new lane at the time of the last timestep, so for a DIR_PLUS on a negative position, and
-                     * for a DIR_MINUS on a position beyond the length of the next lane.
-                     */
-                    if (direction.equals(GTUDirectionality.DIR_PLUS))
+                    if (lane.nextLanes(getGTUType()).size() > 0) // no lane drop
                     {
-                        Length.Rel refPosAtLastTimestep =
-                            new Length.Rel(-(lane.getLength().si - frontPosSI) - getFront().getDx().si, LengthUnit.SI);
-                        enterLane(nextLane, refPosAtLastTimestep, direction);
-                        // schedule any sensor triggers on this lane for the remainder time
-                        nextLane.scheduleTriggers(this, refPosAtLastTimestep.getSI(), moveSI);
-                    }
-                    else if (direction.equals(GTUDirectionality.DIR_MINUS))
-                    {
-                        Length.Rel refPosAtLastTimestep =
-                            new Length.Rel(nextLane.getLength().si + (lane.getLength().si - frontPosSI)
-                                + getFront().getDx().si, LengthUnit.SI);
-                        enterLane(nextLane, refPosAtLastTimestep, direction);
-                        // schedule any sensor triggers on this lane for the remainder time
-                        // TODO extra argument for DIR_MINUS driving direction?
-                        nextLane.scheduleTriggers(this, refPosAtLastTimestep.getSI() - moveSI, moveSI);
-                    }
-                    else
-                    {
-                        throw new NetworkException("scheduleTriggers DIR_PLUS for GTU " + toString() + ", nextLane "
-                            + nextLane + ", direction not DIR_PLUS or DIR_MINUS");
+                        Lane nextLane = determineNextLane(lane);
+                        GTUDirectionality direction = lane.nextLanes(getGTUType()).get(nextLane);
+                        /*
+                         * We have to register the position at the previous timestep to keep calculations consistent. And we
+                         * have to correct for the position of the reference point. The idea is that we register the vehicle
+                         * 'before' the entrance of the new lane at the time of the last timestep, so for a DIR_PLUS on a
+                         * negative position, and for a DIR_MINUS on a position beyond the length of the next lane.
+                         */
+                        if (direction.equals(GTUDirectionality.DIR_PLUS))
+                        {
+                            Length.Rel refPosAtLastTimestep =
+                                new Length.Rel(-(lane.getLength().si - frontPosSI) - getFront().getDx().si,
+                                    LengthUnit.SI);
+                            enterLane(nextLane, refPosAtLastTimestep, direction);
+                            // schedule any sensor triggers on this lane for the remainder time
+                            nextLane.scheduleTriggers(this, refPosAtLastTimestep.getSI(), moveSI);
+                        }
+                        else if (direction.equals(GTUDirectionality.DIR_MINUS))
+                        {
+                            Length.Rel refPosAtLastTimestep =
+                                new Length.Rel(nextLane.getLength().si + (lane.getLength().si - frontPosSI)
+                                    + getFront().getDx().si, LengthUnit.SI);
+                            enterLane(nextLane, refPosAtLastTimestep, direction);
+                            // schedule any sensor triggers on this lane for the remainder time
+                            // TODO extra argument for DIR_MINUS driving direction?
+                            nextLane.scheduleTriggers(this, refPosAtLastTimestep.getSI() - moveSI, moveSI);
+                        }
+                        else
+                        {
+                            throw new NetworkException("scheduleTriggers DIR_PLUS for GTU " + toString()
+                                + ", nextLane " + nextLane + ", direction not DIR_PLUS or DIR_MINUS");
+                        }
                     }
                 }
             }
@@ -437,35 +441,39 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             {
                 if (frontPosSI >= 0.0 && nextFrontPosSI < 0.0)
                 {
-                    Lane prevLane = determinePrevLane(lane);
-                    GTUDirectionality direction = lane.prevLanes(getGTUType()).get(prevLane);
-                    /*
-                     * We have to register the position at the previous timestep to keep calculations consistent. And we have to
-                     * correct for the position of the reference point. The idea is that we register the vehicle 'before' the
-                     * entrance of the new lane at the time of the last timestep, so for a DIR_MINUS on a negative position, and
-                     * for a DIR_PLUS on a position beyond the length of the next lane.
-                     */
-                    if (direction.equals(GTUDirectionality.DIR_MINUS))
+                    if (lane.prevLanes(getGTUType()).size() > 0)  // no lane drop
                     {
-                        Length.Rel refPosAtLastTimestep =
-                            new Length.Rel(prevLane.getLength().si + frontPosSI + getFront().getDx().si, LengthUnit.SI);
-                        enterLane(prevLane, refPosAtLastTimestep, direction);
-                        // schedule any sensor triggers on this lane for the remainder time
-                        prevLane.scheduleTriggers(this, refPosAtLastTimestep.getSI() - moveSI, moveSI);
-                    }
-                    else if (direction.equals(GTUDirectionality.DIR_PLUS))
-                    {
-                        Length.Rel refPosAtLastTimestep =
-                            new Length.Rel(-frontPosSI - getFront().getDx().si, LengthUnit.SI);
-                        enterLane(prevLane, refPosAtLastTimestep, direction);
-                        // schedule any sensor triggers on this lane for the remainder time
-                        // TODO extra argument for DIR_MINUS driving direction?
-                        prevLane.scheduleTriggers(this, refPosAtLastTimestep.getSI(), moveSI);
-                    }
-                    else
-                    {
-                        throw new NetworkException("scheduleTriggers DIR_MINUS for GTU " + toString() + ", prevLane "
-                            + prevLane + ", direction not DIR_PLUS or DIR_MINUS");
+                        Lane prevLane = determinePrevLane(lane);
+                        GTUDirectionality direction = lane.prevLanes(getGTUType()).get(prevLane);
+                        /*
+                         * We have to register the position at the previous timestep to keep calculations consistent. And we
+                         * have to correct for the position of the reference point. The idea is that we register the vehicle
+                         * 'before' the entrance of the new lane at the time of the last timestep, so for a DIR_MINUS on a
+                         * negative position, and for a DIR_PLUS on a position beyond the length of the next lane.
+                         */
+                        if (direction.equals(GTUDirectionality.DIR_MINUS))
+                        {
+                            Length.Rel refPosAtLastTimestep =
+                                new Length.Rel(prevLane.getLength().si + frontPosSI + getFront().getDx().si,
+                                    LengthUnit.SI);
+                            enterLane(prevLane, refPosAtLastTimestep, direction);
+                            // schedule any sensor triggers on this lane for the remainder time
+                            prevLane.scheduleTriggers(this, refPosAtLastTimestep.getSI() - moveSI, moveSI);
+                        }
+                        else if (direction.equals(GTUDirectionality.DIR_PLUS))
+                        {
+                            Length.Rel refPosAtLastTimestep =
+                                new Length.Rel(-frontPosSI - getFront().getDx().si, LengthUnit.SI);
+                            enterLane(prevLane, refPosAtLastTimestep, direction);
+                            // schedule any sensor triggers on this lane for the remainder time
+                            // TODO extra argument for DIR_MINUS driving direction?
+                            prevLane.scheduleTriggers(this, refPosAtLastTimestep.getSI(), moveSI);
+                        }
+                        else
+                        {
+                            throw new NetworkException("scheduleTriggers DIR_MINUS for GTU " + toString()
+                                + ", prevLane " + prevLane + ", direction not DIR_PLUS or DIR_MINUS");
+                        }
                     }
                 }
             }

@@ -21,4 +21,20 @@ public enum GTUDirectionality
      * Driving direction opposite to the direction of the graph, decreasing fractional position when driving in this direction.
      */
     DIR_MINUS;
+
+    /**
+     * @return whether the gtu drives in the design direction on the link
+     */
+    public boolean isPlus()
+    {
+        return this.equals(DIR_PLUS);
+    }
+
+    /**
+     * @return whether the gtu drives against the design direction on the link
+     */
+    public boolean isMinus()
+    {
+        return this.equals(DIR_MINUS);
+    }
 }

@@ -76,6 +76,9 @@ public abstract class AbstractLanePerception implements LanePerception
 
     /** The GTUs on the right side. */
     private TimeStampedObject<Collection<HeadwayGTU>> neighboringGTUsRight;
+    
+    /** the structure of the lanes in front of the GTU. */
+    private LaneStructure laneStructure;
 
     /**
      * Create a new LanePerception module. Because the constructor is often called inside the constructor of a GTU, this

@@ -851,13 +851,17 @@ public class Lane extends CrossSectionElement implements Serializable
                     {
                         if (cse instanceof Lane)
                         {
+                            Lane lane = (Lane) cse;
                             Length.Rel df = this.getCenterLine().getLast().distance(cse.getCenterLine().getFirst());
                             Length.Rel dl = this.getCenterLine().getLast().distance(cse.getCenterLine().getLast());
-                            if (df.lt(MARGIN) && df.lt(dl))
+                            // TODO this should be 4 ifs...
+                            if (df.lt(MARGIN) && df.lt(dl) && lane.getDirectionality(gtuType).isForwardOrBoth()
+                                && link.getStartNode().equals(getParentLink().getEndNode()))
                             {
                                 laneMap.put((Lane) cse, GTUDirectionality.DIR_PLUS);
                             }
-                            else if (dl.lt(MARGIN) && dl.lt(df))
+                            else if (dl.lt(MARGIN) && dl.lt(df) && lane.getDirectionality(gtuType).isBackwardOrBoth()
+                                && link.getEndNode().equals(getParentLink().getStartNode()))
                             {
                                 laneMap.put((Lane) cse, GTUDirectionality.DIR_MINUS);
                             }
