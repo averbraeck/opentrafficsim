@@ -351,7 +351,7 @@ public class OperationalPlan implements Serializable
     }
 
     /**
-     * Return the time it will take to travel the given distance.
+     * Return the time when the GTU will reach the given distance.
      * @param distance the distance to calculate the time for
      * @return the time it will take to have traveled the given distance
      */
