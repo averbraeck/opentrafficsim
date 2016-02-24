@@ -2,8 +2,11 @@ package org.opentrafficsim.road.gtu.lane;
 
 import java.util.Map;
 
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -42,7 +45,7 @@ public interface LaneBasedGTU extends GTU
      * @return a safe copy of the lanes on which the GTU is registered.
      */
     Map<Lane, GTUDirectionality> getLanes();
-
+    
     /**
      * insert GTU at a certain position. This can happen at setup (first initialization), and after a lane change of the GTU.
      * The relative position that will be registered is the referencePosition (dx, dy, dz) = (0, 0, 0). Front and rear positions
@@ -160,5 +163,12 @@ public interface LaneBasedGTU extends GTU
      */
     Length.Rel projectedPosition(Lane projectionLane, RelativePosition relativePosition, Time.Abs when)
         throws GTUException;
+
+    /**
+     * Add an event to the list of lane triggers scheduled for this GTU.
+     * @param lane Lane; the lane on which the event occurs
+     * @param event SimeEvent&lt;OTSSimTimeDouble&gt; the event
+     */
+    public void addTrigger(final Lane lane, final SimEvent<OTSSimTimeDouble> event);
 
 }

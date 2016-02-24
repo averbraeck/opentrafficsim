@@ -8,6 +8,7 @@ import javax.naming.NamingException;
 import javax.vecmath.Point3d;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.language.d3.BoundingBox;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
@@ -17,8 +18,8 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djunits.value.vdouble.scalar.Time.Abs;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTU;
@@ -419,5 +420,12 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
             return new OperationalPlan(locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.MINUTE));
         }
 
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void addTrigger(Lane lane, SimEvent<OTSSimTimeDouble> event)
+    {
+        // Nothing to do as this is not really a GTU.
     }
 }
