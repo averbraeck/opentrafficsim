@@ -626,8 +626,8 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
             new LaneBasedDrivingCharacteristics(generateTruck ? this.carFollowingModelTrucks
                 : this.carFollowingModelCars, this.laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new /*LaneBasedCFLCTacticalPlanner()*/ 
-                    LaneBasedGTUFollowingLaneChangeTacticalPlanner());
+                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner() 
+                    /*LaneBasedGTUFollowingLaneChangeTacticalPlanner()*/);
         new LaneBasedIndividualCar("" + (++this.carsCreated), gtuType, initialPositions, initialSpeed, vehicleLength,
             new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, strategicalPlanner,
             new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
