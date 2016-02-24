@@ -60,7 +60,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 gtu.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
             if (null == gtuFollowingModel)
             {
-                throw new Error("GTU " + gtu + " has null GTUFollowingModel");
+                throw new Error(gtu + " has null GTUFollowingModel");
             }
             DualAccelerationStep straightAccelerationSteps =
                 gtuFollowingModel.computeDualAccelerationStep(gtu, sameLaneGTUs, headway, speedLimit);

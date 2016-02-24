@@ -38,10 +38,10 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
     /** {@inheritDoc} */
     @Override
     public final DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
-        final LateralDirectionality direction, final Collection<HeadwayGTU> sameLaneGTUs,
-        final Collection<HeadwayGTU> otherLaneGTUs, final Length.Rel maxDistance, final Speed speedLimit,
-        final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold,
-        final Time.Rel laneChangeTime) throws GTUException
+            final LateralDirectionality direction, final Collection<HeadwayGTU> sameLaneGTUs,
+            final Collection<HeadwayGTU> otherLaneGTUs, final Length.Rel maxDistance, final Speed speedLimit,
+            final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold, final Time.Rel laneChangeTime)
+            throws GTUException
     {
         Map<Lane, Length.Rel> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
         Lane lane = positions.keySet().iterator().next();
@@ -50,27 +50,25 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
         GTUFollowingModel gtuFollowingModel = gtu.getDrivingCharacteristics().getGTUFollowingModel();
         if (null == gtuFollowingModel)
         {
-            throw new Error("GTU " + gtu + " has null GTUFollowingModel");
+            throw new Error(gtu + " has null GTUFollowingModel");
         }
         DualAccelerationStep thisLaneAccelerationSteps =
-            gtuFollowingModel.computeDualAccelerationStep(gtu, sameLaneGTUs, maxDistance, speedLimit, laneChangeTime);
+                gtuFollowingModel.computeDualAccelerationStep(gtu, sameLaneGTUs, maxDistance, speedLimit, laneChangeTime);
         if (thisLaneAccelerationSteps.getLeaderAcceleration().getSI() < -9999)
         {
-            System.out.println("GTU " + gtu
-                + " has a problem: straightAccelerationSteps.getLeaderAcceleration().getSI() < -9999");
+            System.out.println(gtu + " has a problem: straightAccelerationSteps.getLeaderAcceleration().getSI() < -9999");
         }
         Acceleration straightA = applyDriverPersonality(thisLaneAccelerationSteps).plus(laneChangeThreshold);
         DualAccelerationStep otherLaneAccelerationSteps =
-            null == otherLane ? null : gtuFollowingModel.computeDualAccelerationStep(gtu, otherLaneGTUs, maxDistance,
-                speedLimit, laneChangeTime);
+                null == otherLane ? null : gtuFollowingModel.computeDualAccelerationStep(gtu, otherLaneGTUs, maxDistance,
+                        speedLimit, laneChangeTime);
         if (null != otherLaneAccelerationSteps
-            && otherLaneAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getDrivingCharacteristics()
-                .getGTUFollowingModel().getMaximumSafeDeceleration().getSI())
+                && otherLaneAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getDrivingCharacteristics()
+                        .getGTUFollowingModel().getMaximumSafeDeceleration().getSI())
         {
             otherLaneAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
         }
-        Acceleration otherLaneAcceleration =
-            null == otherLane ? null : applyDriverPersonality(otherLaneAccelerationSteps);
+        Acceleration otherLaneAcceleration = null == otherLane ? null : applyDriverPersonality(otherLaneAccelerationSteps);
         if (null == otherLaneAcceleration)
         {
             // No lane change possible; this is definitely the easy case
