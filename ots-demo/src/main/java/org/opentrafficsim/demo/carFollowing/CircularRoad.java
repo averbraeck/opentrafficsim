@@ -566,7 +566,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                     // Actual headway is uniformly distributed around headway
                     double laneRelativePos = pos > lane1Length ? pos - lane1Length : pos;
                     double actualHeadway = headway + (random.nextDouble() * 2 - 1) * variability;
-                    System.out.println(lane + ", len=" + lane.getLength() + ", pos=" + laneRelativePos);
+                    // System.out.println(lane + ", len=" + lane.getLength() + ", pos=" + laneRelativePos);
                     generateCar(new Length.Rel(laneRelativePos, METER), lane, gtuType);
                     pos += actualHeadway;
                 }
