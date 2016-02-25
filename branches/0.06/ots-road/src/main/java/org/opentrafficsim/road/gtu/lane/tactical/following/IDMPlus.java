@@ -57,7 +57,7 @@ public class IDMPlus extends AbstractGTUFollowingModel {
         this.a = new Acceleration(1.56, AccelerationUnit.METER_PER_SECOND_2);
         this.b = new Acceleration(2.09, AccelerationUnit.METER_PER_SECOND_2);
         this.s0 = new Length.Rel(2, LengthUnit.METER);
-        this.tSafe = new Time.Rel(0.9, TimeUnit.SECOND);
+        this.tSafe = new Time.Rel(0.8, TimeUnit.SECOND);
         this.delta = 1d;
     }
 
@@ -66,7 +66,7 @@ public class IDMPlus extends AbstractGTUFollowingModel {
      * @param a Acceleration; the maximum acceleration of a stationary vehicle (normal value is 1 m/s/s)
      * @param b Acceleration; the maximum deemed-safe deceleration (this is a positive value)
      * @param s0 Length.Rel; the minimum stationary headway
-     * @param tSafe Time.Rel; the minimum time-headway
+     * @param tSafe Time.Rel; the minimum time-headway (originally 1.2)
      * @param delta double; the speed limit adherence (1.0; mean free speed equals the speed limit; 1.1: mean free speed equals
      *            110% of the speed limit; etc.)
      */

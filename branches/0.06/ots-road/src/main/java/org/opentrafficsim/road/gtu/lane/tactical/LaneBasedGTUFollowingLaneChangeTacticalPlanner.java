@@ -186,7 +186,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
         return null;
     }
 
-    /**
+	   /**
      * Make a lane change in the given direction if possible, and return the operational plan, or null if a lane change is not
      * possible.
      * @param gtu the GTU that has to make the lane change
@@ -405,10 +405,9 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
             currentLaneLeaderHeadway = lanePathInfo.getPath().getLength();
             currentLaneLeaderSpeed = Speed.ZERO;
         }
-
         AccelerationStep currentLaneStep = gtu.getDrivingCharacteristics().getGTUFollowingModel().computeAccelerationStep(
             gtu, currentLaneLeaderSpeed, currentLaneLeaderHeadway, gtu.getDrivingCharacteristics()
-                .getForwardHeadwayDistance(), perception.getSpeedLimit(), new Time.Rel(LANECHANGETIME, TimeUnit.SECOND));
+                 .getForwardHeadwayDistance(), perception.getSpeedLimit(), new Time.Rel(LANECHANGETIME, TimeUnit.SECOND));
 
         // make a 2 second acc/dec plan on the alternative lane.
         Speed alternativeLaneLeaderSpeed = leaderNextLane == null || leaderNextLane.getGtuSpeed() == null ? perception
@@ -419,6 +418,12 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
             .computeAccelerationStep(gtu, alternativeLaneLeaderSpeed, alternativeLaneLeaderHeadway, gtu
                 .getDrivingCharacteristics().getForwardHeadwayDistance(), perception.getSpeedLimit(), new Time.Rel(
                     LANECHANGETIME, TimeUnit.SECOND));
+
+        // XXX
+        if (gtu.getId().contains("241")) {
+            System.out.println("241");
+        }
+        // XXX
 
         // choose the most conservative one
         AccelerationStep accelerationStep = currentLaneStep.getAcceleration().si < alternativeLaneStep.getAcceleration().si
@@ -434,16 +439,10 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
         if (Math.abs(vt.si) < OperationalPlan.DRIFTING_SPEED_SI || currentLaneLeaderHeadway.si < 4.0) {
             return null;
         }
-
         OTSLine3D path;
         try {
             path = interpolate(lanePathInfo.getPath(), lanePathInfo2.getPath(), distanceSI);
         } catch (OTSGeometryException exception) {
-            System.err.println("GTU          : " + gtu);
-            System.err.println("LanePathInfo : " + lanePathInfo.getPath());
-            System.err.println("LanePathInfo2: " + lanePathInfo2.getPath());
-            System.err.println("distanceSI   : " + distanceSI);
-            System.err.println("v0, t, vt, a : " + v0 + ", " + t + ", " + vt + ", " + accelerationStep.getAcceleration());
             throw new GTUException(exception);
         }
 
@@ -459,28 +458,19 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
             // schedule leaving the current lane(s) that do not overlap with the target lane(s)
             for (Lane lane : gtu.getLanes().keySet()) {
                 gtu.getSimulator().scheduleEventRel(new Time.Rel(LANECHANGETIME, TimeUnit.SI), this, gtu, "leaveLane",
+
                     new Object[] {lane});
             }
 
             gtu.enterLane(adjacentLane, adjacentLane.getLength().multiplyBy(fraction2), gtu.getLanes().get(startLane));
             System.out.println("gtu " + gtu.getId() + " entered lane " + adjacentLane + " at pos " + adjacentLane.getLength()
                 .multiplyBy(fraction2));
-            if (gtu.getId().contains("29473")) {
-
-                System.err.println("GTU          : " + gtu);
-                System.err.println("LanePathInfo : " + lanePathInfo.getPath());
-                System.err.println("LanePathInfo2: " + lanePathInfo2.getPath());
-                System.err.println("distanceSI   : " + distanceSI);
-                System.err.println("v0, t, vt, a : " + v0 + ", " + t + ", " + vt + ", " + accelerationStep
-                    .getAcceleration());
-            }
 
             return OperationalPlanBuilder.buildGradualAccelerationPlan(path, gtu.getSimulator().getSimulatorTime().getTime(),
                 v0, vt);
         } catch (OperationalPlanException | SimRuntimeException exception) {
             throw new GTUException(exception);
         }
-
     }
 
     /**

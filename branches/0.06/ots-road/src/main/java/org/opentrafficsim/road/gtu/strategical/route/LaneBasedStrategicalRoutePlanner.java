@@ -161,7 +161,6 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                 + previousLink + ", but node " + node + " not in route " + this.route);
         }
         if (i == this.route.getNodes().size() - 1) {
-
             return previousLink.getStartNode().equals(node) ? new LinkDirection(previousLink, GTUDirectionality.DIR_PLUS)
                 : new LinkDirection(previousLink, GTUDirectionality.DIR_MINUS);
             // throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from "
