@@ -28,6 +28,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -269,10 +270,19 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         for (Link link : this.fractionalLinkPositions.keySet())
         {
             double d = this.fractionalLinkPositions.get(link);
-            if (d < -0.1 || d > 1.1)
+
+            double fractionalExcess = d < 0 ? -d : (d - 1);
+            if (fractionalExcess > 0)
             {
-                System.err.println(this + " has extreme fractional position on Link " + link + ": " + d + " time is "
-                        + this.getSimulator().getSimulatorTime().get());
+                double excess = fractionalExcess * link.getLength().si;
+                OperationalPlan op = this.getOperationalPlan();
+                double maxLength = this.getLength().si + op.getTraveledDistanceSI(op.getTotalDuration());
+                if (excess > maxLength)
+                // if (d < -0.1 || d > 1.1)
+                {
+                    System.err.println(this + " has extreme fractional position on Link " + link + ": " + d + " (" + excess
+                            + "m), time is " + this.getSimulator().getSimulatorTime().get());
+                }
             }
         }
         // store the new positions, and sample statistics
