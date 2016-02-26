@@ -52,8 +52,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * initial version Jul 24, 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart,
-    LaneBasedGTUSampler
+public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset, MultipleViewerChart, LaneBasedGTUSampler
 
 {
     /** */
@@ -168,7 +167,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
         container.add(statusLabel, BorderLayout.SOUTH);
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", false));
         final JFreeChart result =
-            ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
+                ChartFactory.createXYLineChart(this.caption, "", "", this, PlotOrientation.VERTICAL, false, false, false);
         // Overrule the default background paint because some of the lines are invisible on top of this default.
         result.getPlot().setBackgroundPaint(new Color(0.9f, 0.9f, 0.9f));
         FixCaption.fixCaption(result);
@@ -372,7 +371,7 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             carTrajectory = new Trajectory(key);
             this.trajectoryIndices.add(carTrajectory);
             this.trajectories.put(key, carTrajectory);
-            // System.out.println("Creating new trajectory");
+            // System.out.println("Creating new trajectory for GTU " + key);
         }
         carTrajectory.addSegment(car, lane, lengthOffset);
     }
@@ -468,19 +467,24 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
          * @throws GTUException on problems obtaining data from the GTU
          */
         public final void addSegment(final LaneBasedGTU car, final Lane lane, final double positionOffset)
-            throws NetworkException, GTUException
+                throws NetworkException, GTUException
         {
+//            if ("4".equals(car.getId()) && "Lane lane.0 of FirstVia to SecondVia".equals(lane.toString()))
+//            {
+//                System.out.println("Enter. positions.size is " + this.positions.size() + ", currentEndPosition is "
+//                        + this.currentEndPosition);
+//            }
             try
             {
                 final int startSample =
-                    (int) Math.ceil(car.getOperationalPlan().getStartTime().getSI() / getSampleInterval().getSI());
+                        (int) Math.ceil(car.getOperationalPlan().getStartTime().getSI() / getSampleInterval().getSI());
                 final int endSample =
-                    (int) (Math.ceil(car.getOperationalPlan().getEndTime().getSI() / getSampleInterval().getSI()));
+                        (int) (Math.ceil(car.getOperationalPlan().getEndTime().getSI() / getSampleInterval().getSI()));
                 for (int sample = startSample; sample < endSample; sample++)
                 {
-                    Time.Abs sampleTime = new Time.Abs(sample * getSampleInterval().getSI(), TimeUnit.SECOND);
+                    Time.Abs sampleTime = new Time.Abs(sample * getSampleInterval().getSI(), TimeUnit.SI);
                     Double position = car.position(lane, car.getReference(), sampleTime).getSI() + positionOffset;
-                    if (this.positions.size() > 0 && position < this.currentEndPosition.getSI() - 0.001)
+                    if (this.positions.size() > 0 && null != this.currentEndPosition && position < this.currentEndPosition.getSI() - 0.001)
                     {
                         if (0 != positionOffset)
                         {
@@ -516,9 +520,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
                 }
                 this.currentEndTime = car.getOperationalPlan().getEndTime();
                 this.currentEndPosition =
-                    new Length.Rel(
-                        car.position(lane, car.getReference(), this.currentEndTime).getSI() + positionOffset,
-                        LengthUnit.METER);
+                        new Length.Rel(car.position(lane, car.getReference(), this.currentEndTime).getSI() + positionOffset,
+                                LengthUnit.SI);
                 if (car.getOperationalPlan().getEndTime().gt(getMaximumTime()))
                 {
                     setMaximumTime(car.getOperationalPlan().getEndTime());
@@ -527,7 +530,8 @@ public class TrajectoryPlot extends JFrame implements ActionListener, XYDataset,
             catch (Exception e)
             {
                 // TODO lane change causes error...
-                System.err.println("Trajectoryplot lane change difficulty...: " + e.getMessage());
+                System.err.println("Trajectoryplot caught unexpected Exception: " + e.getMessage());
+                e.printStackTrace();
             }
         }
 
