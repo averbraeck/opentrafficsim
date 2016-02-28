@@ -60,6 +60,7 @@ import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingChange0TacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
@@ -585,7 +586,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         LaneBasedDrivingCharacteristics drivingCharacteristics = new LaneBasedDrivingCharacteristics(gfm, lcm);
         LaneBasedStrategicalPlanner strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
-                new LaneBasedGTUFollowingLaneChangeTacticalPlanner());
+                new LaneBasedGTUFollowingChange0TacticalPlanner());
         // new LaneBasedCFLCTacticalPlanner());
         new LaneBasedIndividualCar("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
             new Length.Rel(1, METER), lane.getWidth(1), new Speed(0.0, KM_PER_HOUR), this.simulator,
@@ -638,7 +639,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             drivingCharacteristics.setForwardHeadwayDistance(new Length.Rel(450.0, LengthUnit.METER));
             LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
-                    new LaneBasedGTUFollowingLaneChangeTacticalPlanner(), this.routeGenerator.generateRoute());
+                    new LaneBasedGTUFollowingChange0TacticalPlanner(), this.routeGenerator.generateRoute());
             // LaneBasedStrategicalPlanner strategicalPlanner =
             // new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
             // new LaneBasedCFLCTacticalPlanner(), this.routeGenerator.generateRoute());
