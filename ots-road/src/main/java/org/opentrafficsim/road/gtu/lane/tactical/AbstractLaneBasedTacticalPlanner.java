@@ -60,22 +60,23 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      */
     public static Lane getReferenceLane(final LaneBasedGTU gtu) throws GTUException
     {
-        Map<Lane, Length.Rel> positions = gtu.positions(gtu.getReference());
-        for (Lane lane : positions.keySet())
+        for (Lane lane : gtu.getLanes().keySet())
         {
-            double posSI = positions.get(lane).si;
-            if (posSI >= 0.0 && posSI <= lane.getLength().si)
+            double fraction = gtu.fractionalPosition(lane, gtu.getReference());
+            if (fraction >= 0.0 && fraction <= 1.0)
             {
                 // TODO widest lane in case we are registered on more than one lane with the reference point
                 return lane;
             }
         }
-        for (Lane lane : positions.keySet())
+
+        // TODO lane closest to length or 0
+        System.err.println(gtu + " does not have a reference lane with pos between 0 and length...");
+        if (gtu.getLanes().size() > 0)
         {
-            // TODO lane closest to length or 0
-            System.err.println(gtu + " does not have a reference lane with pos between 0 and length...");
-            return lane;
+            return gtu.getLanes().keySet().iterator().next();
         }
+
         throw new GTUException("The reference point of GTU " + gtu
             + " is not on any of the lanes on which it is registered");
     }
