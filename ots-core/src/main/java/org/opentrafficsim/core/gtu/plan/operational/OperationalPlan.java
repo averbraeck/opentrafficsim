@@ -389,11 +389,12 @@ public class OperationalPlan implements Serializable
         DirectedPoint p = new DirectedPoint();
         try
         {
-            p = this.path.getLocationFraction(fraction, 1E-6);
+            p = this.path.getLocationFraction(fraction, 0.01);
         }
         catch (OTSGeometryException exception)
         {
-            throw new OperationalPlanException(exception);
+            System.err.println("OperationalPlan.getLocation(): " + exception.getMessage());
+            p = this.path.getLocationFractionExtended(fraction);
         }
         p.setZ(p.getZ() + 0.001);
         return p;

@@ -3,12 +3,14 @@ package org.opentrafficsim.road.network.factory;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.net.SocketException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import javax.naming.NamingException;
@@ -54,6 +56,7 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -64,15 +67,19 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.opendrive.LaneAnimationOD;
 import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkLaneParser;
+import org.opentrafficsim.road.network.factory.opendrive.communicationRTI.RTICars;
+import org.opentrafficsim.road.network.factory.opendrive.communicationRTI.ReceiverThread;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -371,50 +378,186 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 exception.printStackTrace();
             }
 
+            /*-
             // generate 1 GTU on cr2
-            Lane lane = null;
-            GTUDirectionality dir = GTUDirectionality.DIR_PLUS;
-            for (CrossSectionElement cse : link1.getCrossSectionElementList())
+            for (int i = 0; i < 10; i++)
             {
-                if (cse instanceof Lane && !(cse instanceof NoTrafficLane))
+                Lane lane = null;
+                GTUDirectionality dir = GTUDirectionality.DIR_PLUS;
+                for (CrossSectionElement cse : link1.getCrossSectionElementList())
                 {
-                    lane = (Lane) cse;
-                    dir =
-                        lane.getDirectionality(carType).isForwardOrBoth() ? GTUDirectionality.DIR_PLUS
-                            : GTUDirectionality.DIR_MINUS;
-                    break;
+                    if (cse instanceof Lane && !(cse instanceof NoTrafficLane))
+                    {
+                        lane = (Lane) cse;
+                        dir =
+                            lane.getDirectionality(carType).isForwardOrBoth() ? GTUDirectionality.DIR_PLUS
+                                : GTUDirectionality.DIR_MINUS;
+                        break;
+                    }
+                }
+                // int i = 1;
+                LaneBasedDrivingCharacteristics drivingCharacteristics =
+                    new LaneBasedDrivingCharacteristics(new IDMPlus(), new Altruistic());
+                LaneBasedStrategicalPlanner sPlanner =
+                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
+                        new LaneBasedGTUFollowingLaneChangeTacticalPlanner(), cr2);
+
+                System.out.println("Car " + i + " - generated on lane " + lane + " with sn="
+                    + lane.getParentLink().getStartNode() + " and en=" + lane.getParentLink().getEndNode()
+                    + ", route = " + cr2);
+
+                LanePerceptionFull perception = new LanePerceptionFull();
+                DirectedLanePosition directedLanePosition =
+                    new DirectedLanePosition(lane,
+                        initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()), dir);
+                Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
+                lanepositionSet.add(directedLanePosition);
+                Length.Rel carLength = lengthDist.draw();
+
+                try
+                {
+                    LaneBasedIndividualCar car =
+                        new LaneBasedIndividualCar(String.valueOf(i), carType, lanepositionSet, new Speed(0.0,
+                            SpeedUnit.METER_PER_SECOND), carLength, widthDist.draw(), maxSpeedDist.draw(),
+                            this.simulator, sPlanner, perception, network);
+                    this.rtiCars.add(car);
+
+                }
+                catch (NamingException | NetworkException | GTUException | OTSGeometryException exception)
+                {
+                    exception.printStackTrace();
                 }
             }
-            int i = 1;
-            LaneBasedDrivingCharacteristics drivingCharacteristics =
-                new LaneBasedDrivingCharacteristics(new IDMPlus(), new Altruistic());
-            LaneBasedStrategicalPlanner sPlanner =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner(), cr2);
+             */
 
-            System.out.println("Car " + i + " - generated on lane " + lane + " with sn="
-                + lane.getParentLink().getStartNode() + " and en=" + lane.getParentLink().getEndNode() + ", route = "
-                + cr2);
+            List<CompleteRoute> cRoutes = new ArrayList<>();
+            cRoutes.add(cr1);
+            cRoutes.add(cr2);
+            cRoutes.add(cr3);
+            cRoutes.add(cr4);
+            cRoutes.add(cr5);
+            cRoutes.add(cr6);
+            Random routeRandom = new Random();
 
-            LanePerceptionFull perception = new LanePerceptionFull();
-            DirectedLanePosition directedLanePosition =
-                new DirectedLanePosition(lane, initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()),
-                    dir);
-            Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
-            lanepositionSet.add(directedLanePosition);
-            Length.Rel carLength = lengthDist.draw();
+            List<CrossSectionLink> links = new ArrayList<>();
+            links.add(link1);
+            links.add(link2);
+            links.add(link3);
+            links.add(link4);
+            links.add(link5);
+            links.add(link6);
+            links.add(link7);
+            links.add(link8);
+
+            for (int i = 0; i < 52; i++)
+            {
+                CompleteRoute cr = cRoutes.get(routeRandom.nextInt(6));
+
+                CrossSectionLink link;
+                while (true)
+                {
+                    link = links.get(routeRandom.nextInt(8));
+                    if (cr.getNodes().contains(link.getStartNode()))
+                        break;
+                }
+
+                GTUDirectionality dir = GTUDirectionality.DIR_PLUS;
+                Lane lane = null;
+
+                while (true)
+                {
+                    CrossSectionElement cse =
+                        link.getCrossSectionElementList().get(
+                            routeRandom.nextInt(link.getCrossSectionElementList().size()));
+                    if (cse instanceof Lane && !(cse instanceof NoTrafficLane))
+                    {
+                        lane = (Lane) cse;
+                        break;
+
+                    }
+                }
+
+                if (lane.getDirectionality(carType).equals(LongitudinalDirectionality.DIR_MINUS))
+                {
+                    dir = GTUDirectionality.DIR_MINUS;
+                }
+
+                LaneBasedDrivingCharacteristics drivingCharacteristics =
+                    new LaneBasedDrivingCharacteristics(new IDMPlus(), new Altruistic());
+                LaneBasedStrategicalPlanner sPlanner =
+                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
+                        new LaneBasedGTUFollowingLaneChangeTacticalPlanner(), cRoutes.get(routeRandom.nextInt(6)));
+                LanePerceptionFull perception = new LanePerceptionFull();
+
+                DirectedLanePosition directedLanePosition =
+                    new DirectedLanePosition(lane,
+                        initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()), dir);
+                Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
+                lanepositionSet.add(directedLanePosition);
+
+                Length.Rel carLength = lengthDist.draw();
+                double genPosSI = directedLanePosition.getPosition().getSI();
+                double lengthSI = lane.getLength().getSI();
+                double frontNew = (genPosSI + carLength.getSI()) / lengthSI;
+                double rearNew = genPosSI / lengthSI;
+
+                boolean isEnoughSpace = true;
+
+                for (LaneBasedGTU gtu : lane.getGtuList())
+                {
+                    double frontGTU = 0;
+                    try
+                    {
+                        frontGTU = gtu.fractionalPosition(lane, gtu.getFront());
+                    }
+                    catch (GTUException exception)
+                    {
+                        exception.printStackTrace();
+                    }
+                    double rearGTU = 0;
+                    try
+                    {
+                        rearGTU = gtu.fractionalPosition(lane, gtu.getRear());
+                    }
+                    catch (GTUException exception)
+                    {
+                        exception.printStackTrace();
+                    }
+                    if ((frontNew >= rearGTU && frontNew <= frontGTU) || (rearNew >= rearGTU && rearNew <= frontGTU)
+                        || (frontGTU >= rearNew && frontGTU <= frontNew) || (rearGTU >= rearNew && rearGTU <= frontNew))
+                        isEnoughSpace = false;
+                }
+
+                if (isEnoughSpace)
+                {
+                    try
+                    {
+                        LaneBasedIndividualCar car =
+                            new LaneBasedIndividualCar(String.valueOf(i), carType, lanepositionSet, new Speed(0.0,
+                                SpeedUnit.METER_PER_SECOND), carLength, widthDist.draw(), maxSpeedDist.draw(),
+                                this.simulator, sPlanner, perception, network);
+                        this.rtiCars.add(car);
+
+                    }
+                    catch (NamingException | NetworkException | GTUException | OTSGeometryException exception)
+                    {
+                        exception.printStackTrace();
+                    }
+                }
+                else
+                {
+                    i = i - 1;
+                }
+
+            }
 
             try
             {
-                LaneBasedIndividualCar car =
-                    new LaneBasedIndividualCar(String.valueOf(i), carType, lanepositionSet, new Speed(0.0,
-                        SpeedUnit.METER_PER_SECOND), carLength, widthDist.draw(), maxSpeedDist.draw(), this.simulator,
-                        sPlanner, perception, network);
-                this.rtiCars.add(car);
-
+                new Thread(new ReceiverThread(this.simulator, carType, this.rtiCars)).start();
             }
-            catch (NamingException | NetworkException | GTUException | OTSGeometryException exception)
+            catch (SocketException exception1)
             {
-                exception.printStackTrace();
+                exception1.printStackTrace();
             }
 
         }

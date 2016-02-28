@@ -60,7 +60,7 @@ import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
@@ -269,7 +269,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                                     new LaneBasedDrivingCharacteristics(new IDMPlus(), new Altruistic());
                                 LaneBasedStrategicalPlanner strategicalPlanner =
                                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
-                                        new LaneBasedCFLCTacticalPlanner());
+                                        new LaneBasedGTUFollowingLaneChangeTacticalPlanner());
                                 LanePerceptionFull perception = new LanePerceptionFull();
                                 // new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
                                 // initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
@@ -321,7 +321,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                                     new LaneBasedDrivingCharacteristics(new IDMPlus(), new Altruistic());
                                 LaneBasedStrategicalPlanner strategicalPlanner =
                                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
-                                        new LaneBasedCFLCTacticalPlanner());
+                                        new LaneBasedGTUFollowingLaneChangeTacticalPlanner());
                                 LanePerceptionFull perception = new LanePerceptionFull();
                                 // new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
                                 // initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
