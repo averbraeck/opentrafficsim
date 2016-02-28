@@ -193,7 +193,8 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     {
         if (null == this.lanes.get(lane))
         {
-            System.err.println("Oops: GTU " + this + " is not in lane " + lane);
+            // XXX no problem -- this method can be scheduled and the GTU can already have left the lane
+            // System.err.println("Oops: GTU " + this + " is not in lane " + lane);
         }
         // if ("77".equals(this.getId()))
         // {

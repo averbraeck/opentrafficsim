@@ -73,6 +73,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
         for (Lane lane : positions.keySet())
         {
             // TODO lane closest to length or 0
+            System.err.println(gtu + " does not have a reference lane with pos between 0 and length...");
             return lane;
         }
         throw new GTUException("The reference point of GTU " + gtu
