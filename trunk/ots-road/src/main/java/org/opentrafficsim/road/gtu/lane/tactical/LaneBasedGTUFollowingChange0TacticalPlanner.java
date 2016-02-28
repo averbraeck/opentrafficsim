@@ -78,6 +78,12 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
     /** Earliest next lane change time. */
     private Time.Abs earliestNexLaneChangeTime = Time.Abs.ZERO;
 
+    /** Lane we changed to at instantaneous lane change. */
+    private Lane referenceLane = null;
+
+    /** Position on the reference lane. */
+    private Length.Rel referencePos = null;
+
     /**
      * Instantiated a tactical planner with just GTU following behavior and no lane changes.
      */
@@ -126,7 +132,8 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
                     if (canChange(laneBasedGTU, perception, lanePathInfo, direction))
                     {
                         DirectedPoint newLocation = changeLane(laneBasedGTU, direction);
-                        lanePathInfo = buildLaneListForward(laneBasedGTU, forwardHeadway);
+                        lanePathInfo =
+                            buildLaneListForward(laneBasedGTU, this.referenceLane, this.referencePos, forwardHeadway);
                         return currentLanePlan(laneBasedGTU, startTime, newLocation, lanePathInfo);
                     }
                 }
@@ -167,14 +174,15 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
                     dlcm.computeLaneChangeAndAcceleration(laneBasedGTU, LateralDirectionality.LEFT, sameLaneTraffic,
                         perception.getNeighboringGTUsLeft(), laneBasedGTU.getDrivingCharacteristics()
                             .getForwardHeadwayDistance(), perception.getSpeedLimit(), new Acceleration(1.0,
-                            AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI), new Time.Rel(
-                            0.5, TimeUnit.SECOND));
+                            AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI), new Time.Rel(0.5,
+                            TimeUnit.SECOND));
                 if (dlms.getLaneChange() != null)
                 {
                     if (canChange(laneBasedGTU, perception, lanePathInfo, LateralDirectionality.LEFT))
                     {
                         DirectedPoint newLocation = changeLane(laneBasedGTU, LateralDirectionality.LEFT);
-                        lanePathInfo = buildLaneListForward(laneBasedGTU, forwardHeadway);
+                        lanePathInfo =
+                                buildLaneListForward(laneBasedGTU, this.referenceLane, this.referencePos, forwardHeadway);
                         return currentLanePlan(laneBasedGTU, startTime, newLocation, lanePathInfo);
                     }
                 }
@@ -208,14 +216,15 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
                     dlcm.computeLaneChangeAndAcceleration(laneBasedGTU, LateralDirectionality.RIGHT, sameLaneTraffic,
                         perception.getNeighboringGTUsRight(), laneBasedGTU.getDrivingCharacteristics()
                             .getForwardHeadwayDistance(), perception.getSpeedLimit(), new Acceleration(1.0,
-                            AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI), new Time.Rel(
-                            0.5, TimeUnit.SECOND));
+                            AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI), new Time.Rel(0.5,
+                            TimeUnit.SECOND));
                 if (dlms.getLaneChange() != null)
                 {
                     if (canChange(laneBasedGTU, perception, lanePathInfo, LateralDirectionality.RIGHT))
                     {
                         DirectedPoint newLocation = changeLane(laneBasedGTU, LateralDirectionality.RIGHT);
-                        lanePathInfo = buildLaneListForward(laneBasedGTU, forwardHeadway);
+                        lanePathInfo =
+                                buildLaneListForward(laneBasedGTU, this.referenceLane, this.referencePos, forwardHeadway);
                         return currentLanePlan(laneBasedGTU, startTime, newLocation, lanePathInfo);
                     }
                 }
@@ -385,28 +394,44 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
      * @return the new location of the reference point of the GTU
      * @throws GTUException in case the enterlane fails
      */
-    private DirectedPoint changeLane(final LaneBasedGTU gtu,
-        final LateralDirectionality direction) throws GTUException
+    private DirectedPoint changeLane(final LaneBasedGTU gtu, final LateralDirectionality direction) throws GTUException
     {
-        DirectedPoint p = new DirectedPoint();
+        DirectedPoint p = null;
         Set<Lane> lanes = new HashSet<>(gtu.getLanes().keySet());
         for (Lane lane : lanes)
         {
             Set<Lane> adjacentLanes = lane.accessibleAdjacentLanes(direction, gtu.getGTUType());
-            Length.Rel position = gtu.position(lane, gtu.getReference());
-            double fraction = lane.fraction(position);
+            double fraction = gtu.fractionalPosition(lane, gtu.getReference());
             for (Lane adjacentLane : adjacentLanes)
             {
                 gtu.enterLane(adjacentLane, adjacentLane.getLength().multiplyBy(fraction), gtu.getLanes().get(lane));
-                p = adjacentLane.getCenterLine().getLocationFractionExtended(fraction);
+                if (fraction >= 0.0 && fraction <= 1.0)
+                {
+                    p = adjacentLane.getCenterLine().getLocationFractionExtended(fraction);
+                    this.referenceLane = adjacentLane;
+                    this.referencePos = adjacentLane.getLength().multiplyBy(fraction);
+                }
                 System.out.println("gtu " + gtu.getId() + " entered lane " + adjacentLane + " at pos "
                     + adjacentLane.getLength().multiplyBy(fraction));
             }
             gtu.leaveLane(lane);
         }
+
+        if (p == null)
+        {
+            System.err.println("Warning: " + gtu + " not with its reference point on any lane. Came from " + lanes
+                + ", now at " + gtu.getLanes().keySet());
+            Lane l = gtu.getLanes().keySet().iterator().next();
+            double fraction = gtu.fractionalPosition(l, gtu.getReference());
+            p = l.getCenterLine().getLocationFractionExtended(fraction);
+            this.referenceLane = l;
+            this.referencePos = l.getLength().multiplyBy(fraction);
+        }
+
         // stay at least 15 seconds in the current lane
         this.earliestNexLaneChangeTime =
-                gtu.getSimulator().getSimulatorTime().getTime().plus(new Time.Rel(15, TimeUnit.SECOND));
+            gtu.getSimulator().getSimulatorTime().getTime().plus(new Time.Rel(15, TimeUnit.SECOND));
+
         return p;
     }
 }
