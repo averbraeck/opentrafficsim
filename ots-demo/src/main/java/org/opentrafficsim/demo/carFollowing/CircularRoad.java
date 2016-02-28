@@ -52,6 +52,7 @@ import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingChange0TacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
@@ -626,7 +627,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
                 : this.carFollowingModelCars, this.laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, /*new LaneBasedCFLCTacticalPlanner()*/ 
-                    new LaneBasedGTUFollowingLaneChangeTacticalPlanner());
+                    new LaneBasedGTUFollowingChange0TacticalPlanner());
         new LaneBasedIndividualCar("" + (++this.carsCreated), gtuType, initialPositions, initialSpeed, vehicleLength,
             new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator, strategicalPlanner,
             new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
