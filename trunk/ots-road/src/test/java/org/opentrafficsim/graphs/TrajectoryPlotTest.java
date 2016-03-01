@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.Test;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -170,7 +170,7 @@ public class TrajectoryPlotTest implements UNITS
      * @param tp TrajectoryPlot; the TrajectoryPlot that contains the samples
      * @throws GTUException when car is not on lane anymore
      */
-    private void verifyTrajectory(final LaneBasedIndividualCar car, final int series, final TrajectoryPlot tp)
+    private void verifyTrajectory(final LaneBasedIndividualGTU car, final int series, final TrajectoryPlot tp)
         throws GTUException
     {
         // XXX we take the first (and only) lane on which the vehicle is registered.

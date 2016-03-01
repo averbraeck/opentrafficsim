@@ -56,7 +56,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
@@ -180,7 +180,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
         /** the simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
-        private List<LaneBasedIndividualCar> rtiCars;
+        private List<LaneBasedIndividualGTU> rtiCars;
 
         /** {@inheritDoc} */
         @Override
@@ -192,7 +192,7 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
 
-            this.rtiCars = new ArrayList<LaneBasedIndividualCar>();
+            this.rtiCars = new ArrayList<LaneBasedIndividualGTU>();
 
             // URL url = URLResource.getResource("/NASAames.xodr");
             URL url = URLResource.getResource("/testod.xodr");
@@ -525,8 +525,8 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                 {
                     try
                     {
-                        LaneBasedIndividualCar car =
-                            new LaneBasedIndividualCar(String.valueOf(i), carType, lanepositionSet, new Speed(0.0,
+                        LaneBasedIndividualGTU car =
+                            new LaneBasedIndividualGTU(String.valueOf(i), carType, lanepositionSet, new Speed(0.0,
                                 SpeedUnit.METER_PER_SECOND), carLength, widthDist.draw(), maxSpeedDist.draw(),
                                 this.simulator, sPlanner, perception, network);
                         this.rtiCars.add(car);

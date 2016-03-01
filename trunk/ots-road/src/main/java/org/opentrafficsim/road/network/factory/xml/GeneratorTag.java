@@ -17,7 +17,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
 import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
@@ -283,7 +283,7 @@ class GeneratorTag
         final LinkTag linkTag, final OTSDEVSSimulatorInterface simulator) throws SimRuntimeException, NetworkException
     {
         Lane lane = linkTag.lanes.get(generatorTag.laneName);
-        Class<?> gtuClass = LaneBasedIndividualCar.class;
+        Class<?> gtuClass = LaneBasedIndividualGTU.class;
         List<org.opentrafficsim.core.network.Node> nodeList = new ArrayList<>();
         for (NodeTag nodeTag : generatorTag.routeTag.routeNodeTags)
         {

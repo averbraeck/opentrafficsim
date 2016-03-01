@@ -30,7 +30,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.car.CarTest;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
@@ -121,8 +121,8 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         maxHeadway = drivingCharacteristics.getForwardHeadwayDistance();
         LaneBasedStrategicalPlanner strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner());
-        LaneBasedIndividualCar gtu =
-            new LaneBasedIndividualCar("12345", carType, initialLongitudinalPositions, speed, length, width, maxSpeed,
+        LaneBasedIndividualGTU gtu =
+            new LaneBasedIndividualGTU("12345", carType, initialLongitudinalPositions, speed, length, width, maxSpeed,
                 simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
         Length.Rel longerHeadway = minimumHeadway.plus(precision);
         Acceleration longerHeadwayAcceleration =
@@ -168,8 +168,8 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         Set<DirectedLanePosition> initialLongitudinalPositions50 = new LinkedHashSet<>(1);
         initialLongitudinalPositions50.add(new DirectedLanePosition(lane, initialPosition.plus(headway50m),
             GTUDirectionality.DIR_PLUS));
-        LaneBasedIndividualCar gtu50m =
-            new LaneBasedIndividualCar("100050", carType, initialLongitudinalPositions50, speed, length, width,
+        LaneBasedIndividualGTU gtu50m =
+            new LaneBasedIndividualGTU("100050", carType, initialLongitudinalPositions50, speed, length, width,
                 maxSpeed, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
         HeadwayGTU hwgtu50m =
             new HeadwayGTU(gtu50m.getId(), gtu50m.getVelocity(), headway50m.getSI(), gtu50m.getGTUType());
@@ -197,8 +197,8 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         Map<Lane, Length.Rel> initialLongitudinalPositions100 = new HashMap<>();
         Length.Rel headway100m = new Length.Rel(100, METER);
         initialLongitudinalPositions100.put(lane, initialPosition.plus(headway100m));
-        LaneBasedIndividualCar gtu100m =
-            new LaneBasedIndividualCar("100100", carType, initialLongitudinalPositions50, speed, length, width,
+        LaneBasedIndividualGTU gtu100m =
+            new LaneBasedIndividualGTU("100100", carType, initialLongitudinalPositions50, speed, length, width,
                 maxSpeed, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
         HeadwayGTU hwgtu100m =
             new HeadwayGTU(gtu100m.getId(), gtu100m.getVelocity(), headway100m.getSI(), gtu100m.getGTUType());
@@ -228,8 +228,8 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         // Add an overlapping GTU. Immediate collision situation should return TOODANGEROUS
         Map<Lane, Length.Rel> initialLongitudinalPositionsOverlapping = new HashMap<>();
         initialLongitudinalPositionsOverlapping.put(lane, initialPosition.plus(new Length.Rel(1, METER)));
-        LaneBasedIndividualCar gtu1m =
-            new LaneBasedIndividualCar("100100", carType, initialLongitudinalPositions50, speed, length, width,
+        LaneBasedIndividualGTU gtu1m =
+            new LaneBasedIndividualGTU("100100", carType, initialLongitudinalPositions50, speed, length, width,
                 maxSpeed, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
         HeadwayGTU hwgtu1m =
             new HeadwayGTU(gtu1m.getId(), gtu1m.getVelocity(), java.lang.Double.NaN, gtu1m.getGTUType());
@@ -249,8 +249,8 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         initialLongitudinalPositionsMinus75.add(new DirectedLanePosition(lane, initialPosition.plus(headwayMinus75m),
             GTUDirectionality.DIR_PLUS));
 
-        LaneBasedIndividualCar gtuMinus75m =
-            new LaneBasedIndividualCar("100075", carType, initialLongitudinalPositionsMinus75, speed, length, width,
+        LaneBasedIndividualGTU gtuMinus75m =
+            new LaneBasedIndividualGTU("100075", carType, initialLongitudinalPositionsMinus75, speed, length, width,
                 maxSpeed, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
         HeadwayGTU hwgtuMinus75m =
             new HeadwayGTU(gtuMinus75m.getId(), gtuMinus75m.getVelocity(), headwayMinus75m.getSI(),
@@ -269,8 +269,8 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         initialLongitudinalPositionsMinus200.add(new DirectedLanePosition(lane, initialPosition.plus(headwayMinus200m),
             GTUDirectionality.DIR_PLUS));
 
-        LaneBasedIndividualCar gtuMinus200m =
-            new LaneBasedIndividualCar("100200", carType, initialLongitudinalPositionsMinus200, speed, length, width,
+        LaneBasedIndividualGTU gtuMinus200m =
+            new LaneBasedIndividualGTU("100200", carType, initialLongitudinalPositionsMinus200, speed, length, width,
                 maxSpeed, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
         HeadwayGTU hwgtuMinus200m =
             new HeadwayGTU(gtuMinus200m.getId(), gtuMinus200m.getVelocity(), headwayMinus200m.getSI(),

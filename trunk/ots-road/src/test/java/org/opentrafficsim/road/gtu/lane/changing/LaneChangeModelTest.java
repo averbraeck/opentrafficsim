@@ -35,7 +35,7 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
@@ -187,8 +187,8 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
                 1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d), laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
-        LaneBasedIndividualCar car =
-            new LaneBasedIndividualCar("ReferenceCar", gtuType, initialLongitudinalPositions, new Speed(100,
+        LaneBasedIndividualGTU car =
+            new LaneBasedIndividualGTU("ReferenceCar", gtuType, initialLongitudinalPositions, new Speed(100,
                 KM_PER_HOUR), new Length.Rel(4, METER), new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR),
                 simpleSimulator, strategicalPlanner, new LanePerceptionFull(), this.network);
         car.getPerception().perceive();
@@ -224,8 +224,8 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
                     laneChangeModel);
             strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
-            LaneBasedIndividualCar collisionCar =
-                new LaneBasedIndividualCar("LaneChangeBlockingCar", gtuType, otherLongitudinalPositions, new Speed(100,
+            LaneBasedIndividualGTU collisionCar =
+                new LaneBasedIndividualGTU("LaneChangeBlockingCar", gtuType, otherLongitudinalPositions, new Speed(100,
                     KM_PER_HOUR), vehicleLength, new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR),
                     simpleSimulator, strategicalPlanner, new LanePerceptionFull(), this.network);
             preferredLaneGTUs.clear();
@@ -254,8 +254,8 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
                     laneChangeModel);
             strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
-            LaneBasedIndividualCar otherCar =
-                new LaneBasedIndividualCar("OtherCar", gtuType, otherLongitudinalPositions,
+            LaneBasedIndividualGTU otherCar =
+                new LaneBasedIndividualGTU("OtherCar", gtuType, otherLongitudinalPositions,
                     new Speed(100, KM_PER_HOUR), vehicleLength, new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR),
                     simpleSimulator, strategicalPlanner, new LanePerceptionFull(), this.network);
             preferredLaneGTUs.clear();

@@ -4,7 +4,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
 
 /** */
 public class OTSToRTIData
@@ -55,7 +55,7 @@ public class OTSToRTIData
      * @param rtiCars cars to prepare for RTI software
      * @throws RemoteException on unability to retrieve the location of one of the cars
      */
-    public OTSToRTIData(List<LaneBasedIndividualCar> rtiCars) throws RemoteException
+    public OTSToRTIData(List<LaneBasedIndividualGTU> rtiCars) throws RemoteException
     {
         // this.setTimeStamp(System.currentTimeMillis());
 

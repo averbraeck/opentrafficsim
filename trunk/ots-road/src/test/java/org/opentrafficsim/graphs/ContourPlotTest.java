@@ -38,7 +38,7 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.car.CarTest;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.SequentialFixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
@@ -386,7 +386,7 @@ public class ContourPlotTest implements UNITS
             SECOND)));
         LaneChangeModel laneChangeModel = new Egoistic();
         OTSNetwork network = new OTSNetwork("network");
-        LaneBasedIndividualCar car =
+        LaneBasedIndividualGTU car =
             CarTest.makeReferenceCar("0", gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
                 laneChangeModel, network);
         car.getStrategicalPlanner().getDrivingCharacteristics()

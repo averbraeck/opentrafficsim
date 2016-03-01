@@ -23,8 +23,8 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar.LaneBasedIndividualCarBuilder;
+import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU.LaneBasedIndividualCarBuilder;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
@@ -177,7 +177,7 @@ public abstract class AbstractGTUGenerator
         String id = this.name + ":" + this.numberGTUs;
 
         // create the GTU
-        if (LaneBasedIndividualCar.class.isAssignableFrom(getGtuClass()))
+        if (LaneBasedIndividualGTU.class.isAssignableFrom(getGtuClass()))
         {
             LaneBasedIndividualCarBuilder carBuilder = new LaneBasedIndividualCarBuilder();
             carBuilder.setId(id);

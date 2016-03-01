@@ -47,7 +47,7 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
@@ -224,11 +224,11 @@ public class TestGMParser extends AbstractWrappableAnimation
             CrossSectionLink L2a = (CrossSectionLink) network.getLink("L2a");
             Lane L2a_A2 = (Lane) L2a.getCrossSectionElement("A2");
             Lane L2a_A3 = (Lane) L2a.getCrossSectionElement("A3");
-            new GTUGeneratorIndividual("L2a_A2", this.simulator, carType, LaneBasedIndividualCar.class,
+            new GTUGeneratorIndividual("L2a_A2", this.simulator, carType, LaneBasedIndividualGTU.class,
                 initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
                 endTime, L2a_A2, new Length.Rel(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
                 strategicalPlanner, perceptionClass, network);
-            new GTUGeneratorIndividual("L2a_A3", this.simulator, carType, LaneBasedIndividualCar.class,
+            new GTUGeneratorIndividual("L2a_A3", this.simulator, carType, LaneBasedIndividualGTU.class,
                 initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
                 endTime, L2a_A3, new Length.Rel(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
                 strategicalPlanner, perceptionClass, network);
@@ -236,11 +236,11 @@ public class TestGMParser extends AbstractWrappableAnimation
             CrossSectionLink L49b = (CrossSectionLink) network.getLink("L49b");
             Lane L49b_A1 = (Lane) L49b.getCrossSectionElement("A1");
             Lane L49b_A2 = (Lane) L49b.getCrossSectionElement("A2");
-            new GTUGeneratorIndividual("L49b_A1", this.simulator, carType, LaneBasedIndividualCar.class,
+            new GTUGeneratorIndividual("L49b_A1", this.simulator, carType, LaneBasedIndividualGTU.class,
                 initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
                 endTime, L49b_A1, new Length.Rel(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
                 strategicalPlanner, perceptionClass, network);
-            new GTUGeneratorIndividual("L49b_A2", this.simulator, carType, LaneBasedIndividualCar.class,
+            new GTUGeneratorIndividual("L49b_A2", this.simulator, carType, LaneBasedIndividualGTU.class,
                 initialSpeedDist, interarrivelTimeDist, lengthDist, widthDist, maximumSpeedDist, maxGTUs, startTime,
                 endTime, L49b_A2, new Length.Rel(10.0, LengthUnit.METER), GTUDirectionality.DIR_PLUS, gtuColorer,
                 strategicalPlanner, perceptionClass, network);
