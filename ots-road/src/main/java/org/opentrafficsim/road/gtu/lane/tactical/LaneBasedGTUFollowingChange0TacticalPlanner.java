@@ -141,6 +141,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
             }
 
             // Condition, if we have just changed lane, let's not change immediately again.
+            // TODO make direction dependent!
             if (gtu.getSimulator().getSimulatorTime().getTime().lt(this.earliestNexLaneChangeTime))
             {
                 return currentLanePlan(laneBasedGTU, startTime, locationAtStartTime, lanePathInfo);
@@ -192,7 +193,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
                 }
             }
 
-            // Step 3. Do we want to change lanes to the right because of traffic rules?
+            // Step 3. Do we want to change lanes to the right because of TODO traffic rules?
             Set<Lane> rightLanes = perception.getAccessibleAdjacentLanesRight().get(lanePathInfo.getReferenceLane());
             if (nextSplitInfo.isSplit())
             {
