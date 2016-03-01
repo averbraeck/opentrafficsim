@@ -428,9 +428,10 @@ public abstract class AbstractLanePerception implements LanePerception
      * are adjacent to the current lane, the widest lane that best matches the GTU accessibility of the provided GTUType is
      * returned. <br>
      * <b>Note:</b> LEFT is seen as a negative lateral direction, RIGHT as a positive lateral direction. <br>
+     * FIXME In other places in OTS LEFT is positive (and RIGHT is negative). This should be made more consistent.
      * @param currentLane the lane to look for the best accessible adjacent lane
      * @param lateralDirection the direction (LEFT, RIGHT) to look at
-     * @param longitudinalPosition Length.Rel; the position of the GTU along this Lane
+     * @param longitudinalPosition Length.Rel; the position of the GTU along <cite>currentLane</cite>
      * @return the lane if it is accessible, or null if there is no lane, it is not accessible, or the driving direction does
      *         not match.
      */
@@ -448,12 +449,12 @@ public abstract class AbstractLanePerception implements LanePerception
         }
         // There are several candidates; find the one that is widest at the beginning.
         Lane bestLane = null;
-        double widthM = -1.0;
+        double widestSeen = Double.NEGATIVE_INFINITY;
         for (Lane lane : candidates)
         {
-            if (lane.getWidth(longitudinalPosition).getSI() > widthM)
+            if (lane.getWidth(longitudinalPosition).getSI() > widestSeen)
             {
-                widthM = lane.getWidth(longitudinalPosition).getSI();
+                widestSeen = lane.getWidth(longitudinalPosition).getSI();
                 bestLane = lane;
             }
         }

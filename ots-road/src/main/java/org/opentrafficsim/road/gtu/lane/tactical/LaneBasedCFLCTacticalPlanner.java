@@ -32,7 +32,6 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
@@ -217,16 +216,16 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     laneBasedGTU.enterLane(newLane, newLane.getLength().multiplyBy(fractionalPosition), laneBasedGTU.getLanes()
                             .get(foundOldLane));
                 }
-                if ("41".equals(gtu.getId()) && oldLaneSet.size() > 1)
-                {
-                    System.out.println("Problem");
-                    AbstractLaneBasedGTU lbg = (AbstractLaneBasedGTU) gtu;
-                    for (Lane l : lbg.getLanes().keySet())
-                    {
-                        System.out.println("reference on lane " + l + " is "
-                                + lbg.position(l, RelativePosition.REFERENCE_POSITION) + " length of lane is " + l.getLength());
-                    }
-                }
+//                if ("41".equals(gtu.getId()) && oldLaneSet.size() > 1)
+//                {
+//                    System.out.println("Problem");
+//                    AbstractLaneBasedGTU lbg = (AbstractLaneBasedGTU) gtu;
+//                    for (Lane l : lbg.getLanes().keySet())
+//                    {
+//                        System.out.println("reference on lane " + l + " is "
+//                                + lbg.position(l, RelativePosition.REFERENCE_POSITION) + " length of lane is " + l.getLength());
+//                    }
+//                }
                 System.out.println(gtu + " changes lane from " + oldLaneSet + " to " + newLaneSet + " at time "
                         + gtu.getSimulator().getSimulatorTime().get());
                 // Remove this GTU from all of the Lanes that it is on and remember the fractional position on each
@@ -263,9 +262,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                 OperationalPlan op = new OperationalPlan(path, startTime, gtu.getVelocity(), operationalPlanSegmentList);
                 return op;
             }
-
             else
-
             // NO LANE CHANGE
             {
                 // see if we have to continue standing still. In that case, generate a stand still plan
@@ -274,7 +271,6 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                 {
                     return new OperationalPlan(locationAtStartTime, startTime, duration);
                 }
-
                 // build a list of lanes forward, with a maximum headway.
                 OTSLine3D path = lanePathInfo.getPath();
                 List<Segment> operationalPlanSegmentList = new ArrayList<>();
@@ -296,7 +292,6 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
         {
             throw new GTUException(exception);
         }
-
     }
 
     /**
@@ -353,6 +348,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
     private AccelerationVector checkLaneDrops(final LaneBasedGTU gtu, final AccelerationVector defaultLaneIncentives)
             throws NetworkException, ValueException, GTUException
     {
+        // FIXME: these comparisons to -10 is ridiculous.
         Length.Rel leftSuitability =
                 Double.isNaN(defaultLaneIncentives.get(0).si) || defaultLaneIncentives.get(0).si < -10 ? GETOFFTHISLANENOW
                         : laneDrop(gtu, LateralDirectionality.LEFT);
@@ -362,8 +358,8 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                         : laneDrop(gtu, LateralDirectionality.RIGHT);
         // @formatter:off
         if ((leftSuitability == NOLANECHANGENEEDED || leftSuitability == GETOFFTHISLANENOW)
-            && currentSuitability == NOLANECHANGENEEDED
-            && (rightSuitability == NOLANECHANGENEEDED || rightSuitability == GETOFFTHISLANENOW))
+                && currentSuitability == NOLANECHANGENEEDED
+                && (rightSuitability == NOLANECHANGENEEDED || rightSuitability == GETOFFTHISLANENOW))
         {
             return defaultLaneIncentives;
         }
@@ -499,12 +495,14 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             // System.out.println(gtu + " direction " + direction + " position on " + lane + " is " + longitudinalPosition);
             // }
             lane = gtu.getPerception().bestAccessibleAdjacentLane(lane, direction, longitudinalPosition); // XXX correct??
+            // These nested if statements can be combined, but that would reduce readability of the code
             if (null != lane)
             {
+                // Cancel lane change opportunity if front or rear of the GTU is not able to make the lane change
                 if ((!canChangeLane(gtu.positions(gtu.getRear()), positions, gtu, direction))
                         || (!canChangeLane(gtu.positions(gtu.getFront()), positions, gtu, direction)))
                 {
-                    // System.out.println("Cancelling " + direction + " lane change opportunity for " + gtu);
+                    // System.out.println("Canceling " + direction + " lane change opportunity for " + gtu);
                     lane = null;
                 }
             }
@@ -536,16 +534,14 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
     private boolean canChangeLane(final Map<Lane, Length.Rel> laneMap, final Map<Lane, Length.Rel> positions,
             final LaneBasedGTU gtu, final LateralDirectionality direction)
     {
-        for (Lane l : laneMap.keySet())
+        for (Lane lane : laneMap.keySet())
         {
-            Length.Rel positionInLane = laneMap.get(l);
-            if (positionInLane.si < 0 || positionInLane.gt(l.getLength()))
+            Length.Rel positionInLane = laneMap.get(lane);
+            if (positionInLane.si < 0 || positionInLane.gt(lane.getLength()))
             {
                 continue;
             }
-            Length.Rel neighborLaneLongitudinalPosition = positions.get(l);
-            Lane neighborLane = gtu.getPerception().bestAccessibleAdjacentLane(l, direction, neighborLaneLongitudinalPosition);
-            if (null == neighborLane)
+            if (null == gtu.getPerception().bestAccessibleAdjacentLane(lane, direction, positions.get(lane)))
             {
                 // System.out.println("Front or back of " + gtu + " cannot change lane");
                 return false;
