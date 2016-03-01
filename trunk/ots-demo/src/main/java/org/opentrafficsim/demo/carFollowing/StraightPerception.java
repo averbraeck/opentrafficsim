@@ -62,9 +62,9 @@ import org.opentrafficsim.graphs.FlowContourPlot;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
@@ -385,7 +385,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
     private AbstractLaneChangeModel laneChangeModel = new Egoistic();
 
     /** The blocking car. */
-    private LaneBasedIndividualCar block = null;
+    private LaneBasedIndividualGTU block = null;
 
     /** minimum distance. */
     private Length.Rel minimumDistance = new Length.Rel(0, METER);
@@ -604,7 +604,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
                     new GTUFollowingTacticalPlannerNoPerceive());
             this.block =
-                new LaneBasedIndividualCar("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
+                new LaneBasedIndividualGTU("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
                     new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed(0.0, KM_PER_HOUR), this.simulator,
                     strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer,
                     this.network);
@@ -718,7 +718,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
     /**
      * Perceiving car.
      */
-    class LaneBasedPerceivingCar extends LaneBasedIndividualCar
+    class LaneBasedPerceivingCar extends LaneBasedIndividualGTU
     {
         /** */
         private static final long serialVersionUID = 1L;

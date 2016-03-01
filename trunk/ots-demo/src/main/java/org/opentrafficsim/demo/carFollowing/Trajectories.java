@@ -38,8 +38,8 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.graphs.TrajectoryPlot;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
@@ -236,7 +236,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
     private AbstractLaneChangeModel laneChangeModel = new Egoistic();
 
     /** The blocking car. */
-    private LaneBasedIndividualCar block = null;
+    private LaneBasedIndividualGTU block = null;
 
     /** minimum distance. */
     private Length.Rel minimumDistance = new Length.Rel(0, METER);
@@ -408,7 +408,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
         LaneBasedStrategicalPlanner strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner());
         this.block =
-            new LaneBasedIndividualCar("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
+            new LaneBasedIndividualGTU("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
                 new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed(0.0, KM_PER_HOUR), this.simulator,
                 strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
     }
@@ -445,7 +445,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
                 new LaneBasedDrivingCharacteristics(gtuFollowingModel, this.laneChangeModel);
             LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner());
-            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
+            new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
                 vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
                 strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
             // Re-schedule this method after headway seconds

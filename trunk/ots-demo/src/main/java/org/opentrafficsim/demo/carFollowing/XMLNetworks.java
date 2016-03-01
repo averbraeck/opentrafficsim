@@ -56,9 +56,9 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.TrajectoryPlot;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
@@ -616,7 +616,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, this.tacticalPlanner);
         // new LaneBasedCFLCTacticalPlanner());
-        new LaneBasedIndividualCar("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
+        new LaneBasedIndividualGTU("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
             new Length.Rel(1, METER), lane.getWidth(1), new Speed(0.0, KM_PER_HOUR), this.simulator,
             strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
         return lane;
@@ -668,7 +668,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             LaneBasedStrategicalPlanner strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, this.tacticalPlanner,
                             this.routeGenerator.generateRoute());
-            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed, vehicleLength,
+            new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed, vehicleLength,
                     new Length.Rel(1.8, METER), new Speed(speed, KM_PER_HOUR), this.simulator, strategicalPlanner,
                     new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
 
