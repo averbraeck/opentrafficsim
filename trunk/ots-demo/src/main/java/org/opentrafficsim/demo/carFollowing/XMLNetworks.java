@@ -43,6 +43,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -60,6 +61,7 @@ import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
+import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingChange0TacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
@@ -111,6 +113,9 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         this.properties.add(new SelectionProperty("Network", "Network", new String[]{"Merge 1 plus 1 into 1",
             "Merge 2 plus 1 into 2", "Merge 2 plus 2 into 4", "Split 1 into 1 plus 1", "Split 2 into 1 plus 2",
             "Split 4 into 2 plus 2"}, 0, false, 0));
+        this.properties.add(new SelectionProperty("Tactical planner",
+                "<html>The tactical planner determines if a lane change is desired and possible.</html>", new String[] {
+                        "MOBIL", "Verbraeck", "Verbraeck0" }, 0, false, 600));
         this.properties.add(new ContinuousProperty("Flow per input lane", "Traffic flow per input lane", 500d, 0d,
             3000d, "%.0f veh/h", false, 1));
     }
@@ -251,6 +256,9 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     /** The GTUColorer for the generated vehicles. */
     private final GTUColorer gtuColorer;
 
+    /** The tactical planner that will be used by all GTUs. */
+    private TacticalPlanner tacticalPlanner = null;
+
     /**
      * @param userModifiedProperties ArrayList&lt;AbstractProperty&lt;?&gt;&gt;; the (possibly user modified) properties
      * @param gtuColorer the default and initial GTUColorer, e.g. a DefaultSwitchableTUColorer.
@@ -345,6 +353,27 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                     {
                         carFollowingModelName = sp.getValue();
                     }
+                    else if ("Tactical planner".equals(sp.getShortName()))
+                    {
+                        String tacticalPlannerName = sp.getValue();
+                        if ("MOBIL".equals(tacticalPlannerName))
+                        {
+                            this.tacticalPlanner = new LaneBasedCFLCTacticalPlanner();
+                        }
+                        else if ("Verbraeck".equals(tacticalPlannerName))
+                        {
+                            this.tacticalPlanner = new LaneBasedGTUFollowingLaneChangeTacticalPlanner();
+                        }
+                        else if ("Verbraeck0".equals(tacticalPlannerName))
+                        {
+                            this.tacticalPlanner = new LaneBasedGTUFollowingChange0TacticalPlanner();
+                        }
+                        else
+                        {
+                            throw new Error("Don't know how to create a " + tacticalPlannerName + " tactical planner");
+                        }
+                    }
+
                 }
                 else if (ap instanceof ProbabilityDistributionProperty)
                 {
@@ -585,8 +614,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         LaneChangeModel lcm = new FixedLaneChangeModel(null);
         LaneBasedDrivingCharacteristics drivingCharacteristics = new LaneBasedDrivingCharacteristics(gfm, lcm);
         LaneBasedStrategicalPlanner strategicalPlanner =
-            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
-                new LaneBasedGTUFollowingChange0TacticalPlanner());
+                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, this.tacticalPlanner);
         // new LaneBasedCFLCTacticalPlanner());
         new LaneBasedIndividualCar("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
             new Length.Rel(1, METER), lane.getWidth(1), new Speed(0.0, KM_PER_HOUR), this.simulator,
@@ -638,14 +666,11 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                 new LaneBasedDrivingCharacteristics(gtuFollowingModel, this.laneChangeModel);
             drivingCharacteristics.setForwardHeadwayDistance(new Length.Rel(450.0, LengthUnit.METER));
             LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
-                    new LaneBasedGTUFollowingChange0TacticalPlanner(), this.routeGenerator.generateRoute());
-            // LaneBasedStrategicalPlanner strategicalPlanner =
-            // new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
-            // new LaneBasedCFLCTacticalPlanner(), this.routeGenerator.generateRoute());
-            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
-                vehicleLength, new Length.Rel(1.8, METER), new Speed(speed, KM_PER_HOUR), this.simulator,
-                strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, this.tacticalPlanner,
+                            this.routeGenerator.generateRoute());
+            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed, vehicleLength,
+                    new Length.Rel(1.8, METER), new Speed(speed, KM_PER_HOUR), this.simulator, strategicalPlanner,
+                    new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
 
             Object[] arguments = new Object[1];
             arguments[0] = lane;
