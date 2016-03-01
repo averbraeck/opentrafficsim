@@ -36,6 +36,7 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
+import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
@@ -88,7 +89,7 @@ public class CarTest implements UNITS
         GTUFollowingModel gtuFollowingModel =
             new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(10, SECOND));
         LaneChangeModel laneChangeModel = new Egoistic();
-        LaneBasedIndividualCar referenceCar =
+        LaneBasedIndividualGTU referenceCar =
             makeReferenceCar("12345", gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
                 laneChangeModel, network);
         assertEquals("The car should store it's ID", "12345", referenceCar.getId());
@@ -145,7 +146,7 @@ public class CarTest implements UNITS
      * @throws GTUException when construction of the GTU fails (probably due to an invalid parameter)
      * @throws OTSGeometryException when the initial path is wrong
      */
-    public static LaneBasedIndividualCar makeReferenceCar(final String id, final GTUType gtuType, final Lane lane,
+    public static LaneBasedIndividualGTU makeReferenceCar(final String id, final GTUType gtuType, final Lane lane,
         final Length.Rel initialPosition, final Speed initialSpeed, final OTSDEVSSimulator simulator,
         final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSNetwork network)
         throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
@@ -159,7 +160,7 @@ public class CarTest implements UNITS
             new LaneBasedDrivingCharacteristics(gtuFollowingModel, laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
-        return new LaneBasedIndividualCar(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width,
+        return new LaneBasedIndividualGTU(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width,
             maxSpeed, simulator, strategicalPlanner, new LanePerceptionFull(), network);
     }
 

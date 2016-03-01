@@ -26,7 +26,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -177,7 +177,7 @@ public class ListGTUGenerator
         try
         {
             Length.Rel vehicleLength = new Length.Rel(4, LengthUnit.METER);
-            new LaneBasedIndividualCar("" + (++this.carsCreated), this.gtuType, initialPositions, this.initialSpeed,
+            new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, initialPositions, this.initialSpeed,
                 vehicleLength, new Length.Rel(1.8, LengthUnit.METER), new Speed(200, SpeedUnit.KM_PER_HOUR),
                 this.simulator, this.strategicalPlanner, this.perception, DefaultCarAnimation.class, this.gtuColorer,
                 this.network);

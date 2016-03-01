@@ -17,7 +17,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.network.factory.opendrive.data.OTSToRTIData;
 import org.opentrafficsim.road.network.factory.opendrive.data.RTIToOTSData;
 
@@ -41,7 +41,7 @@ public class ReceiverThread extends Thread
     GTUType carType;
 
     /** */
-    List<LaneBasedIndividualCar> rtiCars;
+    List<LaneBasedIndividualGTU> rtiCars;
 
     /**
      * @param simulator the simulator
@@ -49,7 +49,7 @@ public class ReceiverThread extends Thread
      * @param rtiCars the list of cars in the RTI software
      * @throws SocketException when communication fails
      */
-    public ReceiverThread(OTSDEVSSimulatorInterface simulator, GTUType carType, List<LaneBasedIndividualCar> rtiCars)
+    public ReceiverThread(OTSDEVSSimulatorInterface simulator, GTUType carType, List<LaneBasedIndividualGTU> rtiCars)
         throws SocketException
     {
         super();

@@ -58,7 +58,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
@@ -183,7 +183,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
         /** the simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
-        private List<LaneBasedIndividualCar> rtiCars;
+        private List<LaneBasedIndividualGTU> rtiCars;
 
         /** {@inheritDoc} */
         @Override
@@ -195,7 +195,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
         {
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
 
-            this.rtiCars = new ArrayList<LaneBasedIndividualCar>();
+            this.rtiCars = new ArrayList<LaneBasedIndividualGTU>();
 
             // URL url = URLResource.getResource("/NASAames.xodr");
             URL url = URLResource.getResource("/testod.xodr");

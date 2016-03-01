@@ -27,7 +27,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.car.CarTest;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
 import org.opentrafficsim.road.network.factory.LaneFactory;
@@ -94,7 +94,7 @@ public class CurveTest
                 System.out.println("lane " + set[lane] + " length is " + set[lane].getLength()
                     + " time for reference to get to end " + timeAtEnd);
             }
-            LaneBasedIndividualCar car =
+            LaneBasedIndividualGTU car =
                 CarTest.makeReferenceCar("car", gtuType, straight1[lane], initialPosition, speed,
                     (OTSDEVSSimulator) simulator, new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI),
                         new Time.Rel(25, TimeUnit.SI)), new FixedLaneChangeModel(null), network);

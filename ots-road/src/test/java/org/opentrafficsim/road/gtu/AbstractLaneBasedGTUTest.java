@@ -34,7 +34,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
@@ -134,8 +134,8 @@ public class AbstractLaneBasedGTUTest implements UNITS
             new LaneBasedDrivingCharacteristics(gfm, laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner(), route);
-        LaneBasedIndividualCar car =
-            new LaneBasedIndividualCar(carID, gtuType, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
+        LaneBasedIndividualGTU car =
+            new LaneBasedIndividualGTU(carID, gtuType, initialLongitudinalPositions, initialSpeed, carLength, carWidth,
                 maximumVelocity, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
         // Now we can verify the various fields in the newly created Car
         assertEquals("ID of the car should be identical to the provided one", carID, car.getId());

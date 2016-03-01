@@ -15,7 +15,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
 
 /**
  * Draw a car.
@@ -40,7 +40,7 @@ public class DefaultCarAnimation extends Renderable2D
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public DefaultCarAnimation(final LaneBasedIndividualCar source, final OTSSimulatorInterface simulator)
+    public DefaultCarAnimation(final LaneBasedIndividualGTU source, final OTSSimulatorInterface simulator)
         throws NamingException, RemoteException
     {
         this(source, simulator, null);
@@ -54,7 +54,7 @@ public class DefaultCarAnimation extends Renderable2D
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
-    public DefaultCarAnimation(final LaneBasedIndividualCar source, final OTSSimulatorInterface simulator,
+    public DefaultCarAnimation(final LaneBasedIndividualGTU source, final OTSSimulatorInterface simulator,
         final GTUColorer gtuColorer) throws NamingException, RemoteException
     {
         super(source, simulator);
@@ -81,7 +81,7 @@ public class DefaultCarAnimation extends Renderable2D
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        final LaneBasedIndividualCar car = (LaneBasedIndividualCar) getSource();
+        final LaneBasedIndividualGTU car = (LaneBasedIndividualGTU) getSource();
         final double length = car.getLength().getSI();
         final double width = car.getWidth().getSI();
         graphics.setColor(this.gtuColorer.getColor(car));
@@ -102,7 +102,7 @@ public class DefaultCarAnimation extends Renderable2D
     @Override
     public final String toString()
     {
-        return "DefaultCarAnimation [id=" + ((LaneBasedIndividualCar) this.getSource()).getId() + "]";
+        return "DefaultCarAnimation [id=" + ((LaneBasedIndividualGTU) this.getSource()).getId() + "]";
     }
 
 }
