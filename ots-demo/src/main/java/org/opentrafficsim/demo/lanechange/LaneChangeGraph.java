@@ -52,7 +52,7 @@ import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
-import org.opentrafficsim.road.car.LaneBasedIndividualCar;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
@@ -303,8 +303,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
             new LaneBasedDrivingCharacteristics(this.carFollowingModel, laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
-        LaneBasedIndividualCar referenceCar =
-            new LaneBasedIndividualCar("ReferenceCar", gtuType, initialLongitudinalPositions, referenceSpeed,
+        LaneBasedIndividualGTU referenceCar =
+            new LaneBasedIndividualGTU("ReferenceCar", gtuType, initialLongitudinalPositions, referenceSpeed,
                 new Length.Rel(4, METER), new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR), simpleSimulator,
                 strategicalPlanner, new LanePerceptionFull(), this.network);
         Collection<HeadwayGTU> sameLaneGTUs = new LinkedHashSet<HeadwayGTU>();
@@ -370,7 +370,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
      * @throws GTUException on error during GTU construction
      * @throws OTSGeometryException when the initial position is outside the lane's center line
      */
-    private LaneMovementStep computeLaneChange(final LaneBasedIndividualCar referenceCar,
+    private LaneMovementStep computeLaneChange(final LaneBasedIndividualGTU referenceCar,
         final Collection<HeadwayGTU> sameLaneGTUs, final Speed speedLimit, final LaneChangeModel laneChangeModel,
         final Length.Rel otherCarPosition, final Lane otherCarLane, final Speed deltaV, final boolean mergeRight)
         throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
@@ -382,8 +382,8 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
             new LaneBasedDrivingCharacteristics(this.carFollowingModel, laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
-        LaneBasedIndividualCar otherCar =
-            new LaneBasedIndividualCar("otherCar", referenceCar.getGTUType(), initialLongitudinalPositions,
+        LaneBasedIndividualGTU otherCar =
+            new LaneBasedIndividualGTU("otherCar", referenceCar.getGTUType(), initialLongitudinalPositions,
                 referenceCar.getVelocity().plus(deltaV), new Length.Rel(4, METER), new Length.Rel(2, METER), new Speed(
                     150, KM_PER_HOUR), referenceCar.getSimulator(), strategicalPlanner, new LanePerceptionFull(),
                 this.network);
