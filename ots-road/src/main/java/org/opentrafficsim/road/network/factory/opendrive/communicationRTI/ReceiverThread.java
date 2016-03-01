@@ -17,7 +17,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
-import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.network.factory.opendrive.data.OTSToRTIData;
 import org.opentrafficsim.road.network.factory.opendrive.data.RTIToOTSData;
 

@@ -15,7 +15,7 @@ import nl.tudelft.simulation.dsol.animation.D2.Renderable2D;
 import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
-import org.opentrafficsim.road.gtu.LaneBasedIndividualGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 
 /**
  * Draw a car.
