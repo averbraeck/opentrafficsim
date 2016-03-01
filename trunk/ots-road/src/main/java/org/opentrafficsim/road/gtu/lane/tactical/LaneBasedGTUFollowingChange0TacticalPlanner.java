@@ -6,19 +6,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
-import org.opentrafficsim.core.geometry.OTSLine3D;
-import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -84,6 +78,9 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
     /** Position on the reference lane. */
     private Length.Rel referencePos = null;
 
+    /** When a failure in planning occurs, should we destroy the GTU to avoid halting of the model? */
+    private boolean destroyGtuOnFailure = false;
+
     /**
      * Instantiated a tactical planner with just GTU following behavior and no lane changes.
      */
@@ -97,141 +94,162 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
     public OperationalPlan generateOperationalPlan(final GTU gtu, final Time.Abs startTime,
         final DirectedPoint locationAtStartTime) throws OperationalPlanException, NetworkException, GTUException
     {
-        // ask Perception for the local situation
-        LaneBasedGTU laneBasedGTU = (LaneBasedGTU) gtu;
-        LanePerception perception = laneBasedGTU.getPerception();
-        LaneBasedDrivingCharacteristics drivingCharacteristics = laneBasedGTU.getDrivingCharacteristics();
-
-        // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
-        if (laneBasedGTU.getMaximumVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
+        try
         {
-            return new OperationalPlan(locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.SECOND));
-        }
+            // ask Perception for the local situation
+            LaneBasedGTU laneBasedGTU = (LaneBasedGTU) gtu;
+            LanePerception perception = laneBasedGTU.getPerception();
+            LaneBasedDrivingCharacteristics drivingCharacteristics = laneBasedGTU.getDrivingCharacteristics();
 
-        // perceive the forward headway, accessible lanes and speed limit.
-        perception.updateForwardHeadwayGTU();
-        perception.updateAccessibleAdjacentLanesLeft();
-        perception.updateAccessibleAdjacentLanesRight();
-        perception.updateSpeedLimit();
-
-        // find out where we are going
-        Length.Rel forwardHeadway = drivingCharacteristics.getForwardHeadwayDistance();
-        LanePathInfo lanePathInfo = buildLaneListForward(laneBasedGTU, forwardHeadway);
-        NextSplitInfo nextSplitInfo = determineNextSplit(laneBasedGTU, forwardHeadway);
-        Set<Lane> correctLanes = laneBasedGTU.getLanes().keySet();
-        correctLanes.retainAll(nextSplitInfo.getCorrectCurrentLanes());
-
-        // Step 1: Do we want to change lanes because of the current lane not leading to our destination?
-        if (lanePathInfo.getPath().getLength().lt(forwardHeadway))
-        {
-            if (correctLanes.isEmpty())
+            // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
+            if (laneBasedGTU.getMaximumVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
             {
-                LateralDirectionality direction = determineLeftRight(laneBasedGTU, nextSplitInfo);
-                if (direction != null)
+                return new OperationalPlan(locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.SECOND));
+            }
+
+            // perceive the forward headway, accessible lanes and speed limit.
+            perception.updateForwardHeadwayGTU();
+            perception.updateAccessibleAdjacentLanesLeft();
+            perception.updateAccessibleAdjacentLanesRight();
+            perception.updateSpeedLimit();
+
+            // find out where we are going
+            Length.Rel forwardHeadway = drivingCharacteristics.getForwardHeadwayDistance();
+            LanePathInfo lanePathInfo = buildLaneListForward(laneBasedGTU, forwardHeadway);
+            NextSplitInfo nextSplitInfo = determineNextSplit(laneBasedGTU, forwardHeadway);
+            Set<Lane> correctLanes = laneBasedGTU.getLanes().keySet();
+            correctLanes.retainAll(nextSplitInfo.getCorrectCurrentLanes());
+
+            // Step 1: Do we want to change lanes because of the current lane not leading to our destination?
+            if (lanePathInfo.getPath().getLength().lt(forwardHeadway))
+            {
+                if (correctLanes.isEmpty())
                 {
-                    if (canChange(laneBasedGTU, perception, lanePathInfo, direction))
+                    LateralDirectionality direction = determineLeftRight(laneBasedGTU, nextSplitInfo);
+                    if (direction != null)
                     {
-                        DirectedPoint newLocation = changeLane(laneBasedGTU, direction);
-                        lanePathInfo =
-                            buildLaneListForward(laneBasedGTU, this.referenceLane, this.referencePos, forwardHeadway);
-                        return currentLanePlan(laneBasedGTU, startTime, newLocation, lanePathInfo);
+                        if (canChange(laneBasedGTU, perception, lanePathInfo, direction))
+                        {
+                            DirectedPoint newLocation = changeLane(laneBasedGTU, direction);
+                            lanePathInfo =
+                                buildLaneListForward(laneBasedGTU, this.referenceLane, this.referencePos,
+                                    forwardHeadway);
+                            return currentLanePlan(laneBasedGTU, startTime, newLocation, lanePathInfo);
+                        }
                     }
                 }
             }
-        }
 
-        // Condition, if we have just changed lane, let's not change immediately again.
-        if (gtu.getSimulator().getSimulatorTime().getTime().lt(this.earliestNexLaneChangeTime))
-        {
+            // Condition, if we have just changed lane, let's not change immediately again.
+            if (gtu.getSimulator().getSimulatorTime().getTime().lt(this.earliestNexLaneChangeTime))
+            {
+                return currentLanePlan(laneBasedGTU, startTime, locationAtStartTime, lanePathInfo);
+            }
+
+            // Step 2. Do we want to change lanes to the left because of our predecessor on the current lane?
+            // does the lane left of us [TODO: driving direction] bring us to our destination as well?
+            Set<Lane> leftLanes = perception.getAccessibleAdjacentLanesLeft().get(lanePathInfo.getReferenceLane());
+            if (nextSplitInfo.isSplit())
+            {
+                leftLanes.retainAll(nextSplitInfo.getCorrectCurrentLanes());
+            }
+            if (!leftLanes.isEmpty() && laneBasedGTU.getVelocity().si > 4.0) // XXX we are driving...
+            {
+                perception.updateBackwardHeadwayGTU();
+                perception.updateParallelGTUsLeft();
+                perception.updateLaneTrafficLeft();
+                if (perception.getParallelGTUsLeft().isEmpty())
+                {
+                    Collection<HeadwayGTU> sameLaneTraffic = new HashSet<>();
+                    if (perception.getForwardHeadwayGTU() != null
+                        && perception.getForwardHeadwayGTU().getGtuId() != null)
+                    {
+                        sameLaneTraffic.add(perception.getForwardHeadwayGTU());
+                    }
+                    if (perception.getBackwardHeadwayGTU() != null
+                        && perception.getBackwardHeadwayGTU().getGtuId() != null)
+                    {
+                        sameLaneTraffic.add(perception.getBackwardHeadwayGTU());
+                    }
+                    DirectedLaneChangeModel dlcm = new DirectedAltruistic();
+                    DirectedLaneMovementStep dlms =
+                        dlcm.computeLaneChangeAndAcceleration(laneBasedGTU, LateralDirectionality.LEFT,
+                            sameLaneTraffic, perception.getNeighboringGTUsLeft(), laneBasedGTU
+                                .getDrivingCharacteristics().getForwardHeadwayDistance(), perception.getSpeedLimit(),
+                            new Acceleration(1.0, AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI),
+                            new Time.Rel(0.5, TimeUnit.SECOND));
+                    if (dlms.getLaneChange() != null)
+                    {
+                        if (canChange(laneBasedGTU, perception, lanePathInfo, LateralDirectionality.LEFT))
+                        {
+                            DirectedPoint newLocation = changeLane(laneBasedGTU, LateralDirectionality.LEFT);
+                            lanePathInfo =
+                                buildLaneListForward(laneBasedGTU, this.referenceLane, this.referencePos,
+                                    forwardHeadway);
+                            return currentLanePlan(laneBasedGTU, startTime, newLocation, lanePathInfo);
+                        }
+                    }
+                }
+            }
+
+            // Step 3. Do we want to change lanes to the right because of traffic rules?
+            Set<Lane> rightLanes = perception.getAccessibleAdjacentLanesRight().get(lanePathInfo.getReferenceLane());
+            if (nextSplitInfo.isSplit())
+            {
+                rightLanes.retainAll(nextSplitInfo.getCorrectCurrentLanes());
+            }
+            if (!rightLanes.isEmpty() && laneBasedGTU.getVelocity().si > 4.0) // XXX we are driving...
+            {
+                perception.updateBackwardHeadwayGTU();
+                perception.updateParallelGTUsRight();
+                perception.updateLaneTrafficRight();
+                if (perception.getParallelGTUsRight().isEmpty())
+                {
+                    Collection<HeadwayGTU> sameLaneTraffic = new HashSet<>();
+                    if (perception.getForwardHeadwayGTU() != null
+                        && perception.getForwardHeadwayGTU().getGtuId() != null)
+                    {
+                        sameLaneTraffic.add(perception.getForwardHeadwayGTU());
+                    }
+                    if (perception.getBackwardHeadwayGTU() != null
+                        && perception.getBackwardHeadwayGTU().getGtuId() != null)
+                    {
+                        sameLaneTraffic.add(perception.getBackwardHeadwayGTU());
+                    }
+                    DirectedLaneChangeModel dlcm = new DirectedAltruistic();
+                    DirectedLaneMovementStep dlms =
+                        dlcm.computeLaneChangeAndAcceleration(laneBasedGTU, LateralDirectionality.RIGHT,
+                            sameLaneTraffic, perception.getNeighboringGTUsRight(), laneBasedGTU
+                                .getDrivingCharacteristics().getForwardHeadwayDistance(), perception.getSpeedLimit(),
+                            new Acceleration(1.0, AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI),
+                            new Time.Rel(0.5, TimeUnit.SECOND));
+                    if (dlms.getLaneChange() != null)
+                    {
+                        if (canChange(laneBasedGTU, perception, lanePathInfo, LateralDirectionality.RIGHT))
+                        {
+                            DirectedPoint newLocation = changeLane(laneBasedGTU, LateralDirectionality.RIGHT);
+                            lanePathInfo =
+                                buildLaneListForward(laneBasedGTU, this.referenceLane, this.referencePos,
+                                    forwardHeadway);
+                            return currentLanePlan(laneBasedGTU, startTime, newLocation, lanePathInfo);
+                        }
+                    }
+                }
+            }
+
             return currentLanePlan(laneBasedGTU, startTime, locationAtStartTime, lanePathInfo);
         }
-
-        // Step 2. Do we want to change lanes to the left because of our predecessor on the current lane?
-        // does the lane left of us [TODO: driving direction] bring us to our destination as well?
-        Set<Lane> leftLanes = perception.getAccessibleAdjacentLanesLeft().get(lanePathInfo.getReferenceLane());
-        if (nextSplitInfo.isSplit())
+        catch (GTUException | NetworkException | OperationalPlanException exception)
         {
-            leftLanes.retainAll(nextSplitInfo.getCorrectCurrentLanes());
-        }
-        if (!leftLanes.isEmpty() && laneBasedGTU.getVelocity().si > 4.0) // XXX we are driving...
-        {
-            perception.updateBackwardHeadwayGTU();
-            perception.updateParallelGTUsLeft();
-            perception.updateLaneTrafficLeft();
-            if (perception.getParallelGTUsLeft().isEmpty())
+            if (isDestroyGtuOnFailure())
             {
-                Collection<HeadwayGTU> sameLaneTraffic = new HashSet<>();
-                if (perception.getForwardHeadwayGTU() != null && perception.getForwardHeadwayGTU().getGtuId() != null)
-                {
-                    sameLaneTraffic.add(perception.getForwardHeadwayGTU());
-                }
-                if (perception.getBackwardHeadwayGTU() != null && perception.getBackwardHeadwayGTU().getGtuId() != null)
-                {
-                    sameLaneTraffic.add(perception.getBackwardHeadwayGTU());
-                }
-                DirectedLaneChangeModel dlcm = new DirectedAltruistic();
-                DirectedLaneMovementStep dlms =
-                    dlcm.computeLaneChangeAndAcceleration(laneBasedGTU, LateralDirectionality.LEFT, sameLaneTraffic,
-                        perception.getNeighboringGTUsLeft(), laneBasedGTU.getDrivingCharacteristics()
-                            .getForwardHeadwayDistance(), perception.getSpeedLimit(), new Acceleration(1.0,
-                            AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI), new Time.Rel(0.5,
-                            TimeUnit.SECOND));
-                if (dlms.getLaneChange() != null)
-                {
-                    if (canChange(laneBasedGTU, perception, lanePathInfo, LateralDirectionality.LEFT))
-                    {
-                        DirectedPoint newLocation = changeLane(laneBasedGTU, LateralDirectionality.LEFT);
-                        lanePathInfo =
-                                buildLaneListForward(laneBasedGTU, this.referenceLane, this.referencePos, forwardHeadway);
-                        return currentLanePlan(laneBasedGTU, startTime, newLocation, lanePathInfo);
-                    }
-                }
+                System.err.println("LaneBasedGTUFollowingChange0TacticalPlanner.generateOperationalPlan() failed for "
+                    + gtu + " because of " + exception.getMessage() + " -- GTU destroyed");
+                gtu.destroy();
+                return new OperationalPlan(locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.SECOND));
             }
+            throw exception;
         }
-
-        // Step 3. Do we want to change lanes to the right because of traffic rules?
-        Set<Lane> rightLanes = perception.getAccessibleAdjacentLanesRight().get(lanePathInfo.getReferenceLane());
-        if (nextSplitInfo.isSplit())
-        {
-            rightLanes.retainAll(nextSplitInfo.getCorrectCurrentLanes());
-        }
-        if (!rightLanes.isEmpty() && laneBasedGTU.getVelocity().si > 4.0) // XXX we are driving...
-        {
-            perception.updateBackwardHeadwayGTU();
-            perception.updateParallelGTUsRight();
-            perception.updateLaneTrafficRight();
-            if (perception.getParallelGTUsRight().isEmpty())
-            {
-                Collection<HeadwayGTU> sameLaneTraffic = new HashSet<>();
-                if (perception.getForwardHeadwayGTU() != null && perception.getForwardHeadwayGTU().getGtuId() != null)
-                {
-                    sameLaneTraffic.add(perception.getForwardHeadwayGTU());
-                }
-                if (perception.getBackwardHeadwayGTU() != null && perception.getBackwardHeadwayGTU().getGtuId() != null)
-                {
-                    sameLaneTraffic.add(perception.getBackwardHeadwayGTU());
-                }
-                DirectedLaneChangeModel dlcm = new DirectedAltruistic();
-                DirectedLaneMovementStep dlms =
-                    dlcm.computeLaneChangeAndAcceleration(laneBasedGTU, LateralDirectionality.RIGHT, sameLaneTraffic,
-                        perception.getNeighboringGTUsRight(), laneBasedGTU.getDrivingCharacteristics()
-                            .getForwardHeadwayDistance(), perception.getSpeedLimit(), new Acceleration(1.0,
-                            AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI), new Time.Rel(0.5,
-                            TimeUnit.SECOND));
-                if (dlms.getLaneChange() != null)
-                {
-                    if (canChange(laneBasedGTU, perception, lanePathInfo, LateralDirectionality.RIGHT))
-                    {
-                        DirectedPoint newLocation = changeLane(laneBasedGTU, LateralDirectionality.RIGHT);
-                        lanePathInfo =
-                                buildLaneListForward(laneBasedGTU, this.referenceLane, this.referencePos, forwardHeadway);
-                        return currentLanePlan(laneBasedGTU, startTime, newLocation, lanePathInfo);
-                    }
-                }
-            }
-        }
-
-        return currentLanePlan(laneBasedGTU, startTime, locationAtStartTime, lanePathInfo);
     }
 
     /**
@@ -434,4 +452,23 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
 
         return p;
     }
+
+    /**
+     * @return destroyGtuOnFailure, indicating when a failure in planning occurs, whether we should destroy the GTU to avoid
+     *         halting of the model
+     */
+    public final boolean isDestroyGtuOnFailure()
+    {
+        return this.destroyGtuOnFailure;
+    }
+
+    /**
+     * When a failure in planning occurs, should we destroy the GTU to avoid halting of the model?
+     * @param destroyGtuOnFailure set destroyGtuOnFailure to true or false
+     */
+    public final void setDestroyGtuOnFailure(final boolean destroyGtuOnFailure)
+    {
+        this.destroyGtuOnFailure = destroyGtuOnFailure;
+    }
+
 }
