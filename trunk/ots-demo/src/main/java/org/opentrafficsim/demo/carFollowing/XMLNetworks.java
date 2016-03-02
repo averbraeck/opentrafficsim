@@ -33,7 +33,7 @@ import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.distributions.Distribution.ProbabilityAndObject;
+import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
@@ -484,14 +484,14 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                         laneType);
 
                 // determine the routes
-                List<ProbabilityAndObject<Route>> routeProbabilities = new ArrayList<>();
+                List<FrequencyAndObject<Route>> routeProbabilities = new ArrayList<>();
 
                 ArrayList<Node> mainRouteNodes = new ArrayList<Node>();
                 mainRouteNodes.add(firstVia);
                 mainRouteNodes.add(secondVia);
                 mainRouteNodes.add(end);
                 Route mainRoute = new Route("main", mainRouteNodes);
-                routeProbabilities.add(new ProbabilityAndObject<Route>(lanesOnMain, mainRoute));
+                routeProbabilities.add(new FrequencyAndObject<Route>(lanesOnMain, mainRoute));
 
                 ArrayList<Node> sideRouteNodes = new ArrayList<Node>();
                 sideRouteNodes.add(firstVia);
@@ -499,7 +499,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                 sideRouteNodes.add(end2a);
                 sideRouteNodes.add(end2b);
                 Route sideRoute = new Route("side", sideRouteNodes);
-                routeProbabilities.add(new ProbabilityAndObject<Route>(lanesOnBranch, sideRoute));
+                routeProbabilities.add(new FrequencyAndObject<Route>(lanesOnBranch, sideRoute));
                 try
                 {
                     this.routeGenerator = new ProbabilisticRouteGenerator(routeProbabilities, new MersenneTwister(1234));
@@ -717,7 +717,8 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             this.simulator.scheduleEventRel(new Time.Rel(this.headwayGenerator.draw(), SECOND), this, this, "generateCar",
                     arguments);
         }
-        catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
+        catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException
+                | ProbabilityException exception)
         {
             exception.printStackTrace();
         }

@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.network.route;
 
 import org.opentrafficsim.core.distributions.Generator;
+import org.opentrafficsim.core.distributions.ProbabilityException;
 
 /**
  * Interface for objects that generate a route (to be assigned to a newly constructed GTU).
@@ -16,6 +17,6 @@ import org.opentrafficsim.core.distributions.Generator;
 public interface RouteGenerator extends Generator<Route>
 {
     /** Return the (next) Route. */
-    public Route draw();
+    public Route draw() throws ProbabilityException;
     
 }
