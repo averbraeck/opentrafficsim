@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.network.route;
 
+import org.opentrafficsim.core.distributions.Generator;
+
 /**
  * Interface for objects that generate a route (to be assigned to a newly constructed GTU).
  * <p>
@@ -11,11 +13,7 @@ package org.opentrafficsim.core.network.route;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface RouteGenerator
+public interface RouteGenerator extends Generator<Route>
 {
-    /**
-     * Generate a Route. Generation can be based on GTU type, randomness, fixed, or otherwise.
-     * @return a Route, which can be complete or partial.
-     */
-    Route generateRoute();
+    // Typed extension.
 }

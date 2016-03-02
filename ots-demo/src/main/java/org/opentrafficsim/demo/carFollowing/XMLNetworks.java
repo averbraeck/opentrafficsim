@@ -33,6 +33,8 @@ import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.distributions.Distribution.ProbabilityAndObject;
+import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
@@ -51,7 +53,6 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
-import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator.RouteProbability;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.network.route.RouteGenerator;
 import org.opentrafficsim.graphs.LaneBasedGTUSampler;
@@ -484,14 +485,14 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                         LongitudinalDirectionality.DIR_PLUS), laneType);
 
                 // determine the routes
-                List<RouteProbability> routeProbabilities = new ArrayList<>();
+                List<ProbabilityAndObject<Route>> routeProbabilities = new ArrayList<>();
 
                 ArrayList<Node> mainRouteNodes = new ArrayList<Node>();
                 mainRouteNodes.add(firstVia);
                 mainRouteNodes.add(secondVia);
                 mainRouteNodes.add(end);
                 Route mainRoute = new Route("main", mainRouteNodes);
-                routeProbabilities.add(new RouteProbability(mainRoute, new java.lang.Double(lanesOnMain)));
+                routeProbabilities.add(new ProbabilityAndObject<Route>(lanesOnMain, mainRoute));
 
                 ArrayList<Node> sideRouteNodes = new ArrayList<Node>();
                 sideRouteNodes.add(firstVia);
@@ -499,9 +500,15 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                 sideRouteNodes.add(end2a);
                 sideRouteNodes.add(end2b);
                 Route sideRoute = new Route("side", sideRouteNodes);
-                routeProbabilities.add(new RouteProbability(sideRoute, new java.lang.Double(lanesOnBranch)));
-
-                this.routeGenerator = new ProbabilisticRouteGenerator(routeProbabilities, new MersenneTwister(1234));
+                routeProbabilities.add(new ProbabilityAndObject<Route>(lanesOnBranch, sideRoute));
+                try
+                {
+                    this.routeGenerator = new ProbabilisticRouteGenerator(routeProbabilities, new MersenneTwister(1234));
+                }
+                catch (ProbabilityException exception)
+                {
+                    exception.printStackTrace();
+                }
             }
 
             for (int index = 0; index < lanesOnCommon; index++)
@@ -667,7 +674,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             drivingCharacteristics.setForwardHeadwayDistance(new Length.Rel(450.0, LengthUnit.METER));
             LaneBasedStrategicalPlanner strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, this.tacticalPlanner,
-                            this.routeGenerator.generateRoute());
+                            this.routeGenerator.draw());
             new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed, vehicleLength,
                     new Length.Rel(1.8, METER), new Speed(speed, KM_PER_HOUR), this.simulator, strategicalPlanner,
                     new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);

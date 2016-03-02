@@ -1,0 +1,63 @@
+package org.opentrafficsim.core.distributions;
+
+/**
+ * Exception thrown when provided probabilities or frequencies are invalid. All negative probabilities or frequencies are
+ * invalid. A set of probabilities or frequencies is invalid if all have the value 0.
+ * <p>
+ * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * <p>
+ * @version $Revision$, $LastChangedDate$, by $Author$, initial version Mar 1, 2016 <br>
+ * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ */
+public class ProbabilityException extends Exception
+{
+    /** */
+    private static final long serialVersionUID = 20160301L;
+
+    /**
+     * 
+     */
+    public ProbabilityException()
+    {
+    }
+
+    /**
+     * @param message String
+     */
+    public ProbabilityException(final String message)
+    {
+        super(message);
+    }
+
+    /**
+     * @param cause Throwable
+     */
+    public ProbabilityException(final Throwable cause)
+    {
+        super(cause);
+    }
+
+    /**
+     * @param message String
+     * @param cause Throwable
+     */
+    public ProbabilityException(final String message, final Throwable cause)
+    {
+        super(message, cause);
+    }
+
+    /**
+     * @param message String; description of the problem
+     * @param cause Throwable; the cause of this ValueException
+     * @param enableSuppression boolean; whether or not suppression is enabled or disabled
+     * @param writableStackTrace boolean; whether or not the stack trace should be writable
+     */
+    public ProbabilityException(final String message, final Throwable cause, final boolean enableSuppression,
+            final boolean writableStackTrace)
+    {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
+
+}
