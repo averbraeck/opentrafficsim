@@ -29,7 +29,7 @@ public class FixedRouteGenerator implements RouteGenerator
     /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
-    public Route generateRoute()
+    public Route draw()
     {
         return this.route;
     }
