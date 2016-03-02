@@ -15,5 +15,7 @@ import org.opentrafficsim.core.distributions.Generator;
  */
 public interface RouteGenerator extends Generator<Route>
 {
-    // Typed extension.
+    /** Return the (next) Route. */
+    public Route draw();
+    
 }

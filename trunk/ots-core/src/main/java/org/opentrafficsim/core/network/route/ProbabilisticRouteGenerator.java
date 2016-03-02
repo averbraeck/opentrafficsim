@@ -36,6 +36,7 @@ public class ProbabilisticRouteGenerator implements RouteGenerator //Distributio
         this.distribution = new Distribution<Route>(generators, stream);
         //super(generators, stream);
     }
+    
     /** {@inheritDoc} */
     @Override
     public Route draw()
