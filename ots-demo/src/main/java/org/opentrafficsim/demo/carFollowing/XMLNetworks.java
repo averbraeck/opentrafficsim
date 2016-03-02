@@ -44,6 +44,7 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -59,6 +60,7 @@ import org.opentrafficsim.graphs.LaneBasedGTUSampler;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
@@ -111,14 +113,14 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
      */
     public XMLNetworks()
     {
-        this.properties.add(new SelectionProperty("Network", "Network", new String[]{"Merge 1 plus 1 into 1",
-            "Merge 2 plus 1 into 2", "Merge 2 plus 2 into 4", "Split 1 into 1 plus 1", "Split 2 into 1 plus 2",
-            "Split 4 into 2 plus 2"}, 0, false, 0));
+        this.properties.add(new SelectionProperty("Network", "Network", new String[] { "Merge 1 plus 1 into 1",
+                "Merge 2 plus 1 into 2", "Merge 2 plus 2 into 4", "Split 1 into 1 plus 1", "Split 2 into 1 plus 2",
+                "Split 4 into 2 plus 2" }, 0, false, 0));
         this.properties.add(new SelectionProperty("Tactical planner",
                 "<html>The tactical planner determines if a lane change is desired and possible.</html>", new String[] {
                         "MOBIL", "Verbraeck", "Verbraeck0" }, 0, false, 600));
-        this.properties.add(new ContinuousProperty("Flow per input lane", "Traffic flow per input lane", 500d, 0d,
-            3000d, "%.0f veh/h", false, 1));
+        this.properties.add(new ContinuousProperty("Flow per input lane", "Traffic flow per input lane", 500d, 0d, 3000d,
+                "%.0f veh/h", false, 1));
     }
 
     /** {@inheritDoc} */
@@ -155,8 +157,8 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
         for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
         {
             TrajectoryPlot tp =
-                new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), new Time.Rel(0.5, SECOND),
-                    this.model.getPath(graphIndex));
+                    new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), new Time.Rel(0.5, SECOND),
+                            this.model.getPath(graphIndex));
             tp.setTitle("Trajectory Graph");
             tp.setExtendedState(Frame.MAXIMIZED_BOTH);
             LaneBasedGTUSampler graph = tp;
@@ -179,8 +181,8 @@ public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
     public final String description()
     {
         return "<html><h1>Test Networks</h1>Prove that the test networks can be constructed and rendered on screen "
-            + "and that a mix of cars and trucks can run on them.<br>On the statistics tab, a trajectory plot "
-            + "is generated for each lane.</html>";
+                + "and that a mix of cars and trucks can run on them.<br>On the statistics tab, a trajectory plot "
+                + "is generated for each lane.</html>";
     }
 
 }
@@ -299,9 +301,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
 
     /** {@inheritDoc} */
     @Override
-    public final
-        void
-        constructModel(
+    public final void constructModel(
             final SimulatorInterface<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
@@ -343,7 +343,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                 throw new Error("\"Car following model\" property has wrong type");
             }
             Iterator<AbstractProperty<ArrayList<AbstractProperty<?>>>> iterator =
-                new CompoundProperty("", "", this.properties, false, 0).iterator();
+                    new CompoundProperty("", "", this.properties, false, 0).iterator();
             while (iterator.hasNext())
             {
                 AbstractProperty<?> ap = iterator.next();
@@ -393,8 +393,8 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                         this.averageHeadway = new Time.Rel(3600.0 / contP.getValue(), SECOND);
                         this.minimumHeadway = new Time.Rel(3, SECOND);
                         this.headwayGenerator =
-                            new DistErlang(new MersenneTwister(1234), 4, DoubleScalar.minus(this.averageHeadway,
-                                this.minimumHeadway).getSI());
+                                new DistErlang(new MersenneTwister(1234), 4, DoubleScalar.minus(this.averageHeadway,
+                                        this.minimumHeadway).getSI());
                     }
                 }
                 else if (ap instanceof CompoundProperty)
@@ -439,14 +439,15 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                 }
             }
 
-            Lane[] startLanes = LaneFactory.makeMultiLane("From to FirstVia", from, firstVia, null, merge ? lanesOnMain
-                : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator,
-                LongitudinalDirectionality.DIR_PLUS);
+            Lane[] startLanes =
+                    LaneFactory.makeMultiLane("From to FirstVia", from, firstVia, null, merge ? lanesOnMain
+                            : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator,
+                            LongitudinalDirectionality.DIR_PLUS);
             // setupGenerator(new Lane[] {startLanes[0]});
             setupGenerator(startLanes);
             Lane[] common =
-                LaneFactory.makeMultiLane("FirstVia to SecondVia", firstVia, secondVia, null, lanesOnCommon, laneType,
-                    this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
+                    LaneFactory.makeMultiLane("FirstVia to SecondVia", firstVia, secondVia, null, lanesOnCommon, laneType,
+                            this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
             if (merge)
             {
                 for (int i = lanesOnCommonCompressed; i < lanesOnCommon; i++)
@@ -454,17 +455,16 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                     setupBlock(common[i]);
                 }
             }
-            setupSink(LaneFactory.makeMultiLane("SecondVia to end", secondVia, end, null, merge
-                ? lanesOnCommonCompressed : lanesOnMain, laneType, this.speedLimit, this.simulator,
-                LongitudinalDirectionality.DIR_PLUS), laneType);
+            setupSink(LaneFactory.makeMultiLane("SecondVia to end", secondVia, end, null, merge ? lanesOnCommonCompressed
+                    : lanesOnMain, laneType, this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS), laneType);
             if (merge)
             {
                 setupGenerator(LaneFactory.makeMultiLane("From2a to From2b", from2a, from2b, null, lanesOnBranch, 0,
-                    lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator,
-                    LongitudinalDirectionality.DIR_PLUS));
-                LaneFactory.makeMultiLaneBezier("From2b to FirstVia", from2a, from2b, firstVia, secondVia,
-                    lanesOnBranch, lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType,
-                    this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS);
+                        lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator,
+                        LongitudinalDirectionality.DIR_PLUS));
+                LaneFactory.makeMultiLaneBezier("From2b to FirstVia", from2a, from2b, firstVia, secondVia, lanesOnBranch,
+                        lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit,
+                        this.simulator, LongitudinalDirectionality.DIR_PLUS);
 
                 // provide a route -- at the merge point, the GTU can otherwise decide to "go back"
                 ArrayList<Node> mainRouteNodes = new ArrayList<Node>();
@@ -477,12 +477,11 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             else
             {
                 LaneFactory.makeMultiLaneBezier("SecondVia to end2a", firstVia, secondVia, end2a, end2b, lanesOnBranch,
-                    lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit,
-                    this.simulator, LongitudinalDirectionality.DIR_PLUS);
-                setupSink(
-                    LaneFactory.makeMultiLane("end2a to end2b", end2a, end2b, null, lanesOnBranch, lanesOnCommon
-                        - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator,
-                        LongitudinalDirectionality.DIR_PLUS), laneType);
+                        lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit,
+                        this.simulator, LongitudinalDirectionality.DIR_PLUS);
+                setupSink(LaneFactory.makeMultiLane("end2a to end2b", end2a, end2b, null, lanesOnBranch, lanesOnCommon
+                        - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator, LongitudinalDirectionality.DIR_PLUS),
+                        laneType);
 
                 // determine the routes
                 List<ProbabilityAndObject<Route>> routeProbabilities = new ArrayList<>();
@@ -540,8 +539,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                     lane = lane.nextLanes(this.gtuType).keySet().iterator().next();
                 }
             }
-            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.999, SECOND), this, this, "drawGraphs",
-                null);
+            this.simulator.scheduleEventAbs(new DoubleScalar.Abs<TimeUnit>(0.999, SECOND), this, this, "drawGraphs", null);
         }
         catch (NamingException | NetworkException | GTUException | OTSGeometryException exception1)
         {
@@ -580,19 +578,17 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         OTSNode to = link.getEndNode();
         OTSNode from = link.getStartNode();
         double endLinkLength = 50; // [m]
-        double endX =
-            to.getPoint().x + (endLinkLength / link.getLength().getSI()) * (to.getPoint().x - from.getPoint().x);
-        double endY =
-            to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
+        double endX = to.getPoint().x + (endLinkLength / link.getLength().getSI()) * (to.getPoint().x - from.getPoint().x);
+        double endY = to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
         OTSNode end = new OTSNode("END", new OTSPoint3D(endX, endY, to.getPoint().z));
         CrossSectionLink endLink = LaneFactory.makeLink("endLink", to, end, null, LongitudinalDirectionality.DIR_PLUS);
         for (Lane lane : lanes)
         {
             // Overtaking left and right allowed on the sinkLane
             Lane sinkLane =
-                new Lane(endLink, lane.getId() + "." + "sinkLane", lane.getLateralCenterPosition(1.0),
-                    lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType,
-                    LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.LeftAndRight());
+                    new Lane(endLink, lane.getId() + "." + "sinkLane", lane.getLateralCenterPosition(1.0),
+                            lane.getLateralCenterPosition(1.0), lane.getWidth(1.0), lane.getWidth(1.0), laneType,
+                            LongitudinalDirectionality.DIR_PLUS, this.speedLimit, new OvertakingConditions.LeftAndRight());
             Sensor sensor = new SinkSensor(sinkLane, new Length.Rel(10.0, METER), this.simulator);
             sinkLane.addSensor(sensor, GTUType.ALL);
         }
@@ -609,23 +605,23 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
      * @throws GTUException when construction of the GTU (the block is a GTU) fails
      * @throws OTSGeometryException when the initial path is wrong
      */
-    private Lane setupBlock(final Lane lane) throws NamingException, NetworkException, SimRuntimeException,
-        GTUException, OTSGeometryException
+    private Lane setupBlock(final Lane lane) throws NamingException, NetworkException, SimRuntimeException, GTUException,
+            OTSGeometryException
     {
         Length.Rel initialPosition = lane.getLength();
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         GTUFollowingModel gfm =
-            new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Time.Rel(
-                java.lang.Double.MAX_VALUE, TimeUnit.SI));
+                new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Time.Rel(java.lang.Double.MAX_VALUE,
+                        TimeUnit.SI));
         LaneChangeModel lcm = new FixedLaneChangeModel(null);
         LaneBasedDrivingCharacteristics drivingCharacteristics = new LaneBasedDrivingCharacteristics(gfm, lcm);
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, this.tacticalPlanner);
         // new LaneBasedCFLCTacticalPlanner());
-        new LaneBasedIndividualGTU("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
-            new Length.Rel(1, METER), lane.getWidth(1), new Speed(0.0, KM_PER_HOUR), this.simulator,
-            strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+        new LaneBasedIndividualGTU("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR), new Length.Rel(1,
+                METER), lane.getWidth(1), new Speed(0.0, KM_PER_HOUR), this.simulator, strategicalPlanner,
+                new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
         return lane;
     }
 
@@ -641,8 +637,8 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         // Re schedule this method
         try
         {
-            this.simulator.scheduleEventAbs(new Time.Abs(this.simulator.getSimulatorTime().get().getSI() + 1, SECOND),
-                this, this, "drawGraphs", null);
+            this.simulator.scheduleEventAbs(new Time.Abs(this.simulator.getSimulatorTime().get().getSI() + 1, SECOND), this,
+                    this, "drawGraphs", null);
         }
         catch (SimRuntimeException exception)
         {
@@ -657,32 +653,69 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
      */
     protected final void generateCar(final Lane lane)
     {
-        boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         Length.Rel initialPosition = new Length.Rel(16, METER);
         Speed initialSpeed = new Speed(50, KM_PER_HOUR);
-        Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-        initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
+        boolean generate = true;
+        // Check if there is sufficient room
+        // Find the first vehicle on the lane
+        LaneBasedGTU leader = null;
+        Time.Abs when = new Time.Abs(this.simulator.getSimulatorTime().get().si, TimeUnit.SI);
         try
         {
-            Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
-            GTUFollowingModel gtuFollowingModel =
-                generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
-            double speed = this.disttria.draw();
+            leader = lane.getGtuAhead(initialPosition, GTUDirectionality.DIR_PLUS, RelativePosition.REAR, when);
+            if (null != leader)
+            {
+                double headway =
+                        leader.fractionalPosition(lane, leader.getRear()) * lane.getLength().si - initialPosition.si - 15.0 / 2;
+                if (headway < 0.1)
+                {
+                    System.out.println("Not generating GTU due to insufficient room");
+                    generate = false;
+                }
+                double leaderSpeed = leader.getVelocity().si;
+                if (leaderSpeed < initialSpeed.si)
+                {
+                    // What distance will it take to reduce speed to 0 with a decent deceleration?
+                    double decentDeceleration = 5; // [m/s/s]
+                    double deltaT = initialSpeed.si / decentDeceleration;
+                    double distance = 0.5 * decentDeceleration * deltaT * deltaT;
+                    if (distance > headway)
+                    {
+                        System.out.println("Not generating GTU due to slow driving GTU within emergency stop range");
+                        generate = false;
+                    }
+                }
+            }
+        }
+        catch (GTUException exception1)
+        {
+            exception1.printStackTrace();
+        }
+        try
+        {
+            if (generate)
+            {
+                boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
+                Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
+                initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
+                Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
+                GTUFollowingModel gtuFollowingModel = generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
+                double speed = this.disttria.draw();
 
-            LaneBasedDrivingCharacteristics drivingCharacteristics =
-                new LaneBasedDrivingCharacteristics(gtuFollowingModel, this.laneChangeModel);
-            drivingCharacteristics.setForwardHeadwayDistance(new Length.Rel(450.0, LengthUnit.METER));
-            LaneBasedStrategicalPlanner strategicalPlanner =
-                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, this.tacticalPlanner,
-                            this.routeGenerator.draw());
-            new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed, vehicleLength,
-                    new Length.Rel(1.8, METER), new Speed(speed, KM_PER_HOUR), this.simulator, strategicalPlanner,
-                    new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
-
+                LaneBasedDrivingCharacteristics drivingCharacteristics =
+                        new LaneBasedDrivingCharacteristics(gtuFollowingModel, this.laneChangeModel);
+                drivingCharacteristics.setForwardHeadwayDistance(new Length.Rel(450.0, LengthUnit.METER));
+                LaneBasedStrategicalPlanner strategicalPlanner =
+                        new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, this.tacticalPlanner,
+                                this.routeGenerator.draw());
+                new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
+                        vehicleLength, new Length.Rel(1.8, METER), new Speed(speed, KM_PER_HOUR), this.simulator,
+                        strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+            }
             Object[] arguments = new Object[1];
             arguments[0] = lane;
-            this.simulator.scheduleEventRel(new Time.Rel(this.headwayGenerator.draw(), SECOND), this, this,
-                "generateCar", arguments);
+            this.simulator.scheduleEventRel(new Time.Rel(this.headwayGenerator.draw(), SECOND), this, this, "generateCar",
+                    arguments);
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
         {
@@ -693,7 +726,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     /** {@inheritDoc} */
     @Override
     public SimulatorInterface<Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-        throws RemoteException
+            throws RemoteException
     {
         return this.simulator;
     }
