@@ -14,6 +14,10 @@ package org.opentrafficsim.core.distributions;
  */
 public interface Generator<O>
 {
-    /** Generate the next object. */
-    public O draw();
+    /** 
+     * Generate the next object. 
+     * @return O; an object randomly selected from the stored collection
+     * @throws ProbabilityException if the stored collection is empty
+     */
+    public O draw() throws ProbabilityException;
 }

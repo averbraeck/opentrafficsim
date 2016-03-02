@@ -18,7 +18,7 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ProbabilisticRouteGenerator implements RouteGenerator //Distribution<Route>
+public class ProbabilisticRouteGenerator implements RouteGenerator
 {
 
     /** The Distribution from which routes are drawn. */
@@ -30,16 +30,15 @@ public class ProbabilisticRouteGenerator implements RouteGenerator //Distributio
      * @throws ProbabilityException
      */
     public ProbabilisticRouteGenerator(
-            List<Distribution.ProbabilityAndObject<Route>> generators,
+            List<Distribution.FrequencyAndObject<Route>> generators,
             StreamInterface stream) throws ProbabilityException
     {
         this.distribution = new Distribution<Route>(generators, stream);
-        //super(generators, stream);
     }
     
     /** {@inheritDoc} */
     @Override
-    public Route draw()
+    public Route draw() throws ProbabilityException
     {
         return this.distribution.draw();
     }
