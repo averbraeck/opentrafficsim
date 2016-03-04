@@ -20,6 +20,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanBuilder;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
@@ -39,66 +40,68 @@ public abstract class AbstractGTU implements GTU
     /** */
     private static final long serialVersionUID = 20140822L;
 
-    /** the id of the GTU. */
+    /** The id of the GTU. */
     private final String id;
 
-    /** the type of GTU, e.g. TruckType, CarType, BusType. */
+    /** The type of GTU, e.g. TruckType, CarType, BusType. */
     private final GTUType gtuType;
 
-    /** the simulator to schedule activities on. */
+    /** The simulator to schedule activities on. */
     private final OTSDEVSSimulatorInterface simulator;
 
-    /** the maximum acceleration. */
+    /** The maximum acceleration. */
     private Acceleration maximumAcceleration;
 
-    /** the maximum deceleration, stored as a negative number. */
+    /** The maximum deceleration, stored as a negative number. */
     private Acceleration maximumDeceleration;
 
     /**
-     * the odometer which measures how much distance have we covered between instantiation and the last completed operational
+     * The odometer which measures how much distance have we covered between instantiation and the last completed operational
      * plan. In order to get a complete odometer reading, the progress of the current plan execution has to be added to this
      * value.
      */
     private Length.Rel odometer;
 
-    /** the strategical planner that can instantiate tactical planners to determine mid-term decisions. */
+    /** The strategical planner that can instantiate tactical planners to determine mid-term decisions. */
     private StrategicalPlanner strategicalPlanner;
 
-    /** the tactical planner that can generate an operational plan. */
+    /** The tactical planner that can generate an operational plan. */
     private TacticalPlanner tacticalPlanner = null;
 
-    /** the current operational plan, which provides a short-term movement over time. */
+    /** The current operational plan, which provides a short-term movement over time. */
     private OperationalPlan operationalPlan = null;
 
-    /** the next move event as scheduled on the simulator, can be used for interrupting the current move. */
+    /** The next move event as scheduled on the simulator, can be used for interrupting the current move. */
     private SimEvent<OTSSimTimeDouble> nextMoveEvent;
 
-    /** the perception unit that takes care of observing the environment of the GTU. */
+    /** The perception unit that takes care of observing the environment of the GTU. */
     private Perception perception;
 
-    /** the model in which this GTU is registered. */
+    /** The model in which this GTU is registered. */
     private PerceivableContext perceivableContext;
 
+    /** Id generator that will be used if null is used for the id argument in the constructor. */
+    static private IdGenerator idGenerator = new IdGenerator("GTU ");
+
     /**
-     * @param id the id of the GTU
-     * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
-     * @param simulator the simulator to schedule plan changes on
-     * @param strategicalPlanner the planner responsible for the overall 'mission' of the GTU, usually indicating where it needs
-     *            to go. It operates by instantiating tactical planners to do the work.
-     * @param perception the perception unit that takes care of observing the environment of the GTU
-     * @param initialLocation the initial location (and direction) of the GTU
-     * @param initialSpeed the initial speed of the GTU
-     * @param perceivableContext the perceivable context in which this GTU will be registered
+     * @param id String; the id of the GTU
+     * @param gtuType GTUType; the type of GTU, e.g. TruckType, CarType, BusType
+     * @param simulator OTSDEVSSimulatorInterface; the simulator to schedule plan changes on
+     * @param strategicalPlanner StrategicalPlanner; the strategical planner responsible for the overall 'mission' of the GTU,
+     *            usually indicating where it needs to go. It operates by instantiating tactical planners to do the work.
+     * @param perception Perception; the perception unit that takes care of observing the environment of the GTU
+     * @param initialLocation DirectedPoint; the initial location (and direction) of the GTU
+     * @param initialSpeed Speed; the initial speed of the GTU
+     * @param perceivableContext PerceivableContext; the perceivable context in which this GTU will be registered
      * @throws SimRuntimeException when scheduling after the first move fails
      * @throws GTUException when the construction of the original waiting path fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public AbstractGTU(final String id, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
-        final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation,
-        final Speed initialSpeed, final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
+            final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation,
+            final Speed initialSpeed, final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
     {
-        super();
-        this.id = id;
+        this.id = null == id ? idGenerator.nextId() : id;
         this.gtuType = gtuType;
         this.simulator = simulator;
         this.strategicalPlanner = strategicalPlanner;
@@ -113,7 +116,7 @@ public abstract class AbstractGTU implements GTU
             // Schedule the first move now; scheduling so super constructors can still finish.
             // Store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
             this.nextMoveEvent =
-                new SimEvent<>(new OTSSimTimeDouble(now), this, this, "move", new Object[]{initialLocation});
+                    new SimEvent<>(new OTSSimTimeDouble(now), this, this, "move", new Object[] { initialLocation });
             this.simulator.scheduleEvent(this.nextMoveEvent);
         }
 
@@ -127,8 +130,7 @@ public abstract class AbstractGTU implements GTU
             }
             else
             {
-                OTSPoint3D p2 =
-                    new OTSPoint3D(p.x + 1E-6 * Math.cos(p.getRotZ()), p.y + 1E-6 * Math.sin(p.getRotZ()), p.z);
+                OTSPoint3D p2 = new OTSPoint3D(p.x + 1E-6 * Math.cos(p.getRotZ()), p.y + 1E-6 * Math.sin(p.getRotZ()), p.z);
                 OTSLine3D path = new OTSLine3D(new OTSPoint3D(p), p2);
                 this.operationalPlan = OperationalPlanBuilder.buildConstantSpeedPlan(path, now, initialSpeed);
             }
@@ -161,8 +163,8 @@ public abstract class AbstractGTU implements GTU
      * @throws NetworkException in case of a problem with the network, e.g., a dead end where it is not expected
      */
     @SuppressWarnings("checkstyle:designforextension")
-    protected void move(final DirectedPoint fromLocation) throws SimRuntimeException, OperationalPlanException,
-        GTUException, NetworkException
+    protected void move(final DirectedPoint fromLocation) throws SimRuntimeException, OperationalPlanException, GTUException,
+            NetworkException
     {
         Time.Abs now = this.simulator.getSimulatorTime().getTime();
 
@@ -184,8 +186,8 @@ public abstract class AbstractGTU implements GTU
         // schedule the next move at the end of the current operational plan
         // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
         this.nextMoveEvent =
-            new SimEvent<>(new OTSSimTimeDouble(now.plus(this.operationalPlan.getTotalDuration())), this, this, "move",
-                new Object[]{this.operationalPlan.getEndLocation()});
+                new SimEvent<>(new OTSSimTimeDouble(now.plus(this.operationalPlan.getTotalDuration())), this, this, "move",
+                        new Object[] { this.operationalPlan.getEndLocation() });
         this.simulator.scheduleEvent(this.nextMoveEvent);
     }
 
@@ -279,8 +281,7 @@ public abstract class AbstractGTU implements GTU
         }
         try
         {
-            return this.odometer.plus(this.operationalPlan.getTraveledDistance(this.simulator.getSimulatorTime()
-                .getTime()));
+            return this.odometer.plus(this.operationalPlan.getTraveledDistance(this.simulator.getSimulatorTime().getTime()));
         }
         catch (OperationalPlanException ope)
         {
@@ -310,8 +311,8 @@ public abstract class AbstractGTU implements GTU
             catch (OperationalPlanException ope2)
             {
                 // this should not happen at all...
-                throw new RuntimeException(
-                    "getVelocity() could not derive a valid velocity for the current operationalPlan", ope2);
+                throw new RuntimeException("getVelocity() could not derive a valid velocity for the current operationalPlan",
+                        ope2);
             }
         }
     }
@@ -346,7 +347,7 @@ public abstract class AbstractGTU implements GTU
             {
                 // this should not happen at all...
                 throw new RuntimeException(
-                    "getAcceleration() could not derive a valid acceleration for the current operationalPlan", ope2);
+                        "getAcceleration() could not derive a valid acceleration for the current operationalPlan", ope2);
             }
         }
     }
