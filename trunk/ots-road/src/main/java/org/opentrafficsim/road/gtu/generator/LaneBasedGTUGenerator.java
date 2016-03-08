@@ -125,8 +125,11 @@ public class LaneBasedGTUGenerator
         {
             this.generatedGTUs++;
             this.unplacedTemplates.add(this.laneBasedTemplateGTUType.draw());
+            if (this.unplacedTemplates.size() == 1)
+            {
+                simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] {});
+            }
         }
-        simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] {});
         if (this.generatedGTUs < this.maxGTUs)
         {
             simulator.scheduleEventRel(this.interarrivelTimeDistribution.draw(), this, this, "generateCharacteristics",
@@ -143,7 +146,8 @@ public class LaneBasedGTUGenerator
      * @throws NamingException ???
      */
     @SuppressWarnings("unused")
-    private void tryToPlaceGTU() throws SimRuntimeException, GTUException, NamingException, NetworkException, OTSGeometryException
+    private void tryToPlaceGTU() throws SimRuntimeException, GTUException, NamingException, NetworkException,
+            OTSGeometryException
     {
         LaneBasedGTUCharacteristics characteristics;
         OTSDEVSSimulatorInterface simulator = this.laneBasedTemplateGTUType.getSimulator();
@@ -183,7 +187,7 @@ public class LaneBasedGTUGenerator
             if (null != safeSpeed)
             {
                 // There is enough room; remove the template from the queue and construct the new GTU
-                synchronized(this.unplacedTemplates)
+                synchronized (this.unplacedTemplates)
                 {
                     this.unplacedTemplates.remove();
                 }
@@ -192,12 +196,10 @@ public class LaneBasedGTUGenerator
                     safeSpeed = characteristics.getMaximumVelocity();
                 }
                 String id = null == characteristics.getIdGenerator() ? null : characteristics.getIdGenerator().nextId();
-                new LaneBasedIndividualGTU(id, characteristics.getGTUType(),
-                        this.initialLongitudinalPositions, safeSpeed,
+                new LaneBasedIndividualGTU(id, characteristics.getGTUType(), this.initialLongitudinalPositions, safeSpeed,
                         characteristics.getLength(), characteristics.getWidth(), characteristics.getMaximumVelocity(),
-                        simulator, 
-                        characteristics.getStrategicalPlanner(),
-                        characteristics.getPerception(), characteristics.getNetwork());
+                        simulator, characteristics.getStrategicalPlanner(), characteristics.getPerception(),
+                        characteristics.getNetwork());
             }
         }
         if (this.unplacedTemplates.size() > 0)
