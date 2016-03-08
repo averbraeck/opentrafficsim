@@ -25,6 +25,10 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
+import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUType;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
@@ -57,29 +61,50 @@ public class TemplateGTUTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit>(new DistConstant(this.stream, 1.6), METER);
         final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> pcMaximumSpeed =
                 new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistConstant(this.stream, 180), KM_PER_HOUR);
+        final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> pcInitialSpeed =
+                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistConstant(this.stream, 125), KM_PER_HOUR);
         OTSModelInterface model = new DummyModelForTemplateGTUTest();
         SimpleSimulator simulator =
                 new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND), model);
-        TemplateGTUType passengerCar = new TemplateGTUType(pcTypeId, new IdGenerator("Passenger car "), new Generator<Length.Rel>()
-        {
-            public Length.Rel draw()
-            {
-                return pcLength.draw();
-            }
-        }, new Generator<Length.Rel>()
-        {
-            public Length.Rel draw()
-            {
-                return pcWidth.draw();
-            }
-        }, new Generator<Speed>()
-        {
-            public Speed draw()
-            {
-                return pcMaximumSpeed.draw();
-            }
-        }, simulator);
-        verifyFields(passengerCar, pcTypeId, pcLength, pcWidth, pcMaximumSpeed, simulator);
+        LaneBasedTemplateGTUType passengerCar =
+                new LaneBasedTemplateGTUType(pcTypeId, new IdGenerator("Passenger car "), new Generator<Length.Rel>()
+                {
+                    public Length.Rel draw()
+                    {
+                        return pcLength.draw();
+                    }
+                }, new Generator<Length.Rel>()
+                {
+                    public Length.Rel draw()
+                    {
+                        return pcWidth.draw();
+                    }
+                }, new Generator<Speed>()
+                {
+                    public Speed draw()
+                    {
+                        return pcMaximumSpeed.draw();
+                    }
+                }, simulator, new Generator<LaneBasedStrategicalPlanner>()
+                {
+                    public LaneBasedStrategicalPlanner draw()
+                    {
+                        return null;
+                    }
+                }, new Generator<LanePerceptionFull>()
+                {
+                    public LanePerceptionFull draw()
+                    {
+                        return null;
+                    }
+                }, null, new Generator<Speed>()
+                {
+                    public Speed draw()
+                    {
+                        return pcInitialSpeed.draw();
+                    }
+                }, null);
+        verifyFields(passengerCar, pcTypeId, pcLength, pcWidth, pcMaximumSpeed, pcInitialSpeed, simulator);
         String truckTypeId = "truck";
         ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> truckLength =
                 new ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit>(new DistConstant(this.stream, 18), METER);
@@ -87,30 +112,49 @@ public class TemplateGTUTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit>(new DistConstant(this.stream, 2.2), METER);
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> truckMaximumSpeed =
                 new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistConstant(this.stream, 110), KM_PER_HOUR);
+        ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> truckInitialSpeed =
+                new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistConstant(this.stream, 85), KM_PER_HOUR);
         SimpleSimulator truckSimulator =
                 new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND), model);
-        TemplateGTUType truck = new TemplateGTUType(truckTypeId, new IdGenerator("Truck "), new Generator<Length.Rel>()
-        {
-            public Length.Rel draw()
-            {
-                return truckLength.draw();
-            }
-        }, new Generator<Length.Rel>()
-        {
-            public Length.Rel draw()
-            {
-                return truckWidth.draw();
-            }
-        }, new Generator<Speed>()
-        {
-            public Speed draw()
-            {
-                return truckMaximumSpeed.draw();
-            }
-        }, truckSimulator);
-        verifyFields(truck, truckTypeId, truckLength, truckWidth, truckMaximumSpeed, truckSimulator);
-        passengerCar.clearCharacteristics();
-        verifyFields(passengerCar, pcTypeId, pcLength, pcWidth, pcMaximumSpeed, simulator);
+        LaneBasedTemplateGTUType truck =
+                new LaneBasedTemplateGTUType(truckTypeId, new IdGenerator("Truck "), new Generator<Length.Rel>()
+                {
+                    public Length.Rel draw()
+                    {
+                        return truckLength.draw();
+                    }
+                }, new Generator<Length.Rel>()
+                {
+                    public Length.Rel draw()
+                    {
+                        return truckWidth.draw();
+                    }
+                }, new Generator<Speed>()
+                {
+                    public Speed draw()
+                    {
+                        return truckMaximumSpeed.draw();
+                    }
+                }, truckSimulator, new Generator<LaneBasedStrategicalPlanner>()
+                {
+                    public LaneBasedStrategicalPlanner draw()
+                    {
+                        return null;
+                    }
+                }, new Generator<LanePerceptionFull>()
+                {
+                    public LanePerceptionFull draw()
+                    {
+                        return null;
+                    }
+                }, null, new Generator<Speed>()
+                {
+                    public Speed draw()
+                    {
+                        return truckInitialSpeed.draw();
+                    }
+                }, null);
+        verifyFields(truck, truckTypeId, truckLength, truckWidth, truckMaximumSpeed, truckInitialSpeed, truckSimulator);
     }
 
     /**
@@ -149,7 +193,7 @@ public class TemplateGTUTypeTest implements UNITS
             {
                 return pcMaximumSpeed.draw();
             }
-        }, simulator);
+        }, simulator, null);
         String truckId = "truck";
         ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> truckLength =
                 new ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit>(new DistConstant(this.stream, 18), METER);
@@ -177,7 +221,7 @@ public class TemplateGTUTypeTest implements UNITS
             {
                 return truckMaximumSpeed.draw();
             }
-        }, truckSimulator);
+        }, truckSimulator, null);
         // Create some LaneTypes
         LaneType trucksForbidden = new LaneType("No Trucks");
         trucksForbidden.addCompatibility(passengerCar.getGtuType());
@@ -206,19 +250,23 @@ public class TemplateGTUTypeTest implements UNITS
      * @param width Length.Rel; the expected width
      * @param maximumSpeed Speed; the expected maximum velocity
      * @param simulator OTSDEVSSimulatorInterface; the expected simulator
-     * @throws ProbabilityException 
+     * @throws ProbabilityException
      */
-    private void verifyFields(final TemplateGTUType templateGTUType, final String id,
+    private void verifyFields(final LaneBasedTemplateGTUType templateGTUType, final String id,
             final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> length,
             final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> width,
-            final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeed, final OTSDEVSSimulatorInterface simulator) throws ProbabilityException
+            final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeed,
+            final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeed, final OTSDEVSSimulatorInterface simulator)
+            throws ProbabilityException
     {
         assertTrue("TypeId should be " + id, id.equals(templateGTUType.getGtuType().getId()));
-        templateGTUType.generateCharacteristics();
-        assertEquals("Length should be " + length, length.draw().getSI(), templateGTUType.getLength().getSI(), 0.0001);
-        assertEquals("Width should be " + width, width.draw().getSI(), templateGTUType.getWidth().getSI(), 0.0001);
-        assertEquals("Maximum speed should be " + maximumSpeed, maximumSpeed.draw().getSI(), templateGTUType
+        LaneBasedGTUCharacteristics characteristics = templateGTUType.draw();
+        assertEquals("Length should be " + length, length.draw().getSI(), characteristics.getLength().getSI(), 0.0001);
+        assertEquals("Width should be " + width, width.draw().getSI(), characteristics.getWidth().getSI(), 0.0001);
+        assertEquals("Maximum speed should be " + maximumSpeed, maximumSpeed.draw().getSI(), characteristics
                 .getMaximumVelocity().getSI(), 0.0001);
+        assertEquals("Initial speed should be " + initialSpeed, initialSpeed.draw().getSI(), characteristics.getVelocity()
+                .getSI(), 0.0001);
         assertEquals("Simulator", simulator, templateGTUType.getSimulator());
     }
 }

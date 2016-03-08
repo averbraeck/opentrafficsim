@@ -2,20 +2,14 @@ package org.opentrafficsim.road.gtu.lane;
 
 import java.util.Set;
 
-import javax.naming.NamingException;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -88,7 +82,7 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType
             Generator<LanePerceptionFull> perceptionGenerator, final Set<DirectedLanePosition> initialLongitudinalPositions,
             Generator<Speed> initialSpeedGenerator, OTSNetwork network) throws GTUException
     {
-        super(typeId, idGenerator, lengthGenerator, widthGenerator, maximumSpeedGenerator, simulator);
+        super(typeId, idGenerator, lengthGenerator, widthGenerator, maximumSpeedGenerator, simulator, network);
         this.strategicalPlannerGenerator = strategicalPlannerGenerator;
         this.perceptionGenerator = perceptionGenerator;
         this.initialLongitudinalPositions = initialLongitudinalPositions;
@@ -100,20 +94,10 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType
      * Generate the properties of the next GTU.
      * @throws ProbabilityException when a generator is improperly configured
      */
-    public void generateCharacteristics() throws ProbabilityException
+    public LaneBasedGTUCharacteristics draw() throws ProbabilityException
     {
-        super.generateCharacteristics();
-        this.perception = this.perceptionGenerator.draw();
-        this.strategicalPlanner = this.strategicalPlannerGenerator.draw();
-        this.initialSpeed = this.initialSpeedGenerator.draw();
-    }
-
-    /** {@inheritDoc} */
-    public void clearCharacteristics()
-    {
-        super.clearCharacteristics();
-        this.perception = null;
-        this.strategicalPlanner = null;
+        return new LaneBasedGTUCharacteristics(super.draw(), this.perceptionGenerator.draw(),
+                this.strategicalPlannerGenerator.draw(), this.initialSpeedGenerator.draw(), this.initialLongitudinalPositions);
     }
 
     /**
@@ -146,53 +130,6 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType
     public OTSNetwork getNetwork()
     {
         return this.network;
-    }
-
-    /**
-     * Build a GTU with the current set of characteristics and put it on the road. This method <b>does not</b> check if there is
-     * sufficient room.
-     * @param nextAction UpdateCharacteristics; if YES; the stored characteristics are cleared and a new set is generated; if
-     *            NO; the stored characteristics are not changed; if CLEAR; the stored characteristics are cleared, but no new
-     *            set is generated.
-     * @return LaneBasedGTU; the newly constructed lane based GTU
-     * @throws NetworkException when the GTU cannot be placed on the given lane
-     * @throws SimRuntimeException when the move method cannot be scheduled
-     * @throws GTUException when a parameter is invalid
-     * @throws OTSGeometryException when the initial path is wrong
-     * @throws NamingException when ???
-     * @throws ProbabilityException if UpdateCharacteristics is YES and one of the generators is wrongly configured
-     */
-    public LaneBasedGTU generateGTU(final UpdateCharacteristics nextAction) throws NamingException, NetworkException,
-            SimRuntimeException, GTUException, OTSGeometryException, ProbabilityException
-    {
-        IdGenerator idGenerator = super.getIdGenerator();
-        String id = null == idGenerator ? null : idGenerator.nextId();
-        LaneBasedGTU result =
-                new LaneBasedIndividualGTU(id, super.getGtuType(), this.initialLongitudinalPositions, getInitialSpeed(),
-                        super.getLength(), super.getWidth(), super.getMaximumVelocity(), super.getSimulator(),
-                        this.getStrategicalPlanner(), this.getPerception(), getNetwork());
-        if (UpdateCharacteristics.CLEAR == nextAction || UpdateCharacteristics.YES == nextAction)
-        {
-            clearCharacteristics();
-        }
-        if (UpdateCharacteristics.YES == nextAction)
-        {
-            generateCharacteristics();
-        }
-        return result;
-    }
-
-    /**
-     * Values for the <cite>nextAction</cite> parameter of <cite>generateGTU</cite>. 
-     */
-    public enum UpdateCharacteristics
-    {
-        /** Clear characteristics and generate a new set. */
-        YES,
-        /** Do not change the current set of characteristics. */
-        NO,
-        /** Clear characteristics but do not generate a new set. */
-        CLEAR
     }
 
 }
