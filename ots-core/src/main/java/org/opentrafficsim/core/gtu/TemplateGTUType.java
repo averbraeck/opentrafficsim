@@ -42,7 +42,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
 
     /** The simulator. */
     private final OTSDEVSSimulatorInterface simulator;
-    
+
     /** The network. */
     private final OTSNetwork network;
 
@@ -104,8 +104,8 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
     /** {@inheritDoc} */
     public GTUCharacteristics draw() throws ProbabilityException
     {
-        return new GTUCharacteristics(this.gtuType, this.idGenerator, this.lengthGenerator.draw(),
-                this.widthGenerator.draw(), this.maximumVelocityGenerator.draw(), this.simulator, this.network);
+        return new GTUCharacteristics(this.gtuType, this.idGenerator, this.lengthGenerator.draw(), this.widthGenerator.draw(),
+                this.maximumVelocityGenerator.draw(), this.simulator, this.network);
     }
 
     /**
@@ -132,6 +132,13 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
     public GTUType getGtuType()
     {
         return this.gtuType;
+    }
+
+    /** {@inheritDoc} */
+    public String toString()
+    {
+        return String.format("TemplateGTUType [%s, %s, %s, %s, %s]", this.gtuType, this.idGenerator, this.lengthGenerator,
+                this.widthGenerator, this.maximumVelocityGenerator);
     }
 
 }
