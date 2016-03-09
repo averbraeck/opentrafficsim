@@ -102,8 +102,8 @@ public class ListGTUGenerator
     public ListGTUGenerator(final String name, final OTSDEVSSimulatorInterface simulator, final GTUType gtuType,
         final Speed initialSpeed, final Lane lane, final Length.Rel position, final GTUDirectionality direction,
         final GTUColorer gtuColorer, final LaneBasedStrategicalPlanner strategicalPlanner,
-        final LanePerceptionFull perception, final OTSNetwork network, final String fileName) throws SimRuntimeException,
-        NetworkException
+        final LanePerceptionFull perception, final OTSNetwork network, final String fileName)
+        throws SimRuntimeException, NetworkException
     {
         if (null == lane)
         {
@@ -173,9 +173,9 @@ public class ListGTUGenerator
         Length.Rel initialPosition = new Length.Rel(0, LengthUnit.METER);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>();
         // TODO use given directionality in the constructor?
-        initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
         try
         {
+            initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
             Length.Rel vehicleLength = new Length.Rel(4, LengthUnit.METER);
             new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, initialPositions, this.initialSpeed,
                 vehicleLength, new Length.Rel(1.8, LengthUnit.METER), new Speed(200, SpeedUnit.KM_PER_HOUR),

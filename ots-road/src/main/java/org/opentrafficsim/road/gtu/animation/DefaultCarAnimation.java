@@ -82,19 +82,59 @@ public class DefaultCarAnimation extends Renderable2D
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         final LaneBasedIndividualGTU car = (LaneBasedIndividualGTU) getSource();
+
+        if (car.isDestroyed())
+        {
+            try
+            {
+                destroy();
+            }
+            catch (Exception e)
+            {
+                System.err.println("GTU: " + car.toString());
+                e.printStackTrace();
+            }
+        }
+
         final double length = car.getLength().getSI();
+        final double l2 = length / 2;
         final double width = car.getWidth().getSI();
+        final double w2 = width / 2;
+        final double w4 = width / 4;
         graphics.setColor(this.gtuColorer.getColor(car));
         BasicStroke saveStroke = (BasicStroke) graphics.getStroke();
         graphics.setStroke(new BasicStroke(0));
-        Rectangle2D rectangle = new Rectangle2D.Double(-length / 2, -width / 2, length, width);
+        Rectangle2D rectangle = new Rectangle2D.Double(-l2, -w2, length, width);
         graphics.draw(rectangle);
         graphics.fill(rectangle);
-        // Draw a 1m diameter white disk about 1m before the front to indicate which side faces forward
+        // Draw a white disk at the front to indicate which side faces forward
         graphics.setColor(Color.WHITE);
-        Ellipse2D.Double frontIndicator = new Ellipse2D.Double(length / 2 - 1.5d, -0.5d, 1d, 1d);
+        Ellipse2D.Double frontIndicator = new Ellipse2D.Double(l2 - w2 - w4, -w4, w2, w2);
         graphics.draw(frontIndicator);
         graphics.fill(frontIndicator);
+
+        graphics.setColor(Color.YELLOW);
+        if (car.getTurnIndicatorStatus() != null && car.getTurnIndicatorStatus().isLeftOrBoth())
+        {
+            Rectangle2D.Double leftIndicator = new Rectangle2D.Double(l2 - w4, -w2, w4, w4);
+            graphics.fill(leftIndicator);
+        }
+        
+        if (car.getTurnIndicatorStatus() != null && car.getTurnIndicatorStatus().isRightOrBoth())
+        {
+            Rectangle2D.Double rightIndicator = new Rectangle2D.Double(l2 - w4, w2 - w4, w4, w4);
+            graphics.fill(rightIndicator);            
+        }
+        
+        graphics.setColor(Color.RED);
+        if (car.getAcceleration().si < 0.0)
+        {
+            Rectangle2D.Double leftBrake = new Rectangle2D.Double(-l2, w2 - w4, w4, w4);
+            Rectangle2D.Double rightBrake = new Rectangle2D.Double(-l2, -w2, w4, w4);
+            graphics.setColor(Color.RED);
+            graphics.fill(leftBrake);
+            graphics.fill(rightBrake);
+        }
         graphics.setStroke(saveStroke);
     }
 
@@ -102,7 +142,7 @@ public class DefaultCarAnimation extends Renderable2D
     @Override
     public final String toString()
     {
-        return "DefaultCarAnimation [id=" + ((LaneBasedIndividualGTU) this.getSource()).getId() + "]";
+        return this.getSource().toString();
     }
 
 }

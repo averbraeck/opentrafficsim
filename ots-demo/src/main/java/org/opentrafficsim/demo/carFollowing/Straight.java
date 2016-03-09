@@ -571,9 +571,9 @@ class StraightModel implements OTSModelInterface, UNITS
     {
         Length.Rel initialPosition = new Length.Rel(4000, METER);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-        initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
         try
         {
+            initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
             LaneBasedDrivingCharacteristics drivingCharacteristics =
                 new LaneBasedDrivingCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
             LaneBasedStrategicalPlanner strategicalPlanner =
@@ -581,7 +581,8 @@ class StraightModel implements OTSModelInterface, UNITS
             this.block =
                 new LaneBasedIndividualGTU("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
                     new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed(0.0, KM_PER_HOUR), this.simulator,
-                    strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+                    strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer,
+                    this.network);
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
         {
@@ -607,9 +608,9 @@ class StraightModel implements OTSModelInterface, UNITS
         Length.Rel initialPosition = new Length.Rel(0, METER);
         Speed initialSpeed = new Speed(100, KM_PER_HOUR);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-        initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
         try
         {
+            initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
             Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
             GTUFollowingModel gtuFollowingModel =
                 generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;

@@ -125,7 +125,17 @@ public interface GTU extends LocatableInterface, Serializable
 
     /** @return the driving characteristics of this GTU (driver). */
     DrivingCharacteristics getDrivingCharacteristics();
-
+    
+    /** @return the status of the turn indicator. */
+    TurnIndicatorStatus getTurnIndicatorStatus();
+    
+    /** 
+     * Set the status of the turn indicator.
+     * @param turnIndicatorStatus the new status of the turn indicator. 
+     * @throws GTUException when GTUType does not have a turn indicator
+     */
+    void setTurnIndicatorStatus(TurnIndicatorStatus turnIndicatorStatus) throws GTUException;
+    
     /** {@inheritDoc} */
     @Override
     DirectedPoint getLocation();

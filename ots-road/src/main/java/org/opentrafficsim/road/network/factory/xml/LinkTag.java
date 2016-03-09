@@ -329,4 +329,13 @@ final class LinkTag
         }
         return offset;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "LinkTag [name=" + this.name + ", nodeStartTag=" + this.nodeStartTag + ", nodeEndTag=" + this.nodeEndTag
+            + "]";
+    }
+    
 }

@@ -20,7 +20,13 @@ import org.opentrafficsim.core.gtu.GTU;
 public interface PerceivableContext
 {
     /**
-     * Get an overview of the GTUs in the model.
+     * Get a descriptive Id of the perceivable context (e.g., useful for debugging purposes).
+     * @return the id of the context
+     */
+    String getId();
+    
+    /**
+     * Get an overview of the GTUs in the model. The set returned is a defensive copy.
      * @return a set of GTUs as registered in the current model.
      */
     Set<GTU> getGTUs();
@@ -43,5 +49,12 @@ public interface PerceivableContext
      * @return whether the network contains this GTU
      */
     boolean containsGTU(GTU gtu);
+
+    /**
+     * Test whether a GTU ID is registered in the network.
+     * @param gtuId the GTU ID to search for
+     * @return whether the network contains a GTU with this ID
+     */
+    boolean containsGtuId(String gtuId);
 
 }

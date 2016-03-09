@@ -417,10 +417,10 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         {
             Length.Rel initialPosition = new Length.Rel(200, METER);
             Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-            initialPositions.add(new DirectedLanePosition(this.lanes.get(this.lanes.size() - 1), initialPosition,
-                GTUDirectionality.DIR_PLUS));
             try
             {
+                initialPositions.add(new DirectedLanePosition(this.lanes.get(this.lanes.size() - 1), initialPosition,
+                    GTUDirectionality.DIR_PLUS));
                 LaneBasedDrivingCharacteristics drivingCharacteristics =
                     new LaneBasedDrivingCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
                 LaneBasedStrategicalPlanner strategicalPlanner =
@@ -456,10 +456,10 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
             Length.Rel initialPosition = new Length.Rel(0, METER);
             Speed initialSpeed = new Speed(100, KM_PER_HOUR);
             Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-            initialPositions.add(new DirectedLanePosition(this.lanes.get(0), initialPosition,
-                GTUDirectionality.DIR_PLUS));
             try
             {
+                initialPositions.add(new DirectedLanePosition(this.lanes.get(0), initialPosition,
+                    GTUDirectionality.DIR_PLUS));
                 Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
                 GTUFollowingModel gtuFollowingModel =
                     generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
@@ -474,7 +474,8 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                         new LaneBasedGTUFollowingTacticalPlanner());
                 new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
                     vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
-                    strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer, this.network);
+                    strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer,
+                    this.network);
                 this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             }
             catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)

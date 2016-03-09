@@ -138,4 +138,12 @@ class NodeTag
         nodeTag.node = node;
         return node;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "NodeTag [name=" + this.name + ", coordinate=" + this.coordinate + ", node=" + this.node + "]";
+    }
+
 }
