@@ -52,9 +52,6 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType
     /** Initial speed of the next GTU. */
     private Speed initialSpeed;
 
-    /** The OTSNetwork that all generated GTUs will be registered in. */
-    private OTSNetwork network;
-
     /**
      * @param typeId The id of the GTUType to make it identifiable.
      * @param idGenerator IdGenerator; the id generator used to generate names for GTUs constructed using this TemplateGTUType.
@@ -76,18 +73,35 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType
      * @param network OTSNetwork; the network that all generated GTUs are registered in
      * @throws GTUException when GTUType defined more than once
      */
-    public LaneBasedTemplateGTUType(final String typeId, IdGenerator idGenerator, final Generator<Length.Rel> lengthGenerator,
-            final Generator<Length.Rel> widthGenerator, final Generator<Speed> maximumSpeedGenerator,
-            final OTSDEVSSimulatorInterface simulator, Generator<LaneBasedStrategicalPlanner> strategicalPlannerGenerator,
-            Generator<LanePerceptionFull> perceptionGenerator, final Set<DirectedLanePosition> initialLongitudinalPositions,
-            Generator<Speed> initialSpeedGenerator, OTSNetwork network) throws GTUException
+    public LaneBasedTemplateGTUType(final String typeId, final IdGenerator idGenerator,
+            final Generator<Length.Rel> lengthGenerator, final Generator<Length.Rel> widthGenerator,
+            final Generator<Speed> maximumSpeedGenerator, final OTSDEVSSimulatorInterface simulator,
+            final Generator<LaneBasedStrategicalPlanner> strategicalPlannerGenerator,
+            final Generator<LanePerceptionFull> perceptionGenerator,
+            final Set<DirectedLanePosition> initialLongitudinalPositions, final Generator<Speed> initialSpeedGenerator,
+            final OTSNetwork network) throws GTUException
     {
         super(typeId, idGenerator, lengthGenerator, widthGenerator, maximumSpeedGenerator, simulator, network);
+        if (null == strategicalPlannerGenerator)
+        {
+            throw new GTUException("strategicalPlannerGenerator is null");
+        }
         this.strategicalPlannerGenerator = strategicalPlannerGenerator;
+        if (null == perceptionGenerator)
+        {
+            throw new GTUException("perceptionGenerator is null");
+        }
         this.perceptionGenerator = perceptionGenerator;
+        if (null == initialLongitudinalPositions)
+        {
+            throw new GTUException("initialLongitudinalPositions is null");
+        }
         this.initialLongitudinalPositions = initialLongitudinalPositions;
+        if (null == initialSpeedGenerator)
+        {
+            throw new GTUException("initialSpeedGenerator is null");
+        }
         this.initialSpeedGenerator = initialSpeedGenerator;
-        this.network = network;
     }
 
     /**
@@ -122,14 +136,6 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType
     public Speed getInitialSpeed()
     {
         return this.initialSpeed;
-    }
-
-    /**
-     * @return Network; the network for all generated GTUs
-     */
-    public OTSNetwork getNetwork()
-    {
-        return this.network;
     }
 
 }
