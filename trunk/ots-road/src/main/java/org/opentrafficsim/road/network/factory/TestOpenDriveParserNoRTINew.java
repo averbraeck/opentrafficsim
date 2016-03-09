@@ -56,7 +56,6 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -70,7 +69,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
@@ -78,7 +76,6 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.opendrive.LaneAnimationOD;
 import org.opentrafficsim.road.network.factory.opendrive.OpenDriveNetworkLaneParser;
-import org.opentrafficsim.road.network.factory.opendrive.communicationRTI.RTICars;
 import org.opentrafficsim.road.network.factory.opendrive.communicationRTI.ReceiverThread;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -489,9 +486,17 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                         new LaneBasedGTUFollowingLaneChangeTacticalPlanner(), cRoutes.get(routeRandom.nextInt(6)));
                 LanePerceptionFull perception = new LanePerceptionFull();
 
-                DirectedLanePosition directedLanePosition =
-                    new DirectedLanePosition(lane,
-                        initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()), dir);
+                DirectedLanePosition directedLanePosition = null;
+                try
+                {
+                    directedLanePosition =
+                        new DirectedLanePosition(lane, initialPosDist.draw().multiplyBy(
+                            lane.getCenterLine().getLengthSI()), dir);
+                }
+                catch (GTUException exception1)
+                {
+                    exception1.printStackTrace();
+                }
                 Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
                 lanepositionSet.add(directedLanePosition);
 

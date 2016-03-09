@@ -622,9 +622,10 @@ class SequentialModel implements OTSModelInterface, UNITS
         Length.Rel initialPosition = new Length.Rel(0, METER);
         Speed initialSpeed = new Speed(100, KM_PER_HOUR);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-        initialPositions.add(new DirectedLanePosition(this.initialLane, initialPosition, GTUDirectionality.DIR_PLUS));
         try
         {
+            initialPositions
+                .add(new DirectedLanePosition(this.initialLane, initialPosition, GTUDirectionality.DIR_PLUS));
             Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
             GTUFollowingModel gtuFollowingModel =
                 generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;

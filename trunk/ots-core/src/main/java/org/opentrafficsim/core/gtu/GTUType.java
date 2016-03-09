@@ -34,6 +34,9 @@ public final class GTUType implements Serializable
     /** The set of previously instantiated GTUTypes. */
     private static final Map<String, GTUType> INSTANTIATEDGTUTYPES = new LinkedHashMap<String, GTUType>();
 
+    /** Does the GTUType have a turn indicator or not? */
+    private boolean hasTurnIndicator = true;
+
     static
     {
         ALL = new GTUType("ALL");
@@ -41,6 +44,7 @@ public final class GTUType implements Serializable
 
         NONE = new GTUType("NONE");
         INSTANTIATEDGTUTYPES.put("NONE", GTUType.NONE);
+        NONE.setHasTurnIndicator(false);
     }
 
     /**
@@ -76,6 +80,22 @@ public final class GTUType implements Serializable
     public String getId()
     {
         return this.id;
+    }
+
+    /**
+     * @return whether the GTUType has a turnIndicator or not
+     */
+    public boolean hasTurnIndicator()
+    {
+        return this.hasTurnIndicator;
+    }
+
+    /**
+     * @param hasTurnIndicator set whether the GTUType has a turnIndicator or not
+     */
+    public void setHasTurnIndicator(final boolean hasTurnIndicator)
+    {
+        this.hasTurnIndicator = hasTurnIndicator;
     }
 
     /** {@inheritDoc} */

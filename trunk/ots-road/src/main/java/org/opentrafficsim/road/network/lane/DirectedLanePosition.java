@@ -3,8 +3,8 @@ package org.opentrafficsim.road.network.lane;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUException;
 
 /**
  * <p>
@@ -31,10 +31,15 @@ public class DirectedLanePosition
      * @param lane the lane for the position
      * @param position the position on the lane, relative to the cross section link (design line)
      * @param gtuDirection the direction the vehicle is driving to -- either in the direction of the design line, or against it
+     * @throws GTUException when preconditions fail
      */
     public DirectedLanePosition(final Lane lane, final Length.Rel position, final GTUDirectionality gtuDirection)
+        throws GTUException
     {
         super();
+        GTUException.failIf(lane == null, "lane is null");
+        GTUException.failIf(position == null, "position is null");
+        GTUException.failIf(gtuDirection == null, "gtuDirection is null");
         this.lane = lane;
         this.position = position;
         this.gtuDirection = gtuDirection;
@@ -66,9 +71,8 @@ public class DirectedLanePosition
 
     /**
      * @return the location of the GTU on the lane, in the right direction.
-     * @throws OTSGeometryException when the position turns out to be outside of the lane
      */
-    public DirectedPoint getLocation() throws OTSGeometryException
+    public DirectedPoint getLocation()
     {
         double fraction = this.position.si / this.lane.getParentLink().getLength().si;
         DirectedPoint p = this.lane.getCenterLine().getLocationFractionExtended(fraction);
@@ -93,7 +97,7 @@ public class DirectedLanePosition
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
             return true;

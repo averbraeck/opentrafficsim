@@ -142,8 +142,8 @@ public class TestXMLParser extends AbstractWrappableAnimation
             this.simulator = (OTSDEVSSimulatorInterface) pSimulator;
             // URL url = URLResource.getResource("/PNH1.xml");
             // URL url = URLResource.getResource("/offset-example.xml");
-            URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
-            // URL url = URLResource.getResource("/straight-road-new-gtu-example_2.xml");
+            // URL url = URLResource.getResource("/circular-road-new-gtu-example.xml");
+            URL url = URLResource.getResource("/straight-road-new-gtu-example_2.xml");
             XmlNetworkLaneParser nlp = new XmlNetworkLaneParser(this.simulator);
             try
             {

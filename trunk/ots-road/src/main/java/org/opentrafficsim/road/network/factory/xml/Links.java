@@ -112,17 +112,24 @@ final class Links
         Set<LinkTag> links = new HashSet<>(parser.linkTags.values());
         while (!links.isEmpty())
         {
+            System.out.println(links);
             boolean found = false;
             for (LinkTag linkTag : links)
             {
                 if (linkTag.nodeStartTag.node != null && linkTag.nodeEndTag.node != null)
+                {
+                    links.remove(linkTag);
+                    found = true;
+                    break;
+                }
+                if (linkTag.nodeStartTag.node != null && linkTag.nodeEndTag.node == null)
                 {
                     calculateNodeCoordinates(linkTag, parser);
                     links.remove(linkTag);
                     found = true;
                     break;
                 }
-                if (linkTag.nodeStartTag.node != null || linkTag.nodeEndTag.node != null)
+                if (linkTag.nodeStartTag.node == null && linkTag.nodeEndTag.node != null)
                 {
                     calculateNodeCoordinates(linkTag, parser);
                     links.remove(linkTag);
@@ -161,12 +168,15 @@ final class Links
         if (linkTag.nodeStartTag.node != null && linkTag.nodeStartTag.angle != null && linkTag.nodeEndTag.node != null
             && linkTag.nodeEndTag.angle != null)
         {
+            System.err.println("Shouldn't happen");
             return;
         }
 
         // calculate dx, dy and dz for the straight or the arc.
         if (linkTag.nodeStartTag.node != null && linkTag.nodeEndTag.node != null)
         {
+            System.err.println("Why here?");
+
             // ARC with both points defined
             if (linkTag.arcTag != null)
             {
@@ -338,6 +348,10 @@ final class Links
                 linkTag.nodeStartTag.node = NodeTag.makeOTSNode(nodeTag, parser);
             }
         }
+        else
+        {
+            System.err.println("Problem!");
+        }
     }
 
     /**
@@ -412,10 +426,19 @@ final class Links
             {
                 for (int p = 1; p < points - 1; p++)
                 {
-                    coordinates[p] =
-                        new OTSPoint3D(linkTag.arcTag.center.x + radiusSI
-                            * Math.cos(linkTag.arcTag.startAngle + angleStep * p), linkTag.arcTag.center.y + radiusSI
-                            * Math.sin(linkTag.arcTag.startAngle + angleStep * p), from.coordinate.z + slopeStep * p);
+                    try
+                    {
+                        coordinates[p] =
+                            new OTSPoint3D(linkTag.arcTag.center.x + radiusSI
+                                * Math.cos(linkTag.arcTag.startAngle + angleStep * p), linkTag.arcTag.center.y
+                                + radiusSI * Math.sin(linkTag.arcTag.startAngle + angleStep * p), from.coordinate.z
+                                + slopeStep * p);
+                    }
+                    catch (NullPointerException npe)
+                    {
+                        npe.printStackTrace();
+                        System.err.println(npe.getMessage());
+                    }
                 }
             }
         }

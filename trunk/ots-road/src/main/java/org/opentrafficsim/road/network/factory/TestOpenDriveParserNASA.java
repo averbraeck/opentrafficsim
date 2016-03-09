@@ -478,9 +478,17 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
                 LanePerceptionFull perception = new LanePerceptionFull();
 
-                DirectedLanePosition directedLanePosition =
-                    new DirectedLanePosition(lane,
-                        initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()), dir);
+                DirectedLanePosition directedLanePosition = null;
+                try
+                {
+                    directedLanePosition =
+                        new DirectedLanePosition(lane, initialPosDist.draw().multiplyBy(
+                            lane.getCenterLine().getLengthSI()), dir);
+                }
+                catch (GTUException exception1)
+                {
+                    exception1.printStackTrace();
+                }
                 Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
                 lanepositionSet.add(directedLanePosition);
 

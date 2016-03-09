@@ -22,6 +22,7 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -81,6 +82,21 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
     /** Earliest next lane change time. */
     private Time.Abs earliestNexLaneChangeTime = Time.Abs.ZERO;
 
+    /** Bezier curve points for gradual lane change. */
+    private static final double[] SCURVE;
+
+    static
+    {
+        SCURVE = new double[65];
+        for (int i = 0; i <= 64; i++)
+        {
+            double t = i / 64.0;
+            double ot = 1.0 - t;
+            double t3 = t * t * t;
+            SCURVE[i] = 10.0 * t3 * ot * ot + 5.0 * t3 * t * ot + t3 * t * t;
+        }
+    }
+
     /**
      * Instantiated a tactical planner with just GTU following behavior and no lane changes.
      */
@@ -98,6 +114,9 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
         LaneBasedGTU laneBasedGTU = (LaneBasedGTU) gtu;
         LanePerception perception = laneBasedGTU.getPerception();
         LaneBasedDrivingCharacteristics drivingCharacteristics = laneBasedGTU.getDrivingCharacteristics();
+
+        // start with the turn indicator off -- this can change during the method
+        laneBasedGTU.setTurnIndicatorStatus(TurnIndicatorStatus.NONE);
 
         // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
         if (laneBasedGTU.getMaximumVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
@@ -126,6 +145,8 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
                 LateralDirectionality direction = determineLeftRight(laneBasedGTU, nextSplitInfo);
                 if (direction != null)
                 {
+                    gtu.setTurnIndicatorStatus(direction.isLeft() ? TurnIndicatorStatus.LEFT
+                        : TurnIndicatorStatus.RIGHT);
                     OperationalPlan laneChangePlan =
                         makeLaneChangePlanMobil(laneBasedGTU, perception, lanePathInfo, direction);
                     if (laneChangePlan != null)
@@ -174,6 +195,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
                             LANECHANGETIME, TimeUnit.SECOND));
                 if (dlms.getLaneChange() != null)
                 {
+                    gtu.setTurnIndicatorStatus(TurnIndicatorStatus.LEFT);
                     OperationalPlan laneChangePlan =
                         makeLaneChangePlanMobil(laneBasedGTU, perception, lanePathInfo, LateralDirectionality.LEFT);
                     if (laneChangePlan != null)
@@ -215,6 +237,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
                             LANECHANGETIME, TimeUnit.SECOND));
                 if (dlms.getLaneChange() != null)
                 {
+                    gtu.setTurnIndicatorStatus(TurnIndicatorStatus.RIGHT);
                     OperationalPlan laneChangePlan =
                         makeLaneChangePlanMobil(laneBasedGTU, perception, lanePathInfo, LateralDirectionality.RIGHT);
                     if (laneChangePlan != null)
@@ -413,7 +436,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
         OTSLine3D path;
         try
         {
-            path = interpolate(lanePathInfo.getPath(), lanePathInfo2.getPath(), distanceSI);
+            path = interpolateScurve(lanePathInfo.getPath(), lanePathInfo2.getPath(), distanceSI);
         }
         catch (OTSGeometryException exception)
         {
@@ -476,6 +499,10 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
                     operationalPlanSegmentList);
             this.earliestNexLaneChangeTime =
                 gtu.getSimulator().getSimulatorTime().getTime().plus(new Time.Rel(17, TimeUnit.SECOND));
+
+            // make sure out turn indicator is on!
+            gtu.setTurnIndicatorStatus(direction.isLeft() ? TurnIndicatorStatus.LEFT : TurnIndicatorStatus.RIGHT);
+
             return op;
         }
         catch (OperationalPlanException | SimRuntimeException exception)
@@ -485,14 +512,14 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
     }
 
     /**
-     * Linearly interpolate between two lines (can later become S-curve if needed).
+     * Linearly interpolate between two lines.
      * @param line1 first line
      * @param line2 second line
      * @param lengthSI length of the interpolation (at this point 100% line 2)
      * @return a line between line 1 and line 2
      * @throws OTSGeometryException when interpolation fails
      */
-    private static OTSLine3D interpolate(OTSLine3D line1, OTSLine3D line2, final double lengthSI)
+    private static OTSLine3D interpolateLinear(OTSLine3D line1, OTSLine3D line2, final double lengthSI)
         throws OTSGeometryException
     {
         OTSLine3D l1 = line1.extract(0, lengthSI);
@@ -506,6 +533,32 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
             DirectedPoint p1 = l1.getLocationFraction(f0);
             DirectedPoint p2 = l2.getLocationFraction(f0);
             line.add(new OTSPoint3D(p1.x * f1 + p2.x * f0, p1.y * f1 + p2.y * f0, p1.z * f1 + p2.z * f0));
+        }
+        return new OTSLine3D(line);
+    }
+
+    /**
+     * S-curve interpolation between two lines. We use a 5th order Bezier curve for this.
+     * @param line1 first line
+     * @param line2 second line
+     * @param lengthSI length of the interpolation (at this point 100% line 2)
+     * @return a line between line 1 and line 2
+     * @throws OTSGeometryException when interpolation fails
+     */
+    private static OTSLine3D interpolateScurve(OTSLine3D line1, OTSLine3D line2, final double lengthSI)
+        throws OTSGeometryException
+    {
+        OTSLine3D l1 = line1.extract(0, lengthSI);
+        OTSLine3D l2 = line2.extract(0, lengthSI);
+        List<OTSPoint3D> line = new ArrayList<>();
+        int num = 64;
+        for (int i = 0; i <= num; i++)
+        {
+            double factor = SCURVE[i];
+            DirectedPoint p1 = l1.getLocationFraction(i / 64.0);
+            DirectedPoint p2 = l2.getLocationFraction(i / 64.0);
+            line.add(new OTSPoint3D(p1.x + factor * (p2.x - p1.x), p1.y + factor * (p2.y - p1.y), p1.z + factor
+                * (p2.z - p1.z)));
         }
         return new OTSLine3D(line);
     }

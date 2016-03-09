@@ -24,6 +24,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
+import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -465,8 +466,15 @@ public class LaneBasedGTUTest implements UNITS
                     {
                         fail("Error in test; canot find lane with rank " + laneRank);
                     }
-                    result.add(new DirectedLanePosition(lane, new Length.Rel(rearPositionInLink, METER),
-                        GTUDirectionality.DIR_PLUS));
+                    try
+                    {
+                        result.add(new DirectedLanePosition(lane, new Length.Rel(rearPositionInLink, METER),
+                            GTUDirectionality.DIR_PLUS));
+                    }
+                    catch (GTUException exception)
+                    {
+                        fail("Error in test; DirectedLanePosition for lane " + lane);
+                    }
                 }
             }
             cumulativeLength += linkLength;

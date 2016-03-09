@@ -595,9 +595,9 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
     {
         Length.Rel initialPosition = new Length.Rel(4000, METER);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-        initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
         try
         {
+            initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
             LaneBasedDrivingCharacteristics drivingCharacteristics =
                 new LaneBasedDrivingCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
             LaneBasedStrategicalPlanner strategicalPlanner =
@@ -633,9 +633,9 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
         Length.Rel initialPosition = new Length.Rel(0, METER);
         Speed initialSpeed = new Speed(100, KM_PER_HOUR);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
-        initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
         try
         {
+            initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
             Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
             GTUFollowingModel gtuFollowingModel;
             if (generateTruck)

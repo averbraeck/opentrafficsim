@@ -474,17 +474,26 @@ public class TestOpenDriveParserNoRTI extends AbstractWrappableAnimation
                 LaneBasedDrivingCharacteristics drivingCharacteristics =
                     new LaneBasedDrivingCharacteristics(new IDMPlus(), new Altruistic());
                 LaneBasedStrategicalPlanner sPlanner =
-                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner()); // , cr);
-                
-                System.out.println("Car " + i + " - generated on lane " + lane + " with sn=" + lane.getParentLink().getStartNode() 
-                    + " and en=" + lane.getParentLink().getEndNode() + ", route = " + cr);
-                
-                
+                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
+                        new LaneBasedGTUFollowingTacticalPlanner()); // , cr);
+
+                System.out.println("Car " + i + " - generated on lane " + lane + " with sn="
+                    + lane.getParentLink().getStartNode() + " and en=" + lane.getParentLink().getEndNode()
+                    + ", route = " + cr);
+
                 LanePerceptionFull perception = new LanePerceptionFull();
 
-                DirectedLanePosition directedLanePosition =
-                    new DirectedLanePosition(lane,
-                        initialPosDist.draw().multiplyBy(lane.getCenterLine().getLengthSI()), dir);
+                DirectedLanePosition directedLanePosition = null;
+                try
+                {
+                    directedLanePosition =
+                        new DirectedLanePosition(lane, initialPosDist.draw().multiplyBy(
+                            lane.getCenterLine().getLengthSI()), dir);
+                }
+                catch (GTUException exception1)
+                {
+                    exception1.printStackTrace();
+                }
                 Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
                 lanepositionSet.add(directedLanePosition);
 

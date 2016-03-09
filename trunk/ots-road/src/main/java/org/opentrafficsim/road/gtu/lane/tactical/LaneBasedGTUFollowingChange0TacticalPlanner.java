@@ -16,6 +16,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -101,6 +102,9 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
             LanePerception perception = laneBasedGTU.getPerception();
             LaneBasedDrivingCharacteristics drivingCharacteristics = laneBasedGTU.getDrivingCharacteristics();
 
+            // start with the turn indicator off -- this can change during the method
+            laneBasedGTU.setTurnIndicatorStatus(TurnIndicatorStatus.NONE);
+
             // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
             if (laneBasedGTU.getMaximumVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
             {
@@ -128,6 +132,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
                     LateralDirectionality direction = determineLeftRight(laneBasedGTU, nextSplitInfo);
                     if (direction != null)
                     {
+                        gtu.setTurnIndicatorStatus(direction.isLeft() ? TurnIndicatorStatus.LEFT : TurnIndicatorStatus.RIGHT);
                         if (canChange(laneBasedGTU, perception, lanePathInfo, direction))
                         {
                             DirectedPoint newLocation = changeLane(laneBasedGTU, direction);
@@ -181,6 +186,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
                             new Time.Rel(0.5, TimeUnit.SECOND));
                     if (dlms.getLaneChange() != null)
                     {
+                        gtu.setTurnIndicatorStatus(TurnIndicatorStatus.LEFT);
                         if (canChange(laneBasedGTU, perception, lanePathInfo, LateralDirectionality.LEFT))
                         {
                             DirectedPoint newLocation = changeLane(laneBasedGTU, LateralDirectionality.LEFT);
@@ -226,6 +232,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
                             new Time.Rel(0.5, TimeUnit.SECOND));
                     if (dlms.getLaneChange() != null)
                     {
+                        gtu.setTurnIndicatorStatus(TurnIndicatorStatus.RIGHT);
                         if (canChange(laneBasedGTU, perception, lanePathInfo, LateralDirectionality.RIGHT))
                         {
                             DirectedPoint newLocation = changeLane(laneBasedGTU, LateralDirectionality.RIGHT);
@@ -451,6 +458,9 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
         this.earliestNexLaneChangeTime =
             gtu.getSimulator().getSimulatorTime().getTime().plus(new Time.Rel(15, TimeUnit.SECOND));
 
+        // make sure out turn indicator is on!
+        gtu.setTurnIndicatorStatus(direction.isLeft() ? TurnIndicatorStatus.LEFT : TurnIndicatorStatus.RIGHT);
+        
         return p;
     }
 

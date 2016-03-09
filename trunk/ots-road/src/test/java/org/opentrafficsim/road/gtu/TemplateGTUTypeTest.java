@@ -249,6 +249,7 @@ public class TemplateGTUTypeTest implements UNITS
      * @param length Length.Rel; the expected length
      * @param width Length.Rel; the expected width
      * @param maximumSpeed Speed; the expected maximum velocity
+     * @param initialSpeed Speed; the initial velocity
      * @param simulator OTSDEVSSimulatorInterface; the expected simulator
      * @throws ProbabilityException
      */

@@ -49,7 +49,7 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
     private Map<GTUType, SimpleWeightedGraph<Node, LinkEdge<Link>>> linkGraphs = new HashMap<>();
 
     /** GTUs registered in this network. */
-    private Set<GTU> gtus = new HashSet<>();
+    private Map<String, GTU> gtuMap = new HashMap<>();
 
     /**
      * Construction of an empty network.
@@ -60,9 +60,8 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
         this.id = id;
     }
 
-    /**
-     * @return id
-     */
+    /** {@inheritDoc} */
+    @Override
     public final String getId()
     {
         return this.id;
@@ -109,6 +108,7 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
     @Override
     public final boolean containsNode(final Node node)
     {
+        System.out.println(node);
         return this.nodeMap.keySet().contains(node.getId());
     }
 
@@ -466,7 +466,7 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
      */
     public final void addGTU(final GTU gtu)
     {
-        this.gtus.add(gtu);
+        this.gtuMap.put(gtu.getId(), gtu);
     }
 
     /**
@@ -475,7 +475,7 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
      */
     public final void removeGTU(final GTU gtu)
     {
-        this.gtus.remove(gtu);
+        this.gtuMap.remove(gtu.getId());
     }
 
     /**
@@ -485,7 +485,7 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
      */
     public final boolean containsGTU(final GTU gtu)
     {
-        return this.gtus.contains(gtu);
+        return this.gtuMap.containsValue(gtu);
     }
 
     /** {@inheritDoc} */
@@ -493,7 +493,14 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
     public final Set<GTU> getGTUs()
     {
         // defensive copy
-        return new HashSet<GTU>(this.gtus);
+        return new HashSet<GTU>(this.gtuMap.values());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean containsGtuId(final String gtuId)
+    {
+        return this.gtuMap.containsKey(gtuId);
     }
 
 }
