@@ -94,11 +94,11 @@ public class AbstractLaneBasedGTUTest implements UNITS
                 simulator, LongitudinalDirectionality.DIR_PLUS);
         // A GTU can exist on several lanes at once; create another lane group to test that
         OTSNode nodeBFrom = new OTSNode("BFrom", new OTSPoint3D(10, 0, 0));
-        OTSNode nodeBTo = new OTSNode("BTo", new OTSPoint3D(1000, 100, 0));
+        OTSNode nodeBTo = new OTSNode("BTo", new OTSPoint3D(1000, 0, 0));
         Lane[] lanesGroupB =
             LaneFactory.makeMultiLane("B", nodeBFrom, nodeBTo, null, 3, laneType, new Speed(100, KM_PER_HOUR),
                 simulator, LongitudinalDirectionality.DIR_PLUS);
-        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+        Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(2);
 
         Length.Rel positionA = new Length.Rel(100, METER);
         initialLongitudinalPositions
