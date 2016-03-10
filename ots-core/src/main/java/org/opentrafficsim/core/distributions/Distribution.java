@@ -19,7 +19,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public class Distribution<O> implements Generator<O>
 {
     /** The generators (with their probabilities or frequencies). */
-    private final ArrayList<FrequencyAndObject<O>> generators;
+    private final ArrayList<FrequencyAndObject<O>> generators = new ArrayList<FrequencyAndObject<O>>();
 
     /** Sum of all probabilities or frequencies. */
     private double cumulativeTotal;
@@ -37,10 +37,19 @@ public class Distribution<O> implements Generator<O>
     public Distribution(final List<FrequencyAndObject<O>> generators, final StreamInterface stream)
             throws ProbabilityException, NullPointerException
     {
+        this(stream);
         // Store a defensive copy of the generator list (the generators are immutable; a list of them is not) and make sure it
         // is a List that supports add, remove, etc.
-        this.generators = new ArrayList<FrequencyAndObject<O>>(generators);
+        this.generators.addAll(generators);
         fixProbabilities();
+    }
+
+    /**
+     * Construct a new Distribution with no generators.
+     * @param stream StreamInterface; source for randomness
+     */
+    public Distribution(final StreamInterface stream)
+    {
         if (null == stream)
         {
             throw new NullPointerException("random source may not be null");
@@ -211,7 +220,7 @@ public class Distribution<O> implements Generator<O>
     {
         return this.generators.size();
     }
-    
+
     /** {@inheritDoc} */
     public String toString()
     {
