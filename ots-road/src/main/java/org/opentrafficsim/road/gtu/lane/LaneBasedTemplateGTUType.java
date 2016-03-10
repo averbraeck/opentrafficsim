@@ -26,7 +26,7 @@ import org.opentrafficsim.road.network.lane.DirectedLanePosition;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedTemplateGTUType extends TemplateGTUType
+public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBasedGTUCharacteristicsGenerator
 {
     /** */
     private static final long serialVersionUID = 20160101L;
@@ -40,17 +40,8 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType
     /** Generator for the initial speed of the next GTU. */
     private Generator<Speed> initialSpeedGenerator;
 
-    /** Perception of the next GTU. */
-    private LanePerceptionFull perception = null;
-
-    /** Strategical planner of the next GTU. */
-    private LaneBasedStrategicalPlanner strategicalPlanner = null;
-
     /** Initial longitudinal positions of all generated GTUs. */
     private Set<DirectedLanePosition> initialLongitudinalPositions;
-
-    /** Initial speed of the next GTU. */
-    private Speed initialSpeed;
 
     /**
      * @param typeId The id of the GTUType to make it identifiable.
@@ -82,25 +73,13 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType
             final OTSNetwork network) throws GTUException
     {
         super(typeId, idGenerator, lengthGenerator, widthGenerator, maximumSpeedGenerator, simulator, network);
-        if (null == strategicalPlannerGenerator)
-        {
-            throw new GTUException("strategicalPlannerGenerator is null");
-        }
+        GTUException.failIf(null == strategicalPlannerGenerator, "strategicalPlannerGenerator is null");
+        GTUException.failIf(null == perceptionGenerator, "perceptionGenerator is null");
+        GTUException.failIf(null == initialLongitudinalPositions, "initialLongitudinalPositions is null");
+        GTUException.failIf(null == initialSpeedGenerator, "initialSpeedGenerator is null");
         this.strategicalPlannerGenerator = strategicalPlannerGenerator;
-        if (null == perceptionGenerator)
-        {
-            throw new GTUException("perceptionGenerator is null");
-        }
         this.perceptionGenerator = perceptionGenerator;
-        if (null == initialLongitudinalPositions)
-        {
-            throw new GTUException("initialLongitudinalPositions is null");
-        }
         this.initialLongitudinalPositions = initialLongitudinalPositions;
-        if (null == initialSpeedGenerator)
-        {
-            throw new GTUException("initialSpeedGenerator is null");
-        }
         this.initialSpeedGenerator = initialSpeedGenerator;
     }
 
@@ -114,28 +93,11 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType
                 this.strategicalPlannerGenerator.draw(), this.initialSpeedGenerator.draw(), this.initialLongitudinalPositions);
     }
 
-    /**
-     * @return LanePerceptionFull; the perception for the next GTU
-     */
-    public LanePerceptionFull getPerception()
+    /** {@inheritDoc} */
+    public String toString()
     {
-        return this.perception;
-    }
-
-    /**
-     * @return LaneBasedStrategicalPlanner; the strategical planner for the next GTU
-     */
-    public LaneBasedStrategicalPlanner getStrategicalPlanner()
-    {
-        return this.strategicalPlanner;
-    }
-
-    /**
-     * @return Speed; the initial speed of the next GTU
-     */
-    public Speed getInitialSpeed()
-    {
-        return this.initialSpeed;
+        return String.format("LaneBasedGTUTemplate [%s, %s, %s, %s, %s]", this.initialLongitudinalPositions,
+                this.perceptionGenerator, this.strategicalPlannerGenerator, this.initialSpeedGenerator, super.toString());
     }
 
 }

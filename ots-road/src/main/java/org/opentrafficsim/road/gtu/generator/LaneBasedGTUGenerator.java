@@ -8,27 +8,28 @@ import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
+import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
+import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djunits.value.vdouble.scalar.Time.Rel;
+import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
-import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUType;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
-import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -50,11 +51,14 @@ public class LaneBasedGTUGenerator
     /** FIFO for templates that have not been generated yet due to insufficient room/headway. */
     private final Queue<LaneBasedGTUCharacteristics> unplacedTemplates = new LinkedList<LaneBasedGTUCharacteristics>();
 
+    /** Name of the GTU generator. */
+    private final String id;
+
     /** Time distribution that determines the interval times between GTUs. */
-    private final ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDistribution;
+    private final Generator<Time.Rel> interarrivelTimeGenerator;
 
     /** Generates most properties of the GTUs. */
-    private final LaneBasedTemplateGTUType laneBasedTemplateGTUType;
+    private final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator;
 
     /** End time of this generator. */
     private final Time.Abs endTime;
@@ -74,15 +78,19 @@ public class LaneBasedGTUGenerator
     /** The way that this generator checks if it is safe to construct and place the next lane based GTU. */
     final RoomChecker roomChecker;
 
+    /** The GTU colorer that will be linked to each generated GTU. */
+    final GTUColorer gtuColorer;
+
     /**
      * Construct a new lane base GTU generator.
-     * @param interarrivelTimeDistribution ContinuousDistDoubleScalar.Rel&lt;Time.Rel, TimeUnit&gt;; generator for the interval
-     *            times between GTUs
+     * @param id String; name of the new GTU generator
+     * @param interarrivelTimeGenerator Generator&lt;Time.Rel&gt;; generator for the interval times between GTUs
      * @param maxGTUs long; maximum number of GTUs to generate
      * @param startTime Time.Abs; time at which the first GTU will be generated
      * @param endTime Time.Abs; time after which no more GTUs will be generated
      * @param gtuColorer GTUColorer; the GTU colorer that will be used by all generated GTUs
-     * @param laneBasedTemplateGTUType LaneBasedTemplateGTUType; the template that will generate the characteristics of each GTU
+     * @param laneBasedGTUCharacteristicsGenerator LaneBasedGTUCharacteristicsGenerator; generator of the characteristics of
+     *            each GTU
      * @param initialLongitudinalPositions SET&lt;DirectedLanePosition&gt;; the location and initial direction of all generated
      *            GTUs
      * @param network OTSNetwork; the OTS network that owns the generated GTUs
@@ -90,19 +98,21 @@ public class LaneBasedGTUGenerator
      *            place a new GTU
      * @throws SimRuntimeException when <cite>startTime</cite> lies before the current simulation time
      */
-    public LaneBasedGTUGenerator(final ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> interarrivelTimeDistribution,
-            final long maxGTUs, final Time.Abs startTime, final Time.Abs endTime, final GTUColorer gtuColorer,
-            final LaneBasedTemplateGTUType laneBasedTemplateGTUType,
+    public LaneBasedGTUGenerator(String id, final Generator<Time.Rel> interarrivelTimeGenerator, final long maxGTUs,
+            final Time.Abs startTime, final Time.Abs endTime, final GTUColorer gtuColorer,
+            final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator,
             final Set<DirectedLanePosition> initialLongitudinalPositions, final OTSNetwork network, RoomChecker roomChecker)
             throws SimRuntimeException
     {
-        this.interarrivelTimeDistribution = interarrivelTimeDistribution;
-        this.laneBasedTemplateGTUType = laneBasedTemplateGTUType;
+        this.id = id;
+        this.interarrivelTimeGenerator = interarrivelTimeGenerator;
+        this.laneBasedGTUCharacteristicsGenerator = laneBasedGTUCharacteristicsGenerator;
         this.endTime = endTime;
         this.maxGTUs = maxGTUs;
         this.initialLongitudinalPositions = initialLongitudinalPositions;
         this.roomChecker = roomChecker;
-        laneBasedTemplateGTUType.getSimulator().scheduleEventAbs(startTime, this, this, "generateCharacteristics",
+        this.gtuColorer = gtuColorer;
+        laneBasedGTUCharacteristicsGenerator.getSimulator().scheduleEventAbs(startTime, this, this, "generateCharacteristics",
                 new Object[] {});
     }
 
@@ -115,16 +125,16 @@ public class LaneBasedGTUGenerator
     @SuppressWarnings("unused")
     private void generateCharacteristics() throws ProbabilityException, SimRuntimeException
     {
-        OTSDEVSSimulatorInterface simulator = this.laneBasedTemplateGTUType.getSimulator();
+        OTSDEVSSimulatorInterface simulator = this.laneBasedGTUCharacteristicsGenerator.getSimulator();
         if (this.generatedGTUs >= this.maxGTUs
-                || this.laneBasedTemplateGTUType.getSimulator().getSimulatorTime().get().ge(this.endTime))
+                || this.laneBasedGTUCharacteristicsGenerator.getSimulator().getSimulatorTime().get().ge(this.endTime))
         {
             return; // Do not reschedule
         }
         synchronized (this.unplacedTemplates)
         {
             this.generatedGTUs++;
-            this.unplacedTemplates.add(this.laneBasedTemplateGTUType.draw());
+            this.unplacedTemplates.add(this.laneBasedGTUCharacteristicsGenerator.draw());
             if (this.unplacedTemplates.size() == 1)
             {
                 simulator.scheduleEventNow(this, this, "tryToPlaceGTU", new Object[] {});
@@ -132,10 +142,13 @@ public class LaneBasedGTUGenerator
         }
         if (this.generatedGTUs < this.maxGTUs)
         {
-            simulator.scheduleEventRel(this.interarrivelTimeDistribution.draw(), this, this, "generateCharacteristics",
+            simulator.scheduleEventRel(this.interarrivelTimeGenerator.draw(), this, this, "generateCharacteristics",
                     new Object[] {});
         }
     }
+
+    /** Last reported queue length. */
+    private int lastReportedQueueLength = 0;
 
     /**
      * Check if the queue is non-empty and, if it is, try to place the GTUs in the queue on the road.
@@ -149,8 +162,9 @@ public class LaneBasedGTUGenerator
     private void tryToPlaceGTU() throws SimRuntimeException, GTUException, NamingException, NetworkException,
             OTSGeometryException
     {
+        // System.out.println("entered tryToPlaceGTU");
         LaneBasedGTUCharacteristics characteristics;
-        OTSDEVSSimulatorInterface simulator = this.laneBasedTemplateGTUType.getSimulator();
+        OTSDEVSSimulatorInterface simulator = this.laneBasedGTUCharacteristicsGenerator.getSimulator();
         synchronized (this.unplacedTemplates)
         {
             characteristics = this.unplacedTemplates.peek();
@@ -159,7 +173,7 @@ public class LaneBasedGTUGenerator
         {
             return; // Do not re-schedule this method
         }
-        Length.Rel shortestHeadway = null;
+        Length.Rel shortestHeadway = new Length.Rel(Double.MAX_VALUE, LengthUnit.SI);
         Speed leaderSpeed = null;
         for (DirectedLanePosition dlp : this.initialLongitudinalPositions)
         {
@@ -174,6 +188,7 @@ public class LaneBasedGTUGenerator
                 {
                     headway = new Length.Rel(Math.abs(headway.si), headway.getUnit());
                 }
+                headway = new Length.Rel(headway.si - characteristics.getLength().si / 2, LengthUnit.SI);
                 if (null == shortestHeadway || shortestHeadway.gt(headway))
                 {
                     shortestHeadway = headway;
@@ -181,9 +196,13 @@ public class LaneBasedGTUGenerator
                 }
             }
         }
-        if (null != shortestHeadway)
+        if (null != shortestHeadway && shortestHeadway.si > 0)
         {
-            Speed safeSpeed = this.roomChecker.canPlace(leaderSpeed, shortestHeadway, characteristics);
+            Speed safeSpeed = characteristics.getVelocity();
+            if (null != leaderSpeed)
+            {
+                safeSpeed = this.roomChecker.canPlace(leaderSpeed, shortestHeadway, characteristics);
+            }
             if (null != safeSpeed)
             {
                 // There is enough room; remove the template from the queue and construct the new GTU
@@ -195,37 +214,106 @@ public class LaneBasedGTUGenerator
                 {
                     safeSpeed = characteristics.getMaximumVelocity();
                 }
-                String id = null == characteristics.getIdGenerator() ? null : characteristics.getIdGenerator().nextId();
-                new LaneBasedIndividualGTU(id, characteristics.getGTUType(), this.initialLongitudinalPositions, safeSpeed,
+                String gtuId = null == characteristics.getIdGenerator() ? null : characteristics.getIdGenerator().nextId();
+                new LaneBasedIndividualGTU(gtuId, characteristics.getGTUType(), this.initialLongitudinalPositions, safeSpeed,
                         characteristics.getLength(), characteristics.getWidth(), characteristics.getMaximumVelocity(),
                         simulator, characteristics.getStrategicalPlanner(), characteristics.getPerception(),
-                        characteristics.getNetwork());
+                        DefaultCarAnimation.class, this.gtuColorer, characteristics.getNetwork());
+                // System.out.println("tryToPlace: Constructed GTU on " + this.initialLongitudinalPositions);
             }
         }
-        if (this.unplacedTemplates.size() > 0)
+        int queueLength = this.unplacedTemplates.size();
+        if (queueLength != this.lastReportedQueueLength)
         {
-            this.laneBasedTemplateGTUType.getSimulator().scheduleEventRel(this.reTryInterval, this, this, "tryToPlaceGTU",
-                    new Object[] {});
+            System.out.println("Generator " + this.id + ": queue length is " + queueLength + " at time "
+                    + simulator.getSimulatorTime().get());
+            this.lastReportedQueueLength = queueLength;
+        }
+        if (queueLength > 0)
+        {
+            // System.out.println("Re-scheduling tryToPlace, queue length is " + this.unplacedTemplates.size());
+            this.laneBasedGTUCharacteristicsGenerator.getSimulator().scheduleEventRel(this.reTryInterval, this, this,
+                    "tryToPlaceGTU", new Object[] {});
         }
     }
 
+    /** {@inheritDoc} */
+    public String toString()
+    {
+        return "LaneBasedGTUGenerator " + this.id + " on " + this.initialLongitudinalPositions;
+    }
+
     /**
-     * Interface for a method that checks that there is sufficient room for a proposed new GTU and returns the maximum safe
-     * speed for the proposed new GTU.
+     * @return generatedGTUs.
      */
-    interface RoomChecker
+    public long getGeneratedGTUs()
+    {
+        return this.generatedGTUs;
+    }
+
+    /**
+     * @param generatedGTUs set generatedGTUs.
+     */
+    public void setGeneratedGTUs(long generatedGTUs)
+    {
+        this.generatedGTUs = generatedGTUs;
+    }
+
+    /**
+     * Retrieve the id of this LaneBasedGTUGenerator.
+     * @return String; the id of this LaneBasedGTUGenerator
+     */
+    public String getId()
+    {
+        return this.id;
+    }
+
+    /**
+     * Retrieve the end time of this LaneBasedGTUGenerator.
+     * @return Time.Abs; the time after which this LaneBasedGTUGenerator will not generate any more GTUs
+     */
+    public Time.Abs getEndTime()
+    {
+        return this.endTime;
+    }
+
+    /**
+     * Retrieve the maximum number of GTUs to generate.
+     * @return long; once this number of GTUS is generated, this LaneBasedGTUGenerator will stop generating any more GTUs
+     */
+    public long getMaxGTUs()
+    {
+        return this.maxGTUs;
+    }
+
+    /**
+     * Retrieve the GTUColorer that this LaneBasedGTUGenerator assigns to all generated GTUs.
+     * @return GtuColorer; the GTUColorer that this LaneBasedGTUGenerator assigns to all generated GTUs
+     */
+    public GTUColorer getGtuColorer()
+    {
+        return this.gtuColorer;
+    }
+
+    /**
+     * Interface for class that checks that there is sufficient room for a proposed new GTU and returns the maximum safe speed
+     * for the proposed new GTU.
+     */
+    public interface RoomChecker
     {
         /**
          * Return the maximum safe speed for a new GTU with the specified characteristics. Return null if there is no safe
-         * speed.
+         * speed. This method will never be called if the newly proposed GTU overlaps with the leader. Nor will this method be
+         * called if there is no leader.
          * @param leaderSpeed Speed; velocity of the nearest leader
-         * @param headway Length.Rel; distance to the nearest leader
+         * @param headway Length.Rel; net distance to the nearest leader (always > 0)
          * @param laneBasedGTUCharacteristics LaneBasedGTUCharacteristics; characteristics of the proposed new GTU
          * @return Speed; maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the
          *         current time
+         * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network structure
          */
         public Speed canPlace(final Speed leaderSpeed, final Length.Rel headway,
-                final LaneBasedGTUCharacteristics laneBasedGTUCharacteristics);
+                final LaneBasedGTUCharacteristics laneBasedGTUCharacteristics) throws NetworkException;
     }
 
 }
