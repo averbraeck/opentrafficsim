@@ -130,7 +130,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         GTUCharacteristics characteristicsA = templateA.draw();
         GTUCharacteristics characteristicsB = templateB.draw();
         assertEquals("typenameA", typeNameA, characteristicsA.getGTUType().getId());
-        assertEquals("typenameB", typeNameB, characteristicsA.getGTUType().getId());
+        assertEquals("typenameB", typeNameB, characteristicsB.getGTUType().getId());
         assertEquals("idGeneratorA", idGeneratorA, templateA.getIdGenerator());
         assertEquals("idGeneratorB", idGeneratorB, templateB.getIdGenerator());
         assertEquals("lengthA", lengthGeneratorA.draw(), characteristicsA.getLength());
