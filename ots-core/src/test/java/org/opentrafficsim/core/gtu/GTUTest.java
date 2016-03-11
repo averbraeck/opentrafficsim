@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.Set;
 
 import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
@@ -25,9 +26,16 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
+import org.opentrafficsim.core.gtu.perception.Perception;
+import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
+import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.perception.PerceivableContext;
+import org.opentrafficsim.core.perception.PerceivedObject;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
 
 /**
@@ -57,24 +65,80 @@ public class GTUTest implements OTSModelInterface
      * @throws OTSGeometryException
      */
     @Test
-    public void testAbstractGTU() throws GTUException, SimRuntimeException, NetworkException, NamingException,
-        RemoteException, OTSGeometryException
+    public void testAbstractGTU() throws GTUException, SimRuntimeException, NetworkException, NamingException, RemoteException,
+            OTSGeometryException
     {
         TestGTU firstGTU = null;
         TestGTU lastGTU = null;
+        Perception perception = new Perception()
+        {
+
+            /** */
+            private static final long serialVersionUID = 20160311L;
+
+            @Override
+            public void perceive() throws GTUException, NetworkException
+            {
+                // Fake implementation; do nothing
+            }
+
+            @Override
+            public Set<PerceivedObject> getPerceivedObjects()
+            {
+                return null;
+            }
+        };
         OTSNetwork perceivableContext = new OTSNetwork("network");
         OTSDEVSSimulatorInterface simulator =
-            new SimpleSimulator(new Time.Abs(0, TimeUnit.SI), new Time.Rel(0, TimeUnit.SI), new Time.Rel(9999,
-                TimeUnit.SI), this);
-        for (String id : new String[]{"id1", "id2"})
+                new SimpleSimulator(new Time.Abs(0, TimeUnit.SI), new Time.Rel(0, TimeUnit.SI),
+                        new Time.Rel(9999, TimeUnit.SI), this);
+        StrategicalPlanner strategicalPlanner = new StrategicalPlanner()
         {
-            for (GTUType gtuType : new GTUType[]{GTUType.makeGTUType("gtu type 1"), GTUType.makeGTUType("gtu type 2")})
+
+            @Override
+            public Node nextNode(Node node, Link previousLink, GTUType gtuType) throws NetworkException
             {
-                TestGTU gtu = new TestGTU(id, gtuType, simulator, null, perceivableContext);
-                assertEquals("new GTU has correct id", id, gtu.getId());
+                return null;
+            }
+
+            @Override
+            public Node nextNode(Link link, GTUDirectionality direction, GTUType gtuType) throws NetworkException
+            {
+                return null;
+            }
+
+            @Override
+            public LinkDirection nextLinkDirection(Node node, Link previousLink, GTUType gtuType) throws NetworkException
+            {
+                return null;
+            }
+
+            @Override
+            public LinkDirection nextLinkDirection(Link link, GTUDirectionality direction, GTUType gtuType)
+                    throws NetworkException
+            {
+                return null;
+            }
+
+            @Override
+            public TacticalPlanner generateTacticalPlanner(GTU gtu)
+            {
+                return null;
+            }
+        };
+        DirectedPoint initialLocation =
+                new DirectedPoint(10, 20, 30, Math.toRadians(10), Math.toRadians(20), Math.toRadians(30));
+        for (String id : new String[] { "id1", "id2" })
+        {
+            for (GTUType gtuType : new GTUType[] { GTUType.makeGTUType("gtu type 1"), GTUType.makeGTUType("gtu type 2") })
+            {
+                String gtuId = id + " " + gtuType.getId();
+                TestGTU gtu =
+                        new TestGTU(gtuId, gtuType, simulator, strategicalPlanner, perception,
+                                initialLocation, perceivableContext);
+                assertEquals("new GTU has correct id", gtuId, gtu.getId());
                 assertEquals("new GTU has correct GTUType", gtuType, gtu.getGTUType());
-                assertEquals("new GTU has correct reference position", RelativePosition.REFERENCE_POSITION,
-                    gtu.getReference());
+                assertEquals("new GTU has correct reference position", RelativePosition.REFERENCE_POSITION, gtu.getReference());
                 assertEquals("new GTU has correct simulator", simulator, gtu.getSimulator());
                 assertEquals("new GTU has odometer value 0", 0, gtu.getOdometer().si, 0);
                 assertTrue("new GTU is stored in the perceivable context", perceivableContext.getGTUs().contains(gtu));
@@ -87,10 +151,9 @@ public class GTUTest implements OTSModelInterface
         }
         assertFalse("first GTU and last GTU have different id", firstGTU.getId().equals(lastGTU.getId()));
         assertFalse("first GTU and last GTU have different GTUType", firstGTU.getGTUType().equals(lastGTU.getGTUType()));
-        DirectedPoint initialLocation =
-            new DirectedPoint(10, 20, 30, Math.toRadians(10), Math.toRadians(20), Math.toRadians(30));
         TestGTU gtu =
-            new TestGTU("id3", GTUType.makeGTUType("gtu type 1"), simulator, initialLocation, perceivableContext);
+                new TestGTU("id3", GTUType.makeGTUType("gtu type 1"), simulator, strategicalPlanner, perception,
+                        initialLocation, perceivableContext);
         DirectedPoint actualLocation = gtu.getLocation();
         assertEquals("initial location", 0, initialLocation.distance(actualLocation), 0.002);
         // Only the Z-rotation is returned non-zero; the returned X and Y rotation are zero
@@ -104,9 +167,7 @@ public class GTUTest implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public
-        void
-        constructModel(
+    public void constructModel(
             SimulatorInterface<Abs<TimeUnit>, org.djunits.value.vdouble.scalar.DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
             throws SimRuntimeException, RemoteException
     {
@@ -115,9 +176,8 @@ public class GTUTest implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public
-        SimulatorInterface<Abs<TimeUnit>, org.djunits.value.vdouble.scalar.DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
-        getSimulator() throws RemoteException
+    public SimulatorInterface<Abs<TimeUnit>, org.djunits.value.vdouble.scalar.DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+            throws RemoteException
     {
         return null;
     }
@@ -133,15 +193,18 @@ class TestGTU extends AbstractGTU
      * @param id String; id of the new GTU
      * @param gtuType GTUType; type of the new GTU
      * @param simulator OTSDEVSSimulatorInterface; simulator that controls the new GTU
+     * @param strategicalPlanner StrategicalPlanner; the strategical planner of the new GTU
+     * @param perception Perception;
      * @param initialLocation DirectedPoint; initial location and direction of the new GTU
      * @param perceivableContext PerceivableContext; the perceivable context of the new GTU
      * @throws SimRuntimeException when something goes wrong in the scheduling of the first move event
      * @throws GTUException
      */
-    public TestGTU(String id, GTUType gtuType, OTSDEVSSimulatorInterface simulator, DirectedPoint initialLocation,
-        PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
+    public TestGTU(String id, GTUType gtuType, OTSDEVSSimulatorInterface simulator, StrategicalPlanner strategicalPlanner,
+            Perception perception, DirectedPoint initialLocation, PerceivableContext perceivableContext)
+            throws SimRuntimeException, GTUException
     {
-        super(id, gtuType, simulator, null, null, initialLocation, Speed.ZERO, perceivableContext);
+        super(id, gtuType, simulator, strategicalPlanner, perception, initialLocation, Speed.ZERO, perceivableContext);
     }
 
     /** {@inheritDoc} */
