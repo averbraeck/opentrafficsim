@@ -48,7 +48,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  * initial version 15 jan. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class TemplateGTUTypeTest implements UNITS
+public class LaneBasedTemplateGTUTypeTest implements UNITS
 {
     /** the random stream. */
     private StreamInterface stream = new MersenneTwister();
