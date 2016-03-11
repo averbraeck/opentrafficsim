@@ -178,8 +178,9 @@ public class LaneBasedGTUGenerator
         for (DirectedLanePosition dlp : this.initialLongitudinalPositions)
         {
             Lane lane = dlp.getLane();
+            // GOTCHA look for the first GTU with FRONT after the start position (not REAR)
             LaneBasedGTU leader =
-                    lane.getGtuAhead(dlp.getPosition(), dlp.getGtuDirection(), RelativePosition.REAR, simulator
+                    lane.getGtuAhead(dlp.getPosition(), dlp.getGtuDirection(), RelativePosition.FRONT, simulator
                             .getSimulatorTime().getTime());
             if (null != leader)
             {
@@ -189,14 +190,14 @@ public class LaneBasedGTUGenerator
                     headway = new Length.Rel(Math.abs(headway.si), headway.getUnit());
                 }
                 headway = new Length.Rel(headway.si - characteristics.getLength().si / 2, LengthUnit.SI);
-                if (null == shortestHeadway || shortestHeadway.gt(headway))
+                if (shortestHeadway.gt(headway))
                 {
                     shortestHeadway = headway;
                     leaderSpeed = leader.getVelocity();
                 }
             }
         }
-        if (null != shortestHeadway && shortestHeadway.si > 0)
+        if (shortestHeadway.si > 0)
         {
             Speed safeSpeed = characteristics.getVelocity();
             if (null != leaderSpeed)
