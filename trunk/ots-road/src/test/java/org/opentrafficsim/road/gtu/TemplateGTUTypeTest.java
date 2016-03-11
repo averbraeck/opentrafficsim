@@ -233,13 +233,13 @@ public class TemplateGTUTypeTest implements UNITS
         }, truckSimulator, network);
         // Create some LaneTypes
         LaneType trucksForbidden = new LaneType("No Trucks");
-        trucksForbidden.addCompatibility(passengerCar.getGtuType());
+        trucksForbidden.addCompatibility(passengerCar.getGTUType());
         LaneType trucksOnly = new LaneType("Trucks Only");
-        trucksOnly.addCompatibility(truck.getGtuType());
+        trucksOnly.addCompatibility(truck.getGTUType());
         LaneType bicycleLane = new LaneType("Bicycles Only");
         LaneType urbanRoad = new LaneType("Urban road - open to all traffic");
-        urbanRoad.addCompatibility(passengerCar.getGtuType());
-        urbanRoad.addCompatibility(truck.getGtuType());
+        urbanRoad.addCompatibility(passengerCar.getGTUType());
+        urbanRoad.addCompatibility(truck.getGTUType());
         // Now we test all combinations
         // TODO assertTrue("Passengers cars are allowed on a no trucks lane", passengerCar.isCompatible(trucksForbidden));
         // TODO assertFalse("Trucks are not allowed on a no trucks lane", truck.isCompatible(trucksForbidden));
@@ -269,7 +269,7 @@ public class TemplateGTUTypeTest implements UNITS
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeed, final OTSDEVSSimulatorInterface simulator)
             throws ProbabilityException
     {
-        assertTrue("TypeId should be " + id, id.equals(templateGTUType.getGtuType().getId()));
+        assertTrue("TypeId should be " + id, id.equals(templateGTUType.getGTUType().getId()));
         LaneBasedGTUCharacteristics characteristics = templateGTUType.draw();
         assertEquals("Length should be " + length, length.draw().getSI(), characteristics.getLength().getSI(), 0.0001);
         assertEquals("Width should be " + width, width.draw().getSI(), characteristics.getWidth().getSI(), 0.0001);

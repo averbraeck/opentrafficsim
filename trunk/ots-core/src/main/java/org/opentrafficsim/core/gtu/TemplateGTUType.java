@@ -47,7 +47,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
     private final OTSNetwork network;
 
     /**
-     * @param typeId The id of the GTUType to make it identifiable.
+     * @param typeId String, the id of the GTUType to make it identifiable.
      * @param idGenerator IdGenerator; the id generator used to generate names for GTUs constructed using this TemplateGTUType.
      *            Provide null to use the default id generator of AbstractGTU.
      * @param lengthGenerator Generator&lt;Length.Rel&gt;; generator for the length of the GTU type (parallel with driving
@@ -56,7 +56,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
      *            direction).
      * @param maximumVelocityGenerator Generator&lt;Speed&gt;; generator for the maximum velocity of the GTU type (in the
      *            driving direction).
-     * @param simulator the simulator.
+     * @param simulator OTSDEVSSimulatorInterface; the simulator.
      * @param network OTSNetwork; the network that will own the GTUs
      * @throws GTUException when one or more arguments are invalid
      */
@@ -129,7 +129,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
      * @return gtuType.
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public GTUType getGtuType()
+    public GTUType getGTUType()
     {
         return this.gtuType;
     }
