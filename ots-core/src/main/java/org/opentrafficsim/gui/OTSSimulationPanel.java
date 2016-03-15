@@ -1,6 +1,7 @@
 package org.opentrafficsim.gui;
 
 import java.awt.BorderLayout;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
@@ -51,8 +52,9 @@ public class OTSSimulationPanel extends JPanel
      * Construct a panel that looks like the DSOLPanel for quick building of OTS applications.
      * @param simulator the simulator or animator of the model.
      * @param wrappableAnimation the builder and rebuilder of the simulation, based on properties.
+     * @throws RemoteException 
      */
-    public OTSSimulationPanel(final OTSDEVSSimulatorInterface simulator, final WrappableAnimation wrappableAnimation)
+    public OTSSimulationPanel(final OTSDEVSSimulatorInterface simulator, final WrappableAnimation wrappableAnimation) throws RemoteException
     {
         this.simulator = simulator;
 
