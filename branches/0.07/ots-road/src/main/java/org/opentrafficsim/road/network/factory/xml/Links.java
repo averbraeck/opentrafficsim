@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -428,11 +429,11 @@ final class Links
         }
 
         OTSLine3D designLine = new OTSLine3D(coordinates);
-        // TODO the directionality has to be read from the XML-file. To keep the examples working,
-        // TODO LongitudinalDirectionality.BOTH is inserted for the time being.
+
+        // Directionality has to be added later when the lanes and their direction are known.
         CrossSectionLink link =
             new CrossSectionLink(linkTag.name, linkTag.nodeStartTag.node, linkTag.nodeEndTag.node, LinkType.ALL,
-                designLine, LongitudinalDirectionality.DIR_BOTH, linkTag.laneKeepingPolicy);
+                designLine, new HashMap<GTUType, LongitudinalDirectionality>(), linkTag.laneKeepingPolicy);
         linkTag.link = link;
     }
 
@@ -455,6 +456,8 @@ final class Links
         CrossSectionLink csl = linkTag.link;
         List<CrossSectionElement> cseList = new ArrayList<>();
         List<Lane> lanes = new ArrayList<>();
+        // TODO Map<GTUType, LongitudinalDirectionality> linkDirections = new HashMap<>();
+        LongitudinalDirectionality linkDirection = LongitudinalDirectionality.DIR_NONE;
         for (CrossSectionElementTag cseTag : linkTag.roadTypeTag.cseTags.values())
         {
             LaneOverrideTag laneOverrideTag = null;
@@ -574,6 +577,24 @@ final class Links
                     }
                     Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
                     directionality.put(GTUType.ALL, direction);
+                    if (linkDirection.equals(LongitudinalDirectionality.DIR_NONE))
+                    {
+                        linkDirection = direction;
+                    }
+                    else if (linkDirection.isForward())
+                    {
+                        if (direction.isBackwardOrBoth())
+                        {
+                            linkDirection = LongitudinalDirectionality.DIR_BOTH;
+                        }
+                    }
+                    else if (linkDirection.isBackward())
+                    {
+                        if (direction.isForwardOrBoth())
+                        {
+                            linkDirection = LongitudinalDirectionality.DIR_BOTH;
+                        }
+                    }
                     Map<GTUType, Speed> speedLimit = new LinkedHashMap<>();
                     speedLimit.put(GTUType.ALL, speed);
                     Lane lane =
@@ -744,5 +765,8 @@ final class Links
             }
 
         } // for (CrossSectionElementTag cseTag : roadTypeTag.cseTags.values())
+        
+        // add the calculated direction to the link
+        csl.addDirectionality(GTUType.ALL, linkDirection);
     }
 }
