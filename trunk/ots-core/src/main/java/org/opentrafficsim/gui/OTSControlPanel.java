@@ -11,6 +11,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -47,6 +48,9 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.DEVSRealTimeClock;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulator;
 import nl.tudelft.simulation.dsol.simulators.DEVSSimulatorInterface;
+import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
+import nl.tudelft.simulation.event.EventInterface;
+import nl.tudelft.simulation.event.EventListenerInterface;
 import nl.tudelft.simulation.language.io.URLResource;
 
 import org.djunits.unit.TimeUnit;
@@ -67,7 +71,8 @@ import org.opentrafficsim.simulationengine.WrappableAnimation;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class OTSControlPanel extends JPanel implements ActionListener, PropertyChangeListener, WindowListener
+public class OTSControlPanel extends JPanel implements ActionListener, PropertyChangeListener, WindowListener,
+        EventListenerInterface
 {
     /** */
     private static final long serialVersionUID = 20150617L;
@@ -109,8 +114,10 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
      * Decorate a SimpleSimulator with a different set of control buttons.
      * @param simulator SimpleSimulator; the simulator
      * @param wrappableAnimation WrappableAnimation; if non-null, the restart button should work
+     * @throws RemoteException
      */
     public OTSControlPanel(final OTSDEVSSimulatorInterface simulator, final WrappableAnimation wrappableAnimation)
+            throws RemoteException
     {
         this.simulator = simulator;
         this.wrappableAnimation = wrappableAnimation;
@@ -122,8 +129,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         buttonPanel.add(makeButton("stepButton", "/Last_recor.png", "Step", "Execute one event", true));
         buttonPanel.add(makeButton("nextTimeButton", "/NextTrack.png", "NextTime",
                 "Execute all events scheduled for the current time", true));
-        buttonPanel
-                .add(makeButton("runPauseButton", "/Play.png", "RunPause", "XXX", true));
+        buttonPanel.add(makeButton("runPauseButton", "/Play.png", "RunPause", "XXX", true));
         this.timeWarpPanel = new TimeWarpPanel(0.1, 1000, 1, 3, simulator);
         buttonPanel.add(this.timeWarpPanel);
         buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", null, false));
@@ -135,6 +141,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         this.add(buttonPanel);
         fixButtons();
         installWindowCloseHandler();
+        this.simulator.addListener(this, SimulatorInterface.END_OF_REPLICATION_EVENT);
     }
 
     /**
@@ -265,7 +272,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                 {
                     this.simulator.stop();
                 }
-                else
+                else if (getSimulator().getEventList().size() > 0)
                 {
                     this.simulator.start();
                 }
@@ -397,6 +404,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
                     button.setToolTipText("Run the simulation at the indicated speed");
                     button.setIcon(new ImageIcon(URLResource.getResource("/Play.png")));
                 }
+                button.setEnabled(moreWorkToDo);
             }
             else if (actionCommand.equals("NextTime"))
             {
@@ -925,6 +933,16 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             }
             // System.out.println("String \"" + text + "\" does not match");
             throw new ParseException("Pattern did not match", 0);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void notify(EventInterface event) throws RemoteException
+    {
+        if (event.getType().equals(SimulatorInterface.END_OF_REPLICATION_EVENT))
+        {
+            fixButtons();
         }
     }
 
