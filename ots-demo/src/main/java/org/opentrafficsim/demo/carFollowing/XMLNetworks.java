@@ -616,6 +616,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         // System.out.println("Constructed template " + template);
         distribution.add(new FrequencyAndObject<LaneBasedTemplateGTUType>(1.0 - this.carProbability, template));
         LaneBasedTemplateGTUTypeDistribution templateDistribution = new LaneBasedTemplateGTUTypeDistribution(distribution);
+        LaneBasedGTUGenerator.RoomChecker roomChecker = new CanPlaceDemoCode();
         return new LaneBasedGTUGenerator(lane.getId(), new Generator<Time.Rel>()
         {
             public Time.Rel draw()
@@ -623,7 +624,9 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                 return new Time.Rel(XMLNetworkModel.this.headwayGenerator.draw(), TimeUnit.SECOND);
             }
         }, Long.MAX_VALUE, new Time.Abs(0, TimeUnit.SI), new Time.Abs(Double.MAX_VALUE, TimeUnit.SI), this.gtuColorer,
-                templateDistribution, initialPositions, this.network, new LaneBasedGTUGenerator.RoomChecker()
+                templateDistribution, initialPositions, this.network,
+                /*-
+                new LaneBasedGTUGenerator.RoomChecker()
                 {
                     @Override
                     public Speed canPlace(Speed leaderSpeed, org.djunits.value.vdouble.scalar.Length.Rel headway,
@@ -644,7 +647,9 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                         }
                         return leaderSpeed;
                     }
-                });
+                }
+                 */
+                roomChecker);
     }
 
     /**
