@@ -47,6 +47,40 @@ public class OperationalPlanTest
         assertEquals("End speed is 0", 0, op.getEndSpeed().si, 0);
         assertEquals("Start time is " + startTime, startTime.si, op.getStartTime().si, 0);
         assertEquals("End time is " + startTime.plus(duration), startTime.plus(duration).si, op.getEndTime().si, 0.0001);
+        assertEquals("Segment list contains 1 segment", 1, op.getOperationalPlanSegmentList().size());
+        OperationalPlan.Segment segment = op.getOperationalPlanSegmentList().get(0);
+        assertEquals("Duration is " + duration, duration.si, segment.getDuration().si, 0.00001);
+        assertEquals("DurationSI is " + duration.si, duration.si, segment.getDurationSI(), 0.00001);
+        assertEquals("End location is " + waitPoint, 0,  waitPoint.distance(op.getEndLocation()), 0.0001);
+        try
+        {
+            op.getLocation(new Time.Rel(-0.1, TimeUnit.SI));
+            fail ("getLocation for negative relative time should have thrown an OperationalPlanException");
+        }
+        catch (OperationalPlanException ope)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            op.getLocation(new Time.Abs(99.5, TimeUnit.SECOND));
+            fail ("getLocation for absolute time before start time should have thrown an OperationalPlanException");
+        }
+        catch (OperationalPlanException ope)
+        {
+            // Ignore expected exception
+        }
+        op.getLocation(new Time.Abs(100.1, TimeUnit.SECOND)); // Should NOT throw an exception
+        op.getLocation(new Time.Abs(159.9, TimeUnit.SECOND)); // Should NOT throw an exception
+        try
+        {
+            op.getLocation(new Time.Abs(160.1, TimeUnit.SECOND));
+            fail ("getLocation for absolute time after end time should have thrown an OperationalPlanException");
+        }
+        catch (OperationalPlanException ope)
+        {
+            // Ignore expected exception
+        }
         for (int i = 0; i <= duration.si; i++)
         {
             Time.Abs t = startTime.plus(new Time.Rel(i, TimeUnit.SECOND));
