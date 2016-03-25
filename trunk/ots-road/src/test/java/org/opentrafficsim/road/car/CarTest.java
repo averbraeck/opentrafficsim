@@ -41,7 +41,7 @@ import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristic
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -86,7 +86,7 @@ public class CarTest implements UNITS
         Length.Rel initialPosition = new Length.Rel(12, METER);
         Speed initialSpeed = new Speed(34, KM_PER_HOUR);
         OTSDEVSSimulator simulator = makeSimulator();
-        GTUFollowingModel gtuFollowingModel =
+        GTUFollowingModelOld gtuFollowingModel =
             new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(10, SECOND));
         LaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedIndividualGTU referenceCar =
@@ -148,7 +148,7 @@ public class CarTest implements UNITS
      */
     public static LaneBasedIndividualGTU makeReferenceCar(final String id, final GTUType gtuType, final Lane lane,
         final Length.Rel initialPosition, final Speed initialSpeed, final OTSDEVSSimulator simulator,
-        final GTUFollowingModel gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSNetwork network)
+        final GTUFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final OTSNetwork network)
         throws NamingException, NetworkException, SimRuntimeException, GTUException, OTSGeometryException
     {
         Length.Rel length = new Length.Rel(5.0, METER);

@@ -21,7 +21,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public interface GTUFollowingModel
+public interface GTUFollowingModelOld
 {
     /**
      * Compute the acceleration that would be used to follow a leader.<br>

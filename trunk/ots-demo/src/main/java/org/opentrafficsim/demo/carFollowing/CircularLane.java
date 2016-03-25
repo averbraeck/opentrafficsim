@@ -53,9 +53,9 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -317,10 +317,10 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
     private GTUType gtuType = GTUType.makeGTUType("Car");
 
     /** the car following model, e.g. IDM Plus for cars. */
-    private GTUFollowingModel carFollowingModelCars;
+    private GTUFollowingModelOld carFollowingModelCars;
 
     /** the car following model, e.g. IDM Plus for trucks. */
-    private GTUFollowingModel carFollowingModelTrucks;
+    private GTUFollowingModelOld carFollowingModelTrucks;
 
     /** The probability that the next generated GTU is a passenger car. */
     private double carProbability;
@@ -450,14 +450,14 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
                         Acceleration b = IDMPropertySet.getB(cp);
                         Length.Rel s0 = IDMPropertySet.getS0(cp);
                         Time.Rel tSafe = IDMPropertySet.getTSafe(cp);
-                        GTUFollowingModel gtuFollowingModel = null;
+                        GTUFollowingModelOld gtuFollowingModel = null;
                         if (carFollowingModelName.equals("IDM"))
                         {
-                            gtuFollowingModel = new IDM(a, b, s0, tSafe, 1.0);
+                            gtuFollowingModel = new IDMOld(a, b, s0, tSafe, 1.0);
                         }
                         else if (carFollowingModelName.equals("IDM+"))
                         {
-                            gtuFollowingModel = new IDMPlus(a, b, s0, tSafe, 1.0);
+                            gtuFollowingModel = new IDMPlusOld(a, b, s0, tSafe, 1.0);
                         }
                         else
                         {
@@ -589,7 +589,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
         try
         {
             Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
-            GTUFollowingModel gtuFollowingModel =
+            GTUFollowingModelOld gtuFollowingModel =
                 generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
             if (null == gtuFollowingModel)
             {

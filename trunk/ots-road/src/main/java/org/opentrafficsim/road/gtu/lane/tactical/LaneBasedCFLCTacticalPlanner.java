@@ -34,7 +34,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneMovementStep;
@@ -115,7 +115,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             Speed speedLimit = perception.getSpeedLimit();
 
             // get some models to help us make a plan
-            GTUFollowingModel gtuFollowingModel =
+            GTUFollowingModelOld gtuFollowingModel =
                     laneBasedGTU.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
             LaneChangeModel laneChangeModel =
                     laneBasedGTU.getStrategicalPlanner().getDrivingCharacteristics().getLaneChangeModel();

@@ -13,9 +13,9 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModelMobil;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -47,7 +47,7 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
         Lane lane = positions.keySet().iterator().next();
         Length.Rel longitudinalPosition = positions.get(lane);
         Lane otherLane = gtu.getPerception().bestAccessibleAdjacentLane(lane, direction, longitudinalPosition);
-        GTUFollowingModel gtuFollowingModel = gtu.getDrivingCharacteristics().getGTUFollowingModel();
+        GTUFollowingModelOld gtuFollowingModel = gtu.getDrivingCharacteristics().getGTUFollowingModel();
         if (null == gtuFollowingModel)
         {
             throw new Error(gtu + " has null GTUFollowingModel");
@@ -66,7 +66,7 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
                 && otherLaneAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getDrivingCharacteristics()
                         .getGTUFollowingModel().getMaximumSafeDeceleration().getSI())
         {
-            otherLaneAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
+            otherLaneAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
         }
         Acceleration otherLaneAcceleration = null == otherLane ? null : applyDriverPersonality(otherLaneAccelerationSteps);
         if (null == otherLaneAcceleration)

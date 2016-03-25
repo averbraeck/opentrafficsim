@@ -35,13 +35,13 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModelMobil;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -77,7 +77,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
      * @param gtuFollowingModel GTUFollowingModel
      * @throws Exception when something goes wrong (should not happen)
      */
-    private void gtuFollowingModelTests(GTUFollowingModel gtuFollowingModel) throws Exception
+    private void gtuFollowingModelTests(GTUFollowingModelOld gtuFollowingModel) throws Exception
     {
         Acceleration maxSafeDeceleration = gtuFollowingModel.getMaximumSafeDeceleration();
         assertNotNull("maximumSafeDeceleration must return non-null value", maxSafeDeceleration);
@@ -232,7 +232,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         HeadwayGTU hwgtu1m = new HeadwayGTU(gtu1m.getId(), gtu1m.getVelocity(), java.lang.Double.NaN, gtu1m.getGTUType());
         otherGTUs.add(hwgtu1m);
         DualAccelerationStep as1m = gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
-        AccelerationStep a1 = AbstractGTUFollowingModel.TOODANGEROUS.getLeaderAccelerationStep();
+        AccelerationStep a1 = AbstractGTUFollowingModelMobil.TOODANGEROUS.getLeaderAccelerationStep();
         // System.out.println("a1: " + a1);
         // System.out.println("as1m: [" + as1m[0] + ", " + as1m[1] + "]");
         checkAccelerationStep("leader overlapping ", as1m, a1.getAcceleration(), a1.getAcceleration(), a1.getValidUntil());
@@ -312,7 +312,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
     @Test
     public void testIDM() throws Exception
     {
-        gtuFollowingModelTests(new IDM());
+        gtuFollowingModelTests(new IDMOld());
     }
 
     /**
@@ -322,7 +322,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
     @Test
     public void testIDMPlus() throws Exception
     {
-        gtuFollowingModelTests(new IDMPlus());
+        gtuFollowingModelTests(new IDMPlusOld());
     }
 
     /** {@inheritDoc} */

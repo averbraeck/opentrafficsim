@@ -30,7 +30,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedEgoi
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedLaneMovementStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -275,7 +275,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
         GTUException
     {
         LanePerception perception = laneBasedGTU.getPerception();
-        GTUFollowingModel gfm = laneBasedGTU.getDrivingCharacteristics().getGTUFollowingModel();
+        GTUFollowingModelOld gfm = laneBasedGTU.getDrivingCharacteristics().getGTUFollowingModel();
 
         // No lane change. Continue on current lane.
         AccelerationStep accelerationStep;

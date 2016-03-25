@@ -76,9 +76,9 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingChange0TacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
@@ -244,10 +244,10 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     GTUType gtuType = GTUType.makeGTUType("Car");
 
     /** the car following model, e.g. IDM Plus for cars. */
-    private GTUFollowingModel carFollowingModelCars;
+    private GTUFollowingModelOld carFollowingModelCars;
 
     /** the car following model, e.g. IDM Plus for trucks. */
-    private GTUFollowingModel carFollowingModelTrucks;
+    private GTUFollowingModelOld carFollowingModelTrucks;
 
     /** The lane change model. */
     AbstractLaneChangeModel laneChangeModel = new Egoistic();
@@ -426,14 +426,14 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                         Acceleration b = IDMPropertySet.getB(compoundProperty);
                         Length.Rel s0 = IDMPropertySet.getS0(compoundProperty);
                         Time.Rel tSafe = IDMPropertySet.getTSafe(compoundProperty);
-                        GTUFollowingModel gtuFollowingModel = null;
+                        GTUFollowingModelOld gtuFollowingModel = null;
                         if (carFollowingModelName.equals("IDM"))
                         {
-                            gtuFollowingModel = new IDM(a, b, s0, tSafe, 1.0);
+                            gtuFollowingModel = new IDMOld(a, b, s0, tSafe, 1.0);
                         }
                         else if (carFollowingModelName.equals("IDM+"))
                         {
-                            gtuFollowingModel = new IDMPlus(a, b, s0, tSafe, 1.0);
+                            gtuFollowingModel = new IDMPlusOld(a, b, s0, tSafe, 1.0);
                         }
                         else
                         {
@@ -663,7 +663,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDistribution,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumVelocityDistribution,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDistribution,
-            Set<DirectedLanePosition> initialPositions, final GTUFollowingModel gtuFollowingModel) throws GTUException
+            Set<DirectedLanePosition> initialPositions, final GTUFollowingModelOld gtuFollowingModel) throws GTUException
     {
         return new LaneBasedTemplateGTUType(this.gtuType.getId(), this.idGenerator, new Generator<Length.Rel>()
         {
@@ -757,7 +757,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         Length.Rel initialPosition = lane.getLength();
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
-        GTUFollowingModel gfm =
+        GTUFollowingModelOld gfm =
                 new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Time.Rel(java.lang.Double.MAX_VALUE,
                         TimeUnit.SI));
         LaneChangeModel lcm = new FixedLaneChangeModel(null);

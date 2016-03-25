@@ -16,7 +16,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 
 /**
@@ -66,7 +66,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         perception.perceive();
 
         // get some models to help us make a plan
-        GTUFollowingModel gtuFollowingModel =
+        GTUFollowingModelOld gtuFollowingModel =
             laneBasedGTU.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
 
         // see how far we can drive

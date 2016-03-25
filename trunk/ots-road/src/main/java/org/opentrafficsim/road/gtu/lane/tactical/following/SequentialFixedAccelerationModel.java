@@ -23,7 +23,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModel
+public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelMobil
 {
     /** The list of result values of this SequentialFixedAccelerationModel. */
     private final List<FixedAccelerationModel> steps = new ArrayList<FixedAccelerationModel>();

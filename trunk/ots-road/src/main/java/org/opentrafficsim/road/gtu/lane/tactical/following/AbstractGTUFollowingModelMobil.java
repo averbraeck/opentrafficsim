@@ -25,7 +25,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
+public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingModelOld
 {
     /** Prohibitive deceleration used to construct the TOODANGEROUS result below. */
     private static final AccelerationStep PROHIBITIVEACCELERATIONSTEP = new AccelerationStep(new Acceleration(
@@ -61,7 +61,7 @@ public abstract class AbstractGTUFollowingModel implements GTUFollowingModel
         }
         AccelerationStep followerAccelerationStep = null;
         AccelerationStep referenceGTUAccelerationStep = null;
-        GTUFollowingModel gfm = referenceGTU.getDrivingCharacteristics().getGTUFollowingModel();
+        GTUFollowingModelOld gfm = referenceGTU.getDrivingCharacteristics().getGTUFollowingModel();
         // Find the leader and the follower that cause/experience the least positive (most negative) acceleration.
         for (HeadwayGTU headwayGTU : otherGTUs)
         {

@@ -28,7 +28,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU.LaneBasedIndividualCarBuilder;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
@@ -262,7 +262,7 @@ public abstract class AbstractGTUGenerator
         }
 
         // test for sufficient headway
-        GTUFollowingModel followingModel =
+        GTUFollowingModelOld followingModel =
             carBuilder.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
 
         HeadwayGTU headwayGTU = headway(new Length.Rel(250.0, LengthUnit.METER), generatorLane);
