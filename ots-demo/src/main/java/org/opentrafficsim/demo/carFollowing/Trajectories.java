@@ -40,7 +40,7 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
@@ -403,8 +403,8 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
         Length.Rel initialPosition = new Length.Rel(4000, METER);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(this.getLane(), initialPosition, GTUDirectionality.DIR_PLUS));
-        LaneBasedDrivingCharacteristics drivingCharacteristics =
-            new LaneBasedDrivingCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
+        LaneBasedBehavioralCharacteristics drivingCharacteristics =
+            new LaneBasedBehavioralCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner());
         this.block =
@@ -441,8 +441,8 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
             {
                 throw new Error("gtuFollowingModel is null");
             }
-            LaneBasedDrivingCharacteristics drivingCharacteristics =
-                new LaneBasedDrivingCharacteristics(gtuFollowingModel, this.laneChangeModel);
+            LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                new LaneBasedBehavioralCharacteristics(gtuFollowingModel, this.laneChangeModel);
             LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner());
             new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,

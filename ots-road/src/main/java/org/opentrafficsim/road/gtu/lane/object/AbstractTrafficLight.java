@@ -38,7 +38,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -210,7 +210,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public LaneBasedDrivingCharacteristics getDrivingCharacteristics()
+    public LaneBasedBehavioralCharacteristics getDrivingCharacteristics()
     {
         return null;
     }
@@ -352,7 +352,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
     static class DummyStrategicalPlanner implements LaneBasedStrategicalPlanner
     {
         /** */
-        private LaneBasedDrivingCharacteristics drivingCharacteristics;
+        private LaneBasedBehavioralCharacteristics drivingCharacteristics;
 
         /** {@inheritDoc} */
         @Override
@@ -393,14 +393,14 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
         /** {@inheritDoc} */
         @Override
-        public LaneBasedDrivingCharacteristics getDrivingCharacteristics()
+        public LaneBasedBehavioralCharacteristics getDrivingCharacteristics()
         {
             return this.drivingCharacteristics;
         }
 
         /** {@inheritDoc} */
         @Override
-        public void setDrivingCharacteristics(final LaneBasedDrivingCharacteristics drivingCharacteristics)
+        public void setDrivingCharacteristics(final LaneBasedBehavioralCharacteristics drivingCharacteristics)
         {
             this.drivingCharacteristics = drivingCharacteristics;
         }

@@ -65,7 +65,7 @@ import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LanePathInfo;
@@ -598,8 +598,8 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
         try
         {
             initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
-            LaneBasedDrivingCharacteristics drivingCharacteristics =
-                new LaneBasedDrivingCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
+            LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                new LaneBasedBehavioralCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
             LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
                     new GTUFollowingTacticalPlannerNoPerceive());
@@ -654,8 +654,8 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                 Time.Rel tSafe = new Time.Rel(1.0, TimeUnit.SECOND); // time headway
                 gtuFollowingModel = new IDMPlus(a, b, s0, tSafe, 1.0);
             }
-            LaneBasedDrivingCharacteristics drivingCharacteristics =
-                new LaneBasedDrivingCharacteristics(gtuFollowingModel, this.laneChangeModel);
+            LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                new LaneBasedBehavioralCharacteristics(gtuFollowingModel, this.laneChangeModel);
             LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
                     new GTUFollowingTacticalPlannerNoPerceive());

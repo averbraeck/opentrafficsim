@@ -33,7 +33,7 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
@@ -142,8 +142,8 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         GTUFollowingModel gtuFollowingModel =
             new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(1000, SECOND));
         // Construct a car
-        LaneBasedDrivingCharacteristics drivingCharacteristics =
-            new LaneBasedDrivingCharacteristics(gtuFollowingModel, laneChangeModel);
+        LaneBasedBehavioralCharacteristics drivingCharacteristics =
+            new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
         new LaneBasedIndividualGTU("1", gtuType, initialLongitudinalPositions, speed, length, width, maxSpeed,
@@ -230,7 +230,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         }
         // Check that harmonic mean speed is computed
         speed = new Speed(10, KM_PER_HOUR);
-        drivingCharacteristics = new LaneBasedDrivingCharacteristics(gtuFollowingModel, laneChangeModel);
+        drivingCharacteristics = new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
         strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
         new LaneBasedIndividualGTU("1234", gtuType, initialLongitudinalPositions, speed, length, width, maxSpeed,

@@ -40,7 +40,7 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.graphs.FundamentalDiagramLane;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
@@ -421,8 +421,8 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
             {
                 initialPositions.add(new DirectedLanePosition(this.lanes.get(this.lanes.size() - 1), initialPosition,
                     GTUDirectionality.DIR_PLUS));
-                LaneBasedDrivingCharacteristics drivingCharacteristics =
-                    new LaneBasedDrivingCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
+                LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                    new LaneBasedBehavioralCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
                 LaneBasedStrategicalPlanner strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
                         new LaneBasedGTUFollowingTacticalPlanner());
@@ -467,8 +467,8 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 {
                     throw new Error("gtuFollowingModel is null");
                 }
-                LaneBasedDrivingCharacteristics drivingCharacteristics =
-                    new LaneBasedDrivingCharacteristics(gtuFollowingModel, this.laneChangeModel);
+                LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                    new LaneBasedBehavioralCharacteristics(gtuFollowingModel, this.laneChangeModel);
                 LaneBasedStrategicalPlanner strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
                         new LaneBasedGTUFollowingTacticalPlanner());

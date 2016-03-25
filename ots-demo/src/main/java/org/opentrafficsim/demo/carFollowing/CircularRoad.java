@@ -51,7 +51,7 @@ import org.opentrafficsim.graphs.SpeedContourPlot;
 import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingChange0TacticalPlanner;
@@ -643,8 +643,8 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
-        LaneBasedDrivingCharacteristics drivingCharacteristics =
-                new LaneBasedDrivingCharacteristics(generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars,
+        LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                new LaneBasedBehavioralCharacteristics(generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars,
                         this.laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
                 this.tacticalPlanner);

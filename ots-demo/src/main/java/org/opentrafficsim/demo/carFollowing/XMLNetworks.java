@@ -70,7 +70,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUType;
 import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUTypeDistribution;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingChange0TacticalPlanner;
@@ -687,8 +687,8 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         {
             public LaneBasedStrategicalPlanner draw() throws ProbabilityException
             {
-                LaneBasedDrivingCharacteristics drivingCharacteristics =
-                        new LaneBasedDrivingCharacteristics(gtuFollowingModel, XMLNetworkModel.this.laneChangeModel);
+                LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                        new LaneBasedBehavioralCharacteristics(gtuFollowingModel, XMLNetworkModel.this.laneChangeModel);
                 drivingCharacteristics.setForwardHeadwayDistance(new Length.Rel(450.0, LengthUnit.METER));
 
                 return new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, XMLNetworkModel.this.tacticalPlanner,
@@ -761,7 +761,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                 new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Time.Rel(java.lang.Double.MAX_VALUE,
                         TimeUnit.SI));
         LaneChangeModel lcm = new FixedLaneChangeModel(null);
-        LaneBasedDrivingCharacteristics drivingCharacteristics = new LaneBasedDrivingCharacteristics(gfm, lcm);
+        LaneBasedBehavioralCharacteristics drivingCharacteristics = new LaneBasedBehavioralCharacteristics(gfm, lcm);
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, this.tacticalPlanner);
         // new LaneBasedCFLCTacticalPlanner());

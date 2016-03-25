@@ -49,7 +49,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
@@ -214,8 +214,8 @@ public class TestGMParser extends AbstractWrappableAnimation
                     SpeedUnit.KM_PER_HOUR)), new AccelerationGTUColorer(new Acceleration(-1.0,
                     AccelerationUnit.METER_PER_SECOND_2), new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2)));
             GTUFollowingModel gtuFollowingModel = new IDMPlus();
-            LaneBasedDrivingCharacteristics drivingCharacteristics =
-                new LaneBasedDrivingCharacteristics(gtuFollowingModel, null);
+            LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                new LaneBasedBehavioralCharacteristics(gtuFollowingModel, null);
             TacticalPlanner fixedTacticalPlanner = new LaneBasedGTUFollowingTacticalPlanner();
             LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, fixedTacticalPlanner);

@@ -19,7 +19,7 @@ import org.opentrafficsim.core.network.factory.xml.units.TimeUnits;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
@@ -292,8 +292,8 @@ class GeneratorTag
         Time.Abs endTime =
             generatorTag.endTime != null ? generatorTag.endTime : new Time.Abs(Double.MAX_VALUE, TimeUnit.SI);
         Length.Rel position = LinkTag.parseBeginEndPosition(generatorTag.positionStr, lane);
-        LaneBasedDrivingCharacteristics drivingCharacteristics =
-            new LaneBasedDrivingCharacteristics(new IDMPlus(), new Altruistic());
+        LaneBasedBehavioralCharacteristics drivingCharacteristics =
+            new LaneBasedBehavioralCharacteristics(new IDMPlus(), new Altruistic());
         LaneBasedStrategicalPlanner strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner(),
                 generatorTag.routeTag.route);

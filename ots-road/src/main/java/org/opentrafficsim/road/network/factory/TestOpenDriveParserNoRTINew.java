@@ -67,7 +67,7 @@ import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
@@ -479,8 +479,8 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                     dir = GTUDirectionality.DIR_MINUS;
                 }
 
-                LaneBasedDrivingCharacteristics drivingCharacteristics =
-                    new LaneBasedDrivingCharacteristics(new IDMPlus(), new Altruistic());
+                LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                    new LaneBasedBehavioralCharacteristics(new IDMPlus(), new Altruistic());
                 LaneBasedStrategicalPlanner sPlanner =
                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
                         new LaneBasedGTUFollowingLaneChangeTacticalPlanner(), cRoutes.get(routeRandom.nextInt(6)));
