@@ -124,7 +124,7 @@ public interface GTU extends LocatableInterface, Serializable
     Perception getPerception();
 
     /** @return the driving characteristics of this GTU (driver). */
-    DrivingCharacteristics getDrivingCharacteristics();
+    DrivingCharacteristics getBehavioralCharacteristics();
     
     /** @return the status of the turn indicator. */
     TurnIndicatorStatus getTurnIndicatorStatus();

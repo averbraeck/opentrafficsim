@@ -47,7 +47,7 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
         Lane lane = positions.keySet().iterator().next();
         Length.Rel longitudinalPosition = positions.get(lane);
         Lane otherLane = gtu.getPerception().bestAccessibleAdjacentLane(lane, direction, longitudinalPosition);
-        GTUFollowingModelOld gtuFollowingModel = gtu.getDrivingCharacteristics().getGTUFollowingModel();
+        GTUFollowingModelOld gtuFollowingModel = gtu.getBehavioralCharacteristics().getGTUFollowingModel();
         if (null == gtuFollowingModel)
         {
             throw new Error(gtu + " has null GTUFollowingModel");
@@ -63,7 +63,7 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
                 null == otherLane ? null : gtuFollowingModel.computeDualAccelerationStep(gtu, otherLaneGTUs, maxDistance,
                         speedLimit, laneChangeTime);
         if (null != otherLaneAccelerationSteps
-                && otherLaneAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getDrivingCharacteristics()
+                && otherLaneAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getBehavioralCharacteristics()
                         .getGTUFollowingModel().getMaximumSafeDeceleration().getSI())
         {
             otherLaneAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;

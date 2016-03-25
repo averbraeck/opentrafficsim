@@ -3,6 +3,7 @@ package org.opentrafficsim.core.gtu.drivercharacteristics;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 
 /**
+ * Defines meta-information of a parameter, defining the parameter uniquely.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -11,15 +12,17 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * initial version Mar 24, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
- * @param <T> 
+ * @author Wouter Schakel
+ * @param <T> Class of the value.
  */
 public class ParameterType<T extends DoubleScalar.Rel<?>> extends AbstractParameterType<T>
 {
-    /**
-     * @param id
-     * @param description
-     * @param valueClass
-     * @param defaultValue
+	/**
+     * Constructor with default value.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param valueClass Class of the value.
+     * @param defaultValue Default value.
      */
     public ParameterType(String id, String description, Class<T> valueClass, T defaultValue)
     {
@@ -27,9 +30,10 @@ public class ParameterType<T extends DoubleScalar.Rel<?>> extends AbstractParame
     }
 
     /**
-     * @param id
-     * @param description
-     * @param valueClass
+     * Constructor without default value.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param valueClass Class of the value.
      */
     public ParameterType(String id, String description, Class<T> valueClass)
     {
@@ -37,7 +41,8 @@ public class ParameterType<T extends DoubleScalar.Rel<?>> extends AbstractParame
     }
 
     /**
-     * @return valueClass
+     * Returns the class of the value.
+     * @return valueClass Class of the value.
      */
     public final Class<T> getValueClass()
     {
@@ -45,9 +50,9 @@ public class ParameterType<T extends DoubleScalar.Rel<?>> extends AbstractParame
     }
 
     /**
-     * 
-     * @param value
-     * @throws ParameterException when the value does not comply with the constraints
+     * Method to overwrite for checks with constraints.
+     * @param value Value to check with constraints.
+     * @throws ParameterException If the value does not comply with constraints.
      */
     @SuppressWarnings("checkstyle:designforextension")
     public void check(T value) throws ParameterException
@@ -55,6 +60,4 @@ public class ParameterType<T extends DoubleScalar.Rel<?>> extends AbstractParame
         //
     }
 
-
 }
-

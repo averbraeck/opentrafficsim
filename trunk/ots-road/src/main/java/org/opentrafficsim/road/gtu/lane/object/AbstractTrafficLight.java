@@ -210,7 +210,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public LaneBasedBehavioralCharacteristics getDrivingCharacteristics()
+    public LaneBasedBehavioralCharacteristics getBehavioralCharacteristics()
     {
         return null;
     }

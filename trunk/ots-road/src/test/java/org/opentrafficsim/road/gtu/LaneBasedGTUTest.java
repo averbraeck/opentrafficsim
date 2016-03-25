@@ -171,7 +171,7 @@ public class LaneBasedGTUTest implements UNITS
         assertEquals("lanesChecked should equals the number of Links times the number of lanes on each Link",
                 laneCount * links.size(), lanesChecked);
         assertEquals("Truck should be registered in " + truckPositions.size() + " lanes", truckPositions.size(), found);
-        Length.Rel forwardMaxDistance = truck.getDrivingCharacteristics().getForwardHeadwayDistance();
+        Length.Rel forwardMaxDistance = truck.getBehavioralCharacteristics().getForwardHeadwayDistance();
         // TODO see how we can ask the vehicle to look this far ahead
         truck.getPerception().perceive();
         HeadwayGTU leader = truck.getPerception().getForwardHeadwayGTU();
@@ -180,7 +180,7 @@ public class LaneBasedGTUTest implements UNITS
                 forwardMaxDistance.getSI() >= leader.getDistance().si && leader.getDistance().si > 0);
         assertEquals("With one vehicle in the network forward headwayGTU should return null", null, leader.getGtuId());
         // TODO see how we can ask the vehicle to look this far behind
-        Length.Rel reverseMaxDistance = truck.getDrivingCharacteristics().getBackwardHeadwayDistance();
+        Length.Rel reverseMaxDistance = truck.getBehavioralCharacteristics().getBackwardHeadwayDistance();
         HeadwayGTU follower = truck.getPerception().getBackwardHeadwayGTU();
         assertTrue(
                 "With one vehicle in the network reverse headway should return a value less than zero, and smaller than |maxDistance|",

@@ -43,21 +43,21 @@ public class FixedLaneChangeModel implements LaneChangeModel
         final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
         final Acceleration nonPreferredLaneRouteIncentive) throws GTUException
     {
-        Length.Rel headway = gtu.getDrivingCharacteristics().getForwardHeadwayDistance();
+        Length.Rel headway = gtu.getBehavioralCharacteristics().getForwardHeadwayDistance();
         if (null == this.laneChange)
         {
-            return new LaneMovementStep(gtu.getDrivingCharacteristics().getGTUFollowingModel()
+            return new LaneMovementStep(gtu.getBehavioralCharacteristics().getGTUFollowingModel()
                 .computeDualAccelerationStep(gtu, sameLaneTraffic, headway, speedLimit).getLeaderAccelerationStep(), null);
         }
         else if (LateralDirectionality.LEFT == this.laneChange)
         {
-            return new LaneMovementStep(gtu.getDrivingCharacteristics().getGTUFollowingModel()
+            return new LaneMovementStep(gtu.getBehavioralCharacteristics().getGTUFollowingModel()
                 .computeDualAccelerationStep(gtu, leftLaneTraffic, headway, speedLimit).getLeaderAccelerationStep(),
                 this.laneChange);
         }
         else if (LateralDirectionality.RIGHT == this.laneChange)
         {
-            return new LaneMovementStep(gtu.getDrivingCharacteristics().getGTUFollowingModel()
+            return new LaneMovementStep(gtu.getBehavioralCharacteristics().getGTUFollowingModel()
                 .computeDualAccelerationStep(gtu, rightLaneTraffic, headway, speedLimit).getLeaderAccelerationStep(),
                 this.laneChange);
         }

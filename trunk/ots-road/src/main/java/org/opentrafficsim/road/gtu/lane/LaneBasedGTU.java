@@ -35,7 +35,7 @@ public interface LaneBasedGTU extends GTU
 
     /** {@inheritDoc} */
     @Override
-    LaneBasedBehavioralCharacteristics getDrivingCharacteristics();
+    LaneBasedBehavioralCharacteristics getBehavioralCharacteristics();
 
     /** {@inheritDoc} */
     @Override

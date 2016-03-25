@@ -1,8 +1,7 @@
 package org.opentrafficsim.core.gtu.drivercharacteristics;
 
-import org.opentrafficsim.core.gtu.GTUException;
-
 /**
+ * Throwable for exceptions regarding parameters. 
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -11,19 +10,23 @@ import org.opentrafficsim.core.gtu.GTUException;
  * initial version Mar 24, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
+ * @author Wouter Schakel
  */
 public class ParameterException extends Exception
 {
 
-    /**
-     * 
+	private static final long serialVersionUID = 20160325L;
+
+	/**
+     * Empty constructor.
      */
     public ParameterException()
     {
     }
 
     /**
-     * @param message
+     * Constructor with message.
+     * @param message Message.
      */
     public ParameterException(String message)
     {
@@ -31,16 +34,18 @@ public class ParameterException extends Exception
     }
 
     /**
-     * @param cause
+     * Constructor with cause.
+     * @param cause Cause.
      */
     public ParameterException(Throwable cause)
     {
         super(cause);
     }
 
-    /**
-     * @param message
-     * @param cause
+    /** 
+     * Constructor with message and cause.
+     * @param message Message.
+     * @param cause Cause.
      */
     public ParameterException(String message, Throwable cause)
     {
@@ -48,10 +53,11 @@ public class ParameterException extends Exception
     }
 
     /**
-     * @param message
-     * @param cause
-     * @param enableSuppression
-     * @param writableStackTrace
+     * Constructor with message and cause.
+     * @param message Message.
+     * @param cause Cause.
+     * @param enableSuppression Whether to enable suppression.
+     * @param writableStackTrace Whether or not the stack trace should be writable.
      */
     public ParameterException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
     {

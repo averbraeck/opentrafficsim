@@ -766,7 +766,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public LaneBasedBehavioralCharacteristics getDrivingCharacteristics()
+    public LaneBasedBehavioralCharacteristics getBehavioralCharacteristics()
     {
         return getStrategicalPlanner().getDrivingCharacteristics();
     }
