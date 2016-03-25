@@ -56,10 +56,10 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
@@ -91,7 +91,7 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
     static final double[] STANDARDSPEEDS = {30, 50, 80, 100, 120};
 
     /** The car following model. */
-    private GTUFollowingModel carFollowingModel;
+    private GTUFollowingModelOld carFollowingModel;
 
     /** The graphs. */
     private ChartPanel[][] charts;
@@ -293,10 +293,10 @@ public class LaneChangeGraph extends JFrame implements OTSModelInterface, UNITS
             new SimpleSimulator(new Time.Abs(0.0, SECOND), new Time.Rel(0.0, SECOND), new Time.Rel(3600.0, SECOND),
                 this);
         this.carFollowingModel =
-            new IDMPlus(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
+            new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2),
                 new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
         this.carFollowingModel =
-            new IDM(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(
+            new IDMOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(
                 2, METER), new Time.Rel(1, SECOND), 1d);
 
         LaneBasedBehavioralCharacteristics drivingCharacteristics =

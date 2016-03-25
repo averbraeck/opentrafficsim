@@ -36,9 +36,9 @@ import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristic
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -128,7 +128,7 @@ public class LaneBasedGTUTest implements UNITS
         Length.Rel truckWidth = new Length.Rel(2.5, METER);
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
         Speed maximumVelocity = new Speed(120, KM_PER_HOUR);
-        GTUFollowingModel gtuFollowingModel = new IDMPlus();
+        GTUFollowingModelOld gtuFollowingModel = new IDMPlusOld();
         LaneBasedBehavioralCharacteristics drivingCharacteristics =
                 new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =

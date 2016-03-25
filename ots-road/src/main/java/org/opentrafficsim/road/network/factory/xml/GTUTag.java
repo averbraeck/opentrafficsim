@@ -9,9 +9,9 @@ import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.factory.xml.units.Distributions;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
@@ -50,7 +50,7 @@ class GTUTag
 
     /** GTU following model. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    GTUFollowingModel followingModel = null;
+    GTUFollowingModelOld followingModel = null;
 
     /** lane change model. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -138,15 +138,15 @@ class GTUTag
      * @return the model.
      * @throws NetworkException in case of unknown model.
      */
-    static GTUFollowingModel parseFollowingModel(final String modelName) throws NetworkException
+    static GTUFollowingModelOld parseFollowingModel(final String modelName) throws NetworkException
     {
         if (modelName.equals("IDM"))
         {
-            return new IDM();
+            return new IDMOld();
         }
         else if (modelName.equals("IDM+"))
         {
-            return new IDMPlus();
+            return new IDMPlusOld();
         }
         throw new NetworkException("Unknown GTU following model: " + modelName);
     }

@@ -12,9 +12,9 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModelMobil;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -56,7 +56,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             Lane nonPreferredLane =
                 gtu.getPerception().bestAccessibleAdjacentLane(lane, nonPreferred, longitudinalPosition);
             Lane preferredLane = gtu.getPerception().bestAccessibleAdjacentLane(lane, preferred, longitudinalPosition);
-            GTUFollowingModel gtuFollowingModel =
+            GTUFollowingModelOld gtuFollowingModel =
                 gtu.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
             if (null == gtuFollowingModel)
             {
@@ -78,7 +78,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 && nonPreferredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getStrategicalPlanner()
                     .getDrivingCharacteristics().getGTUFollowingModel().getMaximumSafeDeceleration().getSI())
             {
-                nonPreferredAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
+                nonPreferredAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
             }
             Acceleration nonPreferredA =
                 null == nonPreferredLane ? null : applyDriverPersonality(nonPreferredAccelerationSteps);
@@ -89,7 +89,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
                 && preferredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getStrategicalPlanner()
                     .getDrivingCharacteristics().getGTUFollowingModel().getMaximumSafeDeceleration().getSI())
             {
-                preferredAccelerationSteps = AbstractGTUFollowingModel.TOODANGEROUS;
+                preferredAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
             }
             Acceleration preferredA = null == preferredLane ? null : applyDriverPersonality(preferredAccelerationSteps);
             if (null == preferredA)

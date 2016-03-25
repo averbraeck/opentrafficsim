@@ -70,10 +70,10 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LanePathInfo;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -373,10 +373,10 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
     private GTUType gtuType = GTUType.makeGTUType("Car");
 
     /** the car following model, e.g. IDM Plus for cars. */
-    private GTUFollowingModel carFollowingModelCars;
+    private GTUFollowingModelOld carFollowingModelCars;
 
     /** the car following model, e.g. IDM Plus for trucks. */
-    private GTUFollowingModel carFollowingModelTrucks;
+    private GTUFollowingModelOld carFollowingModelTrucks;
 
     /** The probability that the next generated GTU is a passenger car. */
     private double carProbability;
@@ -519,14 +519,14 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                         Acceleration b = IDMPropertySet.getB(cp);
                         Length.Rel s0 = IDMPropertySet.getS0(cp);
                         Time.Rel tSafe = IDMPropertySet.getTSafe(cp);
-                        GTUFollowingModel gtuFollowingModel = null;
+                        GTUFollowingModelOld gtuFollowingModel = null;
                         if (carFollowingModelName.equals("IDM"))
                         {
-                            gtuFollowingModel = new IDM(a, b, s0, tSafe, 1.0);
+                            gtuFollowingModel = new IDMOld(a, b, s0, tSafe, 1.0);
                         }
                         else if (carFollowingModelName.equals("IDM+"))
                         {
-                            gtuFollowingModel = new IDMPlus(a, b, s0, tSafe, 1.0);
+                            gtuFollowingModel = new IDMPlusOld(a, b, s0, tSafe, 1.0);
                         }
                         else
                         {
@@ -637,14 +637,14 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
         {
             initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
             Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
-            GTUFollowingModel gtuFollowingModel;
+            GTUFollowingModelOld gtuFollowingModel;
             if (generateTruck)
             {
                 Acceleration a = new Acceleration(0.5, AccelerationUnit.METER_PER_SECOND_2); // max acceleration
                 Acceleration b = new Acceleration(1.25, AccelerationUnit.METER_PER_SECOND_2); // max xomfortable deceleration
                 Length.Rel s0 = new Length.Rel(4, LengthUnit.METER); // headway distance
                 Time.Rel tSafe = new Time.Rel(2.0, TimeUnit.SECOND); // time headway
-                gtuFollowingModel = new IDMPlus(a, b, s0, tSafe, 1.0);
+                gtuFollowingModel = new IDMPlusOld(a, b, s0, tSafe, 1.0);
             }
             else
             {
@@ -652,7 +652,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                 Acceleration b = new Acceleration(3, AccelerationUnit.METER_PER_SECOND_2); // max xomfortable deceleration
                 Length.Rel s0 = new Length.Rel(2.0, LengthUnit.METER); // headway distance
                 Time.Rel tSafe = new Time.Rel(1.0, TimeUnit.SECOND); // time headway
-                gtuFollowingModel = new IDMPlus(a, b, s0, tSafe, 1.0);
+                gtuFollowingModel = new IDMPlusOld(a, b, s0, tSafe, 1.0);
             }
             LaneBasedBehavioralCharacteristics drivingCharacteristics =
                 new LaneBasedBehavioralCharacteristics(gtuFollowingModel, this.laneChangeModel);
@@ -850,7 +850,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             }
 
             // get some models to help us make a plan
-            GTUFollowingModel gtuFollowingModel =
+            GTUFollowingModelOld gtuFollowingModel =
                 laneBasedGTU.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
 
             // get the lane plan

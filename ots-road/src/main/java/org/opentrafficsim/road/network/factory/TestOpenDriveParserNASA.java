@@ -62,7 +62,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
@@ -270,7 +270,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                                 Length.Rel position = lane.getLength().lt(M25) ? M0 : M25;
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
                                 LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                                    new LaneBasedBehavioralCharacteristics(new IDMPlus(), new Altruistic());
+                                    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
                                 LaneBasedStrategicalPlanner strategicalPlanner =
                                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
                                         new LaneBasedCFLCTacticalPlanner());
@@ -322,7 +322,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                                     lane.getLength().lt(M25) ? lane.getLength() : lane.getLength().minus(M25);
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
                                 LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                                    new LaneBasedBehavioralCharacteristics(new IDMPlus(), new Altruistic());
+                                    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
                                 LaneBasedStrategicalPlanner strategicalPlanner =
                                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
                                         new LaneBasedCFLCTacticalPlanner());
@@ -473,7 +473,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
                 }
 
                 LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                    new LaneBasedBehavioralCharacteristics(new IDMPlus(), new Altruistic());
+                    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
                 LaneBasedStrategicalPlanner sPlanner =
                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
                 LanePerceptionFull perception = new LanePerceptionFull();

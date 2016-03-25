@@ -39,7 +39,7 @@ import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristic
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -109,7 +109,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         // A Car needs a CarFollowingModel
         Acceleration acceleration = new Acceleration(2, METER_PER_SECOND_2);
         Time.Rel validFor = new Time.Rel(10, SECOND);
-        GTUFollowingModel gfm = new FixedAccelerationModel(acceleration, validFor);
+        GTUFollowingModelOld gfm = new FixedAccelerationModel(acceleration, validFor);
         // A Car needs a lane change model
         // AbstractLaneChangeModel laneChangeModel = new Egoistic();
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);

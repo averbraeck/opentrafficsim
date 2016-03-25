@@ -43,9 +43,9 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDM;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -235,10 +235,10 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         private GTUType gtuType = GTUType.makeGTUType("Car");
 
         /** the car following model, e.g. IDM Plus for cars. */
-        private GTUFollowingModel carFollowingModelCars;
+        private GTUFollowingModelOld carFollowingModelCars;
 
         /** the car following model, e.g. IDM Plus for trucks. */
-        private GTUFollowingModel carFollowingModelTrucks;
+        private GTUFollowingModelOld carFollowingModelTrucks;
 
         /** The probability that the next generated GTU is a passenger car. */
         private double carProbability;
@@ -338,19 +338,19 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                         if (modelName.equals("IDM"))
                         {
                             this.carFollowingModelCars =
-                                new IDM(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5,
+                                new IDMOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5,
                                     METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
                             this.carFollowingModelTrucks =
-                                new IDM(new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.5,
+                                new IDMOld(new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.5,
                                     METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
                         }
                         else if (modelName.equals("IDM+"))
                         {
                             this.carFollowingModelCars =
-                                new IDMPlus(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5,
+                                new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(1.5,
                                     METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
                             this.carFollowingModelTrucks =
-                                new IDMPlus(new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.5,
+                                new IDMPlusOld(new Acceleration(0.5, METER_PER_SECOND_2), new Acceleration(1.5,
                                     METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d);
                         }
                         else
@@ -461,7 +461,7 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 initialPositions.add(new DirectedLanePosition(this.lanes.get(0), initialPosition,
                     GTUDirectionality.DIR_PLUS));
                 Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
-                GTUFollowingModel gtuFollowingModel =
+                GTUFollowingModelOld gtuFollowingModel =
                     generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars;
                 if (null == gtuFollowingModel)
                 {

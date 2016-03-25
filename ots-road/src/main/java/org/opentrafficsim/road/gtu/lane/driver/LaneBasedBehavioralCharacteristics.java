@@ -9,7 +9,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.DrivingCharacteristics;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 
 /**
@@ -30,7 +30,7 @@ public class LaneBasedBehavioralCharacteristics implements DrivingCharacteristic
     private static final long serialVersionUID = 20151126L;
 
     /** the GTUFollowing model to use for this driver. */
-    private final GTUFollowingModel gtuFollowingModel;
+    private final GTUFollowingModelOld gtuFollowingModel;
 
     /** laneChangeModel the lane change model to use for this driver. */
     private final LaneChangeModel laneChangeModel;
@@ -78,7 +78,7 @@ public class LaneBasedBehavioralCharacteristics implements DrivingCharacteristic
      * @param gtuFollowingModel the GTUFollowing model to use for this driver
      * @param laneChangeModel the lane change model to use for this driver
      */
-    public LaneBasedBehavioralCharacteristics(GTUFollowingModel gtuFollowingModel, LaneChangeModel laneChangeModel)
+    public LaneBasedBehavioralCharacteristics(GTUFollowingModelOld gtuFollowingModel, LaneChangeModel laneChangeModel)
     {
         super();
         this.gtuFollowingModel = gtuFollowingModel;
@@ -88,7 +88,7 @@ public class LaneBasedBehavioralCharacteristics implements DrivingCharacteristic
     /**
      * @return gtuFollowingModel
      */
-    public final GTUFollowingModel getGTUFollowingModel()
+    public final GTUFollowingModelOld getGTUFollowingModel()
     {
         return this.gtuFollowingModel;
     }

@@ -19,7 +19,7 @@ import org.djunits.value.vdouble.scalar.Time;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FixedAccelerationModel extends AbstractGTUFollowingModel
+public class FixedAccelerationModel extends AbstractGTUFollowingModelMobil
 {
     /** Acceleration that will be returned in GTUFollowingModelResult by computeAcceleration. */
     private Acceleration acceleration;

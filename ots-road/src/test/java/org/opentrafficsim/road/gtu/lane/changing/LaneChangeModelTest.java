@@ -40,7 +40,7 @@ import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristic
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
@@ -183,7 +183,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             new SimpleSimulator(new Time.Abs(0, SECOND), new Time.Rel(0, SECOND), new Time.Rel(3600, SECOND), this);
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
         LaneBasedBehavioralCharacteristics drivingCharacteristics =
-            new LaneBasedBehavioralCharacteristics(new IDMPlus(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(
+            new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(
                 1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d), laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
@@ -219,7 +219,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
                 GTUDirectionality.DIR_PLUS));
 
             drivingCharacteristics =
-                new LaneBasedBehavioralCharacteristics(new IDMPlus(new Acceleration(1, METER_PER_SECOND_2),
+                new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
                     new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d),
                     laneChangeModel);
             strategicalPlanner =
@@ -249,7 +249,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
                 GTUDirectionality.DIR_PLUS));
 
             drivingCharacteristics =
-                new LaneBasedBehavioralCharacteristics(new IDMPlus(new Acceleration(1, METER_PER_SECOND_2),
+                new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
                     new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d),
                     laneChangeModel);
             strategicalPlanner =
