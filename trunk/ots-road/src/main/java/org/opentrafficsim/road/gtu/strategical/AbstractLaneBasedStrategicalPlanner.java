@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.strategical;
 
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 
 /**
  * <p>
@@ -15,12 +15,12 @@ import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
 public abstract class AbstractLaneBasedStrategicalPlanner implements LaneBasedStrategicalPlanner
 {
     /** the personal driving characteristics, which contain settings for the tactical planner. */
-    protected LaneBasedDrivingCharacteristics drivingCharacteristics;
+    protected LaneBasedBehavioralCharacteristics drivingCharacteristics;
 
     /**
      * @param drivingCharacteristics the personal driving characteristics, which contain settings for the tactical planner
      */
-    public AbstractLaneBasedStrategicalPlanner(LaneBasedDrivingCharacteristics drivingCharacteristics)
+    public AbstractLaneBasedStrategicalPlanner(LaneBasedBehavioralCharacteristics drivingCharacteristics)
     {
         super();
         this.drivingCharacteristics = drivingCharacteristics;
@@ -28,14 +28,14 @@ public abstract class AbstractLaneBasedStrategicalPlanner implements LaneBasedSt
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedDrivingCharacteristics getDrivingCharacteristics()
+    public final LaneBasedBehavioralCharacteristics getDrivingCharacteristics()
     {
         return this.drivingCharacteristics;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void setDrivingCharacteristics(final LaneBasedDrivingCharacteristics drivingCharacteristics)
+    public final void setDrivingCharacteristics(final LaneBasedBehavioralCharacteristics drivingCharacteristics)
     {
         this.drivingCharacteristics = drivingCharacteristics;
     }

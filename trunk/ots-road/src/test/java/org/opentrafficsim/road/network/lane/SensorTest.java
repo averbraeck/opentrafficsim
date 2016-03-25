@@ -29,7 +29,7 @@ import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
@@ -111,8 +111,8 @@ public class SensorTest implements UNITS
         FixedAccelerationModel fas =
             new FixedAccelerationModel(new Acceleration(0.5, METER_PER_SECOND_2), new Time.Rel(100, SECOND));
         // Now we can make a car (GTU) (and we don't even have to hold a pointer to it)
-        LaneBasedDrivingCharacteristics drivingCharacteristics =
-            new LaneBasedDrivingCharacteristics(fas, null);
+        LaneBasedBehavioralCharacteristics drivingCharacteristics =
+            new LaneBasedBehavioralCharacteristics(fas, null);
         LaneBasedStrategicalPlanner strategicalPlanner =
             new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner());
         LaneBasedIndividualGTU car = new LaneBasedIndividualGTU(carID, gtuType, initialLongitudinalPositions, initialSpeed, carLength, carWidth,

@@ -23,7 +23,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedAltruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedEgoistic;
@@ -100,7 +100,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
             // ask Perception for the local situation
             LaneBasedGTU laneBasedGTU = (LaneBasedGTU) gtu;
             LanePerception perception = laneBasedGTU.getPerception();
-            LaneBasedDrivingCharacteristics drivingCharacteristics = laneBasedGTU.getDrivingCharacteristics();
+            LaneBasedBehavioralCharacteristics drivingCharacteristics = laneBasedGTU.getDrivingCharacteristics();
 
             // start with the turn indicator off -- this can change during the method
             laneBasedGTU.setTurnIndicatorStatus(TurnIndicatorStatus.NONE);

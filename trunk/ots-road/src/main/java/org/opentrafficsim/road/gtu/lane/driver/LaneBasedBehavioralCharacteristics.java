@@ -24,7 +24,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedDrivingCharacteristics implements DrivingCharacteristics
+public class LaneBasedBehavioralCharacteristics implements DrivingCharacteristics
 {
     /** */
     private static final long serialVersionUID = 20151126L;
@@ -78,7 +78,7 @@ public class LaneBasedDrivingCharacteristics implements DrivingCharacteristics
      * @param gtuFollowingModel the GTUFollowing model to use for this driver
      * @param laneChangeModel the lane change model to use for this driver
      */
-    public LaneBasedDrivingCharacteristics(GTUFollowingModel gtuFollowingModel, LaneChangeModel laneChangeModel)
+    public LaneBasedBehavioralCharacteristics(GTUFollowingModel gtuFollowingModel, LaneChangeModel laneChangeModel)
     {
         super();
         this.gtuFollowingModel = gtuFollowingModel;

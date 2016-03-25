@@ -12,7 +12,7 @@ import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedDrivingCharacteristics;
+import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.strategical.AbstractLaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -46,7 +46,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * @param drivingCharacteristics the personal driving characteristics, which contain settings for the tactical planner
      * @param fixedTacticalPlanner the tactical planner to use for the GTU
      */
-    public LaneBasedStrategicalRoutePlanner(LaneBasedDrivingCharacteristics drivingCharacteristics,
+    public LaneBasedStrategicalRoutePlanner(LaneBasedBehavioralCharacteristics drivingCharacteristics,
         final TacticalPlanner fixedTacticalPlanner)
     {
         this(drivingCharacteristics, fixedTacticalPlanner, null);
@@ -57,7 +57,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * @param fixedTacticalPlanner the tactical planner to use for the GTU
      * @param route the route to drive
      */
-    public LaneBasedStrategicalRoutePlanner(LaneBasedDrivingCharacteristics drivingCharacteristics,
+    public LaneBasedStrategicalRoutePlanner(LaneBasedBehavioralCharacteristics drivingCharacteristics,
         final TacticalPlanner fixedTacticalPlanner, final Route route)
     {
         super(drivingCharacteristics);
