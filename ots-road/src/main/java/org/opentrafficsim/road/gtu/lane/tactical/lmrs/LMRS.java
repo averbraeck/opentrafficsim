@@ -13,6 +13,9 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.scalar.Time.Abs;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypeDouble;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
@@ -21,6 +24,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 
@@ -36,14 +40,34 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
  */
 public class LMRS extends AbstractLaneBasedTacticalPlanner {
 
-	/** Serialization id. */
 	private static final long serialVersionUID = 20160803L;
 	
-	// TODO: driver properties / parameters; get from driver characteristics?
-	public double dFree;
-	public double dSync;
-	public double dCoop;
-	public double b;
+	/** Free lane change desire threshold. */
+	public static final ParameterTypeDouble DFREE = new ParameterTypeDouble("dFree", 
+			"Free lane change desire threshold.", 0.365) {
+		public void check(double value) throws ParameterException {
+			ParameterException.failIf(value<=0, "Parameter of type dFree may not have a negative or zero value.");
+			ParameterException.failIf(value>1, "Parameter of type dFree may not have a value greater than 1.");
+		}		
+	};
+	
+	/** Synchronized lane change desire threshold. */
+	public static final ParameterTypeDouble DSYNC = new ParameterTypeDouble("dSync", 
+			"Synchronized lane change desire threshold.", 0.577) {
+		public void check(double value) throws ParameterException {
+			ParameterException.failIf(value<=0, "Parameter of type dSync may not have a negative or zero value.");
+			ParameterException.failIf(value>1, "Parameter of type dSync may not have a value greater than 1.");
+		}		
+	};
+	
+	/** Cooperative lane change desire threshold. */
+	public static final ParameterTypeDouble DCOOP = new ParameterTypeDouble("dCoop", 
+			"Cooperative lane change desire threshold.", 0.788) {
+		public void check(double value) throws ParameterException {
+			ParameterException.failIf(value<=0, "Parameter of type dCoop may not have a negative or zero value.");
+			ParameterException.failIf(value>1, "Parameter of type dCoop may not have a value greater than 1.");
+		}		
+	};
 	
 	/** Minimum acceleration for current plan. */
 	protected Acceleration minimumAcceleration;
@@ -92,9 +116,8 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner {
 	}
 	
 	@Override
-	public OperationalPlan generateOperationalPlan(GTU gtu, Abs startTime,
-			DirectedPoint locationAtStartTime) throws OperationalPlanException,
-			GTUException, NetworkException {
+	public OperationalPlan generateOperationalPlan(GTU gtu, Abs startTime, DirectedPoint locationAtStartTime) 
+			throws OperationalPlanException, GTUException, NetworkException {
 		
 		// TODO: Remove this when other todo's are done, it is used as a placeholder where some acceleration needs to be
 		// determined.
@@ -104,11 +127,26 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner {
 		if (mandatoryIncentives.isEmpty()) {
 			throw new OperationalPlanException("At the least the LMRS requires 1 mandatory lane change incentive.");
 		}
-		
+
 		// Obtain objects to get info
 		LaneBasedGTU gtuLane = (LaneBasedGTU) gtu;
 		LanePerception perception = (LanePerception) gtu.getPerception();
-		GTUFollowingModelOld dfm = gtuLane.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
+		CarFollowingModel dfm = (CarFollowingModel) gtuLane.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
+				
+		
+		// TODO: Throw ParameterException
+		Acceleration b;
+		double dFree;
+		double dSync;
+		double dCoop;
+		try {
+			b = gtuLane.getBehavioralCharacteristics().getAccelerationParameter(ParameterTypes.B);
+			dFree = gtuLane.getBehavioralCharacteristics().getParameter(DFREE);
+			dSync = gtuLane.getBehavioralCharacteristics().getParameter(DSYNC);
+			dCoop = gtuLane.getBehavioralCharacteristics().getParameter(DCOOP);
+		} catch (ParameterException pe) {
+			throw new RuntimeException(pe);
+		}
 		
 		// Reset stuff that is used in creating a plan
 		minimumAcceleration = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
@@ -190,13 +228,13 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner {
 		Acceleration aFollow = dummy;
 		Acceleration aSelf = dummy;
 		boolean leftAllowed = true; // TODO: get from perception / infrastructure, with relaxation
-		boolean acceptLeft = aSelf.getSI()>=-b*totalDesire.getLeft() && 
-                aFollow.getSI()>=-b*totalDesire.getLeft() && leftAllowed;
+		boolean acceptLeft = aSelf.getSI()>=-b.si*totalDesire.getLeft() && 
+                aFollow.getSI()>=-b.si*totalDesire.getLeft() && leftAllowed;
         aFollow = dummy;
 		aSelf = dummy;
 		boolean rightAllowed = true; // TODO: get from perception / infrastructure, with relaxation
-		boolean acceptRight = aSelf.getSI()>=-b*totalDesire.getRight() && 
-				aFollow.getSI()>=-b*totalDesire.getRight() && rightAllowed;
+		boolean acceptRight = aSelf.getSI()>=-b.si*totalDesire.getRight() && 
+				aFollow.getSI()>=-b.si*totalDesire.getRight() && rightAllowed;
 		
         /*
          * Lane change decision
@@ -231,20 +269,20 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner {
         // TODO: get neighboring vehicles, use car-following model with altered headway
         if (totalDesire.leftIsLargerOrEqual() && totalDesire.getLeft()>=dSync) {
         	// sync left
-        	lowerAcceleration(safe(dummy));
+        	lowerAcceleration(safe(dummy, b));
         } else if (!totalDesire.leftIsLargerOrEqual() && totalDesire.getRight()>=dSync) {
         	// sync right
-        	lowerAcceleration(safe(dummy));
+        	lowerAcceleration(safe(dummy, b));
         }
         // cooperate
         // TODO: get neighboring vehicles, their indicators, use car-following model with altered headway
         if (Math.random()>0) {
         	// cooperate left
-        	lowerAcceleration(safe(dummy));
+        	lowerAcceleration(safe(dummy, b));
         }
         if (Math.random()>0) {
         	// cooperate right
-        	lowerAcceleration(safe(dummy));
+        	lowerAcceleration(safe(dummy, b));
         }
         
         /*
@@ -277,7 +315,7 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner {
 	 * @param a Acceleration to remember if lower than any previous acceleration.
 	 */
 	protected void lowerAcceleration(Acceleration a) {
-		if (a.getSI()<this.minimumAcceleration.getSI()) {
+		if (a.getSI()<this.minimumAcceleration.si) {
 			this.minimumAcceleration = a;
 		}
 	}
@@ -285,13 +323,14 @@ public class LMRS extends AbstractLaneBasedTacticalPlanner {
 	/**
 	 * Limits the supplied acceleration to safe values, i.e. above or equal to -b.
 	 * @param a Acceleration to limit.
+	 * @param b Deceleration to limit to.
 	 * @return Limited acceleration.
 	 */
-	protected Acceleration safe(Acceleration a) {
-		if (a.getSI()>=-b) {
+	protected Acceleration safe(Acceleration a, Acceleration b) {
+		if (a.si>=-b.si) {
 			return a;
 		}
-		return new Acceleration(-b, AccelerationUnit.SI);
+		return new Acceleration(-b.si, AccelerationUnit.SI);
 	}
 
 }

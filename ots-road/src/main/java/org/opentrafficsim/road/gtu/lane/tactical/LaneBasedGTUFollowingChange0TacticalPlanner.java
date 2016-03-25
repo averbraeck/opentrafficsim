@@ -100,7 +100,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
             // ask Perception for the local situation
             LaneBasedGTU laneBasedGTU = (LaneBasedGTU) gtu;
             LanePerception perception = laneBasedGTU.getPerception();
-            LaneBasedBehavioralCharacteristics drivingCharacteristics = laneBasedGTU.getDrivingCharacteristics();
+            LaneBasedBehavioralCharacteristics drivingCharacteristics = laneBasedGTU.getBehavioralCharacteristics();
 
             // start with the turn indicator off -- this can change during the method
             laneBasedGTU.setTurnIndicatorStatus(TurnIndicatorStatus.NONE);
@@ -181,7 +181,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
                     DirectedLaneMovementStep dlms =
                         dlcm.computeLaneChangeAndAcceleration(laneBasedGTU, LateralDirectionality.LEFT,
                             sameLaneTraffic, perception.getNeighboringGTUsLeft(), laneBasedGTU
-                                .getDrivingCharacteristics().getForwardHeadwayDistance(), perception.getSpeedLimit(),
+                                .getBehavioralCharacteristics().getForwardHeadwayDistance(), perception.getSpeedLimit(),
                             new Acceleration(1.0, AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI),
                             new Time.Rel(0.5, TimeUnit.SECOND));
                     if (dlms.getLaneChange() != null)
@@ -227,7 +227,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
                     DirectedLaneMovementStep dlms =
                         dlcm.computeLaneChangeAndAcceleration(laneBasedGTU, LateralDirectionality.RIGHT,
                             sameLaneTraffic, perception.getNeighboringGTUsRight(), laneBasedGTU
-                                .getDrivingCharacteristics().getForwardHeadwayDistance(), perception.getSpeedLimit(),
+                                .getBehavioralCharacteristics().getForwardHeadwayDistance(), perception.getSpeedLimit(),
                             new Acceleration(1.0, AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI),
                             new Time.Rel(0.5, TimeUnit.SECOND));
                     if (dlms.getLaneChange() != null)
@@ -275,7 +275,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
         GTUException
     {
         LanePerception perception = laneBasedGTU.getPerception();
-        GTUFollowingModelOld gfm = laneBasedGTU.getDrivingCharacteristics().getGTUFollowingModel();
+        GTUFollowingModelOld gfm = laneBasedGTU.getBehavioralCharacteristics().getGTUFollowingModel();
 
         // No lane change. Continue on current lane.
         AccelerationStep accelerationStep;
@@ -402,7 +402,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
         // TODO make the elasticities 2.0 and 0.1 parameters of the class
         DirectedLaneMovementStep dlms =
             dlcm.computeLaneChangeAndAcceleration(gtu, direction, sameLaneTraffic, otherLaneTraffic, gtu
-                .getDrivingCharacteristics().getForwardHeadwayDistance(), perception.getSpeedLimit(), new Acceleration(
+                .getBehavioralCharacteristics().getForwardHeadwayDistance(), perception.getSpeedLimit(), new Acceleration(
                 2.0, AccelerationUnit.SI), new Acceleration(0.1, AccelerationUnit.SI), new Time.Rel(0.5,
                 TimeUnit.SECOND));
         if (dlms.getLaneChange() == null)

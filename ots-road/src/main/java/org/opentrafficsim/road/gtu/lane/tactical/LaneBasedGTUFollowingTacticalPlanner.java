@@ -71,7 +71,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
 
         // see how far we can drive
         LanePathInfo lanePathInfo =
-            buildLaneListForward(laneBasedGTU, laneBasedGTU.getDrivingCharacteristics().getForwardHeadwayDistance());
+            buildLaneListForward(laneBasedGTU, laneBasedGTU.getBehavioralCharacteristics().getForwardHeadwayDistance());
 
         // look at the conditions for headway
         HeadwayGTU headwayGTU = perception.getForwardHeadwayGTU();

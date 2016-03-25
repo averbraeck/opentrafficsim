@@ -30,8 +30,8 @@ public class TestBehavioralCharacteristics
     public static void main(final String[] args) throws ParameterException
     {
         BehavioralCharacteristics bc = new BehavioralCharacteristics();
-        bc.setParameter(ParameterTypes.VMAX, new Speed(100, SpeedUnit.KM_PER_HOUR));
-        bc.setParameter(ParameterTypes.VMAX, new Speed(50.0, SpeedUnit.KM_PER_HOUR));
+        bc.setParameter(ParameterTypes.VCONG, new Speed(100, SpeedUnit.KM_PER_HOUR));
+        bc.setParameter(ParameterTypes.VCONG, new Speed(50.0, SpeedUnit.KM_PER_HOUR));
 
         ParameterTypeDouble ptd = new ParameterTypeDouble("mijnParam", "mijn parameter")
         {
@@ -39,12 +39,12 @@ public class TestBehavioralCharacteristics
             @Override
             public void check(double value) throws ParameterException
             {
-                ParameterException.failIf(Double.isNaN(value), "Value is NaN...");
+                ParameterException.failIf(value>1.0, "Value is NaN...");
             }
             
         };
         bc.setParameter(ptd, 3.0);
-        bc.setParameter(ptd, Double.NEGATIVE_INFINITY);
+        bc.setParameter(ptd, Double.NaN);
     }
 }
 

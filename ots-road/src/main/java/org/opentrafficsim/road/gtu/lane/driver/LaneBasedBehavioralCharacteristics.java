@@ -9,6 +9,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.DrivingCharacteristics;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 
@@ -24,7 +25,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedBehavioralCharacteristics implements DrivingCharacteristics
+public class LaneBasedBehavioralCharacteristics extends BehavioralCharacteristics implements DrivingCharacteristics
 {
     /** */
     private static final long serialVersionUID = 20151126L;

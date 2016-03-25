@@ -855,7 +855,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
 
             // get the lane plan
             LanePathInfo lanePathInfo =
-                buildLaneListForward(laneBasedGTU, laneBasedGTU.getDrivingCharacteristics().getForwardHeadwayDistance());
+                buildLaneListForward(laneBasedGTU, laneBasedGTU.getBehavioralCharacteristics().getForwardHeadwayDistance());
             Length.Rel maxDistance = lanePathInfo.getPath().getLength();
 
             // look at the conditions for headway

@@ -45,7 +45,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
     {
         try
         {
-            Length.Rel headway = gtu.getDrivingCharacteristics().getForwardHeadwayDistance();
+            Length.Rel headway = gtu.getBehavioralCharacteristics().getForwardHeadwayDistance();
             Map<Lane, Length.Rel> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
             Lane lane = positions.keySet().iterator().next();
             Length.Rel longitudinalPosition = positions.get(lane);

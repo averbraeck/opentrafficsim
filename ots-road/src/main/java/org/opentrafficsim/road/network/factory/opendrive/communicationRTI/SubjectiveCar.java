@@ -149,7 +149,7 @@ public class SubjectiveCar extends AbstractGTU
      * {@inheritDoc}
      */
     @Override
-    public DrivingCharacteristics getDrivingCharacteristics()
+    public DrivingCharacteristics getBehavioralCharacteristics()
     {
         return null;
     }

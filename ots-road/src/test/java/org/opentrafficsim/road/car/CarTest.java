@@ -100,7 +100,7 @@ public class CarTest implements UNITS
         assertEquals("The car should have an initial acceleration equal to 0", 0,
             referenceCar.getAcceleration(initialTime).getSI(), 0.0001);
         assertEquals("The gtu following model should be " + gtuFollowingModel, gtuFollowingModel, referenceCar
-            .getDrivingCharacteristics().getGTUFollowingModel());
+            .getBehavioralCharacteristics().getGTUFollowingModel());
         // There is (currently) no way to retrieve the lane change model of a GTU.
     }
 

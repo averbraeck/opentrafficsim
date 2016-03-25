@@ -98,7 +98,7 @@ public class IDMPlusTest implements UNITS
         Speed speedLimit = new Speed(100, KM_PER_HOUR);
         AccelerationStep cfmr =
             carFollowingModel.computeAccelerationStepWithNoLeader(referenceCar10, referenceCar10
-                .getDrivingCharacteristics().getForwardHeadwayDistance(), speedLimit);
+                .getBehavioralCharacteristics().getForwardHeadwayDistance(), speedLimit);
         assertEquals("Standard time slice in IDM+ is 0.5s", 0.5, cfmr.getValidUntil().getSI(), 0.0001);
         assertEquals("Acceleration should be maximum", 1.25, cfmr.getAcceleration().getSI(), 0.0001);
         // Create another car at exactly the stationary following distance
@@ -125,7 +125,7 @@ public class IDMPlusTest implements UNITS
                 - referenceCar10.getLength().getSI() - initialPosition.getSI(), leaderCar11.getGTUType());
         cfmr =
             carFollowingModel.computeAccelerationStep(referenceCar10, leaderCar11.getVelocity(), leader.getDistance(),
-                leaderCar11.getDrivingCharacteristics().getForwardHeadwayDistance(), speedLimit);
+                leaderCar11.getBehavioralCharacteristics().getForwardHeadwayDistance(), speedLimit);
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         leaderPosition =
             new Length.Rel(1000 + (3 + referenceCar10.getLength().getSI() + referenceCar10.position(lane,
@@ -149,7 +149,7 @@ public class IDMPlusTest implements UNITS
         leaders.add(leader);
         cfmr =
             carFollowingModel.computeDualAccelerationStep(referenceCar10, leaders,
-                referenceCar10.getDrivingCharacteristics().getForwardHeadwayDistance(), speedLimit)
+                referenceCar10.getBehavioralCharacteristics().getForwardHeadwayDistance(), speedLimit)
                 .getLeaderAccelerationStep();
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         leaders.clear();
@@ -157,7 +157,7 @@ public class IDMPlusTest implements UNITS
         leaders.add(leader2);
         cfmr =
             carFollowingModel.computeDualAccelerationStep(referenceCar10, leaders,
-                referenceCar10.getDrivingCharacteristics().getForwardHeadwayDistance(), speedLimit)
+                referenceCar10.getBehavioralCharacteristics().getForwardHeadwayDistance(), speedLimit)
                 .getLeaderAccelerationStep();
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         referenceCar10.destroy();
@@ -185,7 +185,7 @@ public class IDMPlusTest implements UNITS
         leaders.add(leader);
         cfmr =
             carFollowingModel.computeDualAccelerationStep(referenceCar20, leaders,
-                referenceCar20.getDrivingCharacteristics().getForwardHeadwayDistance(), speedLimit)
+                referenceCar20.getBehavioralCharacteristics().getForwardHeadwayDistance(), speedLimit)
                 .getLeaderAccelerationStep();
         assertEquals("Leader acceleration should be 1.25", 1.25, cfmr.getAcceleration().getSI(), 0.0001);
         leaderCar21.destroy();
@@ -211,7 +211,7 @@ public class IDMPlusTest implements UNITS
             leaders.add(leader);
             cfmr =
                 carFollowingModel.computeDualAccelerationStep(referenceCar20, leaders,
-                    referenceCar20.getDrivingCharacteristics().getForwardHeadwayDistance(), speedLimit)
+                    referenceCar20.getBehavioralCharacteristics().getForwardHeadwayDistance(), speedLimit)
                     .getFollowerAccelerationStep();
             double acceleration = cfmr.getAcceleration().getSI();
             // System.out.println("Acceleration with stationary leader at " + spareDistance + " is " + acceleration);
@@ -267,7 +267,7 @@ public class IDMPlusTest implements UNITS
             // System.out.println("leaderCar   : " + leaderCar);
             cfmr =
                 carFollowingModel.computeDualAccelerationStep(referenceCar30, leaders,
-                    referenceCar30.getDrivingCharacteristics().getForwardHeadwayDistance(), speedLimit)
+                    referenceCar30.getBehavioralCharacteristics().getForwardHeadwayDistance(), speedLimit)
                     .getFollowerAccelerationStep();
             double acceleration = cfmr.getAcceleration().getSI();
             // System.out.println("Acceleration with leader driving " + integerLeaderSpeed + " m/s is " + acceleration);

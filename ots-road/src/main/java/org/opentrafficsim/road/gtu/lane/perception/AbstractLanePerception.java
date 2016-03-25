@@ -132,7 +132,7 @@ public abstract class AbstractLanePerception implements LanePerception
     public void updateForwardHeadwayGTU() throws GTUException, NetworkException
     {
         Time.Abs timestamp = getTimestamp();
-        Length.Rel maximumForwardHeadway = this.gtu.getDrivingCharacteristics().getForwardHeadwayDistance();
+        Length.Rel maximumForwardHeadway = this.gtu.getBehavioralCharacteristics().getForwardHeadwayDistance();
         this.forwardHeadwayGTU = new TimeStampedObject<>(headway(maximumForwardHeadway), timestamp);
     }
 
@@ -141,7 +141,7 @@ public abstract class AbstractLanePerception implements LanePerception
     public void updateBackwardHeadwayGTU() throws GTUException, NetworkException
     {
         Time.Abs timestamp = getTimestamp();
-        Length.Rel maximumReverseHeadway = this.gtu.getDrivingCharacteristics().getBackwardHeadwayDistance();
+        Length.Rel maximumReverseHeadway = this.gtu.getBehavioralCharacteristics().getBackwardHeadwayDistance();
         this.backwardHeadwayGTU = new TimeStampedObject<>(headway(maximumReverseHeadway), timestamp);
     }
 
@@ -234,8 +234,8 @@ public abstract class AbstractLanePerception implements LanePerception
         }
 
         // for the accessible lanes, see who is ahead of us and in front of us
-        Length.Rel maximumForwardHeadway = this.gtu.getDrivingCharacteristics().getForwardHeadwayDistance();
-        Length.Rel maximumReverseHeadway = this.gtu.getDrivingCharacteristics().getBackwardHeadwayDistance();
+        Length.Rel maximumForwardHeadway = this.gtu.getBehavioralCharacteristics().getForwardHeadwayDistance();
+        Length.Rel maximumReverseHeadway = this.gtu.getBehavioralCharacteristics().getBackwardHeadwayDistance();
         this.neighboringGTUsLeft =
             new TimeStampedObject<>(collectNeighborLaneTraffic(LateralDirectionality.LEFT, timestamp,
                 maximumForwardHeadway, maximumReverseHeadway), timestamp);
@@ -258,8 +258,8 @@ public abstract class AbstractLanePerception implements LanePerception
         }
 
         // for the accessible lanes, see who is ahead of us and in front of us
-        Length.Rel maximumForwardHeadway = this.gtu.getDrivingCharacteristics().getForwardHeadwayDistance();
-        Length.Rel maximumReverseHeadway = this.gtu.getDrivingCharacteristics().getBackwardHeadwayDistance();
+        Length.Rel maximumForwardHeadway = this.gtu.getBehavioralCharacteristics().getForwardHeadwayDistance();
+        Length.Rel maximumReverseHeadway = this.gtu.getBehavioralCharacteristics().getBackwardHeadwayDistance();
         this.neighboringGTUsRight =
             new TimeStampedObject<>(collectNeighborLaneTraffic(LateralDirectionality.RIGHT, timestamp,
                 maximumForwardHeadway, maximumReverseHeadway), timestamp);

@@ -61,7 +61,7 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
         }
         AccelerationStep followerAccelerationStep = null;
         AccelerationStep referenceGTUAccelerationStep = null;
-        GTUFollowingModelOld gfm = referenceGTU.getDrivingCharacteristics().getGTUFollowingModel();
+        GTUFollowingModelOld gfm = referenceGTU.getBehavioralCharacteristics().getGTUFollowingModel();
         // Find the leader and the follower that cause/experience the least positive (most negative) acceleration.
         for (HeadwayGTU headwayGTU : otherGTUs)
         {

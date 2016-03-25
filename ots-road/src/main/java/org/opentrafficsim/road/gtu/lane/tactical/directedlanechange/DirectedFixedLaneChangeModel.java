@@ -35,13 +35,13 @@ public class DirectedFixedLaneChangeModel implements DirectedLaneChangeModel
         if (null == direction)
         {
             return new DirectedLaneMovementStep(
-                gtu.getDrivingCharacteristics().getGTUFollowingModel()
+                gtu.getBehavioralCharacteristics().getGTUFollowingModel()
                     .computeDualAccelerationStep(gtu, sameLaneTraffic, maxDistance, speedLimit)
                     .getLeaderAccelerationStep(), null);
         }
         else
         {
-            return new DirectedLaneMovementStep(gtu.getDrivingCharacteristics().getGTUFollowingModel()
+            return new DirectedLaneMovementStep(gtu.getBehavioralCharacteristics().getGTUFollowingModel()
                 .computeDualAccelerationStep(gtu, otherLaneTraffic, maxDistance, speedLimit)
                 .getLeaderAccelerationStep(), direction);
         }

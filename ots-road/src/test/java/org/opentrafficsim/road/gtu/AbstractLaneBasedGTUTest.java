@@ -140,7 +140,7 @@ public class AbstractLaneBasedGTUTest implements UNITS
         // Now we can verify the various fields in the newly created Car
         assertEquals("ID of the car should be identical to the provided one", carID, car.getId());
         assertEquals("GTU following model should be identical to the provided one", gfm, car
-            .getDrivingCharacteristics().getGTUFollowingModel());
+            .getBehavioralCharacteristics().getGTUFollowingModel());
         assertEquals("Width should be identical to the provided width", carWidth, car.getWidth());
         assertEquals("Length should be identical to the provided length", carLength, car.getLength());
         assertEquals("GTU type should be identical to the provided one", gtuType, car.getGTUType());
