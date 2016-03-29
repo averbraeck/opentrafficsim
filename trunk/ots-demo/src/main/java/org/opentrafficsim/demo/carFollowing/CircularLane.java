@@ -179,7 +179,7 @@ public class CircularLane extends AbstractWrappableAnimation implements UNITS
     @Override
     protected final Rectangle2D.Double makeAnimationRectangle()
     {
-        return new Rectangle2D.Double(-1000, -1000, 2000, 2000);
+        return new Rectangle2D.Double(-350, -350, 700, 700);
     }
 
     /** {@inheritDoc} */
