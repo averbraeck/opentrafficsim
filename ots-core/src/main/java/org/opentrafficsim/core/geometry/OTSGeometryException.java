@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.geometry;
 
+
 /**
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -58,6 +59,22 @@ public class OTSGeometryException extends Exception
         final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);
+    }
+
+    /**
+     * Throw an Exception if a condition is met, e.g. for pre- and postcondition checking.
+     * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
+     * @param message the message to use in the exception
+     * @throws OTSGeometryException the exception to throw on true condition
+     */
+    public static void failIf(final boolean condition, final String message) throws OTSGeometryException
+    {
+        if (condition)
+        {
+            StackTraceElement[] ste = new Exception().getStackTrace();
+            String where = ste[1].getClassName() + "." + ste[1].getMethodName() + " (" + ste[1].getLineNumber() + "): ";
+            throw new OTSGeometryException(where + message);
+        }
     }
 
 }

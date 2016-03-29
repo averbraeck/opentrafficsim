@@ -1,5 +1,6 @@
 package org.opentrafficsim.simulationengine;
 
+
 /**
  * Exception for the operational plan, e.g. when a request is given outside the plan's validity.
  * <p>
@@ -61,4 +62,19 @@ public class OTSSimulationException extends Exception
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
+    /**
+     * Throw an Exception if a condition is met, e.g. for pre- and postcondition checking.
+     * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
+     * @param message the message to use in the exception
+     * @throws OTSSimulationException the exception to throw on true condition
+     */
+    public static void failIf(final boolean condition, final String message) throws OTSSimulationException
+    {
+        if (condition)
+        {
+            StackTraceElement[] ste = new Exception().getStackTrace();
+            String where = ste[1].getClassName() + "." + ste[1].getMethodName() + " (" + ste[1].getLineNumber() + "): ";
+            throw new OTSSimulationException(where + message);
+        }
+    }
 }

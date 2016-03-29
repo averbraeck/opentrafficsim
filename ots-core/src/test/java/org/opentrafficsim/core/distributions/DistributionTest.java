@@ -36,9 +36,9 @@ public class DistributionTest
         try
         {
             new Distribution<TestObject>(null, si);
-            fail("Null pointer for generators should have thrown a NullPointerException");
+            fail("Null pointer for generators should have thrown a ProbabilityException");
         }
-        catch (NullPointerException npe)
+        catch (ProbabilityException npe)
         {
             // Ignore expected exception
         }
@@ -47,9 +47,9 @@ public class DistributionTest
         try
         {
             new Distribution<TestObject>(generators, null);
-            fail("Null pointer for stream interface should have thrown a NullPointerException");
+            fail("Null pointer for stream interface should have thrown a ProbabilityException");
         }
-        catch (NullPointerException npe)
+        catch (ProbabilityException npe)
         {
             // Ignore expected exception
         }
