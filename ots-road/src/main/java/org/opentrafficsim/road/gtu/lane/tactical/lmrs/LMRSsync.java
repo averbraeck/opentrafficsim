@@ -21,7 +21,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
  * rather than only the direct leader. Furthermore, gaps are also created during lane changes, also for the adjacent 
  * lane of the target lane.
  * 
- * @see Schakel, W.J., Knoop, V.L., and Van Arem, B. (2012), 
+ * See Schakel, W.J., Knoop, V.L., and Van Arem, B. (2012), 
  * <a href="http://victorknoop.eu/research/papers/TRB2012_LMRS_reviewed.pdf">LMRS: Integrated Lane Change Model with 
  * Relaxation and Synchronization</a>, Transportation Research Records: Journal of the Transportation Research Board, 
  * No. 2316, pp. 47-57. Note in the official versions of TRB and TRR some errors appeared due to the typesetting of the 

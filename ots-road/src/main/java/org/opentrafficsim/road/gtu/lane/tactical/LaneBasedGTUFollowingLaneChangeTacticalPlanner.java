@@ -247,7 +247,6 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
                 }
             }
         }
-
         return currentLanePlan(laneBasedGTU, startTime, locationAtStartTime, lanePathInfo);
     }
 

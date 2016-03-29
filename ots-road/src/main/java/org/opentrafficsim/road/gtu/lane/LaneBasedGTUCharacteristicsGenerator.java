@@ -26,6 +26,7 @@ public interface LaneBasedGTUCharacteristicsGenerator
     /**
      * Return the simulator.
      * @return OTSDEVSSimulatorInterface; the simulator
+     * @throws ProbabilityException when the generator cannot retrieve the simulator
      */
-    public OTSDEVSSimulatorInterface getSimulator();
+    public OTSDEVSSimulatorInterface getSimulator() throws ProbabilityException;
 }

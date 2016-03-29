@@ -78,8 +78,8 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel, GT
 	 * @param desiredSpeed Desired speed.
 	 * @param desiredHeadway Desired headway.
 	 * @param leaders Set of leader headways (guaranteed positive) and speeds, ordered by headway (closest first).
+     * @throws ParameterException If parameter exception occurs.
 	 * @return Car-following acceleration.
-	 * @throw ParameterException If parameter exception occurs.
 	 */
 	protected abstract Acceleration followingAcceleration(LaneBasedGTU gtu, Speed speed, Speed desiredSpeed, 
 			Length.Rel desiredHeadway, SortedMap<Length.Rel, Speed> leaders) throws ParameterException;
