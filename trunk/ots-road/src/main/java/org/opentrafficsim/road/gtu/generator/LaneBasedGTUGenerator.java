@@ -10,10 +10,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.distributions.Generator;
@@ -97,12 +94,13 @@ public class LaneBasedGTUGenerator
      * @param roomChecker LaneBasedGTUGenerator.RoomChecker; the way that this generator checks that there is sufficient room to
      *            place a new GTU
      * @throws SimRuntimeException when <cite>startTime</cite> lies before the current simulation time
+     * @throws ProbabilityException pe
      */
     public LaneBasedGTUGenerator(String id, final Generator<Time.Rel> interarrivelTimeGenerator, final long maxGTUs,
             final Time.Abs startTime, final Time.Abs endTime, final GTUColorer gtuColorer,
             final LaneBasedGTUCharacteristicsGenerator laneBasedGTUCharacteristicsGenerator,
             final Set<DirectedLanePosition> initialLongitudinalPositions, final OTSNetwork network, RoomChecker roomChecker)
-            throws SimRuntimeException
+            throws SimRuntimeException, ProbabilityException
     {
         this.id = id;
         this.interarrivelTimeGenerator = interarrivelTimeGenerator;
@@ -157,10 +155,11 @@ public class LaneBasedGTUGenerator
      * @throws OTSGeometryException when something is wrong in the definition of the GTU
      * @throws NetworkException when something is wrong with the initial location of the GTU
      * @throws NamingException ???
+     * @throws ProbabilityException pe
      */
     @SuppressWarnings("unused")
     private void tryToPlaceGTU() throws SimRuntimeException, GTUException, NamingException, NetworkException,
-            OTSGeometryException
+            OTSGeometryException, ProbabilityException
     {
         // System.out.println("entered tryToPlaceGTU");
         LaneBasedGTUCharacteristics characteristics;
@@ -307,7 +306,7 @@ public class LaneBasedGTUGenerator
          * speed. This method will never be called if the newly proposed GTU overlaps with the leader. Nor will this method be
          * called if there is no leader.
          * @param leaderSpeed Speed; velocity of the nearest leader
-         * @param headway Length.Rel; net distance to the nearest leader (always > 0)
+         * @param headway Length.Rel; net distance to the nearest leader (always &gt; 0)
          * @param laneBasedGTUCharacteristics LaneBasedGTUCharacteristics; characteristics of the proposed new GTU
          * @return Speed; maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the
          *         current time

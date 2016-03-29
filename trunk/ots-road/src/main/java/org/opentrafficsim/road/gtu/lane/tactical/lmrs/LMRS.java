@@ -30,7 +30,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 
 /**
  * Implementation of the LMRS (Lane change Model with Relaxation and Synchronization).
- * @see Schakel, W.J., Knoop, V.L., and Van Arem, B. (2012), 
+ * See Schakel, W.J., Knoop, V.L., and Van Arem, B. (2012), 
  * <a href="http://victorknoop.eu/research/papers/TRB2012_LMRS_reviewed.pdf">LMRS: Integrated Lane Change Model with 
  * Relaxation and Synchronization</a>, Transportation Research Records: Journal of the Transportation Research Board, 
  * No. 2316, pp. 47-57. Note in the official versions of TRB and TRR some errors appeared due to the typesetting of the 

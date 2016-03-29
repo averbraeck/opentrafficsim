@@ -98,50 +98,28 @@ public class IDMOld extends AbstractGTUFollowingModelMobil
         final Speed leaderSpeed, final Length.Rel headway, final Speed speedLimit, final Time.Rel stepSize)
     {
         // TODO maxDistance
-        // System.out.println("Applying IDM for " + follower + " headway is " + headway);
         // dV is the approach speed
         Speed dV = followerSpeed.minus(leaderSpeed);
+        double sStar =
+            this.s0.si + followerSpeed.si * this.tSafe.si + dV.si * followerSpeed.si
+                / (2.0 * Math.sqrt(this.a.si * this.b.si));
+        if (sStar < 0.0 && headway.si < 0.0)
+        {
+            return new Acceleration(Double.NEGATIVE_INFINITY, AccelerationUnit.SI);
+        }
+        sStar = sStar >= 0.0 ? sStar : 0.0;
+        double s = headway.si > 0.0 ? headway.si : 1E-99;
+        Acceleration aInteraction = new Acceleration(this.a.si * (sStar / s) * (sStar / s), AccelerationUnit.SI);
         Acceleration aFree =
-            new Acceleration(this.a.getSI()
-                * (1 - Math.pow(followerSpeed.getSI() / vDes(speedLimit, followerMaximumSpeed).getSI(), 4)),
+            new Acceleration(this.a.si
+                * (1.0 - Math.pow(followerSpeed.si / vDes(speedLimit, followerMaximumSpeed).si, 4)),
                 AccelerationUnit.SI);
-        if (Double.isNaN(aFree.getSI()))
-        {
-            aFree = new Acceleration(0, AccelerationUnit.SI);
-        }
-        Acceleration logWeightedAccelerationTimes2 =
-            new Acceleration(Math.sqrt(this.a.getSI() * this.b.getSI()), AccelerationUnit.SI).multiplyBy(2);
-        // don't forget the times 2
 
-        // TODO compute logWeightedAccelerationTimes2 only once per run
-        Length.Rel right =
-            followerSpeed.multiplyBy(this.tSafe).plus(
-                dV.multiplyBy(followerSpeed.divideBy(logWeightedAccelerationTimes2)));
-        /*-
-            Calc.speedTimesTime(followerSpeed, this.tSafe).plus(
-                Calc.speedTimesTime(dV, Calc.speedDividedByAcceleration(followerSpeed, logWeightedAccelerationTimes2)));
-         */
-        if (right.getSI() < 0)
+        Acceleration newAcceleration = aFree.minus(aInteraction);
+        if (newAcceleration.si * stepSize.si + followerSpeed.si < 0)
         {
-            // System.out.println("Fixing negative right");
-            right = new Length.Rel(0, LengthUnit.SI);
+            newAcceleration = new Acceleration(-followerSpeed.si / stepSize.si, AccelerationUnit.SI);
         }
-        Length.Rel sStar = this.s0.plus(right);
-        if (sStar.getSI() < 0) // Negative value should be treated as 0
-        {
-            System.out.println("sStar is negative");
-            sStar = new Length.Rel(0, LengthUnit.SI);
-        }
-        // System.out.println("s* is " + sStar);
-        Acceleration aInteraction =
-            new Acceleration(-Math.pow(this.a.getSI() * sStar.getSI() / headway.getSI(), 2), AccelerationUnit.SI);
-        Acceleration newAcceleration = aFree.plus(aInteraction);
-        if (newAcceleration.getSI() * stepSize.getSI() + followerSpeed.getSI() < 0)
-        {
-            // System.out.println("Limiting deceleration to prevent moving backwards");
-            newAcceleration = new Acceleration(-followerSpeed.getSI() / stepSize.getSI(), AccelerationUnit.SI);
-        }
-        // System.out.println("newAcceleration is " + newAcceleration);
         return newAcceleration;
     }
 

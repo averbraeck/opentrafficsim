@@ -15,7 +15,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 
 /**
  * Implementation of the IDM.
- * @see <a href=https://en.wikipedia.org/wiki/Intelligent_driver_model>https://en.wikipedia.org/wiki/Intelligent_driver_model</a>
+ * See <a href=https://en.wikipedia.org/wiki/Intelligent_driver_model>https://en.wikipedia.org/wiki/Intelligent_driver_model</a>
  * @author Wouter Schakel
  */
 public class IDM extends AbstractCarFollowingModel {
@@ -70,6 +70,7 @@ public class IDM extends AbstractCarFollowingModel {
 	 * @param desiredHeadway Desired speed.
 	 * @param leaderSpeed Speed of the leading vehicle.
 	 * @return Dynamic desired headway.
+	 * @throws ParameterException 
 	 */
 	protected Length.Rel dynamicDesiredHeadway(LaneBasedGTU gtu, Speed speed, Rel desiredHeadway, Speed leaderSpeed) 
 			throws ParameterException {
@@ -90,6 +91,7 @@ public class IDM extends AbstractCarFollowingModel {
 	 * @param speed Current speed.
 	 * @param leaderSpeed Speed of the leading vehicle.
 	 * @return Dynamic headway term.
+	 * @throws ParameterException 
 	 */
 	protected Length.Rel dynamicHeadwayTerm(LaneBasedGTU gtu, Speed speed, Speed leaderSpeed) throws ParameterException {
 		Acceleration a = gtu.getBehavioralCharacteristics().getAccelerationParameter(ParameterTypes.A);

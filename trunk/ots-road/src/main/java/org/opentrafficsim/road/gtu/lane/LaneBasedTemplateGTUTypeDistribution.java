@@ -22,7 +22,7 @@ public class LaneBasedTemplateGTUTypeDistribution implements LaneBasedGTUCharact
 
     /**
      * Construct a new LaneBasedTemplateGTUTypeDistribution.
-     * @param distributionOfLanebasedTemplateGTUType
+     * @param distributionOfLanebasedTemplateGTUType the distribution of LaneBasedTemplateGTUTypes
      */
     public LaneBasedTemplateGTUTypeDistribution(
             final Distribution<LaneBasedTemplateGTUType> distributionOfLanebasedTemplateGTUType)
@@ -39,7 +39,7 @@ public class LaneBasedTemplateGTUTypeDistribution implements LaneBasedGTUCharact
 
     /** {@inheritDoc} */
     @Override
-    public OTSDEVSSimulatorInterface getSimulator()
+    public OTSDEVSSimulatorInterface getSimulator() throws ProbabilityException
     {
         return this.distribution.get(0).getObject().getSimulator();
     }

@@ -22,8 +22,8 @@ public interface CarFollowingModel {
 	 * @param speedLimit Speed limit, static or dynamic.
 	 * @param enforcement Whether the speed limit is enforced by camera, section control, etc.
 	 * @param maximumVehicleSpeed Maximum speed of the vehicle.
+     * @throws ParameterException If parameter exception occurs.
 	 * @return Desired speed.
-	 * @throw ParameterException If parameter exception occurs.
 	 */
 	Speed desiredSpeed(LaneBasedGTU gtu, Speed speedLimit, boolean enforcement, Speed maximumVehicleSpeed) 
 			throws ParameterException;				
@@ -32,8 +32,8 @@ public interface CarFollowingModel {
 	 * Determines the desired headway.
 	 * @param gtu GTU for which the acceleration is calculated.
 	 * @param speed Speed to determine the desired headway at.
+     * @throws ParameterException If parameter exception occurs.
 	 * @return Desired headway.
-	 * @throw ParameterException If parameter exception occurs.
 	 */
 	Length.Rel desiredHeadway(LaneBasedGTU gtu, Speed speed) throws ParameterException;
 
@@ -44,9 +44,9 @@ public interface CarFollowingModel {
 	 * @param speedLimit Speed limit, static or dynamic.
 	 * @param enforcement Whether the speed limit is enforced by camera, section control, etc.
 	 * @param maximumVehicleSpeed Maximum speed of the vehicle.
-	 * @return Acceleration if there is no reason to decelerate.
-	 * @throw ParameterException If parameter exception occurs.
-	 */
+	 * @throws ParameterException If parameter exception occurs.
+     * @return Acceleration if there is no reason to decelerate.
+	 */ 
 	Acceleration freeAcceleration(LaneBasedGTU gtu, Speed speed, Speed speedLimit, boolean enforcement, 
 			Speed maximumVehicleSpeed) throws ParameterException;
 
@@ -61,8 +61,8 @@ public interface CarFollowingModel {
 	 * @param maximumVehicleSpeed Maximum speed of the vehicle.
 	 * @param headway Net headway towards the leading vehicle.
 	 * @param leaderSpeed Speed of the leading vehicle.
+     * @throws ParameterException If parameter exception occurs.
 	 * @return Car-following acceleration.
-	 * @throw ParameterException If parameter exception occurs.
 	 */
 	Acceleration followingAcceleration(LaneBasedGTU gtu, Speed speed, Speed speedLimit, boolean enforcement, 
 			Speed maximumVehicleSpeed, Length.Rel headway, Speed leaderSpeed) throws ParameterException;
@@ -80,8 +80,8 @@ public interface CarFollowingModel {
 	 * @param enforcement Whether the speed limit is enforced by camera, section control, etc.
 	 * @param maximumVehicleSpeed Maximum speed of the vehicle.
 	 * @param leaders Set of leader headways and speeds, ordered by headway (closest first).
+     * @throws ParameterException If parameter exception occurs.
 	 * @return Car-following acceleration.
-	 * @throw ParameterException If parameter exception occurs.
 	 */
 	Acceleration followingAcceleration(LaneBasedGTU gtu, Speed speed, Speed speedLimit, boolean enforcement, 
 			Speed maximumVehicleSpeed, SortedMap<Length.Rel, Speed> leaders) throws ParameterException;
