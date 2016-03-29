@@ -655,7 +655,13 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     /**
      * @param stream
      * @param lane
-     * @return
+     * @param lengthDistribution 
+     * @param widthDistribution 
+     * @param maximumVelocityDistribution 
+     * @param initialSpeedDistribution 
+     * @param initialPositions 
+     * @param gtuFollowingModel 
+     * @return x
      * @throws GTUException
      */
     LaneBasedTemplateGTUType makeTemplate(final StreamInterface stream, final Lane lane,

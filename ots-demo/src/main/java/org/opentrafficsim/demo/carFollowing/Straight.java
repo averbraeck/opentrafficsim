@@ -171,7 +171,7 @@ public class Straight extends AbstractWrappableAnimation implements UNITS
     @Override
     protected final Rectangle2D.Double makeAnimationRectangle()
     {
-        return new Rectangle2D.Double(0, -100, 5000, 200);
+        return new Rectangle2D.Double(1500, -100, 2000, 200);
     }
 
     /** {@inheritDoc} */
