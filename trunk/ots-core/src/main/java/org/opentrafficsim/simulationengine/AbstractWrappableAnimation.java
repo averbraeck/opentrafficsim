@@ -164,4 +164,12 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation
         }
         this.panel = null;
     }
+
+    /**
+     * @return panel
+     */
+    public final OTSAnimationPanel getPanel()
+    {
+        return this.panel;
+    }
 }

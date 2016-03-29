@@ -19,7 +19,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public class Distribution<O> implements Generator<O>
 {
     /** The generators (with their probabilities or frequencies). */
-    private final ArrayList<FrequencyAndObject<O>> generators = new ArrayList<FrequencyAndObject<O>>();
+    private final List<FrequencyAndObject<O>> generators = new ArrayList<>();
 
     /** Sum of all probabilities or frequencies. */
     private double cumulativeTotal;
@@ -31,13 +31,13 @@ public class Distribution<O> implements Generator<O>
      * Construct a new Distribution.
      * @param generators List&lt;FrequencyAndObject&lt;O&gt;&gt;; the generators and their frequencies (or probabilities)
      * @param stream StreamInterface; source for randomness
-     * @throws ProbabilityException when a frequency (or probability) is negative
-     * @throws NullPointerException when generators is null or stream is null
+     * @throws ProbabilityException when a frequency (or probability) is negative, or when generators is null or stream is null
      */
     public Distribution(final List<FrequencyAndObject<O>> generators, final StreamInterface stream)
-            throws ProbabilityException, NullPointerException
+        throws ProbabilityException
     {
         this(stream);
+        ProbabilityException.failIf(null == generators, "generators may not be null");
         // Store a defensive copy of the generator list (the generators are immutable; a list of them is not) and make sure it
         // is a List that supports add, remove, etc.
         this.generators.addAll(generators);
@@ -47,19 +47,17 @@ public class Distribution<O> implements Generator<O>
     /**
      * Construct a new Distribution with no generators.
      * @param stream StreamInterface; source for randomness
+     * @throws ProbabilityException when a frequency (or probability) is negative, or when generators is null or stream is null
      */
-    public Distribution(final StreamInterface stream)
+    public Distribution(final StreamInterface stream) throws ProbabilityException
     {
-        if (null == stream)
-        {
-            throw new NullPointerException("random source may not be null");
-        }
+        ProbabilityException.failIf(null == stream, "random stream may not be null");
         this.random = new DistUniform(stream, 0, 1);
     }
 
     /**
      * Compute the cumulative frequencies of the storedGenerators.
-     * @throws ProbabilityException
+     * @throws ProbabilityException on negative frequency
      */
     private void fixProbabilities() throws ProbabilityException
     {
@@ -71,25 +69,17 @@ public class Distribution<O> implements Generator<O>
         for (FrequencyAndObject<O> generator : this.generators)
         {
             double frequency = generator.getFrequency();
-            if (frequency < 0)
-            {
-                throw new ProbabilityException("Negative frequency or probability is not allowed (got " + frequency + ")");
-            }
+            ProbabilityException.failIf(frequency < 0, "Negative frequency or probability is not allowed (got "
+                + frequency + ")");
             this.cumulativeTotal += frequency;
         }
     }
 
     /** {@inheritDoc} */
-    public O draw() throws ProbabilityException
+    public final O draw() throws ProbabilityException
     {
-        if (0 == this.generators.size())
-        {
-            throw new ProbabilityException("Cannot draw from empty collection");
-        }
-        if (0 == this.cumulativeTotal)
-        {
-            throw new ProbabilityException("Sum of frequencies or probabilities must be > 0");
-        }
+        ProbabilityException.failIf(0 == this.generators.size(), "Cannot draw from empty collection");
+        ProbabilityException.failIf(0 == this.cumulativeTotal, "Sum of frequencies or probabilities must be > 0");
 
         double randomValue = this.random.draw() * this.cumulativeTotal;
         for (FrequencyAndObject<O> fAndO : this.generators)
@@ -118,9 +108,9 @@ public class Distribution<O> implements Generator<O>
      * Append a generator to the internally stored list.
      * @param generator FrequencyAndObject&lt;O&gt;; the generator to add
      * @return Distribution&lt;O&gt;; this
-     * @throws ProbabilityException
+     * @throws ProbabilityException when frequency less than zero
      */
-    public Distribution<O> add(final FrequencyAndObject<O> generator) throws ProbabilityException
+    public final Distribution<O> add(final FrequencyAndObject<O> generator) throws ProbabilityException
     {
         return add(this.generators.size(), generator);
     }
@@ -130,14 +120,13 @@ public class Distribution<O> implements Generator<O>
      * @param index int; position to store the generator
      * @param generator FrequencyAndObject&lt;O&gt;; the generator to add
      * @return Distribution&lt;O&gt;; this
-     * @throws ProbabilityException
+     * @throws ProbabilityException when frequency less than zero
      */
-    public Distribution<O> add(final int index, final FrequencyAndObject<O> generator) throws ProbabilityException
+    public final Distribution<O> add(final int index, final FrequencyAndObject<O> generator)
+        throws ProbabilityException
     {
-        if (generator.getFrequency() < 0)
-        {
-            throw new ProbabilityException("frequency (or probability) must be >= 0 (got " + generator.getFrequency() + ")");
-        }
+        ProbabilityException.failIf(generator.getFrequency() < 0, "frequency (or probability) must be >= 0 (got "
+            + generator.getFrequency() + ")");
         this.generators.add(index, generator);
         fixProbabilities();
         return this;
@@ -147,10 +136,10 @@ public class Distribution<O> implements Generator<O>
      * Remove the generator at the specified position from the internally stored list.
      * @param index int; the position
      * @return this
-     * @throws IndexOutOfBoundsException when index is < 0 or >= size
+     * @throws IndexOutOfBoundsException when index is &lt; 0 or &gt;= size
      * @throws ProbabilityException if the sum of the remaining probabilities or frequencies adds up to 0
      */
-    public Distribution<O> remove(final int index) throws IndexOutOfBoundsException, ProbabilityException
+    public final Distribution<O> remove(final int index) throws IndexOutOfBoundsException, ProbabilityException
     {
         this.generators.remove(index);
         fixProbabilities();
@@ -162,17 +151,21 @@ public class Distribution<O> implements Generator<O>
      * @param index int; the position of the generator that must be replaced
      * @param generator FrequencyAndObject; the new generator and the frequency (or probability)
      * @return this
-     * @throws ProbabilityException when the frequency (or probability) is &lt; 0
-     * @throws IndexOutOfBoundsException when index is < 0 or >= size
+     * @throws ProbabilityException when the frequency (or probability) &lt; 0, or when index is &lt; 0 or &gt;= size
      */
-    public Distribution<O> set(final int index, final FrequencyAndObject<O> generator) throws ProbabilityException,
-            IndexOutOfBoundsException
+    public final Distribution<O> set(final int index, final FrequencyAndObject<O> generator)
+        throws ProbabilityException
     {
-        if (generator.getFrequency() < 0)
+        ProbabilityException.failIf(generator.getFrequency() < 0, "frequency (or probability) must be >= 0 (got "
+            + generator.getFrequency() + ")");
+        try
         {
-            throw new ProbabilityException("frequency (or probability) must be >= 0 (got " + generator.getFrequency() + ")");
+            this.generators.set(index, generator);
         }
-        this.generators.set(index, generator);
+        catch (IndexOutOfBoundsException ie)
+        {
+            throw new ProbabilityException("Index out of bounds for set operation, index=" + index);
+        }
         fixProbabilities();
         return this;
     }
@@ -182,11 +175,9 @@ public class Distribution<O> implements Generator<O>
      * @param index int; index of the stored generator
      * @param frequency double; new frequency (or probability)
      * @return this
-     * @throws ProbabilityException
-     * @throws IndexOutOfBoundsException
+     * @throws ProbabilityException when the frequency (or probability) &lt; 0, or when index is &lt; 0 or &gt;= size
      */
-    public Distribution<O> modifyFrequency(final int index, double frequency) throws ProbabilityException,
-            IndexOutOfBoundsException
+    public final Distribution<O> modifyFrequency(final int index, final double frequency) throws ProbabilityException
     {
         return set(index, new FrequencyAndObject<O>(frequency, this.generators.get(index).getObject()));
     }
@@ -195,7 +186,7 @@ public class Distribution<O> implements Generator<O>
      * Empty the internally stored list.
      * @return this
      */
-    public Distribution<O> clear()
+    public final Distribution<O> clear()
     {
         this.generators.clear();
         return this;
@@ -205,24 +196,76 @@ public class Distribution<O> implements Generator<O>
      * Retrieve one of the internally stored generators.
      * @param index int; the index of the FrequencyAndObject to retrieve
      * @return FrequencyAndObject&lt;O&gt;; the generator stored at position <cite>index</cite>
-     * @throws IndexOutOfBoundsException when index < 0 or >= size()
+     * @throws ProbabilityException when index &lt; 0 or &gt;= size()
      */
-    public FrequencyAndObject<O> get(final int index) throws IndexOutOfBoundsException
+    public final FrequencyAndObject<O> get(final int index) throws ProbabilityException
     {
-        return this.generators.get(index);
+        try
+        {
+            return this.generators.get(index);
+        }
+        catch (IndexOutOfBoundsException ie)
+        {
+            throw new ProbabilityException("Index out of bounds for set operation, index=" + index);
+        }
     }
 
     /**
      * Report the number of generators.
      * @return int; the number of generators
      */
-    public int size()
+    public final int size()
     {
         return this.generators.size();
     }
 
     /** {@inheritDoc} */
-    public String toString()
+    @Override
+    public final int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(this.cumulativeTotal);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + ((this.generators == null) ? 0 : this.generators.hashCode());
+        result = prime * result + ((this.random == null) ? 0 : this.random.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings("checkstyle:needbraces")
+    public final boolean equals(final Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Distribution<?> other = (Distribution<?>) obj;
+        if (Double.doubleToLongBits(this.cumulativeTotal) != Double.doubleToLongBits(other.cumulativeTotal))
+            return false;
+        if (this.generators == null)
+        {
+            if (other.generators != null)
+                return false;
+        }
+        else if (!this.generators.equals(other.generators))
+            return false;
+        if (this.random == null)
+        {
+            if (other.random != null)
+                return false;
+        }
+        else if (!this.random.equals(other.random))
+            return false;
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    public final String toString()
     {
         StringBuilder result = new StringBuilder();
         result.append("Distribution [");
@@ -239,7 +282,8 @@ public class Distribution<O> implements Generator<O>
     /**
      * Immutable storage for a frequency (or probability) plus a Generator.
      * <p>
-     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
+     * All rights reserved. <br>
      * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
      * <p>
      * @version $Revision$, $LastChangedDate$, by $Author$, initial version Mar 1, 2016 <br>
@@ -283,6 +327,51 @@ public class Distribution<O> implements Generator<O>
         {
             return this.object;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final int hashCode()
+        {
+            final int prime = 31;
+            int result = 1;
+            long temp;
+            temp = Double.doubleToLongBits(this.frequency);
+            result = prime * result + (int) (temp ^ (temp >>> 32));
+            result = prime * result + ((this.object == null) ? 0 : this.object.hashCode());
+            return result;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        @SuppressWarnings("checkstyle:needbraces")
+        public final boolean equals(final Object obj)
+        {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            FrequencyAndObject<?> other = (FrequencyAndObject<?>) obj;
+            if (Double.doubleToLongBits(this.frequency) != Double.doubleToLongBits(other.frequency))
+                return false;
+            if (this.object == null)
+            {
+                if (other.object != null)
+                    return false;
+            }
+            else if (!this.object.equals(other.object))
+                return false;
+            return true;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "FrequencyAndObject [frequency=" + this.frequency + ", object=" + this.object + "]";
+        }
+        
     }
 
 }

@@ -52,9 +52,10 @@ public class OTSSimulationPanel extends JPanel
      * Construct a panel that looks like the DSOLPanel for quick building of OTS applications.
      * @param simulator the simulator or animator of the model.
      * @param wrappableAnimation the builder and rebuilder of the simulation, based on properties.
-     * @throws RemoteException 
+     * @throws RemoteException
      */
-    public OTSSimulationPanel(final OTSDEVSSimulatorInterface simulator, final WrappableAnimation wrappableAnimation) throws RemoteException
+    public OTSSimulationPanel(final OTSDEVSSimulatorInterface simulator, final WrappableAnimation wrappableAnimation)
+        throws RemoteException
     {
         this.simulator = simulator;
 

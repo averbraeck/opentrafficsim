@@ -77,7 +77,7 @@ public abstract class AbstractParameterType<T extends DoubleScalar.Rel<?>>
     /**
      * Returns the default value.
      * @return defaultValue Default value.
-     * @throw ParameterException If no default value was set.
+     * @throws ParameterException If no default value was set.
      */
     public final T getDefaultValue() throws ParameterException
     {

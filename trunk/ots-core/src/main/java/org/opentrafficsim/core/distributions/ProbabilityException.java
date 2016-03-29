@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.distributions;
 
+
 /**
  * Exception thrown when provided probabilities or frequencies are invalid. Negative probabilities or frequencies are invalid. A
  * set of probabilities or frequencies that adds up to 0 causes this exception when the draw method is called.
@@ -54,9 +55,25 @@ public class ProbabilityException extends Exception
      * @param writableStackTrace boolean; whether or not the stack trace should be writable
      */
     public ProbabilityException(final String message, final Throwable cause, final boolean enableSuppression,
-            final boolean writableStackTrace)
+        final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);
+    }
+
+    /**
+     * Throw an Exception if a condition is met, e.g. for pre- and postcondition checking.
+     * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
+     * @param message the message to use in the exception
+     * @throws ProbabilityException the exception to throw on true condition
+     */
+    public static void failIf(final boolean condition, final String message) throws ProbabilityException
+    {
+        if (condition)
+        {
+            StackTraceElement[] ste = new Exception().getStackTrace();
+            String where = ste[1].getClassName() + "." + ste[1].getMethodName() + " (" + ste[1].getLineNumber() + "): ";
+            throw new ProbabilityException(where + message);
+        }
     }
 
 }

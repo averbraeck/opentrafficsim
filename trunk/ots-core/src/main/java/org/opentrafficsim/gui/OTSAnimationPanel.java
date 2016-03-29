@@ -1,15 +1,28 @@
 package org.opentrafficsim.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import nl.tudelft.simulation.dsol.animation.D2.AnimationPanel;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.event.Event;
+import nl.tudelft.simulation.language.io.URLResource;
 
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.simulationengine.SimpleAnimator;
@@ -25,7 +38,7 @@ import org.opentrafficsim.simulationengine.WrappableAnimation;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class OTSAnimationPanel extends OTSSimulationPanel
+public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListener, WindowListener
 {
     /** */
     private static final long serialVersionUID = 20150617L;
@@ -41,6 +54,29 @@ public class OTSAnimationPanel extends OTSSimulationPanel
 
     /** The ColorControlPanel that allows the user to operate the SwitchableGTUColorer. */
     private ColorControlPanel colorControlPanel = null;
+
+    /** The coordinates of the cursor. */
+    private final JLabel coordinateField;
+
+    /** The animation buttons. */
+    private final ArrayList<JButton> buttons = new ArrayList<JButton>();
+
+    /** the formatter for the world coordinates. */
+    private static final NumberFormat FORMATTER = NumberFormat.getInstance();
+
+    /** Has the window close handler been registered? */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected boolean closeHandlerRegistered = false;
+
+    /** Indicate the window has been closed and the timer thread can stop. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected boolean windowExited = false;
+
+    /** initialize the formatter. */
+    static
+    {
+        FORMATTER.setMaximumFractionDigits(3);
+    }
 
     /**
      * Construct a panel that looks like the DSOLPanel for quick building of OTS applications.
@@ -66,10 +102,82 @@ public class OTSAnimationPanel extends OTSSimulationPanel
         // Include the GTU colorer control panel NORTH of the animation.
         this.gtuColorer = gtuColorer;
         this.colorControlPanel = new ColorControlPanel(this.gtuColorer);
-        this.borderPanel.add(this.colorControlPanel, BorderLayout.NORTH);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+        this.borderPanel.add(buttonPanel, BorderLayout.NORTH);
+        buttonPanel.add(this.colorControlPanel);
+
+        // add the buttons for home, zoom all, grid, and mouse coordinates
+        buttonPanel.add(new JLabel("   "));
+        buttonPanel.add(makeButton("allButton", "/Expand.png", "ZoomAll", "Zoom whole network", true));
+        buttonPanel.add(makeButton("homeButton", "/Home.png", "Home", "Zoom to original extent", true));
+        buttonPanel.add(makeButton("gridButton", "/Grid.png", "Grid", "Toggle grid on/off", true));
+        buttonPanel.add(new JLabel("   "));
+        this.coordinateField = new JLabel("Mouse: ");
+        this.coordinateField.setMinimumSize(new Dimension(250, 10));
+        this.coordinateField.setPreferredSize(new Dimension(250, 10));
+        buttonPanel.add(this.coordinateField);
 
         // Tell the animation to build the list of animation objects.
         this.animationPanel.notify(new Event(SimulatorInterface.START_REPLICATION_EVENT, simulator, null));
+
+        // switch off the X and Y coordinates in a tooltip.
+        this.animationPanel.setShowToolTip(false);
+
+        // run the update task for the mouse coordinate panel
+        new UpdateTimer().start();
+
+        // make sure the thread gets killed when the window closes.
+        installWindowCloseHandler();
+    }
+
+    /**
+     * Create a button.
+     * @param name String; name of the button
+     * @param iconPath String; path to the resource
+     * @param actionCommand String; the action command
+     * @param toolTipText String; the hint to show when the mouse hovers over the button
+     * @param enabled boolean; true if the new button must initially be enable; false if it must initially be disabled
+     * @return JButton
+     */
+    private JButton makeButton(final String name, final String iconPath, final String actionCommand,
+        final String toolTipText, final boolean enabled)
+    {
+        // JButton result = new JButton(new ImageIcon(this.getClass().getResource(iconPath)));
+        JButton result = new JButton(new ImageIcon(URLResource.getResource(iconPath)));
+        result.setName(name);
+        result.setEnabled(enabled);
+        result.setActionCommand(actionCommand);
+        result.setToolTipText(toolTipText);
+        result.addActionListener(this);
+        this.buttons.add(result);
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void actionPerformed(final ActionEvent actionEvent)
+    {
+        String actionCommand = actionEvent.getActionCommand();
+        try
+        {
+            if (actionCommand.equals("Home"))
+            {
+                this.animationPanel.home();
+            }
+            if (actionCommand.equals("ZoomAll"))
+            {
+                this.animationPanel.zoomAll();
+            }
+            if (actionCommand.equals("Grid"))
+            {
+                this.animationPanel.showGrid(!this.animationPanel.isShowGrid());
+            }
+        }
+        catch (Exception exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     /**
@@ -79,6 +187,18 @@ public class OTSAnimationPanel extends OTSSimulationPanel
     public final AnimationPanel getAnimationPanel()
     {
         return this.animationPanel;
+    }
+
+    /**
+     * Display the latest world coordinate based on the mouse position on the screen.
+     */
+    protected final void updateWorldCoordinate()
+    {
+        String worldPoint =
+            "(x=" + FORMATTER.format(this.animationPanel.getWorldCoordinate().getX()) + " ; y="
+                + FORMATTER.format(this.animationPanel.getWorldCoordinate().getY()) + ")";
+        this.coordinateField.setText("Mouse: " + worldPoint);
+        this.coordinateField.repaint();
     }
 
     /**
@@ -101,4 +221,138 @@ public class OTSAnimationPanel extends OTSSimulationPanel
         return this.colorControlPanel;
     }
 
+    /**
+     * Install a handler for the window closed event that stops the simulator (if it is running).
+     */
+    public final void installWindowCloseHandler()
+    {
+        if (this.closeHandlerRegistered)
+        {
+            return;
+        }
+
+        // make sure the root frame gets disposed of when the closing X icon is pressed.
+        new DisposeOnCloseThread(this).start();
+    }
+
+    /** Install the dispose on close when the OTSControlPanel is registered as part of a frame. */
+    protected class DisposeOnCloseThread extends Thread
+    {
+        /** the current container. */
+        private OTSAnimationPanel panel;
+
+        /**
+         * @param panel the OTSControlpanel container.
+         */
+        public DisposeOnCloseThread(final OTSAnimationPanel panel)
+        {
+            super();
+            this.panel = panel;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final void run()
+        {
+            Container root = this.panel;
+            while (!(root instanceof JFrame))
+            {
+                try
+                {
+                    Thread.sleep(10);
+                }
+                catch (InterruptedException exception)
+                {
+                    // nothing to do
+                }
+
+                // Search towards the root of the Swing components until we find a JFrame
+                root = this.panel;
+                while (null != root.getParent() && !(root instanceof JFrame))
+                {
+                    root = root.getParent();
+                }
+            }
+            JFrame frame = (JFrame) root;
+            frame.addWindowListener(this.panel);
+            this.panel.closeHandlerRegistered = true;
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void windowOpened(final WindowEvent e)
+    {
+        // No action
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void windowClosing(final WindowEvent e)
+    {
+        // No action
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void windowClosed(final WindowEvent e)
+    {
+        this.windowExited = true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void windowIconified(final WindowEvent e)
+    {
+        // No action
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void windowDeiconified(final WindowEvent e)
+    {
+        // No action
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void windowActivated(final WindowEvent e)
+    {
+        // No action
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void windowDeactivated(final WindowEvent e)
+    {
+        // No action
+    }
+
+    /**
+     * UpdateTimer class to update the coordinate on the screen.
+     */
+    protected class UpdateTimer extends Thread
+    {
+        /** {@inheritDoc} */
+        @Override
+        public final void run()
+        {
+            while (!OTSAnimationPanel.this.windowExited)
+            {
+                if (OTSAnimationPanel.this.isShowing())
+                {
+                    OTSAnimationPanel.this.updateWorldCoordinate();
+                }
+                try
+                {
+                    Thread.sleep(50); // 20 times per second
+                }
+                catch (InterruptedException exception)
+                {
+                    // do nothing
+                }
+            }
+        }
+
+    }
 }

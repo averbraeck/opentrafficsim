@@ -479,8 +479,6 @@ public abstract class AbstractGTU implements GTU
         }
         catch (OperationalPlanException exception)
         {
-            System.err.println("Could not determine location, got exception: " + exception.getMessage());
-            exception.printStackTrace();
             return new DirectedPoint(0, 0, 0);
         }
     }
