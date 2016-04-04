@@ -72,7 +72,7 @@ public interface DiscreteDistDoubleScalar
      * @param <T> The absolute doublescalar type
      * @param <U> The unit type used
      */
-    public static class Abs<T extends DoubleScalar.Abs<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar
+    class Abs<T extends DoubleScalar.Abs<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar
         implements Absolute
     {
         /**
@@ -124,7 +124,7 @@ public interface DiscreteDistDoubleScalar
      * @param <T> The absolute doublescalar type
      * @param <U> The unit type used
      */
-    public static class Rel<T extends DoubleScalar.Rel<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar
+    class Rel<T extends DoubleScalar.Rel<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar
         implements Relative
     {
         /**

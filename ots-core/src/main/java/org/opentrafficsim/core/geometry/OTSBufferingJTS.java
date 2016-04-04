@@ -2,15 +2,12 @@ package org.opentrafficsim.core.geometry;
 
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.opentrafficsim.core.network.NetworkException;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.util.GeometryExtracter;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import com.vividsolutions.jts.operation.buffer.BufferParameters;
 
@@ -72,7 +69,7 @@ public final class OTSBufferingJTS
      * @param point Point to project onto the line segment
      * @return double; the distance of the projected point or one of the end points of the line segment to the point
      */
-    public static double distanceLineSegmentToPoint(OTSPoint3D lineP1, OTSPoint3D lineP2, OTSPoint3D point)
+    public static double distanceLineSegmentToPoint(final OTSPoint3D lineP1, final OTSPoint3D lineP2, final OTSPoint3D point)
     {
         return closestPointOnSegmentToPoint(lineP1, lineP2, point).distanceSI(point);
     }
@@ -88,19 +85,28 @@ public final class OTSBufferingJTS
      * @return Point2D.Double; either <cite>lineP1</cite>, or <cite>lineP2</cite> or a new OTSPoint3D that lies somewhere in
      *         between those two
      */
-    public static OTSPoint3D closestPointOnSegmentToPoint(OTSPoint3D lineP1, OTSPoint3D lineP2, OTSPoint3D point)
+    public static OTSPoint3D closestPointOnSegmentToPoint(final OTSPoint3D lineP1, final OTSPoint3D lineP2,
+            final OTSPoint3D point)
     {
         double dX = lineP2.x - lineP1.x;
         double dY = lineP2.y - lineP1.y;
         if ((0 == dX) && (0 == dY))
+        {
             return lineP1;
+        }
         final double u = ((point.x - lineP1.x) * dX + (point.y - lineP1.y) * dY) / (dX * dX + dY * dY);
         if (u < 0)
+        {
             return lineP1;
+        }
         else if (u > 1)
+        {
             return lineP2;
+        }
         else
+        {
             return new OTSPoint3D(lineP1.x + u * dX, lineP1.y + u * dY); // could use interpolate in stead
+        }
     }
 
     /**
@@ -129,9 +135,9 @@ public final class OTSBufferingJTS
                 OTSPoint3D nextPoint = referenceLine.get(index + 1);
                 double angle = Math.atan2(nextPoint.y - prevPoint.y, nextPoint.x - prevPoint.x);
                 OTSPoint3D segmentFrom =
-                    new OTSPoint3D(prevPoint.x - Math.sin(angle) * offset, prevPoint.y + Math.cos(angle) * offset);
+                        new OTSPoint3D(prevPoint.x - Math.sin(angle) * offset, prevPoint.y + Math.cos(angle) * offset);
                 OTSPoint3D segmentTo =
-                    new OTSPoint3D(nextPoint.x - Math.sin(angle) * offset, nextPoint.y + Math.cos(angle) * offset);
+                        new OTSPoint3D(nextPoint.x - Math.sin(angle) * offset, nextPoint.y + Math.cos(angle) * offset);
                 if (index > 0)
                 {
                     double deltaAngle = angle - prevAngle;
@@ -149,7 +155,7 @@ public final class OTSBufferingJTS
                             OTSPoint3D p = points.get(i);
                             if (Double.isNaN(p.z))
                             {
-                                continue;// skip this one
+                                continue; // skip this one
                             }
                             if (null != pPoint)
                             {
@@ -164,12 +170,12 @@ public final class OTSBufferingJTS
                                     // System.out.println("preceding segment " + pPoint + " to " + p + ", this segment "
                                     // + segmentFrom + " to " + segmentTo + " totalAngle " + totalAngle);
                                     OTSPoint3D intermediatePoint =
-                                        intersectionOfLineSegments(pPoint, p, segmentFrom, segmentTo);
+                                            intersectionOfLineSegments(pPoint, p, segmentFrom, segmentTo);
                                     if (null != intermediatePoint)
                                     {
                                         // mark it as added point at inside corner
                                         intermediatePoint =
-                                            new OTSPoint3D(intermediatePoint.x, intermediatePoint.y, Double.NaN);
+                                                new OTSPoint3D(intermediatePoint.x, intermediatePoint.y, Double.NaN);
                                         // System.out.println("Inserting intersection of preceding segment and this segment "
                                         // + intermediatePoint);
                                         points.add(intermediatePoint);
@@ -201,15 +207,14 @@ public final class OTSBufferingJTS
                         for (int additionalPoint = 1; additionalPoint < numSegments; additionalPoint++)
                         {
                             double intermediateAngle =
-                                (additionalPoint * angle + (numSegments - additionalPoint) * prevAngle) / numSegments;
-                            if (prevAngle * angle < 0 && Math.abs(prevAngle) > Math.PI / 2
-                                && Math.abs(angle) > Math.PI / 2)
+                                    (additionalPoint * angle + (numSegments - additionalPoint) * prevAngle) / numSegments;
+                            if (prevAngle * angle < 0 && Math.abs(prevAngle) > Math.PI / 2 && Math.abs(angle) > Math.PI / 2)
                             {
                                 intermediateAngle += Math.PI;
                             }
                             OTSPoint3D intermediatePoint =
-                                new OTSPoint3D(prevPoint.x - Math.sin(intermediateAngle) * offset, prevPoint.y
-                                    + Math.cos(intermediateAngle) * offset);
+                                    new OTSPoint3D(prevPoint.x - Math.sin(intermediateAngle) * offset, prevPoint.y
+                                            + Math.cos(intermediateAngle) * offset);
                             // System.out.println("inserting intermediate point " + intermediatePoint + " for angle "
                             // + Math.toDegrees(intermediateAngle));
                             points.add(intermediatePoint);
@@ -235,8 +240,7 @@ public final class OTSBufferingJTS
                     if (null != prevPoint)
                     {
                         OTSPoint3D closestPoint = closestPointOnSegmentToPoint(prevPoint, p, checkPoint);
-                        if (closestPoint != referenceLine.get(0)
-                            && closestPoint != referenceLine.get(referenceLine.size() - 1))
+                        if (closestPoint != referenceLine.get(0) && closestPoint != referenceLine.get(referenceLine.size() - 1))
                         {
                             double distance = closestPoint.horizontalDistanceSI(checkPoint);
                             if (distance < bufferOffset - circlePrecision)
@@ -288,24 +292,24 @@ public final class OTSBufferingJTS
      * @return OTSPoint3D; the intersection of the two lines, or null if the lines are (almost) parallel, or do not intersect
      */
     private static OTSPoint3D intersectionOfLineSegments(final OTSPoint3D line1P1, final OTSPoint3D line1P2,
-        final OTSPoint3D line2P1, final OTSPoint3D line2P2)
+            final OTSPoint3D line2P1, final OTSPoint3D line2P2)
     {
         double denominator =
-            (line2P2.y - line2P1.y) * (line1P2.x - line1P1.x) - (line2P2.x - line2P1.x) * (line1P2.y - line1P1.y);
+                (line2P2.y - line2P1.y) * (line1P2.x - line1P1.x) - (line2P2.x - line2P1.x) * (line1P2.y - line1P1.y);
         if (denominator == 0f)
         {
             return null; // lines are parallel (they might even be on top of each other, but we don't check that)
         }
         double uA =
-            ((line2P2.x - line2P1.x) * (line1P1.y - line2P1.y) - (line2P2.y - line2P1.y) * (line1P1.x - line2P1.x))
-                / denominator;
+                ((line2P2.x - line2P1.x) * (line1P1.y - line2P1.y) - (line2P2.y - line2P1.y) * (line1P1.x - line2P1.x))
+                        / denominator;
         if ((uA < 0f) || (uA > 1f))
         {
             return null; // intersection outside line 1
         }
         double uB =
-            ((line1P2.x - line1P1.x) * (line1P1.y - line2P1.y) - (line1P2.y - line1P1.y) * (line1P1.x - line2P1.x))
-                / denominator;
+                ((line1P2.x - line1P1.x) * (line1P1.y - line2P1.y) - (line1P2.y - line1P1.y) * (line1P1.x - line2P1.x))
+                        / denominator;
         if (uB < 0 || uB > 1)
         {
             return null; // intersection outside line 2
@@ -321,8 +325,7 @@ public final class OTSBufferingJTS
      * @throws OTSGeometryException on failure
      */
     @SuppressWarnings("checkstyle:methodlength")
-    public static OTSLine3D offsetGeometryOLD(final OTSLine3D referenceLine, final double offset)
-        throws OTSGeometryException
+    public static OTSLine3D offsetGeometryOLD(final OTSLine3D referenceLine, final double offset) throws OTSGeometryException
     {
         Coordinate[] referenceCoordinates = referenceLine.getCoordinates();
         // printCoordinates("reference", referenceCoordinates);
@@ -335,7 +338,7 @@ public final class OTSBufferingJTS
         }
         Geometry geometryLine = referenceLine.getLineString();
         Coordinate[] bufferCoordinates =
-            geometryLine.buffer(bufferOffset, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
+                geometryLine.buffer(bufferOffset, QUADRANTSEGMENTS, BufferParameters.CAP_FLAT).getCoordinates();
 
         // Z coordinates may be NaN at this point
 
@@ -349,11 +352,11 @@ public final class OTSBufferingJTS
         double expectedStartAngle = norm(angle(sC0, sC1) + Math.signum(offset) * Math.PI / 2.0);
         double expectedEndAngle = norm(angle(eCm2, eCm1) + Math.signum(offset) * Math.PI / 2.0);
         Coordinate sExpected =
-            new Coordinate(sC0.x + bufferOffset * Math.cos(expectedStartAngle), sC0.y + bufferOffset
-                * Math.sin(expectedStartAngle));
+                new Coordinate(sC0.x + bufferOffset * Math.cos(expectedStartAngle), sC0.y + bufferOffset
+                        * Math.sin(expectedStartAngle));
         Coordinate eExpected =
-            new Coordinate(eCm1.x + bufferOffset * Math.cos(expectedEndAngle), eCm1.y + bufferOffset
-                * Math.sin(expectedEndAngle));
+                new Coordinate(eCm1.x + bufferOffset * Math.cos(expectedEndAngle), eCm1.y + bufferOffset
+                        * Math.sin(expectedEndAngle));
 
         // which coordinates are closest to sExpected and eExpected?
         double dS = Double.MAX_VALUE;
@@ -387,10 +390,9 @@ public final class OTSBufferingJTS
         }
         if (dS > 0.01)
         {
-            System.err.println(referenceLine.toExcel() + "\n\n\n\n" + new OTSLine3D(bufferCoordinates).toExcel()
-                + "\n\n\n\n" + sExpected + "\n" + eExpected); 
-            throw new OTSGeometryException("offsetGeometry: startDistance too big (" + dS + ") for line "
-                + referenceLine);
+            System.err.println(referenceLine.toExcel() + "\n\n\n\n" + new OTSLine3D(bufferCoordinates).toExcel() + "\n\n\n\n"
+                    + sExpected + "\n" + eExpected);
+            throw new OTSGeometryException("offsetGeometry: startDistance too big (" + dS + ") for line " + referenceLine);
         }
         if (dE > 0.01)
         {
@@ -443,8 +445,7 @@ public final class OTSBufferingJTS
 
         /*- System.err.println(referenceLine.toExcel() + "\n\n\n\n" + new OTSLine3D(bufferCoordinates).toExcel()
             + "\n\n\n\n" + sExpected + "\n" + eExpected); */
-        throw new OTSGeometryException("offsetGeometry: could not find offset in either direction for line "
-            + referenceLine);
+        throw new OTSGeometryException("offsetGeometry: could not find offset in either direction for line " + referenceLine);
     }
 
     /**
@@ -476,8 +477,8 @@ public final class OTSBufferingJTS
      * @return Geometry; the Geometry of the line at linearly changing offset of the reference line
      * @throws OTSGeometryException when this method fails to create the offset line
      */
-    public static OTSLine3D offsetLine(final OTSLine3D referenceLine, final double offsetAtStart,
-        final double offsetAtEnd) throws OTSGeometryException
+    public static OTSLine3D offsetLine(final OTSLine3D referenceLine, final double offsetAtStart, final double offsetAtEnd)
+            throws OTSGeometryException
     {
         // System.out.println(OTSGeometry.printCoordinates("#referenceLine: \nc1,0,0\n# offset at start is " + offsetAtStart
         // + " at end is " + offsetAtEnd + "\n#", referenceLine, "\n   "));
@@ -506,11 +507,11 @@ public final class OTSBufferingJTS
         while (firstIndex < firstCoordinates.length && secondIndex < secondCoordinates.length)
         {
             double firstRatio =
-                firstIndex < firstCoordinates.length ? first.indexOf(firstCoordinates[firstIndex]) / firstLength
-                    : Double.MAX_VALUE;
+                    firstIndex < firstCoordinates.length ? first.indexOf(firstCoordinates[firstIndex]) / firstLength
+                            : Double.MAX_VALUE;
             double secondRatio =
-                secondIndex < secondCoordinates.length ? second.indexOf(secondCoordinates[secondIndex]) / secondLength
-                    : Double.MAX_VALUE;
+                    secondIndex < secondCoordinates.length ? second.indexOf(secondCoordinates[secondIndex]) / secondLength
+                            : Double.MAX_VALUE;
             double ratio;
             if (firstRatio < secondRatio)
             {
@@ -525,8 +526,8 @@ public final class OTSBufferingJTS
             Coordinate firstCoordinate = first.extractPoint(ratio * firstLength);
             Coordinate secondCoordinate = second.extractPoint(ratio * secondLength);
             Coordinate resultCoordinate =
-                new Coordinate((1 - ratio) * firstCoordinate.x + ratio * secondCoordinate.x, (1 - ratio)
-                    * firstCoordinate.y + ratio * secondCoordinate.y);
+                    new Coordinate((1 - ratio) * firstCoordinate.x + ratio * secondCoordinate.x, (1 - ratio)
+                            * firstCoordinate.y + ratio * secondCoordinate.y);
             if (null == prevCoordinate || resultCoordinate.distance(prevCoordinate) > tooClose)
             {
                 out.add(resultCoordinate);
@@ -554,30 +555,30 @@ public final class OTSBufferingJTS
         // double offset = 4.83899987;
         // System.out.println(OTSBufferingOLD.offsetGeometryOLD(line, offset));
         OTSLine3D line =
-            new OTSLine3D(new OTSPoint3D[]{new OTSPoint3D(-579.253, 60.157, 4.710),
-                new OTSPoint3D(-579.253, 60.144, 4.712), new OTSPoint3D(-579.253, 60.144, 0.000),
-                new OTSPoint3D(-579.251, 60.044, 0.000), new OTSPoint3D(-579.246, 59.944, 0.000),
-                new OTSPoint3D(-579.236, 59.845, 0.000), new OTSPoint3D(-579.223, 59.746, 0.000),
-                new OTSPoint3D(-579.206, 59.647, 0.000), new OTSPoint3D(-579.185, 59.549, 0.000),
-                new OTSPoint3D(-579.161, 59.452, 0.000), new OTSPoint3D(-579.133, 59.356, 0.000),
-                new OTSPoint3D(-579.101, 59.261, 0.000), new OTSPoint3D(-579.066, 59.168, 0.000),
-                new OTSPoint3D(-579.028, 59.075, 0.000), new OTSPoint3D(-578.986, 58.985, 0.000),
-                new OTSPoint3D(-578.940, 58.896, 0.000), new OTSPoint3D(-578.891, 58.809, 0.000),
-                new OTSPoint3D(-578.839, 58.723, 0.000), new OTSPoint3D(-578.784, 58.640, 0.000),
-                new OTSPoint3D(-578.725, 58.559, 0.000), new OTSPoint3D(-578.664, 58.480, 0.000),
-                new OTSPoint3D(-578.599, 58.403, 0.000), new OTSPoint3D(-578.532, 58.329, 0.000),
-                new OTSPoint3D(-578.462, 58.258, 0.000), new OTSPoint3D(-578.390, 58.189, 0.000),
-                new OTSPoint3D(-578.314, 58.123, 0.000), new OTSPoint3D(-578.237, 58.060, 0.000),
-                new OTSPoint3D(-578.157, 58.000, 0.000), new OTSPoint3D(-578.075, 57.943, 0.000),
-                new OTSPoint3D(-577.990, 57.889, 0.000), new OTSPoint3D(-577.904, 57.839, 0.000),
-                new OTSPoint3D(-577.816, 57.791, 0.000), new OTSPoint3D(-577.726, 57.747, 0.000),
-                new OTSPoint3D(-577.635, 57.707, 0.000), new OTSPoint3D(-577.542, 57.670, 0.000),
-                new OTSPoint3D(-577.448, 57.636, 0.000), new OTSPoint3D(-577.352, 57.606, 0.000),
-                new OTSPoint3D(-577.256, 57.580, 0.000), new OTSPoint3D(-577.159, 57.557, 0.000),
-                new OTSPoint3D(-577.060, 57.538, 0.000), new OTSPoint3D(-576.962, 57.523, 0.000),
-                new OTSPoint3D(-576.862, 57.512, 0.000), new OTSPoint3D(-576.763, 57.504, 0.000),
-                new OTSPoint3D(-576.663, 57.500, 0.000), new OTSPoint3D(-576.623, 57.500, 6.278),
-                new OTSPoint3D(-576.610, 57.500, 6.280), new OTSPoint3D(-567.499, 57.473, 6.280)});
+                new OTSLine3D(new OTSPoint3D[] { new OTSPoint3D(-579.253, 60.157, 4.710),
+                        new OTSPoint3D(-579.253, 60.144, 4.712), new OTSPoint3D(-579.253, 60.144, 0.000),
+                        new OTSPoint3D(-579.251, 60.044, 0.000), new OTSPoint3D(-579.246, 59.944, 0.000),
+                        new OTSPoint3D(-579.236, 59.845, 0.000), new OTSPoint3D(-579.223, 59.746, 0.000),
+                        new OTSPoint3D(-579.206, 59.647, 0.000), new OTSPoint3D(-579.185, 59.549, 0.000),
+                        new OTSPoint3D(-579.161, 59.452, 0.000), new OTSPoint3D(-579.133, 59.356, 0.000),
+                        new OTSPoint3D(-579.101, 59.261, 0.000), new OTSPoint3D(-579.066, 59.168, 0.000),
+                        new OTSPoint3D(-579.028, 59.075, 0.000), new OTSPoint3D(-578.986, 58.985, 0.000),
+                        new OTSPoint3D(-578.940, 58.896, 0.000), new OTSPoint3D(-578.891, 58.809, 0.000),
+                        new OTSPoint3D(-578.839, 58.723, 0.000), new OTSPoint3D(-578.784, 58.640, 0.000),
+                        new OTSPoint3D(-578.725, 58.559, 0.000), new OTSPoint3D(-578.664, 58.480, 0.000),
+                        new OTSPoint3D(-578.599, 58.403, 0.000), new OTSPoint3D(-578.532, 58.329, 0.000),
+                        new OTSPoint3D(-578.462, 58.258, 0.000), new OTSPoint3D(-578.390, 58.189, 0.000),
+                        new OTSPoint3D(-578.314, 58.123, 0.000), new OTSPoint3D(-578.237, 58.060, 0.000),
+                        new OTSPoint3D(-578.157, 58.000, 0.000), new OTSPoint3D(-578.075, 57.943, 0.000),
+                        new OTSPoint3D(-577.990, 57.889, 0.000), new OTSPoint3D(-577.904, 57.839, 0.000),
+                        new OTSPoint3D(-577.816, 57.791, 0.000), new OTSPoint3D(-577.726, 57.747, 0.000),
+                        new OTSPoint3D(-577.635, 57.707, 0.000), new OTSPoint3D(-577.542, 57.670, 0.000),
+                        new OTSPoint3D(-577.448, 57.636, 0.000), new OTSPoint3D(-577.352, 57.606, 0.000),
+                        new OTSPoint3D(-577.256, 57.580, 0.000), new OTSPoint3D(-577.159, 57.557, 0.000),
+                        new OTSPoint3D(-577.060, 57.538, 0.000), new OTSPoint3D(-576.962, 57.523, 0.000),
+                        new OTSPoint3D(-576.862, 57.512, 0.000), new OTSPoint3D(-576.763, 57.504, 0.000),
+                        new OTSPoint3D(-576.663, 57.500, 0.000), new OTSPoint3D(-576.623, 57.500, 6.278),
+                        new OTSPoint3D(-576.610, 57.500, 6.280), new OTSPoint3D(-567.499, 57.473, 6.280) });
         System.out.println(line.toExcel());
         System.out.println(OTSBufferingJTS.offsetGeometryOLD(line, -1.831));
     }

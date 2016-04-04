@@ -23,19 +23,19 @@ public class ProbabilisticRouteGenerator implements RouteGenerator
 
     /** The Distribution from which routes are drawn. */
     private final Distribution<Route> distribution;
+
     /**
      * Create a new Probabilistic Route Generator.
-     * @param generators
+     * @param generators List&lt;Distribution.FrequencyAndObject&lt;Route&gt;&gt;; list of routes and frequencies
      * @param stream
      * @throws ProbabilityException
      */
-    public ProbabilisticRouteGenerator(
-            List<Distribution.FrequencyAndObject<Route>> generators,
-            StreamInterface stream) throws ProbabilityException
+    public ProbabilisticRouteGenerator(final List<Distribution.FrequencyAndObject<Route>> generators,
+            final StreamInterface stream) throws ProbabilityException
     {
         this.distribution = new Distribution<Route>(generators, stream);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Route draw() throws ProbabilityException

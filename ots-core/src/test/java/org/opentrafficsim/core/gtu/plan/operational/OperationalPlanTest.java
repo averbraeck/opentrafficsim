@@ -12,8 +12,6 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djunits.value.vdouble.scalar.Time.Abs;
-import org.djunits.value.vdouble.scalar.Time.Rel;
 import org.junit.Test;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
@@ -33,11 +31,11 @@ public class OperationalPlanTest
 {
     /**
      * Test OperationalPlan.
-     * @throws OTSGeometryException
-     * @throws OperationalPlanException
+     * @throws OTSGeometryException Should not happen - test fails if it does
+     * @throws OperationalPlanException Should not happen - test fails if it does
      */
     @Test
-    public void testOperationalPlan() throws OperationalPlanException, OTSGeometryException
+    public final void testOperationalPlan() throws OperationalPlanException, OTSGeometryException
     {
         DirectedPoint waitPoint = new DirectedPoint(12, 13, 14, 15, 16, 17);
         Time.Abs startTime = new Time.Abs(100, TimeUnit.SECOND);
@@ -152,7 +150,7 @@ public class OperationalPlanTest
         int steps = 20;
         for (int i = 0; i <= steps; i++)
         {
-            double stepTime = startTime.si + t * i / steps * 0.9999;// sometimes fails for endTime
+            double stepTime = startTime.si + t * i / steps * 0.9999; // sometimes fails for endTime
             Time.Abs absTime = new Time.Abs(stepTime, TimeUnit.SI);
             double deltaT = stepTime - startTime.si;
             Time.Rel relTime = new Time.Rel(deltaT, TimeUnit.SI);

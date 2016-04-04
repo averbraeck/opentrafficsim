@@ -66,12 +66,16 @@ public class OTSPolygon3D extends OTSLine3D
      *         OTSPolygon3D, unpredictable (but reproducible) if the <cite>point</cite> lies on the boundary of this
      *         OTSPolygon3D
      */
-    public boolean contains(OTSPoint3D point)
+    public final boolean contains(final OTSPoint3D point)
     {
         // First take care of the case where point coincides with one of the points on the polygon
         for (OTSPoint3D p : getPoints())
+        {
             if ((p.x == point.x) && (p.y == point.y))
+            {
                 return true; // we'll consider that a hit
+            }
+        }
         // http://paulbourke.net/geometry/insidepoly/ (Solution 2; 2D)
         double sumAngle = 0;
         OTSPoint3D prevPoint = getLast();
@@ -82,9 +86,13 @@ public class OTSPolygon3D extends OTSLine3D
             double theta2 = Math.atan2(p.y - point.y, p.x - point.x);
             double diffTheta = theta2 - theta1;
             while (diffTheta > Math.PI)
+            {
                 diffTheta -= 2 * Math.PI;
+            }
             while (diffTheta < -Math.PI)
+            {
                 diffTheta += 2 * Math.PI;
+            }
             sumAngle += diffTheta;
             // System.out.println(String.format("theta1=%.3f, theta2=%.3f diff=%.3f sum=%.3f", Math.toDegrees(theta1),
             // Math.toDegrees(theta2), Math.toDegrees(diffTheta), Math.toDegrees(sumAngle)));

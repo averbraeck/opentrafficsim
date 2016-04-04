@@ -96,32 +96,32 @@ public class GTUTest implements OTSModelInterface
         {
 
             @Override
-            public Node nextNode(Node node, Link previousLink, GTUType gtuType) throws NetworkException
+            public Node nextNode(final Node node, final Link previousLink, final GTUType gtuType) throws NetworkException
             {
                 return null;
             }
 
             @Override
-            public Node nextNode(Link link, GTUDirectionality direction, GTUType gtuType) throws NetworkException
+            public Node nextNode(final Link link, final GTUDirectionality direction, final GTUType gtuType) throws NetworkException
             {
                 return null;
             }
 
             @Override
-            public LinkDirection nextLinkDirection(Node node, Link previousLink, GTUType gtuType) throws NetworkException
+            public LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GTUType gtuType) throws NetworkException
             {
                 return null;
             }
 
             @Override
-            public LinkDirection nextLinkDirection(Link link, GTUDirectionality direction, GTUType gtuType)
+            public LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction, final GTUType gtuType)
                     throws NetworkException
             {
                 return null;
             }
 
             @Override
-            public TacticalPlanner generateTacticalPlanner(GTU gtu)
+            public TacticalPlanner generateTacticalPlanner(final GTU gtu)
             {
                 return null;
             }
@@ -134,8 +134,8 @@ public class GTUTest implements OTSModelInterface
             {
                 String gtuId = id + " " + gtuType.getId();
                 TestGTU gtu =
-                        new TestGTU(gtuId, gtuType, simulator, strategicalPlanner, perception,
-                                initialLocation, perceivableContext);
+                        new TestGTU(gtuId, gtuType, simulator, strategicalPlanner, perception, initialLocation,
+                                perceivableContext);
                 assertEquals("new GTU has correct id", gtuId, gtu.getId());
                 assertEquals("new GTU has correct GTUType", gtuType, gtu.getGTUType());
                 assertEquals("new GTU has correct reference position", RelativePosition.REFERENCE_POSITION, gtu.getReference());
@@ -198,11 +198,11 @@ class TestGTU extends AbstractGTU
      * @param initialLocation DirectedPoint; initial location and direction of the new GTU
      * @param perceivableContext PerceivableContext; the perceivable context of the new GTU
      * @throws SimRuntimeException when something goes wrong in the scheduling of the first move event
-     * @throws GTUException
+     * @throws GTUException when something goes wrong during GTU instantiation
      */
-    public TestGTU(String id, GTUType gtuType, OTSDEVSSimulatorInterface simulator, StrategicalPlanner strategicalPlanner,
-            Perception perception, DirectedPoint initialLocation, PerceivableContext perceivableContext)
-            throws SimRuntimeException, GTUException
+    TestGTU(final String id, final GTUType gtuType, final OTSDEVSSimulatorInterface simulator,
+            final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation,
+            final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
     {
         super(id, gtuType, simulator, strategicalPlanner, perception, initialLocation, Speed.ZERO, perceivableContext);
     }

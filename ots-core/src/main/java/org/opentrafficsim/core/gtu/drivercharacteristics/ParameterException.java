@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.gtu.drivercharacteristics;
 
 /**
- * Throwable for exceptions regarding parameters. 
+ * Throwable for exceptions regarding parameters.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -15,9 +15,10 @@ package org.opentrafficsim.core.gtu.drivercharacteristics;
 public class ParameterException extends Exception
 {
 
-	private static final long serialVersionUID = 20160325L;
+    /** */
+    private static final long serialVersionUID = 20160325L;
 
-	/**
+    /**
      * Empty constructor.
      */
     public ParameterException()
@@ -28,7 +29,7 @@ public class ParameterException extends Exception
      * Constructor with message.
      * @param message Message.
      */
-    public ParameterException(String message)
+    public ParameterException(final String message)
     {
         super(message);
     }
@@ -37,17 +38,17 @@ public class ParameterException extends Exception
      * Constructor with cause.
      * @param cause Cause.
      */
-    public ParameterException(Throwable cause)
+    public ParameterException(final Throwable cause)
     {
         super(cause);
     }
 
-    /** 
+    /**
      * Constructor with message and cause.
      * @param message Message.
      * @param cause Cause.
      */
-    public ParameterException(String message, Throwable cause)
+    public ParameterException(final String message, final Throwable cause)
     {
         super(message, cause);
     }
@@ -59,7 +60,8 @@ public class ParameterException extends Exception
      * @param enableSuppression Whether to enable suppression.
      * @param writableStackTrace Whether or not the stack trace should be writable.
      */
-    public ParameterException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
+    public ParameterException(final String message, final Throwable cause, final boolean enableSuppression,
+            final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);
     }
@@ -75,12 +77,9 @@ public class ParameterException extends Exception
         if (condition)
         {
             StackTraceElement[] ste = new Exception().getStackTrace();
-            String where =
-                ste[1].getClassName() + "." + ste[1].getMethodName() + " (" + ste[1].getLineNumber()
-                    + "): ";
+            String where = ste[1].getClassName() + "." + ste[1].getMethodName() + " (" + ste[1].getLineNumber() + "): ";
             throw new ParameterException(where + message);
         }
     }
 
 }
-

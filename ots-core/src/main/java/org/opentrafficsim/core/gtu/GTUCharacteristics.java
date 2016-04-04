@@ -18,10 +18,10 @@ import org.opentrafficsim.core.network.OTSNetwork;
  */
 public class GTUCharacteristics
 {
-    
+
     /** The type of the GTU. */
     private final GTUType gtuType;
-    
+
     /** The id generator that will generate the id of the GTU. */
     private final IdGenerator idGenerator;
 
@@ -33,7 +33,7 @@ public class GTUCharacteristics
 
     /** Maximum velocity of the GTU. */
     private final Speed maximumVelocity;
-    
+
     /** The simulator that controls the GTU. */
     private final OTSDEVSSimulatorInterface simulator;
 
@@ -50,8 +50,9 @@ public class GTUCharacteristics
      * @param simulator OTSDEVSSimulatorInterface; the simulator that controls the (not yet constructed) GTU
      * @param network OTSNetwork; the network that will contain the GTU
      */
-    public GTUCharacteristics(GTUType gtuType, IdGenerator idGenerator, final Length.Rel length, final Length.Rel width,
-            final Speed maximumVelocity, OTSDEVSSimulatorInterface simulator, OTSNetwork network)
+    public GTUCharacteristics(final GTUType gtuType, final IdGenerator idGenerator, final Length.Rel length,
+            final Length.Rel width, final Speed maximumVelocity, final OTSDEVSSimulatorInterface simulator,
+            final OTSNetwork network)
     {
         this.gtuType = gtuType;
         this.idGenerator = idGenerator;
@@ -66,7 +67,7 @@ public class GTUCharacteristics
      * Retrieve the GTU type.
      * @return GTUType.
      */
-    public GTUType getGTUType()
+    public final GTUType getGTUType()
     {
         return this.gtuType;
     }
@@ -75,7 +76,7 @@ public class GTUCharacteristics
      * Retrieve the id generator.
      * @return IdGenerator
      */
-    public IdGenerator getIdGenerator()
+    public final IdGenerator getIdGenerator()
     {
         return this.idGenerator;
     }
@@ -84,7 +85,7 @@ public class GTUCharacteristics
      * Retrieve the length.
      * @return Length.Rel
      */
-    public Length.Rel getLength()
+    public final Length.Rel getLength()
     {
         return this.length;
     }
@@ -93,7 +94,7 @@ public class GTUCharacteristics
      * Retrieve the width.
      * @return Width.Rel
      */
-    public Length.Rel getWidth()
+    public final Length.Rel getWidth()
     {
         return this.width;
     }
@@ -102,7 +103,7 @@ public class GTUCharacteristics
      * Retrieve the maximum velocity.
      * @return Speed
      */
-    public Speed getMaximumVelocity()
+    public final Speed getMaximumVelocity()
     {
         return this.maximumVelocity;
     }
@@ -111,7 +112,7 @@ public class GTUCharacteristics
      * Retrieve the simulator.
      * @return OTSDEVSSimulatorInterface
      */
-    public OTSDEVSSimulatorInterface getSimulator()
+    public final OTSDEVSSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
@@ -120,7 +121,7 @@ public class GTUCharacteristics
      * Retrieve the network.
      * @return OTSNetwork
      */
-    public OTSNetwork getNetwork()
+    public final OTSNetwork getNetwork()
     {
         return this.network;
     }
