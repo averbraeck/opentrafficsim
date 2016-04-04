@@ -30,6 +30,12 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:simpleType name="PERLENGTHTYPE">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d+[\.]{0,1}\d*\s*\/\s*(mm|cm|dm|m|dam|hm|km|mi|y|ft)"></xsd:pattern>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <!-- Allows patterns like BEGIN | END | END-10m | 25m | 50% -->
   <xsd:simpleType name="LENGTHBEGINENDTYPE">
     <xsd:restriction base="xsd:string">

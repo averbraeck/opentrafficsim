@@ -20,6 +20,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSShape;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
@@ -852,18 +853,19 @@ public class Lane extends CrossSectionElement implements Serializable
                         if (cse instanceof Lane)
                         {
                             Lane lane = (Lane) cse;
-                            Length.Rel df = this.getCenterLine().getLast().distance(cse.getCenterLine().getFirst());
-                            Length.Rel dl = this.getCenterLine().getLast().distance(cse.getCenterLine().getLast());
-                            // TODO this should be 4 ifs...
+                            Length.Rel df = this.getCenterLine().getLast().distance(lane.getCenterLine().getFirst());
+                            Length.Rel dl = this.getCenterLine().getLast().distance(lane.getCenterLine().getLast());
+                            // this, parentLink ---> O ---> lane, link
                             if (df.lt(MARGIN) && df.lt(dl) && lane.getDirectionality(gtuType).isForwardOrBoth()
                                 && link.getStartNode().equals(getParentLink().getEndNode()))
                             {
-                                laneMap.put((Lane) cse, GTUDirectionality.DIR_PLUS);
+                                laneMap.put(lane, GTUDirectionality.DIR_PLUS);
                             }
+                            // this, parentLink ---> O <--- lane, link
                             else if (dl.lt(MARGIN) && dl.lt(df) && lane.getDirectionality(gtuType).isBackwardOrBoth()
-                                && link.getEndNode().equals(getParentLink().getStartNode()))
+                                && link.getEndNode().equals(getParentLink().getEndNode()))
                             {
-                                laneMap.put((Lane) cse, GTUDirectionality.DIR_MINUS);
+                                laneMap.put(lane, GTUDirectionality.DIR_MINUS);
                             }
                         }
                     }
@@ -906,15 +908,20 @@ public class Lane extends CrossSectionElement implements Serializable
                     {
                         if (cse instanceof Lane)
                         {
-                            Length.Rel df = this.getCenterLine().getFirst().distance(cse.getCenterLine().getFirst());
-                            Length.Rel dl = this.getCenterLine().getFirst().distance(cse.getCenterLine().getLast());
-                            if (df.lt(MARGIN) && df.lt(dl))
+                            Lane lane = (Lane) cse;
+                            Length.Rel df = this.getCenterLine().getFirst().distance(lane.getCenterLine().getFirst());
+                            Length.Rel dl = this.getCenterLine().getFirst().distance(lane.getCenterLine().getLast());
+                            // this, parentLink <--- O ---> lane, link
+                            if (df.lt(MARGIN) && df.lt(dl) && lane.getDirectionality(gtuType).isForwardOrBoth()
+                                && link.getStartNode().equals(getParentLink().getStartNode()))
                             {
-                                laneMap.put((Lane) cse, GTUDirectionality.DIR_PLUS);
+                                laneMap.put(lane, GTUDirectionality.DIR_PLUS);
                             }
-                            else if (dl.lt(MARGIN) && dl.lt(df))
+                            // this, parentLink <--- O <--- lane, link
+                            else if (dl.lt(MARGIN) && dl.lt(df) && lane.getDirectionality(gtuType).isBackwardOrBoth()
+                                && link.getEndNode().equals(getParentLink().getStartNode()))
                             {
-                                laneMap.put((Lane) cse, GTUDirectionality.DIR_MINUS);
+                                laneMap.put(lane, GTUDirectionality.DIR_MINUS);
                             }
                         }
                     }
@@ -940,7 +947,9 @@ public class Lane extends CrossSectionElement implements Serializable
     public final Set<Lane> accessibleAdjacentLanes(final LateralDirectionality lateralDirection, final GTUType gtuType)
     {
         Set<Lane> candidates = new LinkedHashSet<>(1);
-        for (Lane lane : neighbors(lateralDirection, gtuType))
+        LateralDirectionality dir = this.getDirectionality(gtuType).isForwardOrBoth() ? lateralDirection : lateralDirection.isLeft() ?
+            LateralDirectionality.RIGHT : LateralDirectionality.LEFT;
+        for (Lane lane : neighbors(dir, gtuType))
         {
             if (lane.getDirectionality(gtuType).equals(LongitudinalDirectionality.DIR_BOTH)
                     || lane.getDirectionality(gtuType).equals(this.getDirectionality(gtuType)))
@@ -1151,7 +1160,7 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         return this.overtakingConditions;
     }
-
+    
     /** {@inheritDoc} */
     public final String toString()
     {

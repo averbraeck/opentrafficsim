@@ -25,6 +25,9 @@ import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.network.OTSNetwork;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionNone;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerNone;
 
 /** */
 public class SubjectiveCar extends AbstractGTU
@@ -47,15 +50,16 @@ public class SubjectiveCar extends AbstractGTU
      * @param type GTU type
      * @param simulator simulator
      * @param initialLocation location
+     * @param network hhe network in whoch the subjective car will be registered
      * @throws GTUException when GTU cannot be initialized
      * @throws SimRuntimeException when operational plan execution or perception execution cannot be scheduled
      * @throws NamingException when animation cannot be registered
      * @throws RemoteException when animation context or simulator cannot be reached
      */
-    public SubjectiveCar(String id, GTUType type, OTSDEVSSimulatorInterface simulator, DirectedPoint initialLocation)
-        throws SimRuntimeException, GTUException, RemoteException, NamingException
+    public SubjectiveCar(String id, GTUType type, OTSDEVSSimulatorInterface simulator, DirectedPoint initialLocation,
+        final OTSNetwork network) throws SimRuntimeException, GTUException, RemoteException, NamingException
     {
-        super(id, type, simulator, null, null, initialLocation, Speed.ZERO, null);
+        super(id, type, simulator, new LaneBasedStrategicalPlannerNone(), new LanePerceptionNone(), initialLocation, Speed.ZERO, network);
         this.position = initialLocation;
         System.out.println("Subjective car created at position " + this.position);
 

@@ -185,7 +185,7 @@
             <configuration>
               <fromDir>${basedir}/target/site/jacoco-ut</fromDir>
               <includes>.*, .resources/*</includes>
-              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs/${ots.version}/${project.artifactId}</url>
+              <url>scp://opentrafficsim.org/home/web/opentrafficsim.org/docs/${ots.version}/${project.artifactId}</url>
               <toDir>jacoco-ut</toDir>
               <serverId>ots-deployment</serverId>
             </configuration>
@@ -200,24 +200,26 @@
             <configuration>
               <fromDir>${basedir}/src/main/resources</fromDir>
               <includes>license.html</includes>
-              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org</url>
+              <url>scp://opentrafficsim.org/home/web/opentrafficsim.org</url>
               <toDir>docs</toDir>
               <serverId>ots-deployment</serverId>
             </configuration>
           </execution>
 
           <execution>
-            <id>upload-current-site</id>
+            <id>upload-last-site</id>
             <phase>site-deploy</phase>
             <goals>
-              <goal>upload</goal>
+              <goal>sshexec</goal>
             </goals>
             <configuration>
-              <fromDir>${basedir}/target/site</fromDir>
-              <includes>**/**</includes>
-              <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org</url>
-              <toDir>docs/current</toDir>
-              <serverId>ots-deployment</serverId>
+              <url>scp://opentrafficsim.org/home/web/opentrafficsim.org</url>
+              <serverId>dsol-deployment</serverId>
+              <commands>
+                <command>rm -r -f /home/web/opentrafficsim.org/docs/current</command>
+                <command>mkdir -p /home/web/opentrafficsim.org/docs/current</command>
+                <command>cp -r -f /home/web/opentrafficsim.org/docs/${project.version}/. /home/web/opentrafficsim.org/docs/current</command>
+              </commands>
             </configuration>
           </execution>
 
@@ -987,20 +989,20 @@
       <uniqueVersion>false</uniqueVersion>
       <id>ots-deployment</id>
       <name>open traffic sim repository</name>
-      <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/maven</url>
+      <url>scp://opentrafficsim.org/home/web/opentrafficsim.org/maven</url>
       <layout>default</layout>
     </repository>
     <snapshotRepository>
       <uniqueVersion>false</uniqueVersion>
       <id>ots-deployment</id>
       <name>open traffic sim snapshot repository</name>
-      <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/maven</url>
+      <url>scp://opentrafficsim.org/home/web/opentrafficsim.org/maven</url>
       <layout>default</layout>
     </snapshotRepository>
     <site>
       <id>ots-deployment</id>
       <name>open trafffic sim website</name>
-      <url>sftp://opentrafficsim.org/home/web/opentrafficsim.org/docs/${ots.version}</url>
+      <url>scp://opentrafficsim.org/home/web/opentrafficsim.org/docs/${ots.version}</url>
     </site>
   </distributionManagement>
 

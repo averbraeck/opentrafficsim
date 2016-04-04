@@ -108,7 +108,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
             // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
             if (laneBasedGTU.getMaximumVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
             {
-                return new OperationalPlan(locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.SECOND));
+                return new OperationalPlan(gtu, locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.SECOND));
             }
 
             // perceive the forward headway, accessible lanes and speed limit.
@@ -119,7 +119,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
 
             // find out where we are going
             Length.Rel forwardHeadway = drivingCharacteristics.getForwardHeadwayDistance();
-            LanePathInfo lanePathInfo = buildLaneListForward(laneBasedGTU, forwardHeadway);
+            LanePathInfo lanePathInfo = buildLanePathInfo(laneBasedGTU, forwardHeadway);
             NextSplitInfo nextSplitInfo = determineNextSplit(laneBasedGTU, forwardHeadway);
             Set<Lane> correctLanes = laneBasedGTU.getLanes().keySet();
             correctLanes.retainAll(nextSplitInfo.getCorrectCurrentLanes());
@@ -137,7 +137,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
                         {
                             DirectedPoint newLocation = changeLane(laneBasedGTU, direction);
                             lanePathInfo =
-                                buildLaneListForward(laneBasedGTU, this.referenceLane, this.referencePos,
+                                buildLanePathInfo(laneBasedGTU, this.referenceLane, this.referencePos,
                                     forwardHeadway);
                             return currentLanePlan(laneBasedGTU, startTime, newLocation, lanePathInfo);
                         }
@@ -191,7 +191,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
                         {
                             DirectedPoint newLocation = changeLane(laneBasedGTU, LateralDirectionality.LEFT);
                             lanePathInfo =
-                                buildLaneListForward(laneBasedGTU, this.referenceLane, this.referencePos,
+                                buildLanePathInfo(laneBasedGTU, this.referenceLane, this.referencePos,
                                     forwardHeadway);
                             return currentLanePlan(laneBasedGTU, startTime, newLocation, lanePathInfo);
                         }
@@ -237,7 +237,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
                         {
                             DirectedPoint newLocation = changeLane(laneBasedGTU, LateralDirectionality.RIGHT);
                             lanePathInfo =
-                                buildLaneListForward(laneBasedGTU, this.referenceLane, this.referencePos,
+                                buildLanePathInfo(laneBasedGTU, this.referenceLane, this.referencePos,
                                     forwardHeadway);
                             return currentLanePlan(laneBasedGTU, startTime, newLocation, lanePathInfo);
                         }
@@ -254,7 +254,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
                 System.err.println("LaneBasedGTUFollowingChange0TacticalPlanner.generateOperationalPlan() failed for "
                     + gtu + " because of " + exception.getMessage() + " -- GTU destroyed");
                 gtu.destroy();
-                return new OperationalPlan(locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.SECOND));
+                return new OperationalPlan(gtu, locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.SECOND));
             }
             throw exception;
         }
@@ -299,7 +299,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
         if (accelerationStep.getAcceleration().si < 1E-6
             && laneBasedGTU.getVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
         {
-            return new OperationalPlan(locationAtStartTime, startTime, accelerationStep.getDuration());
+            return new OperationalPlan(laneBasedGTU, locationAtStartTime, startTime, accelerationStep.getDuration());
         }
 
         // build a list of lanes forward, with a maximum headway.
@@ -317,7 +317,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
             operationalPlanSegmentList.add(segment);
         }
         OperationalPlan op =
-            new OperationalPlan(lanePathInfo.getPath(), startTime, laneBasedGTU.getVelocity(),
+            new OperationalPlan(laneBasedGTU, lanePathInfo.getPath(), startTime, laneBasedGTU.getVelocity(),
                 operationalPlanSegmentList);
         return op;
     }

@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.geometry;
 
+import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +42,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
     private static final long serialVersionUID = 20150722L;
 
     /** The points of the line. */
-    private final OTSPoint3D[] points;
+    private OTSPoint3D[] points;
 
     /** The cumulative length of the line at point 'i'. */
     private double[] lengthIndexedLine = null;
@@ -62,20 +64,31 @@ public class OTSLine3D implements LocatableInterface, Serializable
      */
     public OTSLine3D(final OTSPoint3D... points) throws OTSGeometryException
     {
-        if (points.length < 2)
+        init(points);
+    }
+
+    /**
+     * Construct a new OTSLine3D.
+     * @param pts the array of points to construct this OTSLine3D from.
+     * @throws OTSGeometryException when the provided points do not constitute a valid line (too few points or identical
+     *             adjacent points)
+     */
+    private void init(final OTSPoint3D... pts) throws OTSGeometryException
+    {
+        if (pts.length < 2)
         {
-            throw new OTSGeometryException("Degenerate OTSLine3D; has " + points.length + " point"
-                + (points.length != 1 ? "s" : ""));
+            throw new OTSGeometryException("Degenerate OTSLine3D; has " + pts.length + " point"
+                + (pts.length != 1 ? "s" : ""));
         }
-        for (int i = 1; i < points.length; i++)
+        for (int i = 1; i < pts.length; i++)
         {
-            if (points[i - 1].x == points[i].x && points[i - 1].y == points[i].y && points[i - 1].z == points[i].z)
+            if (pts[i - 1].x == pts[i].x && pts[i - 1].y == pts[i].y && pts[i - 1].z == pts[i].z)
             {
                 throw new OTSGeometryException("Degenerate OTSLine3D; point " + (i - 1)
                     + " has the same x, y and z as point " + i);
             }
         }
-        this.points = points;
+        this.points = pts;
     }
 
     /** Which offsetLine method to use... */
@@ -631,6 +644,37 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
+     * Construct a new OTSShape (closed shape) from a Path2D.
+     * @param path the Path2D to construct this OTSLine3D from.
+     * @throws OTSGeometryException when the provided points do not constitute a valid line (too few points or identical
+     *             adjacent points)
+     */
+    public OTSLine3D(final Path2D path) throws OTSGeometryException
+    {
+        PathIterator pi = path.getPathIterator(null);
+        List<OTSPoint3D> pl = new ArrayList<>();
+        double[] p = new double[6];
+        while (!pi.isDone())
+        {
+            pi.next();
+            int segType = pi.currentSegment(p);
+            if (segType == PathIterator.SEG_MOVETO || segType == PathIterator.SEG_LINETO)
+            {
+                pl.add(new OTSPoint3D(p[0], p[1]));
+            }
+            else if (segType == PathIterator.SEG_CLOSE)
+            {
+                if (!pl.get(0).equals(pl.get(pl.size() - 1)))
+                {
+                    pl.add(new OTSPoint3D(pl.get(0).x, pl.get(0).y));
+                }
+                break;
+            }
+        }
+        init(pl.toArray(new OTSPoint3D[pl.size() - 1]));
+    }
+
+    /**
      * Construct a Coordinate array and fill it with the points of this OTSLine3D.
      * @return an array of Coordinates corresponding to this OTSLine
      */
@@ -1019,7 +1063,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         }
         return Double.NaN;
     }
-    */
+     */
 
     /**
      * Calculate the centroid of this line, and the bounds, and cache for later use. Make sure the dx, dy and dz are at least

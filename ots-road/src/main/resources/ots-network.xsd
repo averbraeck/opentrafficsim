@@ -26,6 +26,16 @@
       <xsd:sequence>
         <xsd:choice>
           <xsd:element name="BEZIER" />
+          <xsd:element name="CLOTHOID">
+            <xsd:complexType>
+              <xsd:attribute name="STARTANGLE" type="ANGLETYPE" use="optional"></xsd:attribute>
+              <xsd:attribute name="STARTCURVATURE" type="PERLENGTHTYPE" use="required"></xsd:attribute>
+              <xsd:attribute name="ENDCURVATURE" type="PERLENGTHTYPE" use="required"></xsd:attribute>
+              <xsd:attribute name="LENGTH" type="LENGTHTYPE" use="optional"></xsd:attribute>
+              <xsd:attribute name="ENDELEVATION" type="LENGTHTYPE" use="optional"></xsd:attribute>
+              <xsd:attribute name="NUMSEGMENTS" type="xsd:integer" use="optional"></xsd:attribute>
+            </xsd:complexType>
+          </xsd:element>
           <xsd:element name="STRAIGHT">
             <xsd:complexType>
               <xsd:attribute name="LENGTH" type="LENGTHTYPE" use="optional"></xsd:attribute>

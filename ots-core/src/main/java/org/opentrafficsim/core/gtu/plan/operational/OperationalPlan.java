@@ -18,6 +18,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.math.Solver;
 
 /**
@@ -60,6 +61,9 @@ public class OperationalPlan implements Serializable
 
     /** wait plan? */
     private final boolean waitPlan;
+    
+    /** GTU for debugging purposes. */
+    private final GTU gtu;
 
     /**
      * An array of relative start times of each segment, expressed in the SI unit, where the last time is the overall ending
@@ -78,6 +82,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Construct an operational plan.
+     * @param gtu the GTU for debugging purposes
      * @param path the path to follow from a certain time till a certain time. The path should have <i>at least</i> the length
      * @param startTime the absolute start time when we start executing the path
      * @param startSpeed the GTU speed when we start executing the path
@@ -85,10 +90,11 @@ public class OperationalPlan implements Serializable
      *            profile
      * @throws OperationalPlanException when the path is too short for the operation
      */
-    public OperationalPlan(final OTSLine3D path, final Time.Abs startTime, final Speed startSpeed,
+    public OperationalPlan(final GTU gtu, final OTSLine3D path, final Time.Abs startTime, final Speed startSpeed,
         final List<Segment> operationalPlanSegmentList) throws OperationalPlanException
     {
         this.waitPlan = false;
+        this.gtu = gtu;
         this.startTime = startTime;
         this.startSpeed = startSpeed;
         this.operationalPlanSegmentList = operationalPlanSegmentList;
@@ -128,15 +134,17 @@ public class OperationalPlan implements Serializable
 
     /**
      * Build a plan where the GTU will wait for a certain time.
+     * @param gtu the GTU for debugging purposes
      * @param waitPoint the point at which the GTU will wait
      * @param startTime the current time or a time in the future when the plan should start
      * @param duration the waiting time
      * @throws OperationalPlanException when construction of a waiting path fails
      */
-    public OperationalPlan(final DirectedPoint waitPoint, final Time.Abs startTime, final Time.Rel duration)
+    public OperationalPlan(final GTU gtu, final DirectedPoint waitPoint, final Time.Abs startTime, final Time.Rel duration)
         throws OperationalPlanException
     {
         this.waitPlan = true;
+        this.gtu = gtu;
         this.startTime = startTime;
         this.startSpeed = Speed.ZERO;
         this.endSpeed = Speed.ZERO;
@@ -334,8 +342,9 @@ public class OperationalPlan implements Serializable
     {
         if (time.lt(this.startTime))
         {
-            throw new OperationalPlanException(
-                "SegmentProgress cannot be determined for time before startTime of this OperationalPlan");
+            throw new OperationalPlanException(this.gtu + ", t = " + time
+                + "SegmentProgress cannot be determined for time before startTime " + getStartTime()
+                + " of this OperationalPlan");
         }
         double cumulativeDistance = 0;
         for (int i = 0; i < this.segmentStartTimesRelSI.length - 1; i++)
@@ -346,8 +355,9 @@ public class OperationalPlan implements Serializable
                     + this.segmentStartTimesRelSI[i], TimeUnit.SI), new Length.Rel(cumulativeDistance, LengthUnit.SI));
             }
         }
-        throw new OperationalPlanException(
-            "SegmentProgress cannot be determined for time after endTime of this OperationalPlan");
+        throw new OperationalPlanException(this.gtu + ", t = " + time
+            + " SegmentProgress cannot be determined for time after endTime " + getEndTime()
+            + " of this OperationalPlan");
     }
 
     /**

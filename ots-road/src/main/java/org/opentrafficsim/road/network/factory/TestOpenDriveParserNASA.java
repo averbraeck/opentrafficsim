@@ -550,7 +550,7 @@ public class TestOpenDriveParserNASA extends AbstractWrappableAnimation
 
             try
             {
-                new Thread(new ReceiverThread(this.simulator, carType, this.rtiCars)).start();
+                new Thread(new ReceiverThread(this.simulator, carType, this.rtiCars, network)).start();
             }
             catch (SocketException exception1)
             {

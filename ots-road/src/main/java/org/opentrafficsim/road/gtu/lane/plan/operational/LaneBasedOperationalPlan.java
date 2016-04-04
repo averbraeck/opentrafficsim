@@ -10,6 +10,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -38,6 +39,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
 
     /**
      * Construct an operational plan without a lane change.
+     * @param gtu the GTU for debugging purposes
      * @param path the path to follow from a certain time till a certain time. The path should have <i>at least</i> the length
      * @param startTime the absolute start time when we start executing the path
      * @param startSpeed the GTU speed when we start executing the path
@@ -46,26 +48,27 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      * @param referenceLaneList the list of lanes that are part of this plan
      * @throws OperationalPlanException when the path is too short for the operation
      */
-    public LaneBasedOperationalPlan(final OTSLine3D path, final Time.Abs startTime, final Speed startSpeed,
+    public LaneBasedOperationalPlan(final LaneBasedGTU gtu, final OTSLine3D path, final Time.Abs startTime, final Speed startSpeed,
         List<Segment> operationalPlanSegmentList, final List<Lane> referenceLaneList) throws OperationalPlanException
     {
-        super(path, startTime, startSpeed, operationalPlanSegmentList);
+        super(gtu, path, startTime, startSpeed, operationalPlanSegmentList);
         this.referenceLaneList = referenceLaneList;
         this.targetLaneList = null;
     }
 
     /**
      * Build a plan where the GTU will wait for a certain time. Of course no lane change takes place.
+     * @param gtu the GTU for debugging purposes
      * @param waitPoint the point at which the GTU will wait
      * @param startTime the current time or a time in the future when the plan should start
      * @param duration the waiting time
      * @param referenceLane the reference lane where the halting takes place
      * @throws OperationalPlanException when construction of a waiting path fails
      */
-    public LaneBasedOperationalPlan(final DirectedPoint waitPoint, final Time.Abs startTime, final Time.Rel duration,
+    public LaneBasedOperationalPlan(final LaneBasedGTU gtu, final DirectedPoint waitPoint, final Time.Abs startTime, final Time.Rel duration,
         final Lane referenceLane) throws OperationalPlanException
     {
-        super(waitPoint, startTime, duration);
+        super(gtu, waitPoint, startTime, duration);
         this.referenceLaneList = new ArrayList<>();
         this.referenceLaneList.add(referenceLane);
         this.targetLaneList = null;

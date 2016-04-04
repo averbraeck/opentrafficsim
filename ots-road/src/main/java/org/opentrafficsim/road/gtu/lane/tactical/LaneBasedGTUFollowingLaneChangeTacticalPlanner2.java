@@ -73,16 +73,25 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLaneBasedTacticalPlanner
+public class LaneBasedGTUFollowingLaneChangeTacticalPlanner2 extends AbstractLaneBasedTacticalPlanner
 {
     /** */
     private static final long serialVersionUID = 20160129L;
 
     /** Lane change time (fixed foe now. */
-    private static final double LANECHANGETIME = 2.0;
+    private static final double LANECHANGETIME = 5.0;
 
     /** Earliest next lane change time. */
     private Time.Abs earliestNexLaneChangeTime = Time.Abs.ZERO;
+
+    /** the defined lane change path in the space domain. null if no lane change busy. */
+    private OTSLine3D laneChangePath = null;
+
+    /** progress on the lane change plan along the defined lane change path in the space domain. */
+    private double laneChangeFraction = 0.0;
+
+    /** lane change direction for the turn indicator. */
+    private LateralDirectionality laneChangeDirection;
 
     /** Bezier curve points for gradual lane change. */
     private static final double[] SCURVE;
@@ -102,7 +111,7 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
     /**
      * Instantiated a tactical planner with just GTU following behavior and no lane changes.
      */
-    public LaneBasedGTUFollowingLaneChangeTacticalPlanner()
+    public LaneBasedGTUFollowingLaneChangeTacticalPlanner2()
     {
         super();
     }
@@ -128,8 +137,6 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
 
         // perceive the forward headway, accessible lanes and speed limit.
         perception.updateForwardHeadwayGTU();
-        perception.updateAccessibleAdjacentLanesLeft();
-        perception.updateAccessibleAdjacentLanesRight();
         perception.updateSpeedLimit();
 
         // find out where we are going
@@ -138,6 +145,74 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
         NextSplitInfo nextSplitInfo = determineNextSplit(laneBasedGTU, forwardHeadway);
         Set<Lane> correctLanes = laneBasedGTU.getLanes().keySet();
         correctLanes.retainAll(nextSplitInfo.getCorrectCurrentLanes());
+
+        // step 0. if we are making a lane change: continue till the end in small steps.
+        if (this.laneChangePath != null)
+        {
+            try
+            {
+                OTSLine3D pathRemainder = this.laneChangePath.extractFractional(this.laneChangeFraction, 1.0);
+                GTUFollowingModelOld gfm = laneBasedGTU.getBehavioralCharacteristics().getGTUFollowingModel();
+                AccelerationStep accelerationStep;
+                HeadwayGTU headwayGTU = perception.getForwardHeadwayGTU(); // XXX multiple lanes!!!!!!
+                Length.Rel maxDistance = lanePathInfo.getPath().getLength();
+                if (headwayGTU.getGtuId() == null)
+                {
+                    headwayGTU = new HeadwayGTU("ENDPATH", Speed.ZERO, maxDistance, GTUType.NONE);
+                }
+                accelerationStep =
+                    gfm.computeAccelerationStep(laneBasedGTU, headwayGTU.getGtuSpeed(), headwayGTU.getDistance(),
+                        maxDistance, perception.getSpeedLimit());
+
+                List<Segment> operationalPlanSegmentList = new ArrayList<>();
+                Speed v = gtu.getVelocity();
+                if (accelerationStep.getAcceleration().si == 0.0)
+                {
+                    Time.Rel t = accelerationStep.getDuration();
+                    Length.Rel x = v.multiplyBy(t);
+                    if (x.gt(pathRemainder.getLength()))
+                    {
+                        t = pathRemainder.getLength().divideBy(v);
+                        this.laneChangePath = null;
+                        // TODO book out of not covered lanes...
+                    }
+                    Segment segment = new OperationalPlan.SpeedSegment(t);
+                    operationalPlanSegmentList.add(segment);
+                }
+                else
+                {
+                    Time.Rel t = accelerationStep.getDuration();
+                    Acceleration a = accelerationStep.getAcceleration();
+                    Length.Rel x = v.multiplyBy(t).plus(a.multiplyBy(t).multiplyBy(t).multiplyBy(0.5));
+                    if (x.gt(pathRemainder.getLength()))
+                    {
+                        // constant speed for the last small part...
+                        t = pathRemainder.getLength().divideBy(v);
+                        this.laneChangePath = null;
+                        Segment segment = new OperationalPlan.SpeedSegment(t);
+                        operationalPlanSegmentList.add(segment);
+                        // TODO book out of not covered lanes...
+                    }
+                    else
+                    {
+                        Segment segment =
+                            new OperationalPlan.AccelerationSegment(accelerationStep.getDuration(),
+                                accelerationStep.getAcceleration());
+                        operationalPlanSegmentList.add(segment);
+                    }
+                }
+                OperationalPlan op =
+                    new OperationalPlan(laneBasedGTU, lanePathInfo.getPath(), startTime, laneBasedGTU.getVelocity(),
+                        operationalPlanSegmentList);
+                laneBasedGTU.setTurnIndicatorStatus(this.laneChangeDirection.isLeft() ? TurnIndicatorStatus.LEFT
+                    : TurnIndicatorStatus.RIGHT);
+                return op;
+            }
+            catch (OTSGeometryException ge)
+            {
+                throw new GTUException(ge);
+            }
+        }
 
         // Step 1: Do we want to change lanes because of the current lane not leading to our destination?
         if (lanePathInfo.getPath().getLength().lt(forwardHeadway))
@@ -167,6 +242,8 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
 
         // Step 2. Do we want to change lanes to the left because of our predecessor on the current lane?
         // does the lane left of us [TODO: driving direction] bring us to our destination as well?
+        perception.updateAccessibleAdjacentLanesLeft();
+        perception.updateAccessibleAdjacentLanesRight();
         Set<Lane> leftLanes = perception.getAccessibleAdjacentLanesLeft().get(lanePathInfo.getReferenceLane());
         if (nextSplitInfo.isSplit())
         {
@@ -481,6 +558,8 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
                 + adjacentLane.getLength().multiplyBy(fraction2));
 
             List<Segment> operationalPlanSegmentList = new ArrayList<>();
+            // Segment segment = new OperationalPlan.SpeedSegment(new Time.Rel(0.01, TimeUnit.SI));
+            // operationalPlanSegmentList.add(segment);
             if (a == 0.0)
             {
                 Segment segment = new OperationalPlan.SpeedSegment(new Time.Rel(LANECHANGETIME, TimeUnit.SI));
@@ -493,6 +572,12 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
                         new Acceleration(a, AccelerationUnit.SI));
                 operationalPlanSegmentList.add(segment);
             }
+            /*-
+            if (v0.si == 0.0)
+            {
+                v0 = new Speed(0.1, SpeedUnit.SI);
+            }
+             */
             OperationalPlan op =
                 new OperationalPlan(gtu, path, gtu.getSimulator().getSimulatorTime().getTime(), v0,
                     operationalPlanSegmentList);
@@ -501,6 +586,10 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner extends AbstractLane
 
             // make sure out turn indicator is on!
             gtu.setTurnIndicatorStatus(direction.isLeft() ? TurnIndicatorStatus.LEFT : TurnIndicatorStatus.RIGHT);
+
+            // this.laneChangeDirection = direction;
+            // this.laneChangeFraction = 0.0;
+            // this.laneChangePath = path;
 
             return op;
         }

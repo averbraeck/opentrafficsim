@@ -34,6 +34,9 @@ public class CrossSectionLink extends OTSLink implements Serializable
     /** list of cross-section elements. */
     private final List<CrossSectionElement> crossSectionElementList = new ArrayList<>();
 
+    /** list of lanes. */
+    private final List<Lane> lanes = new ArrayList<>();
+    
     /** the policy to generally keep left, keep right, or keep lane. */
     private final LaneKeepingPolicy laneKeepingPolicy;
 
@@ -99,6 +102,10 @@ public class CrossSectionLink extends OTSLink implements Serializable
     protected final void addCrossSectionElement(final CrossSectionElement cse)
     {
         this.crossSectionElementList.add(cse);
+        if (cse instanceof Lane)
+        {
+            this.lanes.add((Lane) cse);
+        }
     }
 
     /**
@@ -110,6 +117,10 @@ public class CrossSectionLink extends OTSLink implements Serializable
     protected final void addCrossSectionElement(final CrossSectionElement cse, final int index)
     {
         this.crossSectionElementList.add(index, cse);
+        if (cse instanceof Lane)
+        {
+            this.lanes.add((Lane) cse);
+        }
     }
 
     /**
@@ -142,5 +153,13 @@ public class CrossSectionLink extends OTSLink implements Serializable
             }
         }
         return null;
+    }
+
+    /**
+     * @return lanes
+     */
+    public final List<Lane> getLanes()
+    {
+        return this.lanes;
     }
 }

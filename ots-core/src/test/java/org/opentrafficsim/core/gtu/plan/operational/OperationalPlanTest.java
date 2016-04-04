@@ -42,7 +42,7 @@ public class OperationalPlanTest
         DirectedPoint waitPoint = new DirectedPoint(12, 13, 14, 15, 16, 17);
         Time.Abs startTime = new Time.Abs(100, TimeUnit.SECOND);
         Time.Rel duration = new Time.Rel(1, TimeUnit.MINUTE);
-        OperationalPlan op = new OperationalPlan(waitPoint, startTime, duration);
+        OperationalPlan op = new OperationalPlan(null, waitPoint, startTime, duration);
         assertEquals("Start speed is 0", 0, op.getStartSpeed().si, 0);
         assertEquals("End speed is 0", 0, op.getEndSpeed().si, 0);
         assertEquals("Start time is " + startTime, startTime.si, op.getStartTime().si, 0);
@@ -51,11 +51,11 @@ public class OperationalPlanTest
         OperationalPlan.Segment segment = op.getOperationalPlanSegmentList().get(0);
         assertEquals("Duration is " + duration, duration.si, segment.getDuration().si, 0.00001);
         assertEquals("DurationSI is " + duration.si, duration.si, segment.getDurationSI(), 0.00001);
-        assertEquals("End location is " + waitPoint, 0,  waitPoint.distance(op.getEndLocation()), 0.0001);
+        assertEquals("End location is " + waitPoint, 0, waitPoint.distance(op.getEndLocation()), 0.0001);
         try
         {
             op.getLocation(new Time.Rel(-0.1, TimeUnit.SI));
-            fail ("getLocation for negative relative time should have thrown an OperationalPlanException");
+            fail("getLocation for negative relative time should have thrown an OperationalPlanException");
         }
         catch (OperationalPlanException ope)
         {
@@ -64,7 +64,7 @@ public class OperationalPlanTest
         try
         {
             op.getLocation(new Time.Abs(99.5, TimeUnit.SECOND));
-            fail ("getLocation for absolute time before start time should have thrown an OperationalPlanException");
+            fail("getLocation for absolute time before start time should have thrown an OperationalPlanException");
         }
         catch (OperationalPlanException ope)
         {
@@ -75,7 +75,7 @@ public class OperationalPlanTest
         try
         {
             op.getLocation(new Time.Abs(160.1, TimeUnit.SECOND));
-            fail ("getLocation for absolute time after end time should have thrown an OperationalPlanException");
+            fail("getLocation for absolute time after end time should have thrown an OperationalPlanException");
         }
         catch (OperationalPlanException ope)
         {
@@ -85,20 +85,20 @@ public class OperationalPlanTest
         {
             Time.Abs t = startTime.plus(new Time.Rel(i, TimeUnit.SECOND));
             DirectedPoint locationAtT = op.getLocation(t);
-            //System.out.println("Location at time " + t + " is " + locationAtT);
+            // System.out.println("Location at time " + t + " is " + locationAtT);
             // Use a tolerance that is larger than the z-offset (0.001)
             assertEquals("Distance from wait point at " + t + " is 0", 0, waitPoint.distance(locationAtT), 0.002);
         }
         assertEquals("end location matches start location", 0,
-                new OTSPoint3D(op.getEndLocation()).distance(new OTSPoint3D(waitPoint)).si, 0.0001);
+            new OTSPoint3D(op.getEndLocation()).distance(new OTSPoint3D(waitPoint)).si, 0.0001);
         OTSLine3D path = new OTSLine3D(new OTSPoint3D(12, 13, 14), new OTSPoint3D(123, 234, 345));
         Speed startSpeed = new Speed(20, SpeedUnit.KM_PER_HOUR);
         Speed endSpeed = new Speed(50, SpeedUnit.KM_PER_HOUR);
         Acceleration maxAcceleration = new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2);
         Acceleration maxDeceleration = new Acceleration(6, AccelerationUnit.METER_PER_SECOND_2);
         op =
-                OperationalPlanBuilder.buildGradualAccelerationPlan(path, startTime, startSpeed, endSpeed, maxAcceleration,
-                        maxDeceleration);
+            OperationalPlanBuilder.buildGradualAccelerationPlan(null, path, startTime, startSpeed, endSpeed,
+                maxAcceleration, maxDeceleration);
         assertEquals("Start speed is " + startSpeed, startSpeed.si, op.getStartSpeed().si, 0.00001);
         assertEquals("Start time is " + startTime, startTime.si, op.getStartTime().si, 0.00001);
         assertEquals("End speed is " + endSpeed, endSpeed.si, op.getEndSpeed().si, 0.00001);
@@ -160,17 +160,18 @@ public class OperationalPlanTest
             double fraction = expectedDistance / path.getLength().si;
             OTSPoint3D expectedPosition = new OTSPoint3D(path.getLocationFraction(fraction));
             DirectedPoint actualPosition = op.getLocation(absTime);
-            assertEquals("Position at abs time " + deltaT, 0, expectedPosition.distance(new OTSPoint3D(actualPosition)).si,
-                    0.002);
+            assertEquals("Position at abs time " + deltaT, 0,
+                expectedPosition.distance(new OTSPoint3D(actualPosition)).si, 0.002);
             actualPosition = op.getLocation(relTime);
-            assertEquals("Position at rel time " + deltaT, 0, expectedPosition.distance(new OTSPoint3D(actualPosition)).si,
-                    0.002);
+            assertEquals("Position at rel time " + deltaT, 0,
+                expectedPosition.distance(new OTSPoint3D(actualPosition)).si, 0.002);
             double expectedVelocity = startSpeed.si + a.si * deltaT;
             Speed actualSpeed = op.getVelocity(absTime);
             assertEquals("Velocity at abs time " + deltaT, expectedVelocity, actualSpeed.si, 0.0001);
             actualSpeed = op.getVelocity(relTime);
             assertEquals("Velocity at rel time " + deltaT, expectedVelocity, actualSpeed.si, 0.0001);
-            Time.Abs actualTimeAtPosition = op.timeAtDistance(new Length.Rel(fraction * path.getLength().si, LengthUnit.SI));
+            Time.Abs actualTimeAtPosition =
+                op.timeAtDistance(new Length.Rel(fraction * path.getLength().si, LengthUnit.SI));
             assertEquals("TimeAtDistance matches time", startTime.si + deltaT, actualTimeAtPosition.si, 0.0001);
             double actualAcceleration = op.getAcceleration(absTime).si;
             assertEquals("acceleration at abs time", a.si, actualAcceleration, 0.00001);

@@ -13,6 +13,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.SpeedSegment;
 import org.opentrafficsim.core.math.Solver;
 
@@ -47,6 +48,7 @@ public final class OperationalPlanBuilder
 
     /**
      * Build a plan with a path and a given speed.
+     * @param gtu the GTU for debugging purposes
      * @param path the path to drive (provides the length)
      * @param startTime the current time or a time in the future when the plan should start
      * @param speed the speed at the start of the path
@@ -54,7 +56,7 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildConstantSpeedPlan(final OTSLine3D path, final Time.Abs startTime,
+    public static OperationalPlan buildConstantSpeedPlan(final GTU gtu, final OTSLine3D path, final Time.Abs startTime,
         final Speed speed) throws OperationalPlanException
     {
         Length.Rel length = path.getLength();
@@ -62,13 +64,14 @@ public final class OperationalPlanBuilder
         segment = new SpeedSegment(length.divideBy(speed));
         ArrayList<OperationalPlan.Segment> segmentList = new ArrayList<>();
         segmentList.add(segment);
-        return new OperationalPlan(path, startTime, speed, segmentList);
+        return new OperationalPlan(gtu, path, startTime, speed, segmentList);
     }
 
     /**
      * Build a plan with a path and a given start speed to try to reach a provided end speed, exactly at the end of the curve.
      * The acceleration (and deceleration) are capped by maxAcceleration and maxDeceleration. Therefore, there is no guarantee
      * that the end speed is actually reached by this plan.
+     * @param gtu the GTU for debugging purposes
      * @param path the path to drive (provides the length)
      * @param startTime the current time or a time in the future when the plan should start
      * @param startSpeed the speed at the start of the path
@@ -79,7 +82,7 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildGradualAccelerationPlan(final OTSLine3D path, final Time.Abs startTime,
+    public static OperationalPlan buildGradualAccelerationPlan(final GTU gtu, final OTSLine3D path, final Time.Abs startTime,
         final Speed startSpeed, final Speed endSpeed, final Acceleration maxAcceleration,
         final Acceleration maxDeceleration) throws OperationalPlanException
     {
@@ -121,13 +124,14 @@ public final class OperationalPlanBuilder
         }
         ArrayList<OperationalPlan.Segment> segmentList = new ArrayList<>();
         segmentList.add(segment);
-        return new OperationalPlan(path, startTime, startSpeed, segmentList);
+        return new OperationalPlan(gtu, path, startTime, startSpeed, segmentList);
     }
 
     /**
      * Build a plan with a path and a given start speed to reach a provided end speed, exactly at the end of the curve.
      * Acceleration and deceleration are virtually unbounded (1E12 m/s2) to reach the end speed (e.g., to come to a complete
      * stop).
+     * @param gtu the GTU for debugging purposes
      * @param path the path to drive (provides the length)
      * @param startTime the current time or a time in the future when the plan should start
      * @param startSpeed the speed at the start of the path
@@ -136,10 +140,10 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildGradualAccelerationPlan(final OTSLine3D path, final Time.Abs startTime,
+    public static OperationalPlan buildGradualAccelerationPlan(final GTU gtu, final OTSLine3D path, final Time.Abs startTime,
         final Speed startSpeed, final Speed endSpeed) throws OperationalPlanException
     {
-        return buildGradualAccelerationPlan(path, startTime, startSpeed, endSpeed, MAX_ACCELERATION, MAX_DECELERATION);
+        return buildGradualAccelerationPlan(gtu, path, startTime, startSpeed, endSpeed, MAX_ACCELERATION, MAX_DECELERATION);
     }
 
     /**
@@ -147,6 +151,7 @@ public final class OperationalPlanBuilder
      * provided, until the end speed is reached. After this, constant end speed is used to reach the end point of the path.
      * There is no guarantee that the end speed is actually reached by this plan. If the end speed is zero, and it is reached
      * before completing the path, a truncated path that ends where the GTU stops is used instead.
+     * @param gtu the GTU for debugging purposes
      * @param path the path to drive (provides the length)
      * @param startTime the current time or a time in the future when the plan should start
      * @param startSpeed the speed at the start of the path
@@ -157,7 +162,7 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildMaximumAccelerationPlan(final OTSLine3D path, final Time.Abs startTime,
+    public static OperationalPlan buildMaximumAccelerationPlan(final GTU gtu, final OTSLine3D path, final Time.Abs startTime,
         final Speed startSpeed, final Speed endSpeed, final Acceleration acceleration, final Acceleration deceleration)
         throws OperationalPlanException
     {
@@ -214,7 +219,7 @@ public final class OperationalPlanBuilder
                             // if endSpeed == 0, we cannot reach the end of the path. Therefore, build a partial path.
                             OTSLine3D partialPath = path.truncate(x.si);
                             segmentList.add(new OperationalPlan.AccelerationSegment(t, deceleration));
-                            return new OperationalPlan(partialPath, startTime, startSpeed, segmentList);
+                            return new OperationalPlan(gtu, partialPath, startTime, startSpeed, segmentList);
                         }
                         // we reach the (lower) end speed, larger than zero, before the end of the segment. Make two segments.
                         segmentList.add(new OperationalPlan.AccelerationSegment(t, deceleration));
@@ -228,13 +233,14 @@ public final class OperationalPlanBuilder
                 throw new OperationalPlanException("Caught unexpected exception: " + exception);
             }
         }
-        return new OperationalPlan(path, startTime, startSpeed, segmentList);
+        return new OperationalPlan(gtu, path, startTime, startSpeed, segmentList);
     }
 
     /**
      * Build a plan with a path and a given start speed to try to come to a stop with a given deceleration. If the GTU can stop
      * before completing the given path, a truncated path that ends where the GTU stops is used instead. There is no guarantee
      * that the OperationalPlan will lead to a complete stop.
+     * @param gtu the GTU for debugging purposes
      * @param path the path to drive (provides the length)
      * @param startTime the current time or a time in the future when the plan should start
      * @param startSpeed the speed at the start of the path
@@ -243,10 +249,10 @@ public final class OperationalPlanBuilder
      * @throws OperationalPlanException when the length of the path and the calculated driven distance implied by the
      *             constructed segment list differ more than a given threshold
      */
-    public static OperationalPlan buildStopPlan(final OTSLine3D path, final Time.Abs startTime, final Speed startSpeed,
+    public static OperationalPlan buildStopPlan(final GTU gtu, final OTSLine3D path, final Time.Abs startTime, final Speed startSpeed,
         final Acceleration deceleration) throws OperationalPlanException
     {
-        return buildMaximumAccelerationPlan(path, startTime, startSpeed, new Speed(0.0, SpeedUnit.SI),
+        return buildMaximumAccelerationPlan(gtu, path, startTime, startSpeed, new Speed(0.0, SpeedUnit.SI),
             new Acceleration(1.0, AccelerationUnit.SI), deceleration);
     }
 
@@ -262,14 +268,14 @@ public final class OperationalPlanBuilder
 
         // go from 0 to 10 m/s over entire distance. This should take 20 sec with a=0.5 m/s2.
         OperationalPlan plan1 =
-            buildGradualAccelerationPlan(path1, new Time.Abs(0.0, TimeUnit.SI), new Speed(0.0, SpeedUnit.SI),
+            buildGradualAccelerationPlan(null, path1, new Time.Abs(0.0, TimeUnit.SI), new Speed(0.0, SpeedUnit.SI),
                 new Speed(10.0, SpeedUnit.METER_PER_SECOND));
         System.out.println(plan1);
 
         // go from 0 to 10 m/s over entire distance, but limit a to 0.1 m/s2.
         // This should take 44.72 sec with a=0.1 m/s2, and an end speed of 4.472 m/s.
         OperationalPlan plan2 =
-            buildGradualAccelerationPlan(path1, new Time.Abs(0.0, TimeUnit.SI), new Speed(0.0, SpeedUnit.SI),
+            buildGradualAccelerationPlan(null, path1, new Time.Abs(0.0, TimeUnit.SI), new Speed(0.0, SpeedUnit.SI),
                 new Speed(10.0, SpeedUnit.METER_PER_SECOND),
                 new Acceleration(0.1, AccelerationUnit.METER_PER_SECOND_2), new Acceleration(-0.1,
                     AccelerationUnit.METER_PER_SECOND_2));
@@ -278,7 +284,7 @@ public final class OperationalPlanBuilder
         // go from 0 to 10 m/s with a = 1 m/s2, followed by a constant speed of 10 m/s.
         // This should take 10 sec with a = 1 m/s2, reaching 50 m. After that, 50 m with 10 m/s in 5 sec.
         OperationalPlan plan3 =
-            buildMaximumAccelerationPlan(path1, new Time.Abs(0.0, TimeUnit.SI), new Speed(0.0, SpeedUnit.SI),
+            buildMaximumAccelerationPlan(null, path1, new Time.Abs(0.0, TimeUnit.SI), new Speed(0.0, SpeedUnit.SI),
                 new Speed(10.0, SpeedUnit.METER_PER_SECOND),
                 new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2), new Acceleration(-1.0,
                     AccelerationUnit.METER_PER_SECOND_2));
@@ -287,7 +293,7 @@ public final class OperationalPlanBuilder
         // go from 10 to 0 m/s with a = -1 m/s2, which should truncate the path at 50 m.
         // This should take 10 sec with a = -1 m/s2, reaching 50 m. After that, the plan should stop.
         OperationalPlan plan4 =
-            buildMaximumAccelerationPlan(path1, new Time.Abs(0.0, TimeUnit.SI), new Speed(10.0, SpeedUnit.SI),
+            buildMaximumAccelerationPlan(null, path1, new Time.Abs(0.0, TimeUnit.SI), new Speed(10.0, SpeedUnit.SI),
                 new Speed(0.0, SpeedUnit.METER_PER_SECOND), new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2),
                 new Acceleration(-1.0, AccelerationUnit.METER_PER_SECOND_2));
         System.out.println(plan4);
@@ -295,7 +301,7 @@ public final class OperationalPlanBuilder
         // try to stop with a = -2 m/s2, which should truncate the path at 25 m.
         // This should take 5 sec with a = -2 m/s2, reaching 25 m. After that, the plan should stop.
         OperationalPlan plan5 =
-            buildStopPlan(path1, new Time.Abs(0.0, TimeUnit.SI), new Speed(10.0, SpeedUnit.SI), new Acceleration(-2.0,
+            buildStopPlan(null, path1, new Time.Abs(0.0, TimeUnit.SI), new Speed(10.0, SpeedUnit.SI), new Acceleration(-2.0,
                 AccelerationUnit.METER_PER_SECOND_2));
         System.out.println(plan5);
 

@@ -102,7 +102,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
             if (laneBasedGTU.getMaximumVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
             {
-                return new OperationalPlan(locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.SECOND));
+                return new OperationalPlan(gtu, locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.SECOND));
             }
 
             // perceive every time step... This is the 'classical' way of tactical planning.
@@ -135,7 +135,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             }
 
             // Are we in the right lane for the route?
-            LanePathInfo lanePathInfo = buildLaneListForward(laneBasedGTU, maximumForwardHeadway);
+            LanePathInfo lanePathInfo = buildLanePathInfo(laneBasedGTU, maximumForwardHeadway);
             NextSplitInfo nextSplitInfo = determineNextSplit(laneBasedGTU, maximumForwardHeadway);
             boolean currentLaneFine = nextSplitInfo.getCorrectCurrentLanes().contains(lanePathInfo.getReferenceLane());
 
@@ -235,7 +235,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     laneBasedGTU.leaveLane(l);
                 }
                 // ????
-                lanePathInfo = buildLaneListForward(laneBasedGTU, maximumForwardHeadway);
+                lanePathInfo = buildLanePathInfo(laneBasedGTU, maximumForwardHeadway);
 
                 // System.out.println("lane incentives: " + laneIncentives);
                 // build a list of lanes forward, with a maximum headway.
@@ -243,7 +243,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                         && laneBasedGTU.getVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
                 {
                     // TODO Make a 100% lateral move from standing still...
-                    return new OperationalPlan(locationAtStartTime, startTime, duration);
+                    return new OperationalPlan(gtu, locationAtStartTime, startTime, duration);
                 }
 
                 // TODO make a gradual lateral move
@@ -259,7 +259,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     Segment segment = new OperationalPlan.AccelerationSegment(duration, lcmr.getGfmr().getAcceleration());
                     operationalPlanSegmentList.add(segment);
                 }
-                OperationalPlan op = new OperationalPlan(path, startTime, gtu.getVelocity(), operationalPlanSegmentList);
+                OperationalPlan op = new OperationalPlan(gtu, path, startTime, gtu.getVelocity(), operationalPlanSegmentList);
                 return op;
             }
             else
@@ -269,7 +269,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                 if (lcmr.getGfmr().getAcceleration().si < 1E-6
                         && laneBasedGTU.getVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
                 {
-                    return new OperationalPlan(locationAtStartTime, startTime, duration);
+                    return new OperationalPlan(gtu, locationAtStartTime, startTime, duration);
                 }
                 // build a list of lanes forward, with a maximum headway.
                 OTSLine3D path = lanePathInfo.getPath();
@@ -284,7 +284,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     Segment segment = new OperationalPlan.AccelerationSegment(duration, lcmr.getGfmr().getAcceleration());
                     operationalPlanSegmentList.add(segment);
                 }
-                OperationalPlan op = new OperationalPlan(path, startTime, gtu.getVelocity(), operationalPlanSegmentList);
+                OperationalPlan op = new OperationalPlan(gtu, path, startTime, gtu.getVelocity(), operationalPlanSegmentList);
                 return op;
             }
         }
