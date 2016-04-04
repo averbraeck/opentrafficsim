@@ -18,10 +18,10 @@ import org.junit.Test;
 public class GeometryTest
 {
     /**
-     * 
+     * Test the printCoordinate family of functions.
      */
     @Test
-    public void geometryTest()
+    public final void geometryTest()
     {
         OTSPoint3D p0 = new OTSPoint3D(1.2, 2.3, 3.4);
         String prefix = "Prefix";

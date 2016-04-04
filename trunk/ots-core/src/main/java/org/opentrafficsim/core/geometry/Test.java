@@ -551,7 +551,8 @@ public final class Test
             double[] closestToReference = new double[numSteps + 1];
             for (int i = 0; i < closestToResult.length; i++)
             {
-                closestToResult[i] = closestToReference[i] = Double.MAX_VALUE;
+                closestToResult[i] = Double.MAX_VALUE;
+                closestToReference[i] = Double.MAX_VALUE;
             }
             double referenceLength = referenceLine.getLengthSI();
             double resultLength = offsetLine.getLengthSI();

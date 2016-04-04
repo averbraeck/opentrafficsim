@@ -138,7 +138,7 @@ public class IntegerProperty extends AbstractProperty<Integer>
 
     /** {@inheritDoc} */
     @Override
-    public AbstractProperty<Integer> deepCopy()
+    public final AbstractProperty<Integer> deepCopy()
     {
         return new IntegerProperty(this.shortName, this.description, this.value, this.maximumValue, this.maximumValue,
             this.format, this.readOnly, getDisplayPriority());

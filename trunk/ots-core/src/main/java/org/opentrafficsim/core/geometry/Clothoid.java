@@ -79,7 +79,7 @@ public final class Clothoid
 
     //@formatter:off
     /** S(x) for small x numerator. */
-    static final double[] sn = {
+    static final double[] SN = {
         -2.99181919401019853726E3,
         7.08840045257738576863E5,
         -6.29741486205862506537E7,
@@ -89,7 +89,7 @@ public final class Clothoid
     };
 
     /** S(x) for small x denominator. */
-    static final double[] sd = {
+    static final double[] SD = {
         2.81376268889994315696E2, 
         4.55847810806532581675E4, 
         5.17343888770096400730E6, 
@@ -99,7 +99,7 @@ public final class Clothoid
     };
 
     /** C(x) for small x numerator. */
-    static final double[] cn = { 
+    static final double[] CN = {
         -4.98843114573573548651E-8, 
         9.50428062829859605134E-6, 
         -6.45191435683965050962E-4,
@@ -109,7 +109,7 @@ public final class Clothoid
     };
 
     /** C(x) for small x denominator. */
-    static final double[] cd = { 
+    static final double[] CD = {
         3.99982968972495980367E-12, 
         9.15439215774657478799E-10, 
         1.25001862479598821474E-7,
@@ -120,7 +120,7 @@ public final class Clothoid
     };
 
     /** Auxiliary function f(x) numerator. */
-    static final double[] fn = { 
+    static final double[] FN = {
         4.21543555043677546506E-1, 
         1.43407919780758885261E-1, 
         1.15220955073585758835E-2,
@@ -134,7 +134,7 @@ public final class Clothoid
     };
 
     /** Auxiliary function f(x) denominator. */
-    static final double[] fd = {
+    static final double[] FD = {
         7.51586398353378947175E-1, 
         1.16888925859191382142E-1, 
         6.44051526508858611005E-3, 
@@ -148,7 +148,7 @@ public final class Clothoid
     };
 
     /** Auxiliary function g(x) numerator. */
-    static final double[] gn = { 
+    static final double[] GN = {
         5.04442073643383265887E-1, 
         1.97102833525523411709E-1, 
         1.87648584092575249293E-2,
@@ -163,7 +163,7 @@ public final class Clothoid
     };
 
     /** Auxiliary function g(x) denominator. */
-    static final double[] gd = {
+    static final double[] GD = {
         1.47495759925128324529E0, 
         3.37748989120019970451E-1, 
         2.53603741420338795122E-2, 
@@ -212,7 +212,7 @@ public final class Clothoid
 
     /**
      * Approximate the Fresnel function.
-     * @param xxa
+     * @param xxa double; the xxa parameter
      * @return double[]; array with two double values c and s
      */
     private static double[] fresnel(final double xxa)
@@ -224,8 +224,8 @@ public final class Clothoid
         if (x2 < 2.5625)
         {
             final double t = x2 * x2;
-            ss = x * x2 * polevl(t, sn) / p1evl(t, sd);
-            cc = x * polevl(t, cn) / polevl(t, cd);
+            ss = x * x2 * polevl(t, SN) / p1evl(t, SD);
+            cc = x * polevl(t, CN) / polevl(t, CD);
         }
         else if (x > 36974.0)
         {
@@ -237,8 +237,8 @@ public final class Clothoid
             double t = Math.PI * x2;
             final double u = 1.0 / (t * t);
             t = 1.0 / t;
-            final double f = 1.0 - u * polevl(u, fn) / p1evl(u, fd);
-            final double g = t * polevl(u, gn) / p1evl(u, gd);
+            final double f = 1.0 - u * polevl(u, FN) / p1evl(u, FD);
+            final double g = t * polevl(u, GN) / p1evl(u, GD);
 
             t = Math.PI * 0.5 * x2;
             final double c = Math.cos(t);
@@ -314,6 +314,7 @@ public final class Clothoid
      * @return OTSLine3D; the clothoid
      * @throws OTSGeometryException if the number of segments is too low
      */
+    @SuppressWarnings("checkstyle:parameternumber")
     private static OTSLine3D clothoid(final double x1, final double y1, final double startElevation,
         final double startDirection, final double startCurvature, final double endCurvature, final double length,
         final double endElevation, final int numSegments) throws OTSGeometryException

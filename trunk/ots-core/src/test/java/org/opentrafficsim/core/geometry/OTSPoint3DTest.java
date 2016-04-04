@@ -30,10 +30,10 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 public class OTSPoint3DTest
 {
     /**
-     * Test the various constructors of OTSPoint3D
+     * Test the various constructors of OTSPoint3D.
      */
     @Test
-    public void constructorsTest()
+    public final void constructorsTest()
     {
         OTSPoint3D previousPoint = null;
         int previousHashCode = 0;
@@ -121,7 +121,7 @@ public class OTSPoint3DTest
      * @param expectedY double; the expected y coordinate
      * @param expectedZ double; the expected z coordinate
      */
-    private void checkXYZ(OTSPoint3D otsPoint3D, double expectedX, double expectedY, double expectedZ)
+    private void checkXYZ(final OTSPoint3D otsPoint3D, final double expectedX, final double expectedY, final double expectedZ)
     {
         assertEquals("x value", expectedX, otsPoint3D.x, Math.ulp(expectedX));
         assertEquals("y value", expectedY, otsPoint3D.y, Math.ulp(expectedY));
@@ -132,14 +132,14 @@ public class OTSPoint3DTest
      * Test the interpolate method.
      */
     @Test
-    public void interpolateTest()
+    public final void interpolateTest()
     {
         OTSPoint3D p0 = new OTSPoint3D(123, 234, 345);
         OTSPoint3D p1 = new OTSPoint3D(567, 678, 789);
         for (double ratio : new double[] {0, 1, 0.5, 0.1, -10, 10})
         {
             OTSPoint3D pi = OTSPoint3D.interpolate(ratio, p0, p1);
-            assertTrue ("result of interpolate is not null", null != pi);
+            assertTrue("result of interpolate is not null", null != pi);
             assertEquals("x of interpolate", (1 - ratio) * p0.x + ratio * p1.x, pi.x, 0.00001);
             assertEquals("y of interpolate", (1 - ratio) * p0.y + ratio * p1.y, pi.y, 0.00001);
             assertEquals("z of interpolate", (1 - ratio) * p0.z + ratio * p1.z, pi.z, 0.00001);

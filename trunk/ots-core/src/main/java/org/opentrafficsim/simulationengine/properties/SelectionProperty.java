@@ -127,7 +127,7 @@ public class SelectionProperty extends AbstractProperty<String>
 
     /** {@inheritDoc} */
     @Override
-    public AbstractProperty<String> deepCopy()
+    public final AbstractProperty<String> deepCopy()
     {
         return new SelectionProperty(this.shortName, this.description, this.options, this.currentOption, this.readOnly,
             getDisplayPriority());

@@ -941,7 +941,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
 
     /** {@inheritDoc} */
     @Override
-    public void notify(EventInterface event) throws RemoteException
+    public final void notify(final EventInterface event) throws RemoteException
     {
         if (event.getType().equals(SimulatorInterface.END_OF_REPLICATION_EVENT))
         {

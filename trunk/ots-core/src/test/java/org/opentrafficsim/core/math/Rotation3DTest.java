@@ -25,10 +25,10 @@ public class Rotation3DTest
 
     /**
      * Test the constructor.
-     * @throws ValueException
+     * @throws ValueException should not happen; test has failed if it does happen
      */
     @Test
-    public void constructorTest() throws ValueException
+    public final void constructorTest() throws ValueException
     {
         double roll = Math.toRadians(10);
         double pitch = Math.toRadians(20);

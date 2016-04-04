@@ -3,6 +3,7 @@ package org.opentrafficsim.core.perception;
 import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.math.Rotation3D;
 import org.opentrafficsim.core.math.Rotation3D.Abs;
 import org.opentrafficsim.core.math.Speed3D;
 
@@ -30,56 +31,56 @@ public class PerceivedObject2D implements PerceivedObject
 
     /** {@inheritDoc} */
     @Override
-    public PerceivedObjectType getPerceivedObjectType()
+    public final PerceivedObjectType getPerceivedObjectType()
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Rel getPerceivedDistance()
+    public final Rel getPerceivedDistance()
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public org.opentrafficsim.core.math.Rotation3D.Rel getPerceivedRelativeAngle()
+    public final Rotation3D.Rel getPerceivedRelativeAngle()
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public OTSPoint3D getPerceivedLocation()
+    public final OTSPoint3D getPerceivedLocation()
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public org.opentrafficsim.core.math.Rotation3D.Rel getPerceivedRelativeMovingDirection()
+    public final Rotation3D.Rel getPerceivedRelativeMovingDirection()
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Abs getPerceivedMovingDirection()
+    public final Abs getPerceivedMovingDirection()
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Speed getPerceivedSpeed()
+    public final Speed getPerceivedSpeed()
     {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Speed3D getPerceivedSpeed3D()
+    public final Speed3D getPerceivedSpeed3D()
     {
         return null;
     }

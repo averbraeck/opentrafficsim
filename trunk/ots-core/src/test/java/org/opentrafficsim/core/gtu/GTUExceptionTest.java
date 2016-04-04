@@ -24,7 +24,7 @@ public class GTUExceptionTest
      * Test the GTUException class.
      */
     @Test
-    public void gtuExceptionTest()
+    public final void gtuExceptionTest()
     {
         GTUException e = new GTUException();
         assertNotNull("result should not be null", e);
@@ -58,7 +58,7 @@ public class GTUExceptionTest
      * @throws GTUException should not happen (this test has failed if it does)
      */
     @Test
-    public void failIfTest() throws GTUException
+    public final void failIfTest() throws GTUException
     {
         String message = "message";
         try

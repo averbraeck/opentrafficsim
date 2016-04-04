@@ -21,8 +21,9 @@ public class SolverTest
     /**
      * Linear solver.
      */
+    @SuppressWarnings("checkstyle:methodlength")
     @Test
-    public void solverTest()
+    public final void solverTest()
     {
         // Linear equations
         double[] result = Solver.solve(0, 0);

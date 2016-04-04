@@ -14,6 +14,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -51,7 +52,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
      * @throws ProbabilityException 
      */
     @Test
-    public void templateGTUTypeTest() throws SimRuntimeException, NamingException, GTUException, ProbabilityException
+    public final void templateGTUTypeTest() throws SimRuntimeException, NamingException, GTUException, ProbabilityException
     {
         String typeNameA = "type name A";
         String typeNameB = "type name B";
@@ -221,12 +222,12 @@ public class TemplateGTUTypeTest implements OTSModelInterface
     }
 
     /** ... */
-    private SimulatorInterface<Abs<TimeUnit>, org.djunits.value.vdouble.scalar.DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator;
+    private SimulatorInterface<Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator;
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(
-            SimulatorInterface<Abs<TimeUnit>, org.djunits.value.vdouble.scalar.DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+    public final void constructModel(
+            final SimulatorInterface<Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
             throws SimRuntimeException, RemoteException
     {
         this.simulator = theSimulator;
@@ -234,7 +235,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Abs<TimeUnit>, org.djunits.value.vdouble.scalar.DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+    public final SimulatorInterface<Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
             throws RemoteException
     {
         return this.simulator;

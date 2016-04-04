@@ -27,8 +27,8 @@ public class ProbabilisticRouteGenerator implements RouteGenerator
     /**
      * Create a new Probabilistic Route Generator.
      * @param generators List&lt;Distribution.FrequencyAndObject&lt;Route&gt;&gt;; list of routes and frequencies
-     * @param stream
-     * @throws ProbabilityException
+     * @param stream StreamInterface; the entropy source
+     * @throws ProbabilityException when the probabilities are invalid
      */
     public ProbabilisticRouteGenerator(final List<Distribution.FrequencyAndObject<Route>> generators,
             final StreamInterface stream) throws ProbabilityException
@@ -38,7 +38,7 @@ public class ProbabilisticRouteGenerator implements RouteGenerator
 
     /** {@inheritDoc} */
     @Override
-    public Route draw() throws ProbabilityException
+    public final Route draw() throws ProbabilityException
     {
         return this.distribution.draw();
     }
