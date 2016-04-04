@@ -258,9 +258,9 @@
 		<module name="MissingSwitchDefault">
 			<property name="severity" value="warning" />
 		</module>
-		<module name="RedundantThrows">
+		<!-- module name="RedundantThrows">
 			<property name="severity" value="warning" />
-		</module>
+		</module -->
 		<module name="SimplifyBooleanExpression">
 			<property name="severity" value="warning" />
 		</module>
