@@ -30,7 +30,7 @@ public class DistributionTest
      * @throws ProbabilityException the test fails if this happens uncaught
      */
     @Test
-    public void distributionTest() throws ProbabilityException
+    public final void distributionTest() throws ProbabilityException
     {
         StreamInterface si = new MersenneTwister(1234);
         try

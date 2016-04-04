@@ -45,7 +45,7 @@ public class GTUCharacteristicsTest implements OTSModelInterface
      * @throws NamingException should never happen
      */
     @Test
-    public void testGTUCharacteristics() throws SimRuntimeException, NamingException
+    public final void testGTUCharacteristics() throws SimRuntimeException, NamingException
     {
         // Make two sets of values so we can prove that the constructed GTUCharacteristics sets are really distinct.
         GTUType gtuTypeA = GTUType.makeGTUType("Type A");

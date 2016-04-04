@@ -24,7 +24,7 @@ public class RelativePositionTest
      * Test constructors and getters of RelativePosition.
      */
     @Test
-    public void relativePositionTest()
+    public final void relativePositionTest()
     {
         Length.Rel deltaX = new Length.Rel(12, LengthUnit.METER);
         Length.Rel deltaY = new Length.Rel(23, LengthUnit.METER);

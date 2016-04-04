@@ -27,10 +27,10 @@ public class Speed3DTest
 
     /**
      * Test the constructors and getters of the Speed3D class.
-     * @throws ValueException
+     * @throws ValueException should not happen; test has failed if it does happen
      */
     @Test
-    public void speed3DTest() throws ValueException
+    public final void speed3DTest() throws ValueException
     {
         double x = 2.2;
         double y = 3.3;

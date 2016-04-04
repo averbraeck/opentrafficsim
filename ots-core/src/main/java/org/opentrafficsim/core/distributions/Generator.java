@@ -19,5 +19,5 @@ public interface Generator<O>
      * @return O; an object randomly selected from the stored collection
      * @throws ProbabilityException if the stored collection is empty
      */
-    public O draw() throws ProbabilityException;
+    O draw() throws ProbabilityException;
 }

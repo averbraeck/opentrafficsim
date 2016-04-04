@@ -16,6 +16,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import org.djunits.unit.TimeUnit;
+import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.DoubleScalar.Abs;
 import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -57,16 +58,16 @@ public class GTUTest implements OTSModelInterface
 
     /**
      * Test the constructor.
-     * @throws GTUException
-     * @throws NetworkException
-     * @throws SimRuntimeException
-     * @throws NamingException
-     * @throws RemoteException
-     * @throws OTSGeometryException
+     * @throws GTUException should not happen uncaught; if it does the test has failed
+     * @throws NetworkException should not happen uncaught; if it does the test has failed
+     * @throws SimRuntimeException should not happen uncaught; if it does the test has failed
+     * @throws NamingException should not happen uncaught; if it does the test has failed
+     * @throws RemoteException should not happen uncaught; if it does the test has failed
+     * @throws OTSGeometryException should not happen uncaught; if it does the test has failed
      */
     @Test
-    public void testAbstractGTU() throws GTUException, SimRuntimeException, NetworkException, NamingException, RemoteException,
-            OTSGeometryException
+    public final void testAbstractGTU() throws GTUException, SimRuntimeException, NetworkException, NamingException,
+            RemoteException, OTSGeometryException
     {
         TestGTU firstGTU = null;
         TestGTU lastGTU = null;
@@ -102,13 +103,15 @@ public class GTUTest implements OTSModelInterface
             }
 
             @Override
-            public Node nextNode(final Link link, final GTUDirectionality direction, final GTUType gtuType) throws NetworkException
+            public Node nextNode(final Link link, final GTUDirectionality direction, final GTUType gtuType)
+                    throws NetworkException
             {
                 return null;
             }
 
             @Override
-            public LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GTUType gtuType) throws NetworkException
+            public LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GTUType gtuType)
+                    throws NetworkException
             {
                 return null;
             }
@@ -167,8 +170,7 @@ public class GTUTest implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public void constructModel(
-            SimulatorInterface<Abs<TimeUnit>, org.djunits.value.vdouble.scalar.DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
+    public void constructModel(final SimulatorInterface<Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> simulator)
             throws SimRuntimeException, RemoteException
     {
         // Not used
@@ -176,7 +178,7 @@ public class GTUTest implements OTSModelInterface
 
     /** {@inheritDoc} */
     @Override
-    public SimulatorInterface<Abs<TimeUnit>, org.djunits.value.vdouble.scalar.DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
+    public final SimulatorInterface<Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
             throws RemoteException
     {
         return null;

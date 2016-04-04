@@ -14,5 +14,5 @@ package org.opentrafficsim.core.gtu.plan.strategical;
  */
 public interface NetworkBasedStrategicalPlanner extends StrategicalPlanner
 {
-
+    // ...
 }

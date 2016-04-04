@@ -31,7 +31,7 @@ public class IdGenerator
      * Generate an id.
      * @return String; the generated id
      */
-    public synchronized String nextId()
+    public final synchronized String nextId()
     {
         long number;
         synchronized (this)

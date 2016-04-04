@@ -60,7 +60,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
      * @param network OTSNetwork; the network that will own the GTUs
      * @throws GTUException when one or more arguments are invalid
      */
-    public TemplateGTUType(final String typeId, IdGenerator idGenerator, final Generator<Length.Rel> lengthGenerator,
+    public TemplateGTUType(final String typeId, final IdGenerator idGenerator, final Generator<Length.Rel> lengthGenerator,
             final Generator<Length.Rel> widthGenerator, final Generator<Speed> maximumVelocityGenerator,
             final OTSDEVSSimulatorInterface simulator, final OTSNetwork network) throws GTUException
     {
@@ -102,6 +102,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
     public GTUCharacteristics draw() throws ProbabilityException
     {
         return new GTUCharacteristics(this.gtuType, this.idGenerator, this.lengthGenerator.draw(), this.widthGenerator.draw(),
@@ -135,6 +136,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return String.format("TemplateGTUType [%s, %s, %s, %s, %s]", this.gtuType, this.idGenerator, this.lengthGenerator,

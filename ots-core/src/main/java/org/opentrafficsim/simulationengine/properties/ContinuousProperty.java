@@ -136,7 +136,7 @@ public class ContinuousProperty extends AbstractProperty<Double>
 
     /** {@inheritDoc} */
     @Override
-    public AbstractProperty<Double> deepCopy()
+    public final AbstractProperty<Double> deepCopy()
     {
         return new ContinuousProperty(this.shortName, this.description, this.value, this.minimumValue,
             this.maximumValue, this.format, this.readOnly, getDisplayPriority());

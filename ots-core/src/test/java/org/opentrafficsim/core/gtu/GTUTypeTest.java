@@ -20,7 +20,7 @@ public class GTUTypeTest
      * Test the static fields of the GTUType class.
      */
     @Test
-    public void staticsTest()
+    public final void staticsTest()
     {
         GTUType t = GTUType.ALL;
         assertTrue("Id of ALL is \"ALL\"", "ALL".equals(t.getId()));
@@ -32,7 +32,7 @@ public class GTUTypeTest
      * Run the constructor and verify that all fields get correctly initialized.
      */
     @Test
-    public void constructorTest()
+    public final void constructorTest()
     {
         GTUType t = GTUType.makeGTUType("abc");
         assertTrue("Id is stored in the newly created GTUType", "abc".equals(t.getId()));
