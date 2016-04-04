@@ -12,22 +12,21 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class Test2
+public final class Test2
 {
 
-    /**
-     * 
-     */
-    public Test2()
+    /** This class should never be instantiated. */
+    private Test2()
     {
+        // This class cannot be instantiated.
     }
-
+    
     /**
      * @param args args
      * @throws NetworkException on error
      * @throws OTSGeometryException on error
      */
-    public static void main(String[] args) throws NetworkException, OTSGeometryException
+    public static void main(final String[] args) throws NetworkException, OTSGeometryException
     {
         OTSLine3D reference =
             new OTSLine3D(new OTSPoint3D(5, -1, 1), new OTSPoint3D(5, -2, 1), new OTSPoint3D(4.9, -2.01, 1),

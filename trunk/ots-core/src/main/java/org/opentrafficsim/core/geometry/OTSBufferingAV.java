@@ -703,7 +703,14 @@ public final class OTSBufferingAV
         return angle;
     }
 
-    private static boolean inside(Path2D.Double shape, Line2D.Double line, List<Line2D.Double> contour)
+    /**
+     * Determine if a line is fully contained in a contour. A begin or end point on the contour counts as inside.
+     * @param shape Path2D.Double
+     * @param line
+     * @param contour
+     * @return
+     */
+    private static boolean inside(final Path2D.Double shape, final Line2D.Double line, final List<Line2D.Double> contour)
     {
         if (shape.contains(line.getP1()))
         {
@@ -722,7 +729,13 @@ public final class OTSBufferingAV
         return false;
     }
 
-    private static boolean onContour(List<Line2D.Double> contour, Point2D point)
+    /**
+     * Return if a point is extremely close to a contour.
+     * @param contour List&lt;Line2D.Double&gt;; a list of lines that make up the contour
+     * @param point Point2D; the point
+     * @return boolean; true if the point is extremely close to any of the lines; false otherwise
+     */
+    private static boolean onContour(final List<Line2D.Double> contour, final Point2D point)
     {
         for (Line2D.Double l : contour)
         {
@@ -734,7 +747,12 @@ public final class OTSBufferingAV
         return false;
     }
 
-    private static List<Line2D.Double> getContour(Path2D.Double shape)
+    /**
+     * Return a contour.
+     * @param shape Path2D.Double; the shape
+     * @return Lies&lt;Line2D.Double&gt;; a set of lines that define the contour
+     */
+    private static List<Line2D.Double> getContour(final Path2D.Double shape)
     {
         List<Line2D.Double> contour = new ArrayList<>();
         PathIterator pi = shape.getPathIterator(null);
@@ -764,11 +782,18 @@ public final class OTSBufferingAV
         return contour;
     }
 
-    private static List<Line2D.Double> splitAtIntersection(Line2D.Double line1, Line2D.Double line2)
+    /**
+     * XXXX explain what this method does.
+     * @param line1 Line2D.Double; XXXX
+     * @param line2 Line2D.Double; XXXX
+     * @return List&lt;Line2D.Double&gt;; the XXXX
+     */
+    private static List<Line2D.Double> splitAtIntersection(final Line2D.Double line1, final Line2D.Double line2)
     {
         if (!line1.intersectsLine(line2))
+        {
             return null;
-
+        }
         double p1x = line1.getX1(), p1y = line1.getY1(), d1x = line1.getX2() - p1x, d1y = line1.getY2() - p1y;
         double p2x = line2.getX1(), p2y = line2.getY1(), d2x = line2.getX2() - p2x, d2y = line2.getY2() - p2y;
 
@@ -784,16 +809,25 @@ public final class OTSBufferingAV
             Point2D p1s = line1.getP1(), p1e = line1.getP2(), p2s = line2.getP1(), p2e = line2.getP2();
             List<Line2D.Double> lines = new ArrayList<>();
             if ((p1s.equals(p2s) && p1e.equals(p2e)) || (p1s.equals(p2e) && p1e.equals(p2s)))
+            {
                 return lines; // situation d.
+            }
             if (p1s.equals(p2s) && line1.ptLineDist(p2e) > 0 && line2.ptLineDist(p1e) > 0)
+            {
                 return null; // situation e.
+            }
             if (p1e.equals(p2e) && line1.ptLineDist(p2s) > 0 && line2.ptLineDist(p1s) > 0)
+            {
                 return null; // situation e.
+            }
             if (p1s.equals(p2e) && line1.ptLineDist(p2s) > 0 && line2.ptLineDist(p1e) > 0)
+            {
                 return null; // situation e.
+            }
             if (p1e.equals(p2s) && line1.ptLineDist(p2e) > 0 && line2.ptLineDist(p1s) > 0)
+            {
                 return null; // situation e.
-
+            }
             // situation a, b or c; create an ordered list of 4 points, based on distance
             SortedMap<Double, Point2D> pointMap = new TreeMap<>();
             pointMap.put(0.0, p1s);
@@ -802,7 +836,9 @@ public final class OTSBufferingAV
             pointMap.put(p1s.distance(p2e), p2e);
             List<Point2D> ptList = new ArrayList<>(pointMap.values());
             for (int i = 0; i < ptList.size() - 1; i++)
+            {
                 lines.add(new Line2D.Double(ptList.get(i), ptList.get(i + 1)));
+            }
             return lines;
         }
         else
@@ -815,18 +851,30 @@ public final class OTSBufferingAV
             Point2D.Double cross = new Point2D.Double(p1x + z * d1x, p1y + z * d1y);
             List<Line2D.Double> lines = new ArrayList<>();
             if (cross.distance(line1.getP1()) > 0)
+            {
                 lines.add(new Line2D.Double(line1.getP1(), cross));
+            }
             if (cross.distance(line1.getP2()) > 0)
+            {
                 lines.add(new Line2D.Double(cross, line1.getP2()));
+            }
             if (cross.distance(line2.getP1()) > 0)
+            {
                 lines.add(new Line2D.Double(line2.getP1(), cross));
+            }
             if (cross.distance(line2.getP2()) > 0)
+            {
                 lines.add(new Line2D.Double(cross, line2.getP2()));
+            }
             return lines;
         }
     }
 
-    private static void print(Path2D.Double shape)
+    /**
+     * Output a textual description of a shape on the console.
+     * @param shape Path2D.Double; the shape
+     */
+    private static void print(final Path2D.Double shape)
     {
         PathIterator pi = shape.getPathIterator(null);
         Point2D.Double pf = null;
@@ -848,7 +896,11 @@ public final class OTSBufferingAV
         System.out.println();
     }
 
-    private static void print(List<Line2D.Double> lines)
+    /**
+     * Print a textual description of a set of lines on the console.
+     * @param lines List&lt;Line2D.Double&gt;; the lines to print
+     */
+    private static void print(final List<Line2D.Double> lines)
     {
         if (lines.size() == 0)
         {

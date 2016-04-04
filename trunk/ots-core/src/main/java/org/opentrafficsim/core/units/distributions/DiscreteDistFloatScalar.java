@@ -72,7 +72,7 @@ public interface DiscreteDistFloatScalar
      * @param <T> The absolute floatscalar type
      * @param <U> The unit type used
      */
-    public static class Abs<T extends FloatScalar.Abs<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar
+    class Abs<T extends FloatScalar.Abs<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar
         implements Absolute
     {
         /**
@@ -121,10 +121,10 @@ public interface DiscreteDistFloatScalar
 
     /**
      * Relative value.
-     * @param <T> The absolute floatscalar type
+     * @param <T> The absolute float scalar type
      * @param <U> The unit type used
      */
-    public static class Rel<T extends FloatScalar.Rel<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar
+    class Rel<T extends FloatScalar.Rel<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar
         implements Relative
     {
         /**

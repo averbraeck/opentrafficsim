@@ -72,7 +72,7 @@ public interface ContinuousDistFloatScalar
      * @param <T> The absolute FloatScalar type
      * @param <U> The unit type used
      */
-    public static class Abs<T extends FloatScalar.Abs<U>, U extends Unit<U>> extends AbstractContinuousDistScalar
+    class Abs<T extends FloatScalar.Abs<U>, U extends Unit<U>> extends AbstractContinuousDistScalar
         implements Absolute
     {
         /**
@@ -124,7 +124,7 @@ public interface ContinuousDistFloatScalar
      * @param <T> The absolute FloatScalar type
      * @param <U> The unit type used
      */
-    public static class Rel<T extends FloatScalar.Rel<U>, U extends Unit<U>> extends AbstractContinuousDistScalar
+    class Rel<T extends FloatScalar.Rel<U>, U extends Unit<U>> extends AbstractContinuousDistScalar
         implements Relative
     {
         /**

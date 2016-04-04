@@ -226,7 +226,7 @@ public class OTSPoint3D implements LocatableInterface, Serializable
      * @param segmentPoint2 OTSPoint3D; end of line segment
      * @return double; the distance of this point to (one of the end points of the line segment)
      */
-    public double distanceToLineSegment(OTSPoint3D segmentPoint1, OTSPoint3D segmentPoint2)
+    public final double distanceToLineSegment(final OTSPoint3D segmentPoint1, final OTSPoint3D segmentPoint2)
     {
         return closestPointOnSegment(segmentPoint1, segmentPoint2).distanceSI(this);
     }
@@ -242,19 +242,27 @@ public class OTSPoint3D implements LocatableInterface, Serializable
      * @return Point2D.Double; either <cite>lineP1</cite>, or <cite>lineP2</cite> or a new OTSPoint3D that lies somewhere in
      *         between those two
      */
-    public OTSPoint3D closestPointOnSegment(OTSPoint3D segmentPoint1, OTSPoint3D segmentPoint2)
+    public final OTSPoint3D closestPointOnSegment(final OTSPoint3D segmentPoint1, final OTSPoint3D segmentPoint2)
     {
         double dX = segmentPoint2.x - segmentPoint1.x;
         double dY = segmentPoint2.y - segmentPoint1.y;
         if ((0 == dX) && (0 == dY))
+        {
             return segmentPoint1;
+        }
         final double u = ((this.x - segmentPoint1.x) * dX + (this.y - segmentPoint1.y) * dY) / (dX * dX + dY * dY);
         if (u < 0)
+        {
             return segmentPoint1;
+        }
         else if (u > 1)
+        {
             return segmentPoint2;
+        }
         else
+        {
             return new OTSPoint3D(segmentPoint1.x + u * dX, segmentPoint1.y + u * dY); // could use interpolate in stead
+        }
     }
 
     /**

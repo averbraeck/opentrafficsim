@@ -16,7 +16,11 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
  */
 public interface RouteGenerator extends Generator<Route>
 {
-    /** Return the (next) Route. */
-    public Route draw() throws ProbabilityException;
+    /** 
+     * Return the (next) Route.
+     * @return Route; the next Route 
+     * @throws ProbabilityException when the an error was detected in the probabilities of the routes to choose from
+     * */
+    Route draw() throws ProbabilityException;
     
 }

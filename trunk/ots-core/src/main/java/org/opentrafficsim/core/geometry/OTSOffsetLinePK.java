@@ -13,9 +13,14 @@ import java.util.Locale;
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Dec 1, 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class OTSOffsetLinePK
+public final class OTSOffsetLinePK
 {
-
+    /** This class should never be instantiated. */
+    private OTSOffsetLinePK()
+    {
+        // Cannot be instantiated.
+    }
+    
     /** Debugging flag. */
     static boolean debugOffsetLine = false;
 

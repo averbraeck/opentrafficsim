@@ -93,7 +93,9 @@ public final class Test
                 executor.shutdownNow(); // Cancel currently executing tasks
                 // Wait a while for tasks to respond to being cancelled
                 if (!executor.awaitTermination(60, TimeUnit.MILLISECONDS))
+                {
                     System.err.println("executor did not terminate");
+                }
             }
         }
         catch (InterruptedException ie)
@@ -844,13 +846,13 @@ public final class Test
     {
 
         /** The reference line. */
-        final OTSLine3D referenceLine;
+        private final OTSLine3D referenceLine;
 
         /** The offset. */
-        final double offset;
+        private final double offset;
 
         /** The offset method. */
-        final OTSLine3D.OffsetMethod offsetMethod;
+        private final OTSLine3D.OffsetMethod offsetMethod;
 
         /**
          * Construct a MyCallable object.
@@ -858,7 +860,7 @@ public final class Test
          * @param offset double; the offset
          * @param offsetMethod OTSLine3D.OffsetMethod; the offset method
          */
-        public MyCallable(final OTSLine3D referenceLine, final double offset, final OTSLine3D.OffsetMethod offsetMethod)
+        MyCallable(final OTSLine3D referenceLine, final double offset, final OTSLine3D.OffsetMethod offsetMethod)
         {
             this.referenceLine = referenceLine;
             this.offset = offset;

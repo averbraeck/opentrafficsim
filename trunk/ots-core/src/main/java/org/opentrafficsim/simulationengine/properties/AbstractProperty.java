@@ -117,7 +117,7 @@ public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T
          * Construct a new PropertyIterator.
          * @param ap AbstractProperty; root of the tree to iterate over
          */
-        public PropertyIterator(final AbstractProperty<T> ap)
+        PropertyIterator(final AbstractProperty<T> ap)
         {
             this.currentIndex = 0;
             this.list = new ArrayList<AbstractProperty<T>>();

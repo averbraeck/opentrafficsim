@@ -26,17 +26,17 @@ public class Acceleration3DTest
 
     /**
      * Test the constructors and getters of the Acceleration3D class.
-     * @throws ValueException
+     * @throws ValueException Should not happen; test fails if it does
      */
     @Test
-    public void acceleration3DTest() throws ValueException
+    public final void acceleration3DTest() throws ValueException
     {
         double x = 2.2;
         double y = 3.3;
         double z = 5.5;
         Acceleration3D s3d = new Acceleration3D(x, y, z, AccelerationUnit.SI);
         checkAcceleration(s3d, x, y, z);
-        AccelerationVector sv = new AccelerationVector(new double[] { x, y, z }, AccelerationUnit.SI, StorageType.DENSE);
+        AccelerationVector sv = new AccelerationVector(new double[] {x, y, z }, AccelerationUnit.SI, StorageType.DENSE);
         s3d = new Acceleration3D(sv);
         checkAcceleration(s3d, x, y, z);
         sv = new AccelerationVector(new double[] { x, y, z }, AccelerationUnit.SI, StorageType.SPARSE);
@@ -62,7 +62,7 @@ public class Acceleration3DTest
         {
             // Ignore expected exception
         }
-        sv = new AccelerationVector(new double[] { x, y }, AccelerationUnit.SI, StorageType.SPARSE);
+        sv = new AccelerationVector(new double[] {x, y }, AccelerationUnit.SI, StorageType.SPARSE);
         try
         {
             new Acceleration3D(sv);
@@ -72,7 +72,7 @@ public class Acceleration3DTest
         {
             // Ignore expected exception
         }
-        sv = new AccelerationVector(new double[] { x, y, z, x }, AccelerationUnit.SI, StorageType.SPARSE);
+        sv = new AccelerationVector(new double[] {x, y, z, x }, AccelerationUnit.SI, StorageType.SPARSE);
         try
         {
             new Acceleration3D(sv);

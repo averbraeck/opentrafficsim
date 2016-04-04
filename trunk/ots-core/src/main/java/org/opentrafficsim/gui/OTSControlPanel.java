@@ -636,7 +636,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
          * @param ticksPerDecade int; the number of steps per decade
          * @param simulator SimpleSimulator; the simulator to change the speed of
          */
-        public TimeWarpPanel(final double minimum, final double maximum, final double initialValue,
+        TimeWarpPanel(final double minimum, final double maximum, final double initialValue,
             final int ticksPerDecade, final DEVSSimulatorInterface<?, ?, ?> simulator)
         {
             if (minimum <= 0 || minimum > initialValue || initialValue > maximum)
@@ -920,7 +920,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
          * Create a new RegexFormatter.
          * @param pattern String; regular expression pattern that defines what this RexexFormatter will accept
          */
-        public RegexFormatter(final String pattern)
+        RegexFormatter(final String pattern)
         {
             this.pattern = Pattern.compile(pattern);
         }
