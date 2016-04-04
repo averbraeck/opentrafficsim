@@ -417,7 +417,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
         public OperationalPlan generateOperationalPlan(final GTU gtu, final Time.Abs startTime,
             final DirectedPoint locationAtStartTime) throws OperationalPlanException, GTUException, NetworkException
         {
-            return new OperationalPlan(locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.MINUTE));
+            return new OperationalPlan(gtu, locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.MINUTE));
         }
 
     }

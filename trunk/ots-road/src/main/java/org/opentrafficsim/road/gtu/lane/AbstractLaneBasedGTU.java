@@ -1,5 +1,8 @@
 package org.opentrafficsim.road.gtu.lane;
 
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +26,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
+import org.opentrafficsim.core.geometry.OTSShape;
 import org.opentrafficsim.core.gtu.AbstractGTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
@@ -96,6 +100,9 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     /** the object to lock to make the GTU thread safe. */
     private Object lock = new Object();
 
+    /** the mode of movement: lane-based or path-based. */
+    private static final boolean MOVEMENT_LANE_BASED = true;
+
     /**
      * Construct a Lane Based GTU.
      * @param id the id of the GTU
@@ -128,7 +135,14 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
         for (DirectedLanePosition directedLanePosition : initialLongitudinalPositions)
         {
             Lane lane = directedLanePosition.getLane();
-            enterLane(lane, directedLanePosition.getPosition(), directedLanePosition.getGtuDirection());
+            if (!this.fractionalLinkPositions.containsKey(lane.getParentLink()))
+            {
+                // initially registered on parallel or overlapping lanes
+                this.fractionalLinkPositions.put(lane.getParentLink(),
+                    lane.fraction(directedLanePosition.getPosition()));
+            }
+            this.lanes.put(lane, directedLanePosition.getGtuDirection());
+            lane.addGTU(this, lane.fraction(directedLanePosition.getPosition()));
         }
     }
 
@@ -158,6 +172,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     public final void enterLane(final Lane lane, final Length.Rel position, final GTUDirectionality gtuDirection)
         throws GTUException
     {
+        GTUException.failIf(!MOVEMENT_LANE_BASED, "MOVEMENT_LANE_BASED is true, but enterLane() is called");
         if (lane == null || gtuDirection == null || position == null)
         {
             throw new GTUException("enterLane - one of the arguments is null");
@@ -182,7 +197,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
     /** {@inheritDoc} */
     @Override
-    public final void leaveLane(final Lane lane)
+    public final void leaveLane(final Lane lane) throws GTUException
     {
         leaveLane(lane, false);
     }
@@ -191,27 +206,15 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * Leave a lane but do not complain about having no lanes left when beingDestroyed is true.
      * @param lane the lane to leave
      * @param beingDestroyed if true, no complaints about having no lanes left
+     * @throws GTUException in case leaveLane should not be called
      */
-    public final void leaveLane(final Lane lane, final boolean beingDestroyed)
+    public final void leaveLane(final Lane lane, final boolean beingDestroyed) throws GTUException
     {
+        GTUException.failIf(!MOVEMENT_LANE_BASED, "MOVEMENT_LANE_BASED is true, but leaveLane() is called");
         if (null == this.lanes.get(lane))
         {
-            // XXX no problem -- this method can be scheduled and the GTU can already have left the lane
-            // System.err.println("Oops: GTU " + this + " is not in lane " + lane);
+            // No problem -- this method can be scheduled and the GTU can already have left the lane
         }
-        // if ("77".equals(this.getId()))
-        // {
-        // try
-        // {
-        // System.out.println(this + " leaves lane " + lane + " is currently at relative position "
-        // + this.fractionalPosition(lane, RelativePosition.REFERENCE_POSITION));
-        // }
-        // catch (GTUException exception)
-        // {
-        // exception.printStackTrace();
-        // }
-        // }
-        // System.out.println(toString() + " to be removed from lane: " + lane);
         this.lanes.remove(lane);
         List<SimEvent<OTSSimTimeDouble>> pending = this.pendingTriggers.get(lane);
         if (null != pending)
@@ -263,48 +266,109 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     protected final void move(final DirectedPoint fromLocation) throws SimRuntimeException, GTUException,
         OperationalPlanException, NetworkException
     {
-        // Only carry out move() if we still have lane(s) to drive on.
-        // Note: a (Sink) trigger can have 'destroyed' us between the previous evaluation step and this one.
-        if (this.lanes.isEmpty())
+        if (MOVEMENT_LANE_BASED)
         {
-            destroy();
-            return; // Done; do not re-schedule execution of this move method.
-        }
-
-        for (Link link : this.fractionalLinkPositions.keySet())
-        {
-            double d = this.fractionalLinkPositions.get(link);
-
-            double fractionalExcess = d < 0 ? -d : (d - 1);
-            if (fractionalExcess > 0)
+            // Only carry out move() if we still have lane(s) to drive on.
+            // Note: a (Sink) trigger can have 'destroyed' us between the previous evaluation step and this one.
+            if (this.lanes.isEmpty())
             {
-                double excess = fractionalExcess * link.getLength().si;
-                OperationalPlan op = this.getOperationalPlan();
-                double maxLength = this.getLength().si + op.getTraveledDistanceSI(op.getTotalDuration());
-                if (excess > maxLength)
-                // if (d < -0.1 || d > 1.1)
+                destroy();
+                return; // Done; do not re-schedule execution of this move method.
+            }
+
+            for (Link link : this.fractionalLinkPositions.keySet())
+            {
+                double d = this.fractionalLinkPositions.get(link);
+
+                double fractionalExcess = d < 0 ? -d : (d - 1);
+                if (fractionalExcess > 0)
                 {
-                    System.err.println(this + " has extreme fractional position on Link " + link + ": " + d + " ("
-                        + excess + "m), time is " + this.getSimulator().getSimulatorTime().get());
+                    double excess = fractionalExcess * link.getLength().si;
+                    OperationalPlan op = this.getOperationalPlan();
+                    double maxLength = this.getLength().si + op.getTraveledDistanceSI(op.getTotalDuration());
+                    if (excess > maxLength)
+                    // if (d < -0.1 || d > 1.1)
+                    {
+                        System.err.println(this + " has extreme fractional position on Link " + link + ": " + d + " ("
+                            + excess + "m), time is " + this.getSimulator().getSimulatorTime().get());
+                    }
                 }
             }
+            // store the new positions, and sample statistics
+            Map<Link, Double> newLinkPositions = new HashMap<>();
+            for (Lane lane : this.lanes.keySet())
+            {
+                lane.sample(this);
+                newLinkPositions.put(lane.getParentLink(), lane.fraction(position(lane, getReference())));
+            }
+
+            // generate the next operational plan and carry it out
+            super.move(fromLocation);
+
+            // update the positions on the lanes we are registered on
+            this.fractionalLinkPositions = newLinkPositions;
+
+            // schedule triggers and determine when to enter lanes with front and leave lanes with rear
+            scheduleTriggers();
         }
-        // store the new positions, and sample statistics
-        Map<Link, Double> newLinkPositions = new HashMap<>();
-        for (Lane lane : this.lanes.keySet())
+
+        // else
+        // MOVEMENT_PATH_BASED
         {
-            lane.sample(this);
-            newLinkPositions.put(lane.getParentLink(), lane.fraction(position(lane, getReference())));
+            try
+            {
+                // 1. generate the next operational plan and carry it out
+                super.move(fromLocation);
+
+                // 2. split the movement into a number of steps, so that each steps overlaps with the half GTU length
+                int steps = Math.max(5, (int) (2.0 * getOperationalPlan().getPath().getLengthSI() / getLength().si));
+                DirectedPoint[] points = new DirectedPoint[steps + 1];
+                OTSShape[] rects = new OTSShape[steps + 1];
+                for (int i = 0; i <= steps; i++)
+                {
+                    points[i] = getOperationalPlan().getPath().getLocationFraction(1.0 * i / steps);
+                    double x = points[i].x;
+                    double y = points[i].y;
+                    double l = getLength().si;
+                    double w = getWidth().si;
+                    Rectangle2D rect = new Rectangle2D.Double(-l / 2.0, -w / 2.0, l, w);
+                    Path2D.Double path = new Path2D.Double(rect);
+                    AffineTransform t = new AffineTransform();
+                    t.translate(x, y);
+                    t.rotate(points[i].getRotZ());
+                    path.transform(t);
+                    rects[i] = new OTSShape(path);
+                }
+
+                // 3. determine for each rectangle with which lanes there is an overlap
+                List<Lane>[] laneLists = new ArrayList[steps + 1];
+Set<Lane> laneSet = new HashSet<>();
+                OTSNetwork network = (OTSNetwork) getPerceivableContext();
+                for (int i = 0; i < rects.length; i++)
+                {
+                    laneLists[i] = new ArrayList<Lane>();
+                    for (Link link : network.getLinkMap().values())
+                    {
+                        if (link instanceof CrossSectionLink)
+                        {
+                            for (Lane lane : ((CrossSectionLink) link).getLanes())
+                            {
+                                if (lane.getContour().intersects(rects[i]))
+                                {
+                                    laneLists[i].add(lane);
+laneSet.add(lane);
+                                }
+                            }
+                        }
+                    }
+                }
+System.out.println(this + " will be on lanes: " + laneSet);
+            }
+            catch (OTSGeometryException e)
+            {
+                throw new GTUException(e);
+            }
         }
-
-        // generate the next operational plan and carry it out
-        super.move(fromLocation);
-
-        // update the positions on the lanes we are registered on
-        this.fractionalLinkPositions = newLinkPositions;
-
-        // schedule triggers and determine when to enter lanes with front and leave lanes with rear
-        scheduleTriggers();
     }
 
     /** {@inheritDoc} */
@@ -397,7 +461,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
                 else
                 {
                     loc =
-                        longitudinalPosition.minus(getOperationalPlan().getTraveledDistance(when)).plus(
+                        longitudinalPosition.minus(getOperationalPlan().getTraveledDistance(when)).minus(
                             relativePosition.getDx());
                 }
             }
@@ -793,7 +857,14 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             Set<Lane> laneSet = new HashSet<>(this.lanes.keySet()); // Operate on a copy of the key set
             for (Lane lane : laneSet)
             {
-                leaveLane(lane, true);
+                try
+                {
+                    leaveLane(lane, true);
+                }
+                catch (GTUException e)
+                {
+                    // ignore. not important at destroy
+                }
             }
         }
         super.destroy();

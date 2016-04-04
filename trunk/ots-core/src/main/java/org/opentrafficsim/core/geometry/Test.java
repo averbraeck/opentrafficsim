@@ -610,8 +610,8 @@ public final class Test
                 {
                     System.out.println("#No errors detected");
                     System.out
-                        .println(OTSGeometry.printCoordinates("#reference: \nc1,0,0\n#", referenceLine, "\n    "));
-                    System.out.println(OTSGeometry.printCoordinates("#offset: \nc0,1,0\n#", offsetLine, "\n    "));
+                        .println(OTSGeometryUtil.printCoordinates("#reference: \nc1,0,0\n#", referenceLine, "\n    "));
+                    System.out.println(OTSGeometryUtil.printCoordinates("#offset: \nc0,1,0\n#", offsetLine, "\n    "));
                 }
                 return true;
             }
@@ -638,8 +638,8 @@ public final class Test
                         System.out.println(String.format("sw0.2M%.3f,%.3fl0,0r", p.x, p.y));
                     }
                 }
-                System.out.println(OTSGeometry.printCoordinates("#reference: \nc1,0,0\n#", referenceLine, "\n    "));
-                System.out.println(OTSGeometry.printCoordinates("#offset: \nc0,1,0\n#", offsetLine, "\n    "));
+                System.out.println(OTSGeometryUtil.printCoordinates("#reference: \nc1,0,0\n#", referenceLine, "\n    "));
+                System.out.println(OTSGeometryUtil.printCoordinates("#offset: \nc0,1,0\n#", offsetLine, "\n    "));
             }
             return false;
         }
@@ -667,12 +667,12 @@ public final class Test
         OTSLine3D referenceLine =
             new OTSLine3D(new OTSPoint3D(5, 2.5), new OTSPoint3D(4.8, 2.5), new OTSPoint3D(4.6, 2.7), new OTSPoint3D(
                 2.2, 2.7), new OTSPoint3D(2.2, 5));
-        System.out.println(OTSGeometry.printCoordinates("#reference line: \nc1,0,0\n#", referenceLine, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#reference line: \nc1,0,0\n#", referenceLine, "\n    "));
         // OTSLine3D.debugOffsetLine = true;
         OTSLine3D left = referenceLine.offsetLine(2.0);
-        System.out.println(OTSGeometry.printCoordinates("#left: \nc0,1,0\n#", left, "\n   "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#left: \nc0,1,0\n#", left, "\n   "));
         OTSLine3D right = referenceLine.offsetLine(-2.0);
-        System.out.println(OTSGeometry.printCoordinates("#right: \nc0,1,0\n#", right, "\n   "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#right: \nc0,1,0\n#", right, "\n   "));
     }
 
     /**
@@ -682,11 +682,11 @@ public final class Test
     public static void test2() throws OTSGeometryException
     {
         OTSLine3D otsLine = new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(10, 5, 0), new OTSPoint3D(20, 0, 0));
-        System.out.println(OTSGeometry.printCoordinates("#reference line: \nc1,0,0\n#", otsLine, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#reference line: \nc1,0,0\n#", otsLine, "\n    "));
         OTSLine3D left = otsLine.offsetLine(2.0);
-        System.out.println(OTSGeometry.printCoordinates("#left: \nc0,1,0\n#", left, "\n   "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#left: \nc0,1,0\n#", left, "\n   "));
         OTSLine3D right = otsLine.offsetLine(-2.0);
-        System.out.println(OTSGeometry.printCoordinates("#buffer: \nc0,1,0\n#", right, "\n   "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#buffer: \nc0,1,0\n#", right, "\n   "));
     }
 
     /**
@@ -697,9 +697,9 @@ public final class Test
     {
         OTSLine3D referenceLine =
             new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(200, 100, 0), new OTSPoint3D(1000, 0, 0));
-        System.out.println(OTSGeometry.printCoordinates("#reference line: \nc1,0,0\n#", referenceLine, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#reference line: \nc1,0,0\n#", referenceLine, "\n    "));
         OTSLine3D centerLine = referenceLine.offsetLine(-8, -5);
-        System.out.println(OTSGeometry.printCoordinates("#center line: \nc0,1,0\n#", centerLine, "\n   "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#center line: \nc0,1,0\n#", centerLine, "\n   "));
         for (int i = 1; i < centerLine.size(); i++)
         {
             OTSPoint3D from = centerLine.get(i - 1);
@@ -708,9 +708,9 @@ public final class Test
             System.out.println("#Direction in segment " + i + " is " + Math.toDegrees(angle));
         }
         OTSLine3D leftEdge = centerLine.offsetLine(1.5, 2);
-        System.out.println(OTSGeometry.printCoordinates("#left edge: \nc0,0,1\n#", leftEdge, "\n   "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#left edge: \nc0,0,1\n#", leftEdge, "\n   "));
         OTSLine3D rightEdge = centerLine.offsetLine(-1.5, -2);
-        System.out.println(OTSGeometry.printCoordinates("#right edge: \nc0,0,1\n#", rightEdge, "\n   "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#right edge: \nc0,0,1\n#", rightEdge, "\n   "));
     }
 
     /**
@@ -722,9 +722,9 @@ public final class Test
         OTSLine3D reference =
             new OTSLine3D(new OTSPoint3D(0, 0, 0), new OTSPoint3D(20, 10, 0), new OTSPoint3D(21, 10, 0),
                 new OTSPoint3D(22, 9.5, 0), new OTSPoint3D(30, 0, 0));
-        System.out.println(OTSGeometry.printCoordinates("#reference: \nc1,0,0\n#", reference, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#reference: \nc1,0,0\n#", reference, "\n    "));
         OTSLine3D offset = reference.offsetLine(-3);
-        System.out.println(OTSGeometry.printCoordinates("#offset: \nc0,1,0\n#", offset, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#offset: \nc0,1,0\n#", offset, "\n    "));
     }
 
     /**
@@ -744,9 +744,9 @@ public final class Test
         }
         // OTSLine3D.debugOffsetLine = true;
         OTSLine3D reference = new OTSLine3D(designLinePoints);
-        System.out.println(OTSGeometry.printCoordinates("#reference:\nc1,0,0\n#", reference, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#reference:\nc1,0,0\n#", reference, "\n    "));
         OTSLine3D centerLine = reference.offsetLine(5);
-        System.out.println(OTSGeometry.printCoordinates("#center:\nc0,1,0\n#", centerLine, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#center:\nc0,1,0\n#", centerLine, "\n    "));
         for (int i = 1; i < centerLine.size() - 1; i++)
         {
             double distance =
@@ -754,9 +754,9 @@ public final class Test
             System.out.println("#distance of intermediate point " + i + " to overall line is " + distance);
         }
         OTSLine3D right = centerLine.offsetLine(-2);
-        System.out.println(OTSGeometry.printCoordinates("#right:\nc0,0,1\n#", right, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#right:\nc0,0,1\n#", right, "\n    "));
         OTSLine3D left = centerLine.offsetLine(2);
-        System.out.println(OTSGeometry.printCoordinates("#left:\nc0,0,1\n#", left, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#left:\nc0,0,1\n#", left, "\n    "));
     }
 
     /**
@@ -770,11 +770,11 @@ public final class Test
             new OTSLine3D(new OTSPoint3D(10, 10, 0), new OTSPoint3D(9.999, 8, 0), new OTSPoint3D(9.996, 7.99, 0),
                 new OTSPoint3D(9.999, 7.98, 0), new OTSPoint3D(10.03, 7.95, 0), new OTSPoint3D(10.01, 7.94, 0),
                 new OTSPoint3D(10.0, 7.94, 0), new OTSPoint3D(10, 6, 0), new OTSPoint3D(10, 2, 0));
-        System.out.println(OTSGeometry.printCoordinates("#reference:\nc1,0,0\n#", reference, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#reference:\nc1,0,0\n#", reference, "\n    "));
         OTSLine3D right = reference.offsetLine(-2);
-        System.out.println(OTSGeometry.printCoordinates("#right:\nc0,0,1\n#", right, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#right:\nc0,0,1\n#", right, "\n    "));
         OTSLine3D left = reference.offsetLine(2);
-        System.out.println(OTSGeometry.printCoordinates("#left:\nc0,0,1\n#", left, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#left:\nc0,0,1\n#", left, "\n    "));
     }
 
     /**
@@ -791,11 +791,11 @@ public final class Test
                     9.996, 5.99, 0), new OTSPoint3D(9.999, 5.98, 0), new OTSPoint3D(10.03, 5.95, 0), new OTSPoint3D(
                     10.01, 5.94, 0), new OTSPoint3D(10.0, 5.94, 0), new OTSPoint3D(10, 2, 0));
 
-        System.out.println(OTSGeometry.printCoordinates("#reference:\nc1,0,0\n#", reference, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#reference:\nc1,0,0\n#", reference, "\n    "));
         OTSLine3D right = reference.offsetLine(-2);
-        System.out.println(OTSGeometry.printCoordinates("#right:\nc0,0,1\n#", right, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#right:\nc0,0,1\n#", right, "\n    "));
         OTSLine3D left = reference.offsetLine(2);
-        System.out.println(OTSGeometry.printCoordinates("#left:\nc0,0,1\n#", left, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#left:\nc0,0,1\n#", left, "\n    "));
     }
 
     /**
@@ -817,11 +817,11 @@ public final class Test
                     4.9, -6.01, 0), new OTSPoint3D(5.1, -6.03, 0), new OTSPoint3D(5, -6.04, 0), new OTSPoint3D(5,
                     -7.04, 0));
 
-        System.out.println(OTSGeometry.printCoordinates("#reference:\nc1,0,0\n#", reference, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#reference:\nc1,0,0\n#", reference, "\n    "));
         OTSLine3D right = reference.offsetLine(-2);
-        System.out.println(OTSGeometry.printCoordinates("#right:\nc0,0,1\n#", right, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#right:\nc0,0,1\n#", right, "\n    "));
         OTSLine3D left = reference.offsetLine(2);
-        System.out.println(OTSGeometry.printCoordinates("#left:\nc0,0,1\n#", left, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#left:\nc0,0,1\n#", left, "\n    "));
 
         reference =
             new OTSLine3D(new OTSPoint3D(10, 0.5, 0), new OTSPoint3D(10, -2, 0), new OTSPoint3D(9.9, -2.01, 0),
@@ -829,11 +829,11 @@ public final class Test
                 new OTSPoint3D(9.9, -6.01, 0), new OTSPoint3D(10.1, -6.03, 0), new OTSPoint3D(10, -6.04, 0),
                 new OTSPoint3D(10, -8.54, 0));
 
-        System.out.println(OTSGeometry.printCoordinates("#reference:\nc1,0,0\n#", reference, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#reference:\nc1,0,0\n#", reference, "\n    "));
         right = reference.offsetLine(-2);
-        System.out.println(OTSGeometry.printCoordinates("#right:\nc0,0,1\n#", right, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#right:\nc0,0,1\n#", right, "\n    "));
         left = reference.offsetLine(2);
-        System.out.println(OTSGeometry.printCoordinates("#left:\nc0,0,1\n#", left, "\n    "));
+        System.out.println(OTSGeometryUtil.printCoordinates("#left:\nc0,0,1\n#", left, "\n    "));
     }
 
     /**

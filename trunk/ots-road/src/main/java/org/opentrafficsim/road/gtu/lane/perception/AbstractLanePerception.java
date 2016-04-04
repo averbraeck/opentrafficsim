@@ -21,8 +21,11 @@ import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.PerceivedObject;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.LanePathInfo;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneDirection;
 
 /**
  * The perception module of a GTU based on lanes. It is responsible for perceiving (sensing) the environment of the GTU, which
@@ -76,9 +79,12 @@ public abstract class AbstractLanePerception implements LanePerception
 
     /** The GTUs on the right side. */
     private TimeStampedObject<Collection<HeadwayGTU>> neighboringGTUsRight;
-    
+
+    /** the lanes and path we expect to take if we do not change lanes. */
+    private TimeStampedObject<LanePathInfo> lanePathInfo;
+
     /** the structure of the lanes in front of the GTU. */
-    private LaneStructure laneStructure;
+    // TODO private LaneStructure laneStructure;
 
     /**
      * Create a new LanePerception module. Because the constructor is often called inside the constructor of a GTU, this
@@ -111,6 +117,27 @@ public abstract class AbstractLanePerception implements LanePerception
         return this.gtu.getSimulator().getSimulatorTime().getTime();
     }
 
+    /**
+     * @throws GTUException
+     * @throws NetworkException
+     */
+    public void updateLanePathInfo() throws GTUException, NetworkException
+    {
+        Time.Abs timestamp = getTimestamp();
+        this.lanePathInfo =
+            new TimeStampedObject<LanePathInfo>(AbstractLaneBasedTacticalPlanner.buildLanePathInfo(this.gtu, this.gtu
+                .getBehavioralCharacteristics().getForwardHeadwayDistance()), timestamp);
+        // assess the speed limit where we are right now
+        this.speedLimit = new TimeStampedObject<>(new Speed(Double.MAX_VALUE, SpeedUnit.SI), timestamp);
+        for (Lane lane : this.gtu.getLanes().keySet())
+        {
+            if (lane.getSpeedLimit(this.gtu.getGTUType()).lt(this.speedLimit.getObject()))
+            {
+                this.speedLimit = new TimeStampedObject<>(lane.getSpeedLimit(this.gtu.getGTUType()), timestamp);
+            }
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     public void updateSpeedLimit() throws GTUException, NetworkException
@@ -132,6 +159,10 @@ public abstract class AbstractLanePerception implements LanePerception
     public void updateForwardHeadwayGTU() throws GTUException, NetworkException
     {
         Time.Abs timestamp = getTimestamp();
+        if (this.lanePathInfo == null || this.lanePathInfo.getTimestamp().ne(timestamp))
+        {
+            updateLanePathInfo();
+        }
         Length.Rel maximumForwardHeadway = this.gtu.getBehavioralCharacteristics().getForwardHeadwayDistance();
         this.forwardHeadwayGTU = new TimeStampedObject<>(headway(maximumForwardHeadway), timestamp);
     }
@@ -510,23 +541,32 @@ public abstract class AbstractLanePerception implements LanePerception
      */
     private HeadwayGTU headwayGTUSI(final double maxDistanceSI) throws GTUException, NetworkException
     {
+        // TODO GTU can be registered on multiple lanes at the same time during e.g. lane change!
         Time.Abs time = this.gtu.getSimulator().getSimulatorTime().getTime();
         HeadwayGTU foundMaxGTUDistanceSI = new HeadwayGTU(null, null, maxDistanceSI, null);
         // search for the closest GTU on all current lanes we are registered on.
         if (maxDistanceSI > 0.0)
         {
-            // look forward.
-            for (Lane lane : this.gtu.positions(this.gtu.getFront()).keySet())
+            // look forward based on the observed lanePathInfo.
+            LaneDirection ld = this.lanePathInfo.getObject().getLaneDirectionList().get(0);
+            double gtuPosFrontSI = this.gtu.position(ld.getLane(), this.gtu.getFront()).si;
+            HeadwayGTU closest = headwayGTULane(ld, gtuPosFrontSI, 0.0, time);
+            if (closest != null)
             {
-                HeadwayGTU closest =
-                    headwayRecursiveForwardSI(lane, this.gtu.getLanes().get(lane),
-                        this.gtu.position(lane, this.gtu.getFront(), time).getSI(), 0.0, maxDistanceSI, time);
-                if (closest.getDistance().si < maxDistanceSI
-                    && closest.getDistance().si < foundMaxGTUDistanceSI.getDistance().si)
-                {
-                    foundMaxGTUDistanceSI = closest;
-                }
+                return closest;
             }
+            double cumDistSI = ld.getDirection().isPlus() ? ld.getLane().getLength().si - gtuPosFrontSI : gtuPosFrontSI;
+            for (int i = 1; i < this.lanePathInfo.getObject().getLaneDirectionList().size(); i++)
+            {
+                ld = this.lanePathInfo.getObject().getLaneDirectionList().get(i);
+                closest = headwayGTULane(ld, ld.getDirection().isPlus() ? ld.getLane().getLength().si : 0.0, cumDistSI, time);
+                if (closest != null)
+                {
+                    return closest;
+                }
+                cumDistSI += ld.getLane().getLength().si;
+            }
+            return new HeadwayGTU(null, null, maxDistanceSI, null);
         }
         else
         {
@@ -544,6 +584,29 @@ public abstract class AbstractLanePerception implements LanePerception
             }
         }
         return foundMaxGTUDistanceSI;
+    }
+
+    /**
+     * @param laneDirection
+     * @param startPosSI
+     * @param cumDistSI
+     * @param now
+     * @return the HeadwayGTU is a GTU is ahead of the given start position
+     * @throws GTUException
+     */
+    private HeadwayGTU headwayGTULane(LaneDirection laneDirection, double startPosSI, double cumDistSI, Time.Abs now)
+        throws GTUException
+    {
+        Lane lane = laneDirection.getLane();
+        LaneBasedGTU gtu =
+            lane.getGtuAhead(new Length.Rel(startPosSI, LengthUnit.SI), laneDirection.getDirection(),
+                RelativePosition.REAR, now);
+        if (gtu == null)
+        {
+            return null;
+        }
+        double distanceSI = Math.abs(gtu.position(lane, gtu.getRear()).si - startPosSI);
+        return new HeadwayGTU(gtu.getId(), gtu.getVelocity(), cumDistSI + distanceSI, gtu.getGTUType());
     }
 
     /**
@@ -651,7 +714,7 @@ public abstract class AbstractLanePerception implements LanePerception
         final double lanePositionSI, final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when)
         throws GTUException
     {
-        // WRONG - adapt method to forward perception method!
+        // XXX WRONG - adapt method to forward perception method!
         LaneBasedGTU otherGTU =
             lane.getGtuBehind(new Length.Rel(lanePositionSI, LengthUnit.SI), direction, RelativePosition.FRONT, when);
         if (otherGTU != null)
@@ -806,6 +869,11 @@ public abstract class AbstractLanePerception implements LanePerception
     public final LaneBasedGTU getGTU()
     {
         return this.gtu;
+    }
+
+    public final LanePathInfo getLanePathInfo()
+    {
+        return this.lanePathInfo.getObject();
     }
 
     /** {@inheritDoc} */

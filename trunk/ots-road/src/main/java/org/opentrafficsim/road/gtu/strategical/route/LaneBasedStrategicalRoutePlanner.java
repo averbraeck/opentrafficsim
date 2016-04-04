@@ -156,8 +156,8 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                         if (cse instanceof Lane)
                         {
                             Lane lane = (Lane) cse;
-                            if ((link.getStartNode().equals(node) && lane.getDirectionality(gtuType).isForward())
-                                || (link.getEndNode().equals(node) && lane.getDirectionality(gtuType).isBackward()))
+                            if ((link.getStartNode().equals(node) && lane.getDirectionality(gtuType).isForwardOrBoth())
+                                || (link.getEndNode().equals(node) && lane.getDirectionality(gtuType).isBackwardOrBoth()))
                             {
                                 out = true;
                             }
@@ -194,7 +194,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                 + previousLink + ", but the GTU reached the last node for route " + this.route);
         }
         Node nextNode = this.route.getNode(i + 1);
-        for (Link link : node.getLinks())
+        for (Link link : links)
         {
             if (link.getStartNode().equals(nextNode))
             {

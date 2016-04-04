@@ -14,10 +14,10 @@ import java.util.Locale;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author <a href="http://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public final class OTSGeometry
+public final class OTSGeometryUtil
 {
     /** */
-    private OTSGeometry()
+    private OTSGeometryUtil()
     {
         // do not instantiate this class.
     }

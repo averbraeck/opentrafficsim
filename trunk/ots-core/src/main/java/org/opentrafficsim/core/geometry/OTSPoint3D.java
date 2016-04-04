@@ -316,6 +316,14 @@ public class OTSPoint3D implements LocatableInterface, Serializable
         return new DirectedPoint(this.x, this.y, this.z);
     }
 
+    /**
+     * @return a Point2D with the x and y structure.
+     */
+    public final Point2D getPoint2D()
+    {
+        return new Point2D.Double(this.x, this.y);
+    }
+
     /** {@inheritDoc} */
     @Override
     public final DirectedPoint getLocation()

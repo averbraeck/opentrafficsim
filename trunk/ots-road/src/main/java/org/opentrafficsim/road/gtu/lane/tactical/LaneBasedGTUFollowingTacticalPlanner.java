@@ -59,7 +59,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
         if (laneBasedGTU.getMaximumVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
         {
-            return new OperationalPlan(locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.SECOND));
+            return new OperationalPlan(gtu, locationAtStartTime, startTime, new Time.Rel(1.0, TimeUnit.SECOND));
         }
 
         // perceive every time step... This is the 'classical' way of tactical planning.
@@ -71,7 +71,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
 
         // see how far we can drive
         LanePathInfo lanePathInfo =
-            buildLaneListForward(laneBasedGTU, laneBasedGTU.getBehavioralCharacteristics().getForwardHeadwayDistance());
+            buildLanePathInfo(laneBasedGTU, laneBasedGTU.getBehavioralCharacteristics().getForwardHeadwayDistance());
 
         // look at the conditions for headway
         HeadwayGTU headwayGTU = perception.getForwardHeadwayGTU();
@@ -93,7 +93,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         if (accelerationStep.getAcceleration().si < 1E-6
             && laneBasedGTU.getVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
         {
-            return new OperationalPlan(locationAtStartTime, startTime, accelerationStep.getDuration());
+            return new OperationalPlan(gtu, locationAtStartTime, startTime, accelerationStep.getDuration());
         }
 
         List<Segment> operationalPlanSegmentList = new ArrayList<>();
@@ -110,7 +110,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
             operationalPlanSegmentList.add(segment);
         }
         OperationalPlan op =
-            new OperationalPlan(lanePathInfo.getPath(), startTime, gtu.getVelocity(), operationalPlanSegmentList);
+            new OperationalPlan(gtu, lanePathInfo.getPath(), startTime, gtu.getVelocity(), operationalPlanSegmentList);
         return op;
     }
 }

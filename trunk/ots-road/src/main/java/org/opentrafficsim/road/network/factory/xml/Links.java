@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -361,9 +362,10 @@ final class Links
      * @param simulator to be able to make the animation
      * @throws OTSGeometryException when both nodes are null.
      * @throws NamingException when node animation cannot link to the animation context.
+     * @throws NetworkException when tag type not filled
      */
     static void buildLink(final LinkTag linkTag, final XmlNetworkLaneParser parser,
-        final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException, NamingException
+        final OTSDEVSSimulatorInterface simulator) throws OTSGeometryException, NamingException, NetworkException
     {
         NodeTag from = linkTag.nodeStartTag;
         OTSPoint3D startPoint = new OTSPoint3D(from.coordinate);
@@ -402,7 +404,7 @@ final class Links
             coordinates[1] = endPoint;
         }
 
-        if (linkTag.arcTag != null)
+        else if (linkTag.arcTag != null)
         {
             // TODO move the radius if there is an start and end offset? How?
             int points = (Math.abs(linkTag.arcTag.angle.getSI()) <= Math.PI / 2.0) ? 64 : 128;
@@ -428,6 +430,8 @@ final class Links
                 {
                     try
                     {
+                        System.err.println("linkTag.arcTag.center = " + linkTag.arcTag.center);
+                        System.err.println("linkTag.arcTag.startAngle = " + linkTag.arcTag.startAngle);
                         coordinates[p] =
                             new OTSPoint3D(linkTag.arcTag.center.x + radiusSI
                                 * Math.cos(linkTag.arcTag.startAngle + angleStep * p), linkTag.arcTag.center.y
@@ -443,19 +447,25 @@ final class Links
             }
         }
 
-        if (linkTag.bezierTag != null)
+        else if (linkTag.bezierTag != null)
         {
             coordinates =
                 Bezier.cubic(128, new DirectedPoint(startPoint.x, startPoint.y, startPoint.z, 0, 0, startAngle),
                     new DirectedPoint(endPoint.x, endPoint.y, endPoint.z, 0, 0, endAngle)).getPoints();
         }
 
+        else
+        {
+            throw new NetworkException("Making link, but link " + linkTag.name
+                + " has no filled straight, arc, or bezier curve");
+        }
+
         OTSLine3D designLine = new OTSLine3D(coordinates);
-        // TODO the directionality has to be read from the XML-file. To keep the examples working,
-        // TODO LongitudinalDirectionality.BOTH is inserted for the time being.
+
+        // Directionality has to be added later when the lanes and their direction are known.
         CrossSectionLink link =
             new CrossSectionLink(linkTag.name, linkTag.nodeStartTag.node, linkTag.nodeEndTag.node, LinkType.ALL,
-                designLine, LongitudinalDirectionality.DIR_BOTH, linkTag.laneKeepingPolicy);
+                designLine, new HashMap<GTUType, LongitudinalDirectionality>(), linkTag.laneKeepingPolicy);
         linkTag.link = link;
     }
 
@@ -478,6 +488,8 @@ final class Links
         CrossSectionLink csl = linkTag.link;
         List<CrossSectionElement> cseList = new ArrayList<>();
         List<Lane> lanes = new ArrayList<>();
+        // TODO Map<GTUType, LongitudinalDirectionality> linkDirections = new HashMap<>();
+        LongitudinalDirectionality linkDirection = LongitudinalDirectionality.DIR_NONE;
         for (CrossSectionElementTag cseTag : linkTag.roadTypeTag.cseTags.values())
         {
             LaneOverrideTag laneOverrideTag = null;
@@ -597,6 +609,24 @@ final class Links
                     }
                     Map<GTUType, LongitudinalDirectionality> directionality = new LinkedHashMap<>();
                     directionality.put(GTUType.ALL, direction);
+                    if (linkDirection.equals(LongitudinalDirectionality.DIR_NONE))
+                    {
+                        linkDirection = direction;
+                    }
+                    else if (linkDirection.isForward())
+                    {
+                        if (direction.isBackwardOrBoth())
+                        {
+                            linkDirection = LongitudinalDirectionality.DIR_BOTH;
+                        }
+                    }
+                    else if (linkDirection.isBackward())
+                    {
+                        if (direction.isForwardOrBoth())
+                        {
+                            linkDirection = LongitudinalDirectionality.DIR_BOTH;
+                        }
+                    }
                     Map<GTUType, Speed> speedLimit = new LinkedHashMap<>();
                     speedLimit.put(GTUType.ALL, speed);
                     Lane lane =
@@ -767,5 +797,8 @@ final class Links
             }
 
         } // for (CrossSectionElementTag cseTag : roadTypeTag.cseTags.values())
+
+        // add the calculated direction to the link
+        csl.addDirectionality(GTUType.ALL, linkDirection);
     }
 }

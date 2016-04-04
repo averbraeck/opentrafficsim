@@ -144,14 +144,14 @@ public abstract class AbstractGTU implements GTU
         {
             if (initialSpeed.si < OperationalPlan.DRIFTING_SPEED_SI)
             {
-                this.operationalPlan = new OperationalPlan(p, now, new Time.Rel(1.0e-6, TimeUnit.SECOND));
+                this.operationalPlan = new OperationalPlan(this, p, now, new Time.Rel(1.0e-6, TimeUnit.SECOND));
             }
             else
             {
                 OTSPoint3D p2 =
                     new OTSPoint3D(p.x + 1E-6 * Math.cos(p.getRotZ()), p.y + 1E-6 * Math.sin(p.getRotZ()), p.z);
                 OTSLine3D path = new OTSLine3D(new OTSPoint3D(p), p2);
-                this.operationalPlan = OperationalPlanBuilder.buildConstantSpeedPlan(path, now, initialSpeed);
+                this.operationalPlan = OperationalPlanBuilder.buildConstantSpeedPlan(this, path, now, initialSpeed);
             }
         }
         catch (OperationalPlanException | OTSGeometryException exception)
@@ -512,6 +512,14 @@ public abstract class AbstractGTU implements GTU
     public final boolean isDestroyed()
     {
         return this.destroyed;
+    }
+
+    /**
+     * @return perceivableContext
+     */
+    public final PerceivableContext getPerceivableContext()
+    {
+        return this.perceivableContext;
     }
 
 }

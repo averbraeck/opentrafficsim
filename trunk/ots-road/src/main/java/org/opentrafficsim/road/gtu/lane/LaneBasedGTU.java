@@ -61,8 +61,9 @@ public interface LaneBasedGTU extends GTU
     /**
      * Unregister the GTU from a lane.
      * @param lane the lane to remove from the list of lanes on which the GTU is registered.
+     * @throws GTUException when leaveLane should not be called
      */
-    void leaveLane(Lane lane);
+    void leaveLane(Lane lane) throws GTUException;
 
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the

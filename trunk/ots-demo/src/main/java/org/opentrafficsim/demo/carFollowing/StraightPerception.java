@@ -845,8 +845,8 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             if (laneBasedGTU.getMaximumVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
             {
                 // time equal to fastest reaction time of GTU
-                return new OperationalPlan(locationAtStartTime, startTime, new Time.Rel(perceptionIntervalDist.draw(),
-                    TimeUnit.SECOND));
+                return new OperationalPlan(laneBasedGTU, locationAtStartTime, startTime, new Time.Rel(
+                    perceptionIntervalDist.draw(), TimeUnit.SECOND));
             }
 
             // get some models to help us make a plan
@@ -855,7 +855,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
 
             // get the lane plan
             LanePathInfo lanePathInfo =
-                buildLaneListForward(laneBasedGTU, laneBasedGTU.getBehavioralCharacteristics().getForwardHeadwayDistance());
+                buildLanePathInfo(laneBasedGTU, laneBasedGTU.getBehavioralCharacteristics().getForwardHeadwayDistance());
             Length.Rel maxDistance = lanePathInfo.getPath().getLength();
 
             // look at the conditions for headway
@@ -879,7 +879,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             if (accelerationStep.getAcceleration().si < 1E-6
                 && laneBasedGTU.getVelocity().si < OperationalPlan.DRIFTING_SPEED_SI)
             {
-                return new OperationalPlan(locationAtStartTime, startTime, accelerationStep.getDuration());
+                return new OperationalPlan(laneBasedGTU, locationAtStartTime, startTime, accelerationStep.getDuration());
             }
 
             List<Segment> operationalPlanSegmentList = new ArrayList<>();
@@ -896,7 +896,8 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                 operationalPlanSegmentList.add(segment);
             }
             OperationalPlan op =
-                new OperationalPlan(lanePathInfo.getPath(), startTime, gtu.getVelocity(), operationalPlanSegmentList);
+                new OperationalPlan(laneBasedGTU, lanePathInfo.getPath(), startTime, gtu.getVelocity(),
+                    operationalPlanSegmentList);
             return op;
         }
     }

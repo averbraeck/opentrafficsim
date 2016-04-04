@@ -21,6 +21,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LaneDirection;
 
 /**
  * A lane-based tactical planner generates an operational plan for the lane-based GTU. It can ask the strategic planner for
@@ -66,6 +67,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             if (fraction >= 0.0 && fraction <= 1.0)
             {
                 // TODO widest lane in case we are registered on more than one lane with the reference point
+                // TODO lane that leads to our location or not if we are registered on parallel lanes?
                 return lane;
             }
         }
@@ -90,12 +92,12 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    public static LanePathInfo buildLaneListForward(final LaneBasedGTU gtu, final Length.Rel maxHeadway)
+    public static LanePathInfo buildLanePathInfo(final LaneBasedGTU gtu, final Length.Rel maxHeadway)
         throws GTUException, NetworkException
     {
         Lane startLane = getReferenceLane(gtu);
         Length.Rel startPosition = gtu.position(startLane, gtu.getReference());
-        return buildLaneListForward(gtu, startLane, startPosition, maxHeadway);
+        return buildLanePathInfo(gtu, startLane, startPosition, maxHeadway);
     }
 
     /**
@@ -109,10 +111,10 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    public static LanePathInfo buildLaneListForward(final LaneBasedGTU gtu, final Lane startLane,
+    public static LanePathInfo buildLanePathInfo(final LaneBasedGTU gtu, final Lane startLane,
         final Length.Rel startPosition, final Length.Rel maxHeadway) throws GTUException, NetworkException
     {
-        return buildLaneListForward(gtu, maxHeadway, startLane, startLane.fraction(startPosition),
+        return buildLanePathInfo(gtu, maxHeadway, startLane, startLane.fraction(startPosition),
             gtu.getLanes().get(startLane));
     }
 
@@ -130,16 +132,16 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
      * @throws GTUException when the vehicle is not on one of the lanes on which it is registered
      * @throws NetworkException when the strategic planner is not able to return a next node in the route
      */
-    public static LanePathInfo buildLaneListForward(final LaneBasedGTU gtu, final Length.Rel maxHeadway,
+    public static LanePathInfo buildLanePathInfo(final LaneBasedGTU gtu, final Length.Rel maxHeadway,
         final Lane startLane, final double startLaneFractionalPosition, final GTUDirectionality startDirectionality)
         throws GTUException, NetworkException
     {
-        List<Lane> laneListForward = new ArrayList<>();
+        List<LaneDirection> laneListForward = new ArrayList<>();
         Lane lane = startLane;
         GTUDirectionality lastGtuDir = startDirectionality;
         Length.Rel position = lane.position(startLaneFractionalPosition);
         Lane lastLane = lane;
-        laneListForward.add(lane);
+        laneListForward.add(new LaneDirection(lastLane, lastGtuDir));
         Length.Rel lengthForward;
         OTSLine3D path;
         try
@@ -172,6 +174,27 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             {
                 // dead end. return with the list as is.
                 return new LanePathInfo(path, laneListForward);
+            }
+            if (lanes.size() == 1)
+            {
+                // ask the strategical planner what the next link should be (if known).
+                LinkDirection ld = null;
+                try
+                {
+                    ld =
+                        gtu.getStrategicalPlanner().nextLinkDirection(lane.getParentLink(), lastGtuDir,
+                            gtu.getGTUType());
+                }
+                catch (NetworkException ne)
+                {
+                    // no route found. Assume all is okay.
+                }
+                lane = lanes.keySet().iterator().next();
+                if (ld != null && !lane.getParentLink().equals(ld.getLink()))
+                {
+                    // lane not on route anymore. return with the list as is.
+                    return new LanePathInfo(path, laneListForward);
+                }
             }
             else
             {
@@ -208,8 +231,6 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
                 // otherwise: continue!
                 lane = newLane;
             }
-            laneListForward.add(lane);
-            lengthForward = lengthForward.plus(lane.getLength());
 
             // determine direction for the path
             try
@@ -250,6 +271,9 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             {
                 throw new GTUException(exception);
             }
+
+            laneListForward.add(new LaneDirection(lastLane, lastGtuDir));
+            lengthForward = lengthForward.plus(lane.getLength());
 
         }
         return new LanePathInfo(path, laneListForward);
@@ -529,12 +553,12 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             final double startLaneFractionalPosition, final GTUDirectionality startDirectionality,
             final Link linkAfterSplit) throws GTUException, NetworkException
     {
-        List<Lane> lanes =
-            buildLaneListForward(gtu, maxHeadway, startLane, startLaneFractionalPosition, startDirectionality)
-                .getLaneList();
-        for (Lane lane : lanes)
+        List<LaneDirection> laneDirections =
+            buildLanePathInfo(gtu, maxHeadway, startLane, startLaneFractionalPosition, startDirectionality)
+                .getLaneDirectionList();
+        for (LaneDirection laneDirection : laneDirections)
         {
-            if (lane.getParentLink().equals(linkAfterSplit))
+            if (laneDirection.getLane().getParentLink().equals(linkAfterSplit))
             {
                 return true;
             }
@@ -559,7 +583,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
         NetworkException
     {
         LanePathInfo lpi =
-            buildLaneListForward(gtu, maxHeadway, startLane, startLaneFractionalPosition, startDirectionality);
+            buildLanePathInfo(gtu, maxHeadway, startLane, startLaneFractionalPosition, startDirectionality);
         if (lpi.getPath().getLength().lt(maxHeadway))
         {
             return false;

@@ -7,10 +7,9 @@ import java.net.SocketException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import javax.naming.NamingException;
@@ -64,8 +63,8 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.core.network.route.CompleteRoute;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
@@ -190,6 +189,52 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
 
         private List<LaneBasedIndividualGTU> rtiCars;
 
+        /** */
+        private ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist;
+
+        /** */
+        private ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> iatDist;
+
+        /** */
+        private ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist;
+
+        /** */
+        private ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist;
+
+        /** */
+        private ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maxSpeedDist;
+
+        /** */
+        private ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> initialPosDist;
+
+        /** */
+        private GTUType carType;
+        
+        /** last id */
+        private int lastId = 0;
+        
+        /** */
+        private StreamInterface stream;
+
+        /**
+             * 
+             */
+        public TestOpenDriveModel()
+        {
+            super();
+            this.stream = new MersenneTwister(1);
+            this.initialSpeedDist = new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 0.0), SpeedUnit.SI);
+            this.iatDist = new ContinuousDistDoubleScalar.Rel<>(new DistExponential(this.stream, 30.0), TimeUnit.SECOND);
+            this.lengthDist = new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 4.0, 5.0), LengthUnit.METER);
+            this.widthDist = new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 2.0), LengthUnit.METER);
+            this.maxSpeedDist =
+                new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(this.stream, 30.0, 35.0, 40.0),
+                    SpeedUnit.MILE_PER_HOUR);
+            this.initialPosDist =
+                new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 0.0, 1.0), LengthUnit.METER);
+            this.carType = GTUType.makeGTUType("Car");
+        }
+
         /** {@inheritDoc} */
         @Override
         public final
@@ -225,42 +270,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             CoordinateTransform latLonToXY = new CoordinateTransformLonLatToXY(lonCenter, latCenter);
             new GisRenderable2D(this.simulator, gisURL, latLonToXY);
 
-            // Make a GTU Type
-            GTUType carType = GTUType.makeGTUType("Car");
-
             // new ReceiverThread(this.simulator).run();
-
-            // stream
-            StreamInterface stream = new MersenneTwister(1);
-            Length.Rel M25 = new Length.Rel(25.0, LengthUnit.METER);
-            Length.Rel M0 = new Length.Rel(0.0, LengthUnit.METER);
-
-            // distributions
-            ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 0.0), SpeedUnit.SI);
-            ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> iatDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistExponential(stream, 30.0), TimeUnit.SECOND);
-            ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 4.0, 5.0), LengthUnit.METER);
-            ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistConstant(stream, 2.0), LengthUnit.METER);
-            ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maxSpeedDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistTriangular(stream, 30.0, 35.0, 40.0),
-                    SpeedUnit.MILE_PER_HOUR);
-
-            ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> initialPosDist =
-                new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 0.0, 1.0), LengthUnit.METER);
-
-            // default colorer
-
-            CrossSectionLink link1 = (CrossSectionLink) network.getLink("3766054.5");
-            CrossSectionLink link2 = (CrossSectionLink) network.getLink("3766059.7");
-            CrossSectionLink link3 = (CrossSectionLink) network.getLink("3766068.3");
-            CrossSectionLink link4 = (CrossSectionLink) network.getLink("3766038.5");
-            CrossSectionLink link5 = (CrossSectionLink) network.getLink("3766043.3");
-            CrossSectionLink link6 = (CrossSectionLink) network.getLink("3766064.2");
-            CrossSectionLink link7 = (CrossSectionLink) network.getLink("3766046.3");
-            CrossSectionLink link8 = (CrossSectionLink) network.getLink("3766050.3");
 
             /** Repair the network... */
             try
@@ -321,6 +331,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 e.printStackTrace();
             }
 
+            /*-
             CompleteRoute cr1 = null, cr2 = null, cr3 = null, cr4 = null, cr5 = null, cr6 = null;
 
             List<Node> nodesVia1 = new ArrayList<Node>();
@@ -374,9 +385,95 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             {
                 exception.printStackTrace();
             }
+             */
 
+            // build the graph
+            network.buildGraph(this.carType);
+
+            // generate 2 GTUs on 70.1 (parking lot NRC SV)
+            try
+            {
+                CrossSectionLink link70_1 = (CrossSectionLink) network.getLink("3766070.1");
+                Lane lane70_1m1 = getLane(link70_1, "-1"); // get the rightmost lane (-1) to drive north
+                Lane lane70_1p1 = getLane(link70_1, "1"); // get the rightmost lane (1) to drive south
+
+                // create a route around NRC SV
+                Node n70_0 = network.getNode("3766070.0");
+                Node n70_23 = network.getNode("3766070.23");
+                Node n45_0 = network.getNode("3766045.0");
+                Node n45_22 = network.getNode("3766045.22");
+                Node n65_0 = network.getNode("3766065.0");
+                Node n65_8 = network.getNode("3766065.8");
+                Route route7070r =
+                    new CompleteRoute("Right around NRC-SV", this.carType, network.getShortestRouteBetween(
+                        this.carType, n70_0, n70_0, Arrays.asList(new Node[]{n45_0, n65_0})).getNodes());
+                putCar(lane70_1m1, route7070r, network, GTUDirectionality.DIR_PLUS);
+                Route route7070l =
+                    new CompleteRoute("Left around NRC-SV", this.carType, network.getShortestRouteBetween(this.carType,
+                        n70_0, n70_0, Arrays.asList(new Node[]{n65_8, n45_22, n70_23})).getNodes());
+                putCar(lane70_1p1, route7070l, network, GTUDirectionality.DIR_MINUS);
+            }
+            catch (NetworkException | GTUException | NamingException | OTSGeometryException exception)
+            {
+                exception.printStackTrace();
+            }
+
+            // generate 10 GTUs on 68 driving the upper circle.
+            try
+            {
+                List<CrossSectionLink> links68 = new ArrayList<>();
+                links68.add((CrossSectionLink) network.getLink("3766068.1"));
+                links68.add((CrossSectionLink) network.getLink("3766068.2"));
+                links68.add((CrossSectionLink) network.getLink("3766068.3"));
+                links68.add((CrossSectionLink) network.getLink("3766068.4"));
+                links68.add((CrossSectionLink) network.getLink("3766068.5"));
+
+                // create a right route for top circle
+                Node n68_0 = network.getNode("3766068.0");
+                Node n38_88 = network.getNode("3766038.88");
+                Node n43_0 = network.getNode("3766043.0");
+                Node n45_0 = network.getNode("3766045.0");
+                Node n65_0 = network.getNode("3766065.0");
+                Node n64_17 = network.getNode("3766064.17");
+                Route route6868r =
+                    new CompleteRoute("Right top", this.carType, network.getShortestRouteBetween(
+                        this.carType, n68_0, n68_0, Arrays.asList(new Node[]{n38_88, n43_0, n45_0, n65_0, n64_17})).getNodes());
+                System.out.println(route6868r);
+                for (int i=0; i<5; i++)
+                {
+                    putCar(randLane(links68, LongitudinalDirectionality.DIR_PLUS), route6868r, network, GTUDirectionality.DIR_PLUS);
+                }
+                
+                // create a left route for top circle
+                Node n38_0 = network.getNode("3766038.0");
+                Node n43_53 = network.getNode("3766043.53");
+                Node n45_22 = network.getNode("3766045.22");
+                Node n65_8 = network.getNode("3766065.8");
+                Node n64_0 = network.getNode("3766064.0");
+                Node n68_158 = network.getNode("3766068.158");
+                Route route6868l =
+                    new CompleteRoute("Right top", this.carType, network.getShortestRouteBetween(
+                        this.carType, n68_158, n68_158, Arrays.asList(new Node[]{n64_0, n65_8, n45_22, n43_53, n38_0})).getNodes());
+                System.out.println(route6868l);
+                for (int i=0; i<5; i++)
+                {
+                    putCar(randLane(links68, LongitudinalDirectionality.DIR_MINUS), route6868l, network, GTUDirectionality.DIR_MINUS);
+                }
+
+            }
+            catch (NetworkException | GTUException | NamingException | OTSGeometryException exception)
+            {
+                exception.printStackTrace();
+            }
+
+            
+            // XXX dirty hack...
+            while (this.rtiCars.size() < 52)
+            {
+                this.rtiCars.add(this.rtiCars.get(this.rtiCars.size() - 1));
+                
+            }
             /*-
-            // generate 1 GTU on cr2
             for (int i = 0; i < 10; i++)
             {
                 Lane lane = null;
@@ -427,6 +524,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
             }
              */
 
+            /*-
             List<CompleteRoute> cRoutes = new ArrayList<>();
             cRoutes.add(cr1);
             cRoutes.add(cr2);
@@ -555,16 +653,79 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
                 }
 
             }
+             */
 
             try
             {
-                new Thread(new ReceiverThread(this.simulator, carType, this.rtiCars)).start();
+                new Thread(new ReceiverThread(this.simulator, this.carType, this.rtiCars, network)).start();
             }
             catch (SocketException exception1)
             {
                 exception1.printStackTrace();
             }
 
+        }
+
+        private Lane randLane(final List<CrossSectionLink> links, final LongitudinalDirectionality dir)
+        {
+            // choose a random link with a random lane on that link in the right direction
+            CrossSectionLink link = links.get(this.stream.nextInt(0, links.size()-1));
+            List<Lane> lanes = new ArrayList<>();
+            for (CrossSectionElement cse : link.getCrossSectionElementList())
+            {
+                if (cse instanceof Lane)
+                {
+                    Lane lane = (Lane) cse;
+                    if (lane.getDirectionality(this.carType).equals(dir) || lane.getDirectionality(this.carType).isBoth())
+                    {
+                        lanes.add(lane);
+                    }
+                }
+            }
+            for (int i=0; i<10; i++)
+            {
+                Lane lane = lanes.get(this.stream.nextInt(0, lanes.size()-1));
+                if (lane.getGtuList().isEmpty())
+                {
+                    return lane;
+                }
+            }
+            return lanes.get(this.stream.nextInt(0, lanes.size()-1));
+        }
+        
+        private void putCar(Lane lane, Route route, OTSNetwork network, GTUDirectionality dir) throws GTUException,
+            NamingException, NetworkException, SimRuntimeException, OTSGeometryException
+        {
+            LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
+            LaneBasedStrategicalPlanner sPlanner =
+                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
+                    new LaneBasedGTUFollowingLaneChangeTacticalPlanner(), route);
+            LanePerceptionFull perception = new LanePerceptionFull();
+
+            DirectedLanePosition directedLanePosition =
+                new DirectedLanePosition(lane, this.initialPosDist.draw()
+                    .multiplyBy(lane.getCenterLine().getLengthSI()), dir);
+            Set<DirectedLanePosition> lanepositionSet = new HashSet<DirectedLanePosition>();
+            lanepositionSet.add(directedLanePosition);
+            Length.Rel carLength = this.lengthDist.draw();
+            LaneBasedIndividualGTU car =
+                new LaneBasedIndividualGTU("" + (++this.lastId), this.carType, lanepositionSet, new Speed(0.0,
+                    SpeedUnit.METER_PER_SECOND), carLength, this.widthDist.draw(), this.maxSpeedDist.draw(),
+                    this.simulator, sPlanner, perception, network);
+            this.rtiCars.add(car);
+        }
+
+        private Lane getLane(CrossSectionLink link, String id) throws NetworkException
+        {
+            for (CrossSectionElement cse : link.getCrossSectionElementList())
+            {
+                if (cse instanceof Lane && !(cse instanceof NoTrafficLane) && cse.getId().equals(id))
+                {
+                    return (Lane) cse;
+                }
+            }
+            throw new NetworkException("Could not find Lane " + id + " in link " + link);
         }
 
         /**

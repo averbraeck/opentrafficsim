@@ -17,6 +17,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.SpeedSegment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.math.Solver;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -51,6 +52,7 @@ public final class LaneOperationalPlanBuilder
      * Build a plan with a path and a given start speed to try to reach a provided end speed, exactly at the end of the curve.
      * The acceleration (and deceleration) are capped by maxAcceleration and maxDeceleration. Therefore, there is no guarantee
      * that the end speed is actually reached by this plan.
+     * @param gtu the GTU for debugging purposes
      * @param lanes a list of connected Lanes to do the driving on
      * @param firstLanePosition position on the first lane with the reference point of the GTU
      * @param distance distance to drive for reaching the end speed
@@ -66,7 +68,7 @@ public final class LaneOperationalPlanBuilder
      * @throws OTSGeometryException in case the lanes are not connected or firstLanePosition is larger than the length of the
      *             first lane
      */
-    public static LaneBasedOperationalPlan buildGradualAccelerationPlan(final List<Lane> lanes,
+    public static LaneBasedOperationalPlan buildGradualAccelerationPlan(final LaneBasedGTU gtu, final List<Lane> lanes,
         final Length.Rel firstLanePosition, final Length.Rel distance, final Time.Abs startTime,
         final Speed startSpeed, final Speed endSpeed, final Acceleration maxAcceleration,
         final Acceleration maxDeceleration) throws OperationalPlanException, OTSGeometryException
@@ -107,7 +109,7 @@ public final class LaneOperationalPlanBuilder
         }
         ArrayList<OperationalPlan.Segment> segmentList = new ArrayList<>();
         segmentList.add(segment);
-        return new LaneBasedOperationalPlan(path, startTime, startSpeed, segmentList, lanes);
+        return new LaneBasedOperationalPlan(gtu, path, startTime, startSpeed, segmentList, lanes);
     }
 
     /**
@@ -123,8 +125,9 @@ public final class LaneOperationalPlanBuilder
      * @throws OTSGeometryException in case the lanes are not connected or firstLanePosition is larger than the length of the
      *             first lane
      */
-    public static OTSLine3D makePath(final List<Lane> lanes, final Length.Rel firstLanePosition,
-        final Length.Rel distance) throws OperationalPlanException, OTSGeometryException
+    public static OTSLine3D makePath(final List<Lane> lanes,
+        final Length.Rel firstLanePosition, final Length.Rel distance) throws OperationalPlanException,
+        OTSGeometryException
     {
         if (lanes.size() == 0)
         {
@@ -142,6 +145,7 @@ public final class LaneOperationalPlanBuilder
      * Build a plan with a path and a given start speed to reach a provided end speed, exactly at the end of the curve.
      * Acceleration and deceleration are virtually unbounded (1E12 m/s2) to reach the end speed (e.g., to come to a complete
      * stop).
+     * @param gtu the GTU for debugging purposes
      * @param lanes a list of connected Lanes to do the driving on
      * @param firstLanePosition position on the first lane with the reference point of the GTU
      * @param distance distance to drive for reaching the end speed
@@ -154,11 +158,11 @@ public final class LaneOperationalPlanBuilder
      * @throws OTSGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
      *             first lane
      */
-    public static LaneBasedOperationalPlan buildGradualAccelerationPlan(final List<Lane> lanes,
+    public static LaneBasedOperationalPlan buildGradualAccelerationPlan(final LaneBasedGTU gtu, final List<Lane> lanes,
         final Length.Rel firstLanePosition, final Length.Rel distance, final Time.Abs startTime,
         final Speed startSpeed, final Speed endSpeed) throws OperationalPlanException, OTSGeometryException
     {
-        return buildGradualAccelerationPlan(lanes, firstLanePosition, distance, startTime, startSpeed, endSpeed,
+        return buildGradualAccelerationPlan(gtu, lanes, firstLanePosition, distance, startTime, startSpeed, endSpeed,
             MAX_ACCELERATION, MAX_DECELERATION);
     }
 
@@ -167,6 +171,7 @@ public final class LaneOperationalPlanBuilder
      * provided, until the end speed is reached. After this, constant end speed is used to reach the end point of the path.
      * There is no guarantee that the end speed is actually reached by this plan. If the end speed is zero, and it is reached
      * before completing the path, a truncated path that ends where the GTU stops is used instead.
+     * @param gtu the GTU for debugging purposes
      * @param lanes a list of connected Lanes to do the driving on
      * @param firstLanePosition position on the first lane with the reference point of the GTU
      * @param distance distance to drive for reaching the end speed
@@ -180,7 +185,7 @@ public final class LaneOperationalPlanBuilder
      * @throws OTSGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
      *             first lane
      */
-    public static LaneBasedOperationalPlan buildMaximumAccelerationPlan(final List<Lane> lanes,
+    public static LaneBasedOperationalPlan buildMaximumAccelerationPlan(final LaneBasedGTU gtu, final List<Lane> lanes,
         final Length.Rel firstLanePosition, final Length.Rel distance, final Time.Abs startTime,
         final Speed startSpeed, final Speed endSpeed, final Acceleration acceleration, final Acceleration deceleration)
         throws OperationalPlanException, OTSGeometryException
@@ -238,7 +243,8 @@ public final class LaneOperationalPlanBuilder
                             // if endSpeed == 0, we cannot reach the end of the path. Therefore, build a partial path.
                             OTSLine3D partialPath = path.truncate(x.si);
                             segmentList.add(new OperationalPlan.AccelerationSegment(t, deceleration));
-                            return new LaneBasedOperationalPlan(partialPath, startTime, startSpeed, segmentList, lanes);
+                            return new LaneBasedOperationalPlan(gtu, partialPath, startTime, startSpeed, segmentList,
+                                lanes);
                         }
                         // we reach the (lower) end speed, larger than zero, before the end of the segment. Make two segments.
                         segmentList.add(new OperationalPlan.AccelerationSegment(t, deceleration));
@@ -253,13 +259,14 @@ public final class LaneOperationalPlanBuilder
             }
 
         }
-        return new LaneBasedOperationalPlan(path, startTime, startSpeed, segmentList, lanes);
+        return new LaneBasedOperationalPlan(gtu, path, startTime, startSpeed, segmentList, lanes);
     }
 
     /**
      * Build a plan with a path and a given start speed to try to come to a stop with a given deceleration. If the GTU can stop
      * before completing the given path, a truncated path that ends where the GTU stops is used instead. There is no guarantee
      * that the OperationalPlan will lead to a complete stop.
+     * @param gtu the GTU for debugging purposes
      * @param lanes a list of connected Lanes to do the driving on
      * @param firstLanePosition position on the first lane with the reference point of the GTU
      * @param distance distance to drive for reaching the end speed
@@ -271,11 +278,11 @@ public final class LaneOperationalPlanBuilder
      * @throws OTSGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
      *             first lane
      */
-    public static LaneBasedOperationalPlan buildStopPlan(final List<Lane> lanes, final Length.Rel firstLanePosition,
-        final Length.Rel distance, final Time.Abs startTime, final Speed startSpeed, final Acceleration deceleration)
-        throws OperationalPlanException, OTSGeometryException
+    public static LaneBasedOperationalPlan buildStopPlan(final LaneBasedGTU gtu, final List<Lane> lanes,
+        final Length.Rel firstLanePosition, final Length.Rel distance, final Time.Abs startTime,
+        final Speed startSpeed, final Acceleration deceleration) throws OperationalPlanException, OTSGeometryException
     {
-        return buildMaximumAccelerationPlan(lanes, firstLanePosition, distance, startTime, startSpeed, new Speed(0.0,
-            SpeedUnit.SI), new Acceleration(1.0, AccelerationUnit.SI), deceleration);
+        return buildMaximumAccelerationPlan(gtu, lanes, firstLanePosition, distance, startTime, startSpeed, new Speed(
+            0.0, SpeedUnit.SI), new Acceleration(1.0, AccelerationUnit.SI), deceleration);
     }
 }

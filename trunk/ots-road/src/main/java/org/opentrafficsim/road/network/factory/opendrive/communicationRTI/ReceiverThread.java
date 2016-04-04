@@ -17,6 +17,7 @@ import nl.tudelft.simulation.language.d3.DirectedPoint;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.network.factory.opendrive.data.OTSToRTIData;
 import org.opentrafficsim.road.network.factory.opendrive.data.RTIToOTSData;
@@ -42,14 +43,19 @@ public class ReceiverThread extends Thread
 
     /** */
     List<LaneBasedIndividualGTU> rtiCars;
+    
+    /** */
+    OTSNetwork network;
 
     /**
      * @param simulator the simulator
      * @param carType the GTU type
      * @param rtiCars the list of cars in the RTI software
+     * @param network the network
      * @throws SocketException when communication fails
      */
-    public ReceiverThread(OTSDEVSSimulatorInterface simulator, GTUType carType, List<LaneBasedIndividualGTU> rtiCars)
+    public ReceiverThread(OTSDEVSSimulatorInterface simulator, GTUType carType, List<LaneBasedIndividualGTU> rtiCars,
+        final OTSNetwork network)
         throws SocketException
     {
         super();
@@ -58,6 +64,7 @@ public class ReceiverThread extends Thread
         this.simulator = simulator;
         this.carType = carType;
         this.rtiCars = rtiCars;
+        this.network = network;
     }
 
     /** {@inheritDoc} */
@@ -91,7 +98,7 @@ public class ReceiverThread extends Thread
                         (Math.PI / 2 - simData.getEgoOri().getYaw()));
 
                 if (this.car == null)
-                    this.car = new SubjectiveCar("nissan", this.carType, this.simulator, position);
+                    this.car = new SubjectiveCar("nissan", this.carType, this.simulator, position, this.network);
 
                 this.car.setPosition(position);
 
