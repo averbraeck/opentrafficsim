@@ -19,7 +19,7 @@ import org.xml.sax.SAXException;
  */
 class LaneTypeTag
 {
-    /** name. */
+    /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 

@@ -54,7 +54,7 @@ public class Link extends OTSLink
     /** SPEEDAB class java.lang.Double 120.0. */
     private DoubleScalar.Rel<TimeUnit> time;
 
-    /** the lines for the animation, relative to the centroid. */
+    /** The lines for the animation, relative to the centroid. */
     private Set<Path2D> lines = null;
 
     /** */
@@ -66,7 +66,7 @@ public class Link extends OTSLink
     /** */
     private int numberOfLanes;
 
-    /** traffic behaviour. */
+    /** Traffic behaviour. */
     private TrafficBehaviourType behaviourType;
 
     /**

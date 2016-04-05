@@ -14,10 +14,10 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
  */
 public class LaneDirection
 {
-    /** the lane. */
+    /** The lane. */
     private final Lane lane;
 
-    /** the GTU direction to drive on this lane. */
+    /** The GTU direction to drive on this lane. */
     private final GTUDirectionality direction;
 
     /**

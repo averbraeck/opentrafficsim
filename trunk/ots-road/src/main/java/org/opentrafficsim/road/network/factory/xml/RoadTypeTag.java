@@ -28,15 +28,15 @@ import org.xml.sax.SAXException;
  */
 class RoadTypeTag
 {
-    /** name. */
+    /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
-    /** default speed. */
+    /** Default speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Speed speed = null;
 
-    /** default lane width. */
+    /** Default lane width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel width = null;
 
@@ -44,11 +44,11 @@ class RoadTypeTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, CrossSectionElementTag> cseTags = new LinkedHashMap<>();
 
-    /** the lane keeping policy, i.e., keep left, keep right or keep lane. */
+    /** The lane keeping policy, i.e., keep left, keep right or keep lane. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     LaneKeepingPolicy laneKeepingPolicy = null;
 
-    /** the overtaking conditions for the lanes of this road type. */
+    /** The overtaking conditions for the lanes of this road type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OvertakingConditions overtakingConditions = null;
 

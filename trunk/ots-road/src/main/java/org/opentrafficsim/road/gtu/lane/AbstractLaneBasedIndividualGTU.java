@@ -33,13 +33,13 @@ public abstract class AbstractLaneBasedIndividualGTU extends AbstractLaneBasedGT
     /** */
     private static final long serialVersionUID = 20140822L;
 
-    /** the maximum length of the GTU (parallel with driving direction). */
+    /** The maximum length of the GTU (parallel with driving direction). */
     private final Length.Rel length;
 
-    /** the maximum width of the GTU (perpendicular to driving direction). */
+    /** The maximum width of the GTU (perpendicular to driving direction). */
     private final Length.Rel width;
 
-    /** the maximum speed of the GTU (in the driving direction). */
+    /** The maximum speed of the GTU (in the driving direction). */
     private final Speed maximumVelocity;
 
     /**

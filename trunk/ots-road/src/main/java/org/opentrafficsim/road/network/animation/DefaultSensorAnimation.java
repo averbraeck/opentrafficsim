@@ -26,10 +26,10 @@ import org.opentrafficsim.road.network.lane.Sensor;
  */
 public class DefaultSensorAnimation extends Renderable2D
 {
-    /** the color of the sensor. */
+    /** The color of the sensor. */
     private final Color color;
 
-    /** the half width left and right of the center line that is used to draw the block. */
+    /** The half width left and right of the center line that is used to draw the block. */
     private final double halfWidth;
 
     /**

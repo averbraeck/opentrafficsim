@@ -28,7 +28,7 @@ class ListGeneratorTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     URI uri = null;
 
-    /** position of the sink on the link, relative to the design line, stored as a string to parse when the length is known. */
+    /** Position of the sink on the link, relative to the design line, stored as a string to parse when the length is known. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String positionStr = null;
 
@@ -40,7 +40,7 @@ class ListGeneratorTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     GTUMixTag gtuMixTag = null;
 
-    /** initial speed. */
+    /** Initial speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist = null;
 

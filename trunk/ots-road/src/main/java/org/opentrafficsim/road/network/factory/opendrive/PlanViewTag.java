@@ -29,7 +29,7 @@ import org.xml.sax.SAXException;
 class PlanViewTag
 {
 
-    /** geometryTags */
+    /** GeometryTags */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<GeometryTag> geometryTags = new ArrayList<GeometryTag>();
 

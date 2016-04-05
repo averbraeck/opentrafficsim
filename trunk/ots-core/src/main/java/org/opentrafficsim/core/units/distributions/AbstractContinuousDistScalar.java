@@ -8,6 +8,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import org.djunits.unit.Unit;
 
 /**
+ * Continuous distribution with unit.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -21,7 +22,7 @@ public abstract class AbstractContinuousDistScalar
     /** The wrapped distribution function. */
     private final DistContinuous distribution;
 
-    /** the unit. */
+    /** The unit. */
     private final Unit<?> unit;
 
     /** The dummy stream for the constant values. Is never really used. */

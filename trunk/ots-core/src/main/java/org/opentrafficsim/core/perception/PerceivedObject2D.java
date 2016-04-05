@@ -24,7 +24,7 @@ public class PerceivedObject2D implements PerceivedObject
     /** */
     private static final long serialVersionUID = 20151210L;
 
-    /** the perceived object type. */
+    /** The perceived object type. */
     PerceivedObjectType perceivedObjectType;
 
     // TODO finish PerceivedObject2D

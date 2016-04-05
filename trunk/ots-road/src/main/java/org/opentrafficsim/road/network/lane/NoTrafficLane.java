@@ -34,7 +34,7 @@ public class NoTrafficLane extends Lane
     /** Map that tells that speed is 0.0 for all GTU Types. */
     private static final Map<GTUType, Speed> SPEED_NULL = new HashMap<>();
 
-    /** the overtaking rules for a no-traffic lane. */
+    /** The overtaking rules for a no-traffic lane. */
     private static final OvertakingConditions NO_OVERTAKING = new OvertakingConditions.None();
 
     static

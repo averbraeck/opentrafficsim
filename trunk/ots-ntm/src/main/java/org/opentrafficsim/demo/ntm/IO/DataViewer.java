@@ -71,7 +71,7 @@ public class DataViewer implements OTSModelInterface
     /** */
     HashMap<String, ShapeObject> mapRoadCounts;
 
-    /** the simulator. */
+    /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
     /**

@@ -30,13 +30,13 @@ public class ShapeModel implements OTSModelInterface
     /** */
     private static final long serialVersionUID = 20140815L;
 
-    /** the simulator. */
+    /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
-    /** nodes from shape file. */
+    /** Nodes from shape file. */
     private Map<String, OTSNode> nodes;
 
-    /** links from shape file. */
+    /** Links from shape file. */
     private Map<String, Link> shpLinks;
 
     /** {@inheritDoc} */

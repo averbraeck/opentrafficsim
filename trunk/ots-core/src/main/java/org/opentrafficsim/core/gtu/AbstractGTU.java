@@ -83,7 +83,7 @@ public abstract class AbstractGTU implements GTU
     /** Turn indicator status. */
     private TurnIndicatorStatus turnIndicatorStatus = TurnIndicatorStatus.NOTPRESENT;
 
-    /** is the GTU destroyed? */
+    /** Is this GTU destroyed? */
     private boolean destroyed = false;
 
     /**

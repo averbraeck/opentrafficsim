@@ -57,19 +57,19 @@ public class OpenDriveNetworkLaneParser
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, RoadTag> roadTags = new HashMap<>();
 
-    /** the GTUTypes that have been created. */
+    /** The GTUTypes that have been created. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, GTUType> gtuTypes = new HashMap<>();
 
-    /** the LaneTypes that have been created. */
+    /** The LaneTypes that have been created. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, LaneType> laneTypes = new HashMap<>();
 
-    /** the no traffic LaneType. */
+    /** The no traffic LaneType. */
     @SuppressWarnings("visibilitymodifier")
     protected static LaneType noTrafficLaneType = new LaneType("NOTRAFFIC");
 
-    /** the simulator for creating the animation. Null if no animation needed. */
+    /** The simulator for creating the animation. Null if no animation needed. */
     @SuppressWarnings("visibilitymodifier")
     protected OTSDEVSSimulatorInterface simulator;
 
@@ -77,19 +77,19 @@ public class OpenDriveNetworkLaneParser
     @SuppressWarnings("visibilitymodifier")
     protected OTSNetwork network = null;
 
-    /** the signalTags that have been created. */
+    /** The signalTags that have been created. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, SignalTag> signalTags = new HashMap<>();
 
-    /** the trafficLights that have been created, organized by signals */
+    /** The trafficLights that have been created, organized by signals */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, Set<AbstractTrafficLightNew>> trafficLightsBySignals = new HashMap<>();
 
-    /** the trafficLights that have been created, organized by lanes */
+    /** The trafficLights that have been created, organized by lanes */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, Set<AbstractTrafficLightNew>> trafficLightsByLanes = new HashMap<>();
 
-    /** the generated animation per object. */
+    /** The generated animation per object. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     public Map<Object, Renderable2D> animationMap = new HashMap<>();
 

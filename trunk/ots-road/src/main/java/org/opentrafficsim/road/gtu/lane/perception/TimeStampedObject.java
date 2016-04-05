@@ -21,10 +21,10 @@ public class TimeStampedObject<C> implements Serializable
     /** */
     private static final long serialVersionUID = 20160129L;
 
-    /** the object. */
+    /** The object. */
     final C object;
     
-    /** the time stamp. */
+    /** The time stamp. */
     final Time.Abs timestamp;
     
     /**

@@ -34,7 +34,7 @@ public abstract class CrossSectionElement implements LocatableInterface, Seriali
     /** */
     private static final long serialVersionUID = 20150826L;
 
-    /** the id. Should be unique within the parentLink. */
+    /** The id. Should be unique within the parentLink. */
     private final String id;
 
     /** Cross Section Link to which the element belongs. */

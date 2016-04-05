@@ -24,7 +24,7 @@ public abstract class AbstractLinkBasedGTU extends AbstractGTU
     /** */
     private static final long serialVersionUID = 20151114L;
 
-    /** the network in which this GTU is (initially) registered. */
+    /** The network in which this GTU is (initially) registered. */
     private OTSNetwork network;
 
     /**

@@ -38,63 +38,63 @@ import org.xml.sax.SAXException;
  */
 public class XmlNetworkLaneParser
 {
-    /** global values from the GLOBAL tag. */
+    /** Global values from the GLOBAL tag. */
     @SuppressWarnings("visibilitymodifier")
     protected GlobalTag globalTag;
 
-    /** the UNprocessed nodes for further reference. */
+    /** The UNprocessed nodes for further reference. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, NodeTag> nodeTags = new HashMap<>();
 
-    /** the UNprocessed links for further reference. */
+    /** The UNprocessed links for further reference. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, LinkTag> linkTags = new HashMap<>();
 
-    /** the gtu tags for further reference. */
+    /** The GTU tags for further reference. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, GTUTag> gtuTags = new HashMap<>();
 
-    /** the gtumix tags for further reference. */
+    /** The GTUmix tags for further reference. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, GTUMixTag> gtuMixTags = new HashMap<>();
 
-    /** the route tags for further reference. */
+    /** The route tags for further reference. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, RouteTag> routeTags = new HashMap<>();
 
-    /** the route mix tags for further reference. */
+    /** The route mix tags for further reference. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, RouteMixTag> routeMixTags = new HashMap<>();
 
-    /** the shortest route tags for further reference. */
+    /** The shortest route tags for further reference. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, ShortestRouteTag> shortestRouteTags = new HashMap<>();
 
-    /** the shortest route mix tags for further reference. */
+    /** The shortest route mix tags for further reference. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, ShortestRouteMixTag> shortestRouteMixTags = new HashMap<>();
 
-    /** the road type tags for further reference. */
+    /** The road type tags for further reference. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, RoadTypeTag> roadTypeTags = new HashMap<>();
 
-    /** the GTUTypes that have been created. public to make it accessible from LaneAttributes. */
+    /** The GTUTypes that have been created. public to make it accessible from LaneAttributes. */
     @SuppressWarnings("visibilitymodifier")
     public Map<String, GTUType> gtuTypes = new HashMap<>();
 
-    /** the LaneTypes that have been created. */
+    /** The LaneTypes that have been created. */
     @SuppressWarnings("visibilitymodifier")
     protected Map<String, LaneType> laneTypes = new HashMap<>();
 
-    /** the no traffic LaneType. */
+    /** The no traffic LaneType. */
     @SuppressWarnings("visibilitymodifier")
     protected static LaneType noTrafficLaneType = new LaneType("NOTRAFFIC");
 
-    /** the simulator for creating the animation. Null if no animation needed. */
+    /** The simulator for creating the animation. Null if no animation needed. */
     @SuppressWarnings("visibilitymodifier")
     protected OTSDEVSSimulatorInterface simulator;
 
-    /** the network to register the GTUs in. */
+    /** The network to register the GTUs in. */
     @SuppressWarnings("visibilitymodifier")
     protected OTSNetwork network;
 

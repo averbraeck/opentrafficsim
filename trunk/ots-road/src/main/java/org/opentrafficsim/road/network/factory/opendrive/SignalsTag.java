@@ -21,11 +21,11 @@ import org.xml.sax.SAXException;
 class SignalsTag
 {
 
-    /** signalTags */
+    /** Signal tags */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<SignalTag> signalTags = new ArrayList<SignalTag>();
 
-    /** SignalReferenceTag */
+    /** Signal reference tag */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<SignalReferenceTag> signalReferenceTag = new ArrayList<SignalReferenceTag>();
 

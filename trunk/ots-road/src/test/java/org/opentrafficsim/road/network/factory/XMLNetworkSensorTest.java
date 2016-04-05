@@ -167,10 +167,10 @@ public class XMLNetworkSensorTest implements UNITS
         /** */
         private static final long serialVersionUID = 1L;
 
-        /** the sensor id. */
+        /** The sensor id. */
         private final String id;
 
-        /** the simulator. */
+        /** The simulator. */
         private final OTSDEVSSimulatorInterface simulator;
 
         /**
@@ -257,10 +257,10 @@ public class XMLNetworkSensorTest implements UNITS
         /** */
         private static final long serialVersionUID = 20150717L;
 
-        /** the simulator. */
+        /** The simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
-        /** the generated network. */
+        /** The generated network. */
         private OTSNetwork network;
 
         /** */

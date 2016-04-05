@@ -17,31 +17,31 @@ import java.util.HashMap;
  */
 public class TripInfoByDestination
 {
-    /** the first Area/Node encountered on the path to Destination. */
+    /** The first Area/Node encountered on the path to Destination. */
     private HashMap<BoundedNode, Double> routeFractionToNeighbours;
 
-    /** the first Area/Node encountered on the path to Destination. */
+    /** The first Area/Node encountered on the path to Destination. */
     private HashMap<BoundedNode, Double> accumulatedCarsToNeighbour;
 
-    /** the first Area/Node encountered on the path to Destination. */
+    /** The first Area/Node encountered on the path to Destination. */
     private HashMap<BoundedNode, Double> demandToNeighbour;
 
-    /** the first Area/Node encountered on the path to Destination. */
+    /** The first Area/Node encountered on the path to Destination. */
     private Node destination;
 
-    /** trips on their journey within an area. */
+    /** Trips on their journey within an area. */
     private double accumulatedCarsToDestination;
 
-    /** demand to neighbour. */
+    /** Demand to neighbour. */
     private double demandToDestination;
 
-    /** trips that could not yet injected. */
+    /** Trips that could not yet injected. */
     private double tripsInReservoir;
 
-    /** demand to neighbour. */
+    /** Demand to neighbour. */
     private double departedTrips;
 
-    /** demand to neighbour. */
+    /** Demand to neighbour. */
     private double arrivedTrips;
 
     /** */

@@ -48,7 +48,7 @@ public class BuildGraph
     static void buildGraph(NTMModel model, Map<String, Area> areasToUse, Map<String, Node> centroidsToUse,
         Map<String, Link> shpConnectorsToUse)
     {
-        /** debug information?. */
+        /** Debug information?. */
         final boolean DEBUG = false;
         // temporary storage for nodes and edges mapped from the number to the node
         Map<String, Node> nodeMap = new HashMap<>();

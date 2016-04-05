@@ -62,7 +62,7 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
     /** */
     private static final long serialVersionUID = 20150226L;
 
-    /** network. */
+    /** The network. */
     private OTSNetwork network = new OTSNetwork("network");
 
     /**

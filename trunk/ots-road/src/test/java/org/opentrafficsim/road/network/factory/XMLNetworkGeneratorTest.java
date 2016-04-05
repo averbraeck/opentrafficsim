@@ -149,13 +149,13 @@ public class XMLNetworkGeneratorTest implements UNITS
         /** */
         private static final long serialVersionUID = 1L;
 
-        /** the sensor id. */
+        /** The sensor id. */
         private final String id;
 
-        /** the simulator. */
+        /** The simulator. */
         private final OTSDEVSSimulatorInterface simulator;
 
-        /** last time car passed. */
+        /** Last time car passed. */
         private double lastSimTimeCheck = 0.0;
 
         /**
@@ -232,10 +232,10 @@ public class XMLNetworkGeneratorTest implements UNITS
         /** */
         private static final long serialVersionUID = 20150717L;
 
-        /** the simulator. */
+        /** The simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
-        /** the generated network. */
+        /** The generated network. */
         private OTSNetwork network;
 
         /** */

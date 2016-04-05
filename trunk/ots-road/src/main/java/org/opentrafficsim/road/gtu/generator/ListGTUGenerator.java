@@ -61,10 +61,10 @@ public class ListGTUGenerator
     /** The GTU colorer that will be linked to each generated GTU. */
     private final GTUColorer gtuColorer;
 
-    /** the lane-based strategical planner to use. */
+    /** The lane-based strategical planner to use. */
     private final LaneBasedStrategicalPlanner strategicalPlanner;
 
-    /** the LanePerception to use. */
+    /** The LanePerception to use. */
     private final LanePerceptionFull perception;
 
     /** The simulator that controls everything. */
@@ -76,7 +76,7 @@ public class ListGTUGenerator
     /** Number of GTUs created. */
     private int carsCreated = 0;
 
-    /** the network to initially register the cars in. */
+    /** The network to initially register the cars in. */
     private final OTSNetwork network;
 
     /**

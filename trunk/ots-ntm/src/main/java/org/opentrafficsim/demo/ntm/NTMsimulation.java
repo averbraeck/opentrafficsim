@@ -37,7 +37,7 @@ public class NTMsimulation
     /** */
     static int steps = 0;
 
-    /** for reporting */
+    /** For reporting */
     static int MAXSTEPS = 1080;
 
     /** */

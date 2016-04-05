@@ -112,7 +112,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  */
 public class XMLNetworks extends AbstractWrappableAnimation implements UNITS
 {
-    /** the model. */
+    /** The model. */
     private XMLNetworkModel model;
 
     /**
@@ -209,10 +209,10 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     /** */
     private static final long serialVersionUID = 20150304L;
 
-    /** the simulator. */
+    /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
-    /** network. */
+    /** The network. */
     private OTSNetwork network = new OTSNetwork("network");
 
     /** The plots. */
@@ -236,16 +236,16 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     /** The speed limit. */
     private Speed speedLimit = new Speed(60, KM_PER_HOUR);
 
-    /** number of cars created. */
+    /** Number of cars created. */
     // private int carsCreated = 0;
 
-    /** type of all GTUs (required to permit lane changing). */
+    /** Type of all GTUs (required to permit lane changing). */
     GTUType gtuType = GTUType.makeGTUType("Car");
 
-    /** the car following model, e.g. IDM Plus for cars. */
+    /** The car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModelOld carFollowingModelCars;
 
-    /** the car following model, e.g. IDM Plus for trucks. */
+    /** The car following model, e.g. IDM Plus for trucks. */
     private GTUFollowingModelOld carFollowingModelTrucks;
 
     /** The lane change model. */
@@ -257,7 +257,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     /** The random number generator used to decide what kind of GTU to generate. */
     // private Random randomGenerator = new Random(12346);
 
-    /** disttria(70,80,100). */
+    /** Probability distribution disttria(70,80,100). */
     // private DistContinuous disttria = new DistTriangular(new MersenneTwister(), 70, 80, 100);
 
     /** The route generator. */
@@ -897,7 +897,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
      */
     private class DirectionGTUColorer implements GTUColorer
     {
-        /** the legend. */
+        /** The legend. */
         private List<LegendEntry> legend = new ArrayList<>();
 
         /** */

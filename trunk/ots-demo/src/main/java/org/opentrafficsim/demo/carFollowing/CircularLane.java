@@ -88,7 +88,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  */
 public class CircularLane extends AbstractWrappableAnimation implements UNITS
 {
-    /** the model. */
+    /** The model. */
     private LaneSimulationModel model;
 
     /** Create a CircularLane simulation. */
@@ -304,22 +304,22 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
     /** */
     private static final long serialVersionUID = 20141121L;
 
-    /** network. */
+    /** The network. */
     private OTSNetwork network = new OTSNetwork("network");
 
-    /** the simulator. */
+    /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
-    /** number of cars created. */
+    /** Number of cars created. */
     private int carsCreated = 0;
 
     /** Type of all GTUs. */
     private GTUType gtuType = GTUType.makeGTUType("Car");
 
-    /** the car following model, e.g. IDM Plus for cars. */
+    /** The car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModelOld carFollowingModelCars;
 
-    /** the car following model, e.g. IDM Plus for trucks. */
+    /** The car following model, e.g. IDM Plus for trucks. */
     private GTUFollowingModelOld carFollowingModelTrucks;
 
     /** The probability that the next generated GTU is a passenger car. */
@@ -328,7 +328,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
     /** The lane change model. */
     private AbstractLaneChangeModel laneChangeModel = new Egoistic();
 
-    /** minimum distance. */
+    /** Minimum distance. */
     private Length.Rel minimumDistance = new Length.Rel(0, METER);
 
     /** The left Lane that contains simulated Cars. */
@@ -337,13 +337,13 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
     /** The right Lane that contains simulated Cars. */
     private Lane lane2;
 
-    /** the speed limit. */
+    /** The speed limit. */
     private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
-    /** the contour plots. */
+    /** The contour plots. */
     private ArrayList<LaneBasedGTUSampler> contourPlots = new ArrayList<LaneBasedGTUSampler>();
 
-    /** the trajectory plot. */
+    /** The trajectory plot. */
     private ArrayList<TrajectoryPlot> trajectoryPlots = new ArrayList<TrajectoryPlot>();
 
     /** User settable properties. */

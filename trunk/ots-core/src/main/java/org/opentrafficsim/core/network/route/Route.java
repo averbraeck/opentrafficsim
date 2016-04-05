@@ -33,7 +33,7 @@ public class Route implements Serializable
     /** The nodes of the route as a Set for quick containsNode() method. */
     private final Set<Node> nodeSet = new HashSet<>();
 
-    /** name of the route. */
+    /** Name of the route. */
     private final String id;
 
     /**

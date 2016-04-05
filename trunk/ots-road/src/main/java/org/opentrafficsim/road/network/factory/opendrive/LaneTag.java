@@ -21,27 +21,27 @@ import org.xml.sax.SAXException;
 class LaneTag
 {
 
-    /** id of the lane. */
+    /** Id of the lane. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Integer id = null;
 
-    /** type */
+    /** Type */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String type = null;
 
-    /** level */
+    /** Level */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String level = null;
 
-    /** successor lane Id. */
+    /** Successor lane Id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String successorId = null;
 
-    /** predecessor lane Id. */
+    /** Predecessor lane Id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String predecessorId = null;
 
-    /** width Tag */
+    /** Width Tag */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<WidthTag> widthTags = new ArrayList<>();
 
@@ -53,7 +53,7 @@ class LaneTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<SpeedTag> speedTags = new ArrayList<>();
 
-    /** height Tag */
+    /** Height Tag */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     HeightTag heightTag = null;
 

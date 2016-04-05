@@ -64,7 +64,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  */
 public class LaneBasedGTUTest implements UNITS
 {
-    /** network. */
+    /** The network. */
     private OTSNetwork network = new OTSNetwork("network");
 
     /** Id generator. */

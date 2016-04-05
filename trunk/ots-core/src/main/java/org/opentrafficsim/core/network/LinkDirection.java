@@ -14,10 +14,10 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
  */
 public class LinkDirection
 {
-    /** the link. */
+    /** The link. */
     private final Link link;
 
-    /** the direction on the link, with or against the design line. */
+    /** The direction on the link, with or against the design line. */
     private final GTUDirectionality direction;
 
     /**

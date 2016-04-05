@@ -50,7 +50,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  */
 public class LaneBasedTemplateGTUTypeTest implements UNITS
 {
-    /** the random stream. */
+    /** The random stream. */
     private StreamInterface stream = new MersenneTwister();
 
     /**

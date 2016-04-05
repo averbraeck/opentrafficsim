@@ -28,7 +28,7 @@ public class CellBehaviourFlow extends CellBehaviour
     /** */
     private static final long serialVersionUID = 20140903L;
 
-    /** currentSpeed: average current speed of Cars in this CELL. */
+    /** CurrentSpeed: average current speed of Cars in this CELL. */
     private DoubleScalar.Abs<SpeedUnit> currentSpeed;
 
     /**

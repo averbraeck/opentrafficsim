@@ -25,19 +25,19 @@ import org.xml.sax.SAXException;
  */
 class JunctionTag
 {
-    /** name of the junction. */
+    /** Name of the junction. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
-    /** unique ID within database. */
+    /** Unique ID within database. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String id = null;
 
-    /** a map of connections in the junction */
+    /** A map of connections in the junction */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, ConnectionTag> connectionTags = new HashMap<String, ConnectionTag>();
 
-    /** a map of controller in the junction */
+    /** A map of controller in the junction */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, ControllerTag> controllerTags = new HashMap<String, ControllerTag>();
 

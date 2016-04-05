@@ -28,7 +28,7 @@ public abstract class RoadMarkerAlong extends CrossSectionElement
     /** */
     private static final long serialVersionUID = 20141025L;
 
-    /** lateral permeability per GTU type and direction. */
+    /** Lateral permeability per GTU type and direction. */
     private final Map<GTUType, Set<LateralDirectionality>> permeabilityMap = new HashMap<>();
 
     /**

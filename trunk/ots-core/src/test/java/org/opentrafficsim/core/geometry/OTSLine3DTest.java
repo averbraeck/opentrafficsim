@@ -338,11 +338,11 @@ public class OTSLine3DTest
     }
 
     /**
-     * Test the createAndCleanOTSLine3D method
+     * Test the createAndCleanOTSLine3D method.
      * @throws OTSGeometryException should never happen
      */
     @Test
-    public void cleanTest() throws OTSGeometryException
+    public final void cleanTest() throws OTSGeometryException
     {
         OTSPoint3D[] tooShort = new OTSPoint3D[] {};
         try

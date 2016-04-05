@@ -32,91 +32,91 @@ import org.xml.sax.SAXException;
  */
 final class LinkTag
 {
-    /** name. */
+    /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
-    /** from node tag. */
+    /** From node tag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     NodeTag nodeStartTag = null;
 
-    /** to node tag. */
+    /** To node tag. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     NodeTag nodeEndTag = null;
 
-    /** road type. */
+    /** Road type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     RoadTypeTag roadTypeTag = null;
 
-    /** offset for the link at the start node. */
+    /** Offset for the link at the start node. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel offsetStart = null;
 
-    /** offset for the link at the end node. */
+    /** Offset for the link at the end node. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel offsetEnd = null;
 
-    /** extra rotation for the link at the start node. */
+    /** Extra rotation for the link at the start node. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Angle.Rel rotationStart = null;
 
-    /** extra rotation for the link at the end node. */
+    /** Extra rotation for the link at the end node. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Angle.Rel rotationEnd = null;
 
-    /** straight. */
+    /** Straight. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     StraightTag straightTag = null;
 
-    /** arc. */
+    /** Arc. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ArcTag arcTag = null;
 
-    /** bezier. */
+    /** Bezier. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     BezierTag bezierTag = null;
 
-    /** map of lane name to lane override. */
+    /** Map of lane name to lane override. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, LaneOverrideTag> laneOverrideTags = new HashMap<>();
 
-    /** map of lane name to generators. */
+    /** Map of lane name to generators. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, GeneratorTag> generatorTags = new HashMap<>();
 
-    /** map of lane name to list generators. */
+    /** Map of lane name to list generators. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, ListGeneratorTag> listGeneratorTags = new HashMap<>();
 
-    /** map of lane name to list of sensors. */
+    /** Map of lane name to list of sensors. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, List<SensorTag>> sensorTags = new HashMap<>();
 
-    /** map of lane name to blocks. */
+    /** Map of lane name to blocks. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, BlockTag> blockTags = new HashMap<>();
 
-    /** map of lane name to traffic lights. */
+    /** Map of lane name to traffic lights. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, List<TrafficLightTag>> trafficLightTags = new HashMap<>();
 
-    /** map of lane name to fill at t=0. */
+    /** Map of lane name to fill at t=0. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, FillTag> fillTags = new HashMap<>();
 
-    /** map of lane name to sink tags. */
+    /** Map of lane name to sink tags. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, SinkTag> sinkTags = new HashMap<>();
 
-    /** map of lane name to generated lanes. */
+    /** Map of lane name to generated lanes. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<String, Lane> lanes = new HashMap<>();
 
-    /** the calculated Link. */
+    /** The calculated Link. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     CrossSectionLink link = null;
 
-    /** the lane keeping policy, i.e., keep left, keep right or keep lane. */
+    /** The lane keeping policy, i.e., keep left, keep right or keep lane. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     LaneKeepingPolicy laneKeepingPolicy = null;
 

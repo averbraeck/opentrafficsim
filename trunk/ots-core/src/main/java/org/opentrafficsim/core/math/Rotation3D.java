@@ -36,7 +36,7 @@ public interface Rotation3D
      */
     class Abs
     {
-        /** the angles of the rotation in 3D (RPY coded). */
+        /** The angles of the rotation in 3D (RPY coded). */
         private final AngleVector.Abs rotation;
 
         /**
@@ -152,7 +152,7 @@ public interface Rotation3D
      */
     class Rel
     {
-        /** the rotations of the rotation in 3D (RPY coded). */
+        /** The rotations of the rotation in 3D (RPY coded). */
         private final AngleVector.Rel rotation;
 
         /**

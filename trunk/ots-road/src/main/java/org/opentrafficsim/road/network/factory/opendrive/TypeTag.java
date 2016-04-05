@@ -22,15 +22,15 @@ import org.xml.sax.SAXException;
  */
 class TypeTag
 {
-    /** start position (s-coordinate). */
+    /** Start position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel s = null;
 
-    /** road type. */
+    /** Road type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String type = null;
 
-    /** maximum allowed speed. */
+    /** Maximum allowed speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     DoubleScalar<SpeedUnit> maxSpeed = null;
 

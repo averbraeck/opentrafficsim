@@ -26,7 +26,7 @@ import org.xml.sax.SAXException;
  */
 class ShortestRouteTag
 {
-    /** name. */
+    /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
@@ -42,11 +42,11 @@ class ShortestRouteTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     NodeTag to = null;
 
-    /** time unit for the "cost" per time. */
+    /** Time unit for the "cost" per time. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Frequency costPerTime = null;
 
-    /** distance unit for the "cost" per time. */
+    /** Distance unit for the "cost" per time. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     DoubleScalar.Abs<LinearDensityUnit> costPerDistance = null;
 

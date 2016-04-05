@@ -90,7 +90,7 @@ public class BooleanProperty extends AbstractProperty<Boolean>
 
     /** {@inheritDoc} */
     @Override
-    public AbstractProperty<Boolean> deepCopy()
+    public final AbstractProperty<Boolean> deepCopy()
     {
         return new BooleanProperty(this.shortName, this.description, this.value, this.readOnly,
             this.getDisplayPriority());

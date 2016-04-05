@@ -31,10 +31,10 @@ public class LaneBasedOperationalPlan extends OperationalPlan
     /** */
     private static final long serialVersionUID = 20160120L;
 
-    /** the list of lanes that are part of this plan; these will be deregistered in case of lane change. */
+    /** The list of lanes that are part of this plan; these will be deregistered in case of lane change. */
     private final List<Lane> referenceLaneList;
     
-    /** the list of new lanes to which the GTU is driving, parallel to the referenceLaneList. */
+    /** The list of new lanes to which the GTU is driving, parallel to the referenceLaneList. */
     private final List<Lane> targetLaneList;
 
     /**

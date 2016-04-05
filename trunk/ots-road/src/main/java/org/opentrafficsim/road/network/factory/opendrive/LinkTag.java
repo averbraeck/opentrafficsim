@@ -21,43 +21,43 @@ import org.xml.sax.SAXException;
 class LinkTag
 {
 
-    /** predecessor id. */
+    /** Predecessor id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String predecessorId = null;
 
-    /** predecessor Type. */
+    /** Predecessor Type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String predecessorType = null;
 
-    /** predecessor contact point. */
+    /** Predecessor contact point. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ContactPointEnum predecessorContactPoint = null;
 
-    /** successor id. */
+    /** Successor id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String successorId = null;
 
-    /** successor Type. */
+    /** Successor Type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String successorType = null;
 
-    /** successor contact point. */
+    /** Successor contact point. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ContactPointEnum successorContactPoint = null;
 
-    /** left neighbor road id. */
+    /** Left neighbor road id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String leftNeighborRoadId = null;
 
-    /** left neighbor direction. */
+    /** Left neighbor direction. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     NeighborDirection leftNeighborDirection = null;
 
-    /** right neighbor road id. */
+    /** Right neighbor road id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String rightNeighborRoadId = null;
 
-    /** right neighbor direction. */
+    /** Right neighbor direction. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     NeighborDirection rightNeighborDirection = null;
 
@@ -226,21 +226,21 @@ class LinkTag
             throw new SAXException("ROAD: more than one LINK tag for road id=" + roadTag.id);
     }
 
-    /** enum for road linking contact points: is the link with the start or the end? */
+    /** Enum for road linking contact points: is the link with the start or the end? */
     enum ContactPointEnum
     {
-        /** start. */
+        /** Start. */
         START,
-        /** end. */
+        /** End. */
         END;
     }
 
-    /** enum for neighbor direction: same or opposite direction? */
+    /** Enum for neighbor direction: same or opposite direction? */
     enum NeighborDirection
     {
-        /** same. */
+        /** Same. */
         SAME,
-        /** opposite. */
+        /** Opposite. */
         OPPOSITE;
     }
 }

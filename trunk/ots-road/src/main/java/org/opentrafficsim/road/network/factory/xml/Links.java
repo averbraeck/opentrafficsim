@@ -72,18 +72,18 @@ final class Links
         // do not instantiate
     }
 
-    /** helper class to temporarily store coordinate. */
+    /** Helper class to temporarily store coordinate. */
     private static class XYZ
     {
-        /** x coordinate. */
+        /** The x coordinate. */
         @SuppressWarnings("checkstyle:visibilitymodifier")
         double x;
 
-        /** y coordinate. */
+        /** The y coordinate. */
         @SuppressWarnings("checkstyle:visibilitymodifier")
         double y;
 
-        /** z coordinate. */
+        /** The z coordinate. */
         @SuppressWarnings("checkstyle:visibilitymodifier")
         double z;
 

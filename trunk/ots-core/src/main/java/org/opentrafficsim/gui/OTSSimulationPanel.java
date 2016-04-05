@@ -19,6 +19,7 @@ import org.opentrafficsim.simulationengine.properties.AbstractProperty;
 import org.opentrafficsim.simulationengine.properties.CompoundProperty;
 
 /**
+ * GUI with simulator, console, control panel, status bar, etc.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -33,13 +34,13 @@ public class OTSSimulationPanel extends JPanel
     /** */
     private static final long serialVersionUID = 20150617L;
 
-    /** the simulator. */
+    /** The simulator. */
     private final OTSDEVSSimulatorInterface simulator;
 
-    /** the console to log messages. */
+    /** The console to log messages. */
     private final Console console = new Console();
 
-    /** the control panel to control start/stop, speed of the simulation. */
+    /** The control panel to control start/stop, speed of the simulation. */
     private final OTSControlPanel otsControlPanel;
 
     /** The tabbed pane that contains the different (default) screens. */

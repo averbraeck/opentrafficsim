@@ -29,15 +29,15 @@ import org.xml.sax.SAXException;
  */
 class NodeTag
 {
-    /** name. */
+    /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
-    /** coordinate (null at first, can be calculated later when connected to a link. */
+    /** Coordinate (null at first, can be calculated later when connected to a link. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OTSPoint3D coordinate = null;
 
-    /** absolute angle of the node. 0 is "East", pi/2 = "North". */
+    /** Absolute angle of the node. 0 is "East", pi/2 = "North". */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Angle.Abs angle = null;
 
@@ -45,7 +45,7 @@ class NodeTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Angle.Abs slope = null;
 
-    /** the calculated Node, either through a coordinate or after calculation. */
+    /** The calculated Node, either through a coordinate or after calculation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OTSNode node = null;
 

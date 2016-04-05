@@ -27,10 +27,10 @@ import org.opentrafficsim.road.gtu.lane.object.CSEBlock;
  */
 public class CSEBlockAnimation extends Renderable2D
 {
-    /** the fill color of the block. */
+    /** The fill color of the block. */
     private Color fillColor;
 
-    /** the point (0,0,0). */
+    /** The point (0,0,0). */
     private static final DirectedPoint POINT_000 = new DirectedPoint();
 
     /**

@@ -16,7 +16,7 @@ package org.opentrafficsim.demo.ntm.trafficdemand;
 public class TripInfoTimeDynamic extends TripInfo
 {
 
-    /** relative amount of trips within a period over the separate segments. */
+    /** Relative amount of trips within a period over the separate segments. */
     private DepartureTimeProfile departureTimeProfile;
 
     /**

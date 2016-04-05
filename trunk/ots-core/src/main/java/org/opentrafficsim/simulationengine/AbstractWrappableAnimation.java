@@ -46,17 +46,17 @@ public abstract class AbstractWrappableAnimation implements WrappableAnimation
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected boolean exitOnClose;
 
-    /** the tabbed panel so other tabs can be added by the classes that extend this class. */
+    /** The tabbed panel so other tabs can be added by the classes that extend this class. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected OTSAnimationPanel panel;
 
-    /** save the startTime for restarting the simulation. */
+    /** Save the startTime for restarting the simulation. */
     private Time.Abs savedStartTime;
 
-    /** save the startTime for restarting the simulation. */
+    /** Save the startTime for restarting the simulation. */
     private Time.Rel savedWarmupPeriod;
 
-    /** save the runLength for restarting the simulation. */
+    /** Save the runLength for restarting the simulation. */
     private Time.Rel savedRunLength;
 
     /** {@inheritDoc} */

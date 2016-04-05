@@ -19,27 +19,27 @@ import org.xml.sax.SAXException;
 class SuperElevationTag
 {
 
-    /** sequence of the geometry. */
+    /** Sequence of the geometry. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     int id = 0;
 
-    /** start position (s-coordinate). */
+    /** Start position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel s = null;
 
-    /** a position (s-coordinate). */
+    /** The a position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel a = null;
 
-    /** b position (s-coordinate). */
+    /** The b position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel b = null;
 
-    /** c position (s-coordinate). */
+    /** The c position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel c = null;
 
-    /** d position (s-coordinate) */
+    /** The d position (s-coordinate) */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel d = null;
 

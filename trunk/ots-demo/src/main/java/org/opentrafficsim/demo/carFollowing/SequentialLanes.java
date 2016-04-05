@@ -98,7 +98,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  */
 public class SequentialLanes extends AbstractWrappableAnimation implements UNITS
 {
-    /** the model. */
+    /** The model. */
     private SequentialModel model;
 
     /** Create a SequentialLanes simulation. */
@@ -333,19 +333,19 @@ class SequentialModel implements OTSModelInterface, UNITS
     /** */
     private static final long serialVersionUID = 20150130L;
 
-    /** the simulator. */
+    /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
-    /** network. */
+    /** The network. */
     private OTSNetwork network = new OTSNetwork("network");
 
     /** The nodes of our network in the order that all GTUs will visit them. */
     private ArrayList<OTSNode> nodes = new ArrayList<OTSNode>();
 
-    /** the car following model, e.g. IDM Plus for cars. */
+    /** The car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModelOld carFollowingModelCars;
 
-    /** the car following model, e.g. IDM Plus for trucks. */
+    /** The car following model, e.g. IDM Plus for trucks. */
     private GTUFollowingModelOld carFollowingModelTrucks;
 
     /** The probability that the next generated GTU is a passenger car. */
@@ -354,25 +354,25 @@ class SequentialModel implements OTSModelInterface, UNITS
     /** The lane change model. */
     private AbstractLaneChangeModel laneChangeModel = new Egoistic();
 
-    /** the headway (inter-vehicle time). */
+    /** The headway (inter-vehicle time). */
     private Time.Rel headway;
 
-    /** number of cars created. */
+    /** Number of cars created. */
     private int carsCreated = 0;
 
     /** Type of all GTUs. */
     private GTUType gtuType = GTUType.makeGTUType("Car");
 
-    /** minimum distance. */
+    /** Minimum distance. */
     private Length.Rel minimumDistance = new Length.Rel(0, METER);
 
     /** The Lane where newly created Cars initially placed on. */
     private Lane initialLane;
 
-    /** maximum distance. */
+    /** Maximum distance. */
     private Length.Rel maximumDistance = new Length.Rel(2001, METER);
 
-    /** the contour plots. */
+    /** The contour plots. */
     private ArrayList<LaneBasedGTUSampler> plots = new ArrayList<LaneBasedGTUSampler>();
 
     /** The random number generator used to decide what kind of GTU to generate. */

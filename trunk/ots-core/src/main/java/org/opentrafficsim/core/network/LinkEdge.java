@@ -28,7 +28,7 @@ public class LinkEdge<LINK extends Link> extends DefaultWeightedEdge
     /** */
     private static final long serialVersionUID = 1L;
 
-    /** edge object. */
+    /** Edge object. */
     private LINK link;
 
     /**

@@ -92,7 +92,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  */
 public class CircularRoad extends AbstractWrappableAnimation implements UNITS
 {
-    /** the model. */
+    /** The model. */
     private RoadSimulationModel model;
 
     /** Create a CircularRoad simulation. */
@@ -331,19 +331,19 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
     /** */
     private static final long serialVersionUID = 20141121L;
 
-    /** the simulator. */
+    /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
-    /** network. */
+    /** The network. */
     private OTSNetwork network = new OTSNetwork("network");
 
     /** Number of cars created. */
     private int carsCreated = 0;
 
-    /** the car following model, e.g. IDM Plus for cars. */
+    /** The car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModelOld carFollowingModelCars;
 
-    /** the car following model, e.g. IDM Plus for trucks. */
+    /** The car following model, e.g. IDM Plus for trucks. */
     private GTUFollowingModelOld carFollowingModelTrucks;
 
     /** The probability that the next generated GTU is a passenger car. */

@@ -31,7 +31,7 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
     /** The simulator engine. */
     private final OTSDEVSSimulatorInterface simulator;
 
-    /** the maximum safe deceleration. */
+    /** The maximum safe deceleration. */
     private final Acceleration maximumSafeDeceleration;
 
     /**

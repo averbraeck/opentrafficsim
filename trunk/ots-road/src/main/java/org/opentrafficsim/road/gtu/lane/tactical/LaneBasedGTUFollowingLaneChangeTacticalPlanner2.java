@@ -84,13 +84,13 @@ public class LaneBasedGTUFollowingLaneChangeTacticalPlanner2 extends AbstractLan
     /** Earliest next lane change time. */
     private Time.Abs earliestNexLaneChangeTime = Time.Abs.ZERO;
 
-    /** the defined lane change path in the space domain. null if no lane change busy. */
+    /** The defined lane change path in the space domain. null if no lane change busy. */
     private OTSLine3D laneChangePath = null;
 
-    /** progress on the lane change plan along the defined lane change path in the space domain. */
+    /** Progress on the lane change plan along the defined lane change path in the space domain. */
     private double laneChangeFraction = 0.0;
 
-    /** lane change direction for the turn indicator. */
+    /** Lane change direction for the turn indicator. */
     private LateralDirectionality laneChangeDirection;
 
     /** Bezier curve points for gradual lane change. */

@@ -184,7 +184,7 @@ public class CarTest implements UNITS
             new Speed(100, KM_PER_HOUR), new OvertakingConditions.LeftAndRight());
     }
 
-    /** the helper model. */
+    /** The helper model. */
     protected static class Model implements OTSModelInterface
     {
         /** */

@@ -35,13 +35,13 @@ import org.opentrafficsim.demo.ntm.fundamentaldiagrams.FundamentalDiagram;
  */
 public class FlowCell implements LocatableInterface
 {
-    /** link length in a length unit. */
+    /** Link length in a length unit. */
     private DoubleScalar.Rel<LengthUnit> cellLength;
 
-    /** link capacity in vehicles per hour. This is a mutable property (e.g., blockage). */
+    /** Link capacity in vehicles per hour. This is a mutable property (e.g., blockage). */
     private Frequency maxCapacity;
 
-    /** lanes in a link */
+    /** Lanes in a link */
     private int numberOfLanes;
 
     /** SPEEDAB class java.lang.Double 120.0. */
