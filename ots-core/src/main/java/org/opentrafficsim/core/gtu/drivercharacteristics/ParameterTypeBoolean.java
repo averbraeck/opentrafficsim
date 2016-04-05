@@ -17,13 +17,13 @@ import org.djunits.value.vdouble.scalar.Dimensionless;
  */
 public class ParameterTypeBoolean extends AbstractParameterType<Dimensionless>
 {
-	/**
+    /**
      * Constructor.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
      */
-    public ParameterTypeBoolean(String id, String description, boolean defaultValue)
+    public ParameterTypeBoolean(final String id, final String description, final boolean defaultValue)
     {
         super(id, description, Dimensionless.class, new Dimensionless(defaultValue ? 1.0 : 0.0, DimensionlessUnit.SI));
     }

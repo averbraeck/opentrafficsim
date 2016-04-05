@@ -17,15 +17,23 @@ import org.djunits.value.vdouble.scalar.Dimensionless;
  */
 public class ParameterTypeInteger extends AbstractParameterType<Dimensionless>
 {
-	/**
+    /**
      * Constructor with default value.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
      */
-    public ParameterTypeInteger(String id, String description, int defaultValue)
+    public ParameterTypeInteger(final String id, final String description, final int defaultValue)
     {
         super(id, description, Dimensionless.class, new Dimensionless(defaultValue, DimensionlessUnit.SI));
+        try
+        {
+            check(defaultValue);
+        }
+        catch (ParameterException exception)
+        {
+            throw new RuntimeException("Default value does not comply with constraints.", exception);
+        }
     }
 
     /**
@@ -33,10 +41,20 @@ public class ParameterTypeInteger extends AbstractParameterType<Dimensionless>
      * @param value Value to check with constraints.
      * @throws ParameterException If the value does not comply with constraints.
      */
-    public void check(double value) throws ParameterException
+    public void check(final double value) throws ParameterException
     {
         //
     }
-
+    
+    /**
+     * Method to overwrite for checks with constraints.
+     * @param value Value to check with constraints.
+     * @param bc Set of behavioral characteristics. 
+     * @throws ParameterException If the value does not comply with constraints.
+     */
+    public void check(final double value, final BehavioralCharacteristics bc) throws ParameterException
+    {
+        //
+    }
 
 }
