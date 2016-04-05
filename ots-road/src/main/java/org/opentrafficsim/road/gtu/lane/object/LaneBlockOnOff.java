@@ -67,6 +67,9 @@ public class LaneBlockOnOff extends AbstractTrafficLight
         }
     }
 
+    /**
+     * Update the block and re-schedule.
+     */
     protected void changeColorTime()
     {
         setBlocked(!isBlocked());

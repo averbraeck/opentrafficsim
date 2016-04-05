@@ -871,6 +871,10 @@ public abstract class AbstractLanePerception implements LanePerception
         return this.gtu;
     }
 
+    /**
+     * Retrieve the last perceived lane path info.
+     * @return LanePathInfo
+     */
     public final LanePathInfo getLanePathInfo()
     {
         return this.lanePathInfo.getObject();
