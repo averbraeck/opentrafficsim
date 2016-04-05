@@ -488,7 +488,7 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
 
     /**
      * Storage for one sample of data collected with mean speed [m/s] and number of vehicles per km. Flow per second can be
-     * calculated from these two numbers as
+     * calculated from these two numbers; currently the flow is provided (but never used).
      * <p>
      * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * </p>

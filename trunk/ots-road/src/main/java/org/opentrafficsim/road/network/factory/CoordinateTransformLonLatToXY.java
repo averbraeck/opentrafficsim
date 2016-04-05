@@ -62,6 +62,12 @@ public class CoordinateTransformLonLatToXY implements CoordinateTransform
         return new float[]{(float) dt[0], (float) dt[1]};
     }
 
+    /**
+     * Convert WGS84 coordinates to Cartesian coordinates.
+     * @param lon double; longitude in degrees
+     * @param lat double; latitude in degrees
+     * @return double[]
+     */
     public double[] doubleTransformWSG84toCartesianXY(double lon, double lat)
     {
         double latrad = lat / 180.0 * Math.PI;

@@ -189,4 +189,12 @@ public class ListGTUGenerator
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "ListGTUGenerator [name=" + this.name + ", lane=" + this.lane + ", gtuType=" + this.gtuType + ", initialSpeed="
+                + this.initialSpeed + ", carsCreated=" + this.carsCreated + "]";
+    }
+
 }

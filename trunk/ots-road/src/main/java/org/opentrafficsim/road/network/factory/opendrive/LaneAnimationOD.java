@@ -50,11 +50,18 @@ public class LaneAnimationOD extends Renderable2D
         this.color = color;
     }
 
+    /**
+     * Paint a road stripe.
+     * @param graphics Graphics2D; the graphics context
+     * @param color Color; the color of the road stripe
+     * @param referencePoint DirectedPoint; offset of the reference point of the lane from the origin
+     * @param line OTSLine3D; the coordinates of the center line of the stripe
+     */
     public static void paintLine(final Graphics2D graphics, final Color color, final DirectedPoint referencePoint,
         final OTSLine3D line)
     {
         graphics.setColor(color);
-        graphics.setStroke(new BasicStroke(0.1f));
+        graphics.setStroke(new BasicStroke(0.1f)); // width of the stripe is 0.1m
         Path2D.Double path = new Path2D.Double();
         boolean start = true;
         for (OTSPoint3D point : line.getPoints())
@@ -72,6 +79,15 @@ public class LaneAnimationOD extends Renderable2D
         graphics.draw(path);
     }
 
+    /**
+     * Draw one arrow on the lane at a specified relative position in a specified color.
+     * @param graphics Graphics2D; the graphics context
+     * @param color Color; the color of the arrow
+     * @param ref DirectedPoint; offset of the reference point of the lane from the origin
+     * @param line OTSLine3D; the coordinates of the center line of the lane
+     * @param fraction double; the relative position on the lane
+     * @param dir LongitudinalDirectionality; the driving direction of the lane
+     */
     private static void paintArrow(final Graphics2D graphics, final Color color, final DirectedPoint ref,
         final OTSLine3D line, final double fraction, final LongitudinalDirectionality dir)
     {

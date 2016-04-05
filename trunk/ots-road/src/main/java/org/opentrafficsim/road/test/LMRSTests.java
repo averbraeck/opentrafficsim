@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import javax.measure.quantity.Velocity;
 import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -18,7 +17,6 @@ import nl.tudelft.simulation.language.io.URLResource;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
