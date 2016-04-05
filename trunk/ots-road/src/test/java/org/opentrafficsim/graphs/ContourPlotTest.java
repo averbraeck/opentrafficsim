@@ -429,7 +429,7 @@ public class ContourPlotTest implements UNITS
         // System.out.println("Running simulator from " + simulator.getSimulatorTime().get() + " to "
         // + gtuFollowingModel.timeAfterCompletionOfStep(0));
         double stopTime = gtuFollowingModel.timeAfterCompletionOfStep(0).si;
-        simulator.runUpTo(new Time.Abs(stopTime + Math.ulp(stopTime), TimeUnit.SI));
+        simulator.runUpToAndIncluding(new Time.Abs(stopTime, TimeUnit.SI));
         while (simulator.isRunning())
         {
             try
@@ -556,7 +556,7 @@ public class ContourPlotTest implements UNITS
         // System.out.println("Running simulator from " + simulator.getSimulatorTime().get() + " to "
         // + gtuFollowingModel.timeAfterCompletionOfStep(1));
         stopTime = gtuFollowingModel.timeAfterCompletionOfStep(1).si;
-        simulator.runUpTo(new Time.Abs(stopTime + Math.ulp(stopTime), TimeUnit.SI));
+        simulator.runUpToAndIncluding(new Time.Abs(stopTime, TimeUnit.SI));
         while (simulator.isRunning())
         {
             try
