@@ -495,7 +495,7 @@
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>${maven.checkstyle.version}</version>
         <configuration>
-          <configLocation>development/dsol-checks_6_11.xml</configLocation>
+          <configLocation>development/dsol-checks.xml</configLocation>
           <suppressionsLocation>development/checkstyle_suppressions.xml</suppressionsLocation>
           <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
         </configuration>
