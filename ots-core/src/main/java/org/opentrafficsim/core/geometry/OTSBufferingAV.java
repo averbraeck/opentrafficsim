@@ -681,6 +681,14 @@ public final class OTSBufferingAV
         return new OTSLine3D(otsPoints);
     }
 
+    /**
+     * Make a polygon (the caller is always supplying coordinates of the vertices of a rectangle (?)) of four points.
+     * @param p1 Point2D.Double; the first point
+     * @param p2 Point2D.Double; the second point
+     * @param p3 Point2D.Double; the third point
+     * @param p4 Point2D.Double; the fourth point
+     * @return Path2D.Double; the polygon
+     */
     private static Path2D.Double makeRectangle(final Point2D.Double p1, final Point2D.Double p2, final Point2D.Double p3,
             final Point2D.Double p4)
     {
@@ -923,11 +931,21 @@ public final class OTSBufferingAV
         }
     }
 
+    /**
+     * Construct a string describing a Line2D.Double.
+     * @param l Line2D.Double; the line
+     * @return String
+     */
     private static String p(final Line2D.Double l)
     {
         return "[(" + l.x1 + "," + l.y1 + ")->(" + l.x2 + "," + l.y2 + ")]";
     }
 
+    /**
+     * Construct a string describing a list of Line2D.Double entries.
+     * @param c List&lt;Line2D.Double&ft;; the list
+     * @return String
+     */
     private static String p(final List<Line2D.Double> c)
     {
         String s = "contour [";
