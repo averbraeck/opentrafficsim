@@ -169,7 +169,7 @@
 		</module>
 		<module name="NoWhitespaceAfter">
 			<property name="severity" value="warning" />
-            <property name="tokens" value="INC, DEC, UNARY_MINUS, UNARY_PLUS, BNOT, LNOT, DOT, TYPECAST, ARRAY_DECLARATOR, INDEX_OP"/>
+            <property name="tokens" value="INC, DEC, UNARY_MINUS, UNARY_PLUS, BNOT, LNOT, DOT, ARRAY_DECLARATOR, INDEX_OP"/>
 		</module>
 		<module name="NoWhitespaceBefore">
 			<property name="severity" value="warning" />
