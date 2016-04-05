@@ -15,7 +15,7 @@ package org.opentrafficsim.core.gtu.drivercharacteristics;
 public class ParameterException extends Exception
 {
 
-    /** */
+    /** Serialization id. */
     private static final long serialVersionUID = 20160325L;
 
     /**
@@ -60,8 +60,8 @@ public class ParameterException extends Exception
      * @param enableSuppression Whether to enable suppression.
      * @param writableStackTrace Whether or not the stack trace should be writable.
      */
-    public ParameterException(final String message, final Throwable cause, final boolean enableSuppression,
-            final boolean writableStackTrace)
+    public ParameterException(final String message, final Throwable cause, final boolean enableSuppression, 
+        final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);
     }

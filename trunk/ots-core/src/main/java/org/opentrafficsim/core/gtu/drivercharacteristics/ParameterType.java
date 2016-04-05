@@ -17,14 +17,14 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  */
 public class ParameterType<T extends DoubleScalar.Rel<?>> extends AbstractParameterType<T>
 {
-	/**
+    /**
      * Constructor with default value.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param valueClass Class of the value.
      * @param defaultValue Default value.
      */
-    public ParameterType(String id, String description, Class<T> valueClass, T defaultValue)
+    public ParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue)
     {
         super(id, description, valueClass, defaultValue);
     }
@@ -35,7 +35,7 @@ public class ParameterType<T extends DoubleScalar.Rel<?>> extends AbstractParame
      * @param description Parameter description or full name.
      * @param valueClass Class of the value.
      */
-    public ParameterType(String id, String description, Class<T> valueClass)
+    public ParameterType(final String id, final String description, final Class<T> valueClass)
     {
         super(id, description, valueClass);
     }
@@ -55,7 +55,19 @@ public class ParameterType<T extends DoubleScalar.Rel<?>> extends AbstractParame
      * @throws ParameterException If the value does not comply with constraints.
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public void check(T value) throws ParameterException
+    protected void check(final T value) throws ParameterException
+    {
+        //
+    }
+    
+    /**
+     * Method to overwrite for checks with constraints.
+     * @param value Value to check with constraints.
+     * @param bc Set of behavioral characteristics. 
+     * @throws ParameterException If the value does not comply with constraints.
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    protected void check(final T value, final BehavioralCharacteristics bc) throws ParameterException
     {
         //
     }

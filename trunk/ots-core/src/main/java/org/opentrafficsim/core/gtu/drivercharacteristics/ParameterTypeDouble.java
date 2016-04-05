@@ -17,15 +17,23 @@ import org.djunits.value.vdouble.scalar.Dimensionless;
  */
 public class ParameterTypeDouble extends AbstractParameterType<Dimensionless>
 {
-	/**
+    /**
      * Constructor with default value.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param defaultValue Default value.
      */
-    public ParameterTypeDouble(String id, String description, double defaultValue)
+    public ParameterTypeDouble(final String id, final String description, final double defaultValue)
     {
         super(id, description, Dimensionless.class, new Dimensionless(defaultValue, DimensionlessUnit.SI));
+        try
+        {
+            check(defaultValue);
+        }
+        catch (ParameterException exception)
+        {
+            throw new RuntimeException("Default value does not comply with constraints.", exception);
+        }
     }
 
     /**
@@ -33,7 +41,7 @@ public class ParameterTypeDouble extends AbstractParameterType<Dimensionless>
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      */
-    public ParameterTypeDouble(String id, String description)
+    public ParameterTypeDouble(final String id, final String description)
     {
         this(id, description, Double.NaN);
     }
@@ -43,7 +51,18 @@ public class ParameterTypeDouble extends AbstractParameterType<Dimensionless>
      * @param value Value to check with constraints.
      * @throws ParameterException If the value does not comply with constraints.
      */
-    public void check(double value) throws ParameterException
+    public void check(final double value) throws ParameterException
+    {
+        //
+    }
+    
+    /**
+     * Method to overwrite for checks with constraints.
+     * @param value Value to check with constraints.
+     * @param bc Set of behavioral characteristics. 
+     * @throws ParameterException If the value does not comply with constraints.
+     */
+    public void check(final double value, final BehavioralCharacteristics bc) throws ParameterException
     {
         //
     }

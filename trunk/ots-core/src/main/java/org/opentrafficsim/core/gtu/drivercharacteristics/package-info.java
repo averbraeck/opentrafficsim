@@ -1,4 +1,3 @@
-
 /**
  * List of behavioral characteristics in the form of parameters.
  * @author Wouter Schakel
