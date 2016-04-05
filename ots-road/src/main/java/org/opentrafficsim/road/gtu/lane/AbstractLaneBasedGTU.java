@@ -312,7 +312,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
             scheduleTriggers();
         }
 
-        // else
+        else
         // MOVEMENT_PATH_BASED
         {
             try
