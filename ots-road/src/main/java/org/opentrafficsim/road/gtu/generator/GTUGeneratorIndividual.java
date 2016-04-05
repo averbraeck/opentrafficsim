@@ -31,16 +31,16 @@ import org.opentrafficsim.road.network.lane.Lane;
  */
 public class GTUGeneratorIndividual extends AbstractGTUGenerator
 {
-    /** simulator to schedule next arrival events. */
+    /** Simulator to schedule next arrival events. */
     private final OTSDEVSSimulatorInterface simulator;
 
-    /** distribution of the length of the GTU. */
+    /** Distribution of the length of the GTU. */
     private final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> lengthDist;
 
-    /** distribution of the width of the GTU. */
+    /** Distribution of the width of the GTU. */
     private final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDist;
 
-    /** distribution of the maximum speed of the GTU. */
+    /** Distribution of the maximum speed of the GTU. */
     private final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeedDist;
 
     /**

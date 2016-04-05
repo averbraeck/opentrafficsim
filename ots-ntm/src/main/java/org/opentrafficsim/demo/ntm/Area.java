@@ -101,7 +101,7 @@ public class Area extends GeoObject implements LocatableInterface
     /** */
     private ParametersNTM parametersNTM;
 
-    /** polygon for drawing relative to centroid */
+    /** Polygon for drawing relative to centroid */
     private Set<Path2D> polygons = null;
 
     /** */

@@ -21,16 +21,16 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
 public class InputNTM
 {
 
-    /** debugging. */
+    /** Debugging. */
     public boolean DEBUG = false;
 
-    /** debugging. */
+    /** Debugging. */
     public boolean WRITEDATA = false;
 
-    /** debugging. */
+    /** Debugging. */
     public boolean paint = false;
 
-    /** use the bigger areas (true) or the detailed areas (false). */
+    /** Use the bigger areas (true) or the detailed areas (false). */
     public boolean COMPRESS_AREAS = false;
 
     /** */

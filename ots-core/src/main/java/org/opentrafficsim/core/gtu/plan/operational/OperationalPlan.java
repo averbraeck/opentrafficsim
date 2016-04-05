@@ -59,7 +59,7 @@ public class OperationalPlan implements Serializable
     /** The speed at the end of the operational plan. */
     private final Speed endSpeed;
 
-    /** wait plan? */
+    /** Is this operational plan a wait plan? */
     private final boolean waitPlan;
     
     /** GTU for debugging purposes. */
@@ -609,11 +609,11 @@ public class OperationalPlan implements Serializable
         /** */
         private static final long serialVersionUID = 20151114L;
 
-        /** the duration of the acceleration or speed for this segment. */
+        /** The duration of the acceleration or speed for this segment. */
         @SuppressWarnings("checkstyle:visibilitymodifier")
         protected final Time.Rel duration;
 
-        /** the initial speed for this segment. */
+        /** The initial speed for this segment. */
         @SuppressWarnings("checkstyle:visibilitymodifier")
         protected Speed v0;
 
@@ -753,7 +753,7 @@ public class OperationalPlan implements Serializable
         /** */
         private static final long serialVersionUID = 20151114L;
 
-        /** the acceleration for the given duration. */
+        /** The acceleration for the given duration. */
         private final Acceleration acceleration;
 
         /**

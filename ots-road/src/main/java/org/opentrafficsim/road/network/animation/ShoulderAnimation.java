@@ -24,7 +24,7 @@ import org.opentrafficsim.road.network.lane.Shoulder;
  */
 public class ShoulderAnimation extends Renderable2D
 {
-    /** the animation color. */
+    /** The animation color. */
     private final Color color;
 
     /**

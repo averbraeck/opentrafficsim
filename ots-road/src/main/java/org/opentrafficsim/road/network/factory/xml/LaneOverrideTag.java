@@ -25,19 +25,19 @@ import org.xml.sax.SAXException;
  */
 class LaneOverrideTag
 {
-    /** speed limit. */
+    /** Speed limit. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Speed speed = null;
 
-    /** direction. */
+    /** Direction. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     LongitudinalDirectionality direction;
 
-    /** animation color. */
+    /** Animation color. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Color color;
 
-    /** the overtaking conditions for this lane, i.e., overtake on the left, and on the right under 25 km/h. */
+    /** The overtaking conditions for this lane, i.e., overtake on the left, and on the right under 25 km/h. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OvertakingConditions overtakingConditions = null;
 

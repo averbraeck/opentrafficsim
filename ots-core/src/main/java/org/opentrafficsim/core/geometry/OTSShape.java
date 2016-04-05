@@ -32,7 +32,7 @@ public class OTSShape extends OTSLine3D
     /** */
     private static final long serialVersionUID = 20160331;
 
-    /** underlying shape (only constructed if needed). */
+    /** The underlying shape (only constructed if needed). */
     private Path2D shape = null;
 
     /**

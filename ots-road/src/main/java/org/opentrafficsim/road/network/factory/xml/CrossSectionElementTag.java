@@ -30,61 +30,61 @@ import org.xml.sax.SAXException;
  */
 class CrossSectionElementTag
 {
-    /** element types. */
+    /** Element types. */
     @SuppressWarnings({"javadoc", "checkstyle:javadocvariable"})
     enum ElementType
     {
         LANE, NOTRAFFICLANE, SHOULDER, STRIPE
     };
 
-    /** stripe types. */
+    /** Stripe types. */
     @SuppressWarnings({"javadoc", "checkstyle:javadocvariable"})
     enum StripeType
     {
         SOLID, DASHED, BLOCKED, DOUBLE, LEFTONLY, RIGHTONLY
     };
 
-    /** type. */
+    /** Type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ElementType elementType = null;
 
-    /** name. */
+    /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
-    /** lane type name in case elementType is a LANE. */
+    /** Lane type name in case elementType is a LANE. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String laneTypeString = null;
 
-    /** lane type in case elementType is a LANE. */
+    /** Lane type in case elementType is a LANE. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     LaneType laneType = XmlNetworkLaneParser.noTrafficLaneType;
 
-    /** stripe type. */
+    /** Stripe type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     StripeType stripeType = null;
 
-    /** offset. */
+    /** Offset. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel offset = null;
 
-    /** speed limit. */
+    /** Speed limit. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Speed speed = null;
 
-    /** lane width. */
+    /** Lane width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel width = null;
 
-    /** direction. */
+    /** Direction. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     LongitudinalDirectionality direction;
 
-    /** animation color. */
+    /** Animation color. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Color color;
 
-    /** overtaking conditions. */
+    /** Overtaking conditions. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OvertakingConditions overtakingConditions = new OvertakingConditions.LeftAndRight();
 

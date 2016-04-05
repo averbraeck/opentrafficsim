@@ -20,59 +20,59 @@ import org.xml.sax.SAXException;
  */
 class ObjectTag
 {
-    /** s. */
+    /** Parameter s. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel s = null;
 
-    /** t. */
+    /** Parameter t. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel t = null;
 
-    /** id. */
+    /** Id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String id = null;
 
-    /** name. */
+    /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
-    /** orientation. */
+    /** Orientation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String orientation = null;
 
-    /** zOffset. */
+    /** The zOffset. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel zOffset = null;
 
-    /** type. */
+    /** Type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String type = null;
 
-    /** validLength. */
+    /** Valid length. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel validLength = null;
 
-    /** length. */
+    /** Length. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel length = null;
 
-    /** width. */
+    /** Width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel width = null;
 
-    /** height. */
+    /** Height. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel height = null;
 
-    /** hdg. */
+    /** The hdg. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Angle.Rel hdg = null;
 
-    /** pitch. */
+    /** Pitch. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Angle.Rel pitch = null;
 
-    /** roll. */
+    /** Roll. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Angle.Rel roll = null;
 

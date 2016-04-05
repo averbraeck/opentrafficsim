@@ -80,7 +80,7 @@ public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T
      * Construct a deep copy of this property (duplicates everything except immutable fields).
      * @return AbstractProperty&lt;T&gt;; a deep copy of this AbstractProperty
      */
-    abstract public AbstractProperty<T> deepCopy();
+    public abstract AbstractProperty<T> deepCopy();
 
     /** {@inheritDoc} */
     @Override

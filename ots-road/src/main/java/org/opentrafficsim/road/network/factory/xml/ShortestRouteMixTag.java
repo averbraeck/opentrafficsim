@@ -21,15 +21,15 @@ import org.xml.sax.SAXException;
  */
 class ShortestRouteMixTag
 {
-    /** name. */
+    /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
-    /** routes. */
+    /** Routes. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<ShortestRouteTag> routes = new ArrayList<ShortestRouteTag>();
 
-    /** weights. */
+    /** Weights. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<Double> weights = new ArrayList<Double>();
 

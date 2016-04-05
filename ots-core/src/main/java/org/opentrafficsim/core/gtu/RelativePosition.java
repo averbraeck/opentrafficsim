@@ -22,16 +22,16 @@ public class RelativePosition implements Serializable
     /** */
     private static final long serialVersionUID = 20141231L;
 
-    /** positive x is in the normal direction of movement. */
+    /** Positive x is in the normal direction of movement. */
     private final Length.Rel dx;
 
-    /** positive y is left compared to the normal direction of movement (seen from the top). */
+    /** Positive y is left compared to the normal direction of movement (seen from the top). */
     private final Length.Rel dy;
 
-    /** positive z is up. */
+    /** Positive z is up. */
     private final Length.Rel dz;
 
-    /** type of relative position (FRONT, BACK, etc.). */
+    /** Type of relative position (FRONT, BACK, etc.). */
     private final TYPE type;
 
     /** Standard relative position type FRONT. */
@@ -49,7 +49,7 @@ public class RelativePosition implements Serializable
     /** Standard relative position type DRIVER. */
     public static final TYPE DRIVER = new TYPE("DRIVER");
 
-    /** the reference position (always 0, 0, 0). */
+    /** The reference position (always 0, 0, 0). */
     public static final RelativePosition REFERENCE_POSITION = new RelativePosition(new Length.Rel(0.0d, LengthUnit.SI),
         new Length.Rel(0.0d, LengthUnit.SI), new Length.Rel(0.0d, LengthUnit.SI), RelativePosition.REFERENCE);
 
@@ -193,7 +193,7 @@ public class RelativePosition implements Serializable
         /** */
         private static final long serialVersionUID = 20141231L;
 
-        /** the type name. */
+        /** The type name. */
         private final String name;
 
         /**

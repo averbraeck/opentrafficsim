@@ -11,6 +11,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
+ * Parser for length with unit.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -21,10 +22,10 @@ import org.opentrafficsim.core.network.NetworkException;
  */
 public final class LengthUnits implements UNITS
 {
-    /** the length units. */
+    /** The length units. */
     public static final Map<String, LengthUnit> LENGTH_UNITS = new HashMap<>();
 
-    /** the per-length units. */
+    /** The per-length units. */
     public static final Map<String, LinearDensityUnit> PER_LENGTH_UNITS = new HashMap<>();
 
     static

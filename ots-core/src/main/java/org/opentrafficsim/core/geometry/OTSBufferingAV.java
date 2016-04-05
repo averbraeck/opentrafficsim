@@ -336,6 +336,7 @@ public final class OTSBufferingAV
         System.out.println();
     }
 
+    /** Number of segments to approximate a half circle. (?) */
     private static final int LINES2PI = 128;
 
     /**
@@ -649,6 +650,11 @@ public final class OTSBufferingAV
         }
     }
 
+    /**
+     * Produce a textual representation of an OTSLine3D.
+     * @param line OTSLine3D; the line
+     * @return String
+     */
     private static String toJava(final OTSLine3D line)
     {
         StringBuffer s = new StringBuffer();
@@ -671,6 +677,12 @@ public final class OTSBufferingAV
         return s.toString();
     }
 
+    /**
+     * Make an OTSLine3D that connect a List of Point2D. Z-component is set to 0.0
+     * @param points List&lt;Point2D&gt;; the points
+     * @return OTSLine3D
+     * @throws OTSGeometryException when two consecutive points have the same location, or the number of points is less than 2
+     */
     private static OTSLine3D makeOTSLine3D(final List<Point2D> points) throws OTSGeometryException
     {
         List<OTSPoint3D> otsPoints = new ArrayList<>();
@@ -706,17 +718,18 @@ public final class OTSBufferingAV
      * @param angle double; the angle
      * @return double; the normalized angle
      */
-    private static double norm(double angle)
+    private static double norm(final double angle)
     {
-        while (angle < 0)
+        double result = angle;
+        while (result < 0)
         {
-            angle += 2.0 * Math.PI;
+            result += 2.0 * Math.PI;
         }
-        while (angle > 2.0 * Math.PI)
+        while (result > 2.0 * Math.PI)
         {
-            angle -= 2.0 * Math.PI;
+            result -= 2.0 * Math.PI;
         }
-        return angle;
+        return result;
     }
 
     /**

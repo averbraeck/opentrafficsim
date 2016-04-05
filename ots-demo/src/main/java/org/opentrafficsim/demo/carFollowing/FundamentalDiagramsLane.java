@@ -77,7 +77,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  */
 public class FundamentalDiagramsLane extends AbstractWrappableAnimation implements UNITS
 {
-    /** the model. */
+    /** The model. */
     private FundamentalDiagramLanePlotsModel model;
 
     /** Create a FundamentalDiagrams simulation. */
@@ -219,25 +219,25 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         /** */
         private static final long serialVersionUID = 20140820L;
 
-        /** network. */
+        /** The network. */
         private OTSNetwork network = new OTSNetwork("network");
 
-        /** the simulator. */
+        /** The simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
-        /** the headway (inter-vehicle time). */
+        /** The headway (inter-vehicle time). */
         private Time.Rel headway;
 
-        /** number of cars created. */
+        /** Number of cars created. */
         private int carsCreated = 0;
 
         /** Type of all GTUs. */
         private GTUType gtuType = GTUType.makeGTUType("Car");
 
-        /** the car following model, e.g. IDM Plus for cars. */
+        /** The car following model, e.g. IDM Plus for cars. */
         private GTUFollowingModelOld carFollowingModelCars;
 
-        /** the car following model, e.g. IDM Plus for trucks. */
+        /** The car following model, e.g. IDM Plus for trucks. */
         private GTUFollowingModelOld carFollowingModelTrucks;
 
         /** The probability that the next generated GTU is a passenger car. */
@@ -249,19 +249,19 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
         /** The blocking car. */
         private LaneBasedIndividualGTU block = null;
 
-        /** starting x-position. */
+        /** Starting x-position. */
         private Length.Rel startX = new Length.Rel(0, METER);
 
-        /** length per lane. */
+        /** Length per lane. */
         private Length.Rel laneLength = new Length.Rel(500, METER);
 
         /** The Lanes containing the simulated Cars. */
         private List<Lane> lanes = new ArrayList<>();
 
-        /** the speed limit. */
+        /** The speed limit. */
         private Speed speedLimit = new Speed(100, KM_PER_HOUR);
 
-        /** the fundamental diagram plots. */
+        /** The fundamental diagram plots. */
         private ArrayList<FundamentalDiagramLane> fundamentalDiagramsLane = new ArrayList<>();
 
         /** User settable properties. */

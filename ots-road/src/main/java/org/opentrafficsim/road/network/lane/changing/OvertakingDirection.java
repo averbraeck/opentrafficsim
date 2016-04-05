@@ -12,15 +12,15 @@ package org.opentrafficsim.road.network.lane.changing;
  */
 public enum OvertakingDirection
 {
-    /** left only. */
+    /** Left only. */
     LEFT,
 
-    /** right only. */
+    /** Right only. */
     RIGHT,
 
-    /** left and right are both allowed. */
+    /** Left and right are both allowed. */
     BOTH,
 
-    /** neither left nor right are allowed. */
+    /** Neither left nor right are allowed. */
     NONE;
 }

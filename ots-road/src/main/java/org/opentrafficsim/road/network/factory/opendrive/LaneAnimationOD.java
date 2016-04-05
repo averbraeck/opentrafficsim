@@ -33,7 +33,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  */
 public class LaneAnimationOD extends Renderable2D
 {
-    /** color of the lane. */
+    /** Color of the lane. */
     private final Color color;
 
     /**

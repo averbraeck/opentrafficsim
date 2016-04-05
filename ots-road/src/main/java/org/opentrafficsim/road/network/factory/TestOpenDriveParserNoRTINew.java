@@ -184,7 +184,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
         /** */
         private static final long serialVersionUID = 20150811L;
 
-        /** the simulator. */
+        /** The simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
         private List<LaneBasedIndividualGTU> rtiCars;
@@ -210,7 +210,7 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
         /** */
         private GTUType carType;
         
-        /** last id */
+        /** Last id */
         private int lastId = 0;
         
         /** */

@@ -22,11 +22,11 @@ import org.xml.sax.SAXException;
  */
 class SpeedTag
 {
-    /** sOffst. */
+    /** The s offst. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel sOffst = null;
 
-    /** max speed. */
+    /** Maximum speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Speed max = null;
 

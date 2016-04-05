@@ -29,6 +29,7 @@ import org.opentrafficsim.simulationengine.SimpleAnimator;
 import org.opentrafficsim.simulationengine.WrappableAnimation;
 
 /**
+ * Animation panel with various controls.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -43,7 +44,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     /** */
     private static final long serialVersionUID = 20150617L;
 
-    /** the animation panel on tab position 0. */
+    /** The animation panel on tab position 0. */
     private final AnimationPanel animationPanel;
 
     /** Border panel in which the animation is shown. */
@@ -61,7 +62,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     /** The animation buttons. */
     private final ArrayList<JButton> buttons = new ArrayList<JButton>();
 
-    /** the formatter for the world coordinates. */
+    /** The formatter for the world coordinates. */
     private static final NumberFormat FORMATTER = NumberFormat.getInstance();
 
     /** Has the window close handler been registered? */
@@ -72,7 +73,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected boolean windowExited = false;
 
-    /** initialize the formatter. */
+    /** Initialize the formatter. */
     static
     {
         FORMATTER.setMaximumFractionDigits(3);
@@ -238,7 +239,7 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
     /** Install the dispose on close when the OTSControlPanel is registered as part of a frame. */
     protected class DisposeOnCloseThread extends Thread
     {
-        /** the current container. */
+        /** The current container. */
         private OTSAnimationPanel panel;
 
         /**

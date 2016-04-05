@@ -180,7 +180,7 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
         /** */
         private static final long serialVersionUID = 20150811L;
 
-        /** the simulator. */
+        /** The simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
         private List<LaneBasedIndividualGTU> rtiCars;

@@ -33,7 +33,7 @@ public class ShapeObject implements LocatableInterface
     /** */
     private ArrayList<String> values;
 
-    /** the lines for the animation, relative to the centroid. */
+    /** The lines for the animation, relative to the centroid. */
     private Set<Path2D> lines = null;
 
     /**

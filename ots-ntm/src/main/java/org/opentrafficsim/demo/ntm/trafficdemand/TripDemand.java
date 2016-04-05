@@ -27,13 +27,13 @@ import org.opentrafficsim.demo.ntm.Node;
 public class TripDemand<TripInformation>
 {
 
-    /** information on trips: number, shortest path etc.. */
+    /** Information on trips: number, shortest path etc.. */
     private Map<String, Map<String, TripInformation>> tripInfo;
 
-    /** starting time. */
+    /** Starting time. */
     private DoubleScalar.Abs<TimeUnit> startTime;
 
-    /** time period covered by this demand. */
+    /** Time period covered by this demand. */
     private DoubleScalar.Rel<TimeUnit> timeSpan;
 
     /**

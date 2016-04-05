@@ -89,7 +89,7 @@ public interface GTU extends LocatableInterface, Serializable
     /** @return the positions for this GTU. */
     Map<RelativePosition.TYPE, RelativePosition> getRelativePositions();
 
-    /** destroy the GTU from the simulation and animation. */
+    /** Destroy the GTU from the simulation and animation. */
     void destroy();
 
     /**

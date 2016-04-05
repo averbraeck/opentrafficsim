@@ -60,22 +60,22 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
     /** */
     private static final long serialVersionUID = 1L;
 
-    /** the lane of the block. */
+    /** The lane of the block. */
     final Lane laneTL;
 
-    /** the position of the block on the lane. */
+    /** The position of the block on the lane. */
     final Length.Rel positionTL;
 
-    /** light blocked or nor. */
+    /** Light blocked or not? */
     private boolean blocked = true;
 
-    /** blocking GTU type. */
+    /** Blocking GTU type. */
     public static final GTUType BLOCK_GTU;
 
-    /** the dummy strategical planner. */
+    /** The dummy strategical planner. */
     public static final StrategicalPlanner dummyStrategicalPlanner;
 
-    /** relative position (0,0,0). */
+    /** Relative position (0,0,0). */
     public static final Map<RelativePosition.TYPE, RelativePosition> RELATIVE_POSITIONS = new HashMap<>();
 
     static

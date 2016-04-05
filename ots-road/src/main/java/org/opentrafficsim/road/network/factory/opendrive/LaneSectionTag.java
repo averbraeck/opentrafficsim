@@ -26,27 +26,27 @@ import org.xml.sax.SAXException;
 class LaneSectionTag
 {
 
-    /** sequence of the laneSection. */
+    /** Sequence of the laneSection. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     int id = 0;
 
-    /** start position (s-coordinate). */
+    /** Start position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel s = null;
 
-    /** left lanes */
+    /** Left lanes */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<Integer, LaneTag> leftLaneTags = new HashMap<Integer, LaneTag>();
 
-    /** center lanes */
+    /** Center lanes */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<Integer, LaneTag> centerLaneTags = new HashMap<Integer, LaneTag>();
 
-    /** right lanes */
+    /** Right lanes */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<Integer, LaneTag> rightLaneTags = new HashMap<Integer, LaneTag>();
 
-    /** all lanes */
+    /** All lanes */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Map<Integer, Lane> lanes = new HashMap<Integer, Lane>();
 

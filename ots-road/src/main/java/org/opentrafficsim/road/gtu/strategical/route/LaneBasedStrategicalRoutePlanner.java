@@ -36,10 +36,10 @@ import org.opentrafficsim.road.network.lane.Lane;
 public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategicalPlanner implements
     LaneBasedStrategicalPlanner
 {
-    /** the route to drive. */
+    /** The route to drive. */
     private final Route route;
 
-    /** the fixed tactical planner to use for the GTU. */
+    /** The fixed tactical planner to use for the GTU. */
     private final TacticalPlanner fixedTacticalPlanner;
 
     /**

@@ -23,7 +23,7 @@ public class SwitchableGTUColorer implements GTUColorer
     /** The currently active GTUColorer. */
     private GTUColorer activeColorer;
 
-    /** list of included colorers. */
+    /** The list of included colorers. */
     private List<GTUColorer> colorers = new ArrayList<>();
 
     /**

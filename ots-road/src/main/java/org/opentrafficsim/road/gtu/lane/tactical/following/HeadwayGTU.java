@@ -18,16 +18,16 @@ import org.opentrafficsim.core.gtu.GTUType;
  */
 public class HeadwayGTU
 {
-    /** the id of the GTU for comparison purposes. */
+    /** The id of the GTU for comparison purposes. */
     private final String gtuId;
 
-    /** the (perceived) speed of the other GTU. Can be null if unknown. */
+    /** The (perceived) speed of the other GTU. Can be null if unknown. */
     private final Speed gtuSpeed;
 
-    /** the (perceived) distance to the GTU. */
+    /** The (perceived) distance to the GTU. */
     private final Length.Rel distance;
 
-    /** the perceived GTU type. */
+    /** The perceived GTU type. */
     private final GTUType gtuType;
 
     /**

@@ -23,11 +23,11 @@ public class NextSplitInfo implements Serializable
     /** */
     private static final long serialVersionUID = 20151231L;
 
-    /** if the route splits, at what node does it split? */
+    /** If the route splits, at what node does it split? */
     private final OTSNode nextSplitNode;
     
     /**
-     * if the route splits, what are the lane(s) and/or adjacent lane(s) on which the reference point of the GTU is registered
+     * If the route splits, what are the lane(s) and/or adjacent lane(s) on which the reference point of the GTU is registered
      * that lead us in the direction of the route provided by the strategical planner.
      */
     private final Set<Lane> correctCurrentLanes;

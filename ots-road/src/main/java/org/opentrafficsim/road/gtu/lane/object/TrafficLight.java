@@ -34,7 +34,7 @@ public class TrafficLight extends AbstractTrafficLightNew
         BLACK
     };
 
-    /** the color of the traffic light. */
+    /** The color of the traffic light. */
     private TrafficLightColor trafficLightColor;
 
     /**

@@ -123,13 +123,13 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
     /** Not used internally. */
     private DatasetGroup datasetGroup = null;
 
-    /** the lane for which data is gathered. */
+    /** The lane for which data is gathered. */
     private final Lane lane;
 
-    /** the simulator to schedule sampling. */
+    /** The simulator to schedule sampling. */
     private final OTSDEVSSimulatorInterface simulator;
 
-    /** flow counter. */
+    /** Flow counter. */
 
     int flow = 0;
 
@@ -498,13 +498,13 @@ public class FundamentalDiagramLane extends JFrame implements XYDataset, ActionL
      */
     class Sample
     {
-        /** mean speed observed during this sample [m/s]. */
+        /** Mean speed observed during this sample [m/s]. */
         private final double meanSpeed;
 
-        /** density [veh/m]. */
+        /** Density [veh/m]. */
         private final double density;
 
-        /** flow [veh/s]. */
+        /** Flow [veh/s]. */
         private final double flow;
 
         /**

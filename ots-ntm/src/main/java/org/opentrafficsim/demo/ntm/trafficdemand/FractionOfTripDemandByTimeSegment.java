@@ -19,13 +19,13 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
 public class FractionOfTripDemandByTimeSegment
 {
 
-    /** startTime of the segment in Calendar Time. */
+    /** StartTime of the segment in Calendar Time. */
     private DoubleScalar.Abs<TimeUnit> timeSinceMidnight;
 
-    /** length of a time segment. */
+    /** Length of a time segment. */
     private DoubleScalar.Rel<TimeUnit> duration;
 
-    /** relative amount of trips. */
+    /** Relative amount of trips. */
     private double shareOfDemand;
 
     /**

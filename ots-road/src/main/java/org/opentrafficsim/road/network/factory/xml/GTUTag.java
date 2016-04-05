@@ -32,11 +32,11 @@ import org.xml.sax.SAXException;
  */
 class GTUTag
 {
-    /** name. */
+    /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
-    /** type. */
+    /** Type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     GTUType gtuType = null;
 
@@ -52,11 +52,11 @@ class GTUTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     GTUFollowingModelOld followingModel = null;
 
-    /** lane change model. */
+    /** Lane change model. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     LaneChangeModel laneChangeModel = null;
 
-    /** max speed. */
+    /** Maximum speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maxSpeedDist = null;
 

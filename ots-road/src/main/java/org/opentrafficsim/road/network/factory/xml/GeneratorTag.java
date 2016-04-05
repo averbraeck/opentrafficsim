@@ -43,15 +43,15 @@ import org.xml.sax.SAXException;
  */
 class GeneratorTag
 {
-    /** lane name. */
+    /** Lane name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String laneName = null;
 
-    /** position of the sink on the link, relative to the design line, stored as a string to parse when the length is known. */
+    /** Position of the sink on the link, relative to the design line, stored as a string to parse when the length is known. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String positionStr = null;
 
-    /** direction in which to generate the GTU, relative to the design line of the Link. */
+    /** Direction in which to generate the GTU, relative to the design line of the Link. */
     // TOO parse direction, and add to XML formal
     GTUDirectionality gtuDirection = GTUDirectionality.DIR_PLUS;
 
@@ -63,23 +63,23 @@ class GeneratorTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     GTUMixTag gtuMixTag = null;
 
-    /** interarrival time. */
+    /** Interarrival time. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ContinuousDistDoubleScalar.Rel<Time.Rel, TimeUnit> iatDist = null;
 
-    /** initial speed. */
+    /** Initial speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist = null;
 
-    /** max number of generated GTUs. */
+    /** Maximimum number of generated GTUs. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     int maxGTUs = Integer.MAX_VALUE;
 
-    /** start time of generation. */
+    /** Start time of generation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Time.Abs startTime = null;
 
-    /** end time of generation. */
+    /** End time of generation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Time.Abs endTime = null;
 

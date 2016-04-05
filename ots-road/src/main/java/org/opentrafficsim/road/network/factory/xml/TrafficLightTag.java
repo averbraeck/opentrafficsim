@@ -26,15 +26,15 @@ import org.xml.sax.SAXException;
  */
 class TrafficLightTag
 {
-    /** name, cannot be null in implementation of traffic light. */
+    /** Name, cannot be null in implementation of traffic light. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = "";
 
-    /** position of the sink on the link, relative to the design line, stored as a string to parse when the length is known. */
+    /** Position of the sink on the link, relative to the design line, stored as a string to parse when the length is known. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String positionStr = null;
 
-    /** class name of the TrafficLight. */
+    /** Class name of the TrafficLight. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String className = null;
 

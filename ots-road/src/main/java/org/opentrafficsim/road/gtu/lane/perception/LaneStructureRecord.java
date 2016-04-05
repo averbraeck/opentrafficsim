@@ -22,20 +22,20 @@ import org.opentrafficsim.road.network.lane.Lane;
  */
 public class LaneStructureRecord
 {
-    /** the lane of the LSR. */
+    /** The lane of the LSR. */
     private final Lane lane;
 
-    /** the direction in which we process this lane. */
+    /** The direction in which we process this lane. */
     private final GTUDirectionality direction;
 
-    /** the left LSR or null if not available. Left and right are relative to the <b>driving</b> direction. */
+    /** The left LSR or null if not available. Left and right are relative to the <b>driving</b> direction. */
     private LaneStructureRecord left;
 
-    /** the right LSR or null if not available. Left and right are relative to the <b>driving</b> direction. */
+    /** The right LSR or null if not available. Left and right are relative to the <b>driving</b> direction. */
     private LaneStructureRecord right;
 
     /**
-     * the next LSRs. The list is empty if no LSRs are available. Next is relative to the driving direction, not to the design
+     * The next LSRs. The list is empty if no LSRs are available. Next is relative to the driving direction, not to the design
      * line direction.
      */
     private List<LaneStructureRecord> nextList;

@@ -63,19 +63,19 @@ import org.xml.sax.SAXException;
  */
 class RoadTag
 {
-    /** unique ID within database (preferably an integer number, uint32_t). */
+    /** Unique ID within database (preferably an integer number, uint32_t). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String id = null;
 
-    /** name of the road. */
+    /** Name of the road. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
-    /** total length of the reference line in the xy-plane, as indicated in the XML document. */
+    /** Total length of the reference line in the xy-plane, as indicated in the XML document. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel length = null;
 
-    /** ID of the junction to which the road belongs as a connecting road (= -1 for none). */
+    /** Id of the junction to which the road belongs as a connecting road (= -1 for none). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String junctionId = null;
 
@@ -91,19 +91,19 @@ class RoadTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ElevationProfileTag elevationProfileTag = null;
 
-    /** lateralProfile Tag containing a list of superElevations. */
+    /** LateralProfile Tag containing a list of superElevations. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     LateralProfileTag lateralProfileTag = null;
 
-    /** lanes Tag containing a list of laneSections. */
+    /** Lanes Tag containing a list of laneSections. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     LanesTag lanesTag = null;
 
-    /** signals Tag containing a list of signals. */
+    /** Signals Tag containing a list of signals. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     SignalsTag signalsTag = null;
 
-    /** objects Tag containing a list of objects. */
+    /** Objects Tag containing a list of objects. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ObjectsTag objectsTag = null;
 
@@ -111,27 +111,27 @@ class RoadTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     TypeTag typeTag = null;
 
-    /** the calculated Link. */
+    /** The calculated Link. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     CrossSectionLink link = null;
 
-    /** the calculated designLine. */
+    /** The calculated designLine. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OTSLine3D designLine = null;
 
-    /** the calculated startNode. */
+    /** The calculated startNode. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OTSNode startNode = null;
 
-    /** the calculated endNode. */
+    /** The calculated endNode. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OTSNode endNode = null;
 
-    /** the calculated Link. */
+    /** The calculated Link. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<CrossSectionLink> subLinks = new ArrayList<>();
     
-    /** the lanetype that allows all traffic. */
+    /** The lane type that allows all traffic. */
     static LaneType LANETYPE_ALL = null;
 
     /**

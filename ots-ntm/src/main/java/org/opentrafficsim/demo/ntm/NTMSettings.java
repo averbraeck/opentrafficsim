@@ -28,22 +28,22 @@ public class NTMSettings
      */
     private Abs<TimeUnit> startTimeSinceMidnight;
 
-    /** relative time length of simulation */
+    /** Relative time length of simulation */
     private Rel<TimeUnit> durationOfSimulation;
 
-    /** name and description of the project */
+    /** Name and description of the project */
     private String descriptionProject;
 
-    /** time step interval NTM */
+    /** Time step interval NTM */
     private DoubleScalar.Rel<TimeUnit> timeStepDurationNTM;
 
-    /** cell transmission might have different time step interval?? */
+    /** Cell transmission might have different time step interval?? */
     private DoubleScalar.Rel<TimeUnit> timeStepDurationCellTransmissionModel;
 
-    /** time of a certain date */
+    /** Time of a certain date */
     private DoubleScalar.Abs<TimeUnit> absoluteStartTime;
 
-    /** generate new routes after a certain time interval */
+    /** Generate new routes after a certain time interval */
     private DoubleScalar.Rel<TimeUnit> reRouteTimeInterval;
 
     /** */
@@ -52,7 +52,7 @@ public class NTMSettings
     /** */
     private boolean increaseDemandByArea;
 
-    /** number of routes for generation */
+    /** Number of routes for generation */
     private int numberOfRoutes;
 
     /** */

@@ -14,28 +14,28 @@ import nl.javel.gisbeans.io.esri.CoordinateTransform;
  */
 public class CoordinateTransformLonLatToXY implements CoordinateTransform
 {
-    /** the x-center of the center point (0, 0). */
+    /** The x-center of the center point (0, 0). */
     private double centerX = 0.0;
 
-    /** the y-center of the center point (0, 0). */
+    /** The y-center of the center point (0, 0). */
     private double centerY = 0.0;
 
-    /** the x-center of the center point (0, 0). */
+    /** The x-center of the center point (0, 0). */
     private final double lonCenter;
 
-    /** the y-center of the center point (0, 0). */
+    /** The y-center of the center point (0, 0). */
     private final double latCenter;
 
-    /** one percent of a lat degree to y meters. */
+    /** One percent of a lat degree to y meters. */
     private double latToM;
 
-    /** one percent of a lon degree to x meters. */
+    /** One percent of a lon degree to x meters. */
     private double lonToM;
 
-    /** earth constants. */
+    /** Earth constants. */
     private static final double Re = 6378137;
 
-    /** earth constants. */
+    /** Earth constants. */
     private static final double Rp = 6356752.31424518;
 
     /**

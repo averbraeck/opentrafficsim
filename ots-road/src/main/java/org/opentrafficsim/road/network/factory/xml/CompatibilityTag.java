@@ -22,11 +22,11 @@ import org.xml.sax.SAXException;
  */
 class CompatibilityTag
 {
-    /** lane type name. */
+    /** Lane type name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String laneTypeName = null;
 
-    /** compatible gtu types. */
+    /** Compatible gtu types. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<GTUTag> gtuList = new ArrayList<GTUTag>();
 

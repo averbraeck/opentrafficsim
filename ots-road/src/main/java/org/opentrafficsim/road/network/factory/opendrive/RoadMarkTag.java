@@ -20,27 +20,27 @@ import org.xml.sax.SAXException;
  */
 class RoadMarkTag
 {
-    /** sOffst. */
+    /** The sOffst. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel sOffst = null;
 
-    /** type */
+    /** Type */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String type = null;
 
-    /** weight */
+    /** Weight */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String weight = null;
 
-    /** color */
+    /** Color */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String color = null;
 
-    /** width. */
+    /** Width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel width = null;
 
-    /** laneChange */
+    /** Lane change */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String laneChange = null;
 

@@ -26,19 +26,19 @@ import org.xml.sax.SAXException;
  */
 class SensorTag
 {
-    /** name. */
+    /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
-    /** position of the sink on the link, relative to the design line, stored as a string to parse when the length is known. */
+    /** Position of the sink on the link, relative to the design line, stored as a string to parse when the length is known. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String positionStr = null;
 
-    /** class name of the Sensor. */
+    /** Class name of the Sensor. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String className = null;
 
-    /** trigger position of the GTU (FRONT, REAR, etc.). */
+    /** Trigger position of the GTU (FRONT, REAR, etc.). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     RelativePosition.TYPE triggerPosition;
 

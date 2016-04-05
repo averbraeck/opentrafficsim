@@ -22,10 +22,10 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
  */
 public class StaticObject implements ObjectInterface
 {
-    /** the top-level 2D outline of the object. */
+    /** The top-level 2D outline of the object. */
     private final OTSLine3D geometry;
 
-    /** the height of the object. */
+    /** The height of the object. */
     private final Length.Rel height;
 
     /**

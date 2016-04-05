@@ -97,10 +97,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     private Map<Lane, List<SimEvent<OTSSimTimeDouble>>> pendingTriggers =
         new HashMap<Lane, List<SimEvent<OTSSimTimeDouble>>>();
 
-    /** the object to lock to make the GTU thread safe. */
+    /** The object to lock to make the GTU thread safe. */
     private Object lock = new Object();
 
-    /** the mode of movement: lane-based or path-based. */
+    /** The mode of movement: lane-based or path-based. */
     private static final boolean MOVEMENT_LANE_BASED = true;
 
     /**

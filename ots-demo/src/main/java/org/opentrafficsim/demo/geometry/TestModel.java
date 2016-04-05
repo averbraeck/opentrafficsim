@@ -48,7 +48,7 @@ public class TestModel implements OTSModelInterface, UNITS
     /** */
     private static final long serialVersionUID = 1L;
 
-    /** simulator. */
+    /** The simulator. */
     private OTSSimulatorInterface simulator;
 
     /** {@inheritDoc} */

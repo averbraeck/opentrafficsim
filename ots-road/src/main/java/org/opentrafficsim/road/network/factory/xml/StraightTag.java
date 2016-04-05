@@ -18,7 +18,7 @@ import org.xml.sax.SAXException;
  */
 class StraightTag
 {
-    /** length. */
+    /** Length. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel length = null;
 

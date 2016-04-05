@@ -21,7 +21,7 @@ import org.xml.sax.SAXException;
 class LateralProfileTag
 {
 
-    /** geometryTags */
+    /** GeometryTags */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<SuperElevationTag> superElevationTags = new ArrayList<SuperElevationTag>();
 

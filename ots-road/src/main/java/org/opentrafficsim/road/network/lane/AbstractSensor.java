@@ -33,19 +33,19 @@ public abstract class AbstractSensor implements Sensor
     /** The position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane in SI units. */
     private final double longitudinalPositionSI;
 
-    /** the relative position of the vehicle that triggers the sensor. */
+    /** The relative position of the vehicle that triggers the sensor. */
     private final RelativePosition.TYPE positionType;
 
-    /** the name of the sensor. */
+    /** The name of the sensor. */
     private final String name;
 
-    /** the cached location for animation. */
+    /** The cached location for animation. */
     private DirectedPoint location = null;
 
-    /** the cached bounds for animation. */
+    /** The cached bounds for animation. */
     private Bounds bounds = null;
 
-    /** the simulator for being able to generate an animation. */
+    /** The simulator for being able to generate an animation. */
     private final OTSDEVSSimulatorInterface simulator;
 
     /**

@@ -18,27 +18,27 @@ import org.xml.sax.SAXException;
 class ControllerTag
 {
 
-    /** id of the lane. */
+    /** Id of the lane. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String id = null;
 
-    /** type */
+    /** Type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String type = null;
 
-    /** name */
+    /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
-    /** sequence. */
+    /** Sequence. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Integer sequence = null;
 
-    /** id of the control signal. */
+    /** Id of the control signal. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String controlSignalID = null;
 
-    /** control type */
+    /** Control type */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String controlType = null;
 

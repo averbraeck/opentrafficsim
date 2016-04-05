@@ -26,10 +26,10 @@ import org.opentrafficsim.core.dsol.OTSSimulatorInterface;
  */
 public class SensorAnimation extends Renderable2D
 {
-    /** the half width left and right of the center line that is used to draw the block. */
+    /** The half width left and right of the center line that is used to draw the block. */
     private final double halfWidth;
 
-    /** the color of the sensor. */
+    /** The color of the sensor. */
     private final Color color;
 
     /**

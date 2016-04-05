@@ -23,7 +23,7 @@ public class CompleteRoute extends Route
     /** */
     private static final long serialVersionUID = 20150722L;
 
-    /** the GTUType for which this is a route. */
+    /** The GTUType for which this is a route. */
     private final GTUType gtuType;
 
     /**

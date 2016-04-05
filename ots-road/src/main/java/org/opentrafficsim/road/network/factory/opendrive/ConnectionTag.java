@@ -19,27 +19,27 @@ import org.xml.sax.SAXException;
 class ConnectionTag
 {
 
-    /** id of the lane. */
+    /** Id of the lane. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String id = null;
 
-    /** incoming Road id */
+    /** Incoming Road id */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String incomingRoad = null;
 
-    /** connecting Road id */
+    /** Connecting Road id */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String connectingRoad = null;
 
-    /** contact point. */
+    /** Contact point. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ContactPointEnum contactPoint = null;
 
-    /** lane Link From. */
+    /** Lane Link From. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Integer laneLinkFrom = null;
 
-    /** lane Link To. */
+    /** Lane Link To. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Integer laneLinkTo = null;
 

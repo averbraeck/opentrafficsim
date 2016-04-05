@@ -28,7 +28,7 @@ import org.opentrafficsim.road.gtu.lane.object.TrafficLight;
  */
 public class TrafficLightAnimation extends Renderable2D
 {
-    /** the point (0,0,0). */
+    /** The point (0,0,0). */
     private static final DirectedPoint POINT_000 = new DirectedPoint();
 
     /**

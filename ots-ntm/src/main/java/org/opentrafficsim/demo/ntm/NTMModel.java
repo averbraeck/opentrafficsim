@@ -68,49 +68,49 @@ public class NTMModel implements OTSModelInterface
     /** */
     private static final long serialVersionUID = 20140815L;
 
-    /** the simulator. */
+    /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
-    /** detailed areas from the traffic model. */
+    /** Detailed areas from the traffic model. */
     private Map<String, Area> areas;
 
-    /** detailed areas from the traffic model. */
+    /** Detailed areas from the traffic model. */
     private Map<String, Area> bigAreas;
 
-    /** rougher areas from the traffic model. */
+    /** Rougher areas from the traffic model. */
     private ShapeStore compressedAreas;
 
-    /** nodes from shape file. */
+    /** Nodes from shape file. */
     private Map<String, Node> nodes;
 
-    /** connectors from shape file. */
+    /** Connectors from shape file. */
     private Map<String, Link> shpConnectors;
 
-    /** connectors from shape file. */
+    /** Connectors from shape file. */
     private Map<String, Link> shpBigConnectors;
 
-    /** links from shape file. */
+    /** Links from shape file. */
     private Map<String, Link> shpLinks;
 
-    /** subset of links from shape file used as flow links. */
+    /** Subset of links from shape file used as flow links. */
     private Map<String, Link> flowLinks;
 
-    /** detailed areas from the traffic model. */
+    /** Detailed areas from the traffic model. */
     private Map<String, AreaFlowLink> areaFlowLinks;
 
-    /** the centroids. */
+    /** The centroids. */
     private Map<String, Node> centroids;
 
-    /** the centroids. */
+    /** The centroids. */
     private Map<String, Node> bigCentroids;
 
-    /** the demand of trips by Origin and Destination. */
+    /** The demand of trips by Origin and Destination. */
     private TripDemand<TripInfoTimeDynamic> tripDemand;
 
-    /** the compressed demand of trips by Origin and Destination. */
+    /** The compressed demand of trips by Origin and Destination. */
     private TripDemand<TripInfoTimeDynamic> compressedTripDemand;
 
-    /** the demand of trips by Origin and Destination for simulation. */
+    /** The demand of trips by Origin and Destination for simulation. */
     TripDemand<TripInfoTimeDynamic> tripDemandToUse;
 
     /** */
@@ -119,19 +119,19 @@ public class NTMModel implements OTSModelInterface
     /** The simulation settings. */
     private NTMSettings settingsNTM;
 
-    /** profiles with fractions of total demand. */
+    /** Profiles with fractions of total demand. */
     private ArrayList<DepartureTimeProfile> departureTimeProfiles;
 
-    /** graph containing the original network. */
+    /** Graph containing the original network. */
     private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> linkGraph;
 
-    /** graph containing the simplified network. */
+    /** Graph containing the simplified network. */
     private SimpleDirectedWeightedGraph<Node, LinkEdge<Link>> areaGraph;
 
     /** */
     private Map<String, Node> nodeAreaGraphMap = new HashMap<>();
 
-    /** subset of links from shape file used as flow links. */
+    /** Subset of links from shape file used as flow links. */
     private LinkedHashMap<String, Link> debugLinkList;
 
     /**

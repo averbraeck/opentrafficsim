@@ -35,15 +35,15 @@ public class OTSPoint3D implements LocatableInterface, Serializable
     /** */
     private static final long serialVersionUID = 20150722L;
 
-    /** the internal representation of the point; x-coordinate. */
+    /** The internal representation of the point; x-coordinate. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     public final double x;
 
-    /** the internal representation of the point; y-coordinate. */
+    /** The internal representation of the point; y-coordinate. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     public final double y;
 
-    /** the internal representation of the point; z-coordinate. */
+    /** The internal representation of the point; z-coordinate. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     public final double z;
 

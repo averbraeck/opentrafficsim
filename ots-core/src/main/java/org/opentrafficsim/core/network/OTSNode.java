@@ -35,19 +35,19 @@ public class OTSNode implements Node, LocatableInterface, Serializable
     /** */
     private static final long serialVersionUID = 20150722L;
 
-    /** the node id. */
+    /** The node id. */
     private final String id;
 
-    /** the point. */
+    /** The point. */
     private final OTSPoint3D point;
 
-    /** the 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians). */
+    /** The 3D direction. "East" is 0 degrees. "North" is 90 degrees (1/2 pi radians). */
     private final Angle.Abs direction;
 
-    /** the slope as an angle. Horizontal is 0 degrees. */
+    /** The slope as an angle. Horizontal is 0 degrees. */
     private final Angle.Abs slope;
 
-    /** the links connected to the Node. */
+    /** The links connected to the Node. */
     private final Set<Link> links = new HashSet<Link>();
 
     /**

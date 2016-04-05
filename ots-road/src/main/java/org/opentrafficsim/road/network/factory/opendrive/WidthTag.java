@@ -20,23 +20,23 @@ import org.xml.sax.SAXException;
  */
 class WidthTag
 {
-    /** sOffst. */
+    /** The sOffst. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel sOffst = null;
 
-    /** a. */
+    /** Parameter a. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel a = null;
 
-    /** b. */
+    /** Parameter b. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel b = null;
 
-    /** c. */
+    /** Parameter c. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel c = null;
 
-    /** d. */
+    /** Parameter d. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel d = null;
 

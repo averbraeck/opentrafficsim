@@ -19,11 +19,11 @@ import org.xml.sax.SAXException;
  */
 class SpiralTag
 {
-    /** degree of the curve at the start(s-coordinate?). */
+    /** Degree of the curve at the start(s-coordinate?). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel curvStart = null;
 
-    /** degree of the curve at the end(s-coordinate?). */
+    /** Degree of the curve at the end(s-coordinate?). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel curvEnd = null;
 

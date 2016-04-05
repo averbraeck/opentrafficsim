@@ -9,6 +9,8 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
 import org.djunits.value.vdouble.scalar.Time;
 
 /**
+ * OTS uses a DoubleScalar.Abs&lt;TimeUnit&gt; to represent simulation start time and a DoubleScalar.Rel&lt;timeUnit&gt; to
+ * represent the warmup time and total duration of a simulation.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -18,12 +20,12 @@ import org.djunits.value.vdouble.scalar.Time;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
 public class OTSSimTimeDouble extends SimTime<DoubleScalar.Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble>
-    implements Serializable
+        implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20140815L;
 
-    /** value represents the value in milliseconds. */
+    /** The time. */
     private DoubleScalar.Abs<TimeUnit> time;
 
     /**

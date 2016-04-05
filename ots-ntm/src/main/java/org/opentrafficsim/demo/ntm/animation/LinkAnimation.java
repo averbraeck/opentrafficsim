@@ -28,7 +28,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  */
 public class LinkAnimation extends Renderable2D
 {
-    /** stroke width for drawing links. */
+    /** Stroke width for drawing links. */
     private final float width;
 
     /**

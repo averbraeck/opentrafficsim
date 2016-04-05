@@ -37,7 +37,7 @@ public class GeoObject
     /** */
     private Geometry geometry;
 
-    /** touching areas. */
+    /** Touching areas. */
     private final Set<GeoObject> touchingAreas = new HashSet<>();
 
     /**

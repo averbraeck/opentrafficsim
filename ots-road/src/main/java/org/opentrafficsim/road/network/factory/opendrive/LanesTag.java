@@ -11,6 +11,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
+ * Parser for lanes.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -22,7 +23,7 @@ import org.xml.sax.SAXException;
 class LanesTag
 {
 
-    /** geometryTags */
+    /** GeometryTags */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<LaneSectionTag> laneSectionTags = new ArrayList<LaneSectionTag>();
 

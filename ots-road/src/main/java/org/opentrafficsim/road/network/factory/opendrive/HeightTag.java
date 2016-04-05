@@ -20,15 +20,15 @@ import org.xml.sax.SAXException;
  */
 class HeightTag
 {
-    /** sOffst. */
+    /** The sOffst. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel sOffst = null;
 
-    /** inner. */
+    /** Inner. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel inner = null;
 
-    /** outer. */
+    /** Outer. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel outer = null;
 

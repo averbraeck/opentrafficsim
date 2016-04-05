@@ -18,13 +18,13 @@ import org.opentrafficsim.core.gtu.GTUException;
  */
 public class DirectedLanePosition
 {
-    /** the lane for the position. */
+    /** The lane for the position. */
     private final Lane lane;
 
-    /** the position on the lane, relative to the cross section link (design line). */
+    /** The position on the lane, relative to the cross section link (design line). */
     private final Length.Rel position;
 
-    /** the direction the vehicle is driving to -- either in the direction of the design line, or against it. */
+    /** The direction the vehicle is driving to -- either in the direction of the design line, or against it. */
     private final GTUDirectionality gtuDirection;
 
     /**

@@ -27,10 +27,10 @@ import org.opentrafficsim.road.network.lane.Lane;
  */
 public class LaneAnimation extends Renderable2D
 {
-    /** color of the lane. */
+    /** Color of the lane. */
     private final Color color;
 
-    /** whether to draw the center line or not. */
+    /** Whether to draw the center line or not. */
     private final boolean drawCenterLine;
 
     /**

@@ -34,7 +34,7 @@ import com.vividsolutions.jts.operation.buffer.BufferParameters;
  */
 public class StripeAnimation extends Renderable2D
 {
-    /** the line type. */
+    /** The line type. */
     private final TYPE type;
 
     /** The points for the outline of the Stripe. */

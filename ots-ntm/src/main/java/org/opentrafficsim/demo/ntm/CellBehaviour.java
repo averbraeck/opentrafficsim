@@ -31,13 +31,13 @@ public class CellBehaviour
         this.tripInfoByDestinationMap = new HashMap<Node, TripInfoByDestination>();
     }
 
-    /** the first Area/Node encountered on the path to Destination. */
+    /** The first Area/Node encountered on the path to Destination. */
     private HashMap<Node, TripInfoByDestination> tripInfoByDestinationMap;
 
-    /** maximum in-flow */
+    /** Maximum in-flow */
     private double supply;
 
-    /** demand generated to leave */
+    /** Demand generated to leave */
     private double demand;
 
     /** */

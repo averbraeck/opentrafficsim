@@ -21,27 +21,27 @@ import org.xml.sax.SAXException;
  */
 class ArcTag
 {
-    /** angle. */
+    /** Angle. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Angle.Abs angle = null;
 
-    /** radius. */
+    /** Radius. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel radius = null;
 
-    /** direction. */
+    /** Direction. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ArcDirection direction = null;
 
-    /** the center coordinate of the arc. Will be filled after parsing. */
+    /** The center coordinate of the arc. Will be filled after parsing. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OTSPoint3D center;
 
-    /** the startAngle in radians compared to the center coordinate. Will be filled after parsing. */
+    /** The startAngle in radians compared to the center coordinate. Will be filled after parsing. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     double startAngle;
 
-    /** direction of the arc; LEFT or RIGHT. */
+    /** Direction of the arc; LEFT or RIGHT. */
     enum ArcDirection
     {
         /** Left = counter-clockwise. */

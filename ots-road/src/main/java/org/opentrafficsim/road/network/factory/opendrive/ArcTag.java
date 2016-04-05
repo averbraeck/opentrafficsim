@@ -19,7 +19,7 @@ import org.xml.sax.SAXException;
  */
 class ArcTag
 {
-    /** degree of the curve at the start(s-coordinate?). */
+    /** Degree of the curve at the start(s-coordinate?). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel curvature = null;
 

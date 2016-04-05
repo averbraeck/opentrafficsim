@@ -18,27 +18,27 @@ import org.xml.sax.SAXException;
  */
 class ElevationTag
 {
-    /** start position (s-coordinate). */
+    /** Start position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel s = null;
 
-    /** a coefficient */
+    /** The a coefficient. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel a = null;
 
-    /** b coefficient */
+    /** The b coefficient. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel b = null;
 
-    /** c coefficient */
+    /** The c coefficient. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel c = null;
 
-    /** d coefficient */
+    /** The d coefficient. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel d = null;
 
-    /** elevation = a + b*ds + c*ds2 + d*ds3 */
+    /** Elevation = a + b*ds + c*ds2 + d*ds3 */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel elevation = null;
 

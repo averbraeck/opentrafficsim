@@ -98,7 +98,7 @@ public class Stripe extends RoadMarkerAlong
         }
     }
 
-    /** the types of permeability of a stripe. */
+    /** The types of permeability of a stripe. */
     public enum Permeable
     {
         /** Permeable in the positive lateral direction compared to the design line direction. */

@@ -34,13 +34,13 @@ import org.opentrafficsim.core.math.Solver;
  */
 public final class OperationalPlanBuilder
 {
-    /** maximum acceleration for unbounded accelerations: 1E12 m/s2. */
+    /** The maximum acceleration for unbounded accelerations: 1E12 m/s2. */
     private static final Acceleration MAX_ACCELERATION = new Acceleration(1E12, AccelerationUnit.SI);
 
-    /** maximum deceleration for unbounded accelerations: -1E12 m/s2. */
+    /** The maximum deceleration for unbounded accelerations: -1E12 m/s2. */
     private static final Acceleration MAX_DECELERATION = new Acceleration(-1E12, AccelerationUnit.SI);
 
-    /** private constructor. */
+    /** Private constructor prevents instantiation. */
     private OperationalPlanBuilder()
     {
         // class should not be instantiated

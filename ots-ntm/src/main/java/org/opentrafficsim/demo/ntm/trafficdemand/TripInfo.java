@@ -15,7 +15,7 @@ package org.opentrafficsim.demo.ntm.trafficdemand;
  */
 public class TripInfo
 {
-    /** total number of Trips for this simulation from the trip demand file. */
+    /** Total number of Trips for this simulation from the trip demand file. */
     private double numberOfTrips;
 
     /**

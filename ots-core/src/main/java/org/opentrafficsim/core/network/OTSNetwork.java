@@ -33,7 +33,7 @@ public class OTSNetwork implements Network, PerceivableContext, Serializable
     /** */
     private static final long serialVersionUID = 20150722;
 
-    /** network id. */
+    /** Id of this network. */
     private final String id;
 
     /** Map of Nodes. */

@@ -56,7 +56,7 @@ public class Lane extends CrossSectionElement implements Serializable
     /** */
     private static final long serialVersionUID = 20150826L;
 
-    /** type of lane to deduce compatibility with GTU types. */
+    /** Type of lane to deduce compatibility with GTU types. */
     private final LaneType laneType;
 
     /**
@@ -129,7 +129,7 @@ public class Lane extends CrossSectionElement implements Serializable
     /** List of graphs that want to sample GTUs on this Lane. */
     private ArrayList<LaneBasedGTUSampler> samplers = new ArrayList<LaneBasedGTUSampler>();
 
-    /** the conditions for overtaking another GTU, viewed from this lane. */
+    /** The conditions for overtaking another GTU, viewed from this lane. */
     // TODO allow for direction-dependent overtaking conditions
     private final OvertakingConditions overtakingConditions;
 
@@ -1216,10 +1216,10 @@ public class Lane extends CrossSectionElement implements Serializable
         /** */
         private static final long serialVersionUID = 20150828L;
 
-        /** the GTU type that triggers this sensor; GTUType.ALL if all GTU types trigger the sensor. */
+        /** The GTU type that triggers this sensor; GTUType.ALL if all GTU types trigger the sensor. */
         private final GTUType gtuType;
 
-        /** the sensor that is triggers by the gtuType. */
+        /** The sensor that is triggers by the gtuType. */
         private final Sensor sensor;
 
         /**

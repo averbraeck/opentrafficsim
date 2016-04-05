@@ -30,10 +30,10 @@ public class LaneBasedBehavioralCharacteristics extends BehavioralCharacteristic
     /** */
     private static final long serialVersionUID = 20151126L;
 
-    /** the GTUFollowing model to use for this driver. */
+    /** The GTUFollowing model to use for this driver. */
     private final GTUFollowingModelOld gtuFollowingModel;
 
-    /** laneChangeModel the lane change model to use for this driver. */
+    /** LaneChangeModel the lane change model to use for this driver. */
     private final LaneChangeModel laneChangeModel;
 
     /** Standard incentive to stay in the current lane. */
@@ -51,13 +51,13 @@ public class LaneBasedBehavioralCharacteristics extends BehavioralCharacteristic
     /** Standard time horizon for route choices. */
     private static final Time.Rel TIMEHORIZON = new Time.Rel(90, TimeUnit.SECOND);
 
-    /** how far does the driver of this GTU look ahead when perceiving the environment. */
+    /** How far does the driver of this GTU look ahead when perceiving the environment. */
     private Length.Rel forwardHeadwayDistance = new Length.Rel(250.0, LengthUnit.METER);
 
-    /** how far does the driver of this GTU look back when perceiving the environment, stored as a negative number. */
+    /** How far does the driver of this GTU look back when perceiving the environment, stored as a negative number. */
     private Length.Rel backwardHeadwayDistance = new Length.Rel(-100.0, LengthUnit.METER);
 
-    /** update frequency. */
+    /** Update frequency. */
     private Frequency averagePerceptionUpdateFrequency = new Frequency(0.5, FrequencyUnit.PER_SECOND);
 
     /** {@inheritDoc} */

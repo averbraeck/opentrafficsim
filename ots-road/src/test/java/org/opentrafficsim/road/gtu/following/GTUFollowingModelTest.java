@@ -66,7 +66,7 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
     /** */
     private static final long serialVersionUID = 20150227L;
 
-    /** network. */
+    /** The network. */
     private OTSNetwork network = new OTSNetwork("network");
 
     /** Generate unique names for the GTUs. */

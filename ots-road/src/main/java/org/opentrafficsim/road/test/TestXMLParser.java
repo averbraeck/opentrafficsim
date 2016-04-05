@@ -128,7 +128,7 @@ public class TestXMLParser extends AbstractWrappableAnimation
         /** */
         private static final long serialVersionUID = 20141121L;
 
-        /** the simulator. */
+        /** The simulator. */
         private OTSDEVSSimulatorInterface simulator;
 
         /** {@inheritDoc} */

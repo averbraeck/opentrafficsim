@@ -70,7 +70,7 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
     /** */
     private static final long serialVersionUID = 20150313;
 
-    /** network. */
+    /** The network. */
     private OTSNetwork network = new OTSNetwork("network");
 
     /**

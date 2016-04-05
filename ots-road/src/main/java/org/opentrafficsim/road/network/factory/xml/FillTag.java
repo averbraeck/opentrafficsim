@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
  */
 class FillTag
 {
-    /** lane name. */
+    /** Lane name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String laneName = null;
 
@@ -47,15 +47,15 @@ class FillTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     GTUMixTag gtuMixTag = null;
 
-    /** inter-vehicle distance. */
+    /** Inter-vehicle distance. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> distanceDist = null;
 
-    /** initial speed. */
+    /** Initial speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDist = null;
 
-    /** max number of generated GTUs. */
+    /** Maximmum number of generated GTUs. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     int maxGTUs = Integer.MAX_VALUE;
 

@@ -107,7 +107,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
     /** Has the window close handler been registered? */
     protected boolean closeHandlerRegistered = false;
 
-    /** has cleanup taken place? */
+    /** Has cleanup taken place? */
     private boolean isCleanUp = false;
 
     /**
@@ -209,7 +209,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
     /** Install the dispose on close when the OTSControlPanel is registered as part of a frame. */
     protected class DisposeOnCloseThread extends Thread
     {
-        /** the current container. */
+        /** The current container. */
         private OTSControlPanel panel;
 
         /**
@@ -790,10 +790,10 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         /** The JLabel that displays the time. */
         private final JLabel clockLabel;
 
-        /** the timer so we can cancel it. */
+        /** The timer (so we can cancel it). */
         private Timer timer;
 
-        /** timer update in msec. */
+        /** Timer update interval in msec. */
         private static final long UPDATEINTERVAL = 1000;
 
         /** Construct a clock panel. */
@@ -824,7 +824,7 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
             /**
              * Create a TimeUpdateTask.
              */
-            public TimeUpdateTask()
+            TimeUpdateTask()
             {
             }
 

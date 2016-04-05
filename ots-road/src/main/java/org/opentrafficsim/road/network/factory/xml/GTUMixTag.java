@@ -21,7 +21,7 @@ import org.xml.sax.SAXException;
  */
 class GTUMixTag
 {
-    /** name. */
+    /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
@@ -29,7 +29,7 @@ class GTUMixTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<GTUTag> gtus = new ArrayList<GTUTag>();
 
-    /** weights. */
+    /** Weights. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<Double> weights = new ArrayList<Double>();
 

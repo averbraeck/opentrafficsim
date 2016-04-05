@@ -65,7 +65,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  */
 public class OpenStreetMap extends AbstractWrappableAnimation implements UNITS
 {
-    /** the model. */
+    /** The model. */
     private OSMModel model;
 
     /** The OSMNetwork. */
@@ -293,7 +293,7 @@ class OSMModel implements OTSModelInterface
     /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
-    /** network. */
+    /** The network. */
     private OTSNetwork network = new OTSNetwork("network");
 
     /** Provided Network. */

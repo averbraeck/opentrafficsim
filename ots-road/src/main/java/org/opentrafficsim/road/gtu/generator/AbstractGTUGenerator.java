@@ -82,22 +82,22 @@ public abstract class AbstractGTUGenerator
     /** Lane to generate the GTU on -- at the end for now. */
     private final Lane lane;
 
-    /** position on the lane, relative to the design line of the link. */
+    /** Position on the lane, relative to the design line of the link. */
     private final Length.Rel position;
 
-    /** the direction in which the GTU has to be generated; DIR_PLUS or DIR_MINUS. */
+    /** The direction in which the GTU has to be generated; DIR_PLUS or DIR_MINUS. */
     private final GTUDirectionality direction;
 
     /** GTUColorer to use. */
     private final GTUColorer gtuColorer;
 
-    /** the lane-based strategical planner to use. */
+    /** The lane-based strategical planner to use. */
     private final LaneBasedStrategicalPlanner strategicalPlanner;
 
-    /** the LanePerception to use. */
+    /** The LanePerception to use. */
     private final Class<LanePerceptionFull> perceptionClass;
 
-    /** network. */
+    /** The network. */
     private final OTSNetwork network;
 
     /** Car builder list. */

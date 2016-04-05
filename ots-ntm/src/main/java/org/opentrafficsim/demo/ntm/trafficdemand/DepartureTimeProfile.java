@@ -22,7 +22,7 @@ public class DepartureTimeProfile
     /** */
     private NavigableMap<Abs<TimeUnit>, FractionOfTripDemandByTimeSegment> departureTimeCurve;
 
-    /** descriptive name of the profile. */
+    /** Descriptive name of the profile. */
     private String name;
 
     /**

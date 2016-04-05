@@ -22,7 +22,7 @@ import org.xml.sax.SAXException;
  */
 class RouteTag
 {
-    /** name. */
+    /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
@@ -30,7 +30,7 @@ class RouteTag
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<NodeTag> routeNodeTags = new ArrayList<NodeTag>();
 
-    /** route that has been generated. */
+    /** Route that has been generated. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Route route;
 

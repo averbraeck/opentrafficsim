@@ -150,7 +150,7 @@ public interface OvertakingConditions
      */
     public static class LeftAlwaysRightSpeed implements OvertakingConditions
     {
-        /** the speed under which overtaking on the "wrong" side is allowed. */
+        /** The speed under which overtaking on the "wrong" side is allowed. */
         private final Speed rightOvertakingSpeedMax;
 
         /**
@@ -183,7 +183,7 @@ public interface OvertakingConditions
      */
     public static class RightAlwaysLeftSpeed implements OvertakingConditions
     {
-        /** the speed under which overtaking on the "wrong" side is allowed. */
+        /** The speed under which overtaking on the "wrong" side is allowed. */
         private final Speed leftOvertakingSpeedMax;
 
         /**
@@ -221,10 +221,10 @@ public interface OvertakingConditions
      */
     public static class LeftSet implements OvertakingConditions
     {
-        /** a collection of GTUs that can overtake another collection of GTUs. */
+        /** A collection of GTUs that can overtake another collection of GTUs. */
         private final Collection<GTUType> overtakingGTUs;
 
-        /** a collection of GTUs that can be overtaken by another collection of GTUs. */
+        /** A collection of GTUs that can be overtaken by another collection of GTUs. */
         private final Collection<GTUType> overtakenGTUs;
 
         /**
@@ -274,10 +274,10 @@ public interface OvertakingConditions
      */
     public static class RightSet implements OvertakingConditions
     {
-        /** a collection of GTUs that can overtake another collection of GTUs. */
+        /** A collection of GTUs that can overtake another collection of GTUs. */
         private final Collection<GTUType> overtakingGTUs;
 
-        /** a collection of GTUs that can be overtaken by another collection of GTUs. */
+        /** A collection of GTUs that can be overtaken by another collection of GTUs. */
         private final Collection<GTUType> overtakenGTUs;
 
         /**
@@ -327,13 +327,13 @@ public interface OvertakingConditions
      */
     public static class LeftSetRightSpeed implements OvertakingConditions
     {
-        /** a collection of GTUs that can overtake another collection of GTUs. */
+        /** A collection of GTUs that can overtake another collection of GTUs. */
         private final Collection<GTUType> overtakingGTUs;
 
-        /** a collection of GTUs that can be overtaken by another collection of GTUs. */
+        /** A collection of GTUs that can be overtaken by another collection of GTUs. */
         private final Collection<GTUType> overtakenGTUs;
 
-        /** the speed under which overtaking on the "wrong" side is allowed. */
+        /** The speed under which overtaking on the "wrong" side is allowed. */
         private final Speed rightOvertakingSpeedMax;
 
         /**
@@ -390,13 +390,13 @@ public interface OvertakingConditions
      */
     public static class RightSetLeftSpeed implements OvertakingConditions
     {
-        /** a collection of GTUs that can overtake another collection of GTUs. */
+        /** A collection of GTUs that can overtake another collection of GTUs. */
         private final Collection<GTUType> overtakingGTUs;
 
-        /** a collection of GTUs that can be overtaken by another collection of GTUs. */
+        /** A collection of GTUs that can be overtaken by another collection of GTUs. */
         private final Collection<GTUType> overtakenGTUs;
 
-        /** the speed under which overtaking on the "wrong" side is allowed. */
+        /** The speed under which overtaking on the "wrong" side is allowed. */
         private final Speed leftOvertakingSpeedMax;
 
         /**

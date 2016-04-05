@@ -21,7 +21,7 @@ import org.xml.sax.SAXException;
 class ObjectsTag
 {
 
-    /** objectTags */
+    /** The objectTags */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<ObjectTag> objectTags = new ArrayList<ObjectTag>();
 

@@ -36,13 +36,13 @@ import org.opentrafficsim.road.network.lane.Lane;
  */
 public final class LaneOperationalPlanBuilder
 {
-    /** maximum acceleration for unbounded accelerations: 1E12 m/s2. */
+    /** Maximum acceleration for unbounded accelerations: 1E12 m/s2. */
     private static final Acceleration MAX_ACCELERATION = new Acceleration(1E12, AccelerationUnit.SI);
 
-    /** maximum deceleration for unbounded accelerations: -1E12 m/s2. */
+    /** Maximum deceleration for unbounded accelerations: -1E12 m/s2. */
     private static final Acceleration MAX_DECELERATION = new Acceleration(-1E12, AccelerationUnit.SI);
 
-    /** private constructor. */
+    /** Private constructor. */
     private LaneOperationalPlanBuilder()
     {
         // class should not be instantiated

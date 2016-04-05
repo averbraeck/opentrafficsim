@@ -17,7 +17,7 @@ import org.xml.sax.SAXException;
  */
 class BlockTag
 {
-    /** position of the sink on the link, relative to the design line, stored as a string to parse when the length is known. */
+    /** Position of the sink on the link, relative to the design line, stored as a string to parse when the length is known. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String positionStr = null;
 

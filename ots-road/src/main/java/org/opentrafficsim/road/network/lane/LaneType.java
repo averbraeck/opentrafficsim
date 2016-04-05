@@ -25,10 +25,10 @@ public class LaneType implements Serializable
     /** The id of the LaneType to make it identifiable. */
     private final String id;
 
-    /** the compatibility of GTUs with this lane type. */
+    /** The compatibility of GTUs with this lane type. */
     private final Set<GTUType> compatibilitySet = new HashSet<>();
 
-    /** lane type that does not allow any vehicles. */
+    /** Lane type that does not allow any vehicles. */
     public static final LaneType NONE = new LaneType("NONE");
 
     /**

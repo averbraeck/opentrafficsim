@@ -21,15 +21,15 @@ import org.xml.sax.SAXException;
  */
 class RouteMixTag
 {
-    /** name. */
+    /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
-    /** routes. */
+    /** Routes. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<RouteTag> routes = new ArrayList<RouteTag>();
 
-    /** weights. */
+    /** Weights. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     List<Double> weights = new ArrayList<Double>();
 

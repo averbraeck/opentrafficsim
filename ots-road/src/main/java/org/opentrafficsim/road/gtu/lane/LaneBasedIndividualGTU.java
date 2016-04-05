@@ -48,7 +48,7 @@ public class LaneBasedIndividualGTU extends AbstractLaneBasedIndividualGTU
     /** */
     private static final long serialVersionUID = 20141025L;
 
-    /** animation. */
+    /** The animation. */
     private Renderable2D animation;
 
     /** Sensing positions. */

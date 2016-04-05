@@ -54,7 +54,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulator;
  */
 public class IDMPlusTest implements UNITS
 {
-    /** network. */
+    /** The network. */
     private OTSNetwork network = new OTSNetwork("network");
 
     /**

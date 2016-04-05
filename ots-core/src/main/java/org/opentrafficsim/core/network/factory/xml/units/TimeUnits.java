@@ -11,6 +11,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
+ * Parser for times and frequencies with unit.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -21,10 +22,10 @@ import org.opentrafficsim.core.network.NetworkException;
  */
 public final class TimeUnits implements UNITS
 {
-    /** the time units. */
+    /** The time units. */
     public static final Map<String, TimeUnit> TIME_UNITS = new HashMap<>();
 
-    /** the time units. */
+    /** The per time units. */
     public static final Map<String, FrequencyUnit> PER_TIME_UNITS = new HashMap<>();
 
     static

@@ -14,6 +14,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /**
+ * Parser for geometry tag.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -25,43 +26,43 @@ import org.xml.sax.SAXException;
 class GeometryTag
 {
 
-    /** sequence of the geometry. */
+    /** Sequence of the geometry. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String id = null;
 
-    /** start position (s-coordinate). */
+    /** Start position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel s = null;
 
-    /** x position (s-coordinate). */
+    /** The x position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel x = null;
 
-    /** y position (s-coordinate). */
+    /** The y position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel y = null;
 
-    /** z position (s-coordinate). */
+    /** The z position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel z = null;
 
-    /** hdg position (s-coordinate). */
+    /** The hdg position (s-coordinate). */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Angle.Rel hdg = null;
 
-    /** total length of the reference line in the xy-plane, as indicated in the XML document. */
+    /** Total length of the reference line in the xy-plane, as indicated in the XML document. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel length = null;
 
-    /** spiralTag */
+    /** SpiralTag */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     SpiralTag spiralTag = null;
 
-    /** arcTag */
+    /** ArcTag */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     ArcTag arcTag = null;
 
-    /** the calculated Node, either through a coordinate or after calculation. */
+    /** The calculated Node, either through a coordinate or after calculation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OTSNode node = null;
 

@@ -10,6 +10,7 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
+ * Parser for angle with unit.
  * <p>
  * Copyright (c) 2013-2015 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -20,7 +21,7 @@ import org.opentrafficsim.core.network.NetworkException;
  */
 public final class AngleUnits implements UNITS
 {
-    /** the angle units. */
+    /** The angle units. */
     public static final Map<String, AngleUnit> ANGLE_UNITS = new HashMap<>();
 
     static
@@ -29,7 +30,7 @@ public final class AngleUnits implements UNITS
         ANGLE_UNITS.put("rad", RADIAN);
     }
 
-    /** Utility class. */
+    /** Utility class cannot be instantiated. */
     private AngleUnits()
     {
         // do not instantiate

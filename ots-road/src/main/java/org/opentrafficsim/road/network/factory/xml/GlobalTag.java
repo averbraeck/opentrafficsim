@@ -27,23 +27,23 @@ import org.xml.sax.SAXException;
  */
 class GlobalTag
 {
-    /** default speed. */
+    /** Default speed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Speed defaultMaxSpeed = null;
 
-    /** default lane width. */
+    /** Default lane width. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel defaultLaneWidth = null;
 
-    /** default VelocityGTUColorer.maxSpeed. */
+    /** Default VelocityGTUColorer.maxSpeed. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Speed velocityGTUColorerMaxSpeed = null;
 
-    /** default lane keeping policy. */
+    /** Default lane keeping policy. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     LaneKeepingPolicy defaultLaneKeepingPolicy = null;
 
-    /** default overtaking conditions. */
+    /** Default overtaking conditions. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     OvertakingConditions defaultOvertakingConditions = null;
 

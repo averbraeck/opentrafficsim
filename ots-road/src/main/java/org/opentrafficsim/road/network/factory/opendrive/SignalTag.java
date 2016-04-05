@@ -18,47 +18,47 @@ import org.xml.sax.SAXException;
  */
 class SignalTag
 {
-    /** s. */
+    /** Parameter s. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel s = null;
 
-    /** t. */
+    /** Parameter t. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel t = null;
 
-    /** id. */
+    /** Id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String id = null;
 
-    /** name. */
+    /** Name. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
-    /** dynamic. */
+    /** Dynamic. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String dynamic = null;
 
-    /** orientation. */
+    /** Orientation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String orientation = null;
 
-    /** zOffset. */
+    /** The zOffset. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel zOffset = null;
 
-    /** country. */
+    /** Country. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String country = null;
 
-    /** type. */
+    /** Type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String type = null;
 
-    /** sub type. */
+    /** Sub type. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String subtype = null;
 
-    /** value. */
+    /** Value. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String value = null;
 

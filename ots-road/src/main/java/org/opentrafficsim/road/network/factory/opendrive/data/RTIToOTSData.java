@@ -3,13 +3,13 @@ package org.opentrafficsim.road.network.factory.opendrive.data;
 /** */
 public class RTIToOTSData
 {
-    /** time stamp */
+    /** Time stamp */
     private float timeStamp;// int32_t64 Hans suggests
 
     /** */
     private float deltaT;
 
-    // my vehicle state
+    // My vehicle state
     /** */
     private Position egoPos; // position[m]
 

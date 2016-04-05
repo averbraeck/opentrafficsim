@@ -25,13 +25,13 @@ public class LinkType implements Serializable
     /** The id of the link type to make it identifiable. Should be unique in the simulation. */
     private final String id;
 
-    /** the compatibility of GTU types with this link type. */
+    /** The compatibility of GTU types with this link type. */
     private final Set<GTUType> compatibilitySet = new HashSet<>();
 
-    /** link type that does not allow any vehicles. */
+    /** The link type that does not allow any vehicles. */
     public static final LinkType NONE = new LinkType("NONE");
 
-    /** link type that allows all vehicles. */
+    /** The link type that allows all vehicles. */
     public static final LinkType ALL = new LinkType("ALL");
 
     static

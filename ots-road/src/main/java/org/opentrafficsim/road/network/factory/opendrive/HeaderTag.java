@@ -20,55 +20,55 @@ import org.xml.sax.SAXException;
  */
 public class HeaderTag
 {
-    /** name of the map. */
+    /** Name of the map. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String name = null;
 
-    /** revMajor. */
+    /** Major revision. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     int revMajor = 0;
 
-    /** revMinor. */
+    /** Minor revision. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     int revMinor = 0;
 
-    /** version of the map. */
+    /** Version of the map. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String version = null;
 
-    /** date of the map. */
+    /** Date of the map. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String date = null;
 
-    /** range of the map in the north */
+    /** Range of the map in the north */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel north = null;
 
-    /** range of the map in the south */
+    /** Range of the map in the south */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel south = null;
 
-    /** range of the map in the east */
+    /** Range of the map in the east */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel east = null;
 
-    /** range of the map in the west */
+    /** Range of the map in the west */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel west = null;
 
-    /** vendor of the map. */
+    /** Vendor of the map. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String vendor = null;
 
-    /** origin latitude of the map */
+    /** Origin latitude of the map */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel originLat = null;
 
-    /** origin longitude of the map */
+    /** Origin longitude of the map */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel originLong = null;
 
-    /** origin Hdg of the map */
+    /** Origin Hdg of the map */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Angle.Rel originHdg = null;
 

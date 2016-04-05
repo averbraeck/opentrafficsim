@@ -65,7 +65,7 @@ import org.opentrafficsim.simulationengine.SimpleSimulatorInterface;
  */
 public class AbstractLaneBasedGTUTest implements UNITS
 {
-    /** network. */
+    /** The network. */
     private OTSNetwork network = new OTSNetwork("network");
 
     /**

@@ -23,7 +23,7 @@ public class AccelerationStep
     /** Time when the current time slot ends. */
     private final Time.Abs validUntil;
     
-    /** duration of the time step. */
+    /** Duration of the time step. */
     final Time.Rel duration;
 
     /**

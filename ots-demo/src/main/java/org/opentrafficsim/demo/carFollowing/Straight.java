@@ -93,7 +93,7 @@ import org.opentrafficsim.simulationengine.properties.SelectionProperty;
  */
 public class Straight extends AbstractWrappableAnimation implements UNITS
 {
-    /** the model. */
+    /** The model. */
     private StraightModel model;
 
     /** Create a ContourPlots simulation. */
@@ -341,25 +341,25 @@ class StraightModel implements OTSModelInterface, UNITS
     /** */
     private static final long serialVersionUID = 20140815L;
 
-    /** the simulator. */
+    /** The simulator. */
     private OTSDEVSSimulatorInterface simulator;
 
-    /** network. */
+    /** The network. */
     private OTSNetwork network = new OTSNetwork("network");
 
-    /** the headway (inter-vehicle time). */
+    /** The headway (inter-vehicle time). */
     private Time.Rel headway;
 
-    /** number of cars created. */
+    /** Number of cars created. */
     private int carsCreated = 0;
 
     /** Type of all GTUs. */
     private GTUType gtuType = GTUType.makeGTUType("Car");
 
-    /** the car following model, e.g. IDM Plus for cars. */
+    /** The car following model, e.g. IDM Plus for cars. */
     private GTUFollowingModelOld carFollowingModelCars;
 
-    /** the car following model, e.g. IDM Plus for trucks. */
+    /** The car following model, e.g. IDM Plus for trucks. */
     private GTUFollowingModelOld carFollowingModelTrucks;
 
     /** The probability that the next generated GTU is a passenger car. */
@@ -371,16 +371,16 @@ class StraightModel implements OTSModelInterface, UNITS
     /** The blocking car. */
     private LaneBasedIndividualGTU block = null;
 
-    /** minimum distance. */
+    /** Minimum distance. */
     private Length.Rel minimumDistance = new Length.Rel(0, METER);
 
-    /** maximum distance. */
+    /** Maximum distance. */
     private Length.Rel maximumDistance = new Length.Rel(5000, METER);
 
     /** The Lane that contains the simulated Cars. */
     private Lane lane;
 
-    /** the contour plots. */
+    /** The contour plots. */
     private ArrayList<LaneBasedGTUSampler> plots = new ArrayList<LaneBasedGTUSampler>();
 
     /** User settable properties. */

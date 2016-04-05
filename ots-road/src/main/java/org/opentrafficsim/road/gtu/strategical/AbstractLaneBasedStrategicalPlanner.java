@@ -14,7 +14,7 @@ import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristic
  */
 public abstract class AbstractLaneBasedStrategicalPlanner implements LaneBasedStrategicalPlanner
 {
-    /** the personal driving characteristics, which contain settings for the tactical planner. */
+    /** The personal driving characteristics, which contain settings for the tactical planner. */
     protected LaneBasedBehavioralCharacteristics drivingCharacteristics;
 
     /**

@@ -18,19 +18,19 @@ import org.xml.sax.SAXException;
  */
 class SignalReferenceTag
 {
-    /** s. */
+    /** Parameter s. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel s = null;
 
-    /** t. */
+    /** Parameter t. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Length.Rel t = null;
 
-    /** id. */
+    /** Id. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String id = null;
 
-    /** orientation. */
+    /** Orientation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     String orientation = null;
 

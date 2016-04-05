@@ -31,13 +31,13 @@ public class CrossSectionLink extends OTSLink implements Serializable
     /** */
     private static final long serialVersionUID = 20141015L;
 
-    /** list of cross-section elements. */
+    /** List of cross-section elements. */
     private final List<CrossSectionElement> crossSectionElementList = new ArrayList<>();
 
-    /** list of lanes. */
+    /** List of lanes. */
     private final List<Lane> lanes = new ArrayList<>();
     
-    /** the policy to generally keep left, keep right, or keep lane. */
+    /** The policy to generally keep left, keep right, or keep lane. */
     private final LaneKeepingPolicy laneKeepingPolicy;
 
     /**

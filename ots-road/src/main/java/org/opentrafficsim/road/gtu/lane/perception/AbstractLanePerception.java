@@ -80,10 +80,10 @@ public abstract class AbstractLanePerception implements LanePerception
     /** The GTUs on the right side. */
     private TimeStampedObject<Collection<HeadwayGTU>> neighboringGTUsRight;
 
-    /** the lanes and path we expect to take if we do not change lanes. */
+    /** The lanes and path we expect to take if we do not change lanes. */
     private TimeStampedObject<LanePathInfo> lanePathInfo;
 
-    /** the structure of the lanes in front of the GTU. */
+    /** The structure of the lanes in front of the GTU. */
     // TODO private LaneStructure laneStructure;
 
     /**

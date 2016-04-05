@@ -71,10 +71,10 @@ import org.djunits.value.vdouble.scalar.Length;
  */
 public class LaneStructure
 {
-    /** the length of this structure, to see if it needs updating. */
+    /** The length of this structure, to see if it needs updating. */
     private Length.Rel length;
 
-    /** the lanes from which we observe the situation. */
+    /** The lanes from which we observe the situation. */
     private LaneStructureRecord rootLSR;
 
     /**
