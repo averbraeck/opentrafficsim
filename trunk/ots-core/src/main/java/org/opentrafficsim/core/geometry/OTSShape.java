@@ -140,7 +140,6 @@ public class OTSShape extends OTSLine3D
      * @param otsShape the shape to test the intersection with
      * @return whether the shapes intersect or whether one chape contains the other
      */
-    @SuppressWarnings("checkstyle:needbraces")
     public final boolean intersects(final OTSShape otsShape)
     {
         // step 1: quick check to see if the bounds intersect
@@ -188,17 +187,14 @@ public class OTSShape extends OTSLine3D
         {
             for (int j = 1; j < otsShape.getPoints().length - 1; j++)
             {
-                Line2D.Double line1 =
-                    new Line2D.Double(this.getPoints()[i].getPoint2D(), this.getPoints()[i + 1].getPoint2D());
+                Line2D.Double line1 = new Line2D.Double(this.getPoints()[i].getPoint2D(), this.getPoints()[i + 1].getPoint2D());
                 Line2D.Double line2 =
-                    new Line2D.Double(otsShape.getPoints()[j].getPoint2D(), otsShape.getPoints()[j + 1].getPoint2D());
+                        new Line2D.Double(otsShape.getPoints()[j].getPoint2D(), otsShape.getPoints()[j + 1].getPoint2D());
 
                 if (line1.intersectsLine(line2))
                 {
-                    double p1x = line1.getX1(), p1y = line1.getY1(), d1x = line1.getX2() - p1x, d1y =
-                        line1.getY2() - p1y;
-                    double p2x = line2.getX1(), p2y = line2.getY1(), d2x = line2.getX2() - p2x, d2y =
-                        line2.getY2() - p2y;
+                    double p1x = line1.getX1(), p1y = line1.getY1(), d1x = line1.getX2() - p1x, d1y = line1.getY2() - p1y;
+                    double p2x = line2.getX1(), p2y = line2.getY1(), d2x = line2.getX2() - p2x, d2y = line2.getY2() - p2y;
 
                     double det = d2x * d1y - d2y * d1x;
                     if (det == 0)
@@ -211,15 +207,25 @@ public class OTSShape extends OTSLine3D
                          */
                         Point2D p1s = line1.getP1(), p1e = line1.getP2(), p2s = line2.getP1(), p2e = line2.getP2();
                         if ((p1s.equals(p2s) && p1e.equals(p2e)) || (p1s.equals(p2e) && p1e.equals(p2s)))
+                        {
                             return true; // situation d.
+                        }
                         if (p1s.equals(p2s) && line1.ptLineDist(p2e) > 0 && line2.ptLineDist(p1e) > 0)
+                        {
                             return true; // situation e.
+                        }
                         if (p1e.equals(p2e) && line1.ptLineDist(p2s) > 0 && line2.ptLineDist(p1s) > 0)
+                        {
                             return true; // situation e.
+                        }
                         if (p1s.equals(p2e) && line1.ptLineDist(p2s) > 0 && line2.ptLineDist(p1e) > 0)
+                        {
                             return true; // situation e.
+                        }
                         if (p1e.equals(p2s) && line1.ptLineDist(p2e) > 0 && line2.ptLineDist(p1s) > 0)
+                        {
                             return true; // situation e.
+                        }
                     }
                     else
                     {
@@ -247,7 +253,7 @@ public class OTSShape extends OTSLine3D
         if (points.length < 2)
         {
             throw new OTSGeometryException("Degenerate OTSLine3D; has " + points.length + " point"
-                + (points.length != 1 ? "s" : ""));
+                    + (points.length != 1 ? "s" : ""));
         }
         return createAndCleanOTSShape(new ArrayList<>(Arrays.asList(points)));
     }
@@ -284,14 +290,12 @@ public class OTSShape extends OTSLine3D
      */
     public static void main(final String[] args) throws OTSGeometryException
     {
-        OTSShape s1 =
-            new OTSShape(new OTSPoint3D(0, 0), new OTSPoint3D(10, 0), new OTSPoint3D(10, 10), new OTSPoint3D(0, 10));
-        OTSShape s2 =
-            new OTSShape(new OTSPoint3D(5, 5), new OTSPoint3D(15, 5), new OTSPoint3D(15, 15), new OTSPoint3D(5, 15));
+        OTSShape s1 = new OTSShape(new OTSPoint3D(0, 0), new OTSPoint3D(10, 0), new OTSPoint3D(10, 10), new OTSPoint3D(0, 10));
+        OTSShape s2 = new OTSShape(new OTSPoint3D(5, 5), new OTSPoint3D(15, 5), new OTSPoint3D(15, 15), new OTSPoint3D(5, 15));
         System.out.println("s1.intersect(s2): " + s1.intersects(s2));
         System.out.println("s1.intersect(s1): " + s1.intersects(s1));
         OTSShape s3 =
-            new OTSShape(new OTSPoint3D(25, 25), new OTSPoint3D(35, 25), new OTSPoint3D(35, 35), new OTSPoint3D(25, 35));
+                new OTSShape(new OTSPoint3D(25, 25), new OTSPoint3D(35, 25), new OTSPoint3D(35, 35), new OTSPoint3D(25, 35));
         System.out.println("s1.intersect(s3): " + s1.intersects(s3));
     }
 }
