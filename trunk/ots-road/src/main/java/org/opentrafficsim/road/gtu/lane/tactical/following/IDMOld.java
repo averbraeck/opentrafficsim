@@ -114,7 +114,11 @@ public class IDMOld extends AbstractGTUFollowingModelMobil
             new Acceleration(this.a.si
                 * (1.0 - Math.pow(followerSpeed.si / vDes(speedLimit, followerMaximumSpeed).si, 4)),
                 AccelerationUnit.SI);
-
+        // limit deceleration for free term  (= aFree)
+        if (aFree.si < -0.5)
+        {
+            aFree = new Acceleration(-0.5, AccelerationUnit.SI);
+        }
         Acceleration newAcceleration = aFree.minus(aInteraction);
         if (newAcceleration.si * stepSize.si + followerSpeed.si < 0)
         {

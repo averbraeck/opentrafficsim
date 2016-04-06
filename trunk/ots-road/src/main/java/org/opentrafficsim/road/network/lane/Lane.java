@@ -911,16 +911,16 @@ public class Lane extends CrossSectionElement implements Serializable
                             Length.Rel df = this.getCenterLine().getFirst().distance(lane.getCenterLine().getFirst());
                             Length.Rel dl = this.getCenterLine().getFirst().distance(lane.getCenterLine().getLast());
                             // this, parentLink <--- O ---> lane, link
-                            if (df.lt(MARGIN) && df.lt(dl) && lane.getDirectionality(gtuType).isForwardOrBoth()
+                            if (df.lt(MARGIN) && df.lt(dl) && lane.getDirectionality(gtuType).isBackwardOrBoth()
                                 && link.getStartNode().equals(getParentLink().getStartNode()))
                             {
-                                laneMap.put(lane, GTUDirectionality.DIR_PLUS);
+                                laneMap.put(lane, GTUDirectionality.DIR_MINUS);
                             }
                             // this, parentLink <--- O <--- lane, link
-                            else if (dl.lt(MARGIN) && dl.lt(df) && lane.getDirectionality(gtuType).isBackwardOrBoth()
+                            else if (dl.lt(MARGIN) && dl.lt(df) && lane.getDirectionality(gtuType).isForwardOrBoth()
                                 && link.getEndNode().equals(getParentLink().getStartNode()))
                             {
-                                laneMap.put(lane, GTUDirectionality.DIR_MINUS);
+                                laneMap.put(lane, GTUDirectionality.DIR_PLUS);
                             }
                         }
                     }

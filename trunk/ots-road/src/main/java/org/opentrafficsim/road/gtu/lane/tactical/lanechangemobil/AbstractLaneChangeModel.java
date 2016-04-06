@@ -80,6 +80,12 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             {
                 nonPreferredAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
             }
+            if (null != nonPreferredAccelerationSteps
+                    && nonPreferredAccelerationSteps.getLeaderAcceleration().getSI() < -gtu.getStrategicalPlanner()
+                        .getDrivingCharacteristics().getGTUFollowingModel().getMaximumSafeDeceleration().getSI())
+                {
+                    nonPreferredAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
+                }
             Acceleration nonPreferredA =
                 null == nonPreferredLane ? null : applyDriverPersonality(nonPreferredAccelerationSteps);
             DualAccelerationStep preferredAccelerationSteps =
@@ -91,6 +97,12 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             {
                 preferredAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
             }
+            if (null != preferredAccelerationSteps
+                    && preferredAccelerationSteps.getLeaderAcceleration().getSI() < -gtu.getStrategicalPlanner()
+                        .getDrivingCharacteristics().getGTUFollowingModel().getMaximumSafeDeceleration().getSI())
+                {
+                    preferredAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
+                }
             Acceleration preferredA = null == preferredLane ? null : applyDriverPersonality(preferredAccelerationSteps);
             if (null == preferredA)
             {
