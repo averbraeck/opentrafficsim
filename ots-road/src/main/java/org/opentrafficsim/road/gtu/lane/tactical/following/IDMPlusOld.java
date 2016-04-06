@@ -110,6 +110,11 @@ public class IDMPlusOld extends AbstractGTUFollowingModelMobil
         {
             leftComponent = 0;
         }
+        // limit deceleration for free term  (= leftComponent)
+        if (leftComponent * this.a.si < -0.5)
+        {
+            leftComponent = -0.5 / this.a.si;
+        }
         Acceleration logWeightedAccelerationTimes2 =
             new Acceleration(Math.sqrt(this.a.getSI() * this.b.getSI()), AccelerationUnit.SI).multiplyBy(2);
         // don't forget the times 2

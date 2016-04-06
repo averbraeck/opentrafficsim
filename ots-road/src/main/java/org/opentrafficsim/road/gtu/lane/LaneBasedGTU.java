@@ -31,6 +31,7 @@ public interface LaneBasedGTU extends GTU
 {
     /** {@inheritDoc} */
     @Override
+    // TODO change into LanePerception interface! 
     LanePerceptionFull getPerception();
 
     /** {@inheritDoc} */

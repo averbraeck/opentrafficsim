@@ -73,7 +73,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBasedGTU
+public abstract class CopyOfAbstractLaneBasedGTU extends AbstractGTU implements LaneBasedGTU
 {
     /** */
     private static final long serialVersionUID = 20140822L;
@@ -97,10 +97,10 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     private Map<Lane, List<SimEvent<OTSSimTimeDouble>>> pendingTriggers =
         new HashMap<Lane, List<SimEvent<OTSSimTimeDouble>>>();
 
-    /** The object to lock to make the GTU thread safe. */
+    /** the object to lock to make the GTU thread safe. */
     private Object lock = new Object();
 
-    /** The mode of movement: lane-based or path-based. */
+    /** the mode of movement: lane-based or path-based. */
     private static final boolean MOVEMENT_LANE_BASED = true;
 
     /**
@@ -119,7 +119,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
      * @throws OTSGeometryException when the initial path is wrong
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public AbstractLaneBasedGTU(final String id, final GTUType gtuType,
+    public CopyOfAbstractLaneBasedGTU(final String id, final GTUType gtuType,
         final Set<DirectedLanePosition> initialLongitudinalPositions, final Speed initialSpeed,
         final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
         final LanePerception perception, final OTSNetwork network) throws NetworkException, SimRuntimeException,
@@ -304,11 +304,6 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
 
             // generate the next operational plan and carry it out
             super.move(fromLocation);
-            
-            if (getOperationalPlan().getAcceleration(Time.Rel.ZERO).si < -10)
-            {
-                System.err.println("(getOperationalPlan().getAcceleration(Time.Rel.ZERO).si < -10)");
-            }
 
             // update the positions on the lanes we are registered on
             this.fractionalLinkPositions = newLinkPositions;

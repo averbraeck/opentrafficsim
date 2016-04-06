@@ -131,7 +131,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             if (null != sameLaneFollower.getGtuId())
             {
                 sameLaneTraffic.add(new HeadwayGTU(sameLaneFollower.getGtuId(), sameLaneFollower.getGtuSpeed(),
-                        -sameLaneFollower.getDistance().si, sameLaneFollower.getGtuType()));
+                        sameLaneFollower.getDistance().si, sameLaneFollower.getGtuType()));
             }
 
             // Are we in the right lane for the route?
@@ -152,11 +152,13 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     LateralDirectionality.LEFT == preferred ? PREFERREDLANEINCENTIVE : NONPREFERREDLANEINCENTIVE;
             final Acceleration defaultRightLaneIncentive =
                     LateralDirectionality.RIGHT == preferred ? PREFERREDLANEINCENTIVE : NONPREFERREDLANEINCENTIVE;
-            // if (laneBasedGTU.getSimulator().getSimulatorTime().get().si >= 3.3493881
-            // && laneBasedGTU.getSimulator().getSimulatorTime().get().si <= 3.3493882)
+            
+            // if (laneBasedGTU.getSimulator().getSimulatorTime().get().si >= 92
+            // && laneBasedGTU.getId().contains("34"))
             // {
             // System.out.println("Let op");
             // }
+            
             AccelerationVector defaultLaneIncentives =
                     new AccelerationVector(new double[] { defaultLeftLaneIncentive.getSI(), STAYINCURRENTLANEINCENTIVE.getSI(),
                             defaultRightLaneIncentive.getSI() }, AccelerationUnit.SI, StorageType.DENSE);
@@ -216,16 +218,16 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     laneBasedGTU.enterLane(newLane, newLane.getLength().multiplyBy(fractionalPosition), laneBasedGTU.getLanes()
                             .get(foundOldLane));
                 }
-//                if ("41".equals(gtu.getId()) && oldLaneSet.size() > 1)
-//                {
-//                    System.out.println("Problem");
-//                    AbstractLaneBasedGTU lbg = (AbstractLaneBasedGTU) gtu;
-//                    for (Lane l : lbg.getLanes().keySet())
-//                    {
-//                        System.out.println("reference on lane " + l + " is "
-//                                + lbg.position(l, RelativePosition.REFERENCE_POSITION) + " length of lane is " + l.getLength());
-//                    }
-//                }
+                // if ("41".equals(gtu.getId()) && oldLaneSet.size() > 1)
+                // {
+                // System.out.println("Problem");
+                // AbstractLaneBasedGTU lbg = (AbstractLaneBasedGTU) gtu;
+                // for (Lane l : lbg.getLanes().keySet())
+                // {
+                // System.out.println("reference on lane " + l + " is "
+                // + lbg.position(l, RelativePosition.REFERENCE_POSITION) + " length of lane is " + l.getLength());
+                // }
+                // }
                 System.out.println(gtu + " changes lane from " + oldLaneSet + " to " + newLaneSet + " at time "
                         + gtu.getSimulator().getSimulatorTime().get());
                 // Remove this GTU from all of the Lanes that it is on and remember the fractional position on each
@@ -234,7 +236,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                 {
                     laneBasedGTU.leaveLane(l);
                 }
-                // ????
+                // create the path to drive in this timestep.
                 lanePathInfo = buildLanePathInfo(laneBasedGTU, maximumForwardHeadway);
 
                 // System.out.println("lane incentives: " + laneIncentives);

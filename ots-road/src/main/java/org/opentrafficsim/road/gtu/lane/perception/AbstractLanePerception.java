@@ -125,17 +125,8 @@ public abstract class AbstractLanePerception implements LanePerception
     {
         Time.Abs timestamp = getTimestamp();
         this.lanePathInfo =
-            new TimeStampedObject<LanePathInfo>(AbstractLaneBasedTacticalPlanner.buildLanePathInfo(this.gtu, this.gtu
-                .getBehavioralCharacteristics().getForwardHeadwayDistance()), timestamp);
-        // assess the speed limit where we are right now
-        this.speedLimit = new TimeStampedObject<>(new Speed(Double.MAX_VALUE, SpeedUnit.SI), timestamp);
-        for (Lane lane : this.gtu.getLanes().keySet())
-        {
-            if (lane.getSpeedLimit(this.gtu.getGTUType()).lt(this.speedLimit.getObject()))
-            {
-                this.speedLimit = new TimeStampedObject<>(lane.getSpeedLimit(this.gtu.getGTUType()), timestamp);
-            }
-        }
+                new TimeStampedObject<LanePathInfo>(AbstractLaneBasedTacticalPlanner.buildLanePathInfo(this.gtu, this.gtu
+                        .getBehavioralCharacteristics().getForwardHeadwayDistance()), timestamp);
     }
 
     /** {@inheritDoc} */
@@ -211,8 +202,7 @@ public abstract class AbstractLanePerception implements LanePerception
     public void updateParallelGTUsLeft() throws GTUException
     {
         Time.Abs timestamp = getTimestamp();
-        if (this.accessibleAdjacentLanesLeft == null
-            || !timestamp.equals(this.accessibleAdjacentLanesLeft.getTimestamp()))
+        if (this.accessibleAdjacentLanesLeft == null || !timestamp.equals(this.accessibleAdjacentLanesLeft.getTimestamp()))
         {
             updateAccessibleAdjacentLanesLeft();
         }
@@ -232,8 +222,7 @@ public abstract class AbstractLanePerception implements LanePerception
     public void updateParallelGTUsRight() throws GTUException
     {
         Time.Abs timestamp = getTimestamp();
-        if (this.accessibleAdjacentLanesRight == null
-            || !timestamp.equals(this.accessibleAdjacentLanesRight.getTimestamp()))
+        if (this.accessibleAdjacentLanesRight == null || !timestamp.equals(this.accessibleAdjacentLanesRight.getTimestamp()))
         {
             updateAccessibleAdjacentLanesRight();
         }
@@ -253,8 +242,7 @@ public abstract class AbstractLanePerception implements LanePerception
     public void updateLaneTrafficLeft() throws GTUException, NetworkException
     {
         Time.Abs timestamp = getTimestamp();
-        if (this.accessibleAdjacentLanesLeft == null
-            || !timestamp.equals(this.accessibleAdjacentLanesLeft.getTimestamp()))
+        if (this.accessibleAdjacentLanesLeft == null || !timestamp.equals(this.accessibleAdjacentLanesLeft.getTimestamp()))
         {
             updateAccessibleAdjacentLanesLeft();
         }
@@ -268,8 +256,8 @@ public abstract class AbstractLanePerception implements LanePerception
         Length.Rel maximumForwardHeadway = this.gtu.getBehavioralCharacteristics().getForwardHeadwayDistance();
         Length.Rel maximumReverseHeadway = this.gtu.getBehavioralCharacteristics().getBackwardHeadwayDistance();
         this.neighboringGTUsLeft =
-            new TimeStampedObject<>(collectNeighborLaneTraffic(LateralDirectionality.LEFT, timestamp,
-                maximumForwardHeadway, maximumReverseHeadway), timestamp);
+                new TimeStampedObject<>(collectNeighborLaneTraffic(LateralDirectionality.LEFT, timestamp,
+                        maximumForwardHeadway, maximumReverseHeadway), timestamp);
     }
 
     /** {@inheritDoc} */
@@ -277,8 +265,7 @@ public abstract class AbstractLanePerception implements LanePerception
     public void updateLaneTrafficRight() throws GTUException, NetworkException
     {
         Time.Abs timestamp = getTimestamp();
-        if (this.accessibleAdjacentLanesRight == null
-            || !timestamp.equals(this.accessibleAdjacentLanesRight.getTimestamp()))
+        if (this.accessibleAdjacentLanesRight == null || !timestamp.equals(this.accessibleAdjacentLanesRight.getTimestamp()))
         {
             updateAccessibleAdjacentLanesRight();
         }
@@ -292,8 +279,8 @@ public abstract class AbstractLanePerception implements LanePerception
         Length.Rel maximumForwardHeadway = this.gtu.getBehavioralCharacteristics().getForwardHeadwayDistance();
         Length.Rel maximumReverseHeadway = this.gtu.getBehavioralCharacteristics().getBackwardHeadwayDistance();
         this.neighboringGTUsRight =
-            new TimeStampedObject<>(collectNeighborLaneTraffic(LateralDirectionality.RIGHT, timestamp,
-                maximumForwardHeadway, maximumReverseHeadway), timestamp);
+                new TimeStampedObject<>(collectNeighborLaneTraffic(LateralDirectionality.RIGHT, timestamp,
+                        maximumForwardHeadway, maximumReverseHeadway), timestamp);
     }
 
     /** {@inheritDoc} */
@@ -301,15 +288,15 @@ public abstract class AbstractLanePerception implements LanePerception
     public Map<Lane, Set<Lane>> accessibleAdjacentLaneMap(final LateralDirectionality lateralDirection)
     {
         return lateralDirection.equals(LateralDirectionality.LEFT) ? this.accessibleAdjacentLanesLeft.getObject()
-            : this.accessibleAdjacentLanesRight.getObject();
+                : this.accessibleAdjacentLanesRight.getObject();
     }
 
     /** {@inheritDoc} */
     @Override
     public Set<LaneBasedGTU> parallelGTUs(final LateralDirectionality lateralDirection)
     {
-        return lateralDirection.equals(LateralDirectionality.LEFT) ? this.parallelGTUsLeft.getObject()
-            : this.parallelGTUsRight.getObject();
+        return lateralDirection.equals(LateralDirectionality.LEFT) ? this.parallelGTUsLeft.getObject() : this.parallelGTUsRight
+                .getObject();
     }
 
     /** {@inheritDoc} */
@@ -317,7 +304,7 @@ public abstract class AbstractLanePerception implements LanePerception
     public Collection<HeadwayGTU> neighboringGTUCollection(final LateralDirectionality lateralDirection)
     {
         return lateralDirection.equals(LateralDirectionality.LEFT) ? this.neighboringGTUsLeft.getObject()
-            : this.neighboringGTUsRight.getObject();
+                : this.neighboringGTUsRight.getObject();
     }
 
     /**
@@ -338,6 +325,11 @@ public abstract class AbstractLanePerception implements LanePerception
      */
     private final HeadwayGTU headway(Length.Rel maxDistance) throws GTUException, NetworkException
     {
+        if (maxDistance.si < 0.0)
+        {
+            HeadwayGTU hg = headwayGTUSI(maxDistance.getSI());
+            return new HeadwayGTU(hg.getGtuId(), hg.getGtuSpeed(), hg.getDistance().multiplyBy(-1.0), hg.getGtuType());
+        }
         return headwayGTUSI(maxDistance.getSI());
     }
 
@@ -356,18 +348,18 @@ public abstract class AbstractLanePerception implements LanePerception
      * @throws NetworkException when there is a problem with the route planner
      */
     private final HeadwayGTU headway(final Lane lane, final GTUDirectionality direction, final Length.Rel maxDistance)
-        throws GTUException, NetworkException
+            throws GTUException, NetworkException
     {
         Time.Abs when = this.gtu.getSimulator().getSimulatorTime().getTime();
         if (maxDistance.getSI() > 0.0)
         {
-            return headwayRecursiveForwardSI(lane, direction,
-                this.gtu.projectedPosition(lane, this.gtu.getFront(), when).getSI(), 0.0, maxDistance.getSI(), when);
+            return headwayRecursiveForwardSI(lane, direction, this.gtu.projectedPosition(lane, this.gtu.getFront(), when)
+                    .getSI(), 0.0, maxDistance.getSI(), when);
         }
         else
         {
-            return headwayRecursiveBackwardSI(lane, direction,
-                this.gtu.projectedPosition(lane, this.gtu.getRear(), when).getSI(), 0.0, -maxDistance.getSI(), when);
+            return headwayRecursiveBackwardSI(lane, direction, this.gtu.projectedPosition(lane, this.gtu.getRear(), when)
+                    .getSI(), 0.0, -maxDistance.getSI(), when);
         }
     }
 
@@ -402,14 +394,12 @@ public abstract class AbstractLanePerception implements LanePerception
                          *                *-----*    *----*      *------------*       *-----*
                          * where the GTUs can each drive in two directions (!)
                          */
-                        double gtuFractionFront =
-                            Math.max(0.0, otherGTU.fractionalPosition(lane, otherGTU.getFront(), when));
-                        double gtuFractionRear =
-                            Math.min(1.0, otherGTU.fractionalPosition(lane, otherGTU.getRear(), when));
+                        double gtuFractionFront = Math.max(0.0, otherGTU.fractionalPosition(lane, otherGTU.getFront(), when));
+                        double gtuFractionRear = Math.min(1.0, otherGTU.fractionalPosition(lane, otherGTU.getRear(), when));
                         double gtuMin = Math.min(gtuFractionFront, gtuFractionRear);
                         double gtuMax = Math.max(gtuFractionFront, gtuFractionRear);
                         if ((gtuMin >= posMin && gtuMin <= posMax) || (gtuMax >= posMin && gtuMax <= posMax)
-                            || (posMin >= gtuMin && posMin <= gtuMax) || (posMax >= gtuMin && posMax <= gtuMax))
+                                || (posMin >= gtuMin && posMin <= gtuMax) || (posMax >= gtuMin && posMax <= gtuMax))
                         {
                             gtuSet.add(otherGTU);
                         }
@@ -432,7 +422,7 @@ public abstract class AbstractLanePerception implements LanePerception
      *             or when there are no lanes parallel to one of the lanes where we are registered in the given direction.
      */
     private final Set<LaneBasedGTU> parallel(final LateralDirectionality lateralDirection, final Time.Abs when)
-        throws GTUException
+            throws GTUException
     {
         Set<LaneBasedGTU> gtuSet = new LinkedHashSet<LaneBasedGTU>();
         for (Lane lane : this.gtu.getLanes().keySet())
@@ -467,7 +457,7 @@ public abstract class AbstractLanePerception implements LanePerception
      *         not match.
      */
     public final Lane bestAccessibleAdjacentLane(final Lane currentLane, final LateralDirectionality lateralDirection,
-        final Length.Rel longitudinalPosition)
+            final Length.Rel longitudinalPosition)
     {
         Set<Lane> candidates = accessibleAdjacentLaneMap(lateralDirection).get(currentLane);
         if (candidates.isEmpty())
@@ -503,9 +493,9 @@ public abstract class AbstractLanePerception implements LanePerception
      * @throws NetworkException on network inconsistency
      * @throws GTUException on problems with the GTU state (e.g., position)
      */
-    private Collection<HeadwayGTU> collectNeighborLaneTraffic(final LateralDirectionality directionality,
-        final Time.Abs when, final Length.Rel maximumForwardHeadway, final Length.Rel maximumReverseHeadway)
-        throws NetworkException, GTUException
+    private Collection<HeadwayGTU> collectNeighborLaneTraffic(final LateralDirectionality directionality, final Time.Abs when,
+            final Length.Rel maximumForwardHeadway, final Length.Rel maximumReverseHeadway) throws NetworkException,
+            GTUException
     {
         Collection<HeadwayGTU> result = new HashSet<HeadwayGTU>();
         for (LaneBasedGTU p : parallel(directionality, when))
@@ -524,8 +514,8 @@ public abstract class AbstractLanePerception implements LanePerception
                 HeadwayGTU follower = headway(adjacentLane, this.gtu.getLanes().get(lane), maximumReverseHeadway);
                 if (null != follower.getGtuSpeed() && !result.contains(follower))
                 {
-                    result.add(new HeadwayGTU(follower.getGtuId(), follower.getGtuSpeed(), -follower.getDistance().si,
-                        follower.getGtuType()));
+                    result.add(new HeadwayGTU(follower.getGtuId(), follower.getGtuSpeed(), -follower.getDistance().si, follower
+                            .getGtuType()));
                 }
             }
         }
@@ -541,12 +531,13 @@ public abstract class AbstractLanePerception implements LanePerception
      */
     private HeadwayGTU headwayGTUSI(final double maxDistanceSI) throws GTUException, NetworkException
     {
-        // TODO GTU can be registered on multiple lanes at the same time during e.g. lane change!
         Time.Abs time = this.gtu.getSimulator().getSimulatorTime().getTime();
         HeadwayGTU foundMaxGTUDistanceSI = new HeadwayGTU(null, null, maxDistanceSI, null);
+        HeadwayGTU foundMaxGTUDistanceSIOld = new HeadwayGTU(null, null, maxDistanceSI, null);
         // search for the closest GTU on all current lanes we are registered on.
         if (maxDistanceSI > 0.0)
         {
+            /*-
             // look forward based on the observed lanePathInfo.
             LaneDirection ld = this.lanePathInfo.getObject().getLaneDirectionList().get(0);
             double gtuPosFrontSI = this.gtu.position(ld.getLane(), this.gtu.getFront()).si;
@@ -566,7 +557,29 @@ public abstract class AbstractLanePerception implements LanePerception
                 }
                 cumDistSI += ld.getLane().getLength().si;
             }
-            return new HeadwayGTU(null, null, maxDistanceSI, null);
+            */
+            // Old
+            for (Lane lane : this.gtu.positions(this.gtu.getFront()).keySet())
+            {
+                HeadwayGTU closestOld =
+                        headwayRecursiveForwardSI(lane, this.gtu.getLanes().get(lane),
+                                this.gtu.position(lane, this.gtu.getFront(), time).getSI(), 0.0, maxDistanceSI, time);
+                if (closestOld.getDistance().si < maxDistanceSI
+                        && closestOld.getDistance().si < foundMaxGTUDistanceSIOld.getDistance().si)
+                {
+                    foundMaxGTUDistanceSIOld = closestOld;
+                }
+            }
+            /*-
+            if (foundMaxGTUDistanceSI.getGtuId() != foundMaxGTUDistanceSIOld.getGtuId()
+                    || Math.abs(foundMaxGTUDistanceSI.getDistance().si - foundMaxGTUDistanceSIOld.getDistance().si) > 1E-6)
+            {
+                System.err.println();
+            }
+            */
+            return foundMaxGTUDistanceSIOld;
+            // End old
+            // return new HeadwayGTU(null, null, maxDistanceSI, null);
         }
         else
         {
@@ -574,10 +587,10 @@ public abstract class AbstractLanePerception implements LanePerception
             for (Lane lane : this.gtu.positions(this.gtu.getRear()).keySet())
             {
                 HeadwayGTU closest =
-                    headwayRecursiveBackwardSI(lane, this.gtu.getLanes().get(lane),
-                        this.gtu.position(lane, this.gtu.getRear(), time).getSI(), 0.0, -maxDistanceSI, time);
+                        headwayRecursiveBackwardSI(lane, this.gtu.getLanes().get(lane),
+                                this.gtu.position(lane, this.gtu.getRear(), time).getSI(), 0.0, -maxDistanceSI, time);
                 if (closest.getDistance().si < -maxDistanceSI
-                    && closest.getDistance().si < foundMaxGTUDistanceSI.getDistance().si)
+                        && closest.getDistance().si < -foundMaxGTUDistanceSI.getDistance().si)
                 {
                     foundMaxGTUDistanceSI = closest;
                 }
@@ -595,12 +608,12 @@ public abstract class AbstractLanePerception implements LanePerception
      * @throws GTUException
      */
     private HeadwayGTU headwayGTULane(LaneDirection laneDirection, double startPosSI, double cumDistSI, Time.Abs now)
-        throws GTUException
+            throws GTUException
     {
         Lane lane = laneDirection.getLane();
         LaneBasedGTU gtu =
-            lane.getGtuAhead(new Length.Rel(startPosSI, LengthUnit.SI), laneDirection.getDirection(),
-                RelativePosition.REAR, now);
+                lane.getGtuAhead(new Length.Rel(startPosSI, LengthUnit.SI), laneDirection.getDirection(),
+                        RelativePosition.REAR, now);
         if (gtu == null)
         {
             return null;
@@ -630,17 +643,17 @@ public abstract class AbstractLanePerception implements LanePerception
      * @throws NetworkException when the
      */
     private HeadwayGTU headwayRecursiveForwardSI(final Lane lane, final GTUDirectionality direction,
-        final double lanePositionSI, final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when)
-        throws GTUException, NetworkException
+            final double lanePositionSI, final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when)
+            throws GTUException, NetworkException
     {
         LaneBasedGTU otherGTU =
-            lane.getGtuAhead(new Length.Rel(lanePositionSI, LengthUnit.SI), direction, RelativePosition.REAR, when);
+                lane.getGtuAhead(new Length.Rel(lanePositionSI, LengthUnit.SI), direction, RelativePosition.REAR, when);
         if (otherGTU != null)
         {
             double distanceSI =
-                direction.equals(GTUDirectionality.DIR_PLUS) ? cumDistanceSI
-                    + otherGTU.position(lane, otherGTU.getRear(), when).getSI() - lanePositionSI : cumDistanceSI
-                    + lanePositionSI;
+                    direction.equals(GTUDirectionality.DIR_PLUS) ? cumDistanceSI
+                            + otherGTU.position(lane, otherGTU.getRear(), when).getSI() - lanePositionSI : cumDistanceSI
+                            + lanePositionSI;
             if (distanceSI > 0 && distanceSI <= maxDistanceSI)
             {
                 return new HeadwayGTU(otherGTU.getId(), otherGTU.getVelocity(), distanceSI, otherGTU.getGTUType());
@@ -649,8 +662,8 @@ public abstract class AbstractLanePerception implements LanePerception
         }
 
         double distanceSI =
-            direction.equals(GTUDirectionality.DIR_PLUS) ? cumDistanceSI + lane.getLength().getSI() - lanePositionSI
-                : cumDistanceSI + lanePositionSI;
+                direction.equals(GTUDirectionality.DIR_PLUS) ? cumDistanceSI + lane.getLength().getSI() - lanePositionSI
+                        : cumDistanceSI + lanePositionSI;
         if (distanceSI > maxDistanceSI)
         {
             // No other GTU was found on one of the current lanes or their successors.
@@ -675,8 +688,7 @@ public abstract class AbstractLanePerception implements LanePerception
         }
         else
         {
-            LinkDirection ld =
-                this.gtu.getStrategicalPlanner().nextLinkDirection(lane.getParentLink(), direction, gtuType);
+            LinkDirection ld = this.gtu.getStrategicalPlanner().nextLinkDirection(lane.getParentLink(), direction, gtuType);
             for (Lane l : lane.nextLanes(gtuType).keySet())
             {
                 if (l.getParentLink().equals(ld.getLink()))
@@ -711,16 +723,15 @@ public abstract class AbstractLanePerception implements LanePerception
      * @throws GTUException when there is a problem with the geometry of the network
      */
     private HeadwayGTU headwayRecursiveBackwardSI(final Lane lane, final GTUDirectionality direction,
-        final double lanePositionSI, final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when)
-        throws GTUException
+            final double lanePositionSI, final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when)
+            throws GTUException
     {
         // XXX WRONG - adapt method to forward perception method!
         LaneBasedGTU otherGTU =
-            lane.getGtuBehind(new Length.Rel(lanePositionSI, LengthUnit.SI), direction, RelativePosition.FRONT, when);
+                lane.getGtuBehind(new Length.Rel(lanePositionSI, LengthUnit.SI), direction, RelativePosition.FRONT, when);
         if (otherGTU != null)
         {
-            double distanceM =
-                cumDistanceSI + lanePositionSI - otherGTU.position(lane, otherGTU.getFront(), when).getSI();
+            double distanceM = cumDistanceSI + lanePositionSI - otherGTU.position(lane, otherGTU.getFront(), when).getSI();
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
                 return new HeadwayGTU(otherGTU.getId(), otherGTU.getVelocity(), distanceM, otherGTU.getGTUType());
@@ -741,10 +752,10 @@ public abstract class AbstractLanePerception implements LanePerception
                     double traveledDistanceSI = cumDistanceSI + lanePositionSI;
                     // WRONG - adapt method to forward perception method!
                     HeadwayGTU closest =
-                        headwayRecursiveBackwardSI(prevLane, direction, prevLane.getLength().getSI(),
-                            traveledDistanceSI, maxDistanceSI, when);
+                            headwayRecursiveBackwardSI(prevLane, direction, prevLane.getLength().getSI(), traveledDistanceSI,
+                                    maxDistanceSI, when);
                     if (closest.getDistance().si < maxDistanceSI
-                        && closest.getDistance().si < foundMaxGTUDistanceSI.getDistance().si)
+                            && closest.getDistance().si < foundMaxGTUDistanceSI.getDistance().si)
                     {
                         foundMaxGTUDistanceSI = closest;
                     }
@@ -771,12 +782,11 @@ public abstract class AbstractLanePerception implements LanePerception
      * @throws GTUException when there is a problem with the geometry of the network
      */
     private double headwayRecursiveForwardSI(final Lane lane, final double lanePositionSI, final LaneBasedGTU otherGTU,
-        final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when) throws GTUException
+            final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when) throws GTUException
     {
         if (lane.getGtuList().contains(otherGTU))
         {
-            double distanceM =
-                cumDistanceSI + otherGTU.position(lane, otherGTU.getRear(), when).getSI() - lanePositionSI;
+            double distanceM = cumDistanceSI + otherGTU.position(lane, otherGTU.getRear(), when).getSI() - lanePositionSI;
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
                 return distanceM;
@@ -796,7 +806,7 @@ public abstract class AbstractLanePerception implements LanePerception
                 {
                     double traveledDistanceSI = cumDistanceSI + lane.getLength().getSI() - lanePositionSI;
                     double headwaySuccessor =
-                        headwayRecursiveForwardSI(nextLane, 0.0, otherGTU, traveledDistanceSI, maxDistanceSI, when);
+                            headwayRecursiveForwardSI(nextLane, 0.0, otherGTU, traveledDistanceSI, maxDistanceSI, when);
                     if (headwaySuccessor < maxDistanceSI)
                     {
                         return headwaySuccessor;
@@ -823,14 +833,12 @@ public abstract class AbstractLanePerception implements LanePerception
      *         within maxDistanceSI
      * @throws GTUException when there is a problem with the geometry of the network
      */
-    private double headwayRecursiveBackwardSI(final Lane lane, final double lanePositionSI,
-        final LaneBasedGTU otherGTU, final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when)
-        throws GTUException
+    private double headwayRecursiveBackwardSI(final Lane lane, final double lanePositionSI, final LaneBasedGTU otherGTU,
+            final double cumDistanceSI, final double maxDistanceSI, final Time.Abs when) throws GTUException
     {
         if (lane.getGtuList().contains(otherGTU))
         {
-            double distanceM =
-                cumDistanceSI + lanePositionSI - otherGTU.position(lane, otherGTU.getFront(), when).getSI();
+            double distanceM = cumDistanceSI + lanePositionSI - otherGTU.position(lane, otherGTU.getFront(), when).getSI();
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
                 return distanceM;
@@ -851,8 +859,8 @@ public abstract class AbstractLanePerception implements LanePerception
                 // headwayRecursiveForwardSI(prevLane, prevLane.getLength().getSI(), otherGTU,
                 // traveledDistanceSI, maxDistanceSI, when);
                 double headwayPredecessor =
-                    headwayRecursiveBackwardSI(prevLane, prevLane.getLength().getSI(), otherGTU, traveledDistanceSI,
-                        maxDistanceSI, when);
+                        headwayRecursiveBackwardSI(prevLane, prevLane.getLength().getSI(), otherGTU, traveledDistanceSI,
+                                maxDistanceSI, when);
                 if (headwayPredecessor < maxDistanceSI)
                 {
                     return headwayPredecessor;

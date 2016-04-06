@@ -136,6 +136,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
             Link link = linkIterator.next();
             if (link.equals(previousLink))
             {
+                // No u-turn...
                 linkIterator.remove();
             }
             else

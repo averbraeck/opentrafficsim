@@ -228,6 +228,10 @@ public abstract class AbstractGTUFollowingModelMobil implements GTUFollowingMode
         }
         if (maximumSIDeceleration < maximumDeceleration)
         {
+            System.out.println();
+            maximumSIDeceleration =
+                    computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed,
+                        new Length.Rel(maximumSI, LengthUnit.SI), speedLimit).getSI();
             throw new Error("Cannot find headway that results in an acceptable deceleration");
         }
         // Now bisect until the error is less than the requested precision
