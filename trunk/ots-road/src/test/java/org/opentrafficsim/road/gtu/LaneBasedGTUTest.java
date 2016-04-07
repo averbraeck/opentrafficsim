@@ -335,10 +335,10 @@ public class LaneBasedGTUTest implements UNITS
     @Test
     public void leaderFollowerAndParallelTest() throws Exception
     {
-        // TODO leaderFollowerParallel(2, 2, 1);
-        // TODO leaderFollowerParallel(2, 3, 1);
-        // TODO leaderFollowerParallel(2, 2, 2);
-        // TODO leaderFollowerParallel(2, 3, 2);
+//        leaderFollowerParallel(2, 2, 1);
+//        leaderFollowerParallel(2, 3, 1);
+//        leaderFollowerParallel(2, 2, 2);
+//        leaderFollowerParallel(2, 3, 2);
     }
 
     /**
@@ -385,7 +385,8 @@ public class LaneBasedGTUTest implements UNITS
             FixedAccelerationModel fam = new FixedAccelerationModel(acceleration, new Time.Rel(10, SECOND));
             LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
             Speed maximumVelocity = new Speed(200, KM_PER_HOUR);
-            LaneBasedBehavioralCharacteristics drivingCharacteristics = new LaneBasedBehavioralCharacteristics(fam, laneChangeModel);
+            LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                    new LaneBasedBehavioralCharacteristics(fam, laneChangeModel);
             LaneBasedStrategicalPlanner strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
             LaneBasedIndividualGTU car =
@@ -415,11 +416,11 @@ public class LaneBasedGTUTest implements UNITS
                 // System.out.println(String.format("time %.1fs, distance %.3fm", 60 + deltaTime, carPosition.getSI()
                 // + distanceAtTime));
                 // System.out.println("Expected differential distance " + distanceAtTime);
-                /*- 
-                 * TODO assertEquals("It should take " + deltaTime + " seconds to cover distance " + distanceAtTime, deltaTime,
-                 * car.deltaTimeForDistance(new Length.Rel(distanceAtTime, METER)).getSI(), 0.0001);
-                 * TODO assertEquals("Car should reach distance " + distanceAtTime + " at " + (deltaTime + 60), deltaTime + 60,
-                 * car.timeAtDistance(new Length.Rel(distanceAtTime, METER)).getSI(), 0.0001);
+                /*-
+                assertEquals("It should take " + deltaTime + " seconds to cover distance " + distanceAtTime, deltaTime, car
+                        .deltaTimeForDistance(new Length.Rel(distanceAtTime, METER)).getSI(), 0.0001);
+                assertEquals("Car should reach distance " + distanceAtTime + " at " + (deltaTime + 60), deltaTime + 60, car
+                        .timeAtDistance(new Length.Rel(distanceAtTime, METER)).getSI(), 0.0001);
                  */
             }
         }
@@ -452,7 +453,7 @@ public class LaneBasedGTUTest implements UNITS
             double linkLength = link.getLength().getSI();
             double frontPositionInLink = totalLongitudinalPosition.getSI() - cumulativeLength + gtuLength.getSI();
             double rearPositionInLink = frontPositionInLink - gtuLength.getSI();
-            // double linkEnd = cumulativeLength + linkLength;
+            double linkEnd = cumulativeLength + linkLength;
             // System.out.println("cumulativeLength: " + cumulativeLength + ", linkEnd: " + linkEnd + ", frontpos: "
             // + frontPositionInLink + ", rearpos: " + rearPositionInLink);
             if (rearPositionInLink < linkLength && frontPositionInLink >= 0)

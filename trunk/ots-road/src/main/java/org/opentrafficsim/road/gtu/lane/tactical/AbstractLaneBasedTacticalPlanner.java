@@ -138,6 +138,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
         Lane lane = startLane;
         GTUDirectionality lastGtuDir = startDirectionality;
         Length.Rel position = lane.position(startLaneFractionalPosition);
+        Length.Rel startPosition = position;
         Lane lastLane = lane;
         laneListForward.add(new LaneDirection(lastLane, lastGtuDir));
         Length.Rel lengthForward;
@@ -171,7 +172,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             if (lanes.size() == 0)
             {
                 // dead end. return with the list as is.
-                return new LanePathInfo(path, laneListForward);
+                return new LanePathInfo(path, laneListForward, startPosition);
             }
             if (lanes.size() == 1)
             {
@@ -183,7 +184,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
                 if (ld != null && !lane.getParentLink().equals(ld.getLink()))
                 {
                     // lane not on route anymore. return with the list as is.
-                    return new LanePathInfo(path, laneListForward);
+                    return new LanePathInfo(path, laneListForward, startPosition);
                 }
             }
             else
@@ -200,7 +201,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
                 {
                     // no route found.
                     // return the data structure up to this point...
-                    return new LanePathInfo(path, laneListForward);
+                    return new LanePathInfo(path, laneListForward, startPosition);
                 }
                 Link nextLink = ld.getLink();
                 Lane newLane = null;
@@ -216,7 +217,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
                 {
                     // we cannot reach the next node on this lane -- we have to make a lane change!
                     // return the data structure up to this point...
-                    return new LanePathInfo(path, laneListForward);
+                    return new LanePathInfo(path, laneListForward, startPosition);
                 }
                 // otherwise: continue!
                 lane = newLane;
@@ -266,7 +267,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             lengthForward = lengthForward.plus(lastLane.getLength());
 
         }
-        return new LanePathInfo(path, laneListForward);
+        return new LanePathInfo(path, laneListForward, startPosition);
     }
 
     /**
