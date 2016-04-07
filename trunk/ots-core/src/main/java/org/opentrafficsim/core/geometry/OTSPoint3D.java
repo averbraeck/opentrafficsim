@@ -317,7 +317,7 @@ public class OTSPoint3D implements LocatableInterface, Serializable
     }
 
     /**
-     * @return the equivalent DSOL DirectedPoint of this point.
+     * @return the equivalent DSOL DirectedPoint of this point. Should the result be cached?
      */
     public final DirectedPoint getDirectedPoint()
     {

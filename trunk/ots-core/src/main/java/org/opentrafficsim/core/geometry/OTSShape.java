@@ -135,31 +135,15 @@ public class OTSShape extends OTSLine3D
     {
         return getShape().contains(point.x, point.y);
     }
-
+    
     /**
      * @param otsShape the shape to test the intersection with
-     * @return whether the shapes intersect or whether one chape contains the other
+     * @return whether the shapes intersect or whether one shape contains the other
      */
     public final boolean intersects(final OTSShape otsShape)
     {
         // step 1: quick check to see if the bounds intersect
-        DirectedPoint l1 = getLocation();
-        BoundingBox b1 = (BoundingBox) getBounds();
-        Point3d pl1 = new Point3d();
-        b1.getLower(pl1);
-        Point3d pu1 = new Point3d();
-        b1.getUpper(pu1);
-        Rectangle2D r1 = new Rectangle2D.Double(l1.x - pl1.x, l1.y - pl1.y, pu1.x - pl1.x, pu1.y - pl1.y);
-
-        DirectedPoint l2 = getLocation();
-        BoundingBox b2 = (BoundingBox) getBounds();
-        Point3d pl2 = new Point3d();
-        b2.getLower(pl2);
-        Point3d pu2 = new Point3d();
-        b2.getUpper(pu2);
-        Rectangle2D r2 = new Rectangle2D.Double(l2.x - pl2.x, l2.y - pl2.y, pu2.x - pl2.x, pu2.y - pl2.y);
-
-        if (!r1.intersects(r2))
+        if (!getBoundingRectangle().intersects(otsShape.getBoundingRectangle()))
         {
             return false;
         }
@@ -183,11 +167,11 @@ public class OTSShape extends OTSLine3D
         }
 
         // step 4: see if any of the lines of shape 1 and shape 2 intersect (expensive!)
-        for (int i = 1; i < getPoints().length - 1; i++)
+        for (int i = 0; i < getPoints().length - 1; i++)
         {
-            for (int j = 1; j < otsShape.getPoints().length - 1; j++)
+            Line2D.Double line1 = new Line2D.Double(this.getPoints()[i].getPoint2D(), this.getPoints()[i + 1].getPoint2D());
+            for (int j = 0; j < otsShape.getPoints().length - 1; j++)
             {
-                Line2D.Double line1 = new Line2D.Double(this.getPoints()[i].getPoint2D(), this.getPoints()[i + 1].getPoint2D());
                 Line2D.Double line2 =
                         new Line2D.Double(otsShape.getPoints()[j].getPoint2D(), otsShape.getPoints()[j + 1].getPoint2D());
 
