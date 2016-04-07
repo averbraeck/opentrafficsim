@@ -153,12 +153,6 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             final Acceleration defaultRightLaneIncentive =
                     LateralDirectionality.RIGHT == preferred ? PREFERREDLANEINCENTIVE : NONPREFERREDLANEINCENTIVE;
             
-            // if (laneBasedGTU.getSimulator().getSimulatorTime().get().si >= 92
-            // && laneBasedGTU.getId().contains("34"))
-            // {
-            // System.out.println("Let op");
-            // }
-            
             AccelerationVector defaultLaneIncentives =
                     new AccelerationVector(new double[] { defaultLeftLaneIncentive.getSI(), STAYINCURRENTLANEINCENTIVE.getSI(),
                             defaultRightLaneIncentive.getSI() }, AccelerationUnit.SI, StorageType.DENSE);

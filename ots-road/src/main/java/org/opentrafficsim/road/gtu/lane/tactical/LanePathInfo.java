@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical;
 import java.io.Serializable;
 import java.util.List;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneDirection;
@@ -11,6 +12,7 @@ import org.opentrafficsim.road.network.lane.LaneDirection;
  * This class provides the following information for an operational plan:
  * <ul>
  * <li>the lanes to follow, with the direction to drive on them</li>
+ * <li>the starting point on the first lane</li>
  * <li>the path to follow when staying on the same lane</li>
  * </ul>
  * <p>
@@ -28,19 +30,25 @@ public class LanePathInfo implements Serializable
     private static final long serialVersionUID = 20151231L;
 
     /**
-     * the path it the GTU keeps driving in the same lane, and follows the route if possible in the same lane. The path stops
+     * The path it the GTU keeps driving in the same lane, and follows the route if possible in the same lane. The path stops
      * when the lane or a continuation lane does not lead in the direction of the route provided by the strategical planner.
      */
     private final OTSLine3D path;
 
     /**
-     * the current lane on which the reference point of the GTU is registered (if the GTU is registered on multiple lanes with
+     * The current lane on which the reference point of the GTU is registered (if the GTU is registered on multiple lanes with
      * the reference point, one lane is chosen where the reference point has a fractional lane position between 0.0 and 1.0),
      * and consecutive lanes that follow the route if possible in the same lane. The list of lanes stops when a continuation
      * lane does not lead in the direction of the route provided by the strategical planner. For each lane, the direction to
      * drive is provided.
      */
     private final List<LaneDirection> laneDirectionList;
+
+    /**
+     * The start point on the first lane in the laneDirectionList. When this is a point that represents a GTU position, it
+     * should represent the reference point of the GTU.
+     */
+    private final Length.Rel referencePosition;
 
     /**
      * @param path the path it the GTU keeps driving in the same lane, and follows the route if possible in the same lane. The
@@ -51,12 +59,15 @@ public class LanePathInfo implements Serializable
      *            position between 0.0 and 1.0), and consecutive lanes that follow the route if possible in the same lane. The
      *            list of lanes stops when a continuation lane does not lead in the direction of the route provided by the
      *            strategical planner. For each lane, the direction to drive is provided.
+     * @param referencePosition the start point on the first lane in the laneDirectionList. When this is a point that represents
+     *            a GTU position, it should represent the reference point of the GTU.
      */
-    public LanePathInfo(final OTSLine3D path, final List<LaneDirection> laneDirectionList)
+    public LanePathInfo(final OTSLine3D path, final List<LaneDirection> laneDirectionList, final Length.Rel referencePosition)
     {
         super();
         this.path = path;
         this.laneDirectionList = laneDirectionList;
+        this.referencePosition = referencePosition;
     }
 
     /**
@@ -98,6 +109,15 @@ public class LanePathInfo implements Serializable
     public final Lane getReferenceLane()
     {
         return this.laneDirectionList.isEmpty() ? null : this.laneDirectionList.get(0).getLane();
+    }
+
+    /**
+     * @return the start point on the first lane in the laneDirectionList. When this is a point that represents a GTU position,
+     *         it should represent the reference point of the GTU.
+     */
+    public final Length.Rel getReferencePosition()
+    {
+        return this.referencePosition;
     }
 
 }

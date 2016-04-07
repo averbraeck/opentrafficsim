@@ -855,16 +855,32 @@ public class Lane extends CrossSectionElement implements Serializable
                             Length.Rel df = this.getCenterLine().getLast().distance(lane.getCenterLine().getFirst());
                             Length.Rel dl = this.getCenterLine().getLast().distance(lane.getCenterLine().getLast());
                             // this, parentLink ---> O ---> lane, link
-                            if (df.lt(MARGIN) && df.lt(dl) && lane.getDirectionality(gtuType).isForwardOrBoth()
-                                && link.getStartNode().equals(getParentLink().getEndNode()))
+                            if (df.lt(MARGIN) && df.lt(dl) && link.getStartNode().equals(getParentLink().getEndNode()))
                             {
-                                laneMap.put(lane, GTUDirectionality.DIR_PLUS);
+                                // does the GTU move in the design line direction or against it?
+                                // TODO And is it aligned with its next lane?
+                                if (lane.getDirectionality(gtuType).isForwardOrBoth())
+                                {
+                                    laneMap.put(lane, GTUDirectionality.DIR_PLUS);
+                                }
+                                else if (lane.getDirectionality(gtuType).isBackwardOrBoth())
+                                {
+                                    laneMap.put(lane, GTUDirectionality.DIR_MINUS);
+                                }
                             }
                             // this, parentLink ---> O <--- lane, link
-                            else if (dl.lt(MARGIN) && dl.lt(df) && lane.getDirectionality(gtuType).isBackwardOrBoth()
-                                && link.getEndNode().equals(getParentLink().getEndNode()))
+                            else if (dl.lt(MARGIN) && dl.lt(df) && link.getEndNode().equals(getParentLink().getEndNode()))
                             {
-                                laneMap.put(lane, GTUDirectionality.DIR_MINUS);
+                                // does the GTU move in the design line direction or against it?
+                                // TODO And is it aligned with its next lane?
+                                if (lane.getDirectionality(gtuType).isForwardOrBoth())
+                                {
+                                    laneMap.put(lane, GTUDirectionality.DIR_PLUS);
+                                }
+                                else if (lane.getDirectionality(gtuType).isBackwardOrBoth())
+                                {
+                                    laneMap.put(lane, GTUDirectionality.DIR_MINUS);
+                                }
                             }
                         }
                     }
@@ -911,16 +927,32 @@ public class Lane extends CrossSectionElement implements Serializable
                             Length.Rel df = this.getCenterLine().getFirst().distance(lane.getCenterLine().getFirst());
                             Length.Rel dl = this.getCenterLine().getFirst().distance(lane.getCenterLine().getLast());
                             // this, parentLink <--- O ---> lane, link
-                            if (df.lt(MARGIN) && df.lt(dl) && lane.getDirectionality(gtuType).isBackwardOrBoth()
-                                && link.getStartNode().equals(getParentLink().getStartNode()))
+                            if (df.lt(MARGIN) && df.lt(dl) && link.getStartNode().equals(getParentLink().getStartNode()))
                             {
-                                laneMap.put(lane, GTUDirectionality.DIR_MINUS);
+                                // does the GTU move in the design line direction or against it?
+                                // TODO And is it aligned with its next lane?
+                                if (lane.getDirectionality(gtuType).isForwardOrBoth())
+                                {
+                                    laneMap.put(lane, GTUDirectionality.DIR_PLUS);
+                                }
+                                else if (lane.getDirectionality(gtuType).isBackwardOrBoth())
+                                {
+                                    laneMap.put(lane, GTUDirectionality.DIR_MINUS);
+                                }
                             }
                             // this, parentLink <--- O <--- lane, link
-                            else if (dl.lt(MARGIN) && dl.lt(df) && lane.getDirectionality(gtuType).isForwardOrBoth()
-                                && link.getEndNode().equals(getParentLink().getStartNode()))
+                            else if (dl.lt(MARGIN) && dl.lt(df) && link.getEndNode().equals(getParentLink().getStartNode()))
                             {
-                                laneMap.put(lane, GTUDirectionality.DIR_PLUS);
+                                // does the GTU move in the design line direction or against it?
+                                // TODO And is it aligned with its next lane?
+                                if (lane.getDirectionality(gtuType).isForwardOrBoth())
+                                {
+                                    laneMap.put(lane, GTUDirectionality.DIR_PLUS);
+                                }
+                                else if (lane.getDirectionality(gtuType).isBackwardOrBoth())
+                                {
+                                    laneMap.put(lane, GTUDirectionality.DIR_MINUS);
+                                }
                             }
                         }
                     }
@@ -946,8 +978,9 @@ public class Lane extends CrossSectionElement implements Serializable
     public final Set<Lane> accessibleAdjacentLanes(final LateralDirectionality lateralDirection, final GTUType gtuType)
     {
         Set<Lane> candidates = new LinkedHashSet<>(1);
-        LateralDirectionality dir = this.getDirectionality(gtuType).isForwardOrBoth() ? lateralDirection : lateralDirection.isLeft() ?
-            LateralDirectionality.RIGHT : LateralDirectionality.LEFT;
+        LateralDirectionality dir =
+                this.getDirectionality(gtuType).isForwardOrBoth() ? lateralDirection : lateralDirection.isLeft()
+                        ? LateralDirectionality.RIGHT : LateralDirectionality.LEFT;
         for (Lane lane : neighbors(dir, gtuType))
         {
             if (lane.getDirectionality(gtuType).equals(LongitudinalDirectionality.DIR_BOTH)
@@ -1159,7 +1192,7 @@ public class Lane extends CrossSectionElement implements Serializable
     {
         return this.overtakingConditions;
     }
-    
+
     /** {@inheritDoc} */
     public final String toString()
     {

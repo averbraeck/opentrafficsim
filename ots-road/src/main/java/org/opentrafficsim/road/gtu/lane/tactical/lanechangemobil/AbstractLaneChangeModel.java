@@ -43,6 +43,10 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
         final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
         final Acceleration nonPreferredLaneRouteIncentive)
     {
+        // if (gtu.getId().equals("146") && gtu.getSimulator().getSimulatorTime().getTime().si >= 88.0)
+        // {
+        // System.out.println("XXXXXXXXXXXXXXXXXXXXXXX");
+        // }
         try
         {
             Length.Rel headway = gtu.getBehavioralCharacteristics().getForwardHeadwayDistance();

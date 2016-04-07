@@ -34,7 +34,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
 public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategicalPlanner implements
-    LaneBasedStrategicalPlanner
+        LaneBasedStrategicalPlanner
 {
     /** The route to drive. */
     private final Route route;
@@ -47,7 +47,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * @param fixedTacticalPlanner the tactical planner to use for the GTU
      */
     public LaneBasedStrategicalRoutePlanner(LaneBasedBehavioralCharacteristics drivingCharacteristics,
-        final TacticalPlanner fixedTacticalPlanner)
+            final TacticalPlanner fixedTacticalPlanner)
     {
         this(drivingCharacteristics, fixedTacticalPlanner, null);
     }
@@ -58,7 +58,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
      * @param route the route to drive
      */
     public LaneBasedStrategicalRoutePlanner(LaneBasedBehavioralCharacteristics drivingCharacteristics,
-        final TacticalPlanner fixedTacticalPlanner, final Route route)
+            final TacticalPlanner fixedTacticalPlanner, final Route route)
     {
         super(drivingCharacteristics);
         this.route = route;
@@ -74,8 +74,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
 
     /** {@inheritDoc} */
     @Override
-    public Node nextNode(final Link link, final GTUDirectionality direction, final GTUType gtuType)
-        throws NetworkException
+    public Node nextNode(final Link link, final GTUDirectionality direction, final GTUType gtuType) throws NetworkException
     {
         LinkDirection linkDirection = nextLinkDirection(link, direction, gtuType);
         return linkDirection.getNodeTo();
@@ -84,7 +83,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     /** {@inheritDoc} */
     @Override
     public LinkDirection nextLinkDirection(final Link link, final GTUDirectionality direction, final GTUType gtuType)
-        throws NetworkException
+            throws NetworkException
     {
         Node lastNode = direction.equals(GTUDirectionality.DIR_PLUS) ? link.getEndNode() : link.getStartNode();
         return nextLinkDirection(lastNode, link, gtuType);
@@ -101,30 +100,39 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     /** {@inheritDoc} */
     @Override
     public LinkDirection nextLinkDirection(final Node node, final Link previousLink, final GTUType gtuType)
-        throws NetworkException
+            throws NetworkException
     {
+        // if (node.getId().contains("68.158"))
+        // {
+        // System.err.println(node + ", links=" + node.getLinks());
+        // }
+
         // if there is no split, don't ask the route
         if (node.getLinks().size() == 1 && previousLink != null)
         {
             // end node
             throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link, but node " + node
-                + " has no successors");
+                    + " has no successors");
         }
         if (node.getLinks().size() == 1 && previousLink == null)
         {
             // start node
             Link link = node.getLinks().iterator().next();
-            return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS)
-                : new LinkDirection(link, GTUDirectionality.DIR_MINUS);
+            return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS) : new LinkDirection(
+                    link, GTUDirectionality.DIR_MINUS);
         }
         if (node.getLinks().size() == 2)
         {
+            // if (node.getId().contains("68.158"))
+            // {
+            // System.err.println(node + ", size=2");
+            // }
             for (Link link : node.getLinks())
             {
                 if (!link.equals(previousLink))
                 {
                     return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS)
-                        : new LinkDirection(link, GTUDirectionality.DIR_MINUS);
+                            : new LinkDirection(link, GTUDirectionality.DIR_MINUS);
                 }
             }
         }
@@ -143,7 +151,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
             {
                 // does the directionality of the link forbid us to go in?
                 if ((link.getStartNode().equals(node) && link.getDirectionality(gtuType).isBackward())
-                    || (link.getEndNode().equals(node) && link.getDirectionality(gtuType).isForward()))
+                        || (link.getEndNode().equals(node) && link.getDirectionality(gtuType).isForward()))
                 {
                     linkIterator.remove();
                 }
@@ -158,7 +166,7 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                         {
                             Lane lane = (Lane) cse;
                             if ((link.getStartNode().equals(node) && lane.getDirectionality(gtuType).isForwardOrBoth())
-                                || (link.getEndNode().equals(node) && lane.getDirectionality(gtuType).isBackwardOrBoth()))
+                                    || (link.getEndNode().equals(node) && lane.getDirectionality(gtuType).isBackwardOrBoth()))
                             {
                                 out = true;
                             }
@@ -171,11 +179,17 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
                 }
             }
         }
+
+        // if (node.getId().contains("68.158"))
+        // {
+        // System.err.println(node + ", cleaning... links = " + links);
+        // }
+
         if (links.size() == 1)
         {
             Link link = links.iterator().next();
-            return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS)
-            : new LinkDirection(link, GTUDirectionality.DIR_MINUS);
+            return link.getStartNode().equals(node) ? new LinkDirection(link, GTUDirectionality.DIR_PLUS) : new LinkDirection(
+                    link, GTUDirectionality.DIR_MINUS);
         }
 
         // more than 2 links... We have to check the route!
@@ -186,29 +200,42 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
         int i = this.route.getNodes().indexOf(node);
         if (i == -1)
         {
-            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from "
-                + previousLink + ", but node " + node + " not in route " + this.route);
+            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from " + previousLink
+                    + ", but node " + node + " not in route " + this.route);
         }
         if (i == this.route.getNodes().size() - 1)
         {
-            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from "
-                + previousLink + ", but the GTU reached the last node for route " + this.route);
+            throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next link coming from " + previousLink
+                    + ", but the GTU reached the last node for route " + this.route);
         }
         Node nextNode = this.route.getNode(i + 1);
+
+        // if (node.getId().contains("68.158"))
+        // {
+        // System.err.println(node + ", route, nextNode = " + nextNode);
+        // }
+
         for (Link link : links)
         {
-            if (link.getStartNode().equals(nextNode))
+            if (link.getStartNode().equals(nextNode) && link.getEndNode().equals(node))
             {
+                // if (node.getId().contains("68.158"))
+                // {
+                // System.err.println(node + ", returned " + link);
+                // }
                 return new LinkDirection(link, GTUDirectionality.DIR_MINUS);
             }
-            if (link.getEndNode().equals(nextNode))
+            if (link.getEndNode().equals(nextNode) && link.getStartNode().equals(node))
             {
+                // if (node.getId().contains("68.158"))
+                // {
+                // System.err.println(node + ", route, returned " + link);
+                // }
                 return new LinkDirection(link, GTUDirectionality.DIR_PLUS);
             }
         }
-        throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next linkcoming from "
-            + previousLink + ", but no link could be found connecting node " + node + " and node " + nextNode
-            + " for route " + this.route);
+        throw new NetworkException("LaneBasedStrategicalRoutePlanner is asked for a next linkcoming from " + previousLink
+                + ", but no link could be found connecting node " + node + " and node " + nextNode + " for route " + this.route);
     }
 
     /**
