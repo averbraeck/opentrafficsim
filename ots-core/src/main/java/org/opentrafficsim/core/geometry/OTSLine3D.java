@@ -2,12 +2,14 @@ package org.opentrafficsim.core.geometry;
 
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.media.j3d.Bounds;
+import javax.vecmath.Point3d;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.BoundingBox;
@@ -55,6 +57,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
 
     /** The cached bounds; will be calculated when needed for the first time. */
     private Bounds bounds = null;
+
+    private java.awt.geom.Rectangle2D.Double boundingRect;
 
     /**
      * Construct a new OTSLine3D.
@@ -1091,6 +1095,33 @@ public class OTSLine3D implements LocatableInterface, Serializable
         double deltaY = Math.max(maxY - minY, 0.5);
         double deltaZ = Math.max(maxZ - minZ, 0.5);
         this.bounds = new BoundingBox(deltaX, deltaY, deltaZ);
+        this.boundingRect = new Rectangle2D.Double(minX, minY, deltaX, deltaY);
+    }
+
+    /**
+     * TODO
+     * @return
+     */
+    public final OTSPoint3D getCentroid()
+    {
+        if (this.centroid == null)
+        {
+            calcCentroidBounds();
+        }
+        return this.centroid;
+    }
+
+    /**
+     * TODO
+     * @return
+     */
+    public final Rectangle2D getBoundingRectangle()
+    {
+        if (this.boundingRect == null)
+        {
+            calcCentroidBounds();
+        }
+        return this.boundingRect;
     }
 
     /** {@inheritDoc} */
