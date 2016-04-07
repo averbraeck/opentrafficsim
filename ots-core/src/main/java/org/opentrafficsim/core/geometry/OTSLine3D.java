@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.media.j3d.Bounds;
-import javax.vecmath.Point3d;
 
 import nl.tudelft.simulation.dsol.animation.LocatableInterface;
 import nl.tudelft.simulation.language.d3.BoundingBox;
@@ -1037,7 +1036,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
 
     /*-
      * TODO finish this method if it is needed; remove otherwise.
-     * Calculate the first point on this line that intersects somewehere with the provided line, or NaN if no intersection was
+     * Calculate the first point on this line that intersects somewhere with the provided line, or NaN if no intersection was
      * found.
      * @param line the line to test the intersection with
      * @return the fraction of the first intersection point
@@ -1099,8 +1098,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
-     * TODO
-     * @return
+     * Retrieve the centroid of this OTSLine3D.
+     * @return OTSPoint3D; the centroid of this OTSLine3D
      */
     public final OTSPoint3D getCentroid()
     {
@@ -1112,8 +1111,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
     }
 
     /**
-     * TODO
-     * @return
+     * Get the bounding rectangle of this OTSLine3D.
+     * @return Rectangle2D; the bounding rectangle of this OTSLine3D
      */
     public final Rectangle2D getBoundingRectangle()
     {

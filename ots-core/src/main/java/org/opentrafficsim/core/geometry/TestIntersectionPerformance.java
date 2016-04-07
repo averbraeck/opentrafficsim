@@ -69,10 +69,10 @@ public final class TestIntersectionPerformance
         {
             Collection<OTSShape> shapes = new ArrayList<OTSShape>();
             double radius = 19;
-            double dx = 4 * radius / desiredHitFraction / numShapes;
+            double dx = 6 * radius / desiredHitFraction / numShapes;
             for (int i = 0; i < numShapes; i++)
             {
-                shapes.add(makeNGon(numVertices, radius, i * dx, 0));
+                shapes.add(makeNGon(numVertices, radius, i % (numShapes / 2) * dx, i > numShapes / 2 ? radius * 1.5 : 0));
             }
             // if (0 == run)
             // {
@@ -120,7 +120,7 @@ public final class TestIntersectionPerformance
     {
         System.out.println("Type return to start ...");
         System.in.read();
-        final int numEdges = 30000;
+        final int numEdges = 80000;
         final int numRuns = 10;
         System.out.println(Results.getHeader());
         for (int numVertices : new int[] { 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000 })
@@ -266,7 +266,7 @@ public final class TestIntersectionPerformance
             final double meanRunTime = sumRunTime / size();
             final double sdevRunTime = Math.sqrt(sumRunTimeSquared - sumRunTime * sumRunTime / size()) / (size() - 1);
             // System.out.println("mean " + meanRunTime + " sdev " + sdevRunTime);
-            return String.format("%7d |  %5d   |%9d | %10.4f\u00b5s |%11.4f\u00b5s | " + " %5.2f%% |  %6.2f%%   |%5d |%8.1fs",
+            return String.format("%7d |  %5d   |%9d |%11.4f\u00b5s |%11.4f\u00b5s | " + " %5.2f%% |  %6.2f%%   |%5d |%8.1fs",
                     this.numShapes, this.numVertices, totalTestsPerformed, 1000000 * sumRunTime / totalTestsPerformed, 1000000
                             * sdevRunTime * size() / totalTestsPerformed, 100 * sdevRunTime / meanRunTime, 100.0 * totalHits
                             / totalTestsPerformed, size(), sumRunTime);
@@ -335,7 +335,7 @@ public final class TestIntersectionPerformance
             @Override
             public final String toString()
             {
-                return String.format("        |          | %8d | %10.4f\u00b5s |              |         |  %6.2f%%   |",
+                return String.format("        |          | %8d |%11.4f\u00b5s |              |         |  %6.2f%%   |",
                         this.numTests, 1000000 * this.executionTime / this.numTests, 100.0 * this.numHits / this.numTests);
             }
         }
