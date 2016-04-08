@@ -15,7 +15,7 @@ import org.djunits.value.vdouble.scalar.Dimensionless;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author Wouter Schakel
  */
-public class ParameterTypeBoolean extends AbstractParameterType<Dimensionless>
+public class ParameterTypeBoolean extends AbstractParameterType<DimensionlessUnit, Dimensionless>
 {
     /**
      * Constructor.
@@ -26,6 +26,30 @@ public class ParameterTypeBoolean extends AbstractParameterType<Dimensionless>
     public ParameterTypeBoolean(final String id, final String description, final boolean defaultValue)
     {
         super(id, description, Dimensionless.class, new Dimensionless(defaultValue ? 1.0 : 0.0, DimensionlessUnit.SI));
+    }
+    
+    /**
+     * Default boolean value.
+     * @return Default boolean value.
+     * @throws ParameterException If no default value was given.
+     */
+    public final Boolean getDefaultValue() throws ParameterException
+    {
+        return super.defaultValue.si != 0.0;
+    }
+    
+    /** {@inheritDoc} */
+    public final String printValue(final BehavioralCharacteristics behavioralCharacteristics) throws ParameterException 
+    {
+        return Boolean.toString(behavioralCharacteristics.getParameter(this));
+    }
+    
+    /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
+    @Override
+    public String toString()
+    {
+        return "ParameterTypeBoolean [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }

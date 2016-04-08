@@ -27,6 +27,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
@@ -260,9 +261,10 @@ class TestGTU extends AbstractGTU
 
     /** {@inheritDoc} */
     @Override
-    public DrivingCharacteristics getBehavioralCharacteristics()
+    public BehavioralCharacteristics getBehavioralCharacteristics()
     {
         return null;
     }
+
 
 }

@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.distributions;
 
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
+
 /**
  * Interface for classes that have a draw method with no arguments.
  * <p>
@@ -18,6 +20,7 @@ public interface Generator<O>
      * Generate the next object. 
      * @return O; an object randomly selected from the stored collection
      * @throws ProbabilityException if the stored collection is empty
+     * @throws ParameterException in case of a parameter exception
      */
-    O draw() throws ProbabilityException;
+    O draw() throws ProbabilityException, ParameterException;
 }

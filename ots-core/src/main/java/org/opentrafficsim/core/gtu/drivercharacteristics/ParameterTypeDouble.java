@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.gtu.drivercharacteristics;
 
 import org.djunits.unit.DimensionlessUnit;
+import org.djunits.value.formatter.EngineeringFormatter;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 
 /**
@@ -15,20 +16,56 @@ import org.djunits.value.vdouble.scalar.Dimensionless;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author Wouter Schakel
  */
-public class ParameterTypeDouble extends AbstractParameterType<Dimensionless>
+public class ParameterTypeDouble extends AbstractParameterType<DimensionlessUnit, Dimensionless>
 {
+
     /**
-     * Constructor with default value.
+     * Constructor without default value and check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
+     */
+    public ParameterTypeDouble(final String id, final String description)
+    {
+        this(id, description, Double.NaN, null);
+    }
+
+    /**
+     * Constructor with default value, without check.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name..
      * @param defaultValue Default value.
      */
     public ParameterTypeDouble(final String id, final String description, final double defaultValue)
     {
-        super(id, description, Dimensionless.class, new Dimensionless(defaultValue, DimensionlessUnit.SI));
+        this(id, description, defaultValue, null);
+    }
+
+    /**
+     * Constructor without default value, with check.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param check Check for parameter values.
+     */
+    public ParameterTypeDouble(final String id, final String description, final Check check)
+    {
+        this(id, description, Double.NaN, check);
+    }
+
+    /**
+     * Constructor with default value and check.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param defaultValue Default value.
+     * @param check Check for parameter values.
+     */
+    public ParameterTypeDouble(final String id, final String description, final double defaultValue, final Check check)
+    {
+        super(id, description, Dimensionless.class, new Dimensionless(defaultValue, DimensionlessUnit.SI), check);
         try
         {
-            check(defaultValue);
+            // Forward empty set of parameters. At creation time of parameter types, values cannot be checked with values of
+            // other parameter types.
+            check(defaultValue, new BehavioralCharacteristics());
         }
         catch (ParameterException exception)
         {
@@ -37,34 +74,39 @@ public class ParameterTypeDouble extends AbstractParameterType<Dimensionless>
     }
 
     /**
-     * Constructor without default value.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
+     * Default double value.
+     * @return Default double value.
+     * @throws ParameterException If no default value was given.
      */
-    public ParameterTypeDouble(final String id, final String description)
+    public final Double getDefaultValue() throws ParameterException
     {
-        this(id, description, Double.NaN);
+        ParameterException.failIf(null == this.defaultValue, "No default value was set for " + getId());
+        return super.defaultValue.si;
+    }
+
+    /** {@inheritDoc} */
+    public final String printValue(final BehavioralCharacteristics behavioralCharacteristics) throws ParameterException
+    {
+        return EngineeringFormatter.format(behavioralCharacteristics.getParameter(this));
     }
 
     /**
      * Method to overwrite for checks with constraints.
      * @param value Value to check with constraints.
-     * @throws ParameterException If the value does not comply with constraints.
-     */
-    public void check(final double value) throws ParameterException
-    {
-        //
-    }
-    
-    /**
-     * Method to overwrite for checks with constraints.
-     * @param value Value to check with constraints.
-     * @param bc Set of behavioral characteristics. 
+     * @param bc Set of behavioral characteristics.
      * @throws ParameterException If the value does not comply with constraints.
      */
     public void check(final double value, final BehavioralCharacteristics bc) throws ParameterException
     {
         //
+    }
+
+    /** {@inheritDoc} */
+    @SuppressWarnings("checkstyle:designforextension")
+    @Override
+    public String toString()
+    {
+        return "ParameterTypeDouble [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }

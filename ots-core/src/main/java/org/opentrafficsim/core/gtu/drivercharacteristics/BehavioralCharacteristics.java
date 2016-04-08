@@ -5,14 +5,8 @@ import java.util.Map;
 
 import org.djunits.unit.DimensionlessUnit;
 import org.djunits.unit.Unit;
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
-import org.djunits.value.vdouble.scalar.Frequency;
-import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.LinearDensity;
-import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 
 /**
  * In this class a list of behavioral characteristics in the form of parameters can be stored for use in behavioral models.
@@ -30,16 +24,16 @@ public class BehavioralCharacteristics
 {
 
     // TODO: !=EMPTY may not work across multiple computers
-    /** 
-     * Object to recognize that none was set previously. 
+    /**
+     * Object to recognize that none was set previously.
      */
     private static final Dimensionless EMPTY = new Dimensionless(0, DimensionlessUnit.SI);
 
     /** List of parameters. */
-    private final Map<AbstractParameterType<?>, DoubleScalar.Rel<?>> parameters = new HashMap<>();
+    private final Map<AbstractParameterType<?, ?>, DoubleScalar.Rel<?>> parameters = new HashMap<>();
 
     /** List of parameters with values before last set. */
-    private final Map<AbstractParameterType<?>, DoubleScalar.Rel<?>> previous = new HashMap<>();
+    private final Map<AbstractParameterType<?, ?>, DoubleScalar.Rel<?>> previous = new HashMap<>();
 
     /**
      * Set parameter value of given parameter type.
@@ -49,11 +43,10 @@ public class BehavioralCharacteristics
      * @param <T> Class of value.
      * @throws ParameterException If the value does not comply with value type constraints.
      */
-    @SuppressWarnings("unchecked")
     public final <U extends Unit<U>, T extends DoubleScalar.Rel<U>> void setParameter(
-        final ParameterType<T> parameterType, final DoubleScalar.Rel<U> value) throws ParameterException
+        final ParameterType<U, T> parameterType, final T value) throws ParameterException
     {
-        parameterType.check((T) value, this);
+        parameterType.check(value, this);
         saveSetParameter(parameterType, value);
     }
 
@@ -64,7 +57,15 @@ public class BehavioralCharacteristics
      */
     public final void setParameter(final ParameterTypeBoolean parameterType, final boolean value)
     {
-        saveSetParameter(parameterType, new Dimensionless(value ? 1.0 : 0.0, DimensionlessUnit.SI));
+        try
+        {
+            saveSetParameter(parameterType, new Dimensionless(value ? 1.0 : 0.0, DimensionlessUnit.SI));
+        }
+        catch (ParameterException pe)
+        {
+            // This cannot occur as the ParameterTypeBoolean constructor does not allow a default check.
+            throw new RuntimeException("ParameterTypeBoolean default check throws a ParameterException.", pe);
+        }
     }
 
     /**
@@ -95,9 +96,14 @@ public class BehavioralCharacteristics
      * Remembers the current value, or if it is not given, for possible reset.
      * @param parameterType Parameter type.
      * @param value Value.
+     * @param <U> Unit of the value.
+     * @param <T> Class of the value.
+     * @throws ParameterException If the value does not comply with constraints.
      */
-    private void saveSetParameter(final AbstractParameterType<?> parameterType, final DoubleScalar.Rel<?> value)
+    private <U extends Unit<U>, T extends DoubleScalar.Rel<U>> void saveSetParameter(
+        final AbstractParameterType<U, T> parameterType, final T value) throws ParameterException
     {
+        parameterType.checkCheck(value);
         if (this.parameters.containsKey(parameterType))
         {
             this.previous.put(parameterType, this.parameters.get(parameterType));
@@ -115,7 +121,7 @@ public class BehavioralCharacteristics
      * @param parameterType Parameter type.
      * @throws ParameterException If the parameter was never set.
      */
-    public final void resetParameter(final AbstractParameterType<?> parameterType) throws ParameterException
+    public final void resetParameter(final AbstractParameterType<?, ?> parameterType) throws ParameterException
     {
         ParameterException.failIf(!this.previous.containsKey(parameterType), "Reset on parameter of type '"
             + parameterType.getId() + "' could not be performed, it was not set.");
@@ -139,12 +145,12 @@ public class BehavioralCharacteristics
      * @return Parameter of given type.
      * @throws ParameterException If parameter was never set.
      */
-    @SuppressWarnings("unchecked")
-    public final <U extends Unit<U>, T extends DoubleScalar.Rel<U>> DoubleScalar.Rel<U>
-        getParameter(final ParameterType<T> parameterType) throws ParameterException
+    @SuppressWarnings({"unchecked", "checkstyle:designforextension"})
+    public <U extends Unit<U>, T extends DoubleScalar.Rel<U>> T getParameter(final ParameterType<U, T> parameterType)
+        throws ParameterException
     {
         checkContains(parameterType);
-        return (DoubleScalar.Rel<U>) this.parameters.get(parameterType);
+        return (T) this.parameters.get(parameterType);
     }
 
     /**
@@ -184,85 +190,11 @@ public class BehavioralCharacteristics
     }
 
     /**
-     * Get parameter of given type.
-     * @param parameterType Parameter type.
-     * @return Parameter of given type.
-     * @throws ParameterException If parameter was never set.
-     */
-    public final Speed getSpeedParameter(final ParameterType<Speed> parameterType) throws ParameterException
-    {
-        checkContains(parameterType);
-        return (Speed) this.parameters.get(parameterType);
-    }
-
-    /**
-     * Get parameter of given type.
-     * @param parameterType Parameter type.
-     * @return Parameter of given type.
-     * @throws ParameterException If parameter was never set.
-     */
-    public final Acceleration getAccelerationParameter(final ParameterType<Acceleration> parameterType) 
-            throws ParameterException
-    {
-        checkContains(parameterType);
-        return (Acceleration) this.parameters.get(parameterType);
-    }
-
-    /**
-     * Get parameter of given type.
-     * @param parameterType Parameter type.
-     * @return Parameter of given type.
-     * @throws ParameterException If parameter was never set.
-     */
-    public final Time.Rel getTimeParameter(final ParameterType<Time.Rel> parameterType) throws ParameterException
-    {
-        checkContains(parameterType);
-        return (Time.Rel) this.parameters.get(parameterType);
-    }
-
-    /**
-     * Get parameter of given type.
-     * @param parameterType Parameter type.
-     * @return Parameter of given type.
-     * @throws ParameterException If parameter was never set.
-     */
-    public final Length.Rel getLengthParameter(final ParameterType<Length.Rel> parameterType) throws ParameterException
-    {
-        checkContains(parameterType);
-        return (Length.Rel) this.parameters.get(parameterType);
-    }
-
-    /**
-     * Get parameter of given type.
-     * @param parameterType Parameter type.
-     * @return Parameter of given type.
-     * @throws ParameterException If parameter was never set.
-     */
-    public final Frequency getFrequencyParameter(final ParameterType<Frequency> parameterType) throws ParameterException
-    {
-        checkContains(parameterType);
-        return (Frequency) this.parameters.get(parameterType);
-    }
-
-    /**
-     * Get parameter of given type.
-     * @param parameterType Parameter type.
-     * @return Parameter of given type.
-     * @throws ParameterException If parameter was never set.
-     */
-    public final LinearDensity getLinearDensityParameter(final ParameterType<LinearDensity> parameterType)
-            throws ParameterException
-    {
-        checkContains(parameterType);
-        return (LinearDensity) this.parameters.get(parameterType);
-    }
-
-    /**
      * Check whether parameter has been set.
      * @param parameterType Parameter type.
      * @throws ParameterException If parameter is not present.
      */
-    private void checkContains(final AbstractParameterType<?> parameterType) throws ParameterException
+    private void checkContains(final AbstractParameterType<?, ?> parameterType) throws ParameterException
     {
         ParameterException.failIf(!contains(parameterType), "Could not get parameter of type '" + parameterType.getId()
             + "' as it was not set.");
@@ -273,7 +205,7 @@ public class BehavioralCharacteristics
      * @param parameterType Parameter type.
      * @return Whether the given parameter type has been set.
      */
-    public final boolean contains(final AbstractParameterType<?> parameterType)
+    public final boolean contains(final AbstractParameterType<?, ?> parameterType)
     {
         return this.parameters.containsKey(parameterType);
     }
@@ -282,9 +214,29 @@ public class BehavioralCharacteristics
      * Returns a safe copy of the parameters.
      * @return Safe copy of the parameters, e.g., for printing.
      */
-    public final Map<AbstractParameterType<?>, DoubleScalar.Rel<?>> getParameters()
+    public final Map<AbstractParameterType<?, ?>, DoubleScalar.Rel<?>> getParameters()
     {
-        return new HashMap<AbstractParameterType<?>, DoubleScalar.Rel<?>>(this.parameters);
+        return new HashMap<AbstractParameterType<?, ?>, DoubleScalar.Rel<?>>(this.parameters);
+    }
+
+    /** {@inheritDoc} */
+    public final String toString()
+    {
+        String out = "BehavioralCharacteristics [";
+        String sep = "";
+        for (AbstractParameterType<?, ?> apt : this.parameters.keySet())
+        {
+            try
+            {
+                out += (sep + apt.getId() + "=" + apt.printValue(this));
+                sep = ", ";
+            }
+            catch (ParameterException pe)
+            {
+                // We know the parameter has been set as we get the keySet from parameters
+            }
+        }
+        return out + "]";
     }
 
 }

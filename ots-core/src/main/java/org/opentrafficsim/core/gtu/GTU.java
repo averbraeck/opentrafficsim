@@ -13,6 +13,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
@@ -108,6 +109,9 @@ public interface GTU extends LocatableInterface, Serializable
     /** @return Length.Rel; the current odometer value. */
     Length.Rel getOdometer();
 
+    /** @return Behavioral characteristics. */
+    BehavioralCharacteristics getBehavioralCharacteristics();
+    
     /**
      * @return strategicalPlanner the planner responsible for the overall 'mission' of the GTU, usually indicating where it
      *         needs to go. It operates by instantiating tactical planners to do the work.
@@ -122,9 +126,6 @@ public interface GTU extends LocatableInterface, Serializable
 
     /** @return the perception module of this GTU */
     Perception getPerception();
-
-    /** @return the driving characteristics of this GTU (driver). */
-    DrivingCharacteristics getBehavioralCharacteristics();
     
     /** @return the status of the turn indicator. */
     TurnIndicatorStatus getTurnIndicatorStatus();

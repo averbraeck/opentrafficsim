@@ -7,6 +7,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.OTSNetwork;
 
@@ -102,8 +103,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("checkstyle:designforextension")
-    public GTUCharacteristics draw() throws ProbabilityException
+    public final GTUCharacteristics draw() throws ProbabilityException, ParameterException
     {
         return new GTUCharacteristics(this.gtuType, this.idGenerator, this.lengthGenerator.draw(), this.widthGenerator.draw(),
                 this.maximumVelocityGenerator.draw(), this.simulator, this.network);

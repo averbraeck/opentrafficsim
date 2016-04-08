@@ -1,5 +1,8 @@
 package org.opentrafficsim.core.gtu.drivercharacteristics;
 
+import static org.opentrafficsim.core.gtu.drivercharacteristics.AbstractParameterType.Check.POSITIVE;
+import static org.opentrafficsim.core.gtu.drivercharacteristics.AbstractParameterType.Check.NEGATIVE;
+
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -31,97 +34,86 @@ public class ParameterTypes
     }
 
     /** Car-following stopping distance. */
-    public static final ParameterType<Length.Rel> S0 = new ParameterTypePositive<Length.Rel>("s0",
-        "Car-following stopping distance.", Length.Rel.class, new Length.Rel(3.0, LengthUnit.SI));
+    public static final ParameterTypeLength S0 = new ParameterTypeLength("s0", "Car-following stopping distance.",
+        new Length.Rel(3.0, LengthUnit.SI), POSITIVE);
 
     /** Maximum (desired) car-following acceleration. */
-    public static final ParameterType<Acceleration> A = new ParameterTypePositive<Acceleration>("a",
-        "Maximum (desired) car-following acceleration.", Acceleration.class, new Acceleration(1.25, AccelerationUnit.SI));
+    public static final ParameterTypeAcceleration A = new ParameterTypeAcceleration("a",
+        "Maximum (desired) car-following acceleration.", new Acceleration(1.25, AccelerationUnit.SI), POSITIVE);
 
     /** Maximum comfortable car-following deceleration. */
-    public static final ParameterType<Acceleration> B = new ParameterTypePositive<Acceleration>("b",
-        "Maximum comfortable car-following deceleration.", Acceleration.class, new Acceleration(2.09, AccelerationUnit.SI));
+    public static final ParameterTypeAcceleration B = new ParameterTypeAcceleration("b",
+        "Maximum comfortable car-following deceleration.", new Acceleration(2.09, AccelerationUnit.SI), POSITIVE);
 
     /** Maximum critical deceleration, e.g. stop/go at traffic light. */
-    public static final ParameterType<Acceleration> BCRIT = new ParameterTypePositive<Acceleration>("bCrit",
-        "Maximum critical deceleration, e.g. stop/go at traffic light.", Acceleration.class, new Acceleration(3.5,
-            AccelerationUnit.SI));
+    public static final ParameterTypeAcceleration BCRIT = new ParameterTypeAcceleration("bCrit",
+        "Maximum critical deceleration, e.g. stop/go at traffic light.", new Acceleration(3.5, AccelerationUnit.SI),
+        POSITIVE);
 
     /** Maximum adjustment deceleration, e.g. when speed limit drops. */
-    public static final ParameterType<Acceleration> B0 = new ParameterTypePositive<Acceleration>("b0",
-        "Maximum adjustment deceleration, e.g. when speed limit drops.", Acceleration.class, new Acceleration(0.5,
-            AccelerationUnit.SI));
+    public static final ParameterTypeAcceleration B0 = new ParameterTypeAcceleration("b0",
+        "Maximum adjustment deceleration, e.g. when speed limit drops.", new Acceleration(0.5, AccelerationUnit.SI),
+        POSITIVE);
 
     /** Current car-following headway. */
-    public static final ParameterType<Time.Rel> T = new ParameterTypePositive<Time.Rel>("T",
-        "Current car-following headway.", Time.Rel.class, new Time.Rel(1.2, TimeUnit.SI));
+    public static final ParameterTypeTime T = new ParameterTypeTime("T", "Current car-following headway.", new Time.Rel(1.2,
+        TimeUnit.SI), POSITIVE);
 
     /** Minimum car-following headway. */
-    public static final ParameterType<Time.Rel> TMIN = new ParameterTypePositive<Time.Rel>("Tmin",
-        "Minimum car-following headway.", Time.Rel.class, new Time.Rel(0.56, TimeUnit.SI))
+    public static final ParameterTypeTime TMIN = new ParameterTypeTime("Tmin", "Minimum car-following headway.",
+        new Time.Rel(0.56, TimeUnit.SI), POSITIVE)
     {
+        @Override
         public void check(final Time.Rel value, final BehavioralCharacteristics bc) throws ParameterException
         {
-            super.check(value, bc);
-            if (bc.contains(ParameterTypes.TMAX))
-            {
-                ParameterException.failIf(value.si >= bc.getTimeParameter(ParameterTypes.TMAX).si, 
-                        "Value of Tmin is above or equal to Tmax.");
-            }
+            ParameterException.failIf(bc.contains(ParameterTypes.TMAX) && value.si >= bc.getParameter(ParameterTypes.TMAX).si,
+                    "Value of Tmin is above or equal to Tmax.");
         }
     };
 
     /** Maximum car-following headway. */
-    public static final ParameterType<Time.Rel> TMAX = new ParameterTypePositive<Time.Rel>("Tmax",
-        "Minimum car-following headway.", Time.Rel.class, new Time.Rel(1.2, TimeUnit.SI))
+    public static final ParameterTypeTime TMAX = new ParameterTypeTime("Tmax", "Minimum car-following headway.",
+        new Time.Rel(1.2, TimeUnit.SI), POSITIVE)
     {
+        @Override
         public void check(final Time.Rel value, final BehavioralCharacteristics bc) throws ParameterException
         {
-            super.check(value, bc);
-            if (bc.contains(ParameterTypes.TMIN))
-            {
-                ParameterException.failIf(value.si <= bc.getTimeParameter(ParameterTypes.TMIN).si, 
-                        "Value of Tmax is below or equal to Tmin.");
-            }
+            ParameterException.failIf(bc.contains(ParameterTypes.TMIN)
+                && value.si <= bc.getParameter(ParameterTypes.TMIN).si, "Value of Tmax is below or equal to Tmin.");
         }
     };
 
     /** Headway relaxation time. */
-    public static final ParameterType<Time.Rel> TAU = new ParameterTypePositive<Time.Rel>("tau",
-        "Headway relaxation time.", Time.Rel.class, new Time.Rel(25.0, TimeUnit.SI));
+    public static final ParameterTypeTime TAU = new ParameterTypeTime("tau", "Headway relaxation time.", new Time.Rel(25.0,
+        TimeUnit.SI), POSITIVE);
 
     /** Look-ahead time for mandatory lane changes. */
-    public static final ParameterType<Time.Rel> T0 = new ParameterTypePositive<Time.Rel>("t0",
-        "Look-ahead time for mandatory lane changes.", Time.Rel.class, new Time.Rel(43.0, TimeUnit.SI));
+    public static final ParameterTypeTime T0 = new ParameterTypeTime("t0", "Look-ahead time for mandatory lane changes.",
+        new Time.Rel(43.0, TimeUnit.SI), POSITIVE);
 
     /** Look-ahead distance. */
-    public static final ParameterType<Length.Rel> LOOKAHEAD = new ParameterTypePositive<Length.Rel>("Look-ahead",
-        "Look-ahead distance.", Length.Rel.class, new Length.Rel(295.0, LengthUnit.SI));
-    
+    public static final ParameterTypeLength LOOKAHEAD = new ParameterTypeLength("Look-ahead", "Look-ahead distance.",
+        new Length.Rel(295.0, LengthUnit.SI), POSITIVE);
+
     /** Look-back distance. */
-    public static final ParameterType<Length.Rel> LOOKBACK = new ParameterTypePositive<Length.Rel>("Look-back",
-        "Look-back distance.", Length.Rel.class, new Length.Rel(100, LengthUnit.SI));
-    
+    public static final ParameterTypeLength LOOKBACK = new ParameterTypeLength("Look-back", "Look-back distance.",
+        new Length.Rel(100, LengthUnit.SI), POSITIVE);
+
     // TODO: remove LOOKBACKOLD
     /** Look-back distance, for old MOBIL code only. */
-    public static final ParameterType<Length.Rel> LOOKBACKOLD = new ParameterType<Length.Rel>("Look-back",
-        "Look-back distance (old version for MOBIL code).", Length.Rel.class, new Length.Rel(-100, LengthUnit.SI));
+    public static final ParameterTypeLength LOOKBACKOLD = new ParameterTypeLength("Look-back",
+        "Look-back distance (old version for MOBIL code).", new Length.Rel(-100, LengthUnit.SI), NEGATIVE);
 
     /** Speed limit adherence factor. */
-    public static final ParameterTypeDouble FSPEED = new ParameterTypeDouble("fSpeed", "Speed limit adherence factor.", -1.0)
-    {
-        public void check(final double value) throws ParameterException
-        {
-            ParameterException.failIf(value <= 0, "Parameter of type fSpeed may not have a negative or zero value.");
-        }
-    };
+    public static final ParameterTypeDouble FSPEED = new ParameterTypeDouble("fSpeed", "Speed limit adherence factor.", 1.0,
+        POSITIVE);
 
     /** Speed threshold below which traffic is considered congested. */
-    public static final ParameterType<Speed> VCONG = new ParameterTypePositive<Speed>("vCong",
-        "Speed threshold below which traffic is considered congested.", Speed.class, new Speed(60, SpeedUnit.KM_PER_HOUR));
+    public static final ParameterTypeSpeed VCONG = new ParameterTypeSpeed("vCong",
+        "Speed threshold below which traffic is considered congested.", new Speed(60, SpeedUnit.KM_PER_HOUR), POSITIVE);
 
     /** Regular lane change duration. */
-    public static final ParameterType<Time.Rel> LCDUR = new ParameterTypePositive<Time.Rel>("lcDur",
-        "Regular lane change duration.", Time.Rel.class, new Time.Rel(3, TimeUnit.SI));
+    public static final ParameterTypeTime LCDUR = new ParameterTypeTime("lcDur", "Regular lane change duration.",
+        new Time.Rel(3, TimeUnit.SI), POSITIVE);
 
 }
