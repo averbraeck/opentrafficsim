@@ -41,9 +41,6 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
     /** */
     private static final long serialVersionUID = 20151125L;
 
-    /** Following model for this tactical planner. */
-    private GTUFollowingModelOld carFollowingModel; 
-    
     /**
      * Instantiated a tactical planner with just GTU following behavior and no lane changes.
      * @param carFollowingModel Car-following model.
@@ -56,7 +53,8 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
     /** {@inheritDoc} */
     @Override
     public OperationalPlan generateOperationalPlan(final GTU gtu, final Time.Abs startTime,
-        final DirectedPoint locationAtStartTime) throws OperationalPlanException, NetworkException, GTUException, ParameterException
+        final DirectedPoint locationAtStartTime) throws OperationalPlanException, NetworkException, GTUException,
+        ParameterException
     {
         // ask Perception for the local situation
         LaneBasedGTU laneBasedGTU = (LaneBasedGTU) gtu;
@@ -73,7 +71,8 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
 
         // see how far we can drive
         LanePathInfo lanePathInfo =
-            buildLanePathInfo(laneBasedGTU, laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD));
+            buildLanePathInfo(laneBasedGTU, laneBasedGTU.getBehavioralCharacteristics().getParameter(
+                ParameterTypes.LOOKAHEAD));
 
         // look at the conditions for headway
         HeadwayGTU headwayGTU = perception.getForwardHeadwayGTU();
@@ -81,14 +80,15 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         if (headwayGTU.getGtuId() == null)
         {
             accelerationStep =
-                this.carFollowingModel.computeAccelerationStepWithNoLeader(laneBasedGTU, lanePathInfo.getPath().getLength(),
-                    perception.getSpeedLimit());
+                ((GTUFollowingModelOld) getCarFollowingModel()).computeAccelerationStepWithNoLeader(laneBasedGTU,
+                    lanePathInfo.getPath().getLength(), perception.getSpeedLimit());
         }
         else
         {
             accelerationStep =
-                this.carFollowingModel.computeAccelerationStep(laneBasedGTU, headwayGTU.getGtuSpeed(), headwayGTU.getDistance(),
-                    lanePathInfo.getPath().getLength(), perception.getSpeedLimit());
+                ((GTUFollowingModelOld) getCarFollowingModel())
+                    .computeAccelerationStep(laneBasedGTU, headwayGTU.getGtuSpeed(), headwayGTU.getDistance(), lanePathInfo
+                        .getPath().getLength(), perception.getSpeedLimit());
         }
 
         // see if we have to continue standing still. In that case, generate a stand still plan
@@ -107,8 +107,7 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         else
         {
             Segment segment =
-                new OperationalPlan.AccelerationSegment(accelerationStep.getDuration(),
-                    accelerationStep.getAcceleration());
+                new OperationalPlan.AccelerationSegment(accelerationStep.getDuration(), accelerationStep.getAcceleration());
             operationalPlanSegmentList.add(segment);
         }
         OperationalPlan op =

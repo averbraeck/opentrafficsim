@@ -410,7 +410,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
             {
                 initialPositions.add(new DirectedLanePosition(this.getLane(), initialPosition,
                     GTUDirectionality.DIR_PLUS));
-                BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+                BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
                 //LaneBasedBehavioralCharacteristics drivingCharacteristics =
                 //    new LaneBasedBehavioralCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
                 LaneBasedStrategicalPlanner strategicalPlanner =
@@ -457,7 +457,7 @@ public class FundamentalDiagrams extends AbstractWrappableAnimation implements U
                 {
                     throw new Error("gtuFollowingModel is null");
                 }
-                BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+                BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
                 //LaneBasedBehavioralCharacteristics drivingCharacteristics =
                 //    new LaneBasedBehavioralCharacteristics(gtuFollowingModel, this.laneChangeModel);
                 LaneBasedStrategicalPlanner strategicalPlanner =

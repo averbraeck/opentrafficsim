@@ -601,7 +601,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
         try
         {
             initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
-            BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+            BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
             //LaneBasedBehavioralCharacteristics drivingCharacteristics =
             //    new LaneBasedBehavioralCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
             LaneBasedStrategicalPlanner strategicalPlanner =
@@ -659,7 +659,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                 Time.Rel tSafe = new Time.Rel(1.0, TimeUnit.SECOND); // time headway
                 gtuFollowingModel = new IDMPlusOld(a, b, s0, tSafe, 1.0);
             }
-            BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+            BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
             //LaneBasedBehavioralCharacteristics drivingCharacteristics =
             //    new LaneBasedBehavioralCharacteristics(gtuFollowingModel, this.laneChangeModel);
             LaneBasedStrategicalPlanner strategicalPlanner =

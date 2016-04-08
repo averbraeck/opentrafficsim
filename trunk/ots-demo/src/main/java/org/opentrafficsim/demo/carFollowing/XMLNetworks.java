@@ -778,7 +778,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         {
             public LaneBasedStrategicalPlanner draw() throws ProbabilityException, ParameterException
             {
-                BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+                BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
                 //LaneBasedBehavioralCharacteristics drivingCharacteristics =
                 //        new LaneBasedBehavioralCharacteristics(gtuFollowingModel, XMLNetworkModel.this.laneChangeModel);
                 behavioralCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, new Length.Rel(450.0, LengthUnit.METER));
@@ -854,7 +854,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         //        new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Time.Rel(java.lang.Double.MAX_VALUE,
         //                TimeUnit.SI));
         //LaneChangeModel lcm = new FixedLaneChangeModel(null);
-        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+        BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
         //LaneBasedBehavioralCharacteristics drivingCharacteristics = new LaneBasedBehavioralCharacteristics(gfm, lcm);
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, this.tacticalPlannerCars);

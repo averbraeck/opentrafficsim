@@ -678,7 +678,7 @@ class RoadSimulationModel implements OTSModelInterface, UNITS
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Length.Rel vehicleLength = new Length.Rel(generateTruck ? 15 : 4, METER);
-        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+        BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
         //LaneBasedBehavioralCharacteristics drivingCharacteristics =
         //        new LaneBasedBehavioralCharacteristics(generateTruck ? this.carFollowingModelTrucks : this.carFollowingModelCars,
         //                this.laneChangeModel);

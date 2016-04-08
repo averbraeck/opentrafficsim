@@ -101,7 +101,7 @@ public class ParameterTypes
 
     // TODO: remove LOOKBACKOLD
     /** Look-back distance, for old MOBIL code only. */
-    public static final ParameterTypeLength LOOKBACKOLD = new ParameterTypeLength("Look-back",
+    public static final ParameterTypeLength LOOKBACKOLD = new ParameterTypeLength("Look-back old",
         "Look-back distance (old version for MOBIL code).", new Length.Rel(-100, LengthUnit.SI), NEGATIVE);
 
     /** Speed limit adherence factor. */

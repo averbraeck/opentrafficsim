@@ -166,7 +166,7 @@ public abstract class AbstractLanePerception implements LanePerception
     public void updateBackwardHeadwayGTU() throws GTUException, NetworkException, ParameterException
     {
         Time.Abs timestamp = getTimestamp();
-        Length.Rel maximumReverseHeadway = this.gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACK);
+        Length.Rel maximumReverseHeadway = this.gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACKOLD);
         this.backwardHeadwayGTU = new TimeStampedObject<>(backwardHeadway(maximumReverseHeadway), timestamp);
     }
 
@@ -257,7 +257,7 @@ public abstract class AbstractLanePerception implements LanePerception
 
         // for the accessible lanes, see who is ahead of us and in front of us
         Length.Rel maximumForwardHeadway = this.gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
-        Length.Rel maximumReverseHeadway = this.gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACK);
+        Length.Rel maximumReverseHeadway = this.gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACKOLD);
         this.neighboringGTUsLeft =
                 new TimeStampedObject<>(collectNeighborLaneTraffic(LateralDirectionality.LEFT, timestamp,
                         maximumForwardHeadway, maximumReverseHeadway), timestamp);
@@ -280,7 +280,7 @@ public abstract class AbstractLanePerception implements LanePerception
 
         // for the accessible lanes, see who is ahead of us and in front of us
         Length.Rel maximumForwardHeadway = this.gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
-        Length.Rel maximumReverseHeadway = this.gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACK);
+        Length.Rel maximumReverseHeadway = this.gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACKOLD);
         this.neighboringGTUsRight =
                 new TimeStampedObject<>(collectNeighborLaneTraffic(LateralDirectionality.RIGHT, timestamp,
                         maximumForwardHeadway, maximumReverseHeadway), timestamp);

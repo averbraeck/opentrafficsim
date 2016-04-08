@@ -595,7 +595,7 @@ class LaneSimulationModel implements OTSModelInterface, UNITS
             {
                 throw new GTUException("gtuFollowingModel is null");
             }
-            BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+            BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
             //LaneBasedBehavioralCharacteristics drivingCharacteristics =
             //    new LaneBasedBehavioralCharacteristics(gtuFollowingModel, this.laneChangeModel);
             LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, 
