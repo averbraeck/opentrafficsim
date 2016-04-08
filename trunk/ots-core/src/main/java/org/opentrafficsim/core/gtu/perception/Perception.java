@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.PerceivedObject;
 
@@ -25,8 +26,9 @@ public interface Perception extends Serializable
      * Update the perceived information and store it in a stateful manner.
      * @throws GTUException when GTU has not been properly initialized.
      * @throws NetworkException in case of inconsistencies in the network during perception calculations.
+     * @throws ParameterException in case of a parameter error.
      */
-    void perceive() throws GTUException, NetworkException;
+    void perceive() throws GTUException, NetworkException, ParameterException;
 
     /**
      * Return information about the perceived objects with their (estimated) location, speed, and state.

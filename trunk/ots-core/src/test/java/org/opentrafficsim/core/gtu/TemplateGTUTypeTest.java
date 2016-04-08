@@ -25,6 +25,7 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.simulationengine.SimpleSimulator;
@@ -49,10 +50,12 @@ public class TemplateGTUTypeTest implements OTSModelInterface
      * @throws NamingException should never happen
      * @throws SimRuntimeException should never happen
      * @throws GTUException should never happen
-     * @throws ProbabilityException 
+     * @throws ProbabilityException if probabilities are invalid
+     * @throws ParameterException in case a parameter problem occurs
      */
     @Test
-    public final void templateGTUTypeTest() throws SimRuntimeException, NamingException, GTUException, ProbabilityException
+    public final void templateGTUTypeTest() throws SimRuntimeException, NamingException, GTUException, ProbabilityException,
+        ParameterException
     {
         String typeNameA = "type name A";
         String typeNameB = "type name B";
@@ -113,19 +116,19 @@ public class TemplateGTUTypeTest implements OTSModelInterface
             }
         };
         OTSDEVSSimulatorInterface simulatorA =
-                new SimpleSimulator(new Time.Abs(0, TimeUnit.SI), new Time.Rel(0, TimeUnit.SI), new Time.Rel(1000,
-                        TimeUnit.SECOND), this);
+            new SimpleSimulator(new Time.Abs(0, TimeUnit.SI), new Time.Rel(0, TimeUnit.SI), new Time.Rel(1000,
+                TimeUnit.SECOND), this);
         OTSDEVSSimulatorInterface simulatorB =
-                new SimpleSimulator(new Time.Abs(0, TimeUnit.SI), new Time.Rel(0, TimeUnit.SI), new Time.Rel(1000,
-                        TimeUnit.SECOND), this);
+            new SimpleSimulator(new Time.Abs(0, TimeUnit.SI), new Time.Rel(0, TimeUnit.SI), new Time.Rel(1000,
+                TimeUnit.SECOND), this);
         OTSNetwork networkA = new OTSNetwork("testGTUCharacteristics A");
         OTSNetwork networkB = new OTSNetwork("testGTUCharacteristics B");
         TemplateGTUType templateA =
-                new TemplateGTUType(typeNameA, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA,
-                        simulatorA, networkA);
+            new TemplateGTUType(typeNameA, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA,
+                simulatorA, networkA);
         TemplateGTUType templateB =
-                new TemplateGTUType(typeNameB, idGeneratorB, lengthGeneratorB, widthGeneratorB, maximumVelocityGeneratorB,
-                        simulatorB, networkB);
+            new TemplateGTUType(typeNameB, idGeneratorB, lengthGeneratorB, widthGeneratorB, maximumVelocityGeneratorB,
+                simulatorB, networkB);
         assertEquals("typenameA", typeNameA, templateA.getGTUType().getId());
         assertEquals("typenameB", typeNameB, templateB.getGTUType().getId());
         GTUCharacteristics characteristicsA = templateA.draw();
@@ -152,7 +155,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         try
         {
             new TemplateGTUType(null, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA,
-                    simulatorA, networkA);
+                simulatorA, networkA);
             fail("Previous statement should have thrown a GTUException");
         }
         catch (GTUException gtue)
@@ -161,8 +164,8 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         }
         try
         {
-            new TemplateGTUType(typeNameA, null, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA,
-                    simulatorA, networkA);
+            new TemplateGTUType(typeNameA, null, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA, simulatorA,
+                networkA);
             fail("Previous statement should have thrown a GTUException");
         }
         catch (GTUException gtue)
@@ -171,8 +174,8 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         }
         try
         {
-            new TemplateGTUType(typeNameA, idGeneratorA, null, widthGeneratorA, maximumVelocityGeneratorA,
-                    simulatorA, networkA);
+            new TemplateGTUType(typeNameA, idGeneratorA, null, widthGeneratorA, maximumVelocityGeneratorA, simulatorA,
+                networkA);
             fail("Previous statement should have thrown a GTUException");
         }
         catch (GTUException gtue)
@@ -181,8 +184,8 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         }
         try
         {
-            new TemplateGTUType(typeNameA, idGeneratorA, lengthGeneratorA, null, maximumVelocityGeneratorA,
-                    simulatorA, networkA);
+            new TemplateGTUType(typeNameA, idGeneratorA, lengthGeneratorA, null, maximumVelocityGeneratorA, simulatorA,
+                networkA);
             fail("Previous statement should have thrown a GTUException");
         }
         catch (GTUException gtue)
@@ -191,8 +194,17 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         }
         try
         {
-            new TemplateGTUType(typeNameA, idGeneratorA, lengthGeneratorA, widthGeneratorA, null,
-                    simulatorA, networkA);
+            new TemplateGTUType(typeNameA, idGeneratorA, lengthGeneratorA, widthGeneratorA, null, simulatorA, networkA);
+            fail("Previous statement should have thrown a GTUException");
+        }
+        catch (GTUException gtue)
+        {
+            // Ignore expected exception
+        }
+        try
+        {
+            new TemplateGTUType(typeNameA, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA, null,
+                networkA);
             fail("Previous statement should have thrown a GTUException");
         }
         catch (GTUException gtue)
@@ -202,17 +214,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
         try
         {
             new TemplateGTUType(typeNameA, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA,
-                    null, networkA);
-            fail("Previous statement should have thrown a GTUException");
-        }
-        catch (GTUException gtue)
-        {
-            // Ignore expected exception
-        }
-        try
-        {
-            new TemplateGTUType(typeNameA, idGeneratorA, lengthGeneratorA, widthGeneratorA, maximumVelocityGeneratorA,
-                    simulatorA, null);
+                simulatorA, null);
             fail("Previous statement should have thrown a GTUException");
         }
         catch (GTUException gtue)
@@ -227,8 +229,8 @@ public class TemplateGTUTypeTest implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public final void constructModel(
-            final SimulatorInterface<Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
-            throws SimRuntimeException, RemoteException
+        final SimulatorInterface<Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> theSimulator)
+        throws SimRuntimeException, RemoteException
     {
         this.simulator = theSimulator;
     }
@@ -236,7 +238,7 @@ public class TemplateGTUTypeTest implements OTSModelInterface
     /** {@inheritDoc} */
     @Override
     public final SimulatorInterface<Abs<TimeUnit>, DoubleScalar.Rel<TimeUnit>, OTSSimTimeDouble> getSimulator()
-            throws RemoteException
+        throws RemoteException
     {
         return this.simulator;
     }

@@ -14,6 +14,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.geometry.OTSLine3D;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanBuilder;
@@ -224,10 +225,11 @@ public abstract class AbstractGTU implements GTU
      * @throws OperationalPlanException when there is a problem creating a good path for the GTU
      * @throws GTUException when there is a problem with the state of the GTU when planning a path
      * @throws NetworkException in case of a problem with the network, e.g., a dead end where it is not expected
+     * @throws ParameterException in there is a parameter problem
      */
     @SuppressWarnings("checkstyle:designforextension")
     protected void move(final DirectedPoint fromLocation) throws SimRuntimeException, OperationalPlanException,
-        GTUException, NetworkException
+        GTUException, NetworkException, ParameterException
     {
         Time.Abs now = this.simulator.getSimulatorTime().getTime();
 
@@ -262,9 +264,11 @@ public abstract class AbstractGTU implements GTU
      * @throws OperationalPlanException when there is a problem creating a good path for the GTU
      * @throws GTUException when there is a problem with the state of the GTU when planning a path
      * @throws NetworkException in case of a problem with the network, e.g., unreachability of a certain point
+     * @throws ParameterException when there is a problem with a parameter
      */
     @SuppressWarnings("checkstyle:designforextension")
-    protected void interruptMove() throws SimRuntimeException, OperationalPlanException, GTUException, NetworkException
+    protected void interruptMove() throws SimRuntimeException, OperationalPlanException, GTUException, NetworkException,
+        ParameterException
     {
         this.simulator.cancelEvent(this.nextMoveEvent);
         move(this.operationalPlan.getLocation(this.simulator.getSimulatorTime().getTime()));

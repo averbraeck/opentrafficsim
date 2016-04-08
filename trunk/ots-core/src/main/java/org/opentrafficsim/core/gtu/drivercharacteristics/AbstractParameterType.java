@@ -2,6 +2,7 @@ package org.opentrafficsim.core.gtu.drivercharacteristics;
 
 import java.util.UUID;
 
+import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.DoubleScalar;
 
 /**
@@ -15,11 +16,12 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author Wouter Schakel
+ * @param <U> Unit of the value.
  * @param <T> Class of the value.
  */
-public abstract class AbstractParameterType<T extends DoubleScalar.Rel<?>>
+public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>>
 {
-
+    
     /** Unique identifier. */
     private final UUID uniqueId;
 
@@ -34,10 +36,47 @@ public abstract class AbstractParameterType<T extends DoubleScalar.Rel<?>>
     protected final Class<T> valueClass;
 
     /** Default value. */
-    private final T defaultValue;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected final T defaultValue;
+
+    /** Default check. */
+    private final Check check;
+    
+    /** List of default checks for ParameterTypes. */
+    public enum Check
+    {
+        /** Checks for &gt;0. */
+        POSITIVE, 
+        
+        /** Checks for &lt;0. */
+        NEGATIVE, 
+        
+        /** Checks for &ge;0. */
+        POSITIVEZERO, 
+        
+        /** Checks for &le;0. */
+        NEGATIVEZERO,
+        
+        /** Checks for &ne;0. */
+        NONZERO,
+        
+        /** Checks for range [0...1]. */
+        UNITINTERVAL;
+    }
 
     /**
-     * Constructor with default value.
+     * Constructor without default value and check.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param valueClass Class of the value.
+     */
+    public AbstractParameterType(final String id, final String description, final Class<T> valueClass)
+    {
+        this(id, description, valueClass, null, null);
+    }
+    
+    /**
+     * Constructor with default value, without check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
      * @param valueClass Class of the value.
@@ -45,22 +84,49 @@ public abstract class AbstractParameterType<T extends DoubleScalar.Rel<?>>
      */
     public AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue)
     {
+        this(id, description, valueClass, defaultValue, null);
+    }
+
+    /**
+     * Constructor without default value, with check.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param valueClass Class of the value.
+     * @param check Check for parameter values.
+     */
+    public AbstractParameterType(final String id, final String description, final Class<T> valueClass, final Check check)
+    {
+        this(id, description, valueClass, null, check);
+    }
+    
+    /**
+     * Constructor with default value and check.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param valueClass Class of the value.
+     * @param defaultValue Default value.
+     * @param check Check for parameter values.
+     */
+    public AbstractParameterType(final String id, final String description, final Class<T> valueClass, final T defaultValue, final Check check)
+    {
         this.id = id;
         this.description = description;
         this.valueClass = valueClass;
         this.defaultValue = defaultValue;
         this.uniqueId = UUID.randomUUID();
-    }
-
-    /**
-     * Constructor without default value.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
-     */
-    public AbstractParameterType(final String id, final String description, final Class<T> valueClass)
-    {
-        this(id, description, valueClass, null);
+        this.check = check;
+        if (this.defaultValue != null) 
+        {
+            try
+            {
+                checkCheck(this.defaultValue);
+            }
+            catch (ParameterException pe)
+            {
+                throw new RuntimeException("Default value of parameter '" + this.id
+                    + "' does not comply with default constraints.", pe);
+            }
+        }
     }
 
     /**
@@ -86,11 +152,59 @@ public abstract class AbstractParameterType<T extends DoubleScalar.Rel<?>>
      * @return defaultValue Default value.
      * @throws ParameterException If no default value was set.
      */
-    public final T getDefaultValue() throws ParameterException
+    public abstract Object getDefaultValue() throws ParameterException;
+
+    /**
+     * Checks the default checks given with the parameter type.
+     * @param value The value to check.
+     * @throws ParameterException If the value does not comply with constraints.
+     */
+    protected final void checkCheck(final T value) throws ParameterException 
     {
-        ParameterException.failIf(null == this.defaultValue, "No default value was set for " + this.id);
-        return this.defaultValue;
+        if (this.check == null)
+        {
+            return;
+        }
+        switch (this.check)
+        {
+            case POSITIVE:
+                ParameterException.failIf(value.si <= 0.0, "Value of parameter '" + this.id + "' must be above zero.");
+                break;
+                
+            case NEGATIVE:
+                ParameterException.failIf(value.si >= 0.0, "Value of parameter '" + this.id + "' must be below zero.");
+                break;
+                
+            case POSITIVEZERO:
+                ParameterException.failIf(value.si < 0.0, "Value of parameter '" + this.id + "' may not be below zero.");
+                break;
+                
+            case NEGATIVEZERO:
+                ParameterException.failIf(value.si > 0.0, "Value of parameter '" + this.id + "' may not be above zero.");
+                break;
+                
+            case NONZERO:
+                ParameterException.failIf(value.si == 0.0, "Value of parameter '" + this.id + "' may not be zero.");
+                break;
+                
+            case UNITINTERVAL:
+                ParameterException.failIf(value.si < 0.0 || value.si > 1.0, "Value of parameter '" + this.id 
+                    + "' must be in range [0...1]");
+                break;
+            
+            default:
+                throw new ParameterException("Unknown parameter check value.");
+                
+        }
     }
+    
+    /**
+     * Print the given value from the map in BehavioralCharachteristics in a presentable format.
+     * @param behavioralCharacteristics Behavioral characteristics to get the value from.
+     * @return Printable string of value.
+     * @throws ParameterException If the parameter is not present.
+     */
+    public abstract String printValue(BehavioralCharacteristics behavioralCharacteristics) throws ParameterException;
 
     /**
      * {@inheritDoc}
@@ -116,7 +230,7 @@ public abstract class AbstractParameterType<T extends DoubleScalar.Rel<?>>
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AbstractParameterType<?> other = (AbstractParameterType<?>) obj;
+        AbstractParameterType<?, ?> other = (AbstractParameterType<?, ?>) obj;
         if (this.uniqueId == null)
         {
             if (other.uniqueId != null)
@@ -132,7 +246,8 @@ public abstract class AbstractParameterType<T extends DoubleScalar.Rel<?>>
     @Override
     public String toString()
     {
-        return "AbstractParameterType [id=" + this.id + ", description=" + this.description + ", valueClass=" + this.valueClass + "]";
+        return "AbstractParameterType [id=" + this.id + ", description=" + this.description + ", valueClass="
+            + this.valueClass + "]";
     }
 
 }
