@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -188,15 +189,17 @@ public interface LanePerception extends Perception
      * Update who's in front of us and how far away the nearest GTU is.
      * @throws GTUException when the GTU was not initialized yet.
      * @throws NetworkException when the headway cannot be determined for this GTU, usually due to routing problems.
+     * @throws ParameterException when there is a parameter problem.
      */
-    void updateForwardHeadwayGTU() throws GTUException, NetworkException;
+    void updateForwardHeadwayGTU() throws GTUException, NetworkException, ParameterException;
 
     /**
      * Update who's behind us and how far away the nearest GTU is.
      * @throws GTUException when the GTU was not initialized yet.
      * @throws NetworkException when the headway cannot be determined for this GTU, usually due to routing problems.
+     * @throws ParameterException when there is a parameter problem
      */
-    void updateBackwardHeadwayGTU() throws GTUException, NetworkException;
+    void updateBackwardHeadwayGTU() throws GTUException, NetworkException, ParameterException;
 
     /**
      * Build a set of Lanes that is adjacent to the given lane that this GTU can enter, for the left lateral direction.
@@ -226,14 +229,16 @@ public interface LanePerception extends Perception
      * Update the information about the GTUs left of our GTU, and behind us or ahead on the left hand side.
      * @throws GTUException when the GTU was not initialized yet.
      * @throws NetworkException when there is an inconsistency in the lanes on this network
+     * @throws ParameterException when there is a parameter problem.
      */
-    void updateLaneTrafficLeft() throws GTUException, NetworkException;
+    void updateLaneTrafficLeft() throws GTUException, NetworkException, ParameterException;
 
     /**
      * Update the information about the GTUs right of our GTU, and behind us or ahead on the left hand side.
      * @throws GTUException when the GTU was not initialized yet.
      * @throws NetworkException when there is an inconsistency in the lanes on this network
+     * @throws ParameterException when there is a parameter problem.
      */
-    void updateLaneTrafficRight() throws GTUException, NetworkException;
+    void updateLaneTrafficRight() throws GTUException, NetworkException, ParameterException;
 
 }

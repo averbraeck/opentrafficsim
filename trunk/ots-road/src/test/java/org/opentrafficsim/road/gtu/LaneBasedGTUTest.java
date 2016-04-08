@@ -26,13 +26,14 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
@@ -129,10 +130,12 @@ public class LaneBasedGTUTest implements UNITS
         LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
         Speed maximumVelocity = new Speed(120, KM_PER_HOUR);
         GTUFollowingModelOld gtuFollowingModel = new IDMPlusOld();
-        LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
+        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+        //LaneBasedBehavioralCharacteristics drivingCharacteristics =
+        //        new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
+                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, 
+                    new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel));
         LaneBasedIndividualGTU truck =
                 new LaneBasedIndividualGTU("Truck", truckType, truckPositions, truckSpeed, truckLength, truckWidth,
                         maximumVelocity, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
@@ -171,7 +174,7 @@ public class LaneBasedGTUTest implements UNITS
         assertEquals("lanesChecked should equals the number of Links times the number of lanes on each Link",
                 laneCount * links.size(), lanesChecked);
         assertEquals("Truck should be registered in " + truckPositions.size() + " lanes", truckPositions.size(), found);
-        Length.Rel forwardMaxDistance = truck.getBehavioralCharacteristics().getForwardHeadwayDistance();
+        Length.Rel forwardMaxDistance = truck.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
         // TODO see how we can ask the vehicle to look this far ahead
         truck.getPerception().perceive();
         HeadwayGTU leader = truck.getPerception().getForwardHeadwayGTU();
@@ -180,7 +183,7 @@ public class LaneBasedGTUTest implements UNITS
                 forwardMaxDistance.getSI() >= leader.getDistance().si && leader.getDistance().si > 0);
         assertEquals("With one vehicle in the network forward headwayGTU should return null", null, leader.getGtuId());
         // TODO see how we can ask the vehicle to look this far behind
-        Length.Rel reverseMaxDistance = truck.getBehavioralCharacteristics().getBackwardHeadwayDistance();
+        Length.Rel reverseMaxDistance = truck.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACK);
         HeadwayGTU follower = truck.getPerception().getBackwardHeadwayGTU();
         assertTrue(
                 "With one vehicle in the network reverse headway should return a value less than zero, and smaller than |maxDistance|",
@@ -203,9 +206,10 @@ public class LaneBasedGTUTest implements UNITS
                 Length.Rel carPosition = new Length.Rel(step, METER);
                 Set<DirectedLanePosition> carPositions =
                         buildPositionsSet(carPosition, carLength, links, laneRank, laneRank + carLanesCovered - 1);
-                drivingCharacteristics = new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
-                strategicalPlanner =
-                        new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
+                behavioralCharacteristics = new BehavioralCharacteristics();
+                //drivingCharacteristics = new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
+                strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, 
+                            new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel));
                 LaneBasedIndividualGTU car =
                         new LaneBasedIndividualGTU("Car", carType, carPositions, carSpeed, carLength, carWidth,
                                 maximumVelocity, simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
@@ -385,10 +389,10 @@ public class LaneBasedGTUTest implements UNITS
             FixedAccelerationModel fam = new FixedAccelerationModel(acceleration, new Time.Rel(10, SECOND));
             LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
             Speed maximumVelocity = new Speed(200, KM_PER_HOUR);
-            LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                    new LaneBasedBehavioralCharacteristics(fam, laneChangeModel);
-            LaneBasedStrategicalPlanner strategicalPlanner =
-                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
+            BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+            //LaneBasedBehavioralCharacteristics drivingCharacteristics = new LaneBasedBehavioralCharacteristics(fam, laneChangeModel);
+            LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, 
+                new LaneBasedCFLCTacticalPlanner(fam, laneChangeModel));
             LaneBasedIndividualGTU car =
                     new LaneBasedIndividualGTU("Car" + this.idGenerator.nextId(), carType, carPositions, carSpeed,
                             new Length.Rel(4, METER), new Length.Rel(1.8, METER), maximumVelocity, simulator,

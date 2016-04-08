@@ -9,6 +9,8 @@ import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -39,18 +41,22 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
     /** */
     private static final long serialVersionUID = 20151125L;
 
+    /** Following model for this tactical planner. */
+    private GTUFollowingModelOld carFollowingModel; 
+    
     /**
      * Instantiated a tactical planner with just GTU following behavior and no lane changes.
+     * @param carFollowingModel Car-following model.
      */
-    public LaneBasedGTUFollowingTacticalPlanner()
+    public LaneBasedGTUFollowingTacticalPlanner(final GTUFollowingModelOld carFollowingModel)
     {
-        super();
+        super(carFollowingModel);
     }
 
     /** {@inheritDoc} */
     @Override
     public OperationalPlan generateOperationalPlan(final GTU gtu, final Time.Abs startTime,
-        final DirectedPoint locationAtStartTime) throws OperationalPlanException, NetworkException, GTUException
+        final DirectedPoint locationAtStartTime) throws OperationalPlanException, NetworkException, GTUException, ParameterException
     {
         // ask Perception for the local situation
         LaneBasedGTU laneBasedGTU = (LaneBasedGTU) gtu;
@@ -65,13 +71,9 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         // perceive every time step... This is the 'classical' way of tactical planning.
         perception.perceive();
 
-        // get some models to help us make a plan
-        GTUFollowingModelOld gtuFollowingModel =
-            laneBasedGTU.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
-
         // see how far we can drive
         LanePathInfo lanePathInfo =
-            buildLanePathInfo(laneBasedGTU, laneBasedGTU.getBehavioralCharacteristics().getForwardHeadwayDistance());
+            buildLanePathInfo(laneBasedGTU, laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD));
 
         // look at the conditions for headway
         HeadwayGTU headwayGTU = perception.getForwardHeadwayGTU();
@@ -79,13 +81,13 @@ public class LaneBasedGTUFollowingTacticalPlanner extends AbstractLaneBasedTacti
         if (headwayGTU.getGtuId() == null)
         {
             accelerationStep =
-                gtuFollowingModel.computeAccelerationStepWithNoLeader(laneBasedGTU, lanePathInfo.getPath().getLength(),
+                this.carFollowingModel.computeAccelerationStepWithNoLeader(laneBasedGTU, lanePathInfo.getPath().getLength(),
                     perception.getSpeedLimit());
         }
         else
         {
             accelerationStep =
-                gtuFollowingModel.computeAccelerationStep(laneBasedGTU, headwayGTU.getGtuSpeed(), headwayGTU.getDistance(),
+                this.carFollowingModel.computeAccelerationStep(laneBasedGTU, headwayGTU.getGtuSpeed(), headwayGTU.getDistance(),
                     lanePathInfo.getPath().getLength(), perception.getSpeedLimit());
         }
 

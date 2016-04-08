@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane;
 
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
 
 /**
  * Interface for objects that can generate a LaneBasedGTUCharacteristics object.
@@ -20,8 +21,9 @@ public interface LaneBasedGTUCharacteristicsGenerator
      * Generate a LaneBasedGTUCharacteristics object.
      * @return LaneBasedGTUCharacteristics
      * @throws ProbabilityException when the generator is improperly configured
+     * @throws ParameterException in case of a parameter problem.
      */
-    public LaneBasedGTUCharacteristics draw() throws ProbabilityException;
+    public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException;
     
     /**
      * Return the simulator.

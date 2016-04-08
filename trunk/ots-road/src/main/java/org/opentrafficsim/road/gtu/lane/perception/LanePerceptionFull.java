@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -40,7 +41,7 @@ public class LanePerceptionFull extends AbstractLanePerception implements Percep
 
     /** {@inheritDoc} */
     @Override
-    public void perceive() throws GTUException, NetworkException
+    public void perceive() throws GTUException, NetworkException, ParameterException
     {
         updateSpeedLimit();
         updateForwardHeadwayGTU();

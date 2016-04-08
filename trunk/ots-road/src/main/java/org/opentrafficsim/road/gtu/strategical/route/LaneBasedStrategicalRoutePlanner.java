@@ -6,13 +6,13 @@ import java.util.Set;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.strategical.AbstractLaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -43,24 +43,24 @@ public class LaneBasedStrategicalRoutePlanner extends AbstractLaneBasedStrategic
     private final TacticalPlanner fixedTacticalPlanner;
 
     /**
-     * @param drivingCharacteristics the personal driving characteristics, which contain settings for the tactical planner
+     * @param behavioralCharacteristics the personal driving characteristics, which contain settings for the tactical planner
      * @param fixedTacticalPlanner the tactical planner to use for the GTU
      */
-    public LaneBasedStrategicalRoutePlanner(LaneBasedBehavioralCharacteristics drivingCharacteristics,
+    public LaneBasedStrategicalRoutePlanner(final BehavioralCharacteristics behavioralCharacteristics,
             final TacticalPlanner fixedTacticalPlanner)
     {
-        this(drivingCharacteristics, fixedTacticalPlanner, null);
+        this(behavioralCharacteristics, fixedTacticalPlanner, null);
     }
 
     /**
-     * @param drivingCharacteristics the personal driving characteristics, which contain settings for the tactical planner
+     * @param behavioralCharacteristics the personal driving characteristics, which contain settings for the tactical planner
      * @param fixedTacticalPlanner the tactical planner to use for the GTU
      * @param route the route to drive
      */
-    public LaneBasedStrategicalRoutePlanner(LaneBasedBehavioralCharacteristics drivingCharacteristics,
+    public LaneBasedStrategicalRoutePlanner(final BehavioralCharacteristics behavioralCharacteristics,
             final TacticalPlanner fixedTacticalPlanner, final Route route)
     {
-        super(drivingCharacteristics);
+        super(behavioralCharacteristics);
         this.route = route;
         this.fixedTacticalPlanner = fixedTacticalPlanner;
     }

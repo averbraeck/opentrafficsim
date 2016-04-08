@@ -37,7 +37,7 @@ public class TestBehavioralCharacteristics
         {
             /** {@inheritDoc} */
             @Override
-            public void check(double value) throws ParameterException
+            public void check(double value, BehavioralCharacteristics bc) throws ParameterException
             {
                 ParameterException.failIf(value>1.0, "Value is NaN...");
             }

@@ -10,8 +10,11 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModelMobil;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -41,15 +44,11 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
         final Collection<HeadwayGTU> sameLaneGTUs, final Collection<HeadwayGTU> preferredLaneGTUs,
         final Collection<HeadwayGTU> nonPreferredLaneGTUs, final Speed speedLimit,
         final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
-        final Acceleration nonPreferredLaneRouteIncentive)
+        final Acceleration nonPreferredLaneRouteIncentive) throws ParameterException
     {
-        // if (gtu.getId().equals("146") && gtu.getSimulator().getSimulatorTime().getTime().si >= 88.0)
-        // {
-        // System.out.println("XXXXXXXXXXXXXXXXXXXXXXX");
-        // }
         try
         {
-            Length.Rel headway = gtu.getBehavioralCharacteristics().getForwardHeadwayDistance();
+            Length.Rel headway = gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
             Map<Lane, Length.Rel> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
             Lane lane = positions.keySet().iterator().next();
             Length.Rel longitudinalPosition = positions.get(lane);
@@ -60,8 +59,8 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             Lane nonPreferredLane =
                 gtu.getPerception().bestAccessibleAdjacentLane(lane, nonPreferred, longitudinalPosition);
             Lane preferredLane = gtu.getPerception().bestAccessibleAdjacentLane(lane, preferred, longitudinalPosition);
-            GTUFollowingModelOld gtuFollowingModel =
-                gtu.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
+            GTUFollowingModelOld gtuFollowingModel = (GTUFollowingModelOld) 
+                    ((AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner()).getCarFollowingModel();
             if (null == gtuFollowingModel)
             {
                 throw new Error(gtu + " has null GTUFollowingModel");
@@ -71,42 +70,29 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             if (straightAccelerationSteps.getLeaderAcceleration().getSI() < -9999)
             {
                 System.out.println("Problem");
-                gtu.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel()
-                    .computeDualAccelerationStep(gtu, sameLaneGTUs, headway, speedLimit);
+                gtuFollowingModel.computeDualAccelerationStep(gtu, sameLaneGTUs, headway, speedLimit);
             }
             Acceleration straightA = applyDriverPersonality(straightAccelerationSteps).plus(laneChangeThreshold);
             DualAccelerationStep nonPreferredAccelerationSteps =
-                null == nonPreferredLane ? null : gtu.getStrategicalPlanner().getDrivingCharacteristics()
-                    .getGTUFollowingModel().computeDualAccelerationStep(gtu, nonPreferredLaneGTUs, headway, speedLimit);
+                null == nonPreferredLane ? null : gtuFollowingModel
+                    .computeDualAccelerationStep(gtu, nonPreferredLaneGTUs, headway, speedLimit);
             if (null != nonPreferredAccelerationSteps
                 && nonPreferredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getStrategicalPlanner()
-                    .getDrivingCharacteristics().getGTUFollowingModel().getMaximumSafeDeceleration().getSI())
+                    .getBehavioralCharacteristics().getParameter(ParameterTypes.B).getSI())
             {
                 nonPreferredAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
             }
-            if (null != nonPreferredAccelerationSteps
-                    && nonPreferredAccelerationSteps.getLeaderAcceleration().getSI() < -gtu.getStrategicalPlanner()
-                        .getDrivingCharacteristics().getGTUFollowingModel().getMaximumSafeDeceleration().getSI())
-                {
-                    nonPreferredAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
-                }
             Acceleration nonPreferredA =
                 null == nonPreferredLane ? null : applyDriverPersonality(nonPreferredAccelerationSteps);
             DualAccelerationStep preferredAccelerationSteps =
-                null == preferredLane ? null : gtu.getStrategicalPlanner().getDrivingCharacteristics()
-                    .getGTUFollowingModel().computeDualAccelerationStep(gtu, preferredLaneGTUs, headway, speedLimit);
+                null == preferredLane ? null : gtuFollowingModel
+                    .computeDualAccelerationStep(gtu, preferredLaneGTUs, headway, speedLimit);
             if (null != preferredAccelerationSteps
                 && preferredAccelerationSteps.getFollowerAcceleration().getSI() < -gtu.getStrategicalPlanner()
-                    .getDrivingCharacteristics().getGTUFollowingModel().getMaximumSafeDeceleration().getSI())
+                    .getBehavioralCharacteristics().getParameter(ParameterTypes.B).getSI())
             {
                 preferredAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
             }
-            if (null != preferredAccelerationSteps
-                    && preferredAccelerationSteps.getLeaderAcceleration().getSI() < -gtu.getStrategicalPlanner()
-                        .getDrivingCharacteristics().getGTUFollowingModel().getMaximumSafeDeceleration().getSI())
-                {
-                    preferredAccelerationSteps = AbstractGTUFollowingModelMobil.TOODANGEROUS;
-                }
             Acceleration preferredA = null == preferredLane ? null : applyDriverPersonality(preferredAccelerationSteps);
             if (null == preferredA)
             {

@@ -11,6 +11,7 @@ import java.util.Set;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
+import org.djunits.unit.LengthUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -23,10 +24,10 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
@@ -87,18 +88,20 @@ public class IDMPlusTest implements UNITS
         initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
-        LaneBasedBehavioralCharacteristics drivingCharacteristicsIDM =
-            new LaneBasedBehavioralCharacteristics(carFollowingModel, laneChangeModel);
-        LaneBasedStrategicalPlanner strategicalPlannerIDM =
-            new LaneBasedStrategicalRoutePlanner(drivingCharacteristicsIDM, new LaneBasedGTUFollowingTacticalPlanner());
+        BehavioralCharacteristics behavioralCharacteristicsIDM = new BehavioralCharacteristics();
+        // fixed value for consistent testing even if the default value is changed
+        Length.Rel lookAhead = new Length.Rel(250, LengthUnit.SI); 
+        //LaneBasedBehavioralCharacteristics drivingCharacteristicsIDM =
+        //    new LaneBasedBehavioralCharacteristics(carFollowingModel, laneChangeModel);
+        LaneBasedStrategicalPlanner strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristicsIDM, 
+            new LaneBasedGTUFollowingTacticalPlanner(carFollowingModel));
         LaneBasedIndividualGTU referenceCar10 =
             new LaneBasedIndividualGTU("10", gtuType, initialLongitudinalPositions, initialSpeed, length, width,
                 maxSpeed, simulator, strategicalPlannerIDM, new LanePerceptionFull(), this.network);
         referenceCar10.getPerception().perceive();
         Speed speedLimit = new Speed(100, KM_PER_HOUR);
         AccelerationStep cfmr =
-            carFollowingModel.computeAccelerationStepWithNoLeader(referenceCar10, referenceCar10
-                .getBehavioralCharacteristics().getForwardHeadwayDistance(), speedLimit);
+            carFollowingModel.computeAccelerationStepWithNoLeader(referenceCar10, lookAhead, speedLimit);
         assertEquals("Standard time slice in IDM+ is 0.5s", 0.5, cfmr.getValidUntil().getSI(), 0.0001);
         assertEquals("Acceleration should be maximum", 1.25, cfmr.getAcceleration().getSI(), 0.0001);
         // Create another car at exactly the stationary following distance
@@ -112,10 +115,11 @@ public class IDMPlusTest implements UNITS
         // The leader gets a car following model that makes it stay in place for a loooong time
         FixedAccelerationModel fam =
             new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(9999, SECOND));
-        LaneBasedBehavioralCharacteristics drivingCharacteristicsFAM =
-            new LaneBasedBehavioralCharacteristics(fam, laneChangeModel);
-        LaneBasedStrategicalPlanner strategicalPlannerFAM =
-            new LaneBasedStrategicalRoutePlanner(drivingCharacteristicsFAM, new LaneBasedGTUFollowingTacticalPlanner());
+        BehavioralCharacteristics behavioralCharacteristicsFAM = new BehavioralCharacteristics();
+        //LaneBasedBehavioralCharacteristics drivingCharacteristicsFAM =
+        //    new LaneBasedBehavioralCharacteristics(fam, laneChangeModel);
+        LaneBasedStrategicalPlanner strategicalPlannerFAM = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristicsFAM, 
+            new LaneBasedGTUFollowingTacticalPlanner(fam));
         LaneBasedIndividualGTU leaderCar11 =
             new LaneBasedIndividualGTU("11", gtuType, leaderPositions, initialSpeed, length, width, maxSpeed,
                 simulator, strategicalPlannerFAM, new LanePerceptionFull(), this.network);
@@ -125,7 +129,7 @@ public class IDMPlusTest implements UNITS
                 - referenceCar10.getLength().getSI() - initialPosition.getSI(), leaderCar11.getGTUType());
         cfmr =
             carFollowingModel.computeAccelerationStep(referenceCar10, leaderCar11.getVelocity(), leader.getDistance(),
-                leaderCar11.getBehavioralCharacteristics().getForwardHeadwayDistance(), speedLimit);
+                lookAhead, speedLimit);
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         leaderPosition =
             new Length.Rel(1000 + (3 + referenceCar10.getLength().getSI() + referenceCar10.position(lane,
@@ -133,9 +137,10 @@ public class IDMPlusTest implements UNITS
         leaderPositions = new LinkedHashSet<>(1);
         leaderPositions.add(new DirectedLanePosition(lane, leaderPosition, GTUDirectionality.DIR_PLUS));
         // Exercise the if statement that ignores leaders that are further ahead
-        drivingCharacteristicsFAM = new LaneBasedBehavioralCharacteristics(fam, laneChangeModel);
-        strategicalPlannerFAM =
-            new LaneBasedStrategicalRoutePlanner(drivingCharacteristicsFAM, new LaneBasedGTUFollowingTacticalPlanner());
+        behavioralCharacteristicsFAM = new BehavioralCharacteristics();
+        //drivingCharacteristicsFAM = new LaneBasedBehavioralCharacteristics(fam, laneChangeModel);
+        strategicalPlannerFAM = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristicsFAM, 
+            new LaneBasedGTUFollowingTacticalPlanner(fam));
         LaneBasedIndividualGTU leaderCar12 =
             new LaneBasedIndividualGTU("12", gtuType, leaderPositions, initialSpeed, length, width, maxSpeed,
                 simulator, strategicalPlannerFAM, new LanePerceptionFull(), this.network);
@@ -149,7 +154,7 @@ public class IDMPlusTest implements UNITS
         leaders.add(leader);
         cfmr =
             carFollowingModel.computeDualAccelerationStep(referenceCar10, leaders,
-                referenceCar10.getBehavioralCharacteristics().getForwardHeadwayDistance(), speedLimit)
+                lookAhead, speedLimit)
                 .getLeaderAccelerationStep();
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         leaders.clear();
@@ -157,7 +162,7 @@ public class IDMPlusTest implements UNITS
         leaders.add(leader2);
         cfmr =
             carFollowingModel.computeDualAccelerationStep(referenceCar10, leaders,
-                referenceCar10.getBehavioralCharacteristics().getForwardHeadwayDistance(), speedLimit)
+                lookAhead, speedLimit)
                 .getLeaderAccelerationStep();
         assertEquals("Acceleration should be 0", 0, cfmr.getAcceleration().getSI(), 0.0001);
         referenceCar10.destroy();
@@ -185,7 +190,7 @@ public class IDMPlusTest implements UNITS
         leaders.add(leader);
         cfmr =
             carFollowingModel.computeDualAccelerationStep(referenceCar20, leaders,
-                referenceCar20.getBehavioralCharacteristics().getForwardHeadwayDistance(), speedLimit)
+                lookAhead, speedLimit)
                 .getLeaderAccelerationStep();
         assertEquals("Leader acceleration should be 1.25", 1.25, cfmr.getAcceleration().getSI(), 0.0001);
         leaderCar21.destroy();
@@ -211,7 +216,7 @@ public class IDMPlusTest implements UNITS
             leaders.add(leader);
             cfmr =
                 carFollowingModel.computeDualAccelerationStep(referenceCar20, leaders,
-                    referenceCar20.getBehavioralCharacteristics().getForwardHeadwayDistance(), speedLimit)
+                    lookAhead, speedLimit)
                     .getFollowerAccelerationStep();
             double acceleration = cfmr.getAcceleration().getSI();
             // System.out.println("Acceleration with stationary leader at " + spareDistance + " is " + acceleration);
@@ -242,19 +247,19 @@ public class IDMPlusTest implements UNITS
             Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
             initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
             referenceCar30.destroy();
-            drivingCharacteristicsIDM = new LaneBasedBehavioralCharacteristics(carFollowingModel, laneChangeModel);
-            strategicalPlannerIDM =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristicsIDM,
-                    new LaneBasedGTUFollowingTacticalPlanner());
+            behavioralCharacteristicsIDM = new BehavioralCharacteristics();
+            //drivingCharacteristicsIDM = new LaneBasedBehavioralCharacteristics(carFollowingModel, laneChangeModel);
+            strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristicsIDM,
+                    new LaneBasedGTUFollowingTacticalPlanner(carFollowingModel));
             referenceCar30 =
                 new LaneBasedIndividualGTU("30", gtuType, initialPositions, initialSpeed, length, width, maxSpeed,
                     simulator, strategicalPlannerIDM, new LanePerceptionFull(), this.network);
             leaders.clear();
             Speed leaderSpeed = new Speed(integerLeaderSpeed, METER_PER_SECOND);
-            drivingCharacteristicsFAM = new LaneBasedBehavioralCharacteristics(fam, laneChangeModel);
-            strategicalPlannerFAM =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristicsFAM,
-                    new LaneBasedGTUFollowingTacticalPlanner());
+            behavioralCharacteristicsFAM = new BehavioralCharacteristics();
+            //drivingCharacteristicsFAM = new LaneBasedBehavioralCharacteristics(fam, laneChangeModel);
+            strategicalPlannerFAM = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristicsFAM,
+                    new LaneBasedGTUFollowingTacticalPlanner(fam));
             LaneBasedIndividualGTU leaderCar31 =
                 new LaneBasedIndividualGTU("31", gtuType, leaderPositions, leaderSpeed, length, width, maxSpeed,
                     simulator, strategicalPlannerFAM, new LanePerceptionFull(), this.network);
@@ -267,7 +272,7 @@ public class IDMPlusTest implements UNITS
             // System.out.println("leaderCar   : " + leaderCar);
             cfmr =
                 carFollowingModel.computeDualAccelerationStep(referenceCar30, leaders,
-                    referenceCar30.getBehavioralCharacteristics().getForwardHeadwayDistance(), speedLimit)
+                    lookAhead, speedLimit)
                     .getFollowerAccelerationStep();
             double acceleration = cfmr.getAcceleration().getSI();
             // System.out.println("Acceleration with leader driving " + integerLeaderSpeed + " m/s is " + acceleration);
@@ -286,9 +291,10 @@ public class IDMPlusTest implements UNITS
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         initialSpeed = new Speed(0, METER_PER_SECOND);
-        drivingCharacteristicsIDM = new LaneBasedBehavioralCharacteristics(carFollowingModel, laneChangeModel);
-        strategicalPlannerIDM =
-            new LaneBasedStrategicalRoutePlanner(drivingCharacteristicsIDM, new LaneBasedGTUFollowingTacticalPlanner());
+        behavioralCharacteristicsIDM = new BehavioralCharacteristics();
+        //drivingCharacteristicsIDM = new LaneBasedBehavioralCharacteristics(carFollowingModel, laneChangeModel);
+        strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristicsIDM, 
+            new LaneBasedGTUFollowingTacticalPlanner(carFollowingModel));
         LaneBasedIndividualGTU referenceCar40 =
             new LaneBasedIndividualGTU("40", gtuType, initialPositions, initialSpeed, length, width, maxSpeed,
                 simulator, strategicalPlannerIDM, new LanePerceptionFull(), this.network);
@@ -296,9 +302,10 @@ public class IDMPlusTest implements UNITS
         leaderPosition =
             new Length.Rel(100 + 3 + referenceCar40.getLength().getSI()
                 + referenceCar40.position(lane, referenceCar40.getFront(), initialTime).getSI(), METER);
-        drivingCharacteristicsFAM = new LaneBasedBehavioralCharacteristics(fam, laneChangeModel);
-        strategicalPlannerFAM =
-            new LaneBasedStrategicalRoutePlanner(drivingCharacteristicsFAM, new LaneBasedGTUFollowingTacticalPlanner());
+        behavioralCharacteristicsFAM = new BehavioralCharacteristics();
+        //drivingCharacteristicsFAM = new LaneBasedBehavioralCharacteristics(fam, laneChangeModel);
+        strategicalPlannerFAM = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristicsFAM, 
+            new LaneBasedGTUFollowingTacticalPlanner(fam));
         LaneBasedIndividualGTU leaderCar41 =
             new LaneBasedIndividualGTU("41", gtuType, leaderPositions, initialSpeed, length, width, maxSpeed,
                 simulator, strategicalPlannerFAM, new LanePerceptionFull(), this.network);

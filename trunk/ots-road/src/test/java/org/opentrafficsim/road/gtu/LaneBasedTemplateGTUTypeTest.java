@@ -27,6 +27,7 @@ import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
@@ -261,13 +262,14 @@ public class LaneBasedTemplateGTUTypeTest implements UNITS
      * @param initialSpeed Speed; the initial velocity
      * @param simulator OTSDEVSSimulatorInterface; the expected simulator
      * @throws ProbabilityException
+     * @throws ParameterException in case of a parameter problem.
      */
     private void verifyFields(final LaneBasedTemplateGTUType templateGTUType, final String id,
             final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> length,
             final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> width,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeed,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeed, final OTSDEVSSimulatorInterface simulator)
-            throws ProbabilityException
+            throws ProbabilityException, ParameterException
     {
         assertTrue("TypeId should be " + id, id.equals(templateGTUType.getGTUType().getId()));
         LaneBasedGTUCharacteristics characteristics = templateGTUType.draw();

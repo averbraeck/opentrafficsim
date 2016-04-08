@@ -55,6 +55,7 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -66,11 +67,9 @@ import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingLaneChangeTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.route.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.factory.opendrive.LaneAnimationOD;
@@ -696,11 +695,12 @@ public class TestOpenDriveParserNoRTINew extends AbstractWrappableAnimation
         private void putCar(Lane lane, Route route, OTSNetwork network, GTUDirectionality dir) throws GTUException,
             NamingException, NetworkException, SimRuntimeException, OTSGeometryException
         {
-            LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
+            BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+            //LaneBasedBehavioralCharacteristics drivingCharacteristics =
+            //    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
             LaneBasedStrategicalPlanner sPlanner =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
-                    new LaneBasedGTUFollowingLaneChangeTacticalPlanner(), route);
+                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                    new LaneBasedGTUFollowingLaneChangeTacticalPlanner(new IDMPlusOld()), route);
             LanePerceptionFull perception = new LanePerceptionFull();
 
             DirectedLanePosition directedLanePosition =

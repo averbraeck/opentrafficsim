@@ -17,11 +17,11 @@ import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.AbstractGTU;
-import org.opentrafficsim.core.gtu.DrivingCharacteristics;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.network.NetworkException;
@@ -153,15 +153,6 @@ public class SubjectiveCar extends AbstractGTU
      * {@inheritDoc}
      */
     @Override
-    public DrivingCharacteristics getBehavioralCharacteristics()
-    {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Bounds getBounds()
     {
         double dx = 0.5 * getLength().doubleValue();
@@ -192,6 +183,13 @@ public class SubjectiveCar extends AbstractGTU
         // System.out.println("Subjective car at position " + this.position);
 
         return this.getPosition();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public BehavioralCharacteristics getBehavioralCharacteristics()
+    {
+        return null;
     }
 
 }

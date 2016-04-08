@@ -9,6 +9,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 
 /**
@@ -32,16 +34,17 @@ public class DirectedFixedLaneChangeModel implements DirectedLaneChangeModel
         final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold,
         final Time.Rel laneChangeTime) throws GTUException
     {
+        GTUFollowingModelOld gtuFollowingModel = (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu
+                .getTacticalPlanner()).getCarFollowingModel();
         if (null == direction)
         {
-            return new DirectedLaneMovementStep(
-                gtu.getBehavioralCharacteristics().getGTUFollowingModel()
-                    .computeDualAccelerationStep(gtu, sameLaneTraffic, maxDistance, speedLimit)
+            return new DirectedLaneMovementStep(gtuFollowingModel
+                .computeDualAccelerationStep(gtu, sameLaneTraffic, maxDistance, speedLimit)
                     .getLeaderAccelerationStep(), null);
         }
         else
         {
-            return new DirectedLaneMovementStep(gtu.getBehavioralCharacteristics().getGTUFollowingModel()
+            return new DirectedLaneMovementStep(gtuFollowingModel
                 .computeDualAccelerationStep(gtu, otherLaneTraffic, maxDistance, speedLimit)
                 .getLeaderAccelerationStep(), direction);
         }
