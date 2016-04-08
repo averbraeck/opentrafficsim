@@ -30,10 +30,10 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
@@ -142,10 +142,11 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         GTUFollowingModelOld gtuFollowingModel =
             new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Time.Rel(1000, SECOND));
         // Construct a car
-        LaneBasedBehavioralCharacteristics drivingCharacteristics =
-            new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
+        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+        //LaneBasedBehavioralCharacteristics drivingCharacteristics =
+        //    new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
-            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
+            new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel));
         new LaneBasedIndividualGTU("1", gtuType, initialLongitudinalPositions, speed, length, width, maxSpeed,
             simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
         simulator.runUpTo(new Time.Abs(124, SECOND));
@@ -230,9 +231,10 @@ public class FundamentalDiagramPlotTest implements OTSModelInterface, UNITS
         }
         // Check that harmonic mean speed is computed
         speed = new Speed(10, KM_PER_HOUR);
-        drivingCharacteristics = new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
-        strategicalPlanner =
-            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
+        behavioralCharacteristics = new BehavioralCharacteristics();
+        //drivingCharacteristics = new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
+        strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, 
+                new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel));
         new LaneBasedIndividualGTU("1234", gtuType, initialLongitudinalPositions, speed, length, width, maxSpeed,
             simulator, strategicalPlanner, new LanePerceptionFull(), this.network);
         simulator.runUpTo(new Time.Abs(125, SECOND));

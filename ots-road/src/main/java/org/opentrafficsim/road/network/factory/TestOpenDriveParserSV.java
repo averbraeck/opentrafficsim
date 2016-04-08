@@ -50,6 +50,7 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -60,7 +61,6 @@ import org.opentrafficsim.core.network.route.CompleteRoute;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
@@ -271,11 +271,12 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                                 Time.Abs endTime = new Time.Abs(Double.MAX_VALUE, TimeUnit.SI);
                                 Length.Rel position = lane.getLength().lt(M25) ? M0 : M25;
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
-                                LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                                    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
+                                BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+                                //LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                                //    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
                                 LaneBasedStrategicalPlanner strategicalPlanner =
-                                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
-                                        new LaneBasedCFLCTacticalPlanner());
+                                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                                        new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), new Altruistic()));
                                 LanePerceptionFull perception = new LanePerceptionFull();
                                 // new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
                                 // initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
@@ -323,11 +324,12 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                                 Length.Rel position =
                                     lane.getLength().lt(M25) ? lane.getLength() : lane.getLength().minus(M25);
                                 String id = lane.getParentLink().getId() + "." + lane.getId();
-                                LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                                    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
+                                BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+                                //LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                                //    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
                                 LaneBasedStrategicalPlanner strategicalPlanner =
-                                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
-                                        new LaneBasedCFLCTacticalPlanner());
+                                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                                        new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), new Altruistic()));
                                 LanePerceptionFull perception = new LanePerceptionFull();
                                 // new GTUGeneratorIndividual(id, this.simulator, carType, LaneBasedIndividualCar.class,
                                 // initialSpeedDist, iatDist, lengthDist, widthDist, maxSpeedDist, Integer.MAX_VALUE,
@@ -477,10 +479,12 @@ public class TestOpenDriveParserSV extends AbstractWrappableAnimation
                     dir = GTUDirectionality.DIR_MINUS;
                 }
 
-                LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
+                BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+                //LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                //    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(), new Altruistic());
                 LaneBasedStrategicalPlanner sPlanner =
-                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
+                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, 
+                        new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), new Altruistic()));
                 LanePerceptionFull perception = new LanePerceptionFull();
 
                 DirectedLanePosition directedLanePosition = null;

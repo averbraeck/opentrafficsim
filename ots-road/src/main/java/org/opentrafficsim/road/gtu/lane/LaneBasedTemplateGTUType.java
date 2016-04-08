@@ -9,6 +9,7 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.TemplateGTUType;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
@@ -86,8 +87,9 @@ public class LaneBasedTemplateGTUType extends TemplateGTUType implements LaneBas
     /**
      * Generate the properties of the next GTU.
      * @throws ProbabilityException when a generator is improperly configured
+     * @throws ParameterException in case of a parameter problem.
      */
-    public LaneBasedGTUCharacteristics draw() throws ProbabilityException
+    public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException
     {
         return new LaneBasedGTUCharacteristics(super.draw(), this.perceptionGenerator.draw(),
                 this.strategicalPlannerGenerator.draw(), this.initialSpeedGenerator.draw(), this.initialLongitudinalPositions);

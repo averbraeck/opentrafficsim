@@ -18,6 +18,7 @@ import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -41,12 +42,17 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
     /** */
     private static final long serialVersionUID = 20151125L;
 
+    /** Car-following model. */
+    private CarFollowingModel carFollowingModel;
+    
     /**
-     * Instantiated a tactical planner.
+     * Instantiates a tactical planner.
+     * @param carFollowingModel Car-following model.
      */
-    public AbstractLaneBasedTacticalPlanner()
+    public AbstractLaneBasedTacticalPlanner(final CarFollowingModel carFollowingModel)
     {
         super();
+        this.setCarFollowingModel(carFollowingModel);
     }
 
     /**
@@ -674,5 +680,23 @@ public abstract class AbstractLaneBasedTacticalPlanner implements TacticalPlanne
             lengthForward = lengthForward.plus(lastLink.getLength());
         }
         return linkList;
+    }
+
+    /**
+     * Returns the car-following model.
+     * @return Car-following model.
+     */
+    public final CarFollowingModel getCarFollowingModel()
+    {
+        return this.carFollowingModel;
+    }
+
+    /**
+     * Sets the car-following model.
+     * @param carFollowingModel Car-following model to set.
+     */
+    public final void setCarFollowingModel(final CarFollowingModel carFollowingModel)
+    {
+        this.carFollowingModel = carFollowingModel;
     }
 }

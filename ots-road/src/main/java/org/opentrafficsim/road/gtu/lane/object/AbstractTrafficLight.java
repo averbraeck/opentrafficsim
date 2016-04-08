@@ -28,6 +28,7 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
@@ -38,7 +39,6 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -210,7 +210,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
     /** {@inheritDoc} */
     @Override
-    public LaneBasedBehavioralCharacteristics getBehavioralCharacteristics()
+    public BehavioralCharacteristics getBehavioralCharacteristics()
     {
         return null;
     }
@@ -352,7 +352,7 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
     static class DummyStrategicalPlanner implements LaneBasedStrategicalPlanner
     {
         /** */
-        private LaneBasedBehavioralCharacteristics drivingCharacteristics;
+        private BehavioralCharacteristics behavioralCharacteristics;
 
         /** {@inheritDoc} */
         @Override
@@ -393,16 +393,16 @@ public class AbstractTrafficLight extends AbstractGTU implements LaneBasedGTU
 
         /** {@inheritDoc} */
         @Override
-        public LaneBasedBehavioralCharacteristics getDrivingCharacteristics()
+        public BehavioralCharacteristics getBehavioralCharacteristics()
         {
-            return this.drivingCharacteristics;
+            return this.behavioralCharacteristics;
         }
 
         /** {@inheritDoc} */
         @Override
-        public void setDrivingCharacteristics(final LaneBasedBehavioralCharacteristics drivingCharacteristics)
+        public void setBehavioralCharacteristics(final BehavioralCharacteristics drivingCharacteristics)
         {
-            this.drivingCharacteristics = drivingCharacteristics;
+            this.behavioralCharacteristics = drivingCharacteristics;
         }
     }
 

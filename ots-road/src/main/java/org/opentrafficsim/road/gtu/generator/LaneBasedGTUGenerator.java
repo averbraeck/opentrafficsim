@@ -20,6 +20,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
@@ -119,9 +120,10 @@ public class LaneBasedGTUGenerator
      * @throws ProbabilityException when something is wrongly defined in the LaneBasedTemplateGTUType
      * @throws SimRuntimeException when this method fails to re-schedule itself or the call to the method that tries to place a
      *             GTU on the road
+     * @throws ParameterException in case of a parameter problem
      */
     @SuppressWarnings("unused")
-    private void generateCharacteristics() throws ProbabilityException, SimRuntimeException
+    private void generateCharacteristics() throws ProbabilityException, SimRuntimeException, ParameterException
     {
         OTSDEVSSimulatorInterface simulator = this.laneBasedGTUCharacteristicsGenerator.getSimulator();
         if (this.generatedGTUs >= this.maxGTUs

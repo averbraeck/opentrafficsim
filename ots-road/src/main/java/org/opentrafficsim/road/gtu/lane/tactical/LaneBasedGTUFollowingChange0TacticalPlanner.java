@@ -17,19 +17,22 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedAltruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedEgoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.directedlanechange.DirectedLaneMovementStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
+import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -84,23 +87,34 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
 
     /**
      * Instantiated a tactical planner with just GTU following behavior and no lane changes.
+     * @param carFollowingModel Car-following model.
      */
-    public LaneBasedGTUFollowingChange0TacticalPlanner()
+    public LaneBasedGTUFollowingChange0TacticalPlanner(final GTUFollowingModelOld carFollowingModel)
     {
-        super();
+        super(carFollowingModel);
+    }
+    
+    /**
+     * Returns the car-following model.
+     * @return The car-following model.
+     */
+    public GTUFollowingModelOld getCarFollowingModelOld() {
+        return (GTUFollowingModelOld) super.getCarFollowingModel();
     }
 
     /** {@inheritDoc} */
     @Override
-    public OperationalPlan generateOperationalPlan(final GTU gtu, final Time.Abs startTime,
-        final DirectedPoint locationAtStartTime) throws OperationalPlanException, NetworkException, GTUException
+    public OperationalPlan generateOperationalPlan(final GTU gtu, final Time.Abs startTime, 
+        final DirectedPoint locationAtStartTime) 
+                throws OperationalPlanException, NetworkException, GTUException, ParameterException
     {
         try
         {
             // ask Perception for the local situation
             LaneBasedGTU laneBasedGTU = (LaneBasedGTU) gtu;
             LanePerception perception = laneBasedGTU.getPerception();
-            LaneBasedBehavioralCharacteristics drivingCharacteristics = laneBasedGTU.getBehavioralCharacteristics();
+            BehavioralCharacteristics behavioralCharacteristics = laneBasedGTU.getBehavioralCharacteristics();
+            behavioralCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, ParameterTypes.LOOKAHEAD.getDefaultValue());
 
             // start with the turn indicator off -- this can change during the method
             laneBasedGTU.setTurnIndicatorStatus(TurnIndicatorStatus.NONE);
@@ -118,7 +132,7 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
             perception.updateSpeedLimit();
 
             // find out where we are going
-            Length.Rel forwardHeadway = drivingCharacteristics.getForwardHeadwayDistance();
+            Length.Rel forwardHeadway = behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD);
             LanePathInfo lanePathInfo = buildLanePathInfo(laneBasedGTU, forwardHeadway);
             NextSplitInfo nextSplitInfo = determineNextSplit(laneBasedGTU, forwardHeadway);
             Set<Lane> correctLanes = laneBasedGTU.getLanes().keySet();
@@ -180,8 +194,8 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
                     DirectedLaneChangeModel dlcm = new DirectedAltruistic();
                     DirectedLaneMovementStep dlms =
                         dlcm.computeLaneChangeAndAcceleration(laneBasedGTU, LateralDirectionality.LEFT,
-                            sameLaneTraffic, perception.getNeighboringGTUsLeft(), laneBasedGTU
-                                .getBehavioralCharacteristics().getForwardHeadwayDistance(), perception.getSpeedLimit(),
+                            sameLaneTraffic, perception.getNeighboringGTUsLeft(), behavioralCharacteristics.
+                                getParameter(ParameterTypes.LOOKAHEAD), perception.getSpeedLimit(),
                             new Acceleration(1.0, AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI),
                             new Time.Rel(0.5, TimeUnit.SECOND));
                     if (dlms.getLaneChange() != null)
@@ -226,8 +240,8 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
                     DirectedLaneChangeModel dlcm = new DirectedAltruistic();
                     DirectedLaneMovementStep dlms =
                         dlcm.computeLaneChangeAndAcceleration(laneBasedGTU, LateralDirectionality.RIGHT,
-                            sameLaneTraffic, perception.getNeighboringGTUsRight(), laneBasedGTU
-                                .getBehavioralCharacteristics().getForwardHeadwayDistance(), perception.getSpeedLimit(),
+                            sameLaneTraffic, perception.getNeighboringGTUsRight(), behavioralCharacteristics.
+                                getParameter(ParameterTypes.LOOKAHEAD), perception.getSpeedLimit(),
                             new Acceleration(1.0, AccelerationUnit.SI), new Acceleration(0.5, AccelerationUnit.SI),
                             new Time.Rel(0.5, TimeUnit.SECOND));
                     if (dlms.getLaneChange() != null)
@@ -275,21 +289,20 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
         GTUException
     {
         LanePerception perception = laneBasedGTU.getPerception();
-        GTUFollowingModelOld gfm = laneBasedGTU.getBehavioralCharacteristics().getGTUFollowingModel();
 
         // No lane change. Continue on current lane.
         AccelerationStep accelerationStep;
         if (perception.getForwardHeadwayGTU().getGtuId() == null)
         {
             accelerationStep =
-                gfm.computeAccelerationStepWithNoLeader(laneBasedGTU,
+                this.getCarFollowingModelOld().computeAccelerationStepWithNoLeader(laneBasedGTU,
                     lanePathInfo.getPath().getLength().minus(laneBasedGTU.getLength().multiplyBy(2.0)),
                     perception.getSpeedLimit());
         }
         else
         {
             accelerationStep =
-                gfm.computeAccelerationStep(laneBasedGTU, perception.getForwardHeadwayGTU().getGtuSpeed(), perception
+                this.getCarFollowingModelOld().computeAccelerationStep(laneBasedGTU, perception.getForwardHeadwayGTU().getGtuSpeed(), perception
                     .getForwardHeadwayGTU().getDistance(),
                     lanePathInfo.getPath().getLength().minus(laneBasedGTU.getLength().multiplyBy(2.0)), perception
                         .getSpeedLimit());
@@ -363,9 +376,10 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
      * @return whether a lane change is possible.
      * @throws NetworkException when there is a network inconsistency in updating the perception
      * @throws GTUException when there is an issue retrieving GTU information for the perception update
+     * @throws ParameterException when there is a parameter problem.
      */
     private boolean canChange(final LaneBasedGTU gtu, final LanePerception perception, final LanePathInfo lanePathInfo,
-        final LateralDirectionality direction) throws GTUException, NetworkException
+        final LateralDirectionality direction) throws GTUException, NetworkException, ParameterException
     {
         Collection<HeadwayGTU> otherLaneTraffic;
         perception.updateForwardHeadwayGTU();
@@ -402,8 +416,8 @@ public class LaneBasedGTUFollowingChange0TacticalPlanner extends AbstractLaneBas
         // TODO make the elasticities 2.0 and 0.1 parameters of the class
         DirectedLaneMovementStep dlms =
             dlcm.computeLaneChangeAndAcceleration(gtu, direction, sameLaneTraffic, otherLaneTraffic, gtu
-                .getBehavioralCharacteristics().getForwardHeadwayDistance(), perception.getSpeedLimit(), new Acceleration(
-                2.0, AccelerationUnit.SI), new Acceleration(0.1, AccelerationUnit.SI), new Time.Rel(0.5,
+                .getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD), perception.getSpeedLimit(), 
+                new Acceleration(2.0, AccelerationUnit.SI), new Acceleration(0.1, AccelerationUnit.SI), new Time.Rel(0.5,
                 TimeUnit.SECOND));
         if (dlms.getLaneChange() == null)
         {

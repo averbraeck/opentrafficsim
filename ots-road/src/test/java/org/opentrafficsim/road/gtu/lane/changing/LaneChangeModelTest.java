@@ -29,6 +29,8 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -36,9 +38,9 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIDM;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
@@ -182,11 +184,18 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
         SimpleSimulator simpleSimulator =
             new SimpleSimulator(new Time.Abs(0, SECOND), new Time.Rel(0, SECOND), new Time.Rel(3600, SECOND), this);
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
-        LaneBasedBehavioralCharacteristics drivingCharacteristics =
-            new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(
-                1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d), laneChangeModel);
-        LaneBasedStrategicalPlanner strategicalPlanner =
-            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
+        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+        behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
+        behavioralCharacteristics.setParameter(ParameterTypes.B, new Acceleration(1.5, METER_PER_SECOND_2));
+        behavioralCharacteristics.setParameter(ParameterTypes.S0, new Length.Rel(2, METER));
+        behavioralCharacteristics.setParameter(ParameterTypes.T, new Time.Rel(1, SECOND));
+        behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
+        behavioralCharacteristics.setParameter(AbstractIDM.DELTA, 1d);
+        //LaneBasedBehavioralCharacteristics drivingCharacteristics =
+        //    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2), new Acceleration(
+        //        1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d), laneChangeModel);
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, 
+            new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), laneChangeModel));
         LaneBasedIndividualGTU car =
             new LaneBasedIndividualGTU("ReferenceCar", gtuType, initialLongitudinalPositions, new Speed(100,
                 KM_PER_HOUR), new Length.Rel(4, METER), new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR),
@@ -218,12 +227,19 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             otherLongitudinalPositions.add(new DirectedLanePosition(lanes[1], new Length.Rel(pos, METER),
                 GTUDirectionality.DIR_PLUS));
 
-            drivingCharacteristics =
-                new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
-                    new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d),
-                    laneChangeModel);
-            strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
+            behavioralCharacteristics = new BehavioralCharacteristics();
+            behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
+            behavioralCharacteristics.setParameter(ParameterTypes.B, new Acceleration(1.5, METER_PER_SECOND_2));
+            behavioralCharacteristics.setParameter(ParameterTypes.S0, new Length.Rel(2, METER));
+            behavioralCharacteristics.setParameter(ParameterTypes.T, new Time.Rel(1, SECOND));
+            behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
+            behavioralCharacteristics.setParameter(AbstractIDM.DELTA, 1d);
+            //drivingCharacteristics =
+            //    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
+            //        new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d),
+            //        laneChangeModel);
+            strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, 
+                new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), laneChangeModel));
             LaneBasedIndividualGTU collisionCar =
                 new LaneBasedIndividualGTU("LaneChangeBlockingCarAt" + pos, gtuType, otherLongitudinalPositions, new Speed(100,
                     KM_PER_HOUR), vehicleLength, new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR),
@@ -248,12 +264,19 @@ public class LaneChangeModelTest implements OTSModelInterface, UNITS
             otherLongitudinalPositions.add(new DirectedLanePosition(lanes[1], new Length.Rel(pos, METER),
                 GTUDirectionality.DIR_PLUS));
 
-            drivingCharacteristics =
-                new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
-                    new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d),
-                    laneChangeModel);
-            strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
+            behavioralCharacteristics = new BehavioralCharacteristics();
+            behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
+            behavioralCharacteristics.setParameter(ParameterTypes.B, new Acceleration(1.5, METER_PER_SECOND_2));
+            behavioralCharacteristics.setParameter(ParameterTypes.S0, new Length.Rel(2, METER));
+            behavioralCharacteristics.setParameter(ParameterTypes.T, new Time.Rel(1, SECOND));
+            behavioralCharacteristics.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
+            behavioralCharacteristics.setParameter(AbstractIDM.DELTA, 1d);
+            //drivingCharacteristics =
+            //    new LaneBasedBehavioralCharacteristics(new IDMPlusOld(new Acceleration(1, METER_PER_SECOND_2),
+            //        new Acceleration(1.5, METER_PER_SECOND_2), new Length.Rel(2, METER), new Time.Rel(1, SECOND), 1d),
+            //        laneChangeModel);
+            strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, 
+                new LaneBasedCFLCTacticalPlanner(new IDMPlusOld(), laneChangeModel));
             LaneBasedIndividualGTU otherCar =
                 new LaneBasedIndividualGTU("OtherCarAt" + pos, gtuType, otherLongitudinalPositions,
                     new Speed(100, KM_PER_HOUR), vehicleLength, new Length.Rel(2, METER), new Speed(150, KM_PER_HOUR),

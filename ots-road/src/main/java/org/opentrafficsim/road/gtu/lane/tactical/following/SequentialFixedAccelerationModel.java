@@ -3,13 +3,17 @@ package org.opentrafficsim.road.gtu.lane.tactical.following;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Length.Rel;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
 
 /**
  * Extended version of FixedAccelerationModel. The addition is that this GTUFollowingModel stores a series of acceleration and
@@ -175,4 +179,49 @@ public class SequentialFixedAccelerationModel extends AbstractGTUFollowingModelM
         return "Fixed sequential acceleration model";
     }
 
+// The following is inherited from CarFollowingModel
+    
+    /** {@inheritDoc} */
+    @Override
+    public final Speed desiredSpeed(final BehavioralCharacteristics behavioralCharacteristics, final Speed speedLimit, 
+        final boolean enforcement, final Speed maximumVehicleSpeed)
+        throws ParameterException
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Rel desiredHeadway(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed) 
+            throws ParameterException
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Acceleration freeAcceleration(final BehavioralCharacteristics behavioralCharacteristics, final Speed speed, 
+        final Speed speedLimit, final boolean enforcement, final Speed maximumVehicleSpeed) throws ParameterException
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics, 
+        final Speed speed, final Speed speedLimit, final boolean enforcement, final Speed maximumVehicleSpeed, 
+        final Rel headway, final Speed leaderSpeed) throws ParameterException
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final Acceleration followingAcceleration(final BehavioralCharacteristics behavioralCharacteristics, 
+        final Speed speed, final Speed speedLimit, final boolean enforcement, final Speed maximumVehicleSpeed, 
+        final SortedMap<Rel, Speed> leaders) throws ParameterException
+    {
+        return null;
+    }
+    
 }

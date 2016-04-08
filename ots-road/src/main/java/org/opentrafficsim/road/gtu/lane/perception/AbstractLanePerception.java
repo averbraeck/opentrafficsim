@@ -17,6 +17,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.PerceivedObject;
@@ -120,13 +122,14 @@ public abstract class AbstractLanePerception implements LanePerception
     /**
      * @throws GTUException when the GTU was not initialized yet.
      * @throws NetworkException when the speed limit for a GTU type cannot be retrieved from the network.
+     * @throws ParameterException in case of a parameter problem
      */
-    public final void updateLanePathInfo() throws GTUException, NetworkException
+    public void updateLanePathInfo() throws GTUException, NetworkException, ParameterException
     {
         Time.Abs timestamp = getTimestamp();
         this.lanePathInfo =
                 new TimeStampedObject<LanePathInfo>(AbstractLaneBasedTacticalPlanner.buildLanePathInfo(this.gtu, this.gtu
-                        .getBehavioralCharacteristics().getForwardHeadwayDistance()), timestamp);
+                        .getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD)), timestamp);
     }
 
     /** {@inheritDoc} */
@@ -147,23 +150,23 @@ public abstract class AbstractLanePerception implements LanePerception
 
     /** {@inheritDoc} */
     @Override
-    public final void updateForwardHeadwayGTU() throws GTUException, NetworkException
+    public void updateForwardHeadwayGTU() throws GTUException, NetworkException, ParameterException
     {
         Time.Abs timestamp = getTimestamp();
         if (this.lanePathInfo == null || this.lanePathInfo.getTimestamp().ne(timestamp))
         {
             updateLanePathInfo();
         }
-        Length.Rel maximumForwardHeadway = this.gtu.getBehavioralCharacteristics().getForwardHeadwayDistance();
+        Length.Rel maximumForwardHeadway = this.gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
         this.forwardHeadwayGTU = new TimeStampedObject<>(forwardHeadway(maximumForwardHeadway), timestamp);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void updateBackwardHeadwayGTU() throws GTUException, NetworkException
+    public void updateBackwardHeadwayGTU() throws GTUException, NetworkException, ParameterException
     {
         Time.Abs timestamp = getTimestamp();
-        Length.Rel maximumReverseHeadway = this.gtu.getBehavioralCharacteristics().getBackwardHeadwayDistance();
+        Length.Rel maximumReverseHeadway = this.gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACK);
         this.backwardHeadwayGTU = new TimeStampedObject<>(backwardHeadway(maximumReverseHeadway), timestamp);
     }
 
@@ -239,7 +242,7 @@ public abstract class AbstractLanePerception implements LanePerception
 
     /** {@inheritDoc} */
     @Override
-    public final void updateLaneTrafficLeft() throws GTUException, NetworkException
+    public void updateLaneTrafficLeft() throws GTUException, NetworkException, ParameterException
     {
         Time.Abs timestamp = getTimestamp();
         if (this.accessibleAdjacentLanesLeft == null || !timestamp.equals(this.accessibleAdjacentLanesLeft.getTimestamp()))
@@ -253,8 +256,8 @@ public abstract class AbstractLanePerception implements LanePerception
         }
 
         // for the accessible lanes, see who is ahead of us and in front of us
-        Length.Rel maximumForwardHeadway = this.gtu.getBehavioralCharacteristics().getForwardHeadwayDistance();
-        Length.Rel maximumReverseHeadway = this.gtu.getBehavioralCharacteristics().getBackwardHeadwayDistance();
+        Length.Rel maximumForwardHeadway = this.gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
+        Length.Rel maximumReverseHeadway = this.gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACK);
         this.neighboringGTUsLeft =
                 new TimeStampedObject<>(collectNeighborLaneTraffic(LateralDirectionality.LEFT, timestamp,
                         maximumForwardHeadway, maximumReverseHeadway), timestamp);
@@ -262,7 +265,7 @@ public abstract class AbstractLanePerception implements LanePerception
 
     /** {@inheritDoc} */
     @Override
-    public final void updateLaneTrafficRight() throws GTUException, NetworkException
+    public void updateLaneTrafficRight() throws GTUException, NetworkException, ParameterException
     {
         Time.Abs timestamp = getTimestamp();
         if (this.accessibleAdjacentLanesRight == null || !timestamp.equals(this.accessibleAdjacentLanesRight.getTimestamp()))
@@ -276,8 +279,8 @@ public abstract class AbstractLanePerception implements LanePerception
         }
 
         // for the accessible lanes, see who is ahead of us and in front of us
-        Length.Rel maximumForwardHeadway = this.gtu.getBehavioralCharacteristics().getForwardHeadwayDistance();
-        Length.Rel maximumReverseHeadway = this.gtu.getBehavioralCharacteristics().getBackwardHeadwayDistance();
+        Length.Rel maximumForwardHeadway = this.gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
+        Length.Rel maximumReverseHeadway = this.gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACK);
         this.neighboringGTUsRight =
                 new TimeStampedObject<>(collectNeighborLaneTraffic(LateralDirectionality.RIGHT, timestamp,
                         maximumForwardHeadway, maximumReverseHeadway), timestamp);
@@ -681,10 +684,11 @@ public abstract class AbstractLanePerception implements LanePerception
      * @return Collection&lt;LaneBasedGTU&gt;;
      * @throws NetworkException on network inconsistency
      * @throws GTUException on problems with the GTU state (e.g., position)
+     * @throws ParameterException in case of a parameter problem
      */
     private Collection<HeadwayGTU> collectNeighborLaneTraffic(final LateralDirectionality directionality, final Time.Abs when,
             final Length.Rel maximumForwardHeadway, final Length.Rel maximumReverseHeadway) throws NetworkException,
-            GTUException
+            GTUException, ParameterException
     {
         Collection<HeadwayGTU> result = new HashSet<HeadwayGTU>();
         for (LaneBasedGTU p : parallel(directionality, when))
@@ -742,9 +746,10 @@ public abstract class AbstractLanePerception implements LanePerception
      * @return the adjacent LanePathInfo
      * @throws GTUException when the GTU was not initialized yet.
      * @throws NetworkException when the speed limit for a GTU type cannot be retrieved from the network.
+     * @throws ParameterException in case of a parameter problem
      */
     private LanePathInfo buildLanePathInfoAdjacent(final Lane adjacentLane, final LateralDirectionality direction,
-            final Time.Abs when) throws GTUException, NetworkException
+            final Time.Abs when) throws GTUException, NetworkException, ParameterException
     {
         if (this.lanePathInfo == null || this.lanePathInfo.getTimestamp().ne(when))
         {

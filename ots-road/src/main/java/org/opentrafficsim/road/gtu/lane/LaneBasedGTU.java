@@ -11,7 +11,7 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -33,10 +33,6 @@ public interface LaneBasedGTU extends GTU
     @Override
     // TODO change into LanePerception interface! 
     LanePerceptionFull getPerception();
-
-    /** {@inheritDoc} */
-    @Override
-    LaneBasedBehavioralCharacteristics getBehavioralCharacteristics();
 
     /** {@inheritDoc} */
     @Override

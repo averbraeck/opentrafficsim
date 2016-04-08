@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 
@@ -39,13 +40,14 @@ public interface LaneChangeModel
      *            merge to overtake other traffic
      * @return LaneMovementStep; the result of the lane change and GTU following model
      * @throws GTUException when the speed of the GTU can not be determined
+     * @throws ParameterException in case of a parameter problem.
      */
     @SuppressWarnings("checkstyle:parameternumber")
     LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
         final Collection<HeadwayGTU> sameLaneTraffic, final Collection<HeadwayGTU> rightLaneTraffic,
         final Collection<HeadwayGTU> leftLaneTraffic, final Speed speedLimit,
         final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
-        final Acceleration nonPreferredLaneRouteIncentive) throws GTUException;
+        final Acceleration nonPreferredLaneRouteIncentive) throws GTUException, ParameterException;
 
     /**
      * Return the name of this GTU following model.

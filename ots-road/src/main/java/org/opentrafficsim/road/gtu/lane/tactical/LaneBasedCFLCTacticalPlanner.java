@@ -25,6 +25,8 @@ import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -79,19 +81,25 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
 
     /** Standard time horizon for route choices. */
     private static final Time.Rel TIMEHORIZON = new Time.Rel(90, TimeUnit.SECOND);
-
+    
+    /** Lane change model for this tactical planner. */
+    private LaneChangeModel laneChangeModel; 
+    
     /**
      * Instantiated a tactical planner with GTU following and lane change behavior.
+     * @param carFollowingModel Car-following model.
+     * @param laneChangeModel Lane change model.
      */
-    public LaneBasedCFLCTacticalPlanner()
+    public LaneBasedCFLCTacticalPlanner(final GTUFollowingModelOld carFollowingModel, final LaneChangeModel laneChangeModel)
     {
-        super();
+        super(carFollowingModel);
+        this.laneChangeModel = laneChangeModel;
     }
 
     /** {@inheritDoc} */
     @Override
     public OperationalPlan generateOperationalPlan(final GTU gtu, final Time.Abs startTime,
-            final DirectedPoint locationAtStartTime) throws OperationalPlanException, NetworkException, GTUException
+            final DirectedPoint locationAtStartTime) throws OperationalPlanException, NetworkException, GTUException, ParameterException
     {
         try
         {
@@ -109,16 +117,10 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             // NOTE: delete this if perception takes place independent of the tactical planning (different frequency)
             perception.perceive();
 
-            Length.Rel maximumForwardHeadway = laneBasedGTU.getBehavioralCharacteristics().getForwardHeadwayDistance();
-            Length.Rel maximumReverseHeadway = laneBasedGTU.getBehavioralCharacteristics().getBackwardHeadwayDistance();
+            Length.Rel maximumForwardHeadway = laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
+            Length.Rel maximumReverseHeadway = laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACK);
             Time.Abs now = gtu.getSimulator().getSimulatorTime().getTime();
             Speed speedLimit = perception.getSpeedLimit();
-
-            // get some models to help us make a plan
-            GTUFollowingModelOld gtuFollowingModel =
-                    laneBasedGTU.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
-            LaneChangeModel laneChangeModel =
-                    laneBasedGTU.getStrategicalPlanner().getDrivingCharacteristics().getLaneChangeModel();
 
             // look at the conditions for headway on the current lane
             HeadwayGTU sameLaneLeader = perception.getForwardHeadwayGTU();
@@ -158,7 +160,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
                             defaultRightLaneIncentive.getSI() }, AccelerationUnit.SI, StorageType.DENSE);
             AccelerationVector laneIncentives = laneIncentives(laneBasedGTU, defaultLaneIncentives);
             LaneMovementStep lcmr =
-                    laneChangeModel.computeLaneChangeAndAcceleration(laneBasedGTU, sameLaneTraffic, rightLaneTraffic,
+                    this.laneChangeModel.computeLaneChangeAndAcceleration(laneBasedGTU, sameLaneTraffic, rightLaneTraffic,
                             leftLaneTraffic, speedLimit,
                             new Acceleration(laneIncentives.get(preferred == LateralDirectionality.RIGHT ? 2 : 0)),
                             new Acceleration(laneIncentives.get(1)),

@@ -32,13 +32,14 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.OTSNetwork;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -264,7 +265,7 @@ public abstract class AbstractLaneBasedGTU extends AbstractGTU implements LaneBa
     /** {@inheritDoc} */
     @Override
     protected final void move(final DirectedPoint fromLocation) throws SimRuntimeException, GTUException,
-        OperationalPlanException, NetworkException
+        OperationalPlanException, NetworkException, ParameterException
     {
         if (MOVEMENT_LANE_BASED)
         {
@@ -830,8 +831,10 @@ System.out.println(this + " will be on lanes: " + laneSet);
     public LanePerceptionFull getPerception()
     {
         return (LanePerceptionFull) super.getPerception();
-    }
-
+    }  
+    
+    
+    
     /** {@inheritDoc} */
     @Override
     public LaneBasedStrategicalPlanner getStrategicalPlanner()
@@ -841,9 +844,9 @@ System.out.println(this + " will be on lanes: " + laneSet);
 
     /** {@inheritDoc} */
     @Override
-    public LaneBasedBehavioralCharacteristics getBehavioralCharacteristics()
+    public BehavioralCharacteristics getBehavioralCharacteristics()
     {
-        return getStrategicalPlanner().getDrivingCharacteristics();
+        return getStrategicalPlanner().getBehavioralCharacteristics();
     }
 
     /** {@inheritDoc} */

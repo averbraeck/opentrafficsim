@@ -34,6 +34,7 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
@@ -389,8 +390,8 @@ public class ContourPlotTest implements UNITS
         LaneBasedIndividualGTU car =
             CarTest.makeReferenceCar("0", gtuType, lane, initialPosition, initialSpeed, simulator, gtuFollowingModel,
                 laneChangeModel, network);
-        car.getStrategicalPlanner().getDrivingCharacteristics()
-            .setForwardHeadwayDistance(new Length.Rel(10, LengthUnit.KILOMETER));
+        car.getStrategicalPlanner().getBehavioralCharacteristics().setParameter(
+            ParameterTypes.LOOKAHEAD, new Length.Rel(10, LengthUnit.KILOMETER));
         // Check that the initial data in the graph contains no trace of any car.
         for (int item = 0; item < bins; item++)
         {

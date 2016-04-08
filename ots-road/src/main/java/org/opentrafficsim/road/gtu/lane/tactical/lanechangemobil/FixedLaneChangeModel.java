@@ -6,8 +6,12 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GTUException;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
+import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 
 /**
@@ -34,30 +38,33 @@ public class FixedLaneChangeModel implements LaneChangeModel
         this.laneChange = laneChange;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc} 
+     * @throws ParameterException */
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
     public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGTU gtu,
         final Collection<HeadwayGTU> sameLaneTraffic, final Collection<HeadwayGTU> rightLaneTraffic,
         final Collection<HeadwayGTU> leftLaneTraffic, final Speed speedLimit,
         final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
-        final Acceleration nonPreferredLaneRouteIncentive) throws GTUException
+        final Acceleration nonPreferredLaneRouteIncentive) throws GTUException, ParameterException
     {
-        Length.Rel headway = gtu.getBehavioralCharacteristics().getForwardHeadwayDistance();
+        Length.Rel headway = gtu.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
+        GTUFollowingModelOld gtuFollowingModel = (GTUFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) gtu
+                .getTacticalPlanner()).getCarFollowingModel();
         if (null == this.laneChange)
         {
-            return new LaneMovementStep(gtu.getBehavioralCharacteristics().getGTUFollowingModel()
+            return new LaneMovementStep(gtuFollowingModel
                 .computeDualAccelerationStep(gtu, sameLaneTraffic, headway, speedLimit).getLeaderAccelerationStep(), null);
         }
         else if (LateralDirectionality.LEFT == this.laneChange)
         {
-            return new LaneMovementStep(gtu.getBehavioralCharacteristics().getGTUFollowingModel()
+            return new LaneMovementStep(gtuFollowingModel
                 .computeDualAccelerationStep(gtu, leftLaneTraffic, headway, speedLimit).getLeaderAccelerationStep(),
                 this.laneChange);
         }
         else if (LateralDirectionality.RIGHT == this.laneChange)
         {
-            return new LaneMovementStep(gtu.getBehavioralCharacteristics().getGTUFollowingModel()
+            return new LaneMovementStep(gtuFollowingModel
                 .computeDualAccelerationStep(gtu, rightLaneTraffic, headway, speedLimit).getLeaderAccelerationStep(),
                 this.laneChange);
         }

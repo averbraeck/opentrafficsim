@@ -42,13 +42,13 @@ import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.IDGTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
 import org.opentrafficsim.core.gtu.animation.VelocityGTUColorer;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.generator.GTUGeneratorIndividual;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -212,11 +212,12 @@ public class TestGMParser extends AbstractWrappableAnimation
                     SpeedUnit.KM_PER_HOUR)), new AccelerationGTUColorer(new Acceleration(-1.0,
                     AccelerationUnit.METER_PER_SECOND_2), new Acceleration(1.0, AccelerationUnit.METER_PER_SECOND_2)));
             GTUFollowingModelOld gtuFollowingModel = new IDMPlusOld();
-            LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                new LaneBasedBehavioralCharacteristics(gtuFollowingModel, null);
-            TacticalPlanner fixedTacticalPlanner = new LaneBasedGTUFollowingTacticalPlanner();
+            BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+            //LaneBasedBehavioralCharacteristics drivingCharacteristics =
+            //    new LaneBasedBehavioralCharacteristics(gtuFollowingModel, null);
+            TacticalPlanner fixedTacticalPlanner = new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel);
             LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, fixedTacticalPlanner);
+                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, fixedTacticalPlanner);
             Class<LanePerceptionFull> perceptionClass = LanePerceptionFull.class;
 
             CrossSectionLink L2a = (CrossSectionLink) network.getLink("L2a");

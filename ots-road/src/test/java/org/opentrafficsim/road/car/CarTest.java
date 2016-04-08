@@ -31,13 +31,13 @@ import org.opentrafficsim.core.geometry.OTSPoint3D;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
@@ -99,8 +99,9 @@ public class CarTest implements UNITS
             referenceCar.getVelocity(initialTime).getSI(), 0.00001);
         assertEquals("The car should have an initial acceleration equal to 0", 0,
             referenceCar.getAcceleration(initialTime).getSI(), 0.0001);
-        assertEquals("The gtu following model should be " + gtuFollowingModel, gtuFollowingModel, referenceCar
-            .getBehavioralCharacteristics().getGTUFollowingModel());
+        // TODO check with following model as part of tactical planner
+        //assertEquals("The gtu following model should be " + gtuFollowingModel, gtuFollowingModel, referenceCar
+        //    .getBehavioralCharacteristics().getGTUFollowingModel());
         // There is (currently) no way to retrieve the lane change model of a GTU.
     }
 
@@ -156,10 +157,11 @@ public class CarTest implements UNITS
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
-        LaneBasedBehavioralCharacteristics drivingCharacteristics =
-            new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
+        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+        //LaneBasedBehavioralCharacteristics drivingCharacteristics =
+        //    new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
-            new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedCFLCTacticalPlanner());
+            new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, new LaneBasedCFLCTacticalPlanner(gtuFollowingModel, laneChangeModel));
         return new LaneBasedIndividualGTU(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width,
             maxSpeed, simulator, strategicalPlanner, new LanePerceptionFull(), network);
     }

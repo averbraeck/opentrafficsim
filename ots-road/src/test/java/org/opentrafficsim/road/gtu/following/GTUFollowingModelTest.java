@@ -28,11 +28,12 @@ import org.opentrafficsim.core.dsol.OTSModelInterface;
 import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.OTSNetwork;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGTUFollowingModelMobil;
@@ -119,11 +120,14 @@ public class GTUFollowingModelTest implements OTSModelInterface, UNITS
         Set<DirectedLanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
         initialLongitudinalPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
-        LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
-        maxHeadway = drivingCharacteristics.getForwardHeadwayDistance();
-        LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, new LaneBasedGTUFollowingTacticalPlanner());
+        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+        behavioralCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, ParameterTypes.LOOKAHEAD.getDefaultValue());
+        maxHeadway = behavioralCharacteristics.getParameter(ParameterTypes.LOOKAHEAD);
+        //LaneBasedBehavioralCharacteristics drivingCharacteristics =
+        //        new LaneBasedBehavioralCharacteristics(gtuFollowingModel, laneChangeModel);
+        //maxHeadway = drivingCharacteristics.getForwardHeadwayDistance();
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, 
+            new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel));
         LaneBasedIndividualGTU gtu =
                 new LaneBasedIndividualGTU("12345", carType, initialLongitudinalPositions, speed, length, width, maxSpeed,
                         simulator, strategicalPlanner, new LanePerceptionFull(), this.network);

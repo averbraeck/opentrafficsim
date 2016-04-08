@@ -3,12 +3,12 @@ package org.opentrafficsim.road.gtu.strategical;
 import org.opentrafficsim.core.gtu.GTU;
 import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUType;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkDirection;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 
 /**
  * <p>
@@ -28,7 +28,7 @@ public class LaneBasedStrategicalPlannerNone extends AbstractLaneBasedStrategica
      */
     public LaneBasedStrategicalPlannerNone()
     {
-        super(new LaneBasedBehavioralCharacteristics(null, null));
+        super(new BehavioralCharacteristics());
     }
 
     /** {@inheritDoc} */

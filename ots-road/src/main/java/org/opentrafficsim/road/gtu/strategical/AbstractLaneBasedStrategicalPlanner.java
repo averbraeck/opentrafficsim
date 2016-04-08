@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.strategical;
 
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
 
 /**
  * <p>
@@ -15,29 +15,31 @@ import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristic
 public abstract class AbstractLaneBasedStrategicalPlanner implements LaneBasedStrategicalPlanner
 {
     /** The personal driving characteristics, which contain settings for the tactical planner. */
-    protected LaneBasedBehavioralCharacteristics drivingCharacteristics;
+    protected BehavioralCharacteristics behavioralCharacteristics;
 
     /**
-     * @param drivingCharacteristics the personal driving characteristics, which contain settings for the tactical planner
+     * @param behavioralCharacteristics the personal driving characteristics, which contain settings for the tactical planner
      */
-    public AbstractLaneBasedStrategicalPlanner(LaneBasedBehavioralCharacteristics drivingCharacteristics)
+    public AbstractLaneBasedStrategicalPlanner(final BehavioralCharacteristics behavioralCharacteristics)
     {
         super();
-        this.drivingCharacteristics = drivingCharacteristics;
+        this.behavioralCharacteristics = behavioralCharacteristics;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final LaneBasedBehavioralCharacteristics getDrivingCharacteristics()
+    public final BehavioralCharacteristics getBehavioralCharacteristics()
     {
-        return this.drivingCharacteristics;
+        return this.behavioralCharacteristics;
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void setDrivingCharacteristics(final LaneBasedBehavioralCharacteristics drivingCharacteristics)
+    public final void setBehavioralCharacteristics(final BehavioralCharacteristics behavioralCharacteristics)
     {
-        this.drivingCharacteristics = drivingCharacteristics;
+        this.behavioralCharacteristics = behavioralCharacteristics;
     }
+    
+    
 
 }

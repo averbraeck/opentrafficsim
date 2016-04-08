@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane;
 import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
 
 /**
  * Distribution of LaneBasedTemplateGTUType.
@@ -32,7 +33,7 @@ public class LaneBasedTemplateGTUTypeDistribution implements LaneBasedGTUCharact
 
     /** {@inheritDoc} */
     @Override
-    public LaneBasedGTUCharacteristics draw() throws ProbabilityException
+    public LaneBasedGTUCharacteristics draw() throws ProbabilityException, ParameterException
     {
         return this.distribution.draw().draw();
     }
