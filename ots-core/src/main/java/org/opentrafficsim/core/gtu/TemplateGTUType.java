@@ -103,7 +103,7 @@ public class TemplateGTUType implements Serializable, Generator<GTUCharacteristi
     }
 
     /** {@inheritDoc} */
-    public final GTUCharacteristics draw() throws ProbabilityException, ParameterException
+    public GTUCharacteristics draw() throws ProbabilityException, ParameterException
     {
         return new GTUCharacteristics(this.gtuType, this.idGenerator, this.lengthGenerator.draw(), this.widthGenerator.draw(),
                 this.maximumVelocityGenerator.draw(), this.simulator, this.network);
