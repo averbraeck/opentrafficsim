@@ -118,7 +118,7 @@ public class LaneBasedCFLCTacticalPlanner extends AbstractLaneBasedTacticalPlann
             perception.perceive();
 
             Length.Rel maximumForwardHeadway = laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD);
-            Length.Rel maximumReverseHeadway = laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACK);
+            Length.Rel maximumReverseHeadway = laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKBACKOLD);
             Time.Abs now = gtu.getSimulator().getSimulatorTime().getTime();
             Speed speedLimit = perception.getSpeedLimit();
 

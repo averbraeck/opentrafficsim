@@ -403,7 +403,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
         Length.Rel initialPosition = new Length.Rel(4000, METER);
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(this.getLane(), initialPosition, GTUDirectionality.DIR_PLUS));
-        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+        BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
         //LaneBasedBehavioralCharacteristics drivingCharacteristics =
         //    new LaneBasedBehavioralCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
         LaneBasedStrategicalPlanner strategicalPlanner =
@@ -443,7 +443,7 @@ class TrajectoriesModel implements OTSModelInterface, UNITS
             {
                 throw new Error("gtuFollowingModel is null");
             }
-            BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+            BehavioralCharacteristics behavioralCharacteristics = DefaultsFactory.getDefaultBehavioralCharacteristics();
             //LaneBasedBehavioralCharacteristics drivingCharacteristics =
             //    new LaneBasedBehavioralCharacteristics(gtuFollowingModel, this.laneChangeModel);
             LaneBasedStrategicalPlanner strategicalPlanner =
