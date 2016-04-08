@@ -33,6 +33,7 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.OTSNetwork;
@@ -40,7 +41,6 @@ import org.opentrafficsim.core.network.OTSNode;
 import org.opentrafficsim.graphs.FundamentalDiagramLane;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
@@ -421,11 +421,12 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
             {
                 initialPositions.add(new DirectedLanePosition(this.lanes.get(this.lanes.size() - 1), initialPosition,
                     GTUDirectionality.DIR_PLUS));
-                LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                    new LaneBasedBehavioralCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
+                BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+                //LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                //    new LaneBasedBehavioralCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
                 LaneBasedStrategicalPlanner strategicalPlanner =
-                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
-                        new LaneBasedGTUFollowingTacticalPlanner());
+                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                        new LaneBasedGTUFollowingTacticalPlanner(this.carFollowingModelCars));
                 this.block =
                     new LaneBasedIndividualGTU("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
                         new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed(0.0, KM_PER_HOUR),
@@ -467,11 +468,12 @@ public class FundamentalDiagramsLane extends AbstractWrappableAnimation implemen
                 {
                     throw new Error("gtuFollowingModel is null");
                 }
-                LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                    new LaneBasedBehavioralCharacteristics(gtuFollowingModel, this.laneChangeModel);
+                BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+                //LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                //    new LaneBasedBehavioralCharacteristics(gtuFollowingModel, this.laneChangeModel);
                 LaneBasedStrategicalPlanner strategicalPlanner =
-                    new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
-                        new LaneBasedGTUFollowingTacticalPlanner());
+                    new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                        new LaneBasedGTUFollowingTacticalPlanner(gtuFollowingModel));
                 new LaneBasedIndividualGTU("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
                     vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
                     strategicalPlanner, new LanePerceptionFull(), DefaultCarAnimation.class, this.gtuColorer,

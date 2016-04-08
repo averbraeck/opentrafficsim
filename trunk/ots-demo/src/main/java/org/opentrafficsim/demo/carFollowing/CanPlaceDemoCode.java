@@ -6,6 +6,8 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGTUGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTUCharacteristics;
+import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
 import org.opentrafficsim.road.network.lane.DirectedLanePosition;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -50,8 +52,9 @@ public class CanPlaceDemoCode implements LaneBasedGTUGenerator.RoomChecker
         // Use the speed limit of the first compatible lane in the initial longitudinal positions.
         Speed speedLimit = lane.getSpeedLimit(laneBasedGTUCharacteristics.getGTUType());
         Speed maximumVelocity = laneBasedGTUCharacteristics.getMaximumVelocity();
-        if (headway.lt(laneBasedGTUCharacteristics.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel()
-                .minimumHeadway(leaderSpeed, leaderSpeed, precision, maxDistance, speedLimit, maximumVelocity)))
+        GTUFollowingModelOld gfm = new IDMOld();
+        if (headway.lt(//laneBasedGTUCharacteristics.getStrategicalPlanner().getBehavioralCharacteristics().getGTUFollowingModel()
+            gfm.minimumHeadway(leaderSpeed, leaderSpeed, precision, maxDistance, speedLimit, maximumVelocity)))
         {
             return null;
         }

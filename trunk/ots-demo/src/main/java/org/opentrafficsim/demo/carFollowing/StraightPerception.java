@@ -48,6 +48,9 @@ import org.opentrafficsim.core.gtu.GTUDirectionality;
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan.Segment;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -65,11 +68,11 @@ import org.opentrafficsim.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.gtu.animation.DefaultCarAnimation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LanePathInfo;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
+import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.HeadwayGTU;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
@@ -598,11 +601,12 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
         try
         {
             initialPositions.add(new DirectedLanePosition(this.lane, initialPosition, GTUDirectionality.DIR_PLUS));
-            LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                new LaneBasedBehavioralCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
+            BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+            //LaneBasedBehavioralCharacteristics drivingCharacteristics =
+            //    new LaneBasedBehavioralCharacteristics(this.carFollowingModelCars, this.laneChangeModel);
             LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
-                    new GTUFollowingTacticalPlannerNoPerceive());
+                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                    new GTUFollowingTacticalPlannerNoPerceive(this.carFollowingModelCars));
             this.block =
                 new LaneBasedIndividualGTU("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR),
                     new Length.Rel(4, METER), new Length.Rel(1.8, METER), new Speed(0.0, KM_PER_HOUR), this.simulator,
@@ -626,8 +630,9 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
 
     /**
      * Generate cars at a fixed rate (implemented by re-scheduling this method).
+     * @throws ParameterException in case of a parameter problem.
      */
-    protected final void generateCar()
+    protected final void generateCar() throws ParameterException
     {
         boolean generateTruck = this.randomGenerator.nextDouble() > this.carProbability;
         Length.Rel initialPosition = new Length.Rel(0, METER);
@@ -654,11 +659,12 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                 Time.Rel tSafe = new Time.Rel(1.0, TimeUnit.SECOND); // time headway
                 gtuFollowingModel = new IDMPlusOld(a, b, s0, tSafe, 1.0);
             }
-            LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                new LaneBasedBehavioralCharacteristics(gtuFollowingModel, this.laneChangeModel);
+            BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+            //LaneBasedBehavioralCharacteristics drivingCharacteristics =
+            //    new LaneBasedBehavioralCharacteristics(gtuFollowingModel, this.laneChangeModel);
             LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics,
-                    new GTUFollowingTacticalPlannerNoPerceive());
+                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics,
+                    new GTUFollowingTacticalPlannerNoPerceive(gtuFollowingModel));
             LaneBasedPerceivingCar car =
                 new LaneBasedPerceivingCar("" + (++this.carsCreated), this.gtuType, initialPositions, initialSpeed,
                     vehicleLength, new Length.Rel(1.8, METER), new Speed(200, KM_PER_HOUR), this.simulator,
@@ -666,8 +672,9 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
                     this.network);
             this.simulator.scheduleEventRel(this.headway, this, this, "generateCar", null);
             car.setPerceptionInterval(new Time.Rel(this.perceptionIntervalDist.draw(), TimeUnit.SECOND));
-            car.getStrategicalPlanner().getDrivingCharacteristics()
-                .setForwardHeadwayDistance(new Length.Rel(this.forwardHeadwayDist.draw(), LengthUnit.METER));
+            car.getStrategicalPlanner().getBehavioralCharacteristics()
+                .setParameter(ParameterTypes.LOOKAHEAD, new Length.Rel(this.forwardHeadwayDist.draw(), LengthUnit.METER));
+                //.setForwardHeadwayDistance(new Length.Rel(this.forwardHeadwayDist.draw(), LengthUnit.METER));
         }
         catch (SimRuntimeException | NamingException | NetworkException | GTUException | OTSGeometryException exception)
         {
@@ -744,6 +751,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
          * @throws SimRuntimeException when the move method cannot be scheduled
          * @throws GTUException when a parameter is invalid
          * @throws OTSGeometryException when the initial path is wrong
+         * @throws ParameterException in case of a parameter problem.
          */
         @SuppressWarnings("checkstyle:parameternumber")
         LaneBasedPerceivingCar(final String id, final GTUType gtuType,
@@ -751,7 +759,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             final Length.Rel length, final Length.Rel width, final Speed maximumVelocity,
             final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
             final LanePerceptionFull perception, final OTSNetwork network) throws NamingException, NetworkException,
-            SimRuntimeException, GTUException, OTSGeometryException
+            SimRuntimeException, GTUException, OTSGeometryException, ParameterException
         {
             super(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
                 strategicalPlanner, perception, network);
@@ -780,6 +788,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
          * @throws SimRuntimeException when the move method cannot be scheduled
          * @throws GTUException when a parameter is invalid
          * @throws OTSGeometryException when the initial path is wrong
+         * @throws ParameterException in case of a parameter problem.
          */
         @SuppressWarnings("checkstyle:parameternumber")
         LaneBasedPerceivingCar(final String id, final GTUType gtuType,
@@ -788,7 +797,7 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             final OTSDEVSSimulatorInterface simulator, final LaneBasedStrategicalPlanner strategicalPlanner,
             final LanePerceptionFull perception, final Class<? extends Renderable2D> animationClass,
             final GTUColorer gtuColorer, final OTSNetwork network) throws NamingException, NetworkException,
-            SimRuntimeException, GTUException, OTSGeometryException
+            SimRuntimeException, GTUException, OTSGeometryException, ParameterException
         {
             super(id, gtuType, initialLongitudinalPositions, initialSpeed, length, width, maximumVelocity, simulator,
                 strategicalPlanner, perception, animationClass, gtuColorer, network);
@@ -808,8 +817,9 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
          * @throws SimRuntimeException RTE
          * @throws GTUException GTUE
          * @throws NetworkException NE
+         * @throws ParameterException in case of a parameter problem.
          */
-        public void perceive() throws SimRuntimeException, GTUException, NetworkException
+        public void perceive() throws SimRuntimeException, GTUException, NetworkException, ParameterException
         {
             getPerception().perceive();
             getSimulator().scheduleEventRel(this.perceptionInterval, this, this, "perceive", null);
@@ -826,16 +836,17 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
 
         /**
          * Instantiated a tactical planner with just GTU following behavior and no lane changes.
+         * @param carFollowingModel Car-following model.
          */
-        GTUFollowingTacticalPlannerNoPerceive()
+        GTUFollowingTacticalPlannerNoPerceive(final GTUFollowingModelOld carFollowingModel)
         {
-            super();
+            super(carFollowingModel);
         }
 
         /** {@inheritDoc} */
         @Override
         public OperationalPlan generateOperationalPlan(final GTU gtu, final Time.Abs startTime,
-            final DirectedPoint locationAtStartTime) throws OperationalPlanException, NetworkException, GTUException
+            final DirectedPoint locationAtStartTime) throws OperationalPlanException, NetworkException, GTUException, ParameterException
         {
             // ask Perception for the local situation
             LaneBasedGTU laneBasedGTU = (LaneBasedGTU) gtu;
@@ -850,12 +861,12 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             }
 
             // get some models to help us make a plan
-            GTUFollowingModelOld gtuFollowingModel =
-                laneBasedGTU.getStrategicalPlanner().getDrivingCharacteristics().getGTUFollowingModel();
+            //GTUFollowingModelOld gtuFollowingModel =
+            //    laneBasedGTU.getStrategicalPlanner().getBehavioralCharacteristics().getGTUFollowingModel();
 
             // get the lane plan
             LanePathInfo lanePathInfo =
-                buildLanePathInfo(laneBasedGTU, laneBasedGTU.getBehavioralCharacteristics().getForwardHeadwayDistance());
+                buildLanePathInfo(laneBasedGTU, laneBasedGTU.getBehavioralCharacteristics().getParameter(ParameterTypes.LOOKAHEAD));
             Length.Rel maxDistance = lanePathInfo.getPath().getLength();
 
             // look at the conditions for headway
@@ -864,15 +875,15 @@ class StraightPerceptionModel implements OTSModelInterface, UNITS
             if (headwayGTU.getGtuId() == null)
             {
                 accelerationStep =
-                    gtuFollowingModel.computeAccelerationStepWithNoLeader(laneBasedGTU, maxDistance,
-                        perception.getSpeedLimit());
+                    ((GTUFollowingModelOld) this.getCarFollowingModel()).computeAccelerationStepWithNoLeader(
+                        laneBasedGTU, maxDistance, perception.getSpeedLimit());
             }
             else
             {
                 // TODO do not use the velocity of the other GTU, but the PERCEIVED velocity
                 accelerationStep =
-                    gtuFollowingModel.computeAccelerationStep(laneBasedGTU, headwayGTU.getGtuSpeed(),
-                        headwayGTU.getDistance(), maxDistance, perception.getSpeedLimit());
+                        ((GTUFollowingModelOld) this.getCarFollowingModel()).computeAccelerationStep(
+                            laneBasedGTU, headwayGTU.getGtuSpeed(), headwayGTU.getDistance(), maxDistance, perception.getSpeedLimit());
             }
 
             // see if we have to continue standing still. In that case, generate a stand still plan

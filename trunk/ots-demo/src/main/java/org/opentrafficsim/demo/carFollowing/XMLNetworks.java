@@ -49,6 +49,9 @@ import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.GTUType;
 import org.opentrafficsim.core.gtu.animation.GTUColorer;
 import org.opentrafficsim.core.gtu.animation.SwitchableGTUColorer;
+import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LongitudinalDirectionality;
@@ -69,7 +72,6 @@ import org.opentrafficsim.road.gtu.lane.AbstractLaneBasedGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedIndividualGTU;
 import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUType;
 import org.opentrafficsim.road.gtu.lane.LaneBasedTemplateGTUTypeDistribution;
-import org.opentrafficsim.road.gtu.lane.driver.LaneBasedBehavioralCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerceptionFull;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCFLCTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGTUFollowingChange0TacticalPlanner;
@@ -79,6 +81,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.GTUFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMOld;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IDMPlusOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.AbstractLaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Altruistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
@@ -266,8 +269,11 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
     /** The GTUColorer for the generated vehicles. */
     private final GTUColorer gtuColorer;
 
-    /** The tactical planner that will be used by all GTUs. */
-    TacticalPlanner tacticalPlanner = null;
+    /** The tactical planner that will be used by all car GTUs. */
+    TacticalPlanner tacticalPlannerCars = null;
+    
+    /** The tactical planner that will be used by all truck GTUs. */
+    TacticalPlanner tacticalPlannerTrucks = null;
 
     /** Id generator (used by all generators). */
     IdGenerator idGenerator = new IdGenerator("");
@@ -342,6 +348,8 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         laneType.addCompatibility(this.gtuType);
         try
         {
+            
+            // Get car-following model name
             String carFollowingModelName = null;
             CompoundProperty propertyContainer = new CompoundProperty("", "", this.properties, false, 0);
             AbstractProperty<?> cfmp = propertyContainer.findByShortName("Car following model");
@@ -357,32 +365,110 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             {
                 throw new Error("\"Car following model\" property has wrong type");
             }
+            
+            // Get car-following model parameter
             Iterator<AbstractProperty<ArrayList<AbstractProperty<?>>>> iterator =
                     new CompoundProperty("", "", this.properties, false, 0).iterator();
+            while (iterator.hasNext())
+            {
+                AbstractProperty<?> ap = iterator.next();
+                if (ap instanceof CompoundProperty)
+                {
+                    cp = (CompoundProperty) ap;
+                    if (ap.getShortName().contains("IDM"))
+                    {
+                        // System.out.println("Car following model name appears to be " + ap.getShortName());
+                        Acceleration a = IDMPropertySet.getA(cp);
+                        Acceleration b = IDMPropertySet.getB(cp);
+                        Length.Rel s0 = IDMPropertySet.getS0(cp);
+                        Time.Rel tSafe = IDMPropertySet.getTSafe(cp);
+                        GTUFollowingModelOld gtuFollowingModel = null;
+                        if (carFollowingModelName.equals("IDM"))
+                        {
+                            gtuFollowingModel = new IDMOld(a, b, s0, tSafe, 1.0);
+                        }
+                        else if (carFollowingModelName.equals("IDM+"))
+                        {
+                            gtuFollowingModel = new IDMPlusOld(a, b, s0, tSafe, 1.0);
+                        }
+                        else
+                        {
+                            throw new Error("Unknown gtu following model: " + carFollowingModelName);
+                        }
+                        if (ap.getShortName().contains(" Car "))
+                        {
+                            this.carFollowingModelCars = gtuFollowingModel;
+                        }
+                        else if (ap.getShortName().contains(" Truck "))
+                        {
+                            this.carFollowingModelTrucks = gtuFollowingModel;
+                        }
+                        else
+                        {
+                            throw new Error("Cannot determine gtu type for " + ap.getShortName());
+                        }
+                    }
+                }
+            }
+            
+            // Get lane change model
+            cfmp = propertyContainer.findByShortName("Lane changing");
+            if (null == cfmp)
+            {
+                throw new Error("Cannot find \"Lane changing\" property");
+            }
+            if (cfmp instanceof SelectionProperty)
+            {
+                String laneChangeModelName = ((SelectionProperty) cfmp).getValue();
+                if ("Egoistic".equals(laneChangeModelName))
+                {
+                    this.laneChangeModel = new Egoistic();
+                }
+                else if ("Altruistic".equals(laneChangeModelName))
+                {
+                    this.laneChangeModel = new Altruistic();
+                }
+                else
+                {
+                    throw new Error("Lane changing " + laneChangeModelName + " not implemented");
+                }
+            }
+            else
+            {
+                throw new Error("\"Lane changing\" property has wrong type");
+            }
+            
+            // Get remaining properties
+            iterator = new CompoundProperty("", "", this.properties, false, 0).iterator();
             while (iterator.hasNext())
             {
                 AbstractProperty<?> ap = iterator.next();
                 if (ap instanceof SelectionProperty)
                 {
                     SelectionProperty sp = (SelectionProperty) ap;
-                    if ("Car following model".equals(sp.getShortName()))
-                    {
-                        carFollowingModelName = sp.getValue();
-                    }
-                    else if ("Tactical planner".equals(sp.getShortName()))
+                    if ("Tactical planner".equals(sp.getShortName()))
                     {
                         String tacticalPlannerName = sp.getValue();
                         if ("MOBIL".equals(tacticalPlannerName))
                         {
-                            this.tacticalPlanner = new LaneBasedCFLCTacticalPlanner();
+                            this.tacticalPlannerCars = new LaneBasedCFLCTacticalPlanner(
+                                this.carFollowingModelCars, this.laneChangeModel);
+                            this.tacticalPlannerTrucks = new LaneBasedCFLCTacticalPlanner(
+                                this.carFollowingModelTrucks, this.laneChangeModel);
                         }
                         else if ("Verbraeck".equals(tacticalPlannerName))
                         {
-                            this.tacticalPlanner = new LaneBasedGTUFollowingLaneChangeTacticalPlanner();
+                            this.tacticalPlannerCars = new LaneBasedGTUFollowingLaneChangeTacticalPlanner(
+                                this.carFollowingModelCars);
+                            this.tacticalPlannerTrucks = new LaneBasedGTUFollowingLaneChangeTacticalPlanner(
+                                this.carFollowingModelTrucks);
                         }
                         else if ("Verbraeck0".equals(tacticalPlannerName))
                         {
-                            this.tacticalPlanner = new LaneBasedGTUFollowingChange0TacticalPlanner();
+                            this.tacticalPlannerCars = new LaneBasedGTUFollowingChange0TacticalPlanner(
+                                this.carFollowingModelCars);
+                            this.tacticalPlannerTrucks = new LaneBasedGTUFollowingChange0TacticalPlanner(
+                                this.carFollowingModelTrucks);
                         }
                         else
                         {
@@ -603,7 +689,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                         3, 6), METER), new ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit>(new DistUniform(stream, 1.6,
                         2.0), METER), new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(stream, 140, 180),
                         KM_PER_HOUR), new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(stream, 100, 125),
-                        KM_PER_HOUR), initialPositions, this.carFollowingModelCars);
+                        KM_PER_HOUR), initialPositions, this.tacticalPlannerCars);
         // System.out.println("Constructed template " + template);
         distribution.add(new FrequencyAndObject<LaneBasedTemplateGTUType>(this.carProbability, template));
         template =
@@ -611,7 +697,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
                         8, 14), METER), new ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit>(new DistUniform(stream, 2.0,
                         2.5), METER), new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(stream, 100, 140),
                         KM_PER_HOUR), new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(stream, 80, 90),
-                        KM_PER_HOUR), initialPositions, this.carFollowingModelTrucks);
+                        KM_PER_HOUR), initialPositions, this.tacticalPlannerTrucks);
         // System.out.println("Constructed template " + template);
         distribution.add(new FrequencyAndObject<LaneBasedTemplateGTUType>(1.0 - this.carProbability, template));
         LaneBasedTemplateGTUTypeDistribution templateDistribution = new LaneBasedTemplateGTUTypeDistribution(distribution);
@@ -659,7 +745,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
      * @param maximumVelocityDistribution 
      * @param initialSpeedDistribution 
      * @param initialPositions 
-     * @param gtuFollowingModel 
+     * @param tacticalPlanner 
      * @return x
      * @throws GTUException
      */
@@ -668,7 +754,7 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             final ContinuousDistDoubleScalar.Rel<Length.Rel, LengthUnit> widthDistribution,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumVelocityDistribution,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> initialSpeedDistribution,
-            Set<DirectedLanePosition> initialPositions, final GTUFollowingModelOld gtuFollowingModel) throws GTUException
+            Set<DirectedLanePosition> initialPositions, final TacticalPlanner tacticalPlanner) throws GTUException
     {
         return new LaneBasedTemplateGTUType(this.gtuType.getId(), this.idGenerator, new Generator<Length.Rel>()
         {
@@ -690,13 +776,15 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
             }
         }, this.simulator, new Generator<LaneBasedStrategicalPlanner>()
         {
-            public LaneBasedStrategicalPlanner draw() throws ProbabilityException
+            public LaneBasedStrategicalPlanner draw() throws ProbabilityException, ParameterException
             {
-                LaneBasedBehavioralCharacteristics drivingCharacteristics =
-                        new LaneBasedBehavioralCharacteristics(gtuFollowingModel, XMLNetworkModel.this.laneChangeModel);
-                drivingCharacteristics.setForwardHeadwayDistance(new Length.Rel(450.0, LengthUnit.METER));
+                BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+                //LaneBasedBehavioralCharacteristics drivingCharacteristics =
+                //        new LaneBasedBehavioralCharacteristics(gtuFollowingModel, XMLNetworkModel.this.laneChangeModel);
+                behavioralCharacteristics.setParameter(ParameterTypes.LOOKAHEAD, new Length.Rel(450.0, LengthUnit.METER));
+                //drivingCharacteristics.setForwardHeadwayDistance(new Length.Rel(450.0, LengthUnit.METER));
 
-                return new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, XMLNetworkModel.this.tacticalPlanner,
+                return new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, tacticalPlanner,
                         XMLNetworkModel.this.routeGenerator.draw());
             }
         }, new Generator<LanePerceptionFull>()
@@ -762,13 +850,14 @@ class XMLNetworkModel implements OTSModelInterface, UNITS
         Length.Rel initialPosition = lane.getLength();
         Set<DirectedLanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new DirectedLanePosition(lane, initialPosition, GTUDirectionality.DIR_PLUS));
-        GTUFollowingModelOld gfm =
-                new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Time.Rel(java.lang.Double.MAX_VALUE,
-                        TimeUnit.SI));
-        LaneChangeModel lcm = new FixedLaneChangeModel(null);
-        LaneBasedBehavioralCharacteristics drivingCharacteristics = new LaneBasedBehavioralCharacteristics(gfm, lcm);
+        //GTUFollowingModelOld gfm =
+        //        new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Time.Rel(java.lang.Double.MAX_VALUE,
+        //                TimeUnit.SI));
+        //LaneChangeModel lcm = new FixedLaneChangeModel(null);
+        BehavioralCharacteristics behavioralCharacteristics = new BehavioralCharacteristics();
+        //LaneBasedBehavioralCharacteristics drivingCharacteristics = new LaneBasedBehavioralCharacteristics(gfm, lcm);
         LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(drivingCharacteristics, this.tacticalPlanner);
+                new LaneBasedStrategicalRoutePlanner(behavioralCharacteristics, this.tacticalPlannerCars);
         // new LaneBasedCFLCTacticalPlanner());
         new LaneBasedIndividualGTU("999999", this.gtuType, initialPositions, new Speed(0.0, KM_PER_HOUR), new Length.Rel(1,
                 METER), lane.getWidth(1), new Speed(0.0, KM_PER_HOUR), this.simulator, strategicalPlanner,
