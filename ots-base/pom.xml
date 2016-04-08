@@ -4,7 +4,7 @@
 
   <groupId>opentrafficsim</groupId>
   <artifactId>ots-base</artifactId>
-  <version>0.08.00</version>
+  <version>0.09.00-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>OpenTrafficSim base project</name>
@@ -214,7 +214,7 @@
             </goals>
             <configuration>
               <url>scp://opentrafficsim.org/home/web/opentrafficsim.org</url>
-              <serverId>dsol-deployment</serverId>
+              <serverId>ots-deployment</serverId>
               <commands>
                 <command>rm -r -f /home/web/opentrafficsim.org/docs/current</command>
                 <command>mkdir -p /home/web/opentrafficsim.org/docs/current</command>
