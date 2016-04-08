@@ -24,13 +24,6 @@ public class IDMPlus extends IDM
 
     /**
      * {@inheritDoc}
-     * @param gtu
-     * @param speed
-     * @param desiredSpeed
-     * @param desiredHeadway
-     * @param leaders
-     * @return acc
-     * @throws ParameterException
      */
     protected Acceleration followingAcceleration(LaneBasedGTU gtu, Speed speed, Speed desiredSpeed, Rel desiredHeadway,
         SortedMap<Rel, Speed> leaders) throws ParameterException

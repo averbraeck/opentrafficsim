@@ -52,8 +52,8 @@ public interface CarFollowingModel {
 
 	/**
 	 * Determines car-following acceleration. The implementation should be able to deal with:<br>
-	 * <li>The current speed being higher than the desired speed.
-	 * <li>The headway being negative.<br><br>
+	 * The current speed being higher than the desired speed.
+	 * The headway being negative.<br><br>
 	 * @param gtu GTU for which the acceleration is calculated.
 	 * @param speed Current speed.
 	 * @param speedLimit Speed limit, static or dynamic.
@@ -69,8 +69,8 @@ public interface CarFollowingModel {
 
 	/**
 	 * Multi-anticipative determination of car-following acceleration. The implementation should be able to deal with:<br>
-	 * <li>The current speed being higher than the desired speed.
-	 * <li>The headway being negative.
+	 * The current speed being higher than the desired speed.
+	 * The headway being negative.
 	 * The tactical planner determines whether multi-anticipative car-following is applied, including to how many
 	 * leaders and within what distance, by including these vehicles in the set. The car-following model itself may
 	 * however only respond to the first vehicle.

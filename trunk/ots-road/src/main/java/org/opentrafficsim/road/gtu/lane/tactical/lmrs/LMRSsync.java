@@ -2,22 +2,22 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 /**
  * Implementation of the LMRS (Lane change Model with Relaxation and Synchronization). This is extended by:
- * <li><i>Tag-along behavior</i> at low speed during synchronization, which prevents the driver from being overtaken as
+ * <i>Tag-along behavior</i> at low speed during synchronization, which prevents the driver from being overtaken as
  * it waits for an acceptable gap. This occurs as the follower in the target lane starts accelerating before the 
  * potential lane changer does. As a result, the potential lane changer is overtaken. This process may occur 
  * sequentially letting the potential lane changer make small jumps and reaching standstill for every new leader. This
  * significantly disturbs the acceleration process and thus queue discharge.
- * <li><i>Active gap selection</i>, taking care of not stopping for synchronization upstream of the location where one 
+ * <i>Active gap selection</i>, taking care of not stopping for synchronization upstream of the location where one 
  * can actually merge, and accounting for speed differences with the target lane. The result is synchronization by
  * following a sensible leader in the target lane, rather than simply the direct leader in the target lane. A driver may
  * also decide to reduce acceleration to get behind the follower in the target lane. If synchronization is determined to
  * be impossible, the driver decelerates. Furthermore, speeds may be reduced to allow time for further lane changes.
- * <li><i>Courtesy lane changes</i>, where the level of lane change desire of drivers in adjacent lanes towards the 
+ * <i>Courtesy lane changes</i>, where the level of lane change desire of drivers in adjacent lanes towards the 
  * current lane, results in an additional lane change incentive towards the other adjacent lane. A factor <i>p</i> is 
  * applied to the lane change desire of the adjacent leader. Further leaders are considered less. The opposite is also 
  * applied. Leaders on the second lane to either direction that have desire to change to the first lane in that 
  * direction, result in a negative courtesy desire. I.e. leave adjacent lane open for a leader on the second lane.
- * <li><i>Gap-creation</i> is changed by letting drivers reduce speed for any adjacent leader within a given distance, 
+ * <i>Gap-creation</i> is changed by letting drivers reduce speed for any adjacent leader within a given distance, 
  * rather than only the direct leader. Furthermore, gaps are also created during lane changes, also for the adjacent 
  * lane of the target lane.
  * 
