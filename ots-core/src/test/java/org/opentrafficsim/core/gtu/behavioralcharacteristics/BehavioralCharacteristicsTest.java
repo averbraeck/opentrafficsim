@@ -6,10 +6,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -21,6 +23,7 @@ import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
 import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterType;
 import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypeAcceleration;
 import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypeDouble;
+import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypeFrequency;
 import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypeInteger;
 import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypeLinearDensity;
 import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterTypeSpeed;
@@ -351,6 +354,33 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         bc.setParameter(a, 2);
         bc.resetParameter(a);
         assertEquals("Value after reset should be the same as before last set.", 1, bc.getParameter(a));
+        
+        // check null is not the same as 'no value': no value -> set(null) -> reset -> get
+        // (null setting does not work on primitive data types, parameter type 'a' cannot be used)
+        ParameterTypeFrequency b = new ParameterTypeFrequency("b", "blong");
+        bc = new BehavioralCharacteristics();
+        bc.setParameter(b, null);
+        bc.resetParameter(b);
+        try
+        {
+            // as there was no value before the null set, this should fail
+            bc.getParameter(b);
+            fail("Reset after setting of null is not properly handled.");
+        }
+        catch (ParameterException pe)
+        {
+            // should fail
+        }
+        
+        // check null is not the same as no value: no value -> set(null) -> set(value) -> reset -> get(null?)
+        bc.setParameter(b, null);
+        bc.setParameter(b, new Frequency(12, FrequencyUnit.SI));
+        bc.resetParameter(b);
+        // assertEquals() with null cannot be used (defaults into deprecated array method)
+        if (bc.getParameter(b) != null)
+        {
+            fail("Value after reset is not equal to null, which it was before the last set.");
+        }
 
     }
 
