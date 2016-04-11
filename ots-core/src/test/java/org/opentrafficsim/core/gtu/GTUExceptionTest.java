@@ -63,7 +63,7 @@ public class GTUExceptionTest
         String message = "message";
         try
         {
-            GTUException.failIf(true, message);
+            GTUException.throwIf(true, message);
             fail("Previous statement should have thrown a GTUException");
         }
         catch (GTUException e)
@@ -71,6 +71,6 @@ public class GTUExceptionTest
             assertTrue(e.getMessage().endsWith(message));
         }
         
-        GTUException.failIf(false, message);
+        GTUException.throwIf(false, message);
     }
 }

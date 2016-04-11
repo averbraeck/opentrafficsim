@@ -37,7 +37,7 @@ public class Distribution<O> implements Generator<O>
         throws ProbabilityException
     {
         this(stream);
-        ProbabilityException.failIf(null == generators, "generators may not be null");
+        ProbabilityException.throwIf(null == generators, "generators may not be null");
         // Store a defensive copy of the generator list (the generators are immutable; a list of them is not) and make sure it
         // is a List that supports add, remove, etc.
         this.generators.addAll(generators);
@@ -51,7 +51,7 @@ public class Distribution<O> implements Generator<O>
      */
     public Distribution(final StreamInterface stream) throws ProbabilityException
     {
-        ProbabilityException.failIf(null == stream, "random stream may not be null");
+        ProbabilityException.throwIf(null == stream, "random stream may not be null");
         this.random = new DistUniform(stream, 0, 1);
     }
 
@@ -69,7 +69,7 @@ public class Distribution<O> implements Generator<O>
         for (FrequencyAndObject<O> generator : this.generators)
         {
             double frequency = generator.getFrequency();
-            ProbabilityException.failIf(frequency < 0, "Negative frequency or probability is not allowed (got "
+            ProbabilityException.throwIf(frequency < 0, "Negative frequency or probability is not allowed (got "
                 + frequency + ")");
             this.cumulativeTotal += frequency;
         }
@@ -78,8 +78,8 @@ public class Distribution<O> implements Generator<O>
     /** {@inheritDoc} */
     public final O draw() throws ProbabilityException
     {
-        ProbabilityException.failIf(0 == this.generators.size(), "Cannot draw from empty collection");
-        ProbabilityException.failIf(0 == this.cumulativeTotal, "Sum of frequencies or probabilities must be > 0");
+        ProbabilityException.throwIf(0 == this.generators.size(), "Cannot draw from empty collection");
+        ProbabilityException.throwIf(0 == this.cumulativeTotal, "Sum of frequencies or probabilities must be > 0");
 
         double randomValue = this.random.draw() * this.cumulativeTotal;
         for (FrequencyAndObject<O> fAndO : this.generators)
@@ -125,7 +125,7 @@ public class Distribution<O> implements Generator<O>
     public final Distribution<O> add(final int index, final FrequencyAndObject<O> generator)
         throws ProbabilityException
     {
-        ProbabilityException.failIf(generator.getFrequency() < 0, "frequency (or probability) must be >= 0 (got "
+        ProbabilityException.throwIf(generator.getFrequency() < 0, "frequency (or probability) must be >= 0 (got "
             + generator.getFrequency() + ")");
         this.generators.add(index, generator);
         fixProbabilities();
@@ -156,7 +156,7 @@ public class Distribution<O> implements Generator<O>
     public final Distribution<O> set(final int index, final FrequencyAndObject<O> generator)
         throws ProbabilityException
     {
-        ProbabilityException.failIf(generator.getFrequency() < 0, "frequency (or probability) must be >= 0 (got "
+        ProbabilityException.throwIf(generator.getFrequency() < 0, "frequency (or probability) must be >= 0 (got "
             + generator.getFrequency() + ")");
         try
         {

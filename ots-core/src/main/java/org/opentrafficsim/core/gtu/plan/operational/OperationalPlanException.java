@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu.plan.operational;
 
+import java.util.Arrays;
+import java.util.IllegalFormatException;
 
 /**
  * Exception for the operational plan, e.g. when a request is given outside the plan's validity.
@@ -57,24 +59,35 @@ public class OperationalPlanException extends Exception
      * @param writableStackTrace whether or not the stack trace should be writable
      */
     public OperationalPlanException(final String message, final Throwable cause, final boolean enableSuppression,
-        final boolean writableStackTrace)
+            final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
     /**
-     * Throw an Exception if a condition is met, e.g. for pre- and postcondition checking.
+     * Throw an Exception if a condition is met, e.g. for pre- and postcondition checking. Use e.g. as follows:<br>
+     * <code>OperationalPlanException.throwIf(value == null, "value cannot be null for id = %s", id);</code>
      * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
-     * @param message the message to use in the exception
+     * @param message the message to use in the exception, with potential formatting identifiers
+     * @param args potential values to use for the formatting identifiers
      * @throws OperationalPlanException the exception to throw on true condition
      */
-    public static void failIf(final boolean condition, final String message) throws OperationalPlanException
+    public static void throwIf(final boolean condition, final String message, final Object... args)
+            throws OperationalPlanException
     {
         if (condition)
         {
             StackTraceElement[] ste = new Exception().getStackTrace();
             String where = ste[1].getClassName() + "." + ste[1].getMethodName() + " (" + ste[1].getLineNumber() + "): ";
-            throw new OperationalPlanException(where + message);
+            try
+            {
+                throw new OperationalPlanException(where + String.format(message, args));
+            }
+            catch (IllegalFormatException exception)
+            {
+                throw new OperationalPlanException(where + message + "[FormatException; args=" + Arrays.asList(args) + "]");
+            }
         }
     }
+
 }

@@ -80,7 +80,7 @@ public class ParameterTypeDouble extends AbstractParameterType<DimensionlessUnit
      */
     public final Double getDefaultValue() throws ParameterException
     {
-        ParameterException.failIf(null == this.defaultValue, "No default value was set for " + getId());
+        ParameterException.throwIf(null == this.defaultValue, "No default value was set for " + getId());
         return super.defaultValue.si;
     }
 

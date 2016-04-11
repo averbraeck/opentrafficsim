@@ -252,7 +252,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         @Override
         public void check(final Speed v, final BehavioralCharacteristics bca) throws ParameterException
         {
-            ParameterException.failIf(bca.contains(v2) && v.si > bca.getParameter(v2).si,
+            ParameterException.throwIf(bca.contains(v2) && v.si > bca.getParameter(v2).si,
                 "Value of v1 is larger than value of v2.");
         }
     };
@@ -264,7 +264,7 @@ public class BehavioralCharacteristicsTest implements CheckInterface
         @Override
         public void check(final Speed v, final BehavioralCharacteristics bca) throws ParameterException
         {
-            ParameterException.failIf(bca.contains(v1) && v.si < bca.getParameter(v1).si,
+            ParameterException.throwIf(bca.contains(v1) && v.si < bca.getParameter(v1).si,
                 "Value of v2 is smaller than value of v1.");
         }
     };

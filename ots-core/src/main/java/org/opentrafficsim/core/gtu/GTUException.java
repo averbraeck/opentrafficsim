@@ -1,5 +1,8 @@
 package org.opentrafficsim.core.gtu;
 
+import java.util.Arrays;
+import java.util.IllegalFormatException;
+
 /**
  * Exception thrown when GTU encounters a problem.
  * <p>
@@ -56,26 +59,34 @@ public class GTUException extends Exception
      * @param writableStackTrace boolean; whether or not the stack trace should be writable
      */
     public GTUException(final String message, final Throwable cause, final boolean enableSuppression,
-        final boolean writableStackTrace)
+            final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
     /**
-     * Throw an Exception if a condition is met, e.g. for pre- and postcondition checking.
+     * Throw an Exception if a condition is met, e.g. for pre- and postcondition checking. Use e.g. as follows:<br>
+     * <code>GTUException.throwIf(value == null, "value cannot be null for id = %s", id);</code>
      * @param condition the condition to check; an exception will be thrown if this is <b>true</b>
-     * @param message the message to use in the exception
+     * @param message the message to use in the exception, with potential formatting identifiers
+     * @param args potential values to use for the formatting identifiers
      * @throws GTUException the exception to throw on true condition
      */
-    public static void failIf(final boolean condition, final String message) throws GTUException
+    public static void throwIf(final boolean condition, final String message, final Object... args) throws GTUException
     {
         if (condition)
         {
             StackTraceElement[] ste = new Exception().getStackTrace();
-            String where =
-                ste[1].getClassName() + "." + ste[1].getMethodName() + " (" + ste[1].getLineNumber()
-                    + "): ";
-            throw new GTUException(where + message);
+            String where = ste[1].getClassName() + "." + ste[1].getMethodName() + " (" + ste[1].getLineNumber() + "): ";
+            try
+            {
+                throw new GTUException(where + String.format(message, args));
+            }
+            catch (IllegalFormatException exception)
+            {
+                throw new GTUException(where + message + "[FormatException; args=" + Arrays.asList(args) + "]");
+            }
         }
     }
+
 }

@@ -106,19 +106,19 @@ public abstract class AbstractGTU implements GTU
         final StrategicalPlanner strategicalPlanner, final Perception perception, final DirectedPoint initialLocation,
         final Speed initialSpeed, final PerceivableContext perceivableContext) throws SimRuntimeException, GTUException
     {
-        GTUException.failIf(id == null, "id is null");
-        GTUException.failIf(gtuType == null, "gtuType is null");
-        GTUException.failIf(gtuType.equals(GTUType.NONE), "gtuType of an actual GTU cannot be GTUType.NONE");
-        GTUException.failIf(gtuType.equals(GTUType.ALL), "gtuType of an actual GTU cannot be GTUType.ALL");
-        GTUException.failIf(perceivableContext == null, "perceivableContext is null for GTU with id " + id);
-        GTUException.failIf(perceivableContext.containsGtuId(id), "GTU with id " + id
+        GTUException.throwIf(id == null, "id is null");
+        GTUException.throwIf(gtuType == null, "gtuType is null");
+        GTUException.throwIf(gtuType.equals(GTUType.NONE), "gtuType of an actual GTU cannot be GTUType.NONE");
+        GTUException.throwIf(gtuType.equals(GTUType.ALL), "gtuType of an actual GTU cannot be GTUType.ALL");
+        GTUException.throwIf(perceivableContext == null, "perceivableContext is null for GTU with id " + id);
+        GTUException.throwIf(perceivableContext.containsGtuId(id), "GTU with id " + id
             + " already registered in perceivableContext " + perceivableContext.getId());
-        GTUException.failIf(simulator == null, "simulator is null for GTU with id " + id);
-        GTUException.failIf(strategicalPlanner == null, "strategicalPlanner is null for GTU with id " + id);
-        GTUException.failIf(perception == null, "perception is null for GTU with id " + id);
-        GTUException.failIf(initialLocation == null | Double.isNaN(initialLocation.x) | Double.isNaN(initialLocation.y)
+        GTUException.throwIf(simulator == null, "simulator is null for GTU with id " + id);
+        GTUException.throwIf(strategicalPlanner == null, "strategicalPlanner is null for GTU with id " + id);
+        GTUException.throwIf(perception == null, "perception is null for GTU with id " + id);
+        GTUException.throwIf(initialLocation == null | Double.isNaN(initialLocation.x) | Double.isNaN(initialLocation.y)
             | Double.isNaN(initialLocation.z), "initialLocation " + initialLocation + " invalid for GTU with id " + id);
-        GTUException.failIf(initialSpeed == null, "initialSpeed is null for GTU with id " + id);
+        GTUException.throwIf(initialSpeed == null, "initialSpeed is null for GTU with id " + id);
 
         this.id = id;
         this.gtuType = gtuType;
@@ -192,7 +192,7 @@ public abstract class AbstractGTU implements GTU
      */
     private static String generateId(final IdGenerator idGenerator) throws GTUException
     {
-        GTUException.failIf(idGenerator == null, "AbstractGTU.<init>: idGenerator is null");
+        GTUException.throwIf(idGenerator == null, "AbstractGTU.<init>: idGenerator is null");
         return idGenerator.nextId();
     }
 

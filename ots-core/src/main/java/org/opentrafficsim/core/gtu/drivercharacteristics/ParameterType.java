@@ -110,7 +110,7 @@ public class ParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>> ext
     @SuppressWarnings("checkstyle:designforextension")
     public T getDefaultValue() throws ParameterException
     {
-        ParameterException.failIf(null == this.defaultValue, "No default value was set for " + getId());
+        ParameterException.throwIf(null == this.defaultValue, "No default value was set for " + getId());
         return this.defaultValue;
     }
 

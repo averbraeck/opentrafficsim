@@ -168,27 +168,27 @@ public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleS
         switch (this.check)
         {
             case POSITIVE:
-                ParameterException.failIf(value.si <= 0.0, "Value of parameter '" + this.id + "' must be above zero.");
+                ParameterException.throwIf(value.si <= 0.0, "Value of parameter '" + this.id + "' must be above zero.");
                 break;
                 
             case NEGATIVE:
-                ParameterException.failIf(value.si >= 0.0, "Value of parameter '" + this.id + "' must be below zero.");
+                ParameterException.throwIf(value.si >= 0.0, "Value of parameter '" + this.id + "' must be below zero.");
                 break;
                 
             case POSITIVEZERO:
-                ParameterException.failIf(value.si < 0.0, "Value of parameter '" + this.id + "' may not be below zero.");
+                ParameterException.throwIf(value.si < 0.0, "Value of parameter '" + this.id + "' may not be below zero.");
                 break;
                 
             case NEGATIVEZERO:
-                ParameterException.failIf(value.si > 0.0, "Value of parameter '" + this.id + "' may not be above zero.");
+                ParameterException.throwIf(value.si > 0.0, "Value of parameter '" + this.id + "' may not be above zero.");
                 break;
                 
             case NONZERO:
-                ParameterException.failIf(value.si == 0.0, "Value of parameter '" + this.id + "' may not be zero.");
+                ParameterException.throwIf(value.si == 0.0, "Value of parameter '" + this.id + "' may not be zero.");
                 break;
                 
             case UNITINTERVAL:
-                ParameterException.failIf(value.si < 0.0 || value.si > 1.0, "Value of parameter '" + this.id 
+                ParameterException.throwIf(value.si < 0.0 || value.si > 1.0, "Value of parameter '" + this.id 
                     + "' must be in range [0...1]");
                 break;
             
