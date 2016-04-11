@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.gtu.perception;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.Collection;
 
 import org.opentrafficsim.core.gtu.GTUException;
 import org.opentrafficsim.core.gtu.drivercharacteristics.ParameterException;
@@ -32,7 +32,13 @@ public interface Perception extends Serializable
 
     /**
      * Return information about the perceived objects with their (estimated) location, speed, and state.
-     * @return a set of objects within the perception range and angle
+     * @return a collection of objects within the perception range and angle
      */
-    Set<PerceivedObject> getPerceivedObjects();
+    Collection<PerceivedObject> getPerceivedObjects();
+
+    /**
+     * Return time stamped information about the perceived objects with their (estimated) location, speed, and state.
+     * @return a time stamped collection of objects within the perception range and angle
+     */
+    TimeStampedObject<Collection<PerceivedObject>> getTimeStampedPerceivedObjects();
 }
