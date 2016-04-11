@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu.animation;
 
+import java.io.Serializable;
+
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -17,8 +19,11 @@ import org.djunits.value.vdouble.scalar.Speed;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer
+public class DefaultSwitchableGTUColorer extends SwitchableGTUColorer implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+    
     /** The initial set of GTU colorers in the default list. */
     private static final GTUColorer[] COLORERS;
 

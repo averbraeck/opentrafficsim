@@ -271,8 +271,11 @@ public class OperationalPlan implements Serializable
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    private class SegmentProgress
+    private class SegmentProgress implements Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20160000L;
+
         /** Active Segment. */
         private final Segment segment;
 

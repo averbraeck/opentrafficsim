@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.geometry;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,8 +16,11 @@ import java.util.List;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public final class TestIntersectionPerformance
+public final class TestIntersectionPerformance implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20160400L;
 
     /**
      * Inaccessible constructor to prevent instantiation of this class.
@@ -120,7 +124,7 @@ public final class TestIntersectionPerformance
     {
         System.out.println("Type return to start ...");
         System.in.read();
-        final int numEdges = 80000;
+        final int numEdges = 8000;
         final int numRuns = 10;
         System.out.println(Results.getHeader());
         for (int numVertices : new int[] { 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000 })
@@ -135,6 +139,7 @@ public final class TestIntersectionPerformance
      */
     static class Results
     {
+
         /** Number of shapes constructed. */
         private final int numShapes;
 

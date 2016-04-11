@@ -3,15 +3,9 @@ package org.opentrafficsim.core.geometry;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.media.j3d.BoundingBox;
-import javax.vecmath.Point3d;
-
-import nl.tudelft.simulation.language.d3.DirectedPoint;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -143,7 +137,7 @@ public class OTSShape extends OTSLine3D
     public final boolean intersects(final OTSShape otsShape)
     {
         // step 1: quick check to see if the bounds intersect
-        if (!getBoundingRectangle().intersects(otsShape.getBoundingRectangle()))
+        if (!getEnvelope().intersects(otsShape.getEnvelope()))
         {
             return false;
         }

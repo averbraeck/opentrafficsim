@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.geometry;
 
+import java.io.Serializable;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -843,8 +844,11 @@ public final class Test
      * Stolen from <a href="http://www.journaldev.com/1650/java-futuretask-example-program">
      * http://www.journaldev.com/1650/java-futuretask-example-program</a>.
      */
-    class MyCallable implements Callable<String>
+    class MyCallable implements Callable<String>, Serializable
     {
+
+        /** */
+        private static final long serialVersionUID = 20150000L;
 
         /** The reference line. */
         private final OTSLine3D referenceLine;

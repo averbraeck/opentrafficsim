@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.idgenerator;
 
+import java.io.Serializable;
+
 /**
  * Generate names for any kind of object.
  * <p>
@@ -10,8 +12,11 @@ package org.opentrafficsim.core.idgenerator;
  *          initial version Mar 4, 2016 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class IdGenerator
+public class IdGenerator implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 1L;
+
     /** All generated names start with this string. */
     private final String baseName;
     

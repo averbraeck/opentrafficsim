@@ -1,5 +1,7 @@
 package org.opentrafficsim.simulationengine;
 
+import java.io.Serializable;
+
 import javax.naming.NamingException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -23,7 +25,7 @@ import org.opentrafficsim.core.dsol.OTSSimTimeDouble;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimulatorInterface
+public class SimpleAnimator extends OTSDEVSRealTimeClock implements SimpleSimulatorInterface, Serializable
 {
     /** */
     private static final long serialVersionUID = 20150511L;

@@ -2,7 +2,6 @@ package org.opentrafficsim.core.geometry;
 
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
-import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +18,7 @@ import org.djunits.value.vdouble.scalar.Length;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
@@ -57,7 +57,8 @@ public class OTSLine3D implements LocatableInterface, Serializable
     /** The cached bounds; will be calculated when needed for the first time. */
     private Bounds bounds = null;
 
-    private java.awt.geom.Rectangle2D.Double boundingRect;
+    /** Bounding of this OTSLine3D. */
+    private Envelope envelope;
 
     /**
      * Construct a new OTSLine3D.
@@ -1094,7 +1095,7 @@ public class OTSLine3D implements LocatableInterface, Serializable
         double deltaY = Math.max(maxY - minY, 0.5);
         double deltaZ = Math.max(maxZ - minZ, 0.5);
         this.bounds = new BoundingBox(deltaX, deltaY, deltaZ);
-        this.boundingRect = new Rectangle2D.Double(minX, minY, deltaX, deltaY);
+        this.envelope = new Envelope(minX, maxX, minY, maxY);
     }
 
     /**
@@ -1114,13 +1115,13 @@ public class OTSLine3D implements LocatableInterface, Serializable
      * Get the bounding rectangle of this OTSLine3D.
      * @return Rectangle2D; the bounding rectangle of this OTSLine3D
      */
-    public final Rectangle2D getBoundingRectangle()
+    public final Envelope getEnvelope()
     {
-        if (this.boundingRect == null)
+        if (this.envelope == null)
         {
             calcCentroidBounds();
         }
-        return this.boundingRect;
+        return this.envelope;
     }
 
     /** {@inheritDoc} */

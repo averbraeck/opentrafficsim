@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.math;
 
+import java.io.Serializable;
 import java.util.Locale;
 
 import org.djunits.unit.AccelerationUnit;
@@ -29,8 +30,11 @@ import org.djunits.value.vdouble.vector.AccelerationVector;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class Acceleration3D
+public class Acceleration3D implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+    
     /** The acceleration in 3D (XYZ coded). */
     private final AccelerationVector acceleration;
 

@@ -2,6 +2,7 @@ package org.opentrafficsim.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -116,7 +117,7 @@ public final class ClassList
     }
 
     /**
-     * Recursively load names from a directory. 
+     * Recursively load names from a directory.
      * @param directory File; root of the tree to load
      * @param pattern Pattern; only return names matching this pattern
      * @return Collection&lt;String&gt;; a list of names
@@ -152,6 +153,64 @@ public final class ClassList
     }
 
     /**
+     * Return a List of all the classes under a package. Test-classes are excluded from the result.
+     * @param packageRoot String package name
+     * @param excludeInterfaces boolean; if true; interfaces are excluded from the result
+     * @return Collection&lt;Class&lt;?&gt;&gt;; the classes under the package
+     */
+    public static Collection<Class<?>> classList(final String packageRoot, final boolean excludeInterfaces)
+    {
+        Collection<String> classList = ClassList.getResources(Pattern.compile(".*[^-]classes." + packageRoot + ".*\\.class"));
+        Collection<Class<?>> result = new ArrayList<Class<?>>();
+        for (String className : classList)
+        {
+            int pos = className.indexOf("\\org\\");
+            if (pos >= 0)
+            {
+                className = className.substring(pos + 1);
+            }
+            className = className.replaceAll("\\\\", ".");
+            pos = className.lastIndexOf(".class");
+            if (pos >= 0)
+            {
+                className = className.substring(0, pos);
+            }
+            if (className.endsWith("package-info"))
+            {
+                continue; // Not a real class
+            }
+            // System.out.println("Checking class \"" + className + "\"");
+            try
+            {
+                Class<?> c = Class.forName(className);
+                // System.out.println("modifiers: " + Modifier.toString(c.getModifiers()));
+                boolean exclude = false;
+                if (excludeInterfaces)
+                {
+                    for (String modifierString : Modifier.toString(c.getModifiers()).split(" "))
+                    {
+                        if (modifierString.equals("interface"))
+                        {
+                            // System.out.println(className + " is an interface");
+                            exclude = true;
+                            continue;
+                        }
+                    }
+                }
+                if (!exclude)
+                {
+                    result.add(c);
+                }
+            }
+            catch (ClassNotFoundException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    /**
      * List the resources that match args[0], or a fixed pattern to demonstrate the use of this class.
      * @param args args[0] is the pattern to match, or list all resources matching a built-in pattern if there are no args
      */
@@ -160,7 +219,7 @@ public final class ClassList
         Pattern pattern;
         if (args.length < 1)
         {
-            pattern = Pattern.compile(".*classes.org.opentrafficsim.*\\.class");
+            pattern = Pattern.compile(".*[^-]classes.org.opentrafficsim.*\\.class");
         }
         else
         {
