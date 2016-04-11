@@ -5,8 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.media.j3d.Bounds;
 import javax.naming.NamingException;
@@ -29,6 +30,7 @@ import org.opentrafficsim.core.geometry.OTSGeometryException;
 import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
 import org.opentrafficsim.core.gtu.drivercharacteristics.BehavioralCharacteristics;
 import org.opentrafficsim.core.gtu.perception.Perception;
+import org.opentrafficsim.core.gtu.perception.TimeStampedObject;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.Link;
@@ -85,9 +87,16 @@ public class GTUTest implements OTSModelInterface
             }
 
             @Override
-            public Set<PerceivedObject> getPerceivedObjects()
+            public Collection<PerceivedObject> getPerceivedObjects()
             {
-                return null;
+                return new HashSet<PerceivedObject>();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public TimeStampedObject<Collection<PerceivedObject>> getTimeStampedPerceivedObjects()
+            {
+                return new TimeStampedObject<Collection<PerceivedObject>>(new HashSet<PerceivedObject>(), Time.Abs.ZERO);
             }
         };
         OTSNetwork perceivableContext = new OTSNetwork("network");
@@ -265,6 +274,5 @@ class TestGTU extends AbstractGTU
     {
         return null;
     }
-
 
 }
