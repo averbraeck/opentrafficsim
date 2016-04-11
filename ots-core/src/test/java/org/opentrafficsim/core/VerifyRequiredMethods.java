@@ -23,32 +23,6 @@ public class VerifyRequiredMethods
 {
 
     /**
-     * Determine if a class is an anonymous inner class.
-     * @param c Class; the class to check
-     * @return boolean; true if <cite>c</cite> is an anonymous inner class; false otherwise
-     */
-    public final boolean isAnonymousInnerClass(final Class<?> c)
-    {
-        String className = c.getName();
-        int pos = className.lastIndexOf("$");
-        if (pos > 0)
-        {
-            while (++pos < className.length())
-            {
-                if (!Character.isDigit(className.charAt(pos)))
-                {
-                    break;
-                }
-            }
-            if (pos >= className.length())
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Check that all classes have a toString method.
      */
     @Test
@@ -61,7 +35,7 @@ public class VerifyRequiredMethods
             {
                 continue;
             }
-            if (isAnonymousInnerClass(c))
+            if (ClassList.isAnonymousInnerClass(c))
             {
                 continue;
             }
@@ -135,7 +109,7 @@ public class VerifyRequiredMethods
                     }
                 }
             }
-            if (!Serializable.class.isAssignableFrom(c) && !allStatic && !isAnonymousInnerClass(c))
+            if (!Serializable.class.isAssignableFrom(c) && !allStatic && !ClassList.isAnonymousInnerClass(c))
             {
                 System.out.println("Class " + c.getName() + " does not implement Serializable");
             }
