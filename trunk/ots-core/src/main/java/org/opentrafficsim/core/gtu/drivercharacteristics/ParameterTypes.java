@@ -66,7 +66,7 @@ public class ParameterTypes
         @Override
         public void check(final Time.Rel value, final BehavioralCharacteristics bc) throws ParameterException
         {
-            ParameterException.failIf(bc.contains(ParameterTypes.TMAX) && value.si >= bc.getParameter(ParameterTypes.TMAX).si,
+            ParameterException.throwIf(bc.contains(ParameterTypes.TMAX) && value.si >= bc.getParameter(ParameterTypes.TMAX).si,
                     "Value of Tmin is above or equal to Tmax.");
         }
     };
@@ -78,7 +78,7 @@ public class ParameterTypes
         @Override
         public void check(final Time.Rel value, final BehavioralCharacteristics bc) throws ParameterException
         {
-            ParameterException.failIf(bc.contains(ParameterTypes.TMIN)
+            ParameterException.throwIf(bc.contains(ParameterTypes.TMIN)
                 && value.si <= bc.getParameter(ParameterTypes.TMIN).si, "Value of Tmax is below or equal to Tmin.");
         }
     };

@@ -123,7 +123,7 @@ public class BehavioralCharacteristics
      */
     public final void resetParameter(final AbstractParameterType<?, ?> parameterType) throws ParameterException
     {
-        ParameterException.failIf(!this.previous.containsKey(parameterType), "Reset on parameter of type '"
+        ParameterException.throwIf(!this.previous.containsKey(parameterType), "Reset on parameter of type '"
             + parameterType.getId() + "' could not be performed, it was not set.");
         if (this.previous.get(parameterType) != EMPTY)
         {
@@ -196,7 +196,7 @@ public class BehavioralCharacteristics
      */
     private void checkContains(final AbstractParameterType<?, ?> parameterType) throws ParameterException
     {
-        ParameterException.failIf(!contains(parameterType), "Could not get parameter of type '" + parameterType.getId()
+        ParameterException.throwIf(!contains(parameterType), "Could not get parameter of type '" + parameterType.getId()
             + "' as it was not set.");
     }
 
