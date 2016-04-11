@@ -211,6 +211,32 @@ public final class ClassList
     }
 
     /**
+     * Determine if a class is an anonymous inner class.
+     * @param c Class; the class to check
+     * @return boolean; true if <cite>c</cite> is an anonymous inner class; false otherwise
+     */
+    public static boolean isAnonymousInnerClass(final Class<?> c)
+    {
+        String className = c.getName();
+        int pos = className.lastIndexOf("$");
+        if (pos > 0)
+        {
+            while (++pos < className.length())
+            {
+                if (!Character.isDigit(className.charAt(pos)))
+                {
+                    break;
+                }
+            }
+            if (pos >= className.length())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * List the resources that match args[0], or a fixed pattern to demonstrate the use of this class.
      * @param args args[0] is the pattern to match, or list all resources matching a built-in pattern if there are no args
      */
