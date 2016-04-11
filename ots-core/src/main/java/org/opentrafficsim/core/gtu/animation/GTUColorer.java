@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.gtu.animation;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.List;
 
 import org.opentrafficsim.core.gtu.GTU;
@@ -42,8 +43,11 @@ public interface GTUColorer
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class LegendEntry
+    class LegendEntry implements Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20150000L;
+
         /** The Color. */
         private final Color color;
 

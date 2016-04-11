@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.gtu.animation;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,8 +19,11 @@ import org.opentrafficsim.core.gtu.GTU;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SwitchableGTUColorer implements GTUColorer
+public class SwitchableGTUColorer implements GTUColorer, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+
     /** The currently active GTUColorer. */
     private GTUColorer activeColorer;
 

@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.network;
 
+import java.io.Serializable;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 
@@ -14,8 +16,11 @@ import org.djunits.value.vdouble.scalar.Length;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class LinkLocation
+public class LinkLocation implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+
     /** The link of the location of a point relative to the GTU. */
     private final Link link;
 

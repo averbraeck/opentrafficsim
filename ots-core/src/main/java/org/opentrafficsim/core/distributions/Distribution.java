@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.distributions;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +17,11 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <O> Type of the object returned by the draw method
  */
-public class Distribution<O> implements Generator<O>
+public class Distribution<O> implements Generator<O>, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20160301L;
+
     /** The generators (with their probabilities or frequencies). */
     private final List<FrequencyAndObject<O>> generators = new ArrayList<>();
 
@@ -291,8 +295,11 @@ public class Distribution<O> implements Generator<O>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      * @param <O> Type of the object returned by the draw method
      */
-    public static class FrequencyAndObject<O>
+    public static class FrequencyAndObject<O> implements Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20160301L;
+
         /** Frequency (or probability) of an object. */
         private final double frequency;
 
@@ -371,7 +378,7 @@ public class Distribution<O> implements Generator<O>
         {
             return "FrequencyAndObject [frequency=" + this.frequency + ", object=" + this.object + "]";
         }
-        
+
     }
 
 }

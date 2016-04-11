@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.math;
 
+import java.io.Serializable;
 import java.util.Locale;
 
 import org.djunits.unit.AngleUnit;
@@ -34,8 +35,11 @@ public interface Rotation3D
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class Abs
+    class Abs implements Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20160000L;
+        
         /** The angles of the rotation in 3D (RPY coded). */
         private final AngleVector.Abs rotation;
 
@@ -150,8 +154,11 @@ public interface Rotation3D
      * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class Rel
+    class Rel implements Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20160000L;
+        
         /** The rotations of the rotation in 3D (RPY coded). */
         private final AngleVector.Rel rotation;
 
