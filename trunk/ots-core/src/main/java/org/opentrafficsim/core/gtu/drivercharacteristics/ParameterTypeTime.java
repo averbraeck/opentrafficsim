@@ -65,7 +65,7 @@ public class ParameterTypeTime extends ParameterType<TimeUnit, Time.Rel>
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "ParameterTypeTime [id=" + super.getId() + "]";
     }
