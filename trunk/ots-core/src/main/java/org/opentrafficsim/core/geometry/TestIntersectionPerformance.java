@@ -16,11 +16,8 @@ import java.util.List;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public final class TestIntersectionPerformance implements Serializable
+public final class TestIntersectionPerformance
 {
-
-    /** */
-    private static final long serialVersionUID = 20160400L;
 
     /**
      * Inaccessible constructor to prevent instantiation of this class.
@@ -137,8 +134,11 @@ public final class TestIntersectionPerformance implements Serializable
     /**
      * Storage for the results of a number of runs with identical numbers of shapes and vertices per shape.
      */
-    static class Results
+    static class Results implements Serializable
     {
+
+        /** */
+        private static final long serialVersionUID = 20160412L;
 
         /** Number of shapes constructed. */
         private final int numShapes;
@@ -289,7 +289,7 @@ public final class TestIntersectionPerformance implements Serializable
         /**
          * Storage for execution time, number of tests and number of hits.
          */
-        static class Result
+        static class Result implements Serializable
         {
             /** Total execution time. */
             private final double executionTime;
