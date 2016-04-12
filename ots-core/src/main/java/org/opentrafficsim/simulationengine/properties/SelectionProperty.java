@@ -1,5 +1,7 @@
 package org.opentrafficsim.simulationengine.properties;
 
+import java.io.Serializable;
+
 /**
  * Property that is described by a set of Strings where exactly one can (and must) be true.
  * <p>
@@ -10,8 +12,11 @@ package org.opentrafficsim.simulationengine.properties;
  * initial version 19 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class SelectionProperty extends AbstractProperty<String>
+public class SelectionProperty extends AbstractProperty<String> implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+
     /** Short description of this SelectionProperty. */
     private String shortName;
 

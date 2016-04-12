@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -32,8 +33,11 @@ import org.opentrafficsim.simulationengine.properties.AbstractProperty;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractWrappableAnimation implements WrappableAnimation
+public abstract class AbstractWrappableAnimation implements WrappableAnimation, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+
     /** The properties exhibited by this simulation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();

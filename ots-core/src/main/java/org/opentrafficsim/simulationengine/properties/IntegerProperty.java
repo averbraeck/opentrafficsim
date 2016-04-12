@@ -1,5 +1,7 @@
 package org.opentrafficsim.simulationengine.properties;
 
+import java.io.Serializable;
+
 /**
  * Integer property.
  * <p>
@@ -10,8 +12,11 @@ package org.opentrafficsim.simulationengine.properties;
  * initial version 18 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class IntegerProperty extends AbstractProperty<Integer>
+public class IntegerProperty extends AbstractProperty<Integer> implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+
     /** The current value of the property. */
     private Integer value;
 

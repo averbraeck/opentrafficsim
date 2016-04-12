@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu.drivercharacteristics;
 
+import java.io.Serializable;
+
 import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.formatter.EngineeringFormatter;
 import org.djunits.value.vdouble.scalar.Dimensionless;
@@ -16,8 +18,11 @@ import org.djunits.value.vdouble.scalar.Dimensionless;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author Wouter Schakel
  */
-public class ParameterTypeDouble extends AbstractParameterType<DimensionlessUnit, Dimensionless>
+public class ParameterTypeDouble extends AbstractParameterType<DimensionlessUnit, Dimensionless> implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 120160400;
 
     /**
      * Constructor without default value and check.

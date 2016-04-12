@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.units.distributions;
 
+import java.io.Serializable;
+
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 
 import org.djunits.unit.AccelerationUnit;
@@ -73,8 +75,11 @@ public interface ContinuousDistDoubleScalar
      * @param <U> The unit type used
      */
     class Abs<T extends DoubleScalar.Abs<U>, U extends Unit<U>> extends AbstractContinuousDistScalar
-        implements Absolute
+        implements Absolute, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20150000L;
+
         /**
          * @param distribution the wrapped distribution function.
          * @param unit the unit.
@@ -133,8 +138,11 @@ public interface ContinuousDistDoubleScalar
      * @param <U> The unit type used
      */
     class Rel<T extends DoubleScalar.Rel<U>, U extends Unit<U>> extends AbstractContinuousDistScalar
-        implements Relative
+        implements Relative, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20150000L;
+
         /**
          * @param distribution the wrapped distribution function.
          * @param unit the unit.

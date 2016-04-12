@@ -291,6 +291,9 @@ public final class TestIntersectionPerformance
          */
         static class Result implements Serializable
         {
+            /** */
+            private static final long serialVersionUID = 20160400L;
+
             /** Total execution time. */
             private final double executionTime;
 

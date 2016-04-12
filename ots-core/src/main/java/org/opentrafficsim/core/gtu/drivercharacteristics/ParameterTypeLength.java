@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu.drivercharacteristics;
 
+import java.io.Serializable;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 
@@ -16,8 +18,11 @@ import org.djunits.value.vdouble.scalar.Length;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class ParameterTypeLength extends ParameterType<LengthUnit, Length.Rel>
+public class ParameterTypeLength extends ParameterType<LengthUnit, Length.Rel> implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20160400L;
 
     /**
      * Constructor without default value and check.

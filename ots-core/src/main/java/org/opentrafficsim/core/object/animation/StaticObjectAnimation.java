@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.image.ImageObserver;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -24,8 +25,11 @@ import org.opentrafficsim.core.object.StaticObject;
  * initial version Sep 13, 2014 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public class StaticObjectAnimation extends Renderable2D
+public class StaticObjectAnimation extends Renderable2D implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20160400L;
+
     /** */
     private float width;
 

@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.object;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import javax.media.j3d.Bounds;
@@ -20,8 +21,11 @@ import org.opentrafficsim.core.geometry.OTSLine3D;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class StaticObject implements ObjectInterface
+public class StaticObject implements ObjectInterface, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20160400L;
+
     /** The top-level 2D outline of the object. */
     private final OTSLine3D geometry;
 

@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.network.route;
 
+import java.io.Serializable;
 import java.util.List;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -18,9 +19,12 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ProbabilisticRouteGenerator implements RouteGenerator
+public class ProbabilisticRouteGenerator implements RouteGenerator, Serializable
 {
 
+    /** */
+    private static final long serialVersionUID = 20150000L;
+    
     /** The Distribution from which routes are drawn. */
     private final Distribution<Route> distribution;
 
