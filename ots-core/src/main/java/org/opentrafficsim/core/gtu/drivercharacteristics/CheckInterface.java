@@ -28,7 +28,7 @@ import org.opentrafficsim.core.gtu.drivercharacteristics.AbstractParameterType.C
  * <br>
  * In order to implement <i>custom</i> checks, any Parameter Type must extend the <tt>check</tt> method of its super. An example
  * is given below. The method should throw a <tt>ParameterException</tt> whenever a constraint is not met. The static
- * <tt>failIf</tt> method is used to do this. The first check is a simple check on the SI value being above 2. The second check
+ * <tt>throwIf</tt> method is used to do this. The first check is a simple check on the SI value being above 2. The second check
  * compares the value with the value of another parameter in the <tt>BehavioralCharacteristics</tt>. These checks can only be
  * performed if the other parameter is present in the <tt>BehavioralCharacteristics</tt>. <b>Checks with other parameter type
  * values should always check whether <tt>BehavioralCharacteristics</tt> contains the other parameter type</b>. i.e.
@@ -39,19 +39,19 @@ import org.opentrafficsim.core.gtu.drivercharacteristics.AbstractParameterType.C
  * {
  *     public void check(Length.Rel value, BehavioralCharacteristics bc) throws ParameterException
  *     {
- *         ParameterException.failIf(value.si &lt;= 2, &quot;Value of X is not above 2.&quot;);
- *         ParameterException.failIf(bc.contains(Y) &amp;&amp; value.si &gt; bc.getParameter(Y).si,
+ *         ParameterException.throwIf(value.si &lt;= 2, &quot;Value of X is not above 2.&quot;);
+ *         ParameterException.throwIf(bc.contains(Y) &amp;&amp; value.si &gt; bc.getParameter(Y).si,
  *             &quot;Value of X is larger than value of Y.&quot;);
  *     }
  * };
  * </pre>
  * 
  * Checks are invoked on default values (if given), in which case an empty <tt>BehavioralCharacteristics</tt> is forwarded. At
- * construction of a Parameter Type, no <tt>BehavioralCharacteristics</tt> is available. Checks are also invoked when set into
- * <tt>BehavioralCharacteristics</tt>, in which case that <tt>BehavioralCharacteristics</tt> forwards itself. Even still, if in
- * the above case X is set before Y, the check is never performed. Therefore, Y should also compare itself to X. <b>Two
- * parameters that are checked with each other, should both implement a check which is consistent with and mirrored to the the
- * others' check.</b> <br>
+ * construction of a Parameter Type, no <tt>BehavioralCharacteristics</tt> is available. Checks are also invoked when value are
+ * set into <tt>BehavioralCharacteristics</tt>, in which case that <tt>BehavioralCharacteristics</tt> forwards itself. Even
+ * still, if in the above case X is set before Y, the check is never performed. Therefore, Y should also compare itself to X.
+ * <b>Two parameters that are checked with each other, should both implement a check which is consistent with and mirrored to
+ * the the others' check.</b> <br>
  * <br>
  * The type of the first argument in the <tt>check()</tt> method depends on the super Parameter Type. For example:<br>
  * <li><tt>double</tt> for <tt>ParameterTypeDouble</tt></li> <li><tt>int</tt> for <tt>ParameterTypeInteger</tt></li> <li>
