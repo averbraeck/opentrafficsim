@@ -1,5 +1,7 @@
 package org.opentrafficsim.simulationengine.properties;
 
+import java.io.Serializable;
+
 /**
  * Continuous property.
  * <p>
@@ -10,8 +12,11 @@ package org.opentrafficsim.simulationengine.properties;
  * initial version 30 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ContinuousProperty extends AbstractProperty<Double>
+public class ContinuousProperty extends AbstractProperty<Double> implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+
     /** The current value. */
     private Double value;
 

@@ -1,5 +1,6 @@
 package org.opentrafficsim.simulationengine.properties;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,8 +16,11 @@ import java.util.Iterator;
  * initial version 30 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class CompoundProperty extends AbstractProperty<ArrayList<AbstractProperty<?>>>
+public class CompoundProperty extends AbstractProperty<ArrayList<AbstractProperty<?>>> implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+
     /** Properties contained in this one. */
     private ArrayList<AbstractProperty<?>> value;
 

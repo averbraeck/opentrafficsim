@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu.drivercharacteristics;
 
+import java.io.Serializable;
+
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 
@@ -16,8 +18,11 @@ import org.djunits.value.vdouble.scalar.LinearDensity;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class ParameterTypeLinearDensity extends ParameterType<LinearDensityUnit, LinearDensity>
+public class ParameterTypeLinearDensity extends ParameterType<LinearDensityUnit, LinearDensity> implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20150000L;
 
     /**
      * Constructor without default value and check.

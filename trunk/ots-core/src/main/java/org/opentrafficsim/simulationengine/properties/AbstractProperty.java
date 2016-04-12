@@ -1,5 +1,6 @@
 package org.opentrafficsim.simulationengine.properties;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -14,8 +15,11 @@ import java.util.Iterator;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @param <T> type of the property
  */
-public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T>>
+public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T>>, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+    
     /** Determines sorting order when properties are displayed to the user. */
     private final int displayPriority;
 
@@ -105,8 +109,11 @@ public abstract class AbstractProperty<T> implements Iterable<AbstractProperty<T
      * initial version jan. 2015 <br>
      * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
      */
-    class PropertyIterator implements Iterator<AbstractProperty<T>>
+    class PropertyIterator implements Iterator<AbstractProperty<T>>, Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20150000L;
+
         /** Next in line in the main CompoundProperty. */
         private int currentIndex;
 

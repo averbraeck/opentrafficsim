@@ -63,6 +63,9 @@ public class ParameterTypes
     public static final ParameterTypeTime TMIN = new ParameterTypeTime("Tmin", "Minimum car-following headway.",
         new Time.Rel(0.56, TimeUnit.SI), POSITIVE)
     {
+        /** */
+        private static final long serialVersionUID = 20160400L;
+
         @Override
         public void check(final Time.Rel value, final BehavioralCharacteristics bc) throws ParameterException
         {
@@ -75,6 +78,9 @@ public class ParameterTypes
     public static final ParameterTypeTime TMAX = new ParameterTypeTime("Tmax", "Minimum car-following headway.",
         new Time.Rel(1.2, TimeUnit.SI), POSITIVE)
     {
+        /** */
+        private static final long serialVersionUID = 20160400L;
+
         @Override
         public void check(final Time.Rel value, final BehavioralCharacteristics bc) throws ParameterException
         {

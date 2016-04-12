@@ -1,5 +1,7 @@
 package org.opentrafficsim.simulationengine.properties;
 
+import java.io.Serializable;
+
 /**
  * String property.
  * <p>
@@ -10,8 +12,11 @@ package org.opentrafficsim.simulationengine.properties;
  * initial version 29 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class StringProperty extends AbstractProperty<String>
+public class StringProperty extends AbstractProperty<String> implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+
     /** The current value of the property. */
     private String value;
 

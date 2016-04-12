@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu.drivercharacteristics;
 
+import java.io.Serializable;
+
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
 
@@ -16,8 +18,11 @@ import org.djunits.value.vdouble.scalar.Frequency;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class ParameterTypeFrequency extends ParameterType<FrequencyUnit, Frequency>
+public class ParameterTypeFrequency extends ParameterType<FrequencyUnit, Frequency> implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20160400L;
 
     /**
      * Constructor without default value and check.

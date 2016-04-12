@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.units.distributions;
 
+import java.io.Serializable;
+
 import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
 
 import org.djunits.unit.AccelerationUnit;
@@ -72,8 +74,12 @@ public interface DiscreteDistFloatScalar
      * @param <T> The absolute floatscalar type
      * @param <U> The unit type used
      */
-    class Abs<T extends FloatScalar.Abs<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar implements Absolute
+    class Abs<T extends FloatScalar.Abs<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar implements Absolute,
+            Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20150000L;
+
         /**
          * @param distribution the wrapped distribution function.
          * @param unit the unit.
@@ -130,8 +136,12 @@ public interface DiscreteDistFloatScalar
      * @param <T> The absolute float scalar type
      * @param <U> The unit type used
      */
-    class Rel<T extends FloatScalar.Rel<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar implements Relative
+    class Rel<T extends FloatScalar.Rel<U>, U extends Unit<U>> extends AbstractDiscreteDistScalar implements Relative,
+            Serializable
     {
+        /** */
+        private static final long serialVersionUID = 20150000L;
+
         /**
          * @param distribution the wrapped distribution function.
          * @param unit the unit.
@@ -239,7 +249,6 @@ public interface DiscreteDistFloatScalar
                     return (T) new FloatScalar.Rel(getDistribution().draw(), getUnit());
             }
         }
-
 
         /** {@inheritDoc} */
         @Override

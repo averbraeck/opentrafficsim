@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.units.distributions;
 
+import java.io.Serializable;
+
 import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
 import nl.tudelft.simulation.jstats.distributions.DistDiscreteConstant;
 import nl.tudelft.simulation.jstats.streams.Java2Random;
@@ -17,8 +19,11 @@ import org.djunits.unit.Unit;
  * initial version Feb 2, 2015 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  */
-public abstract class AbstractDiscreteDistScalar
+public abstract class AbstractDiscreteDistScalar implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+
     /** The wrapped distribution function. */
     private final DistDiscrete distribution;
 

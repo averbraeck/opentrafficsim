@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.gtu.drivercharacteristics;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import org.djunits.unit.Unit;
@@ -19,9 +20,12 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * @param <U> Unit of the value.
  * @param <T> Class of the value.
  */
-public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>>
+public abstract class AbstractParameterType<U extends Unit<U>, T extends DoubleScalar.Rel<U>> implements Serializable
 {
     
+    /** */
+    private static final long serialVersionUID = 20160400L;
+
     /** Unique identifier. */
     private final UUID uniqueId;
 

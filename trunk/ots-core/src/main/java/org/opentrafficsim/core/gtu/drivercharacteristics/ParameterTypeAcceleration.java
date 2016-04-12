@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu.drivercharacteristics;
 
+import java.io.Serializable;
+
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 
@@ -16,8 +18,11 @@ import org.djunits.value.vdouble.scalar.Acceleration;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class ParameterTypeAcceleration extends ParameterType<AccelerationUnit, Acceleration>
+public class ParameterTypeAcceleration extends ParameterType<AccelerationUnit, Acceleration> implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20160400L;
 
     /**
      * Constructor without default value and check.

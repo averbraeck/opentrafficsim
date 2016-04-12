@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.network.route;
 
+import java.io.Serializable;
+
 import org.opentrafficsim.core.network.Node;
 
 /**
@@ -12,8 +14,11 @@ import org.opentrafficsim.core.network.Node;
  * initial version 20 mrt. 2015 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class FixedRouteGenerator implements RouteGenerator
+public class FixedRouteGenerator implements RouteGenerator, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+    
     /** The route that is returned on every call to generateRoute. */
     private final Route route;
 

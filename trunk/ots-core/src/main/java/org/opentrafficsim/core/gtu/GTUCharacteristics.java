@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
+import java.io.Serializable;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OTSDEVSSimulatorInterface;
@@ -16,8 +18,11 @@ import org.opentrafficsim.core.network.OTSNetwork;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class GTUCharacteristics
+public class GTUCharacteristics implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20160000L;
 
     /** The type of the GTU. */
     private final GTUType gtuType;

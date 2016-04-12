@@ -1,5 +1,6 @@
 package org.opentrafficsim.simulationengine;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.naming.NamingException;
@@ -20,8 +21,11 @@ import org.opentrafficsim.simulationengine.properties.AbstractProperty;
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public abstract class AbstractWrappableSimulation implements WrappableSimulation
+public abstract class AbstractWrappableSimulation implements WrappableSimulation, Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+    
     /** The properties exhibited by this simulation. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected ArrayList<AbstractProperty<?>> properties = new ArrayList<AbstractProperty<?>>();

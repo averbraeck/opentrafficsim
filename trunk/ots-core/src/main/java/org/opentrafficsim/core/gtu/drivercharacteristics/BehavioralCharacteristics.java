@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.gtu.drivercharacteristics;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,8 +21,11 @@ import org.djunits.value.vdouble.scalar.DoubleScalar;
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  * @author Wouter Schakel
  */
-public class BehavioralCharacteristics
+public class BehavioralCharacteristics implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20160400L;
 
     // TODO: !=EMPTY may not work across multiple computers
     /**

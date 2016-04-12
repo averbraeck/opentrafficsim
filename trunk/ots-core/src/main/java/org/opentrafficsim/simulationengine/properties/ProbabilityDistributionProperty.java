@@ -1,5 +1,7 @@
 package org.opentrafficsim.simulationengine.properties;
 
+import java.io.Serializable;
+
 /**
  * Property that describes a probability distribution.
  * <p>
@@ -10,8 +12,11 @@ package org.opentrafficsim.simulationengine.properties;
  * initial version 18 dec. 2014 <br>
  * @author <a href="http://www.tudelft.nl/pknoppers">Peter Knoppers</a>
  */
-public class ProbabilityDistributionProperty extends AbstractProperty<Double[]>
+public class ProbabilityDistributionProperty extends AbstractProperty<Double[]> implements Serializable
 {
+    /** */
+    private static final long serialVersionUID = 20150000L;
+
     /** The current set of probability values (should add up to 1.0). */
     private Double[] value;
 

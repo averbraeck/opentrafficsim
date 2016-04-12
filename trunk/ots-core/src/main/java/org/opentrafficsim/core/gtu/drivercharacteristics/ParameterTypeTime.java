@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu.drivercharacteristics;
 
+import java.io.Serializable;
+
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Time;
 
@@ -16,8 +18,11 @@ import org.djunits.value.vdouble.scalar.Time;
  * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
  */
 
-public class ParameterTypeTime extends ParameterType<TimeUnit, Time.Rel>
+public class ParameterTypeTime extends ParameterType<TimeUnit, Time.Rel> implements Serializable
 {
+
+    /** */
+    private static final long serialVersionUID = 20150400L;
 
     /**
      * Constructor without default value and check.
