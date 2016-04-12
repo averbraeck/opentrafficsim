@@ -58,10 +58,16 @@ public class ParameterTypeTime extends ParameterType<TimeUnit, Time.Rel>
      * @param defaultValue Default value.
      * @param check Check for parameter values.
      */
-    public ParameterTypeTime(final String id, final String description, final Time.Rel defaultValue,
-        final Check check)
+    public ParameterTypeTime(final String id, final String description, final Time.Rel defaultValue, final Check check)
     {
         super(id, description, Time.Rel.class, defaultValue, check);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "ParameterTypeTime [id=" + super.getId() + "]";
     }
 
 }

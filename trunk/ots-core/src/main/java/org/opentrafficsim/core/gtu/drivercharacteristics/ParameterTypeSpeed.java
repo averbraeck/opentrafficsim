@@ -58,10 +58,16 @@ public class ParameterTypeSpeed extends ParameterType<SpeedUnit, Speed>
      * @param defaultValue Default value.
      * @param check Check for parameter values.
      */
-    public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue,
-        final Check check)
+    public ParameterTypeSpeed(final String id, final String description, final Speed defaultValue, final Check check)
     {
         super(id, description, Speed.class, defaultValue, check);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ParameterTypeSpeed [id=" + super.getId() + "]";
     }
 
 }

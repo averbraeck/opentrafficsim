@@ -48,4 +48,11 @@ public class LinkEdge<LINK extends Link> extends DefaultWeightedEdge
         return this.link;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LinkEdge [link=" + this.link + "]";
+    }
+
 }

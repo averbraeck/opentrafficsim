@@ -117,6 +117,14 @@ public interface ContinuousDistDoubleScalar
                     return (T) new DoubleScalar.Abs(getDistribution().draw(), getUnit());
             }
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "ContinuousDistDoubleScalar.Abs [T=" + getUnit().getClass().getSimpleName() + "]";
+        }
+        
     }
 
     /**
@@ -232,6 +240,14 @@ public interface ContinuousDistDoubleScalar
                     return (T) new DoubleScalar.Rel(getDistribution().draw(), getUnit());
             }
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "ContinuousDistDoubleScalar.Rel [T=" + getUnit().getClass().getSimpleName() + "]";
+        }
+        
     }
 
 }

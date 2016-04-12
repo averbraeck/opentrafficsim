@@ -115,4 +115,11 @@ public class StaticObjectAnimation extends Renderable2D
         this.fill = fill;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "StaticObjectAnimation [width=" + this.width + ", color=" + this.color + ", fill=" + this.fill + "]";
+    }
+
 }

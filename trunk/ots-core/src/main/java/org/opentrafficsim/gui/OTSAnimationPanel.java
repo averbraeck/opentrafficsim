@@ -278,6 +278,13 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
             frame.addWindowListener(this.panel);
             this.panel.closeHandlerRegistered = true;
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "DisposeOnCloseThread of OTSAnimationPanel [panel=" + this.panel + "]";
+        }
     }
 
     /** {@inheritDoc} */
@@ -353,6 +360,13 @@ public class OTSAnimationPanel extends OTSSimulationPanel implements ActionListe
                     // do nothing
                 }
             }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "UpdateTimer thread for OTSAnimationPanel";
         }
 
     }

@@ -85,4 +85,11 @@ public class PerceivedObject2D implements PerceivedObject
         return null;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "PerceivedObject2D [perceivedObjectType=" + this.perceivedObjectType + "]";
+    }
+
 }

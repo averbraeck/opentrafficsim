@@ -94,5 +94,12 @@ public interface GTUColorer
             return this.description;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "LegendEntry [color=" + this.color + ", name=" + this.name + ", description=" + this.description + "]";
+        }
+
     }
 }

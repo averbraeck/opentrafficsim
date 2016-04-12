@@ -29,7 +29,7 @@ public class LinkAnimation extends Renderable2D implements Serializable
 {
     /** */
     private static final long serialVersionUID = 20140000L;
-    
+
     /** */
     private float width;
 
@@ -40,8 +40,8 @@ public class LinkAnimation extends Renderable2D implements Serializable
      * @throws NamingException for problems with registering in context
      * @throws RemoteException on communication failure
      */
-    public LinkAnimation(final Link source, final OTSSimulatorInterface simulator, final float width)
-        throws NamingException, RemoteException
+    public LinkAnimation(final Link source, final OTSSimulatorInterface simulator, final float width) throws NamingException,
+            RemoteException
     {
         super(source, simulator);
         this.width = width;
@@ -53,9 +53,16 @@ public class LinkAnimation extends Renderable2D implements Serializable
     {
         Stroke oldStroke = graphics.getStroke();
         graphics.setStroke(new BasicStroke(this.width));
-        PaintPolygons.paintMultiPolygon(graphics, Color.RED, getSource().getLocation(),
-            ((Link) getSource()).getDesignLine(), true);
+        PaintPolygons.paintMultiPolygon(graphics, Color.RED, getSource().getLocation(), ((Link) getSource()).getDesignLine(),
+                true);
         graphics.setStroke(oldStroke);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "LinkAnimation [width=" + this.width + ", link=" + super.getSource() + "]";
     }
 
 }

@@ -31,6 +31,10 @@ public class VerifyRequiredMethods
         Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
         for (Class<?> c : classList)
         {
+            if (c.getName().contains("SimulatorFrame"))
+            {
+                // System.out.println("opletten");
+            }
             if (Exception.class.isAssignableFrom(c))
             {
                 continue;
@@ -41,6 +45,15 @@ public class VerifyRequiredMethods
             }
             Method toStringMethod = null;
             boolean allStatic = c.getConstructors().length == 0;
+            boolean isAbstract = false;
+            for (String modifierString : Modifier.toString(c.getModifiers()).split(" "))
+            {
+                if (modifierString.equals("abstract"))
+                {
+                    isAbstract = true;
+                    break;
+                }
+            }
             for (Method m : c.getDeclaredMethods())
             {
                 if (m.getName().equals("toString") && m.getParameterCount() == 0)
@@ -64,14 +77,50 @@ public class VerifyRequiredMethods
                     }
                 }
             }
-            if (null == toStringMethod && !allStatic)
+            if (null == toStringMethod)
             {
-                System.out.println("Class " + c.getName() + " does not have a toString method" + " (modifiers: "
-                        + Modifier.toString(c.getModifiers()) + ")");
-            }
-            else if (null == toStringMethod)
-            {
-                System.out.println("Class " + c.getName() + " does not need a toString method because all methods are static");
+                try
+                {
+                    toStringMethod = c.getMethod("toString");
+                }
+                catch (NoSuchMethodException | SecurityException exception)
+                {
+                    exception.printStackTrace();
+                    fail("getMethod(\"toString\") should never fail");
+                }
+                boolean isFinal = false;
+                for (String modifierString : Modifier.toString(toStringMethod.getModifiers()).split(" "))
+                {
+                    if ("final".equals(modifierString))
+                    {
+                        isFinal = true;
+                        break;
+                    }
+                }
+                if (isFinal)
+                {
+                    System.out.println("Class " + c.getName() + " can not override the toString method because a super "
+                            + "class implements a final toString method");
+                }
+                else if (allStatic)
+
+                {
+                    System.out.println("Class " + c.getName() + " does not have override the toString method because all "
+                            + "methods are static (modifiers: " + Modifier.toString(c.getModifiers()) + ")");
+                }
+                else if (isAbstract)
+                {
+                    System.out.println("Class " + c.getName() + " does not have to override the toString method because "
+                            + "it is an abstract class");
+                }
+                else if (c.isEnum())
+                {
+                    System.out.println("Class " + c.getName() + " does not override toString (this class is an enum)");
+                }
+                else
+                {
+                    System.err.println("Class " + c.getName() + " does not override toString");
+                }
             }
         }
     }

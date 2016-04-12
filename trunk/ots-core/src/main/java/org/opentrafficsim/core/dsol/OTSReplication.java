@@ -49,4 +49,11 @@ public class OTSReplication extends
 
     /** */
     private static final long serialVersionUID = 20140815L;
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "OTSReplication []";
+    }
 }

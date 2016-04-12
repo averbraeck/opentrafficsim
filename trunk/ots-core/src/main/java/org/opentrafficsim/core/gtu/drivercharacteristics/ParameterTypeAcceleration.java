@@ -59,9 +59,16 @@ public class ParameterTypeAcceleration extends ParameterType<AccelerationUnit, A
      * @param check Check for parameter values.
      */
     public ParameterTypeAcceleration(final String id, final String description, final Acceleration defaultValue,
-        final Check check)
+            final Check check)
     {
         super(id, description, Acceleration.class, defaultValue, check);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString()
+    {
+        return "ParameterTypeAcceleration [id=" + super.getId() + "]";
     }
 
 }

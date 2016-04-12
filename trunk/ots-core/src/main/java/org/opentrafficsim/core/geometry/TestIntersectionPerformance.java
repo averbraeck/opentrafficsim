@@ -345,6 +345,13 @@ public final class TestIntersectionPerformance implements Serializable
             }
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public final String toString()
+        {
+            return "Results [numShapes=" + this.numShapes + ", numVertices=" + this.numVertices + ", stats=" + this.stats + "]";
+        }
+
     }
 
 }
