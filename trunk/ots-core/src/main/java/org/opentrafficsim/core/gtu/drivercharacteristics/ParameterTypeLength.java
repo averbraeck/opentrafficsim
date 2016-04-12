@@ -66,7 +66,7 @@ public class ParameterTypeLength extends ParameterType<LengthUnit, Length.Rel>
 
     /** {@inheritDoc} */
     @Override
-    public String toString()
+    public final String toString()
     {
         return "ParameterTypeLength [id=" + super.getId() + "]";
     }
