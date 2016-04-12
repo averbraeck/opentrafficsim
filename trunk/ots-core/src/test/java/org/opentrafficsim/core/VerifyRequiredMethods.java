@@ -10,7 +10,10 @@ import java.util.Collection;
 import org.junit.Test;
 
 /**
- * Verify that all classes have a toString method.
+ * Verify that all classes have a toString method (unless the class in non-instantiable, or an enum, or abstract. <br>
+ * Verify that no class overrides equals without overriding hashCode. <br>
+ * Verify that classes that can be instantiated are Serializable for those classes that this makes sense.
+ * 
  * <p>
  * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
