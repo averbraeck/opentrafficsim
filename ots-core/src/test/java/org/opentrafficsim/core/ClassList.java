@@ -12,12 +12,14 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 /**
- * Build a list of the classes in the project (or under a specific directory in the project).<br>
+ * Build a list of the classes in the project (or under a specific directory/package in the project).<br>
  * Adapted from <a href="http://stackoverflow.com/questions/3923129/get-a-list-of-resources-from-classpath-directory">
- * http://stackoverflow.com/questions/3923129/get-a-list-of-resources-from-classpath-directory</a>.
+ * http://stackoverflow.com/questions/3923129/get-a-list-of-resources-from-classpath-directory</a> which apparently copied the
+ * code from <a href="http://forums.devx.com/showthread.php?153784-how-to-list-resources-in-a-package">
+ * http://forums.devx.com/showthread.php?153784-how-to-list-resources-in-a-package</a>. Original poster stoughto has not visited
+ * that forum after 2006.
  * <p>
- * Copyright (c) 2013-2016 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="http://opentrafficsim.org/node/13">OpenTrafficSim License</a>.
+ * Copyright (c) 2006 by stoughto! TODO replace this by something that is provably free code.
  * <p>
  * @version $Revision$, $LastChangedDate$, by $Author$, initial version Apr 8, 2016 <br>
  * @author <a href="http://www.tbm.tudelft.nl/averbraeck">Alexander Verbraeck</a>
