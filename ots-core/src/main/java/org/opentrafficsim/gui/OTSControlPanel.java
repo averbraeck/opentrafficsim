@@ -11,6 +11,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -831,8 +832,11 @@ public class OTSControlPanel extends JPanel implements ActionListener, PropertyC
         }
 
         /** Updater for the clock panel. */
-        private class TimeUpdateTask extends TimerTask
+        private class TimeUpdateTask extends TimerTask implements Serializable
         {
+            /** */
+            private static final long serialVersionUID = 20140000L;
+
             /**
              * Create a TimeUpdateTask.
              */
